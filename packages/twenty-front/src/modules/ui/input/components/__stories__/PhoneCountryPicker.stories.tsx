@@ -1,63 +1,40 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type E164Number } from 'libphonenumber-js';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from 'twenty-ui/primitives/input';
-import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 
 const onCountryChange = fn();
-const onCountryFocus = fn();
-const onCountryBlur = fn();
 
 const LibraryPhoneInput = ({
   label = 'Phone',
-  countryLabelledBy,
   disabled = false,
   readOnly = false,
-  showFocusAction = false,
 }: {
   label?: string;
-  countryLabelledBy?: string;
   disabled?: boolean;
   readOnly?: boolean;
-  showFocusAction?: boolean;
 }) => {
   const [value, setValue] = useState<E164Number>();
-  const countryRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <>
-      <ReactPhoneNumberInput
-        aria-label={label}
-        name="phone"
-        value={value}
-        onChange={setValue}
-        onCountryChange={onCountryChange}
-        international
-        withCountryCallingCode
-        defaultCountry="US"
-        disabled={disabled}
-        readOnly={readOnly}
-        countrySelectComponent={PhoneCountryPickerDropdownButton}
-        countrySelectProps={{
-          'aria-label': `${label} country`,
-          'aria-labelledby': countryLabelledBy,
-          ref: countryRef,
-          onFocus: onCountryFocus,
-          onBlur: onCountryBlur,
-        }}
-      />
-      {showFocusAction && (
-        <Button onClick={() => countryRef.current?.focus()}>
-          Focus country
-        </Button>
-      )}
-    </>
+    <ReactPhoneNumberInput
+      aria-label={label}
+      value={value}
+      onChange={setValue}
+      onCountryChange={onCountryChange}
+      international
+      withCountryCallingCode
+      defaultCountry="US"
+      disabled={disabled}
+      readOnly={readOnly}
+      countrySelectComponent={PhoneCountryPickerDropdownButton}
+    />
   );
 };
 
@@ -66,11 +43,7 @@ const ControlledCountryPicker = () => {
 
   return (
     <>
-      <PhoneCountryPickerDropdownButton
-        value={value}
-        onChange={setValue}
-        aria-label="Country"
-      />
+      <PhoneCountryPickerDropdownButton value={value} onChange={setValue} />
       <Button onClick={() => setValue(undefined)}>Clear country</Button>
     </>
   );
@@ -81,8 +54,6 @@ const meta: Meta = {
   decorators: [ComponentDecorator],
   beforeEach: () => {
     onCountryChange.mockClear();
-    onCountryFocus.mockClear();
-    onCountryBlur.mockClear();
   },
 };
 
@@ -90,25 +61,21 @@ export default meta;
 type Story = StoryObj;
 
 export const PhoneLibrarySelectionAndFocus: Story = {
-  render: () => <LibraryPhoneInput showFocusAction />,
+  render: () => <LibraryPhoneInput />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', { name: 'Phone country' });
+    const trigger = canvas.getByRole('button', { name: 'Country' });
     const phoneInput = canvas.getByRole('textbox', { name: 'Phone' });
 
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Focus country' }),
-    );
+    await userEvent.tab();
     expect(trigger).toHaveFocus();
-    expect(trigger).toHaveAttribute('name', 'phoneCountry');
-    expect(onCountryFocus).toHaveBeenCalled();
+    expect(trigger).toHaveAccessibleDescription('United States');
     await userEvent.keyboard('{Enter}');
 
-    const popup = await body.findByRole('dialog', { name: 'Phone country' });
+    const popup = await body.findByRole('dialog', { name: 'Country' });
     const search = within(popup).getByRole('searchbox', { name: 'Search' });
     await waitFor(() => expect(search).toHaveFocus());
-    expect(onCountryBlur).toHaveBeenCalled();
     expect(within(popup).getAllByRole('button')[0]).toHaveAccessibleName(
       'United States (+1)',
     );
@@ -122,11 +89,10 @@ export const PhoneLibrarySelectionAndFocus: Story = {
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     expect(onCountryChange).toHaveBeenLastCalledWith('FR');
     await waitFor(() => expect(phoneInput).toHaveFocus());
+    expect(trigger).toHaveAccessibleDescription('France');
 
     await userEvent.click(trigger);
-    const reopenedPopup = await body.findByRole('dialog', {
-      name: 'Phone country',
-    });
+    const reopenedPopup = await body.findByRole('dialog', { name: 'Country' });
     const reopenedSearch = within(reopenedPopup).getByRole('searchbox', {
       name: 'Search',
     });
@@ -145,7 +111,7 @@ export const PhoneLibrarySelectionAndFocus: Story = {
     await waitFor(() => expect(phoneInput).toHaveFocus());
 
     await userEvent.click(trigger);
-    await body.findByRole('dialog', { name: 'Phone country' });
+    await body.findByRole('dialog', { name: 'Country' });
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(body.queryByRole('dialog')).toBeNull());
     await waitFor(() => expect(trigger).toHaveFocus());
@@ -155,33 +121,20 @@ export const PhoneLibrarySelectionAndFocus: Story = {
 export const IndependentPhoneInputs: Story = {
   render: () => (
     <>
-      <Text id="work-country-label">Work country</Text>
-      <LibraryPhoneInput
-        label="Work phone"
-        countryLabelledBy="work-country-label"
-      />
-      <Text id="personal-country-label">Personal country</Text>
-      <LibraryPhoneInput
-        label="Personal phone"
-        countryLabelledBy="personal-country-label"
-      />
+      <LibraryPhoneInput label="Work phone" />
+      <LibraryPhoneInput label="Personal phone" />
     </>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const workTrigger = canvas.getByRole('button', {
-      name: 'Work country',
-    });
-    const personalTrigger = canvas.getByRole('button', {
-      name: 'Personal country',
+    const [workTrigger, personalTrigger] = canvas.getAllByRole('button', {
+      name: 'Country',
     });
 
     await userEvent.click(workTrigger);
-    const workPopup = await body.findByRole('dialog', {
-      name: 'Work country',
-    });
-    expect(body.queryByRole('dialog', { name: 'Personal country' })).toBeNull();
+    const workPopup = await body.findByRole('dialog', { name: 'Country' });
+    expect(body.getAllByRole('dialog')).toHaveLength(1);
     expect(personalTrigger).toHaveAttribute('aria-expanded', 'false');
     await userEvent.type(
       within(workPopup).getByRole('searchbox', { name: 'Search' }),
@@ -194,12 +147,12 @@ export const IndependentPhoneInputs: Story = {
     await waitFor(() =>
       expect(canvas.getByRole('textbox', { name: 'Work phone' })).toHaveFocus(),
     );
+    expect(workTrigger).toHaveAccessibleDescription('France');
+    expect(personalTrigger).toHaveAccessibleDescription('United States');
 
     await userEvent.click(personalTrigger);
-    const personalPopup = await body.findByRole('dialog', {
-      name: 'Personal country',
-    });
-    expect(body.queryByRole('dialog', { name: 'Work country' })).toBeNull();
+    const personalPopup = await body.findByRole('dialog', { name: 'Country' });
+    expect(body.getAllByRole('dialog')).toHaveLength(1);
     expect(workTrigger).toHaveAttribute('aria-expanded', 'false');
     expect(
       within(personalPopup).getByRole('searchbox', { name: 'Search' }),
@@ -224,11 +177,8 @@ export const DisabledAndReadOnlyPhoneInputs: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const disabledTrigger = canvas.getByRole('button', {
-      name: 'Disabled phone country',
-    });
-    const readOnlyTrigger = canvas.getByRole('button', {
-      name: 'Read-only phone country',
+    const [disabledTrigger, readOnlyTrigger] = canvas.getAllByRole('button', {
+      name: 'Country',
     });
 
     expect(disabledTrigger).toBeDisabled();
@@ -252,6 +202,7 @@ export const ClearedCountryRemovesSelection: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const trigger = canvas.getByRole('button', { name: 'Country' });
 
+    expect(trigger).toHaveAccessibleDescription('United States');
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog', { name: 'Country' });
     expect(
@@ -262,6 +213,7 @@ export const ClearedCountryRemovesSelection: Story = {
     await userEvent.click(
       canvas.getByRole('button', { name: 'Clear country' }),
     );
+    expect(trigger).not.toHaveAccessibleDescription();
     await userEvent.click(trigger);
     const clearedPopup = await body.findByRole('dialog', { name: 'Country' });
     expect(
@@ -273,6 +225,7 @@ export const ClearedCountryRemovesSelection: Story = {
     );
     await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(clearedPopup).not.toBeInTheDocument());
+    expect(trigger).toHaveAccessibleDescription('France');
     await userEvent.click(trigger);
     expect(
       await body.findByRole('button', { name: 'France (+33)', pressed: true }),

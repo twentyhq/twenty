@@ -6,7 +6,11 @@ export const createPhoneCountryPickerSandboxFailureTest = (
 ) =>
   createSandboxFailureTest({
     trigger: { role: 'button', name: 'Primary phone country' },
-    requiredErrors: [SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH],
+    requiredErrors: [
+      runtime === 'react'
+        ? SANDBOX_ERROR_PATTERNS.ELEMENT_DATASET
+        : SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH,
+    ],
     allowedAdditionalErrors:
-      runtime === 'react' ? [SANDBOX_ERROR_PATTERNS.NATIVE_EVENT_TYPE] : [],
+      runtime === 'react' ? [SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH] : [],
   });

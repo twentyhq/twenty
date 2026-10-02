@@ -7,6 +7,7 @@ import { ComponentDecorator } from '@ui/testing';
 
 import { PhoneCountryPickerExample } from './PhoneCountryPickerExample';
 import { openPhoneCountryPicker } from './openPhoneCountryPicker';
+import { PHONE_COUNTRY_OPTIONS } from './phoneCountryOptions';
 import { PHONE_COUNTRY_PICKER_STORY_A11Y_PARAMETERS } from './phoneCountryPickerStoryA11yParameters';
 
 const meta: Meta<typeof PhoneCountryPickerExample> = {
@@ -27,10 +28,25 @@ export default meta;
 type Story = StoryObj<typeof PhoneCountryPickerExample>;
 
 export const CountryNameSearch: Story = {
-  args: { onValueChange: fn() },
+  args: {
+    countries: [
+      ...PHONE_COUNTRY_OPTIONS,
+      { value: 'RE', label: 'Réunion', callingCode: '262', flag: '🇷🇪' },
+    ],
+    onValueChange: fn(),
+  },
   play: async ({ canvasElement, args }) => {
     const { dialog, search } = await openPhoneCountryPicker({ canvasElement });
 
+    for (const query of ['reunion', 'RÉUNION']) {
+      await userEvent.clear(search);
+      await userEvent.type(search, query);
+      await expect(within(dialog).getAllByRole('button')).toHaveLength(1);
+      await expect(
+        within(dialog).getByRole('button', { name: 'Réunion (+262)' }),
+      ).toBeVisible();
+    }
+    await userEvent.clear(search);
     await userEvent.type(search, 'a');
     await expect(
       within(dialog)
@@ -102,6 +118,25 @@ export const KeyboardSelection: Story = {
     await expect(args.onValueChange).toHaveBeenLastCalledWith('DE');
     await waitFor(() => expect(reopened.dialog).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
+  },
+};
+
+export const LetterNavigation: Story = {
+  args: { onValueChange: fn() },
+  play: async ({ canvasElement, args }) => {
+    const { dialog } = await openPhoneCountryPicker({ canvasElement });
+
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(
+      within(dialog).getByRole('button', { name: 'France (+33)' }),
+    ).toHaveFocus();
+    await userEvent.keyboard('g');
+    await expect(
+      within(dialog).getByRole('button', { name: 'Germany (+49)' }),
+    ).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onValueChange).toHaveBeenCalledWith('DE');
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
   },
 };
 

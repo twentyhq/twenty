@@ -4,7 +4,7 @@ import { type PhoneCountryOption } from './PhoneCountryOption';
 
 export type PhoneCountryPickerTriggerProps = Omit<
   DropdownTriggerProps,
-  'children' | 'render' | 'nativeButton'
+  'children' | 'render' | 'nativeButton' | 'aria-label'
 > & {
   country?: PhoneCountryOption;
   'aria-label': string;

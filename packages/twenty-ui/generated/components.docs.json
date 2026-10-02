@@ -7127,7 +7127,7 @@
           {
             "name": "aria-label",
             "type": "string",
-            "required": false,
+            "required": true,
             "defaultValue": null,
             "description": "Required accessible name for the country selector button."
           },
@@ -7150,7 +7150,7 @@
             "type": "PhoneCountryOption",
             "required": false,
             "defaultValue": null,
-            "description": "Prepared country whose flag is displayed. Omit it to show a world icon."
+            "description": "Prepared country whose flag is displayed and whose label describes the trigger. Omit it to show a world icon."
           },
           {
             "name": "delay",
@@ -7167,13 +7167,6 @@
             "description": "Disables the native trigger button."
           },
           {
-            "name": "handle",
-            "type": "PopoverHandle<unknown>",
-            "required": false,
-            "defaultValue": null,
-            "description": "A handle to associate the trigger with a popover."
-          },
-          {
             "name": "id",
             "type": "string",
             "required": false,
@@ -7186,13 +7179,6 @@
             "required": false,
             "defaultValue": "false",
             "description": "Whether the popover should also open when the trigger is hovered."
-          },
-          {
-            "name": "payload",
-            "type": "unknown",
-            "required": false,
-            "defaultValue": null,
-            "description": "A payload to pass to the popover when it is opened."
           },
           {
             "name": "style",
@@ -7337,13 +7323,6 @@
             "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
           },
           {
-            "name": "handle",
-            "type": "PopoverHandle<unknown>",
-            "required": false,
-            "defaultValue": null,
-            "description": "A handle to associate the trigger with a popover."
-          },
-          {
             "name": "id",
             "type": "string",
             "required": false,
@@ -7363,13 +7342,6 @@
             "required": false,
             "defaultValue": "false",
             "description": "Whether the popover should also open when the trigger is hovered."
-          },
-          {
-            "name": "payload",
-            "type": "unknown",
-            "required": false,
-            "defaultValue": null,
-            "description": "A payload to pass to the popover when it is opened."
           },
           {
             "name": "render",

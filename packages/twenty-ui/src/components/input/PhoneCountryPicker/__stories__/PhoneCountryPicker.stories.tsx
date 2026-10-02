@@ -33,6 +33,7 @@ export const Default: Story = {
     const { dialog, trigger } = await openPhoneCountryPicker({ canvasElement });
     const choices = within(dialog).getAllByRole('button');
 
+    await expect(trigger).toHaveAccessibleDescription('France');
     await expect(choices.map((choice) => choice.textContent)).toEqual([
       expect.stringContaining('France (+33)'),
       expect.stringContaining('Canada (+1)'),
@@ -50,6 +51,7 @@ export const Default: Story = {
     await expect(args.onValueChange).toHaveBeenCalledWith('CA');
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
+    await expect(trigger).toHaveAccessibleDescription('Canada');
     await expect(
       within(canvasElement).getByRole('status', {
         name: 'Phone country selection',
@@ -76,8 +78,9 @@ export const Dark: Story = {
 export const International: Story = {
   args: { initialValue: '' },
   play: async ({ canvasElement }) => {
-    const { dialog } = await openPhoneCountryPicker({ canvasElement });
+    const { dialog, trigger } = await openPhoneCountryPicker({ canvasElement });
 
+    await expect(trigger).not.toHaveAccessibleDescription();
     for (const choice of within(dialog).getAllByRole('button')) {
       await expect(choice).toHaveAttribute('aria-pressed', 'false');
     }
@@ -85,6 +88,7 @@ export const International: Story = {
       within(dialog).getByRole('button', { name: 'United States (+1)' }),
     );
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await expect(trigger).toHaveAccessibleDescription('United States');
     await expect(
       within(canvasElement).getByRole('status', {
         name: 'Phone country selection',

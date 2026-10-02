@@ -25,7 +25,6 @@ const PhoneCountrySelector = ({
   disabled?: boolean;
 }) => {
   const [value, setValue] = useState(initialValue);
-  const [changeCount, setChangeCount] = useState(0);
 
   return (
     <>
@@ -39,17 +38,14 @@ const PhoneCountrySelector = ({
           <PhoneCountryPicker.Options
             countries={COUNTRIES}
             value={value}
-            onValueChange={(nextValue) => {
-              setValue(nextValue);
-              setChangeCount((count) => count + 1);
-            }}
+            onValueChange={setValue}
             searchLabel={`Search ${label}`}
             emptyLabel="No countries found"
           />
         </Dropdown.Content>
       </Dropdown.Root>
       <Text role="status" aria-label={`${label} selection`}>
-        Country: {value ?? 'none'}; Changes: {changeCount}
+        Country: {value ?? 'none'}
       </Text>
     </>
   );

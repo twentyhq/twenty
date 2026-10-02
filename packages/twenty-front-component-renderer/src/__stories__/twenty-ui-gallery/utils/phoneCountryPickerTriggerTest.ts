@@ -1,4 +1,4 @@
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
@@ -22,20 +22,19 @@ export const phoneCountryPickerTriggerTest: TwentyUiGalleryPlayFunction =
 
     expect(primary).toHaveAttribute('type', 'button');
     expect(primary).toHaveTextContent('🇺🇸');
+    expect(primary).toHaveAccessibleDescription('United States');
     expect(secondary).toHaveTextContent('🇫🇷');
+    expect(secondary).toHaveAccessibleDescription('France');
     expect(disabled).toBeDisabled();
-    await userEvent.click(disabled);
-    expect(
-      within(canvasElement.ownerDocument.body).queryByRole('dialog'),
-    ).not.toBeInTheDocument();
+    expect(disabled).not.toHaveAccessibleDescription();
     expect(
       canvas.getByRole('status', { name: 'Primary phone country selection' }),
-    ).toHaveTextContent('Country: US; Changes: 0');
+    ).toHaveTextContent('Country: US');
     expect(
       canvas.getByRole('status', { name: 'Secondary phone country selection' }),
-    ).toHaveTextContent('Country: FR; Changes: 0');
+    ).toHaveTextContent('Country: FR');
     expect(
       canvas.getByRole('status', { name: 'Disabled phone country selection' }),
-    ).toHaveTextContent('Country: none; Changes: 0');
+    ).toHaveTextContent('Country: none');
     expect(errorHandler).not.toHaveBeenCalled();
   };

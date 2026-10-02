@@ -56,3 +56,12 @@
   block-size: 14px;
   inline-size: 14px;
 }
+
+.selectedCountryLabel {
+  block-size: 1px;
+  clip-path: inset(50%);
+  inline-size: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+}

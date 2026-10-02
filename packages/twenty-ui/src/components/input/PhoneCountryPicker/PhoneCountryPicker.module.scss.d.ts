@@ -3,5 +3,6 @@ declare const classNames: {
   readonly triggerFlag: 'triggerFlag';
   readonly optionFlag: 'optionFlag';
   readonly chevron: 'chevron';
+  readonly selectedCountryLabel: 'selectedCountryLabel';
 };
 export default classNames;

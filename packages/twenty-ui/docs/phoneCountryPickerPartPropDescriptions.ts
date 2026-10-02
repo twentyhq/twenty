@@ -5,7 +5,7 @@ import { type PhoneCountryPicker } from '../src/components/input/PhoneCountryPic
 export const PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS = {
   Trigger: {
     country:
-      'Prepared country whose flag is displayed. Omit it to show a world icon.',
+      'Prepared country whose flag is displayed and whose label describes the trigger. Omit it to show a world icon.',
     'aria-label': 'Required accessible name for the country selector button.',
     disabled: 'Disables the native trigger button.',
   } satisfies Partial<

@@ -16,7 +16,7 @@ import PhoneCountryPickerReference from '/snippets/ui/generated/components/phone
 
 ## Prepared choices
 
-Each `PhoneCountryOption` has a unique `value`, a localized country `label`, a `callingCode` without the leading plus sign, and a `flag` node. Supply the country list in the order you want it displayed. The picker adds the plus sign to calling-code labels.
+Each `PhoneCountryOption` has a unique `value`, a localized country `label`, a `callingCode` without the leading plus sign, and a `flag` node. Supply the country list in the order you want it displayed. The picker adds the plus sign to calling-code labels and keeps calling codes left to right next to right-to-left country names.
 
 ```tsx
 import { useState } from 'react';
@@ -26,7 +26,7 @@ import {
   type PhoneCountryOption,
 } from 'twenty-ui/components';
 
-const countries: PhoneCountryOption[] = [
+const COUNTRIES: PhoneCountryOption[] = [
   { value: 'FR', label: 'France', callingCode: '33', flag: '🇫🇷' },
   { value: 'GB', label: 'United Kingdom', callingCode: '44', flag: '🇬🇧' },
   { value: 'US', label: 'United States', callingCode: '1', flag: '🇺🇸' },
@@ -39,11 +39,11 @@ export const PhoneCountryExample = () => {
     <Dropdown.Root type="picker">
       <PhoneCountryPicker.Trigger
         aria-label="Phone country"
-        country={countries.find((country) => country.value === value)}
+        country={COUNTRIES.find((country) => country.value === value)}
       />
-      <Dropdown.Content aria-label="Choose phone country" width={280}>
+      <Dropdown.Content width={280}>
         <PhoneCountryPicker.Options
-          countries={countries}
+          countries={COUNTRIES}
           value={value}
           onValueChange={setValue}
           searchLabel="Search countries"
@@ -59,27 +59,27 @@ The picker ships without a country catalog, flag asset package, or phone-input r
 
 ## Search and selection
 
-Search matches a substring of the country name after applying `toLocaleLowerCase()` to both strings. It does not trim whitespace or match country values or calling codes. For example, `united` matches United Kingdom and United States; `+44` does not match a calling code. This preserves the phone picker search behavior.
+Search matches a substring of the country name, ignoring case and accents. It does not trim whitespace or match country values or calling codes. For example, `united` matches United Kingdom and United States, `reunion` matches Réunion, and `+44` does not match a calling code.
 
 The selected country appears first when it matches the query. Remaining matches retain their supplied order. A query that excludes the current selection also removes its row. Empty results show the supplied status message.
 
-The search field receives focus when the popup opens. Arrow keys navigate options. Enter chooses the highlighted matching result after typing, or the focused option. Enter with an empty query does not select a country while focus remains in the search field. Pointer selection calls `onValueChange` with the country value. The dropdown closes after selection and returns focus according to its focus settings. Search clears when the popup content unmounts.
+The search field receives focus when the popup opens. Arrow keys and typed letters navigate options. Enter chooses the highlighted matching result after typing, or the focused option. Enter with an empty query does not select a country while focus remains in the search field. Pointer selection calls `onValueChange` with the country value. The dropdown closes after selection and returns focus according to its focus settings. Search clears when the popup content unmounts.
 
 ## Trigger and host integration
 
-`Trigger` is a native button with a required accessible name. Its flag and chevron are decorative. Pass the selected `country` to display its flag, or omit it for a world icon. Native attributes, event handlers, `disabled`, and the button ref reach the trigger.
+`Trigger` is a native button with a required accessible name. Its flag and chevron are decorative, and the selected country label becomes its accessible description. Pass the selected `country` to display its flag, or omit it for a world icon. Native attributes, event handlers, `disabled`, and the button ref reach the trigger.
 
 Keep `Dropdown.Root` and `Dropdown.Content` in the host when coordinating controlled open state, popup placement, an explicit return-focus target, or application editing lifecycle. The shared parts use the root's picker behavior. Use one root per selector to keep instances independent.
 
-A phone library adapter can forward the custom selector's ref, disabled state, accessible label, and country-change callback to this composition. The adapter owns the library-specific country values and any subsequent focus on the phone input.
+A phone library adapter maps the library's country value, country-change callback, and disabled or read-only state onto this composition, and supplies its own translated trigger label. The adapter owns the library-specific country values and any subsequent focus on the phone input.
 
 ## Labels
 
-Supply localized country labels in `countries`, an accessible name on `Trigger`, and a stable popup name on `Dropdown.Content`. `searchLabel` defaults to `Search` and names both the search field and its placeholder. `emptyLabel` defaults to `No results`.
+Supply localized country labels in `countries` and an accessible name on `Trigger`. The popup takes the trigger name unless `Dropdown.Content` receives its own label. `searchLabel` defaults to `Search` and names both the search field and its placeholder. `emptyLabel` defaults to `No results`.
 
-## Sandbox renderer
+## Front component renderer
 
-The React and Preact sandbox renderers display the trigger and preserve its disabled state. Opening the popup currently fails because Dropdown reads pointer contact data from a missing native event in both runtimes; React can also report a missing event type. Named sandbox failure stories require the pointer width error and reject unrelated errors. Popup interactions are covered in the regular UI stories; successful sandbox popup behavior remains unsupported.
+In [front components](/developers/extend/apps/layout/front-components), the React and Preact renderers display the trigger, its flag, and its disabled state. Opening the popup is not supported yet: both renderers lack the native pointer data Dropdown reads, and in React the popup also fails while mounting because sandbox elements have no `dataset`, which stops the front component from rendering. These limitations do not affect normal React rendering.
 
 ## Props
 

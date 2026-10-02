@@ -13,7 +13,7 @@
 
 ### PhoneCountryPicker.Trigger
 
-<ParamField body="Trigger.aria-label" type="string">
+<ParamField body="Trigger.aria-label" type="string" required>
   Required accessible name for the country selector button.
 </ParamField>
 
@@ -30,7 +30,7 @@
 </ParamField>
 
 <ParamField body="Trigger.country" type="PhoneCountryOption">
-  Prepared country whose flag is displayed. Omit it to show a world icon.
+  Prepared country whose flag is displayed and whose label describes the trigger. Omit it to show a world icon.
 </ParamField>
 
 <ParamField body="Trigger.delay" type="number" default="300">
@@ -43,10 +43,6 @@
   Disables the native trigger button.
 </ParamField>
 
-<ParamField body="Trigger.handle" type="PopoverHandle&lt;unknown&gt;">
-  A handle to associate the trigger with a popover.
-</ParamField>
-
 <ParamField body="Trigger.id" type="string">
   ID of the trigger. In addition to being forwarded to the rendered element,
   it is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop).
@@ -54,10 +50,6 @@
 
 <ParamField body="Trigger.openOnHover" type="boolean" default="false">
   Whether the popover should also open when the trigger is hovered.
-</ParamField>
-
-<ParamField body="Trigger.payload" type="unknown">
-  A payload to pass to the popover when it is opened.
 </ParamField>
 
 <ParamField body="Trigger.style" type="CSSProperties | ((state: PopoverTriggerState) =&gt; CSSProperties | undefined)">

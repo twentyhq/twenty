@@ -1,6 +1,5 @@
 import { ConfigVariableDatabaseInput } from '@/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
-import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
@@ -15,13 +14,6 @@ const CurrencyExample = () => {
       selectedCurrencyCode={currency}
       onChange={(option) => setCurrency(option.value)}
     />
-  );
-};
-
-const PhoneExample = () => {
-  const [country, setCountry] = useState('US');
-  return (
-    <PhoneCountryPickerDropdownButton value={country} onChange={setCountry} />
   );
 };
 
@@ -93,38 +85,6 @@ export const CurrencySearchAndKeyboard: Story = {
       '',
     );
     await userEvent.keyboard('{Escape}');
-  },
-};
-
-export const PhoneSearchAndSelection: Story = {
-  render: () => <PhoneExample />,
-  play: async ({ canvasElement }) => {
-    const body = within(canvasElement.ownerDocument.body);
-    const trigger = within(canvasElement).getByRole('button');
-    await userEvent.click(trigger);
-    expect(await body.findByRole('dialog', { name: 'Country' })).toBeVisible();
-    await userEvent.type(
-      await body.findByRole('searchbox', { name: 'Search' }),
-      'france',
-    );
-    const france = await body.findByRole('button', {
-      name: /France \(\+33\)/,
-    });
-    expect(
-      body.queryByRole('button', { pressed: true }),
-    ).not.toBeInTheDocument();
-    await waitFor(() => expect(france).toHaveAttribute('data-highlighted'));
-    await userEvent.keyboard('{Enter}');
-    await waitFor(() =>
-      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
-    );
-    await userEvent.click(trigger);
-    expect(
-      await body.findByRole('button', { name: /France \(\+33\)/ }),
-    ).toHaveAttribute('aria-pressed', 'true');
-    expect(body.getByRole('searchbox', { name: 'Search' })).toHaveValue('');
-    await userEvent.keyboard('{Escape}');
-    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 

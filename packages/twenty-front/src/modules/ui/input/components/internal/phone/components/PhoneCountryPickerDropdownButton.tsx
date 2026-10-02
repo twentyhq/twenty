@@ -1,35 +1,26 @@
 import { t } from '@lingui/core/macro';
-import { type ComponentProps, useId, useMemo } from 'react';
+import { type KeyboardEvent, useId, useMemo } from 'react';
 import { PhoneCountryPicker } from 'twenty-ui/components';
 
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
-type PhoneCountryPickerDropdownButtonProps = Pick<
-  ComponentProps<typeof PhoneCountryPicker.Trigger>,
-  | 'ref'
-  | 'id'
-  | 'name'
-  | 'className'
-  | 'style'
-  | 'title'
-  | 'tabIndex'
-  | 'onFocus'
-  | 'onBlur'
-  | 'onClick'
-  | 'onKeyDown'
-  | 'onPointerDown'
-  | 'aria-invalid'
-  | 'aria-required'
-  | 'aria-labelledby'
-  | 'aria-describedby'
-  | 'disabled'
-> & {
+type PhoneCountryPickerDropdownButtonProps = {
   value?: string;
   onChange: (countryCode: string) => void;
-  'aria-label'?: string;
+  disabled?: boolean;
   readOnly?: boolean;
+};
+
+const keepEnterAwayFromFieldHotkeys = (
+  event: KeyboardEvent<HTMLButtonElement>,
+) => {
+  if (event.key !== 'Enter') {
+    return;
+  }
+
+  event.stopPropagation();
 };
 
 export const PhoneCountryPickerDropdownButton = ({
@@ -37,23 +28,6 @@ export const PhoneCountryPickerDropdownButton = ({
   onChange,
   disabled,
   readOnly,
-  ref,
-  id,
-  name,
-  className,
-  style,
-  title,
-  tabIndex,
-  onFocus,
-  onBlur,
-  onClick,
-  onKeyDown,
-  onPointerDown,
-  'aria-label': ariaLabel = t`Country`,
-  'aria-labelledby': ariaLabelledBy,
-  'aria-describedby': ariaDescribedBy,
-  'aria-invalid': ariaInvalid,
-  'aria-required': ariaRequired,
 }: PhoneCountryPickerDropdownButtonProps) => {
   const dropdownId = useId();
   const availableCountries = useCountries();
@@ -74,33 +48,16 @@ export const PhoneCountryPickerDropdownButton = ({
   return (
     <DropdownRoot dropdownId={dropdownId} type="picker">
       <PhoneCountryPicker.Trigger
-        ref={ref}
-        id={id}
-        name={name}
-        className={className}
-        style={style}
-        title={title}
-        tabIndex={tabIndex}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        onClick={onClick}
-        onKeyDown={onKeyDown}
-        onPointerDown={onPointerDown}
         country={selectedCountry}
         disabled={disabled || readOnly}
-        aria-label={ariaLabel}
-        aria-labelledby={ariaLabelledBy}
-        aria-describedby={ariaDescribedBy}
-        aria-invalid={ariaInvalid}
-        aria-required={ariaRequired}
+        aria-label={t`Country`}
+        onKeyDown={keepEnterAwayFromFieldHotkeys}
       />
       <DropdownContent
         side="bottom"
         align="start"
         sideOffset={4}
         alignOffset={0}
-        aria-label={ariaLabel}
-        aria-labelledby={ariaLabelledBy}
       >
         <PhoneCountryPicker.Options
           countries={countries}

@@ -45,6 +45,41 @@ describe('PhoneCountryPicker.Trigger', () => {
     expect(trigger).toHaveAttribute('name', 'phone-country');
     expect(trigger).toHaveAttribute('value', 'CA');
     expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
+    expect(trigger).toHaveAccessibleDescription('Canada');
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
+  });
+
+  it('describes the selected country after a supplied description', () => {
+    render(
+      <PhoneCountryPickerWrapper>
+        <span id="phone-country-hint">Used for text messages</span>
+        <PhoneCountryPicker.Trigger
+          aria-label="Phone country"
+          aria-describedby="phone-country-hint"
+          country={{
+            value: 'FR',
+            label: 'France',
+            callingCode: '33',
+            flag: <svg />,
+          }}
+        />
+      </PhoneCountryPickerWrapper>,
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Phone country' }),
+    ).toHaveAccessibleDescription('France Used for text messages');
+  });
+
+  it('has no description without a selected country', () => {
+    render(
+      <PhoneCountryPickerWrapper>
+        <PhoneCountryPicker.Trigger aria-label="Phone country" />
+      </PhoneCountryPickerWrapper>,
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Phone country' }),
+    ).not.toHaveAccessibleDescription();
   });
 });
