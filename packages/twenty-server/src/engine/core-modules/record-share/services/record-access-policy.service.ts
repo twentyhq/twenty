@@ -11,11 +11,12 @@ import { In, MoreThanOrEqual } from 'typeorm';
 
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
-import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
+import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
 import {
   evaluateRowAccessPolicy,
   type RowAccessEvaluationContext,
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
+import { resolveRecordShareGrantsAtDestroyByRecordId } from 'src/engine/core-modules/record-share/utils/resolve-record-share-grants-at-destroy-by-record-id.util';
 import {
   type EventRecordSnapshot,
   resolveEventRecordSnapshots,
@@ -62,8 +63,20 @@ export class RecordAccessPolicyService {
     // records of the batch, so later calls are served from what was fetched
     const recordSharesByRecordIdByObject = new Map<
       string,
-      Map<string, Promise<RecordShare[]>>
-    >();
+      Map<string, Promise<RecordShareGrant[]>>
+    >([
+      [
+        objectMetadata.id,
+        new Map(
+          [...resolveRecordShareGrantsAtDestroyByRecordId(events)].map(
+            ([recordId, recordShareGrants]) => [
+              recordId,
+              Promise.resolve(recordShareGrants),
+            ],
+          ),
+        ),
+      ],
+    ]);
     const fetchRecordShares = async ({
       objectMetadataId,
       recordIds,
@@ -73,7 +86,7 @@ export class RecordAccessPolicyService {
     }) => {
       const recordSharesByRecordId =
         recordSharesByRecordIdByObject.get(objectMetadataId) ??
-        new Map<string, Promise<RecordShare[]>>();
+        new Map<string, Promise<RecordShareGrant[]>>();
 
       recordSharesByRecordIdByObject.set(
         objectMetadataId,

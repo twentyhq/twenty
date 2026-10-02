@@ -3,7 +3,11 @@ import {
   type ObjectRecordDestroyEvent,
   type ObjectRecordUpdateEvent,
 } from 'twenty-shared/database-events';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RecordShareAccessLevel,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -15,6 +19,7 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { type InheritedReadabilityChildRecordsCarrier } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
+import { type RecordShareGrantsAtDestroyCarrier } from 'src/engine/core-modules/record-share/types/record-share-grants-at-destroy.type';
 
 describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
   const workspaceId = 'workspace-id';
@@ -332,6 +337,40 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
       expect(destroyEvent2.properties).not.toHaveProperty(
         'inheritedReadabilityChildRecords',
       );
+    });
+
+    it('should carry the record share grants captured for a record on its destroyed event', () => {
+      const recordShareGrant = {
+        recordId: 'record-1',
+        principalId: 'principal-1',
+        accessLevel: RecordShareAccessLevel.READ,
+      };
+      const result = formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.DESTROYED,
+        objectMetadataItem: flatObjectMetadata,
+        flatFieldMetadataMaps,
+        workspaceId: mockWorkspaceId,
+        authContext: mockAuthContext,
+        recordsBefore: [
+          { id: 'record-1', name: 'John' },
+          { id: 'record-2', name: 'Jane' },
+        ],
+        recordShareGrantsAtDestroyByRecordId: new Map([
+          ['record-1', [recordShareGrant]],
+          ['record-2', []],
+        ]),
+      });
+      const [destroyEvent1, destroyEvent2] =
+        result?.events as ObjectRecordDestroyEvent[];
+
+      expect(
+        (destroyEvent1.properties as RecordShareGrantsAtDestroyCarrier)
+          .recordShareGrantsAtDestroy,
+      ).toEqual([recordShareGrant]);
+      expect(
+        (destroyEvent2.properties as RecordShareGrantsAtDestroyCarrier)
+          .recordShareGrantsAtDestroy,
+      ).toEqual([]);
     });
   });
 });

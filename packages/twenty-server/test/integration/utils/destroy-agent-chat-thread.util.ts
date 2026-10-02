@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
-// Grants outlive the destroyed chat until a new chat reuses its id.
 export const destroyAgentChatThread = async ({
   threadId,
   token = APPLE_JANE_ADMIN_ACCESS_TOKEN,

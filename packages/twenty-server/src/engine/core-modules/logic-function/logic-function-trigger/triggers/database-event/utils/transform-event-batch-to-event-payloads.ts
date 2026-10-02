@@ -7,7 +7,7 @@ import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type LogicFunctionTriggerJobData } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { MAX_EVENTS_PER_TRIGGER_JOB } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/constants/max-events-per-trigger-job.constant';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
+import { omitEventRecordAccessSnapshots } from 'src/engine/core-modules/record-share/utils/omit-event-record-access-snapshots.util';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 export const transformEventBatchToEventPayloads = ({
@@ -40,7 +40,7 @@ export const transformEventBatchToEventPayloads = ({
           workspaceId: logicFunction.workspaceId,
           payload: {
             ...batchEventInfo,
-            ...omitInheritedReadabilityChildRecords(event),
+            ...omitEventRecordAccessSnapshots(event),
           },
           ...buildAuthContext(event),
         });
@@ -62,7 +62,7 @@ export const transformEventBatchToEventPayloads = ({
           workspaceId: logicFunction.workspaceId,
           payload: {
             ...batchEventInfo,
-            events: eventsChunk.map(omitInheritedReadabilityChildRecords),
+            events: eventsChunk.map(omitEventRecordAccessSnapshots),
           },
           ...buildAuthContext(eventsChunk[0]),
         });

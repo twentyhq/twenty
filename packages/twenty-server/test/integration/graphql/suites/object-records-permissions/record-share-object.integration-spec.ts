@@ -151,7 +151,7 @@ describe('recordShare object', () => {
     }
   });
 
-  it('keeps the grants of a deleted thread until a new thread reuses its id', async () => {
+  it('drops the grants of a destroyed thread so a new thread reusing its id starts clean', async () => {
     const chatService =
       getAppProviderByClassName<AgentChatService>('AgentChatService');
     const metadata = await getCoreRepository<ObjectMetadataEntity>(
@@ -203,7 +203,7 @@ describe('recordShare object', () => {
         token: timAccessToken,
       });
       await expect(chatService.findWritableThread(args)).resolves.toBeNull();
-      await expect(readGrants()).resolves.toHaveLength(2);
+      await expect(readGrants()).resolves.toEqual([]);
 
       await chatService.createThread({
         ...args,

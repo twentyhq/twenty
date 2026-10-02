@@ -889,7 +889,7 @@ describe('Conversations through the record API', () => {
       const destroyed = await destroyThreadRecord(threadId);
       expect(destroyed.body.errors).toBeUndefined();
       expect(await readStoredThread(threadId)).toBeNull();
-      expect(await readShares(threadId)).toHaveLength(1);
+      expect(await readShares(threadId)).toEqual([]);
     } finally {
       await global.testDataSource.query(
         `DELETE FROM ${schema}."agentChatThread" WHERE id = $1`,

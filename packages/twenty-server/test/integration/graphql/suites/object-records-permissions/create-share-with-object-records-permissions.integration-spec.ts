@@ -276,7 +276,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
       ]);
     });
 
-    it('should drop the rows of a destroyed record whose id is reused', async () => {
+    it('should drop the rows of a destroyed record so a reused id starts clean', async () => {
       const recordId = trackRecordId();
 
       const firstResponse = await makeGraphqlApiRequest(
@@ -301,7 +301,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
       );
 
       expect(destroyResponse.body.errors).toBeUndefined();
-      expect(await findRecordShares(recordId)).toHaveLength(2);
+      expect(await findRecordShares(recordId)).toEqual([]);
 
       const secondResponse = await makeGraphqlApiRequest(
         createOneOperation({

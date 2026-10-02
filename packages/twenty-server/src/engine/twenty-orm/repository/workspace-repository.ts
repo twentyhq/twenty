@@ -57,6 +57,7 @@ import {
 import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
 import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
 import { isRecordShareableObject } from 'src/engine/core-modules/record-share/utils/is-record-shareable-object.util';
+import { buildDeleteRecordSharesByRecordIdsStatement } from 'src/engine/core-modules/record-share/utils/build-delete-record-shares-by-record-ids-statement.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -1615,7 +1616,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
   }): Promise<ObjectRecord[]> {
-    if (args.kind === 'delete' && this.canHoldRecordShares) {
+    if (
+      args.kind === 'delete' &&
+      isDefined(this.recordShareObjectMetadataIdToCleanUpOnDestroy)
+    ) {
       return this.runAtomically((repository) =>
         repository.performMutation({
           ...args,
@@ -1759,22 +1763,21 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
       kind,
-      columnsToReturn:
-        kind === 'update'
-          ? getUpdateEventColumnsToReturn(
-              columnsToReturn,
-              this.options.tableShape,
-            )
-          : kind === 'delete' && !columnsToReturn.includes('id')
-            ? [...columnsToReturn, 'id']
-            : columnsToReturn,
+      columnsToReturn: this.resolveMutationColumnsToReturn({
+        kind,
+        columnsToReturn,
+      }),
       setColumns,
     });
 
+    const recordShareGrantsAtDestroyByRecordId =
+      kind === 'delete'
+        ? await this.deleteRecordSharesOfDestroyedRecords(
+            mutationResult.generatedMaps,
+          )
+        : undefined;
+
     if (kind === 'delete') {
-      await this.deleteRecordSharesOfDestroyedRecords(
-        mutationResult.generatedMaps,
-      );
       await this.releaseRecordStock(mutationResult.generatedMaps.length);
     }
 
@@ -1807,9 +1810,32 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       recordsBefore,
       recordsAfter,
       inheritedReadabilityChildRecordsByRecordId,
+      recordShareGrantsAtDestroyByRecordId,
     });
 
     return mutationResult.generatedMaps;
+  }
+
+  // A destroy returns the ids so the destroyed records' shares can be dropped
+  private resolveMutationColumnsToReturn({
+    kind,
+    columnsToReturn,
+  }: {
+    kind: MutationKind;
+    columnsToReturn: string[];
+  }): string[] {
+    if (kind === 'update') {
+      return getUpdateEventColumnsToReturn(
+        columnsToReturn,
+        this.options.tableShape,
+      );
+    }
+
+    if (kind === 'delete' && !columnsToReturn.includes('id')) {
+      return [...columnsToReturn, 'id'];
+    }
+
+    return columnsToReturn;
   }
 
   private async fetchInheritedReadabilityChildRecords(
@@ -2051,28 +2077,50 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   // A destroyed record's id can be reused on create, which would otherwise
-  // inherit the grants and restrictions left behind
+  // inherit the grants and restrictions left behind. The deleted grants are
+  // returned so the destroy event is still gated on them once delivered
   private async deleteRecordSharesOfDestroyedRecords(
     destroyedRecords: ObjectRecord[],
-  ): Promise<void> {
+  ): Promise<Map<string, RecordShareGrant[]> | undefined> {
     const recordShareObjectMetadataId =
-      this.options.internalContext.objectIdByNameSingular.recordShare;
+      this.recordShareObjectMetadataIdToCleanUpOnDestroy;
 
     if (
       destroyedRecords.length === 0 ||
-      !this.canHoldRecordShares ||
       !isDefined(recordShareObjectMetadataId)
     ) {
-      return;
+      return undefined;
     }
 
-    await this.executeRaw(
-      `DELETE FROM ${this.getTableExpression(recordShareObjectMetadataId)} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds)`,
-      {
-        objectMetadataId: this.options.flatObjectMetadata.id,
-        recordIds: destroyedRecords.map((record) => String(record.id)),
-      },
+    const destroyedRecordIds = destroyedRecords.map((record) =>
+      String(record.id),
     );
+    const deletedRecordShares = (await this.options.executor.execute(
+      buildDeleteRecordSharesByRecordIdsStatement({
+        recordShareTableExpression: this.getTableExpression(
+          recordShareObjectMetadataId,
+        ),
+        objectMetadataId: this.options.flatObjectMetadata.id,
+        recordIds: destroyedRecordIds,
+        shouldReturnDeletedGrants: true,
+      }),
+    )) as (RecordShareGrant & { deletedAt: string | null })[];
+
+    const recordShareGrantsByRecordId = new Map<string, RecordShareGrant[]>(
+      destroyedRecordIds.map((recordId) => [recordId, []]),
+    );
+
+    for (const { deletedAt, ...recordShareGrant } of deletedRecordShares) {
+      if (isDefined(deletedAt)) {
+        continue;
+      }
+
+      recordShareGrantsByRecordId
+        .get(recordShareGrant.recordId)
+        ?.push(recordShareGrant);
+    }
+
+    return recordShareGrantsByRecordId;
   }
 
   private async findRecordShareGrants({
@@ -2097,6 +2145,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     recordsBefore,
     recordsAfter,
     inheritedReadabilityChildRecordsByRecordId,
+    recordShareGrantsAtDestroyByRecordId,
   }: {
     kind: MutationKind;
     recordsBefore: ObjectRecord[];
@@ -2105,6 +2154,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       string,
       InheritedReadabilityChildRecords
     >;
+    recordShareGrantsAtDestroyByRecordId?: Map<string, RecordShareGrant[]>;
   }): void {
     if (this.options.shouldSkipEventEmission) {
       return;
@@ -2128,6 +2178,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         recordsAfter: formattedAfter,
         authContext: this.options.authContext,
         inheritedReadabilityChildRecordsByRecordId,
+        recordShareGrantsAtDestroyByRecordId,
       });
 
       if (isDefined(event)) {
@@ -2423,12 +2474,19 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     };
   }
 
-  // Rows outlive a sharing flag toggle, so cleanup ignores the flag
-  private get canHoldRecordShares(): boolean {
-    return isRecordShareableObject({
+  // Rows outlive a sharing flag toggle, so cleanup ignores the flag; system
+  // objects such as workflow runs and chat threads hold shares too
+  private get recordShareObjectMetadataIdToCleanUpOnDestroy():
+    | string
+    | undefined {
+    const canHoldRecordShares = isRecordShareableObject({
       flatObjectMetadata: this.options.flatObjectMetadata,
       isRecordSharingEnabled: true,
     });
+
+    return canHoldRecordShares
+      ? this.options.internalContext.objectIdByNameSingular.recordShare
+      : undefined;
   }
 
   private get isRecordSharingEnabled(): boolean {

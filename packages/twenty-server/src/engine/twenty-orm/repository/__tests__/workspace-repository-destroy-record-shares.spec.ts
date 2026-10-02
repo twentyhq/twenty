@@ -1,6 +1,12 @@
-import { FieldMetadataType, MetadataReadability } from 'twenty-shared/types';
+import { type ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
+import {
+  FieldMetadataType,
+  MetadataReadability,
+  RecordShareAccessLevel,
+} from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type RecordShareGrantsAtDestroyCarrier } from 'src/engine/core-modules/record-share/types/record-share-grants-at-destroy.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -15,9 +21,15 @@ import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/type
 const SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 const OBJECT_METADATA_ID = 'company-object-id';
 const RECORD_SHARE_OBJECT_METADATA_ID = 'record-share-object-id';
-const DESTROYED_RECORD_IDS = [
+const RECORD_IDS_TO_DESTROY = [
   '20202020-0000-4000-8000-000000000001',
   '20202020-0000-4000-8000-000000000002',
+  '20202020-0000-4000-8000-000000000003',
+];
+// A concurrent destroy may have removed the second record already
+const DESTROYED_RECORD_IDS = [
+  RECORD_IDS_TO_DESTROY[0],
+  RECORD_IDS_TO_DESTROY[2],
 ];
 
 const buildTableShape = (
@@ -65,13 +77,18 @@ const buildRepository = ({
   isSystem = false,
   isTransactional = true,
   objectIdByNameSingular = { recordShare: RECORD_SHARE_OBJECT_METADATA_ID },
+  deletedRecordShareRows = [],
+  shouldSkipEventEmission = true,
 }: {
   readability: MetadataReadability;
   isSystem?: boolean;
   isTransactional?: boolean;
   objectIdByNameSingular?: Record<string, string>;
+  deletedRecordShareRows?: Record<string, unknown>[];
+  shouldSkipEventEmission?: boolean;
 }) => {
   const executedStatements: CompiledStatement[] = [];
+  const emittedEvents: ObjectRecordDestroyEvent[] = [];
   const flatObjectMetadata: FlatObjectMetadata = getFlatObjectMetadataMock({
     universalIdentifier: 'company-universal-identifier',
     id: OBJECT_METADATA_ID,
@@ -90,6 +107,13 @@ const buildRepository = ({
     objectIdByNameSingular,
     featureFlagsMap: {},
     recordStock: { releaseRecordStock: jest.fn() },
+    eventEmitterService: {
+      emitDatabaseBatchEvent: ({
+        events,
+      }: {
+        events: ObjectRecordDestroyEvent[];
+      }) => emittedEvents.push(...events),
+    },
   } as unknown as WorkspaceInternalContext;
   const runInNewTransaction = jest.fn();
 
@@ -105,16 +129,22 @@ const buildRepository = ({
         execute: async (statement) => {
           executedStatements.push(statement);
 
-          return isRecordShareStatement(statement)
-            ? []
-            : DESTROYED_RECORD_IDS.map((id) => ({
-                [buildColumnResultAlias('company', 'id')]: id,
-              }));
+          if (isRecordShareStatement(statement)) {
+            return deletedRecordShareRows;
+          }
+
+          const returnedRecordIds = statement.text.startsWith('DELETE')
+            ? DESTROYED_RECORD_IDS
+            : RECORD_IDS_TO_DESTROY;
+
+          return returnedRecordIds.map((id) => ({
+            [buildColumnResultAlias('company', 'id')]: id,
+          }));
         },
       },
       objectRecordsPermissions: {},
       shouldBypassPermissionChecks: true,
-      shouldSkipEventEmission: true,
+      shouldSkipEventEmission,
       tableShapeByObjectMetadataId: (objectMetadataId) =>
         objectMetadataId === RECORD_SHARE_OBJECT_METADATA_ID
           ? recordShareTableShape
@@ -134,17 +164,18 @@ const buildRepository = ({
   return {
     repository: createRepository(isTransactional),
     executedStatements,
+    emittedEvents,
     runInNewTransaction,
   };
 };
 
 describe('WorkspaceRepository destroy', () => {
-  it('should delete the record shares of destroyed records in one statement', async () => {
+  it('should delete the record shares of the records actually destroyed in one statement', async () => {
     const { repository, executedStatements } = buildRepository({
       readability: MetadataReadability.PRIVATE,
     });
 
-    await repository.delete(DESTROYED_RECORD_IDS);
+    await repository.delete(RECORD_IDS_TO_DESTROY);
 
     const recordShareStatements = executedStatements.filter(
       isRecordShareStatement,
@@ -152,10 +183,46 @@ describe('WorkspaceRepository destroy', () => {
 
     expect(recordShareStatements).toEqual([
       {
-        text: `DELETE FROM "${SCHEMA_NAME}"."recordShare" WHERE "objectMetadataId" = $1 AND "recordId" = ANY($2)`,
+        text: `DELETE FROM "${SCHEMA_NAME}"."recordShare" WHERE "objectMetadataId" = $1 AND "recordId" = ANY($2::uuid[]) RETURNING "recordId", "principalId", "accessLevel", "deletedAt"`,
         values: [OBJECT_METADATA_ID, DESTROYED_RECORD_IDS],
       },
     ]);
+  });
+
+  it('should carry the live grants deleted with each destroyed record on its destroy event', async () => {
+    const liveGrant = {
+      recordId: DESTROYED_RECORD_IDS[0],
+      principalId: 'principal-id',
+      accessLevel: RecordShareAccessLevel.READ,
+    };
+    const { repository, emittedEvents } = buildRepository({
+      readability: MetadataReadability.PRIVATE,
+      shouldSkipEventEmission: false,
+      deletedRecordShareRows: [
+        { ...liveGrant, deletedAt: null },
+        {
+          ...liveGrant,
+          principalId: 'soft-deleted-principal-id',
+          deletedAt: '2026-01-01T00:00:00.000Z',
+        },
+      ],
+    });
+
+    await repository.delete(RECORD_IDS_TO_DESTROY);
+
+    const grantsAtDestroyByRecordId = Object.fromEntries(
+      emittedEvents.map((event) => [
+        event.recordId,
+        (event.properties as RecordShareGrantsAtDestroyCarrier)
+          .recordShareGrantsAtDestroy,
+      ]),
+    );
+
+    expect(grantsAtDestroyByRecordId).toEqual({
+      [DESTROYED_RECORD_IDS[0]]: [liveGrant],
+      [RECORD_IDS_TO_DESTROY[1]]: undefined,
+      [DESTROYED_RECORD_IDS[1]]: [],
+    });
   });
 
   it('should delete the record shares of an object open by default', async () => {
@@ -163,7 +230,18 @@ describe('WorkspaceRepository destroy', () => {
       readability: MetadataReadability.OPEN,
     });
 
-    await repository.delete(DESTROYED_RECORD_IDS);
+    await repository.delete(RECORD_IDS_TO_DESTROY);
+
+    expect(executedStatements.filter(isRecordShareStatement)).toHaveLength(1);
+  });
+
+  it('should delete the record shares of a system object holding shares', async () => {
+    const { repository, executedStatements } = buildRepository({
+      readability: MetadataReadability.PRIVATE,
+      isSystem: true,
+    });
+
+    await repository.delete(RECORD_IDS_TO_DESTROY);
 
     expect(executedStatements.filter(isRecordShareStatement)).toHaveLength(1);
   });
@@ -174,7 +252,7 @@ describe('WorkspaceRepository destroy', () => {
       isTransactional: false,
     });
 
-    await repository.delete(DESTROYED_RECORD_IDS);
+    await repository.delete(RECORD_IDS_TO_DESTROY);
 
     expect(runInNewTransaction).toHaveBeenCalledTimes(1);
   });
@@ -184,7 +262,7 @@ describe('WorkspaceRepository destroy', () => {
       readability: MetadataReadability.PRIVATE,
     });
 
-    await repository.softDelete(DESTROYED_RECORD_IDS);
+    await repository.softDelete(RECORD_IDS_TO_DESTROY);
 
     expect(executedStatements.filter(isRecordShareStatement)).toEqual([]);
   });
@@ -198,7 +276,7 @@ describe('WorkspaceRepository destroy', () => {
       const { repository, executedStatements, runInNewTransaction } =
         buildRepository({ readability, isSystem, isTransactional: false });
 
-      await repository.delete(DESTROYED_RECORD_IDS);
+      await repository.delete(RECORD_IDS_TO_DESTROY);
 
       expect(executedStatements.filter(isRecordShareStatement)).toEqual([]);
       expect(runInNewTransaction).not.toHaveBeenCalled();
@@ -206,13 +284,16 @@ describe('WorkspaceRepository destroy', () => {
   );
 
   it('should skip workspaces without the record share object', async () => {
-    const { repository, executedStatements } = buildRepository({
-      readability: MetadataReadability.PRIVATE,
-      objectIdByNameSingular: {},
-    });
+    const { repository, executedStatements, runInNewTransaction } =
+      buildRepository({
+        readability: MetadataReadability.PRIVATE,
+        isTransactional: false,
+        objectIdByNameSingular: {},
+      });
 
-    await repository.delete(DESTROYED_RECORD_IDS);
+    await repository.delete(RECORD_IDS_TO_DESTROY);
 
     expect(executedStatements.filter(isRecordShareStatement)).toEqual([]);
+    expect(runInNewTransaction).not.toHaveBeenCalled();
   });
 });

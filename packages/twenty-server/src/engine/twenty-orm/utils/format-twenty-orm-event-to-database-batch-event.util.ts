@@ -29,6 +29,7 @@ import {
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type InheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
+import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <
@@ -42,6 +43,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   recordsAfter,
   recordsBefore,
   inheritedReadabilityChildRecordsByRecordId,
+  recordShareGrantsAtDestroyByRecordId,
 }: {
   action: DatabaseEventAction;
   objectMetadataItem: FlatObjectMetadata;
@@ -54,6 +56,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
     string,
     InheritedReadabilityChildRecords
   >;
+  recordShareGrantsAtDestroyByRecordId?: Map<string, RecordShareGrant[]>;
 }): DatabaseBatchEventInput<T, DatabaseEventAction> | undefined => {
   const objectMetadataNameSingular = objectMetadataItem.nameSingular;
 
@@ -63,6 +66,15 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
 
     return isDefined(inheritedReadabilityChildRecords)
       ? { inheritedReadabilityChildRecords }
+      : {};
+  };
+
+  const buildRecordShareGrantsAtDestroyProperty = (recordId: string) => {
+    const recordShareGrantsAtDestroy =
+      recordShareGrantsAtDestroyByRecordId?.get(recordId);
+
+    return isDefined(recordShareGrantsAtDestroy)
+      ? { recordShareGrantsAtDestroy }
       : {};
   };
 
@@ -217,6 +229,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         event.properties = {
           before: recordBefore,
           ...buildInheritedReadabilityChildRecordsProperty(recordBefore.id),
+          ...buildRecordShareGrantsAtDestroyProperty(recordBefore.id),
         };
 
         return event;

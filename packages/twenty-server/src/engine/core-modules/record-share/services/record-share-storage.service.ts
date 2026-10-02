@@ -21,6 +21,7 @@ import {
 } from 'src/engine/core-modules/record-share/record-share.exception';
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
+import { buildDeleteRecordSharesByRecordIdsStatement } from 'src/engine/core-modules/record-share/utils/build-delete-record-shares-by-record-ids-statement.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -118,11 +119,14 @@ export class RecordShareStorageService {
     if (recordIds.length === 0) {
       return;
     }
+    const { text, values } = buildDeleteRecordSharesByRecordIdsStatement({
+      recordShareTableExpression: `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)}`,
+      objectMetadataId,
+      recordIds,
+    });
+
     // History transactions span core and workspace tables, so they must reuse their connection.
-    await manager.query(
-      `DELETE FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)} WHERE "objectMetadataId" = $1 AND "recordId" = ANY($2::uuid[])`,
-      [objectMetadataId, recordIds],
-    );
+    await manager.query(text, values);
   }
 
   async deleteMatching({
