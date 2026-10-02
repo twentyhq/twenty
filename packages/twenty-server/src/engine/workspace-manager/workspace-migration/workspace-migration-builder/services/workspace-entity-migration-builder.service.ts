@@ -1,9 +1,9 @@
 import { Inject } from '@nestjs/common';
 
+import { isValidUniversalIdentifier } from 'twenty-shared/application';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
@@ -476,10 +476,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
   private validateUniversalIdentifier({
     flatEntityToValidate: { universalIdentifier },
   }: UniversalFlatEntityValidationArgs<T>): FlatEntityValidationError[] {
-    if (
-      !uuidValidate(universalIdentifier) ||
-      uuidVersion(universalIdentifier) < 4
-    ) {
+    if (!isValidUniversalIdentifier(universalIdentifier)) {
       return [
         {
           code: FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
