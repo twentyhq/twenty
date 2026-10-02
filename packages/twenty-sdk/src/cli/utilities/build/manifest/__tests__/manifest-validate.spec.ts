@@ -441,23 +441,24 @@ describe('manifestValidate', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it('should pass with UUID v5 identifiers', () => {
-      const v5Field: FieldManifest = {
-        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
-        universalIdentifier: '21f7f8de-8051-5b89-8680-0195ef798b6a',
-        type: FieldMetadataType.TEXT,
-        name: 'v5Field',
-        label: 'V5 Field',
-      };
+    it.each([
+      '21f7f8de-8051-5b89-8680-0195ef798b6a',
+      'bbbbbbbb-bbbb-6bbb-8bbb-bbbbbbbbbbbb',
+      'bbbbbbbb-bbbb-7bbb-8bbb-bbbbbbbbbbbb',
+      'bbbbbbbb-bbbb-8bbb-8bbb-bbbbbbbbbbbb',
+      'ffffffff-ffff-ffff-ffff-ffffffffffff',
+    ])(
+      'should pass with supported universal identifier %s',
+      (universalIdentifier) => {
+        const result = manifestValidate({
+          ...validManifest,
+          fields: [{ ...validField, universalIdentifier }],
+        });
 
-      const result = manifestValidate({
-        ...validManifest,
-        fields: [v5Field],
-      });
-
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-    });
+        expect(result.isValid).toBe(true);
+        expect(result.errors).toHaveLength(0);
+      },
+    );
 
     it('should fail with UUID v1 identifiers', () => {
       const v1Uuid = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
@@ -475,12 +476,9 @@ describe('manifestValidate', () => {
       });
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.stringContaining(`"${v1Uuid}" is UUID version 1`),
-      );
-      expect(result.errors).toContainEqual(
-        expect.stringContaining('Only UUID version 4 or higher is allowed'),
-      );
+      expect(result.errors).toEqual([
+        `Invalid universal identifiers: Universal identifier "${v1Uuid}" is UUID version 1. Only UUID version 4 or higher is allowed.`,
+      ]);
     });
 
     it('should fail with UUID v3 identifiers', () => {
@@ -529,9 +527,9 @@ describe('manifestValidate', () => {
       });
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.stringContaining('"not-a-uuid" is not a valid UUID'),
-      );
+      expect(result.errors).toEqual([
+        'Invalid universal identifiers: Universal identifier "not-a-uuid" is not a valid UUID.',
+      ]);
     });
 
     it('should not report duplicate version errors for the same identifier', () => {
@@ -967,6 +965,32 @@ describe('manifestValidate', () => {
 
       expect(manifestValidate(manifest).errors).toHaveLength(0);
     });
+
+    it.each([
+      'bbbbbbbb-bbbb-7bbb-8bbb-bbbbbbbbbbbb',
+      'ffffffff-ffff-ffff-ffff-ffffffffffff',
+    ])(
+      'accepts supported external timeline reference %s',
+      (universalIdentifier) => {
+        const manifest = buildTimelineManifest();
+        const [timelineActivityType] = manifest.timelineActivityTypes;
+
+        timelineActivityType.emit!.objectUniversalIdentifier =
+          universalIdentifier;
+        timelineActivityType.replacesTimelineActivityTypeUniversalIdentifier =
+          universalIdentifier;
+        timelineActivityType.emit!.through!.relationFieldUniversalIdentifier =
+          universalIdentifier;
+        timelineActivityType.emit!.through!.triggerFieldUniversalIdentifiers = [
+          universalIdentifier,
+        ];
+
+        const result = manifestValidate(manifest);
+
+        expect(result.isValid).toBe(true);
+        expect(result.errors).toHaveLength(0);
+      },
+    );
 
     it('validates external-object route identifiers without resolving their metadata', () => {
       const manifest = buildTimelineManifest();

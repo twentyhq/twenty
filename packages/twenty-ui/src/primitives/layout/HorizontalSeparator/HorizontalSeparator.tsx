@@ -9,6 +9,7 @@ type HorizontalSeparatorProps = {
   text?: string;
   noMargin?: boolean;
   color?: string;
+  textPosition?: 'center' | 'end';
 };
 
 export const HorizontalSeparator = ({
@@ -16,6 +17,7 @@ export const HorizontalSeparator = ({
   text = '',
   noMargin = false,
   color,
+  textPosition = 'center',
 }: HorizontalSeparatorProps): JSX.Element => {
   const colorStyle = color
     ? ({ '--horizontal-separator-color': color } as React.CSSProperties)
@@ -26,14 +28,19 @@ export const HorizontalSeparator = ({
       {text ? (
         <div
           className={styles.separatorContainer}
+          role="separator"
+          aria-label={text}
           data-no-margin={noMargin || undefined}
+          data-colored={color ? true : undefined}
           style={colorStyle}
         >
           <div className={styles.line} data-visible={visible || undefined} />
           <Label>
             <span className={styles.text}>{text}</span>
           </Label>
-          <div className={styles.line} data-visible={visible || undefined} />
+          {textPosition === 'center' && (
+            <div className={styles.line} data-visible={visible || undefined} />
+          )}
         </div>
       ) : (
         <div
