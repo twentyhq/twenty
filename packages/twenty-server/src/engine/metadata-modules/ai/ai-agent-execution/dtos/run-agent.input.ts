@@ -42,4 +42,22 @@ export class RunAgentInputDTO {
   @Type(() => RunAgentMessageInputDTO)
   @Field(() => [RunAgentMessageInputDTO], { nullable: true })
   messages?: RunAgentMessageInputDTO[];
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @Field({ nullable: true })
+  threadKey?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @Field({ nullable: true })
+  threadTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @Field({ nullable: true })
+  context?: string;
 }

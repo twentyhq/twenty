@@ -30,6 +30,7 @@ describe('runAgent', () => {
       result: { response: 'done' },
       error: null,
       success: true,
+      threadId: null,
     };
 
     fetchSpy.mockResolvedValue(

@@ -195,6 +195,35 @@ alongside `AI`. `filename` is optional and only labels the file for the model.
   `agent-chat` folder. Anything else fails the call instead of quietly
   answering without the file.
 
+### Continuing a conversation
+
+Pass a `threadKey` and Twenty keeps the conversation for you: each call sends
+only the new message, and the agent sees the earlier turns, including what its
+tools returned. Use any stable identifier from your side, such as a Slack
+channel and thread timestamp:
+
+```ts src/logic-functions/reply-in-thread.ts
+const { result, threadId } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  threadKey: `${channelId}:${threadTs}`,
+  threadTitle: 'Acme renewal',
+  prompt: 'What was the last touchpoint?',
+  context: 'Answer in Slack markdown.',
+});
+```
+
+- Keys are scoped to your app and agent, so two apps never share a
+  conversation. Only app access tokens can pass a `threadKey`.
+- Send `prompt`, or `messages` holding only `user` messages: the conversation
+  already holds the agent's replies.
+- `context` is given to the model for this call only and is not stored, which
+  suits per-request instructions such as formatting rules or a deadline.
+- A turn is stored once the run succeeds. A failed run leaves the conversation
+  as it was.
+- When turns run as different members (see below), each one only sees the text
+  of the others' turns, never their tool results, since those were read with
+  someone else's permissions.
+
 ### Running on behalf of a workspace member
 
 Pass `runAsWorkspaceMemberId` when the run is triggered by a person — a chat

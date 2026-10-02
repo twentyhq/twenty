@@ -11,6 +11,9 @@ export type RunAgentMessage = {
 export type RunAgentInput = {
   agentUniversalIdentifier: string;
   runAsWorkspaceMemberId?: string;
+  threadKey?: string;
+  threadTitle?: string;
+  context?: string;
 } & (
   | { prompt: string; messages?: never }
   | { messages: RunAgentMessage[]; prompt?: never }
@@ -20,4 +23,5 @@ export type RunAgentResult = {
   result: object | null;
   error: string | null;
   success: boolean;
+  threadId: string | null;
 };

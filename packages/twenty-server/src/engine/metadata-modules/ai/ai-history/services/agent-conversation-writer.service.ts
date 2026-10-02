@@ -6,12 +6,15 @@ import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
-import { type AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
+import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
+import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-persisted-db-parts.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
+import { type RecordableAgentExecution } from 'src/engine/metadata-modules/ai/ai-history/types/recordable-agent-execution.type';
 import {
   AiException,
   AiExceptionCode,
@@ -120,5 +123,45 @@ export class AgentConversationWriterService {
     });
 
     return messageId;
+  }
+
+  // One unanswerable call would keep the conversation waiting forever, so it is recorded as not waiting
+  async insertExecutionReply({
+    workspaceId,
+    threadId,
+    turnId,
+    agentId,
+    execution,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId: string;
+    agentId: string | null;
+    execution: RecordableAgentExecution;
+  }): Promise<{ isAwaitingAnswer: boolean }> {
+    const replyParts = mapAiStepsToUiMessageParts(execution.steps ?? []);
+
+    if (replyParts.length === 0) {
+      return { isAwaitingAnswer: false };
+    }
+
+    const awaitingParts = findAwaitingPausingToolParts(replyParts);
+    const isAwaitingAnswer =
+      execution.isPaused === true &&
+      awaitingParts.length > 0 &&
+      awaitingParts.every(({ isAnswerable }) => isAnswerable);
+
+    await this.insertMessage({
+      workspaceId,
+      threadId,
+      turnId,
+      role: AgentMessageRole.ASSISTANT,
+      agentId,
+      senderUserWorkspaceId: null,
+      isAwaitingAnswer,
+      parts: replyParts,
+    });
+
+    return { isAwaitingAnswer };
   }
 }

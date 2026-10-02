@@ -3385,6 +3385,7 @@ type RunAgentResult {
   result: JSON
   error: String
   success: Boolean!
+  threadId: UUID
 }
 
 type ChannelSyncSuccess {
@@ -5512,6 +5513,9 @@ input RunAgentInput {
   prompt: String
   runAsWorkspaceMemberId: UUID
   messages: [RunAgentMessageInput!]
+  threadKey: String
+  threadTitle: String
+  context: String
 }
 
 input RunAgentMessageInput {

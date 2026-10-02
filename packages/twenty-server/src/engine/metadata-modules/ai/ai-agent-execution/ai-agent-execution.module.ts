@@ -16,6 +16,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
+import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -29,11 +30,13 @@ import { AgentMessagePartResolver } from './resolvers/agent-message-part.resolve
 import { AgentRunResolver } from './resolvers/agent-run.resolver';
 import { AgentActorContextService } from './services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from './services/agent-async-executor.service';
+import { AgentRunConversationService } from './services/agent-run-conversation.service';
 import { AgentRunService } from './services/agent-run.service';
 import { RunAgentAttachmentService } from './services/run-agent-attachment.service';
 
 @Module({
   imports: [
+    AgentHistoryModule,
     AiBillingModule,
     AiModelsModule,
     AiAgentModule,
@@ -64,6 +67,7 @@ import { RunAgentAttachmentService } from './services/run-agent-attachment.servi
     AgentMessagePartResolver,
     AgentMessageResolver,
     AgentRunResolver,
+    AgentRunConversationService,
     AgentRunService,
     RunAgentAttachmentService,
     provideWorkspaceScopedRepository(RoleTargetEntity),

@@ -14,9 +14,14 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
+import { addContextToLastRunAgentMessage } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/add-context-to-last-run-agent-message.util';
+import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
+import { type AgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-actor.type';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import {
   AiException,
@@ -30,6 +35,9 @@ type RunAgentServiceInput = {
   prompt?: string | null;
   messages?: RunAgentMessage[] | null;
   runAsWorkspaceMemberId?: string;
+  threadKey?: string | null;
+  threadTitle?: string | null;
+  context?: string | null;
 };
 
 @Injectable()
@@ -39,7 +47,9 @@ export class AgentRunService {
   constructor(
     private readonly agentActorContextService: AgentActorContextService,
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
+    private readonly agentRunConversationService: AgentRunConversationService,
     private readonly applicationLookupService: ApplicationLookupService,
+    private readonly conversationReaderService: AgentConversationReaderService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
@@ -70,6 +80,14 @@ export class AgentRunService {
     const messages: RunAgentMessage[] = isNonEmptyString(prompt)
       ? [{ role: 'user', content: prompt }]
       : (input.messages ?? []);
+
+    const threadKey = isNonEmptyString(input.threadKey)
+      ? input.threadKey
+      : null;
+
+    if (isDefined(threadKey)) {
+      this.assertCanContinueConversation({ callerApplication, messages });
+    }
 
     const agent = await this.agentRepository.findOne(workspace.id, {
       where: {
@@ -119,11 +137,41 @@ export class AgentRunService {
       application,
     };
 
+    const actor: AgentConversationActor = isDefined(runAsContext)
+      ? {
+          type: 'user',
+          userWorkspaceId: runAsContext.authContext.userWorkspaceId,
+        }
+      : { type: 'application', applicationId: application.id };
+
+    const threadId = isDefined(threadKey)
+      ? buildAgentRunThreadId({
+          applicationId: application.id,
+          agentId: agent.id,
+          threadKey,
+        })
+      : null;
+
+    const executionMessages = isNonEmptyString(input.context)
+      ? addContextToLastRunAgentMessage({ messages, context: input.context })
+      : messages;
+
     try {
+      const priorMessages = isDefined(threadId)
+        ? await this.conversationReaderService.loadMessages({
+            workspaceId: workspace.id,
+            threadId,
+            actor,
+          })
+        : [];
+
+      const startedAt = new Date();
+
       const executionResult = await withDedicatedAiTrace(() =>
         this.agentAsyncExecutorService.executeAgent({
           agent,
-          messages,
+          messages: executionMessages,
+          priorMessages,
           baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
           actorContext: runAsContext?.actorContext,
           authContext,
@@ -141,13 +189,38 @@ export class AgentRunService {
           result: null,
           error: 'Agent stopped: no more available credits.',
           success: false,
+          threadId,
         };
+      }
+
+      if (isDefined(threadId)) {
+        await this.agentRunConversationService
+          .recordTurn({
+            workspaceId: workspace.id,
+            threadId,
+            title: isNonEmptyString(input.threadTitle)
+              ? input.threadTitle
+              : agent.label,
+            agentId: agent.id,
+            applicationId: application.id,
+            actor,
+            messages,
+            startedAt,
+            execution: executionResult,
+          })
+          .catch((error: unknown) =>
+            this.logger.error(
+              `Failed to record the turn of ${input.agentUniversalIdentifier} in thread ${threadId}`,
+              error instanceof Error ? error.stack : error,
+            ),
+          );
       }
 
       return {
         result: executionResult.result,
         error: null,
         success: true,
+        threadId,
       };
     } catch (error) {
       if (
@@ -166,7 +239,30 @@ export class AgentRunService {
         result: null,
         error: 'Agent execution failed.',
         success: false,
+        threadId,
       };
+    }
+  }
+
+  private assertCanContinueConversation({
+    callerApplication,
+    messages,
+  }: {
+    callerApplication?: FlatApplication;
+    messages: RunAgentMessage[];
+  }): void {
+    if (!isDefined(callerApplication)) {
+      throw new AiException(
+        'Continuing a conversation requires an application access token',
+        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+      );
+    }
+
+    if (messages.some((message) => message.role !== 'user')) {
+      throw new AiException(
+        'A conversation already holds its replies, so only user messages can be sent to it',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
     }
   }
 

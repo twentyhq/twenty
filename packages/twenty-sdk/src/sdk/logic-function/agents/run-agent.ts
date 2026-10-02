@@ -11,6 +11,7 @@ const RUN_AGENT_MUTATION = `
       result
       error
       success
+      threadId
     }
   }
 `;

@@ -2,17 +2,20 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
+  convertToModelMessages,
   generateText,
   jsonSchema,
   type LanguageModelUsage,
-  type ModelMessage,
   Output,
   isStepCount,
   type StepResult,
   type ToolSet,
 } from 'ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
-import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
+import {
+  AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  type ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import {
   isDefined,
@@ -67,6 +70,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
+import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -265,13 +269,13 @@ export class AgentAsyncExecutorService {
     runAsRoleId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
-    priorModelMessages = [],
+    priorMessages = [],
     pausingTools = {},
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
     // a continued conversation, with the tool calls and results plain run messages cannot carry
-    priorModelMessages?: ModelMessage[];
+    priorMessages?: ExtendedUIMessage[];
     pausingTools?: ToolSet;
     baseSystemPrompt: string;
     actorContext?: ActorMetadata;
@@ -282,7 +286,7 @@ export class AgentAsyncExecutorService {
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
-    if (!isNonEmptyArray(messages) && !isNonEmptyArray(priorModelMessages)) {
+    if (!isNonEmptyArray(messages) && !isNonEmptyArray(priorMessages)) {
       throw new AiException(
         'Provide at least one message to run an agent',
         AiExceptionCode.INVALID_AGENT_INPUT,
@@ -383,13 +387,19 @@ export class AgentAsyncExecutorService {
 
       let hasNoMoreAvailableCredits = false;
 
+      const modalities = this.aiModelRegistryService.getModelConfig(
+        registeredModel.modelId,
+      )?.modalities;
+
+      const priorModelMessages = await convertToModelMessages(
+        replaceUnsupportedFileParts(priorMessages, modalities, false),
+      );
+
       const modelMessages =
         await this.runAgentAttachmentService.buildModelMessagesOrThrow({
           messages,
           workspaceId,
-          modalities: this.aiModelRegistryService.getModelConfig(
-            registeredModel.modelId,
-          )?.modalities,
+          modalities,
         });
 
       const offeredToolNames = Object.keys(pausingTools);
