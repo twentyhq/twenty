@@ -13,6 +13,7 @@ import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions'
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
+import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
 import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
@@ -469,6 +470,14 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/settings-row',
     propDescriptions: SETTINGS_ROW_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'PhoneCountryPicker',
+    source: 'components/input/PhoneCountryPicker/PhoneCountryPicker.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/phone-country-picker',
+    parts: ['Trigger', 'Options'],
+    partPropDescriptions: PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'Dropdown',

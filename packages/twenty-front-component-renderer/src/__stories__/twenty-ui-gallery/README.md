@@ -22,6 +22,7 @@ requiring them to occur.
 | `twenty-ui-list-item` | ListItem |
 | `twenty-ui-tabs` | Tabs |
 | `twenty-ui-overflowing-list` | OverflowingList |
+| `twenty-ui-phone-country-picker` | PhoneCountryPicker |
 | `twenty-ui-popover` | Popover |
 | `twenty-ui-menu` | Menu |
 | `twenty-ui-select` | Select |
@@ -60,6 +61,7 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | Tabs | Activation fails on the missing `nativeEvent` for `composedPath` in both runtimes. |
 | Popover, Dialog, AlertDialog | Opening fails while reading pointer contact data from the missing `nativeEvent`. |
 | OverflowingList | Both runtimes measure, resize, and unmount the inline list, and keep rendering afterwards. A scoped light provider keeps popup portals inside the connected remote root and matches the gallery theme. Popup lifecycle checks verify selection, dismissal, focus restoration, and independent lists while requiring the missing native pointer width error; missing native `defaultPrevented` data and event constructor errors are optional. Focus restoration can also call a stale host listener, which is checked with the existing exact host-error assertion. Separate event isolation failure stories verify that opening the trigger activates the surrounding host, then check that popup selection adds no host activation. Full popup compatibility remains blocked on the event bridge work in [#26356](https://github.com/twentyhq/twenty/pull/26356). |
+| PhoneCountryPicker | Both runtimes render the triggers, flags, and disabled state. Opening fails while reading pointer contact data from the missing `nativeEvent`. In React the popup still mounts, and the Dropdown search effect then reads `dataset`, which sandbox elements lack; the uncaught error unmounts the React tree, so the React story requires that error and keeps the pointer error optional. See the [PhoneCountryPicker documentation](../../../../twenty-docs/ui/components/phone-country-picker.mdx). |
 | Menu | Opening fails on the missing `nativeEvent.pointerType` and pointer contact data. |
 | Select | Opening fails on missing native event data and focus support. Preact can report only the last of these failures when the host coalesces sandbox errors. |
 | CountrySelect | Opening fails while reading pointer contact data from the missing `nativeEvent`. React still mounts the popup, and the Dropdown search target then reads `dataset`, which worker elements do not provide, so that error is allowed without being required; Preact stops at the opening error. The fixture checks the selected values and decorative flags, then clicks the disabled trigger and, after a settle delay, requires the opening error alone, so a popup mounted by React fails the story. Clicking an enabled trigger then asserts the opening error. |

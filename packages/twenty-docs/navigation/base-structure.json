@@ -648,6 +648,7 @@
                 "ui/components/overflowing-list",
                 "ui/components/settings-row",
                 "ui/components/dropdown",
+                "ui/components/phone-country-picker",
                 "ui/components/tab-button",
                 "ui/components/code-editor",
                 "ui/components/toast",

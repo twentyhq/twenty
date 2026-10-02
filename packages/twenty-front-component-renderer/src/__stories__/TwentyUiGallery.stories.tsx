@@ -1,4 +1,6 @@
+import { createPhoneCountryPickerSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createPhoneCountryPickerSandboxFailureTest';
 import { currencyPickerSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/currencyPickerSandboxFailureTest';
+import { phoneCountryPickerTriggerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTriggerTest';
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
 import { imageInputTest } from '@/__stories__/twenty-ui-gallery/utils/imageInputTest';
 import { overflowingListEventIsolationFailureTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListEventIsolationFailureTest';
@@ -374,6 +376,32 @@ export const DropdownPreact: Story = createGalleryStory({
   runtime: 'preact',
   play: dropdownSandboxFailureTest,
 });
+
+export const PhoneCountryPickerTriggersReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-phone-country-picker',
+  runtime: 'react',
+  play: phoneCountryPickerTriggerTest,
+});
+
+export const PhoneCountryPickerTriggersPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-phone-country-picker',
+  runtime: 'preact',
+  play: phoneCountryPickerTriggerTest,
+});
+
+export const PhoneCountryPickerSandboxFailureReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-phone-country-picker',
+  runtime: 'react',
+  play: createPhoneCountryPickerSandboxFailureTest('react'),
+});
+
+export const PhoneCountryPickerSandboxFailurePreact: Story = createGalleryStory(
+  {
+    frontComponentBundleName: 'twenty-ui-phone-country-picker',
+    runtime: 'preact',
+    play: createPhoneCountryPickerSandboxFailureTest('preact'),
+  },
+);
 
 export const SelectReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-select',
