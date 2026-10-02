@@ -130,7 +130,6 @@ const mockCompanyRecord: ObjectRecord = {
   },
 };
 
-// Helper function to create a page layout with a widget
 const createPageLayoutWithWidget = (
   widget: PageLayoutWidget,
   pageLayoutType: PageLayoutType = PageLayoutType.DASHBOARD,

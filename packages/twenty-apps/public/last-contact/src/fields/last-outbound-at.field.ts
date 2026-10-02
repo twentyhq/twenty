@@ -18,4 +18,5 @@ export default defineField({
   icon: 'IconMessageUp',
   isNullable: true,
   isUIEditable: false,
+  isAuditLogged: false,
 });

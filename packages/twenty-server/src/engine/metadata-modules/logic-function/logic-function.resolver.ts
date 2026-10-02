@@ -31,7 +31,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { ExecuteOneLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
@@ -52,8 +52,23 @@ import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
-@UseGuards(WorkspaceAuthGuard, FeatureFlagGuard, NoPermissionGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  FeatureFlagGuard,
+  NoPermissionGuard,
+)
 @MetadataResolver(() => LogicFunctionDTO)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -72,11 +87,13 @@ export class LogicFunctionResolver {
   ) {}
 
   @Query(() => LogicFunctionDTO)
+  @UseGuards(ApplicationTargetGuard)
   async findOneLogicFunction(
     @ApplicationTargetArg<LogicFunctionIdInput>('input', {
       kind: 'applicationOwnedEntity',
       metadataName: 'logicFunction',
       idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
     })
     { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -225,12 +242,16 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => LogicFunctionExecutionResultDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+    ApplicationTargetGuard,
+  )
   async executeOneLogicFunction(
     @ApplicationTargetArg<ExecuteOneLogicFunctionInput>('input', {
       kind: 'applicationOwnedEntity',
       metadataName: 'logicFunction',
       idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
     })
     { id, payload }: ExecuteOneLogicFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -251,12 +272,16 @@ export class LogicFunctionResolver {
   }
 
   @Query(() => String, { nullable: true })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+    ApplicationTargetGuard,
+  )
   async getLogicFunctionSourceCode(
     @ApplicationTargetArg<LogicFunctionIdInput>('input', {
       kind: 'applicationOwnedEntity',
       metadataName: 'logicFunction',
       idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
     })
     { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -272,12 +297,16 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+    ApplicationTargetGuard,
+  )
   async updateOneLogicFunction(
     @ApplicationTargetArg<UpdateLogicFunctionFromSourceInput>('input', {
       kind: 'applicationOwnedEntity',
       metadataName: 'logicFunction',
       idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
     })
     updateLogicFunctionFromSourceInput: UpdateLogicFunctionFromSourceInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

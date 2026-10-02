@@ -1,6 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsBillingLimitForm } from '@/settings/billing/components/SettingsBillingLimitForm';
 import { EMPTY_USAGE_LIMIT_FORM_VALUES } from '@/settings/billing/constants/EmptyUsageLimitFormValues';
@@ -8,6 +7,7 @@ import {
   UsageOperationType,
   UsageResourceType,
 } from '~/generated-metadata/graphql';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const DEFINITIONS = {
   __typename: 'UsageQuotaDefinitions' as const,
@@ -41,7 +41,7 @@ const FILLED_VALUES = {
 const meta: Meta<typeof SettingsBillingLimitForm> = {
   title: 'Modules/Settings/Billing/SettingsBillingLimitForm',
   component: SettingsBillingLimitForm,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentWithRouterDecorator],
   args: {
     definitions: DEFINITIONS,
     values: EMPTY_USAGE_LIMIT_FORM_VALUES,

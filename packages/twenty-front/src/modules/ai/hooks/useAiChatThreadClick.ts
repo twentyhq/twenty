@@ -5,7 +5,7 @@ import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPage
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export type UseAiChatThreadClickOptions = {
@@ -26,7 +26,9 @@ export const useAiChatThreadClick = (
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
-  const handleThreadClick = (thread: AgentChatThread) => {
+  const handleThreadClick = (
+    thread: Pick<AgentChatThreadRecord, 'id' | 'title'>,
+  ) => {
     setThreadIdCreatedFromDraft(null);
 
     selectAiChatThread(thread.id);

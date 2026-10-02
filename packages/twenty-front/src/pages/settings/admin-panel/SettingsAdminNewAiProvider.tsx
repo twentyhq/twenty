@@ -23,7 +23,7 @@ import { slugify } from 'transliteration';
 import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Info, Section, useToast } from 'twenty-ui/components';
+import { InlineBanner, Section, useToast } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
@@ -182,8 +182,7 @@ export const SettingsAdminNewAiProvider = () => {
       const accessKeyId = values.accessKeyId.trim();
       const secretAccessKey = values.secretAccessKey.trim();
 
-      // Half a key pair is a slip, not a mode: role auth ignores both fields,
-      // so accepting it would run under an identity nobody chose.
+      // Role auth ignores both fields, so half a key pair would run under an identity nobody chose
       if (isNonEmptyString(accessKeyId) !== isNonEmptyString(secretAccessKey)) {
         form.setError(
           isNonEmptyString(accessKeyId) ? 'secretAccessKey' : 'accessKeyId',
@@ -271,16 +270,19 @@ export const SettingsAdminNewAiProvider = () => {
       >
         <SettingsPageContainer>
           {!hasCustomAiProviderAccess && (
-            <Info
-              accent="danger"
-              text={customAiProviderGateDescription}
-              buttonTitle={t`Activate`}
-              href={getSettingsPath(SettingsPath.AdminPanelOrganization)}
-              render={
-                <Link
-                  to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
-                />
-              }
+            <InlineBanner
+              variant="compact"
+              color="danger"
+              message={customAiProviderGateDescription}
+              button={{
+                title: t`Activate`,
+                href: getSettingsPath(SettingsPath.AdminPanelOrganization),
+                render: (
+                  <Link
+                    to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                  />
+                ),
+              }}
             />
           )}
 
@@ -310,9 +312,10 @@ export const SettingsAdminNewAiProvider = () => {
           </Section.Root>
 
           {isModelsDevWithoutNativeSdk && (
-            <Info
-              accent="blue"
-              text={t`This provider doesn't have a native SDK yet — it will use OpenAI-compatible mode. Need native support? Reach out to us.`}
+            <InlineBanner
+              variant="compact"
+              color="blue"
+              message={t`This provider doesn't have a native SDK yet — it will use OpenAI-compatible mode. Need native support? Reach out to us.`}
             />
           )}
 

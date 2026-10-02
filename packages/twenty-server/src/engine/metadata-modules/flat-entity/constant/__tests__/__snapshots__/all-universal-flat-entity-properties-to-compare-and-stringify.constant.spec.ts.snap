@@ -192,6 +192,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "writability",
       "readability",
       "readabilityParentFieldUniversalIdentifiers",
+      "sharingReach",
       "isUICreatable",
       "isSearchable",
       "imageIdentifierFieldMetadataUniversalIdentifier",
@@ -373,6 +374,21 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "overrides",
     ],
   },
+  "validationRule": {
+    "propertiesToCompare": [
+      "errorFieldMetadataUniversalIdentifier",
+      "name",
+      "description",
+      "icon",
+      "expression",
+      "bindings",
+      "message",
+      "isActive",
+    ],
+    "propertiesToStringify": [
+      "bindings",
+    ],
+  },
   "view": {
     "propertiesToCompare": [
       "deletedAt",
@@ -491,6 +507,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "workflow": {
     "propertiesToCompare": [
+      "versionDefinitionHash",
       "name",
       "visibility",
       "lastPublishedVersionId",
@@ -500,6 +517,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "workflowVersion": {
     "propertiesToCompare": [
+      "isSystemSideEffect",
       "status",
       "triggers",
       "steps",

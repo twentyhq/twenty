@@ -43,7 +43,6 @@ import { cancelScheduledRecallBots } from 'src/logic-functions/flows/cancel-sche
 import { syncCalendarBotSchedulingHandler } from 'src/logic-functions/sync-calendar-bot-scheduling';
 import reconcileCalendarEventLogicFunction from 'src/logic-functions/reconcile-call-recorder-calendar-event';
 
-// ---------------------------------------------------------------------------
 // Call Recorder end-to-end behavior against a live Twenty server.
 //
 // The app is installed on the test server by the vitest global setup, and all
@@ -60,7 +59,6 @@ import reconcileCalendarEventLogicFunction from 'src/logic-functions/reconcile-c
 // The suite issues a few hundred API requests; if the test server runs with
 // the default API_RATE_LIMITING_LONG_LIMIT of 100 requests per minute,
 // raise it (e.g. to 100000) or the runs trip the limiter.
-// ---------------------------------------------------------------------------
 
 const WORKSPACE_API_KEY_ENV = 'TWENTY_API_KEY';
 const RECALL_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
@@ -247,11 +245,9 @@ const hoursAgo = (hours: number) =>
   new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 const daysAgo = (days: number) => hoursAgo(days * 24);
 
-// ---------------------------------------------------------------------------
 // Recall API fake, installed as a fetch interceptor. Twenty API traffic falls
 // through to the real fetch, except the metadata enqueueJobs mutation, which is
 // captured here so fanned-out jobs do not run inside the test.
-// ---------------------------------------------------------------------------
 
 type FakeRecallBotStatusChange = {
   code: string;
@@ -262,7 +258,7 @@ type FakeRecallBotStatusChange = {
 type FakeRecallBot = {
   id: string;
   metadata: Record<string, string>;
-  statusCode: string;
+  statusCode?: string;
   statusChanges?: FakeRecallBotStatusChange[];
   recordings?: Array<{ id: string; started_at: string; completed_at: string }>;
 };
@@ -286,6 +282,35 @@ const MP3_FRAME_HEADER_BYTES = Uint8Array.from([
   0x64,
   ...new Array(412).fill(0),
 ]);
+
+const RECALL_METADATA_FILTER_PREFIX = 'metadata__';
+
+const matchesRecallBotListFilters = ({
+  bot,
+  listFilters,
+}: {
+  bot: Pick<FakeRecallBot, 'metadata' | 'statusCode'>;
+  listFilters: URLSearchParams;
+}): boolean => {
+  const statusFilters = listFilters.getAll('status');
+
+  if (
+    statusFilters.length > 0 &&
+    (isUndefined(bot.statusCode) || !statusFilters.includes(bot.statusCode))
+  ) {
+    return false;
+  }
+
+  return [...listFilters.entries()]
+    .filter(([filterKey]) =>
+      filterKey.startsWith(RECALL_METADATA_FILTER_PREFIX),
+    )
+    .every(
+      ([filterKey, filterValue]) =>
+        bot.metadata[filterKey.slice(RECALL_METADATA_FILTER_PREFIX.length)] ===
+        filterValue,
+    );
+};
 
 class FakeRecallApi {
   bots = new Map<string, FakeRecallBot>();
@@ -492,15 +517,19 @@ class FakeRecallApi {
     if (method === 'GET' && requestUrl.startsWith(`${RECALL_BASE_URL}/bot/?`)) {
       this.listRequestCount += 1;
 
+      const listFilters = new URL(requestUrl).searchParams;
+
       return jsonResponse(200, {
         next: null,
-        results: [...this.bots.values()].map((bot) => ({
-          id: bot.id,
-          metadata: bot.metadata,
-          status: { code: bot.statusCode },
-          status_changes: bot.statusChanges ?? [],
-          recordings: bot.recordings ?? [],
-        })),
+        results: [...this.bots.values()]
+          .filter((bot) => matchesRecallBotListFilters({ bot, listFilters }))
+          .map((bot) => ({
+            id: bot.id,
+            metadata: bot.metadata,
+            status: { code: bot.statusCode },
+            status_changes: bot.statusChanges ?? [],
+            recordings: bot.recordings ?? [],
+          })),
       });
     }
 
@@ -681,7 +710,6 @@ class FakeRecallApi {
     const bot: FakeRecallBot = {
       id: `recall-bot-${randomUUID()}`,
       metadata: body.metadata ?? {},
-      statusCode: 'ready',
     };
 
     this.bots.set(bot.id, bot);
@@ -696,10 +724,6 @@ class FakeRecallApi {
 
 const jsonResponse = (status: number, body: object): Response =>
   new Response(JSON.stringify(body), { status });
-
-// ---------------------------------------------------------------------------
-// Recall webhook payloads, mirroring the shapes Recall actually delivers.
-// ---------------------------------------------------------------------------
 
 const buildBotMetadata = (callRecordingId: string, workspaceId: string) => ({
   twentyWorkspaceId: workspaceId,
@@ -780,11 +804,6 @@ const buildTranscriptDoneWebhook = ({
     transcript: { id: 'recall-transcript-1' },
   },
 });
-
-// ---------------------------------------------------------------------------
-// Test workspace helpers: real rows in the test database, cleaned up or
-// restored after each scenario.
-// ---------------------------------------------------------------------------
 
 describe('call recorder app lifecycle (integration)', () => {
   // Built before the fetch interceptor is installed so the shared client's
@@ -3080,7 +3099,7 @@ describe('call recorder app lifecycle (integration)', () => {
       const calendarEventId = await createCalendarEvent();
       const callRecordingId = await createPendingCallRecording({
         calendarEventId,
-        botScheduleAttemptedAt: hoursAgo(1),
+        botScheduleAttemptedAt: hoursAgo(0.25),
         botScheduleIdempotencyKey: 'key-from-before-the-meeting-moved',
       });
 
@@ -3096,6 +3115,26 @@ describe('call recorder app lifecycle (integration)', () => {
         'recall-bot-from-crashed-run',
       );
       expect(recall.listRequestCount).toBe(1);
+    });
+
+    it('attaches a scheduled bot that has no status yet instead of creating a twin', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+        botScheduleAttemptedAt: hoursAgo(24),
+      });
+
+      recall.seedBot({
+        id: 'recall-bot-scheduled-before-lost-write-back',
+        metadata: buildBotMetadata(callRecordingId, workspaceId),
+      });
+
+      await runPendingRecoveryCron();
+
+      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
+        'recall-bot-scheduled-before-lost-write-back',
+      );
+      expect(recall.bots.size).toBe(1);
     });
 
     it('fails a recording whose meeting ended before any bot creation was attempted', async () => {

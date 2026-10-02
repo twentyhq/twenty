@@ -14,10 +14,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Async CSV export`,
     description: msg`Generate CSV exports in the background with progress and automatic downloads.`,
   },
-  [FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED]: {
-    label: msg`Unique indexes`,
-    description: msg`Allow unique indexes to prevent duplicate field values.`,
-  },
   [FeatureFlagKey.IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED]: {
     label: msg`Configurable search fields`,
     description: msg`Choose which fields are used when searching for records.`,
@@ -38,6 +34,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Prebuilt logic functions`,
     description: msg`Run logic functions from prebuilt application bundles.`,
   },
+  [FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED]: {
+    label: msg`Application workflows`,
+    description: msg`Allow applications to install workflows and start new workflow runs.`,
+  },
   [FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED]: {
     label: msg`Workflow index page`,
     description: msg`Use the dedicated workflow index page to browse workflows and their versions.`,
@@ -45,6 +45,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
   [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: {
     label: msg`AI chat sharing dropdown`,
     description: msg`Show the sharing dropdown on AI conversations when record sharing is enabled.`,
+  },
+  [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: {
+    label: msg`Record sharing`,
+    description: msg`Let people restrict and share individual records.`,
   },
   [FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED]: {
     label: msg`Webhook rate limits`,
@@ -69,5 +73,13 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
   [FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED]: {
     label: msg`Conversations tab`,
     description: msg`Show a Conversations tab listing the AI conversations attached to the record, on record pages of new workspaces.`,
+  },
+  [FeatureFlagKey.IS_VALIDATION_RULES_ENABLED]: {
+    label: msg`Validation rules`,
+    description: msg`Let admins add conditions a record must meet to be saved, checked on every write.`,
+  },
+  [FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED]: {
+    label: msg`Workflow chat messages`,
+    description: msg`Add a workflow step that posts a message in a member's AI chat.`,
   },
 };

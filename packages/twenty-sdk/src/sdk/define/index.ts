@@ -221,6 +221,7 @@ export {
   NumberDataType,
   ObjectOpenRecordIn,
   ObjectRecordGroupByDateGranularity,
+  ObjectSharingReach,
   PageLayoutTabLayoutMode,
   PageLayoutWidgetVerticalListHeightBehavior,
   PageLayoutType,

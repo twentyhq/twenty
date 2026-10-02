@@ -75,7 +75,7 @@ export const TemplateColumn = ({
       <MatchColumnToFieldSelect
         placeholder={t`Select column...`}
         value={isIgnored ? ignoreValue : selectValue}
-        onChange={(value) => onChange(value?.value as string, column.index)}
+        onChange={(value) => onChange(value.value, column.index)}
         options={selectOptions}
         suggestedOptions={suggestedFieldOptions}
         columnIndex={column.index.toString()}

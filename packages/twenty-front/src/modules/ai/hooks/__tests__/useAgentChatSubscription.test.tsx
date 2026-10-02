@@ -2,6 +2,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
+import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { useAgentChatSubscription } from '@/ai/hooks/useAgentChatSubscription';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
@@ -115,6 +116,33 @@ describe('Shared conversation access revocation', () => {
       expect(disconnect).toHaveBeenCalledTimes(1);
     },
   );
+
+  it('refetches the conversation when one of its tool calls is resolved', () => {
+    const refetchListener = jest.fn();
+    window.addEventListener(
+      AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+      refetchListener,
+    );
+    const { unmount } = renderHook(() => useAgentChatSubscription('thread'), {
+      wrapper: Wrapper,
+    });
+    act(() =>
+      subscribe.mock.calls[0][1].next({
+        data: {
+          onAgentChatEvent: {
+            threadId: 'thread',
+            event: { type: 'tool-call-resolved', toolCallId: 'call-1' },
+          },
+        },
+      }),
+    );
+    expect(refetchListener).toHaveBeenCalledTimes(1);
+    unmount();
+    window.removeEventListener(
+      AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+      refetchListener,
+    );
+  });
 
   it('clears content and disconnects when the AI permission guard denies access', () => {
     renderHook(() => useAgentChatSubscription('thread'), { wrapper: Wrapper });

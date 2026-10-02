@@ -1,4 +1,3 @@
-import { assertAgentMessageSenderFields } from 'src/engine/metadata-modules/ai/ai-history/utils/assert-agent-message-sender-fields.util';
 import { addAgentMessageSenderWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-history/utils/add-agent-message-sender-workspace-member.util';
 import { hydrateAgentHistoryFiles } from 'src/engine/metadata-modules/ai/ai-history/utils/hydrate-agent-history-files.util';
 import { removeAgentHistoryFileRelations } from 'src/engine/metadata-modules/ai/ai-history/utils/remove-agent-history-file-relations.util';
@@ -142,7 +141,6 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
   ) {
     return this.run(workspaceId, async (repository, context) => {
-      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
       return repository.insert(
         await this.addSenderRelation(values, workspaceId, context),
       );
@@ -154,7 +152,6 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     values: QueryDeepPartialEntity<TRecord>,
   ): Promise<TRecord> {
     return this.run(workspaceId, async (repository, context) => {
-      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
       const result = await repository.insert(
         await this.addSenderRelation(values, workspaceId, context),
       );
@@ -180,35 +177,25 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     values: QueryDeepPartialEntity<TRecord>,
   ) {
     return this.run(workspaceId, async (repository) => {
-      const result = await repository
-        .createQueryBuilder()
-        .withDeleted()
-        .where(where)
-        .update()
-        .set(values)
-        .returning(['id'])
-        .execute();
+      const result = await repository.update(where, values);
+      const generatedMaps = result.generatedMaps.map(
+        ({ id }): Pick<TRecord, 'id'> => ({ id }),
+      );
       return {
-        affected: result.generatedMaps.length,
-        generatedMaps: result.generatedMaps,
-        raw: result.generatedMaps,
+        affected: generatedMaps.length,
+        generatedMaps,
+        raw: generatedMaps,
       };
     });
   }
 
   delete(workspaceId: string, where: FindOptionsWhere<TRecord>) {
     return this.run(workspaceId, async (repository) => {
-      const result = await repository
-        .createQueryBuilder()
-        .withDeleted()
-        .where(where)
-        .delete()
-        .returning(['id'])
-        .execute();
+      const result = await repository.delete(where);
       return {
-        affected: result.generatedMaps.length,
-        generatedMaps: result.generatedMaps,
-        raw: result.generatedMaps,
+        affected: result.raw.length,
+        generatedMaps: result.raw,
+        raw: result.raw,
       };
     });
   }
@@ -219,9 +206,7 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     conflictPaths: string[],
   ) {
     return this.run(workspaceId, async (repository, context) => {
-      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
-      // Workspace upsert selects before inserting. Serialize concurrent stream
-      // checkpoints for the same identity so both cannot take the insert path.
+      // workspace upsert selects before inserting, so serialize concurrent checkpoints per identity
       const valuesByField: ObjectLiteral = values;
       const identity = [...conflictPaths]
         .sort()

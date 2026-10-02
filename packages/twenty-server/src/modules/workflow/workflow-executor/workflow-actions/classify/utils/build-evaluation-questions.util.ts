@@ -7,9 +7,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type AiEvaluationModelQuestion } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 
-// Options key an object, so a repeat would overwrite the earlier one and hand
-// the model fewer choices than the step declares — losing one silently, which
-// is worse than refusing to run.
+// Options key an object, so a repeat would silently drop a choice; refusing is better
 const buildChoiceCriteria = (
   question: WorkflowClassifyQuestion,
 ): Record<string, string | null> => {
@@ -40,10 +38,8 @@ const toEvaluationQuestion = (
         criteria: buildChoiceCriteria(question),
       };
     case 'score':
-      // A level's position is its score, so the editor's order is the rubric.
-      // The label stands in when no description was written, since an unnamed
-      // level tells the model nothing. The editor seeds description with an
-      // empty string, so this cannot be a nullish fallback.
+      // A level's position is its score, so editor order is the rubric. The editor seeds description with '',
+      // so the name fallback cannot be nullish
       return {
         type: 'score',
         instructions: question.instructions,
@@ -61,8 +57,7 @@ const toEvaluationQuestion = (
   }
 };
 
-// Keyed by the question's name rather than its id: the key is what downstream
-// steps reference, and a uuid would make every variable unreadable.
+// Keyed by name, not id: downstream steps reference the key, and a uuid would be unreadable
 export const buildEvaluationQuestions = (
   questions: WorkflowClassifyQuestion[],
 ): Record<string, AiEvaluationModelQuestion> => {

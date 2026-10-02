@@ -5,6 +5,7 @@ import { MAX_SERIALIZED_EVENT_TEXT_LENGTH } from '@/host/events/constants/MaxSer
 import { applyFirstChangedTouchCoordinates } from '@/host/events/utils/applyFirstChangedTouchCoordinates';
 import { applyPasteClipboardText } from '@/host/events/utils/applyPasteClipboardText';
 import { serializeFileList } from '@/host/events/utils/serializeFileList';
+import { serializeSelectedOptionIndexes } from '@/host/events/utils/serializeSelectedOptionIndexes';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export const serializeEvent = (event: unknown): SerializedEventData => {
@@ -146,6 +147,10 @@ export const serializeEvent = (event: unknown): SerializedEventData => {
     }
     if (isBoolean(targetRecord.checked)) {
       serialized.checked = targetRecord.checked;
+    }
+    const selectedOptionIndexes = serializeSelectedOptionIndexes(target);
+    if (isDefined(selectedOptionIndexes)) {
+      serialized.selectedOptionIndexes = selectedOptionIndexes;
     }
     if (isNumber(targetRecord.scrollTop)) {
       serialized.scrollTop = targetRecord.scrollTop;

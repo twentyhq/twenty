@@ -72,8 +72,7 @@ export class AgentChatActorService {
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
-    // Only pre-attribution messages inherit the original participant. Never use
-    // a worker's caller or the participant whose preceding turn drained the queue.
+    // only pre-attribution messages inherit the thread's member; never the worker's caller or the participant whose turn drained the queue
     let userWorkspaceId = message.senderUserWorkspaceId;
     if (!isDefined(userWorkspaceId)) {
       const thread = await this.threads.findOneOrFail(workspaceId, {
@@ -119,9 +118,9 @@ export class AgentChatActorService {
         workspaceMemberId: authContext.workspaceMemberId,
       }),
     );
-    if (isDefined(thread.archivedAt)) {
+    if (isDefined(thread.deletedAt)) {
       throw new AiException(
-        'Thread is archived',
+        'Thread is deleted',
         AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
@@ -157,7 +156,8 @@ export class AgentChatActorService {
     return { authContext, rolePermissionConfig, roleId };
   }
 
-  async authorizeQuestionAnswer({
+  // resolved from the application context of the turn that made the call
+  async authorizeToolCallResolution({
     workspaceId,
     threadId,
     messageId,
@@ -166,20 +166,20 @@ export class AgentChatActorService {
     threadId: string;
     messageId: string;
   }): Promise<void> {
-    const question = await this.messages.findOne(workspaceId, {
+    const toolCallMessage = await this.messages.findOne(workspaceId, {
       where: { id: messageId, threadId, role: AgentMessageRole.ASSISTANT },
       select: ['turnId'],
     });
-    if (!isDefined(question?.turnId)) {
+    if (!isDefined(toolCallMessage?.turnId)) {
       throw new AiException(
-        'Question turn not found',
+        'Tool call turn not found',
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
     const { sender } = await this.resolveMessage({
       workspaceId,
       threadId,
-      turnId: question.turnId,
+      turnId: toolCallMessage.turnId,
     });
     const request = workspaceAuthContextStorage.getStore();
     if (
@@ -189,8 +189,8 @@ export class AgentChatActorService {
       (request.application?.id ?? null) !== sender.applicationId
     ) {
       throw new AiException(
-        'Answer requires the original application context',
-        AiExceptionCode.INVALID_QUESTION_ANSWER,
+        'Resolving this tool call requires the original application context',
+        AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
       );
     }
   }

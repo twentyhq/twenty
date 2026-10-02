@@ -15,10 +15,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 
-// Kept at a year, which is the longest the picker offers and comfortably
-// inside the number of periods alignGrantExpiryToPeriodEnd will walk on the
-// shortest interval. Raising it means raising MAX_PERIODS_AHEAD with it, or a
-// long validity silently comes back short.
+// Raising it means raising MAX_PERIODS_AHEAD too, or a long validity silently comes back short
 const MAX_CREDIT_GRANT_VALIDITY_IN_DAYS = 365;
 
 @ArgsType()
@@ -43,8 +40,7 @@ export class GrantWorkspaceCreditsInput {
   @MaxLength(500)
   reason?: string;
 
-  // Left out, the credits do not expire: they stay spendable until a period
-  // transition settles them against usage. Set only for a time-boxed grant.
+  // Omitted, credits stay spendable until a period transition settles them against usage
   @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
@@ -52,8 +48,7 @@ export class GrantWorkspaceCreditsInput {
   @Max(MAX_CREDIT_GRANT_VALIDITY_IN_DAYS)
   expiresInDays?: number;
 
-  // Identifies one intended grant, so a retried mutation returns the grant the
-  // first attempt wrote instead of handing out the credits a second time.
+  // Idempotency key: a retried mutation returns the first attempt's grant
   @Field(() => UUIDScalarType)
   @IsNotEmpty()
   @IsUUID()

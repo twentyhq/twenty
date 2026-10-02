@@ -3,15 +3,16 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
+import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -46,13 +47,8 @@ const StyledEmptyState = styled.div`
   justify-content: center;
 `;
 
-const StyledFetchMoreTrigger = styled.div`
-  height: 1px;
-  min-height: 1px;
-  width: 100%;
-`;
-
 const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
+const AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
 export const NavigationDrawerAiChatContent = () => {
   const { t } = useLingui();
@@ -64,7 +60,10 @@ export const NavigationDrawerAiChatContent = () => {
   });
   const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
 
-  const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
+  const { threads, loading } = useChatThreads();
+  const agentChatFavoriteThreads = useAtomStateValue(
+    agentChatFavoriteThreadsSelector,
+  );
 
   if (loading && threads.length === 0) {
     return (
@@ -74,9 +73,16 @@ export const NavigationDrawerAiChatContent = () => {
     );
   }
 
+  const agentChatFavoriteThreadIds = new Set(
+    agentChatFavoriteThreads.map(({ id }) => id),
+  );
+  const recentThreads = threads.filter(
+    ({ id }) => !agentChatFavoriteThreadIds.has(id),
+  );
+
   const isGroupedByDate =
     agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
-  const dateGroups = isGroupedByDate ? groupThreadsByDate(threads) : [];
+  const dateGroups = isGroupedByDate ? groupThreadsByDate(recentThreads) : [];
   const shouldRenderDateGroups = isGroupedByDate && dateGroups.length > 0;
 
   const filterDropdown = (
@@ -88,9 +94,18 @@ export const NavigationDrawerAiChatContent = () => {
   return (
     <StyledContainer>
       <StyledThreadList>
-        {shouldRenderDateGroups ? (
-          <StyledSectionsContainer>
-            {dateGroups.map((dateGroup, index) => (
+        <StyledSectionsContainer>
+          {agentChatFavoriteThreads.length > 0 && (
+            <NavigationDrawerAiChatThreadSection
+              sectionId={AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID}
+              title={t`Favorites`}
+              threads={agentChatFavoriteThreads}
+              currentThreadId={currentAiChatThread}
+              onThreadClick={handleThreadClick}
+            />
+          )}
+          {shouldRenderDateGroups ? (
+            dateGroups.map((dateGroup, index) => (
               <NavigationDrawerAiChatThreadSection
                 key={dateGroup.id}
                 sectionId={`AiChatDateGroup:${dateGroup.id}`}
@@ -100,26 +115,25 @@ export const NavigationDrawerAiChatContent = () => {
                 onThreadClick={handleThreadClick}
                 rightIcon={index === 0 ? filterDropdown : undefined}
               />
-            ))}
-          </StyledSectionsContainer>
-        ) : (
-          <NavigationDrawerAiChatThreadSection
-            sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
-            title={t`Recents`}
-            threads={threads}
-            currentThreadId={currentAiChatThread}
-            onThreadClick={handleThreadClick}
-            rightIcon={filterDropdown}
-          />
-        )}
-        {threads.length === 0 && isExpanded ? (
+            ))
+          ) : (
+            <NavigationDrawerAiChatThreadSection
+              sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
+              title={t`Recents`}
+              threads={recentThreads}
+              currentThreadId={currentAiChatThread}
+              onThreadClick={handleThreadClick}
+              rightIcon={filterDropdown}
+            />
+          )}
+        </StyledSectionsContainer>
+        {threads.length === 0 &&
+        agentChatFavoriteThreads.length === 0 &&
+        isExpanded ? (
           <StyledEmptyState>{t`No chat`}</StyledEmptyState>
         ) : null}
-        {hasNextPage ? <StyledFetchMoreTrigger ref={fetchMoreRef} /> : null}
+        <AgentChatThreadsFetchMoreTrigger />
       </StyledThreadList>
-      <AiChatThreadDeleteConfirmationModal
-        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-      />
     </StyledContainer>
   );
 };

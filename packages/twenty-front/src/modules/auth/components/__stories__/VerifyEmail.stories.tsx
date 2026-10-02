@@ -4,10 +4,10 @@ import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerific
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-// Mock component that just renders the error state of VerifyEmail directly
-// (since normal VerifyEmail has async logic that's hard to test in Storybook)
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
+// VerifyEmail's async logic is hard to drive in Storybook, so only its error
+// state is rendered directly.
 const VerifyEmailErrorState = ({ email = 'user@example.com' }) => {
   return (
     <StyledAuthContent>

@@ -15,8 +15,6 @@ type BlurPipeline = {
   dispose: () => void;
 };
 
-// The double gaussian blur chain shared by every glow-sampling composite
-// (rows sessions, the transmission materials).
 export function createBlurPipeline(
   width: number,
   height: number,

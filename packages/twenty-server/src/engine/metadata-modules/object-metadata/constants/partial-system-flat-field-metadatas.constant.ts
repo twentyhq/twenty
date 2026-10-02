@@ -278,8 +278,7 @@ const PARTIAL_SEARCH_VECTOR_FIELD = {
   options: null,
   overrides: null,
   morphId: null,
-  // universalSettings for searchVector is computed at runtime
-  // based on the name field (getTsVectorColumnExpressionFromFields)
+  // universalSettings for searchVector is computed at runtime from the object's searchFieldMetadata targets
   universalSettings: null,
   relationTargetObjectMetadataUniversalIdentifier: null,
   relationTargetFieldMetadataUniversalIdentifier: null,

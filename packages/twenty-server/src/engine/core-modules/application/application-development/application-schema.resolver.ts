@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Query } from '@nestjs/graphql';
+import { Query } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -11,14 +11,29 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @MetadataResolver()
 @UseFilters(ApplicationExceptionFilter)
-@UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  NoPermissionGuard,
+)
 export class ApplicationSchemaResolver {
   constructor(
     private readonly workspaceGraphqlSchemaSDLService: WorkspaceGraphqlSchemaSDLService,
@@ -26,8 +41,12 @@ export class ApplicationSchemaResolver {
   ) {}
 
   @Query(() => String)
+  @UseGuards(ApplicationTargetGuard)
   async applicationCoreGraphqlSchema(
-    @Args('applicationUniversalIdentifier')
+    @ApplicationTargetArg('applicationUniversalIdentifier', {
+      kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
+    })
     applicationUniversalIdentifier: string,
     @AuthWorkspace() workspace: FlatWorkspace,
   ): Promise<string> {

@@ -68,7 +68,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
           isRecordTableCellsNonEditable ||
           isRecordFieldReadOnly({
             isRecordReadOnly: isRecordReadOnly ?? false,
-            objectPermissions,
+            objectMetadataId: objectMetadataItem.id,
             fieldMetadataItem,
             fieldDefinition,
             objectPermissionsByObjectMetadataId,

@@ -43,8 +43,7 @@ export class GoogleAPIsOauthRequestCodeStrategy extends GoogleAPIsOauthCommonStr
     _profile: unknown,
     done: VerifyCallback,
   ): Promise<void> {
-    // This strategy is only used for requesting authorization code
-    // No validation is performed here
+    // Only used to request an authorization code
     done(null, {});
   }
 }

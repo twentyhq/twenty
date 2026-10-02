@@ -7,10 +7,11 @@ export const getMentionTagContent = ({
   objectNameSingular,
   label,
   imageUrl,
+  isConversationTarget = false,
 }: Pick<
   SearchRecord,
   'recordId' | 'objectNameSingular' | 'label' | 'imageUrl'
->): JSONContent[] => [
+> & { isConversationTarget?: boolean }): JSONContent[] => [
   {
     type: 'mentionTag',
     attrs: {
@@ -18,6 +19,7 @@ export const getMentionTagContent = ({
       objectNameSingular,
       label,
       imageUrl: imageUrl ?? '',
+      isConversationTarget,
     },
   },
   { type: 'text', text: ' ' },
