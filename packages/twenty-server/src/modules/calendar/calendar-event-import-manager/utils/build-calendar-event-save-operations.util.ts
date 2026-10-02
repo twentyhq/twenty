@@ -3,23 +3,33 @@ import { v4 as uuid } from 'uuid';
 
 import { type CalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-save-operations.type';
 import { type CalendarEventSavePlan } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-save-plan.type';
+import { hasCalendarEventChanged } from 'src/modules/calendar/calendar-event-import-manager/utils/has-calendar-event-changed.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
+import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 import { type FetchedParticipantWithCalendarEventId } from 'src/modules/calendar/common/types/fetched-participant-with-calendar-event-id.type';
 
 export const buildCalendarEventSaveOperations = ({
   fetchedCalendarEvents,
   existingAssociations,
+  existingCalendarEvents,
   calendarChannelId,
 }: {
   fetchedCalendarEvents: FetchedCalendarEvent[];
   existingAssociations: CalendarChannelEventAssociationWorkspaceEntity[];
+  existingCalendarEvents: CalendarEventWorkspaceEntity[];
   calendarChannelId: string;
 }): CalendarEventSavePlan => {
   const existingAssociationByEventExternalId = new Map(
     existingAssociations.map((association) => [
       association.eventExternalId,
       association,
+    ]),
+  );
+  const existingCalendarEventById = new Map(
+    existingCalendarEvents.map((calendarEvent) => [
+      calendarEvent.id,
+      calendarEvent,
     ]),
   );
 
@@ -29,6 +39,7 @@ export const buildCalendarEventSaveOperations = ({
     associationsToInsert: [],
     associationsToUpdate: [],
   };
+  const existingCalendarEventIds: string[] = [];
   const participantsOfNewEvents: FetchedParticipantWithCalendarEventId[] = [];
   const participantsOfExistingEvents: FetchedParticipantWithCalendarEventId[] =
     [];
@@ -64,15 +75,31 @@ export const buildCalendarEventSaveOperations = ({
 
     if (isDefined(existingAssociation)) {
       const { calendarEventId } = existingAssociation;
+      const existingCalendarEvent =
+        existingCalendarEventById.get(calendarEventId);
 
-      saveOperations.calendarEventsToUpdate.push({
-        criteria: calendarEventId,
-        partialEntity: calendarEvent,
-      });
-      saveOperations.associationsToUpdate.push({
-        criteria: existingAssociation.id,
-        partialEntity: { recurringEventExternalId },
-      });
+      existingCalendarEventIds.push(calendarEventId);
+
+      if (
+        !isDefined(existingCalendarEvent) ||
+        hasCalendarEventChanged({ existingCalendarEvent, calendarEvent })
+      ) {
+        saveOperations.calendarEventsToUpdate.push({
+          criteria: calendarEventId,
+          partialEntity: calendarEvent,
+        });
+      }
+
+      if (
+        (existingAssociation.recurringEventExternalId ?? '') !==
+        recurringEventExternalId
+      ) {
+        saveOperations.associationsToUpdate.push({
+          criteria: existingAssociation.id,
+          partialEntity: { recurringEventExternalId },
+        });
+      }
+
       participantsOfExistingEvents.push(
         ...participants.map((participant) => ({
           ...participant,
@@ -105,6 +132,7 @@ export const buildCalendarEventSaveOperations = ({
 
   return {
     saveOperations,
+    existingCalendarEventIds,
     participantsOfNewEvents,
     participantsOfExistingEvents,
   };

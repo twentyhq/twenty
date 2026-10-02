@@ -47,13 +47,31 @@ export class CalendarSaveEventsService {
               },
             });
 
+          const calendarEventRepository =
+            this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+              'calendarEvent',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          const existingCalendarEvents = await calendarEventRepository.find({
+            where: {
+              id: Any(
+                existingAssociations.map(
+                  (association) => association.calendarEventId,
+                ),
+              ),
+            },
+          });
+
           const {
             saveOperations,
+            existingCalendarEventIds,
             participantsOfNewEvents,
             participantsOfExistingEvents,
           } = buildCalendarEventSaveOperations({
             fetchedCalendarEvents,
             existingAssociations,
+            existingCalendarEvents,
             calendarChannelId: calendarChannel.id,
           });
 
@@ -130,9 +148,7 @@ export class CalendarSaveEventsService {
               ...saveOperations.associationsToInsert.map(
                 ({ calendarEventId }) => calendarEventId,
               ),
-              ...saveOperations.calendarEventsToUpdate.map(
-                ({ criteria }) => criteria,
-              ),
+              ...existingCalendarEventIds,
             ],
           };
         },
