@@ -1,40 +1,18 @@
-import { type ObjectPermissions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type ObjectPermissionsByObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsByObjectMetadataId';
+import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsWithObjectMetadataId';
 
+// An object missing from the role's permissions (e.g. created after they were loaded) is fully allowed; the server still enforces the real permissions
 export const getObjectPermissionsForObject = (
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >,
+  objectPermissionsByObjectMetadataId: ObjectPermissionsByObjectMetadataId,
   objectMetadataId: string,
-): ObjectPermissions & { objectMetadataId: string } => {
-  const objectPermissions =
-    objectPermissionsByObjectMetadataId[objectMetadataId];
-
-  if (!isDefined(objectPermissions)) {
-    return {
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: true,
-      canDestroyObjectRecords: true,
-      restrictedFields: {},
-      objectMetadataId,
-      rowLevelPermissionPredicates: [],
-      rowLevelPermissionPredicateGroups: [],
-    };
-  }
-
-  return {
-    canReadObjectRecords: objectPermissions.canReadObjectRecords ?? true,
-    canUpdateObjectRecords: objectPermissions.canUpdateObjectRecords ?? true,
-    canSoftDeleteObjectRecords:
-      objectPermissions.canSoftDeleteObjectRecords ?? true,
-    canDestroyObjectRecords: objectPermissions.canDestroyObjectRecords ?? true,
-    restrictedFields: objectPermissions.restrictedFields ?? {},
+): ObjectPermissionsWithObjectMetadataId =>
+  objectPermissionsByObjectMetadataId[objectMetadataId] ?? {
     objectMetadataId,
-    rowLevelPermissionPredicates:
-      objectPermissions.rowLevelPermissionPredicates ?? [],
-    rowLevelPermissionPredicateGroups:
-      objectPermissions.rowLevelPermissionPredicateGroups ?? [],
+    canReadObjectRecords: true,
+    canUpdateObjectRecords: true,
+    canSoftDeleteObjectRecords: true,
+    canDestroyObjectRecords: true,
+    restrictedFields: {},
+    rowLevelPermissionPredicates: [],
+    rowLevelPermissionPredicateGroups: [],
   };
-};
