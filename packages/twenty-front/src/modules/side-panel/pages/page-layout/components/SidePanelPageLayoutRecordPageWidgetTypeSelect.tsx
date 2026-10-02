@@ -14,7 +14,6 @@ import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultField
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
 import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
 import { buildTabWidgetLayouts } from '@/page-layout/utils/buildTabWidgetLayouts';
-import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { getWidgetGridPosition } from '@/page-layout/utils/getWidgetGridPosition';
 import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
@@ -312,13 +311,23 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     const activeTab = updatedPageLayout.tabs.find((tab) => tab.id === tabId);
     const widgetId = uuidv4();
     const isGridTab = activeTab?.layoutMode === PageLayoutTabLayoutMode.GRID;
+    const currentTabLayouts =
+      store.get(pageLayoutCurrentLayoutsState)[tabId] ??
+      buildTabWidgetLayouts(activeTab?.widgets ?? []);
     const existingGridPosition =
       isReplaceMode && isDefined(existingWidget)
         ? getWidgetGridPosition(existingWidget)
         : undefined;
-    const currentTabLayouts =
-      store.get(pageLayoutCurrentLayoutsState)[tabId] ??
-      buildTabWidgetLayouts(activeTab?.widgets ?? []);
+    const existingDesktopLayout = isReplaceMode
+      ? currentTabLayouts.desktop?.find(
+          (layout) => layout.i === existingWidget?.id,
+        )
+      : undefined;
+    const existingMobileLayout = isReplaceMode
+      ? currentTabLayouts.mobile?.find(
+          (layout) => layout.i === existingWidget?.id,
+        )
+      : undefined;
     const gridSize = getWidgetSize(WidgetConfigurationType.FILES, 'default');
     const gridMinimumSize = getWidgetSize(
       WidgetConfigurationType.FILES,
@@ -333,10 +342,15 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     );
     const gridPosition = {
       layoutMode: PageLayoutTabLayoutMode.GRID,
-      row: existingGridPosition?.row ?? gridBottomRow ?? 0,
-      column: existingGridPosition?.column ?? 0,
-      rowSpan: existingGridPosition?.rowSpan ?? gridSize.h,
-      columnSpan: existingGridPosition?.columnSpan ?? gridSize.w,
+      row:
+        existingGridPosition?.row ?? existingDesktopLayout?.y ?? gridBottomRow,
+      column: existingGridPosition?.column ?? existingDesktopLayout?.x ?? 0,
+      rowSpan:
+        existingGridPosition?.rowSpan ?? existingDesktopLayout?.h ?? gridSize.h,
+      columnSpan:
+        existingGridPosition?.columnSpan ??
+        existingDesktopLayout?.w ??
+        gridSize.w,
     };
 
     const newWidget = buildDraftPageLayoutWidget({
@@ -383,11 +397,25 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
           minH: gridMinimumSize.h,
         };
 
-        return getUpdatedTabLayouts(
-          { ...prev, [tabId]: layoutsWithoutReplacedWidget },
-          tabId,
-          newLayout,
-        );
+        return {
+          ...prev,
+          [tabId]: {
+            desktop: [
+              ...(layoutsWithoutReplacedWidget.desktop ?? []),
+              newLayout,
+            ],
+            mobile: [
+              ...(layoutsWithoutReplacedWidget.mobile ?? []),
+              {
+                ...newLayout,
+                x: 0,
+                y: existingMobileLayout?.y ?? newLayout.y,
+                w: 1,
+                h: existingMobileLayout?.h ?? newLayout.h,
+              },
+            ],
+          },
+        };
       });
     }
 
