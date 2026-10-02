@@ -25,7 +25,6 @@ import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
-import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -61,7 +60,6 @@ export const useAgentChat = (
   const aiModels = useAtomStateValue(aiModelsState);
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
-  const { applyLocalMemberActivity } = useAgentChatThreadParticipants();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
@@ -144,10 +142,6 @@ export const useAgentChat = (
       threadId,
       optimisticMessageCreatedAt,
     );
-    const rollbackLocalMemberActivity = applyLocalMemberActivity({
-      threadId,
-      activityAt: optimisticMessageCreatedAt,
-    });
 
     const optimisticUserMessage: ExtendedUIMessage = {
       id: messageId,
@@ -248,8 +242,7 @@ export const useAgentChat = (
       const restoredDraftKey =
         draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ? threadId : draftKey;
 
-      rollbackOptimisticRestore?.();
-      rollbackLocalMemberActivity();
+      rollbackOptimisticRestore();
 
       setAgentChatInput(contentToSend);
       setAgentChatDraftsByThreadId((prev) => ({
@@ -301,7 +294,6 @@ export const useAgentChat = (
     setCurrentAiChatThread,
     apolloClient,
     applyOptimisticRestore,
-    applyLocalMemberActivity,
     attachChatThreadToRecord,
   ]);
 

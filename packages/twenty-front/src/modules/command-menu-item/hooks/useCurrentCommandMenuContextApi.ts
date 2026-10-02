@@ -1,4 +1,4 @@
-import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
+import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -97,18 +97,18 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   // so the inbox commands read it from here. Those commands only apply to a
   // single chat, and stay hidden until the member state loads rather than
   // offering the wrong half of a pair
-  const hasLoadedAgentChatThreadParticipants = useAtomStateValue(
-    hasLoadedAgentChatThreadParticipantsState,
+  const agentChatThreadParticipants = useAtomStateValue(
+    agentChatThreadParticipantsState,
   );
   const inboxStatusThreadId =
     objectMetadataItem?.nameSingular ===
       CoreObjectNameSingular.AgentChatThread &&
-    hasLoadedAgentChatThreadParticipants
+    isDefined(agentChatThreadParticipants)
       ? recordIds?.[0]
       : undefined;
   const agentChatThreadInboxStatus = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
-    { threadId: inboxStatusThreadId ?? '', lastActivityAt: null },
+    inboxStatusThreadId ?? '',
   );
 
   // Records shared below the role's access level carry their own permissions, which availability expressions read per record

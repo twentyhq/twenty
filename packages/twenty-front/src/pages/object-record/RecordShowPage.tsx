@@ -1,4 +1,3 @@
-import { type ReactNode } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import {
   AppPath,
@@ -7,60 +6,17 @@ import {
 } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
-import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPage';
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { RecordShowPageShell } from '@/object-record/record-show/components/RecordShowPageShell';
-import { type RecordShowPageHeaderTitleMode } from '@/object-record/record-show/types/RecordShowPageHeaderTitleMode';
-import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
-import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-
-type RecordShowPageParameters = {
-  objectNameSingular?: string;
-  objectRecordId?: string;
-};
-
-export const RecordShowPageContent = ({
-  parameters,
-  headerActions,
-  headerTitleAccessory,
-  headerTitleMode,
-  isRecordIdentifierBarHidden,
-}: {
-  parameters: RecordShowPageParameters;
-  headerActions?: ReactNode;
-  headerTitleAccessory?: ReactNode;
-  headerTitleMode?: RecordShowPageHeaderTitleMode;
-  isRecordIdentifierBarHidden?: boolean;
-}) => {
-  const { objectNameSingular, objectRecordId } = useRecordShowPage(
-    parameters.objectNameSingular ?? '',
-    parameters.objectRecordId ?? '',
-  );
-
-  const { error, loading, record } = useRecordShowPageResource({
-    objectNameSingular,
-    recordId: objectRecordId,
-  });
-
-  return (
-    <RecordShowPageShell
-      objectNameSingular={objectNameSingular}
-      objectRecordId={objectRecordId}
-      record={record}
-      loading={loading}
-      error={error}
-      headerActions={headerActions}
-      headerTitleAccessory={headerTitleAccessory}
-      headerTitleMode={headerTitleMode}
-      isRecordIdentifierBarHidden={isRecordIdentifierBarHidden}
-    />
-  );
-};
+import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
+import {
+  type RecordShowPageParameters,
+  RecordShowPageContent,
+} from '~/pages/object-record/RecordShowPageContent';
 
 export const RecordShowPage = () => {
   const parameters = useParams<RecordShowPageParameters>();
@@ -98,14 +54,7 @@ export const RecordShowPage = () => {
       );
     }
 
-    return (
-      <RecordShowPageContent
-        parameters={parameters}
-        headerTitleAccessory={
-          <AiChatThreadDetailsDropdown threadId={parameters.objectRecordId} />
-        }
-      />
-    );
+    return <AiChatThreadPageContent threadId={parameters.objectRecordId} />;
   }
 
   if (

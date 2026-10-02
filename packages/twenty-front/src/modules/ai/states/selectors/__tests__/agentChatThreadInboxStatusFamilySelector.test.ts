@@ -1,131 +1,68 @@
 import { createStore } from 'jotai';
 
-import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
+import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 
-const NOW = new Date('2026-10-01T12:00:00.000Z').getTime();
+const THREAD_ID = 'unread';
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
 
-const buildStore = ({
-  hasLoadedParticipants,
-}: {
-  hasLoadedParticipants: boolean;
-}) => {
+const buildStore = () => {
   const store = createStore();
 
-  setAgentChatThreadList(
-    store,
-    ['read', 'unread', 'archived', 'snoozed', 'snoozeEnded'].map(
-      (id) =>
-        ({
-          __typename: 'AgentChatThread',
-          id,
-          title: id,
-          deletedAt: null,
-          createdAt: LAST_ACTIVITY_AT,
-          updatedAt: LAST_ACTIVITY_AT,
-          lastActivityAt: LAST_ACTIVITY_AT,
-        }) as never,
-    ),
-  );
-  store.set(agentChatThreadParticipantsState.atom, {
-    read: {
-      lastReadAt: LAST_ACTIVITY_AT,
-      archivedAt: null,
-      snoozedUntil: null,
-    },
-    archived: {
-      lastReadAt: LAST_ACTIVITY_AT,
-      archivedAt: '2026-10-01T11:00:00.000Z',
-      snoozedUntil: null,
-    },
-    snoozed: {
-      lastReadAt: LAST_ACTIVITY_AT,
-      archivedAt: '2026-10-01T11:00:00.000Z',
-      snoozedUntil: '2026-10-02T09:00:00.000Z',
-    },
-    snoozeEnded: {
-      lastReadAt: LAST_ACTIVITY_AT,
-      archivedAt: '2026-10-01T11:00:00.000Z',
-      snoozedUntil: '2026-10-01T11:30:00.000Z',
-    },
-  });
-  store.set(
-    hasLoadedAgentChatThreadParticipantsState.atom,
-    hasLoadedParticipants,
-  );
-  store.set(agentChatThreadInboxNowState.atom, NOW);
+  setAgentChatThreadList(store, [
+    {
+      __typename: 'AgentChatThread',
+      id: THREAD_ID,
+      title: 'Unread',
+      deletedAt: null,
+      createdAt: LAST_ACTIVITY_AT,
+      updatedAt: LAST_ACTIVITY_AT,
+      lastActivityAt: LAST_ACTIVITY_AT,
+    } as never,
+  ]);
 
   return store;
 };
 
-describe('agentChatThreadInboxStatusFamilySelector', () => {
-  it('returns the inbox status of a stored thread', () => {
-    const store = buildStore({ hasLoadedParticipants: true });
-    const getInboxStatus = (threadId: string) =>
-      store.get(
-        agentChatThreadInboxStatusFamilySelector.selectorFamily({
-          threadId,
-          lastActivityAt: null,
-        }),
-      );
+const isUnread = (store: ReturnType<typeof createStore>) =>
+  store.get(agentChatThreadInboxStatusFamilySelector.selectorFamily(THREAD_ID))
+    .isUnread;
 
-    expect(getInboxStatus('read')).toEqual({
-      scope: 'INBOX',
-      isUnread: false,
-      snoozedUntil: null,
-      doneAt: null,
-      snoozeEndedAt: null,
-    });
-    expect(getInboxStatus('unread')).toEqual({
-      scope: 'INBOX',
-      isUnread: true,
-      snoozedUntil: null,
-      doneAt: null,
-      snoozeEndedAt: null,
-    });
-    expect(getInboxStatus('archived')).toEqual({
-      scope: 'ARCHIVED',
-      isUnread: false,
-      snoozedUntil: null,
-      doneAt: '2026-10-01T11:00:00.000Z',
-      snoozeEndedAt: null,
-    });
-    expect(getInboxStatus('snoozed')).toEqual({
-      scope: 'SNOOZED',
-      isUnread: false,
-      snoozedUntil: '2026-10-02T09:00:00.000Z',
-      doneAt: null,
-      snoozeEndedAt: null,
-    });
-    expect(getInboxStatus('snoozeEnded')).toEqual({
-      scope: 'INBOX',
-      isUnread: false,
-      snoozedUntil: null,
-      doneAt: null,
-      snoozeEndedAt: '2026-10-01T11:30:00.000Z',
-    });
+describe('agentChatThreadInboxStatusFamilySelector', () => {
+  it('reads a stored thread against the member state', () => {
+    const store = buildStore();
+
+    store.set(agentChatThreadParticipantsState.atom, {});
+
+    expect(isUnread(store)).toBe(true);
   });
 
-  it('never reads as unread before the participants load', () => {
-    const store = buildStore({ hasLoadedParticipants: false });
+  it('never reads as unread before the member state loads', () => {
+    expect(isUnread(buildStore())).toBe(false);
+  });
 
-    expect(
-      store.get(
-        agentChatThreadInboxStatusFamilySelector.selectorFamily({
-          threadId: 'unread',
-          lastActivityAt: null,
-        }),
-      ),
-    ).toEqual({
-      scope: 'INBOX',
-      isUnread: false,
-      snoozedUntil: null,
-      doneAt: null,
-      snoozeEndedAt: null,
+  it('never reads the thread on screen as unread, unless the member kept it unread', () => {
+    const store = buildStore();
+
+    store.set(agentChatThreadParticipantsState.atom, {});
+    store.set(agentChatThreadVisitState.atom, {
+      threadId: THREAD_ID,
+      isUnread: true,
+      lastReadAt: null,
+      isKeptUnread: false,
     });
+
+    expect(isUnread(store)).toBe(false);
+
+    store.set(agentChatThreadVisitState.atom, {
+      threadId: THREAD_ID,
+      isUnread: true,
+      lastReadAt: null,
+      isKeptUnread: true,
+    });
+
+    expect(isUnread(store)).toBe(true);
   });
 });

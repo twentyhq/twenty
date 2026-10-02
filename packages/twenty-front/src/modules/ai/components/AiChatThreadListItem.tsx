@@ -143,11 +143,10 @@ export const AiChatThreadListItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const { isUnread, snoozedUntil, doneAt, snoozeEndedAt } =
-    useAtomFamilySelectorValue(agentChatThreadInboxStatusFamilySelector, {
-      threadId: thread.id,
-      lastActivityAt: thread.lastActivityAt ?? null,
-    });
+  const { isUnread, event } = useAtomFamilySelectorValue(
+    agentChatThreadInboxStatusFamilySelector,
+    thread.id,
+  );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
@@ -163,25 +162,24 @@ export const AiChatThreadListItem = ({
   const { formatAgentChatThreadDay } = useFormatAgentChatThreadDate();
 
   const getActivityTimeLabel = () => {
-    if (isDefined(snoozedUntil)) {
-      const snoozedUntilDay = formatAgentChatThreadDay(new Date(snoozedUntil));
+    switch (event?.type) {
+      case 'SNOOZED': {
+        const snoozedUntilDay = formatAgentChatThreadDay(new Date(event.at));
 
-      return t`Until ${snoozedUntilDay}`;
+        return t`Until ${snoozedUntilDay}`;
+      }
+      case 'SNOOZE_ENDED':
+        return t`Snooze ended`;
+      case 'DONE': {
+        const doneTime = beautifyPastDateRelativeToNowShort(event.at);
+
+        return t`Done ${doneTime}`;
+      }
+      default:
+        return beautifyPastDateRelativeToNowShort(
+          getAgentChatThreadLastActivityAt(thread),
+        );
     }
-
-    if (isDefined(snoozeEndedAt)) {
-      return t`Snooze ended`;
-    }
-
-    if (isDefined(doneAt)) {
-      const doneTime = beautifyPastDateRelativeToNowShort(doneAt);
-
-      return t`Done ${doneTime}`;
-    }
-
-    return beautifyPastDateRelativeToNowShort(
-      getAgentChatThreadLastActivityAt(thread),
-    );
   };
   const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
     threadId: thread.id,

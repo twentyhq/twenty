@@ -40,10 +40,6 @@ jest.mock('@/ai/components/AiChatPageThreadUrlSyncEffect', () => ({
   AiChatPageThreadUrlSyncEffect: () => null,
 }));
 
-jest.mock('@/ai/components/AiChatThreadTriageHotkeysEffect', () => ({
-  AiChatThreadTriageHotkeysEffect: () => null,
-}));
-
 jest.mock('@/ai/components/AiChatPageCloseSidePanelChatEffect', () => ({
   AiChatPageCloseSidePanelChatEffect: () => null,
 }));
@@ -63,7 +59,7 @@ jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
   InformationBannerWrapper: () => null,
 }));
 
-jest.mock('~/pages/object-record/RecordShowPage', () => ({
+jest.mock('~/pages/object-record/RecordShowPageContent', () => ({
   RecordShowPageContent: ({
     parameters,
     headerActions,

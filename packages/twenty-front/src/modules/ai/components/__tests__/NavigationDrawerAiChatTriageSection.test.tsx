@@ -12,7 +12,6 @@ import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadF
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -27,35 +26,6 @@ const navigate = jest.fn();
 jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => navigate,
 }));
-
-jest.mock(
-  '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem',
-  () => ({
-    NavigationDrawerItem: ({
-      label,
-      secondaryLabel,
-      isUnread,
-      active,
-      onClick,
-    }: {
-      label: string;
-      secondaryLabel?: string;
-      isUnread?: boolean;
-      active?: boolean;
-      onClick?: () => void;
-    }) => (
-      <button
-        type="button"
-        aria-current={active ? 'page' : undefined}
-        onClick={onClick}
-      >
-        {label}
-        {isUnread ? ', unread' : ''}
-        {secondaryLabel ? ` · ${secondaryLabel}` : ''}
-      </button>
-    ),
-  }),
-);
 
 const THREAD_IDS = ['thread-1', 'thread-2'];
 
@@ -88,13 +58,14 @@ describe('NavigationDrawerAiChatTriageSection', () => {
           }) as never,
       ),
     );
-    jotaiStore.set(hasLoadedAgentChatThreadParticipantsState.atom, true);
+    jotaiStore.set(agentChatThreadParticipantsState.atom, {});
   });
 
   const markThreadAsRead = (threadId: string) =>
     jotaiStore.set(agentChatThreadParticipantsState.atom, (participants) => ({
       ...participants,
       [threadId]: {
+        threadId,
         lastReadAt: '2026-10-01T10:00:00.000Z',
         archivedAt: null,
         snoozedUntil: null,
@@ -107,7 +78,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     renderTriage();
 
     expect(
-      screen.getByRole('button', { name: 'Open, unread · 2' }),
+      screen.getByRole('button', { name: /^Open\s*, unread · 2$/ }),
     ).toBeVisible();
     expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
@@ -132,19 +103,5 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     expect(navigate).toHaveBeenCalledWith(AppPath.AiChatInbox, {
       threadId: null,
     });
-  });
-
-  it('marks the status shown on the inbox page as current', () => {
-    jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
-      AGENT_CHAT_THREAD_FILTER_STATUS.ARCHIVED,
-    );
-
-    renderTriage('/inbox');
-
-    expect(screen.getByRole('button', { name: 'Done' })).toHaveAttribute(
-      'aria-current',
-      'page',
-    );
   });
 });

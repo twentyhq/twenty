@@ -24,44 +24,22 @@ export const AiChatThreadInboxStateNotice = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
-  const formatEventTime = (date: string) =>
-    formatAgentChatThreadDateTime(new Date(date));
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { snoozedUntil, doneAt, snoozeEndedAt } = useAtomFamilySelectorValue(
+  const { event } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
-    { threadId: currentAiChatThread ?? '', lastActivityAt: null },
+    currentAiChatThread ?? '',
   );
 
-  const getNotice = () => {
-    if (isDefined(snoozedUntil)) {
-      return {
-        Icon: IconClock,
-        text: t`Snoozed until ${formatEventTime(snoozedUntil)}`,
-      };
-    }
-
-    if (isDefined(snoozeEndedAt)) {
-      return {
-        Icon: IconClock,
-        text: t`Snooze ended ${formatEventTime(snoozeEndedAt)}`,
-      };
-    }
-
-    if (isDefined(doneAt)) {
-      return {
-        Icon: IconProgressCheck,
-        text: t`Marked as done ${formatEventTime(doneAt)}`,
-      };
-    }
-
-    return null;
-  };
-
-  const notice = getNotice();
-
-  if (!isDefined(notice)) {
+  if (!isDefined(event)) {
     return null;
   }
+
+  const eventTime = formatAgentChatThreadDateTime(new Date(event.at));
+  const notice = {
+    SNOOZED: { Icon: IconClock, text: t`Snoozed until ${eventTime}` },
+    SNOOZE_ENDED: { Icon: IconClock, text: t`Snooze ended ${eventTime}` },
+    DONE: { Icon: IconProgressCheck, text: t`Marked as done ${eventTime}` },
+  }[event.type];
 
   return (
     <StyledNotice>

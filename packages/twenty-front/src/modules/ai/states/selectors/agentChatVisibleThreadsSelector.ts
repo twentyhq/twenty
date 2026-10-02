@@ -1,7 +1,6 @@
 import { millisecondsInDay } from 'date-fns/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadInboxScope } from '@/ai/types/AgentChatThreadInboxScope';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_DAYS } from '@/ai/constants/AgentChatThreadLastActivityFilterDays';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
@@ -10,12 +9,13 @@ import { agentChatThreadLastActivityFilterState } from '@/ai/states/agentChatThr
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
+import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
 const INBOX_SCOPE_BY_FILTER_STATUS: Partial<
-  Record<AgentChatThreadFilterStatus, AgentChatThreadInboxScope>
+  Record<AgentChatThreadFilterStatus, AgentChatThreadInboxStatus['scope']>
 > = {
   [AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE]: 'INBOX',
   [AGENT_CHAT_THREAD_FILTER_STATUS.UNREAD]: 'INBOX',
@@ -53,7 +53,7 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
 
       const { scope, isUnread } = get(
         agentChatThreadInboxStatusFamilySelector,
-        { threadId: thread.id, lastActivityAt: thread.lastActivityAt ?? null },
+        thread.id,
       );
 
       return (

@@ -6,9 +6,9 @@ import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatCompon
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import {
-  type AgentChatThreadUnreadSince,
-  agentChatThreadUnreadSinceState,
-} from '@/ai/states/agentChatThreadUnreadSinceState';
+  type AgentChatThreadVisit,
+  agentChatThreadVisitState,
+} from '@/ai/states/agentChatThreadVisitState';
 import { agentChatFirstUnreadMessageIdComponentSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdComponentSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -54,12 +54,12 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const getFirstUnreadMessageId = (
-  unreadSince: Omit<AgentChatThreadUnreadSince, 'visitId'>,
+  visit: Omit<AgentChatThreadVisit, 'isKeptUnread'>,
   messages = MESSAGES,
 ) => {
-  jotaiStore.set(agentChatThreadUnreadSinceState.atom, {
-    ...unreadSince,
-    visitId: 'visit',
+  jotaiStore.set(agentChatThreadVisitState.atom, {
+    ...visit,
+    isKeptUnread: false,
   });
   jotaiStore.set(
     agentChatMessagesComponentFamilyState.atomFamily({

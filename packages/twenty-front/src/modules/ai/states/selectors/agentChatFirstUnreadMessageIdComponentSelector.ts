@@ -4,7 +4,7 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { agentChatThreadUnreadSinceState } from '@/ai/states/agentChatThreadUnreadSinceState';
+import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
@@ -19,12 +19,12 @@ export const agentChatFirstUnreadMessageIdComponentSelector =
       ({ instanceId }) =>
       ({ get }) => {
         const threadId = get(agentChatDisplayedThreadState);
-        const unreadSince = get(agentChatThreadUnreadSinceState);
+        const visit = get(agentChatThreadVisitState);
 
         if (
           !isDefined(threadId) ||
-          unreadSince?.threadId !== threadId ||
-          !unreadSince.isUnread
+          visit?.threadId !== threadId ||
+          !visit.isUnread
         ) {
           return null;
         }
@@ -37,8 +37,8 @@ export const agentChatFirstUnreadMessageIdComponentSelector =
         const isSenderlessMessageOwn =
           !isDefined(threadOwnerWorkspaceMemberId) ||
           threadOwnerWorkspaceMemberId === currentWorkspaceMember?.id;
-        const lastReadAtMs = isDefined(unreadSince.lastReadAt)
-          ? new Date(unreadSince.lastReadAt).getTime()
+        const lastReadAtMs = isDefined(visit.lastReadAt)
+          ? new Date(visit.lastReadAt).getTime()
           : null;
 
         const messages = get(agentChatMessagesComponentFamilyState, {

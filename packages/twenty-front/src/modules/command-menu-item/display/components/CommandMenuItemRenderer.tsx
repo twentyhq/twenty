@@ -14,6 +14,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 const StyledPreviewWrapper = styled.div`
@@ -55,6 +56,25 @@ const CommandMenuItemButtonRenderer = ({
     Icon,
     hotKeys: item.hotKeys,
   };
+
+  // A letter runs the button it labels; symbols such as / and @ open the
+  // command menu from anywhere, and key sequences belong to it too
+  const [hotKey] = item.hotKeys ?? [];
+  const runsOnHotKey =
+    !isInPreviewMode &&
+    item.hotKeys?.length === 1 &&
+    /^[a-z]$/i.test(hotKey ?? '');
+
+  useGlobalHotkeys({
+    keys: runsOnHotKey ? [hotKey.toLowerCase()] : [],
+    callback: () => {
+      if (!disabled) {
+        handleClick();
+      }
+    },
+    containsModifier: false,
+    dependencies: [disabled, handleClick],
+  });
 
   if (isInPreviewMode) {
     return (

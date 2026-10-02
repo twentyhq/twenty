@@ -7,7 +7,6 @@ import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNo
 import { agentChatThreadLastActivityFilterState } from '@/ai/states/agentChatThreadLastActivityFilterState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
 
@@ -90,11 +89,10 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
     agentChatThreadParticipantsState.atom,
     Object.fromEntries(
       THREADS.filter(({ participant }) => participant !== undefined).map(
-        ({ id, participant }) => [id, participant!],
+        ({ id, participant }) => [id, { threadId: id, ...participant! }],
       ),
     ),
   );
-  store.set(hasLoadedAgentChatThreadParticipantsState.atom, true);
   store.set(agentChatThreadInboxNowState.atom, NOW);
   store.set(agentChatThreadFilterStatusState.atom, filterStatus);
   store.set(
