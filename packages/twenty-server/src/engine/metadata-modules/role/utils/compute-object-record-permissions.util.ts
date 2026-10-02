@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { IMPLICIT_OBJECT_PERMISSION_RULES } from 'src/engine/metadata-modules/role/constants/implicit-object-permission-rules.constant';
 import { type ComputeObjectRecordPermissionsArgs } from 'src/engine/metadata-modules/role/types/compute-object-record-permissions-args.type';
-import { type ComputedObjectRecordPermissions } from 'src/engine/metadata-modules/role/types/computed-object-record-permissions.type';
 import { type ObjectRecordPermissions } from 'src/engine/metadata-modules/role/types/object-record-permissions.type';
 import { type SettingsGatedObjectPermissionRule } from 'src/engine/metadata-modules/role/types/settings-gated-object-permission-rule.type';
 
@@ -116,7 +115,10 @@ export const computeObjectRecordPermissions = ({
   rolePermissionFlagUniversalIdentifiers,
   objectMetadata,
   objectPermissionOverride,
-}: ComputeObjectRecordPermissionsArgs): ComputedObjectRecordPermissions => {
+}: ComputeObjectRecordPermissionsArgs): {
+  objectRecordPermissions: ObjectRecordPermissions;
+  appliesFieldPermissions: boolean;
+} => {
   const settingsGatedObjectPermissionRule =
     IMPLICIT_OBJECT_PERMISSION_RULES
       .settingsGatedObjectRuleByUniversalIdentifier[

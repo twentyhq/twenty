@@ -1,5 +1,4 @@
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
-import { ROLE_RECORD_PERMISSION_PROPERTIES } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/role-record-permission-properties.constant';
 import { type DerivedWorkspaceCacheInvalidationTrigger } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/derived-workspace-cache-invalidation-trigger.type';
 
 // Each entry lists the metadata changes that can alter what the cache provider reads,
@@ -8,7 +7,14 @@ export const DERIVED_WORKSPACE_CACHE_INVALIDATION_RULES = {
   rolesPermissions: [
     {
       metadataName: 'role',
-      updatedProperties: ROLE_RECORD_PERMISSION_PROPERTIES,
+      updatedProperties: [
+        'canReadAllObjectRecords',
+        'canUpdateAllObjectRecords',
+        'canSoftDeleteAllObjectRecords',
+        'canDestroyAllObjectRecords',
+        'canUpdateAllSettings',
+        'canAccessAllTools',
+      ],
     },
     { metadataName: 'objectPermission' },
     { metadataName: 'fieldPermission' },

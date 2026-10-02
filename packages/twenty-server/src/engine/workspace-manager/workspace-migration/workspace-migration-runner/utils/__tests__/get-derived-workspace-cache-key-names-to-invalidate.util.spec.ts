@@ -1,40 +1,48 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { type WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
-import { type WorkspaceMetadataChange } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-metadata-change.type';
 import { getDerivedWorkspaceCacheKeyNamesToInvalidate } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-derived-workspace-cache-key-names-to-invalidate.util';
 
-const change = (
+type InvalidatingActions = NonNullable<
+  Parameters<typeof getDerivedWorkspaceCacheKeyNamesToInvalidate>[0]['actions']
+>;
+
+type InvalidatingAction = InvalidatingActions[number];
+
+const action = (
   metadataName: AllMetadataName,
-  actionType: WorkspaceMigrationActionType,
-  updatedProperties?: string[],
-): WorkspaceMetadataChange => ({
-  metadataName,
-  actionType,
-  updatedProperties,
-});
+  type: 'create' | 'delete',
+): InvalidatingAction => ({ metadataName, type });
+
+const updateAction = (
+  metadataName: AllMetadataName,
+  update: Extract<InvalidatingAction, { type: 'update' }>['update'],
+): InvalidatingAction => ({ metadataName, type: 'update', update });
 
 describe('getDerivedWorkspaceCacheKeyNamesToInvalidate', () => {
-  it.each<[string, WorkspaceMetadataChange[], WorkspaceCacheKeyName[]]>([
+  it.each<[string, InvalidatingActions, WorkspaceCacheKeyName[]]>([
     [
       'a role target assignment',
-      [change('roleTarget', 'create')],
+      [action('roleTarget', 'create')],
       ['userWorkspaceRoleMap', 'apiKeyRoleMap', 'flatRoleTargetByAgentIdMaps'],
     ],
     [
       'a role target reassignment',
-      [change('roleTarget', 'update', ['roleUniversalIdentifier'])],
+      [
+        updateAction('roleTarget', {
+          roleUniversalIdentifier: 'role-universal-identifier',
+        }),
+      ],
       ['userWorkspaceRoleMap', 'apiKeyRoleMap', 'flatRoleTargetByAgentIdMaps'],
     ],
     [
       'a role creation',
-      [change('role', 'create')],
+      [action('role', 'create')],
       ['rolesPermissions', 'roleIdsWithAllRecordsAccess'],
     ],
     [
       'a role deletion',
-      [change('role', 'delete')],
+      [action('role', 'delete')],
       [
         'rolesPermissions',
         'roleIdsWithAllRecordsAccess',
@@ -45,107 +53,127 @@ describe('getDerivedWorkspaceCacheKeyNamesToInvalidate', () => {
     ],
     [
       'a role record permission update',
-      [change('role', 'update', ['canReadAllObjectRecords'])],
+      [updateAction('role', { canReadAllObjectRecords: true })],
       ['rolesPermissions'],
     ],
     [
       'a role settings permission update',
-      [change('role', 'update', ['canUpdateAllSettings'])],
+      [updateAction('role', { canUpdateAllSettings: true })],
       ['rolesPermissions', 'roleIdsWithAllRecordsAccess'],
     ],
-    ['a role label update', [change('role', 'update', ['label', 'icon'])], []],
+    [
+      'a role label update',
+      [updateAction('role', { label: 'Sales', icon: 'IconUser' })],
+      [],
+    ],
     [
       'an object permission upsert',
       [
-        change('objectPermission', 'create'),
-        change('objectPermission', 'update'),
+        action('objectPermission', 'create'),
+        updateAction('objectPermission', { canReadObjectRecords: true }),
       ],
       ['rolesPermissions'],
     ],
     [
       'a field permission upsert',
       [
-        change('fieldPermission', 'create'),
-        change('fieldPermission', 'delete'),
+        action('fieldPermission', 'create'),
+        action('fieldPermission', 'delete'),
       ],
       ['rolesPermissions'],
     ],
     [
       'a permission flag grant',
-      [change('rolePermissionFlag', 'create')],
+      [action('rolePermissionFlag', 'create')],
       ['rolesPermissions'],
     ],
-    ['a permission flag creation', [change('permissionFlag', 'create')], []],
+    ['a permission flag creation', [action('permissionFlag', 'create')], []],
     [
       'a permission flag deletion',
-      [change('permissionFlag', 'delete')],
+      [action('permissionFlag', 'delete')],
       ['rolesPermissions'],
     ],
     [
       'a row level permission predicate upsert',
-      [change('rowLevelPermissionPredicate', 'create')],
+      [action('rowLevelPermissionPredicate', 'create')],
       ['rolesPermissions'],
     ],
     [
       'a row level permission predicate group deletion',
-      [change('rowLevelPermissionPredicateGroup', 'delete')],
+      [action('rowLevelPermissionPredicateGroup', 'delete')],
       ['rolesPermissions'],
     ],
     [
       'an object creation',
-      [change('objectMetadata', 'create'), change('fieldMetadata', 'create')],
+      [action('objectMetadata', 'create'), action('fieldMetadata', 'create')],
       ['rolesPermissions'],
     ],
     [
       'an object deletion',
-      [change('objectMetadata', 'delete'), change('fieldMetadata', 'delete')],
+      [action('objectMetadata', 'delete'), action('fieldMetadata', 'delete')],
       ['rolesPermissions'],
     ],
     [
       'an object label identifier update',
       [
-        change('objectMetadata', 'update', [
-          'labelIdentifierFieldMetadataUniversalIdentifier',
-        ]),
+        updateAction('objectMetadata', {
+          labelIdentifierFieldMetadataUniversalIdentifier:
+            'field-universal-identifier',
+        }),
       ],
       ['rolesPermissions'],
     ],
     [
       'an object rename',
-      [change('objectMetadata', 'update', ['labelSingular', 'labelPlural'])],
+      [
+        updateAction('objectMetadata', {
+          labelSingular: 'Company',
+          labelPlural: 'Companies',
+        }),
+      ],
       [],
     ],
-    ['a field creation', [change('fieldMetadata', 'create')], []],
+    ['a field creation', [action('fieldMetadata', 'create')], []],
     [
       'a field deletion',
-      [change('fieldMetadata', 'delete')],
+      [action('fieldMetadata', 'delete')],
       ['rolesPermissions'],
     ],
     [
       'an agent deletion',
-      [change('agent', 'delete')],
+      [action('agent', 'delete')],
       ['flatRoleTargetByAgentIdMaps', 'flatRoleTargetMaps'],
     ],
-    ['an agent update', [change('agent', 'update', ['prompt'])], []],
+    ['an agent update', [updateAction('agent', { prompt: 'Help' })], []],
     [
       'an application variable update',
-      [change('applicationVariable', 'update', ['value'])],
+      [updateAction('applicationVariable', { value: 'secret' })],
       ['applicationVariableMaps'],
     ],
-    ['a view creation', [change('view', 'create')], []],
+    ['a view creation', [action('view', 'create')], []],
     ['no change', [], []],
-  ])(
-    'invalidates the expected caches for %s',
-    (_, metadataChanges, expected) => {
-      expect(
-        getDerivedWorkspaceCacheKeyNamesToInvalidate(metadataChanges),
-      ).toEqual(expected);
-    },
-  );
-
-  it('treats an update with unknown properties as touching every property', () => {
+  ])('invalidates the expected caches for %s', (_, actions, expected) => {
     expect(
-      getDerivedWorkspaceCacheKeyNamesToInvalidate([change('role', 'update')]),
-    ).toEqual(['rolesPermissions', 'roleIdsWithAllRecordsAccess']);
+      getDerivedWorkspaceCacheKeyNamesToInvalidate({
+        allFlatEntityMapsKeys: [],
+        actions,
+      }),
+    ).toEqual(expected);
+  });
+
+  it('assumes any change to the given maps when the actions are unknown', () => {
+    expect(
+      getDerivedWorkspaceCacheKeyNamesToInvalidate({
+        allFlatEntityMapsKeys: [
+          'flatRoleTargetMaps',
+          'flatApplicationVariableMaps',
+        ],
+      }),
+    ).toEqual([
+      'userWorkspaceRoleMap',
+      'apiKeyRoleMap',
+      'flatRoleTargetByAgentIdMaps',
+      'applicationVariableMaps',
+    ]);
   });
 });

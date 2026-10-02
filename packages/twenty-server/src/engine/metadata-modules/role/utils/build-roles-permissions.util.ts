@@ -1,3 +1,4 @@
+import groupBy from 'lodash.groupby';
 import {
   type PermissionFlagType,
   SystemPermissionFlag,
@@ -10,27 +11,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
-import { type ComputeObjectRecordPermissionsArgs } from 'src/engine/metadata-modules/role/types/compute-object-record-permissions-args.type';
 import { type RolesPermissionsBuildRows } from 'src/engine/metadata-modules/role/types/roles-permissions-build-rows.type';
 import { computeObjectRecordPermissions } from 'src/engine/metadata-modules/role/utils/compute-object-record-permissions.util';
-
-const groupByObjectMetadataId = <TRow extends { objectMetadataId: string }>(
-  rows: TRow[],
-): Map<string, TRow[]> => {
-  const rowsByObjectMetadataId = new Map<string, TRow[]>();
-
-  for (const row of rows) {
-    const objectMetadataRows = rowsByObjectMetadataId.get(row.objectMetadataId);
-
-    if (isDefined(objectMetadataRows)) {
-      objectMetadataRows.push(row);
-    } else {
-      rowsByObjectMetadataId.set(row.objectMetadataId, [row]);
-    }
-  }
-
-  return rowsByObjectMetadataId;
-};
 
 const computeRestrictedFields = ({
   fieldPermissions,
@@ -99,38 +81,22 @@ export const buildRolesPermissions = (
       ),
     );
 
-    const objectPermissionOverrideByObjectMetadataId = new Map<
-      string,
-      NonNullable<
-        ComputeObjectRecordPermissionsArgs['objectPermissionOverride']
-      >
-    >();
-
-    for (const objectPermission of objectPermissions.byRoleId.get(role.id) ??
-      []) {
-      if (
-        !objectPermissionOverrideByObjectMetadataId.has(
-          objectPermission.objectMetadataId,
-        )
-      ) {
-        objectPermissionOverrideByObjectMetadataId.set(
-          objectPermission.objectMetadataId,
-          objectPermission,
-        );
-      }
-    }
-
-    const fieldPermissionsByObjectMetadataId = groupByObjectMetadataId(
-      fieldPermissions.byRoleId.get(role.id) ?? [],
+    const objectPermissionsByObjectMetadataId = groupBy(
+      objectPermissions.byRoleId.get(role.id) ?? [],
+      'objectMetadataId',
     );
-    const rowLevelPermissionPredicatesByObjectMetadataId =
-      groupByObjectMetadataId(
-        rowLevelPermissionPredicates.byRoleId.get(role.id) ?? [],
-      );
-    const rowLevelPermissionPredicateGroupsByObjectMetadataId =
-      groupByObjectMetadataId(
-        rowLevelPermissionPredicateGroups.byRoleId.get(role.id) ?? [],
-      );
+    const fieldPermissionsByObjectMetadataId = groupBy(
+      fieldPermissions.byRoleId.get(role.id) ?? [],
+      'objectMetadataId',
+    );
+    const rowLevelPermissionPredicatesByObjectMetadataId = groupBy(
+      rowLevelPermissionPredicates.byRoleId.get(role.id) ?? [],
+      'objectMetadataId',
+    );
+    const rowLevelPermissionPredicateGroupsByObjectMetadataId = groupBy(
+      rowLevelPermissionPredicateGroups.byRoleId.get(role.id) ?? [],
+      'objectMetadataId',
+    );
 
     const objectRecordsPermissions: ObjectsPermissions = {};
 
@@ -143,7 +109,7 @@ export const buildRolesPermissions = (
           rolePermissionFlagUniversalIdentifiers,
           objectMetadata,
           objectPermissionOverride:
-            objectPermissionOverrideByObjectMetadataId.get(objectMetadataId),
+            objectPermissionsByObjectMetadataId[objectMetadataId]?.[0],
         });
 
       objectRecordsPermissions[objectMetadataId] = {
@@ -151,19 +117,18 @@ export const buildRolesPermissions = (
         restrictedFields: appliesFieldPermissions
           ? computeRestrictedFields({
               fieldPermissions:
-                fieldPermissionsByObjectMetadataId.get(objectMetadataId) ?? [],
+                fieldPermissionsByObjectMetadataId[objectMetadataId] ?? [],
               labelIdentifierFieldMetadataId:
                 objectMetadata.labelIdentifierFieldMetadataId,
             })
           : {},
         rowLevelPermissionPredicates:
-          rowLevelPermissionPredicatesByObjectMetadataId.get(
-            objectMetadataId,
-          ) ?? [],
+          rowLevelPermissionPredicatesByObjectMetadataId[objectMetadataId] ??
+          [],
         rowLevelPermissionPredicateGroups:
-          rowLevelPermissionPredicateGroupsByObjectMetadataId.get(
-            objectMetadataId,
-          ) ?? [],
+          rowLevelPermissionPredicateGroupsByObjectMetadataId[
+            objectMetadataId
+          ] ?? [],
       };
     }
 
