@@ -7,6 +7,7 @@ const CYRILLIC_LETTER_WITH_MARKS = /(\p{Script=Cyrillic})(\p{Mark}+)/gu;
 const CYRILLIC_STRESS_ACCENTS = /[\u0300\u0301]/g;
 const CYRILLIC_LETTERS_FORMED_WITH_ACUTE = ['г', 'к'];
 const HANGUL_SYLLABLES = /[가-힣]+/g;
+const HANGUL_COMPATIBILITY_JAMO = /[ㄱ-ㆎ]/g;
 const SEARCH_LETTER_REPLACEMENTS: Record<string, string> = {
   ø: 'o',
   æ: 'ae',
@@ -50,6 +51,7 @@ export const normalizeSearchText = (
     .replace(CYRILLIC_LETTER_WITH_MARKS, removeCyrillicStressAccents)
     .normalize('NFC')
     .replace(HANGUL_SYLLABLES, (syllables) => syllables.normalize('NFD'))
+    .replace(HANGUL_COMPATIBILITY_JAMO, (jamo) => jamo.normalize('NFKD'))
     .replace(
       LETTERS_WITH_SEARCH_REPLACEMENT,
       (letter) => SEARCH_LETTER_REPLACEMENTS[letter] ?? letter,

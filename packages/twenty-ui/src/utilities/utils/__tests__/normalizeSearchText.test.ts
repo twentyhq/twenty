@@ -165,6 +165,9 @@ describe('normalizeSearchText', () => {
     { text: '한국', search: '한' },
     { text: '설정', search: '서' },
     { text: '설정', search: '설저' },
+    { text: '한국', search: 'ㅎ' },
+    { text: '한국', search: '한ㄱ' },
+    { text: '설정', search: '설ㅈ' },
   ])('matches the partly typed Hangul $search in $text', ({ text, search }) => {
     expect(normalizeSearchText(text)).toContain(normalizeSearchText(search));
   });
@@ -205,7 +208,7 @@ describe('normalizeSearchText', () => {
     { text: 'Ελλάδα', search: 'ελλ΄' },
     { text: 'Crêpe', search: 'cr^' },
     { text: 'Crème', search: 'cr`' },
-    { text: 'Česko', search: 'ˇ' },
+    { text: 'Dvořák', search: 'dvoˇ' },
   ])(
     'matches $search typed with a pending dead key in $text',
     ({ text, search }) => {

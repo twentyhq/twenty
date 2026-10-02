@@ -32,6 +32,11 @@ export const CountrySelect = ({
   className,
   style,
   render,
+  onClick,
+  onMouseDown,
+  onPointerDown,
+  onKeyDown,
+  onKeyUp,
   id,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
@@ -119,6 +124,11 @@ export const CountrySelect = ({
           }
           aria-disabled={isDisabled || undefined}
           data-disabled={isDisabled ? '' : undefined}
+          onClick={isDisabled ? undefined : onClick}
+          onMouseDown={isDisabled ? undefined : onMouseDown}
+          onPointerDown={isDisabled ? undefined : onPointerDown}
+          onKeyDown={isDisabled ? undefined : onKeyDown}
+          onKeyUp={isDisabled ? undefined : onKeyUp}
           className={(state) => triggerClassName(getTriggerState(state))}
           style={
             isFunction(style) ? (state) => style(getTriggerState(state)) : style
