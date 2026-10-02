@@ -18,7 +18,7 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIcon';
@@ -48,9 +48,12 @@ export const useChatReferenceTarget = (
   const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
-  const hasPermission = useHasPermissionFlag(
-    CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND[reference.kind],
-  );
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const requiredPermissionFlag =
+    CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND[reference.kind];
+  const hasPermission =
+    !isDefined(requiredPermissionFlag) ||
+    permissionFlagMap[requiredPermissionFlag];
   const objectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {

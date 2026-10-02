@@ -41,6 +41,7 @@ import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import {
   AiException,
@@ -260,16 +261,11 @@ export class AgentChatStreamingService {
       };
     } catch (error) {
       await this.releaseStreamClaim(threadId, workspace.id, streamId);
-      const streamError = mapErrorToStreamError(error);
-
-      this.metricsService.incrementCounterBy({
-        key: MetricsKeys.AiChatTurnFailed,
-        amount: 1,
-        attributes: {
-          model: modelId ?? 'unknown',
-          failure_phase: 'enqueue',
-          error_code: streamError.code,
-        },
+      this.recordEnqueueFailure({
+        threadId,
+        workspaceId: workspace.id,
+        model: modelId ?? 'unknown',
+        error,
       });
       throw error;
     }
@@ -366,16 +362,11 @@ export class AgentChatStreamingService {
       return { streamId, messageId, turnId };
     } catch (error) {
       await this.releaseStreamClaim(threadId, workspace.id, streamId);
-      const streamError = mapErrorToStreamError(error);
-
-      this.metricsService.incrementCounterBy({
-        key: MetricsKeys.AiChatTurnFailed,
-        amount: 1,
-        attributes: {
-          model: modelId,
-          failure_phase: 'enqueue',
-          error_code: streamError.code,
-        },
+      this.recordEnqueueFailure({
+        threadId,
+        workspaceId: workspace.id,
+        model: modelId,
+        error,
       });
       throw error;
     }
@@ -519,16 +510,11 @@ export class AgentChatStreamingService {
       await this.releaseStreamClaim(threadId, workspace.id, streamId, {
         lastStreamError: thread.lastStreamError,
       });
-      const streamError = mapErrorToStreamError(error);
-
-      this.metricsService.incrementCounterBy({
-        key: MetricsKeys.AiChatTurnFailed,
-        amount: 1,
-        attributes: {
-          model: modelId ?? 'unknown',
-          failure_phase: 'enqueue',
-          error_code: streamError.code,
-        },
+      this.recordEnqueueFailure({
+        threadId,
+        workspaceId: workspace.id,
+        model: modelId ?? 'unknown',
+        error,
       });
       throw error;
     }
@@ -750,16 +736,11 @@ export class AgentChatStreamingService {
       );
     } catch (error) {
       await this.releaseStreamClaim(threadId, workspaceId, streamId);
-      const streamError = mapErrorToStreamError(error);
-
-      this.metricsService.incrementCounterBy({
-        key: MetricsKeys.AiChatTurnFailed,
-        amount: 1,
-        attributes: {
-          model: 'unknown',
-          failure_phase: 'enqueue',
-          error_code: streamError.code,
-        },
+      this.recordEnqueueFailure({
+        threadId,
+        workspaceId,
+        model: 'unknown',
+        error,
       });
       throw error;
     }
@@ -810,6 +791,32 @@ export class AgentChatStreamingService {
       messageId,
       workspaceId,
     });
+  }
+
+  private recordEnqueueFailure({
+    threadId,
+    workspaceId,
+    model,
+    error,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    model: string;
+    error: unknown;
+  }): void {
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.AiChatTurnFailed,
+      amount: 1,
+      attributes: {
+        model,
+        failure_phase: 'enqueue',
+        error_code: mapErrorToStreamError(error).code,
+      },
+    });
+
+    this.logger.error(
+      `[AI_CHAT_TURN_FAILED] failurePhase=enqueue, model=${model}, threadId=${threadId}, workspaceId=${workspaceId}: ${formatErrorWithCause(error)}`,
+    );
   }
 
   async releaseStreamClaim(

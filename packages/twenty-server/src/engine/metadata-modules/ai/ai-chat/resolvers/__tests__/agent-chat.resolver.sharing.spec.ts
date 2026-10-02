@@ -45,14 +45,6 @@ const buildResolver = () => {
           workspaceId: WORKSPACE_ID,
         };
       }),
-    getPermissions: jest
-      .fn()
-      .mockImplementation(async ({ workspaceMemberId }) => ({
-        canRead: true,
-        canUpdate: workspaceMemberId === 'owner',
-        canDelete: workspaceMemberId === 'owner',
-        canSoftDelete: workspaceMemberId === 'owner',
-      })),
     restoreThreadWithAccess: jest
       .fn()
       .mockRejectedValue(
