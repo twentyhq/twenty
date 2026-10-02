@@ -66,12 +66,6 @@ export const useResizeHandlePointerInteraction = ({
     onResizeEnd?.({ cancelled, value: gesture.currentValue });
   });
 
-  useEffect(() => {
-    if (disabled) {
-      finishResize(true);
-    }
-  }, [disabled, finishResize]);
-
   useEffect(
     () => () => {
       finishResize(true);
@@ -132,11 +126,15 @@ export const useResizeHandlePointerInteraction = ({
     const gesture = gestureRef.current;
 
     if (
-      disabled ||
       event.defaultPrevented ||
       !isDefined(gesture) ||
       gesture.pointerId !== event.pointerId
     ) {
+      return;
+    }
+
+    if (disabled) {
+      finishResize(true);
       return;
     }
 

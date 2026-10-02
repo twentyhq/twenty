@@ -100,7 +100,7 @@ Set `direction="normal"` or `direction="reverse"` when increasing size must foll
 
 `onValueChange` reports live values. `onValueCommit` reports the final value after a successful pointer drag or an effective keyboard change. Home, End and arrow keys commit immediately when they change the size.
 
-`onResizeStart` receives the first bounded candidate after the pointer passes `dragThreshold`. The threshold defaults to zero and is measured in physical pixels. `onResizeEnd` receives `{ cancelled, value }` for a started drag. Escape, pointer cancellation, lost pointer capture, disabling the handle and unmounting it cancel the gesture without committing. Cancellation does not restore an earlier value; callers can restore a controlled value if their workflow requires rollback.
+`onResizeStart` receives the first bounded candidate after the pointer passes `dragThreshold`. The threshold defaults to zero and is measured in physical pixels. `onResizeEnd` receives `{ cancelled, value }` for a started drag. Escape, pointer cancellation, lost pointer capture and unmounting cancel the gesture without committing; disabling the handle cancels it on its next pointer event. Cancellation does not restore an earlier value; callers can restore a controlled value if their workflow requires rollback.
 
 Supply `onActivate` to handle a click without dragging, Enter or Space. Crossing the threshold prevents the following pointer click from activating, even when the pointer returns to its starting position. Native event handlers can prevent the default interaction.
 
