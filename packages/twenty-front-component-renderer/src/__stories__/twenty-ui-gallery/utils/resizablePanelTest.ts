@@ -99,6 +99,9 @@ export const resizablePanelTest: TwentyUiGalleryPlayFunction = async ({
       await fireEvent.pointerUp(edge, { pointerId: 3, clientX: 100 });
       await fireEvent.click(edge, { detail: 1 });
       await expect(await canvas.findByText('Collapse count: 3')).toBeVisible();
+      await expect(edge).toHaveAttribute('aria-valuenow', '210');
+      await expect(canvas.getByText('Committed edge: 210')).toBeVisible();
+      await expect(canvas.getByText('Resize result: Cancelled')).toBeVisible();
 
       await userEvent.click(gap);
       await expect(gap).not.toHaveFocus();

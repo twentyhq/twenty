@@ -41,6 +41,7 @@ const renderNavigationDrawerWithPageHeader = () => {
         <MemoryRouter>
           <NavigationDrawer />
           <PageHeaderExpandButton />
+          <button type="button">Page action</button>
         </MemoryRouter>
       </JotaiProvider>
     </I18nProvider>,
@@ -67,14 +68,16 @@ describe('NavigationDrawer', () => {
 
   it('keeps focus where it was when the resize separator is clicked', async () => {
     renderNavigationDrawerWithPageHeader();
+    const pageActionButton = screen.getByRole('button', {
+      name: 'Page action',
+    });
 
+    pageActionButton.focus();
     await userEvent.click(
       screen.getByRole('separator', { name: 'Resize navigation drawer' }),
     );
 
     expect(jotaiStore.get(isNavigationDrawerExpandedState.atom)).toBe(false);
-    expect(
-      screen.getByRole('button', { name: 'Expand sidebar' }),
-    ).not.toHaveFocus();
+    expect(pageActionButton).toHaveFocus();
   });
 });

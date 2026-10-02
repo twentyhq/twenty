@@ -193,7 +193,7 @@ describe('LogConsole', () => {
     expect(jotaiStore.get(logConsoleHeightState.atom)).toBe(450);
   });
 
-  it('keeps keyboard resizing of an open console above its minimum height', () => {
+  it('starts the resize range of an open console at its minimum height until a drag begins', () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
       jotaiStore.set(isAdvancedModeEnabledState.atom, true);
