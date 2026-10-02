@@ -51,24 +51,29 @@ const isLoopbackOrigin = (origin: string): boolean => {
   }
 };
 
-export const resolveAllowedCredentialedOrigins = (
-  twentyConfigService: TwentyConfigService,
-): Set<string> => {
+type AllowedCredentialedOriginsInputs = {
+  serverUrl: string;
+  frontendUrl: string;
+  authCookieAllowedOrigins: string;
+  nodeEnvironment: NodeEnvironment;
+};
+
+const computeAllowedCredentialedOrigins = ({
+  serverUrl,
+  frontendUrl,
+  authCookieAllowedOrigins,
+  nodeEnvironment,
+}: AllowedCredentialedOriginsInputs): ReadonlySet<string> => {
   const allowedOrigins = new Set<string>();
 
-  const derivedUrls = [
-    twentyConfigService.get('SERVER_URL'),
-    twentyConfigService.get('FRONTEND_URL'),
-  ];
+  const derivedUrls = [serverUrl, frontendUrl];
 
-  const explicitUrls = twentyConfigService
-    .get('AUTH_COOKIE_ALLOWED_ORIGINS')
+  const explicitUrls = authCookieAllowedOrigins
     .split(',')
     .map((allowedOrigin) => allowedOrigin.trim());
 
   // SERVER_URL defaults to http://localhost:3000, which would hand any local page on that port a credentialed origin.
-  const isProduction =
-    twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION;
+  const isProduction = nodeEnvironment === NodeEnvironment.PRODUCTION;
 
   for (const candidateUrl of [...derivedUrls, ...explicitUrls]) {
     if (!isNonEmptyString(candidateUrl)) {
@@ -91,6 +96,43 @@ export const resolveAllowedCredentialedOrigins = (
 
     allowedOrigins.add(origin);
   }
+
+  return allowedOrigins;
+};
+
+// Runs on every request, while the inputs only change when an admin edits the config
+let lastComputed:
+  | {
+      inputs: AllowedCredentialedOriginsInputs;
+      allowedOrigins: ReadonlySet<string>;
+    }
+  | undefined;
+
+export const resolveAllowedCredentialedOrigins = (
+  twentyConfigService: TwentyConfigService,
+): ReadonlySet<string> => {
+  const inputs: AllowedCredentialedOriginsInputs = {
+    serverUrl: twentyConfigService.get('SERVER_URL'),
+    frontendUrl: twentyConfigService.get('FRONTEND_URL'),
+    authCookieAllowedOrigins: twentyConfigService.get(
+      'AUTH_COOKIE_ALLOWED_ORIGINS',
+    ),
+    nodeEnvironment: twentyConfigService.get('NODE_ENV'),
+  };
+
+  if (
+    lastComputed?.inputs.serverUrl === inputs.serverUrl &&
+    lastComputed.inputs.frontendUrl === inputs.frontendUrl &&
+    lastComputed.inputs.authCookieAllowedOrigins ===
+      inputs.authCookieAllowedOrigins &&
+    lastComputed.inputs.nodeEnvironment === inputs.nodeEnvironment
+  ) {
+    return lastComputed.allowedOrigins;
+  }
+
+  const allowedOrigins = computeAllowedCredentialedOrigins(inputs);
+
+  lastComputed = { inputs, allowedOrigins };
 
   return allowedOrigins;
 };
