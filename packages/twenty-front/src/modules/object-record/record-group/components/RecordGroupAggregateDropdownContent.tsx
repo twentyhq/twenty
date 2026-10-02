@@ -11,7 +11,7 @@ import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { type AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
 import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-record/utils/getAvailableFieldsIdsForAggregationFromObjectFields';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { t } from '@lingui/core/macro';
 
 export const RecordGroupAggregateDropdownContent = () => {
@@ -24,10 +24,10 @@ export const RecordGroupAggregateDropdownContent = () => {
 
   const restrictedFieldMetadataIds =
     getNonReadableFieldMetadataIdsFromObjectPermissions({
-      objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
+      objectPermissions: getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
-        objectMetadataId: objectMetadataItem.id,
-      }),
+        objectMetadataItem.id,
+      ),
     });
 
   const readableFields = objectMetadataItem.fields.filter(

@@ -15,7 +15,6 @@ import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/type
 export type WhereClause = {
   operator: 'and' | 'or';
   sql: string;
-  isRowAccessPredicate?: boolean;
 };
 
 export type JoinClause = {
@@ -75,6 +74,7 @@ export type SelectStatementState = {
   columnSelections: ColumnSelection[];
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
+  rowAccessConditions: string[];
   existsFilterClauses: ExistsFilterClause[];
   groupByExpressions: string[];
   orderByClauses: OrderByClause[];
@@ -289,9 +289,7 @@ export const buildProjection = (
   return { expressions, mainAliasColumnNames };
 };
 
-export const renderUserWhereExpression = (
-  whereClauses: WhereClause[],
-): string =>
+const renderUserWhereExpression = (whereClauses: WhereClause[]): string =>
   whereClauses
     .map((clause, index) =>
       index === 0
@@ -299,6 +297,30 @@ export const renderUserWhereExpression = (
         : `${clause.operator.toUpperCase()} ${clause.sql}`,
     )
     .join(' ');
+
+// Row access conditions stay outside the user expression so an OR in it can
+// never bypass them
+export const renderWhereExpressionWithRowAccess = ({
+  whereClauses,
+  rowAccessConditions,
+}: {
+  whereClauses: WhereClause[];
+  rowAccessConditions: string[];
+}): string => {
+  const userExpression = renderUserWhereExpression(whereClauses);
+
+  if (rowAccessConditions.length === 0) {
+    return userExpression;
+  }
+
+  const rowAccessExpression = rowAccessConditions
+    .map((rowAccessCondition) => `(${rowAccessCondition})`)
+    .join(' AND ');
+
+  return userExpression.length > 0
+    ? `(${userExpression}) AND ${rowAccessExpression}`
+    : rowAccessExpression;
+};
 
 const renderExistsFilter = (
   existsFilterClause: ExistsFilterClause,
@@ -358,18 +380,21 @@ export const buildWhereExpression = (
     substituteExistsFilters?: boolean;
   } = {},
 ): string => {
-  const renderedWhereClauses = quoteQualifiedAliasReferences(
-    renderUserWhereExpression(state.whereClauses),
+  const renderedWhereExpression = quoteQualifiedAliasReferences(
+    renderWhereExpressionWithRowAccess({
+      whereClauses: state.whereClauses,
+      rowAccessConditions: state.rowAccessConditions,
+    }),
     collectStatementAliases(state),
   );
 
-  const userExpression = substituteExistsFilters
+  const filterExpression = substituteExistsFilters
     ? substituteExistsFilterTokens({
-        expression: renderedWhereClauses,
+        expression: renderedWhereExpression,
         existsFilterClauses: state.existsFilterClauses,
         includeDeleted: state.includeDeleted,
       })
-    : renderedWhereClauses;
+    : renderedWhereExpression;
 
   const shouldAddSoftDeletePredicate =
     includeSoftDeletePredicate &&
@@ -377,16 +402,16 @@ export const buildWhereExpression = (
     state.tableShape.hasDeletedAtColumn;
 
   if (!shouldAddSoftDeletePredicate) {
-    return userExpression;
+    return filterExpression;
   }
 
   const softDeletePredicate = `${quoteColumn(state.alias, 'deletedAt')} IS NULL`;
 
-  if (userExpression.length === 0) {
+  if (filterExpression.length === 0) {
     return softDeletePredicate;
   }
 
-  return `(${userExpression}) AND ${softDeletePredicate}`;
+  return `(${filterExpression}) AND ${softDeletePredicate}`;
 };
 
 export const buildFromClause = (state: SelectStatementState): string =>
