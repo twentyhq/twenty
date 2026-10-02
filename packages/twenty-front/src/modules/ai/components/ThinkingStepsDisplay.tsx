@@ -491,11 +491,11 @@ export const ThinkingStepsDisplay = ({
   );
 
   const shouldKeepExpandedBeforeAnswer = !hasAssistantTextResponseStarted;
-  const liveReasoningContent = hasActiveStep
-    ? getActiveReasoningContent(parts)
-    : isLastMessageStreaming && shouldKeepExpandedBeforeAnswer
+  const liveReasoningContent =
+    getActiveReasoningContent(parts) ??
+    (isLastMessageStreaming && shouldKeepExpandedBeforeAnswer
       ? getLastReasoningContent(parts)
-      : null;
+      : null);
   const liveReasoningBody = isDefined(liveReasoningContent)
     ? splitReasoningTitle(liveReasoningContent).body
     : '';

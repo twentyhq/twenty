@@ -245,6 +245,24 @@ describe('ThinkingStepsDisplay', () => {
     expect(screen.getByText('Completed reasoning content')).toBeInTheDocument();
   });
 
+  it('should keep the last thought visible while the next tool step runs', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [
+        createReasoningPart({
+          state: 'done',
+          text: 'Completed reasoning content',
+        }),
+        createToolPart({ output: null, state: 'input-available' }),
+      ],
+    });
+
+    expect(
+      screen.getByText('Searching the web for crm software'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Completed reasoning content')).toBeInTheDocument();
+  });
+
   it('should collapse done state once answer text starts while streaming', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: true,
