@@ -242,13 +242,13 @@ export const DisabledDuringDrag: Story = {
           canvas.getByRole('button', { name: 'Disable resizing' }),
         );
         await expect(handle).toHaveAttribute('aria-disabled', 'true');
+        await pointer.pointer({ target: handle, coords: { x: 180 } });
         await expect(args.onResizeEnd).toHaveBeenCalledTimes(1);
         await expect(args.onResizeEnd).toHaveBeenCalledWith({
           cancelled: true,
           value: 190,
         });
         await expect(handle.releasePointerCapture).toHaveBeenCalledWith(1);
-        await pointer.pointer({ target: handle, coords: { x: 180 } });
         await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
         await expect(args.onValueCommit).not.toHaveBeenCalled();
         await expect(args.onActivate).not.toHaveBeenCalled();

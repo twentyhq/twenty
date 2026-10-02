@@ -67,7 +67,7 @@ Use `variant="gap"` between elements in a flex layout. `gapSize` sets the space 
 
 Both pointer and keyboard resizing stay within the required `min` and `max` bounds. Pointer movement starts a drag after five physical pixels. `scale` accepts a positive zoom factor or a function returning one; it is sampled at the start of the gesture and converts pointer movement to layout pixels.
 
-Escape, pointer cancellation, lost pointer capture, disabling the separator and unmounting it cancel an active drag. `onSizeChange` restores the starting size and `onSizeCommit` does not run. `onResizeEnd` reports `{ cancelled, value }`, using the restored size after cancellation. Use `onResizeStart` and `onResizeEnd` for temporary application state associated with dragging.
+Escape, pointer cancellation, lost pointer capture and unmounting the separator cancel an active drag; disabling it cancels the drag on its next pointer event. `onSizeChange` restores the starting size and `onSizeCommit` does not run. `onResizeEnd` reports `{ cancelled, value }`, using the restored size after cancellation. Use `onResizeStart` and `onResizeEnd` for temporary application state associated with dragging.
 
 ## Keyboard and collapse
 
