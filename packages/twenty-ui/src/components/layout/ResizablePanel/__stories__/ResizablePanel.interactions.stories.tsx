@@ -9,13 +9,13 @@ import {
   within,
 } from 'storybook/test';
 
+import { withMockPointerCapture } from '@ui/primitives/layout/ResizeHandle/__stories__/withMockPointerCapture';
 import { ComponentDecorator } from '@ui/testing';
 
 import { ResizablePanel } from '../ResizablePanel';
 
 import { ControlledResizablePanel } from './ControlledResizablePanel';
 import { playCancelledPanelResize } from './playCancelledPanelResize';
-import { withMockPointerCapture } from './withMockPointerCapture';
 import { UnmountingResizablePanel } from './UnmountingResizablePanel';
 
 const meta = {
