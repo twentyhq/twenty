@@ -25,7 +25,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
   PASSWORD_REGEX,
-  compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
@@ -53,6 +52,7 @@ import {
   type SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
+import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -134,9 +134,16 @@ export class AuthService {
         workspace.id,
       );
 
-    const workspaceInvitation = isWorkspaceMember
-      ? undefined
-      : await this.getValidWorkspaceInvitationOrThrow(workspace, user);
+    if (isWorkspaceMember) {
+      await this.validatePasswordCredentialsOrThrow(user, input.password);
+
+      return { user };
+    }
+
+    const workspaceInvitation = await this.getValidWorkspaceInvitationOrThrow(
+      workspace,
+      user,
+    );
 
     await this.validatePasswordCredentialsOrThrow(user, input.password);
 
@@ -213,27 +220,7 @@ export class AuthService {
     user: UserEntity,
     password: string,
   ) {
-    if (!user.passwordHash) {
-      throw new AuthException(
-        'Incorrect login method',
-        AuthExceptionCode.INVALID_INPUT,
-        {
-          userFriendlyMessage: msg`User was not created with email/password`,
-        },
-      );
-    }
-
-    const isValid = await compareHash(password, user.passwordHash);
-
-    if (!isValid) {
-      throw new AuthException(
-        'Wrong password',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        {
-          userFriendlyMessage: msg`Wrong password.`,
-        },
-      );
-    }
+    await assertUserPasswordIsValidOrThrow({ user, password });
 
     await this.checkIsEmailVerified(user.isEmailVerified);
   }
