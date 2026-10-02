@@ -90,6 +90,19 @@ describe('getUsageLimitFormOptions', () => {
     expect(options.units).toEqual([UsageUnit.CREDIT, UsageUnit.INVOCATION]);
   });
 
+  it('offers credits for an all-operations limit on a resource with a single operation', () => {
+    const options = getUsageLimitFormOptions({
+      definitions: DEFINITIONS,
+      values: {
+        ...EMPTY_USAGE_LIMIT_FORM_VALUES,
+        resourceType: UsageResourceType.LOGIC_FUNCTION,
+        operationType: UsageOperationType.ALL,
+      },
+    });
+
+    expect(options.units).toEqual([UsageUnit.CREDIT]);
+  });
+
   it('adds the billing period once the workspace has one', () => {
     const options = getUsageLimitFormOptions({
       definitions: { ...DEFINITIONS, hasAllowancePeriod: true },

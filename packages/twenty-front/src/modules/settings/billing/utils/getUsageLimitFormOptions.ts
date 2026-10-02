@@ -7,10 +7,10 @@ import { type UsageLimitPeriodUnit } from '@/settings/billing/types/UsageLimitPe
 import { type UsageLimitSpenderType } from '@/settings/billing/types/UsageLimitSpenderType';
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
 import {
-  type UsageOperationType,
+  UsageOperationType,
   type UsageQuotaDefinitionsQuery,
   type UsageResourceType,
-  type UsageUnit,
+  UsageUnit,
 } from '~/generated-metadata/graphql';
 
 type UsageLimitDefinitions =
@@ -59,7 +59,8 @@ export const getUsageLimitFormOptions = ({
     definition.allowedOperations.find(
       (allowedOperation) =>
         allowedOperation.operationType === values.operationType,
-    )?.allowedUnits ?? [];
+    )?.allowedUnits ??
+    (values.operationType === UsageOperationType.ALL ? [UsageUnit.CREDIT] : []);
 
   const periodUnits = ANCHORED_USAGE_LIMIT_PERIOD_UNITS.filter(
     (periodUnit) =>
