@@ -13,6 +13,21 @@ const buildParticipantKey = ({
   handle: string | null;
 }): string => `${calendarEventId}:${handle}`;
 
+// The key already matches handle and calendarEventId, so only the remaining written fields can differ
+const hasParticipantChanged = ({
+  existingParticipant,
+  fetchedParticipant,
+}: {
+  existingParticipant: CalendarEventParticipantWorkspaceEntity;
+  fetchedParticipant: FetchedParticipantWithCalendarEventId;
+}): boolean =>
+  (existingParticipant.displayName ?? '') !==
+    (fetchedParticipant.displayName ?? '') ||
+  (existingParticipant.responseStatus ?? '') !==
+    (fetchedParticipant.responseStatus ?? '') ||
+  Boolean(existingParticipant.isOrganizer) !==
+    Boolean(fetchedParticipant.isOrganizer);
+
 export const buildCalendarEventParticipantSaveOperations = ({
   fetchedParticipants,
   existingParticipants,
@@ -52,6 +67,10 @@ export const buildCalendarEventParticipantSaveOperations = ({
         id: uuid(),
       });
 
+      continue;
+    }
+
+    if (!hasParticipantChanged({ existingParticipant, fetchedParticipant })) {
       continue;
     }
 
