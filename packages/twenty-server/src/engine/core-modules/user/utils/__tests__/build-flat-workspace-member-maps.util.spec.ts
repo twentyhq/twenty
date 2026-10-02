@@ -5,11 +5,39 @@ const buildWorkspaceMember = ({
   id,
   userId,
   deletedAt = null,
-}: {
-  id: string;
-  userId: string;
-  deletedAt?: string | null;
-}) => ({ id, userId, deletedAt }) as FlatWorkspaceMember;
+}: Pick<FlatWorkspaceMember, 'id' | 'userId'> &
+  Partial<Pick<FlatWorkspaceMember, 'deletedAt'>>): FlatWorkspaceMember => ({
+  id,
+  userId,
+  deletedAt,
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+  position: 0,
+  name: { firstName: 'Jane', lastName: 'Doe' },
+  colorScheme: 'System',
+  uiScale: 'Default',
+  openRecordIn: 'SIDE_PANEL',
+  locale: 'en',
+  avatarUrl: null,
+  userEmail: null,
+  jobTitle: null,
+  calendarStartDay: 0,
+  timeZone: 'system',
+  dateFormat: 'SYSTEM',
+  timeFormat: 'SYSTEM',
+  searchVector: '',
+  numberFormat: 'SYSTEM',
+  assignedTasks: [],
+  accountOwnerForCompanies: [],
+  authoredAttachments: [],
+  messageParticipants: [],
+  blocklist: [],
+  calendarEventParticipants: [],
+  timelineActivities: [],
+  agentMessages: [],
+  agentChatThreads: [],
+  ownedOpportunities: [],
+});
 
 describe('buildFlatWorkspaceMemberMaps', () => {
   it('should map each user workspace to the member of its user', () => {

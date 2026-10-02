@@ -105,7 +105,10 @@ describe('deleteUser', () => {
       .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(getRolesWithMembersQuery)
-      .expect(200);
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.errors).toBeUndefined();
+      });
 
     const testEmail = `test_user_${Date.now()}@example.com`;
     const signUpMutation = signUpOperationFactory({
