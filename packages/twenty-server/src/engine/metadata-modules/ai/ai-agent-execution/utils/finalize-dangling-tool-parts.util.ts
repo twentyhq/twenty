@@ -4,8 +4,15 @@ import {
   type UIMessagePart,
   type UITools,
 } from 'ai';
+import { isDefined } from 'twenty-shared/utils';
 
 const INTERRUPTED_TOOL_ERROR_TEXT = 'Tool execution was interrupted.';
+
+// Postgres jsonb rejects \u0000, which a tool output can carry from a fetched binary file
+const stripNulCharacters = (output: unknown): unknown =>
+  JSON.parse(JSON.stringify(output), (_key, value) =>
+    typeof value === 'string' ? value.replace(/\0/g, '') : value,
+  );
 
 // A tool part with a nullish input serializes to a `tool_use` block with no
 // `input` field, which Anthropic rejects — bricking every later turn (#21695).
@@ -51,6 +58,13 @@ export const finalizeDanglingToolParts = <
         return {
           ...part,
           input: {},
+        } as TPart;
+      }
+
+      if (part.state === 'output-available' && isDefined(part.output)) {
+        return {
+          ...part,
+          output: stripNulCharacters(part.output),
         } as TPart;
       }
 

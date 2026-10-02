@@ -39,6 +39,19 @@ describe('finalizeDanglingToolParts', () => {
     expect(finalizeDanglingToolParts([part])).toEqual([part]);
   });
 
+  it('strips NUL characters from a completed tool output', () => {
+    const part = buildToolPart('output-available', {
+      output: { stdout: 'Sheet1\u0000\u0000', rows: [['A\u0000', 'B']] },
+    });
+
+    expect(finalizeDanglingToolParts([part])).toEqual([
+      {
+        ...part,
+        output: { stdout: 'Sheet1', rows: [['A', 'B']] },
+      },
+    ]);
+  });
+
   it('leaves an errored tool part with an input untouched', () => {
     const part = buildToolPart('output-error', { errorText: 'boom' });
 
