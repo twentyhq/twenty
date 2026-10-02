@@ -203,6 +203,7 @@ export const RichTextFieldEditor = ({
 
   const handleBodyChange = async (newStringifiedBody: string) => {
     const oldRecord = store.get(recordStoreFamilyState.atomFamily(recordId));
+    const preparedBody = prepareBodyWithSignedUrls(newStringifiedBody);
 
     store.set(
       recordStoreFamilyState.atomFamily(recordId),
@@ -210,7 +211,7 @@ export const RichTextFieldEditor = ({
         ...prev,
         id: recordId,
         [fieldName]: {
-          blocknote: newStringifiedBody,
+          blocknote: preparedBody,
           markdown: null,
         },
         __typename: prev?.__typename ?? objectNameSingular,
@@ -221,7 +222,7 @@ export const RichTextFieldEditor = ({
       recordId,
       fieldModifiers: {
         [fieldName]: () => ({
-          blocknote: newStringifiedBody,
+          blocknote: preparedBody,
           markdown: null,
         }),
       },
@@ -234,10 +235,10 @@ export const RichTextFieldEditor = ({
       | undefined;
 
     // Capture the old body before persisting; otherwise the attachment diff misses removals.
-    // Normalize draft image URLs so a save echo cannot trigger a remote replacement.
-    updateDraft({ blocknote: prepareBodyWithSignedUrls(newStringifiedBody) });
+    // Use the same body for the draft and optimistic state to avoid a save echo.
+    updateDraft({ blocknote: preparedBody });
 
-    await syncAttachments(newStringifiedBody, oldFieldValue?.blocknote);
+    await syncAttachments(preparedBody, oldFieldValue?.blocknote);
   };
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);

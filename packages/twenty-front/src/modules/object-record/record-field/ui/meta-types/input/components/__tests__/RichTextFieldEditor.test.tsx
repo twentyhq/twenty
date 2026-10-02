@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 
 import { RichTextFieldEditor } from '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor';
+import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 const mockEditor = {
@@ -11,6 +12,7 @@ const mockEditor = {
   replaceBlocks: jest.fn(),
 };
 const mockUpdateOneRecord = jest.fn();
+const mockSyncAttachments = jest.fn();
 
 jest.mock('@/blocknote-editor/blocks/Schema', () => ({ BLOCK_SCHEMA: {} }));
 jest.mock('@blocknote/react', () => ({
@@ -28,7 +30,7 @@ jest.mock(
   }),
 );
 jest.mock('@/blocknote-editor/hooks/useAttachmentSync', () => ({
-  useAttachmentSync: () => ({ syncAttachments: jest.fn() }),
+  useAttachmentSync: () => ({ syncAttachments: mockSyncAttachments }),
 }));
 jest.mock('@/activities/files/hooks/useUploadAttachmentFile', () => ({
   useUploadAttachmentFile: () => ({ uploadAttachmentFile: jest.fn() }),
@@ -78,6 +80,8 @@ describe('RichTextFieldEditor autosave', () => {
     jest.useFakeTimers();
     mockEditor.replaceBlocks.mockReset();
     mockUpdateOneRecord.mockReset();
+    mockSyncAttachments.mockReset();
+    jest.mocked(modifyRecordFromCache).mockReset();
   });
 
   afterEach(() => {
@@ -92,11 +96,21 @@ describe('RichTextFieldEditor autosave', () => {
         type: 'image',
         props: { url: 'https://example.com:443/image.png' },
       },
+      expectedImageUrl: 'https://example.com/image.png',
     },
-    { scenario: 'the document has no image', image: null },
+    {
+      scenario: 'an image URL is malformed',
+      image: { type: 'image', props: { url: 'not-a-url' } },
+      expectedImageUrl: 'not-a-url',
+    },
+    {
+      scenario: 'the document has no image',
+      image: null,
+      expectedImageUrl: undefined,
+    },
   ])(
     'keeps the selection when $scenario, then adopts a real remote edit',
-    async ({ image }) => {
+    async ({ image, expectedImageUrl }) => {
       const recordId = 'record-1';
       const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
       const initialDocument = [
@@ -152,6 +166,26 @@ describe('RichTextFieldEditor autosave', () => {
       act(() => {
         jest.advanceTimersByTime(500);
       });
+      const preparedBody = JSON.stringify([
+        { type: 'paragraph', content: 'Edited first paragraph' },
+        ...(image ? [{ type: 'image', props: { url: expectedImageUrl } }] : []),
+        { type: 'paragraph', content: 'Last paragraph' },
+      ]);
+      expect(mockUpdateOneRecord).not.toHaveBeenCalled();
+      expect(
+        (store.get(recordAtom)?.richText as { blocknote: string }).blocknote,
+      ).toBe(preparedBody);
+      const cacheFieldModifier = jest.mocked(modifyRecordFromCache).mock
+        .lastCall?.[0].fieldModifiers.richText;
+      expect(cacheFieldModifier?.()).toEqual({
+        blocknote: preparedBody,
+        markdown: null,
+      });
+      expect(mockSyncAttachments).toHaveBeenCalledWith(
+        preparedBody,
+        JSON.stringify(initialDocument),
+      );
+
       act(() => {
         jest.advanceTimersByTime(300);
       });
@@ -160,18 +194,7 @@ describe('RichTextFieldEditor autosave', () => {
       const savedBlocknote =
         mockUpdateOneRecord.mock.calls[0][0].updateOneRecordInput.richText
           .blocknote;
-      expect(JSON.parse(savedBlocknote)).toEqual([
-        { type: 'paragraph', content: 'Edited first paragraph' },
-        ...(image
-          ? [
-              {
-                type: 'image',
-                props: { url: 'https://example.com/image.png' },
-              },
-            ]
-          : []),
-        { type: 'paragraph', content: 'Last paragraph' },
-      ]);
+      expect(savedBlocknote).toBe(preparedBody);
       expect(mockEditor.replaceBlocks).not.toHaveBeenCalled();
       expect(mockEditor.selectionPosition).toBe(6);
 
