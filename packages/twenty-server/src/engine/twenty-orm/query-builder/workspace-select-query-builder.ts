@@ -167,9 +167,6 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     parameters?: Record<string, unknown>,
   ): this {
     this.whereClauses.length = 0;
-    // Reset with the marker so the next execute re-applies the policy exactly once
-    this.rowAccessConditions.length = 0;
-    this.aliasesWithRowLevelPermissionApplied.delete(this.alias);
 
     return this.appendWhere('and', condition, parameters);
   }

@@ -90,7 +90,7 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
     ).toBe(1);
   });
 
-  it('should re-apply the row access condition exactly once after where() replaces the WHERE', async () => {
+  it('should keep the row access condition exactly once after where() replaces the WHERE', async () => {
     const { queryBuilder, executedStatements } = buildRowAccessQueryBuilder();
 
     await queryBuilder.where('"person"."id" = :a', { a: 1 }).getMany();
@@ -105,6 +105,20 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
     expect(
       countOccurrences(executedStatements[1].text, '"person"."companyId"'),
     ).toBe(1);
+  });
+
+  it('should keep the row access condition on a mutation built after where() replaces the WHERE', () => {
+    const { queryBuilder } = buildRowAccessQueryBuilder();
+
+    const mutationQueryBuilder = queryBuilder
+      .applyRowLevelPermissions()
+      .where('"person"."id" = :a', { a: 1 })
+      .orWhere('"person"."id" = :b', { b: 2 })
+      .delete();
+
+    expect(mutationQueryBuilder.getQuery()).toBe(
+      `DELETE FROM "workspace_1wgvd1injqtife6y4rvfbu3h5"."person" AS "person" WHERE ${GUARDED_OR_CHAIN}`,
+    );
   });
 
   it('should carry the row access condition into a builder that copies the where clauses', () => {

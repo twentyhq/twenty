@@ -89,4 +89,15 @@ describe('buildMutationStatement', () => {
         'WHERE ("person"."ownerId" = :ownerId)',
     );
   });
+
+  it('should render a user OR chain unchanged when there is no row access condition', () => {
+    expect(
+      buildMutationStatement(
+        buildState({ kind: 'delete', setClauses: [], rowAccessConditions: [] }),
+      ),
+    ).toBe(
+      `DELETE FROM "${SCHEMA_NAME}"."person" AS "person" ` +
+        'WHERE ("person"."id" = :a) OR ("person"."id" = :b)',
+    );
+  });
 });
