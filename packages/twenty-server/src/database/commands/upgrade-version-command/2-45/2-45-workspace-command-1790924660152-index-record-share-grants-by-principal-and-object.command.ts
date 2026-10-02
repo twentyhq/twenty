@@ -13,7 +13,6 @@ import {
   type RecordShareIndexToCreate,
   buildRecordShareIndexSyncPlanOrThrow,
 } from 'src/database/commands/upgrade-version-command/2-45/utils/build-record-share-index-sync-plan-or-throw.util';
-import { findInvalidIndexNames } from 'src/database/commands/upgrade-version-command/2-45/utils/find-invalid-index-names.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -167,15 +166,21 @@ export class IndexRecordShareGrantsByPrincipalAndObjectCommand extends Provision
 
       // An interrupted concurrent build leaves an invalid index behind,
       // which IF NOT EXISTS would keep and the migration would register
-      const invalidIndexNames = await findInvalidIndexNames({
-        queryRunner,
-        schemaName,
-        indexNames: indexesToCreate.map(
-          ({ universalFlatIndexMetadata }) => universalFlatIndexMetadata.name,
-        ),
-      });
+      const invalidIndexes: { name: string }[] = await queryRunner.query(
+        `SELECT c.relname AS name
+         FROM pg_index i
+         JOIN pg_class c ON c.oid = i.indexrelid
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+         WHERE n.nspname = $1 AND c.relname = ANY($2) AND NOT i.indisvalid`,
+        [
+          schemaName,
+          indexesToCreate.map(
+            ({ universalFlatIndexMetadata }) => universalFlatIndexMetadata.name,
+          ),
+        ],
+      );
 
-      for (const indexName of invalidIndexNames) {
+      for (const { name: indexName } of invalidIndexes) {
         await this.workspaceSchemaManagerService.indexManager.dropIndex({
           queryRunner,
           schemaName,
