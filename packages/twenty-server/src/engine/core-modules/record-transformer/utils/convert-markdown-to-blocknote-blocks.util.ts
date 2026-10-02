@@ -1,29 +1,12 @@
 import { randomUUID } from 'crypto';
 
-import type {
-  DefaultStyleSchema,
-  Link,
-  PartialBlock,
-  StyledText,
-} from '@blocknote/core';
+import type { PartialBlock } from '@blocknote/core';
 import { Lexer, type Token, type Tokens } from 'marked';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-type InlineStyle = 'bold' | 'italic' | 'strike' | 'code';
-
-type InlineContent = StyledText<DefaultStyleSchema> | Link<DefaultStyleSchema>;
-
-type InlineRun = {
-  text: string;
-  styles: InlineStyle[];
-  href?: string;
-};
-
-const STYLE_BY_TOKEN_TYPE: Record<string, InlineStyle> = {
-  strong: 'bold',
-  em: 'italic',
-  del: 'strike',
-};
+import {
+  convertMarkdownInlineTokens,
+  type InlineContent,
+} from 'src/engine/core-modules/record-transformer/utils/convert-markdown-inline-tokens.util';
 
 const DEFAULT_BLOCK_PROPS = {
   backgroundColor: 'default',
@@ -36,108 +19,6 @@ const createBlock = (block: PartialBlock): PartialBlock => ({
   ...block,
   children: block.children ?? [],
 });
-
-const collectInlineRuns = (
-  tokens: Token[],
-  styles: InlineStyle[],
-  href: string | undefined,
-  runs: InlineRun[],
-): void => {
-  for (const token of tokens) {
-    const style = STYLE_BY_TOKEN_TYPE[token.type];
-
-    if (isDefined(style)) {
-      collectInlineRuns(
-        (token as Tokens.Generic).tokens ?? [],
-        [...styles, style],
-        href,
-        runs,
-      );
-      continue;
-    }
-
-    switch (token.type) {
-      case 'text':
-        if (isNonEmptyArray(token.tokens)) {
-          collectInlineRuns(token.tokens, styles, href, runs);
-        } else {
-          runs.push({ text: token.text, styles, href });
-        }
-        break;
-      case 'escape':
-        runs.push({ text: token.text, styles, href });
-        break;
-      case 'codespan':
-        runs.push({ text: token.text, styles: ['code'] });
-        break;
-      case 'br':
-        runs.push({ text: '\n', styles, href });
-        break;
-      case 'link':
-        collectInlineRuns(token.tokens ?? [], styles, token.href, runs);
-        break;
-      case 'image':
-        runs.push({
-          text: token.text.length > 0 ? token.text : token.href,
-          styles,
-          href: token.href,
-        });
-        break;
-      case 'checkbox':
-        break;
-      default:
-        runs.push({ text: token.raw, styles, href });
-    }
-  }
-};
-
-const isSameRunFormat = (firstRun: InlineRun, secondRun: InlineRun) =>
-  firstRun.href === secondRun.href &&
-  firstRun.styles.length === secondRun.styles.length &&
-  firstRun.styles.every((style) => secondRun.styles.includes(style));
-
-const convertInlineTokens = (tokens: Token[]): InlineContent[] => {
-  const runs: InlineRun[] = [];
-
-  collectInlineRuns(tokens, [], undefined, runs);
-
-  const mergedRuns: InlineRun[] = [];
-
-  for (const run of runs) {
-    const lastRun = mergedRuns[mergedRuns.length - 1];
-
-    if (run.text.length === 0) {
-      continue;
-    }
-
-    if (isDefined(lastRun) && isSameRunFormat(lastRun, run)) {
-      lastRun.text += run.text;
-    } else {
-      mergedRuns.push({ ...run });
-    }
-  }
-
-  const content: InlineContent[] = [];
-
-  for (const run of mergedRuns) {
-    const styledText: StyledText<DefaultStyleSchema> = {
-      type: 'text',
-      text: run.text,
-      styles: Object.fromEntries(run.styles.map((style) => [style, true])),
-    };
-    const lastContent = content[content.length - 1];
-
-    if (!isDefined(run.href)) {
-      content.push(styledText);
-    } else if (lastContent?.type === 'link' && lastContent.href === run.href) {
-      lastContent.content.push(styledText);
-    } else {
-      content.push({ type: 'link', href: run.href, content: [styledText] });
-    }
-  }
-
-  return content;
-};
 
 const isBlankContent = (content: InlineContent[]) =>
   content.every((item) => item.type === 'text' && item.text.trim() === '');
@@ -163,7 +44,7 @@ const convertParagraph = (tokens: Token[]): PartialBlock[] => {
   let pendingTokens: Token[] = [];
 
   const flushParagraph = () => {
-    const content = convertInlineTokens(pendingTokens);
+    const content = convertMarkdownInlineTokens(pendingTokens);
 
     if (!isBlankContent(content)) {
       blocks.push(
@@ -206,7 +87,7 @@ const convertListItem = (
     firstToken?.type === 'text' || firstToken?.type === 'paragraph';
 
   const inlineTokens = hasInlineFirstToken ? (firstToken.tokens ?? []) : [];
-  const content = convertInlineTokens(
+  const content = convertMarkdownInlineTokens(
     inlineTokens.filter((token) => !isImageToken(token)),
   );
   const children = [
@@ -249,7 +130,7 @@ const convertTable = (table: Tokens.Table): PartialBlock => {
   const toRow = (cells: Tokens.TableCell[]) => ({
     cells: cells.map((cell, columnIndex) => ({
       type: 'tableCell' as const,
-      content: convertInlineTokens(cell.tokens),
+      content: convertMarkdownInlineTokens(cell.tokens),
       props: {
         colspan: 1,
         rowspan: 1,
@@ -287,7 +168,7 @@ const convertBlockTokens = (tokens: Token[]): PartialBlock[] =>
               level: token.depth,
               isToggleable: false,
             },
-            content: convertInlineTokens(token.tokens ?? []),
+            content: convertMarkdownInlineTokens(token.tokens ?? []),
           }),
         ];
       case 'paragraph':
@@ -323,7 +204,7 @@ const convertBlockTokens = (tokens: Token[]): PartialBlock[] =>
           createBlock({
             type: 'quote',
             props: { backgroundColor: 'default', textColor: 'default' },
-            content: convertInlineTokens(inlineTokens),
+            content: convertMarkdownInlineTokens(inlineTokens),
             children: convertBlockTokens(
               quoteTokens.filter(
                 (quoteToken) => quoteToken.type !== 'paragraph',
