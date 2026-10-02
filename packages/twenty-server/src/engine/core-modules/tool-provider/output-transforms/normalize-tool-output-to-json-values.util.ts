@@ -2,7 +2,6 @@ import { isString } from '@sniptt/guards';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
-// Postgres jsonb rejects \u0000, which a tool can return from a binary body such as a fetched xlsx
 const stripNulCharacters = (_key: string, value: unknown) =>
   isString(value) ? value.replace(/\0/g, '') : value;
 
