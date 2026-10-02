@@ -12,11 +12,11 @@ import {
   getAgentChatThreadSnoozeOptions,
 } from '@/ai/utils/getAgentChatThreadSnoozeOptions';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SnoozeAiChatUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
 import { snoozeAiChatThreadIdComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdComponentState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -103,17 +103,12 @@ export const SidePanelSnoozeAiChatPage = () => {
           })
         }
       >
-        <Dropdown
+        <CommandMenuItemDropdown
+          id={SNOOZE_UNTIL_DATE_ITEM_ID}
+          Icon={IconCalendar}
+          label={t`Day & Time`}
           dropdownId={untilDateDropdownId}
           dropdownPlacement="bottom-start"
-          clickableComponent={
-            <CommandMenuItem
-              id={SNOOZE_UNTIL_DATE_ITEM_ID}
-              Icon={IconCalendar}
-              label={t`Day & Time`}
-              hasSubMenu
-            />
-          }
           dropdownComponents={
             <SnoozeAiChatUntilDatePicker
               threadId={snoozeAiChatThreadId}

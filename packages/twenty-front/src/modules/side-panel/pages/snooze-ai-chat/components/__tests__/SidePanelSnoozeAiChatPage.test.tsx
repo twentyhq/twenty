@@ -86,6 +86,9 @@ describe('SidePanelSnoozeAiChatPage', () => {
       await screen.findByRole('button', { name: /^Snooze until/ }),
     ).toBeInTheDocument();
     expect(snoozeAgentChatThread).not.toHaveBeenCalled();
+    expect(
+      screen.getByText('Day & Time').closest('[data-focused]'),
+    ).toHaveAttribute('data-focused', 'true');
   });
 
   it('refreshes the options instead of snoozing into the past', () => {
