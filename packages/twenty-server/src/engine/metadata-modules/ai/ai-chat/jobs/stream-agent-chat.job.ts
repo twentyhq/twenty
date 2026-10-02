@@ -39,6 +39,7 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -89,6 +90,7 @@ export class StreamAgentChatJob {
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
+    private readonly sharingService: AgentChatSharingService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -807,6 +809,14 @@ export class StreamAgentChatJob {
     turnModelId: string;
     turnId: string;
   }): Promise<AgentChatTurnOutcome | null> {
+    const replyText =
+      responseMessage.parts
+        .flatMap((part) =>
+          part.type === 'text' && isNonEmptyString(part.text.trim())
+            ? [part.text]
+            : [],
+        )
+        .pop() ?? null;
     const hasText = responseMessage.parts.some(
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
@@ -867,6 +877,9 @@ export class StreamAgentChatJob {
       workspaceId,
       threadId,
       streamId,
+      recordedActivity: (await this.sharingService.hasInboxState(workspaceId))
+        ? { lastMessageText: replyText }
+        : null,
       usage: {
         totalInputTokens: streamUsage.inputTokens,
         totalOutputTokens: streamUsage.outputTokens,
@@ -881,6 +894,16 @@ export class StreamAgentChatJob {
     });
 
     if (!totalsUpdate.affected) {
+      // The reply is saved even though a newer stream owns the thread. That
+      // activity is best-effort and must not turn the saved reply into an error
+      await this.agentChatService
+        .recordThreadActivity({ workspaceId, threadId, text: replyText })
+        .catch((error: unknown) =>
+          this.logger.warn(
+            `Could not record reply activity on thread ${threadId}: ${error instanceof Error ? error.message : String(error)}`,
+          ),
+        );
+
       return resolveSupersededTurnOutcome(outcome);
     }
 
