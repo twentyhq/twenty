@@ -1,6 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
@@ -28,6 +32,7 @@ export type MutationQueryBuilderContext = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutor;
   formatResult: <T>(records: unknown) => T;
+  isExecutionAllowed: boolean;
 };
 
 export type MutationResult = {
@@ -95,6 +100,13 @@ export class WorkspaceMutationQueryBuilder {
   }
 
   async execute(): Promise<MutationResult> {
+    if (!this.context.isExecutionAllowed) {
+      throw new PermissionsException(
+        `Query builder ${this.kind} on "${this.tableShape.nameSingular}" runs without permission checks or events, so it is only allowed on a repository that bypasses permission checks; use the repository update, delete, softDelete or restore methods for permission-scoped writes`,
+        PermissionsExceptionCode.METHOD_NOT_ALLOWED,
+      );
+    }
+
     const { sql, parameters } = this.buildStatement();
     const compiled = compileNamedParameters(sql, parameters);
     const rows = await this.context.executor.execute(compiled);

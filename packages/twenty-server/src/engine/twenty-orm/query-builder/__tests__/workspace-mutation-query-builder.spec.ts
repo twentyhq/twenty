@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
@@ -69,9 +70,15 @@ const personTableShape: WorkspaceTableShape = {
   hasDeletedAtColumn: true,
 };
 
+const INTERNAL_MUTATION_KEY = Symbol('testInternalMutation');
+
 const buildBuilders = ({
   rows = [],
-}: { rows?: Record<string, unknown>[] } = {}) => {
+  shouldBypassPermissionChecks = false,
+}: {
+  rows?: Record<string, unknown>[];
+  shouldBypassPermissionChecks?: boolean;
+} = {}) => {
   const executedStatements: CompiledStatement[] = [];
 
   const selectQueryBuilder = new WorkspaceSelectQueryBuilder('person', {
@@ -84,6 +91,8 @@ const buildBuilders = ({
       },
     },
     objectRecordsPermissions: {},
+    shouldBypassPermissionChecks,
+    internalMutationKey: INTERNAL_MUTATION_KEY,
     tableShapeByObjectMetadataId: () => companyTableShape,
     onBeforeExecute: () => undefined,
     formatResult: (records) => records as never,
@@ -200,6 +209,7 @@ describe('WorkspaceMutationQueryBuilder', () => {
   it('should return formatted rows from execute', async () => {
     const { selectQueryBuilder, executedStatements } = buildBuilders({
       rows: [{ person_id: 'id-1' }, { person_id: 'id-2' }],
+      shouldBypassPermissionChecks: true,
     });
 
     const result = await selectQueryBuilder
@@ -320,5 +330,131 @@ describe('WorkspaceMutationQueryBuilder', () => {
     selectQueryBuilder.leftJoin('person.company', 'company');
 
     expect(() => selectQueryBuilder.softDelete()).toThrow(TwentyOrmException);
+  });
+
+  describe('permission guard', () => {
+    it.each(['update', 'delete', 'softDelete', 'restore'] as const)(
+      'should execute %s when the repository bypasses permission checks',
+      async (method) => {
+        const { selectQueryBuilder, executedStatements } = buildBuilders({
+          rows: [{ person_id: 'id-1' }],
+          shouldBypassPermissionChecks: true,
+        });
+
+        const result = await selectQueryBuilder
+          .where('"person"."id" = :id', { id: 'id-1' })
+          [method]()
+          .returning(['id'])
+          .execute();
+
+        expect(result.generatedMaps).toEqual([{ id: 'id-1' }]);
+        expect(executedStatements).toHaveLength(1);
+      },
+    );
+
+    it.each(['update', 'delete', 'softDelete', 'restore'] as const)(
+      'should refuse to execute %s on a permission-scoped repository',
+      async (method) => {
+        const { selectQueryBuilder, executedStatements } = buildBuilders();
+
+        await expect(
+          selectQueryBuilder
+            .where('"person"."id" = :id', { id: 'id-1' })
+            [method]()
+            .returning(['id'])
+            .execute(),
+        ).rejects.toThrow(PermissionsException);
+        expect(executedStatements).toHaveLength(0);
+      },
+    );
+
+    it('should refuse to execute when the context does not say permission checks are bypassed', async () => {
+      const executedStatements: CompiledStatement[] = [];
+      const selectQueryBuilder = new WorkspaceSelectQueryBuilder('person', {
+        tableShape: personTableShape,
+        executor: {
+          execute: async (statement) => {
+            executedStatements.push(statement);
+
+            return [];
+          },
+        },
+        objectRecordsPermissions: {},
+        tableShapeByObjectMetadataId: () => companyTableShape,
+        onBeforeExecute: () => undefined,
+        formatResult: (records) => records as never,
+      });
+
+      await expect(
+        selectQueryBuilder
+          .where('"person"."id" = :id', { id: 'id-1' })
+          .softDelete()
+          .execute(),
+      ).rejects.toThrow(PermissionsException);
+      expect(executedStatements).toHaveLength(0);
+    });
+
+    it('should still build the statement of a refused mutation', () => {
+      const { selectQueryBuilder } = buildBuilders();
+
+      expect(
+        selectQueryBuilder
+          .where('"person"."id" = :id', { id: 'id-1' })
+          .delete()
+          .getQuery(),
+      ).toBe(
+        `DELETE FROM "${SCHEMA_NAME}"."person" AS "person" ` +
+          'WHERE ("person"."id" = :id)',
+      );
+    });
+
+    it('should execute an internal mutation on a permission-scoped repository', async () => {
+      const { selectQueryBuilder, executedStatements } = buildBuilders({
+        rows: [{ person_id: 'id-1' }],
+      });
+
+      const result = await selectQueryBuilder
+        .where('"person"."id" = :id', { id: 'id-1' })
+        .toInternalMutationQueryBuilder('update', INTERNAL_MUTATION_KEY)
+        .set({ jobTitle: 'Tech Lead' })
+        .returning(['id'])
+        .execute();
+
+      expect(result.generatedMaps).toEqual([{ id: 'id-1' }]);
+      expect(executedStatements).toHaveLength(1);
+      expect(executedStatements[0].values).toEqual(['Tech Lead', 'id-1']);
+    });
+
+    it('should keep the internal mutation available on a clone bound to another executor', async () => {
+      const { selectQueryBuilder } = buildBuilders();
+      const transactionalStatements: CompiledStatement[] = [];
+
+      await selectQueryBuilder
+        .where('"person"."id" = :id', { id: 'id-1' })
+        .clone({
+          execute: async (statement) => {
+            transactionalStatements.push(statement);
+
+            return [];
+          },
+        })
+        .toInternalMutationQueryBuilder('soft-delete', INTERNAL_MUTATION_KEY)
+        .execute();
+
+      expect(transactionalStatements).toHaveLength(1);
+    });
+
+    it('should refuse to build an internal mutation without the repository key', () => {
+      const { selectQueryBuilder } = buildBuilders({
+        shouldBypassPermissionChecks: true,
+      });
+
+      expect(() =>
+        selectQueryBuilder.toInternalMutationQueryBuilder(
+          'delete',
+          Symbol('testInternalMutation'),
+        ),
+      ).toThrow(TwentyOrmException);
+    });
   });
 });

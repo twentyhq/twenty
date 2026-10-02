@@ -124,6 +124,8 @@ import {
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
 const ALWAYS_FALSE_CONDITION = '1=0';
+// Kept module-private so only this repository can execute mutations it has already permission-checked
+const INTERNAL_MUTATION_KEY = Symbol('workspaceRepositoryInternalMutation');
 const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   MutationKind,
   DatabaseEventAction[]
@@ -199,6 +201,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         executor: this.options.executor,
         objectRecordsPermissions: this.options.objectRecordsPermissions,
         isRecordSharingEnabled: this.isRecordSharingEnabled,
+        shouldBypassPermissionChecks: this.options.shouldBypassPermissionChecks,
+        internalMutationKey: INTERNAL_MUTATION_KEY,
         tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
         onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
         formatResult: (records) => this.formatResult(records),
@@ -1246,7 +1250,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       this.applyRowLevelPermissionPredicates(selectQueryBuilder, 'update');
 
       const result = await selectQueryBuilder
-        .update()
+        .toInternalMutationQueryBuilder('update', INTERNAL_MUTATION_KEY)
         .set(setColumns)
         .returning(updateEventColumnsToReturn)
         .execute();
@@ -1867,22 +1871,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     columnsToReturn: string[];
     setColumns?: Record<string, unknown>;
   }): Promise<{ generatedMaps: ObjectRecord[] }> {
-    if (kind === 'update') {
-      return selectQueryBuilder
-        .update()
-        .set(setColumns ?? {})
-        .returning(columnsToReturn)
-        .execute();
-    }
-
-    const mutationQueryBuilder =
-      kind === 'soft-delete'
-        ? selectQueryBuilder.softDelete()
-        : kind === 'restore'
-          ? selectQueryBuilder.restore()
-          : selectQueryBuilder.delete();
-
-    return mutationQueryBuilder.returning(columnsToReturn).execute();
+    return selectQueryBuilder
+      .toInternalMutationQueryBuilder(kind, INTERNAL_MUTATION_KEY)
+      .set(setColumns ?? {})
+      .returning(columnsToReturn)
+      .execute();
   }
 
   private buildEventSnapshotQueryBuilder(

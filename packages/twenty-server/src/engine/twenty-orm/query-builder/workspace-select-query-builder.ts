@@ -68,6 +68,8 @@ export type QueryBuilderContext = {
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   isRecordSharingEnabled?: boolean;
+  shouldBypassPermissionChecks?: boolean;
+  internalMutationKey?: symbol;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
@@ -754,23 +756,47 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   }
 
   update(): WorkspaceMutationQueryBuilder {
-    return this.toMutationQueryBuilder('update');
+    return this.toPublicMutationQueryBuilder('update');
   }
 
   delete(): WorkspaceMutationQueryBuilder {
-    return this.toMutationQueryBuilder('delete');
+    return this.toPublicMutationQueryBuilder('delete');
   }
 
   softDelete(): WorkspaceMutationQueryBuilder {
-    return this.toMutationQueryBuilder('soft-delete');
+    return this.toPublicMutationQueryBuilder('soft-delete');
   }
 
   restore(): WorkspaceMutationQueryBuilder {
-    return this.toMutationQueryBuilder('restore');
+    return this.toPublicMutationQueryBuilder('restore');
+  }
+
+  toInternalMutationQueryBuilder(
+    kind: MutationKind,
+    internalMutationKey: symbol,
+  ): WorkspaceMutationQueryBuilder {
+    if (internalMutationKey !== this.context.internalMutationKey) {
+      throw new TwentyOrmException(
+        `Internal mutations can only be built by the workspace repository, after its own permission checks`,
+        TwentyOrmExceptionCode.METHOD_NOT_ALLOWED,
+      );
+    }
+
+    return this.toMutationQueryBuilder(kind, true);
+  }
+
+  private toPublicMutationQueryBuilder(
+    kind: MutationKind,
+  ): WorkspaceMutationQueryBuilder {
+    return this.toMutationQueryBuilder(
+      kind,
+      this.context.shouldBypassPermissionChecks ?? false,
+    );
   }
 
   private toMutationQueryBuilder(
     kind: MutationKind,
+    isExecutionAllowed: boolean,
   ): WorkspaceMutationQueryBuilder {
     if (this.joinClauses.length > 0) {
       throw new TwentyOrmException(
@@ -794,6 +820,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         tableShape: this.tableShape,
         executor: this.context.executor,
         formatResult: this.context.formatResult,
+        isExecutionAllowed,
       },
       whereClauses: this.whereClauses,
       includeDeleted: this.includeDeleted,
