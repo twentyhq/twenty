@@ -4,7 +4,7 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation } from '@nestjs/graphql';
 
 import bytes from 'bytes';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
@@ -16,7 +16,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { settings } from 'src/engine/constants/settings';
 import { ApplicationDevelopmentService } from 'src/engine/core-modules/application/application-development/application-development.service';
 import { ApplicationFileUploadService } from 'src/engine/core-modules/application/application-development/application-file-upload.service';
-import { ApplicationExportDTO } from 'src/engine/core-modules/application/application-development/dtos/application-export.dto';
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
 import { CompleteApplicationFileUploadsResultDTO } from 'src/engine/core-modules/application/application-development/dtos/complete-application-file-uploads-result.dto';
 import { CompleteApplicationFileUploadsInput } from 'src/engine/core-modules/application/application-development/dtos/complete-application-file-uploads.input';
@@ -24,7 +23,6 @@ import { CreateApplicationFileUploadsResultDTO } from 'src/engine/core-modules/a
 import { CreateApplicationFileUploadsInput } from 'src/engine/core-modules/application/application-development/dtos/create-application-file-uploads.input';
 import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
 import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
-import { ExportApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/export-application.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
@@ -54,7 +52,7 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
     },
     apiKey: true,
     oauthClient: true,
-    application: true,
+    application: false,
   }),
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
@@ -65,20 +63,7 @@ export class ApplicationDevelopmentResolver {
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    ApplicationTargetGuard,
-  )
+  @UseGuards(ApplicationTargetGuard)
   async createDevelopmentApplication(
     @ApplicationTargetArgs<CreateDevelopmentApplicationInput>({
       kind: 'applicationUniversalIdentifier',
@@ -95,38 +80,8 @@ export class ApplicationDevelopmentResolver {
     });
   }
 
-  @Query(() => ApplicationExportDTO)
-  @UseGuards(ApplicationTargetGuard)
-  async exportApplication(
-    @ApplicationTargetArgs<ExportApplicationInput>({
-      kind: 'applicationUniversalIdentifier',
-      idKey: 'universalIdentifier',
-      requireApplicationRegistrationOwnership: true,
-    })
-    { universalIdentifier }: ExportApplicationInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ApplicationExportDTO> {
-    return this.applicationDevelopmentService.exportApplication({
-      universalIdentifier,
-      workspaceId,
-    });
-  }
-
   @Mutation(() => WorkspaceMigrationDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-    ApplicationTargetGuard,
-  )
+  @UseGuards(ApplicationTargetGuard)
   async syncApplication(
     @ApplicationTargetArgs<ApplicationInput>({
       kind: 'applicationUniversalIdentifier',
@@ -149,17 +104,6 @@ export class ApplicationDevelopmentResolver {
       'Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage.',
   })
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
     SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
     ApplicationTargetGuard,
   )
@@ -193,17 +137,6 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => CreateApplicationFileUploadsResultDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
     SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
     ApplicationTargetGuard,
   )
@@ -228,17 +161,6 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => CompleteApplicationFileUploadsResultDTO)
   @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
     SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
     ApplicationTargetGuard,
   )
