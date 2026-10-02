@@ -1,3 +1,4 @@
+import { type FieldFunctionOptions } from '@apollo/client/cache';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
@@ -177,7 +178,9 @@ describe('RichTextFieldEditor autosave', () => {
       ).toBe(preparedBody);
       const cacheFieldModifier = jest.mocked(modifyRecordFromCache).mock
         .lastCall?.[0].fieldModifiers.richText;
-      expect(cacheFieldModifier?.()).toEqual({
+      expect(
+        cacheFieldModifier?.(undefined, {} as FieldFunctionOptions),
+      ).toEqual({
         blocknote: preparedBody,
         markdown: null,
       });
