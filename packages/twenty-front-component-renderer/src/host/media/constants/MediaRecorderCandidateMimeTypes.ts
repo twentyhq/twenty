@@ -1,6 +1,4 @@
-// isTypeSupported answers in the worker come from a snapshot, so the host
-// probes a list of the container/codec combinations applications actually
-// ask for. Anything outside the list reports as unsupported.
+// Worker isTypeSupported answers come from a host snapshot of these; anything else reports unsupported.
 export const MEDIA_RECORDER_CANDIDATE_MIME_TYPES = [
   'audio/webm',
   'audio/webm;codecs=opus',

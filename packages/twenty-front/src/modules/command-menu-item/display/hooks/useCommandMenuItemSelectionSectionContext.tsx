@@ -3,13 +3,13 @@ import {
   isDefined,
   isNonEmptyArray,
   isNonEmptyString,
-  resolveObjectMetadataLabel,
 } from 'twenty-shared/utils';
 
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemSelectionRecordStack } from '@/command-menu-item/display/components/CommandMenuItemSelectionRecordStack';
 import { type CommandMenuItemSectionContext } from '@/command-menu-item/types/CommandMenuItemSectionContext';
+import { getSelectedRecordsCountLabel } from '@/command-menu-item/utils/getSelectedRecordsCountLabel';
 import { useContextStoreObjectMetadataItem } from '@/context-store/hooks/useContextStoreObjectMetadataItem';
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { contextStoreRecordIdsInSelectionOrderComponentState } from '@/context-store/states/contextStoreRecordIdsInSelectionOrderComponentState';
@@ -83,10 +83,10 @@ export const useCommandMenuItemSelectionSectionContext = ():
 
   const label = isNonEmptyString(singleRecordName)
     ? singleRecordName
-    : `${numberOfSelectedRecords} ${resolveObjectMetadataLabel({
+    : getSelectedRecordsCountLabel({
         objectMetadataItem,
         numberOfSelectedRecords,
-      })}`;
+      });
 
   // Record avatars come from the object's identifier chip, which objects
   // without a label identifier field do not have.

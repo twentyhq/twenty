@@ -1,0 +1,58 @@
+.root {
+  align-items: center;
+  block-size: var(--t-spacing-8);
+  color: var(--t-font-color-tertiary);
+  display: flex;
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-md);
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  overflow: hidden;
+}
+
+.list {
+  align-items: center;
+  display: flex;
+  gap: var(--t-spacing-1);
+  list-style: none;
+  margin: 0;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  padding: 0;
+}
+
+.item {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--t-spacing-1);
+  min-inline-size: 0;
+
+  &:last-child {
+    flex: 0 1 auto;
+  }
+}
+
+.content {
+  color: var(--t-font-color-primary);
+  display: block;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &[data-linked] {
+    color: inherit;
+  }
+
+  @include focus-ring;
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+}
+
+.separator {
+  flex: 0 0 var(--t-spacing-2);
+}

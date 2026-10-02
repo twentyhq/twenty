@@ -55,11 +55,7 @@ type AnswerToolCallOutcome = {
   turnId: string | null;
 };
 
-// Every pause for a person is a pausing tool call in a conversation, a chat or
-// a workflow run's, and each is answered here. An answer takes the
-// conversation's stream claim, and only while the conversation still waits on
-// the message that paused, so each call is answered once and only the last
-// answer resumes what waits on them.
+// an answer takes the stream claim only while the conversation still waits, so each call is answered once
 @Injectable()
 export class ToolCallAnswerService {
   constructor(
@@ -223,8 +219,7 @@ export class ToolCallAnswerService {
       throw error;
     }
 
-    // The answer is recorded and cannot be given again, so from here a
-    // failure fails the turn or the run, which can then be retried.
+    // the answer is recorded and cannot be resubmitted, so failures fail the turn or run for retry
     try {
       const answerMessage = await this.agentChatService.addMessage({
         threadId,
@@ -238,8 +233,7 @@ export class ToolCallAnswerService {
 
       await this.publishToolCallResolved({ threadId, toolCallId, workspaceId });
 
-      // A run resumes in its own executor, and a conversation still waiting
-      // on other calls resumes with the last of their answers.
+      // runs resume in their own executor, and only the last answer resumes a chat
       if (isDefined(step) || !isLastAnswer) {
         await this.agentChatStreamingService.releaseStreamClaim(
           threadId,
@@ -371,8 +365,6 @@ export class ToolCallAnswerService {
     });
   }
 
-  // The same permission that lets someone run a workflow, on a run they can
-  // read.
   private async assertCanAnswerForWorkflowRun({
     userWorkspaceId,
     workspaceId,
@@ -413,8 +405,6 @@ export class ToolCallAnswerService {
     }
   }
 
-  // Built only when a pausing tool runs another tool, and as the person who
-  // answered: their role and connected accounts decide what it may do.
   private buildCompletionContext({
     workspaceId,
     userWorkspaceId,

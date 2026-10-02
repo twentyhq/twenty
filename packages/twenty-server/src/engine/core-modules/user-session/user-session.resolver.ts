@@ -49,8 +49,7 @@ export class UserSessionResolver {
       | undefined,
     @Context() context: { req: Request },
   ): Promise<UserSessionDTO[]> {
-    // Workspace-agnostic sessions are admitted and have no workspace to
-    // scope to. Nothing is in scope rather than everything.
+    // Workspace-agnostic sessions have no workspace to scope to: nothing is in scope rather than everything.
     if (!isDefined(workspace)) {
       return [];
     }

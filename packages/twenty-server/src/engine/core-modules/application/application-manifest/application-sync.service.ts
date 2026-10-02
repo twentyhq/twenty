@@ -20,6 +20,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -45,6 +46,7 @@ export class ApplicationSyncService {
 
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly applicationLookupService: ApplicationLookupService,
     private readonly applicationManifestMigrationService: ApplicationManifestMigrationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -76,8 +78,7 @@ export class ApplicationSyncService {
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
   }> {
-    // Server variables are written to the registration after this sync, so
-    // reserved names are checked here to fail before the workspace changes
+    // Checked upfront: server variables reach the registration only after the workspace changes
     const reservedVariableNames =
       findReservedVariableNamesInApplicationManifest(manifest.application);
 
@@ -118,10 +119,7 @@ export class ApplicationSyncService {
     }
 
     if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {
-      // Translation sync runs after the metadata migration is already applied
-      // and is non-critical to the application itself, so a failure here must
-      // never abort an otherwise successful install/sync. It is idempotent and
-      // self-heals on the next sync.
+      // Non-critical and self-healing on next sync, so a failure must not abort the install
       try {
         await this.applicationTranslationSyncService.syncFromManifest({
           applicationRegistrationId:
@@ -150,7 +148,7 @@ export class ApplicationSyncService {
     manifest: Manifest;
   }): Promise<FlatApplication> {
     const installedApplication =
-      await this.applicationService.findByUniversalIdentifier({
+      await this.applicationLookupService.findByUniversalIdentifier({
         universalIdentifier: manifest.application.universalIdentifier,
         workspaceId,
       });
@@ -212,10 +210,7 @@ export class ApplicationSyncService {
     };
   }
 
-  // Registers the application + only the pre-install logic function in
-  // workspace metadata so the pre-install hook can resolve and execute it
-  // before the main synchronizeFromManifest runs the full migrations.
-  // No-op when the manifest does not declare a pre-install logic function.
+  // Lets the pre-install hook resolve its logic function before the full migrations run
   public async preInstallSynchronizeFromManifest({
     workspaceId,
     manifest,
@@ -429,9 +424,8 @@ export class ApplicationSyncService {
       },
     );
 
-    // Uninstall also removes engine-owned and workspace-local metadata that
-    // manifest omission intentionally preserves. Expand these explicit deletions
-    // so dependents owned by other applications are cleaned up too.
+    // Unlike manifest omission, uninstall also removes engine-owned and workspace-local metadata, so expand the deletions
+    // to dependents owned by other applications
     const allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName =
       Object.fromEntries(
         Object.values(ALL_METADATA_NAME).map((metadataName) => [

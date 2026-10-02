@@ -1,5 +1,4 @@
-// The sandboxed worker runs in an opaque origin, which is not a secure
-// context: crypto.randomUUID does not exist there, but getRandomValues does.
+// The sandboxed worker's opaque origin isn't a secure context, so crypto.randomUUID can be missing.
 export const generateRandomId = (): string => {
   if (typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();

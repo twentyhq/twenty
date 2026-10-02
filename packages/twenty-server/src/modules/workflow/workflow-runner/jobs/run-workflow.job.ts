@@ -222,9 +222,7 @@ export class RunWorkflowJob {
     });
   }
 
-  // An answered step stays PENDING until here, which keeps its run from
-  // completing while the resume waits in the queue. Claiming it out of PENDING
-  // is what makes a second resume of the same step do nothing.
+  // The step stays PENDING until claimed here, so its run can't complete while queued and a second resume no-ops
   private async resumeAnsweredStep({
     workflowRunId,
     stepToResume: { stepId, threadId },

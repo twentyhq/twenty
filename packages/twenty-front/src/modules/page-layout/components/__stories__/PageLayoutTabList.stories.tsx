@@ -103,8 +103,7 @@ const PageLayoutTabListPlayground = ({
   containerWidth = 720,
 }: PageLayoutTabListPlaygroundProps) => {
   const isInIdentifierBar = presentation === 'identifier-bar';
-  // Tab drops are routed into the page-layout draft by the dnd provider, so
-  // the story renders from that draft to stay interactive.
+  // The dnd provider routes tab drops into the draft, so render from it.
   const [pageLayoutDraft, setPageLayoutDraft] = useAtomComponentState(
     pageLayoutDraftComponentState,
   );

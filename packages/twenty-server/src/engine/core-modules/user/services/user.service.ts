@@ -43,6 +43,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RecordShareOwnershipTransferService } from 'src/engine/core-modules/record-share/services/record-share-ownership-transfer.service';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -58,6 +59,7 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
+    private readonly recordShareOwnershipTransferService: RecordShareOwnershipTransferService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly emailVerificationService: EmailVerificationService,
     private readonly workspaceService: WorkspaceService,
@@ -387,6 +389,14 @@ export class UserService {
       },
     );
 
+    await this.recordShareOwnershipTransferService.transferRecordSharesToCustodian(
+      {
+        removedUserWorkspace: userWorkspace,
+        removedWorkspaceMemberId: workspaceMember.id,
+        actingUserWorkspaceId,
+      },
+    );
+
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepository =
         this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -404,8 +414,7 @@ export class UserService {
       workspaceId,
     });
 
-    // Runs after the membership is gone so a failed removal keeps the history
-    // and threads created during the removal are still cleaned up.
+    // After the membership is gone, so a failed removal keeps the history and threads created meanwhile are cleaned.
     await this.agentChatThreadRepository.delete(workspaceId, {
       workspaceMemberId: workspaceMember.id,
     });

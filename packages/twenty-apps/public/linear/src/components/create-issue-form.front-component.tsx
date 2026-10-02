@@ -768,7 +768,6 @@ const CreateIssueForm = () => {
     <div style={STYLES.outer}>
       <style>{'@keyframes spin{to{transform:rotate(360deg)}}'}</style>
       <div style={STYLES.container}>
-        {/* Top bar with team selector */}
         <div style={STYLES.topBar}>
           <select
             value={teamId}
@@ -789,10 +788,8 @@ const CreateIssueForm = () => {
           )}
         </div>
 
-        {/* Property chips & labels */}
         <div style={STYLES.labelPicker}>
           <div style={STYLES.chipsRow}>
-            {/* Status */}
             {hasStatuses && !optionsLoading && (
               <label style={STYLES.chip}>
                 <span style={STYLES.chipIcon}>{stateIcon}</span>
@@ -811,7 +808,6 @@ const CreateIssueForm = () => {
               </label>
             )}
 
-            {/* Priority */}
             <label style={STYLES.chip}>
               <span style={STYLES.chipIcon}>{'≡'}</span>
               <select
@@ -827,7 +823,6 @@ const CreateIssueForm = () => {
               </select>
             </label>
 
-            {/* Assignee */}
             <label style={STYLES.chip}>
               <span style={STYLES.chipIcon}>{'⬤'}</span>
               <select
@@ -845,7 +840,6 @@ const CreateIssueForm = () => {
               </select>
             </label>
 
-            {/* Estimate */}
             {hasEstimates && (
               <label style={STYLES.chip}>
                 <span style={STYLES.chipIcon}>{'△'}</span>
@@ -865,7 +859,6 @@ const CreateIssueForm = () => {
               </label>
             )}
 
-            {/* Labels toggle */}
             {options.labels.length > 0 && (
               <button
                 type="button"
@@ -884,7 +877,6 @@ const CreateIssueForm = () => {
               </button>
             )}
 
-            {/* Cycle */}
             {options.cycles.length > 0 && (
               <label style={STYLES.chip}>
                 <span style={STYLES.chipIcon}>{'▶'}</span>
@@ -904,7 +896,6 @@ const CreateIssueForm = () => {
               </label>
             )}
 
-            {/* Due date */}
             <input
               value={dueDate}
               onChange={onValueChange(setDueDate)}
@@ -912,7 +903,6 @@ const CreateIssueForm = () => {
               type="date"
             />
 
-            {/* Project */}
             {options.projects.length > 0 && (
               <label style={STYLES.chip}>
                 <span style={STYLES.chipIcon}>{'⬡'}</span>
