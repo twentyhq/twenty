@@ -1,9 +1,10 @@
+import { useLingui } from '@lingui/react/macro';
 import React, { useMemo } from 'react';
 
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SocialLink } from '@/ui/field/display/components/SocialLink/SocialLink';
-import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { OverflowingList } from 'twenty-ui/components';
 import {
   getAbsoluteUrlOrThrow,
   getUrlHostnameOrThrow,
@@ -19,6 +20,8 @@ type LinksDisplayProps = {
 };
 
 export const LinksDisplay = ({ value, onLinkClick }: LinksDisplayProps) => {
+  const { t } = useLingui();
+
   const links = useMemo(() => {
     if (!isDefined(value)) {
       return [];
@@ -44,7 +47,7 @@ export const LinksDisplay = ({ value, onLinkClick }: LinksDisplayProps) => {
   }, [value]);
 
   return (
-    <ExpandableList>
+    <OverflowingList overflowLabel={t`Show all items`}>
       {links.map(({ url, label, displayLabel, type }, index) =>
         isSocialLinkType(type) ? (
           <SocialLink
@@ -63,6 +66,6 @@ export const LinksDisplay = ({ value, onLinkClick }: LinksDisplayProps) => {
           />
         ),
       )}
-    </ExpandableList>
+    </OverflowingList>
   );
 };

@@ -1,7 +1,8 @@
+import { useLingui } from '@lingui/react/macro';
 import React, { useMemo } from 'react';
 
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { OverflowingList } from 'twenty-ui/components';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink/RoundedLink';
@@ -30,6 +31,8 @@ export const EmailsDisplay = ({
   isFocused,
   onEmailClick,
 }: EmailsDisplayProps) => {
+  const { t } = useLingui();
+
   const emails = useMemo(
     () =>
       [
@@ -40,7 +43,7 @@ export const EmailsDisplay = ({
   );
 
   return isFocused ? (
-    <ExpandableList isChipCountDisplayed>
+    <OverflowingList overflowLabel={t`Show all items`} showOverflowCount>
       {emails.map((email, index) => (
         <RoundedLink
           key={index}
@@ -49,7 +52,7 @@ export const EmailsDisplay = ({
           onClick={(event) => onEmailClick?.(email, event)}
         />
       ))}
-    </ExpandableList>
+    </OverflowingList>
   ) : (
     <StyledContainer>
       {emails.map((email, index) => (

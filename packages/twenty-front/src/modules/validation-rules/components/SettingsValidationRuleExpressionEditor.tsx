@@ -222,8 +222,19 @@ export const SettingsValidationRuleExpressionEditor = ({
     });
   };
 
+  const getIsWordBeingTyped = () => {
+    return (
+      isDefined(editor) &&
+      helperContext.replaceFromOffset <
+        getValidationRuleEditorText(
+          editor.state.doc,
+          editor.state.selection.from,
+        ).length
+    );
+  };
+
   const handleEditorKeyDown = (event: KeyboardEvent): boolean => {
-    const { items, replaceFromOffset } = helperContext;
+    const { items } = helperContext;
 
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       if (items.length === 0) {
@@ -245,17 +256,10 @@ export const SettingsValidationRuleExpressionEditor = ({
     }
 
     const highlightedItem = items[highlightedIndex];
-    const isWordBeingTyped =
-      isDefined(editor) &&
-      replaceFromOffset <
-        getValidationRuleEditorText(
-          editor.state.doc,
-          editor.state.selection.from,
-        ).length;
 
     if (
       isDefined(highlightedItem) &&
-      (hasNavigatedHelper || isWordBeingTyped)
+      (hasNavigatedHelper || getIsWordBeingTyped())
     ) {
       insertHelperItem(highlightedItem);
     }
@@ -283,6 +287,7 @@ export const SettingsValidationRuleExpressionEditor = ({
       <SettingsValidationRuleHelperPanel
         items={helperContext.items}
         highlightedIndex={highlightedIndex}
+        isEnterHintVisible={hasNavigatedHelper || getIsWordBeingTyped()}
         editorFields={editorFields}
         onHighlight={setHighlightedIndex}
         onSelect={insertHelperItem}
