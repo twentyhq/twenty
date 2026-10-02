@@ -7,12 +7,13 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
-import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.module';
 import { LogicFunctionWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/logic-function.workflow-action';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
 @Module({
   imports: [
+    WorkflowExecutionContextModule,
     ApplicationModule,
     LogicFunctionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
@@ -22,7 +23,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     RoleModule,
     WorkflowCommonModule,
   ],
-  providers: [WorkflowExecutionContextService, LogicFunctionWorkflowAction],
+  providers: [LogicFunctionWorkflowAction],
   exports: [LogicFunctionWorkflowAction],
 })
 export class LogicFunctionActionModule {}

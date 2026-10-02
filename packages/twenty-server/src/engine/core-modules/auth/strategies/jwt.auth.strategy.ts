@@ -12,10 +12,8 @@ import {
 import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
 import { type ApiKeyTokenJwtPayload } from 'src/engine/core-modules/auth/types/api-key-token-jwt-payload.type';
 import { ApplicationAccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-access-token-jwt-payload.type';
-import {
-  type AuthContext,
-  type AuthContextUser,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type PlaygroundTokenJwtPayload } from 'src/engine/core-modules/auth/types/playground-token-jwt-payload.type';
@@ -68,7 +66,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   private async validateApiKey(
     payload: ApiKeyTokenJwtPayload,
-  ): Promise<AuthContext> {
+  ): Promise<RawAuthContext> {
     const workspace = await this.coreEntityCacheService.get(
       'workspaceEntity',
       payload.sub,
@@ -108,9 +106,9 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   private async validateAccessToken(
     payload: AccessTokenJwtPayload | PlaygroundTokenJwtPayload,
-  ): Promise<AuthContext> {
+  ): Promise<RawAuthContext> {
     let user: AuthContextUser | null = null;
-    let context: AuthContext = {};
+    let context: RawAuthContext = {};
 
     const workspace = await this.coreEntityCacheService.get(
       'workspaceEntity',
@@ -318,7 +316,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   private async validateWorkspaceAgnosticToken(
     payload: WorkspaceAgnosticTokenJwtPayload,
-  ): Promise<AuthContext> {
+  ): Promise<RawAuthContext> {
     const user = await this.coreEntityCacheService.get('user', payload.sub);
 
     assertIsDefinedOrThrow(
@@ -331,7 +329,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   private async validateApplicationToken(
     payload: ApplicationAccessTokenJwtPayload,
-  ): Promise<AuthContext> {
+  ): Promise<RawAuthContext> {
     const workspace = await this.resolveWorkspaceForApplicationToken(payload);
 
     if (!isDefined(workspace)) {
@@ -357,7 +355,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    const context: AuthContext = { application, workspace };
+    const context: RawAuthContext = { application, workspace };
 
     if (payload.userId && payload.userWorkspaceId) {
       const userContext = await this.resolveUserContext({
@@ -460,7 +458,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     return !payload.type && !('workspaceId' in payload);
   }
 
-  async validate(payload: JwtPayload): Promise<AuthContext> {
+  async validate(payload: JwtPayload): Promise<RawAuthContext> {
     const context = await this.dispatch(payload);
 
     return {
@@ -471,7 +469,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     };
   }
 
-  private async dispatch(payload: JwtPayload): Promise<AuthContext> {
+  private async dispatch(payload: JwtPayload): Promise<RawAuthContext> {
     if (
       payload.type === JwtTokenTypeEnum.API_KEY ||
       this.isLegacyApiKeyPayload(payload)

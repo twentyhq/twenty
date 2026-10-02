@@ -136,9 +136,49 @@ const readStoredThreadState = async (threadId: string) => {
   return rows[0] ?? null;
 };
 const SET_SHARE =
-  parse(`mutation SetThreadShare($target: RecordSharingTargetInput!, $principal: RecordSharePrincipalInput!, $enabled: Boolean!, $accessLevel: RecordShareAccessLevel) {
-  setRecordShare(target: $target, principal: $principal, enabled: $enabled, accessLevel: $accessLevel) { isEnabled }
+  parse(`mutation SetThreadShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) {
+  setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { sharingMode }
 }`);
+const REMOVE_SHARE =
+  parse(`mutation RemoveThreadShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) {
+  removeRecordShare(target: $target, principal: $principal) { sharingMode }
+}`);
+const SET_GENERAL_ACCESS =
+  parse(`mutation SetThreadGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) {
+  setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { sharingMode }
+}`);
+type ThreadAudience = RecordSharePrincipalInput | 'everyone';
+// Everyone is reached through the general access, where NONE withdraws it
+const shareThread = ({
+  target,
+  audience,
+  accessLevel,
+  token,
+}: {
+  target: { objectMetadataId: string; recordId: string };
+  audience: ThreadAudience;
+  accessLevel: RecordShareAccessLevel;
+  token?: string;
+}) => {
+  if (audience === 'everyone') {
+    return makeMetadataApiRequest(
+      { query: SET_GENERAL_ACCESS, variables: { target, accessLevel } },
+      token,
+    );
+  }
+  return accessLevel === RecordShareAccessLevel.NONE
+    ? makeMetadataApiRequest(
+        { query: REMOVE_SHARE, variables: { target, principal: audience } },
+        token,
+      )
+    : makeMetadataApiRequest(
+        {
+          query: SET_SHARE,
+          variables: { target, principal: audience, accessLevel },
+        },
+        token,
+      );
+};
 
 describe('Conversation sharing through the authenticated API', () => {
   it.each(['member', 'role', 'everyone', 'setup'])(
@@ -157,12 +197,12 @@ describe('Conversation sharing through the authenticated API', () => {
       if (!isDefined(roleId)) {
         throw new Error('Seeded recipient role is missing');
       }
-      const principal: RecordSharePrincipalInput =
+      const threadAudience: ThreadAudience =
         audience === 'member'
           ? { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY }
           : audience === 'role'
             ? { roleId }
-            : { everyone: true };
+            : 'everyone';
       const chatService =
         getAppProviderByClassName<AgentChatService>('AgentChatService');
       const threadId =
@@ -193,9 +233,12 @@ describe('Conversation sharing through the authenticated API', () => {
       const listedThreadIds = () =>
         listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN);
       const changeShare = (enabled: boolean) =>
-        makeMetadataApiRequest({
-          query: SET_SHARE,
-          variables: { target, principal, enabled },
+        shareThread({
+          target,
+          audience: threadAudience,
+          accessLevel: enabled
+            ? RecordShareAccessLevel.READ
+            : RecordShareAccessLevel.NONE,
         });
       try {
         const kickoff = await chatService.ensureHiddenKickoffMessage({
@@ -233,8 +276,7 @@ describe('Conversation sharing through the authenticated API', () => {
         expect(sharedMessages.body.data.chatMessages).toEqual([]);
         const audienceDetails = await makeMetadataApiRequest(
           {
-            query:
-              parse(`query SharingDetails($target: RecordSharingTargetInput!) {
+            query: parse(`query SharingDetails($target: RecordTargetInput!) {
             recordSharing(target: $target) { permissions { canRead canUpdate canDelete canSoftDelete } shares { principalId } roles { id } }
           }`),
             variables: { target },
@@ -280,13 +322,12 @@ describe('Conversation sharing through the authenticated API', () => {
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(stop.body.errors[0].extensions.code).toBe('NOT_FOUND');
-        const grantAsViewer = await makeMetadataApiRequest(
-          {
-            query: SET_SHARE,
-            variables: { target, principal: { everyone: true }, enabled: true },
-          },
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        );
+        const grantAsViewer = await shareThread({
+          target,
+          audience: 'everyone',
+          accessLevel: RecordShareAccessLevel.READ,
+          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        });
         expect(grantAsViewer.body.errors[0].extensions.code).toBe('NOT_FOUND');
         const anonymous = await readThread(threadId, null);
         expect(anonymous.body.errors).toBeDefined();
@@ -321,12 +362,12 @@ describe('Conversation sharing through the authenticated API', () => {
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       };
-      const principal =
+      const threadAudience: ThreadAudience =
         audience === 'member'
           ? { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY }
           : audience === 'role'
             ? { roleId: userWorkspaceRoleMap[sender.userWorkspaceId] }
-            : { everyone: true };
+            : 'everyone';
       const threadId = randomUUID();
       const target = {
         objectMetadataId:
@@ -347,10 +388,7 @@ describe('Conversation sharing through the authenticated API', () => {
       });
       try {
         const grant = (accessLevel: RecordShareAccessLevel) =>
-          makeMetadataApiRequest({
-            query: SET_SHARE,
-            variables: { target, principal, enabled: true, accessLevel },
-          });
+          shareThread({ target, audience: threadAudience, accessLevel });
         expect(
           (await grant(RecordShareAccessLevel.READ_WRITE)).body.errors,
         ).toBeUndefined();
@@ -396,33 +434,37 @@ describe('Conversation sharing through the authenticated API', () => {
         expect(stop.body.errors).toBeUndefined();
         expect(stop.body.data.stopAgentChatStream).toBe(true);
         const changeSharingAsParticipant = (enabled: boolean) =>
-          makeMetadataApiRequest(
-            {
-              query: SET_SHARE,
-              variables: {
-                target,
-                principal: {
-                  workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-                },
-                enabled,
-                accessLevel: RecordShareAccessLevel.READ,
-              },
+          shareThread({
+            target,
+            audience: {
+              workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
             },
-            APPLE_JONY_MEMBER_ACCESS_TOKEN,
-          );
+            accessLevel: enabled
+              ? RecordShareAccessLevel.READ
+              : RecordShareAccessLevel.NONE,
+            token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          });
         for (const enabled of [true, false]) {
           expect(
             (await changeSharingAsParticipant(enabled)).body.errors[0]
               .extensions.code,
           ).toBe('NOT_FOUND');
         }
-        expect(
-          (await grant(RecordShareAccessLevel.FULL)).body.errors,
-        ).toBeUndefined();
-        for (const enabled of [true, false]) {
+        // Full access lets its holder manage sharing, so everyone never gets it
+        if (threadAudience === 'everyone') {
           expect(
-            (await changeSharingAsParticipant(enabled)).body.errors,
+            (await grant(RecordShareAccessLevel.FULL)).body.errors[0].extensions
+              .code,
+          ).toBe('BAD_USER_INPUT');
+        } else {
+          expect(
+            (await grant(RecordShareAccessLevel.FULL)).body.errors,
           ).toBeUndefined();
+          for (const enabled of [true, false]) {
+            expect(
+              (await changeSharingAsParticipant(enabled)).body.errors,
+            ).toBeUndefined();
+          }
         }
         expect(
           (await grant(RecordShareAccessLevel.READ_WRITE)).body.errors,
@@ -981,6 +1023,7 @@ describe('Conversations through the record API', () => {
           isSystemContext: false,
           objectsPermissions: rolesPermissions[roleId],
           principalIds: [EVERYONE_PRINCIPAL_ID, workspaceMemberId, roleId],
+          canAccessAllRecords: false,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });

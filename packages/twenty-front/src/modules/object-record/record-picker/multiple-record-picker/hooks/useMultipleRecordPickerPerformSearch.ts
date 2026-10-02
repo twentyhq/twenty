@@ -11,7 +11,7 @@ import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from 
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { sortMorphItems } from '@/object-record/record-picker/multiple-record-picker/utils/sortMorphItems';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { type ApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
@@ -97,10 +97,10 @@ export const useMultipleRecordPickerPerformSearch = () => {
       const filteredSearchableObjectMetadataItems =
         searchableObjectMetadataItems.filter(
           (objectMetadataItem) =>
-            getObjectPermissionsFromMapByObjectMetadataId({
+            getObjectPermissionsForObject(
               objectPermissionsByObjectMetadataId,
-              objectMetadataId: objectMetadataItem.id,
-            }).canReadObjectRecords === true,
+              objectMetadataItem.id,
+            ).canReadObjectRecords === true,
         );
 
       const [

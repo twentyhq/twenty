@@ -11,7 +11,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
@@ -89,7 +89,7 @@ export class ImpersonationResolver {
   @AllowSuspendedWorkspace()
   async stopImpersonation(
     @AuthImpersonationContext()
-    impersonationContext: AuthContext['impersonationContext'],
+    impersonationContext: RawAuthContext['impersonationContext'],
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { req: Request },
   ): Promise<StopImpersonationDTO> {

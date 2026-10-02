@@ -68,6 +68,37 @@ describe('mapAiStepsToToolCallLogs', () => {
     expect(result[0].errorMessage).toContain('Validation failed');
   });
 
+  it('marks a tool-result whose output reports a failure as error', () => {
+    const output = {
+      success: false,
+      message: 'Failed to execute create_view',
+      error: 'View not found',
+    };
+    const steps = [
+      buildStep([
+        {
+          type: 'tool-call',
+          toolName: 'create_view',
+          toolCallId: 'call_3',
+          input: {},
+        } as StepContentPart,
+        {
+          type: 'tool-result',
+          toolName: 'create_view',
+          toolCallId: 'call_3',
+          input: {},
+          output,
+        } as StepContentPart,
+      ]),
+    ];
+
+    expect(mapAiStepsToToolCallLogs(steps)[0]).toMatchObject({
+      state: 'error',
+      errorMessage: 'View not found',
+      output,
+    });
+  });
+
   it('truncates oversized tool input and output', () => {
     const longString = 'x'.repeat(50_000);
 

@@ -2,8 +2,8 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
 
-import { TEMPLATE_FIRST_PARTY_PACKAGES } from '@/constants/template-packages';
-import createTwentyAppPackageJson from 'package.json';
+import { TEMPLATE_PACKAGE_VERSION } from '../constants/template-package-version';
+import { TEMPLATE_FIRST_PARTY_PACKAGES } from '../constants/template-packages';
 
 const SRC_FOLDER = 'src';
 
@@ -12,16 +12,20 @@ export const copyBaseApplicationProject = async ({
   appDisplayName,
   appDescription,
   appDirectory,
+  templateDirectory = join(__dirname, './constants/template'),
+  packageVersion = TEMPLATE_PACKAGE_VERSION,
   onProgress,
 }: {
   appName: string;
   appDisplayName: string;
   appDescription: string;
   appDirectory: string;
+  templateDirectory?: string;
+  packageVersion?: string;
   onProgress?: (message: string) => void;
 }) => {
   onProgress?.('Copying base template');
-  await fs.copy(join(__dirname, './constants/template'), appDirectory);
+  await fs.copy(templateDirectory, appDirectory);
 
   onProgress?.('Configuring dotfiles (.gitignore, .github, .yarnrc.yml)');
   await renameDotfiles({ appDirectory });
@@ -39,7 +43,7 @@ export const copyBaseApplicationProject = async ({
   });
 
   onProgress?.('Updating package.json');
-  await updatePackageJson({ appName, appDirectory });
+  await updatePackageJson({ appName, appDirectory, packageVersion });
 };
 
 // npm strips dotfiles from published packages, so they're stored without the dot and renamed after copying.
@@ -103,18 +107,31 @@ const generateUniversalIdentifiers = async ({
   await fs.writeFile(
     universalIdentifiersPath,
     universalIdentifiersFileContent
-      .replace('DISPLAY-NAME-TO-BE-GENERATED', appDisplayName)
-      .replace('DESCRIPTION-TO-BE-GENERATED', appDescription)
+      .replace('DISPLAY-NAME-TO-BE-GENERATED', () =>
+        escapeSingleQuotedString(appDisplayName),
+      )
+      .replace('DESCRIPTION-TO-BE-GENERATED', () =>
+        escapeSingleQuotedString(appDescription),
+      )
       .replace(/UUID-TO-BE-GENERATED/g, () => v4()),
   );
 };
 
+const escapeSingleQuotedString = (value: string) =>
+  value
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r');
+
 const updatePackageJson = async ({
   appName,
   appDirectory,
+  packageVersion,
 }: {
   appName: string;
   appDirectory: string;
+  packageVersion: string;
 }) => {
   const packageJson = await fs.readJson(join(appDirectory, 'package.json'));
 
@@ -122,8 +139,7 @@ const updatePackageJson = async ({
   packageJson.name = appName;
 
   for (const packageName of TEMPLATE_FIRST_PARTY_PACKAGES) {
-    packageJson.devDependencies[packageName] =
-      createTwentyAppPackageJson.version;
+    packageJson.devDependencies[packageName] = packageVersion;
   }
 
   await fs.writeFile(

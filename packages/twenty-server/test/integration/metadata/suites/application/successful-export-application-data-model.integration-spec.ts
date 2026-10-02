@@ -1062,9 +1062,7 @@ describe('Application export - data model', () => {
       expectToFail: true,
     });
 
-    expect(errors?.[0]?.extensions?.subCode).toBe(
-      'STANDARD_APPLICATION_NOT_EXPORTABLE',
-    );
+    expect(errors?.[0]?.extensions?.subCode).toBe('APPLICATION_NOT_FOUND');
   });
 
   it('round-trips the workspace Custom application through an additive dry-run sync without any action', async () => {

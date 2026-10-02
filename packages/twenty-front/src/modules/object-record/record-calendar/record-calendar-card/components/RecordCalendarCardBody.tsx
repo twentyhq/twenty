@@ -31,8 +31,7 @@ export const RecordCalendarCardBody = ({
   calendarDay,
   isRecordReadOnly,
 }: RecordCalendarCardBodyProps) => {
-  const { objectPermissions, objectMetadataItem } =
-    useRecordCalendarContextOrThrow();
+  const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
   const cardInstanceIdPrefix =
     getRecordCalendarCardInstanceIdPrefix(calendarDay);
@@ -103,7 +102,7 @@ export const RecordCalendarCardBody = ({
                 isLabelIdentifier: false,
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
-                  objectPermissions,
+                  objectMetadataId: objectMetadataItem.id,
                   fieldMetadataItem,
                   fieldDefinition: correspondingFieldDefinition,
                   objectPermissionsByObjectMetadataId,
