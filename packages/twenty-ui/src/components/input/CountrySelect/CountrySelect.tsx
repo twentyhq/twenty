@@ -6,6 +6,7 @@ import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
 import { IconChevronDown, IconCircleOff } from '@ui/icon';
 import inputStyles from '@ui/primitives/input/Input/Input.module.scss';
 import selectStyles from '@ui/primitives/input/Select/Select.module.scss';
+import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { normalizeSearchText } from '@ui/utilities/utils/normalizeSearchText';
@@ -27,10 +28,15 @@ export const CountrySelect = ({
   className,
   id,
   'aria-label': ariaLabel,
+  'aria-describedby': ariaDescribedBy,
   ...props
 }: CountrySelectProps) => {
   const generatedId = useId();
   const triggerId = id ?? generatedId;
+  const selectedValueId = `${generatedId}-value`;
+  const describedBy = [ariaDescribedBy, selectedValueId]
+    .filter(isNonEmptyString)
+    .join(' ');
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const isDisabled = disabled || !isNonEmptyArray(countries);
   const requestedOpen = controlledOpen ?? uncontrolledOpen;
@@ -58,6 +64,7 @@ export const CountrySelect = ({
     normalizedSearch,
   );
   const hasResults = showNoCountry || isNonEmptyArray(filteredCountries);
+  const popupLabel = [label, ariaLabel].find(isNonEmptyString);
 
   const handleOpenChange = (nextOpen: boolean) => {
     setUncontrolledOpen(nextOpen);
@@ -82,6 +89,7 @@ export const CountrySelect = ({
           id={triggerId}
           disabled={isDisabled}
           aria-label={ariaLabel}
+          aria-describedby={describedBy}
           className={mergeClassNames(
             clsx(inputStyles.input, inputStyles.md, selectStyles.trigger),
             className,
@@ -90,12 +98,14 @@ export const CountrySelect = ({
           <span className={styles.flag} aria-hidden="true">
             {selectedFlag}
           </span>
-          <span className={selectStyles.value}>{selectedLabel}</span>
+          <span className={selectStyles.value} id={selectedValueId}>
+            <OverflowingTextWithTooltip text={selectedLabel} />
+          </span>
           <span className={selectStyles.icon} aria-hidden="true">
             <IconChevronDown />
           </span>
         </Dropdown.Trigger>
-        <Dropdown.Content {...popupProps} aria-label={label ?? ariaLabel}>
+        <Dropdown.Content {...popupProps} aria-label={popupLabel}>
           <Dropdown.Search
             value={search}
             onValueChange={setSearch}
@@ -108,7 +118,11 @@ export const CountrySelect = ({
               {showNoCountry && (
                 <Dropdown.OptionItem
                   selected={!isNonEmptyString(value)}
-                  startIcon={<IconCircleOff className={styles.flag} />}
+                  startIcon={
+                    <span className={styles.flag} aria-hidden="true">
+                      <IconCircleOff />
+                    </span>
+                  }
                   onSelect={() => onValueChange('')}
                 >
                   {labels.noCountry}

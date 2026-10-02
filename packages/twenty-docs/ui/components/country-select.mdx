@@ -59,7 +59,7 @@ Search matches the prepared display labels without distinguishing letter case or
 
 The picker handles pointer selection, keyboard movement, selected-option presentation, focus, and closing. Selecting an option closes the popup. Escape closes it and restores trigger focus. Each instance has independent popup and search state.
 
-Provide a visible `label`, or use `aria-label` or `aria-labelledby` on the trigger. The required `labels` object supplies the search input's accessible name, no-country text, and empty-result text. Native trigger attributes, event handlers, `className`, `style`, and `ref` apply to its button.
+Provide a visible `label`, or use `aria-label` or `aria-labelledby` on the trigger. The selected country is also available as the trigger's accessible description, and a tooltip reveals the full label when it is truncated. The required `labels` object supplies the search input's accessible name, no-country text, and empty-result text. Native trigger attributes, event handlers, `className`, `style`, and `ref` apply to its button.
 
 `disabled` prevents opening and selection. A picker with no supplied countries is disabled as well. If either condition occurs while the popup is open, it closes and reports `onOpenChange(false)`. Enabling the picker again does not reopen it automatically.
 
