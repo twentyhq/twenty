@@ -118,6 +118,37 @@ describe('AutocompleteRoot', () => {
     expect(store.get(focusStackState.atom)).toEqual([]);
   });
 
+  it('opens from the arrow keys once results arrive when openOnValueChange is false', async () => {
+    const user = userEvent.setup();
+    const store = createStore();
+
+    const { rerender } = render(
+      <JotaiProvider store={store}>
+        <AutocompleteExample items={[]} openOnValueChange={false} />
+      </JotaiProvider>,
+    );
+
+    const input = screen.getByRole('combobox');
+    await user.type(input, 'Pa');
+    await user.keyboard('{ArrowDown}');
+
+    expect(input).toHaveAttribute('aria-expanded', 'false');
+
+    rerender(
+      <JotaiProvider store={store}>
+        <AutocompleteExample items={OPTIONS} openOnValueChange={false} />
+      </JotaiProvider>,
+    );
+    await user.keyboard('{ArrowDown}');
+
+    expect(screen.getByRole('listbox')).toBeVisible();
+    expect(input).toHaveValue('Pa');
+    expect(store.get(focusStackState.atom).at(-1)?.componentInstance).toEqual({
+      componentType: FocusComponentType.DROPDOWN,
+      componentInstanceId: DROPDOWN_ID,
+    });
+  });
+
   it('does not open an empty list from the arrow keys', async () => {
     const user = userEvent.setup();
     const store = createStore();
@@ -152,10 +183,13 @@ describe('AutocompleteRoot', () => {
       </JotaiProvider>,
     );
 
-    await user.type(screen.getByRole('combobox'), 'Pa');
+    const input = screen.getByRole('combobox');
+    await user.type(input, 'Pa');
     await user.keyboard('{ArrowDown}');
 
     expect(onItemHighlightedByUser).toHaveBeenLastCalledWith('London');
+
+    onItemHighlightedByUser.mockClear();
 
     rerender(
       <JotaiProvider store={store}>
@@ -166,7 +200,11 @@ describe('AutocompleteRoot', () => {
       </JotaiProvider>,
     );
 
-    expect(onItemHighlightedByUser).toHaveBeenLastCalledWith('London');
+    expect(onItemHighlightedByUser).not.toHaveBeenCalled();
+    expect(input).toHaveAttribute(
+      'aria-activedescendant',
+      screen.getByRole('option', { name: 'London' }).id,
+    );
   });
 
   it('opens only the active input for a shared dropdown id and supports external close', async () => {
