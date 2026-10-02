@@ -1,7 +1,10 @@
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { StrictMode } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 
@@ -122,6 +125,7 @@ export const EditExistingItem: Story = {
     ).findByRole('textbox');
 
     expect(editSecondItemInput).toHaveValue('Second item');
+    await waitFor(() => expect(editSecondItemInput).toHaveFocus());
 
     await userEvent.clear(editSecondItemInput);
     await userEvent.type(editSecondItemInput, 'Updated second item{enter}');
@@ -132,6 +136,8 @@ export const EditExistingItem: Story = {
         'Updated second item',
       ]);
     });
+    expect(panel).toBeVisible();
+    expect(within(panel).queryByRole('textbox')).not.toBeInTheDocument();
 
     const updatedSecondItemChip = await canvas.findByText(
       'Updated second item',
@@ -200,6 +206,21 @@ export const ItemLimit: Story = {
     expect(
       body.queryByRole('button', { name: 'Add item' }),
     ).not.toBeInTheDocument();
+
+    const panel = body.getByRole('dialog', { name: 'Items' });
+
+    await userEvent.click(
+      within(panel).getAllByRole('button', { name: 'More options' })[1],
+    );
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Delete' }),
+    );
+
+    expect(args.onChange).toHaveBeenLastCalledWith(['First item']);
+    expect(panel).toBeVisible();
+    expect(
+      within(panel).getByRole('button', { name: 'Add item' }),
+    ).toBeVisible();
   },
 };
 
@@ -209,15 +230,19 @@ export const EscapeDismissesOneLayer: Story = {
     defaultValue: ['First item'],
     onChange: fn(),
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
+    const initialFocusStack = jotaiStore.get(focusStackState.atom);
+
     await userEvent.click(await canvas.findByRole('button', { name: 'Items' }));
 
     const panel = await body.findByRole('dialog', { name: 'Items' });
     const menuTrigger = within(panel).getByRole('button', {
       name: 'More options',
     });
+    const panelFocusStack = jotaiStore.get(focusStackState.atom);
+
     await userEvent.click(menuTrigger);
     await userEvent.keyboard('{escape}');
 
@@ -225,20 +250,77 @@ export const EscapeDismissesOneLayer: Story = {
       expect(body.queryByRole('menu')).not.toBeInTheDocument(),
     );
     expect(panel).toBeVisible();
+    expect(jotaiStore.get(focusStackState.atom)).toEqual(panelFocusStack);
     await waitFor(() => expect(menuTrigger).toHaveFocus());
 
+    await userEvent.keyboard('{escape}');
+
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    expect(jotaiStore.get(focusStackState.atom)).toEqual(initialFocusStack);
+  },
+};
+
+export const EscapeClearsUncommittedItem: Story = {
+  args: {
+    label: 'Items',
+    defaultValue: ['First item'],
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await canvas.findByRole('button', { name: 'Items' });
+
+    await userEvent.click(trigger);
     await userEvent.click(
-      within(panel).getByRole('button', { name: 'Add item' }),
+      await body.findByRole('button', { name: 'Add item' }),
     );
-    await userEvent.type(
-      within(panel).getByRole('textbox'),
-      'Uncommitted{escape}',
-    );
+    await userEvent.type(body.getByRole('textbox'), 'Uncommitted{escape}');
 
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
     expect(args.onChange).not.toHaveBeenCalled();
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Add item' }),
+    );
+
+    expect(body.getByRole('textbox')).toHaveValue('');
+  },
+};
+
+export const TabOrderIncludesTrigger: Story = {
+  decorators: [
+    (Story) => (
+      <>
+        <Button>Before</Button>
+        <Story />
+        <Button>After</Button>
+      </>
+    ),
+  ],
+  args: {
+    label: 'Items',
+    defaultValue: ['First item'],
+    onChange: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Before' }),
+    );
+    await userEvent.tab();
+
+    expect(canvas.getByRole('button', { name: 'Items' })).toHaveFocus();
+
+    await userEvent.tab();
+
+    expect(canvas.getByRole('button', { name: 'After' })).toHaveFocus();
   },
 };
 

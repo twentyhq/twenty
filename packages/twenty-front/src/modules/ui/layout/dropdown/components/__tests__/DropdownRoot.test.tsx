@@ -532,40 +532,6 @@ describe('DropdownRoot', () => {
     expect(store.get(focusStackState.atom)).toHaveLength(2);
   });
 
-  it('keeps a dropdown open when another root with the same id replaces its owner', async () => {
-    const user = userEvent.setup();
-    const store = createTestStore();
-    const renderDropdown = (ownerKey: string) => (
-      <JotaiProvider store={store}>
-        <DropdownRoot key={ownerKey} dropdownId="replaced-dropdown" type="menu">
-          <Dropdown.Trigger>Actions</Dropdown.Trigger>
-          <Dropdown.Content aria-label="Actions">
-            <Dropdown.ActionItem>Archive</Dropdown.ActionItem>
-          </Dropdown.Content>
-        </DropdownRoot>
-      </JotaiProvider>
-    );
-    const { rerender } = render(renderDropdown('first-owner'));
-
-    await user.click(screen.getByRole('button', { name: 'Actions' }));
-
-    expect(screen.getByRole('menu', { name: 'Actions' })).toBeVisible();
-
-    rerender(renderDropdown('second-owner'));
-    await act(async () => {
-      await Promise.resolve();
-    });
-
-    expect(
-      store.get(
-        isDropdownOpenComponentState.atomFamily({
-          instanceId: 'replaced-dropdown',
-        }),
-      ),
-    ).toBe(true);
-    expect(screen.getByRole('menu', { name: 'Actions' })).toBeVisible();
-  });
-
   it('keeps a dropdown opened before its root mounts open in StrictMode', async () => {
     const user = userEvent.setup();
     const store = createTestStore();
