@@ -149,6 +149,7 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_NOTIFICATION_COUNTER: '/ui/components/notification-counter',
   UI_COMPONENTS_OVERFLOWING_LIST: '/ui/components/overflowing-list',
   UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
+  UI_COMPONENTS_RESIZABLE_PANEL: '/ui/components/resizable-panel',
   UI_COMPONENTS_SEARCH_INPUT: '/ui/components/search-input',
   UI_COMPONENTS_SECTION: '/ui/components/section',
   UI_COMPONENTS_SETTINGS_ROW: '/ui/components/settings-row',
