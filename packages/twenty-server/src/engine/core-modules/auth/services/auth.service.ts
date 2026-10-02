@@ -119,10 +119,10 @@ export class AuthService {
     return user;
   }
 
-  async validateWorkspaceLoginWithPassword(
+  async validateLoginWithPasswordAndJoinWorkspaceIfInvited(
     input: UserCredentialsInput,
     workspace: WorkspaceEntity,
-  ): Promise<{ user: UserEntity; workspaceInvitation?: WorkspaceInvitation }> {
+  ): Promise<UserEntity> {
     const user = await this.findUserByEmailOrThrow(input.email);
 
     await this.assertPasswordAuthAllowedOnWorkspaceOrThrow(user, workspace);
@@ -137,7 +137,7 @@ export class AuthService {
     if (isWorkspaceMember) {
       await this.validatePasswordCredentialsOrThrow(user, input.password);
 
-      return { user };
+      return user;
     }
 
     const workspaceInvitation = await this.getValidWorkspaceInvitationOrThrow(
@@ -147,7 +147,13 @@ export class AuthService {
 
     await this.validatePasswordCredentialsOrThrow(user, input.password);
 
-    return { user, workspaceInvitation };
+    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+      user,
+      workspace,
+      workspaceInvitation.roleId,
+    );
+
+    return user;
   }
 
   private async findUserByEmailOrThrow(email: string) {

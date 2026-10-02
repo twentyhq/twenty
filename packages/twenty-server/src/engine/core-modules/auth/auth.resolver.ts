@@ -236,19 +236,11 @@ export class AuthResolver {
       ),
     );
 
-    const { user, workspaceInvitation } =
-      await this.authService.validateWorkspaceLoginWithPassword(
+    const user =
+      await this.authService.validateLoginWithPasswordAndJoinWorkspaceIfInvited(
         getLoginTokenFromCredentialsInput,
         workspace,
       );
-
-    if (isDefined(workspaceInvitation)) {
-      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
-        user,
-        workspace,
-        workspaceInvitation.roleId,
-      );
-    }
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
