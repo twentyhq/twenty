@@ -147,16 +147,12 @@ export class AgentAsyncExecutorService {
     agent,
     agentRoleId,
     runAsRoleId,
-    additionalRoleRestrictionIds,
-    additionalExcludedToolNames = [],
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
     runAsRoleId?: string;
-    additionalRoleRestrictionIds?: string[];
-    additionalExcludedToolNames?: readonly string[];
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<ToolSet> {
@@ -168,7 +164,6 @@ export class AgentAsyncExecutorService {
       rolePermissionConfig: buildAgentRolePermissionConfig({
         agentRoleId,
         runAsRoleId,
-        additionalRoleRestrictionIds,
       }),
       requireExplicitObjectGrants: true,
       authContext,
@@ -182,7 +177,6 @@ export class AgentAsyncExecutorService {
       excludeTools: [
         ...OUTPUT_NAVIGATION_TOOL_NAMES,
         ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
-        ...additionalExcludedToolNames,
       ],
       wrapWithErrorContext: false,
     });
@@ -194,29 +188,20 @@ export class AgentAsyncExecutorService {
     agent,
     agentRoleId,
     runAsRoleId,
-    additionalRoleRestrictionIds,
-    additionalExcludedToolNames = [],
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
     runAsRoleId?: string;
-    additionalRoleRestrictionIds?: string[];
-    additionalExcludedToolNames?: readonly string[];
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<{ tools: ToolSet; catalogSection: string }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
-    const rolePermissionConfig =
-      isDefined(runAsRoleId) || isNonEmptyArray(additionalRoleRestrictionIds)
-        ? buildAgentRolePermissionConfig({
-            agentRoleId,
-            runAsRoleId,
-            additionalRoleRestrictionIds,
-          })
-        : undefined;
+    const rolePermissionConfig = isDefined(runAsRoleId)
+      ? buildAgentRolePermissionConfig({ agentRoleId, runAsRoleId })
+      : undefined;
 
     const toolContext: ToolContext = {
       workspaceId: agent.workspaceId,
@@ -240,7 +225,6 @@ export class AgentAsyncExecutorService {
     const excludedToolNames = new Set<string>([
       ...OUTPUT_NAVIGATION_TOOL_NAMES,
       ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
-      ...additionalExcludedToolNames,
     ]);
 
     const catalog = fullCatalog.filter(
@@ -279,8 +263,6 @@ export class AgentAsyncExecutorService {
     workspaceId,
     userWorkspaceId,
     runAsRoleId,
-    additionalRoleRestrictionIds,
-    additionalExcludedToolNames,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
     priorModelMessages = [],
@@ -297,8 +279,6 @@ export class AgentAsyncExecutorService {
     workspaceId: string;
     userWorkspaceId?: string | null;
     runAsRoleId?: string;
-    additionalRoleRestrictionIds?: string[];
-    additionalExcludedToolNames?: readonly string[];
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
@@ -371,8 +351,6 @@ export class AgentAsyncExecutorService {
               agent,
               agentRoleId,
               runAsRoleId,
-              additionalRoleRestrictionIds,
-              additionalExcludedToolNames,
               authContext,
               actorContext,
             });
@@ -384,8 +362,6 @@ export class AgentAsyncExecutorService {
               agent,
               agentRoleId,
               runAsRoleId,
-              additionalRoleRestrictionIds,
-              additionalExcludedToolNames,
               authContext,
               actorContext,
             });
