@@ -517,27 +517,27 @@ describe('agent execution permissions', () => {
         [APP_ID, SEED_APPLE_WORKSPACE_ID],
       );
 
-    await recordShareStorageService.insertMany({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      recordShares: [
-        {
-          objectMetadataId: companyObjectMetadataId,
-          recordId: HIDDEN_COMPANY_ID,
-          principalId: applicationRoleId,
-          principalType: RecordSharePrincipalType.ROLE,
-          accessLevel: RecordShareAccessLevel.READ,
-          rowCause: RecordShareRowCause.MANUAL,
-          sourceId: HIDDEN_COMPANY_ID,
-        },
-      ],
-    });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     try {
+      await recordShareStorageService.insertMany({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        recordShares: [
+          {
+            objectMetadataId: companyObjectMetadataId,
+            recordId: HIDDEN_COMPANY_ID,
+            principalId: applicationRoleId,
+            principalType: RecordSharePrincipalType.ROLE,
+            accessLevel: RecordShareAccessLevel.READ,
+            rowCause: RecordShareRowCause.MANUAL,
+            sourceId: HIDDEN_COMPANY_ID,
+          },
+        ],
+      });
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+        value: true,
+        expectToFail: false,
+      });
+
       const toolOutput = await runAgent({
         executeToolCall: FIND_COMPANIES,
         runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,

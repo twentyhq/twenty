@@ -20,6 +20,17 @@ describe('assertCanRunAsWorkspaceMember', () => {
     ).toBe(APPLICATION);
   });
 
+  it('should let a token issued for a user run as that same member', () => {
+    expect(
+      assertCanRunAsWorkspaceMember({
+        runAsWorkspaceMemberId: MEMBER_ID,
+        callerApplication: APPLICATION,
+        requestUserWorkspaceId: 'user-workspace-1',
+        requestWorkspaceMemberId: MEMBER_ID,
+      }),
+    ).toBe(APPLICATION);
+  });
+
   it.each([
     {
       title: 'without an application token',
