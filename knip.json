@@ -31,6 +31,7 @@
         "test/integration/graphql/codegen/index.ts",
         "test/integration/utils/setup-test.ts",
         "test/integration/utils/teardown-test.ts",
+        "test/rich-text/check-blocknote-markdown-parity.ts",
         "src/database/typeorm/core/legacy-typeorm-migrations-do-not-add/**/*.ts"
       ],
       "project": ["src/**/*.ts", "test/**/*.ts", "scripts/**/*.ts"],

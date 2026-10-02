@@ -24,7 +24,7 @@ type BlockNoteLink = {
 
 type BlockNoteInlineContent = BlockNoteStyledText | BlockNoteLink;
 
-export type BlockNoteBlock = {
+type BlockNoteBlock = {
   id: string;
   type: string;
   props: Record<string, string | number | boolean>;
