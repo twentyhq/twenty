@@ -21,9 +21,6 @@ export async function findPriorTrialForCard({
   }
 
   try {
-    // The subscription being recorded carries the same fingerprint once it has
-    // been stamped, so a webhook retry arriving after the search index catches
-    // up would otherwise report the subscription against itself.
     const result = await stripe.subscriptions.search({
       query: `metadata['${STRIPE_METADATA_KEY.TRIAL_CARD_FINGERPRINT}']:'${cardFingerprint}'`,
       limit: 2,

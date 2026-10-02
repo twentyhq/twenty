@@ -31,8 +31,6 @@ export async function POST(request: Request) {
   let event;
 
   try {
-    // The async variant is required on Cloudflare Workers: signature
-    // verification goes through SubtleCrypto, which has no sync form.
     event = await stripe.webhooks.constructEventAsync(
       payload,
       signature,
@@ -63,8 +61,6 @@ export async function POST(request: Request) {
       `[enterprise-stripe-webhook] ${subscriptionId} trial card: ${outcome}`,
     );
   } catch (error: unknown) {
-    // A 500 makes Stripe redeliver, which is what we want for a transient
-    // failure: nothing was recorded, so the retry loses nothing.
     console.error(
       `[enterprise-stripe-webhook] trial card recording failed for ${subscriptionId}`,
       error,

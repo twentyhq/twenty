@@ -76,8 +76,6 @@ export async function POST(request: Request) {
       }),
     });
 
-    // Recorded only when a trial is actually granted: the key answers "has this
-    // server consumed a trial", not "has this server ever bought".
     const trialServerIdMetadata: Record<string, string> =
       trialPeriodDays === undefined
         ? {}

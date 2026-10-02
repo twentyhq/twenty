@@ -15,10 +15,6 @@ type SubscriptionRecorder = {
   >;
 };
 
-// Records which card consumed a trial and flags a card that has had one before.
-// The trial is never revoked: checkout has already shown this customer a free
-// period, and billing them against what the page promised is not something we
-// do to catch the minority who forged their server id.
 export async function recordTrialCard({
   stripe,
   subscriptionId,
@@ -42,8 +38,6 @@ export async function recordTrialCard({
     return TRIAL_CARD_RECORD_OUTCOME.CARD_UNKNOWN;
   }
 
-  // Stripe redelivers a webhook until it is acknowledged, and the stamp is the
-  // only record that this subscription was already looked at.
   if (
     subscription.metadata?.[STRIPE_METADATA_KEY.TRIAL_CARD_FINGERPRINT] ===
     cardFingerprint

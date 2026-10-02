@@ -21,9 +21,6 @@ export async function hasPriorSubscriptionForServer({
     return false;
   }
 
-  // TRIAL_SERVER_ID alone would suffice going forward, but subscriptions sold
-  // before it existed only carry BOUND_SERVER_ID. Stripe allows up to 10
-  // clauses and forbids mixing OR with AND.
   const query = [
     `metadata['${STRIPE_METADATA_KEY.TRIAL_SERVER_ID}']:'${normalizedServerId}'`,
     `metadata['${STRIPE_METADATA_KEY.BOUND_SERVER_ID}']:'${normalizedServerId}'`,
