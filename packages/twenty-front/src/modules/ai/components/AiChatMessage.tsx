@@ -232,7 +232,7 @@ export const AiChatMessage = ({
         <HorizontalSeparator
           text={t`New`}
           textPosition="end"
-          color={themeCssVariables.font.color.danger}
+          color={themeCssVariables.tag.text.red}
           noMargin
         />
       )}

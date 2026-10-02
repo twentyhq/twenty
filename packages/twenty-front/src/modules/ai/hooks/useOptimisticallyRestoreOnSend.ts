@@ -13,10 +13,13 @@ export const useOptimisticallyRestoreOnSend = () => {
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const store = useStore();
 
-  const applyOptimisticRestore = (
-    threadId: string,
-    optimisticUpdatedAt: string,
-  ): (() => void) => {
+  const applyOptimisticRestore = ({
+    threadId,
+    optimisticUpdatedAt,
+  }: {
+    threadId: string;
+    optimisticUpdatedAt: string;
+  }): (() => void) => {
     const thread = store.get(
       agentChatThreadRecordFamilySelector.selectorFamily(threadId),
     );

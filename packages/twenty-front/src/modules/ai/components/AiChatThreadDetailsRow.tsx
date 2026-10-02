@@ -17,7 +17,7 @@ const StyledLabel = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};
-  width: 96px;
+  width: ${themeCssVariables.spacing[24]};
 `;
 
 const StyledLabelText = styled.span`

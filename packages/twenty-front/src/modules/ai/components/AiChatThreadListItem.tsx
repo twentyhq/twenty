@@ -60,7 +60,7 @@ const StyledThreadHeading = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  min-height: 20px;
+  min-height: ${themeCssVariables.spacing[5]};
   min-width: 0;
 `;
 
@@ -84,7 +84,7 @@ const StyledThreadTitle = styled.div<{ $isUnread: boolean }>`
 const StyledThreadPreview = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-  min-height: 16px;
+  min-height: ${themeCssVariables.spacing[4]};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

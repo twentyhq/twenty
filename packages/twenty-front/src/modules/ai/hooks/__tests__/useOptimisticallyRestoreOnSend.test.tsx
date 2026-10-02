@@ -37,7 +37,10 @@ describe('useOptimisticallyRestoreOnSend', () => {
     let rollback: () => void = () => undefined;
 
     act(() => {
-      rollback = result.current.applyOptimisticRestore(THREAD_ID, sentAt);
+      rollback = result.current.applyOptimisticRestore({
+        threadId: THREAD_ID,
+        optimisticUpdatedAt: sentAt,
+      });
     });
 
     expect(
@@ -79,7 +82,10 @@ describe('useOptimisticallyRestoreOnSend', () => {
     const sentAt = '2026-10-01T12:00:00.000Z';
 
     act(() => {
-      result.current.applyOptimisticRestore(THREAD_ID, sentAt);
+      result.current.applyOptimisticRestore({
+        threadId: THREAD_ID,
+        optimisticUpdatedAt: sentAt,
+      });
     });
 
     const thread = store.get(recordStoreFamilyState.atomFamily(THREAD_ID));
