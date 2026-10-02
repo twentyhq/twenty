@@ -245,20 +245,24 @@ describe('buildRolesPermissions', () => {
       },
     });
 
-    expect(permissions.role.company).toMatchObject({
-      canReadObjectRecords: false,
-      restrictedFields: {
-        'company-revenue': { canRead: false, canUpdate: null },
-      },
-      rowLevelPermissionPredicates: [PREDICATE],
-    });
-    expect(permissions.other.company).toMatchObject({
-      canReadObjectRecords: true,
-      restrictedFields: {
-        'company-domain': { canRead: false, canUpdate: null },
-      },
-      rowLevelPermissionPredicates: [otherPredicate],
-    });
+    expect(permissions.role.company).toEqual(
+      expect.objectContaining({
+        canReadObjectRecords: false,
+        restrictedFields: {
+          'company-revenue': { canRead: false, canUpdate: null },
+        },
+        rowLevelPermissionPredicates: [PREDICATE],
+      }),
+    );
+    expect(permissions.other.company).toEqual(
+      expect.objectContaining({
+        canReadObjectRecords: true,
+        restrictedFields: {
+          'company-domain': { canRead: false, canUpdate: null },
+        },
+        rowLevelPermissionPredicates: [otherPredicate],
+      }),
+    );
   });
 
   it.each<
