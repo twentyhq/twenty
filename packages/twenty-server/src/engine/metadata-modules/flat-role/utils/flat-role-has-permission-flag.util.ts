@@ -2,10 +2,10 @@ import {
   type PermissionFlagType,
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { getFlatRolePermissionFlagUniversalIdentifiers } from 'src/engine/metadata-modules/flat-role/utils/get-flat-role-permission-flag-universal-identifiers.util';
 
 export const flatRoleHasPermissionFlag = ({
   flatRole,
@@ -15,8 +15,22 @@ export const flatRoleHasPermissionFlag = ({
   flatRole: FlatRole;
   permissionFlag: PermissionFlagType;
   flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
-}): boolean =>
-  getFlatRolePermissionFlagUniversalIdentifiers({
-    flatRole,
-    flatRolePermissionFlagMaps,
-  }).has(SystemPermissionFlag[permissionFlag]);
+}): boolean => {
+  const permissionFlagUniversalIdentifier =
+    SystemPermissionFlag[permissionFlag];
+
+  return flatRole.rolePermissionFlagIds.some((rolePermissionFlagId) => {
+    const rolePermissionFlagUniversalIdentifier =
+      flatRolePermissionFlagMaps.universalIdentifierById[rolePermissionFlagId];
+
+    if (!isDefined(rolePermissionFlagUniversalIdentifier)) {
+      return false;
+    }
+
+    return (
+      flatRolePermissionFlagMaps.byUniversalIdentifier[
+        rolePermissionFlagUniversalIdentifier
+      ]?.permissionFlagUniversalIdentifier === permissionFlagUniversalIdentifier
+    );
+  });
+};

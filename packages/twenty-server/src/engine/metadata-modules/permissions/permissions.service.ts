@@ -4,10 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  ApiKeyException,
-  ApiKeyExceptionCode,
-} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -17,7 +14,6 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { getFlatRolePermissionFlagUniversalIdentifiers } from 'src/engine/metadata-modules/flat-role/utils/get-flat-role-permission-flag-universal-identifiers.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import {
   PermissionsException,
@@ -25,7 +21,6 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions.type';
-import { isPermissionFlagGranted } from 'src/engine/metadata-modules/permissions/utils/is-permission-flag-granted.util';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
@@ -34,7 +29,10 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 @Injectable()
 export class PermissionsService {
-  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
+  constructor(
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
+  ) {}
 
   public async getUserWorkspacePermissions({
     userWorkspaceId,
@@ -61,22 +59,13 @@ export class PermissionsService {
       flatRoleMaps,
     });
 
-    const assignedPermissionFlagUniversalIdentifiers =
-      getFlatRolePermissionFlagUniversalIdentifiers({
-        flatRole,
-        flatRolePermissionFlagMaps,
-      });
-
     const permissionFlags = Object.fromEntries(
       Object.values(PermissionFlagType).map((permissionFlag) => [
         permissionFlag,
-        isPermissionFlagGranted({
-          role: flatRole,
+        isPermissionFlagGrantedToFlatRole({
+          flatRole,
           permissionFlag,
-          isPermissionFlagAssignedToRole: (permissionFlagUniversalIdentifier) =>
-            assignedPermissionFlagUniversalIdentifiers.has(
-              permissionFlagUniversalIdentifier,
-            ),
+          flatRolePermissionFlagMaps,
         }),
       ]),
     ) as Record<PermissionFlagType, boolean>;
@@ -112,24 +101,22 @@ export class PermissionsService {
   }): Promise<boolean> {
     const {
       userWorkspaceRoleMap,
-      apiKeyRoleMap,
       flatApplicationMaps,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'userWorkspaceRoleMap',
-      'apiKeyRoleMap',
       'flatApplicationMaps',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
     ]);
 
-    const flatRoles = this.resolveCallerFlatRolesOrThrow({
+    const flatRoles = await this.resolveCallerFlatRolesOrThrow({
+      workspaceId,
       userWorkspaceId,
       apiKeyId,
       applicationId,
       userWorkspaceRoleMap,
-      apiKeyRoleMap,
       flatApplicationMaps,
       flatRoleMaps,
     });
@@ -190,32 +177,28 @@ export class PermissionsService {
   }
 
   // Every returned role must grant the flag; none means an application without a role
-  private resolveCallerFlatRolesOrThrow({
+  private async resolveCallerFlatRolesOrThrow({
+    workspaceId,
     userWorkspaceId,
     apiKeyId,
     applicationId,
     userWorkspaceRoleMap,
-    apiKeyRoleMap,
     flatApplicationMaps,
     flatRoleMaps,
   }: {
+    workspaceId: string;
     userWorkspaceId: string | undefined;
     apiKeyId: string | undefined;
     applicationId: string | undefined;
     userWorkspaceRoleMap: UserWorkspaceRoleMap;
-    apiKeyRoleMap: Record<string, string>;
     flatApplicationMaps: FlatApplicationCacheMaps;
     flatRoleMaps: FlatRoleMaps;
-  }): FlatRole[] {
+  }): Promise<FlatRole[]> {
     if (isDefined(apiKeyId)) {
-      const apiKeyRoleId = apiKeyRoleMap[apiKeyId];
-
-      if (!isDefined(apiKeyRoleId)) {
-        throw new ApiKeyException(
-          `API key ${apiKeyId} has no role assigned`,
-          ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
-        );
-      }
+      const apiKeyRoleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
+        apiKeyId,
+        workspaceId,
+      );
 
       const apiKeyFlatRole = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: apiKeyRoleId,

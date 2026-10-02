@@ -8,6 +8,7 @@ import {
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import {
   PermissionsException,
@@ -109,7 +110,6 @@ describe('SettingsPermissionGuard', () => {
     }) =>
       mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
         userWorkspaceRoleMap: {},
-        apiKeyRoleMap: {},
         flatApplicationMaps: {
           byId: {
             'application-id': {
@@ -157,6 +157,7 @@ describe('SettingsPermissionGuard', () => {
       const module: TestingModule = await Test.createTestingModule({
         providers: [
           PermissionsService,
+          { provide: ApiKeyRoleService, useValue: {} },
           {
             provide: WorkspaceCacheService,
             useValue: mockWorkspaceCacheService,
@@ -190,7 +191,6 @@ describe('SettingsPermissionGuard', () => {
         'workspace-id',
         [
           'userWorkspaceRoleMap',
-          'apiKeyRoleMap',
           'flatApplicationMaps',
           'flatRoleMaps',
           'flatRolePermissionFlagMaps',

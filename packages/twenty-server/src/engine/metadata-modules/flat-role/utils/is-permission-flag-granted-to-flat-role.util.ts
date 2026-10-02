@@ -2,8 +2,8 @@ import { type PermissionFlagType } from 'twenty-shared/constants';
 
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { getFlatRolePermissionFlagUniversalIdentifiers } from 'src/engine/metadata-modules/flat-role/utils/get-flat-role-permission-flag-universal-identifiers.util';
-import { isPermissionFlagGranted } from 'src/engine/metadata-modules/permissions/utils/is-permission-flag-granted.util';
+import { flatRoleHasPermissionFlag } from 'src/engine/metadata-modules/flat-role/utils/flat-role-has-permission-flag.util';
+import { hasRoleWideAccessToPermissionFlag } from 'src/engine/metadata-modules/permissions/utils/has-role-wide-access-to-permission-flag.util';
 
 export const isPermissionFlagGrantedToFlatRole = ({
   flatRole,
@@ -14,12 +14,9 @@ export const isPermissionFlagGrantedToFlatRole = ({
   permissionFlag: PermissionFlagType;
   flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
 }): boolean =>
-  isPermissionFlagGranted({
-    role: flatRole,
+  hasRoleWideAccessToPermissionFlag({ role: flatRole, permissionFlag }) ||
+  flatRoleHasPermissionFlag({
+    flatRole,
     permissionFlag,
-    isPermissionFlagAssignedToRole: (permissionFlagUniversalIdentifier) =>
-      getFlatRolePermissionFlagUniversalIdentifiers({
-        flatRole,
-        flatRolePermissionFlagMaps,
-      }).has(permissionFlagUniversalIdentifier),
+    flatRolePermissionFlagMaps,
   });
