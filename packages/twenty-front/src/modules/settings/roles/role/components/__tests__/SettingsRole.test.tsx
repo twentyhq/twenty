@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -167,7 +167,9 @@ describe('SettingsRole', () => {
 
     expect(saveButton).toHaveAttribute('aria-busy', 'true');
 
-    resolveSave();
+    await act(async () => {
+      resolveSave();
+    });
 
     await waitFor(() => {
       expect(saveButton).not.toHaveAttribute('aria-busy', 'true');
