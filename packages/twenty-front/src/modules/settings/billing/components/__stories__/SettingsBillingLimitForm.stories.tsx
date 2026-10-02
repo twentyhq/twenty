@@ -161,8 +161,5 @@ export const RuntimeLimit: Story = {
     const canvas = within(canvasElement);
 
     expect(canvas.getByText('Minutes')).toBeVisible();
-    expect(
-      canvas.getByText(/checked when a run starts and counted when it ends/),
-    ).toBeVisible();
   },
 };

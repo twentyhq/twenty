@@ -66,12 +66,6 @@ const StyledRingAnchor = styled.div`
   display: flex;
 `;
 
-const StyledUnitHelpText = styled.p`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  margin: ${themeCssVariables.spacing[2]} 0 0;
-`;
-
 type SettingsBillingLimitFormProps = {
   definitions: UsageQuotaDefinitionsQuery['usageQuotaDefinitions'];
   values: UsageLimitFormValues;
@@ -285,9 +279,6 @@ export const SettingsBillingLimitForm = ({
             />
           </StyledUnitRow>
         </StyledRow>
-        {isDefined(amountInput.helpText) && (
-          <StyledUnitHelpText>{t(amountInput.helpText)}</StyledUnitHelpText>
-        )}
       </Section.Root>
     </>
   );
