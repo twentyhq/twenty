@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { CONSUME_TOKEN_BUCKET_SCRIPT } from 'src/engine/core-modules/throttler/constants/consume-token-bucket-script.constant';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
@@ -25,31 +26,22 @@ export class ThrottlerService {
     maxTokens: number,
     timeWindow: number,
   ): Promise<number> {
-    const now = Date.now();
-    const availableTokens = await this.getAvailableTokensCount(
+    const [isAccepted, remainingTokens] = await this.consumeTokenBucket(
       key,
+      tokensToConsume,
       maxTokens,
       timeWindow,
-      now,
+      false,
     );
 
-    if (availableTokens < tokensToConsume) {
+    if (isAccepted === 0) {
       throw new ThrottlerException(
         `Limit reached (${maxTokens} tokens per ${timeWindow} ms)`,
         ThrottlerExceptionCode.LIMIT_REACHED,
       );
     }
 
-    await this.cacheStorage.set(
-      key,
-      {
-        tokens: availableTokens - tokensToConsume,
-        lastRefillAt: now,
-      },
-      timeWindow * 2,
-    );
-
-    return availableTokens - tokensToConsume;
+    return Number(remainingTokens);
   }
 
   async atomicTokenBucketThrottleOrThrow({
@@ -87,22 +79,33 @@ export class ThrottlerService {
     maxTokens: number,
     timeWindow: number,
   ) {
-    const now = Date.now();
-    const availableTokens = await this.getAvailableTokensCount(
+    await this.consumeTokenBucket(
       key,
+      tokensToConsume,
       maxTokens,
       timeWindow,
-      now,
+      true,
     );
+  }
 
-    await this.cacheStorage.set(
-      key,
-      {
-        tokens: availableTokens - tokensToConsume,
-        lastRefillAt: now,
-      },
-      timeWindow * 2,
-    );
+  private async consumeTokenBucket(
+    key: string,
+    tokensToConsume: number,
+    maxTokens: number,
+    timeWindow: number,
+    allowOverdraft: boolean,
+  ): Promise<[number, string]> {
+    return this.cacheStorage.runScript<[number, string]>({
+      script: CONSUME_TOKEN_BUCKET_SCRIPT,
+      keys: [key],
+      args: [
+        String(tokensToConsume),
+        String(maxTokens),
+        String(timeWindow),
+        String(Date.now()),
+        allowOverdraft ? '1' : '0',
+      ],
+    });
   }
 
   async getAvailableTokensCount(
