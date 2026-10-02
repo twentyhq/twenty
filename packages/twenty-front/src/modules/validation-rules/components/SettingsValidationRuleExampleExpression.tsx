@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidationRuleReservedName } from 'twenty-shared/utils';
 
 import { SettingsValidationRuleExpressionText } from '@/validation-rules/components/SettingsValidationRuleExpressionText';
 import { SettingsValidationRuleFieldChip } from '@/validation-rules/components/SettingsValidationRuleFieldChip';
@@ -20,7 +20,9 @@ export const SettingsValidationRuleExampleExpression = ({
 
   const segments = computeValidationRuleEditorSegments({
     expression,
-    isFieldPath: (path) => isDefined(findEditorField(path)),
+    isFieldPath: (path) =>
+      !isValidationRuleReservedName({ name: path, isMember: false }) &&
+      isDefined(findEditorField(path)),
     cursorOffset: null,
     fieldRanges: [],
   });
