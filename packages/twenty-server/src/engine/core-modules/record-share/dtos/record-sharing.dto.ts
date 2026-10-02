@@ -61,11 +61,13 @@ export class RecordSharingRoleDTO {
   @Field(() => String)
   label: string;
 
-  @Field(() => Boolean)
-  canRead: boolean;
+  // Null when the permissions of the role are not known, never reported as
+  // a role that cannot access the object
+  @Field(() => Boolean, { nullable: true })
+  canRead: boolean | null;
 
-  @Field(() => Boolean)
-  canUpdate: boolean;
+  @Field(() => Boolean, { nullable: true })
+  canUpdate: boolean | null;
 }
 
 @ObjectType()

@@ -1804,8 +1804,8 @@ enum RecordShareRowCause {
 type RecordSharingRoleDTO {
   id: UUID!
   label: String!
-  canRead: Boolean!
-  canUpdate: Boolean!
+  canRead: Boolean
+  canUpdate: Boolean
 }
 
 type RecordSharingDTO {

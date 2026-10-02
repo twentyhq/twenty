@@ -106,7 +106,9 @@ const buildCreatorRows = ({
   ];
 };
 
-// The creator of a record open by default owns it without a row
+// The creator of a record open by default owns it without a row, until
+// everyone is restricted below the default: the creator then keeps a grant,
+// as setRecordGeneralAccess writes one
 export const buildRecordShareInputsForCreatedRecords = ({
   recordIds,
   objectMetadataId,
@@ -132,16 +134,25 @@ export const buildRecordShareInputsForCreatedRecords = ({
         : shareWithPrincipal,
     );
 
+  const shouldWriteCreatorRows =
+    !isOpenByDefault ||
+    shareWithPrincipals.some(
+      (shareWithPrincipal) =>
+        shareWithPrincipal.principalType ===
+          RecordSharePrincipalType.EVERYONE &&
+        shareWithPrincipal.accessLevel === RecordShareAccessLevel.READ,
+    );
+
   return [
     ...recordIds.flatMap((recordId) => [
-      ...(isOpenByDefault
-        ? []
-        : buildCreatorRows({
+      ...(shouldWriteCreatorRows
+        ? buildCreatorRows({
             authContext,
             apiKeyRoleMap,
             recordId,
             shareWithPrincipals,
           })
+        : []
       ).map((creatorRow) => ({ recordId, objectMetadataId, ...creatorRow })),
       ...shareWithPrincipals.map((shareWithPrincipal) => ({
         recordId,

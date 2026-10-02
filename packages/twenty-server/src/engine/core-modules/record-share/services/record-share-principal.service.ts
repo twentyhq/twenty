@@ -34,7 +34,7 @@ export class RecordSharePrincipalService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
-  // Undefined for everyone, and for a member whose membership is gone
+  // Undefined for everyone, and for a member who left or whose membership is gone
   async resolveRoleIds({
     workspaceId,
     principals,
@@ -54,10 +54,17 @@ export class RecordSharePrincipalService {
             principal.principalType ===
             RecordSharePrincipalType.WORKSPACE_MEMBER,
         )
-        .map((principal) => [
-          principal.principalId,
-          flatWorkspaceMemberMaps.byId[principal.principalId]?.userId,
-        ])
+        .map((principal) => {
+          const flatWorkspaceMember =
+            flatWorkspaceMemberMaps.byId[principal.principalId];
+
+          return [
+            principal.principalId,
+            isDefined(flatWorkspaceMember?.deletedAt)
+              ? undefined
+              : flatWorkspaceMember?.userId,
+          ];
+        })
         .filter((entry): entry is [string, string] => isDefined(entry[1])),
     );
     // Members are cached without their user workspace, which holds the role

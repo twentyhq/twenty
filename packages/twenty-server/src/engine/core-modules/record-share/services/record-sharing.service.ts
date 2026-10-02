@@ -479,7 +479,13 @@ export class RecordSharingService {
           ),
       )
       .map(({ id, label }) => {
-        const objectPermissions = rolesPermissions[id]?.[objectMetadataId];
+        const roleObjectsPermissions = rolesPermissions[id];
+
+        if (!isDefined(roleObjectsPermissions)) {
+          return { id, label, canRead: null, canUpdate: null };
+        }
+
+        const objectPermissions = roleObjectsPermissions[objectMetadataId];
 
         return {
           id,

@@ -840,7 +840,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
       await setRecordSharingEnabled(false);
     });
 
-    it('should write the named grants without an owner row, everyone already holding the general access', async () => {
+    it('should write the named grants without an owner row when everyone keeps the default access', async () => {
       const recordId = trackRecordId();
 
       const response = await makeGraphqlApiRequest(
@@ -851,7 +851,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
               workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
               accessLevel: RecordShareAccessLevel.READ_WRITE,
             },
-            { everyone: true, accessLevel: RecordShareAccessLevel.READ },
+            { everyone: true, accessLevel: RecordShareAccessLevel.READ_WRITE },
           ],
         }),
       );
@@ -869,13 +869,57 @@ describe('createShareWithObjectRecordsPermissions', () => {
       ]);
     });
 
+    it('should restrict general access on creation and keep the creator in charge', async () => {
+      const recordId = trackRecordId();
+
+      const response = await makeGraphqlApiRequest(
+        createOneOperation({
+          data: { id: recordId, name: 'restricted on creation' },
+          shareWith: [
+            { everyone: true, accessLevel: RecordShareAccessLevel.READ },
+          ],
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      const recordShares = await findRecordShares(recordId);
+
+      expect(recordShares).toHaveLength(2);
+      expect(recordShares).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(
+            ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
+          ),
+          expect.objectContaining({
+            recordId,
+            principalId: EVERYONE_PRINCIPAL_ID,
+            principalType: RecordSharePrincipalType.EVERYONE,
+            accessLevel: RecordShareAccessLevel.READ,
+            rowCause: RecordShareRowCause.MANUAL,
+          }),
+        ]),
+      );
+
+      const renamedByJony = await makeGraphqlApiRequestWithMemberRole(
+        updateOneOperationFactory({
+          objectMetadataSingularName: OBJECT_SINGULAR,
+          gqlFields: 'id',
+          recordId,
+          data: { name: 'renamed by jony' },
+        }),
+      );
+
+      expect(renamedByJony.body.errors).toBeDefined();
+    });
+
     it('should refuse a grant the role of its recipient cannot use when sharing stays within roles', async () => {
       const recordId = trackRecordId();
 
-      await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
-      await setMemberObjectAccess(false);
-
       try {
+        await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
+        await setMemberObjectAccess(false);
+
         const response = await makeGraphqlApiRequest(
           createOneOperation({
             data: { id: recordId, name: 'beyond the role' },

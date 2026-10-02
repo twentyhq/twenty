@@ -5912,8 +5912,8 @@ export enum RecordSharingMode {
 
 export type RecordSharingRoleDto = {
   __typename?: 'RecordSharingRoleDTO';
-  canRead: Scalars['Boolean']['output'];
-  canUpdate: Scalars['Boolean']['output'];
+  canRead?: Maybe<Scalars['Boolean']['output']>;
+  canUpdate?: Maybe<Scalars['Boolean']['output']>;
   id: Scalars['UUID']['output'];
   label: Scalars['String']['output'];
 };
@@ -8952,7 +8952,7 @@ export type MostlyEmptyFieldMetadataIdsQueryVariables = Exact<{
 
 export type MostlyEmptyFieldMetadataIdsQuery = { __typename?: 'Query', mostlyEmptyFieldMetadataIds: Array<string> };
 
-export type RecordSharingFieldsFragment = { __typename?: 'RecordSharingDTO', sharingMode: RecordSharingMode, canManageSharing: boolean, generalAccessLevel?: RecordShareAccessLevel | null, defaultGeneralAccessLevel?: RecordShareAccessLevel | null, hasManagedGeneralAccess: boolean, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean }, shares: Array<{ __typename?: 'RecordSharingGrantDTO', id: string, principalId: string, principalType: RecordSharePrincipalType, principalRoleId?: string | null, accessLevel: RecordShareAccessLevel, rowCause: RecordShareRowCause }>, roles: Array<{ __typename?: 'RecordSharingRoleDTO', id: string, label: string, canRead: boolean, canUpdate: boolean }> };
+export type RecordSharingFieldsFragment = { __typename?: 'RecordSharingDTO', sharingMode: RecordSharingMode, canManageSharing: boolean, generalAccessLevel?: RecordShareAccessLevel | null, defaultGeneralAccessLevel?: RecordShareAccessLevel | null, hasManagedGeneralAccess: boolean, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean }, shares: Array<{ __typename?: 'RecordSharingGrantDTO', id: string, principalId: string, principalType: RecordSharePrincipalType, principalRoleId?: string | null, accessLevel: RecordShareAccessLevel, rowCause: RecordShareRowCause }>, roles: Array<{ __typename?: 'RecordSharingRoleDTO', id: string, label: string, canRead?: boolean | null, canUpdate?: boolean | null }> };
 
 export type RemoveRecordShareMutationVariables = Exact<{
   target: RecordTargetInput;
@@ -8960,7 +8960,7 @@ export type RemoveRecordShareMutationVariables = Exact<{
 }>;
 
 
-export type RemoveRecordShareMutation = { __typename?: 'Mutation', removeRecordShare: { __typename?: 'RecordSharingDTO', sharingMode: RecordSharingMode, canManageSharing: boolean, generalAccessLevel?: RecordShareAccessLevel | null, defaultGeneralAccessLevel?: RecordShareAccessLevel | null, hasManagedGeneralAccess: boolean, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean }, shares: Array<{ __typename?: 'RecordSharingGrantDTO', id: string, principalId: string, principalType: RecordSharePrincipalType, principalRoleId?: string | null, accessLevel: RecordShareAccessLevel, rowCause: RecordShareRowCause }>, roles: Array<{ __typename?: 'RecordSharingRoleDTO', id: string, label: string, canRead: boolean, canUpdate: boolean }> } };
+export type RemoveRecordShareMutation = { __typename?: 'Mutation', removeRecordShare: { __typename?: 'RecordSharingDTO', sharingMode: RecordSharingMode, canManageSharing: boolean, generalAccessLevel?: RecordShareAccessLevel | null, defaultGeneralAccessLevel?: RecordShareAccessLevel | null, hasManagedGeneralAccess: boolean, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean }, shares: Array<{ __typename?: 'RecordSharingGrantDTO', id: string, principalId: string, principalType: RecordSharePrincipalType, principalRoleId?: string | null, accessLevel: RecordShareAccessLevel, rowCause: RecordShareRowCause }>, roles: Array<{ __typename?: 'RecordSharingRoleDTO', id: string, label: string, canRead?: boolean | null, canUpdate?: boolean | null }> } };
 
 export type SetRecordGeneralAccessMutationVariables = Exact<{
   target: RecordTargetInput;
@@ -8968,7 +8968,7 @@ export type SetRecordGeneralAccessMutationVariables = Exact<{
 }>;
 
 
-export type SetRecordGeneralAccessMutation = { __typename?: 'Mutation', setRecordGeneralAccess: { __typename?: 'RecordSharingDTO', sharingMode: RecordSharingMode, canManageSharing: boolean, generalAccessLevel?: RecordShareAccessLevel | null, defaultGeneralAccessLevel?: RecordShareAccessLevel | null, hasManagedGeneralAccess: boolean, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean }, shares: Array<{ __typename?: 'RecordSharingGrantDTO', id: string, principalId: string, principalType: RecordSharePrincipalType, principalRoleId?: string | null, accessLevel: RecordShareAccessLevel, rowCause: RecordShareRowCause }>, roles: Array<{ __typename?: 'RecordSharingRoleDTO', id: string, label: string, canRead: boolean, canUpdate: boolean }> } };
+export type SetRecordGeneralAccessMutation = { __typename?: 'Mutation', setRecordGeneralAccess: { __typename?: 'RecordSharingDTO', sharingMode: RecordSharingMode, canManageSharing: boolean, generalAccessLevel?: RecordShareAccessLevel | null, defaultGeneralAccessLevel?: RecordShareAccessLevel | null, hasManagedGeneralAccess: boolean, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean }, shares: Array<{ __typename?: 'RecordSharingGrantDTO', id: string, principalId: string, principalType: RecordSharePrincipalType, principalRoleId?: string | null, accessLevel: RecordShareAccessLevel, rowCause: RecordShareRowCause }>, roles: Array<{ __typename?: 'RecordSharingRoleDTO', id: string, label: string, canRead?: boolean | null, canUpdate?: boolean | null }> } };
 
 export type SetRecordShareMutationVariables = Exact<{
   target: RecordTargetInput;
@@ -8977,7 +8977,7 @@ export type SetRecordShareMutationVariables = Exact<{
 }>;
 
 
-export type SetRecordShareMutation = { __typename?: 'Mutation', setRecordShare: { __typename?: 'RecordSharingDTO', sharingMode: RecordSharingMode, canManageSharing: boolean, generalAccessLevel?: RecordShareAccessLevel | null, defaultGeneralAccessLevel?: RecordShareAccessLevel | null, hasManagedGeneralAccess: boolean, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean }, shares: Array<{ __typename?: 'RecordSharingGrantDTO', id: string, principalId: string, principalType: RecordSharePrincipalType, principalRoleId?: string | null, accessLevel: RecordShareAccessLevel, rowCause: RecordShareRowCause }>, roles: Array<{ __typename?: 'RecordSharingRoleDTO', id: string, label: string, canRead: boolean, canUpdate: boolean }> } };
+export type SetRecordShareMutation = { __typename?: 'Mutation', setRecordShare: { __typename?: 'RecordSharingDTO', sharingMode: RecordSharingMode, canManageSharing: boolean, generalAccessLevel?: RecordShareAccessLevel | null, defaultGeneralAccessLevel?: RecordShareAccessLevel | null, hasManagedGeneralAccess: boolean, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean }, shares: Array<{ __typename?: 'RecordSharingGrantDTO', id: string, principalId: string, principalType: RecordSharePrincipalType, principalRoleId?: string | null, accessLevel: RecordShareAccessLevel, rowCause: RecordShareRowCause }>, roles: Array<{ __typename?: 'RecordSharingRoleDTO', id: string, label: string, canRead?: boolean | null, canUpdate?: boolean | null }> } };
 
 export type GetRecordPermissionsQueryVariables = Exact<{
   targets: Array<RecordTargetInput> | RecordTargetInput;
@@ -8991,7 +8991,7 @@ export type GetRecordSharingQueryVariables = Exact<{
 }>;
 
 
-export type GetRecordSharingQuery = { __typename?: 'Query', recordSharing: { __typename?: 'RecordSharingDTO', sharingMode: RecordSharingMode, canManageSharing: boolean, generalAccessLevel?: RecordShareAccessLevel | null, defaultGeneralAccessLevel?: RecordShareAccessLevel | null, hasManagedGeneralAccess: boolean, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean }, shares: Array<{ __typename?: 'RecordSharingGrantDTO', id: string, principalId: string, principalType: RecordSharePrincipalType, principalRoleId?: string | null, accessLevel: RecordShareAccessLevel, rowCause: RecordShareRowCause }>, roles: Array<{ __typename?: 'RecordSharingRoleDTO', id: string, label: string, canRead: boolean, canUpdate: boolean }> } };
+export type GetRecordSharingQuery = { __typename?: 'Query', recordSharing: { __typename?: 'RecordSharingDTO', sharingMode: RecordSharingMode, canManageSharing: boolean, generalAccessLevel?: RecordShareAccessLevel | null, defaultGeneralAccessLevel?: RecordShareAccessLevel | null, hasManagedGeneralAccess: boolean, permissions: { __typename?: 'RecordPermissionsDTO', canRead: boolean, canUpdate: boolean, canDelete: boolean, canSoftDelete: boolean }, shares: Array<{ __typename?: 'RecordSharingGrantDTO', id: string, principalId: string, principalType: RecordSharePrincipalType, principalRoleId?: string | null, accessLevel: RecordShareAccessLevel, rowCause: RecordShareRowCause }>, roles: Array<{ __typename?: 'RecordSharingRoleDTO', id: string, label: string, canRead?: boolean | null, canUpdate?: boolean | null }> } };
 
 export type CompleteBookCallOnboardingStepMutationVariables = Exact<{
   hasBookedCall: Scalars['Boolean']['input'];

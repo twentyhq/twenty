@@ -13,6 +13,10 @@ const EVERYONE_GRANT = {
   everyone: true,
   accessLevel: RecordShareAccessLevel.READ,
 };
+const EVERYONE_AT_DEFAULT = {
+  everyone: true,
+  accessLevel: RecordShareAccessLevel.READ_WRITE,
+};
 
 describe('resolveShareWithToWrite', () => {
   it.each([RecordSharingMode.PRIVATE, RecordSharingMode.INHERITED])(
@@ -28,20 +32,26 @@ describe('resolveShareWithToWrite', () => {
     },
   );
 
-  it('should write the named grants of a record open by default', () => {
+  it('should write named grants and a general access other than the default on a record open by default', () => {
     expect(
       resolveShareWithToWrite({
         sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
         shareWith: [ROLE_GRANT, EVERYONE_GRANT],
       }),
-    ).toEqual([ROLE_GRANT]);
+    ).toEqual([ROLE_GRANT, EVERYONE_GRANT]);
   });
 
-  it('should write nothing on a record open by default without named grants', () => {
+  it('should skip everyone at the default level of a record open by default', () => {
     expect(
       resolveShareWithToWrite({
         sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
-        shareWith: [EVERYONE_GRANT],
+        shareWith: [ROLE_GRANT, EVERYONE_AT_DEFAULT],
+      }),
+    ).toEqual([ROLE_GRANT]);
+    expect(
+      resolveShareWithToWrite({
+        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+        shareWith: [EVERYONE_AT_DEFAULT],
       }),
     ).toBeNull();
     expect(

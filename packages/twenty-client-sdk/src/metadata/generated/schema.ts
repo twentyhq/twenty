@@ -1403,8 +1403,8 @@ export type RecordShareRowCause = 'OWNER' | 'MANUAL' | 'RULE' | 'APPLICATION'
 export interface RecordSharingRoleDTO {
     id: Scalars['UUID']
     label: Scalars['String']
-    canRead: Scalars['Boolean']
-    canUpdate: Scalars['Boolean']
+    canRead?: Scalars['Boolean']
+    canUpdate?: Scalars['Boolean']
     __typename: 'RecordSharingRoleDTO'
 }
 

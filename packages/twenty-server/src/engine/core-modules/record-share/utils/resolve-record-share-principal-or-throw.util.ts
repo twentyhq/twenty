@@ -2,7 +2,7 @@
 
 import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import {
   RecordShareException,
@@ -39,5 +39,15 @@ export const resolveRecordSharePrincipalOrThrow = ({
     );
   }
 
-  return principals[0];
+  const [principal] = principals;
+
+  if (!isValidUuid(principal.principalId)) {
+    throw new RecordShareException(
+      `Record share principal "${principal.principalId}" is not a valid UUID`,
+      RecordShareExceptionCode.INVALID_SHARE_WITH,
+      { userFriendlyMessage: msg`Invalid UUID format.` },
+    );
+  }
+
+  return principal;
 };

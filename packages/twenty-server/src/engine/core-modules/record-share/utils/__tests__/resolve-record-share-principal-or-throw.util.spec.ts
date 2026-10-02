@@ -31,6 +31,8 @@ describe('resolveRecordSharePrincipalOrThrow', () => {
     [{}],
     [{ workspaceMemberId: null, roleId: null }],
     [{ workspaceMemberId: WORKSPACE_MEMBER_ID, roleId: ROLE_ID }],
+    [{ workspaceMemberId: 'not-a-uuid' }],
+    [{ roleId: 'not-a-uuid' }],
   ])('should reject %j', (principal) => {
     expect(() => resolveRecordSharePrincipalOrThrow(principal)).toThrow(
       RecordShareException,
