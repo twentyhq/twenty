@@ -3,6 +3,7 @@ import { type UsageQuotaWithConsumption } from '@/settings/billing/types/UsageQu
 import {
   UsageOperationType,
   UsageResourceType,
+  UsageUnit,
 } from '~/generated-metadata/graphql';
 
 const buildItem = (
@@ -16,7 +17,7 @@ const buildItem = (
   spenderId: null,
   spenderLabel: null,
   periodUnit: 'month',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   limitValue: 100_000_000,
   isEnforced: true,
   consumedValue: null,
@@ -33,17 +34,17 @@ describe('buildUsageLimitFormValues', () => {
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenderType: 'workspace',
       spenderId: '',
-      meter: 'creditsUsedMicro',
+      unit: UsageUnit.CREDIT,
       periodUnit: 'month',
       limitValue: '100',
     });
   });
 
-  it('keeps a quantity quota as it is stored and carries the spender id', () => {
+  it('keeps a count as it is stored and carries the spender id', () => {
     expect(
       buildUsageLimitFormValues(
         buildItem({
-          meter: 'quantity',
+          unit: UsageUnit.TOKEN,
           limitValue: 200,
           spenderType: 'userWorkspace',
           spenderId: 'user-1',
@@ -51,8 +52,27 @@ describe('buildUsageLimitFormValues', () => {
       ),
     ).toEqual(
       expect.objectContaining({
+        unit: UsageUnit.TOKEN,
         limitValue: '200',
         spenderId: 'user-1',
+      }),
+    );
+  });
+
+  it('turns a runtime stored in milliseconds back into minutes', () => {
+    expect(
+      buildUsageLimitFormValues(
+        buildItem({
+          resourceType: UsageResourceType.LOGIC_FUNCTION,
+          operationType: UsageOperationType.CODE_EXECUTION,
+          unit: UsageUnit.MILLISECOND,
+          limitValue: 90_000,
+        }),
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        unit: UsageUnit.MILLISECOND,
+        limitValue: '1.5',
       }),
     );
   });

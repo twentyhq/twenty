@@ -1264,18 +1264,25 @@ export interface EnterpriseSubscriptionStatusDTO {
     __typename: 'EnterpriseSubscriptionStatusDTO'
 }
 
+export interface UsageLimitOperationDefinition {
+    operationType: UsageOperationType
+    allowedUnits: UsageUnit[]
+    __typename: 'UsageLimitOperationDefinition'
+}
+
+export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'RECORD_WRITE' | 'SUBSCRIPTION'
+
+export type UsageUnit = 'CREDIT' | 'TOKEN' | 'INVOCATION' | 'MINUTE' | 'MILLISECOND' | 'BYTE' | 'FILE' | 'REQUEST' | 'SEAT' | 'RECORD' | 'COMPLEXITY'
+
 export interface UsageQuotaDefinition {
     resourceType: UsageResourceType
     limitKind: Scalars['String']
-    allowedOperationTypes: UsageOperationType[]
+    allowedOperations: UsageLimitOperationDefinition[]
     allowedSpenderTypes: Scalars['String'][]
-    allowedMeters: Scalars['String'][]
     __typename: 'UsageQuotaDefinition'
 }
 
 export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL' | 'WEBHOOK' | 'RECORD'
-
-export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'RECORD_WRITE' | 'SUBSCRIPTION'
 
 export interface UsageQuotaDefinitions {
     definitions: UsageQuotaDefinition[]
@@ -1292,7 +1299,7 @@ export interface UsageQuotaWithConsumption {
     spenderId?: Scalars['String']
     spenderLabel?: Scalars['String']
     periodUnit: Scalars['String']
-    meter: Scalars['String']
+    unit: UsageUnit
     limitValue: Scalars['BigInt']
     isEnforced: Scalars['Boolean']
     consumedValue?: Scalars['BigInt']
@@ -1318,7 +1325,7 @@ export interface UsageLimit {
     limitKind: Scalars['String']
     periodCount: Scalars['Int']
     periodUnit: Scalars['String']
-    meter: Scalars['String']
+    unit: UsageUnit
     limitValue: Scalars['BigInt']
     burstValue?: Scalars['BigInt']
     createdAt: Scalars['DateTime']
@@ -5073,12 +5080,18 @@ export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UsageLimitOperationDefinitionGenqlSelection{
+    operationType?: boolean | number
+    allowedUnits?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface UsageQuotaDefinitionGenqlSelection{
     resourceType?: boolean | number
     limitKind?: boolean | number
-    allowedOperationTypes?: boolean | number
+    allowedOperations?: UsageLimitOperationDefinitionGenqlSelection
     allowedSpenderTypes?: boolean | number
-    allowedMeters?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5099,7 +5112,7 @@ export interface UsageQuotaWithConsumptionGenqlSelection{
     spenderId?: boolean | number
     spenderLabel?: boolean | number
     periodUnit?: boolean | number
-    meter?: boolean | number
+    unit?: boolean | number
     limitValue?: boolean | number
     isEnforced?: boolean | number
     consumedValue?: boolean | number
@@ -5127,7 +5140,7 @@ export interface UsageLimitGenqlSelection{
     limitKind?: boolean | number
     periodCount?: boolean | number
     periodUnit?: boolean | number
-    meter?: boolean | number
+    unit?: boolean | number
     limitValue?: boolean | number
     burstValue?: boolean | number
     createdAt?: boolean | number
@@ -7419,7 +7432,7 @@ export interface QueryGenqlSelection{
 
 export interface RecordSharingTargetInput {objectMetadataId: Scalars['UUID'],recordId: Scalars['UUID']}
 
-export interface UsageQuotaScopeInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),periodUnit: Scalars['String'],meter: Scalars['String']}
+export interface UsageQuotaScopeInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),periodUnit: Scalars['String'],unit: UsageUnit}
 
 export interface AgentIdInput {
 /** The id of the agent. */
@@ -7752,7 +7765,7 @@ update: UpdateNavigationMenuItemInput}
 
 export interface UpdateNavigationMenuItemInput {folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
-export interface CreateUsageLimitInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),limitKind: Scalars['String'],periodCount: Scalars['Int'],periodUnit: Scalars['String'],meter: Scalars['String'],limitValue: Scalars['BigInt'],burstValue?: (Scalars['BigInt'] | null)}
+export interface CreateUsageLimitInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),limitKind: Scalars['String'],periodCount: Scalars['Int'],periodUnit: Scalars['String'],unit: UsageUnit,limitValue: Scalars['BigInt'],burstValue?: (Scalars['BigInt'] | null)}
 
 export interface UpdateUsageLimitInput {id: Scalars['UUID'],payload: CreateUsageLimitInput}
 
@@ -8949,6 +8962,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isEnterpriseSubscriptionStatusDTO = (obj?: { __typename?: any } | null): obj is EnterpriseSubscriptionStatusDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
       return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageLimitOperationDefinition_possibleTypes: string[] = ['UsageLimitOperationDefinition']
+    export const isUsageLimitOperationDefinition = (obj?: { __typename?: any } | null): obj is UsageLimitOperationDefinition => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimitOperationDefinition"')
+      return UsageLimitOperationDefinition_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11195,18 +11216,6 @@ export const enumLogicFunctionExecutionStatus = {
    ERROR: 'ERROR' as const
 }
 
-export const enumUsageResourceType = {
-   AI: 'AI' as const,
-   WORKFLOW: 'WORKFLOW' as const,
-   APP: 'APP' as const,
-   STORAGE: 'STORAGE' as const,
-   API: 'API' as const,
-   LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
-   EMAIL: 'EMAIL' as const,
-   WEBHOOK: 'WEBHOOK' as const,
-   RECORD: 'RECORD' as const
-}
-
 export const enumUsageOperationType = {
    ALL: 'ALL' as const,
    AI_CHAT_TOKEN: 'AI_CHAT_TOKEN' as const,
@@ -11222,6 +11231,32 @@ export const enumUsageOperationType = {
    STORAGE_FILE: 'STORAGE_FILE' as const,
    RECORD_WRITE: 'RECORD_WRITE' as const,
    SUBSCRIPTION: 'SUBSCRIPTION' as const
+}
+
+export const enumUsageUnit = {
+   CREDIT: 'CREDIT' as const,
+   TOKEN: 'TOKEN' as const,
+   INVOCATION: 'INVOCATION' as const,
+   MINUTE: 'MINUTE' as const,
+   MILLISECOND: 'MILLISECOND' as const,
+   BYTE: 'BYTE' as const,
+   FILE: 'FILE' as const,
+   REQUEST: 'REQUEST' as const,
+   SEAT: 'SEAT' as const,
+   RECORD: 'RECORD' as const,
+   COMPLEXITY: 'COMPLEXITY' as const
+}
+
+export const enumUsageResourceType = {
+   AI: 'AI' as const,
+   WORKFLOW: 'WORKFLOW' as const,
+   APP: 'APP' as const,
+   STORAGE: 'STORAGE' as const,
+   API: 'API' as const,
+   LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
+   EMAIL: 'EMAIL' as const,
+   WEBHOOK: 'WEBHOOK' as const,
+   RECORD: 'RECORD' as const
 }
 
 export const enumNavigationMenuItemType = {

@@ -130,7 +130,7 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
               {t`Used`}
               <SettingsBillingLimitAmount
                 text={item.consumedText}
-                isCreditsMeter={item.isCreditsMeter}
+                unit={item.unit}
               />
             </StyledTooltipRow>
           )}
@@ -138,7 +138,7 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
             {t`Limit`}
             <SettingsBillingLimitAmount
               text={item.limitText}
-              isCreditsMeter={item.isCreditsMeter}
+              unit={item.unit}
             />
           </StyledTooltipRow>
         </StyledTooltipRows>

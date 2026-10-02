@@ -1,11 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { SettingsBillingLimitForm } from '@/settings/billing/components/SettingsBillingLimitForm';
 import { EMPTY_USAGE_LIMIT_FORM_VALUES } from '@/settings/billing/constants/EmptyUsageLimitFormValues';
 import {
   UsageOperationType,
   UsageResourceType,
+  UsageUnit,
 } from '~/generated-metadata/graphql';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
@@ -15,13 +16,57 @@ const DEFINITIONS = {
     {
       __typename: 'UsageQuotaDefinition' as const,
       resourceType: UsageResourceType.AI,
-      allowedOperationTypes: [
-        UsageOperationType.AI_CHAT_TOKEN,
-        UsageOperationType.AI_WORKFLOW_TOKEN,
-        UsageOperationType.WEB_SEARCH,
+      allowedOperations: [
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.ALL,
+          allowedUnits: [UsageUnit.CREDIT],
+        },
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.TOKEN],
+        },
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.TOKEN],
+        },
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.WEB_SEARCH,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
       ],
       allowedSpenderTypes: ['workspace', 'userWorkspace', 'apiKey'],
-      allowedMeters: ['creditsUsedMicro', 'quantity'],
+    },
+    {
+      __typename: 'UsageQuotaDefinition' as const,
+      resourceType: UsageResourceType.WORKFLOW,
+      allowedOperations: [
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.WORKFLOW_EXECUTION,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
+      ],
+      allowedSpenderTypes: ['workspace'],
+    },
+    {
+      __typename: 'UsageQuotaDefinition' as const,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      allowedOperations: [
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.CODE_EXECUTION,
+          allowedUnits: [
+            UsageUnit.CREDIT,
+            UsageUnit.INVOCATION,
+            UsageUnit.MILLISECOND,
+          ],
+        },
+      ],
+      allowedSpenderTypes: ['workspace'],
     },
   ],
   isIntraWorkspaceLimitEntitled: true,
@@ -33,9 +78,30 @@ const FILLED_VALUES = {
   operationType: UsageOperationType.AI_CHAT_TOKEN,
   spenderType: 'workspace' as const,
   spenderId: '',
-  meter: 'creditsUsedMicro' as const,
+  unit: UsageUnit.CREDIT,
   periodUnit: 'month' as const,
   limitValue: '100',
+};
+
+const CODE_EXECUTION_VALUES = {
+  ...FILLED_VALUES,
+  resourceType: UsageResourceType.LOGIC_FUNCTION,
+  operationType: UsageOperationType.CODE_EXECUTION,
+};
+
+const openUnitOptions = async (canvasElement: HTMLElement) => {
+  await userEvent.click(
+    within(canvasElement).getByRole('button', { name: 'Credits' }),
+  );
+
+  const popup = await within(canvasElement.ownerDocument.body).findByRole(
+    'dialog',
+    { name: 'Unit' },
+  );
+
+  return within(popup)
+    .getAllByRole('button')
+    .map((button) => button.textContent);
 };
 
 const meta: Meta<typeof SettingsBillingLimitForm> = {
@@ -90,5 +156,71 @@ export const AllOperations: Story = {
       periodUnit: 'allowancePeriod',
       limitValue: '1000',
     },
+  },
+};
+
+export const CodeExecutionUnits: Story = {
+  args: { values: CODE_EXECUTION_VALUES },
+  play: async ({ canvasElement }) => {
+    expect(await openUnitOptions(canvasElement)).toEqual([
+      'Credits',
+      'Runs',
+      'Runtime',
+    ]);
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const WorkflowExecutionUnits: Story = {
+  args: {
+    values: {
+      ...FILLED_VALUES,
+      resourceType: UsageResourceType.WORKFLOW,
+      operationType: UsageOperationType.WORKFLOW_EXECUTION,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    expect(await openUnitOptions(canvasElement)).toEqual(['Credits', 'Steps']);
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const RunsLimit: Story = {
+  args: {
+    values: {
+      ...CODE_EXECUTION_VALUES,
+      unit: UsageUnit.INVOCATION,
+      limitValue: '500',
+    },
+  },
+  play: async ({ canvasElement }) => {
+    expect(
+      within(canvasElement).getByText(
+        /Runs of free apps count toward this limit/,
+      ),
+    ).toBeVisible();
+  },
+};
+
+export const RuntimeLimit: Story = {
+  args: {
+    values: {
+      ...CODE_EXECUTION_VALUES,
+      unit: UsageUnit.MILLISECOND,
+      limitValue: '1.5',
+    },
+    scopeConsumption: {
+      consumedValue: 45_000,
+      periodStart: '2026-09-01T00:00:00.000Z',
+      periodEnd: '2026-10-01T00:00:00.000Z',
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(canvas.getByText('Minutes')).toBeVisible();
+    expect(
+      canvas.getByText(/checked when a run starts and counted when it ends/),
+    ).toBeVisible();
   },
 };

@@ -2,6 +2,7 @@ import { buildAdminUsageLimitRows } from '@/settings/admin-panel/utils/buildAdmi
 import {
   UsageOperationType,
   UsageResourceType,
+  UsageUnit,
   type WorkspaceUsageLimitsQuery,
 } from '~/generated-admin/graphql';
 
@@ -17,7 +18,7 @@ const buildDefault = (
   limitKind: 'stock',
   periodCount: 1,
   periodUnit: 'lifetime',
-  meter: 'bytes',
+  unit: UsageUnit.BYTE,
   limitValue: 100,
   isOverridable: true,
   overriddenByUsageLimitId: null,
@@ -49,6 +50,14 @@ const buildWorkspaceUsageLimits = ({
 });
 
 describe('buildAdminUsageLimitRows', () => {
+  it('carries the unit of the default', () => {
+    const [row] = buildAdminUsageLimitRows(
+      buildWorkspaceUsageLimits({ defaults: [buildDefault()] }),
+    );
+
+    expect(row.unit).toBe(UsageUnit.BYTE);
+  });
+
   it('shows one row per overridable default', () => {
     const rows = buildAdminUsageLimitRows(
       buildWorkspaceUsageLimits({
@@ -103,7 +112,7 @@ describe('buildAdminUsageLimitRows', () => {
         defaults: [
           buildDefault({
             limitKind: 'speed',
-            meter: 'quantity',
+            unit: UsageUnit.REQUEST,
             periodUnit: 'second',
             periodCount: 30,
             overriddenByUsageLimitId: 'limit-1',
@@ -136,7 +145,7 @@ describe('buildAdminUsageLimitRows', () => {
             operationType: UsageOperationType.API_REQUEST,
             spenderType: 'apiKey',
             limitKind: 'speed',
-            meter: 'quantity',
+            unit: UsageUnit.REQUEST,
             periodUnit: 'second',
             periodCount: 60,
             overriddenByUsageLimitId: 'limit-1',
@@ -157,7 +166,7 @@ describe('buildAdminUsageLimitRows', () => {
             resourceType: UsageResourceType.WEBHOOK,
             operationType: UsageOperationType.WEBHOOK_CALL,
             limitKind: 'speed',
-            meter: 'quantity',
+            unit: UsageUnit.REQUEST,
           }),
           buildDefault(),
         ],
