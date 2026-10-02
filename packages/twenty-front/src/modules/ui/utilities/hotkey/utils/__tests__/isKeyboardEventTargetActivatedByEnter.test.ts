@@ -19,6 +19,10 @@ const createElementFromHtml = (html: string) => {
 describe('isKeyboardEventTargetActivatedByEnter', () => {
   it.each([
     ['a native button', '<button type="button">Next</button>'],
+    ['an input button', '<input type="button" value="Next" />'],
+    ['an input submit', '<input type="submit" value="Save" />'],
+    ['an input reset', '<input type="reset" value="Reset" />'],
+    ['an input image', '<input type="image" alt="Save" />'],
     ['a role="button" element', '<div role="button" tabindex="0">Next</div>'],
     ['a link', '<a href="/companies">Companies</a>'],
     ['a role="link" element', '<span role="link" tabindex="0">Docs</span>'],
@@ -32,6 +36,7 @@ describe('isKeyboardEventTargetActivatedByEnter', () => {
 
   it.each([
     ['a text input', '<input type="text" />'],
+    ['a checkbox', '<input type="checkbox" />'],
     ['a textarea', '<textarea></textarea>'],
     ['a contenteditable element', '<div contenteditable="true"></div>'],
     ['an anchor without href', '<a>Placeholder</a>'],
