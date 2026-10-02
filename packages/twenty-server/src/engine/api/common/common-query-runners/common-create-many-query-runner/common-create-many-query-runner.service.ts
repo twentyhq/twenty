@@ -255,6 +255,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
         shouldBackfillPositionIfUndefined: !args.upsert,
+        // Raw HTML falls back to the jsdom parser, too slow to run per record
+        shouldRejectRichTextRawHtml: args.data.length > 1,
       }),
     };
   }

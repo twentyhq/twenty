@@ -6,24 +6,20 @@ import {
 import { convertTipTapBlocksToMarkdown, isDefined } from 'twenty-shared/utils';
 
 import {
-  convertBlocknoteToMarkdownInWorker,
-  convertMarkdownToBlocknoteInWorker,
-} from 'src/engine/core-modules/record-transformer/utils/rich-text-conversion-worker-pool.util';
-
-export type RichTextConverters = {
-  convertMarkdownToBlocknote: (markdown: string) => Promise<string>;
-  convertBlocknoteToMarkdown: (blocknote: string) => Promise<string>;
-};
-
-const WORKER_RICH_TEXT_CONVERTERS: RichTextConverters = {
-  convertMarkdownToBlocknote: convertMarkdownToBlocknoteInWorker,
-  convertBlocknoteToMarkdown: convertBlocknoteToMarkdownInWorker,
-};
+  BLOCKNOTE_RICH_TEXT_CONVERTERS,
+  type RichTextConverters,
+} from 'src/engine/core-modules/record-transformer/utils/blocknote-rich-text-converters.util';
 
 export const transformRichTextValue = async (
   // oxlint-disable-next-line typescript/no-explicit-any
   richTextValue: any,
-  converters: RichTextConverters = WORKER_RICH_TEXT_CONVERTERS,
+  {
+    shouldRejectRawHtml = false,
+    converters = BLOCKNOTE_RICH_TEXT_CONVERTERS,
+  }: {
+    shouldRejectRawHtml?: boolean;
+    converters?: RichTextConverters;
+  } = {},
 ): Promise<RichTextMetadata> => {
   const parsedValue = isNonEmptyString(richTextValue)
     ? richTextValueSchema.parse(richTextValue)
@@ -36,7 +32,9 @@ export const transformRichTextValue = async (
   if (isDefined(tipTapMarkdown)) {
     return {
       markdown: parsedValue.markdown || tipTapMarkdown,
-      blocknote: await converters.convertMarkdownToBlocknote(tipTapMarkdown),
+      blocknote: await converters.convertMarkdownToBlocknote(tipTapMarkdown, {
+        shouldRejectRawHtml,
+      }),
     };
   }
 
@@ -50,7 +48,9 @@ export const transformRichTextValue = async (
   const blocknote =
     parsedValue.blocknote ||
     (parsedValue.markdown
-      ? await converters.convertMarkdownToBlocknote(parsedValue.markdown)
+      ? await converters.convertMarkdownToBlocknote(parsedValue.markdown, {
+          shouldRejectRawHtml,
+        })
       : null);
 
   return { markdown, blocknote };

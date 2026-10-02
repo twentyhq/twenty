@@ -49,10 +49,6 @@
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/record-transformer/rich-text-conversion-worker/index.mjs",
-        "outDir": "dist/assets"
-      },
-      {
         "include": "database/clickhouse/migrations/*.sql",
         "outDir": "dist"
       },

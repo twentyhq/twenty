@@ -1,7 +1,5 @@
-import {
-  type RichTextConverters,
-  transformRichTextValue,
-} from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
+import { type RichTextConverters } from 'src/engine/core-modules/record-transformer/utils/blocknote-rich-text-converters.util';
+import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
 
 const BLOCKNOTE_VALUE = JSON.stringify([
   { id: '1', type: 'paragraph', content: [{ type: 'text', text: 'Hello' }] },
@@ -19,7 +17,8 @@ const TIPTAP_VALUE = JSON.stringify({
 
 const buildConverters = (): jest.Mocked<RichTextConverters> => ({
   convertMarkdownToBlocknote: jest.fn(
-    async (markdown: string) => `blocknote(${markdown})`,
+    async (markdown: string, _options: { shouldRejectRawHtml: boolean }) =>
+      `blocknote(${markdown})`,
   ),
   convertBlocknoteToMarkdown: jest.fn(
     async (_blocknote: string) => 'converted markdown',
@@ -32,7 +31,7 @@ describe('transformRichTextValue', () => {
 
     const result = await transformRichTextValue(
       { markdown: '# Title' },
-      converters,
+      { converters },
     );
 
     expect(result).toEqual({
@@ -42,12 +41,26 @@ describe('transformRichTextValue', () => {
     expect(converters.convertBlocknoteToMarkdown).not.toHaveBeenCalled();
   });
 
+  it('should forward the raw html rejection to the markdown conversion', async () => {
+    const converters = buildConverters();
+
+    await transformRichTextValue(
+      { markdown: '# Title' },
+      { shouldRejectRawHtml: true, converters },
+    );
+
+    expect(converters.convertMarkdownToBlocknote).toHaveBeenCalledWith(
+      '# Title',
+      { shouldRejectRawHtml: true },
+    );
+  });
+
   it('should convert blocknote to markdown when only blocknote is provided', async () => {
     const converters = buildConverters();
 
     const result = await transformRichTextValue(
       { blocknote: BLOCKNOTE_VALUE, markdown: null },
-      converters,
+      { converters },
     );
 
     expect(result).toEqual({
@@ -65,7 +78,7 @@ describe('transformRichTextValue', () => {
 
     const result = await transformRichTextValue(
       { blocknote: BLOCKNOTE_VALUE, markdown: 'Hello' },
-      converters,
+      { converters },
     );
 
     expect(result).toEqual({ markdown: 'Hello', blocknote: BLOCKNOTE_VALUE });
@@ -78,7 +91,7 @@ describe('transformRichTextValue', () => {
 
     const result = await transformRichTextValue(
       { blocknote: '', markdown: null },
-      converters,
+      { converters },
     );
 
     expect(result).toEqual({ markdown: null, blocknote: null });
@@ -95,7 +108,7 @@ describe('transformRichTextValue', () => {
 
     const result = await transformRichTextValue(
       { blocknote: BLOCKNOTE_VALUE },
-      converters,
+      { converters },
     );
 
     expect(result).toEqual({
@@ -109,7 +122,7 @@ describe('transformRichTextValue', () => {
 
     const result = await transformRichTextValue(
       { blocknote: TIPTAP_VALUE },
-      converters,
+      { converters },
     );
 
     expect(result).toEqual({

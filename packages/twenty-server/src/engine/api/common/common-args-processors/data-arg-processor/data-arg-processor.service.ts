@@ -76,6 +76,7 @@ export class DataArgProcessorService {
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
     shouldBackfillPositionIfUndefined = true,
+    shouldRejectRichTextRawHtml = false,
   }: {
     partialRecordInputs: Partial<ObjectRecord>[] | undefined;
     authContext: WorkspaceAuthContext;
@@ -83,6 +84,7 @@ export class DataArgProcessorService {
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     shouldBackfillPositionIfUndefined?: boolean;
+    shouldRejectRichTextRawHtml?: boolean;
   }): Promise<Partial<ObjectRecord>[]> {
     if (!isDefined(partialRecordInputs)) {
       return [];
@@ -163,6 +165,7 @@ export class DataArgProcessorService {
           value,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
+          shouldRejectRichTextRawHtml,
         );
       }
       processedRecords.push(processedRecord);
@@ -177,6 +180,7 @@ export class DataArgProcessorService {
     value: unknown,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    shouldRejectRichTextRawHtml = false,
   ): Promise<unknown> {
     switch (fieldMetadata.type) {
       case FieldMetadataType.POSITION:
@@ -330,7 +334,9 @@ export class DataArgProcessorService {
       case FieldMetadataType.RICH_TEXT: {
         const validatedValue = validateRichTextFieldOrThrow(value, key);
 
-        return await transformRichTextValue(validatedValue);
+        return await transformRichTextValue(validatedValue, {
+          shouldRejectRawHtml: shouldRejectRichTextRawHtml,
+        });
       }
       case FieldMetadataType.LINKS: {
         const settings = isFieldMetadataSettingsOfType(
