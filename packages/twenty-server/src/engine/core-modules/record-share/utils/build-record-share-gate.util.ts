@@ -1,17 +1,18 @@
 /* @license Enterprise */
 
-import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
 import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-share/types/inherited-readability-parent.type';
 import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
+import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
-import { shouldEnforceRecordShareExceptions } from 'src/engine/core-modules/record-share/utils/should-enforce-record-share-exceptions.util';
+import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
   type InheritedReadabilityParentExpression,
+  type RowAccessExpression,
   type RowAccessPolicy,
   type RowAccessPolicyContext,
   type RowAccessPolicyTarget,
@@ -40,12 +41,10 @@ export const buildRecordShareGate = ({
   });
   switch (gateKind) {
     case 'open':
-      return shouldEnforceRecordShareExceptions({
-        flatObjectMetadata: target.flatObjectMetadata,
-        isRecordSharingEnabled: context.environment.isRecordSharingEnabled,
-        canAccessAllRecords: context.subject.canAccessAllRecords,
-      })
-        ? buildRecordShareExceptionGate(context, target)
+      return context.environment.isRecordSharingEnabled &&
+        !context.subject.canAccessAllRecords &&
+        isRecordShareExceptionObject(target.flatObjectMetadata)
+        ? buildPrincipalGate('recordNotRestricted', context, target)
         : { kind: 'open' };
     case 'deny':
       return { kind: 'denied' };
@@ -56,7 +55,7 @@ export const buildRecordShareGate = ({
         buildParentPolicy,
       });
     case 'private':
-      return buildOwnRecordShareGate(context, target);
+      return buildPrincipalGate('recordShared', context, target);
     default:
       return assertUnreachable(gateKind);
   }
@@ -81,7 +80,11 @@ const resolveRecordSharePrincipals = (
   return { principalIds: subject.principalIds, accessLevels };
 };
 
-const buildOwnRecordShareGate = (
+const buildPrincipalGate = (
+  kind: Extract<
+    RowAccessExpression['kind'],
+    'recordShared' | 'recordNotRestricted'
+  >,
   context: RowAccessPolicyContext,
   target: RowAccessPolicyTarget,
 ): RowAccessPolicy => {
@@ -94,28 +97,7 @@ const buildOwnRecordShareGate = (
   return {
     kind: 'gated',
     expression: {
-      kind: 'recordShared',
-      tableAlias: target.tableAlias,
-      objectMetadataId: target.flatObjectMetadata.id,
-      ...principals,
-    },
-  };
-};
-
-const buildRecordShareExceptionGate = (
-  context: RowAccessPolicyContext,
-  target: RowAccessPolicyTarget,
-): RowAccessPolicy => {
-  const principals = resolveRecordSharePrincipals(context, target);
-
-  if (!isDefined(principals)) {
-    return { kind: 'open' };
-  }
-
-  return {
-    kind: 'gated',
-    expression: {
-      kind: 'recordNotRestricted',
+      kind,
       tableAlias: target.tableAlias,
       objectMetadataId: target.flatObjectMetadata.id,
       ...principals,
@@ -158,7 +140,7 @@ const buildInheritedReadabilityGate = ({
   if (parents.length === 0) {
     return isOpenWhenDetached
       ? { kind: 'open' }
-      : buildOwnRecordShareGate(context, target);
+      : buildPrincipalGate('recordShared', context, target);
   }
 
   const principals = resolveRecordSharePrincipals(context, target);

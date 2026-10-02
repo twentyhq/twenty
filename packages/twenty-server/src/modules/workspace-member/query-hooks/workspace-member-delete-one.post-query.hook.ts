@@ -92,24 +92,20 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
       );
     }
 
+    const actingUserWorkspaceId =
+      'userWorkspaceId' in authContext
+        ? authContext.userWorkspaceId
+        : undefined;
+
     await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToCustodian(
-      {
-        removedUserWorkspace: userWorkspace,
-        actingUserWorkspaceId:
-          'userWorkspaceId' in authContext
-            ? authContext.userWorkspaceId
-            : undefined,
-      },
+      { removedUserWorkspace: userWorkspace, actingUserWorkspaceId },
     );
 
     await this.recordShareOwnershipTransferService.transferRecordSharesToCustodian(
       {
         removedUserWorkspace: userWorkspace,
         removedWorkspaceMemberId: workspaceMember.id,
-        actingUserWorkspaceId:
-          'userWorkspaceId' in authContext
-            ? authContext.userWorkspaceId
-            : undefined,
+        actingUserWorkspaceId,
       },
     );
 

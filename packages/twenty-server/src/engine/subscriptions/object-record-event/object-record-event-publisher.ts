@@ -516,8 +516,8 @@ export class ObjectRecordEventPublisher {
       isOwningApplication: (objectMetadata) =>
         isDefined(objectMetadata.applicationId) &&
         subscriberAuthContext.applicationId === objectMetadata.applicationId,
-      resolveRowLevelPermissionRecordFilter: (objectMetadata) => {
-        const recordFilter = buildRowLevelPermissionRecordFilter({
+      resolveRowLevelPermissionRecordFilter: (objectMetadata) =>
+        buildRowLevelPermissionRecordFilter({
           flatRowLevelPermissionPredicateMaps:
             permissionsContext.flatRowLevelPermissionPredicateMaps,
           flatRowLevelPermissionPredicateGroupMaps:
@@ -530,12 +530,7 @@ export class ObjectRecordEventPublisher {
                 subscriberAuthContext.workspaceMemberId
               ]
             : undefined,
-        });
-
-        return isDefined(recordFilter) && Object.keys(recordFilter).length > 0
-          ? recordFilter
-          : null;
-      },
+        }),
     };
   }
 

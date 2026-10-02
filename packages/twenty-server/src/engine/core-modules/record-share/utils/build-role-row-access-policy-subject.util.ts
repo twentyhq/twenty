@@ -47,23 +47,14 @@ export const buildRoleRowAccessPolicySubject = ({
     isOwningApplication: (objectMetadata) =>
       isDefined(owningApplicationId) &&
       objectMetadata.applicationId === owningApplicationId,
-    resolveRowLevelPermissionRecordFilter: (objectMetadata) => {
-      if (roleIds.length === 0) {
-        return null;
-      }
-
-      const recordFilter = buildRowLevelPermissionRecordFilter({
+    resolveRowLevelPermissionRecordFilter: (objectMetadata) =>
+      buildRowLevelPermissionRecordFilter({
         flatRowLevelPermissionPredicateMaps,
         flatRowLevelPermissionPredicateGroupMaps,
         flatFieldMetadataMaps,
         objectMetadata,
         roleIds,
         workspaceMember,
-      });
-
-      return isDefined(recordFilter) && Object.keys(recordFilter).length > 0
-        ? recordFilter
-        : null;
-    },
+      }),
   };
 };

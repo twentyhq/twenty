@@ -2025,10 +2025,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     objectMetadataId: string;
     recordIds: string[];
   }): Promise<RecordShareGrant[]> {
-    if (recordIds.length === 0) {
-      return [];
-    }
-
     return this.executeRaw<RecordShareGrant>(
       `SELECT "recordId", "principalId", "accessLevel" FROM ${this.resolveRowAccessPolicyEnvironment().recordShareTableExpression} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds) AND "deletedAt" IS NULL`,
       { objectMetadataId, recordIds },
@@ -2290,11 +2286,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   buildRowAccessPolicy({
     subject,
     operationType,
-    depth = 0,
   }: {
     subject: RowAccessPolicySubject;
     operationType: OperationType;
-    depth?: number;
   }): RowAccessPolicy {
     return buildRowAccessPolicy({
       subject,
@@ -2302,7 +2296,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       tableAlias: this.options.tableShape.nameSingular,
       flatObjectMetadata: this.options.flatObjectMetadata,
       operationType,
-      depth,
+      depth: 0,
     });
   }
 

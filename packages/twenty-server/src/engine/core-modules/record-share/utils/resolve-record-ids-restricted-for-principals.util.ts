@@ -4,6 +4,7 @@ import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
+import { resolveNamedPrincipalIds } from 'src/engine/core-modules/record-share/utils/resolve-named-principal-ids.util';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
 
 // Mirrors buildRecordShareExceptionCondition for records already in memory
@@ -18,9 +19,7 @@ export const resolveRecordIdsRestrictedForPrincipals = ({
 }): Set<string> => {
   const liftedRecordIds = resolveRecordIdsSharedWithPrincipals({
     recordShares,
-    principalIds: principalIds.filter(
-      (principalId) => principalId !== EVERYONE_PRINCIPAL_ID,
-    ),
+    principalIds: resolveNamedPrincipalIds({ principalIds }),
     accessLevels,
   });
 

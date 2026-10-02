@@ -59,11 +59,7 @@ export const compileRowAccessExpression = ({
       });
     case 'inheritedReadability':
       return buildInheritedReadabilityCondition({
-        tableAlias: expression.tableAlias,
-        objectMetadataId: expression.objectMetadataId,
-        principalIds: expression.principalIds,
-        accessLevels: expression.accessLevels,
-        isOpenWhenDetached: expression.isOpenWhenDetached,
+        ...expression,
         recordShareTableExpression: environment.recordShareTableExpression,
         parents: expression.parents.map((parent) =>
           parent.kind === 'column'

@@ -6,6 +6,7 @@ import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
+import { resolveNamedPrincipalIds } from 'src/engine/core-modules/record-share/utils/resolve-named-principal-ids.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 // A record of an object open by default carries share rows only when it
@@ -67,9 +68,7 @@ export const buildRecordShareExceptionCondition = ({
       [restrictedAccessLevelsParameterName]: Object.values(
         RecordShareAccessLevel,
       ).filter((accessLevel) => !accessLevels.includes(accessLevel)),
-      [principalIdsParameterName]: principalIds.filter(
-        (principalId) => principalId !== EVERYONE_PRINCIPAL_ID,
-      ),
+      [principalIdsParameterName]: resolveNamedPrincipalIds({ principalIds }),
       [accessLevelsParameterName]: accessLevels,
     },
   };
