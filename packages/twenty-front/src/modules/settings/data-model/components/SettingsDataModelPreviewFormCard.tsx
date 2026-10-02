@@ -10,6 +10,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 type SettingsDataModelPreviewFormCardProps = {
   className?: string;
   preview: ReactNode;
+  previewTitleEndElement?: ReactNode;
   form?: ReactNode;
   disabled?: boolean;
 };
@@ -18,6 +19,12 @@ const StyledPreviewContainerWrapper = styled.div`
   > div {
     background-color: ${themeCssVariables.background.transparent.lighter};
   }
+`;
+
+const StyledPreviewTitleRow = styled.div`
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const StyledFormContainerWrapper = styled.div`
@@ -29,14 +36,18 @@ const StyledFormContainerWrapper = styled.div`
 export const SettingsDataModelPreviewFormCard = ({
   className,
   preview,
+  previewTitleEndElement,
   form,
 }: SettingsDataModelPreviewFormCardProps) => (
   <Card.Root className={className} fullWidth rounded>
     <StyledPreviewContainerWrapper>
       <Card.Content divider={isDefined(form)}>
-        <StyledFormCardTitle>
-          <Trans>Preview</Trans>
-        </StyledFormCardTitle>
+        <StyledPreviewTitleRow>
+          <StyledFormCardTitle>
+            <Trans>Preview</Trans>
+          </StyledFormCardTitle>
+          {previewTitleEndElement}
+        </StyledPreviewTitleRow>
         {preview}
       </Card.Content>
     </StyledPreviewContainerWrapper>

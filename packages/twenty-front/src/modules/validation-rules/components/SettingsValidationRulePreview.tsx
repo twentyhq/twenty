@@ -1,38 +1,27 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
 import { VALIDATION_RULE_NOW_VARIABLE_NAME } from 'twenty-shared/constants';
-import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
-  compileValidationRuleExpression,
+  type ValidationRuleCompilationResult,
+  type ValidationRuleFieldDescriptor,
+} from 'twenty-shared/types';
+import {
   evaluateValidationRuleExpression,
   isDefined,
   parseValidationRuleExpression,
 } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
-import {
-  IconAlertTriangle,
-  IconCheck,
-  IconChevronDown,
-  IconChevronUp,
-  IconX,
-} from 'twenty-ui/icon';
+import { IconAlertTriangle, IconCheck, IconX } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
-import { buildValidationRulePreviewRelationGqlFields } from '@/validation-rules/utils/buildValidationRulePreviewRelationGqlFields';
 import { formatValidationRulePreviewValue } from '@/validation-rules/utils/formatValidationRulePreviewValue';
 import { getValidationRuleEditorFieldChipLabel } from '@/validation-rules/utils/getValidationRuleEditorFieldChipLabel';
 import { getValidationRulePreviewValue } from '@/validation-rules/utils/getValidationRulePreviewValue';
-
-const PREVIEW_RECORD_COUNT = 3;
 
 const StyledPreview = styled.div`
   display: flex;
@@ -41,20 +30,8 @@ const StyledPreview = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledHeader = styled.div`
-  align-items: center;
+const StyledRecord = styled.div`
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
-  min-width: 0;
-`;
-
-const StyledNavigation = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledValues = styled.div`
@@ -94,7 +71,9 @@ type SettingsValidationRulePreviewProps = {
   fields: ValidationRuleFieldDescriptor[];
   editorFields: ValidationRuleEditorField[];
   expression: string;
+  compilationResult: ValidationRuleCompilationResult;
   message: string;
+  record: ObjectRecord | undefined;
 };
 
 export const SettingsValidationRulePreview = ({
@@ -102,42 +81,12 @@ export const SettingsValidationRulePreview = ({
   fields,
   editorFields,
   expression,
+  compilationResult,
   message,
+  record,
 }: SettingsValidationRulePreviewProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const [recordIndex, setRecordIndex] = useState(0);
-
-  const compilationResult = compileValidationRuleExpression({
-    expression,
-    fields,
-  });
-
-  const { records, loading } = useFindManyRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    limit: PREVIEW_RECORD_COUNT,
-    orderBy: [{ createdAt: 'DescNullsLast' }],
-    recordGqlFields: {
-      ...generateDepthRecordGqlFieldsFromObject({
-        objectMetadataItems,
-        objectMetadataItem,
-        depth: 0,
-      }),
-      ...buildValidationRulePreviewRelationGqlFields({
-        bindingPaths: compilationResult.isValid
-          ? Object.keys(compilationResult.bindings)
-          : [],
-        fields,
-      }),
-    },
-  });
-
-  if (loading) {
-    return null;
-  }
-
-  const record = records[Math.min(recordIndex, records.length - 1)];
 
   if (!isDefined(record)) {
     return (
@@ -202,37 +151,17 @@ export const SettingsValidationRulePreview = ({
     }
   };
 
-  const displayedRecordNumber = records.indexOf(record) + 1;
-  const recordCount = records.length;
-
   return (
     <Card.Root fullWidth>
       <Card.Content>
         <StyledPreview>
-          <StyledHeader>
+          <StyledRecord>
             <RecordChip
               objectNameSingular={objectMetadataItem.nameSingular}
               record={record}
               forceDisableClick
             />
-            <StyledNavigation>
-              {t`Record ${displayedRecordNumber} of ${recordCount}`}
-              <LightIconButton
-                aria-label={t`Previous record`}
-                disabled={displayedRecordNumber === 1}
-                onClick={() => setRecordIndex(displayedRecordNumber - 2)}
-              >
-                <IconChevronUp />
-              </LightIconButton>
-              <LightIconButton
-                aria-label={t`Next record`}
-                disabled={displayedRecordNumber === recordCount}
-                onClick={() => setRecordIndex(displayedRecordNumber)}
-              >
-                <IconChevronDown />
-              </LightIconButton>
-            </StyledNavigation>
-          </StyledHeader>
+          </StyledRecord>
           {referencedPaths.length > 0 && (
             <StyledValues>
               {referencedPaths.map((path) => {
