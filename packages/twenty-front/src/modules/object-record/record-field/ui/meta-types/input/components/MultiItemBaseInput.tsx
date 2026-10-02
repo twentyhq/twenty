@@ -104,6 +104,19 @@ export const MultiItemBaseInput = ({
     enabled: isDefined(onClickOutside),
   });
 
+  const getKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+    switch (event.key) {
+      case Key.Enter:
+        return onEnter;
+      case Key.Escape:
+        return onEscape;
+      case Key.Tab:
+        return event.shiftKey ? onShiftTab : onTab;
+      default:
+        return undefined;
+    }
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     const hasUnsupportedModifier =
       event.altKey ||
@@ -119,16 +132,7 @@ export const MultiItemBaseInput = ({
       event.preventDefault();
     }
 
-    const handler =
-      event.key === Key.Enter
-        ? onEnter
-        : event.key === Key.Escape
-          ? onEscape
-          : event.key === Key.Tab
-            ? event.shiftKey
-              ? onShiftTab
-              : onTab
-            : undefined;
+    const handler = getKeyDownHandler(event);
 
     if (!isDefined(handler)) {
       return;

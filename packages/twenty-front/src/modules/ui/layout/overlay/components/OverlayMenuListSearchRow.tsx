@@ -52,6 +52,7 @@ export const OverlayMenuListSearchRow = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        aria-label={placeholder}
       />
     </StyledSearchRow>
   );

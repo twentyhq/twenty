@@ -3,9 +3,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { createElement, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
-import { IconPlus } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
+import { AddSelectOptionDropdownSection } from '@/ui/input/components/AddSelectOptionDropdownSection';
+import { filterSelectOptionsBySearch } from '@/ui/input/utils/filterSelectOptionsBySearch';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type SelectInputProps = {
@@ -26,12 +27,11 @@ export const SelectInput = ({
   onAddSelectOption,
 }: SelectInputProps) => {
   const [searchFilter, setSearchFilter] = useState('');
-  const trimmedSearchFilter = searchFilter.trim();
-  const isSearching = isNonEmptyString(trimmedSearchFilter);
-  const searchTerm = normalizeSearchText(searchFilter);
-  const filteredOptions = options.filter((option) =>
-    normalizeSearchText(option.label).includes(searchTerm),
-  );
+  const isSearching = isNonEmptyString(searchFilter.trim());
+  const filteredOptions = filterSelectOptionsBySearch({
+    options,
+    searchFilter,
+  });
   const selectedOption = filteredOptions.find(
     (option) => option.value === value,
   );
@@ -47,11 +47,7 @@ export const SelectInput = ({
   const shouldShowClearOption =
     isDefined(onClear) &&
     isNonEmptyString(clearLabel) &&
-    normalizeSearchText(emptyLabel).includes(searchTerm);
-  const shouldShowAddOption =
-    isDefined(onAddSelectOption) &&
-    isSearching &&
-    !isNonEmptyArray(filteredOptions);
+    normalizeSearchText(emptyLabel).includes(normalizeSearchText(searchFilter));
 
   const clearOptionItem = shouldShowClearOption ? (
     <Dropdown.OptionItem
@@ -100,20 +96,11 @@ export const SelectInput = ({
           <Dropdown.Empty>{t`No option found`}</Dropdown.Empty>
         )}
       </Dropdown.Section>
-      {shouldShowAddOption && (
-        <>
-          <Dropdown.Separator />
-          <Dropdown.Section>
-            <Dropdown.ActionItem
-              onClick={() => onAddSelectOption(trimmedSearchFilter)}
-              closeOnClick={false}
-              startIcon={<IconPlus />}
-            >
-              {t`Add "${trimmedSearchFilter}" to options`}
-            </Dropdown.ActionItem>
-          </Dropdown.Section>
-        </>
-      )}
+      <AddSelectOptionDropdownSection
+        searchFilter={searchFilter}
+        filteredOptions={filteredOptions}
+        onAddSelectOption={onAddSelectOption}
+      />
     </>
   );
 };

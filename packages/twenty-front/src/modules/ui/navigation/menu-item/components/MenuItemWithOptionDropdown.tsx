@@ -35,7 +35,10 @@ export const MenuItemWithOptionDropdown = ({
     dropdownId,
   );
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (!isDefined(onClick)) return;
+    if (!isDefined(onClick)) {
+      return;
+    }
+
     event.preventDefault();
     event.stopPropagation();
 

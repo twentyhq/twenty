@@ -78,10 +78,6 @@ const StyledPlaceholderContainer = styled.div`
   width: 100%;
 `;
 
-const parseSpacingValueAsNumber = (value: string) => {
-  return Number(value.replace('px', ''));
-};
-
 export const FormArrayFieldInput = ({
   label,
   defaultValue,
@@ -398,7 +394,7 @@ export const FormArrayFieldInput = ({
                 <DropdownContent
                   side="bottom"
                   align="start"
-                  sideOffset={parseSpacingValueAsNumber(theme.spacing[1])}
+                  sideOffset={parseInt(theme.spacing[1], 10)}
                   aria-label={accessibleLabel}
                 >
                   <Dropdown.Section scrollable>
