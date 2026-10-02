@@ -19,7 +19,7 @@ import { enUS } from 'date-fns/locale';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { type CurrentUserWorkspaceObjectPermissions } from '@/auth/types/CurrentUserWorkspaceObjectPermissions';
 import { isDefined } from 'twenty-shared/utils';
 import { useQuery } from '@apollo/client/react';
 import {
@@ -114,9 +114,8 @@ export const UserMetadataProviderInitialEffect = () => {
             .twoFactorAuthenticationMethodSummary ?? [],
         objectsPermissions:
           (userQueryData.currentUser.currentUserWorkspace
-            .objectsPermissions as Array<
-            ObjectPermissions & { objectMetadataId: string }
-          >) ?? [],
+            .objectsPermissions as CurrentUserWorkspaceObjectPermissions[]) ??
+          [],
         isImpersonating:
           userQueryData.currentUser.currentUserWorkspace.isImpersonating ??
           false,

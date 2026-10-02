@@ -720,7 +720,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "CSS line color. Defaults to the medium border color."
+        "description": "CSS color for the line and text. Defaults to the medium border color."
       },
       {
         "name": "noMargin",
@@ -735,6 +735,13 @@
         "required": false,
         "defaultValue": "",
         "description": "Optional label displayed between two lines."
+      },
+      {
+        "name": "textPosition",
+        "type": "\"center\" | \"end\"",
+        "required": false,
+        "defaultValue": "center",
+        "description": "Places the text between two lines, or at the end of a single line."
       },
       {
         "name": "visible",
