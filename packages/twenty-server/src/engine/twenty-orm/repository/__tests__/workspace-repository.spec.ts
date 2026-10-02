@@ -78,9 +78,19 @@ const tableShape: WorkspaceTableShape = {
   hasDeletedAtColumn: true,
 };
 
+const EMPTY_FLAT_ENTITY_MAPS = {
+  byUniversalIdentifier: {},
+  universalIdentifierById: {},
+  universalIdentifiersByApplicationId: {},
+};
+const API_KEY_ID = 'api-key-id';
+const ROLE_ID = 'role-id';
+
 const buildRepository = ({
+  shouldBypassPermissionChecks = true,
   shouldSkipEventEmission,
 }: {
+  shouldBypassPermissionChecks?: boolean;
   shouldSkipEventEmission: boolean;
 }) => {
   const executedStatements: CompiledStatement[] = [];
@@ -96,7 +106,13 @@ const buildRepository = ({
       objectIdByNameSingular: { delivery: OBJECT_METADATA_ID },
       eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
       coreDataSource: { getRepository: () => ({}) },
+      userWorkspaceRoleMap: {},
+      apiKeyRoleMap: { [API_KEY_ID]: ROLE_ID },
+      roleIdsWithAllRecordsAccess: [ROLE_ID],
+      flatRowLevelPermissionPredicateMaps: EMPTY_FLAT_ENTITY_MAPS,
+      flatRowLevelPermissionPredicateGroupMaps: EMPTY_FLAT_ENTITY_MAPS,
     },
+    authContext: { type: 'apiKey', apiKey: { id: API_KEY_ID } },
     executor: {
       execute: async (statement: CompiledStatement) => {
         executedStatements.push(statement);
@@ -104,8 +120,16 @@ const buildRepository = ({
         return [];
       },
     },
-    objectRecordsPermissions: {},
-    shouldBypassPermissionChecks: true,
+    objectRecordsPermissions: {
+      [OBJECT_METADATA_ID]: {
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: true,
+        canDestroyObjectRecords: true,
+        restrictedFields: {},
+      },
+    },
+    shouldBypassPermissionChecks,
     shouldSkipEventEmission,
     tableShapeByObjectMetadataId: () => tableShape,
   } as unknown as WorkspaceRepositoryOptions);
@@ -176,6 +200,30 @@ describe('WorkspaceRepository mutations', () => {
     it('should read the before-image before a delete', async () => {
       const { repository, getExecutedStatementKinds } = buildRepository({
         shouldSkipEventEmission: false,
+      });
+
+      await repository.delete({ id: 'delivery-id' });
+
+      expect(getExecutedStatementKinds()).toEqual(['SELECT', 'DELETE']);
+    });
+  });
+
+  describe('on a permission-scoped repository that skips events', () => {
+    it('should read the before-image before an update', async () => {
+      const { repository, getExecutedStatementKinds } = buildRepository({
+        shouldBypassPermissionChecks: false,
+        shouldSkipEventEmission: true,
+      });
+
+      await repository.update({ id: 'delivery-id' }, { state: 'SENT' });
+
+      expect(getExecutedStatementKinds()).toEqual(['SELECT', 'UPDATE']);
+    });
+
+    it('should read the before-image before a delete', async () => {
+      const { repository, getExecutedStatementKinds } = buildRepository({
+        shouldBypassPermissionChecks: false,
+        shouldSkipEventEmission: true,
       });
 
       await repository.delete({ id: 'delivery-id' });

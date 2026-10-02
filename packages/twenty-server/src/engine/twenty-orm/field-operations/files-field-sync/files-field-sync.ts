@@ -138,19 +138,16 @@ export class FilesFieldSync {
       this.internalContext,
     );
 
+    if (
+      !this.isUpdatingFilesField(
+        updatePayload as Record<string, unknown>,
+        objectMetadata.id,
+      )
+    ) {
+      return null;
+    }
+
     const filesFields = this.getFilesFields(objectMetadata.id);
-
-    if (filesFields.length === 0) {
-      return null;
-    }
-
-    const isModifyingFilesField = filesFields.some((filesField) =>
-      isDefined(updatePayload[filesField.name as keyof typeof updatePayload]),
-    );
-
-    if (!isModifyingFilesField) {
-      return null;
-    }
 
     if (existingRecords.length !== 1) {
       throw new TwentyOrmException(
