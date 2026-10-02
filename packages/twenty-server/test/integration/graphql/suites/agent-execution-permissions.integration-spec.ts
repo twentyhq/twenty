@@ -2,13 +2,21 @@ import { randomUUID } from 'node:crypto';
 
 import { MockLanguageModelV4 } from 'ai/test';
 import { parse } from 'graphql';
+import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
+import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -212,15 +220,24 @@ const destroyRecord = (objectMetadataSingularName: string, recordId: string) =>
 
 describe('agent execution permissions', () => {
   let applicationAccessToken: string;
+  let workspaceAgentId: string;
+  let workspaceAgentUniversalIdentifier: string;
+  let workspaceAgentRoleId: string;
+  let memberCallerRoleId: string;
+  let memberRoleId: string;
   const spies: jest.SpyInstance[] = [];
   let resolveModelForAgent: jest.SpyInstance;
 
   const runAgent = async ({
     executeToolCall,
     runAsWorkspaceMemberId,
+    agentUniversalIdentifier = AGENT_ID,
+    token = applicationAccessToken,
   }: {
     executeToolCall: ExecuteToolCall;
     runAsWorkspaceMemberId?: string;
+    agentUniversalIdentifier?: string;
+    token?: string;
   }): Promise<string> => {
     resolveModelForAgent.mockReturnValue({
       modelId: 'test-model',
@@ -233,13 +250,13 @@ describe('agent execution permissions', () => {
         query: RUN_AGENT,
         variables: {
           input: {
-            agentUniversalIdentifier: AGENT_ID,
+            agentUniversalIdentifier,
             prompt: 'Look the records up',
             runAsWorkspaceMemberId,
           },
         },
       },
-      applicationAccessToken,
+      token,
     );
 
     expect(response.body.errors).toBeUndefined();
@@ -277,6 +294,80 @@ describe('agent execution permissions', () => {
     });
 
     applicationAccessToken = tokenPair.applicationAccessToken.token;
+
+    // An agent of the workspace application, which has no default role, run by a member narrower than the agent
+    const [{ id: opportunityObjectMetadataId }] =
+      await globalThis.testDataSource.query(
+        `SELECT id FROM core."objectMetadata" WHERE "nameSingular" = 'opportunity' AND "workspaceId" = $1`,
+        [SEED_APPLE_WORKSPACE_ID],
+      );
+
+    const memberCallerRole = await createOneRole({
+      input: {
+        label: `Agent caller role ${RUN_SUFFIX}`,
+        canUpdateAllSettings: false,
+        canAccessAllTools: true,
+        canReadAllObjectRecords: true,
+        canBeAssignedToUsers: true,
+      },
+      expectToFail: false,
+    });
+
+    memberCallerRoleId = memberCallerRole.data.createOneRole.id;
+
+    await upsertObjectPermissions({
+      input: {
+        roleId: memberCallerRoleId,
+        objectPermissions: [
+          {
+            objectMetadataId: opportunityObjectMetadataId,
+            canReadObjectRecords: false,
+          },
+        ],
+      },
+      expectToFail: false,
+    });
+
+    memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+
+    await updateWorkspaceMemberRole({
+      input: {
+        roleId: memberCallerRoleId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      },
+    });
+
+    const workspaceAgentRole = await createOneRole({
+      input: {
+        label: `Workspace agent role ${RUN_SUFFIX}`,
+        canUpdateAllSettings: false,
+        canReadAllObjectRecords: true,
+        canBeAssignedToUsers: false,
+        canBeAssignedToAgents: true,
+      },
+      expectToFail: false,
+    });
+
+    workspaceAgentRoleId = workspaceAgentRole.data.createOneRole.id;
+
+    const workspaceAgent = await createOneAgent({
+      input: {
+        label: `Workspace permission probe ${RUN_SUFFIX}`,
+        prompt: 'You look records up.',
+        modelId: TEST_AI_MODEL_ID,
+        roleId: workspaceAgentRoleId,
+      },
+      expectToFail: false,
+    });
+
+    workspaceAgentId = workspaceAgent.data.createOneAgent.id;
+
+    const [{ universalIdentifier }] = await globalThis.testDataSource.query(
+      `SELECT "universalIdentifier" FROM core.agent WHERE id = $1`,
+      [workspaceAgentId],
+    );
+
+    workspaceAgentUniversalIdentifier = universalIdentifier;
 
     await createRecord('company', {
       id: VISIBLE_COMPANY_ID,
@@ -331,6 +422,16 @@ describe('agent execution permissions', () => {
     await destroyRecord('company', HIDDEN_COMPANY_ID);
     await destroyRecord('opportunity', OPPORTUNITY_ID);
 
+    await updateWorkspaceMemberRole({
+      input: {
+        roleId: memberRoleId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      },
+    });
+    await deleteOneAgent({ input: { id: workspaceAgentId } });
+    await deleteOneRole({ input: { idToDelete: workspaceAgentRoleId } });
+    await deleteOneRole({ input: { idToDelete: memberCallerRoleId } });
+
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: APP_ID,
     });
@@ -368,5 +469,27 @@ describe('agent execution permissions', () => {
 
     expect(toolOutput).toContain(VISIBLE_COMPANY_NAME);
     expect(toolOutput).not.toContain(HIDDEN_COMPANY_NAME);
+  }, 60000);
+
+  it('runs a workspace agent for a signed-in member', async () => {
+    const toolOutput = await runAgent({
+      executeToolCall: FIND_COMPANIES,
+      agentUniversalIdentifier: workspaceAgentUniversalIdentifier,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(toolOutput).toContain(VISIBLE_COMPANY_NAME);
+    expect(toolOutput).toContain(HIDDEN_COMPANY_NAME);
+  }, 60000);
+
+  it('does not let a workspace agent read an object the member cannot read', async () => {
+    const toolOutput = await runAgent({
+      executeToolCall: FIND_OPPORTUNITIES,
+      agentUniversalIdentifier: workspaceAgentUniversalIdentifier,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(toolOutput).toContain('is not available');
+    expect(toolOutput).not.toContain(OPPORTUNITY_NAME);
   }, 60000);
 });

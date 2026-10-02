@@ -133,17 +133,20 @@ export class AgentAsyncExecutorService {
     return roleTarget?.roleId;
   }
 
-  // The agent acts for the principal of its auth context, so it must never get more than that principal could
+  // The agent must never get more than the principal it runs for could
   private async buildRolePermissionConfig({
     agentRoleId,
-    authContext,
+    principalAuthContext,
     workspaceId,
   }: {
     agentRoleId: string;
-    authContext?: WorkspaceAuthContext;
+    principalAuthContext?: WorkspaceAuthContext;
     workspaceId: string;
   }): Promise<RolePermissionConfig> {
-    if (!isDefined(authContext) || isSystemAuthContext(authContext)) {
+    if (
+      !isDefined(principalAuthContext) ||
+      isSystemAuthContext(principalAuthContext)
+    ) {
       return buildAgentRolePermissionConfig({
         agentRoleId,
         principalRoleIds: [],
@@ -157,7 +160,7 @@ export class AgentAsyncExecutorService {
       ]);
 
     const principalRoleIds = resolveRoleIdsFromAuthContext({
-      authContext,
+      authContext: principalAuthContext,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
     });
@@ -297,6 +300,7 @@ export class AgentAsyncExecutorService {
     baseSystemPrompt,
     actorContext,
     authContext,
+    principalAuthContext = authContext,
     workspaceId,
     userWorkspaceId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
@@ -312,6 +316,8 @@ export class AgentAsyncExecutorService {
     baseSystemPrompt: string;
     actorContext?: ActorMetadata;
     authContext?: WorkspaceAuthContext;
+    // whose roles cap the agent, when it acts under another identity than the caller's
+    principalAuthContext?: WorkspaceAuthContext;
     workspaceId: string;
     userWorkspaceId?: string | null;
     operationType?: UsageOperationType;
@@ -383,7 +389,7 @@ export class AgentAsyncExecutorService {
         if (isDefined(agentRoleId)) {
           const rolePermissionConfig = await this.buildRolePermissionConfig({
             agentRoleId,
-            authContext,
+            principalAuthContext,
             workspaceId,
           });
 

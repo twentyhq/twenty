@@ -49,12 +49,14 @@ export class AgentRunService {
     requestUserWorkspaceId,
     requestWorkspaceMemberId,
     callerApplication,
+    callerAuthContext,
     input,
   }: {
     workspace: FlatWorkspace;
     requestUserWorkspaceId: string | null;
     requestWorkspaceMemberId: string | null;
     callerApplication?: FlatApplication;
+    callerAuthContext: WorkspaceAuthContext;
     input: RunAgentServiceInput;
   }): Promise<RunAgentResult> {
     const prompt = input.prompt;
@@ -126,6 +128,7 @@ export class AgentRunService {
           baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
           actorContext: runAsContext?.actorContext,
           authContext,
+          principalAuthContext: runAsContext?.authContext ?? callerAuthContext,
           workspaceId: workspace.id,
           userWorkspaceId:
             runAsContext?.authContext.userWorkspaceId ?? requestUserWorkspaceId,
