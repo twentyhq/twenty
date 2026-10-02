@@ -4603,7 +4603,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@blocknote/core@npm:0.51.4":
+"@blocknote/core@npm:0.51.4, @blocknote/core@npm:^0.51.4":
   version: 0.51.4
   resolution: "@blocknote/core@npm:0.51.4"
   dependencies:
@@ -50688,6 +50688,7 @@ __metadata:
     "@aws-sdk/lib-storage": "npm:3.1001.0"
     "@aws-sdk/s3-request-presigner": "npm:3.1001.0"
     "@azure/msal-node": "npm:^5.2.3"
+    "@blocknote/core": "npm:^0.51.4"
     "@blocknote/server-util": "npm:^0.51.4"
     "@clickhouse/client": "npm:^1.18.1"
     "@e2b/code-interpreter": "npm:^2.6.0"
@@ -50832,6 +50833,7 @@ __metadata:
     lodash.snakecase: "npm:4.1.1"
     lodash.uniq: "npm:^4.5.0"
     lodash.uniqby: "npm:^4.7.0"
+    marked: "npm:^17.0.1"
     microdiff: "npm:1.4.0"
     mrmime: "npm:^2.0.1"
     ms: "npm:2.1.3"
