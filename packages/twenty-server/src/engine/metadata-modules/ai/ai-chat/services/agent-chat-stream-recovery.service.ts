@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -9,11 +9,14 @@ import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { formatAgentChatTurnFailedLog } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-agent-chat-turn-failed-log.util';
 
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 
 @Injectable()
 export class AgentChatStreamRecoveryService {
+  private readonly logger = new Logger(AgentChatStreamRecoveryService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -61,6 +64,16 @@ export class AgentChatStreamRecoveryService {
         error_code: interruptedError.code,
       },
     });
+
+    this.logger.error(
+      formatAgentChatTurnFailedLog({
+        threadId: thread.id,
+        workspaceId,
+        streamId: thread.activeStreamId,
+        failurePhase: 'interrupted',
+        errorCode: interruptedError.code,
+      }),
+    );
 
     await this.eventPublisherService.resetStreamState(thread.id);
     await this.eventPublisherService
