@@ -6,6 +6,7 @@ import { RecordTableContextProvider as RecordTableContextInternalProvider } from
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useIsObjectReadOnly } from '@/object-record/read-only/hooks/useIsObjectReadOnly';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordUpdateHookParams } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
@@ -39,6 +40,8 @@ export const RecordTableContextProvider = ({
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
+
+  const isObjectReadOnly = useIsObjectReadOnly(objectMetadataItem.id);
 
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
@@ -76,6 +79,7 @@ export const RecordTableContextProvider = ({
         recordTableId,
         objectNameSingular,
         objectPermissions,
+        isObjectReadOnly,
         visibleRecordFields: visibleRecordFields.map((field) => ({
           ...field,
           size: Math.max(field.size, RECORD_TABLE_COLUMN_MIN_WIDTH),
