@@ -19,8 +19,6 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type RecordPermissionsDTO } from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions.dto';
-import { RecordPermissionsService } from 'src/engine/metadata-modules/record-permissions/services/record-permissions.service';
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -40,7 +38,6 @@ export class AgentChatSharingService {
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
-    private readonly recordPermissionsService: RecordPermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -79,27 +76,6 @@ export class AgentChatSharingService {
       return this.throwNotFound();
     }
     return thread;
-  }
-
-  async getPermissions(args: ThreadAccessArgs): Promise<RecordPermissionsDTO> {
-    const permissions = await this.getPermissionsForThreads({
-      ...args,
-      threadIds: [args.threadId],
-    });
-    return permissions.get(args.threadId)!;
-  }
-
-  async getPermissionsForThreads(
-    args: Omit<ThreadAccessArgs, 'threadId'> & { threadIds: string[] },
-  ) {
-    const authContext = await this.getAuthContext(args);
-    const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    return this.recordPermissionsService.getPermissionsForRecords({
-      authContext,
-      flatObjectMetadata: objectMetadata,
-      recordIds: args.threadIds,
-      withDeleted: true,
-    });
   }
 
   async createThread(args: {

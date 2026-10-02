@@ -5,38 +5,19 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type RecordPermissionsDTO } from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions.dto';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
-type RecordPermissionsArgs = {
-  authContext: WorkspaceAuthContext;
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
-  withDeleted?: boolean;
-};
-
 @Injectable()
 export class RecordPermissionsService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
-
-  async getPermissions({
-    recordId,
-    ...args
-  }: RecordPermissionsArgs & {
-    recordId: string;
-  }): Promise<RecordPermissionsDTO> {
-    const permissionsByRecordId = await this.getPermissionsForRecords({
-      ...args,
-      recordIds: [recordId],
-    });
-
-    return permissionsByRecordId.get(recordId)!;
-  }
 
   async getPermissionsForRecords({
     authContext,
     flatObjectMetadata,
     recordIds,
-    withDeleted = true,
-  }: RecordPermissionsArgs & { recordIds: string[] }): Promise<
-    Map<string, RecordPermissionsDTO>
-  > {
+  }: {
+    authContext: WorkspaceAuthContext;
+    flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
+    recordIds: string[];
+  }): Promise<Map<string, RecordPermissionsDTO>> {
     const allowedRecordIds =
       await this.workspaceOrmManager.executeInWorkspaceContext(
         () =>
@@ -47,7 +28,6 @@ export class RecordPermissionsService {
             .findRecordIdsAllowedForOperations({
               recordIds,
               operationTypes: ['select', 'update', 'delete', 'soft-delete'],
-              withDeleted,
             }),
         authContext,
       );

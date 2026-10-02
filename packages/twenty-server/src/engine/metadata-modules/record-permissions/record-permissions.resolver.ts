@@ -12,6 +12,7 @@ import {
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { DENIED_RECORD_PERMISSIONS } from 'src/engine/metadata-modules/record-permissions/constants/denied-record-permissions.constant';
 import { type RecordPermissionsDTO } from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions.dto';
 import { RecordPermissionsResult } from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions-result.dto';
 import { RecordTargetInput } from 'src/engine/metadata-modules/record-permissions/dtos/record-target.input';
@@ -74,12 +75,6 @@ export class RecordPermissionsResolver {
         flatEntityId: objectMetadataId,
         flatEntityMaps: flatObjectMetadataMaps,
       });
-      const denied = {
-        canRead: false,
-        canUpdate: false,
-        canDelete: false,
-        canSoftDelete: false,
-      };
       const permissions = !isDefined(objectMetadata)
         ? new Map<string, RecordPermissionsDTO>()
         : await this.recordPermissionsService.getPermissionsForRecords({
@@ -91,7 +86,7 @@ export class RecordPermissionsResolver {
         results.push({
           objectMetadataId,
           recordId,
-          permissions: permissions.get(recordId) ?? denied,
+          permissions: permissions.get(recordId) ?? DENIED_RECORD_PERMISSIONS,
         });
       }
     }

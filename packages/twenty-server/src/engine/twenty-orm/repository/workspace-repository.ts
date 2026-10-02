@@ -2249,17 +2249,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   // Applies the checks of findRecordIdsAllowedForOperation to several
-  // operations in one query, with a boolean column per gated operation
+  // operations in one query, with a boolean column per gated operation;
+  // deleted records are included
   async findRecordIdsAllowedForOperations<
     TOperationType extends OperationType,
   >({
     recordIds,
     operationTypes,
-    withDeleted = false,
   }: {
     recordIds: string[];
     operationTypes: TOperationType[];
-    withDeleted?: boolean;
   }): Promise<Record<TOperationType, Set<string>>> {
     const allowedRecordIdsByOperationType = Object.fromEntries(
       operationTypes.map((operationType) => [operationType, new Set<string>()]),
@@ -2285,12 +2284,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const queryBuilder = this.buildBypassingEventSelectQueryBuilder(tableAlias)
       .where({ id: In(recordIds) })
+      .withDeleted()
       .select([])
       .addSelect(`${escapeIdentifier(tableAlias)}."id"`, 'id');
-
-    if (withDeleted) {
-      queryBuilder.withDeleted();
-    }
 
     for (const { access, columnAlias } of recordAccesses) {
       if (typeof access === 'boolean') {
