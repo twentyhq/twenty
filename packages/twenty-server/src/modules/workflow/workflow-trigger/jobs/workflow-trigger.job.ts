@@ -92,8 +92,8 @@ export class WorkflowTriggerJob {
     }
 
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.ACTIVE) {
-      this.captureDroppedDispatch(
-        `Core workflow version ${coreWorkflowVersionId} is not active in workspace ${workspaceId}`,
+      this.logger.warn(
+        `Core workflow version ${coreWorkflowVersionId} is ${coreWorkflowVersion.status} in workspace ${workspaceId}, dropping queued trigger`,
       );
       return;
     }
