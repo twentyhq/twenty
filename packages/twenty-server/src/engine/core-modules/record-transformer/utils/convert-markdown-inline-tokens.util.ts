@@ -1,5 +1,5 @@
 import type { DefaultStyleSchema, Link, StyledText } from '@blocknote/core';
-import { type Token } from 'marked';
+import { type Token, type Tokens } from 'marked';
 import { isDefined, isNonEmptyArray, isSafeUrl } from 'twenty-shared/utils';
 
 type InlineStyle = 'bold' | 'italic' | 'strike' | 'code';
@@ -22,6 +22,45 @@ const STYLE_BY_TOKEN_TYPE: Record<string, InlineStyle> = {
 
 export const getChildTokens = (token: Token): Token[] =>
   'tokens' in token && Array.isArray(token.tokens) ? token.tokens : [];
+
+export const isImageToken = (token: Token): token is Tokens.Image =>
+  token.type === 'image' && isSafeUrl(token.href);
+
+export const splitAroundImages = (token: Token): Token[] => {
+  const childTokens = getChildTokens(token);
+
+  if (isImageToken(token) || !isNonEmptyArray(childTokens)) {
+    return [token];
+  }
+
+  const parts: Token[] = [];
+  let pendingChildTokens: Token[] = [];
+
+  const flushChildTokens = () => {
+    if (pendingChildTokens.length > 0) {
+      const partToken: Tokens.Generic = {
+        ...token,
+        tokens: pendingChildTokens,
+      };
+
+      parts.push(partToken);
+      pendingChildTokens = [];
+    }
+  };
+
+  for (const childPart of childTokens.flatMap(splitAroundImages)) {
+    if (isImageToken(childPart)) {
+      flushChildTokens();
+      parts.push(childPart);
+    } else {
+      pendingChildTokens.push(childPart);
+    }
+  }
+
+  flushChildTokens();
+
+  return parts;
+};
 
 const collectInlineRuns = ({
   tokens,

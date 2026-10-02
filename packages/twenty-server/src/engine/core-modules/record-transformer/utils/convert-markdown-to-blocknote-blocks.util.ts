@@ -2,12 +2,14 @@ import { randomUUID } from 'crypto';
 
 import type { PartialBlock } from '@blocknote/core';
 import { Lexer, type Token, type Tokens } from 'marked';
-import { isNonEmptyArray, isSafeUrl } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import {
   convertMarkdownInlineTokens,
   getChildTokens,
   type InlineContent,
+  isImageToken,
+  splitAroundImages,
 } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-inline-tokens.util';
 
 const DEFAULT_BLOCK_PROPS = {
@@ -33,9 +35,6 @@ const isListToken = (token: Token): token is Tokens.List =>
 const isTableToken = (token: Token): token is Tokens.Table =>
   token.type === 'table';
 
-const isImageToken = (token: Token): token is Tokens.Image =>
-  token.type === 'image' && isSafeUrl(token.href);
-
 const convertImage = (image: Tokens.Image): PartialBlock =>
   createBlock({
     type: 'image',
@@ -48,42 +47,6 @@ const convertImage = (image: Tokens.Image): PartialBlock =>
       showPreview: true,
     },
   });
-
-const splitAroundImages = (token: Token): Token[] => {
-  const childTokens = getChildTokens(token);
-
-  if (isImageToken(token) || !isNonEmptyArray(childTokens)) {
-    return [token];
-  }
-
-  const parts: Token[] = [];
-  let pendingChildTokens: Token[] = [];
-
-  const flushChildTokens = () => {
-    if (pendingChildTokens.length > 0) {
-      const partToken: Tokens.Generic = {
-        ...token,
-        tokens: pendingChildTokens,
-      };
-
-      parts.push(partToken);
-      pendingChildTokens = [];
-    }
-  };
-
-  for (const childPart of childTokens.flatMap(splitAroundImages)) {
-    if (isImageToken(childPart)) {
-      flushChildTokens();
-      parts.push(childPart);
-    } else {
-      pendingChildTokens.push(childPart);
-    }
-  }
-
-  flushChildTokens();
-
-  return parts;
-};
 
 const convertParagraph = (tokens: Token[]): PartialBlock[] => {
   const blocks: PartialBlock[] = [];
