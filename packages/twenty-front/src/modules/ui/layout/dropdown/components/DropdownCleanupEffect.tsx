@@ -1,7 +1,8 @@
-import { atom, useStore } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useStore } from 'jotai';
+import { useEffect } from 'react';
 
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { mountedDropdownRootCountComponentState } from '@/ui/layout/dropdown/states/internal/mountedDropdownRootCountComponentState';
 
 type DropdownCleanupEffectProps = {
   dropdownId: string;
@@ -11,23 +12,26 @@ export const DropdownCleanupEffect = ({
   dropdownId,
 }: DropdownCleanupEffectProps) => {
   const { closeDropdown } = useCloseDropdown();
-
   const store = useStore();
-  const [mountedDropdownIdAtom] = useState(() => atom<string | null>(null));
 
   useEffect(() => {
-    store.set(mountedDropdownIdAtom, dropdownId);
+    const mountedDropdownRootCountAtom =
+      mountedDropdownRootCountComponentState.atomFamily({
+        instanceId: dropdownId,
+      });
+
+    store.set(mountedDropdownRootCountAtom, (count) => count + 1);
 
     return () => {
-      store.set(mountedDropdownIdAtom, null);
+      store.set(mountedDropdownRootCountAtom, (count) => count - 1);
 
       queueMicrotask(() => {
-        if (store.get(mountedDropdownIdAtom) !== dropdownId) {
+        if (store.get(mountedDropdownRootCountAtom) === 0) {
           closeDropdown(dropdownId);
         }
       });
     };
-  }, [closeDropdown, dropdownId, mountedDropdownIdAtom, store]);
+  }, [closeDropdown, dropdownId, store]);
 
   return null;
 };
