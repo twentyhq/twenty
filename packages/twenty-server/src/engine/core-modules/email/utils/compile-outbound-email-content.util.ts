@@ -12,6 +12,8 @@ import {
 } from 'twenty-shared/utils';
 
 import { type CompiledOutboundEmailContent } from 'src/engine/core-modules/email/types/compiled-outbound-email-content.type';
+import { convertPlainTextToEmailHtml } from 'src/engine/core-modules/email/utils/convert-plain-text-to-email-html.util';
+import { looksLikeHtml } from 'src/engine/core-modules/email/utils/looks-like-html.util';
 import { sanitizeOutboundEmailHtml } from 'src/engine/core-modules/email/utils/sanitize-outbound-email-html.util';
 
 const renderContent = async (body: string | EmailDocument): Promise<string> => {
@@ -26,7 +28,11 @@ const renderContent = async (body: string | EmailDocument): Promise<string> => {
     throw new Error(`Invalid outbound email document: ${parseResult.error}`);
   }
 
-  return body;
+  if (looksLikeHtml(body)) {
+    return body;
+  }
+
+  return convertPlainTextToEmailHtml(body);
 };
 
 export const compileOutboundEmailContent = async (

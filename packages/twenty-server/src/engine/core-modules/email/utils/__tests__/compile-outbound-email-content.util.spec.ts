@@ -279,6 +279,56 @@ describe('compileOutboundEmailContent', () => {
     });
   });
 
+  it('should convert plain-text string body to email HTML paragraphs preserving line breaks', async () => {
+    const plainTextBody =
+      'Dear Nick,\n\nI wanted to share some thoughts.\n\nBest,\nNick';
+
+    const result = await compileOutboundEmailContent(plainTextBody);
+
+    expect(result.html).toBe(
+      '<p>Dear Nick,</p><p>I wanted to share some thoughts.</p><p>Best,<br>Nick</p>',
+    );
+    expect(result.plainText).toBe(
+      'Dear Nick,\n\nI wanted to share some thoughts.\n\nBest,\nNick',
+    );
+  });
+
+  it('should escape HTML in plain-text string bodies and preserve math symbols', async () => {
+    const plainTextBody = 'Price < 5 & > 2\n\nok';
+
+    const result = await compileOutboundEmailContent(plainTextBody);
+
+    expect(result.html).toBe('<p>Price &lt; 5 &amp; &gt; 2</p><p>ok</p>');
+    expect(result.plainText).toBe('Price < 5 & > 2\n\nok');
+  });
+
+  it('should escape angle-bracket email addresses in plain-text bodies', async () => {
+    const plainTextBody = 'Contact John <john@company.com>';
+
+    const result = await compileOutboundEmailContent(plainTextBody);
+
+    expect(result.html).toBe('<p>Contact John &lt;john@company.com&gt;</p>');
+    expect(result.plainText).toBe('Contact John <john@company.com>');
+  });
+
+  it('should preserve line breaks in plain text containing ampersands or entity-like tokens', async () => {
+    const plainTextBody = 'Copy &amp; paste\n\nThanks';
+
+    const result = await compileOutboundEmailContent(plainTextBody);
+
+    expect(result.html).toBe('<p>Copy &amp;amp; paste</p><p>Thanks</p>');
+    expect(result.plainText).toBe('Copy &amp; paste\n\nThanks');
+  });
+
+  it('should escape template placeholders in plain text and preserve line breaks', async () => {
+    const plainTextBody = 'Hello <name>\nThanks';
+
+    const result = await compileOutboundEmailContent(plainTextBody);
+
+    expect(result.html).toBe('<p>Hello &lt;name&gt;<br>Thanks</p>');
+    expect(result.plainText).toBe('Hello <name>\nThanks');
+  });
+
   describe('unsafe URL schemes', () => {
     it('should drop javascript: hrefs from buttons, links and images', async () => {
       const html = await compileDocument({

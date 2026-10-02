@@ -27,7 +27,7 @@ export const EmailToolInputZodSchema = z.object({
   body: z
     .union([emailDocumentSchema, z.string()])
     .describe(
-      'The email body. Preferred: a structured email document ({type: "doc", content: [...]} with paragraph, heading, bulletList/orderedList, image, button, section, divider and html blocks), rendered to email-safe HTML server-side. An HTML string is also accepted. Campaign-style {{variables}} are not substituted in 1:1 emails.',
+      'The email body. Preferred: a structured email document ({type: "doc", content: [...]} with paragraph, heading, bulletList/orderedList, image, button, section, divider and html blocks), rendered to email-safe HTML server-side. An HTML string or a plain-text string (automatically converted into email HTML paragraphs with preserved line breaks) is also accepted. Campaign-style {{variables}} are not substituted in 1:1 emails.',
     ),
   connectedAccountId: z
     .string()
