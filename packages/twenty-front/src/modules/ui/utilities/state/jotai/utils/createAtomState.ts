@@ -25,9 +25,6 @@ type StateAtom<ValueType> = WritableAtom<
 
 type LocalStorageOptions = { getOnInit?: boolean };
 
-// Wraps the default JSON localStorage so a persisted value that fails
-// validateInitFn falls back to the initial value instead of hydrating the atom
-// with an invalid payload.
 const createValidatedLocalStorage = <ValueType>(
   validateInitFn: (payload: NonNullable<ValueType>) => boolean,
 ) => {

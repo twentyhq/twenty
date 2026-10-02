@@ -37,12 +37,8 @@ import { getEvaluationModelFactory } from 'src/engine/metadata-modules/ai/ai-mod
 import { getTranscriptionModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-transcription-model-factory.util';
 
 export type AiSdkProviderInstance = {
-  // Absent on providers that serve no language model at all, such as an
-  // evaluation-only provider.
   createModel?: (modelId: string) => LanguageModel;
-  // Absent on providers with no speech-to-text API.
   createTranscriptionModel?: (modelId: string) => TranscriptionModel;
-  // Absent on providers with no evaluation API.
   createEvaluationModel?: (modelId: string) => AiEvaluationModel;
   rawProvider: unknown;
   sdkPackage: AiSdkPackage;
@@ -236,8 +232,7 @@ export class SdkProviderFactoryService {
     );
   }
 
-  // Evaluation-only: the provider serves no language model, so the instance
-  // carries no createModel and the registry skips its models for chat.
+  // evaluation-only provider: no createModel, so the registry skips it for chat
   private buildTypeSafeAiProvider(
     config: AiProviderConfig,
   ): AiSdkProviderInstance {

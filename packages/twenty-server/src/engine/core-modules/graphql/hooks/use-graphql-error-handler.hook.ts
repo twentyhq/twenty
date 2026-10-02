@@ -46,10 +46,7 @@ type GraphQLErrorHandlerHookOptions = {
   i18nService: I18nService;
 
   twentyConfigService: TwentyConfigService;
-  /**
-   * The key of the event id in the error's extension. `null` to disable.
-   * @default exceptionEventId
-   */
+  // `null` disables the event id extension; any other value falls back to DEFAULT_EVENT_ID_KEY.
   eventIdKey?: string | null;
 };
 

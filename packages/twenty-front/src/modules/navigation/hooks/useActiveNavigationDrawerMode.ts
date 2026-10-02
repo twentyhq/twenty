@@ -9,9 +9,7 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 
-// Settings and the AI chat own a full page each, so the route decides those two
-// modes. The stored tab only has the final say when neither page is open, which
-// is what keeps the chat history listed while the user works on another page.
+// Settings and AI chat pages decide their mode; elsewhere the stored tab wins so chat history stays listed.
 export const useActiveNavigationDrawerMode = (): NavigationDrawerActiveTab => {
   const { pathname } = useLocation();
   const isSettingsDrawer = useIsSettingsDrawer();

@@ -214,9 +214,7 @@ export class CreateCompanyAndPersonService {
           accountOwner,
         );
       } catch (error) {
-        // Concurrent imports for the same workspace can insert the same company
-        // domain or person email, and the loser hits the unique index. The
-        // record it wanted exists either way.
+        // Concurrent imports can race on a unique company domain or person email; the record exists either way
         if (isDuplicateEntryError(error)) {
           continue;
         }
@@ -340,10 +338,6 @@ export class CreateCompanyAndPersonService {
     };
   }
 
-  // Stages per-personId name enrichments for existing People auto-created via
-  // CALENDAR or EMAIL. Empty fields are filled from new sources (first
-  // non-empty value wins across multiple contacts mapping to the same Person);
-  // populated fields are never overwritten.
   private computePeopleToEnrichNames(
     uniqueContacts: Contact[],
     shouldCreateOrRestorePeopleByHandleMap: Map<
@@ -365,8 +359,7 @@ export class CreateCompanyAndPersonService {
         continue;
       }
 
-      // Soft-deleted matches are restored earlier in the same job, so the
-      // enrichment UPDATE runs against an un-deleted row.
+      // Soft-deleted matches were already restored earlier in this job
       const existingSource = existingPerson.createdBy?.source;
 
       if (

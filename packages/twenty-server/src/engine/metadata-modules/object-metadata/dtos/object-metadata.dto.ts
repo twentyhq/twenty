@@ -9,6 +9,7 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
+  ObjectSharingReach,
 } from 'twenty-shared/types';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
@@ -19,6 +20,7 @@ import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object
 registerEnumType(ObjectOpenRecordIn, { name: 'ObjectOpenRecordIn' });
 registerEnumType(MetadataReadability, { name: 'MetadataReadability' });
 registerEnumType(MetadataWritability, { name: 'MetadataWritability' });
+registerEnumType(ObjectSharingReach, { name: 'ObjectSharingReach' });
 
 @ObjectType('Object')
 export class ObjectMetadataDTO {
@@ -70,8 +72,7 @@ export class ObjectMetadataDTO {
   @Field()
   isUICreatable: boolean;
 
-  // Deprecated alias kept for one release: stays exposed (and filterable via
-  // ObjectFilter) so external API consumers are not broken.
+  // Deprecated alias kept for one release so external API consumers are not broken
   @Field({
     deprecationReason: 'Use isUIEditable',
   })
@@ -88,6 +89,9 @@ export class ObjectMetadataDTO {
 
   @Field(() => [UUIDScalarType], { nullable: true })
   readabilityParentFieldUniversalIdentifiers: string[] | null;
+
+  @Field(() => ObjectSharingReach)
+  sharingReach: ObjectSharingReach;
   @Field(() => MetadataWritability)
   writability: MetadataWritability;
 

@@ -1,7 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-// Identifies which halftone model fills the card's stage.
 export type IllustrationId =
   | 'diamond'
   | 'eye'

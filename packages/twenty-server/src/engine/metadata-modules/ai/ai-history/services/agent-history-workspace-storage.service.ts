@@ -56,7 +56,6 @@ export class AgentHistoryWorkspaceStorageService {
   async run<TResult>(
     workspaceId: string,
     work: (context: AgentHistoryStorageContext) => Promise<TResult>,
-    { lockMode = 'shared' }: { lockMode?: 'shared' | 'exclusive' } = {},
   ): Promise<TResult> {
     if (!isNonEmptyString(workspaceId)) {
       throw new AgentHistoryStorageException(
@@ -71,9 +70,7 @@ export class AgentHistoryWorkspaceStorageService {
       await runner.startTransaction();
       // A retried upgrade clears its destination; no live write may race that copy.
       await runner.query(
-        lockMode === 'exclusive'
-          ? 'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))'
-          : 'SELECT pg_advisory_xact_lock_shared(hashtextextended($1, 0))',
+        'SELECT pg_advisory_xact_lock_shared(hashtextextended($1, 0))',
         [`${HISTORY_READINESS_KEY}:${workspaceId}`],
       );
       const ready = await runner.query(
@@ -118,7 +115,6 @@ export class AgentHistoryWorkspaceStorageService {
       await runner.connect();
       await runner.startTransaction('REPEATABLE READ');
       await runner.query('SET TRANSACTION READ ONLY');
-      // Unprovisioned workspaces have no history tables to include in reports.
       const provisioned: { workspaceId: string }[] = await runner.query(
         `SELECT id AS "workspaceId" FROM unnest($1::uuid[], $2::text[]) AS candidate(id, table_name) WHERE to_regclass(table_name) IS NOT NULL
          AND EXISTS (SELECT 1 FROM core."keyValuePair" state WHERE state."workspaceId" = candidate.id

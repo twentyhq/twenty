@@ -1,14 +1,5 @@
-// Runtime-facing barrel for logic-function authors.
-//
-// Anything imported from this entry point is allowed to reach the Lambda
-// runtime. Today we only re-export type-only payload shapes; all of these
-// disappear at TS compile time so the compiled bundle is empty.
-//
-// `defineLogicFunction`, `definePostInstallLogicFunction`, etc. intentionally
-// stay in `twenty-sdk/define` — they are build-time metadata factories that
-// the SDK CLI stubs out before bundling. Logic-function source files keep
-// importing them from `twenty-sdk/define`, but should reach for *types* (and
-// future runtime helpers) here, never directly from `twenty-shared/*`.
+// Only what may reach the Lambda runtime; build-time define* factories stay in twenty-sdk/define.
+// Logic functions import types from here, never directly from twenty-shared/*.
 
 export type {
   LogicFunctionConfig,
@@ -76,6 +67,12 @@ export type { AppMessageChannel } from '@/sdk/logic-function/messaging/types/app
 
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
+
+export { sendInboxMessage } from '@/sdk/logic-function/inbox/send-inbox-message';
+export type {
+  SendInboxMessageInput,
+  SendInboxMessageResult,
+} from 'twenty-shared/application';
 
 export { enqueueJob } from '@/sdk/logic-function/jobs/enqueue-job';
 export { enqueueJobs } from '@/sdk/logic-function/jobs/enqueue-jobs';

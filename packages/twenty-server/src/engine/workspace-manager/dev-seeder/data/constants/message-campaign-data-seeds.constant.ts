@@ -122,8 +122,7 @@ const createEmailBodyTemplate = ({
     ],
   });
 
-// The sender is the seeded email group on the workspace's verified domain, so
-// the draft can actually be sent from a freshly seeded workspace.
+// Sends from the seeded email group on the verified domain so the draft is sendable on a fresh workspace
 export const getMessageCampaignDataSeeds = (
   workspaceId: string,
 ): MessageCampaignDataSeed[] => {

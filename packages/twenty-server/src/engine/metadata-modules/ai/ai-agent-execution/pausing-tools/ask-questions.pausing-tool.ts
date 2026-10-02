@@ -102,8 +102,7 @@ const buildAnswerText = ({
     })
     .join('\n\n');
 
-// The chat renderer, the admin panel and the seeded runs all read this result
-// shape.
+// result shape is read by the chat renderer, the admin panel and seeded runs
 export const ASK_QUESTIONS_PAUSING_TOOL = definePausingTool<
   AskQuestionsToolInput,
   AskQuestionsToolOutput

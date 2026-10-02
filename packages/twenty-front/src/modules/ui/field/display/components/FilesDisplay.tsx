@@ -1,10 +1,11 @@
+import { useLingui } from '@lingui/react/macro';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FileChip } from '@/ui/field/display/components/FileChip';
 import { UploadFileChip } from '@/ui/field/display/components/UploadFileChip';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
-import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { OverflowingList } from 'twenty-ui/components';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,6 +23,8 @@ export const FilesDisplay = ({
   isUploadWindowOpen = false,
   isFileUploading = false,
 }: FilesDisplayProps) => {
+  const { t } = useLingui();
+
   const setFilePreview = useSetAtomState(filePreviewState);
   const isAttachmentPreviewEnabled = useAtomStateValue(
     isAttachmentPreviewEnabledState,
@@ -48,7 +51,7 @@ export const FilesDisplay = ({
   }
 
   return (
-    <ExpandableList>
+    <OverflowingList overflowLabel={t`Show all items`}>
       {value.map((file) => (
         <FileChip
           key={file.fileId}
@@ -57,6 +60,6 @@ export const FilesDisplay = ({
           forceDisableClick={forceDisableClick}
         />
       ))}
-    </ExpandableList>
+    </OverflowingList>
   );
 };

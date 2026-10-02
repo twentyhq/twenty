@@ -223,7 +223,7 @@ describe('getTabsWithVisibleWidgets', () => {
       });
 
       expect(result).toHaveLength(1);
-      expect(result[0].widgets).toHaveLength(2); // All widgets kept in edit mode
+      expect(result[0].widgets).toHaveLength(2);
       expect(result[0].widgets[0].id).toBe('widget-1');
       expect(result[0].widgets[1].id).toBe('widget-2');
     });
@@ -267,8 +267,8 @@ describe('getTabsWithVisibleWidgets', () => {
       });
 
       expect(result).toHaveLength(2);
-      expect(result[0].widgets).toHaveLength(1); // Kept in edit mode
-      expect(result[1].widgets).toHaveLength(1); // Kept in edit mode
+      expect(result[0].widgets).toHaveLength(1);
+      expect(result[1].widgets).toHaveLength(1);
     });
   });
 
@@ -361,10 +361,7 @@ describe('getTabsWithVisibleWidgets', () => {
       conditionalAvailabilityExpression,
     });
 
-    // The campaign layout's sent-only gate. `noneEquals` rather than
-    // `not everyEquals`: the two agree on a loaded record, but an empty
-    // selection makes the first false and the second true, and the selection is
-    // empty until the record loads.
+    // `noneEquals`, not `not everyEquals`: they differ on the empty selection held until the record loads.
     const sentOnlyTab = () =>
       createMockTab('sent-only', [
         createRecordGatedWidget(
@@ -403,10 +400,7 @@ describe('getTabsWithVisibleWidgets', () => {
       expect(result[0].id).toBe('sent-only');
     });
 
-    // The record store answers after the first render, so every campaign page
-    // load passes through this state: it must not show a tab it is about to
-    // take away. The second tab keeps the all-tabs-empty fallback, which would
-    // return the first tab regardless, from hiding the result.
+    // The record arrives after first render; the second tab keeps the all-empty fallback from masking the result.
     it('should drop a record-gated tab while no record is given', () => {
       const result = getTabsWithVisibleWidgets({
         tabs: [sentOnlyTab(), createMockTab('always', [createMockWidget('w')])],

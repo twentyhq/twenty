@@ -30,8 +30,6 @@ export const AiChatToolPartRenderer = ({
 
   const { message, recordReferences } = getToolRecordOutput(toolPart);
 
-  // A record tool that matched nothing, or failed, has no records to show and
-  // reads better as the step row it has always been.
   if (!isNonEmptyArray(recordReferences)) {
     return <ToolStepRenderer toolPart={toolPart} isStreaming={isStreaming} />;
   }

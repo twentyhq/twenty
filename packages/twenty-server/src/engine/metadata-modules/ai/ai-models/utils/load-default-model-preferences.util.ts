@@ -1,15 +1,8 @@
-// TODO: derive default model preferences dynamically from the catalog
-// instead of hardcoding model IDs that become stale as models evolve
-//
-// Each tier is resolved by taking the first model that is actually available,
-// meaning the one whose provider the instance holds a key for. A chain is
-// therefore a preference order across providers, not a shortlist: every
-// supported provider needs an entry, or an instance configured with only that
-// provider resolves the tier to nothing.
+// TODO: derive default model preferences from the catalog instead of hardcoding ids
+// each tier takes the first model whose provider has a key, so every supported provider needs an entry or a single-provider instance resolves the tier to nothing
 import { type AiModelTier } from 'twenty-shared/ai';
 
-// Efforts are pinned so a tier runs at the effort its benchmark was measured
-// at, and so one model family can back neighbouring tiers at different speeds.
+// efforts match the benchmarked effort and let one family back neighbouring tiers
 export const DEFAULT_MODELS_BY_TIER: Record<AiModelTier, string[]> = {
   extraFast: [
     'openai/gpt-5.6-luna@low',

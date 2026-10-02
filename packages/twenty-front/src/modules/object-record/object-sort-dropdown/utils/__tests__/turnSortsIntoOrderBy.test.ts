@@ -1,8 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
+  MetadataReadability,
   type RecordGqlOperationOrderBy,
   ObjectOpenRecordIn,
+  ObjectSharingReach,
 } from 'twenty-shared/types';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
@@ -46,6 +48,8 @@ const objectMetadataItemWithPositionField: EnrichedObjectMetadataItem = {
   isUICreatable: true,
   writability: MetadataWritability.OPEN,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
+  sharingReach: ObjectSharingReach.WORKSPACE,
+  readability: MetadataReadability.OPEN,
   isRemote: false,
   isSearchable: false,
   labelPlural: 'object1s',
@@ -211,6 +215,8 @@ describe('turnSortsIntoOrderBy', () => {
       isUICreatable: true,
       writability: MetadataWritability.OPEN,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
+      sharingReach: ObjectSharingReach.WORKSPACE,
+      readability: MetadataReadability.OPEN,
       isRemote: false,
       isSearchable: false,
       labelPlural: 'Companies',
@@ -264,6 +270,8 @@ describe('turnSortsIntoOrderBy', () => {
       isUICreatable: true,
       writability: MetadataWritability.OPEN,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
+      sharingReach: ObjectSharingReach.WORKSPACE,
+      readability: MetadataReadability.OPEN,
       isRemote: false,
       isSearchable: false,
       labelPlural: 'People',

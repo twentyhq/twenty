@@ -343,7 +343,6 @@ export const EXPECTED_MANIFEST: Manifest = {
   ],
 
   fields: [
-    // User-defined relation and field definitions
     {
       label: 'Post Card',
       name: 'postCard',
@@ -452,7 +451,6 @@ export const EXPECTED_MANIFEST: Manifest = {
         relationType: RelationType.MANY_TO_ONE,
       },
     },
-    // Field on standard company object
     {
       defaultValue: false,
       description: 'Whether the company can receive postcards',

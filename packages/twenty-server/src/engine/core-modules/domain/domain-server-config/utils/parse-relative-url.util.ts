@@ -1,8 +1,4 @@
-// A redirect location coming from the front can carry a query string and a
-// tab anchor (e.g. /object/company/<recordId>#<tabId>). Assigning the whole
-// string to URL.pathname percent-encodes '?' and '#' into the path, so split
-// it into parts the URL API can reassemble. Parsing against a fixed base also
-// drops any host smuggled into the value, keeping redirects on our domain.
+// URL.pathname would percent-encode '?' and '#'; parsing against a fixed base also drops any smuggled host.
 export const parseRelativeUrl = (relativeUrl: string) => {
   const { pathname, searchParams, hash } = new URL(
     relativeUrl,

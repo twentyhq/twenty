@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { OverflowingList, LightIconButton } from 'twenty-ui/components';
 import { IconPencil, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -27,7 +27,6 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useFieldWidgetJunctionRelationRecords } from '@/page-layout/widgets/field/hooks/useFieldWidgetJunctionRelationRecords';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -41,8 +40,6 @@ const StyledContainer = styled.div`
   min-width: 0;
 `;
 
-// Lets the list shrink in a narrow header, where it folds the chips that no
-// longer fit into a count.
 const StyledRecordChips = styled.div`
   min-width: 0;
 `;
@@ -94,8 +91,7 @@ export const AiChatThreadRecordTargets = ({
     skip: isThreadQuerySkipped,
   });
 
-  // The chat model files the conversation through its own tool on the server,
-  // so its links are read again whenever one is written.
+  // The chat model links conversations through its own server tool, so links are reread on any write.
   const linksOperationSignature = useMemo(
     () => ({
       objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
@@ -213,7 +209,7 @@ export const AiChatThreadRecordTargets = ({
     <StyledContainer>
       {hasTargetRecords && (
         <StyledRecordChips>
-          <ExpandableList isChipCountDisplayed>
+          <OverflowingList overflowLabel={t`Show all items`} showOverflowCount>
             {targetRecords.map(({ record, objectNameSingular }) => (
               <RecordChip
                 key={`${objectNameSingular}-${record.id}`}
@@ -221,7 +217,7 @@ export const AiChatThreadRecordTargets = ({
                 record={record}
               />
             ))}
-          </ExpandableList>
+          </OverflowingList>
         </StyledRecordChips>
       )}
       {canEditRecordTargets && (
