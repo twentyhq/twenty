@@ -1,10 +1,10 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getAllSelectableFields } from 'src/engine/api/common/common-select-fields/utils/get-all-selectable-fields.util';
 import { getIsFlatFieldAJoinColumn } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-join-column.util';
 import { getIsFlatFieldAJunctionRelationField } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-junction-relation-field';
+import { isRelationTargetExcludedFromSelection } from 'src/engine/api/common/common-select-fields/utils/is-relation-target-excluded-from-selection.util';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { MAX_DEPTH } from 'src/engine/api/rest/input-request-parsers/constants/max-depth.constant';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
@@ -108,11 +108,7 @@ export const getRelationsSelectFields = ({
       continue;
     }
 
-    // Timeline history grows with every update, so expanding it per record turns one page into thousands of rows
-    if (
-      relationTargetObjectMetadata.universalIdentifier ===
-      STANDARD_OBJECTS.timelineActivity.universalIdentifier
-    ) {
+    if (isRelationTargetExcludedFromSelection(relationTargetObjectMetadata)) {
       continue;
     }
 

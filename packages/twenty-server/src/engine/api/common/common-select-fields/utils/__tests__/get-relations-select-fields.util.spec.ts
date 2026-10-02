@@ -20,6 +20,7 @@ const WORKSPACE_ID = 'workspace-id';
 const APPLICATION_ID = 'application-id';
 const OPPORTUNITY_OBJECT_ID = 'opportunity-object-id';
 const COMPANY_OBJECT_ID = 'company-object-id';
+const PERSON_OBJECT_ID = 'person-object-id';
 const TIMELINE_ACTIVITY_OBJECT_ID = 'timeline-activity-object-id';
 
 const createField = ({
@@ -93,7 +94,16 @@ const buildArgs = (
   const company = createObject({
     id: COMPANY_OBJECT_ID,
     nameSingular: 'company',
-    fieldIds: ['company-name', 'company-timeline-activities'],
+    fieldIds: [
+      'company-name',
+      'company-account-owner',
+      'company-timeline-activities',
+    ],
+  });
+  const person = createObject({
+    id: PERSON_OBJECT_ID,
+    nameSingular: 'person',
+    fieldIds: ['person-name'],
   });
   const timelineActivity = createObject({
     id: TIMELINE_ACTIVITY_OBJECT_ID,
@@ -101,7 +111,7 @@ const buildArgs = (
     universalIdentifier: STANDARD_OBJECTS.timelineActivity.universalIdentifier,
     fieldIds: ['timeline-activity-happens-at'],
   });
-  const objects = [opportunity, company, timelineActivity];
+  const objects = [opportunity, company, person, timelineActivity];
 
   const fields = [
     createField({
@@ -125,6 +135,18 @@ const buildArgs = (
     }),
     createField({
       id: 'company-name',
+      name: 'name',
+      type: FieldMetadataType.TEXT,
+    }),
+    createField({
+      id: 'company-account-owner',
+      name: 'accountOwner',
+      type: FieldMetadataType.RELATION,
+      relationTargetObjectMetadataId: PERSON_OBJECT_ID,
+      relationType: RelationType.MANY_TO_ONE,
+    }),
+    createField({
+      id: 'person-name',
       name: 'name',
       type: FieldMetadataType.TEXT,
     }),
@@ -160,13 +182,18 @@ const buildArgs = (
 describe('getRelationsSelectFields', () => {
   it('should expand relations but not timeline activities at depth 1', () => {
     expect(getRelationsSelectFields(buildArgs(1))).toEqual({
-      company: { name: true, timelineActivities: true },
+      company: { name: true, accountOwnerId: true, timelineActivities: true },
     });
   });
 
-  it('should not expand timeline activities of nested relations at depth 2', () => {
+  it('should expand nested relations but not their timeline activities at depth 2', () => {
     expect(getRelationsSelectFields(buildArgs(2))).toEqual({
-      company: { name: true, timelineActivities: true },
+      company: {
+        name: true,
+        accountOwnerId: true,
+        timelineActivities: true,
+        accountOwner: { name: true },
+      },
     });
   });
 });
