@@ -18,6 +18,7 @@ import {
   IconChevronUp,
   IconX,
 } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -34,13 +35,10 @@ import { getValidationRulePreviewValue } from '@/validation-rules/utils/getValid
 const PREVIEW_RECORD_COUNT = 3;
 
 const StyledPreview = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
   font-size: ${themeCssVariables.font.size.md};
   gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledHeader = styled.div`
@@ -143,11 +141,13 @@ export const SettingsValidationRulePreview = ({
 
   if (!isDefined(record)) {
     return (
-      <StyledPreview>
-        <StyledMuted>
-          {t`Create a few ${objectMetadataItem.labelPlural} to preview this rule on real records.`}
-        </StyledMuted>
-      </StyledPreview>
+      <Card.Root fullWidth>
+        <Card.Content>
+          <StyledMuted>
+            {t`Create a few ${objectMetadataItem.labelPlural} to preview this rule on real records.`}
+          </StyledMuted>
+        </Card.Content>
+      </Card.Root>
     );
   }
 
@@ -206,58 +206,62 @@ export const SettingsValidationRulePreview = ({
   const recordCount = records.length;
 
   return (
-    <StyledPreview>
-      <StyledHeader>
-        <RecordChip
-          objectNameSingular={objectMetadataItem.nameSingular}
-          record={record}
-          forceDisableClick
-        />
-        <StyledNavigation>
-          {t`Record ${displayedRecordNumber} of ${recordCount}`}
-          <LightIconButton
-            aria-label={t`Previous record`}
-            disabled={displayedRecordNumber === 1}
-            onClick={() => setRecordIndex(displayedRecordNumber - 2)}
-          >
-            <IconChevronUp />
-          </LightIconButton>
-          <LightIconButton
-            aria-label={t`Next record`}
-            disabled={displayedRecordNumber === recordCount}
-            onClick={() => setRecordIndex(displayedRecordNumber)}
-          >
-            <IconChevronDown />
-          </LightIconButton>
-        </StyledNavigation>
-      </StyledHeader>
-      {referencedPaths.length > 0 && (
-        <StyledValues>
-          {referencedPaths.map((path) => {
-            const editorField = editorFields.find(
-              (candidate) => candidate.path === path,
-            );
-            const formattedValue = formatValidationRulePreviewValue(
-              getValidationRulePreviewValue(record, path),
-            );
-
-            return [
-              <StyledValueLabel key={`${path}-label`}>
-                {isDefined(editorField)
-                  ? getValidationRuleEditorFieldChipLabel(editorField)
-                  : path}
-              </StyledValueLabel>,
-              <StyledValue
-                key={`${path}-value`}
-                isEmpty={formattedValue.length === 0}
+    <Card.Root fullWidth>
+      <Card.Content>
+        <StyledPreview>
+          <StyledHeader>
+            <RecordChip
+              objectNameSingular={objectMetadataItem.nameSingular}
+              record={record}
+              forceDisableClick
+            />
+            <StyledNavigation>
+              {t`Record ${displayedRecordNumber} of ${recordCount}`}
+              <LightIconButton
+                aria-label={t`Previous record`}
+                disabled={displayedRecordNumber === 1}
+                onClick={() => setRecordIndex(displayedRecordNumber - 2)}
               >
-                {formattedValue.length > 0 ? formattedValue : t`Empty`}
-              </StyledValue>,
-            ];
-          })}
-        </StyledValues>
-      )}
-      {renderResult()}
-    </StyledPreview>
+                <IconChevronUp />
+              </LightIconButton>
+              <LightIconButton
+                aria-label={t`Next record`}
+                disabled={displayedRecordNumber === recordCount}
+                onClick={() => setRecordIndex(displayedRecordNumber)}
+              >
+                <IconChevronDown />
+              </LightIconButton>
+            </StyledNavigation>
+          </StyledHeader>
+          {referencedPaths.length > 0 && (
+            <StyledValues>
+              {referencedPaths.map((path) => {
+                const editorField = editorFields.find(
+                  (candidate) => candidate.path === path,
+                );
+                const formattedValue = formatValidationRulePreviewValue(
+                  getValidationRulePreviewValue(record, path),
+                );
+
+                return [
+                  <StyledValueLabel key={`${path}-label`}>
+                    {isDefined(editorField)
+                      ? getValidationRuleEditorFieldChipLabel(editorField)
+                      : path}
+                  </StyledValueLabel>,
+                  <StyledValue
+                    key={`${path}-value`}
+                    isEmpty={formattedValue.length === 0}
+                  >
+                    {formattedValue.length > 0 ? formattedValue : t`Empty`}
+                  </StyledValue>,
+                ];
+              })}
+            </StyledValues>
+          )}
+          {renderResult()}
+        </StyledPreview>
+      </Card.Content>
+    </Card.Root>
   );
 };
