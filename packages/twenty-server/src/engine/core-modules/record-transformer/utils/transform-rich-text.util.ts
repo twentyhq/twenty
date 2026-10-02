@@ -11,19 +11,19 @@ import { convertMarkdownToBlocknoteBlocks } from 'src/engine/core-modules/record
 
 // Reuse a single ServerBlockNoteEditor across all calls to avoid
 // the cost of dynamic import resolution + instance creation (~90ms) on every transform.
-let cachedServerBlockNoteEditor: ServerBlockNoteEditor | null = null;
+let serverBlockNoteEditorPromise: Promise<ServerBlockNoteEditor> | null = null;
 
-const getServerBlockNoteEditor = async (): Promise<ServerBlockNoteEditor> => {
-  if (cachedServerBlockNoteEditor) {
-    return cachedServerBlockNoteEditor;
+const getServerBlockNoteEditor = (): Promise<ServerBlockNoteEditor> => {
+  if (!isDefined(serverBlockNoteEditorPromise)) {
+    serverBlockNoteEditorPromise = import('@blocknote/server-util')
+      .then(({ ServerBlockNoteEditor }) => ServerBlockNoteEditor.create())
+      .catch((error) => {
+        serverBlockNoteEditorPromise = null;
+        throw error;
+      });
   }
 
-  // BlockNote's CommonJS build cannot load, so it is imported as ESM
-  const { ServerBlockNoteEditor } = await import('@blocknote/server-util');
-
-  cachedServerBlockNoteEditor = ServerBlockNoteEditor.create();
-
-  return cachedServerBlockNoteEditor;
+  return serverBlockNoteEditorPromise;
 };
 
 const convertMarkdownToBlocknote = (markdown: string): string =>

@@ -97,6 +97,78 @@ describe('convertMarkdownToBlocknoteBlocks', () => {
     ]);
   });
 
+  it('should convert unchecked task items', () => {
+    expect(convertWithoutIds('- [ ] todo')).toEqual([
+      {
+        type: 'checkListItem',
+        props: { ...DEFAULT_PROPS, checked: false },
+        content: [text('todo')],
+        children: [],
+      },
+    ]);
+  });
+
+  it('should only nest under an ordered item when indented past its marker', () => {
+    const blockTypes = (markdown: string) =>
+      convertMarkdownToBlocknoteBlocks(markdown).map((block) => ({
+        type: block.type,
+        childTypes: block.children?.map((child) => child.type),
+      }));
+
+    expect(blockTypes('1. first\n  - two spaces')).toEqual([
+      { type: 'numberedListItem', childTypes: [] },
+      { type: 'bulletListItem', childTypes: [] },
+    ]);
+    expect(blockTypes('1. first\n   - three spaces')).toEqual([
+      { type: 'numberedListItem', childTypes: ['bulletListItem'] },
+    ]);
+  });
+
+  it('should turn bare urls into links', () => {
+    expect(convertWithoutIds('see https://example.com')[0].content).toEqual([
+      text('see '),
+      {
+        type: 'link',
+        href: 'https://example.com',
+        content: [text('https://example.com')],
+      },
+    ]);
+  });
+
+  it('should keep only the code style on inline code, even inside a link', () => {
+    expect(
+      convertWithoutIds('**bold `code`** [link `code`](https://example.com)')[0]
+        .content,
+    ).toEqual([
+      text('bold ', { bold: true }),
+      text('code', { code: true }),
+      text(' '),
+      {
+        type: 'link',
+        href: 'https://example.com',
+        content: [text('link ')],
+      },
+      text('code', { code: true }),
+    ]);
+  });
+
+  it('should turn images inside list items into image children', () => {
+    const [listItem] = convertWithoutIds(
+      '- item ![logo](https://example.com/logo.png)',
+    );
+
+    expect(listItem.content).toEqual([text('item ')]);
+    expect(listItem.children).toEqual([
+      expect.objectContaining({
+        type: 'image',
+        props: expect.objectContaining({
+          name: 'logo',
+          url: 'https://example.com/logo.png',
+        }),
+      }),
+    ]);
+  });
+
   it('should convert tables with their column alignment', () => {
     const cellProps = {
       colspan: 1,

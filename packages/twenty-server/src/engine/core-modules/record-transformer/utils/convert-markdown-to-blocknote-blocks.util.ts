@@ -7,6 +7,7 @@ import type {
   StyledText,
 } from '@blocknote/core';
 import { Lexer, type Token, type Tokens } from 'marked';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type InlineStyle = 'bold' | 'italic' | 'strike' | 'code';
 
@@ -45,7 +46,7 @@ const collectInlineRuns = (
   for (const token of tokens) {
     const style = STYLE_BY_TOKEN_TYPE[token.type];
 
-    if (style !== undefined) {
+    if (isDefined(style)) {
       collectInlineRuns(
         (token as Tokens.Generic).tokens ?? [],
         [...styles, style],
@@ -57,7 +58,7 @@ const collectInlineRuns = (
 
     switch (token.type) {
       case 'text':
-        if (token.tokens !== undefined && token.tokens.length > 0) {
+        if (isNonEmptyArray(token.tokens)) {
           collectInlineRuns(token.tokens, styles, href, runs);
         } else {
           runs.push({ text: token.text, styles, href });
@@ -67,7 +68,7 @@ const collectInlineRuns = (
         runs.push({ text: token.text, styles, href });
         break;
       case 'codespan':
-        runs.push({ text: token.text, styles: [...styles, 'code'], href });
+        runs.push({ text: token.text, styles: ['code'] });
         break;
       case 'br':
         runs.push({ text: '\n', styles, href });
@@ -85,7 +86,6 @@ const collectInlineRuns = (
       case 'checkbox':
         break;
       default:
-        // Raw HTML and anything else is kept as the literal text it was written as
         runs.push({ text: token.raw, styles, href });
     }
   }
@@ -110,7 +110,7 @@ const convertInlineTokens = (tokens: Token[]): InlineContent[] => {
       continue;
     }
 
-    if (lastRun !== undefined && isSameRunFormat(lastRun, run)) {
+    if (isDefined(lastRun) && isSameRunFormat(lastRun, run)) {
       lastRun.text += run.text;
     } else {
       mergedRuns.push({ ...run });
@@ -127,7 +127,7 @@ const convertInlineTokens = (tokens: Token[]): InlineContent[] => {
     };
     const lastContent = content[content.length - 1];
 
-    if (run.href === undefined) {
+    if (!isDefined(run.href)) {
       content.push(styledText);
     } else if (lastContent?.type === 'link' && lastContent.href === run.href) {
       lastContent.content.push(styledText);
@@ -142,7 +142,22 @@ const convertInlineTokens = (tokens: Token[]): InlineContent[] => {
 const isBlankContent = (content: InlineContent[]) =>
   content.every((item) => item.type === 'text' && item.text.trim() === '');
 
-// Images are blocks in BlockNote, so a paragraph is split around them
+const isImageToken = (token: Token): token is Tokens.Image =>
+  token.type === 'image';
+
+const convertImage = (image: Tokens.Image): PartialBlock =>
+  createBlock({
+    type: 'image',
+    props: {
+      textAlignment: 'left',
+      backgroundColor: 'default',
+      name: image.text,
+      url: image.href,
+      caption: '',
+      showPreview: true,
+    },
+  });
+
 const convertParagraph = (tokens: Token[]): PartialBlock[] => {
   const blocks: PartialBlock[] = [];
   let pendingTokens: Token[] = [];
@@ -164,25 +179,13 @@ const convertParagraph = (tokens: Token[]): PartialBlock[] => {
   };
 
   for (const token of tokens) {
-    if (token.type !== 'image') {
+    if (!isImageToken(token)) {
       pendingTokens.push(token);
       continue;
     }
 
     flushParagraph();
-    blocks.push(
-      createBlock({
-        type: 'image',
-        props: {
-          textAlignment: 'left',
-          backgroundColor: 'default',
-          name: token.text,
-          url: token.href,
-          caption: '',
-          showPreview: true,
-        },
-      }),
-    );
+    blocks.push(convertImage(token));
   }
 
   flushParagraph();
@@ -202,12 +205,14 @@ const convertListItem = (
   const hasInlineFirstToken =
     firstToken?.type === 'text' || firstToken?.type === 'paragraph';
 
-  const content = hasInlineFirstToken
-    ? convertInlineTokens(firstToken.tokens ?? [])
-    : [];
-  const children = convertBlockTokens(
-    hasInlineFirstToken ? otherTokens : tokens,
+  const inlineTokens = hasInlineFirstToken ? (firstToken.tokens ?? []) : [];
+  const content = convertInlineTokens(
+    inlineTokens.filter((token) => !isImageToken(token)),
   );
+  const children = [
+    ...inlineTokens.filter(isImageToken).map(convertImage),
+    ...convertBlockTokens(hasInlineFirstToken ? otherTokens : tokens),
+  ];
 
   if (item.task) {
     return createBlock({
@@ -334,7 +339,6 @@ const convertBlockTokens = (tokens: Token[]): PartialBlock[] =>
       case 'table':
         return [convertTable(token as Tokens.Table)];
       default:
-        // Raw HTML blocks are kept as the literal text they were written as
         return [
           createBlock({
             type: 'paragraph',
