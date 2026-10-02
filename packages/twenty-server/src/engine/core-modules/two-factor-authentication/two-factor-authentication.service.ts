@@ -160,11 +160,12 @@ export class TwoFactorAuthenticationService {
     workspaceId: WorkspaceEntity['id'],
     twoFactorAuthenticationStrategy: TwoFactorAuthenticationStrategy,
   ) {
-    await this.throttlerService.atomicTokenBucketThrottleOrThrow({
-      key: buildTwoFactorAuthenticationOtpRateLimitKey({ userId, workspaceId }),
-      maxTokens: TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
-      timeWindow: TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
-    });
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      buildTwoFactorAuthenticationOtpRateLimitKey({ userId, workspaceId }),
+      1,
+      TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
+      TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
+    );
 
     const userTwoFactorAuthenticationMethod =
       await this.twoFactorAuthenticationMethodRepository.findOne(workspaceId, {
