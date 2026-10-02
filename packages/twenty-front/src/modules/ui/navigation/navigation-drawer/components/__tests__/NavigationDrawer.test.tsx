@@ -3,6 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
+import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
@@ -31,26 +32,46 @@ const PageHeaderExpandButton = () => {
   );
 };
 
-const renderNavigationDrawerWithPageHeader = () => {
+const NavigationDrawerTestProviders = ({
+  children,
+}: {
+  children: ReactNode;
+}) => (
+  <I18nProvider i18n={i18n}>
+    <JotaiProvider store={jotaiStore}>
+      <MemoryRouter>{children}</MemoryRouter>
+    </JotaiProvider>
+  </I18nProvider>
+);
+
+const NavigationDrawerPage = ({
+  hasPageHeader,
+}: {
+  hasPageHeader: boolean;
+}) => (
+  <>
+    <NavigationDrawer />
+    {hasPageHeader && <PageHeaderExpandButton />}
+    <button type="button">Page action</button>
+  </>
+);
+
+const renderNavigationDrawerPage = ({
+  hasPageHeader,
+}: {
+  hasPageHeader: boolean;
+}) => {
   resetJotaiStore();
   jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
 
-  render(
-    <I18nProvider i18n={i18n}>
-      <JotaiProvider store={jotaiStore}>
-        <MemoryRouter>
-          <NavigationDrawer />
-          <PageHeaderExpandButton />
-          <button type="button">Page action</button>
-        </MemoryRouter>
-      </JotaiProvider>
-    </I18nProvider>,
-  );
+  return render(<NavigationDrawerPage hasPageHeader={hasPageHeader} />, {
+    wrapper: NavigationDrawerTestProviders,
+  });
 };
 
 describe('NavigationDrawer', () => {
   it('moves focus to the expand button when the keyboard collapses the drawer from its resize separator', async () => {
-    renderNavigationDrawerWithPageHeader();
+    renderNavigationDrawerPage({ hasPageHeader: true });
 
     await userEvent.tab();
 
@@ -67,7 +88,7 @@ describe('NavigationDrawer', () => {
   });
 
   it('keeps focus where it was when the resize separator is clicked', async () => {
-    renderNavigationDrawerWithPageHeader();
+    renderNavigationDrawerPage({ hasPageHeader: true });
     const pageActionButton = screen.getByRole('button', {
       name: 'Page action',
     });
@@ -78,6 +99,23 @@ describe('NavigationDrawer', () => {
     );
 
     expect(jotaiStore.get(isNavigationDrawerExpandedState.atom)).toBe(false);
+    expect(pageActionButton).toHaveFocus();
+  });
+
+  it('does not steal focus when the expand button mounts after the keyboard collapse', async () => {
+    const { rerender } = renderNavigationDrawerPage({ hasPageHeader: false });
+    const pageActionButton = screen.getByRole('button', {
+      name: 'Page action',
+    });
+
+    await userEvent.tab();
+    await userEvent.keyboard('{Enter}');
+    pageActionButton.focus();
+    rerender(<NavigationDrawerPage hasPageHeader />);
+
+    expect(
+      screen.getByRole('button', { name: 'Expand sidebar' }),
+    ).not.toHaveFocus();
     expect(pageActionButton).toHaveFocus();
   });
 });
