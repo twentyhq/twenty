@@ -53,6 +53,14 @@ describe('isUserFacingToolExecutionError', () => {
       true,
     ],
     [
+      'a view missing right after its own upsert',
+      new ViewException(
+        'View not found after upsert',
+        ViewExceptionCode.INTERNAL_SERVER_ERROR,
+      ),
+      false,
+    ],
+    [
       'a migration blocked during a hot upgrade',
       new WorkspaceMigrationRunnerException({
         message: 'Workspace schema DDL changes are locked',

@@ -26,7 +26,10 @@ import {
 import { ViewFieldException } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFilterException } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { ViewSortException } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
-import { ViewException } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import {
+  ViewException,
+  ViewExceptionCode,
+} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { isTwentyOrmUserInputError } from 'src/engine/twenty-orm/utils/is-twenty-orm-user-input-error.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -60,16 +63,22 @@ const USER_FACING_FIELD_METADATA_EXCEPTION_CODES: FieldMetadataExceptionCode[] =
     FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
   ];
 
+// TODO: this allowlist duplicates the per-domain classification already done by the REST
+// and GraphQL exception filters. Refactor their code-to-status
+// mapping into shared utils and rely on them here, capturing only 5xx.
 export const isUserFacingToolExecutionError = (error: unknown): boolean => {
   if (
     error instanceof WorkspaceMigrationBuilderException ||
-    error instanceof ViewException ||
     error instanceof ViewFieldException ||
     error instanceof ViewFilterException ||
     error instanceof ViewSortException ||
     isUsageRefusedError(error)
   ) {
     return true;
+  }
+
+  if (error instanceof ViewException) {
+    return error.code !== ViewExceptionCode.INTERNAL_SERVER_ERROR;
   }
 
   if (error instanceof WorkspaceMigrationRunnerException) {
