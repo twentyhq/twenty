@@ -100,6 +100,7 @@ export const PhoneCountryPickerDropdownButton = ({
         sideOffset={4}
         alignOffset={0}
         aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
       >
         <PhoneCountryPicker.Options
           countries={countries}

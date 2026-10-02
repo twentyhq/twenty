@@ -24,6 +24,7 @@ type DropdownContentProps = Pick<
   | 'finalFocus'
   | 'className'
   | 'aria-label'
+  | 'aria-labelledby'
   | 'ref'
 >;
 
@@ -40,6 +41,7 @@ export const DropdownContent = ({
   finalFocus,
   className,
   'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
   ref,
 }: DropdownContentProps) => {
   const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
@@ -60,6 +62,7 @@ export const DropdownContent = ({
       finalFocus={finalFocus}
       className={className}
       aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
     >
       {isDefined(excludedClickOutsideId) ? (
         <StyledClickOutsideListenerExclusion

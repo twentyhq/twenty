@@ -5,6 +5,7 @@ import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
@@ -15,11 +16,13 @@ const onCountryBlur = fn();
 
 const LibraryPhoneInput = ({
   label = 'Phone',
+  countryLabelledBy,
   disabled = false,
   readOnly = false,
   showFocusAction = false,
 }: {
   label?: string;
+  countryLabelledBy?: string;
   disabled?: boolean;
   readOnly?: boolean;
   showFocusAction?: boolean;
@@ -43,6 +46,7 @@ const LibraryPhoneInput = ({
         countrySelectComponent={PhoneCountryPickerDropdownButton}
         countrySelectProps={{
           'aria-label': `${label} country`,
+          'aria-labelledby': countryLabelledBy,
           ref: countryRef,
           onFocus: onCountryFocus,
           onBlur: onCountryBlur,
@@ -151,27 +155,33 @@ export const PhoneLibrarySelectionAndFocus: Story = {
 export const IndependentPhoneInputs: Story = {
   render: () => (
     <>
-      <LibraryPhoneInput label="Work phone" />
-      <LibraryPhoneInput label="Personal phone" />
+      <Text id="work-country-label">Work country</Text>
+      <LibraryPhoneInput
+        label="Work phone"
+        countryLabelledBy="work-country-label"
+      />
+      <Text id="personal-country-label">Personal country</Text>
+      <LibraryPhoneInput
+        label="Personal phone"
+        countryLabelledBy="personal-country-label"
+      />
     </>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const workTrigger = canvas.getByRole('button', {
-      name: 'Work phone country',
+      name: 'Work country',
     });
     const personalTrigger = canvas.getByRole('button', {
-      name: 'Personal phone country',
+      name: 'Personal country',
     });
 
     await userEvent.click(workTrigger);
     const workPopup = await body.findByRole('dialog', {
-      name: 'Work phone country',
+      name: 'Work country',
     });
-    expect(
-      body.queryByRole('dialog', { name: 'Personal phone country' }),
-    ).toBeNull();
+    expect(body.queryByRole('dialog', { name: 'Personal country' })).toBeNull();
     expect(personalTrigger).toHaveAttribute('aria-expanded', 'false');
     await userEvent.type(
       within(workPopup).getByRole('searchbox', { name: 'Search' }),
@@ -187,11 +197,9 @@ export const IndependentPhoneInputs: Story = {
 
     await userEvent.click(personalTrigger);
     const personalPopup = await body.findByRole('dialog', {
-      name: 'Personal phone country',
+      name: 'Personal country',
     });
-    expect(
-      body.queryByRole('dialog', { name: 'Work phone country' }),
-    ).toBeNull();
+    expect(body.queryByRole('dialog', { name: 'Work country' })).toBeNull();
     expect(workTrigger).toHaveAttribute('aria-expanded', 'false');
     expect(
       within(personalPopup).getByRole('searchbox', { name: 'Search' }),
