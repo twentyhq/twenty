@@ -77,10 +77,6 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       accumulator.relationFieldsCount +
       relationAccumulator.relationFieldsCount +
       1;
-    accumulator.relationFieldsCountUnderOneToMany =
-      accumulator.relationFieldsCountUnderOneToMany +
-      relationAccumulator.relationFieldsCountUnderOneToMany +
-      (isFromOneToManyRelation || isOneToManyRelation ? 1 : 0);
     accumulator.hasAtLeastTwoNestedOneToManyRelations =
       accumulator.hasAtLeastTwoNestedOneToManyRelations ||
       relationAccumulator.hasAtLeastTwoNestedOneToManyRelations;

@@ -16,7 +16,6 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { computeMaxRecordCountFromSelection } from 'src/engine/api/common/common-query-runners/utils/compute-max-record-count-from-selection.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonFindDuplicatesOutputItem } from 'src/engine/api/common/types/common-find-duplicates-output-item.type';
@@ -270,7 +269,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     }
   }
 
-  protected override computeMaxRecordCount(
+  protected override computeRootRecordCount(
     args: CommonExtendedInput<FindDuplicatesQueryArgs>,
   ): number {
     const inputRecordCount =
@@ -278,10 +277,6 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         ? args.ids.length
         : (args.data?.length ?? 0);
 
-    return computeMaxRecordCountFromSelection({
-      rootRecordCount: inputRecordCount * QUERY_MAX_RECORDS,
-      selectedFieldsResult: args.selectedFieldsResult,
-      recordLimitPerOneToManyRelation: QUERY_MAX_RECORDS_FROM_RELATION,
-    });
+    return inputRecordCount * QUERY_MAX_RECORDS;
   }
 }

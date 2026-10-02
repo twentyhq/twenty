@@ -5,7 +5,6 @@ import { type ObjectRecord } from 'twenty-shared/types';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { CommonCreateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service';
-import { computeMaxRecordCountFromSelection } from 'src/engine/api/common/common-query-runners/utils/compute-max-record-count-from-selection.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -34,6 +33,9 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
   }
 
   protected readonly operationName = CommonQueryNames.CREATE_ONE;
+
+  protected override readonly recordLimitPerOneToManyRelation =
+    QUERY_MAX_RECORDS;
 
   async run(
     args: CommonExtendedInput<CreateManyQueryArgs>,
@@ -103,15 +105,5 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     if (args.data?.id) {
       assertIsValidUuid(args.data.id);
     }
-  }
-
-  protected override computeMaxRecordCount(
-    args: CommonExtendedInput<CreateOneQueryArgs>,
-  ): number {
-    return computeMaxRecordCountFromSelection({
-      rootRecordCount: 1,
-      selectedFieldsResult: args.selectedFieldsResult,
-      recordLimitPerOneToManyRelation: QUERY_MAX_RECORDS,
-    });
   }
 }

@@ -73,17 +73,6 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
     name: string;
     type: FieldMetadataType;
   });
-  const ownerField = createMockField({
-    id: 'owner-field',
-    name: 'owner',
-    type: FieldMetadataType.RELATION,
-    settings: { relationType: RelationType.MANY_TO_ONE },
-    relationTargetObjectMetadataId: 'company-object-id',
-  } as Partial<FlatFieldMetadata> & {
-    id: string;
-    name: string;
-    type: FieldMetadataType;
-  });
   const companyIdField = createMockField({
     id: 'company-id-field',
     name: 'id',
@@ -95,40 +84,22 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
     type: FieldMetadataType.TEXT,
   });
 
-  const parentCompanyField = createMockField({
-    id: 'parent-company-field',
-    name: 'parentCompany',
-    type: FieldMetadataType.RELATION,
-    settings: { relationType: RelationType.MANY_TO_ONE },
-    relationTargetObjectMetadataId: 'company-object-id',
-  } as Partial<FlatFieldMetadata> & {
-    id: string;
-    name: string;
-    type: FieldMetadataType;
-  });
-
   const investorLeadObject = createMockObject({
     id: 'investor-lead-object-id',
     nameSingular: 'investorLead',
-    fieldIds: ['lead-id-field', 'fund-field', 'owner-field'],
+    fieldIds: ['lead-id-field', 'fund-field'],
   });
   const companyObject = createMockObject({
     id: 'company-object-id',
     nameSingular: 'company',
-    fieldIds: [
-      'company-id-field',
-      'company-name-field',
-      'parent-company-field',
-    ],
+    fieldIds: ['company-id-field', 'company-name-field'],
   });
 
   const fieldMaps = buildFieldMaps([
     leadIdField,
     fundField,
-    ownerField,
     companyIdField,
     companyNameField,
-    parentCompanyField,
   ]);
   const objectMaps = buildObjectMaps([investorLeadObject, companyObject]);
 
@@ -154,33 +125,5 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
     expect(result.select.fund).toEqual({ id: true, name: true });
     expect(result.relations.fund).toEqual({});
     expect(result.relationFieldsCount).toBe(1);
-  });
-
-  it('should not count relations reached through to-one relations only as under a one-to-many relation', () => {
-    const parser = new GraphqlQuerySelectedFieldsParser(objectMaps, fieldMaps);
-
-    const result = parser.parse(
-      { id: true, owner: { id: true, parentCompany: { id: true } } },
-      investorLeadObject,
-    );
-
-    expect(result.relationFieldsCount).toBe(2);
-    expect(result.relationFieldsCountUnderOneToMany).toBe(0);
-  });
-
-  it('should count a one-to-many relation and every relation below it as under a one-to-many relation', () => {
-    const parser = new GraphqlQuerySelectedFieldsParser(objectMaps, fieldMaps);
-
-    const result = parser.parse(
-      {
-        id: true,
-        owner: { id: true },
-        fund: { id: true, parentCompany: { id: true } },
-      },
-      investorLeadObject,
-    );
-
-    expect(result.relationFieldsCount).toBe(3);
-    expect(result.relationFieldsCountUnderOneToMany).toBe(2);
   });
 });

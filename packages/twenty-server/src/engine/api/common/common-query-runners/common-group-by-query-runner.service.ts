@@ -23,7 +23,6 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { computeMaxRecordCountFromSelection } from 'src/engine/api/common/common-query-runners/utils/compute-max-record-count-from-selection.util';
 import { GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 import { GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { getGroupByDefinitions } from 'src/engine/api/common/common-query-runners/utils/get-group-by-definitions.util';
@@ -76,6 +75,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }
 
   protected readonly operationName = CommonQueryNames.GROUP_BY;
+
+  protected override readonly recordLimitPerOneToManyRelation =
+    RELATIONS_PER_RECORD_LIMIT;
   protected readonly isReadOnly = true;
 
   async run(
@@ -469,22 +471,13 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       : groupByQueryComplexity;
   }
 
-  protected override computeMaxRecordCount(
+  protected override computeRootRecordCount(
     args: CommonExtendedInput<GroupByQueryArgs>,
   ): number {
     const groupCount = getGroupLimit(args.limit);
 
-    if (!(args.includeRecords ?? false)) {
-      return groupCount;
-    }
-
-    return (
-      groupCount +
-      computeMaxRecordCountFromSelection({
-        rootRecordCount: groupCount * RECORDS_PER_GROUP_LIMIT,
-        selectedFieldsResult: args.selectedFieldsResult,
-        recordLimitPerOneToManyRelation: RELATIONS_PER_RECORD_LIMIT,
-      })
-    );
+    return (args.includeRecords ?? false)
+      ? groupCount * RECORDS_PER_GROUP_LIMIT
+      : groupCount;
   }
 }

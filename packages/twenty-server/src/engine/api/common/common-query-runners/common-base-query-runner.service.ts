@@ -21,7 +21,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
-import { computeMaxRecordCountFromSelection } from 'src/engine/api/common/common-query-runners/utils/compute-max-record-count-from-selection.util';
+import { computeMaxRecordCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-record-count-per-record.util';
 import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -108,6 +108,9 @@ export abstract class CommonBaseQueryRunnerService<
 
   protected readonly isReadOnly: boolean = false;
 
+  protected readonly recordLimitPerOneToManyRelation: number =
+    QUERY_MAX_RECORDS_FROM_RELATION;
+
   public async execute(
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
@@ -162,7 +165,15 @@ export abstract class CommonBaseQueryRunnerService<
     if (isRootOperation) {
       this.recordApiComplexityUsage(
         authContext,
-        this.computeMaxRecordCount(processedArgs, results),
+        this.computeRootRecordCount(processedArgs, results) *
+          computeMaxRecordCountPerRecord({
+            relations: selectedFieldsResult.relations,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            recordLimitPerOneToManyRelation:
+              this.recordLimitPerOneToManyRelation,
+          }),
       );
     }
 
@@ -207,15 +218,11 @@ export abstract class CommonBaseQueryRunnerService<
     return selectedFieldsComplexity;
   }
 
-  protected computeMaxRecordCount(
-    args: CommonExtendedInput<Args>,
+  protected computeRootRecordCount(
+    _args: CommonExtendedInput<Args>,
     _results: Output,
   ): number {
-    return computeMaxRecordCountFromSelection({
-      rootRecordCount: 1,
-      selectedFieldsResult: args.selectedFieldsResult,
-      recordLimitPerOneToManyRelation: QUERY_MAX_RECORDS_FROM_RELATION,
-    });
+    return 1;
   }
 
   private async processArgs(
