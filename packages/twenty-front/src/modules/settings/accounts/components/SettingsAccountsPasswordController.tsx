@@ -48,6 +48,7 @@ export const SettingsAccountsPasswordController = ({
             placeholder={disabled ? MASKED_PASSWORD_PLACEHOLDER : ''}
             type={disabled ? 'text' : 'password'}
             autoComplete="new-password"
+            ignorePasswordManagers
             value={field.value || ''}
             onChange={field.onChange}
             error={fieldState.error?.message}
