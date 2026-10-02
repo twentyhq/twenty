@@ -138,10 +138,10 @@ export const useAgentChat = (
       : null;
     const messageId = v4();
     const optimisticMessageCreatedAt = new Date().toISOString();
-    const rollbackOptimisticRestore = applyOptimisticRestore(
+    const rollbackOptimisticRestore = applyOptimisticRestore({
       threadId,
-      optimisticMessageCreatedAt,
-    );
+      optimisticUpdatedAt: optimisticMessageCreatedAt,
+    });
 
     const optimisticUserMessage: ExtendedUIMessage = {
       id: messageId,
@@ -242,7 +242,7 @@ export const useAgentChat = (
       const restoredDraftKey =
         draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ? threadId : draftKey;
 
-      rollbackOptimisticRestore?.();
+      rollbackOptimisticRestore();
 
       setAgentChatInput(contentToSend);
       setAgentChatDraftsByThreadId((prev) => ({
