@@ -598,7 +598,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('should keep the loading indicator while hidden reasoning streams in', () => {
+  it('should keep the loading indicator while a message with only hidden reasoning is still streaming', () => {
     const { container } = renderAssistantRenderer(
       [
         {

@@ -186,16 +186,15 @@ describe('buildReasoningProviderOptions', () => {
       },
     );
 
-    it.each([AI_SDK_OPENAI, AI_SDK_AZURE] as const)(
+    it.each([
+      [AI_SDK_OPENAI, 'openai/gpt-5.6-sol'],
+      [AI_SDK_AZURE, 'azure/gpt-5.6-sol'],
+    ] as const)(
       'asks %s for no summary until OpenAI summaries are enabled',
-      (sdkPackage) => {
+      (sdkPackage, modelId) => {
         expect(
           buildReasoningProviderOptions(
-            {
-              modelId: 'openai/gpt-5.6-sol',
-              sdkPackage,
-              supportsReasoning: true,
-            },
+            { modelId, sdkPackage, supportsReasoning: true },
             { shouldIncludeReasoningSummary: true },
           ),
         ).toEqual({});
