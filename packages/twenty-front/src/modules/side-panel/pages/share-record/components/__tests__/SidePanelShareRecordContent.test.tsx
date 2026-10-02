@@ -386,7 +386,7 @@ describe('Share record side panel', () => {
     },
   );
 
-  it('can upgrade and downgrade the general access', async () => {
+  it('can upgrade and downgrade the general access, but never to full access', async () => {
     const user = userEvent.setup();
     const view = renderSharing({
       sharingOverrides: { generalAccessLevel: RecordShareAccessLevel.READ },
@@ -396,20 +396,25 @@ describe('Share record side panel', () => {
         name: /^Everyone with access to Companies/,
       }),
     );
-    await user.click(screen.getByText('Full access'));
+    expect(
+      screen.queryByRole('menuitemradio', { name: 'Full access' }),
+    ).toBeNull();
+    await user.click(screen.getByRole('menuitemradio', { name: 'Editor' }));
     expect(setGeneralAccess).toHaveBeenLastCalledWith(
-      RecordShareAccessLevel.FULL,
+      RecordShareAccessLevel.READ_WRITE,
     );
     view.unmount();
     renderSharing({
-      sharingOverrides: { generalAccessLevel: RecordShareAccessLevel.FULL },
+      sharingOverrides: {
+        generalAccessLevel: RecordShareAccessLevel.READ_WRITE,
+      },
     });
     await user.click(
       screen.getByRole('button', {
         name: /^Everyone with access to Companies/,
       }),
     );
-    await user.click(screen.getAllByText('Viewer').at(-1)!);
+    await user.click(screen.getByRole('menuitemradio', { name: 'Viewer' }));
     expect(setGeneralAccess).toHaveBeenLastCalledWith(
       RecordShareAccessLevel.READ,
     );
@@ -435,7 +440,7 @@ describe('Share record side panel', () => {
   it('explains that records of an object without record sharing follow roles', async () => {
     renderSharing({
       sharingOverrides: {
-        sharingMode: RecordSharingMode.NONE,
+        sharingMode: RecordSharingMode.ROLE_ONLY,
         canManageSharing: false,
         generalAccessLevel: null,
         defaultGeneralAccessLevel: null,

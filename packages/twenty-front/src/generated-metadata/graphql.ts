@@ -5889,7 +5889,6 @@ export type RecordSharingDto = {
   roles: Array<RecordSharingRoleDto>;
   shares: Array<RecordSharingGrantDto>;
   sharingMode: RecordSharingMode;
-  viewerAccessLevel?: Maybe<RecordShareAccessLevel>;
 };
 
 export type RecordSharingGrantDto = {
@@ -5902,12 +5901,12 @@ export type RecordSharingGrantDto = {
   rowCause: RecordShareRowCause;
 };
 
-/** How records of an object are shared: not at all, private until shared, readable through linked records, or open by default with per-record exceptions */
+/** How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions */
 export enum RecordSharingMode {
   INHERITED = 'INHERITED',
-  NONE = 'NONE',
   OPEN_BY_DEFAULT = 'OPEN_BY_DEFAULT',
-  PRIVATE = 'PRIVATE'
+  PRIVATE = 'PRIVATE',
+  ROLE_ONLY = 'ROLE_ONLY'
 }
 
 export type RecordSharingRoleDto = {

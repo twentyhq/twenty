@@ -69,7 +69,10 @@ export const SidePanelShareRecordGeneralAccessItem = ({
       </Dropdown.Section>
       <Dropdown.Separator />
       <Dropdown.Section label={t`Everyone with access to ${objectLabelPlural}`}>
-        {RECORD_SHARE_ACCESS_LEVEL_OPTIONS.map((option) => (
+        {RECORD_SHARE_ACCESS_LEVEL_OPTIONS.filter(
+          // Full access lets its holder manage sharing, so it is only granted by name
+          (option) => option.value !== RecordShareAccessLevel.FULL,
+        ).map((option) => (
           <Dropdown.OptionItem
             key={option.value}
             selected={generalAccessLevel === option.value}

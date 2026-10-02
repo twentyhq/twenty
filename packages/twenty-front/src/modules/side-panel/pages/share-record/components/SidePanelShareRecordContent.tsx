@@ -249,7 +249,7 @@ export const SidePanelShareRecordContent = ({
               </>
             ) : (
               <StyledDescription>
-                {sharing.sharingMode === RecordSharingMode.NONE
+                {sharing.sharingMode === RecordSharingMode.ROLE_ONLY
                   ? t`Access to ${objectLabelPlural} is set by roles, not record by record.`
                   : sharing.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT
                     ? t`Only the creator of this record, people with full access to it and admins can change who has access.`

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useSetRecordPermissions } from '@/object-record/record-sharing/hooks/useSetRecordPermissions';
+import { useRefreshRecordPermissions } from '@/object-record/record-sharing/hooks/useRefreshRecordPermissions';
 import {
   type RecordPermissionsDto,
   type RecordTargetInput,
@@ -16,7 +16,7 @@ export const RecordSharingPermissionsEffect = ({
   recordTarget,
   permissions,
 }: RecordSharingPermissionsEffectProps) => {
-  const { setRecordPermissions } = useSetRecordPermissions();
+  const { setRecordPermissions } = useRefreshRecordPermissions();
   const { objectMetadataId, recordId } = recordTarget;
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useSetRecordPermissions } from '@/object-record/record-sharing/hooks/useSetRecordPermissions';
+import { useRefreshRecordPermissions } from '@/object-record/record-sharing/hooks/useRefreshRecordPermissions';
 import {
   GetRecordSharingDocument,
   RemoveRecordShareDocument,
@@ -21,7 +21,7 @@ export const useRecordSharing = ({
 }: {
   recordTarget: RecordTargetInput;
 }) => {
-  const { setRecordPermissions } = useSetRecordPermissions();
+  const { setRecordPermissions } = useRefreshRecordPermissions();
   const { enqueueToast } = useToast();
   const { data, loading, error, refetch } = useQuery(GetRecordSharingDocument, {
     variables: { target: recordTarget },
