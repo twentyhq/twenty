@@ -225,12 +225,16 @@ describe('NavigateAppTool', () => {
   let tool: NavigateAppTool;
   let findRecords: jest.Mock;
   let findViewsByWorkspaceId: jest.Mock;
+  let workspaceCacheGetOrRecompute: jest.Mock;
 
   const setUp = async (
     records: FakeRecord[],
     rolesPermissions = buildRolesPermissions(),
   ) => {
     findRecords = buildFakeFindRecordsService(records);
+    workspaceCacheGetOrRecompute = jest
+      .fn()
+      .mockResolvedValue({ rolesPermissions });
     findViewsByWorkspaceId = jest.fn().mockResolvedValue([]);
 
     const module: TestingModule = await Test.createTestingModule({
@@ -265,9 +269,7 @@ describe('NavigateAppTool', () => {
         },
         {
           provide: WorkspaceCacheService,
-          useValue: {
-            getOrRecompute: jest.fn().mockResolvedValue({ rolesPermissions }),
-          },
+          useValue: { getOrRecompute: workspaceCacheGetOrRecompute },
         },
       ],
     }).compile();
@@ -416,6 +418,22 @@ describe('NavigateAppTool', () => {
         buildRolesPermissions({
           [COMPANY_NAME_FIELD.id]: { canRead: false, canUpdate: false },
         }),
+      );
+
+      const output = await navigateToRecord('company', 'Acme');
+
+      expect(findRecords).not.toHaveBeenCalled();
+      expect(output.success).toBe(false);
+      expect(output.result).toBeUndefined();
+      expect(output.error).toBe(
+        'No company record matching "Acme" was found, or you do not have access to it.',
+      );
+    });
+
+    it('should return the generic not found result when role permissions cannot be loaded', async () => {
+      await setUp([{ id: 'company-1', name: 'Acme' }]);
+      workspaceCacheGetOrRecompute.mockRejectedValue(
+        new Error('Cache unavailable'),
       );
 
       const output = await navigateToRecord('company', 'Acme');

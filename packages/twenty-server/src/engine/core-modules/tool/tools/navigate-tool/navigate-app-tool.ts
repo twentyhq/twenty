@@ -453,12 +453,12 @@ export class NavigateAppTool implements Tool {
     fieldMetadataId: string;
     rolePermissionConfig: RolePermissionConfig;
   }): Promise<boolean> {
-    const { rolesPermissions } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
-      ]);
-
     try {
+      const { rolesPermissions } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'rolesPermissions',
+        ]);
+
       assertFieldIsReadableOrThrow({
         objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
           rolesPermissions,
