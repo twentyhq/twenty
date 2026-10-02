@@ -4,6 +4,7 @@ import {
   runWorkflowVersion,
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { StepLogicalOperator, ViewFilterOperand } from 'twenty-shared/types';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
@@ -408,30 +409,33 @@ describe('If/Else Workflow (e2e)', () => {
 
   describe('Workflow structure', () => {
     it('should verify If/Else workflow exists and is active', async () => {
-      const response = await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            query FindWorkflow($id: UUID!) {
-              workflow(filter: { id: { eq: $id } }) {
-                id
-                name
-                lastPublishedVersionId
-                statuses
+      // statuses is recomputed by a workflow queue job after activation returns
+      await expectEventually(async () => {
+        const response = await client
+          .post('/graphql')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send({
+            query: `
+              query FindWorkflow($id: UUID!) {
+                workflow(filter: { id: { eq: $id } }) {
+                  id
+                  name
+                  lastPublishedVersionId
+                  statuses
+                }
               }
-            }
-          `,
-          variables: { id: createdWorkflowId },
-        });
+            `,
+            variables: { id: createdWorkflowId },
+          });
 
-      expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.workflow.id).toBe(createdWorkflowId);
-      expect(response.body.data.workflow.name).toBe('If/Else Test Workflow');
-      expect(response.body.data.workflow.lastPublishedVersionId).toBe(
-        createdWorkflowVersionId,
-      );
-      expect(response.body.data.workflow.statuses).toContain('ACTIVE');
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.workflow.id).toBe(createdWorkflowId);
+        expect(response.body.data.workflow.name).toBe('If/Else Test Workflow');
+        expect(response.body.data.workflow.lastPublishedVersionId).toBe(
+          createdWorkflowVersionId,
+        );
+        expect(response.body.data.workflow.statuses).toContain('ACTIVE');
+      });
     });
 
     it('should verify If/Else workflow version has correct structure', async () => {
