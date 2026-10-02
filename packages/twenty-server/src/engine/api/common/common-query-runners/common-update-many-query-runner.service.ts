@@ -148,10 +148,4 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       authContext.workspace.id,
     );
   }
-
-  protected override computeRootRecordCount(
-    args: CommonExtendedInput<UpdateManyQueryArgs>,
-  ): number {
-    return this.computeFilteredMutationRootRecordCount(args.filter);
-  }
 }

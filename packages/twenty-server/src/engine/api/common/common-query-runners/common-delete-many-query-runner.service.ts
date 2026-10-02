@@ -137,10 +137,4 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
   }
-
-  protected override computeRootRecordCount(
-    args: CommonExtendedInput<DeleteManyQueryArgs>,
-  ): number {
-    return this.computeFilteredMutationRootRecordCount(args.filter);
-  }
 }

@@ -222,12 +222,6 @@ export abstract class CommonBaseQueryRunnerService<
     return 1;
   }
 
-  protected computeFilteredMutationRootRecordCount(
-    filter: Partial<ObjectRecordFilter>,
-  ): number {
-    return filter.id?.in?.length ?? 1;
-  }
-
   private async processArgs(
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,

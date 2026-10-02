@@ -136,10 +136,4 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
 
     args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
   }
-
-  protected override computeRootRecordCount(
-    args: CommonExtendedInput<RestoreManyQueryArgs>,
-  ): number {
-    return this.computeFilteredMutationRootRecordCount(args.filter);
-  }
 }
