@@ -7,32 +7,24 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 
-export const resolveRoleIdsFromAuthContext = ({
-  authContext,
-  userWorkspaceRoleMap,
-  apiKeyRoleMap,
-}: {
+type ResolveRoleIdsFromAuthContextArgs = {
   authContext: WorkspaceAuthContext;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;
-}): string[] => {
+};
+
+// The roles the principal acts with; a run-as application is left out since it only narrows them, so its role must
+// never count as a principal that records are shared with
+export const resolveHeldRoleIdsFromAuthContext = ({
+  authContext,
+  userWorkspaceRoleMap,
+  apiKeyRoleMap,
+}: ResolveRoleIdsFromAuthContextArgs): string[] => {
   if (isUserAuthContext(authContext)) {
-    const userRoleIds = resolveRoleIdsForUser({
+    return resolveRoleIdsForUser({
       userRoleId: userWorkspaceRoleMap[authContext.userWorkspaceId],
       applicationRoleId: authContext.application?.defaultRoleId,
     });
-    const runAsApplicationRoleId = authContext.viaApplication?.defaultRoleId;
-
-    // An application running as a member must not reach past its own role by picking a more privileged member
-    if (
-      !isNonEmptyArray(userRoleIds) ||
-      !isDefined(runAsApplicationRoleId) ||
-      userRoleIds.includes(runAsApplicationRoleId)
-    ) {
-      return userRoleIds;
-    }
-
-    return [...userRoleIds, runAsApplicationRoleId];
   }
 
   if (isApiKeyAuthContext(authContext)) {
@@ -48,4 +40,24 @@ export const resolveRoleIdsFromAuthContext = ({
   }
 
   return [];
+};
+
+export const resolveRoleIdsFromAuthContext = (
+  args: ResolveRoleIdsFromAuthContextArgs,
+): string[] => {
+  const heldRoleIds = resolveHeldRoleIdsFromAuthContext(args);
+  const runAsApplicationRoleId = isUserAuthContext(args.authContext)
+    ? args.authContext.viaApplication?.defaultRoleId
+    : undefined;
+
+  // An application running as a member must not reach past its own role by picking a more privileged member
+  if (
+    !isNonEmptyArray(heldRoleIds) ||
+    !isDefined(runAsApplicationRoleId) ||
+    heldRoleIds.includes(runAsApplicationRoleId)
+  ) {
+    return heldRoleIds;
+  }
+
+  return [...heldRoleIds, runAsApplicationRoleId];
 };

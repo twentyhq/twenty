@@ -5,8 +5,8 @@ import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-targ
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 
-// An explicit intersection can name roles the auth context does not carry (an agent role), and each of them must bound
-// the reachable rows too
+// An explicit intersection names every role that bounds the reachable rows; the auth context then only tells who the
+// member is, since its own roles could carry predicates or all-records access the intersection does not grant
 export const resolveRowLevelPermissionRoleIds = ({
   authContext,
   userWorkspaceRoleMap,
@@ -18,20 +18,16 @@ export const resolveRowLevelPermissionRoleIds = ({
   apiKeyRoleMap: Record<string, string>;
   rolePermissionConfig?: RolePermissionConfig;
 }): string[] => {
-  const authContextRoleIds = resolveRoleIdsFromAuthContext({
+  if (
+    isDefined(rolePermissionConfig) &&
+    'intersectionOf' in rolePermissionConfig
+  ) {
+    return [...new Set(rolePermissionConfig.intersectionOf)];
+  }
+
+  return resolveRoleIdsFromAuthContext({
     authContext,
     userWorkspaceRoleMap,
     apiKeyRoleMap,
   });
-
-  if (
-    !isDefined(rolePermissionConfig) ||
-    !('intersectionOf' in rolePermissionConfig)
-  ) {
-    return authContextRoleIds;
-  }
-
-  return [
-    ...new Set([...authContextRoleIds, ...rolePermissionConfig.intersectionOf]),
-  ];
 };

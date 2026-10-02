@@ -22,6 +22,12 @@ const APPLICATION_AUTH_CONTEXT = {
   application: { defaultRoleId: APPLICATION_ROLE_ID },
 } as unknown as WorkspaceAuthContext;
 
+const ROLELESS_APPLICATION_AUTH_CONTEXT = {
+  type: 'application',
+  workspace: { id: 'workspace-1' },
+  application: { defaultRoleId: null },
+} as unknown as WorkspaceAuthContext;
+
 const resolve = ({
   authContext,
   rolePermissionConfig,
@@ -41,24 +47,42 @@ describe('resolveRowLevelPermissionRoleIds', () => {
     expect(resolve({ authContext: USER_AUTH_CONTEXT })).toEqual([USER_ROLE_ID]);
   });
 
-  it('should add every role of an explicit intersection to the auth context roles', () => {
-    expect(
-      resolve({
-        authContext: APPLICATION_AUTH_CONTEXT,
-        rolePermissionConfig: {
-          intersectionOf: [AGENT_ROLE_ID, APPLICATION_ROLE_ID],
-        },
-      }),
-    ).toEqual([APPLICATION_ROLE_ID, AGENT_ROLE_ID]);
-  });
-
-  it('should keep the auth context roles when the intersection does not name them', () => {
+  it('should resolve every role of an explicit intersection', () => {
     expect(
       resolve({
         authContext: USER_AUTH_CONTEXT,
+        rolePermissionConfig: {
+          intersectionOf: [AGENT_ROLE_ID, USER_ROLE_ID, APPLICATION_ROLE_ID],
+        },
+      }),
+    ).toEqual([AGENT_ROLE_ID, USER_ROLE_ID, APPLICATION_ROLE_ID]);
+  });
+
+  it('should not add auth context roles the intersection leaves out', () => {
+    expect(
+      resolve({
+        authContext: APPLICATION_AUTH_CONTEXT,
+        rolePermissionConfig: { intersectionOf: [AGENT_ROLE_ID, USER_ROLE_ID] },
+      }),
+    ).toEqual([AGENT_ROLE_ID, USER_ROLE_ID]);
+  });
+
+  it('should still apply the intersection when the auth context resolves no role', () => {
+    expect(
+      resolve({
+        authContext: ROLELESS_APPLICATION_AUTH_CONTEXT,
         rolePermissionConfig: { intersectionOf: [AGENT_ROLE_ID] },
       }),
-    ).toEqual([USER_ROLE_ID, AGENT_ROLE_ID]);
+    ).toEqual([AGENT_ROLE_ID]);
+  });
+
+  it('should resolve a repeated intersected role once', () => {
+    expect(
+      resolve({
+        authContext: USER_AUTH_CONTEXT,
+        rolePermissionConfig: { intersectionOf: [USER_ROLE_ID, USER_ROLE_ID] },
+      }),
+    ).toEqual([USER_ROLE_ID]);
   });
 
   it('should ignore a union config', () => {

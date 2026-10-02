@@ -1,5 +1,8 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
+import {
+  resolveHeldRoleIdsFromAuthContext,
+  resolveRoleIdsFromAuthContext,
+} from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 
 const USER_WORKSPACE_ID = 'user-workspace-1';
 const USER_ROLE_ID = 'user-role-1';
@@ -127,5 +130,32 @@ describe('resolveRoleIdsFromAuthContext', () => {
         workspace: { id: 'workspace-1' },
       } as unknown as WorkspaceAuthContext),
     ).toEqual([]);
+  });
+});
+
+describe('resolveHeldRoleIdsFromAuthContext', () => {
+  it('should leave the run-as application role out, as it only narrows', () => {
+    const runAsContext = {
+      ...buildUserContext(),
+      viaApplication: { defaultRoleId: APPLICATION_ROLE_ID },
+    } as WorkspaceAuthContext;
+
+    expect(
+      resolveHeldRoleIdsFromAuthContext({
+        authContext: runAsContext,
+        userWorkspaceRoleMap,
+        apiKeyRoleMap,
+      }),
+    ).toEqual([USER_ROLE_ID]);
+  });
+
+  it('should keep the role of an application the user acts through', () => {
+    expect(
+      resolveHeldRoleIdsFromAuthContext({
+        authContext: buildUserContext({ defaultRoleId: APPLICATION_ROLE_ID }),
+        userWorkspaceRoleMap,
+        apiKeyRoleMap,
+      }),
+    ).toEqual([USER_ROLE_ID, APPLICATION_ROLE_ID]);
   });
 });

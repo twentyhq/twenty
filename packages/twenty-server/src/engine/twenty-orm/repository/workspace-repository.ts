@@ -2339,7 +2339,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return {
       isSystemContext: this.options.authContext?.type === 'system',
       objectsPermissions: this.options.objectRecordsPermissions,
-      principalIds: resolvePrincipalIdsFromAuthContext(roleMaps),
+      principalIds: resolvePrincipalIdsFromAuthContext({
+        ...roleMaps,
+        rolePermissionConfig: this.options.rolePermissionConfig,
+      }),
       canAccessAllRecords: canRolesAccessAllRecords({
         roleIds: resolveRowLevelPermissionRoleIds({
           ...roleMaps,
