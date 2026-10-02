@@ -34,6 +34,7 @@ import { DuplicateMessageListSingleRecordCommand } from '@/command-menu-item/eng
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
 import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/SaveDashboardSingleRecordCommand';
 import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
+import { AgentChatThreadInboxSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/AgentChatThreadInboxSingleRecordCommand';
 import { NewAiChatSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/NewAiChatSingleRecordCommand';
 import { ShareRecordCommand } from '@/command-menu-item/engine-command/record/components/ShareRecordCommand';
 import { SeeVersionWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordCommand';
@@ -261,6 +262,21 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: <ReplyToEmailThreadCommand />,
   [EngineComponentKey.NEW_AI_CHAT]: <NewAiChatSingleRecordCommand />,
   [EngineComponentKey.SHARE_RECORD]: <ShareRecordCommand />,
+  [EngineComponentKey.MARK_AI_CHAT_AS_READ]: (
+    <AgentChatThreadInboxSingleRecordCommand action="read" />
+  ),
+  [EngineComponentKey.MARK_AI_CHAT_AS_UNREAD]: (
+    <AgentChatThreadInboxSingleRecordCommand action="unread" />
+  ),
+  [EngineComponentKey.MARK_AI_CHAT_AS_DONE]: (
+    <AgentChatThreadInboxSingleRecordCommand action="done" />
+  ),
+  [EngineComponentKey.REOPEN_AI_CHAT]: (
+    <AgentChatThreadInboxSingleRecordCommand action="reopen" />
+  ),
+  [EngineComponentKey.SNOOZE_AI_CHAT]: (
+    <AgentChatThreadInboxSingleRecordCommand action="snooze" />
+  ),
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
   [EngineComponentKey.COMPOSE_CAMPAIGN]: <ComposeCampaignCommand />,
   [EngineComponentKey.SEND_MESSAGE_CAMPAIGN]: (
