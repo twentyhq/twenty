@@ -1,6 +1,12 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
+import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import {
+  type ApplicationWithVariable,
+  setupApplicationWithVariable,
+} from 'test/integration/metadata/suites/application/utils/setup-application-with-variable.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
@@ -8,8 +14,12 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
@@ -22,6 +32,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -416,6 +427,59 @@ describe('roles permissions', () => {
           );
         }
       });
+
+      it('should gate role relations reached by an API key on the roles permission', async () => {
+        const tokenResponse = await generateApiKeyToken({
+          apiKeyId: relationsApiKeyId,
+          accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        });
+
+        const relationsApiKeyToken: string | undefined =
+          tokenResponse.body.data?.generateApiKeyToken?.token;
+
+        jestExpectToBeDefined(relationsApiKeyToken);
+
+        const query = {
+          query: `
+            query CurrentWorkspaceDefaultRoleRelations {
+              currentWorkspace {
+                defaultRole {
+                  apiKeys {
+                    id
+                  }
+                  workspaceMembers {
+                    id
+                  }
+                }
+              }
+            }
+          `,
+        };
+
+        const deniedResp = await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${relationsApiKeyToken}`)
+          .send(query);
+
+        expect(deniedResp.body.data.currentWorkspace.defaultRole).toBeNull();
+        expect(deniedResp.body.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(deniedResp.body.errors[0].extensions.code).toBe(
+          ErrorCode.FORBIDDEN,
+        );
+
+        const adminApiKeyResp = await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${API_KEY_ACCESS_TOKEN}`)
+          .send(query);
+
+        expect(adminApiKeyResp.body.errors).toBeUndefined();
+        expect(
+          adminApiKeyResp.body.data.currentWorkspace.defaultRole
+            .workspaceMembers,
+        ).toContainEqual({ id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY });
+      });
     });
   });
 
@@ -506,7 +570,7 @@ describe('roles permissions', () => {
       },
     );
 
-    it('should deny role relations reached through workspace member roles to a member without the roles permission', async () => {
+    it('should deny role relations reached through the workspace member roles to a member without the roles permission', async () => {
       const resp = await client
         .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
@@ -514,7 +578,7 @@ describe('roles permissions', () => {
           query: `
             query CurrentUserWorkspaceMemberRoles {
               currentUser {
-                workspaceMembers {
+                workspaceMember {
                   roles {
                     workspaceMembers {
                       id
@@ -527,14 +591,12 @@ describe('roles permissions', () => {
         });
 
       expect(resp.status).toBe(200);
-      expect(resp.body.errors.length).toBeGreaterThan(0);
-
-      for (const error of resp.body.errors) {
-        expect(error.message).toBe(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-        );
-        expect(error.extensions.code).toBe(ErrorCode.FORBIDDEN);
-      }
+      expect(resp.body.data.currentUser.workspaceMember.roles).toBeNull();
+      expect(resp.body.errors).toHaveLength(1);
+      expect(resp.body.errors[0].message).toBe(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+      );
+      expect(resp.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
     it('should still let a member read the default role settings', async () => {
@@ -570,6 +632,80 @@ describe('roles permissions', () => {
       expect(
         resp.body.data.currentWorkspace.defaultRole.workspaceMembers,
       ).toContainEqual({ id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY });
+    });
+
+    describe('application callers', () => {
+      const createdApplications: ApplicationWithVariable[] = [];
+
+      let deniedApplicationId: string;
+      let grantedApplicationId: string;
+
+      beforeAll(async () => {
+        const deniedApplication = await setupApplicationWithVariable({
+          name: 'Role relations denied app',
+          variableKey: 'DENIED',
+        });
+
+        createdApplications.push(deniedApplication);
+
+        const grantedApplication = await setupApplicationWithVariable({
+          name: 'Role relations granted app',
+          variableKey: 'GRANTED',
+          permissionFlagUniversalIdentifiers: [SystemPermissionFlag.ROLES],
+        });
+
+        createdApplications.push(grantedApplication);
+
+        deniedApplicationId = deniedApplication.id;
+        grantedApplicationId = grantedApplication.id;
+      }, 120000);
+
+      afterAll(async () => {
+        for (const application of createdApplications) {
+          await cleanupApplicationAndAppRegistration({
+            applicationUniversalIdentifier: application.universalIdentifier,
+          });
+        }
+      });
+
+      const queryDefaultRoleWorkspaceMembersAsApplication = async (
+        applicationId: string,
+      ) => {
+        const { applicationAccessToken } = await generateApplicationTokenPair({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId,
+        });
+
+        return client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${applicationAccessToken.token}`)
+          .send(defaultRoleQuery('workspaceMembers { id }'));
+      };
+
+      it('should deny defaultRole.workspaceMembers to an application whose role lacks the roles permission', async () => {
+        const resp =
+          await queryDefaultRoleWorkspaceMembersAsApplication(
+            deniedApplicationId,
+          );
+
+        expect(resp.body.data.currentWorkspace.defaultRole).toBeNull();
+        expect(resp.body.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(resp.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      });
+
+      it('should let an application whose role has the roles permission read defaultRole.workspaceMembers', async () => {
+        const resp =
+          await queryDefaultRoleWorkspaceMembersAsApplication(
+            grantedApplicationId,
+          );
+
+        expect(resp.body.errors).toBeUndefined();
+        expect(
+          resp.body.data.currentWorkspace.defaultRole.workspaceMembers,
+        ).toContainEqual({ id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY });
+      });
     });
   });
 
