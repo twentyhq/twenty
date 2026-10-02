@@ -69,9 +69,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 > {
   protected readonly operationName = CommonQueryNames.CREATE_MANY;
 
-  protected override readonly recordLimitPerOneToManyRelation =
-    QUERY_MAX_RECORDS;
-
   constructor(
     private readonly recordPositionService: RecordPositionService,
     private readonly shareWithService: ShareWithService,

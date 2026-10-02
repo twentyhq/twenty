@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type ObjectRecord } from 'twenty-shared/types';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
@@ -33,9 +32,6 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
   }
 
   protected readonly operationName = CommonQueryNames.CREATE_ONE;
-
-  protected override readonly recordLimitPerOneToManyRelation =
-    QUERY_MAX_RECORDS;
 
   async run(
     args: CommonExtendedInput<CreateManyQueryArgs>,
