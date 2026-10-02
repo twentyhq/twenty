@@ -19,6 +19,20 @@ jest.mock('@apollo/client/react', () => ({
 
 const ROLE_ID = 'role-id';
 
+const ROLE_BASIC_FIELDS_INPUT = {
+  description: '',
+  icon: 'IconUser',
+  canUpdateAllSettings: false,
+  canAccessAllTools: false,
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: true,
+  canSoftDeleteAllObjectRecords: true,
+  canDestroyAllObjectRecords: false,
+  canBeAssignedToUsers: true,
+  canBeAssignedToAgents: true,
+  canBeAssignedToApiKeys: true,
+};
+
 const PERSISTED_ROLE: RoleWithPartialMembers = {
   __typename: 'Role',
   id: ROLE_ID,
@@ -104,6 +118,17 @@ describe('useSaveDraftRoleToDB', () => {
     });
 
     expect(mockCreateRole).toHaveBeenCalledTimes(1);
+    expect(mockCreateRole).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: {
+          createRoleInput: {
+            id: ROLE_ID,
+            label: 'New role',
+            ...ROLE_BASIC_FIELDS_INPUT,
+          },
+        },
+      }),
+    );
     expect(onSuccess).toHaveBeenCalledTimes(1);
     expect(onSuccess).toHaveBeenCalledWith(ROLE_ID);
   });
@@ -143,6 +168,16 @@ describe('useSaveDraftRoleToDB', () => {
 
     expect(mockCreateRole).not.toHaveBeenCalled();
     expect(mockOtherMutation).toHaveBeenCalledTimes(1);
+    expect(mockOtherMutation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: {
+          updateRoleInput: {
+            id: ROLE_ID,
+            update: { label: 'Sales team', ...ROLE_BASIC_FIELDS_INPUT },
+          },
+        },
+      }),
+    );
     expect(onSuccess).toHaveBeenCalledTimes(1);
     expect(onSuccess).toHaveBeenCalledWith(ROLE_ID);
   });
