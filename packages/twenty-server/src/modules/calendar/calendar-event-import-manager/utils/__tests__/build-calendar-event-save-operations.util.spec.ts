@@ -112,6 +112,22 @@ describe('buildCalendarEventSaveOperations', () => {
     expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
   });
 
+  it('reads timestamps without an offset as UTC like the database does', () => {
+    const plan = buildCalendarEventSaveOperations({
+      fetchedCalendarEvents: [
+        buildFetchedCalendarEvent({
+          startsAt: '2026-10-02T08:00:00.0000000',
+          endsAt: '2026-10-02T09:00:00.0000000',
+        }),
+      ],
+      existingAssociations: [buildExistingAssociation()],
+      existingCalendarEvents: [buildExistingCalendarEvent()],
+      calendarChannelId: CALENDAR_CHANNEL_ID,
+    });
+
+    expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
+  });
+
   it('treats an empty fetched end date as equal to a null persisted one', () => {
     const plan = buildCalendarEventSaveOperations({
       fetchedCalendarEvents: [buildFetchedCalendarEvent({ endsAt: '' })],

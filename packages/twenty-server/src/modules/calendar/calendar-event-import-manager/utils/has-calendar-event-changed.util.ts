@@ -1,5 +1,5 @@
-import { isEqual } from 'date-fns';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, parseToInstantOrThrow } from 'twenty-shared/utils';
 
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -30,18 +30,20 @@ const DATE_TIME_FIELD_NAMES = ['startsAt', 'endsAt'] as const;
 
 const BOOLEAN_FIELD_NAMES = ['isFullDay', 'isCanceled'] as const;
 
-const hasDateTimeChanged = (
-  existingValue: string | null,
-  fetchedValue: string | null,
-): boolean => {
-  const existingDateTime = existingValue || null;
-  const fetchedDateTime = fetchedValue || null;
-
-  if (!isDefined(existingDateTime) || !isDefined(fetchedDateTime)) {
-    return existingDateTime !== fetchedDateTime;
+const toEpochMilliseconds = (value: string | Date | null): number | null => {
+  if (value instanceof Date) {
+    return value.getTime();
   }
 
-  return !isEqual(existingDateTime, fetchedDateTime);
+  if (!isNonEmptyString(value)) {
+    return null;
+  }
+
+  try {
+    return parseToInstantOrThrow(value).epochMilliseconds;
+  } catch {
+    return Number.NaN;
+  }
 };
 
 export const hasCalendarEventChanged = ({
@@ -56,11 +58,10 @@ export const hasCalendarEventChanged = ({
       (existingCalendarEvent[fieldName] ?? '') !==
       (calendarEvent[fieldName] ?? ''),
   ) ||
-  DATE_TIME_FIELD_NAMES.some((fieldName) =>
-    hasDateTimeChanged(
-      existingCalendarEvent[fieldName],
-      calendarEvent[fieldName],
-    ),
+  DATE_TIME_FIELD_NAMES.some(
+    (fieldName) =>
+      toEpochMilliseconds(existingCalendarEvent[fieldName]) !==
+      toEpochMilliseconds(calendarEvent[fieldName]),
   ) ||
   BOOLEAN_FIELD_NAMES.some(
     (fieldName) =>
