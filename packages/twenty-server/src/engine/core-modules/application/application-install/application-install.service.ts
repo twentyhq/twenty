@@ -371,7 +371,7 @@ export class ApplicationInstallService {
       }
 
       if (isVersionUpgrade && !hasNeverCompletedInstall) {
-        await this.assertRoleGrantsApproved({
+        await this.assertRoleGrantsApprovedOrThrow({
           applicationId: application.id,
           workspaceId: params.workspaceId,
           manifest: resolvedPackage.manifest,
@@ -502,7 +502,7 @@ export class ApplicationInstallService {
     }
   }
 
-  private async assertRoleGrantsApproved({
+  private async assertRoleGrantsApprovedOrThrow({
     applicationId,
     workspaceId,
     manifest,

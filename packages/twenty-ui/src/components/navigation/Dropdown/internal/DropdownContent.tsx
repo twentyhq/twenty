@@ -11,6 +11,7 @@ import { type DropdownContentProps } from '../types/DropdownContentProps';
 import { DropdownPageFocusEffect } from './DropdownPageFocusEffect';
 import { DropdownSearchTargetEffect } from './DropdownSearchTargetEffect';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
+import { getDropdownSearchTarget } from './getDropdownSearchTarget';
 import { isUnhandledModifierShortcut } from './isUnhandledModifierShortcut';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownKeyboardNavigation } from './useDropdownKeyboardNavigation';
@@ -29,6 +30,7 @@ export const DropdownContent = ({
   children,
   initialFocus,
   onKeyDown,
+  onInput,
   onClick,
   onMouseDown,
   onPointerDown,
@@ -45,6 +47,7 @@ export const DropdownContent = ({
     focusOnOpen,
     triggerId,
     titleId,
+    setSearchTargetId,
   } = useDropdownContext();
   const contentRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState<HTMLDivElement | null>(null);
@@ -105,6 +108,10 @@ export const DropdownContent = ({
           if (!isUnhandledModifierShortcut(event)) {
             event.stopPropagation();
           }
+        }}
+        onInput={(event) => {
+          onInput?.(event);
+          setSearchTargetId(getDropdownSearchTarget(event.currentTarget)?.id);
         }}
         onClick={(event) => {
           event.stopPropagation();

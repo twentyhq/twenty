@@ -1,3 +1,4 @@
+import { currencyPickerSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/currencyPickerSandboxFailureTest';
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
 import { imageInputTest } from '@/__stories__/twenty-ui-gallery/utils/imageInputTest';
 import { overflowingListEventIsolationFailureTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListEventIsolationFailureTest';
@@ -642,4 +643,16 @@ export const ImageInputPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-image-input',
   runtime: 'preact',
   play: imageInputTest,
+});
+
+export const CurrencyPickerReactPopupFailure: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-currency-picker',
+  runtime: 'react',
+  play: currencyPickerSandboxFailureTest,
+});
+
+export const CurrencyPickerPreactPopupFailure: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-currency-picker',
+  runtime: 'preact',
+  play: currencyPickerSandboxFailureTest,
 });

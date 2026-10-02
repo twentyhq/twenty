@@ -1,9 +1,7 @@
 import { type RoleManifestGrant } from 'twenty-shared/application';
 
-import {
-  ApplicationUpgradeRoleGrantDTO,
-  ApplicationUpgradeRoleGrantType,
-} from 'src/engine/core-modules/application/application-upgrade/dtos/application-upgrade-role-grant.dto';
+import { type ApplicationUpgradeRoleGrantDTO } from 'src/engine/core-modules/application/application-upgrade/dtos/application-upgrade-role-grant.dto';
+import { ApplicationUpgradeRoleGrantType } from 'src/engine/core-modules/application/application-upgrade/enums/application-upgrade-role-grant-type.enum';
 
 export const fromRoleManifestGrantToApplicationUpgradeRoleGrantDTO = (
   grant: RoleManifestGrant,

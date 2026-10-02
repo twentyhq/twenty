@@ -9,15 +9,14 @@ import {
   AuthenticationError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { type RecordPermissionsDTO } from 'src/engine/core-modules/record-share/dtos/record-permissions.dto';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import {
-  RecordPermissionsResult,
-  RecordPermissionsTargetInput,
-} from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions-result.dto';
+import { DENIED_RECORD_PERMISSIONS } from 'src/engine/metadata-modules/record-permissions/constants/denied-record-permissions.constant';
+import { type RecordPermissionsDTO } from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions.dto';
+import { RecordPermissionsResult } from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions-result.dto';
+import { RecordTargetInput } from 'src/engine/metadata-modules/record-permissions/dtos/record-target.input';
+import { RecordPermissionsService } from 'src/engine/metadata-modules/record-permissions/services/record-permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const MAX_PERMISSION_TARGETS = 100;
@@ -39,14 +38,14 @@ const MAX_PERMISSION_TARGETS = 100;
 )
 export class RecordPermissionsResolver {
   constructor(
-    private readonly recordSharingService: RecordSharingService,
+    private readonly recordPermissionsService: RecordPermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   @Query(() => [RecordPermissionsResult])
   async recordPermissions(
-    @Args('targets', { type: () => [RecordPermissionsTargetInput] })
-    targets: RecordPermissionsTargetInput[],
+    @Args('targets', { type: () => [RecordTargetInput] })
+    targets: RecordTargetInput[],
   ): Promise<RecordPermissionsResult[]> {
     const authContext = getWorkspaceAuthContext();
     if (!isUserAuthContext(authContext)) {
@@ -76,24 +75,18 @@ export class RecordPermissionsResolver {
         flatEntityId: objectMetadataId,
         flatEntityMaps: flatObjectMetadataMaps,
       });
-      const denied = {
-        canRead: false,
-        canUpdate: false,
-        canDelete: false,
-        canSoftDelete: false,
-      };
       const permissions = !isDefined(objectMetadata)
         ? new Map<string, RecordPermissionsDTO>()
-        : await this.recordSharingService.getPermissionsForRecords({
+        : await this.recordPermissionsService.getPermissionsForRecords({
             authContext,
-            objectMetadataId,
+            flatObjectMetadata: objectMetadata,
             recordIds: [...recordIds],
           });
       for (const recordId of recordIds) {
         results.push({
           objectMetadataId,
           recordId,
-          permissions: permissions.get(recordId) ?? denied,
+          permissions: permissions.get(recordId) ?? DENIED_RECORD_PERMISSIONS,
         });
       }
     }
