@@ -26,14 +26,11 @@ type ScannedClass = { endpointClass: EndpointClass; isController: boolean };
 
 type Guard = Type<CanActivate> | CanActivate;
 
-// Field resolvers are left out: guards do not run on them, as twenty does not
-// enable fieldResolverEnhancers
 const GRAPHQL_OPERATION_TYPES = new Set(['Query', 'Mutation', 'Subscription']);
 
 const reflector = new Reflector();
 const metadataScanner = new MetadataScanner();
 
-// Builds the module graph Nest would boot, without creating any provider
 const scanClasses = async (
   rootModule: Type<object>,
 ): Promise<ScannedClass[]> => {
@@ -53,7 +50,6 @@ const scanClasses = async (
       [moduleRef.providers, false],
     ] as const) {
       for (const { metatype } of wrappers.values()) {
-        // Value and factory providers have no class to read endpoints from
         if (typeof metatype !== 'function' || !isDefined(metatype.prototype)) {
           continue;
         }
@@ -73,7 +69,6 @@ const scanClasses = async (
   );
 };
 
-// Nest only routes controllers, while GraphQL reads operations from any provider
 const isEndpointHandler = (
   handler: unknown,
   isController: boolean,
@@ -107,7 +102,6 @@ const stringifyWithSortedKeys = (value: unknown): string =>
       : nestedValue,
   );
 
-// One line per mounted endpoint, so a diff names the endpoint it changes
 export const collectEndpointPermissionDeclarations = async (
   rootModule: Type<object>,
 ): Promise<string[]> => {
