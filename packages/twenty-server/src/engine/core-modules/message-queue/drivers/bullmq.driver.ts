@@ -448,7 +448,6 @@ export class BullMQDriver
       );
     }
 
-    // This ensures only one waiting job can be queued for a specific option.id
     if (options?.id && !options?.allowDuplicatedPrefixes) {
       const waitingJobIds = await this.getWaitingJobIds(queueName);
 

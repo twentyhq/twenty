@@ -80,8 +80,7 @@ describe('useRedeemSsoExchangeToken', () => {
     expect(jotaiStore.get(isAppEffectRedirectEnabledState.atom)).toBe(true);
   });
 
-  // The cookie is httpOnly, so nothing else can tell the client it is now
-  // signed in; without this the user stays on the sign-in flow.
+  // The cookie is httpOnly, so nothing else tells the client it is signed in.
   it('should mark the session active once the exchange succeeds', async () => {
     const { result } = renderHooks();
 

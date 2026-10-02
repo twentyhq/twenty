@@ -121,7 +121,7 @@ const LinksInputWithContext = ({
 };
 
 const getPrimaryLinkBookmarkIcon = (canvasElement: HTMLElement) =>
-  // It would be better to use an aria-label on the icon, but we'll do this for now
+  // TODO: query by an aria-label on the icon instead
   canvasElement.querySelector('svg[class*="tabler-icon-bookmark"]');
 
 const meta: Meta = {
@@ -554,7 +554,7 @@ export const MakeSecondaryLinkPrimary: Story = {
       name: 'More options',
       expanded: false,
     });
-    await userEvent.click(openDropdownButtons[1]); // Click the secondary link's dropdown
+    await userEvent.click(openDropdownButtons[1]);
 
     const setPrimaryOption = await within(
       canvasElement.ownerDocument.body,

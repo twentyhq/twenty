@@ -15,8 +15,7 @@ type ViewNameObjectMetadata = {
   overrides?: AuthoredOverrides<ObjectMetadataOverrides> | null;
 };
 
-// Each placeholder resolved costs a catalog lookup, so only the ones the name
-// actually carries are resolved.
+// Each resolved placeholder costs a catalog lookup
 export const buildViewNameObjectLabels = ({
   viewName,
   objectMetadata,

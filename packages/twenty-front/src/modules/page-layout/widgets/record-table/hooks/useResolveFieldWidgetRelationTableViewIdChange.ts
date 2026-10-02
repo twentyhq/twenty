@@ -28,11 +28,7 @@ export const useResolveFieldWidgetRelationTableViewIdChange = (
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  // The embedded view must always list the selected chain's terminal object.
-  // Whenever the selection results in a table widget, a fresh draft view is
-  // generated on a chain change or a missing view id; otherwise a view id
-  // belonging to the previous chain is cleared so the layout dropdown can
-  // lazily create the right one.
+  // The view must list the chain's terminal object: regenerate on chain change, else clear a stale id for lazy creation.
   const resolveFieldWidgetRelationTableViewIdChange = ({
     selectedField,
     selectedNestedField,

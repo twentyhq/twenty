@@ -55,7 +55,6 @@ describe('Attaching a conversation to a record from a chat turn', () => {
     await destroyAgentChatThread({ threadId });
   });
 
-  // Built from the same authorization ChatExecutionService gives the turn.
   const buildTool = async () => {
     const { authorization } = await actors.authorizeJob({
       workspaceId,
@@ -76,7 +75,6 @@ describe('Attaching a conversation to a record from a chat turn', () => {
     });
   };
 
-  // Read back through the record API, the way the record page lists them.
   const listConversationIdsAttachedTo = async (recordId: string) => {
     const response = await makeGraphqlApiRequest(
       findManyOperationFactory({

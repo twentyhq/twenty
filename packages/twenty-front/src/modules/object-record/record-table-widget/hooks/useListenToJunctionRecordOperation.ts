@@ -4,8 +4,7 @@ import { RecordTableWidgetContext } from '@/object-record/record-table-widget/co
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-// A junction widget's rows come and go with junction records, which are
-// written on another object than the one the table lists.
+// Junction records are written on another object than the one the table lists.
 export const useListenToJunctionRecordOperation = ({
   onJunctionRecordOperation,
 }: {
@@ -22,8 +21,7 @@ export const useListenToJunctionRecordOperation = ({
       return;
     }
 
-    // Only operations carrying the written record can be scoped to the
-    // widget's source record; the others may concern it, so they refresh.
+    // Operations without the written record can't be scoped, so they refresh.
     const writtenRecord =
       operation.type === 'create-one'
         ? operation.createdRecord

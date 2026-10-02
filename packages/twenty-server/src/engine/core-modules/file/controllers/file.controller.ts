@@ -57,10 +57,7 @@ export class FileController {
     private readonly serverFileStorageService: ServerFileStorageService,
   ) {}
 
-  // Serves application registration assets (logo, gallery images) by their
-  // public folder path. These are instance-global marketplace resources, also
-  // displayed on the public OAuth authorize page, hence no auth token, unlike
-  // the workspace-scoped /file/:folder/:id.
+  // Instance-global marketplace assets, also shown on the public OAuth authorize page, hence no auth.
   @Get(
     `${ApiPath.Files}/application-registrations/:applicationRegistrationId/*path`,
   )

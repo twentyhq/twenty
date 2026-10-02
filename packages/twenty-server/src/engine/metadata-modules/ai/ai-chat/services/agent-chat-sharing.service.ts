@@ -10,8 +10,6 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
-import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
-import { type RecordPermissionsDTO } from 'src/engine/core-modules/record-share/dtos/record-permissions.dto';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -40,7 +38,6 @@ export class AgentChatSharingService {
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
-    private readonly recordSharingService: RecordSharingService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -79,27 +76,6 @@ export class AgentChatSharingService {
       return this.throwNotFound();
     }
     return thread;
-  }
-
-  async getPermissions(args: ThreadAccessArgs): Promise<RecordPermissionsDTO> {
-    const permissions = await this.getPermissionsForThreads({
-      ...args,
-      threadIds: [args.threadId],
-    });
-    return permissions.get(args.threadId)!;
-  }
-
-  async getPermissionsForThreads(
-    args: Omit<ThreadAccessArgs, 'threadId'> & { threadIds: string[] },
-  ) {
-    const authContext = await this.getAuthContext(args);
-    const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    return this.recordSharingService.getPermissionsForRecords({
-      authContext,
-      objectMetadataId: objectMetadata.id,
-      recordIds: args.threadIds,
-      withDeleted: true,
-    });
   }
 
   async createThread(args: {
@@ -199,8 +175,7 @@ export class AgentChatSharingService {
   }): Promise<TResult> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    // Preload the workspace context before reserving a core connection. Sharing
-    // changes and domain writes then serialize on the same grant/record locks.
+    // preloaded before reserving a core connection; sharing changes and domain writes then serialize on the same grant/record locks
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.threadRepository.query(args.workspaceId, async (context) => {

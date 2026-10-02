@@ -1,3 +1,6 @@
+import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
+import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
+import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
 import { COMMAND_BLOCK_PROP_DESCRIPTIONS } from './commandBlockPropDescriptions';
 import { JSON_TREE_PROP_DESCRIPTIONS } from './jsonTreePropDescriptions';
@@ -9,6 +12,8 @@ import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescription
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
+import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
+import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
 import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
 import { MENU_ITEM_AVATAR_PROP_DESCRIPTIONS } from './menuItemAvatarPropDescriptions';
@@ -60,6 +65,20 @@ import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'ProgressRing',
+    source: 'primitives/feedback/ProgressRing/ProgressRing.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/progress-ring',
+    propDescriptions: PROGRESS_RING_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'MetricRow',
+    source: 'components/data-display/MetricRow/MetricRow.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/metric-row',
+    propDescriptions: METRIC_ROW_PROP_DESCRIPTIONS,
+  },
   {
     name: 'Shortcut',
     source: 'primitives/typography/Shortcut/Shortcut.tsx',
@@ -228,6 +247,13 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/InputGroup/InputGroup.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/input-group',
+  },
+  {
+    name: 'NumberStepper',
+    source: 'primitives/input/NumberStepper/NumberStepper.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/number-stepper',
+    propDescriptions: NUMBER_STEPPER_PROP_DESCRIPTIONS,
   },
   {
     name: 'Textarea',
@@ -468,6 +494,13 @@ export const DOCUMENTED_COMPONENTS = [
     },
   },
   {
+    name: 'OverflowingList',
+    source: 'components/layout/OverflowingList/OverflowingList.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/overflowing-list',
+    propDescriptions: OVERFLOWING_LIST_PROP_DESCRIPTIONS,
+  },
+  {
     name: 'Section',
     source: 'components/layout/Section/Section.tsx',
     entryPoint: 'twenty-ui/components',
@@ -567,6 +600,13 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/toaster',
     propDescriptions: TOASTER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ImageInput',
+    source: 'components/input/ImageInput/ImageInput.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/image-input',
+    propDescriptions: IMAGE_INPUT_PROP_DESCRIPTIONS,
   },
   {
     name: 'SearchInput',

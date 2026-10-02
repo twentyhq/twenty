@@ -111,8 +111,6 @@ const StyledMessageListPlaceholder = styled.div`
   flex-direction: column;
 `;
 
-// Collapsing this spacer is what slides the composer from the middle of an
-// empty page down to the bottom once the conversation starts.
 const StyledComposerBottomSpacer = styled.div`
   flex-basis: 0;
   flex-grow: 0;
@@ -123,8 +121,7 @@ const StyledComposerBottomSpacer = styled.div`
   transition-property: flex-grow;
   transition-timing-function: ease-out;
 
-  // Only the collapse is animated: the composer becomes centered again on a
-  // thread switch, where sliding it back up would trail the content change.
+  // Only the collapse animates: re-centering on a thread switch would trail the content change.
   &.is-centered {
     flex-grow: 1;
     transition-property: none;

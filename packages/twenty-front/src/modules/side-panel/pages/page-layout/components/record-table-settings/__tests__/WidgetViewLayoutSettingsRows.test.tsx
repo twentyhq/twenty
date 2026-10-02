@@ -96,8 +96,6 @@ describe('WidgetViewLayoutSettingsRows', () => {
     expect(screen.getByTestId('row-Calendar view')).toHaveTextContent('Month');
   });
 
-  // The layout row used to fall through to Table for anything that was not
-  // kanban or calendar, so a list widget described itself as a table.
   it.each([
     [ViewType.TABLE_WIDGET, 'Table', 'Table'],
     [ViewType.KANBAN_WIDGET, 'Kanban', 'LayoutKanban'],
