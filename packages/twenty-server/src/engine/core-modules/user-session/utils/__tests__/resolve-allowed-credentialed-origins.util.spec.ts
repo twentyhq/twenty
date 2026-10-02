@@ -3,12 +3,12 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { resolveAllowedCredentialedOrigins } from 'src/engine/core-modules/user-session/utils/resolve-allowed-credentialed-origins.util';
 
-type CredentialedOriginsConfig = Pick<
+type AllowedOriginsConfigVariables = Pick<
   ConfigVariables,
   'SERVER_URL' | 'FRONTEND_URL' | 'AUTH_COOKIE_ALLOWED_ORIGINS' | 'NODE_ENV'
 >;
 
-const PRODUCTION_CONFIG: CredentialedOriginsConfig = {
+const PRODUCTION_CONFIG_VARIABLES: AllowedOriginsConfigVariables = {
   SERVER_URL: 'https://api.twenty.com',
   FRONTEND_URL: 'https://app.twenty.com',
   AUTH_COOKIE_ALLOWED_ORIGINS: '',
@@ -16,9 +16,12 @@ const PRODUCTION_CONFIG: CredentialedOriginsConfig = {
 };
 
 const buildTwentyConfigService = (
-  config: CredentialedOriginsConfig,
+  allowedOriginsConfigVariables: AllowedOriginsConfigVariables,
 ): Pick<TwentyConfigService, 'get'> => {
-  const configVariables = Object.assign(new ConfigVariables(), config);
+  const configVariables = Object.assign(
+    new ConfigVariables(),
+    allowedOriginsConfigVariables,
+  );
 
   return {
     get: (key) => configVariables[key],
@@ -29,7 +32,7 @@ describe('resolveAllowedCredentialedOrigins', () => {
   it('should allow the server, frontend and explicit origins', () => {
     const allowedOrigins = resolveAllowedCredentialedOrigins(
       buildTwentyConfigService({
-        ...PRODUCTION_CONFIG,
+        ...PRODUCTION_CONFIG_VARIABLES,
         SERVER_URL: 'https://api.twenty.com/graphql',
         FRONTEND_URL: 'https://App.twenty.com',
         AUTH_COOKIE_ALLOWED_ORIGINS: ' https://other.example , file:///tmp',
@@ -44,7 +47,7 @@ describe('resolveAllowedCredentialedOrigins', () => {
   });
 
   it('should skip derived loopback origins in production only', () => {
-    const loopbackConfig: CredentialedOriginsConfig = {
+    const loopbackConfigVariables: AllowedOriginsConfigVariables = {
       SERVER_URL: 'http://localhost:3000',
       FRONTEND_URL: 'http://localhost:3001',
       AUTH_COOKIE_ALLOWED_ORIGINS: 'http://localhost:3001',
@@ -52,11 +55,11 @@ describe('resolveAllowedCredentialedOrigins', () => {
     };
 
     const productionAllowedOrigins = resolveAllowedCredentialedOrigins(
-      buildTwentyConfigService(loopbackConfig),
+      buildTwentyConfigService(loopbackConfigVariables),
     );
     const developmentAllowedOrigins = resolveAllowedCredentialedOrigins(
       buildTwentyConfigService({
-        ...loopbackConfig,
+        ...loopbackConfigVariables,
         NODE_ENV: NodeEnvironment.DEVELOPMENT,
       }),
     );
@@ -69,7 +72,9 @@ describe('resolveAllowedCredentialedOrigins', () => {
   });
 
   it('should reuse the resolved origins while the config is unchanged', () => {
-    const twentyConfigService = buildTwentyConfigService(PRODUCTION_CONFIG);
+    const twentyConfigService = buildTwentyConfigService(
+      PRODUCTION_CONFIG_VARIABLES,
+    );
 
     expect(resolveAllowedCredentialedOrigins(twentyConfigService)).toBe(
       resolveAllowedCredentialedOrigins(twentyConfigService),
@@ -78,11 +83,11 @@ describe('resolveAllowedCredentialedOrigins', () => {
 
   it('should resolve the origins again when the config changes', () => {
     const allowedOriginsBeforeChange = resolveAllowedCredentialedOrigins(
-      buildTwentyConfigService(PRODUCTION_CONFIG),
+      buildTwentyConfigService(PRODUCTION_CONFIG_VARIABLES),
     );
     const allowedOriginsAfterChange = resolveAllowedCredentialedOrigins(
       buildTwentyConfigService({
-        ...PRODUCTION_CONFIG,
+        ...PRODUCTION_CONFIG_VARIABLES,
         AUTH_COOKIE_ALLOWED_ORIGINS: 'https://other.example',
       }),
     );

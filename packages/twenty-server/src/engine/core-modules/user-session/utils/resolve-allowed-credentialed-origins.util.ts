@@ -52,31 +52,34 @@ const isLoopbackOrigin = (origin: string): boolean => {
   }
 };
 
-type CredentialedOriginsConfig = {
+type AllowedOriginsSettings = {
   serverUrl: string;
   frontendUrl: string;
   authCookieAllowedOrigins: string;
   nodeEnvironment: NodeEnvironment;
 };
 
-let cachedConfig: CredentialedOriginsConfig | undefined;
+let cachedAllowedOriginsSettings: AllowedOriginsSettings | undefined;
 let cachedComputedAllowedOrigins: ReadonlySet<string> | undefined;
 
-const isSameCredentialedOriginsConfig = (
-  config: CredentialedOriginsConfig,
-  otherConfig: CredentialedOriginsConfig,
+const isSameAllowedOriginsSettings = (
+  allowedOriginsSettings: AllowedOriginsSettings,
+  otherAllowedOriginsSettings: AllowedOriginsSettings,
 ): boolean =>
-  config.serverUrl === otherConfig.serverUrl &&
-  config.frontendUrl === otherConfig.frontendUrl &&
-  config.authCookieAllowedOrigins === otherConfig.authCookieAllowedOrigins &&
-  config.nodeEnvironment === otherConfig.nodeEnvironment;
+  allowedOriginsSettings.serverUrl === otherAllowedOriginsSettings.serverUrl &&
+  allowedOriginsSettings.frontendUrl ===
+    otherAllowedOriginsSettings.frontendUrl &&
+  allowedOriginsSettings.authCookieAllowedOrigins ===
+    otherAllowedOriginsSettings.authCookieAllowedOrigins &&
+  allowedOriginsSettings.nodeEnvironment ===
+    otherAllowedOriginsSettings.nodeEnvironment;
 
 const computeAllowedCredentialedOrigins = ({
   serverUrl,
   frontendUrl,
   authCookieAllowedOrigins,
   nodeEnvironment,
-}: CredentialedOriginsConfig): ReadonlySet<string> => {
+}: AllowedOriginsSettings): ReadonlySet<string> => {
   const allowedOrigins = new Set<string>();
 
   const derivedUrls = [serverUrl, frontendUrl];
@@ -116,7 +119,7 @@ const computeAllowedCredentialedOrigins = ({
 export const resolveAllowedCredentialedOrigins = (
   twentyConfigService: Pick<TwentyConfigService, 'get'>,
 ): ReadonlySet<string> => {
-  const config: CredentialedOriginsConfig = {
+  const allowedOriginsSettings: AllowedOriginsSettings = {
     serverUrl: twentyConfigService.get('SERVER_URL'),
     frontendUrl: twentyConfigService.get('FRONTEND_URL'),
     authCookieAllowedOrigins: twentyConfigService.get(
@@ -126,16 +129,21 @@ export const resolveAllowedCredentialedOrigins = (
   };
 
   if (
-    isDefined(cachedConfig) &&
+    isDefined(cachedAllowedOriginsSettings) &&
     isDefined(cachedComputedAllowedOrigins) &&
-    isSameCredentialedOriginsConfig(cachedConfig, config)
+    isSameAllowedOriginsSettings(
+      cachedAllowedOriginsSettings,
+      allowedOriginsSettings,
+    )
   ) {
     return cachedComputedAllowedOrigins;
   }
 
-  const allowedOrigins = computeAllowedCredentialedOrigins(config);
+  const allowedOrigins = computeAllowedCredentialedOrigins(
+    allowedOriginsSettings,
+  );
 
-  cachedConfig = config;
+  cachedAllowedOriginsSettings = allowedOriginsSettings;
   cachedComputedAllowedOrigins = allowedOrigins;
 
   return allowedOrigins;
