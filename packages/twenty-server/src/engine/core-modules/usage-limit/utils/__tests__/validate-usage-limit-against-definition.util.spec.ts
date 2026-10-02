@@ -81,7 +81,7 @@ describe('validateUsageLimitAgainstDefinition', () => {
     });
   });
 
-  it.each([UsageUnit.CREDIT, UsageUnit.INVOCATION, UsageUnit.MILLISECOND])(
+  it.each([UsageUnit.CREDIT, UsageUnit.INVOCATION])(
     'accepts a code execution quota counted in %s',
     (unit) => {
       accepts({ ...validCodeExecutionQuotaLimit, unit });

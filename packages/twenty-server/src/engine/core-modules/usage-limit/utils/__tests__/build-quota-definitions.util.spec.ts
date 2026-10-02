@@ -55,17 +55,13 @@ describe('buildQuotaDefinitions', () => {
     ]);
   });
 
-  it('offers credits, runs and runtime on code execution, with no every-operation entry', () => {
+  it('offers credits and runs on code execution, with no every-operation entry', () => {
     expect(
       findQuotaDefinition(UsageResourceType.LOGIC_FUNCTION)?.allowedOperations,
     ).toEqual([
       {
         operationType: UsageOperationType.CODE_EXECUTION,
-        allowedUnits: [
-          UsageUnit.CREDIT,
-          UsageUnit.INVOCATION,
-          UsageUnit.MILLISECOND,
-        ],
+        allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
       },
     ]);
   });

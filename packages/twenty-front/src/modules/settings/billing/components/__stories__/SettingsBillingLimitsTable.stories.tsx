@@ -59,20 +59,6 @@ const LOGIC_FUNCTION_RUNS_QUOTA = buildQuota({
   remainingValue: 200,
 });
 
-const LOGIC_FUNCTION_RUNTIME_QUOTA = buildQuota({
-  id: 'limit-3',
-  resourceType: UsageResourceType.LOGIC_FUNCTION,
-  operationType: UsageOperationType.CODE_EXECUTION,
-  spenderType: 'logicFunction',
-  spenderId: 'b1b2c3d4-0000-0000-0000-000000000000',
-  spenderLabel: 'Enrich company',
-  periodUnit: 'day',
-  unit: UsageUnit.MILLISECOND,
-  limitValue: 600_000,
-  consumedValue: 90_000,
-  remainingValue: 510_000,
-});
-
 const meta: Meta<typeof SettingsBillingLimitsTable> = {
   title: 'Modules/Settings/Billing/SettingsBillingLimitsTable',
   component: SettingsBillingLimitsTable,
@@ -82,7 +68,6 @@ const meta: Meta<typeof SettingsBillingLimitsTable> = {
       ALL_OPERATIONS_QUOTA,
       CUSTOM_USER_QUOTA,
       LOGIC_FUNCTION_RUNS_QUOTA,
-      LOGIC_FUNCTION_RUNTIME_QUOTA,
     ],
   },
 };
@@ -120,24 +105,6 @@ export const Exhausted: Story = {
   },
   play: async ({ canvasElement }) => {
     expect(await within(canvasElement).findByText('100%')).toBeVisible();
-  },
-};
-
-export const RuntimeLimit: Story = {
-  args: { quotas: [LOGIC_FUNCTION_RUNTIME_QUOTA] },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await userEvent.hover(await canvas.findByText('15%'));
-
-    const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
-      'tooltip',
-      {},
-      { timeout: 2000 },
-    );
-
-    await waitFor(() => expect(tooltip).toHaveTextContent('1.5 min'));
-    expect(tooltip).toHaveTextContent('10 min');
   },
 };
 

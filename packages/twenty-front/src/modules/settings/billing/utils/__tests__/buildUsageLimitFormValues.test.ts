@@ -58,22 +58,4 @@ describe('buildUsageLimitFormValues', () => {
       }),
     );
   });
-
-  it('turns a runtime stored in milliseconds back into minutes', () => {
-    expect(
-      buildUsageLimitFormValues(
-        buildItem({
-          resourceType: UsageResourceType.LOGIC_FUNCTION,
-          operationType: UsageOperationType.CODE_EXECUTION,
-          unit: UsageUnit.MILLISECOND,
-          limitValue: 90_000,
-        }),
-      ),
-    ).toEqual(
-      expect.objectContaining({
-        unit: UsageUnit.MILLISECOND,
-        limitValue: '1.5',
-      }),
-    );
-  });
 });

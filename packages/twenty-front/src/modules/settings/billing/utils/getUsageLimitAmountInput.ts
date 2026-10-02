@@ -19,10 +19,6 @@ export const getUsageLimitAmountInput = ({
     return { label: msg`Amount`, placeholder: '1000' };
   }
 
-  if (unit === UsageUnit.MILLISECOND) {
-    return { label: msg`Minutes`, placeholder: '60' };
-  }
-
   return {
     label: getUsageLimitUnitLabel({ unit, operationType }).name,
     placeholder: unit === UsageUnit.CREDIT ? '100' : '1000',

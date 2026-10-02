@@ -3,7 +3,6 @@ import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { formatBytes } from 'twenty-shared/utils';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { formatUsageLimitDuration } from '@/settings/billing/utils/formatUsageLimitDuration';
 import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import {
@@ -29,12 +28,6 @@ export const useUsageLimitFormatter = () => {
       return formatUsageAmount(value / INTERNAL_CREDITS_PER_DISPLAY_CREDIT, {
         abbreviate: true,
       });
-    }
-
-    if (unit === UsageUnit.MILLISECOND) {
-      return formatUsageLimitDuration(value, (amount) =>
-        formatNumber(amount, { decimals: 1 }),
-      );
     }
 
     if (unit === UsageUnit.BYTE) {

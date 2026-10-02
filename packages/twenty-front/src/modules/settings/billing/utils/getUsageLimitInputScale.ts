@@ -1,7 +1,6 @@
-import { isDefined } from 'twenty-shared/utils';
+import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 
-import { USAGE_LIMIT_UNIT_INPUT_SCALES } from '@/settings/billing/constants/UsageLimitUnitInputScales';
-import { type UsageUnit } from '~/generated-metadata/graphql';
+import { UsageUnit } from '~/generated-metadata/graphql';
 
 export const getUsageLimitInputScale = (unit: UsageUnit | null): number =>
-  (isDefined(unit) ? USAGE_LIMIT_UNIT_INPUT_SCALES[unit] : undefined) ?? 1;
+  unit === UsageUnit.CREDIT ? INTERNAL_CREDITS_PER_DISPLAY_CREDIT : 1;

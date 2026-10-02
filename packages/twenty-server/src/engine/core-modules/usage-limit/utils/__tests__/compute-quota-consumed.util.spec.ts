@@ -194,15 +194,6 @@ describe('computeQuotaConsumed', () => {
         }),
       ).toBe(1);
     });
-
-    it('counts only the billed duration on a MILLISECOND counter', () => {
-      expect(
-        computeQuotaConsumed({
-          rows: logicFunctionRunRows,
-          scope: { ...logicFunctionScope, unit: UsageUnit.MILLISECOND },
-        }),
-      ).toBe(1500);
-    });
   });
 
   it('counts the credits of a credit-unit row, never its quantity', () => {

@@ -75,24 +75,6 @@ describe('buildCreateUsageLimitInput', () => {
     }
   });
 
-  it('stores a runtime entered in minutes as milliseconds', () => {
-    expect(
-      buildCreateUsageLimitInput(
-        buildValues({
-          resourceType: UsageResourceType.LOGIC_FUNCTION,
-          operationType: UsageOperationType.CODE_EXECUTION,
-          unit: UsageUnit.MILLISECOND,
-          limitValue: '1.5',
-        }),
-      ),
-    ).toEqual(
-      expect.objectContaining({
-        limitValue: 90_000,
-        unit: UsageUnit.MILLISECOND,
-      }),
-    );
-  });
-
   it('rejects an amount too small to store', () => {
     expect(
       buildCreateUsageLimitInput(buildValues({ limitValue: '0.0000001' })),

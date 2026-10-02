@@ -59,11 +59,7 @@ const DEFINITIONS = {
         {
           __typename: 'UsageLimitOperationDefinition' as const,
           operationType: UsageOperationType.CODE_EXECUTION,
-          allowedUnits: [
-            UsageUnit.CREDIT,
-            UsageUnit.INVOCATION,
-            UsageUnit.MILLISECOND,
-          ],
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
         },
       ],
       allowedSpenderTypes: ['workspace'],
@@ -81,12 +77,6 @@ const FILLED_VALUES = {
   unit: UsageUnit.CREDIT,
   periodUnit: 'month' as const,
   limitValue: '100',
-};
-
-const CODE_EXECUTION_VALUES = {
-  ...FILLED_VALUES,
-  resourceType: UsageResourceType.LOGIC_FUNCTION,
-  operationType: UsageOperationType.CODE_EXECUTION,
 };
 
 const meta: Meta<typeof SettingsBillingLimitForm> = {
@@ -141,25 +131,5 @@ export const AllOperations: Story = {
       periodUnit: 'allowancePeriod',
       limitValue: '1000',
     },
-  },
-};
-
-export const RuntimeLimit: Story = {
-  args: {
-    values: {
-      ...CODE_EXECUTION_VALUES,
-      unit: UsageUnit.MILLISECOND,
-      limitValue: '1.5',
-    },
-    scopeConsumption: {
-      consumedValue: 45_000,
-      periodStart: '2026-09-01T00:00:00.000Z',
-      periodEnd: '2026-10-01T00:00:00.000Z',
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(canvas.getByText('Minutes')).toBeVisible();
   },
 };

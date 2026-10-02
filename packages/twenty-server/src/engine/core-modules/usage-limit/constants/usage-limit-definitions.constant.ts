@@ -124,11 +124,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
       allowedOperations: [
         {
           operationType: UsageOperationType.CODE_EXECUTION,
-          allowedUnits: [
-            UsageUnit.CREDIT,
-            UsageUnit.INVOCATION,
-            UsageUnit.MILLISECOND,
-          ],
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
         },
       ],
       allowedSpenderTypes: ['workspace', 'application', 'logicFunction'],

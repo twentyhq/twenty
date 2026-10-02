@@ -50,15 +50,10 @@ const SEEDED_RUNS = [
 
 const SEEDED_CONSUMPTION_BY_UNIT = {
   [UsageUnit.INVOCATION]: SEEDED_RUNS.length,
-  [UsageUnit.MILLISECOND]: 9_000,
   [UsageUnit.CREDIT]: 3_900,
 };
 
-const QUOTA_UNITS = [
-  UsageUnit.INVOCATION,
-  UsageUnit.MILLISECOND,
-  UsageUnit.CREDIT,
-] as const;
+const QUOTA_UNITS = [UsageUnit.INVOCATION, UsageUnit.CREDIT] as const;
 
 const EXECUTED_RUN_COUNT = 2;
 const UNREACHABLE_LIMIT_VALUE = 1_000_000_000_000;
@@ -257,9 +252,6 @@ describe('Usage quota consumption', () => {
     usageLimitIdByUnit = {
       [UsageUnit.INVOCATION]: await saveCodeExecutionQuota(
         UsageUnit.INVOCATION,
-      ),
-      [UsageUnit.MILLISECOND]: await saveCodeExecutionQuota(
-        UsageUnit.MILLISECOND,
       ),
       [UsageUnit.CREDIT]: await saveCodeExecutionQuota(UsageUnit.CREDIT),
     };

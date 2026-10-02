@@ -35,16 +35,10 @@ describe('buildQuotaDebits', () => {
   it('debits each counter the amount of its own unit', () => {
     const creditCounter = buildLimitCounter(UsageUnit.CREDIT);
     const invocationCounter = buildLimitCounter(UsageUnit.INVOCATION);
-    const runtimeCounter = buildLimitCounter(UsageUnit.MILLISECOND);
 
     expect(
       buildQuotaDebits({
-        counters: [
-          allowanceCounter,
-          creditCounter,
-          invocationCounter,
-          runtimeCounter,
-        ],
+        counters: [allowanceCounter, creditCounter, invocationCounter],
         cost: {
           [UsageUnit.CREDIT]: 2_500,
           [UsageUnit.INVOCATION]: 1,
@@ -55,14 +49,13 @@ describe('buildQuotaDebits', () => {
       { counter: allowanceCounter, amount: 2_500 },
       { counter: creditCounter, amount: 2_500 },
       { counter: invocationCounter, amount: 1 },
-      { counter: runtimeCounter, amount: 15_000 },
     ]);
   });
 
   it('drops a counter whose unit the cost leaves out', () => {
     expect(
       buildQuotaDebits({
-        counters: [buildLimitCounter(UsageUnit.MILLISECOND)],
+        counters: [buildLimitCounter(UsageUnit.TOKEN)],
         cost: { [UsageUnit.CREDIT]: 2_500, [UsageUnit.INVOCATION]: 1 },
       }),
     ).toEqual([]);
@@ -71,8 +64,8 @@ describe('buildQuotaDebits', () => {
   it('drops a counter whose unit costs zero', () => {
     expect(
       buildQuotaDebits({
-        counters: [buildLimitCounter(UsageUnit.MILLISECOND)],
-        cost: { [UsageUnit.CREDIT]: 2_500, [UsageUnit.MILLISECOND]: 0 },
+        counters: [buildLimitCounter(UsageUnit.INVOCATION)],
+        cost: { [UsageUnit.CREDIT]: 2_500, [UsageUnit.INVOCATION]: 0 },
       }),
     ).toEqual([]);
   });
