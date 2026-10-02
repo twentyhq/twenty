@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
-import { AGENT_CHAT_THREAD_SNOOZE_TIME_FORMAT } from '@/ai/constants/AgentChatThreadSnoozeTimeFormat';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
@@ -18,7 +17,8 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { agentChatThreadPreviewFamilySelector } from '@/ai/states/selectors/agentChatThreadPreviewFamilySelector';
-import { formatAgentChatThreadActivityTime } from '@/ai/utils/formatAgentChatThreadActivityTime';
+import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
+import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { getAgentChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -168,10 +168,13 @@ export const AiChatThreadListItem = ({
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
   });
   const displayTitle = thread.title ?? t`Untitled`;
+  const { formatAgentChatThreadDay } = useFormatAgentChatThreadDate();
 
   const getActivityTimeLabel = () => {
     if (isDefined(snoozedUntil)) {
-      return t`Until ${AGENT_CHAT_THREAD_SNOOZE_TIME_FORMAT.format(new Date(snoozedUntil))}`;
+      const snoozedUntilDay = formatAgentChatThreadDay(new Date(snoozedUntil));
+
+      return t`Until ${snoozedUntilDay}`;
     }
 
     if (isDefined(snoozeEndedAt)) {
@@ -179,10 +182,12 @@ export const AiChatThreadListItem = ({
     }
 
     if (isDefined(doneAt)) {
-      return t`Done ${formatAgentChatThreadActivityTime(doneAt)}`;
+      const doneTime = beautifyPastDateRelativeToNowShort(doneAt);
+
+      return t`Done ${doneTime}`;
     }
 
-    return formatAgentChatThreadActivityTime(
+    return beautifyPastDateRelativeToNowShort(
       getAgentChatThreadLastActivityAt(thread),
     );
   };

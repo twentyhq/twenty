@@ -15,6 +15,7 @@ import {
 
 const snoozeAgentChatThread = jest.fn();
 const closeSidePanelMenu = jest.fn();
+const openSnoozeAiChatUntilDateInSidePanel = jest.fn();
 
 jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
   useAgentChatThreadParticipants: () => ({ snoozeAgentChatThread }),
@@ -22,6 +23,12 @@ jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu }),
+}));
+
+jest.mock('@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel', () => ({
+  useOpenSnoozeAiChatInSidePanel: () => ({
+    openSnoozeAiChatUntilDateInSidePanel,
+  }),
 }));
 
 const PAGE_ID = 'snooze-page';
@@ -64,6 +71,23 @@ describe('SidePanelSnoozeAiChatPage', () => {
       threadId: 'thread-1',
       snoozedUntil: new Date(2026, 9, 1, 18, 0),
     });
+  });
+
+  it('shows when each option ends', () => {
+    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
+
+    expect(screen.getByText('Today, 6:00 PM')).toBeInTheDocument();
+  });
+
+  it('opens the day and time picker for the chat', () => {
+    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
+
+    fireEvent.click(screen.getByText('Day & Time'));
+
+    expect(openSnoozeAiChatUntilDateInSidePanel).toHaveBeenCalledWith(
+      'thread-1',
+    );
+    expect(snoozeAgentChatThread).not.toHaveBeenCalled();
   });
 
   it('refreshes the options instead of snoozing into the past', () => {

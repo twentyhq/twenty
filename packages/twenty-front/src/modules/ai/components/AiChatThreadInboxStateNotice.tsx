@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconClock, IconProgressCheck } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { AGENT_CHAT_THREAD_INBOX_EVENT_TIME_FORMAT } from '@/ai/constants/AgentChatThreadInboxEventTimeFormat';
+import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -19,13 +19,13 @@ const StyledNotice = styled.div`
   justify-content: center;
 `;
 
-const formatEventTime = (date: string) =>
-  AGENT_CHAT_THREAD_INBOX_EVENT_TIME_FORMAT.format(new Date(date));
-
 // Ends the conversation with where the chat stands in the member's inbox
 export const AiChatThreadInboxStateNotice = () => {
   const { t } = useLingui();
   const theme = useTheme();
+  const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
+  const formatEventTime = (date: string) =>
+    formatAgentChatThreadDateTime(new Date(date));
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const { snoozedUntil, doneAt, snoozeEndedAt } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,

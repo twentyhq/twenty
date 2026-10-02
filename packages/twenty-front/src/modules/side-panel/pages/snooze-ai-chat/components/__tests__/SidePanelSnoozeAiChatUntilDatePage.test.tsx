@@ -1,0 +1,108 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
+import { type ReactNode } from 'react';
+import { Temporal } from 'temporal-polyfill';
+
+import { SidePanelSnoozeAiChatUntilDatePage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatUntilDatePage';
+import { snoozeAiChatThreadIdComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdComponentState';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
+
+const snoozeAgentChatThread = jest.fn();
+const closeSidePanelMenu = jest.fn();
+
+jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
+  useAgentChatThreadParticipants: () => ({ snoozeAgentChatThread }),
+}));
+
+jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
+  useSidePanelMenu: () => ({ closeSidePanelMenu }),
+}));
+
+jest.mock('@/ui/input/components/internal/date/hooks/useUserTimezone', () => ({
+  useUserTimezone: () => ({
+    userTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  }),
+}));
+
+jest.mock(
+  '@/ui/input/components/internal/date/components/DateTimePicker',
+  () => ({
+    DateTimePicker: ({
+      onChange,
+    }: {
+      onChange: (date: Temporal.ZonedDateTime) => void;
+    }) => (
+      <button
+        type="button"
+        onClick={() =>
+          onChange(
+            Temporal.PlainDateTime.from('2026-10-01T17:00').toZonedDateTime(
+              Intl.DateTimeFormat().resolvedOptions().timeZone,
+            ),
+          )
+        }
+      >
+        Pick an earlier time
+      </button>
+    ),
+  }),
+);
+
+const PAGE_ID = 'snooze-until-date-page';
+
+const Wrapper = ({ children }: { children: ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>
+    <I18nProvider i18n={i18n}>
+      <SidePanelPageComponentInstanceContext.Provider
+        value={{ instanceId: PAGE_ID }}
+      >
+        {children}
+      </SidePanelPageComponentInstanceContext.Provider>
+    </I18nProvider>
+  </JotaiProvider>
+);
+
+describe('SidePanelSnoozeAiChatUntilDatePage', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(2026, 9, 1, 17, 59));
+    jest.clearAllMocks();
+    resetJotaiStore();
+    jotaiStore.set(
+      snoozeAiChatThreadIdComponentState.atomFamily({ instanceId: PAGE_ID }),
+      'thread-1',
+    );
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('snoozes the chat until tomorrow morning by default', () => {
+    render(<SidePanelSnoozeAiChatUntilDatePage />, { wrapper: Wrapper });
+
+    fireEvent.click(screen.getByRole('button', { name: /Snooze until/ }));
+
+    expect(closeSidePanelMenu).toHaveBeenCalled();
+    expect(snoozeAgentChatThread).toHaveBeenCalledWith({
+      threadId: 'thread-1',
+      snoozedUntil: new Date(2026, 9, 2, 9, 0),
+    });
+  });
+
+  it('does not snooze until a time that has passed', () => {
+    render(<SidePanelSnoozeAiChatUntilDatePage />, { wrapper: Wrapper });
+
+    fireEvent.click(screen.getByText('Pick an earlier time'));
+
+    expect(
+      screen.getByRole('button', { name: 'Pick a time in the future' }),
+    ).toBeDisabled();
+  });
+});
