@@ -24,7 +24,8 @@ export type WorkflowCleanWorkflowRunsJobData = {
 type WorkflowRunsDeletionContext = {
   workspaceId: string;
   schemaName: string;
-  workflowRunObjectMetadataId: string | undefined;
+  // Undefined when the workspace has no record share object to clean up
+  sharedWorkflowRunObjectMetadataId: string | undefined;
   batchSize: number;
 };
 
@@ -55,16 +56,22 @@ export class WorkflowCleanWorkflowRunsJob {
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
       ]);
-    const workflowRunObjectMetadataId =
+    const hasRecordShareObject = isDefined(
       flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.workflowRun.universalIdentifier
-      ]?.id;
+        STANDARD_OBJECTS.recordShare.universalIdentifier
+      ],
+    );
+    const sharedWorkflowRunObjectMetadataId = hasRecordShareObject
+      ? flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.workflowRun.universalIdentifier
+        ]?.id
+      : undefined;
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const deletionContext: WorkflowRunsDeletionContext = {
         workspaceId,
         schemaName,
-        workflowRunObjectMetadataId,
+        sharedWorkflowRunObjectMetadataId,
         batchSize: 200,
       };
       let totalDeleted = 0;
@@ -161,7 +168,7 @@ export class WorkflowCleanWorkflowRunsJob {
 
   // Runs deleted here bypass the ORM, so their grants must be dropped alongside
   private async deleteRunBatchWithRecordShares({
-    deletionContext: { workspaceId, workflowRunObjectMetadataId },
+    deletionContext: { workspaceId, sharedWorkflowRunObjectMetadataId },
     query,
     parameters,
   }: {
@@ -176,10 +183,13 @@ export class WorkflowCleanWorkflowRunsJob {
         parameters,
       );
 
-      if (isDefined(workflowRunObjectMetadataId)) {
+      if (
+        deletedRuns.length > 0 &&
+        isDefined(sharedWorkflowRunObjectMetadataId)
+      ) {
         await this.recordShareStorageService.deleteByRecordIdsInTransaction({
           workspaceId,
-          objectMetadataId: workflowRunObjectMetadataId,
+          objectMetadataId: sharedWorkflowRunObjectMetadataId,
           recordIds: deletedRuns.map(({ id }) => id),
           manager,
         });

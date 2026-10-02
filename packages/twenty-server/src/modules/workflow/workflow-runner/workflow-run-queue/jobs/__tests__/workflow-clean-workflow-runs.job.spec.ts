@@ -7,21 +7,32 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { WorkflowCleanWorkflowRunsJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-clean-workflow-runs.job';
 
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
-const WORKFLOW_RUN_OBJECT_METADATA_ID = 'workflow-run-object-metadata-id';
+const WORKFLOW_RUN_OBJECT_METADATA_ID = 'workflowRun-object-metadata-id';
+const DELETED_RUN_ID_BATCHES = [
+  ['old-run-1', 'old-run-2'],
+  [],
+  ['excess-run-1'],
+];
 
-const buildJob = (deletedRunIdBatches: string[][]) => {
-  const remainingBatches = [...deletedRunIdBatches];
+type StandardObjectName = 'workflowRun' | 'recordShare';
+
+const buildJob = ({
+  standardObjectNames = ['workflowRun', 'recordShare'],
+}: {
+  standardObjectNames?: StandardObjectName[];
+} = {}) => {
+  const remainingBatches = [...DELETED_RUN_ID_BATCHES];
   const manager = {
     query: jest.fn(async () => {
       const deletedRunIds = remainingBatches.shift() ?? [];
 
       return [deletedRunIds.map((id) => ({ id })), deletedRunIds.length];
     }),
-  } as unknown as EntityManager;
+  };
   const dataSource = {
     transaction: jest.fn(
       (work: (transactionManager: EntityManager) => Promise<unknown>) =>
-        work(manager),
+        work(manager as unknown as EntityManager),
     ),
   } as unknown as DataSource;
   const workspaceOrmManager = {
@@ -32,11 +43,12 @@ const buildJob = (deletedRunIdBatches: string[][]) => {
   const workspaceCacheService = {
     getOrRecompute: jest.fn(async () => ({
       flatObjectMetadataMaps: {
-        byUniversalIdentifier: {
-          [STANDARD_OBJECTS.workflowRun.universalIdentifier]: {
-            id: WORKFLOW_RUN_OBJECT_METADATA_ID,
-          },
-        },
+        byUniversalIdentifier: Object.fromEntries(
+          standardObjectNames.map((standardObjectName) => [
+            STANDARD_OBJECTS[standardObjectName].universalIdentifier,
+            { id: `${standardObjectName}-object-metadata-id` },
+          ]),
+        ),
       },
     })),
   } as unknown as WorkspaceCacheService;
@@ -55,12 +67,8 @@ const buildJob = (deletedRunIdBatches: string[][]) => {
 };
 
 describe('WorkflowCleanWorkflowRunsJob', () => {
-  it('should delete the record shares of each batch of deleted runs within its transaction', async () => {
-    const { job, manager, recordShareStorageService } = buildJob([
-      ['old-run-1', 'old-run-2'],
-      [],
-      ['excess-run-1'],
-    ]);
+  it('should delete the record shares of each non-empty batch of deleted runs within its transaction', async () => {
+    const { job, manager, recordShareStorageService } = buildJob();
 
     await job.handle({ workspaceId: WORKSPACE_ID });
 
@@ -78,21 +86,31 @@ describe('WorkflowCleanWorkflowRunsJob', () => {
       {
         workspaceId: WORKSPACE_ID,
         objectMetadataId: WORKFLOW_RUN_OBJECT_METADATA_ID,
-        recordIds: [],
-        manager,
-      },
-      {
-        workspaceId: WORKSPACE_ID,
-        objectMetadataId: WORKFLOW_RUN_OBJECT_METADATA_ID,
         recordIds: ['excess-run-1'],
-        manager,
-      },
-      {
-        workspaceId: WORKSPACE_ID,
-        objectMetadataId: WORKFLOW_RUN_OBJECT_METADATA_ID,
-        recordIds: [],
         manager,
       },
     ]);
   });
+
+  it.each<{
+    missingObjectName: StandardObjectName;
+    standardObjectNames: StandardObjectName[];
+  }>([
+    { missingObjectName: 'workflowRun', standardObjectNames: ['recordShare'] },
+    { missingObjectName: 'recordShare', standardObjectNames: ['workflowRun'] },
+  ])(
+    'should delete runs without touching shares when the $missingObjectName object is absent',
+    async ({ standardObjectNames }) => {
+      const { job, manager, recordShareStorageService } = buildJob({
+        standardObjectNames,
+      });
+
+      await job.handle({ workspaceId: WORKSPACE_ID });
+
+      expect(manager.query).toHaveBeenCalledTimes(4);
+      expect(
+        recordShareStorageService.deleteByRecordIdsInTransaction,
+      ).not.toHaveBeenCalled();
+    },
+  );
 });
