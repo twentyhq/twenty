@@ -1,9 +1,10 @@
-import { FieldMetadataType, ObjectsPermissions } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getAllSelectableFields } from 'src/engine/api/common/common-select-fields/utils/get-all-selectable-fields.util';
 import { getIsFlatFieldAJoinColumn } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-join-column.util';
 import { getIsFlatFieldAJunctionRelationField } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-junction-relation-field';
+import { isRelationTargetExcludedFromSelection } from 'src/engine/api/common/common-select-fields/utils/is-relation-target-excluded-from-selection.util';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { MAX_DEPTH } from 'src/engine/api/rest/input-request-parsers/constants/max-depth.constant';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
@@ -12,6 +13,35 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+
+type RelationsSelectFlatObjectMetadata = Pick<
+  FlatObjectMetadata,
+  | 'id'
+  | 'universalIdentifier'
+  | 'applicationId'
+  | 'workspaceId'
+  | 'fieldIds'
+  | 'nameSingular'
+  | 'labelIdentifierFieldMetadataId'
+  | 'imageIdentifierFieldMetadataId'
+>;
+
+type RelationsSelectFlatFieldMetadata = Pick<
+  OrmFlatFieldMetadata,
+  | 'id'
+  | 'universalIdentifier'
+  | 'applicationId'
+  | 'workspaceId'
+  | 'type'
+  | 'name'
+  | 'settings'
+  | 'relationTargetObjectMetadataId'
+>;
+
+type RelationsSelectObjectsPermissions = Record<
+  string,
+  Pick<ObjectPermissions, 'canReadObjectRecords' | 'restrictedFields'>
+>;
 
 export const getRelationsSelectFields = ({
   flatObjectMetadataMaps,
@@ -23,10 +53,10 @@ export const getRelationsSelectFields = ({
   currentDepthLevelIsAJunctionTable = false,
   recurseIntoJunctionTableRelations = false,
 }: {
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  flatObjectMetadata: FlatObjectMetadata;
-  objectsPermissions: ObjectsPermissions;
+  flatObjectMetadataMaps: FlatEntityMaps<RelationsSelectFlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<RelationsSelectFlatFieldMetadata>;
+  flatObjectMetadata: RelationsSelectFlatObjectMetadata;
+  objectsPermissions: RelationsSelectObjectsPermissions;
   depth: Depth | undefined;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
   currentDepthLevelIsAJunctionTable?: boolean;
@@ -75,6 +105,10 @@ export const getRelationsSelectFields = ({
     if (
       !objectsPermissions[relationTargetObjectMetadata.id]?.canReadObjectRecords
     ) {
+      continue;
+    }
+
+    if (isRelationTargetExcludedFromSelection(relationTargetObjectMetadata)) {
       continue;
     }
 
