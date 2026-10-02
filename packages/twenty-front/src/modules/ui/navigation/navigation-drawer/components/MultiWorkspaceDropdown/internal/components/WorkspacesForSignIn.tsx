@@ -19,7 +19,7 @@ export const WorkspacesForSignIn = ({
   const { searchAvailableWorkspaces } = useFilteredAvailableWorkspaces();
 
   return (
-    <Dropdown.Section label={t`Member of`}>
+    <Dropdown.Section label={t`Member of`} scrollable>
       {searchAvailableWorkspaces(
         searchValue,
         availableWorkspaces.availableWorkspacesForSignIn,
