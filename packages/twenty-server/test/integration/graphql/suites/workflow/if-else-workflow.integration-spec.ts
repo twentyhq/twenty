@@ -409,9 +409,8 @@ describe('If/Else Workflow (e2e)', () => {
 
   describe('Workflow structure', () => {
     it('should verify If/Else workflow exists and is active', async () => {
-      // statuses is recomputed by a workflow queue job after activation returns
-      await expectEventually(async () => {
-        const response = await client
+      const findWorkflow = () =>
+        client
           .post('/graphql')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send({
@@ -428,13 +427,22 @@ describe('If/Else Workflow (e2e)', () => {
             variables: { id: createdWorkflowId },
           });
 
-        expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.workflow.id).toBe(createdWorkflowId);
-        expect(response.body.data.workflow.name).toBe('If/Else Test Workflow');
-        expect(response.body.data.workflow.lastPublishedVersionId).toBe(
-          createdWorkflowVersionId,
+      const response = await findWorkflow();
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.workflow.id).toBe(createdWorkflowId);
+      expect(response.body.data.workflow.name).toBe('If/Else Test Workflow');
+      expect(response.body.data.workflow.lastPublishedVersionId).toBe(
+        createdWorkflowVersionId,
+      );
+
+      // statuses is recomputed by a workflow queue job after activation returns
+      await expectEventually(async () => {
+        const statusesResponse = await findWorkflow();
+
+        expect(statusesResponse.body.data.workflow.statuses).toContain(
+          'ACTIVE',
         );
-        expect(response.body.data.workflow.statuses).toContain('ACTIVE');
       });
     });
 
