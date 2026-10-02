@@ -474,18 +474,17 @@ export class DatabaseToolProvider implements ToolProvider {
       );
 
     return (flatObject) =>
-      getFlatFieldsFromFlatObjectMetadata(
-        flatObject,
-        flatFieldMetadataMaps,
-      ).map((flatFieldMetadata) => ({
-        ...flatFieldMetadata,
-        description: resolveEffectiveFieldDescription({
-          flatFieldMetadata,
-          locale: context.locale,
-          i18nInstance,
-          workspaceCustomApplicationUniversalIdentifier,
-        }),
-      }));
+      getFlatFieldsFromFlatObjectMetadata(flatObject, flatFieldMetadataMaps)
+        .sort((fieldA, fieldB) => fieldA.name.localeCompare(fieldB.name))
+        .map((flatFieldMetadata) => ({
+          ...flatFieldMetadata,
+          description: resolveEffectiveFieldDescription({
+            flatFieldMetadata,
+            locale: context.locale,
+            i18nInstance,
+            workspaceCustomApplicationUniversalIdentifier,
+          }),
+        }));
   }
 
   private hasMatchingTool(

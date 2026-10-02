@@ -417,7 +417,7 @@ exports[`MCP database tool input schemas should list the input schemas of the no
   "additionalProperties": false,
   "properties": {
     "aggregateFieldName": {
-      "description": "Field to aggregate. Required for any operation other than COUNT. Available fields: id, createdAt, updatedAt, deletedAt, position, title, bodyV2, createdBy, updatedBy, searchVector.",
+      "description": "Field to aggregate. Required for any operation other than COUNT. Available fields: bodyV2, createdAt, createdBy, deletedAt, id, position, searchVector, title, updatedAt, updatedBy.",
       "type": "string",
     },
     "aggregateOperation": {
@@ -489,9 +489,53 @@ exports[`MCP database tool input schemas should list the input schemas of the no
       "type": "object",
     },
     "groupBy": {
-      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: createdAt (date), updatedAt (date), title, bodyV2.blocknote, bodyV2.markdown.",
+      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: bodyV2.blocknote, bodyV2.markdown, createdAt (date), title, updatedAt (date).",
       "items": {
         "anyOf": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "bodyV2": {
+                "additionalProperties": false,
+                "properties": {
+                  "blocknote": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "blocknote",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "bodyV2",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "bodyV2": {
+                "additionalProperties": false,
+                "properties": {
+                  "markdown": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "markdown",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "bodyV2",
+            ],
+            "type": "object",
+          },
           {
             "additionalProperties": false,
             "properties": {
@@ -540,6 +584,19 @@ exports[`MCP database tool input schemas should list the input schemas of the no
           {
             "additionalProperties": false,
             "properties": {
+              "title": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "title",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
               "updatedAt": {
                 "additionalProperties": false,
                 "description": "Date field grouping configuration",
@@ -579,63 +636,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
             },
             "required": [
               "updatedAt",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "title": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "title",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "bodyV2": {
-                "additionalProperties": false,
-                "properties": {
-                  "blocknote": {
-                    "const": true,
-                    "type": "boolean",
-                  },
-                },
-                "required": [
-                  "blocknote",
-                ],
-                "type": "object",
-              },
-            },
-            "required": [
-              "bodyV2",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "bodyV2": {
-                "additionalProperties": false,
-                "properties": {
-                  "markdown": {
-                    "const": true,
-                    "type": "boolean",
-                  },
-                },
-                "required": [
-                  "markdown",
-                ],
-                "type": "object",
-              },
-            },
-            "required": [
-              "bodyV2",
             ],
             "type": "object",
           },
@@ -3008,7 +3008,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
       "type": "object",
     },
     "aggregateFieldName": {
-      "description": "Field to aggregate. Required for any operation other than COUNT. Available fields: name, id, createdAt, createdBy, deletedAt, position, updatedAt, updatedBy, searchVector, species, traits, comments, age, location, vetPhone, vetEmail, birthday, isGoodWithKids, pictures, averageCostOfKibblePerMonth, averageCostOfKibblePerMonth.amountMicros, makesOwnerThinkOf, soundSwag, bio, interestingFacts, extraData, polymorphicOwnerSurveyResult, polymorphicOwnerRocket, polymorphicHelperSurveyResults, polymorphicHelperRockets.",
+      "description": "Field to aggregate. Required for any operation other than COUNT. Available fields: age, averageCostOfKibblePerMonth, averageCostOfKibblePerMonth.amountMicros, bio, birthday, comments, createdAt, createdBy, deletedAt, extraData, id, interestingFacts, isGoodWithKids, location, makesOwnerThinkOf, name, pictures, polymorphicHelperRockets, polymorphicHelperSurveyResults, polymorphicOwnerRocket, polymorphicOwnerSurveyResult, position, searchVector, soundSwag, species, traits, updatedAt, updatedBy, vetEmail, vetPhone.",
       "type": "string",
     },
     "aggregateOperation": {
@@ -3284,19 +3284,134 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
       "type": "object",
     },
     "groupBy": {
-      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: name, createdAt (date), updatedAt (date), species, traits (multi-value, {"traits": {"unnest": true}} counts each value), comments, age, location.addressStreet1, location.addressStreet2, location.addressCity, location.addressPostcode, location.addressState, location.addressCountry, location.addressLat, location.addressLng, vetPhone.primaryPhoneNumber, vetPhone.primaryPhoneCountryCode, vetPhone.primaryPhoneCallingCode, vetEmail.primaryEmail, birthday (date), isGoodWithKids, pictures.primaryLinkLabel, pictures.primaryLinkUrl, averageCostOfKibblePerMonth.amountMicros, averageCostOfKibblePerMonth.currencyCode, makesOwnerThinkOf.firstName, makesOwnerThinkOf.lastName, soundSwag, bio, interestingFacts (multi-value, {"interestingFacts": {"unnest": true}} counts each value), polymorphicOwnerSurveyResultId, polymorphicOwnerRocketId.",
+      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: age, averageCostOfKibblePerMonth.amountMicros, averageCostOfKibblePerMonth.currencyCode, bio, birthday (date), comments, createdAt (date), interestingFacts (multi-value, {"interestingFacts": {"unnest": true}} counts each value), isGoodWithKids, location.addressStreet1, location.addressStreet2, location.addressCity, location.addressPostcode, location.addressState, location.addressCountry, location.addressLat, location.addressLng, makesOwnerThinkOf.firstName, makesOwnerThinkOf.lastName, name, pictures.primaryLinkLabel, pictures.primaryLinkUrl, polymorphicOwnerRocketId, polymorphicOwnerSurveyResultId, soundSwag, species, traits (multi-value, {"traits": {"unnest": true}} counts each value), updatedAt (date), vetEmail.primaryEmail, vetPhone.primaryPhoneNumber, vetPhone.primaryPhoneCountryCode, vetPhone.primaryPhoneCallingCode.",
       "items": {
         "anyOf": [
           {
             "additionalProperties": false,
             "properties": {
-              "name": {
+              "age": {
                 "const": true,
                 "type": "boolean",
               },
             },
             "required": [
-              "name",
+              "age",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "averageCostOfKibblePerMonth": {
+                "additionalProperties": false,
+                "properties": {
+                  "amountMicros": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "amountMicros",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "averageCostOfKibblePerMonth",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "averageCostOfKibblePerMonth": {
+                "additionalProperties": false,
+                "properties": {
+                  "currencyCode": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "currencyCode",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "averageCostOfKibblePerMonth",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "bio": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "bio",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "birthday": {
+                "additionalProperties": false,
+                "description": "Date field grouping configuration",
+                "properties": {
+                  "granularity": {
+                    "default": "MONTH",
+                    "description": "Date grouping granularity. Default: MONTH.",
+                    "enum": [
+                      "DAY",
+                      "MONTH",
+                      "QUARTER",
+                      "YEAR",
+                      "WEEK",
+                      "DAY_OF_THE_WEEK",
+                      "MONTH_OF_THE_YEAR",
+                      "QUARTER_OF_THE_YEAR",
+                    ],
+                    "type": "string",
+                  },
+                  "timeZone": {
+                    "default": "UTC",
+                    "description": "IANA timezone for date groupings (e.g. "America/New_York"). Default: UTC.",
+                    "type": "string",
+                  },
+                  "weekStartDay": {
+                    "description": "First day of week (MONDAY, SUNDAY, SATURDAY). Only used when granularity is WEEK.",
+                    "enum": [
+                      "MONDAY",
+                      "SUNDAY",
+                      "SATURDAY",
+                    ],
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            },
+            "required": [
+              "birthday",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "comments": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "comments",
             ],
             "type": "object",
           },
@@ -3348,65 +3463,7 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
           {
             "additionalProperties": false,
             "properties": {
-              "updatedAt": {
-                "additionalProperties": false,
-                "description": "Date field grouping configuration",
-                "properties": {
-                  "granularity": {
-                    "default": "MONTH",
-                    "description": "Date grouping granularity. Default: MONTH.",
-                    "enum": [
-                      "DAY",
-                      "MONTH",
-                      "QUARTER",
-                      "YEAR",
-                      "WEEK",
-                      "DAY_OF_THE_WEEK",
-                      "MONTH_OF_THE_YEAR",
-                      "QUARTER_OF_THE_YEAR",
-                    ],
-                    "type": "string",
-                  },
-                  "timeZone": {
-                    "default": "UTC",
-                    "description": "IANA timezone for date groupings (e.g. "America/New_York"). Default: UTC.",
-                    "type": "string",
-                  },
-                  "weekStartDay": {
-                    "description": "First day of week (MONDAY, SUNDAY, SATURDAY). Only used when granularity is WEEK.",
-                    "enum": [
-                      "MONDAY",
-                      "SUNDAY",
-                      "SATURDAY",
-                    ],
-                    "type": "string",
-                  },
-                },
-                "type": "object",
-              },
-            },
-            "required": [
-              "updatedAt",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "species": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "species",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "traits": {
+              "interestingFacts": {
                 "anyOf": [
                   {
                     "const": true,
@@ -3429,33 +3486,20 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
               },
             },
             "required": [
-              "traits",
+              "interestingFacts",
             ],
             "type": "object",
           },
           {
             "additionalProperties": false,
             "properties": {
-              "comments": {
+              "isGoodWithKids": {
                 "const": true,
                 "type": "boolean",
               },
             },
             "required": [
-              "comments",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "age": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "age",
+              "isGoodWithKids",
             ],
             "type": "object",
           },
@@ -3638,6 +3682,256 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
           {
             "additionalProperties": false,
             "properties": {
+              "makesOwnerThinkOf": {
+                "additionalProperties": false,
+                "properties": {
+                  "firstName": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "firstName",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "makesOwnerThinkOf",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "makesOwnerThinkOf": {
+                "additionalProperties": false,
+                "properties": {
+                  "lastName": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "lastName",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "makesOwnerThinkOf",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "name",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "pictures": {
+                "additionalProperties": false,
+                "properties": {
+                  "primaryLinkLabel": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "primaryLinkLabel",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "pictures",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "pictures": {
+                "additionalProperties": false,
+                "properties": {
+                  "primaryLinkUrl": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "primaryLinkUrl",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "pictures",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "polymorphicOwnerRocketId": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "polymorphicOwnerRocketId",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "polymorphicOwnerSurveyResultId": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "polymorphicOwnerSurveyResultId",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "soundSwag": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "soundSwag",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "species": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "species",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "traits": {
+                "anyOf": [
+                  {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "unnest": {
+                        "const": true,
+                        "type": "boolean",
+                      },
+                    },
+                    "required": [
+                      "unnest",
+                    ],
+                    "type": "object",
+                  },
+                ],
+              },
+            },
+            "required": [
+              "traits",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "updatedAt": {
+                "additionalProperties": false,
+                "description": "Date field grouping configuration",
+                "properties": {
+                  "granularity": {
+                    "default": "MONTH",
+                    "description": "Date grouping granularity. Default: MONTH.",
+                    "enum": [
+                      "DAY",
+                      "MONTH",
+                      "QUARTER",
+                      "YEAR",
+                      "WEEK",
+                      "DAY_OF_THE_WEEK",
+                      "MONTH_OF_THE_YEAR",
+                      "QUARTER_OF_THE_YEAR",
+                    ],
+                    "type": "string",
+                  },
+                  "timeZone": {
+                    "default": "UTC",
+                    "description": "IANA timezone for date groupings (e.g. "America/New_York"). Default: UTC.",
+                    "type": "string",
+                  },
+                  "weekStartDay": {
+                    "description": "First day of week (MONDAY, SUNDAY, SATURDAY). Only used when granularity is WEEK.",
+                    "enum": [
+                      "MONDAY",
+                      "SUNDAY",
+                      "SATURDAY",
+                    ],
+                    "type": "string",
+                  },
+                },
+                "type": "object",
+              },
+            },
+            "required": [
+              "updatedAt",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "vetEmail": {
+                "additionalProperties": false,
+                "properties": {
+                  "primaryEmail": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "primaryEmail",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "vetEmail",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
               "vetPhone": {
                 "additionalProperties": false,
                 "properties": {
@@ -3698,300 +3992,6 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
             },
             "required": [
               "vetPhone",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "vetEmail": {
-                "additionalProperties": false,
-                "properties": {
-                  "primaryEmail": {
-                    "const": true,
-                    "type": "boolean",
-                  },
-                },
-                "required": [
-                  "primaryEmail",
-                ],
-                "type": "object",
-              },
-            },
-            "required": [
-              "vetEmail",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "birthday": {
-                "additionalProperties": false,
-                "description": "Date field grouping configuration",
-                "properties": {
-                  "granularity": {
-                    "default": "MONTH",
-                    "description": "Date grouping granularity. Default: MONTH.",
-                    "enum": [
-                      "DAY",
-                      "MONTH",
-                      "QUARTER",
-                      "YEAR",
-                      "WEEK",
-                      "DAY_OF_THE_WEEK",
-                      "MONTH_OF_THE_YEAR",
-                      "QUARTER_OF_THE_YEAR",
-                    ],
-                    "type": "string",
-                  },
-                  "timeZone": {
-                    "default": "UTC",
-                    "description": "IANA timezone for date groupings (e.g. "America/New_York"). Default: UTC.",
-                    "type": "string",
-                  },
-                  "weekStartDay": {
-                    "description": "First day of week (MONDAY, SUNDAY, SATURDAY). Only used when granularity is WEEK.",
-                    "enum": [
-                      "MONDAY",
-                      "SUNDAY",
-                      "SATURDAY",
-                    ],
-                    "type": "string",
-                  },
-                },
-                "type": "object",
-              },
-            },
-            "required": [
-              "birthday",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "isGoodWithKids": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "isGoodWithKids",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "pictures": {
-                "additionalProperties": false,
-                "properties": {
-                  "primaryLinkLabel": {
-                    "const": true,
-                    "type": "boolean",
-                  },
-                },
-                "required": [
-                  "primaryLinkLabel",
-                ],
-                "type": "object",
-              },
-            },
-            "required": [
-              "pictures",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "pictures": {
-                "additionalProperties": false,
-                "properties": {
-                  "primaryLinkUrl": {
-                    "const": true,
-                    "type": "boolean",
-                  },
-                },
-                "required": [
-                  "primaryLinkUrl",
-                ],
-                "type": "object",
-              },
-            },
-            "required": [
-              "pictures",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "averageCostOfKibblePerMonth": {
-                "additionalProperties": false,
-                "properties": {
-                  "amountMicros": {
-                    "const": true,
-                    "type": "boolean",
-                  },
-                },
-                "required": [
-                  "amountMicros",
-                ],
-                "type": "object",
-              },
-            },
-            "required": [
-              "averageCostOfKibblePerMonth",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "averageCostOfKibblePerMonth": {
-                "additionalProperties": false,
-                "properties": {
-                  "currencyCode": {
-                    "const": true,
-                    "type": "boolean",
-                  },
-                },
-                "required": [
-                  "currencyCode",
-                ],
-                "type": "object",
-              },
-            },
-            "required": [
-              "averageCostOfKibblePerMonth",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "makesOwnerThinkOf": {
-                "additionalProperties": false,
-                "properties": {
-                  "firstName": {
-                    "const": true,
-                    "type": "boolean",
-                  },
-                },
-                "required": [
-                  "firstName",
-                ],
-                "type": "object",
-              },
-            },
-            "required": [
-              "makesOwnerThinkOf",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "makesOwnerThinkOf": {
-                "additionalProperties": false,
-                "properties": {
-                  "lastName": {
-                    "const": true,
-                    "type": "boolean",
-                  },
-                },
-                "required": [
-                  "lastName",
-                ],
-                "type": "object",
-              },
-            },
-            "required": [
-              "makesOwnerThinkOf",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "soundSwag": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "soundSwag",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "bio": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "bio",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "interestingFacts": {
-                "anyOf": [
-                  {
-                    "const": true,
-                    "type": "boolean",
-                  },
-                  {
-                    "additionalProperties": false,
-                    "properties": {
-                      "unnest": {
-                        "const": true,
-                        "type": "boolean",
-                      },
-                    },
-                    "required": [
-                      "unnest",
-                    ],
-                    "type": "object",
-                  },
-                ],
-              },
-            },
-            "required": [
-              "interestingFacts",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "polymorphicOwnerSurveyResultId": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "polymorphicOwnerSurveyResultId",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "polymorphicOwnerRocketId": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "polymorphicOwnerRocketId",
             ],
             "type": "object",
           },
@@ -7840,7 +7840,7 @@ exports[`MCP database tool input schemas should list the input schemas of the su
   "additionalProperties": false,
   "properties": {
     "aggregateFieldName": {
-      "description": "Field to aggregate. Required for any operation other than COUNT. Available fields: name, id, createdAt, createdBy, deletedAt, position, updatedAt, updatedBy, searchVector, score, percentageOfCompletion, participants, averageEstimatedNumberOfAtomsInTheUniverse, comments, shortNotes, files.",
+      "description": "Field to aggregate. Required for any operation other than COUNT. Available fields: averageEstimatedNumberOfAtomsInTheUniverse, comments, createdAt, createdBy, deletedAt, files, id, name, participants, percentageOfCompletion, position, score, searchVector, shortNotes, updatedAt, updatedBy.",
       "type": "string",
     },
     "aggregateOperation": {
@@ -7987,19 +7987,32 @@ exports[`MCP database tool input schemas should list the input schemas of the su
       "type": "object",
     },
     "groupBy": {
-      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: name, createdAt (date), updatedAt (date), score, percentageOfCompletion, participants, averageEstimatedNumberOfAtomsInTheUniverse, comments, shortNotes, helpedPetsId.",
+      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: averageEstimatedNumberOfAtomsInTheUniverse, comments, createdAt (date), helpedPetsId, name, participants, percentageOfCompletion, score, shortNotes, updatedAt (date).",
       "items": {
         "anyOf": [
           {
             "additionalProperties": false,
             "properties": {
-              "name": {
+              "averageEstimatedNumberOfAtomsInTheUniverse": {
                 "const": true,
                 "type": "boolean",
               },
             },
             "required": [
-              "name",
+              "averageEstimatedNumberOfAtomsInTheUniverse",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "comments": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "comments",
             ],
             "type": "object",
           },
@@ -8051,6 +8064,84 @@ exports[`MCP database tool input schemas should list the input schemas of the su
           {
             "additionalProperties": false,
             "properties": {
+              "helpedPetsId": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "helpedPetsId",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "name",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "participants": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "participants",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "percentageOfCompletion": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "percentageOfCompletion",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "score": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "score",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "shortNotes": {
+                "const": true,
+                "type": "boolean",
+              },
+            },
+            "required": [
+              "shortNotes",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
               "updatedAt": {
                 "additionalProperties": false,
                 "description": "Date field grouping configuration",
@@ -8090,97 +8181,6 @@ exports[`MCP database tool input schemas should list the input schemas of the su
             },
             "required": [
               "updatedAt",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "score": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "score",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "percentageOfCompletion": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "percentageOfCompletion",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "participants": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "participants",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "averageEstimatedNumberOfAtomsInTheUniverse": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "averageEstimatedNumberOfAtomsInTheUniverse",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "comments": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "comments",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "shortNotes": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "shortNotes",
-            ],
-            "type": "object",
-          },
-          {
-            "additionalProperties": false,
-            "properties": {
-              "helpedPetsId": {
-                "const": true,
-                "type": "boolean",
-              },
-            },
-            "required": [
-              "helpedPetsId",
             ],
             "type": "object",
           },
