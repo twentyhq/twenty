@@ -1,7 +1,6 @@
 import { Logger, Scope } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
@@ -9,9 +8,9 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { NUMBER_OF_WORKFLOW_RUNS_TO_KEEP } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/number-of-workflow-runs-to-keep';
@@ -19,14 +18,6 @@ import { RUNS_TO_CLEAN_THRESHOLD_DAYS } from 'src/modules/workflow/workflow-runn
 
 export type WorkflowCleanWorkflowRunsJobData = {
   workspaceId: string;
-};
-
-type WorkflowRunsDeletionContext = {
-  workspaceId: string;
-  schemaName: string;
-  // Undefined when the workspace has no record share object to clean up
-  sharedWorkflowRunObjectMetadataId: string | undefined;
-  batchSize: number;
 };
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
@@ -37,7 +28,6 @@ export class WorkflowCleanWorkflowRunsJob {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectDataSource()
     private readonly dataSource: DataSource,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
 
@@ -52,36 +42,23 @@ export class WorkflowCleanWorkflowRunsJob {
       `[WorkflowCleanWorkflowRunsJob] Starting job for workspace ${workspaceId}`,
     );
 
-    const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
-    const hasRecordShareObject = isDefined(
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.recordShare.universalIdentifier
-      ],
-    );
-    const sharedWorkflowRunObjectMetadataId = hasRecordShareObject
-      ? flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.workflowRun.universalIdentifier
-        ]?.id
-      : undefined;
-
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const deletionContext: WorkflowRunsDeletionContext = {
-        workspaceId,
-        schemaName,
-        sharedWorkflowRunObjectMetadataId,
-        batchSize: 200,
-      };
+      const BATCH_SIZE = 200;
       let totalDeleted = 0;
 
-      const oldRunsDeleted = await this.deleteOldRuns(deletionContext);
+      const oldRunsDeleted = await this.deleteOldRuns({
+        workspaceId,
+        schemaName,
+        batchSize: BATCH_SIZE,
+      });
 
       totalDeleted += oldRunsDeleted;
 
-      const excessRunsDeleted =
-        await this.deleteExcessRunsPerWorkflow(deletionContext);
+      const excessRunsDeleted = await this.deleteExcessRunsPerWorkflow({
+        workspaceId,
+        schemaName,
+        batchSize: BATCH_SIZE,
+      });
 
       totalDeleted += excessRunsDeleted;
 
@@ -91,16 +68,21 @@ export class WorkflowCleanWorkflowRunsJob {
     }, authContext);
   }
 
-  private async deleteOldRuns(
-    deletionContext: WorkflowRunsDeletionContext,
-  ): Promise<number> {
-    const { schemaName, batchSize } = deletionContext;
+  private async deleteOldRuns({
+    workspaceId,
+    schemaName,
+    batchSize,
+  }: {
+    workspaceId: string;
+    schemaName: string;
+    batchSize: number;
+  }): Promise<number> {
     let totalDeleted = 0;
     let deletedCount: number;
 
     do {
-      deletedCount = await this.deleteRunBatchWithRecordShares({
-        deletionContext,
+      deletedCount = await this.deleteRunBatch({
+        workspaceId,
         query: `
           DELETE FROM ${schemaName}."workflowRun"
           WHERE id IN (
@@ -124,16 +106,21 @@ export class WorkflowCleanWorkflowRunsJob {
     return totalDeleted;
   }
 
-  private async deleteExcessRunsPerWorkflow(
-    deletionContext: WorkflowRunsDeletionContext,
-  ): Promise<number> {
-    const { schemaName, batchSize } = deletionContext;
+  private async deleteExcessRunsPerWorkflow({
+    workspaceId,
+    schemaName,
+    batchSize,
+  }: {
+    workspaceId: string;
+    schemaName: string;
+    batchSize: number;
+  }): Promise<number> {
     let totalDeleted = 0;
     let deletedCount: number;
 
     do {
-      deletedCount = await this.deleteRunBatchWithRecordShares({
-        deletionContext,
+      deletedCount = await this.deleteRunBatch({
+        workspaceId,
         query: `
           WITH ranked_runs AS (
             SELECT id,
@@ -167,15 +154,17 @@ export class WorkflowCleanWorkflowRunsJob {
   }
 
   // Runs deleted here bypass the ORM, so their grants must be dropped alongside
-  private async deleteRunBatchWithRecordShares({
-    deletionContext: { workspaceId, sharedWorkflowRunObjectMetadataId },
+  private async deleteRunBatch({
+    workspaceId,
     query,
     parameters,
   }: {
-    deletionContext: WorkflowRunsDeletionContext;
+    workspaceId: string;
     query: string;
     parameters: unknown[];
   }): Promise<number> {
+    const { objectIdByNameSingular } = getWorkspaceContext();
+
     return this.dataSource.transaction(async (manager) => {
       // TypeORM's query() for DELETE ... RETURNING returns a tuple [rows, affectedCount]
       const [deletedRuns]: [{ id: string }[], number] = await manager.query(
@@ -184,12 +173,12 @@ export class WorkflowCleanWorkflowRunsJob {
       );
 
       if (
-        deletedRuns.length > 0 &&
-        isDefined(sharedWorkflowRunObjectMetadataId)
+        isDefined(objectIdByNameSingular.recordShare) &&
+        isDefined(objectIdByNameSingular.workflowRun)
       ) {
         await this.recordShareStorageService.deleteByRecordIdsInTransaction({
           workspaceId,
-          objectMetadataId: sharedWorkflowRunObjectMetadataId,
+          objectMetadataId: objectIdByNameSingular.workflowRun,
           recordIds: deletedRuns.map(({ id }) => id),
           manager,
         });

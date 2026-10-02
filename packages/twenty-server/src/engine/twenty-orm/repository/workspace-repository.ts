@@ -1616,45 +1616,27 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
   }): Promise<ObjectRecord[]> {
-    if (
-      args.kind === 'delete' &&
+    const performMutationOn = (
+      repository: WorkspaceRepository<TEntity>,
+      validateWrittenRecords?: ValidateWrittenRecords,
+    ) =>
+      repository.performMutation({
+        ...args,
+        selectQueryBuilder:
+          repository === this
+            ? args.selectQueryBuilder
+            : args.selectQueryBuilder.clone(repository.options.executor),
+        validateWrittenRecords,
+      });
+
+    if (args.kind === 'update') {
+      return this.runWithValidationRules({ write: performMutationOn });
+    }
+
+    return args.kind === 'delete' &&
       isDefined(this.recordShareObjectMetadataIdToCleanUpOnDestroy)
-    ) {
-      return this.runAtomically((repository) =>
-        repository.performMutation({
-          ...args,
-          selectQueryBuilder: this.bindQueryBuilderToRepository(
-            args.selectQueryBuilder,
-            repository,
-          ),
-        }),
-      );
-    }
-
-    if (args.kind !== 'update') {
-      return this.performMutation(args);
-    }
-
-    return this.runWithValidationRules({
-      write: (repository, validateWrittenRecords) =>
-        repository.performMutation({
-          ...args,
-          selectQueryBuilder: this.bindQueryBuilderToRepository(
-            args.selectQueryBuilder,
-            repository,
-          ),
-          validateWrittenRecords,
-        }),
-    });
-  }
-
-  private bindQueryBuilderToRepository(
-    selectQueryBuilder: WorkspaceSelectQueryBuilder,
-    repository: WorkspaceRepository<TEntity>,
-  ): WorkspaceSelectQueryBuilder {
-    return repository === this
-      ? selectQueryBuilder
-      : selectQueryBuilder.clone(repository.options.executor);
+      ? this.runAtomically(performMutationOn)
+      : this.performMutation(args);
   }
 
   private async performMutation({
@@ -1763,10 +1745,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
       kind,
-      columnsToReturn: this.resolveMutationColumnsToReturn({
-        kind,
-        columnsToReturn,
-      }),
+      columnsToReturn:
+        kind === 'update'
+          ? getUpdateEventColumnsToReturn(
+              columnsToReturn,
+              this.options.tableShape,
+            )
+          : kind === 'delete'
+            ? // The destroyed records' ids are needed to drop their shares
+              [...new Set([...columnsToReturn, 'id'])]
+            : columnsToReturn,
       setColumns,
     });
 
@@ -1814,28 +1802,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     return mutationResult.generatedMaps;
-  }
-
-  // A destroy returns the ids so the destroyed records' shares can be dropped
-  private resolveMutationColumnsToReturn({
-    kind,
-    columnsToReturn,
-  }: {
-    kind: MutationKind;
-    columnsToReturn: string[];
-  }): string[] {
-    if (kind === 'update') {
-      return getUpdateEventColumnsToReturn(
-        columnsToReturn,
-        this.options.tableShape,
-      );
-    }
-
-    if (kind === 'delete' && !columnsToReturn.includes('id')) {
-      return [...columnsToReturn, 'id'];
-    }
-
-    return columnsToReturn;
   }
 
   private async fetchInheritedReadabilityChildRecords(

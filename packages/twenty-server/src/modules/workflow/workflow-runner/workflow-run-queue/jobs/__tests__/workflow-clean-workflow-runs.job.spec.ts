@@ -1,10 +1,14 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type DataSource, type EntityManager } from 'typeorm';
 
 import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCleanWorkflowRunsJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-clean-workflow-runs.job';
+
+jest.mock(
+  'src/engine/twenty-orm/storage/orm-workspace-context.storage',
+  () => ({ getWorkspaceContext: jest.fn() }),
+);
 
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const WORKFLOW_RUN_OBJECT_METADATA_ID = 'workflowRun-object-metadata-id';
@@ -40,26 +44,22 @@ const buildJob = ({
       work(),
     ),
   } as unknown as WorkspaceOrmManager;
-  const workspaceCacheService = {
-    getOrRecompute: jest.fn(async () => ({
-      flatObjectMetadataMaps: {
-        byUniversalIdentifier: Object.fromEntries(
-          standardObjectNames.map((standardObjectName) => [
-            STANDARD_OBJECTS[standardObjectName].universalIdentifier,
-            { id: `${standardObjectName}-object-metadata-id` },
-          ]),
-        ),
-      },
-    })),
-  } as unknown as WorkspaceCacheService;
   const recordShareStorageService = {
     deleteByRecordIdsInTransaction: jest.fn(),
   };
 
+  jest.mocked(getWorkspaceContext).mockReturnValue({
+    objectIdByNameSingular: Object.fromEntries(
+      standardObjectNames.map((standardObjectName) => [
+        standardObjectName,
+        `${standardObjectName}-object-metadata-id`,
+      ]),
+    ),
+  } as never);
+
   const job = new WorkflowCleanWorkflowRunsJob(
     workspaceOrmManager,
     dataSource,
-    workspaceCacheService,
     recordShareStorageService as unknown as RecordShareStorageService,
   );
 
@@ -67,7 +67,7 @@ const buildJob = ({
 };
 
 describe('WorkflowCleanWorkflowRunsJob', () => {
-  it('should delete the record shares of each non-empty batch of deleted runs within its transaction', async () => {
+  it('should delete the record shares of each batch of deleted runs within its transaction', async () => {
     const { job, manager, recordShareStorageService } = buildJob();
 
     await job.handle({ workspaceId: WORKSPACE_ID });
@@ -86,7 +86,19 @@ describe('WorkflowCleanWorkflowRunsJob', () => {
       {
         workspaceId: WORKSPACE_ID,
         objectMetadataId: WORKFLOW_RUN_OBJECT_METADATA_ID,
+        recordIds: [],
+        manager,
+      },
+      {
+        workspaceId: WORKSPACE_ID,
+        objectMetadataId: WORKFLOW_RUN_OBJECT_METADATA_ID,
         recordIds: ['excess-run-1'],
+        manager,
+      },
+      {
+        workspaceId: WORKSPACE_ID,
+        objectMetadataId: WORKFLOW_RUN_OBJECT_METADATA_ID,
+        recordIds: [],
         manager,
       },
     ]);

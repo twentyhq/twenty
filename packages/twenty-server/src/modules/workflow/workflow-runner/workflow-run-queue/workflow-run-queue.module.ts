@@ -7,7 +7,6 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowHandleStaledRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/command/workflow-handle-staled-runs.command';
@@ -34,7 +33,6 @@ import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflo
     ThrottlerModule,
     WorkflowRunModule,
     RecordShareStorageModule,
-    WorkspaceCacheModule,
   ],
   providers: [
     WorkflowThrottlingWorkspaceService,
