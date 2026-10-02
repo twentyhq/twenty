@@ -263,7 +263,7 @@ export class MessageCampaignLifecycleService {
       >
     >;
   }): Promise<number> {
-    const { generatedMaps: settledDeliveries } =
+    const { affected: settledDeliveryCount } =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const campaignDeliveryRepository =
           this.workspaceOrmManager.getRepository(
@@ -271,16 +271,10 @@ export class MessageCampaignLifecycleService {
             { shouldBypassPermissionChecks: true },
             { shouldSkipEventEmission: true },
           );
-        return campaignDeliveryRepository
-          .createQueryBuilder()
-          .where(criteria)
-          .update()
-          .set(update)
-          .returning(['id'])
-          .execute();
+        return campaignDeliveryRepository.update(criteria, update);
       }, buildSystemAuthContext(workspaceId));
 
-    return settledDeliveries.length;
+    return settledDeliveryCount ?? 0;
   }
 
   async finalizeCampaignIfComplete({

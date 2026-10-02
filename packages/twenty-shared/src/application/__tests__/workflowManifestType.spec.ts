@@ -1,5 +1,6 @@
 /** @jest-environment node */
 
+import { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from '@/application/constants/ApplicationWorkflowUnavailableStepTypes';
 import { isDefined } from '@/utils/validation/isDefined';
 
 import {
@@ -120,4 +121,22 @@ describe('workflow manifest iterator cycles', () => {
     iterator.input.initialLoopStepIds = [iteratorId, delayId];
     expect(workflowManifestSchema.safeParse(invalid).success).toBe(false);
   });
+});
+
+describe('workflow manifest step types', () => {
+  it.each(APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES)(
+    'rejects %s steps',
+    (type) => {
+      const invalid = structuredClone(workflow);
+      Object.assign(getStep(invalid, 2), { type });
+      const result = workflowManifestSchema.safeParse(invalid);
+      expect(result.success).toBe(false);
+      expect(result.error?.issues[0]?.path).toEqual([
+        'version',
+        'steps',
+        2,
+        'type',
+      ]);
+    },
+  );
 });
