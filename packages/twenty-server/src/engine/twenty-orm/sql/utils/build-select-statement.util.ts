@@ -107,18 +107,41 @@ export const normaliseColumnExpression = (
 
 const SQL_TEXT_SEGMENTS = /('(?:[^']|'')*'|"[^"]*")/;
 
+const MAX_CACHED_ALIAS_REFERENCE_PATTERNS = 10_000;
+
+const aliasReferencePatternByAlias = new Map<string, RegExp>();
+
+const getAliasReferencePattern = (alias: string): RegExp => {
+  const cachedPattern = aliasReferencePatternByAlias.get(alias);
+
+  if (isDefined(cachedPattern)) {
+    return cachedPattern;
+  }
+
+  if (
+    aliasReferencePatternByAlias.size >= MAX_CACHED_ALIAS_REFERENCE_PATTERNS
+  ) {
+    aliasReferencePatternByAlias.clear();
+  }
+
+  const pattern = new RegExp(
+    `(?<![\\w".:])${alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.(\\w+)`,
+    'g',
+  );
+
+  aliasReferencePatternByAlias.set(alias, pattern);
+
+  return pattern;
+};
+
 const quoteQualifiedAliasReferencesInSegment = (
   segment: string,
   aliases: string[],
 ): string =>
   aliases.reduce(
     (quotedSegment, alias) =>
-      quotedSegment.replace(
-        new RegExp(
-          `(?<![\\w".:])${alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.(\\w+)`,
-          'g',
-        ),
-        (_, columnName) => quoteColumn(alias, columnName),
+      quotedSegment.replace(getAliasReferencePattern(alias), (_, columnName) =>
+        quoteColumn(alias, columnName),
       ),
     segment,
   );
@@ -219,27 +242,37 @@ export const collectJoinedColumnProjections = (
   return projections;
 };
 
-export const buildProjection = (
-  state: SelectStatementState,
-): { expressions: string[]; mainAliasColumnNames: string[] } => {
-  const selectedColumnNames = Object.entries(state.findOptions.select ?? {})
-    .filter(([, isSelected]) => isSelected)
-    .map(([columnName]) => columnName);
+const resolveMainAliasColumnNames = (state: SelectStatementState): string[] => {
+  const selectedColumnNames: string[] = [];
+  const select = state.findOptions.select ?? {};
 
-  for (const columnName of selectedColumnNames) {
+  for (const columnName of Object.keys(select)) {
+    if (!select[columnName]) {
+      continue;
+    }
+
     if (!isDefined(state.tableShape.columnShapeByColumnName[columnName])) {
       throw new TwentyOrmException(
         `Column "${columnName}" does not exist on "${state.tableShape.nameSingular}"`,
         TwentyOrmExceptionCode.UNKNOWN_COLUMN,
       );
     }
+
+    selectedColumnNames.push(columnName);
   }
 
-  const mainAliasColumnNames =
+  return (
     state.explicitSelection ??
     (selectedColumnNames.length > 0
       ? selectedColumnNames
-      : state.tableShape.columnNames);
+      : state.tableShape.columnNames)
+  );
+};
+
+export const buildProjection = (
+  state: SelectStatementState,
+): { expressions: string[]; mainAliasColumnNames: string[] } => {
+  const mainAliasColumnNames = resolveMainAliasColumnNames(state);
 
   const expressions = mainAliasColumnNames.map(
     (columnName) =>
@@ -681,33 +714,37 @@ export const createRowToEntityMapper = <TRecord extends ObjectLiteral>(
 export const buildColumnNameByResultAlias = (
   alias: string,
   mainAliasColumnNames: string[],
-): Record<string, string> =>
-  Object.fromEntries(
-    mainAliasColumnNames.map((columnName) => [
-      buildColumnResultAlias(alias, columnName),
-      columnName,
-    ]),
-  );
+): Record<string, string> => {
+  const columnNameByResultAlias: Record<string, string> = {};
+
+  for (const columnName of mainAliasColumnNames) {
+    columnNameByResultAlias[buildColumnResultAlias(alias, columnName)] =
+      columnName;
+  }
+
+  return columnNameByResultAlias;
+};
 
 export const buildHydrationPathByResultAlias = (
   state: SelectStatementState,
 ): Record<string, string> => {
-  const { mainAliasColumnNames } = buildProjection(state);
+  const hydrationPathByResultAlias = buildColumnNameByResultAlias(
+    state.alias,
+    resolveMainAliasColumnNames(state),
+  );
 
-  const mainColumnNames = [
-    ...mainAliasColumnNames,
-    ...state.columnSelections
-      .filter((columnSelection) => columnSelection.alias === state.alias)
-      .map((columnSelection) => columnSelection.columnName),
-  ];
+  for (const columnSelection of state.columnSelections) {
+    if (columnSelection.alias === state.alias) {
+      hydrationPathByResultAlias[
+        buildColumnResultAlias(state.alias, columnSelection.columnName)
+      ] = columnSelection.columnName;
+    }
+  }
 
-  return {
-    ...buildColumnNameByResultAlias(state.alias, mainColumnNames),
-    ...Object.fromEntries(
-      collectJoinedColumnProjections(state).map((joinedProjection) => [
-        joinedProjection.resultAlias,
-        `${joinedProjection.propertyPath}.${joinedProjection.columnName}`,
-      ]),
-    ),
-  };
+  for (const joinedProjection of collectJoinedColumnProjections(state)) {
+    hydrationPathByResultAlias[joinedProjection.resultAlias] =
+      `${joinedProjection.propertyPath}.${joinedProjection.columnName}`;
+  }
+
+  return hydrationPathByResultAlias;
 };

@@ -14,9 +14,11 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import {
+  encodeCursorFromOrderByLeaves,
+  resolveCursorOrderByLeaves,
+} from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { type OrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
-import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
@@ -28,11 +30,27 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
+type ConnectionFieldPlan =
+  | {
+      kind: 'composite';
+      fieldMetadata: OrmFlatFieldMetadata;
+      subFieldTypeByName: ReadonlyMap<string, FieldMetadataType> | undefined;
+    }
+  | {
+      kind: 'relation';
+      fieldMetadata: OrmFlatFieldMetadata;
+      joinColumnName: string;
+      isToManyRelation: boolean;
+      targetObjectNameSingular: string;
+    }
+  | { kind: 'scalar'; fieldMetadata: OrmFlatFieldMetadata };
+
 // TODO: Refacto-common - Rename CommonRecordsToGraphqlConnectionHelper
 export class ObjectRecordsToGraphqlConnectionHelper {
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   private objectIdByNameSingular: Record<string, string>;
+  private fieldPlansByObjectName = new Map<string, ConnectionFieldPlan[]>();
 
   constructor(
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
@@ -47,8 +65,8 @@ export class ObjectRecordsToGraphqlConnectionHelper {
   public createConnection<T extends ObjectRecord = ObjectRecord>({
     objectRecords,
     parentObjectRecord,
-    objectRecordsAggregatedValues = {},
-    selectedAggregatedFields = [],
+    objectRecordsAggregatedValues,
+    selectedAggregatedFields,
     objectName,
     take,
     totalCount,
@@ -73,13 +91,78 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     depth?: number;
     orderByValuesByRecordId?: OrderByValuesByRecordId;
   }): IConnection<T> {
+    const edges = this.buildEdges({
+      objectRecords: objectRecords ?? [],
+      objectName,
+      objectRecordsAggregatedValues,
+      selectedAggregatedFields,
+      take,
+      totalCount,
+      order,
+      depth,
+      orderByValuesByRecordId,
+    });
+
+    const connection = this.extractAggregatedFieldsValues({
+      selectedAggregatedFields,
+      objectRecordsAggregatedValues: parentObjectRecord
+        ? objectRecordsAggregatedValues?.[parentObjectRecord.id]
+        : objectRecordsAggregatedValues,
+    });
+
+    connection.edges = edges;
+    connection.pageInfo = {
+      hasNextPage,
+      hasPreviousPage,
+      startCursor: edges[0]?.cursor,
+      endCursor: edges[edges.length - 1]?.cursor,
+    };
+    connection.totalCount = totalCount;
+
+    return connection as IConnection<T>;
+  }
+
+  private buildEdges<T extends ObjectRecord>({
+    objectRecords,
+    objectName,
+    objectRecordsAggregatedValues,
+    selectedAggregatedFields,
+    take,
+    totalCount,
+    order,
+    depth,
+    orderByValuesByRecordId,
+  }: {
+    objectRecords: T[];
+    objectName: string;
+    // oxlint-disable-next-line typescript/no-explicit-any
+    objectRecordsAggregatedValues?: Record<string, any>;
+    // oxlint-disable-next-line typescript/no-explicit-any
+    selectedAggregatedFields?: Record<string, any>;
+    take: number;
+    totalCount: number | undefined;
+    order?: ObjectRecordOrderBy;
+    depth: number;
+    orderByValuesByRecordId?: OrderByValuesByRecordId;
+  }): IConnection<T>['edges'] {
+    if (objectRecords.length === 0) {
+      return [];
+    }
+
     const objectMetadataId = this.objectIdByNameSingular[objectName];
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: objectMetadataId,
       flatEntityMaps: this.flatObjectMetadataMaps,
     });
 
-    const edges = (objectRecords ?? []).map((objectRecord) => ({
+    const cursorOrderByLeaves = resolveCursorOrderByLeaves({
+      order,
+      flatObjectMetadata,
+      flatObjectMetadataMaps: this.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+    });
+
+    return objectRecords.map((objectRecord) => ({
       node: this.processRecord({
         objectRecord,
         objectName,
@@ -90,73 +173,51 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         order,
         depth,
       }),
-      cursor: encodeCursor({
+      cursor: encodeCursorFromOrderByLeaves({
         objectRecord,
-        order,
-        flatObjectMetadata,
-        flatObjectMetadataMaps: this.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+        cursorOrderByLeaves,
         orderByValuesFromScan: orderByValuesByRecordId?.[objectRecord.id],
       }),
     }));
-
-    const aggregatedFieldsValues = this.extractAggregatedFieldsValues({
-      selectedAggregatedFields,
-      objectRecordsAggregatedValues: parentObjectRecord
-        ? objectRecordsAggregatedValues[parentObjectRecord.id]
-        : objectRecordsAggregatedValues,
-    });
-
-    return {
-      ...aggregatedFieldsValues,
-      edges,
-      pageInfo: {
-        hasNextPage,
-        hasPreviousPage,
-        startCursor: edges[0]?.cursor,
-        endCursor: edges[edges.length - 1]?.cursor,
-      },
-      totalCount: totalCount,
-    };
   }
 
-  private extractAggregatedFieldsValues = ({
+  private extractAggregatedFieldsValues({
     selectedAggregatedFields,
     objectRecordsAggregatedValues,
   }: {
-    selectedAggregatedFields: Record<string, AggregationField[]>;
+    selectedAggregatedFields: Record<string, AggregationField[]> | undefined;
     // oxlint-disable-next-line typescript/no-explicit-any
-    objectRecordsAggregatedValues: Record<string, any>;
-  }) => {
-    if (!isDefined(objectRecordsAggregatedValues)) {
-      return {};
+    objectRecordsAggregatedValues: Record<string, any> | undefined;
+    // oxlint-disable-next-line typescript/no-explicit-any
+  }): Record<string, any> {
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const aggregatedFieldsValues: Record<string, any> = {};
+
+    if (
+      !isDefined(objectRecordsAggregatedValues) ||
+      !isDefined(selectedAggregatedFields)
+    ) {
+      return aggregatedFieldsValues;
     }
 
-    return Object.entries(selectedAggregatedFields).reduce(
-      (acc, [aggregatedFieldName]) => {
-        const aggregatedFieldValue =
-          objectRecordsAggregatedValues[aggregatedFieldName];
+    for (const aggregatedFieldName of Object.keys(selectedAggregatedFields)) {
+      const aggregatedFieldValue =
+        objectRecordsAggregatedValues[aggregatedFieldName];
 
-        if (!isDefined(aggregatedFieldValue)) {
-          return acc;
-        }
+      if (isDefined(aggregatedFieldValue)) {
+        aggregatedFieldsValues[aggregatedFieldName] = aggregatedFieldValue;
+      }
+    }
 
-        return {
-          ...acc,
-          [aggregatedFieldName]:
-            objectRecordsAggregatedValues[aggregatedFieldName],
-        };
-      },
-      {},
-    );
-  };
+    return aggregatedFieldsValues;
+  }
 
   // oxlint-disable-next-line typescript/no-explicit-any
   public processRecord<T extends Record<string, any>>({
     objectRecord,
     objectName,
-    objectRecordsAggregatedValues = {},
-    selectedAggregatedFields = [],
+    objectRecordsAggregatedValues,
+    selectedAggregatedFields,
     take,
     totalCount,
     order,
@@ -181,23 +242,13 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       );
     }
 
-    const objectMetadataId = this.objectIdByNameSingular[objectName];
-
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: objectMetadataId,
-      flatEntityMaps: this.flatObjectMetadataMaps,
-    });
-
     // oxlint-disable-next-line typescript/no-explicit-any
     const processedObjectRecord: Record<string, any> = {};
 
-    for (const fieldId of flatObjectMetadata.fieldIds) {
-      const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: fieldId,
-        flatEntityMaps: this.flatFieldMetadataMaps,
-      });
+    for (const fieldPlan of this.getOrBuildFieldPlans(objectName)) {
+      const { fieldMetadata } = fieldPlan;
 
-      if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+      if (fieldPlan.kind === 'composite') {
         const objectValue = objectRecord[fieldMetadata.name];
 
         if (!isDefined(objectValue)) {
@@ -205,33 +256,22 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         }
         processedObjectRecord[fieldMetadata.name] = this.processCompositeField(
           fieldMetadata,
+          fieldPlan.subFieldTypeByName,
           objectValue,
         );
         continue;
       }
 
-      if (isMorphOrRelationFlatFieldMetadata(fieldMetadata)) {
-        const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
-          flatEntityMaps: this.flatObjectMetadataMaps,
-        });
+      if (fieldPlan.kind === 'relation') {
+        const { joinColumnName } = fieldPlan;
 
-        if (!isDefined(targetObjectMetadata)) {
-          continue;
+        if (isDefined(objectRecord[joinColumnName])) {
+          processedObjectRecord[joinColumnName] = objectRecord[joinColumnName];
         }
-
-        const fieldMetadataNameWithId = `${fieldMetadata.name}Id`;
-
-        if (isDefined(objectRecord[fieldMetadataNameWithId])) {
-          processedObjectRecord[fieldMetadataNameWithId] =
-            objectRecord[fieldMetadataNameWithId];
-        }
-
-        const isToManyRelation =
-          fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY;
 
         const objectValue =
-          !isDefined(objectRecord[fieldMetadata.name]) && isToManyRelation
+          !isDefined(objectRecord[fieldMetadata.name]) &&
+          fieldPlan.isToManyRelation
             ? []
             : objectRecord[fieldMetadata.name];
 
@@ -239,37 +279,32 @@ export class ObjectRecordsToGraphqlConnectionHelper {
           continue;
         }
 
+        const relationAggregatedValues =
+          objectRecordsAggregatedValues?.[fieldMetadata.name];
+
         if (Array.isArray(objectValue)) {
           processedObjectRecord[fieldMetadata.name] = this.createConnection({
             objectRecords: objectValue,
             parentObjectRecord: objectRecord,
-            objectRecordsAggregatedValues:
-              objectRecordsAggregatedValues[fieldMetadata.name],
+            objectRecordsAggregatedValues: relationAggregatedValues,
             selectedAggregatedFields:
-              selectedAggregatedFields[fieldMetadata.name],
-            objectName: targetObjectMetadata.nameSingular,
+              selectedAggregatedFields?.[fieldMetadata.name],
+            objectName: fieldPlan.targetObjectNameSingular,
             take,
             totalCount:
-              objectRecordsAggregatedValues[fieldMetadata.name]?.totalCount ??
-              objectValue.length,
+              relationAggregatedValues?.totalCount ?? objectValue.length,
             order,
             hasNextPage: false,
             hasPreviousPage: false,
             depth: depth + 1,
           });
         } else if (isPlainObject(objectValue)) {
-          const targetObjectMetadataOrThrow = getTargetObjectMetadataOrThrow(
-            fieldMetadata,
-            this.flatObjectMetadataMaps,
-          );
-
           processedObjectRecord[fieldMetadata.name] = this.processRecord({
             objectRecord: objectValue,
-            objectRecordsAggregatedValues:
-              objectRecordsAggregatedValues[fieldMetadata.name],
+            objectRecordsAggregatedValues: relationAggregatedValues,
             selectedAggregatedFields:
-              selectedAggregatedFields[fieldMetadata.name],
-            objectName: targetObjectMetadataOrThrow.nameSingular,
+              selectedAggregatedFields?.[fieldMetadata.name],
+            objectName: fieldPlan.targetObjectNameSingular,
             take,
             totalCount,
             order,
@@ -294,46 +329,109 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     return processedObjectRecord as T;
   }
 
+  private getOrBuildFieldPlans(objectName: string): ConnectionFieldPlan[] {
+    const cachedFieldPlans = this.fieldPlansByObjectName.get(objectName);
+
+    if (isDefined(cachedFieldPlans)) {
+      return cachedFieldPlans;
+    }
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: this.objectIdByNameSingular[objectName],
+      flatEntityMaps: this.flatObjectMetadataMaps,
+    });
+
+    const fieldPlans: ConnectionFieldPlan[] = [];
+
+    for (const fieldId of flatObjectMetadata.fieldIds) {
+      const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: fieldId,
+        flatEntityMaps: this.flatFieldMetadataMaps,
+      });
+
+      if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+        const compositeType = compositeTypeDefinitions.get(
+          fieldMetadata.type as CompositeFieldMetadataType,
+        );
+
+        fieldPlans.push({
+          kind: 'composite',
+          fieldMetadata,
+          subFieldTypeByName: isDefined(compositeType)
+            ? new Map(
+                compositeType.properties.map((property) => [
+                  property.name,
+                  property.type,
+                ]),
+              )
+            : undefined,
+        });
+        continue;
+      }
+
+      if (isMorphOrRelationFlatFieldMetadata(fieldMetadata)) {
+        const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
+          flatEntityMaps: this.flatObjectMetadataMaps,
+        });
+
+        if (!isDefined(targetObjectMetadata)) {
+          continue;
+        }
+
+        fieldPlans.push({
+          kind: 'relation',
+          fieldMetadata,
+          joinColumnName: `${fieldMetadata.name}Id`,
+          isToManyRelation:
+            fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY,
+          targetObjectNameSingular: targetObjectMetadata.nameSingular,
+        });
+        continue;
+      }
+
+      fieldPlans.push({ kind: 'scalar', fieldMetadata });
+    }
+
+    this.fieldPlansByObjectName.set(objectName, fieldPlans);
+
+    return fieldPlans;
+  }
+
   private processCompositeField(
     fieldMetadata: OrmFlatFieldMetadata,
+    subFieldTypeByName: ReadonlyMap<string, FieldMetadataType> | undefined,
     // oxlint-disable-next-line typescript/no-explicit-any
     fieldValue: any,
     // oxlint-disable-next-line typescript/no-explicit-any
   ): Record<string, any> {
-    const compositeType = compositeTypeDefinitions.get(
-      fieldMetadata.type as CompositeFieldMetadataType,
-    );
-
-    if (!compositeType) {
+    if (!isDefined(subFieldTypeByName)) {
       throw new Error(
         `Composite type definition not found for type: ${fieldMetadata.type}`,
       );
     }
 
-    return Object.entries(fieldValue).reduce(
-      (acc, [subFieldKey, subFieldValue]) => {
-        if (subFieldKey === '__typename') return acc;
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const processedFieldValue: Record<string, any> = {};
 
-        const subFieldMetadata = compositeType.properties.find(
-          (property) => property.name === subFieldKey,
+    for (const subFieldKey of Object.keys(fieldValue)) {
+      if (subFieldKey === '__typename') continue;
+
+      const subFieldType = subFieldTypeByName.get(subFieldKey);
+
+      if (!isDefined(subFieldType)) {
+        throw new Error(
+          `Sub field metadata not found for composite type: ${fieldMetadata.type}`,
         );
+      }
 
-        if (!subFieldMetadata) {
-          throw new Error(
-            `Sub field metadata not found for composite type: ${fieldMetadata.type}`,
-          );
-        }
+      processedFieldValue[subFieldKey] = this.formatFieldValue(
+        fieldValue[subFieldKey],
+        subFieldType,
+      );
+    }
 
-        acc[subFieldKey] = this.formatFieldValue(
-          subFieldValue,
-          subFieldMetadata.type,
-        );
-
-        return acc;
-      },
-      // oxlint-disable-next-line typescript/no-explicit-any
-      {} as Record<string, any>,
-    );
+    return processedFieldValue;
   }
 
   // oxlint-disable-next-line typescript/no-explicit-any

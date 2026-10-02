@@ -31,6 +31,11 @@ type ResultProcessingContext = {
   >;
 };
 
+const PASS_THROUGH_OBJECT_HANDLER: QueryResultGetterHandlerInterface = {
+  handle: (result: ObjectRecord): Promise<ObjectRecord> =>
+    Promise.resolve(result),
+};
+
 // TODO: find a way to prevent conflict between handlers executing logic on object relations
 // And this factory that is also executing logic on object relations
 // Right now the factory will override any change made on relations by the handlers
@@ -123,30 +128,35 @@ export class CommonResultGettersService {
       flatObjectMetadata,
       context,
     );
-    const recordFieldMetadataList = Object.keys(record)
-      .map((recordFieldName) => fieldMetadataByName.get(recordFieldName))
-      .filter(isDefined);
+    const recordFieldMetadataList: OrmFlatFieldMetadata[] = [];
+    const relationFields: OrmFlatFieldMetadata<FieldMetadataType.RELATION>[] =
+      [];
+    const handlers = [this.getObjectHandler(flatObjectMetadata.nameSingular)];
 
-    const fieldHandlers = new Set(
-      recordFieldMetadataList
-        .map((recordFieldMetadata) =>
-          this.fieldHandlers.get(recordFieldMetadata.type),
-        )
-        .filter(isDefined),
-    );
+    for (const recordFieldName of Object.keys(record)) {
+      const recordFieldMetadata = fieldMetadataByName.get(recordFieldName);
 
-    const handlers = [
-      this.getObjectHandler(flatObjectMetadata.nameSingular),
-      ...fieldHandlers,
-    ];
+      if (!isDefined(recordFieldMetadata)) {
+        continue;
+      }
 
-    const relationFields = recordFieldMetadataList.filter(
-      (recordFieldMetadata) =>
+      recordFieldMetadataList.push(recordFieldMetadata);
+
+      const fieldHandler = this.fieldHandlers.get(recordFieldMetadata.type);
+
+      if (isDefined(fieldHandler) && !handlers.includes(fieldHandler)) {
+        handlers.push(fieldHandler);
+      }
+
+      if (
         isFlatFieldMetadataOfType(
           recordFieldMetadata,
           FieldMetadataType.RELATION,
-        ),
-    );
+        )
+      ) {
+        relationFields.push(recordFieldMetadata);
+      }
+    }
 
     const relationFieldsProcessedMap = {} as Record<
       string,
@@ -246,11 +256,6 @@ export class CommonResultGettersService {
   private getObjectHandler(
     objectType: string,
   ): QueryResultGetterHandlerInterface {
-    return (
-      this.objectHandlers.get(objectType) ?? {
-        handle: (result: ObjectRecord): Promise<ObjectRecord> =>
-          Promise.resolve(result),
-      }
-    );
+    return this.objectHandlers.get(objectType) ?? PASS_THROUGH_OBJECT_HANDLER;
   }
 }

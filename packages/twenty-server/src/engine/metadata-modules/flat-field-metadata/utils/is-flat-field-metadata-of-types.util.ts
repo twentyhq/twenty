@@ -5,7 +5,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 
 export function isFlatFieldMetadataOfTypes<
   Field extends OrmFlatFieldMetadata<FieldMetadataType>,
-  Types extends FieldMetadataType[],
+  Types extends readonly FieldMetadataType[],
 >(
   fieldMetadata: Pick<Field, 'type'>,
   types: Types,

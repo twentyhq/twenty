@@ -11,6 +11,7 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   checkIfLeafCanCarryCursorValue,
+  type OrderByLeaf,
   resolveOrderByLeaves,
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -34,31 +35,40 @@ export const decodeCursor = <T = CursorData>(cursor: string): T => {
   }
 };
 
-export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
-  objectRecord,
+export const resolveCursorOrderByLeaves = ({
   order,
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
-  orderByValuesFromScan,
 }: {
-  objectRecord: T;
   order: ObjectRecordOrderBy | undefined;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+}): OrderByLeaf[] =>
+  resolveOrderByLeaves({
+    orderBy: order,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }).filter(checkIfLeafCanCarryCursorValue);
+
+export const encodeCursorFromOrderByLeaves = <
+  T extends ObjectRecord = ObjectRecord,
+>({
+  objectRecord,
+  cursorOrderByLeaves,
+  orderByValuesFromScan,
+}: {
+  objectRecord: T;
+  cursorOrderByLeaves: OrderByLeaf[];
   // Exact SQL values (NULLs included) the continuation must mirror; absent for nested connections
   orderByValuesFromScan?: Record<string, unknown>;
 }): string => {
   // oxlint-disable-next-line typescript/no-explicit-any
   const orderByValues: Record<string, any> = {};
 
-  for (const leaf of resolveOrderByLeaves({
-    orderBy: order,
-    flatObjectMetadata,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-  }).filter(checkIfLeafCanCarryCursorValue)) {
+  for (const leaf of cursorOrderByLeaves) {
     const [rootKey, ...nestedKeys] = leaf.path;
     const valueSource = orderByValuesFromScan ?? objectRecord;
     let leafValue: unknown = valueSource[rootKey];
@@ -90,6 +100,32 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
 
   return encodeCursorData(cursorData);
 };
+
+export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
+  objectRecord,
+  order,
+  flatObjectMetadata,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+  orderByValuesFromScan,
+}: {
+  objectRecord: T;
+  order: ObjectRecordOrderBy | undefined;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  orderByValuesFromScan?: Record<string, unknown>;
+}): string =>
+  encodeCursorFromOrderByLeaves({
+    objectRecord,
+    cursorOrderByLeaves: resolveCursorOrderByLeaves({
+      order,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    }),
+    orderByValuesFromScan,
+  });
 
 export const encodeCursorData = (cursorData: CursorData) => {
   return Buffer.from(JSON.stringify(cursorData)).toString('base64url');

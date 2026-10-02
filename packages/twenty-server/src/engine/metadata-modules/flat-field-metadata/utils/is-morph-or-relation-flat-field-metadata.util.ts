@@ -15,13 +15,12 @@ export const isMorphOrRelationFlatFieldMetadata = <
   flatFieldMetadata: T,
 ): flatFieldMetadata is T &
   FlatFieldMetadata<MorphOrRelationFieldMetadataType> =>
-  isFlatFieldMetadataOfTypes(flatFieldMetadata, [
-    ...MORPH_OR_RELATION_FIELD_TYPES,
-  ]);
+  isFlatFieldMetadataOfTypes(flatFieldMetadata, MORPH_OR_RELATION_FIELD_TYPES);
 
 export const isMorphOrRelationUniversalFlatFieldMetadata = (
   universalFlatFieldMetadata: UniversalFlatFieldMetadata,
 ): universalFlatFieldMetadata is UniversalFlatFieldMetadata<MorphOrRelationFieldMetadataType> =>
-  isFlatFieldMetadataOfTypes(universalFlatFieldMetadata, [
-    ...MORPH_OR_RELATION_FIELD_TYPES,
-  ]);
+  isFlatFieldMetadataOfTypes(
+    universalFlatFieldMetadata,
+    MORPH_OR_RELATION_FIELD_TYPES,
+  );

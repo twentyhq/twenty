@@ -21,6 +21,7 @@ export const compileNamedParameters = (
 
   let text = '';
   let index = 0;
+  let pendingTextStartIndex = 0;
 
   const buildSpreadItemKey = (parameterName: string, itemIndex: number) =>
     `:${parameterName}__${itemIndex}`;
@@ -38,25 +39,29 @@ export const compileNamedParameters = (
     return `$${values.length}`;
   };
 
+  // Kept out of the loop body: a closure there capturing a loop-scoped const
+  // makes V8 allocate a block context on every scanned character
+  const appendSpreadValues = (parameterName: string, items: unknown[]) =>
+    items
+      .map((item, itemIndex) =>
+        appendValue(buildSpreadItemKey(parameterName, itemIndex), item),
+      )
+      .join(', ');
+
   while (index < sql.length) {
     const character = sql[index];
 
     if (character === "'" || character === '"') {
-      const closingIndex = findClosingQuoteIndex(sql, index, character);
-
-      text += sql.slice(index, closingIndex + 1);
-      index = closingIndex + 1;
+      index = findClosingQuoteIndex(sql, index, character) + 1;
       continue;
     }
 
     if (character === ':' && sql[index + 1] === ':') {
-      text += '::';
       index += 2;
       continue;
     }
 
     if (character !== ':') {
-      text += character;
       index += 1;
       continue;
     }
@@ -73,7 +78,6 @@ export const compileNamedParameters = (
     }
 
     if (nameEndIndex === nameStartIndex) {
-      text += character;
       index += 1;
       continue;
     }
@@ -89,6 +93,8 @@ export const compileNamedParameters = (
 
     const parameterValue = parameters[parameterName];
 
+    text += sql.slice(pendingTextStartIndex, index);
+
     if (isSpread) {
       if (!Array.isArray(parameterValue)) {
         throw new TwentyOrmException(
@@ -100,18 +106,17 @@ export const compileNamedParameters = (
       if (parameterValue.length === 0) {
         text += 'NULL';
       } else {
-        text += parameterValue
-          .map((item, itemIndex) =>
-            appendValue(buildSpreadItemKey(parameterName, itemIndex), item),
-          )
-          .join(', ');
+        text += appendSpreadValues(parameterName, parameterValue);
       }
     } else {
       text += appendValue(parameterName, parameterValue);
     }
 
     index = nameEndIndex;
+    pendingTextStartIndex = index;
   }
+
+  text += sql.slice(pendingTextStartIndex);
 
   return { text, values };
 };

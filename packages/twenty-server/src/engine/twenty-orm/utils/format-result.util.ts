@@ -108,7 +108,10 @@ function formatResultRecursively<T>(
 
   const newData: object = {};
 
-  for (const [key, value] of Object.entries(data)) {
+  const record = data as Record<string, unknown>;
+
+  for (const key of Object.keys(record)) {
+    const value = record[key];
     const compositePropertyArgs =
       objectCache.compositeFieldMetadataMap.get(key);
 
@@ -158,7 +161,8 @@ function formatResultRecursively<T>(
     }
 
     if (isDefined(compositePropertyArgs)) {
-      const { parentField, ...compositeProperty } = compositePropertyArgs;
+      const { parentField, name: compositePropertyName } =
+        compositePropertyArgs;
 
       // @ts-expect-error legacy noImplicitAny
       if (!newData[parentField]) {
@@ -167,15 +171,15 @@ function formatResultRecursively<T>(
       }
 
       // @ts-expect-error legacy noImplicitAny
-      newData[parentField][compositeProperty.name] = isNull(value)
+      newData[parentField][compositePropertyName] = isNull(value)
         ? transformCompositeFieldNullValue(
             value,
-            compositeProperty.name,
+            compositePropertyName,
             fieldMetadata,
           )
         : formatCompositeFieldValue(
             value,
-            compositeProperty.name,
+            compositePropertyName,
             fieldMetadata,
           );
       continue;
@@ -383,16 +387,10 @@ function handleEmptyCompositeFields(
       continue;
     }
 
-    // oxlint-disable-next-line typescript/no-explicit-any
-    const typedFieldValue = fieldValue as Record<string, any>;
-
-    const allRequiredPropertiesAreNull = requiredPropertyNames.every(
-      (propertyName) =>
-        !isDefined(typedFieldValue[propertyName]) ||
-        isNull(typedFieldValue[propertyName]),
-    );
-
-    if (allRequiredPropertiesAreNull && requiredPropertyNames.length > 0) {
+    if (
+      requiredPropertyNames.length > 0 &&
+      areAllPropertiesNullOrUndefined(fieldValue, requiredPropertyNames)
+    ) {
       if (fieldMetadata.isNullable) {
         data[fieldMetadata.name] = null;
       } else {
@@ -402,6 +400,20 @@ function handleEmptyCompositeFields(
       }
     }
   }
+}
+
+function areAllPropertiesNullOrUndefined(
+  // oxlint-disable-next-line typescript/no-explicit-any
+  value: Record<string, any>,
+  propertyNames: string[],
+): boolean {
+  for (const propertyName of propertyNames) {
+    if (isDefined(value[propertyName])) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 function getDefaultCompositeFieldValue(

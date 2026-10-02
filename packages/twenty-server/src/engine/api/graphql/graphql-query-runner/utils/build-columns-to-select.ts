@@ -31,19 +31,21 @@ export const buildColumnsToSelect = ({
     flatFieldMetadataMaps,
   );
 
-  const fieldsToSelect: Record<string, boolean> = Object.entries(select)
-    .filter(
-      ([_columnName, value]) => value === true && typeof value !== 'object',
-    )
-    .reduce((acc, [columnName]) => ({ ...acc, [columnName]: true }), {});
+  const fieldsToSelect: Record<string, boolean> = {};
+
+  for (const columnName of Object.keys(select)) {
+    if (select[columnName] === true) {
+      fieldsToSelect[columnName] = true;
+    }
+  }
 
   for (const columnName of requiredRelationColumns) {
     fieldsToSelect[columnName] = true;
   }
 
-  const result = { ...fieldsToSelect, id: true };
+  fieldsToSelect.id = true;
 
-  return result;
+  return fieldsToSelect;
 };
 
 const getRequiredRelationColumns = (
