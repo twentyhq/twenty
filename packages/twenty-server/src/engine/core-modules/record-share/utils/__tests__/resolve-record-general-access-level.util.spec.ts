@@ -2,14 +2,14 @@
 
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
-  MetadataReadability,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
 
+import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
-import { resolveRecordGeneralAccess } from 'src/engine/core-modules/record-share/utils/resolve-record-general-access.util';
+import { resolveRecordGeneralAccessLevel } from 'src/engine/core-modules/record-share/utils/resolve-record-general-access-level.util';
 
 const buildEveryoneShare = (
   accessLevel: RecordShareAccessLevel,
@@ -25,49 +25,43 @@ const buildEveryoneShare = (
   sourceId: 'record-1',
 });
 
-describe('resolveRecordGeneralAccess', () => {
+describe('resolveRecordGeneralAccessLevel', () => {
   it.each([
-    [MetadataReadability.OPEN, true, RecordShareAccessLevel.READ_WRITE],
-    [MetadataReadability.PRIVATE, false, RecordShareAccessLevel.NONE],
-    [MetadataReadability.INHERITED, false, null],
+    [RecordSharingMode.OPEN_BY_DEFAULT, RecordShareAccessLevel.READ_WRITE],
+    [RecordSharingMode.PRIVATE, RecordShareAccessLevel.NONE],
+    [RecordSharingMode.INHERITED, RecordShareAccessLevel.NONE],
+    [RecordSharingMode.NONE, null],
   ])(
     'should fall back to the default of a %s object',
-    (readability, isRecordShareExceptionObject, accessLevel) => {
+    (sharingMode, accessLevel) => {
       expect(
-        resolveRecordGeneralAccess({
-          readability,
-          isRecordShareExceptionObject,
-          recordShares: [],
-        }),
-      ).toEqual({ accessLevel, isDefault: true });
+        resolveRecordGeneralAccessLevel({ sharingMode, recordShares: [] }),
+      ).toBe(accessLevel);
     },
   );
 
   it('should read a restriction of a record open by default', () => {
     expect(
-      resolveRecordGeneralAccess({
-        readability: MetadataReadability.OPEN,
-        isRecordShareExceptionObject: true,
+      resolveRecordGeneralAccessLevel({
+        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
         recordShares: [buildEveryoneShare(RecordShareAccessLevel.NONE)],
       }),
-    ).toEqual({ accessLevel: RecordShareAccessLevel.NONE, isDefault: false });
+    ).toBe(RecordShareAccessLevel.NONE);
   });
 
   it('should read a manual opening of a private record', () => {
     expect(
-      resolveRecordGeneralAccess({
-        readability: MetadataReadability.PRIVATE,
-        isRecordShareExceptionObject: false,
+      resolveRecordGeneralAccessLevel({
+        sharingMode: RecordSharingMode.PRIVATE,
         recordShares: [buildEveryoneShare(RecordShareAccessLevel.READ)],
       }),
-    ).toEqual({ accessLevel: RecordShareAccessLevel.READ, isDefault: false });
+    ).toBe(RecordShareAccessLevel.READ);
   });
 
   it('should ignore everyone grants managed by a rule', () => {
     expect(
-      resolveRecordGeneralAccess({
-        readability: MetadataReadability.PRIVATE,
-        isRecordShareExceptionObject: false,
+      resolveRecordGeneralAccessLevel({
+        sharingMode: RecordSharingMode.PRIVATE,
         recordShares: [
           buildEveryoneShare(
             RecordShareAccessLevel.FULL,
@@ -75,6 +69,15 @@ describe('resolveRecordGeneralAccess', () => {
           ),
         ],
       }),
-    ).toEqual({ accessLevel: RecordShareAccessLevel.NONE, isDefault: true });
+    ).toBe(RecordShareAccessLevel.NONE);
+  });
+
+  it('should report no general access when records are not shared', () => {
+    expect(
+      resolveRecordGeneralAccessLevel({
+        sharingMode: RecordSharingMode.NONE,
+        recordShares: [buildEveryoneShare(RecordShareAccessLevel.READ)],
+      }),
+    ).toBeNull();
   });
 });

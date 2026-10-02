@@ -1,6 +1,6 @@
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, registerEnumType } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
@@ -9,16 +9,14 @@ import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/wo
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { AuthenticationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
-  RecordSharingDTO,
-  RecordSharingTargetInput,
   RecordSharePrincipalInput,
+  RecordSharingDTO,
 } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
 import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { recordShareGraphqlApiExceptionHandler } from 'src/engine/core-modules/record-share/utils/record-share-graphql-api-exception-handler.util';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-
-registerEnumType(RecordShareAccessLevel, { name: 'RecordShareAccessLevel' });
+import { RecordTargetInput } from 'src/engine/metadata-modules/record-permissions/dtos/record-target.input';
 
 @MetadataResolver()
 @UseGuards(
@@ -39,7 +37,7 @@ export class RecordSharingResolver {
   constructor(private readonly sharingService: RecordSharingService) {}
 
   @Query(() => RecordSharingDTO)
-  recordSharing(@Args('target') target: RecordSharingTargetInput) {
+  recordSharing(@Args('target') target: RecordTargetInput) {
     return this.sharingService.getSharing({
       ...target,
       authContext: this.getUserContext(),
@@ -47,25 +45,56 @@ export class RecordSharingResolver {
   }
 
   @Mutation(() => RecordSharingDTO)
-  async setRecordShare(
-    @Args('target') target: RecordSharingTargetInput,
-    @Args('principal') principal: RecordSharePrincipalInput,
-    @Args('enabled') enabled: boolean,
-    @Args('accessLevel', {
-      type: () => RecordShareAccessLevel,
-      nullable: true,
-      defaultValue: RecordShareAccessLevel.READ,
-    })
-    accessLevel: RecordShareAccessLevel | null,
+  setRecordGeneralAccess(
+    @Args('target') target: RecordTargetInput,
+    @Args('accessLevel', { type: () => RecordShareAccessLevel })
+    accessLevel: RecordShareAccessLevel,
   ) {
-    try {
-      return await this.sharingService.setShare({
+    return this.handleRecordShareException(() =>
+      this.sharingService.setGeneralAccess({
+        ...target,
+        accessLevel,
+        authContext: this.getUserContext(),
+      }),
+    );
+  }
+
+  @Mutation(() => RecordSharingDTO)
+  setRecordShare(
+    @Args('target') target: RecordTargetInput,
+    @Args('principal') principal: RecordSharePrincipalInput,
+    @Args('accessLevel', { type: () => RecordShareAccessLevel })
+    accessLevel: RecordShareAccessLevel,
+  ) {
+    return this.handleRecordShareException(() =>
+      this.sharingService.setShare({
         ...target,
         principal,
-        enabled,
-        accessLevel: accessLevel ?? RecordShareAccessLevel.READ,
+        accessLevel,
         authContext: this.getUserContext(),
-      });
+      }),
+    );
+  }
+
+  @Mutation(() => RecordSharingDTO)
+  removeRecordShare(
+    @Args('target') target: RecordTargetInput,
+    @Args('principal') principal: RecordSharePrincipalInput,
+  ) {
+    return this.handleRecordShareException(() =>
+      this.sharingService.removeShare({
+        ...target,
+        principal,
+        authContext: this.getUserContext(),
+      }),
+    );
+  }
+
+  private async handleRecordShareException(
+    change: () => Promise<RecordSharingDTO>,
+  ): Promise<RecordSharingDTO> {
+    try {
+      return await change();
     } catch (error) {
       if (error instanceof RecordShareException) {
         recordShareGraphqlApiExceptionHandler(error);

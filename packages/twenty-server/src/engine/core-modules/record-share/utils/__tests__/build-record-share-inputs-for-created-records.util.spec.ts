@@ -115,6 +115,31 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
       ]);
     });
 
+    it('should write only the shareWith rows on a record open by default', () => {
+      expect(
+        buildRecordShareInputsForCreatedRecords({
+          recordIds: ['record-1'],
+          objectMetadataId: OBJECT_METADATA_ID,
+          authContext: userAuthContext,
+          apiKeyRoleMap,
+          shareWith: [
+            { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.READ },
+          ],
+          isOpenByDefault: true,
+        }),
+      ).toEqual([
+        {
+          recordId: 'record-1',
+          objectMetadataId: OBJECT_METADATA_ID,
+          principalId: ROLE_ID,
+          principalType: RecordSharePrincipalType.ROLE,
+          accessLevel: RecordShareAccessLevel.READ,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: WORKSPACE_MEMBER_ID,
+        },
+      ]);
+    });
+
     it('should give an api key a FULL row for its role next to MANUAL rows sourced from the record', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({

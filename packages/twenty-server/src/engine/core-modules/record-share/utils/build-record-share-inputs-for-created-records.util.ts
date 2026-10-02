@@ -106,18 +106,21 @@ const buildCreatorRows = ({
   ];
 };
 
+// The creator of a record open by default owns it without a row
 export const buildRecordShareInputsForCreatedRecords = ({
   recordIds,
   objectMetadataId,
   authContext,
   apiKeyRoleMap,
   shareWith,
+  isOpenByDefault = false,
 }: {
   recordIds: string[];
   objectMetadataId: string;
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
   shareWith?: ShareWithInput[] | null;
+  isOpenByDefault?: boolean;
 }): RecordShareInput[] => {
   const shareWithEntries = shareWith ?? [];
   const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
@@ -131,12 +134,15 @@ export const buildRecordShareInputsForCreatedRecords = ({
 
   return [
     ...recordIds.flatMap((recordId) => [
-      ...buildCreatorRows({
-        authContext,
-        apiKeyRoleMap,
-        recordId,
-        shareWithPrincipals,
-      }).map((creatorRow) => ({ recordId, objectMetadataId, ...creatorRow })),
+      ...(isOpenByDefault
+        ? []
+        : buildCreatorRows({
+            authContext,
+            apiKeyRoleMap,
+            recordId,
+            shareWithPrincipals,
+          })
+      ).map((creatorRow) => ({ recordId, objectMetadataId, ...creatorRow })),
       ...shareWithPrincipals.map((shareWithPrincipal) => ({
         recordId,
         objectMetadataId,

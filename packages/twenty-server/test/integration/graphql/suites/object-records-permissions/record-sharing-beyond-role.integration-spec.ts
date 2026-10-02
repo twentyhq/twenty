@@ -41,12 +41,14 @@ const SHARED_RECORD_ID = randomUUID();
 const OTHER_RECORD_ID = randomUUID();
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const JONY = { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY };
-const EVERYONE = { everyone: true };
 const SET_SHARE = parse(
-  `mutation SetShare($target: RecordSharingTargetInput!, $principal: RecordSharePrincipalInput!, $enabled: Boolean!, $accessLevel: RecordShareAccessLevel) { setRecordShare(target: $target, principal: $principal, enabled: $enabled, accessLevel: $accessLevel) { viewerAccessLevel } }`,
+  `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { viewerAccessLevel } }`,
+);
+const SET_GENERAL_ACCESS = parse(
+  `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { viewerAccessLevel } }`,
 );
 const READ_SHARING = parse(
-  `query RecordSharing($target: RecordSharingTargetInput!) { recordSharing(target: $target) { viewerAccessLevel permissions { canRead canUpdate canDelete } shares { principalId } } }`,
+  `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { viewerAccessLevel canManageSharing permissions { canRead canUpdate canDelete } shares { principalId } } }`,
 );
 
 describe('Records shared beyond the role that can access their object', () => {
@@ -68,19 +70,29 @@ describe('Records shared beyond the role that can access their object', () => {
 
   const setShare = ({
     principal,
-    enabled = true,
     accessLevel = RecordShareAccessLevel.READ,
     token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
   }: {
     principal: RecordSharePrincipalInput;
-    enabled?: boolean;
     accessLevel?: RecordShareAccessLevel;
     token?: string;
   }) =>
     makeMetadataApiRequest(
       {
         query: SET_SHARE,
-        variables: { target: target(), principal, enabled, accessLevel },
+        variables: { target: target(), principal, accessLevel },
+      },
+      token,
+    );
+
+  const setGeneralAccess = (
+    accessLevel: RecordShareAccessLevel,
+    token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  ) =>
+    makeMetadataApiRequest(
+      {
+        query: SET_GENERAL_ACCESS,
+        variables: { target: target(), accessLevel },
       },
       token,
     );
@@ -248,11 +260,10 @@ describe('Records shared beyond the role that can access their object', () => {
     expect(deleted.body.errors).toBeDefined();
     expect(
       (
-        await setShare({
-          principal: EVERYONE,
-          enabled: false,
-          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        })
+        await setGeneralAccess(
+          RecordShareAccessLevel.NONE,
+          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        )
       ).body.errors,
     ).toBeDefined();
 
@@ -263,16 +274,14 @@ describe('Records shared beyond the role that can access their object', () => {
 
     expect(sharing.body.data.recordSharing).toMatchObject({
       viewerAccessLevel: RecordShareAccessLevel.FULL,
+      canManageSharing: false,
       permissions: { canRead: true, canUpdate: true, canDelete: false },
       shares: [],
     });
   });
 
   it('should not let general access reach beyond the role', async () => {
-    const share = await setShare({
-      principal: EVERYONE,
-      accessLevel: RecordShareAccessLevel.READ_WRITE,
-    });
+    const share = await setGeneralAccess(RecordShareAccessLevel.READ_WRITE);
 
     expect(share.body.errors).toBeUndefined();
     expect(await findIdsAsJony()).toEqual({ errors: undefined, ids: [] });
@@ -287,31 +296,36 @@ describe('Records shared beyond the role that can access their object', () => {
   it('should tell owners what the role of each recipient grants on its own', async () => {
     await setShare({ principal: JONY });
     await setShare({ principal: { roleId: memberRoleId } });
-    await setShare({ principal: EVERYONE });
+    await setGeneralAccess(RecordShareAccessLevel.READ);
 
     const sharing = await makeMetadataApiRequest({
       query: parse(
-        `query RecordSharing($target: RecordSharingTargetInput!) { recordSharing(target: $target) { sharingReach shares { principalId canRoleRead canRoleUpdate } } }`,
+        `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { generalAccessLevel shares { principalId principalRoleId } roles { id canRead canUpdate } } }`,
       ),
       variables: { target: target() },
     });
 
-    expect(sharing.body.data.recordSharing.sharingReach).toBe(
-      ObjectSharingReach.WORKSPACE,
+    expect(sharing.body.errors).toBeUndefined();
+    expect(sharing.body.data.recordSharing.generalAccessLevel).toBe(
+      RecordShareAccessLevel.READ,
     );
     expect(sharing.body.data.recordSharing.shares).toEqual(
       expect.arrayContaining([
         {
           principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          canRoleRead: false,
-          canRoleUpdate: false,
+          principalRoleId: memberRoleId,
         },
-        { principalId: memberRoleId, canRoleRead: false, canRoleUpdate: false },
-        {
-          principalId: EVERYONE_PRINCIPAL_ID,
-          canRoleRead: null,
-          canRoleUpdate: null,
-        },
+        { principalId: memberRoleId, principalRoleId: null },
+      ]),
+    );
+    expect(
+      sharing.body.data.recordSharing.shares.map(
+        ({ principalId }: { principalId: string }) => principalId,
+      ),
+    ).not.toContain(EVERYONE_PRINCIPAL_ID);
+    expect(sharing.body.data.recordSharing.roles).toEqual(
+      expect.arrayContaining([
+        { id: memberRoleId, canRead: false, canUpdate: false },
       ]),
     );
   });
