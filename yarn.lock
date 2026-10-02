@@ -43323,7 +43323,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"piscina@npm:^4.3.1":
+"piscina@npm:^4.3.1, piscina@npm:^4.9.4":
   version: 4.9.4
   resolution: "piscina@npm:4.9.4"
   dependencies:
@@ -50849,6 +50849,7 @@ __metadata:
     passport-microsoft: "npm:2.1.0"
     path-to-regexp: "npm:^8.4.0"
     pg: "npm:8.12.0"
+    piscina: "npm:^4.9.4"
     pluralize: "npm:8.0.0"
     postal-mime: "npm:^2.6.1"
     prettier: "npm:^3.1.1"

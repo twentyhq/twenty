@@ -149,6 +149,7 @@
     "passport-microsoft": "2.1.0",
     "path-to-regexp": "^8.4.0",
     "pg": "8.12.0",
+    "piscina": "^4.9.4",
     "pluralize": "8.0.0",
     "postal-mime": "^2.6.1",
     "psl": "^1.9.0",
