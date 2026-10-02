@@ -1,5 +1,8 @@
+import { type WorkspaceFlatWorkspaceMemberMapCacheService } from 'src/engine/core-modules/user/services/workspace-flat-workspace-member-map-cache.service';
+import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type WorkspaceWorkflowAutomatedTriggerMapCacheService } from 'src/engine/core-modules/workflow/services/workspace-workflow-automated-trigger-map-cache.service';
 import { type WorkflowAutomatedTriggerMaps } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
+import { type WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -17,10 +20,41 @@ const STALE_TRIGGER_MAPS: WorkflowAutomatedTriggerMaps = {
     },
   },
 };
+const STALE_USER_ID = '20202020-5e1f-4c4e-9f3a-5a1e00000002';
+const STALE_WORKSPACE_MEMBER_MAPS: FlatWorkspaceMemberMaps = {
+  byId: {},
+  idByUserId: { [STALE_USER_ID]: '20202020-5e1f-4c4e-9f3a-5a1e00000003' },
+};
+
+const deferNextComputeForCache = <
+  TData extends FlatWorkspaceMemberMaps | WorkflowAutomatedTriggerMaps,
+>(
+  provider: WorkspaceCacheProvider<TData>,
+) => {
+  let resolveCompute: (data: TData) => void = () => {};
+  let markComputeStarted: () => void = () => {};
+  const computeStarted = new Promise<void>((resolve) => {
+    markComputeStarted = resolve;
+  });
+
+  jest.spyOn(provider, 'computeForCache').mockImplementationOnce(() => {
+    markComputeStarted();
+
+    return new Promise<TData>((resolve) => {
+      resolveCompute = resolve;
+    });
+  });
+
+  return {
+    computeStarted,
+    resolveCompute: (data: TData) => resolveCompute(data),
+  };
+};
 
 describe('Workspace cache recompute superseded by an invalidation', () => {
   let workspaceCacheService: WorkspaceCacheService;
   let triggerMapProvider: WorkspaceWorkflowAutomatedTriggerMapCacheService;
+  let workspaceMemberMapProvider: WorkspaceFlatWorkspaceMemberMapCacheService;
 
   beforeAll(() => {
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
@@ -30,33 +64,23 @@ describe('Workspace cache recompute superseded by an invalidation', () => {
       getAppProviderByClassName<WorkspaceWorkflowAutomatedTriggerMapCacheService>(
         'WorkspaceWorkflowAutomatedTriggerMapCacheService',
       );
+    workspaceMemberMapProvider =
+      getAppProviderByClassName<WorkspaceFlatWorkspaceMemberMapCacheService>(
+        'WorkspaceFlatWorkspaceMemberMapCacheService',
+      );
   });
 
   afterEach(async () => {
     jest.restoreAllMocks();
     await workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'workflowAutomatedTriggerMaps',
+      'flatWorkspaceMemberMaps',
     ]);
   });
 
   it('returns the superseded data to its caller without publishing it to the local cache or Redis', async () => {
-    let resolveSupersededCompute: (
-      triggerMaps: WorkflowAutomatedTriggerMaps,
-    ) => void = () => {};
-    let markSupersededComputeStarted: () => void = () => {};
-    const supersededComputeStarted = new Promise<void>((resolve) => {
-      markSupersededComputeStarted = resolve;
-    });
-
-    jest
-      .spyOn(triggerMapProvider, 'computeForCache')
-      .mockImplementationOnce(() => {
-        markSupersededComputeStarted();
-
-        return new Promise((resolve) => {
-          resolveSupersededCompute = resolve;
-        });
-      });
+    const { computeStarted, resolveCompute } =
+      deferNextComputeForCache(triggerMapProvider);
 
     await workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
     await workspaceCacheService.flush(workspaceId, [
@@ -67,7 +91,7 @@ describe('Workspace cache recompute superseded by an invalidation', () => {
       'workflowAutomatedTriggerMaps',
     ]);
 
-    await supersededComputeStarted;
+    await computeStarted;
     await workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'workflowAutomatedTriggerMaps',
     ]);
@@ -79,7 +103,7 @@ describe('Workspace cache recompute superseded by an invalidation', () => {
 
     expect(hashesAfterInvalidation.workflowAutomatedTriggerMaps).toBeDefined();
 
-    resolveSupersededCompute(STALE_TRIGGER_MAPS);
+    resolveCompute(STALE_TRIGGER_MAPS);
 
     expect(await supersededRead).toEqual({
       workflowAutomatedTriggerMaps: STALE_TRIGGER_MAPS,
@@ -104,5 +128,44 @@ describe('Workspace cache recompute superseded by an invalidation', () => {
         'workflowAutomatedTriggerMaps',
       ]),
     ).toEqual({ workflowAutomatedTriggerMaps: localTriggerMaps });
+  });
+
+  it('does not bootstrap the hash or cache the data of a superseded local-data-only recompute', async () => {
+    const { computeStarted, resolveCompute } = deferNextComputeForCache(
+      workspaceMemberMapProvider,
+    );
+
+    await workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
+    await workspaceCacheService.flush(workspaceId, ['flatWorkspaceMemberMaps']);
+
+    const supersededRead = workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatWorkspaceMemberMaps',
+    ]);
+
+    await computeStarted;
+    await workspaceCacheService.flush(workspaceId, ['flatWorkspaceMemberMaps']);
+    // flush alone keeps memoized reads, which would hide what the superseded recompute published
+    await workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
+
+    resolveCompute(STALE_WORKSPACE_MEMBER_MAPS);
+
+    expect(await supersededRead).toEqual({
+      flatWorkspaceMemberMaps: STALE_WORKSPACE_MEMBER_MAPS,
+    });
+    expect(
+      await workspaceCacheService.getCacheHashes(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]),
+    ).toEqual({});
+
+    const { flatWorkspaceMemberMaps: freshWorkspaceMemberMaps } =
+      await workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    expect(freshWorkspaceMemberMaps.idByUserId[STALE_USER_ID]).toBeUndefined();
+    expect(Object.keys(freshWorkspaceMemberMaps.byId).length).toBeGreaterThan(
+      0,
+    );
   });
 });
