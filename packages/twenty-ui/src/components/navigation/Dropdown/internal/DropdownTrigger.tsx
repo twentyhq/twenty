@@ -38,7 +38,7 @@ export const DropdownTrigger = ({
 
         if (
           event.defaultPrevented ||
-          event.baseUIHandlerPrevented === true ||
+          event.baseUIHandlerPrevented ||
           props.disabled ||
           type === 'panel'
         ) {

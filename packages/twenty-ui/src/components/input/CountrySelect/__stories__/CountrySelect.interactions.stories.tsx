@@ -319,14 +319,18 @@ export const DisabledSkipsTriggerHandlers: Story = {
       'keydown',
       recordDefaultPreventedKey,
     );
-    await userEvent.tab();
-    expect(trigger).toHaveFocus();
-    await userEvent.keyboard('{Shift}{ArrowDown}{ArrowUp}');
-    await userEvent.click(trigger);
-    canvasElement.ownerDocument.removeEventListener(
-      'keydown',
-      recordDefaultPreventedKey,
-    );
+
+    try {
+      await userEvent.tab();
+      expect(trigger).toHaveFocus();
+      await userEvent.keyboard('{Shift}{ArrowDown}{ArrowUp}');
+      await userEvent.click(trigger);
+    } finally {
+      canvasElement.ownerDocument.removeEventListener(
+        'keydown',
+        recordDefaultPreventedKey,
+      );
+    }
 
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
     expect(defaultPreventedKeys).toEqual([]);
