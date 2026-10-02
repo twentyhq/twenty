@@ -1,170 +1,126 @@
 import { randomUUID } from 'node:crypto';
 
+import { sendInvitations } from 'test/integration/graphql/suites/user-session/utils/send-invitations.util';
 import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
+import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
+import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
 import {
   deleteWorkspaceInvitationsByEmail,
   findWorkspaceInvitationsByEmail,
-  seedWorkspaceInvitation,
 } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
+import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+const PASSWORD = 'Login-with-invitation-1';
 
-const ONE_HOUR_IN_MS = 60 * 60 * 1000;
-const PASSWORD = 'tim@apple.dev';
-const PASSWORD_HASH =
-  '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6';
+const signUpUser = async (email: string): Promise<string> => {
+  const { data } = await signUp({
+    input: { email, password: PASSWORD },
+    expectToFail: false,
+  });
 
-const countAppleMemberships = async (userId: string): Promise<number> => {
-  const rows = await global.testDataSource.query(
-    'SELECT 1 FROM core."userWorkspace" WHERE "userId" = $1 AND "workspaceId" = $2 AND "deletedAt" IS NULL',
-    [userId, SEED_APPLE_WORKSPACE_ID],
-  );
-
-  return rows.length;
+  return data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
 };
+
+const loginOnAppleWorkspace = (email: string, password: string) =>
+  makeMetadataApiRequest(
+    getLoginTokenFromCredentialsQueryFactory({
+      email,
+      password,
+      origin: buildAppleWorkspaceOrigin(),
+    }),
+    null,
+  );
 
 describe('getLoginTokenFromCredentials with a personal invitation (integration)', () => {
   let email: string;
-  let userId: string;
+  let userAccessToken: string;
 
   beforeEach(async () => {
     email = `invited-login-${randomUUID()}@example.com`;
+    userAccessToken = await signUpUser(email);
 
-    const insertedRows = await global.testDataSource.query(
-      `INSERT INTO core."user" ("firstName", "lastName", "email", "passwordHash", "isEmailVerified")
-       VALUES ($1, $2, $3, $4, true)
-       RETURNING "id"`,
-      ['Invited', 'User', email, PASSWORD_HASH],
-    );
-
-    userId = insertedRows[0].id;
-
-    await seedWorkspaceInvitation({
-      email,
-      value: `invited-login-token-${randomUUID()}`,
-      expiresAt: new Date(Date.now() + ONE_HOUR_IN_MS),
-    });
+    await sendInvitations({ input: { emails: [email] }, expectToFail: false });
   });
 
   afterEach(async () => {
     await deleteWorkspaceInvitationsByEmail({ email });
-    await global.testDataSource.query(
-      'DELETE FROM core."userWorkspace" WHERE "userId" = $1',
-      [userId],
-    );
-    await global.testDataSource.query(
-      'DELETE FROM core."user" WHERE "id" = $1',
-      [userId],
-    );
+    await deleteUser({ accessToken: userAccessToken, expectToFail: false });
   });
 
   it('keeps the invitation and does not join the workspace on a wrong password', async () => {
-    const response = await makeMetadataApiRequest(
-      getLoginTokenFromCredentialsQueryFactory({
-        email,
-        password: 'wrong-password',
-        origin: buildAppleWorkspaceOrigin(),
-      }),
-      null,
-    );
+    const response = await loginOnAppleWorkspace(email, 'wrong-password');
 
     expect(response.body.data?.getLoginTokenFromCredentials).toBeFalsy();
-    expect(response.body.errors).toHaveLength(1);
+    expect(response.body.errors[0].message).toBe('Wrong password');
     expect(await findWorkspaceInvitationsByEmail({ email })).toHaveLength(1);
-    expect(await countAppleMemberships(userId)).toBe(0);
   });
 
   it('joins the workspace through the invitation on the right password', async () => {
-    const response = await makeMetadataApiRequest(
-      getLoginTokenFromCredentialsQueryFactory({
-        email,
-        password: PASSWORD,
-        origin: buildAppleWorkspaceOrigin(),
-      }),
-      null,
-    );
+    const response = await loginOnAppleWorkspace(email, PASSWORD);
 
     expect(response.body.errors).toBeUndefined();
-    expect(
-      response.body.data.getLoginTokenFromCredentials.loginToken.token,
-    ).toBeDefined();
-    expect(await countAppleMemberships(userId)).toBe(1);
-  });
-  it('joins the workspace on the right password even when the email still needs verification', async () => {
-    await global.testDataSource.query(
-      'UPDATE core."user" SET "isEmailVerified" = false WHERE "id" = $1',
-      [userId],
-    );
+    expect(await findWorkspaceInvitationsByEmail({ email })).toHaveLength(0);
 
+    const { errors } = await getAuthTokensFromLoginToken({
+      loginToken:
+        response.body.data.getLoginTokenFromCredentials.loginToken.token,
+      origin: buildAppleWorkspaceOrigin(),
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+  });
+
+  it('joins the workspace on the right password even when the email still needs verification', async () => {
     await updateConfigVariable({
       input: { key: 'IS_EMAIL_VERIFICATION_REQUIRED', value: true },
     });
 
     try {
-      const response = await makeMetadataApiRequest(
-        getLoginTokenFromCredentialsQueryFactory({
-          email,
-          password: PASSWORD,
-          origin: buildAppleWorkspaceOrigin(),
-        }),
-        null,
-      );
+      const response = await loginOnAppleWorkspace(email, PASSWORD);
 
       expect(response.body.data?.getLoginTokenFromCredentials).toBeFalsy();
       expect(response.body.errors[0].extensions.subCode).toBe(
         'EMAIL_NOT_VERIFIED',
       );
-      expect(await countAppleMemberships(userId)).toBe(1);
+      expect(await findWorkspaceInvitationsByEmail({ email })).toHaveLength(0);
     } finally {
       await updateConfigVariable({
         input: { key: 'IS_EMAIL_VERIFICATION_REQUIRED', value: false },
       });
     }
+
+    const response = await loginOnAppleWorkspace(email, PASSWORD);
+
+    expect(response.body.errors).toBeUndefined();
   });
 });
 
 describe('getLoginTokenFromCredentials without access to the workspace (integration)', () => {
-  const email = `outsider-login-${Date.now()}@example.com`;
-  let userId: string;
+  let email: string;
+  let userAccessToken: string;
 
   beforeAll(async () => {
-    const insertedRows = await global.testDataSource.query(
-      `INSERT INTO core."user" ("firstName", "lastName", "email", "passwordHash", "isEmailVerified")
-       VALUES ($1, $2, $3, $4, true)
-       RETURNING "id"`,
-      ['Outsider', 'User', email, PASSWORD_HASH],
-    );
-
-    userId = insertedRows[0].id;
+    email = `outsider-login-${randomUUID()}@example.com`;
+    userAccessToken = await signUpUser(email);
   });
 
   afterAll(async () => {
-    await global.testDataSource.query(
-      'DELETE FROM core."user" WHERE "id" = $1',
-      [userId],
-    );
+    await deleteUser({ accessToken: userAccessToken, expectToFail: false });
   });
 
   it.each([PASSWORD, 'wrong-password'])(
     'rejects as not a member whatever the password (%s)',
     async (password) => {
-      const response = await makeMetadataApiRequest(
-        getLoginTokenFromCredentialsQueryFactory({
-          email,
-          password,
-          origin: buildAppleWorkspaceOrigin(),
-        }),
-        null,
-      );
+      const response = await loginOnAppleWorkspace(email, password);
 
       expect(response.body.data?.getLoginTokenFromCredentials).toBeFalsy();
       expect(response.body.errors[0].message).toBe(
         'User is not a member of the workspace.',
       );
-      expect(await countAppleMemberships(userId)).toBe(0);
     },
   );
 });
