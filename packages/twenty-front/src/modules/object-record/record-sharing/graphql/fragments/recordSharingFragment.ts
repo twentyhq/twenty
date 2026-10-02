@@ -2,30 +2,30 @@ import { gql } from '@apollo/client';
 
 export const RECORD_SHARING_FRAGMENT = gql`
   fragment RecordSharingFields on RecordSharingDTO {
-    viewerAccessLevel
+    sharingMode
+    canManageSharing
     permissions {
       canRead
       canUpdate
       canDelete
       canSoftDelete
     }
-    isEnabled
-    hasInheritedAccess
-    isOpenByDefault
     generalAccessLevel
-    sharingReach
+    defaultGeneralAccessLevel
+    hasManagedGeneralAccess
     shares {
       id
       principalId
       principalType
+      principalRoleId
       accessLevel
       rowCause
-      canRoleRead
-      canRoleUpdate
     }
     roles {
       id
       label
+      canRead
+      canUpdate
     }
   }
 `;
