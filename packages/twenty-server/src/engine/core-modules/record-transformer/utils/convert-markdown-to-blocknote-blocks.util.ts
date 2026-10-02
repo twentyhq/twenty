@@ -1,51 +1,24 @@
 import { randomUUID } from 'crypto';
 
+import type {
+  DefaultStyleSchema,
+  Link,
+  PartialBlock,
+  StyledText,
+} from '@blocknote/core';
 import { Lexer, type Token, type Tokens } from 'marked';
 
-type BlockNoteStyle = 'bold' | 'italic' | 'strike' | 'code';
+type InlineStyle = 'bold' | 'italic' | 'strike' | 'code';
 
-type BlockNoteStyledText = {
-  type: 'text';
-  text: string;
-  styles: Partial<Record<BlockNoteStyle, true>>;
-};
-
-type BlockNoteLink = {
-  type: 'link';
-  href: string;
-  content: BlockNoteStyledText[];
-};
-
-type BlockNoteInlineContent = BlockNoteStyledText | BlockNoteLink;
-
-type BlockNoteTableContent = {
-  type: 'tableContent';
-  columnWidths: null[];
-  headerRows: number;
-  rows: {
-    cells: {
-      type: 'tableCell';
-      content: BlockNoteInlineContent[];
-      props: Record<string, string | number>;
-    }[];
-  }[];
-};
-
-type BlockNoteBlock = {
-  id: string;
-  type: string;
-  props: Record<string, string | number | boolean>;
-  content?: BlockNoteInlineContent[] | BlockNoteTableContent;
-  children: BlockNoteBlock[];
-};
+type InlineContent = StyledText<DefaultStyleSchema> | Link<DefaultStyleSchema>;
 
 type InlineRun = {
   text: string;
-  styles: BlockNoteStyle[];
+  styles: InlineStyle[];
   href?: string;
 };
 
-const STYLE_BY_TOKEN_TYPE: Record<string, BlockNoteStyle> = {
+const STYLE_BY_TOKEN_TYPE: Record<string, InlineStyle> = {
   strong: 'bold',
   em: 'italic',
   del: 'strike',
@@ -55,29 +28,17 @@ const DEFAULT_BLOCK_PROPS = {
   backgroundColor: 'default',
   textColor: 'default',
   textAlignment: 'left',
-};
+} as const;
 
-const createBlock = ({
-  type,
-  props,
-  content,
-  children = [],
-}: {
-  type: string;
-  props: BlockNoteBlock['props'];
-  content?: BlockNoteBlock['content'];
-  children?: BlockNoteBlock[];
-}): BlockNoteBlock => ({
+const createBlock = (block: PartialBlock): PartialBlock => ({
   id: randomUUID(),
-  type,
-  props,
-  ...(content === undefined ? {} : { content }),
-  children,
+  ...block,
+  children: block.children ?? [],
 });
 
 const collectInlineRuns = (
   tokens: Token[],
-  styles: BlockNoteStyle[],
+  styles: InlineStyle[],
   href: string | undefined,
   runs: InlineRun[],
 ): void => {
@@ -135,7 +96,7 @@ const isSameRunFormat = (firstRun: InlineRun, secondRun: InlineRun) =>
   firstRun.styles.length === secondRun.styles.length &&
   firstRun.styles.every((style) => secondRun.styles.includes(style));
 
-const convertInlineTokens = (tokens: Token[]): BlockNoteInlineContent[] => {
+const convertInlineTokens = (tokens: Token[]): InlineContent[] => {
   const runs: InlineRun[] = [];
 
   collectInlineRuns(tokens, [], undefined, runs);
@@ -156,10 +117,10 @@ const convertInlineTokens = (tokens: Token[]): BlockNoteInlineContent[] => {
     }
   }
 
-  const content: BlockNoteInlineContent[] = [];
+  const content: InlineContent[] = [];
 
   for (const run of mergedRuns) {
-    const styledText: BlockNoteStyledText = {
+    const styledText: StyledText<DefaultStyleSchema> = {
       type: 'text',
       text: run.text,
       styles: Object.fromEntries(run.styles.map((style) => [style, true])),
@@ -178,12 +139,12 @@ const convertInlineTokens = (tokens: Token[]): BlockNoteInlineContent[] => {
   return content;
 };
 
-const isBlankContent = (content: BlockNoteInlineContent[]) =>
+const isBlankContent = (content: InlineContent[]) =>
   content.every((item) => item.type === 'text' && item.text.trim() === '');
 
 // Images are blocks in BlockNote, so a paragraph is split around them
-const convertParagraph = (tokens: Token[]): BlockNoteBlock[] => {
-  const blocks: BlockNoteBlock[] = [];
+const convertParagraph = (tokens: Token[]): PartialBlock[] => {
+  const blocks: PartialBlock[] = [];
   let pendingTokens: Token[] = [];
 
   const flushParagraph = () => {
@@ -233,7 +194,7 @@ const convertListItem = (
   list: Tokens.List,
   item: Tokens.ListItem,
   index: number,
-): BlockNoteBlock => {
+): PartialBlock => {
   const tokens = item.tokens.filter(
     (token) => token.type !== 'checkbox' && token.type !== 'space',
   );
@@ -279,7 +240,7 @@ const convertListItem = (
   });
 };
 
-const convertTable = (table: Tokens.Table): BlockNoteBlock => {
+const convertTable = (table: Tokens.Table): PartialBlock => {
   const toRow = (cells: Tokens.TableCell[]) => ({
     cells: cells.map((cell, columnIndex) => ({
       type: 'tableCell' as const,
@@ -299,15 +260,15 @@ const convertTable = (table: Tokens.Table): BlockNoteBlock => {
     props: { textColor: 'default' },
     content: {
       type: 'tableContent',
-      columnWidths: table.header.map(() => null),
+      columnWidths: table.header.map(() => undefined),
       headerRows: 1,
       rows: [toRow(table.header), ...table.rows.map(toRow)],
     },
   });
 };
 
-const convertBlockTokens = (tokens: Token[]): BlockNoteBlock[] =>
-  tokens.flatMap((token): BlockNoteBlock[] => {
+const convertBlockTokens = (tokens: Token[]): PartialBlock[] =>
+  tokens.flatMap((token): PartialBlock[] => {
     switch (token.type) {
       case 'space':
       case 'def':
@@ -386,7 +347,7 @@ const convertBlockTokens = (tokens: Token[]): BlockNoteBlock[] =>
 
 export const convertMarkdownToBlocknoteBlocks = (
   markdown: string,
-): BlockNoteBlock[] => {
+): PartialBlock[] => {
   const blocks = convertBlockTokens(new Lexer({ gfm: true }).lex(markdown));
 
   return blocks.length > 0

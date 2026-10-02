@@ -229,7 +229,7 @@ describe('convertMarkdownToBlocknoteBlocks', () => {
 
   it('should give every block a unique id', () => {
     const blocks = convertMarkdownToBlocknoteBlocks('- a\n  - b\n\nc');
-    const ids = [blocks[0].id, blocks[0].children[0].id, blocks[1].id];
+    const ids = [blocks[0].id, blocks[0].children?.[0].id, blocks[1].id];
 
     expect(new Set(ids).size).toBe(3);
   });
