@@ -2379,14 +2379,14 @@
           },
           {
             "name": "filter",
-            "type": "((item: Items[number][\"items\"][number], query: string, itemToString?: ((item: Items[number][\"items\"][number]) => string) | undefined) => boolean) | null",
+            "type": "((item: TItem, query: string, itemToString?: ((item: TItem) => string) | undefined) => boolean) | null",
             "required": false,
             "defaultValue": null,
             "description": "Filter function used to match items against the input query."
           },
           {
             "name": "filteredItems",
-            "type": "readonly Items[number][\"items\"][number][] | readonly Group<Items[number][\"items\"][number]>[]",
+            "type": "readonly TItem[] | readonly Group<TItem>[]",
             "required": false,
             "defaultValue": null,
             "description": "Filtered items to display in the list.\nWhen provided, the list uses these items instead of filtering the `items` prop internally.\nWhen `items` is also provided, this array must preserve its flat or grouped structure.\nNullish entries are not supported, as in `items`.\nUse when you want to control filtering logic externally with the `useFilter()` hook."
@@ -2435,14 +2435,14 @@
           },
           {
             "name": "items",
-            "type": "readonly { items: readonly any[]; }[]",
-            "required": true,
+            "type": "readonly TItem[]",
+            "required": false,
             "defaultValue": null,
-            "description": "The items to be displayed in the list.\nCan be either a flat array of items or an array of groups with items.\nNullish entries are not supported: remove them from the data before passing it."
+            "description": "Items to display in the list. Nullish entries are not supported."
           },
           {
             "name": "itemToStringValue",
-            "type": "((itemValue: Items[number][\"items\"][number]) => string)",
+            "type": "((itemValue: TItem) => string)",
             "required": false,
             "defaultValue": null,
             "description": "When the item values are objects (`<Autocomplete.Item value={object}>`), this function converts the object value to a string representation for both display in the input and form submission.\nIf the shape of the object is `{ value, label }`, the label will be used automatically without needing to specify this prop."
@@ -2498,7 +2498,7 @@
           },
           {
             "name": "onItemHighlighted",
-            "type": "((highlightedValue: Items[number][\"items\"][number] | undefined, eventDetails: HighlightEventDetails) => void)",
+            "type": "((highlightedValue: TItem | undefined, eventDetails: HighlightEventDetails) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Callback fired when an item is highlighted or unhighlighted.\nReceives the highlighted item value (or `undefined` if no item is highlighted) and event details with a `reason` property describing why the highlight changed.\nThe `reason` can be:\n- `'keyboard'`: the highlight changed due to keyboard navigation.\n- `'pointer'`: the highlight changed due to pointer hovering.\n- `'none'`: the highlight changed programmatically."

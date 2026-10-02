@@ -72,6 +72,7 @@ const ControlledResultsExample = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [items, setItems] = useState<string[]>([]);
+  const [outsideClickCount, setOutsideClickCount] = useState(0);
 
   return (
     <>
@@ -112,7 +113,10 @@ const ControlledResultsExample = () => {
       >
         Receive results
       </Button>
-      <Button>Outside</Button>
+      <Button onClick={() => setOutsideClickCount((count) => count + 1)}>
+        Outside
+      </Button>
+      <span>{`Outside clicks: ${outsideClickCount}`}</span>
     </>
   );
 };
@@ -152,6 +156,9 @@ export const ControlledResults: Story = {
       expect(input).toHaveAttribute('aria-expanded', 'false'),
     );
     await expect(input).toHaveValue('Paris');
+    await expect(canvas.getByText('Outside clicks: 0')).toBeVisible();
+    await userEvent.click(outsideButton);
+    await expect(canvas.getByText('Outside clicks: 1')).toBeVisible();
   },
 };
 

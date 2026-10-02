@@ -1,4 +1,5 @@
 const DISMISSING_EVENT_TYPES_FOLLOWED_BY_CLICK = [
+  'pointerdown',
   'mousedown',
   'touchend',
   'focusout',

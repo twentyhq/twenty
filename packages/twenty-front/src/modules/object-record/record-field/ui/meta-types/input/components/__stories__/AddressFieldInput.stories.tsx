@@ -124,7 +124,7 @@ const AddressInputWithContext = ({
             <InitializedAddressFieldInput />
           </FieldInputEventContext.Provider>
         </FieldContext.Provider>
-        <Button>Outside</Button>
+        <Button onClick={outsideButtonClickJestFn}>Outside</Button>
       </RecordFieldComponentInstanceContext.Provider>
     </WorkspaceSurfaceContext.Provider>
   );
@@ -136,6 +136,7 @@ const clickOutsideJestFn = fn();
 const tabJestFn = fn();
 const shiftTabJestFn = fn();
 const autocompleteResponseJestFn = fn();
+const outsideButtonClickJestFn = fn();
 
 const clearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks === true) {
@@ -145,6 +146,7 @@ const clearMocksDecorator: Decorator = (Story, context) => {
     tabJestFn.mockClear();
     shiftTabJestFn.mockClear();
     autocompleteResponseJestFn.mockClear();
+    outsideButtonClickJestFn.mockClear();
   }
   return <Story />;
 };
@@ -333,6 +335,7 @@ export const CancelsSuggestionsBeforePersisting: Story = {
       expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
       expect(input).toHaveValue('Address 1 Rue');
       expect(clickOutsideJestFn).not.toHaveBeenCalled();
+      expect(outsideButtonClickJestFn).not.toHaveBeenCalled();
     });
 
     await userEvent.click(outsideButton);

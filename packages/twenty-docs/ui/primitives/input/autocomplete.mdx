@@ -137,7 +137,7 @@ The parent owns debounce, request cancellation, and stale response protection. I
 
 `Popup` defaults to `side="bottom"`, `align="start"`, and `sideOffset={8}`. It uses the anchor's width as its minimum width and the [theme's portal container](/ui/theming#scope-an-override) unless you provide `container`. Set `width` to override the anchor width with a fixed popup width. Customize placement with `side`, `align`, offsets, `collisionPadding`, or `anchor`.
 
-Use `Item.startIcon`, `Item.endIcon`, and `Item.description` for supporting content. Arrow keys change the highlighted item without moving DOM focus from the input; Enter chooses that item and Escape dismisses the popup. Call `event.preventDefault()` in the input's `onKeyDown` to handle a key yourself and skip this built-in behavior. Give the input an accessible label or compose it with [Field](/ui/primitives/input/field).
+Use `Item.startIcon`, `Item.endIcon`, and `Item.description` for supporting content. Arrow keys change the highlighted item without moving DOM focus from the input; Enter chooses that item and Escape dismisses the popup. A press outside the input group and popup also dismisses it without activating the element that was pressed. Call `event.preventDefault()` in the input's `onKeyDown` to handle a key yourself and skip this built-in behavior. Give the input an accessible label or compose it with [Field](/ui/primitives/input/field).
 
 ## Props
 

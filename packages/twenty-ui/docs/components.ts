@@ -286,6 +286,10 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/autocomplete',
     partPropDescriptions: {
+      Root: {
+        items:
+          'Items to display in the list. Nullish entries are not supported.',
+      },
       Input: {
         size: 'Visual size of the input. Inside an InputGroup, the group size applies.',
       },
