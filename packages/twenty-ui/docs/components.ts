@@ -1,3 +1,4 @@
+import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
 import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
@@ -65,6 +66,13 @@ import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'CountrySelect',
+    source: 'components/input/CountrySelect/CountrySelect.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/country-select',
+    propDescriptions: COUNTRY_SELECT_PROP_DESCRIPTIONS,
+  },
   {
     name: 'ProgressRing',
     source: 'primitives/feedback/ProgressRing/ProgressRing.tsx',

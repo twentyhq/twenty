@@ -1,0 +1,78 @@
+---
+title: CountrySelect
+description: Search prepared country choices and select a country or an explicit empty value.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CountrySelectReference from '/snippets/ui/generated/components/country-select.mdx';
+
+`CountrySelect` combines a labeled trigger, decorative flags, country search, selected options, and an explicit no-country choice. It uses the shared Dropdown picker behavior. Your application supplies country data and labels and decides how selected values are stored.
+
+<StoryEmbed
+  storyId="components-input-countryselect--default"
+  title="Country selection"
+  height={340}
+/>
+
+## Prepared choices
+
+Each choice has a unique, non-empty `value`, a display `label`, and an optional `flag`. Values are opaque strings. They can be country names, identifiers, or codes according to your application's existing storage format. Selecting a choice reports its value unchanged.
+
+```tsx
+import { useState } from 'react';
+import { CountrySelect } from 'twenty-ui/components';
+
+export const ShippingCountry = () => {
+  const [country, setCountry] = useState('France');
+
+  return (
+    <CountrySelect
+      label="Shipping country"
+      countries={[
+        { value: 'France', label: 'France', flag: '🇫🇷' },
+        { value: 'Germany', label: 'Germany', flag: '🇩🇪' },
+        { value: 'Japan', label: 'Japan', flag: '🇯🇵' },
+      ]}
+      value={country}
+      onValueChange={setCountry}
+      labels={{
+        search: 'Search countries',
+        noCountry: 'No country',
+        noResults: 'No countries found',
+      }}
+    />
+  );
+};
+```
+
+`flag` accepts a React node and is decorative. The country label supplies the accessible option name. Country lists, flag assets, locale selection, and translations remain in the host application.
+
+## Empty and unknown values
+
+The empty string (`''`) represents no country. The no-country option appears beside the supplied choices and reports that empty string when selected. Reserve it for the empty selection instead of using it as a country value.
+
+An unknown value displays the no-country label and icon. It does not call `onValueChange` or overwrite the host value. This lets the application decide how to handle a stored value that is absent from the current choices.
+
+## Search and interaction
+
+Search matches the prepared display labels without distinguishing letter case or accents. The no-country label participates in the same search. A query with no matching options displays `labels.noResults`. Closing and reopening the picker clears its search.
+
+The picker handles pointer selection, keyboard movement, selected-option presentation, focus, and closing. Selecting an option closes the popup. Escape closes it and restores trigger focus. Each instance has independent popup and search state.
+
+Provide a visible `label`, or use `aria-label` or `aria-labelledby` on the trigger. The required `labels` object supplies the search input's accessible name, no-country text, and empty-result text. Native trigger attributes, event handlers, `className`, `style`, and `ref` apply to its button.
+
+`disabled` prevents opening and selection. A picker with no supplied countries is disabled as well.
+
+## Host integration
+
+Use `open` and `onOpenChange` when the application needs to register or control the popup. Without `open`, the picker manages its own open state. `popupProps` accepts Dropdown popup options for positioning, portal placement, and focus handling.
+
+Keep application dropdown IDs, focus stacks, field metadata, persistence, and editing lifecycle in the host adapter. Changing the display label or flag does not require changing the stored value.
+
+## Front component renderer
+
+The React and Preact front component sandboxes render the selected country, decorative flag, and disabled trigger. Opening the popup is currently unsupported: the underlying Dropdown encounters missing viewport width data, and React also reports missing event-type data. Search, selection, popup focus, and closing therefore remain unavailable in those sandboxes. Renderer fixtures check initial presentation and explicitly assert the known popup failure. The UI Storybook exercises these interactions in a regular browser.
+
+## Props
+
+<CountrySelectReference />

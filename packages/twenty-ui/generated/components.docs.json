@@ -1,5 +1,152 @@
 [
   {
+    "name": "CountrySelect",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/country-select",
+    "props": [
+      {
+        "name": "className",
+        "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class applied to the trigger."
+      },
+      {
+        "name": "closeDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "0",
+        "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
+      },
+      {
+        "name": "countries",
+        "type": "readonly CountryChoice[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Prepared country choices with unique non-empty values, display labels, and optional decorative flags."
+      },
+      {
+        "name": "delay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "300",
+        "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables opening and selection. An empty country list is also disabled."
+      },
+      {
+        "name": "handle",
+        "type": "PopoverHandle<unknown>",
+        "required": false,
+        "defaultValue": null,
+        "description": "A handle to associate the trigger with a popover."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional visible label associated with the trigger."
+      },
+      {
+        "name": "labels",
+        "type": "{ search: string; noCountry: string; noResults: string; }",
+        "required": true,
+        "defaultValue": null,
+        "description": "Host-provided search, no-country, and empty-result text."
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+      },
+      {
+        "name": "onOpenChange",
+        "type": "((open: boolean) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Reports popup opening and closing."
+      },
+      {
+        "name": "onValueChange",
+        "type": "(value: string) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Reports the selected choice value, or an empty string when no country is selected."
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controls whether the country popup is open."
+      },
+      {
+        "name": "openOnHover",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the popover should also open when the trigger is hovered."
+      },
+      {
+        "name": "payload",
+        "type": "unknown",
+        "required": false,
+        "defaultValue": null,
+        "description": "A payload to pass to the popover when it is opened."
+      },
+      {
+        "name": "popupProps",
+        "type": "Omit<DropdownContentProps, \"children\" | \"aria-label\" | \"keepMounted\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Dropdown popup positioning, portal, focus, and event options for host integration."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the trigger element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the trigger element while preserving its behavior and props."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Selected choice value. An empty string selects no country."
+      }
+    ]
+  },
+  {
     "name": "ProgressRing",
     "entryPoint": "twenty-ui/primitives/feedback",
     "slug": "feedback/progress-ring",
