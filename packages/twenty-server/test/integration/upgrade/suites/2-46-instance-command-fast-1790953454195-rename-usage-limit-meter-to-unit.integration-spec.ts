@@ -1,7 +1,7 @@
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { RenameUsageLimitMeterToUnitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790933535598-rename-usage-limit-meter-to-unit';
+import { RenameUsageLimitMeterToUnitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1790953454195-rename-usage-limit-meter-to-unit';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -117,7 +117,7 @@ const METER_FIXTURES: UsageLimitFixture[] = [
   },
 ];
 
-describe('2-45 fast instance command 1790933535598 - RenameUsageLimitMeterToUnitFastInstanceCommand (integration)', () => {
+describe('2-46 fast instance command 1790953454195 - RenameUsageLimitMeterToUnitFastInstanceCommand (integration)', () => {
   const command = new RenameUsageLimitMeterToUnitFastInstanceCommand();
   let queryRunner: QueryRunner;
   let spenderId: string;

@@ -38,7 +38,7 @@ type UnmappableUsageLimit = {
   meter: string;
 };
 
-@RegisteredInstanceCommand('2.45.0', 1790933535598)
+@RegisteredInstanceCommand('2.46.0', 1790953454195)
 export class RenameUsageLimitMeterToUnitFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const unmappableUsageLimits: UnmappableUsageLimit[] =
