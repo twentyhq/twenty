@@ -1393,35 +1393,49 @@ export interface RecordPermissionsDTO {
 
 export interface RecordSharingGrantDTO {
     id: Scalars['ID']
-    principalType: Scalars['String']
+    principalType: RecordSharePrincipalType
     principalId: Scalars['UUID']
+    principalRoleId?: Scalars['UUID']
     accessLevel: RecordShareAccessLevel
-    rowCause: Scalars['String']
-    canRoleRead?: Scalars['Boolean']
-    canRoleUpdate?: Scalars['Boolean']
+    rowCause: RecordShareRowCause
     __typename: 'RecordSharingGrantDTO'
 }
 
+export type RecordSharePrincipalType = 'EVERYONE' | 'WORKSPACE_MEMBER' | 'ROLE'
+
 export type RecordShareAccessLevel = 'NONE' | 'READ' | 'READ_WRITE' | 'FULL'
+
+export type RecordShareRowCause = 'OWNER' | 'MANUAL' | 'RULE' | 'APPLICATION'
 
 export interface RecordSharingRoleDTO {
     id: Scalars['UUID']
     label: Scalars['String']
+    canRead?: Scalars['Boolean']
+    canUpdate?: Scalars['Boolean']
     __typename: 'RecordSharingRoleDTO'
 }
 
 export interface RecordSharingDTO {
-    viewerAccessLevel?: RecordShareAccessLevel
+    sharingMode: RecordSharingMode
+    canManageSharing: Scalars['Boolean']
     permissions: RecordPermissionsDTO
-    isEnabled: Scalars['Boolean']
-    hasInheritedAccess: Scalars['Boolean']
-    isOpenByDefault: Scalars['Boolean']
     generalAccessLevel?: RecordShareAccessLevel
-    isGeneralAccessDefault: Scalars['Boolean']
-    sharingReach: ObjectSharingReach
+    defaultGeneralAccessLevel?: RecordShareAccessLevel
+    hasManagedGeneralAccess: Scalars['Boolean']
     roles: RecordSharingRoleDTO[]
     shares: RecordSharingGrantDTO[]
     __typename: 'RecordSharingDTO'
+}
+
+
+/** How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions */
+export type RecordSharingMode = 'ROLE_ONLY' | 'PRIVATE' | 'INHERITED' | 'OPEN_BY_DEFAULT'
+
+export interface RecordPermissionsResult {
+    objectMetadataId: Scalars['UUID']
+    recordId: Scalars['UUID']
+    permissions: RecordPermissionsDTO
+    __typename: 'RecordPermissionsResult'
 }
 
 export interface JobStatus {
@@ -3153,13 +3167,6 @@ export interface RecordExport {
     __typename: 'RecordExport'
 }
 
-export interface RecordPermissionsResult {
-    objectMetadataId: Scalars['UUID']
-    recordId: Scalars['UUID']
-    permissions: RecordPermissionsDTO
-    __typename: 'RecordPermissionsResult'
-}
-
 export interface AgentTurnEvaluation {
     id: Scalars['UUID']
     turnId: Scalars['UUID']
@@ -3371,6 +3378,7 @@ export interface MinimalMetadata {
 
 export interface Query {
     recordSharing: RecordSharingDTO
+    recordPermissions: RecordPermissionsResult[]
     navigationMenuItems: NavigationMenuItem[]
     navigationMenuItem?: NavigationMenuItem
     enterprisePortalSession?: Scalars['String']
@@ -3422,6 +3430,7 @@ export interface Query {
     findWorkspaceInvitations: WorkspaceInvitation[]
     getApprovedAccessDomains: ApprovedAccessDomain[]
     getRoles: Role[]
+    getRole: Role
     apiKeys: ApiKey[]
     getApiKeyRoles: Role[]
     apiKey?: ApiKey
@@ -3483,7 +3492,6 @@ export interface Query {
     validationRules: ValidationRule[]
     timelineActivityTypes: TimelineActivityType[]
     metadataTranslations: MetadataTranslation[]
-    recordPermissions: RecordPermissionsResult[]
     checkUserExists: CheckUserExist
     checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid
     findWorkspaceFromInviteHash: Workspace
@@ -3514,7 +3522,9 @@ export type EventLogFilterOperand = 'IS' | 'IS_NOT'
 export interface Mutation {
     addQueryToEventStream: Scalars['Boolean']
     removeQueryFromEventStream: Scalars['Boolean']
+    setRecordGeneralAccess: RecordSharingDTO
     setRecordShare: RecordSharingDTO
+    removeRecordShare: RecordSharingDTO
     createManyNavigationMenuItems: NavigationMenuItem[]
     createNavigationMenuItem: NavigationMenuItem
     updateManyNavigationMenuItems: NavigationMenuItem[]
@@ -5229,10 +5239,9 @@ export interface RecordSharingGrantDTOGenqlSelection{
     id?: boolean | number
     principalType?: boolean | number
     principalId?: boolean | number
+    principalRoleId?: boolean | number
     accessLevel?: boolean | number
     rowCause?: boolean | number
-    canRoleRead?: boolean | number
-    canRoleUpdate?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5240,21 +5249,29 @@ export interface RecordSharingGrantDTOGenqlSelection{
 export interface RecordSharingRoleDTOGenqlSelection{
     id?: boolean | number
     label?: boolean | number
+    canRead?: boolean | number
+    canUpdate?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
 export interface RecordSharingDTOGenqlSelection{
-    viewerAccessLevel?: boolean | number
+    sharingMode?: boolean | number
+    canManageSharing?: boolean | number
     permissions?: RecordPermissionsDTOGenqlSelection
-    isEnabled?: boolean | number
-    hasInheritedAccess?: boolean | number
-    isOpenByDefault?: boolean | number
     generalAccessLevel?: boolean | number
-    isGeneralAccessDefault?: boolean | number
-    sharingReach?: boolean | number
+    defaultGeneralAccessLevel?: boolean | number
+    hasManagedGeneralAccess?: boolean | number
     roles?: RecordSharingRoleDTOGenqlSelection
     shares?: RecordSharingGrantDTOGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface RecordPermissionsResultGenqlSelection{
+    objectMetadataId?: boolean | number
+    recordId?: boolean | number
+    permissions?: RecordPermissionsDTOGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7096,14 +7113,6 @@ export interface RecordExportGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface RecordPermissionsResultGenqlSelection{
-    objectMetadataId?: boolean | number
-    recordId?: boolean | number
-    permissions?: RecordPermissionsDTOGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface AgentTurnEvaluationGenqlSelection{
     id?: boolean | number
     turnId?: boolean | number
@@ -7312,7 +7321,8 @@ export interface MinimalMetadataGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
-    recordSharing?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordSharingTargetInput} })
+    recordSharing?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordTargetInput} })
+    recordPermissions?: (RecordPermissionsResultGenqlSelection & { __args: {targets: RecordTargetInput[]} })
     navigationMenuItems?: NavigationMenuItemGenqlSelection
     navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
@@ -7370,6 +7380,7 @@ export interface QueryGenqlSelection{
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
     getApprovedAccessDomains?: ApprovedAccessDomainGenqlSelection
     getRoles?: RoleGenqlSelection
+    getRole?: (RoleGenqlSelection & { __args: {id: Scalars['UUID']} })
     apiKeys?: ApiKeyGenqlSelection
     getApiKeyRoles?: RoleGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
@@ -7437,7 +7448,6 @@ export interface QueryGenqlSelection{
     validationRules?: (ValidationRuleGenqlSelection & { __args: {objectMetadataId: Scalars['UUID']} })
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
-    recordPermissions?: (RecordPermissionsResultGenqlSelection & { __args: {targets: RecordPermissionsTargetInput[]} })
     checkUserExists?: (CheckUserExistGenqlSelection & { __args: {email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
     checkWorkspaceInviteHashIsValid?: (WorkspaceInviteHashValidGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
@@ -7462,7 +7472,7 @@ export interface QueryGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface RecordSharingTargetInput {objectMetadataId: Scalars['UUID'],recordId: Scalars['UUID']}
+export interface RecordTargetInput {objectMetadataId: Scalars['UUID'],recordId: Scalars['UUID']}
 
 export interface UsageQuotaScopeInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),periodUnit: Scalars['String'],unit: UsageUnit}
 
@@ -7490,8 +7500,6 @@ export interface ListAppConnectionsInput {providerName?: (Scalars['String'] | nu
 
 export interface MetadataTranslationsInput {objectMetadataId?: (Scalars['UUID'] | null),fieldMetadataId?: (Scalars['UUID'] | null),locale?: (Scalars['String'] | null)}
 
-export interface RecordPermissionsTargetInput {objectMetadataId: Scalars['UUID'],recordId: Scalars['UUID']}
-
 export interface EventLogQueryInput {table: EventLogTable,filters?: (EventLogFiltersInput | null),first?: (Scalars['Int'] | null),after?: (Scalars['String'] | null)}
 
 export interface EventLogFiltersInput {eventType?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),dateRange?: (EventLogDateRangeInput | null),recordId?: (Scalars['String'] | null),objectMetadataId?: (Scalars['String'] | null),fieldFilters?: (EventLogFieldFilterInput[] | null)}
@@ -7509,7 +7517,9 @@ export interface BarChartDataInput {objectMetadataId: Scalars['UUID'],configurat
 export interface MutationGenqlSelection{
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
     removeQueryFromEventStream?: { __args: {input: RemoveQueryFromEventStreamInput} }
-    setRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordSharingTargetInput, principal: RecordSharePrincipalInput, enabled: Scalars['Boolean'], accessLevel?: (RecordShareAccessLevel | null)} })
+    setRecordGeneralAccess?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordTargetInput, accessLevel: RecordShareAccessLevel} })
+    setRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordTargetInput, principal: RecordSharePrincipalInput, accessLevel: RecordShareAccessLevel} })
+    removeRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordTargetInput, principal: RecordSharePrincipalInput} })
     createManyNavigationMenuItems?: (NavigationMenuItemGenqlSelection & { __args: {inputs: CreateNavigationMenuItemInput[]} })
     createNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: CreateNavigationMenuItemInput} })
     updateManyNavigationMenuItems?: (NavigationMenuItemGenqlSelection & { __args: {inputs: UpdateOneNavigationMenuItemInput[]} })
@@ -7786,7 +7796,7 @@ export interface AddQuerySubscriptionInput {eventStreamId: Scalars['String'],que
 
 export interface RemoveQueryFromEventStreamInput {eventStreamId: Scalars['String'],queryId: Scalars['String']}
 
-export interface RecordSharePrincipalInput {workspaceMemberId?: (Scalars['UUID'] | null),roleId?: (Scalars['UUID'] | null),everyone?: (Scalars['Boolean'] | null)}
+export interface RecordSharePrincipalInput {workspaceMemberId?: (Scalars['UUID'] | null),roleId?: (Scalars['UUID'] | null)}
 
 export interface CreateNavigationMenuItemInput {id?: (Scalars['UUID'] | null),userWorkspaceId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
 
@@ -9109,6 +9119,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isRecordSharingDTO = (obj?: { __typename?: any } | null): obj is RecordSharingDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordSharingDTO"')
       return RecordSharingDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const RecordPermissionsResult_possibleTypes: string[] = ['RecordPermissionsResult']
+    export const isRecordPermissionsResult = (obj?: { __typename?: any } | null): obj is RecordPermissionsResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordPermissionsResult"')
+      return RecordPermissionsResult_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10601,14 +10619,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
-    const RecordPermissionsResult_possibleTypes: string[] = ['RecordPermissionsResult']
-    export const isRecordPermissionsResult = (obj?: { __typename?: any } | null): obj is RecordPermissionsResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordPermissionsResult"')
-      return RecordPermissionsResult_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const AgentTurnEvaluation_possibleTypes: string[] = ['AgentTurnEvaluation']
     export const isAgentTurnEvaluation = (obj?: { __typename?: any } | null): obj is AgentTurnEvaluation => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentTurnEvaluation"')
@@ -11316,11 +11326,31 @@ export const enumNavigationMenuItemType = {
    PAGE_LAYOUT: 'PAGE_LAYOUT' as const
 }
 
+export const enumRecordSharePrincipalType = {
+   EVERYONE: 'EVERYONE' as const,
+   WORKSPACE_MEMBER: 'WORKSPACE_MEMBER' as const,
+   ROLE: 'ROLE' as const
+}
+
 export const enumRecordShareAccessLevel = {
    NONE: 'NONE' as const,
    READ: 'READ' as const,
    READ_WRITE: 'READ_WRITE' as const,
    FULL: 'FULL' as const
+}
+
+export const enumRecordShareRowCause = {
+   OWNER: 'OWNER' as const,
+   MANUAL: 'MANUAL' as const,
+   RULE: 'RULE' as const,
+   APPLICATION: 'APPLICATION' as const
+}
+
+export const enumRecordSharingMode = {
+   ROLE_ONLY: 'ROLE_ONLY' as const,
+   PRIVATE: 'PRIVATE' as const,
+   INHERITED: 'INHERITED' as const,
+   OPEN_BY_DEFAULT: 'OPEN_BY_DEFAULT' as const
 }
 
 export const enumJobState = {
