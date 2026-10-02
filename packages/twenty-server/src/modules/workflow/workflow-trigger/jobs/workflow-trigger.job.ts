@@ -92,9 +92,6 @@ export class WorkflowTriggerJob {
     }
 
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.ACTIVE) {
-      this.logger.warn(
-        `Core workflow version ${coreWorkflowVersionId} is ${coreWorkflowVersion.status} in workspace ${workspaceId}, dropping queued trigger`,
-      );
       return;
     }
 
