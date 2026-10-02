@@ -35,7 +35,12 @@ import {
 } from '~/generated-metadata/graphql';
 
 type AiChatThreadActionsDropdownProps = {
-  thread: { id: string; title?: string | null; deletedAt?: string | null };
+  thread: {
+    id: string;
+    title?: string | null;
+    deletedAt?: string | null;
+    lastActivityAt?: string | null;
+  };
   surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
   onDetach?: () => void;
@@ -119,6 +124,9 @@ export const AiChatThreadActionsDropdown = ({
           id: thread.id,
           title: thread.title ?? null,
           deletedAt: thread.deletedAt ?? null,
+          ...(isDefined(thread.lastActivityAt)
+            ? { lastActivityAt: thread.lastActivityAt }
+            : {}),
         },
       ],
     });

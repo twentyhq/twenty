@@ -245,6 +245,7 @@ describe('StreamAgentChatJob', () => {
         : jest.fn().mockResolvedValue(undefined),
       generateTitleIfNeeded: jest.fn().mockResolvedValue(null),
       notifyThreadUsageUpdated: jest.fn().mockResolvedValue(undefined),
+      recordThreadActivity: jest.fn().mockResolvedValue(undefined),
     };
     const chatExecutionService = {
       streamChat: streamChatRejection
@@ -298,6 +299,9 @@ describe('StreamAgentChatJob', () => {
         .fn()
         .mockReturnValue({ modelId: 'openai/gpt-5.6-luna' }),
     };
+    const sharingService = {
+      hasInboxState: jest.fn().mockResolvedValue(true),
+    };
     const actorService = {
       authorizeJob: jest.fn().mockResolvedValue({
         authorization: { authContext: { workspaceMemberId: 'member' } },
@@ -316,6 +320,7 @@ describe('StreamAgentChatJob', () => {
       metricsService as never,
       aiModelRegistryService as never,
       actorService as never,
+      sharingService as never,
     );
 
     const turnCounts = (key: string) =>
@@ -965,16 +970,48 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('counts a turn whose claim moved on as superseded', async () => {
-    const { job, turnCounts } = buildJob({ totalsUpdateAffected: 0 });
+    const { job, turnCounts, agentChatService } = buildJob({
+      totalsUpdateAffected: 0,
+    });
 
     await job.handle(jobData);
 
+    expect(agentChatService.recordThreadActivity).toHaveBeenCalledWith({
+      workspaceId: jobData.workspaceId,
+      threadId: jobData.threadId,
+      text: 'Hello',
+    });
     expect(turnCounts('ai-chat/turn-cancelled')).toEqual([
       expect.objectContaining({
         attributes: { model: 'openai/gpt-5.6-luna', reason: 'superseded' },
       }),
     ]);
     expect(turnCounts('ai-chat/turn-completed')).toEqual([]);
+  });
+
+  it('keeps a superseded reply when recording its activity fails', async () => {
+    const { job, turnCounts, agentChatService } = buildJob({
+      totalsUpdateAffected: 0,
+    });
+
+    agentChatService.recordThreadActivity.mockRejectedValue(
+      new Error('database unavailable'),
+    );
+
+    await job.handle(jobData);
+
+    expect(agentChatService.recordThreadActivity).toHaveBeenCalledWith({
+      workspaceId: jobData.workspaceId,
+      threadId: jobData.threadId,
+      text: 'Hello',
+    });
+
+    expect(turnCounts('ai-chat/turn-cancelled')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna', reason: 'superseded' },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
   });
 
   it('counts an empty reply as a no_text failure exactly once', async () => {

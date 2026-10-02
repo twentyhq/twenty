@@ -40,17 +40,11 @@ describe('buildRequiredToolAuthContext', () => {
         deletedAt: null,
       }),
     },
-    userWorkspaceRepository: {
-      findOne: jest.fn().mockResolvedValue({
-        id: userWorkspaceId,
-        userId,
-        workspaceId,
-      }),
-    },
     workspaceCacheService: {
       getOrRecompute: jest.fn().mockResolvedValue({
         flatWorkspaceMemberMaps: {
           idByUserId: { [userId]: workspaceMemberId },
+          userWorkspaceIdByUserId: { [userId]: userWorkspaceId },
           byId: {
             [workspaceMemberId]: {
               id: workspaceMemberId,
@@ -70,9 +64,12 @@ describe('buildRequiredToolAuthContext', () => {
       ...dependencies,
     });
 
-    expect(dependencies.userWorkspaceRepository.findOne).toHaveBeenCalledWith({
-      where: { id: userWorkspaceId, userId, workspaceId },
-    });
+    expect(
+      dependencies.workspaceCacheService.getOrRecompute,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      dependencies.workspaceCacheService.getOrRecompute,
+    ).toHaveBeenCalledWith(workspaceId, ['flatWorkspaceMemberMaps']);
     expect(authContext).toMatchObject({
       type: 'user',
       userWorkspaceId,
@@ -105,7 +102,13 @@ describe('buildRequiredToolAuthContext', () => {
   it('should throw when the userWorkspace does not bind this user to this workspace', async () => {
     const dependencies = buildDependencies();
 
-    dependencies.userWorkspaceRepository.findOne.mockResolvedValue(null);
+    dependencies.workspaceCacheService.getOrRecompute.mockResolvedValue({
+      flatWorkspaceMemberMaps: {
+        idByUserId: { [userId]: workspaceMemberId },
+        userWorkspaceIdByUserId: { [userId]: 'other-user-workspace-id' },
+        byId: {},
+      },
+    });
 
     await expect(
       buildRequiredToolAuthContext({
@@ -133,7 +136,11 @@ describe('buildRequiredToolAuthContext', () => {
     const dependencies = buildDependencies();
 
     dependencies.workspaceCacheService.getOrRecompute.mockResolvedValue({
-      flatWorkspaceMemberMaps: { idByUserId: {}, byId: {} },
+      flatWorkspaceMemberMaps: {
+        idByUserId: {},
+        userWorkspaceIdByUserId: { [userId]: userWorkspaceId },
+        byId: {},
+      },
     });
 
     await expect(

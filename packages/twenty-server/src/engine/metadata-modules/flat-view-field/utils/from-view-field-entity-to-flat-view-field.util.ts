@@ -6,10 +6,15 @@ import { fromViewFieldOverridesToUniversalOverrides } from 'src/engine/metadata-
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
+type FromViewFieldEntityToFlatViewFieldArgs =
+  FromEntityToFlatEntityArgs<'viewField'> & {
+    viewFieldGroupUniversalIdentifierById: Partial<Record<string, string>>;
+  };
+
 export const fromViewFieldEntityToFlatViewField = (
-  args: FromEntityToFlatEntityArgs<'viewField'>,
+  args: FromViewFieldEntityToFlatViewFieldArgs,
 ): FlatViewField => {
-  const { entity: viewFieldEntity, viewFieldGroupIdToUniversalIdentifierMap } =
+  const { entity: viewFieldEntity, viewFieldGroupUniversalIdentifierById } =
     args;
 
   const viewFieldScalarEntity = fromEntityToScalarEntity({
@@ -22,10 +27,6 @@ export const fromViewFieldEntityToFlatViewField = (
       metadataName: 'viewField',
       ...args,
     });
-
-  const viewFieldGroupUniversalIdentifierById = Object.fromEntries(
-    viewFieldGroupIdToUniversalIdentifierMap.entries(),
-  );
 
   const universalOverrides = isDefined(viewFieldEntity.overrides)
     ? fromViewFieldOverridesToUniversalOverrides({

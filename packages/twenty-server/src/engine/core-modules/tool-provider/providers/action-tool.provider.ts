@@ -90,11 +90,12 @@ export class ActionToolProvider implements ToolProvider {
     const includeSchemas = options?.includeSchemas ?? true;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const hasHttpPermission = await this.permissionsService.hasToolPermission(
-      context.rolePermissionConfig,
-      context.workspaceId,
-      PermissionFlagType.HTTP_REQUEST_TOOL,
-    );
+    const hasHttpPermission =
+      await this.permissionsService.checkRolesPermissions(
+        context.rolePermissionConfig,
+        context.workspaceId,
+        PermissionFlagType.HTTP_REQUEST_TOOL,
+      );
 
     if (hasHttpPermission) {
       descriptors.push(
@@ -107,11 +108,12 @@ export class ActionToolProvider implements ToolProvider {
       );
     }
 
-    const hasEmailPermission = await this.permissionsService.hasToolPermission(
-      context.rolePermissionConfig,
-      context.workspaceId,
-      PermissionFlagType.SEND_EMAIL_TOOL,
-    );
+    const hasEmailPermission =
+      await this.permissionsService.checkRolesPermissions(
+        context.rolePermissionConfig,
+        context.workspaceId,
+        PermissionFlagType.SEND_EMAIL_TOOL,
+      );
 
     if (hasEmailPermission) {
       descriptors.push(
@@ -141,7 +143,7 @@ export class ActionToolProvider implements ToolProvider {
     }
 
     const hasCreateCalendarEventPermission =
-      await this.permissionsService.hasToolPermission(
+      await this.permissionsService.checkRolesPermissions(
         context.rolePermissionConfig,
         context.workspaceId,
         PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL,
@@ -159,7 +161,7 @@ export class ActionToolProvider implements ToolProvider {
     }
 
     const hasUploadFilePermission =
-      await this.permissionsService.hasToolPermission(
+      await this.permissionsService.checkRolesPermissions(
         context.rolePermissionConfig,
         context.workspaceId,
         PermissionFlagType.UPLOAD_FILE,
@@ -229,7 +231,7 @@ export class ActionToolProvider implements ToolProvider {
 
     const hasCodeInterpreterPermission =
       this.codeInterpreterService.isEnabled() &&
-      (await this.permissionsService.hasToolPermission(
+      (await this.permissionsService.checkRolesPermissions(
         context.rolePermissionConfig,
         context.workspaceId,
         PermissionFlagType.CODE_INTERPRETER_TOOL,
@@ -267,6 +269,7 @@ export class ActionToolProvider implements ToolProvider {
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,
       threadId: context.threadId,
+      rolePermissionConfig: context.rolePermissionConfig,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
     });
   }

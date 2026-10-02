@@ -407,6 +407,7 @@ export class AgentChatService {
       threadId,
       workspaceMemberId,
       workspaceId,
+      text,
     });
 
     return {
@@ -671,6 +672,12 @@ export class AgentChatService {
     args: Parameters<AgentChatThreadService['notifyThreadActivityUpdated']>[0],
   ) {
     return this.threadService.notifyThreadActivityUpdated(args);
+  }
+
+  recordThreadActivity(
+    args: Parameters<AgentChatThreadService['recordThreadActivity']>[0],
+  ) {
+    return this.threadService.recordThreadActivity(args);
   }
 
   async notifyThreadUsageUpdated({

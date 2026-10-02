@@ -487,9 +487,7 @@ export class RowLevelPermissionPredicateService {
     ]);
   }
 
-  private async hasRowLevelPermissionFeature(
-    workspaceId: string,
-  ): Promise<boolean> {
+  async hasRowLevelPermissionFeature(workspaceId: string): Promise<boolean> {
     const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
 
     const isRowLevelPermissionEnabled =

@@ -18,7 +18,6 @@ import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/prov
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
@@ -69,7 +68,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     RoleModule,
     UserRoleModule,
     EmailingModule,
-    TypeOrmModule.forFeature([UserEntity, UserWorkspaceEntity, FileEntity]),
+    TypeOrmModule.forFeature([UserEntity, FileEntity]),
   ],
   providers: [
     ToolIndexResolver,
