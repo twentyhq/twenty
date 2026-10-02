@@ -225,6 +225,7 @@ export class AgentChatStreamingService {
         threadId,
         workspaceMemberId,
         workspaceId: workspace.id,
+        text,
       });
 
       const previousMessages = await this.loadMessagesFromDB(

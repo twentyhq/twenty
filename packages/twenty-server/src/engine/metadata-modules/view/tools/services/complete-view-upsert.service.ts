@@ -237,7 +237,7 @@ export class CompleteViewUpsertService {
     if (!isDefined(view)) {
       throw new ViewException(
         t`View not found after upsert`,
-        ViewExceptionCode.VIEW_NOT_FOUND,
+        ViewExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
 

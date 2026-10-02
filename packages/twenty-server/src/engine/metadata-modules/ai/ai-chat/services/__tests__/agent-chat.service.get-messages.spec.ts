@@ -29,6 +29,7 @@ const buildService = () => {
       threadRepository as never,
       sharingService as never,
       {} as never,
+      {} as never,
     ),
   );
 
