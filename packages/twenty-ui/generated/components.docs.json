@@ -88,9 +88,9 @@
           {
             "name": "value",
             "type": "string",
-            "required": false,
+            "required": true,
             "defaultValue": null,
-            "description": "Currency code displayed beside the chevron. The application chooses any fallback for a missing value."
+            "description": "Required currency code displayed beside the chevron. The application chooses its initial value and any fallback."
           }
         ]
       },

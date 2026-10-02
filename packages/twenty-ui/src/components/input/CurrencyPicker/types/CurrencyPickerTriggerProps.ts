@@ -4,5 +4,5 @@ export type CurrencyPickerTriggerProps = Omit<
   DropdownTriggerProps,
   'children' | 'value'
 > & {
-  value?: string;
+  value: string;
 };

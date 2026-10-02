@@ -16,7 +16,7 @@ import CurrencyPickerReference from '/snippets/ui/generated/components/currency-
 
 ## Usage
 
-Supply the available currencies and the selected code. `Options` calls `onValueChange` with the chosen code. The trigger displays the code supplied through `value`; your application chooses its initial value.
+Supply the available currencies and the selected code. `Options` calls `onValueChange` with the chosen code. The trigger requires a currency code through `value`; your application chooses its initial value and any fallback.
 
 ```tsx
 import { useState } from 'react';

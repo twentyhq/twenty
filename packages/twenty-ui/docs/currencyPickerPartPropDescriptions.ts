@@ -4,7 +4,7 @@ import { type CurrencyPickerTriggerProps } from '../src/components/input/Currenc
 export const CURRENCY_PICKER_PART_PROP_DESCRIPTIONS = {
   Trigger: {
     value:
-      'Currency code displayed beside the chevron. The application chooses any fallback for a missing value.',
+      'Required currency code displayed beside the chevron. The application chooses its initial value and any fallback.',
     disabled: 'Disables opening the picker.',
     render:
       'Replaces the native trigger button. Forward the supplied props and ref when rendering a custom component.',
