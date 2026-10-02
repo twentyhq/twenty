@@ -223,6 +223,35 @@ describe('convertMarkdownToBlocknoteBlocks', () => {
     ]);
   });
 
+  it('should keep text and nested images in source order', () => {
+    expect(
+      convertWithoutIds(
+        '**before ![logo](https://example.com/logo.png) after**',
+      ).map((block: { type: string; content?: unknown }) => [
+        block.type,
+        block.content,
+      ]),
+    ).toEqual([
+      ['paragraph', [text('before ', { bold: true })]],
+      ['image', undefined],
+      ['paragraph', [text(' after', { bold: true })]],
+    ]);
+  });
+
+  it('should keep quoted code and images', () => {
+    expect(
+      convertWithoutIds(
+        '> code:\n>\n> ```\n> x = 1\n> ```\n>\n> ![logo](https://example.com/logo.png)',
+      ).map((block: { type: string; content?: unknown }) => [
+        block.type,
+        block.content,
+      ]),
+    ).toEqual([
+      ['quote', [text('code:\nx = 1')]],
+      ['image', undefined],
+    ]);
+  });
+
   it('should convert tables with their column alignment', () => {
     const cellProps = {
       colspan: 1,
@@ -355,8 +384,13 @@ describe('convertMarkdownToBlocknoteBlocks', () => {
 
   it('should give every block a unique id', () => {
     const blocks = convertMarkdownToBlocknoteBlocks('- a\n  - b\n\nc');
-    const ids = [blocks[0].id, blocks[0].children?.[0].id, blocks[1].id];
+    const nestedBlock = blocks[0].children?.[0];
 
+    expect(nestedBlock).toBeDefined();
+
+    const ids = [blocks[0].id, nestedBlock?.id, blocks[1].id];
+
+    expect(ids.every((id) => typeof id === 'string')).toBe(true);
     expect(new Set(ids).size).toBe(3);
   });
 });

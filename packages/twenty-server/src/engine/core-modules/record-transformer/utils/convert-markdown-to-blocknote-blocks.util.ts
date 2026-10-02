@@ -49,26 +49,40 @@ const convertImage = (image: Tokens.Image): PartialBlock =>
     },
   });
 
-const collectImageTokens = (token: Token): Tokens.Image[] =>
-  isImageToken(token)
-    ? [token]
-    : getChildTokens(token).flatMap(collectImageTokens);
-
-const removeImageTokens = (token: Token): Token => {
+const splitAroundImages = (token: Token): Token[] => {
   const childTokens = getChildTokens(token);
 
-  if (!isNonEmptyArray(childTokens)) {
-    return token;
+  if (isImageToken(token) || !isNonEmptyArray(childTokens)) {
+    return [token];
   }
 
-  const tokenWithoutImages: Tokens.Generic = {
-    ...token,
-    tokens: childTokens
-      .filter((childToken) => !isImageToken(childToken))
-      .map(removeImageTokens),
+  const parts: Token[] = [];
+  let pendingChildTokens: Token[] = [];
+
+  const flushChildTokens = () => {
+    if (pendingChildTokens.length > 0) {
+      const partToken: Tokens.Generic = {
+        ...token,
+        tokens: pendingChildTokens,
+      };
+
+      parts.push(partToken);
+      pendingChildTokens = [];
+    }
   };
 
-  return tokenWithoutImages;
+  for (const childPart of childTokens.flatMap(splitAroundImages)) {
+    if (isImageToken(childPart)) {
+      flushChildTokens();
+      parts.push(childPart);
+    } else {
+      pendingChildTokens.push(childPart);
+    }
+  }
+
+  flushChildTokens();
+
+  return parts;
 };
 
 const convertParagraph = (tokens: Token[]): PartialBlock[] => {
@@ -91,20 +105,14 @@ const convertParagraph = (tokens: Token[]): PartialBlock[] => {
     pendingTokens = [];
   };
 
-  for (const token of tokens) {
-    const imageTokens = collectImageTokens(token);
-
-    if (imageTokens.length === 0) {
+  for (const token of tokens.flatMap(splitAroundImages)) {
+    if (!isImageToken(token)) {
       pendingTokens.push(token);
       continue;
     }
 
-    if (!isImageToken(token)) {
-      pendingTokens.push(removeImageTokens(token));
-    }
-
     flushParagraph();
-    blocks.push(...imageTokens.map(convertImage));
+    blocks.push(convertImage(token));
   }
 
   flushParagraph();
@@ -128,12 +136,14 @@ const convertListItem = ({
   const hasInlineFirstToken =
     firstToken?.type === 'text' || firstToken?.type === 'paragraph';
 
-  const inlineTokens = hasInlineFirstToken ? (firstToken.tokens ?? []) : [];
+  const inlineParts = hasInlineFirstToken
+    ? (firstToken.tokens ?? []).flatMap(splitAroundImages)
+    : [];
   const content = convertMarkdownInlineTokens(
-    inlineTokens.filter((token) => !isImageToken(token)).map(removeImageTokens),
+    inlineParts.filter((token) => !isImageToken(token)),
   );
   const children = [
-    ...inlineTokens.flatMap(collectImageTokens).map(convertImage),
+    ...inlineParts.filter(isImageToken).map(convertImage),
     ...convertBlockTokens(hasInlineFirstToken ? otherTokens : tokens),
   ];
 
@@ -183,6 +193,8 @@ const collectQuoteLines = (tokens: Token[]): Token[][] =>
           : [];
       case 'blockquote':
         return collectQuoteLines(getChildTokens(token));
+      case 'code':
+        return [[{ type: 'text', raw: token.raw, text: token.text }]];
       default:
         return [[{ type: 'text', raw: token.raw, text: token.raw.trimEnd() }]];
     }
@@ -249,18 +261,27 @@ const convertBlockTokens = (tokens: Token[]): PartialBlock[] =>
         ];
       case 'hr':
         return [createBlock({ type: 'divider', props: {} })];
-      case 'blockquote':
+      case 'blockquote': {
+        const quoteLines = collectQuoteLines(token.tokens ?? []).map((line) =>
+          line.flatMap(splitAroundImages),
+        );
+        const quoteTextLines = quoteLines
+          .map((line) => line.filter((part) => !isImageToken(part)))
+          .filter(isNonEmptyArray);
+
         return [
           createBlock({
             type: 'quote',
             props: { backgroundColor: 'default', textColor: 'default' },
             content: convertMarkdownInlineTokens(
-              collectQuoteLines(token.tokens ?? []).flatMap((line, index) =>
+              quoteTextLines.flatMap((line, index) =>
                 index > 0 ? [LINE_BREAK_TOKEN, ...line] : line,
               ),
             ),
           }),
+          ...quoteLines.flat().filter(isImageToken).map(convertImage),
         ];
+      }
       case 'list':
         return isListToken(token)
           ? token.items.map((item, index) =>
