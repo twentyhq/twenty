@@ -2,6 +2,9 @@ import { type SerializedFileData } from '@/types/SerializedFileData';
 
 export type SerializedEventData = {
   type: string;
+  bubbles?: boolean;
+  targetRemoteElementId?: string;
+  relatedTargetRemoteElementId?: string;
   altKey?: boolean;
   ctrlKey?: boolean;
   metaKey?: boolean;

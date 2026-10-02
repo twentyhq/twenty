@@ -152,6 +152,81 @@ describe('createHtmlHostWrapper client events', () => {
     );
   });
 
+  it('should forward a click once, from the innermost element listening for it', () => {
+    const handleOuterClick = jest.fn();
+    const handleInnerClick = jest.fn();
+    const OuterWrapper = createHtmlHostWrapper('div');
+    const InnerWrapper = createHtmlHostWrapper('button');
+
+    act(() => {
+      root.render(
+        createElement(
+          OuterWrapper,
+          { onClick: handleOuterClick },
+          createElement(InnerWrapper, { onClick: handleInnerClick }),
+        ),
+      );
+    });
+
+    act(() => {
+      container.querySelector('button')?.click();
+    });
+
+    expect(handleInnerClick).toHaveBeenCalledTimes(1);
+    expect(handleInnerClick).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'click', bubbles: true }),
+    );
+    expect(handleOuterClick).not.toHaveBeenCalled();
+  });
+
+  it('should forward a click on an element without a listener from its listening ancestor', () => {
+    const handleOuterClick = jest.fn();
+    const OuterWrapper = createHtmlHostWrapper('div');
+    const InnerWrapper = createHtmlHostWrapper('span');
+
+    act(() => {
+      root.render(
+        createElement(
+          OuterWrapper,
+          { onClick: handleOuterClick },
+          createElement(InnerWrapper, {}, 'label'),
+        ),
+      );
+    });
+
+    act(() => {
+      container.querySelector('span')?.click();
+    });
+
+    expect(handleOuterClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should forward a native focusin once, from the innermost element listening for it', () => {
+    const handleOuterFocusIn = jest.fn();
+    const handleInnerFocusIn = jest.fn();
+    const OuterWrapper = createHtmlHostWrapper('div');
+    const InnerWrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(
+        createElement(
+          OuterWrapper,
+          { onFocusin: handleOuterFocusIn },
+          createElement(InnerWrapper, { onFocusin: handleInnerFocusIn }),
+        ),
+      );
+    });
+
+    act(() => {
+      container
+        .querySelector('input')
+        ?.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+    });
+
+    expect(handleInnerFocusIn).toHaveBeenCalledTimes(1);
+    expect(handleOuterFocusIn).not.toHaveBeenCalled();
+  });
+
   it('should re-assert an unchanged controlled value on an unrelated re-render', () => {
     const Wrapper = createHtmlHostWrapper('input');
 

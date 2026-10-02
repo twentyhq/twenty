@@ -2,6 +2,8 @@ import { isFunction } from '@sniptt/guards';
 import { type PointerEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+const separatorsReleasedAtGestureEnd = new WeakSet<Element>();
+
 export const createResizableSeparatorProps = (
   reactBindableProps: Record<string, unknown>,
 ): Record<string, unknown> | undefined => {
@@ -21,7 +23,11 @@ export const createResizableSeparatorProps = (
     return undefined;
   }
 
-  const releasePointerCapture = (event: PointerEvent<HTMLElement>) => {
+  const releasePointerCaptureAtGestureEnd = (
+    event: PointerEvent<HTMLElement>,
+  ) => {
+    separatorsReleasedAtGestureEnd.add(event.currentTarget);
+
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
@@ -33,24 +39,29 @@ export const createResizableSeparatorProps = (
         return;
       }
 
+      separatorsReleasedAtGestureEnd.delete(event.currentTarget);
       event.preventDefault();
       event.currentTarget.focus();
       event.currentTarget.setPointerCapture(event.pointerId);
       remotePointerDown(event);
     },
     onPointerUp: (event: PointerEvent<HTMLElement>) => {
-      releasePointerCapture(event);
+      releasePointerCaptureAtGestureEnd(event);
       if (isFunction(remotePointerUp)) {
         remotePointerUp(event);
       }
     },
     onPointerCancel: (event: PointerEvent<HTMLElement>) => {
-      releasePointerCapture(event);
+      releasePointerCaptureAtGestureEnd(event);
       if (isFunction(remotePointerCancel)) {
         remotePointerCancel(event);
       }
     },
     onLostPointerCapture: (event: PointerEvent<HTMLElement>) => {
+      if (separatorsReleasedAtGestureEnd.delete(event.currentTarget)) {
+        return;
+      }
+
       if (isFunction(remotePointerCancel)) {
         remotePointerCancel(event);
       }

@@ -5,7 +5,6 @@ import {
   type RemoteElementEventListenerDefinition,
   type RemoteElementEventListenersDefinition,
 } from '@remote-dom/core/elements';
-import { applySerializedEventTargetProperties } from '@/remote/elements/utils/applySerializedEventTargetProperties';
 import { createWorkerEventFromSerializedEvent } from '@/remote/elements/utils/createWorkerEventFromSerializedEvent';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
@@ -119,13 +118,8 @@ const createSerializedEventConfig = (
   eventType: string,
 ): RemoteElementEventListenerDefinition => ({
   dispatchEvent(this: Element, eventData: SerializedEventData) {
-    applySerializedEventTargetProperties({
-      element: this as unknown as Record<string, unknown>,
-      eventData,
-    });
-
     return createWorkerEventFromSerializedEvent({
-      target: this,
+      listeningElement: this,
       eventType,
       eventData,
     });

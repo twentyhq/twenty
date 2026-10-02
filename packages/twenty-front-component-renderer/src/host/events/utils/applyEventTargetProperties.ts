@@ -1,8 +1,7 @@
-import { isBoolean, isNumber, isObject, isString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isBoolean, isNumber, isObject } from '@sniptt/guards';
 
-import { serializeFileList } from '@/host/events/utils/serializeFileList';
-import { serializeSelectedOptionIndexes } from '@/host/events/utils/serializeSelectedOptionIndexes';
+import { MUTED_STATE_SETTLED_EVENT_TYPE } from '@/host/events/constants/MutedStateSettledEventType';
+import { applyFormControlTargetProperties } from '@/host/events/utils/applyFormControlTargetProperties';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export const applyEventTargetProperties = ({
@@ -17,16 +16,9 @@ export const applyEventTargetProperties = ({
   }
 
   const targetRecord = target as Record<string, unknown>;
-  if (isString(targetRecord.value)) {
-    serialized.value = targetRecord.value;
-  }
-  if (isBoolean(targetRecord.checked)) {
-    serialized.checked = targetRecord.checked;
-  }
-  const selectedOptionIndexes = serializeSelectedOptionIndexes(target);
-  if (isDefined(selectedOptionIndexes)) {
-    serialized.selectedOptionIndexes = selectedOptionIndexes;
-  }
+
+  applyFormControlTargetProperties({ serialized, target: targetRecord });
+
   if (isNumber(targetRecord.scrollTop)) {
     serialized.scrollTop = targetRecord.scrollTop;
   }
@@ -48,15 +40,13 @@ export const applyEventTargetProperties = ({
   if (isNumber(targetRecord.volume)) {
     serialized.volume = targetRecord.volume;
   }
-  if (isBoolean(targetRecord.muted)) {
+  if (
+    serialized.type === MUTED_STATE_SETTLED_EVENT_TYPE &&
+    isBoolean(targetRecord.muted)
+  ) {
     serialized.muted = targetRecord.muted;
   }
   if (isNumber(targetRecord.playbackRate)) {
     serialized.playbackRate = targetRecord.playbackRate;
-  }
-
-  const files = serializeFileList(targetRecord.files);
-  if (isDefined(files)) {
-    serialized.files = files;
   }
 };

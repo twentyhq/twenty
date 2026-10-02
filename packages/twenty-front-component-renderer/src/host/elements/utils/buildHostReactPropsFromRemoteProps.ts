@@ -2,9 +2,11 @@ import { isFunction, isUndefined } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DOM_EVENT_TYPE_TO_REACT_PROP } from '@/constants/DomEventTypeToReactProp';
+import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 import { hasDangerousUrlScheme } from '@/host/elements/utils/hasDangerousUrlScheme';
 import { isEventHandlerKey } from '@/host/events/utils/isEventHandlerKey';
 import { isNavigationUrlAttribute } from '@/host/elements/utils/isNavigationUrlAttribute';
+import { isRemoteEventListenerActive } from '@/host/elements/utils/isRemoteEventListenerActive';
 import { parseCssString } from '@/host/elements/utils/parseCssString';
 import { wrapEventHandler } from '@/host/events/utils/wrapEventHandler';
 import { type SerializedEventData } from '@/types/SerializedEventData';
@@ -22,10 +24,21 @@ const LOWERCASE_EVENT_PROP_TO_REACT_PROP: Record<string, string> =
     ),
   );
 
-export const buildHostReactPropsFromRemoteProps = (
-  remoteProps: Record<string, unknown>,
-  htmlTag: string,
-): Record<string, unknown> => {
+const REACT_PROP_TO_DOM_EVENT_TYPE: Record<string, string> = Object.fromEntries(
+  Object.entries(DOM_EVENT_TYPE_TO_REACT_PROP).map(
+    ([domEventType, reactProp]) => [reactProp, domEventType],
+  ),
+);
+
+export const buildHostReactPropsFromRemoteProps = ({
+  remoteProps,
+  htmlTag,
+  findRemoteElementIdContainingNode,
+}: {
+  remoteProps: Record<string, unknown>;
+  htmlTag: string;
+  findRemoteElementIdContainingNode?: FindRemoteElementIdContainingNode;
+}): Record<string, unknown> => {
   const hostReactProps: Record<string, unknown> = {};
 
   for (const [remotePropName, remotePropValue] of Object.entries(remoteProps)) {
@@ -46,10 +59,20 @@ export const buildHostReactPropsFromRemoteProps = (
       const reactPropName =
         LOWERCASE_EVENT_PROP_TO_REACT_PROP[remotePropName.toLowerCase()];
 
-      if (isDefined(reactPropName) && isFunction(remotePropValue)) {
-        hostReactProps[reactPropName] = wrapEventHandler(
-          remotePropValue as (detail: SerializedEventData) => void,
-        );
+      if (
+        isDefined(reactPropName) &&
+        isFunction(remotePropValue) &&
+        isRemoteEventListenerActive({
+          remoteProps,
+          domEventType: REACT_PROP_TO_DOM_EVENT_TYPE[reactPropName],
+        })
+      ) {
+        hostReactProps[reactPropName] = wrapEventHandler({
+          remoteListener: remotePropValue as (
+            detail: SerializedEventData,
+          ) => void,
+          findRemoteElementIdContainingNode,
+        });
       }
       continue;
     }

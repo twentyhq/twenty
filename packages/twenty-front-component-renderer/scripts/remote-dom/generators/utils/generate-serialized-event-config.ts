@@ -15,18 +15,9 @@ export const generateSerializedEventConfig = (sourceFile: SourceFile): void => {
               'dispatchEvent(this: Element, eventData: SerializedEventData) {',
             );
             writer.indent(() => {
-              writer.writeLine('applySerializedEventTargetProperties({');
-              writer.indent(() => {
-                writer.writeLine(
-                  'element: this as unknown as Record<string, unknown>,',
-                );
-                writer.writeLine('eventData,');
-              });
-              writer.writeLine('});');
-              writer.blankLine();
               writer.writeLine('return createWorkerEventFromSerializedEvent({');
               writer.indent(() => {
-                writer.writeLine('target: this,');
+                writer.writeLine('listeningElement: this,');
                 writer.writeLine('eventType,');
                 writer.writeLine('eventData,');
               });

@@ -45,12 +45,6 @@ export const generateRemoteElements = ({
 
   sourceFile.addImportDeclaration({
     moduleSpecifier:
-      '@/remote/elements/utils/applySerializedEventTargetProperties',
-    namedImports: ['applySerializedEventTargetProperties'],
-  });
-
-  sourceFile.addImportDeclaration({
-    moduleSpecifier:
       '@/remote/elements/utils/createWorkerEventFromSerializedEvent',
     namedImports: ['createWorkerEventFromSerializedEvent'],
   });

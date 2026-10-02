@@ -201,6 +201,50 @@ describe('serializeEvent', () => {
     });
   });
 
+  it.each(['keydown', 'keypress', 'beforeinput', 'pointerdown', 'paste'])(
+    'should leave out form control state on %s, before the browser applies the change',
+    (type) => {
+      expect(
+        serializeEvent({
+          type,
+          target: { value: 'before', checked: false, scrollTop: 5 },
+        }),
+      ).toEqual({ type, scrollTop: 5 });
+    },
+  );
+
+  it.each(['input', 'change', 'click', 'blur', 'focusout'])(
+    'should include form control state on %s, once the browser has applied the change',
+    (type) => {
+      expect(
+        serializeEvent({ type, target: { value: 'after', checked: true } }),
+      ).toEqual({ type, value: 'after', checked: true });
+    },
+  );
+
+  it('should include the value but not the checked state on keyup, which precedes a space activation', () => {
+    expect(
+      serializeEvent({
+        type: 'keyup',
+        target: { value: 'typed', checked: false },
+      }),
+    ).toEqual({ type: 'keyup', value: 'typed' });
+  });
+
+  it('should include the muted state only once a volume change has applied it', () => {
+    const video = { muted: true, currentTime: 3 };
+
+    expect(serializeEvent({ type: 'click', target: video })).toEqual({
+      type: 'click',
+      currentTime: 3,
+    });
+    expect(serializeEvent({ type: 'volumechange', target: video })).toEqual({
+      type: 'volumechange',
+      muted: true,
+      currentTime: 3,
+    });
+  });
+
   it('should serialize target files', () => {
     const result = serializeEvent({
       type: 'change',
