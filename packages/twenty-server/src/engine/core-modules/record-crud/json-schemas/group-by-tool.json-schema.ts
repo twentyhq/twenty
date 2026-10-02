@@ -70,11 +70,11 @@ const buildSingleKeyObject = ({
 const buildGroupByEntries = ({
   objectMetadata,
   restrictedFields,
-  definitions = {},
+  definitions,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
   restrictedFields?: RestrictedFieldsPermissions;
-  definitions?: JsonSchemaDefinitions;
+  definitions: JsonSchemaDefinitions;
 }): { schema: JSONSchema7; label: string }[] =>
   objectMetadata.fields
     .filter(
@@ -160,15 +160,6 @@ const buildGroupByEntries = ({
         },
       ];
     });
-
-export const hasGroupByToolInputSchema = ({
-  objectMetadata,
-  restrictedFields,
-}: {
-  objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  restrictedFields?: RestrictedFieldsPermissions;
-}): boolean =>
-  buildGroupByEntries({ objectMetadata, restrictedFields }).length > 0;
 
 export const generateGroupByToolInputSchema = ({
   objectMetadata,

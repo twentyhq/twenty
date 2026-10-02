@@ -1,37 +1,28 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { generateRecordPropertiesJsonSchema } from 'src/engine/core-modules/record-crud/json-schemas/record-properties.json-schema';
-import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-
-const buildField = (
-  overrides: Pick<FlatFieldMetadata, 'name' | 'type'> &
-    Partial<FlatFieldMetadata>,
-) =>
-  getFlatFieldMetadataMock({
-    id: `field-id-${overrides.name}`,
-    universalIdentifier: overrides.name,
-    objectMetadataId: 'object-metadata-id',
-    description: null,
-    ...overrides,
-  });
+import { getToolSchemaFieldMock } from 'src/engine/core-modules/record-crud/__mocks__/get-tool-schema-field-mock';
 
 const FIELDS = [
-  buildField({ name: 'id', type: FieldMetadataType.UUID, isNullable: false }),
-  buildField({
+  getToolSchemaFieldMock({
+    name: 'id',
+    type: FieldMetadataType.UUID,
+    isNullable: false,
+  }),
+  getToolSchemaFieldMock({
     name: 'name',
     type: FieldMetadataType.TEXT,
     isNullable: false,
     description: 'Deal name',
   }),
-  buildField({ name: 'amount', type: FieldMetadataType.CURRENCY }),
-  buildField({
+  getToolSchemaFieldMock({ name: 'amount', type: FieldMetadataType.CURRENCY }),
+  getToolSchemaFieldMock({
     name: 'company',
     type: FieldMetadataType.RELATION,
     isNullable: false,
     settings: { relationType: RelationType.MANY_TO_ONE },
   }),
-  buildField({
+  getToolSchemaFieldMock({
     name: 'tasks',
     type: FieldMetadataType.RELATION,
     settings: { relationType: RelationType.ONE_TO_MANY },

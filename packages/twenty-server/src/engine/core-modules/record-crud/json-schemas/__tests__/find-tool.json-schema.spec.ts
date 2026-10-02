@@ -1,39 +1,27 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/json-schemas/find-tool.json-schema';
-import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-
-const buildField = (
-  overrides: Pick<FlatFieldMetadata, 'name' | 'type'> &
-    Partial<FlatFieldMetadata>,
-) =>
-  getFlatFieldMetadataMock({
-    id: `field-id-${overrides.name}`,
-    universalIdentifier: overrides.name,
-    objectMetadataId: 'object-metadata-id',
-    ...overrides,
-  });
+import { getToolSchemaFieldMock } from 'src/engine/core-modules/record-crud/__mocks__/get-tool-schema-field-mock';
 
 const COMPANY_FIELDS = [
-  buildField({ name: 'name', type: FieldMetadataType.TEXT }),
-  buildField({ name: 'address', type: FieldMetadataType.ADDRESS }),
-  buildField({
+  getToolSchemaFieldMock({ name: 'name', type: FieldMetadataType.TEXT }),
+  getToolSchemaFieldMock({ name: 'address', type: FieldMetadataType.ADDRESS }),
+  getToolSchemaFieldMock({
     name: 'accountOwner',
     type: FieldMetadataType.RELATION,
     settings: { relationType: RelationType.MANY_TO_ONE },
   }),
-  buildField({
+  getToolSchemaFieldMock({
     name: 'createdAt',
     type: FieldMetadataType.DATE_TIME,
     isSystem: true,
   }),
-  buildField({
+  getToolSchemaFieldMock({
     name: 'deletedAt',
     type: FieldMetadataType.DATE_TIME,
     isSystem: true,
   }),
-  buildField({
+  getToolSchemaFieldMock({
     name: 'people',
     type: FieldMetadataType.RELATION,
     settings: { relationType: RelationType.ONE_TO_MANY },

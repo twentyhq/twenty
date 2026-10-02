@@ -1,25 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import {
-  generateGroupByToolInputSchema,
-  hasGroupByToolInputSchema,
-} from 'src/engine/core-modules/record-crud/json-schemas/group-by-tool.json-schema';
-import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-
-const buildField = (
-  overrides: Pick<FlatFieldMetadata, 'name' | 'type'> &
-    Partial<FlatFieldMetadata>,
-) =>
-  getFlatFieldMetadataMock({
-    id: `field-id-${overrides.name}`,
-    universalIdentifier: overrides.name,
-    objectMetadataId: 'object-metadata-id',
-    ...overrides,
-  });
+import { generateGroupByToolInputSchema } from 'src/engine/core-modules/record-crud/json-schemas/group-by-tool.json-schema';
+import { getToolSchemaFieldMock } from 'src/engine/core-modules/record-crud/__mocks__/get-tool-schema-field-mock';
 
 const FIELDS = [
-  buildField({
+  getToolSchemaFieldMock({
     name: 'tags',
     type: FieldMetadataType.MULTI_SELECT,
     options: [
@@ -33,9 +18,12 @@ const FIELDS = [
       { id: 'pam', value: 'PAM', label: 'PAM', color: 'red', position: 1 },
     ],
   }),
-  buildField({ name: 'aliases', type: FieldMetadataType.ARRAY }),
-  buildField({ name: 'name', type: FieldMetadataType.TEXT }),
-  buildField({ name: 'createdAt', type: FieldMetadataType.DATE_TIME }),
+  getToolSchemaFieldMock({ name: 'aliases', type: FieldMetadataType.ARRAY }),
+  getToolSchemaFieldMock({ name: 'name', type: FieldMetadataType.TEXT }),
+  getToolSchemaFieldMock({
+    name: 'createdAt',
+    type: FieldMetadataType.DATE_TIME,
+  }),
 ];
 
 const buildUnnestEntry = (fieldName: string) => ({
@@ -130,8 +118,5 @@ describe('generateGroupByToolInputSchema', () => {
     expect(
       generateGroupByToolInputSchema({ objectMetadata: { fields: [] } }),
     ).toBeNull();
-    expect(hasGroupByToolInputSchema({ objectMetadata: { fields: [] } })).toBe(
-      false,
-    );
   });
 });

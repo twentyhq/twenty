@@ -3,18 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { generateFieldFilterJsonSchema } from 'src/engine/core-modules/record-crud/json-schemas/field-filters.json-schema';
 import { type JsonSchemaDefinitions } from 'src/engine/core-modules/record-crud/types/json-schema-definitions.type';
-import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getToolSchemaFieldMock } from 'src/engine/core-modules/record-crud/__mocks__/get-tool-schema-field-mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-
-const buildField = (
-  overrides: Pick<FlatFieldMetadata, 'name' | 'type'> &
-    Partial<FlatFieldMetadata>,
-) =>
-  getFlatFieldMetadataMock({
-    universalIdentifier: overrides.name,
-    objectMetadataId: 'object-metadata-id',
-    ...overrides,
-  });
 
 const generateResolvedFilter = (field: FlatFieldMetadata) => {
   const definitions: JsonSchemaDefinitions = {};
@@ -29,7 +19,10 @@ describe('generateFieldFilterJsonSchema', () => {
     expect(
       Object.keys(
         generateResolvedFilter(
-          buildField({ name: 'title', type: FieldMetadataType.TEXT }),
+          getToolSchemaFieldMock({
+            name: 'title',
+            type: FieldMetadataType.TEXT,
+          }),
         )?.properties ?? {},
       ),
     ).toEqual(expect.arrayContaining(['eq', 'ilike', 'startsWith', 'is']));
@@ -39,7 +32,10 @@ describe('generateFieldFilterJsonSchema', () => {
     expect(
       Object.keys(
         generateResolvedFilter(
-          buildField({ name: 'body', type: FieldMetadataType.RICH_TEXT }),
+          getToolSchemaFieldMock({
+            name: 'body',
+            type: FieldMetadataType.RICH_TEXT,
+          }),
         )?.properties ?? {},
       ),
     ).toEqual(['markdown']);
@@ -49,7 +45,7 @@ describe('generateFieldFilterJsonSchema', () => {
     expect(
       Object.keys(
         generateResolvedFilter(
-          buildField({
+          getToolSchemaFieldMock({
             name: 'targetPerson',
             type: FieldMetadataType.MORPH_RELATION,
             settings: { relationType: RelationType.MANY_TO_ONE },
@@ -62,7 +58,7 @@ describe('generateFieldFilterJsonSchema', () => {
   it('should not filter one-to-many relations', () => {
     expect(
       generateFieldFilterJsonSchema({
-        field: buildField({
+        field: getToolSchemaFieldMock({
           name: 'people',
           type: FieldMetadataType.RELATION,
           settings: { relationType: RelationType.ONE_TO_MANY },
@@ -75,7 +71,7 @@ describe('generateFieldFilterJsonSchema', () => {
   it('should restrict select filters to the field options', () => {
     expect(
       generateResolvedFilter(
-        buildField({
+        getToolSchemaFieldMock({
           name: 'stage',
           type: FieldMetadataType.SELECT,
           options: [
@@ -102,7 +98,7 @@ describe('generateFieldFilterJsonSchema', () => {
   it('should not filter select fields without options', () => {
     expect(
       generateFieldFilterJsonSchema({
-        field: buildField({
+        field: getToolSchemaFieldMock({
           name: 'stage',
           type: FieldMetadataType.SELECT,
           options: [],

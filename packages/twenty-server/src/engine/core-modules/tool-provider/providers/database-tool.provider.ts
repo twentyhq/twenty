@@ -22,10 +22,7 @@ import { generateBulkDeleteToolInputSchema } from 'src/engine/core-modules/recor
 import { DELETE_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-crud/json-schemas/delete-tool.json-schema';
 import { FIND_ONE_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-crud/json-schemas/find-one-tool.json-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/json-schemas/find-tool.json-schema';
-import {
-  generateGroupByToolInputSchema,
-  hasGroupByToolInputSchema,
-} from 'src/engine/core-modules/record-crud/json-schemas/group-by-tool.json-schema';
+import { generateGroupByToolInputSchema } from 'src/engine/core-modules/record-crud/json-schemas/group-by-tool.json-schema';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -237,17 +234,11 @@ export class DatabaseToolProvider implements ToolProvider {
         });
 
         const groupByName = `group_by_${snakePlural}`;
-        const shouldGenerateGroupBy = shouldIncludeSchema(groupByName);
-        const groupBySchema = shouldGenerateGroupBy
+        const groupBySchema = includeSchemas
           ? generateGroupByToolInputSchema({ objectMetadata, restrictedFields })
           : null;
 
-        const hasGroupBySchema =
-          !includeSchemas ||
-          groupBySchema !== null ||
-          hasGroupByToolInputSchema({ objectMetadata, restrictedFields });
-
-        if (hasGroupBySchema) {
+        if (!includeSchemas || isDefined(groupBySchema)) {
           descriptors.push({
             name: groupByName,
             ...getCrudToolLabels(
@@ -258,7 +249,10 @@ export class DatabaseToolProvider implements ToolProvider {
             ),
             description: `Group ${objectMetadata.labelPlural} records by one or two fields and compute an aggregate (COUNT, SUM, AVG, MIN, MAX, etc.). Use for questions like "how many deals per stage?" or "total revenue by company". Returns groups with dimension values and aggregate results, ordered by the aggregate value.`,
             category: ToolCategory.DATABASE_CRUD,
-            ...(groupBySchema && { inputSchema: groupBySchema }),
+            ...(isDefined(groupBySchema) &&
+              shouldIncludeSchema(groupByName) && {
+                inputSchema: groupBySchema,
+              }),
             executionRef: {
               kind: 'database_crud',
               objectNameSingular: objectMetadata.nameSingular,
