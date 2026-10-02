@@ -11,8 +11,9 @@ export const ControlledResizablePanel = ({
   onSizeCommit,
   ...props
 }: ResizablePanelProps) => {
-  const [size, setSize] = useState(200);
-  const [liveSize, setLiveSize] = useState(200);
+  const initialSize = props.size ?? props.defaultSize ?? props.min;
+  const [size, setSize] = useState(initialSize);
+  const [liveSize, setLiveSize] = useState(initialSize);
 
   return (
     <>
