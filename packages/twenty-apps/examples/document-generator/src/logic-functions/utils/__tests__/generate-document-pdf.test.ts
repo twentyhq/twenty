@@ -22,7 +22,10 @@ describe('generateDocumentPdf', () => {
   });
 
   it('should paginate long content across multiple pages', async () => {
-    const long = Array.from({ length: 120 }, (_, i) => `Paragraph number ${i} with some text.`).join('\n\n');
+    const long = Array.from(
+      { length: 120 },
+      (_, i) => `Paragraph number ${i} with some text.`,
+    ).join('\n\n');
 
     const bytes = await generateDocumentPdf(long);
     const loaded = await PDFDocument.load(bytes);
@@ -30,10 +33,29 @@ describe('generateDocumentPdf', () => {
     expect(loaded.getPageCount()).toBeGreaterThan(1);
   });
 
+  it('should keep a delivery note with many rows compact', async () => {
+    const rows = Array.from(
+      { length: 80 },
+      (_, index) =>
+        `| REF-${String(index + 1).padStart(3, '0')} | Article de livraison ${index + 1} | ${index + 1} | 12,50 EUR |`,
+    ).join('\n');
+    const deliveryNote = `# Bon de livraison BL-ACH-000005-01
+
+| Référence | Désignation | Quantité | Prix unitaire |
+| --- | --- | ---: | ---: |
+${rows}`;
+
+    const bytes = await generateDocumentPdf(deliveryNote);
+    const loaded = await PDFDocument.load(bytes);
+
+    expect(loaded.getPageCount()).toBeLessThanOrEqual(3);
+  });
+
   it('should render explicit line breaks and non-Latin characters without throwing', async () => {
     // The body fonts use WinAnsi encoding: a naive sanitizer would either
     // throw on unencodable characters or swallow the `\n` line breaks.
-    const content = 'Bonjour **José**,\nRendez-vous à 20€ le 5 — merci.\n\n世界 dropped gracefully.';
+    const content =
+      'Bonjour **José**,\nRendez-vous à 20€ le 5 — merci.\n\n世界 dropped gracefully.';
 
     const bytes = await generateDocumentPdf(content);
 

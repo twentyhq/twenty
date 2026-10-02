@@ -12,9 +12,13 @@ import {
 
 const PAGE_WIDTH = 595.28; // A4
 const PAGE_HEIGHT = 841.89;
-const MARGIN = 64;
-const BODY_SIZE = 11;
-const LINE_HEIGHT = 16;
+const MARGIN = 42;
+const BODY_SIZE = 10;
+const LINE_HEIGHT = 14;
+const TABLE_FONT_SIZE = 8;
+const TABLE_LINE_HEIGHT = 10;
+const TABLE_CELL_HORIZONTAL_PADDING = 4;
+const TABLE_CELL_VERTICAL_PADDING = 3;
 
 const ACCENT = rgb(0.098, 0.38, 0.929); // #1961ED
 const INK = rgb(0.06, 0.08, 0.16);
@@ -35,7 +39,13 @@ type Ctx = {
   fonts: Fonts;
 };
 
-type Run = { text: string; bold: boolean; italic: boolean; code: boolean; link: boolean };
+type Run = {
+  text: string;
+  bold: boolean;
+  italic: boolean;
+  code: boolean;
+  link: boolean;
+};
 
 // The built-in fonts use WinAnsi encoding and throw on characters they can't
 // encode. Map common punctuation and drop anything outside Latin-1 so the PDF
@@ -66,13 +76,18 @@ const toRuns = (
   return tokens.flatMap((token): Run[] => {
     switch (token.type) {
       case 'strong':
-        return toRuns((token as Tokens.Strong).tokens, { ...style, bold: true });
+        return toRuns((token as Tokens.Strong).tokens, {
+          ...style,
+          bold: true,
+        });
       case 'em':
         return toRuns((token as Tokens.Em).tokens, { ...style, italic: true });
       case 'link':
         return toRuns((token as Tokens.Link).tokens, { ...style, link: true });
       case 'codespan':
-        return [{ ...style, code: true, text: (token as Tokens.Codespan).text }];
+        return [
+          { ...style, code: true, text: (token as Tokens.Codespan).text },
+        ];
       case 'br':
         return [{ ...style, text: '\n' }];
       default: {
@@ -82,7 +97,8 @@ const toRuns = (
         if (Array.isArray(nested) && nested.length > 0) {
           return toRuns(nested, style);
         }
-        const text = (token as Tokens.Text).text ?? (token as { raw?: string }).raw ?? '';
+        const text =
+          (token as Tokens.Text).text ?? (token as { raw?: string }).raw ?? '';
         return text ? [{ ...style, text }] : [];
       }
     }
@@ -98,6 +114,136 @@ const newPage = (ctx: Ctx) => {
 
 const ensureSpace = (ctx: Ctx, needed: number) => {
   if (ctx.y - needed < MARGIN) newPage(ctx);
+};
+
+const splitTextToLines = (
+  text: string,
+  font: PDFFont,
+  size: number,
+  maxWidth: number,
+): string[] => {
+  const lines: string[] = [];
+
+  for (const paragraph of toWinAnsi(text).split('\n')) {
+    let line = '';
+
+    for (const word of paragraph.split(/\s+/).filter(Boolean)) {
+      const candidate = line === '' ? word : `${line} ${word}`;
+
+      if (font.widthOfTextAtSize(candidate, size) <= maxWidth) {
+        line = candidate;
+        continue;
+      }
+
+      if (line !== '') lines.push(line);
+
+      let remainder = word;
+      while (font.widthOfTextAtSize(remainder, size) > maxWidth) {
+        let splitIndex = 1;
+
+        while (
+          splitIndex < remainder.length &&
+          font.widthOfTextAtSize(remainder.slice(0, splitIndex + 1), size) <=
+            maxWidth
+        ) {
+          splitIndex += 1;
+        }
+
+        lines.push(remainder.slice(0, splitIndex));
+        remainder = remainder.slice(splitIndex);
+      }
+      line = remainder;
+    }
+
+    lines.push(line);
+  }
+
+  return lines.length > 0 ? lines : [''];
+};
+
+const tableCellText = (cell: Tokens.TableCell): string =>
+  toRuns(cell.tokens, EMPTY_STYLE)
+    .map(({ text }) => text)
+    .join('');
+
+const drawTable = (ctx: Ctx, table: Tokens.Table) => {
+  const columnCount = table.header.length;
+
+  if (columnCount === 0) return;
+
+  const tableWidth = PAGE_WIDTH - MARGIN * 2;
+  const cellWidth = tableWidth / columnCount;
+  const textWidth = cellWidth - TABLE_CELL_HORIZONTAL_PADDING * 2;
+
+  const drawRow = (cells: Tokens.TableCell[], isHeader: boolean) => {
+    const font = isHeader ? ctx.fonts.bold : ctx.fonts.regular;
+    const cellLines = cells.map((cell) =>
+      splitTextToLines(tableCellText(cell), font, TABLE_FONT_SIZE, textWidth),
+    );
+    const lineCount = Math.max(...cellLines.map((lines) => lines.length), 1);
+    const rowHeight =
+      lineCount * TABLE_LINE_HEIGHT + TABLE_CELL_VERTICAL_PADDING * 2;
+
+    if (ctx.y - rowHeight < MARGIN) {
+      newPage(ctx);
+
+      if (!isHeader) drawRow(table.header, true);
+    }
+
+    const rowBottom = ctx.y - rowHeight;
+
+    if (isHeader) {
+      ctx.page.drawRectangle({
+        x: MARGIN,
+        y: rowBottom,
+        width: tableWidth,
+        height: rowHeight,
+        color: rgb(0.95, 0.96, 0.98),
+      });
+    }
+
+    cellLines.forEach((lines, columnIndex) => {
+      lines.forEach((line, lineIndex) => {
+        if (line === '') return;
+
+        ctx.page.drawText(line, {
+          x: MARGIN + columnIndex * cellWidth + TABLE_CELL_HORIZONTAL_PADDING,
+          y:
+            ctx.y -
+            TABLE_CELL_VERTICAL_PADDING -
+            TABLE_FONT_SIZE -
+            lineIndex * TABLE_LINE_HEIGHT,
+          size: TABLE_FONT_SIZE,
+          font,
+          color: isHeader ? INK : MUTED,
+        });
+      });
+
+      if (columnIndex > 0) {
+        const x = MARGIN + columnIndex * cellWidth;
+
+        ctx.page.drawLine({
+          start: { x, y: ctx.y },
+          end: { x, y: rowBottom },
+          thickness: 0.5,
+          color: rgb(0.88, 0.9, 0.94),
+        });
+      }
+    });
+
+    ctx.page.drawLine({
+      start: { x: MARGIN, y: rowBottom },
+      end: { x: PAGE_WIDTH - MARGIN, y: rowBottom },
+      thickness: 0.5,
+      color: rgb(0.84, 0.87, 0.92),
+    });
+    ctx.y = rowBottom;
+  };
+
+  ensureSpace(ctx, TABLE_LINE_HEIGHT * 2);
+  drawRow(table.header, true);
+  table.rows.forEach((row) => drawRow(row, false));
+  ctx.y -= 8;
 };
 
 // Word-wraps styled runs across lines, switching font per run, and draws them.
@@ -118,14 +264,21 @@ const drawRuns = (
 
   // Break a token that is wider than a whole line into chunks that fit, so long
   // URLs or identifiers wrap instead of overflowing the right margin.
-  const pushWord = (text: string, font: PDFFont, color: ReturnType<typeof rgb>) => {
+  const pushWord = (
+    text: string,
+    font: PDFFont,
+    color: ReturnType<typeof rgb>,
+  ) => {
     if (text.length <= 1 || font.widthOfTextAtSize(text, size) <= lineWidth) {
       words.push({ text, font, color });
       return;
     }
     let chunk = '';
     for (const char of text) {
-      if (chunk !== '' && font.widthOfTextAtSize(chunk + char, size) > lineWidth) {
+      if (
+        chunk !== '' &&
+        font.widthOfTextAtSize(chunk + char, size) > lineWidth
+      ) {
         words.push({ text: chunk, font, color });
         chunk = char;
       } else {
@@ -200,11 +353,11 @@ const drawBlocks = (ctx: Ctx, tokens: Token[], indent = 0) => {
         const heading = token as Tokens.Heading;
         const size = heading.depth === 1 ? 18 : heading.depth === 2 ? 15 : 13;
         ctx.y -= 8;
-        drawRuns(
-          ctx,
-          toRuns(heading.tokens, { ...EMPTY_STYLE, bold: true }),
-          { size, indent, lineHeight: size + 6 },
-        );
+        drawRuns(ctx, toRuns(heading.tokens, { ...EMPTY_STYLE, bold: true }), {
+          size,
+          indent,
+          lineHeight: size + 6,
+        });
         break;
       }
       case 'paragraph': {
@@ -212,7 +365,11 @@ const drawBlocks = (ctx: Ctx, tokens: Token[], indent = 0) => {
           size: BODY_SIZE,
           indent,
         });
-        ctx.y -= 6;
+        ctx.y -= 4;
+        break;
+      }
+      case 'table': {
+        drawTable(ctx, token as Tokens.Table);
         break;
       }
       case 'list': {
@@ -293,7 +450,10 @@ const drawBlocks = (ctx: Ctx, tokens: Token[], indent = 0) => {
       default: {
         const text = (token as { text?: string }).text;
         if (text) {
-          drawRuns(ctx, [{ ...EMPTY_STYLE, text }], { size: BODY_SIZE, indent });
+          drawRuns(ctx, [{ ...EMPTY_STYLE, text }], {
+            size: BODY_SIZE,
+            indent,
+          });
         }
       }
     }
@@ -312,7 +472,12 @@ export const generateDocumentPdf = async (
     mono: await pdf.embedFont(StandardFonts.Courier),
   };
 
-  const ctx: Ctx = { pdf, page: pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]), y: 0, fonts };
+  const ctx: Ctx = {
+    pdf,
+    page: pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]),
+    y: 0,
+    fonts,
+  };
 
   ctx.y = PAGE_HEIGHT - MARGIN;
 
