@@ -1,5 +1,6 @@
 import { type ToolExecuteFunction, type ToolSet } from 'ai';
 import { type ToolCategory } from 'twenty-shared/ai';
+import { z } from 'zod';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
@@ -19,6 +20,18 @@ export const executeToolFromToolSet = async (
     throw new Error(
       `Tool "${toolName}" not found in ToolSet for category "${category}"`,
     );
+  }
+
+  if (tool.inputSchema instanceof z.ZodType) {
+    const parsedInput = await tool.inputSchema.safeParseAsync(args);
+
+    if (!parsedInput.success) {
+      return {
+        success: false,
+        message: `Invalid input for ${toolName}`,
+        error: z.prettifyError(parsedInput.error),
+      };
+    }
   }
 
   // ToolSet widens execute to a union no argument satisfies; these tools are
