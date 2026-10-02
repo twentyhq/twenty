@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import type { markdownToHTML } from '@blocknote/core';
 import type { ServerBlockNoteEditor } from '@blocknote/server-util';
 
@@ -61,6 +63,12 @@ const convertMarkdownToBlocknote: RichTextConverters['convertMarkdownToBlocknote
           ? 'Rich text markdown containing raw HTML is not supported when writing several records at once'
           : 'Rich text markdown with tables, images, multi-paragraph quotes or code blocks without a language is not supported when writing several records at once',
         RecordTransformerExceptionCode.RICH_TEXT_CONTENT_NOT_SUPPORTED_IN_BATCH,
+        {
+          userFriendlyMessage:
+            conversion.status === 'raw-html'
+              ? msg`Rich text containing HTML can only be saved one record at a time.`
+              : msg`Rich text with tables, images, multi-paragraph quotes or code blocks without a language can only be saved one record at a time.`,
+        },
       );
     }
 
@@ -73,7 +81,15 @@ const convertBlocknoteToMarkdown: RichTextConverters['convertBlocknoteToMarkdown
   async (blocknote) => {
     const { serverBlockNoteEditor } = await loadBlockNoteModules();
 
-    return serverBlockNoteEditor.blocksToMarkdownLossy(JSON.parse(blocknote));
+    // Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)
+    // Todo : This may be resolved once the server-utils library is updated with proper conversion support - #947
+    try {
+      return await serverBlockNoteEditor.blocksToMarkdownLossy(
+        JSON.parse(blocknote),
+      );
+    } catch {
+      return blocknote;
+    }
   };
 
 export const BLOCKNOTE_RICH_TEXT_CONVERTERS: RichTextConverters = {

@@ -256,7 +256,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         flatObjectMetadataMaps,
         shouldBackfillPositionIfUndefined: !args.upsert,
         // Content the DOM-free conversion cannot handle needs the jsdom parser, too slow to run per record
-        shouldRejectSlowRichTextConversion: args.data.length > 1,
+        shouldRejectSlowRichTextConversion:
+          Array.isArray(args.data) && args.data.length > 1,
       }),
     };
   }

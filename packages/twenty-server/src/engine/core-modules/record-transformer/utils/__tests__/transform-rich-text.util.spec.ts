@@ -51,6 +51,8 @@ describe('transformRichTextValue', () => {
       { shouldRejectSlowConversion: true, converters },
     );
 
+    expect(converters.convertMarkdownToBlocknote).toHaveBeenCalledTimes(1);
+
     expect(converters.convertMarkdownToBlocknote).toHaveBeenCalledWith(
       '# Title',
       { shouldRejectSlowConversion: true },
@@ -69,6 +71,7 @@ describe('transformRichTextValue', () => {
       markdown: 'converted markdown',
       blocknote: BLOCKNOTE_VALUE,
     });
+    expect(converters.convertBlocknoteToMarkdown).toHaveBeenCalledTimes(1);
     expect(converters.convertBlocknoteToMarkdown).toHaveBeenCalledWith(
       BLOCKNOTE_VALUE,
     );
@@ -101,22 +104,16 @@ describe('transformRichTextValue', () => {
     expect(converters.convertMarkdownToBlocknote).not.toHaveBeenCalled();
   });
 
-  it('should fall back to the raw blocknote when markdown conversion fails', async () => {
+  it('should propagate converter failures instead of storing raw blocknote', async () => {
     const converters = buildConverters();
 
     converters.convertBlocknoteToMarkdown.mockRejectedValueOnce(
-      new Error('Unsupported block'),
+      new Error('BlockNote failed to load'),
     );
 
-    const result = await transformRichTextValue(
-      { blocknote: BLOCKNOTE_VALUE },
-      { converters },
-    );
-
-    expect(result).toEqual({
-      markdown: BLOCKNOTE_VALUE,
-      blocknote: BLOCKNOTE_VALUE,
-    });
+    await expect(
+      transformRichTextValue({ blocknote: BLOCKNOTE_VALUE }, { converters }),
+    ).rejects.toThrow('BlockNote failed to load');
   });
 
   it('should rebuild blocknote from tiptap content', async () => {

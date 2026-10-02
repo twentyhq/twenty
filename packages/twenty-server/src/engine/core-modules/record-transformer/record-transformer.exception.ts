@@ -34,7 +34,7 @@ const getRecordTransformerExceptionUserFriendlyMessage = (
     case RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE:
       return msg`Conflicting phone calling code and country code.`;
     case RecordTransformerExceptionCode.RICH_TEXT_CONTENT_NOT_SUPPORTED_IN_BATCH:
-      return msg`This rich text can only be written one record at a time. HTML, tables, images, multi-paragraph quotes and code blocks without a language are not supported in batches.`;
+      return msg`This rich text can only be saved one record at a time.`;
     default:
       assertUnreachable(code);
   }

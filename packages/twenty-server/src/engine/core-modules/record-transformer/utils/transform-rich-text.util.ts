@@ -40,10 +40,9 @@ export const transformRichTextValue = async (
 
   const markdown =
     parsedValue.markdown ||
-    (await convertBlocknoteToMarkdownOrFallback(
-      parsedValue.blocknote,
-      converters,
-    ));
+    (isNonEmptyString(parsedValue.blocknote)
+      ? await converters.convertBlocknoteToMarkdown(parsedValue.blocknote)
+      : null);
 
   const blocknote =
     parsedValue.blocknote ||
@@ -54,21 +53,4 @@ export const transformRichTextValue = async (
       : null);
 
   return { markdown, blocknote };
-};
-
-// Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)
-// Todo : This may be resolved once the server-utils library is updated with proper conversion support - #947
-const convertBlocknoteToMarkdownOrFallback = async (
-  blocknote: string | null | undefined,
-  converters: RichTextConverters,
-): Promise<string | null> => {
-  if (!isNonEmptyString(blocknote)) {
-    return null;
-  }
-
-  try {
-    return await converters.convertBlocknoteToMarkdown(blocknote);
-  } catch {
-    return blocknote;
-  }
 };
