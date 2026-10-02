@@ -1,4 +1,4 @@
-import { AiChatThreadRecordTargets } from '@/ai/components/AiChatThreadRecordTargets';
+import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
@@ -29,10 +29,7 @@ export const SidePanelAskAiInfo = () => {
       <HeaderIdentifier title={currentAiChatThreadTitle ?? t`Ask AI`} />
       {isDefined(currentAiChatThread) &&
         currentAiChatThread !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY && (
-          <AiChatThreadRecordTargets
-            threadId={currentAiChatThread}
-            instanceId="side-panel-ask-ai-thread-record-targets"
-          />
+          <AiChatThreadDetailsDropdown threadId={currentAiChatThread} />
         )}
     </StyledContainer>
   );
