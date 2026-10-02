@@ -308,15 +308,32 @@ export const DisabledSkipsTriggerHandlers: Story = {
       name: 'Country',
     });
 
+    const defaultPreventedKeys: string[] = [];
+    const recordDefaultPreventedKey = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) {
+        defaultPreventedKeys.push(event.key);
+      }
+    };
+
+    canvasElement.ownerDocument.addEventListener(
+      'keydown',
+      recordDefaultPreventedKey,
+    );
     await userEvent.tab();
     expect(trigger).toHaveFocus();
-    await userEvent.keyboard('{Shift}');
+    await userEvent.keyboard('{Shift}{ArrowDown}{ArrowUp}');
     await userEvent.click(trigger);
+    canvasElement.ownerDocument.removeEventListener(
+      'keydown',
+      recordDefaultPreventedKey,
+    );
 
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    expect(defaultPreventedKeys).toEqual([]);
     expect(args.onKeyDown).not.toHaveBeenCalled();
     expect(args.onPointerDown).not.toHaveBeenCalled();
     expect(args.onClick).not.toHaveBeenCalled();
+    expect(args.onOpenChange).not.toHaveBeenCalled();
   },
 };
 

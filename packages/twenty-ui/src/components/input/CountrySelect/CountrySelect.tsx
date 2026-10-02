@@ -17,6 +17,9 @@ import { CountrySelectOptions } from './internal/CountrySelectOptions';
 import { getCountrySelectLabelledBy } from './internal/getCountrySelectLabelledBy';
 import { type CountrySelectProps } from './types/CountrySelectProps';
 
+const skipTriggerActivation = (event: { preventBaseUIHandler?: () => void }) =>
+  event.preventBaseUIHandler?.();
+
 export const CountrySelect = ({
   countries,
   value,
@@ -124,11 +127,11 @@ export const CountrySelect = ({
           }
           aria-disabled={isDisabled || undefined}
           data-disabled={isDisabled ? '' : undefined}
-          onClick={isDisabled ? undefined : onClick}
-          onMouseDown={isDisabled ? undefined : onMouseDown}
-          onPointerDown={isDisabled ? undefined : onPointerDown}
-          onKeyDown={isDisabled ? undefined : onKeyDown}
-          onKeyUp={isDisabled ? undefined : onKeyUp}
+          onClick={isDisabled ? skipTriggerActivation : onClick}
+          onMouseDown={isDisabled ? skipTriggerActivation : onMouseDown}
+          onPointerDown={isDisabled ? skipTriggerActivation : onPointerDown}
+          onKeyDown={isDisabled ? skipTriggerActivation : onKeyDown}
+          onKeyUp={isDisabled ? skipTriggerActivation : onKeyUp}
           className={(state) => triggerClassName(getTriggerState(state))}
           style={
             isFunction(style) ? (state) => style(getTriggerState(state)) : style
