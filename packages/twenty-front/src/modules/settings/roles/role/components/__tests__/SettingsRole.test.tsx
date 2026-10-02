@@ -126,7 +126,7 @@ const renderSettingsRole = ({ draftLabel }: { draftLabel: string }) => {
 
 describe('SettingsRole', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('should leave the save button usable when saving is rejected because the role name is empty', async () => {
@@ -174,5 +174,26 @@ describe('SettingsRole', () => {
     });
     expect(mockSaveDraftRoleToDB).toHaveBeenCalledTimes(1);
     expect(mockLoadCurrentUser).toHaveBeenCalledTimes(1);
+  });
+
+  it('should show an error toast and leave the save button usable when the save fails', async () => {
+    const user = userEvent.setup();
+
+    mockSaveDraftRoleToDB.mockRejectedValue(new Error('Save failed'));
+
+    renderSettingsRole({ draftLabel: 'Sales team' });
+
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+
+    await user.click(saveButton);
+
+    await waitFor(() => {
+      expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
+    });
+    expect(mockEnqueueToast).toHaveBeenCalledWith(
+      expect.objectContaining({ variant: 'error' }),
+    );
+    expect(mockLoadCurrentUser).not.toHaveBeenCalled();
+    expect(saveButton).not.toHaveAttribute('aria-busy', 'true');
   });
 });

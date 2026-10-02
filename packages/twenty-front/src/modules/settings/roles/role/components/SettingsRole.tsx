@@ -1,3 +1,4 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -124,6 +125,8 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     try {
       await saveDraftRoleToDB();
       await loadCurrentUser();
+    } catch (error) {
+      enqueueToast(getToastOptionsFromError({ error }));
     } finally {
       setIsSaving(false);
     }
