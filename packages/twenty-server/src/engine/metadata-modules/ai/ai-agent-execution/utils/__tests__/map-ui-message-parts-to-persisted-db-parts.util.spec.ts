@@ -43,4 +43,26 @@ describe('mapUIMessagePartsToPersistedDBParts', () => {
       expect.objectContaining({ type: 'text', textContent: 'Looking it up' }),
     ]);
   });
+
+  it('strips NUL characters from text and tool parts', () => {
+    expect(
+      mapUIMessagePartsToPersistedDBParts(
+        [
+          { type: 'text', text: 'Done\u0000' },
+          {
+            type: 'tool-code_interpreter',
+            toolCallId: 'call-1',
+            state: 'output-available',
+            input: { code: 'print(rows)' },
+            output: { stdout: 'Sheet1\u0000\u0000' },
+          } as unknown as ExtendedUIMessagePart,
+        ],
+        'message-id',
+        'workspace-id',
+      ),
+    ).toEqual([
+      expect.objectContaining({ textContent: 'Done' }),
+      expect.objectContaining({ toolOutput: { stdout: 'Sheet1' } }),
+    ]);
+  });
 });
