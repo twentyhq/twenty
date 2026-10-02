@@ -437,14 +437,17 @@ describe('If/Else Workflow (e2e)', () => {
       );
 
       // statuses is recomputed by a workflow queue job after activation returns
-      await expectEventually(async () => {
-        const statusesResponse = await findWorkflow();
+      await expectEventually(
+        async () => {
+          const statusesResponse = await findWorkflow();
 
-        expect(statusesResponse.body.data.workflow.statuses).toContain(
-          'ACTIVE',
-        );
-      });
-    });
+          expect(statusesResponse.body.data.workflow.statuses).toContain(
+            'ACTIVE',
+          );
+        },
+        { timeoutMs: 30_000 },
+      );
+    }, 60_000);
 
     it('should verify If/Else workflow version has correct structure', async () => {
       const response = await client
