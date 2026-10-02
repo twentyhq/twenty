@@ -146,6 +146,7 @@ export const SettingsValidationRulePreview = ({
           </StyledStatus>
         );
       case 'failed':
+      case 'errored':
         return (
           <StyledStatus role="img" aria-label={t`This record is blocked`}>
             <IconX
@@ -155,8 +156,6 @@ export const SettingsValidationRulePreview = ({
             />
           </StyledStatus>
         );
-      case 'errored':
-        return null;
     }
   };
 
@@ -192,7 +191,7 @@ export const SettingsValidationRulePreview = ({
                       size={theme.icon.size.md}
                       stroke={theme.icon.stroke.sm}
                     />
-                    {`${fieldLabel}:`}
+                    {t`${fieldLabel}:`}
                   </StyledFieldLabel>
                   <StyledValue isEmpty={formattedValue.length === 0}>
                     {formattedValue.length > 0 ? formattedValue : t`Empty`}
