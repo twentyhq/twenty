@@ -2245,28 +2245,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    if (
-      alias === queryBuilder.alias &&
-      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType }) &&
-      !isRecordGrantBeyondRoleAllowed({
-        flatObjectMetadata,
-        operationType,
-        isRecordSharingEnabled: this.isRecordSharingEnabled,
-      })
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-
-    const policy = buildRowAccessPolicy({
-      subject: this.resolveRowAccessPolicySubject(),
-      environment: this.resolveRowAccessPolicyEnvironment(),
-      tableAlias: alias,
+    const policy = this.buildRowAccessPolicyForAlias({
+      alias,
+      isMainAlias: alias === queryBuilder.alias,
       flatObjectMetadata,
       operationType,
-      depth: 0,
       joinParentRelationShape: queryBuilder.getJoinParentRelationShape(alias),
     });
 
@@ -2292,6 +2275,163 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         return;
       default:
         assertUnreachable(policy);
+    }
+  }
+
+  private buildRowAccessPolicyForAlias({
+    alias,
+    isMainAlias,
+    flatObjectMetadata,
+    operationType,
+    joinParentRelationShape,
+  }: {
+    alias: string;
+    isMainAlias: boolean;
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
+    joinParentRelationShape?: WorkspaceRelationShape;
+  }): RowAccessPolicy {
+    if (
+      isMainAlias &&
+      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType }) &&
+      !isRecordGrantBeyondRoleAllowed({
+        flatObjectMetadata,
+        operationType,
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
+      })
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return buildRowAccessPolicy({
+      subject: this.resolveRowAccessPolicySubject(),
+      environment: this.resolveRowAccessPolicyEnvironment(),
+      tableAlias: alias,
+      flatObjectMetadata,
+      operationType,
+      depth: 0,
+      joinParentRelationShape,
+    });
+  }
+
+  // Applies the checks of findRecordIdsAllowedForOperation to several
+  // operations in one query, with a boolean column per gated operation;
+  // deleted records are included
+  async findRecordIdsAllowedForOperations<
+    TOperationType extends OperationType,
+  >({
+    recordIds,
+    operationTypes,
+  }: {
+    recordIds: string[];
+    operationTypes: TOperationType[];
+  }): Promise<Record<TOperationType, Set<string>>> {
+    const allowedRecordIdsByOperationType = Object.fromEntries(
+      operationTypes.map((operationType) => [operationType, new Set<string>()]),
+    ) as Record<TOperationType, Set<string>>;
+
+    if (recordIds.length === 0) {
+      return allowedRecordIdsByOperationType;
+    }
+
+    const tableAlias = this.options.tableShape.nameSingular;
+    const recordAccesses = operationTypes.map((operationType, index) => ({
+      operationType,
+      access: this.resolveRecordAccessForOperation({
+        operationType,
+        tableAlias,
+      }),
+      columnAlias: `isAllowed_${index}`,
+    }));
+
+    if (recordAccesses.every(({ access }) => access === false)) {
+      return allowedRecordIdsByOperationType;
+    }
+
+    const queryBuilder = this.buildBypassingEventSelectQueryBuilder(tableAlias)
+      .where({ id: In(recordIds) })
+      .withDeleted()
+      .select([])
+      .addSelect(`${escapeIdentifier(tableAlias)}."id"`, 'id');
+
+    for (const { access, columnAlias } of recordAccesses) {
+      if (typeof access === 'boolean') {
+        continue;
+      }
+
+      queryBuilder
+        .addSelect(
+          `CASE WHEN ${access.sql} THEN TRUE ELSE FALSE END`,
+          columnAlias,
+        )
+        .setParameters(access.parameters);
+    }
+
+    const rows = await queryBuilder.getRawMany<Record<string, unknown>>();
+
+    for (const row of rows) {
+      for (const { operationType, access, columnAlias } of recordAccesses) {
+        if (access === true || row[columnAlias] === true) {
+          allowedRecordIdsByOperationType[operationType].add(String(row.id));
+        }
+      }
+    }
+
+    return allowedRecordIdsByOperationType;
+  }
+
+  private resolveRecordAccessForOperation({
+    operationType,
+    tableAlias,
+  }: {
+    operationType: OperationType;
+    tableAlias: string;
+  }): boolean | SqlCondition {
+    if (this.options.shouldBypassPermissionChecks) {
+      return true;
+    }
+
+    try {
+      if (operationType !== 'select') {
+        this.validateWriteIsPermitted({
+          operationType,
+          columnsToReturn: ['id'],
+          updatedColumns: [],
+        });
+      }
+
+      this.validateQueryIsPermitted(
+        this.createQueryBuilder(tableAlias).select(['id']),
+      );
+
+      const policy = this.buildRowAccessPolicyForAlias({
+        alias: tableAlias,
+        isMainAlias: true,
+        flatObjectMetadata: this.options.flatObjectMetadata,
+        operationType,
+      });
+
+      switch (policy.kind) {
+        case 'open':
+          return true;
+        case 'denied':
+          return false;
+        case 'gated':
+          return this.compileRowAccessExpression(policy.expression);
+        default:
+          return assertUnreachable(policy);
+      }
+    } catch (error) {
+      if (
+        error instanceof PermissionsException &&
+        error.code === PermissionsExceptionCode.PERMISSION_DENIED
+      ) {
+        return false;
+      }
+      throw error;
     }
   }
 
