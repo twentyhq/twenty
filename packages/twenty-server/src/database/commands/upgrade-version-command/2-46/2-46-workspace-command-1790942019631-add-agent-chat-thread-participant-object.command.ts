@@ -33,9 +33,9 @@ const EXISTING_OBJECT_FIELD_UNIVERSAL_IDENTIFIERS = [
     .universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.45.0', 1790884925593)
+@RegisteredWorkspaceCommand('2.46.0', 1790942019631)
 @Command({
-  name: 'upgrade:2-45:add-agent-chat-thread-participant-object',
+  name: 'upgrade:2-46:add-agent-chat-thread-participant-object',
   description:
     'Create the agentChatThreadParticipant object and the last activity and message of chat threads',
 })

@@ -137,7 +137,7 @@ describe('useRefreshAgentChatThreads', () => {
     ]);
   });
 
-  it('orders by last change on a workspace the 2.45 upgrade has not reached', async () => {
+  it('orders by last change on a workspace the 2.46 upgrade has not reached', async () => {
     const store = buildStore();
     store.set(chatObjectMetadataItemAtom, {
       id: 'chat-object',

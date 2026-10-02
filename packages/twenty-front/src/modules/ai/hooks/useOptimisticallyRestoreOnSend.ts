@@ -28,7 +28,7 @@ export const useOptimisticallyRestoreOnSend = () => {
     )?.[threadId];
     const previousVisit = store.get(agentChatThreadVisitState.atom);
 
-    // Workspaces not yet upgraded to 2.45 have no last activity and sort by
+    // Workspaces not yet upgraded to 2.46 have no last activity and sort by
     // the last change
     const hasLastActivityAt = thread?.lastActivityAt !== undefined;
 

@@ -226,9 +226,9 @@ const moveRestoredArchivedChatThreadsBackToTrash = async ({
   return movedCount;
 };
 
-@RegisteredWorkspaceCommand('2.45.0', 1790884925594)
+@RegisteredWorkspaceCommand('2.46.0', 1790942019632)
 @Command({
-  name: 'upgrade:2-45:backfill-agent-chat-thread-inbox-state',
+  name: 'upgrade:2-46:backfill-agent-chat-thread-inbox-state',
   description:
     'Backfill the last activity of chat threads, mark existing chats read for their members and turn chats archived before 2.44 into per-member archives',
 })

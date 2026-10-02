@@ -238,7 +238,7 @@ export class AgentChatThreadParticipantService {
     return rows[0] ?? null;
   }
 
-  // Before the 2.45 upgrade only updatedAt exists to order chats by
+  // Before the 2.46 upgrade only updatedAt exists to order chats by
   private async touchThread({
     workspaceId,
     threadId,

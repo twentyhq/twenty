@@ -21,9 +21,9 @@ const AI_CHAT_INBOX_COMMAND_MENU_ITEM_NAMES = [
   'snoozeAiChat',
 ] as const;
 
-@RegisteredWorkspaceCommand('2.45.0', 1790884925595)
+@RegisteredWorkspaceCommand('2.46.0', 1790942019633)
 @Command({
-  name: 'upgrade:2-45:add-ai-chat-inbox-command-menu-items',
+  name: 'upgrade:2-46:add-ai-chat-inbox-command-menu-items',
   description:
     'Add the Mark as read, Mark as unread, Mark as done, Reopen, Unsnooze and Snooze commands to chats',
 })

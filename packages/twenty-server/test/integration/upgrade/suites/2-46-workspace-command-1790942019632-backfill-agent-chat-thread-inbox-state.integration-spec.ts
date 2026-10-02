@@ -3,8 +3,8 @@ import { randomUUID } from 'node:crypto';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type AddAgentChatThreadParticipantObjectCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790884925593-add-agent-chat-thread-participant-object.command';
-import { type BackfillAgentChatThreadInboxStateCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790884925594-backfill-agent-chat-thread-inbox-state.command';
+import { type AddAgentChatThreadParticipantObjectCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019631-add-agent-chat-thread-participant-object.command';
+import { type BackfillAgentChatThreadInboxStateCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019632-backfill-agent-chat-thread-inbox-state.command';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
@@ -43,7 +43,7 @@ type StoredParticipant = {
   archivedAt: Date | null;
 };
 
-describe('2-45 workspace commands - agent chat thread inbox state (integration)', () => {
+describe('2-46 workspace commands - agent chat thread inbox state (integration)', () => {
   let objectCommand: AddAgentChatThreadParticipantObjectCommand;
   let backfillCommand: BackfillAgentChatThreadInboxStateCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
@@ -165,7 +165,7 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
       'WorkspaceOrmManager',
     );
 
-    // What a workspace that has not run the 2.45 commands yet looks like
+    // What a workspace that has not run the 2.46 commands yet looks like
     await runCommand(backfillCommand, 'down');
     await runCommand(objectCommand, 'down');
 
@@ -295,11 +295,11 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
     );
   });
 
-  it('registers both commands in order for 2.45.0', () => {
+  it('registers both commands in order for 2.46.0', () => {
     const registry = getAppProviderByClassName<UpgradeCommandRegistryService>(
       'UpgradeCommandRegistryService',
     );
-    const { workspaceCommands } = registry.getBundleForVersion('2.45.0');
+    const { workspaceCommands } = registry.getBundleForVersion('2.46.0');
     const positions = [objectCommand, backfillCommand].map((command) =>
       workspaceCommands.findIndex(
         (registeredCommand) => registeredCommand.command === command,

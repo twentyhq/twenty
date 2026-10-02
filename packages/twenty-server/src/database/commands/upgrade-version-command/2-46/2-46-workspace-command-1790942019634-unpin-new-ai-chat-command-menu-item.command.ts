@@ -12,9 +12,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 
 const NEW_AI_CHAT_UNIVERSAL_IDENTIFIER = '604bc9b2-e438-4572-bd35-726fa0fb2ec7';
 
-@RegisteredWorkspaceCommand('2.45.0', 1790884925596)
+@RegisteredWorkspaceCommand('2.46.0', 1790942019634)
 @Command({
-  name: 'upgrade:2-45:unpin-new-ai-chat-command-menu-item',
+  name: 'upgrade:2-46:unpin-new-ai-chat-command-menu-item',
   description:
     'Unpin New chat from the chat header, the inbox list offers it instead',
 })

@@ -29,7 +29,7 @@ export const updateAgentChatThreadUsage = async ({
   threadId: string;
   streamId: string;
   usage: ThreadUsageUpdate;
-  // Null before the 2.45 upgrade adds the activity columns
+  // Null before the 2.46 upgrade adds the activity columns
   recordedActivity: { lastMessageText: string | null } | null;
 }): Promise<{ affected: number }> =>
   repository.query(workspaceId, async ({ manager, table }) => {
