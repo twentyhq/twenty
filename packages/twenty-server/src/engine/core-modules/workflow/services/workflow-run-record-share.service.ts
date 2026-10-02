@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
@@ -8,11 +7,10 @@ import {
   WorkflowVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsWhere, In, type Repository } from 'typeorm';
+import { type FindOptionsWhere, In } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { buildWorkflowRunRecordShares } from 'src/engine/core-modules/workflow/utils/build-workflow-run-record-shares.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -39,8 +37,6 @@ export class WorkflowRunRecordShareService {
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
@@ -268,28 +264,12 @@ export class WorkflowRunRecordShareService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<string | null> {
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { id: userWorkspaceId, workspaceId },
-      select: { id: true, userId: true },
-    });
-
-    if (!isDefined(userWorkspace)) {
-      return null;
-    }
-
     const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
       ]);
-    const workspaceMemberId =
-      flatWorkspaceMemberMaps.idByUserId[userWorkspace.userId];
-    const workspaceMember = isDefined(workspaceMemberId)
-      ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
-      : undefined;
 
-    return isDefined(workspaceMember) && !isDefined(workspaceMember.deletedAt)
-      ? workspaceMember.id
-      : null;
+    return flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId] ?? null;
   }
 
   private findRuns({

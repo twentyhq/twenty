@@ -21,7 +21,7 @@ export const mapDBPartToUIMessagePart = (
     case 'reasoning':
       return {
         type: 'reasoning',
-        text: part.reasoningContent!,
+        text: part.reasoningContent ?? '',
         state: part.state as ReasoningUIPart['state'],
         providerMetadata: part.providerMetadata ?? undefined,
       };
