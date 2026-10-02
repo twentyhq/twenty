@@ -1,5 +1,5 @@
-import { useId, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
+import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
+import { useCallback, useId, useRef, useState } from 'react';
 
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
@@ -16,24 +16,29 @@ export const ResizablePanelDemo = ({
 }: Pick<ResizablePanelProps, 'side' | 'variant' | 'min' | 'max'>) => {
   const regionId = useId();
   const separatorRef = useRef<HTMLDivElement>(null);
-  const showNotesButtonRef = useRef<HTMLButtonElement>(null);
   const [size, setSize] = useState(220);
   const [committedSize, setCommittedSize] = useState(220);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [shouldFocusOnMount, setShouldFocusOnMount] = useState(false);
+
+  const focusOnMount = useCallback(
+    (element: HTMLElement | null) => {
+      if (shouldFocusOnMount) {
+        element?.focus();
+      }
+    },
+    [shouldFocusOnMount],
+  );
+  const mergedSeparatorRef = useMergedRefs(separatorRef, focusOnMount);
 
   const collapseNotes = () => {
-    const isSeparatorFocused = separatorRef.current === document.activeElement;
-
-    flushSync(() => setIsCollapsed(true));
-
-    if (isSeparatorFocused) {
-      showNotesButtonRef.current?.focus();
-    }
+    setShouldFocusOnMount(separatorRef.current === document.activeElement);
+    setIsCollapsed(true);
   };
 
   const showNotes = () => {
-    flushSync(() => setIsCollapsed(false));
-    separatorRef.current?.focus();
+    setShouldFocusOnMount(true);
+    setIsCollapsed(false);
   };
 
   const isHorizontal = side === 'left' || side === 'right';
@@ -45,7 +50,7 @@ export const ResizablePanelDemo = ({
   );
   const separator = (
     <ResizablePanel
-      ref={separatorRef}
+      ref={mergedSeparatorRef}
       side={side}
       variant={variant}
       gapSize={12}
@@ -62,7 +67,7 @@ export const ResizablePanelDemo = ({
 
   if (isCollapsed) {
     return (
-      <Button ref={showNotesButtonRef} onClick={showNotes}>
+      <Button ref={focusOnMount} onClick={showNotes}>
         Show notes
       </Button>
     );

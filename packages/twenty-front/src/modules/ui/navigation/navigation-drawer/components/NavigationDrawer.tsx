@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
 
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
@@ -18,7 +17,7 @@ import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
 } from '@/ui/navigation/states/navigationDrawerWidthState';
-import { focusNavigationDrawerExpandButton } from '@/ui/navigation/navigation-drawer/utils/focusNavigationDrawerExpandButton';
+import { shouldFocusNavigationDrawerExpandButtonState } from '@/ui/navigation/navigation-drawer/states/shouldFocusNavigationDrawerExpandButtonState';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -103,21 +102,18 @@ export const NavigationDrawer = ({
   const setTableWidthResizeIsActive = useSetAtomState(
     tableWidthResizeIsActiveState,
   );
+  const setShouldFocusNavigationDrawerExpandButton = useSetAtomState(
+    shouldFocusNavigationDrawerExpandButtonState,
+  );
 
   const handleCollapse = () => {
-    const isResizeHandleFocused =
-      resizeHandleRef.current === document.activeElement;
-
-    flushSync(() => {
-      setIsNavigationDrawerExpanded(false);
-      setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
-      setIsResizing(false);
-      setTableWidthResizeIsActive(true);
-    });
-
-    if (isResizeHandleFocused) {
-      focusNavigationDrawerExpandButton();
-    }
+    setShouldFocusNavigationDrawerExpandButton(
+      resizeHandleRef.current === document.activeElement,
+    );
+    setIsNavigationDrawerExpanded(false);
+    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+    setIsResizing(false);
+    setTableWidthResizeIsActive(true);
   };
 
   const handleWidthChange = (width: number) => {
