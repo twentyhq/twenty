@@ -1,4 +1,5 @@
 import { RecordShareAccessLevel } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 export const ShareRecordToolInputZodSchema = z
@@ -12,14 +13,14 @@ export const ShareRecordToolInputZodSchema = z
     workspaceMemberId: z
       .string()
       .uuid()
-      .optional()
+      .nullish()
       .describe(
         'The id of the workspace member to share the record with. Find it with find_many_workspace_members. Set either workspaceMemberId or roleId, not both.',
       ),
     roleId: z
       .string()
       .uuid()
-      .optional()
+      .nullish()
       .describe(
         'The id of the role whose members the record is shared with. Find it with list_roles. Set either workspaceMemberId or roleId, not both.',
       ),
@@ -36,7 +37,7 @@ export const ShareRecordToolInputZodSchema = z
   })
   .refine(
     ({ workspaceMemberId, roleId }) =>
-      (workspaceMemberId === undefined) !== (roleId === undefined),
+      isDefined(workspaceMemberId) !== isDefined(roleId),
     { message: 'Set exactly one of workspaceMemberId or roleId' },
   );
 

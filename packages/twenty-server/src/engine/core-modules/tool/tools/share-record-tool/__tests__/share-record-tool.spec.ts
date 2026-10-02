@@ -108,6 +108,23 @@ describe('ShareRecordTool', () => {
     );
   });
 
+  it('treats a null principal as unset', async () => {
+    const result = await execute({
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+      roleId: null,
+    });
+
+    expect(result.success).toBe(true);
+    expect(setShare).toHaveBeenCalledWith(
+      expect.objectContaining({
+        principal: {
+          workspaceMemberId: WORKSPACE_MEMBER_ID,
+          roleId: undefined,
+        },
+      }),
+    );
+  });
+
   it('refuses to share when record sharing is not enabled', async () => {
     isFeatureEnabled.mockResolvedValue(false);
 
@@ -119,6 +136,7 @@ describe('ShareRecordTool', () => {
 
   it.each([
     [{}],
+    [{ workspaceMemberId: null, roleId: null }],
     [{ workspaceMemberId: WORKSPACE_MEMBER_ID, roleId: ROLE_ID }],
     [
       {
@@ -165,6 +183,17 @@ describe('ShareRecordTool', () => {
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('does not belong to this workspace');
+  });
+
+  it('rethrows internal record sharing errors', async () => {
+    const internalError = new RecordShareException(
+      'Transaction scope mismatch',
+      RecordShareExceptionCode.TRANSACTION_SCOPE_WORKSPACE_MISMATCH,
+    );
+
+    setShare.mockRejectedValueOnce(internalError);
+
+    await expect(execute({ roleId: ROLE_ID })).rejects.toBe(internalError);
   });
 
   it('reports a record the caller cannot manage as a failed output', async () => {

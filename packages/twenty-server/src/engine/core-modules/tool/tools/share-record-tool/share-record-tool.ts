@@ -6,7 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
+import {
+  RecordShareException,
+  RecordShareExceptionCode,
+} from 'src/engine/core-modules/record-share/record-share.exception';
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { ShareRecordToolInputZodSchema } from 'src/engine/core-modules/tool/tools/share-record-tool/share-record-tool.schema';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
@@ -100,12 +103,18 @@ export class ShareRecordTool implements Tool {
       await this.recordSharingService.setShare({
         objectMetadataId,
         recordId,
-        principal: { workspaceMemberId, roleId },
+        principal: {
+          workspaceMemberId: workspaceMemberId ?? undefined,
+          roleId: roleId ?? undefined,
+        },
         accessLevel,
         authContext,
       });
     } catch (error) {
-      if (error instanceof RecordShareException) {
+      if (
+        error instanceof RecordShareException &&
+        error.code === RecordShareExceptionCode.INVALID_SHARE_WITH
+      ) {
         return {
           success: false,
           message: FAILURE_MESSAGE,
