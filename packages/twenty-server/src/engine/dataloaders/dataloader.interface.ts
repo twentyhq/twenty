@@ -2,6 +2,7 @@ import type DataLoader from 'dataloader';
 
 import { type FieldMetadataConnectionLoaderPayload } from 'src/engine/dataloaders/factories/field-metadata-connection-loader.factory';
 import { type IndexMetadataConnectionLoaderPayload } from 'src/engine/dataloaders/factories/index-metadata-connection-loader.factory';
+import { type RoleRelationLoaders } from 'src/engine/dataloaders/factories/role-relation-loaders.factory';
 import {
   type ApplicationTranslationCatalogLoaderPayload,
   type FieldMetadataLoaderPayload,
@@ -36,7 +37,7 @@ import { type ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos
 import { type ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
 import { type ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 
-export interface IDataloaders {
+export interface IDataloaders extends RoleRelationLoaders {
   relationLoader: DataLoader<RelationLoaderPayload, RelationDTO | null>;
 
   morphRelationLoader: DataLoader<

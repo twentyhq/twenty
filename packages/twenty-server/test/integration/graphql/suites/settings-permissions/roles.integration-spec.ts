@@ -170,6 +170,111 @@ describe('roles permissions', () => {
 
       await assertPermissionDeniedForMemberWithMemberRole({ query });
     });
+
+    it('should resolve every role relation in a single request', async () => {
+      const query = {
+        query: `
+          query GetRoles {
+            getRoles {
+              id
+              label
+              workspaceMembers {
+                id
+              }
+              agents {
+                id
+              }
+              apiKeys {
+                id
+              }
+              permissionFlags {
+                flag
+              }
+              objectPermissions {
+                objectMetadataId
+              }
+              fieldPermissions {
+                fieldMetadataId
+              }
+              rowLevelPermissionPredicates {
+                id
+              }
+              rowLevelPermissionPredicateGroups {
+                id
+              }
+            }
+          }
+        `,
+      };
+
+      const resp = await client
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send(query);
+
+      expect(resp.status).toBe(200);
+      expect(resp.body.errors).toBeUndefined();
+
+      for (const role of resp.body.data.getRoles) {
+        expect(Array.isArray(role.workspaceMembers)).toBe(true);
+        expect(Array.isArray(role.agents)).toBe(true);
+        expect(Array.isArray(role.apiKeys)).toBe(true);
+        expect(Array.isArray(role.rowLevelPermissionPredicates)).toBe(true);
+        expect(Array.isArray(role.rowLevelPermissionPredicateGroups)).toBe(
+          true,
+        );
+      }
+    });
+  });
+
+  describe('getRole', () => {
+    const getRoleQuery = (roleId: string) => ({
+      query: `
+        query GetRole {
+          getRole(id: "${roleId}") {
+            id
+            label
+            workspaceMembers {
+              id
+            }
+          }
+        }
+      `,
+    });
+
+    it('should return a single role with its workspace members', async () => {
+      const resp = await client
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send(getRoleQuery(adminRoleId));
+
+      expect(resp.status).toBe(200);
+      expect(resp.body.errors).toBeUndefined();
+      expect(resp.body.data.getRole).toEqual({
+        id: adminRoleId,
+        label: 'Admin',
+        workspaceMembers: [{ id: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE }],
+      });
+    });
+
+    it('should throw a not found error when the role does not exist', async () => {
+      const resp = await client
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send(getRoleQuery('20202020-0000-4000-8000-000000000000'));
+
+      expect(resp.body.data).toBeNull();
+      expect(resp.body.errors[0].message).toBe(
+        PermissionsExceptionMessage.ROLE_NOT_FOUND,
+      );
+      expect(resp.body.errors[0].extensions.code).toBe(ErrorCode.NOT_FOUND);
+    });
+
+    it('should throw a permission error when user does not have permission (member role)', async () => {
+      await assertPermissionDeniedForMemberWithMemberRole({
+        query: getRoleQuery(guestRoleId),
+      });
+    });
   });
 
   describe('updateWorkspaceMemberRole', () => {

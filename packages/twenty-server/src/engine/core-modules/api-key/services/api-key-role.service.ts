@@ -14,10 +14,7 @@ import { RoleTargetService } from 'src/engine/metadata-modules/role-target/servi
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
-import {
-  fromRoleEntitiesToRoleDtos,
-  fromRoleEntityToRoleDto,
-} from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
+import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -179,12 +176,18 @@ export class ApiKeyRoleService {
   public async getApiKeyAssignableRoles(
     workspaceId: string,
   ): Promise<RoleDTO[]> {
-    const roles = await this.roleRepository.find(workspaceId, {
-      where: { canBeAssignedToApiKeys: true },
-      order: { label: 'ASC' },
-    });
+    const { flatRoleMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatRoleMaps'],
+    );
 
-    return fromRoleEntitiesToRoleDtos(roles);
+    return Object.values(flatRoleMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter((flatRole) => flatRole.canBeAssignedToApiKeys)
+      .sort((flatRoleA, flatRoleB) =>
+        flatRoleA.label.localeCompare(flatRoleB.label),
+      )
+      .map(fromFlatRoleToRoleDto);
   }
 
   public async getRolesByApiKeys({

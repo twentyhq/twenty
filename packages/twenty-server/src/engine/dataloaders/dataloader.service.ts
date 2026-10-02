@@ -12,6 +12,7 @@ import { ApplicationTranslationCatalogService } from 'src/engine/metadata-module
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { FieldMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/field-metadata-connection-loader.factory';
 import { IndexMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/index-metadata-connection-loader.factory';
+import { RoleRelationLoadersFactory } from 'src/engine/dataloaders/factories/role-relation-loaders.factory';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
@@ -144,6 +145,7 @@ export class DataloaderService {
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
     private readonly fieldMetadataConnectionLoaderFactory: FieldMetadataConnectionLoaderFactory,
     private readonly indexMetadataConnectionLoaderFactory: IndexMetadataConnectionLoaderFactory,
+    private readonly roleRelationLoadersFactory: RoleRelationLoadersFactory,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -194,6 +196,7 @@ export class DataloaderService {
       isConfiguredLoader,
       applicationAuthorIdentifiersLoader,
       applicationTranslationCatalogLoader,
+      ...this.roleRelationLoadersFactory.create(),
     };
   }
 
