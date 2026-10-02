@@ -1,10 +1,8 @@
 import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { In, Repository } from 'typeorm';
 
 import {
   FeatureFlagKey,
@@ -33,7 +31,6 @@ import {
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
 import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
 import { isRecordShareableObject } from 'src/engine/core-modules/record-share/utils/is-record-shareable-object.util';
@@ -75,8 +72,6 @@ export class RecordSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async getPermissions(args: RecordSharingArgs): Promise<RecordPermissionsDTO> {
@@ -566,43 +561,23 @@ export class RecordSharingService {
         'flatWorkspaceMemberMaps',
         'userWorkspaceRoleMap',
       ]);
-    const userIdByWorkspaceMemberId = new Map(
-      shares
-        .filter(
-          (share) =>
-            share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER,
-        )
-        .map((share) => [
-          share.principalId,
-          flatWorkspaceMemberMaps.byId[share.principalId]?.userId,
-        ])
-        .filter((entry): entry is [string, string] => isDefined(entry[1])),
-    );
-    const userWorkspaces =
-      userIdByWorkspaceMemberId.size > 0
-        ? await this.userWorkspaceRepository.find({
-            select: ['id', 'userId'],
-            where: {
-              workspaceId,
-              userId: In([...userIdByWorkspaceMemberId.values()]),
-            },
-          })
-        : [];
-    const roleIdByUserId = new Map(
-      userWorkspaces.map((userWorkspace) => [
-        userWorkspace.userId,
-        userWorkspaceRoleMap[userWorkspace.id],
-      ]),
-    );
 
     return shares.map((share) => {
       if (share.principalType === RecordSharePrincipalType.ROLE) {
         return share.principalId;
       }
 
-      const userId = userIdByWorkspaceMemberId.get(share.principalId);
+      const userId =
+        share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER
+          ? flatWorkspaceMemberMaps.byId[share.principalId]?.userId
+          : undefined;
+      const userWorkspaceId = isDefined(userId)
+        ? flatWorkspaceMemberMaps.userWorkspaceIdByUserId[userId]
+        : undefined;
 
-      return isDefined(userId) ? roleIdByUserId.get(userId) : undefined;
+      return isDefined(userWorkspaceId)
+        ? userWorkspaceRoleMap[userWorkspaceId]
+        : undefined;
     });
   }
 
