@@ -293,6 +293,7 @@ type Object {
   openRecordIn: ObjectOpenRecordIn!
   readability: MetadataReadability!
   readabilityParentFieldUniversalIdentifiers: [UUID!]
+  sharingReach: ObjectSharingReach!
   writability: MetadataWritability!
   applicationId: UUID!
   createdAt: DateTime!
@@ -332,6 +333,11 @@ enum MetadataReadability {
   INHERITED
   APPLICATION
   SYSTEM
+}
+
+enum ObjectSharingReach {
+  ROLE_ACCESS
+  WORKSPACE
 }
 
 enum MetadataWritability {
@@ -1768,30 +1774,65 @@ type RecordPermissionsDTO {
 
 type RecordSharingGrantDTO {
   id: ID!
-  principalType: String!
+  principalType: RecordSharePrincipalType!
   principalId: UUID!
+  principalRoleId: UUID
   accessLevel: RecordShareAccessLevel!
-  rowCause: String!
+  rowCause: RecordShareRowCause!
+}
+
+enum RecordSharePrincipalType {
+  EVERYONE
+  WORKSPACE_MEMBER
+  ROLE
 }
 
 enum RecordShareAccessLevel {
+  NONE
   READ
   READ_WRITE
   FULL
 }
 
+enum RecordShareRowCause {
+  OWNER
+  MANUAL
+  RULE
+  APPLICATION
+}
+
 type RecordSharingRoleDTO {
   id: UUID!
   label: String!
+  canRead: Boolean
+  canUpdate: Boolean
 }
 
 type RecordSharingDTO {
-  viewerAccessLevel: RecordShareAccessLevel
+  sharingMode: RecordSharingMode!
+  canManageSharing: Boolean!
   permissions: RecordPermissionsDTO!
-  isEnabled: Boolean!
-  hasInheritedAccess: Boolean!
+  generalAccessLevel: RecordShareAccessLevel
+  defaultGeneralAccessLevel: RecordShareAccessLevel
+  hasManagedGeneralAccess: Boolean!
   roles: [RecordSharingRoleDTO!]!
   shares: [RecordSharingGrantDTO!]!
+}
+
+"""
+How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions
+"""
+enum RecordSharingMode {
+  ROLE_ONLY
+  PRIVATE
+  INHERITED
+  OPEN_BY_DEFAULT
+}
+
+type RecordPermissionsResult {
+  objectMetadataId: UUID!
+  recordId: UUID!
+  permissions: RecordPermissionsDTO!
 }
 
 type JobStatus {
@@ -2086,6 +2127,8 @@ enum FeatureFlagKey {
   IS_LOGS_SETTINGS_SECTION_ENABLED
   IS_CONVERSATIONS_TAB_ENABLED
   IS_VALIDATION_RULES_ENABLED
+  IS_RECORD_LEVEL_SHARING_ENABLED
+  IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2787,6 +2830,8 @@ type UpsertRowLevelPermissionPredicatesResult {
 type LogicFunctionLogs {
   """Execution Logs"""
   logs: String!
+  name: String
+  universalIdentifier: UUID
 }
 
 type DeleteTwoFactorAuthenticationMethod {
@@ -3488,6 +3533,10 @@ type AgentChatEvent {
   event: JSON!
 }
 
+type SendInboxMessageResult {
+  threadId: UUID!
+}
+
 type StartWorkspaceSetupChatResult {
   outcome: WorkspaceSetupChatOutcome!
   thread: AgentChatThread
@@ -3537,12 +3586,6 @@ type RecordExport {
   progress: Int!
   errorMessage: String
   downloadPath: String
-}
-
-type RecordPermissionsResult {
-  objectMetadataId: UUID!
-  recordId: UUID!
-  permissions: RecordPermissionsDTO!
 }
 
 type AgentTurnEvaluation {
@@ -3808,7 +3851,8 @@ type MinimalMetadata {
 }
 
 type Query {
-  recordSharing(target: RecordSharingTargetInput!): RecordSharingDTO!
+  recordSharing(target: RecordTargetInput!): RecordSharingDTO!
+  recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
   enterprisePortalSession(returnUrlPath: String): String
@@ -3869,6 +3913,7 @@ type Query {
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   getApprovedAccessDomains: [ApprovedAccessDomain!]!
   getRoles: [Role!]!
+  getRole(id: UUID!): Role!
   apiKeys: [ApiKey!]!
   getApiKeyRoles: [Role!]!
   apiKey(input: GetApiKeyInput!): ApiKey
@@ -3939,7 +3984,6 @@ type Query {
   validationRules(objectMetadataId: UUID!): [ValidationRule!]!
   timelineActivityTypes: [TimelineActivityType!]!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
-  recordPermissions(targets: [RecordPermissionsTargetInput!]!): [RecordPermissionsResult!]!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
@@ -3962,7 +4006,7 @@ type Query {
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
 }
 
-input RecordSharingTargetInput {
+input RecordTargetInput {
   objectMetadataId: UUID!
   recordId: UUID!
 }
@@ -4040,11 +4084,6 @@ input MetadataTranslationsInput {
   locale: String
 }
 
-input RecordPermissionsTargetInput {
-  objectMetadataId: UUID!
-  recordId: UUID!
-}
-
 input EventLogQueryInput {
   table: EventLogTable!
   filters: EventLogFiltersInput
@@ -4103,7 +4142,9 @@ input BarChartDataInput {
 type Mutation {
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
-  setRecordShare(target: RecordSharingTargetInput!, principal: RecordSharePrincipalInput!, enabled: Boolean!, accessLevel: RecordShareAccessLevel = READ): RecordSharingDTO!
+  setRecordGeneralAccess(target: RecordTargetInput!, accessLevel: RecordShareAccessLevel!): RecordSharingDTO!
+  setRecordShare(target: RecordTargetInput!, principal: RecordSharePrincipalInput!, accessLevel: RecordShareAccessLevel!): RecordSharingDTO!
+  removeRecordShare(target: RecordTargetInput!, principal: RecordSharePrincipalInput!): RecordSharingDTO!
   createManyNavigationMenuItems(inputs: [CreateNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
@@ -4296,6 +4337,7 @@ type Mutation {
   stopAgentChatStream(threadId: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
+  sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
   deleteSkill(id: UUID!): Skill!
@@ -4379,7 +4421,6 @@ input RemoveQueryFromEventStreamInput {
 input RecordSharePrincipalInput {
   workspaceMemberId: UUID
   roleId: UUID
-  everyone: Boolean
 }
 
 input CreateNavigationMenuItemInput {
@@ -4896,6 +4937,7 @@ input UpdateObjectPayload {
   isSearchable: Boolean
   openRecordIn: ObjectOpenRecordIn
   readability: MetadataReadability
+  sharingReach: ObjectSharingReach
   translations: [MetadataTranslationOverrideInput!]
 }
 
@@ -5572,6 +5614,15 @@ input ReportAppConnectionAuthFailureInput {
 input FileAttachmentInput {
   id: UUID!
   filename: String!
+}
+
+input SendInboxMessageInput {
+  workspaceMemberId: UUID!
+  threadKey: String!
+  idempotencyKey: String!
+  title: String!
+  text: String!
+  toolCall: JSON
 }
 
 input CreateSkillInput {

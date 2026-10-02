@@ -67,6 +67,7 @@ export type {
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
+export { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from './constants/ApplicationWorkflowUnavailableStepTypes';
 export { ASSETS_DIR } from './constants/AssetDirectory';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
@@ -205,6 +206,9 @@ export type {
   RunAgentInput,
   RunAgentResult,
 } from './runAgentType';
+export type { SendInboxMessageInput } from './sendInboxMessageInputType';
+export type { SendInboxMessageResult } from './sendInboxMessageResultType';
+export type { SendInboxMessageToolCall } from './sendInboxMessageToolCallType';
 export type { ServerVariables } from './server-variables.type';
 export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType';
 export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';

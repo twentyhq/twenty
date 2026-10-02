@@ -1,6 +1,10 @@
 import { definePlugin } from '@oxlint/plugins';
 
 import {
+  rule as applicationTargetGuards,
+  RULE_NAME as applicationTargetGuardsName,
+} from './rules/application-target-guards';
+import {
   rule as componentPropsNaming,
   RULE_NAME as componentPropsNamingName,
 } from './rules/component-props-naming';
@@ -104,6 +108,7 @@ import {
 export default definePlugin({
   meta: { name: 'twenty' },
   rules: {
+    [applicationTargetGuardsName]: applicationTargetGuards,
     [componentPropsNamingName]: componentPropsNaming,
     [effectComponentsName]: effectComponents,
     [enforceModuleBoundariesName]: enforceModuleBoundaries,

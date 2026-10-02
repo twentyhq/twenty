@@ -3,6 +3,7 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 import { type MetadataReadability } from '@/types/MetadataReadability';
 import { type MetadataWritability } from '@/types/MetadataWritability';
 import { type ObjectOpenRecordIn } from '@/types/ObjectOpenRecordIn';
+import { type ObjectSharingReach } from '@/types/ObjectSharingReach';
 
 export type ObjectManifest = SyncableEntityOptions & {
   nameSingular: string;
@@ -19,6 +20,7 @@ export type ObjectManifest = SyncableEntityOptions & {
   writability?: MetadataWritability;
   readability?: MetadataReadability;
   readabilityParentFieldUniversalIdentifiers?: string[] | null;
+  sharingReach?: ObjectSharingReach;
   openRecordIn?: ObjectOpenRecordIn;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;

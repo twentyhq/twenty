@@ -1823,6 +1823,160 @@
     ]
   },
   {
+    "name": "NumberStepper",
+    "entryPoint": "twenty-ui/primitives/input",
+    "slug": "input/number-stepper",
+    "props": [
+      {
+        "name": "allowOutOfRange",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Allows onValueChange to receive typed and pasted numbers outside the bounds. Native range validation still applies; buttons and keyboard adjustments remain bounded."
+      },
+      {
+        "name": "aria-roledescription",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Number field",
+        "description": "A user-friendly description of the input's role for assistive tech. This is a role\ndescription, not an accessible name — use `Field.Label` or `aria-label` to name the control."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: NumberFieldInputState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class applied to the visible input."
+      },
+      {
+        "name": "decrementLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Decrease value",
+        "description": "Accessible name for the decrement button."
+      },
+      {
+        "name": "defaultValue",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Initial number when the field owns its value."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables the input and both buttons, and omits the form value."
+      },
+      {
+        "name": "form",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the form that owns the submitted numeric value."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the visible input. Generated when omitted."
+      },
+      {
+        "name": "incrementLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Increase value",
+        "description": "Accessible name for the increment button."
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inclusive maximum. By default, onValueChange reports bounded numbers and out-of-range drafts normalize on blur."
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inclusive minimum. By default, onValueChange reports bounded numbers and out-of-range drafts normalize on blur."
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Name of the numeric value submitted with a form."
+      },
+      {
+        "name": "onValueChange",
+        "type": "((value: number | null, eventDetails: NumberFieldRootChangeEventDetails) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the next number or null and event details when the numeric value changes. Clearing reports null; incomplete text does not report a number."
+      },
+      {
+        "name": "readOnly",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Prevents numeric changes while keeping the input focusable."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the visible input element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, NumberFieldInputState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "required",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Requires a numeric value for native form submission."
+      },
+      {
+        "name": "showButtons",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Shows the decrement and increment buttons."
+      },
+      {
+        "name": "step",
+        "type": "number",
+        "required": false,
+        "defaultValue": "1",
+        "description": "Amount added or subtracted by the buttons and arrow keys."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: NumberFieldInputState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the visible input."
+      },
+      {
+        "name": "value",
+        "type": "number | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled numeric value. Use null for an empty field."
+      }
+    ]
+  },
+  {
     "name": "Textarea",
     "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/textarea",
@@ -7961,6 +8115,41 @@
             "description": "Class applied to the status. Native div attributes and refs are also accepted."
           }
         ]
+      }
+    ]
+  },
+  {
+    "name": "OverflowingList",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/overflowing-list",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>>[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Complete ordered list of elements, each with a stable key."
+      },
+      {
+        "name": "maxInlineCount",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Maximum number of items mounted in the compact row. The popup still contains every item."
+      },
+      {
+        "name": "overflowLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Show all items",
+        "description": "Accessible label for the popup. The overflow button is named by its visible count followed by this label. Defaults to Show all items."
+      },
+      {
+        "name": "showOverflowCount",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows the overflow count on hover and keyboard focus by default. Use true to show it whenever items overflow, or false to omit the trigger. An open popup stays open until it is dismissed."
       }
     ]
   },
