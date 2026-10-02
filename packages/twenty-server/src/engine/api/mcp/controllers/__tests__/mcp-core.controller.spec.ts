@@ -131,6 +131,10 @@ describe('McpCoreController', () => {
         },
       );
       expect(result).toEqual(mockResponse);
+      expect(mockHttpRequest).toMatchObject({
+        mcpMethod: 'tools/call',
+        mcpToolName: 'testTool',
+      });
     });
 
     it('should handle initialize method', async () => {

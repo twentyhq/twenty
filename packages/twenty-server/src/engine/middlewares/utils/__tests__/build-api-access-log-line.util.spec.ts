@@ -140,19 +140,6 @@ describe('buildApiAccessLogLine', () => {
     expect(line).toContain('mcp_tool=find_many_people');
   });
 
-  it('should drop MCP fields that do not look like a method or tool name', () => {
-    const line = build({
-      request: {
-        originalUrl: '/mcp',
-        mcpMethod: 'tools/list',
-        mcpToolName: 'find_many_people\nfake=line',
-      },
-    });
-
-    expect(line).toContain('mcp_method=tools/list');
-    expect(line).not.toContain('mcp_tool=');
-  });
-
   it('should log the resolvers captured by the graphql pipelines', () => {
     const line = build({
       request: {

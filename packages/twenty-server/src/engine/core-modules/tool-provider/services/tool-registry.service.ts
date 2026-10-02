@@ -457,7 +457,16 @@ export class ToolRegistryService {
           }),
         },
       },
-      () => provider.generateDescriptors(context, options),
+      async (span) => {
+        const descriptors = await provider.generateDescriptors(
+          context,
+          options,
+        );
+
+        span.setAttribute('tool.descriptor_count', descriptors.length);
+
+        return descriptors;
+      },
     );
   }
 

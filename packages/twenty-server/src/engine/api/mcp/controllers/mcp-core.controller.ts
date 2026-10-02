@@ -22,7 +22,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
-import { getMcpRequestToolName } from 'src/engine/api/mcp/utils/get-mcp-request-tool-name.util';
+import { getMcpRequestLogFields } from 'src/engine/api/mcp/utils/get-mcp-request-log-fields.util';
 import { writeSseEvent } from 'src/engine/api/mcp/utils/write-sse-event.util';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
@@ -83,13 +83,14 @@ export class McpCoreController {
     @Res({ passthrough: true }) res: Response,
     @Query('mode') mode?: string,
   ) {
-    const mcpToolName = getMcpRequestToolName(body);
+    const { method: mcpMethod, toolName: mcpToolName } =
+      getMcpRequestLogFields(body);
 
-    request.mcpMethod = body.method;
+    request.mcpMethod = mcpMethod;
     request.mcpToolName = mcpToolName;
 
     Sentry.getActiveSpan()?.setAttributes({
-      'mcp.method': body.method,
+      ...(isDefined(mcpMethod) && { 'mcp.method': mcpMethod }),
       ...(isDefined(mcpToolName) && { 'mcp.tool_name': mcpToolName }),
     });
 
