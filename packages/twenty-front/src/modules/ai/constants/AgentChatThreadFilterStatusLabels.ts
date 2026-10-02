@@ -10,7 +10,7 @@ export const AGENT_CHAT_THREAD_FILTER_STATUS_LABELS: Record<
   active: msg`Open`,
   unread: msg`Unread`,
   snoozed: msg`Snoozed`,
-  archived: msg`Done`,
-  deleted: msg`Deleted`,
+  done: msg`Done`,
+  archived: msg`Deleted`,
   all: msg`All`,
 };

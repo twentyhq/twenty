@@ -12,9 +12,6 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
-import { AiChatPageCloseSidePanelChatEffect } from '@/ai/components/AiChatPageCloseSidePanelChatEffect';
-import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageContinueInSidePanelEffect';
-import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatThreadList } from '@/ai/components/AiChatThreadList';
 import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
@@ -29,6 +26,7 @@ import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
 import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
 
 const StyledInbox = styled.div`
@@ -136,9 +134,7 @@ export const AiChatInboxPage = () => {
       {isThreadShown &&
         (isDefined(selectedThreadId) ? (
           <>
-            <AiChatPageThreadUrlSyncEffect />
-            <AiChatPageCloseSidePanelChatEffect />
-            <AiChatPageContinueInSidePanelEffect />
+            <AiChatPageEffects />
             <AiChatThreadPageContent
               threadId={selectedThreadId}
               headerActions={

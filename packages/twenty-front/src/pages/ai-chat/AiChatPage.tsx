@@ -4,10 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
-import { AiChatPageCloseSidePanelChatEffect } from '@/ai/components/AiChatPageCloseSidePanelChatEffect';
-import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageContinueInSidePanelEffect';
 import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
-import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
@@ -15,6 +12,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { getDisplayedAiChatThreadId } from '@/ai/utils/getDisplayedAiChatThreadId';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
 import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
 
 const StyledChatContainer = styled.div`
@@ -38,9 +36,7 @@ export const AiChatPage = () => {
 
   return (
     <>
-      <AiChatPageThreadUrlSyncEffect />
-      <AiChatPageCloseSidePanelChatEffect />
-      <AiChatPageContinueInSidePanelEffect />
+      <AiChatPageEffects />
       {isDefined(displayedThreadId) ? (
         <AiChatThreadPageContent
           threadId={displayedThreadId}

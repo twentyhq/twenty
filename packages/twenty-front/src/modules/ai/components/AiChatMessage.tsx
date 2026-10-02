@@ -11,9 +11,9 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
-import { AiChatUnreadLine } from '@/ai/components/AiChatUnreadLine';
 import { agentChatFirstUnreadMessageIdComponentSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdComponentSelector';
 import { agentChatMessageComponentFamilySelector } from '@/ai/states/selectors/agentChatMessageComponentFamilySelector';
+import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
@@ -23,6 +23,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -206,13 +207,11 @@ export const AiChatMessage = ({
   const sender = currentWorkspaceMembers.find(
     (member) => isDefined(senderId) && member.userWorkspaceId === senderId,
   );
-  const senderLabel =
-    senderId === currentWorkspaceMember?.userWorkspaceId
-      ? t`You`
-      : isDefined(sender)
-        ? `${sender.name.firstName} ${sender.name.lastName}`.trim() ||
-          sender.userEmail
-        : t`Former member`;
+  const senderLabel = getAgentChatSenderLabel({
+    sender,
+    isCurrentWorkspaceMember:
+      senderId === currentWorkspaceMember?.userWorkspaceId,
+  });
   const isUser = agentChatMessage.role === AgentMessageRole.USER;
   const isLastAssistantMessage =
     agentChatMessage.role === AgentMessageRole.ASSISTANT;
@@ -229,7 +228,14 @@ export const AiChatMessage = ({
 
   return (
     <>
-      {firstUnreadMessageId === messageId && <AiChatUnreadLine />}
+      {firstUnreadMessageId === messageId && (
+        <HorizontalSeparator
+          text={t`New`}
+          textPosition="end"
+          color={themeCssVariables.font.color.danger}
+          noMargin
+        />
+      )}
       <StyledMessageBubble isUser={isUser}>
         {isUser && isDefined(senderId) && (
           <StyledSender>{senderLabel}</StyledSender>

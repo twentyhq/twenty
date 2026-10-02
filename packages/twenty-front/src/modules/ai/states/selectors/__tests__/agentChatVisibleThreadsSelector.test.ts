@@ -114,7 +114,7 @@ describe('agentChatVisibleThreadsSelector', () => {
       ['archived-then-active', 'snoozed-then-active', 'unread'],
     ],
     [AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED, ['snoozed']],
-    [AGENT_CHAT_THREAD_FILTER_STATUS.ARCHIVED, ['archived']],
+    [AGENT_CHAT_THREAD_FILTER_STATUS.DONE, ['archived']],
     [AGENT_CHAT_THREAD_FILTER_STATUS.DELETED, ['deleted']],
     [
       AGENT_CHAT_THREAD_FILTER_STATUS.ALL,

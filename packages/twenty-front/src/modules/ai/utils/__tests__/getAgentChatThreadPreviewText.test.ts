@@ -25,7 +25,7 @@ const getText = (
 
 describe('getAgentChatThreadPreviewText', () => {
   it('names the member who wrote the last message', () => {
-    expect(getText('teammate')).toBe('Tim: Legal is reviewing the terms');
+    expect(getText('teammate')).toBe('Tim Apple: Legal is reviewing the terms');
   });
 
   it('reads the current member as You', () => {

@@ -3,6 +3,7 @@ import { isString } from '@sniptt/guards';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { stripMarkdown } from '~/utils/string/stripMarkdown';
@@ -39,19 +40,10 @@ export const getAgentChatThreadPreviewText = ({
     return text;
   }
 
-  if (senderId === currentWorkspaceMemberId) {
-    return t`You: ${text}`;
-  }
+  const senderLabel = getAgentChatSenderLabel({
+    sender: workspaceMembers.find(({ id }) => id === senderId),
+    isCurrentWorkspaceMember: senderId === currentWorkspaceMemberId,
+  });
 
-  const sender = workspaceMembers.find(({ id }) => id === senderId);
-
-  if (!isDefined(sender)) {
-    return t`Former member: ${text}`;
-  }
-
-  const senderName = isNonEmptyString(sender.name.firstName)
-    ? sender.name.firstName
-    : sender.userEmail;
-
-  return t`${senderName}: ${text}`;
+  return t`${senderLabel}: ${text}`;
 };

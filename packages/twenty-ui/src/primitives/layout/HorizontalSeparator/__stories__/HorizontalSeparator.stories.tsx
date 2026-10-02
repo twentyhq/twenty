@@ -13,3 +13,11 @@ export default meta;
 type Story = StoryObj<typeof HorizontalSeparator>;
 
 export const Default: Story = {};
+
+export const WithTextAtEnd: Story = {
+  args: {
+    text: 'New',
+    textPosition: 'end',
+    color: 'var(--t-font-color-danger)',
+  },
+};

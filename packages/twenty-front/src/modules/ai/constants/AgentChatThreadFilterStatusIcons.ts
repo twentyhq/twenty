@@ -17,7 +17,7 @@ export const AGENT_CHAT_THREAD_FILTER_STATUS_ICONS: Record<
   active: IconCircleDashed,
   unread: IconEyeOff,
   snoozed: IconClock,
-  archived: IconProgressCheck,
-  deleted: IconTrash,
+  done: IconProgressCheck,
+  archived: IconTrash,
   all: IconMessage,
 };
