@@ -1032,7 +1032,9 @@ export const NestedCurrencyPickerKeepsFieldOpen: Story = {
     const amountInput = await body.findByPlaceholderText('Currency');
     await userEvent.clear(amountInput);
     await userEvent.type(amountInput, '6000000');
-    await userEvent.click(await body.findByRole('button', { name: 'USD' }));
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Currency: USD' }),
+    );
     await body.findByRole('dialog', { name: 'Currency' });
 
     await userEvent.click(outsideButton);
@@ -1042,7 +1044,9 @@ export const NestedCurrencyPickerKeepsFieldOpen: Story = {
         body.queryByRole('dialog', { name: 'Currency' }),
       ).not.toBeInTheDocument();
     });
-    await expect(body.getByRole('button', { name: 'USD' })).toBeVisible();
+    await expect(
+      body.getByRole('button', { name: 'Currency: USD' }),
+    ).toBeVisible();
     await expect(amountInput).toHaveValue('6,000,000');
 
     await userEvent.clear(amountInput);
@@ -1051,7 +1055,7 @@ export const NestedCurrencyPickerKeepsFieldOpen: Story = {
 
     await waitFor(() => {
       expect(
-        body.queryByRole('button', { name: 'USD' }),
+        body.queryByRole('button', { name: 'Currency: USD' }),
       ).not.toBeInTheDocument();
     });
     await expect(canvas.getByText('5m')).toBeVisible();
