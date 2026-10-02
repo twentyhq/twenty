@@ -9,8 +9,7 @@ const getTagName = (tag: any): string | undefined => {
     return tag.name;
   }
 
-  // useLingui() hands the macro back on an object, so `i18n.t` and `_.t` reach
-  // the extractor exactly as a bare tag does.
+  // useLingui() returns the macro on an object, so `i18n.t` and `_.t` are extracted like a bare tag
   if (tag.type === 'MemberExpression' && tag.property.type === 'Identifier') {
     return tag.property.name;
   }
@@ -24,10 +23,7 @@ const countTrailingApostrophes = (text: string): number => {
   return trailing === null ? 0 : trailing[0].length;
 };
 
-// ICU reads an apostrophe placed directly before `{` as the start of a quoted
-// literal, so `'{name}'` prints the placeholder instead of substituting it.
-// Apostrophes pair up first: an even run is that many escaped literal
-// apostrophes, and only an odd run leaves one to swallow the placeholder.
+// ICU reads an apostrophe before `{` as a quote; apostrophes pair up, so only an odd run swallows the placeholder
 const escapesFollowingPlaceholder = (text: string): boolean =>
   countTrailingApostrophes(text) % 2 === 1;
 

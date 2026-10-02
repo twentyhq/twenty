@@ -170,8 +170,7 @@ describe('object metadata i18n', () => {
         'objects',
       );
       const person = items.find((item) => item.nameSingular === 'person');
-      // A field only reachable through person proves the inlined fields were
-      // regrouped onto the object they belong to, not merely onto some object.
+      // A person-only field proves fields were regrouped onto their own object.
       const companyField = person?.fields.find(
         (field) => field.name === 'company',
       );

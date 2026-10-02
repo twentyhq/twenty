@@ -37,9 +37,7 @@ export const markWorkspaceCreditsExhausted = (
 ): CurrentWorkspace | null =>
   updateWorkspaceResourceCreditCap(currentWorkspace, true);
 
-// The optimistic inverse of markWorkspaceCreditsExhausted: a send that passed
-// the server credit gate proves credits are available right now, which is the
-// only client-side signal after an external top-up while the app stays open.
+// A send that passed the server credit gate is the only client-side signal of an external top-up
 export const markWorkspaceCreditsAvailable = (
   currentWorkspace: CurrentWorkspace | null,
 ): CurrentWorkspace | null =>

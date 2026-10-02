@@ -21,7 +21,9 @@ import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/applicatio
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT } from 'src/engine/core-modules/application/application-registration/constants/application-registration-without-manifest-select.constant';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
@@ -75,40 +77,6 @@ const APPLICATION_REGISTRATION_UPDATE_LOCK_OPTIONS = {
   maxRetries: 120,
 };
 
-const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegistrationEntity)[] =
-  [
-    'id',
-    'universalIdentifier',
-    'name',
-    'oAuthClientId',
-    'oAuthRedirectUris',
-    'oAuthScopes',
-    'createdByUserId',
-    'ownerWorkspaceId',
-    'sourceType',
-    'sourcePackage',
-    'tarballFileId',
-    'latestAvailableVersion',
-    'isListed',
-    'isVetted',
-    'isPreInstalled',
-    'logo',
-    'logoFileId',
-    'description',
-    'author',
-    'category',
-    'websiteUrl',
-    'aboutDescription',
-    'pricingDescription',
-    'termsUrl',
-    'emailSupport',
-    'issueReportUrl',
-    'screenshots',
-    'galleryImages',
-    'createdAt',
-    'updatedAt',
-  ];
-
 export type UpsertApplicationRegistrationFromCatalogParams = {
   universalIdentifier: string;
   name: string;
@@ -137,8 +105,7 @@ export class ApplicationRegistrationService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    // Registration-owner stats: version distribution and the installed-workspace
-    // list are aggregates over every workspace that installed it.
+    // Stats aggregate over every workspace that installed the app
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
@@ -153,6 +120,7 @@ export class ApplicationRegistrationService {
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
   ) {}
 
   async broadcastApplicationRegistrationUpdatedById(
@@ -236,8 +204,7 @@ export class ApplicationRegistrationService {
     }
   }
 
-  // Best-effort: a queue outage must not fail the publish flow that
-  // triggered the upgrade.
+  // Best-effort: a queue outage must not fail the publish flow
   async enqueueAutoUpgradeApplications(
     applicationRegistrationId: string,
   ): Promise<void> {
@@ -362,8 +329,7 @@ export class ApplicationRegistrationService {
       );
     }
 
-    // Configuration status is computed from variables and installs, not stored
-    // on the registration, so this filter paginates in memory.
+    // Configuration status is computed, not stored, so this filter paginates in memory
     if (isDefined(isConfigured)) {
       const allRegistrations = await queryBuilder.getMany();
 
@@ -399,28 +365,6 @@ export class ApplicationRegistrationService {
     };
   }
 
-  async findOneById({
-    applicationRegistrationId,
-    ownerWorkspaceId,
-  }: {
-    applicationRegistrationId: string;
-    ownerWorkspaceId: string;
-  }): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
-      where: { id: applicationRegistrationId, ownerWorkspaceId },
-    });
-
-    if (!registration) {
-      throw new ApplicationRegistrationException(
-        `Application registration with id ${applicationRegistrationId} not found`,
-        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
-      );
-    }
-
-    return registration;
-  }
-
   async findOneByIdGlobal(id: string): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
       select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
@@ -437,36 +381,6 @@ export class ApplicationRegistrationService {
     return registration;
   }
 
-  async findOneOwnedByWorkspaceOrThrow({
-    universalIdentifier,
-    workspaceId,
-  }: {
-    universalIdentifier: string;
-    workspaceId: string;
-  }): Promise<ApplicationRegistrationEntity> {
-    const applicationRegistration =
-      await this.findOneByUniversalIdentifierGlobal(universalIdentifier);
-
-    if (!isDefined(applicationRegistration)) {
-      throw new ApplicationException(
-        `No registration found for "${universalIdentifier}". Create one first with createApplicationRegistration.`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    if (applicationRegistration.ownerWorkspaceId !== workspaceId) {
-      throw new ApplicationException(
-        !isDefined(applicationRegistration.ownerWorkspaceId)
-          ? `"${universalIdentifier}" is registered on this instance but claimed by no workspace. Claim its ownership before developing on it.`
-          : `"${universalIdentifier}" is registered to another workspace. Change the universalIdentifier in your manifest, or transfer the registration from the owning workspace.`,
-        ApplicationExceptionCode.FORBIDDEN,
-      );
-    }
-
-    return applicationRegistration;
-  }
-
-  // Global lookup — used by OAuth flow (no workspace scoping)
   async findOneByClientId(
     clientId: string,
   ): Promise<ApplicationRegistrationEntity | null> {
@@ -475,7 +389,6 @@ export class ApplicationRegistrationService {
     });
   }
 
-  // Global lookup — used by OAuth authorize page (no workspace scoping)
   async findPublicByClientId(
     clientId: string,
   ): Promise<PublicApplicationRegistrationDTO | null> {
@@ -508,14 +421,6 @@ export class ApplicationRegistrationService {
     };
   }
 
-  async findOneByUniversalIdentifierGlobal(
-    universalIdentifier: string,
-  ): Promise<ApplicationRegistrationEntity | null> {
-    return this.applicationRegistrationRepository.findOne({
-      where: { universalIdentifier },
-    });
-  }
-
   async create({
     input,
     ownerWorkspaceId,
@@ -531,7 +436,9 @@ export class ApplicationRegistrationService {
     const universalIdentifier = input.universalIdentifier ?? v4();
 
     const existingByUid =
-      await this.findOneByUniversalIdentifierGlobal(universalIdentifier);
+      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+        universalIdentifier,
+      );
 
     if (existingByUid) {
       throw new ApplicationRegistrationException(
@@ -584,10 +491,11 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationEntity> {
     const { id, update } = input;
 
-    const existingRegistration = await this.findOneById({
-      applicationRegistrationId: id,
-      ownerWorkspaceId,
-    });
+    const existingRegistration =
+      await this.applicationRegistrationLookupService.findOneByIdOrThrow({
+        applicationRegistrationId: id,
+        ownerWorkspaceId,
+      });
 
     await this.applyUpdate({ id, update });
 
@@ -596,7 +504,7 @@ export class ApplicationRegistrationService {
       existingRegistration,
     );
 
-    return this.findOneById({
+    return this.applicationRegistrationLookupService.findOneByIdOrThrow({
       applicationRegistrationId: id,
       ownerWorkspaceId,
     });
@@ -620,8 +528,7 @@ export class ApplicationRegistrationService {
     return this.findOneByIdGlobal(id);
   }
 
-  // Instance-wide flags travel apart from the payload so the
-  // workspace-scoped update has no way to set them.
+  // Instance-wide flags are kept apart from the payload so the workspace-scoped update cannot set them
   private async applyUpdate({
     id,
     update,
@@ -750,9 +657,7 @@ export class ApplicationRegistrationService {
         const updatePayload =
           updateFields as QueryDeepPartialEntity<ApplicationRegistrationEntity>;
 
-        // Partial update in one transaction: the row and its variable schemas
-        // stay on the same manifest without clobbering columns written by
-        // flows outside this lock.
+        // One transaction keeps the row and its variable schemas on the same manifest; partial so columns written outside this lock survive
         await this.applicationRegistrationRepository.manager.transaction(
           async (entityManager) => {
             await entityManager
@@ -793,13 +698,13 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string;
     ownerWorkspaceId: string;
   }): Promise<boolean> {
-    const applicationRegistration = await this.findOneById({
-      applicationRegistrationId,
-      ownerWorkspaceId,
-    });
+    const applicationRegistration =
+      await this.applicationRegistrationLookupService.findOneByIdOrThrow({
+        applicationRegistrationId,
+        ownerWorkspaceId,
+      });
 
-    // Stored assets (logo, gallery images) go with the registration; deleting
-    // them first also removes the bytes, which the row FK cascade cannot do.
+    // Deleted explicitly: the FK cascade removes rows, not stored bytes
     try {
       await this.serverFileStorageService.deleteByApplicationRegistrationId(
         applicationRegistrationId,
@@ -832,7 +737,10 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string;
     ownerWorkspaceId: string;
   }): Promise<string> {
-    await this.findOneById({ applicationRegistrationId, ownerWorkspaceId });
+    await this.applicationRegistrationLookupService.findOneByIdOrThrow({
+      applicationRegistrationId,
+      ownerWorkspaceId,
+    });
 
     const { clientSecret, clientSecretHash } =
       await this.generateClientSecret();
@@ -876,9 +784,10 @@ export class ApplicationRegistrationService {
       universalIdentifier: rawParams.universalIdentifier.toLowerCase(),
     };
 
-    const existing = await this.findOneByUniversalIdentifierGlobal(
-      params.universalIdentifier,
-    );
+    const existing =
+      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+        params.universalIdentifier,
+      );
 
     if (
       isDefined(existing) &&
@@ -1022,9 +931,10 @@ export class ApplicationRegistrationService {
   }
 
   async findOrCreateCliRegistration(): Promise<ApplicationRegistrationEntity> {
-    const existing = await this.findOneByUniversalIdentifierGlobal(
-      TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-    );
+    const existing =
+      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+      );
 
     if (isDefined(existing)) {
       return existing;
@@ -1054,9 +964,10 @@ export class ApplicationRegistrationService {
       await this.invalidateMarketplaceAppsCache();
     }
 
-    const registration = await this.findOneByUniversalIdentifierGlobal(
-      TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-    );
+    const registration =
+      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+      );
 
     if (!isDefined(registration)) {
       throw new ApplicationException(
@@ -1113,7 +1024,10 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string;
     ownerWorkspaceId: string;
   }): Promise<ApplicationRegistrationStatsDTO> {
-    await this.findOneById({ applicationRegistrationId, ownerWorkspaceId });
+    await this.applicationRegistrationLookupService.findOneByIdOrThrow({
+      applicationRegistrationId,
+      ownerWorkspaceId,
+    });
 
     return this.computeStats(applicationRegistrationId);
   }
@@ -1177,8 +1091,7 @@ export class ApplicationRegistrationService {
     };
   }
 
-  // Installed workspaces are only exposed in the admin panel, which views apps
-  // across all workspaces, so ownership is not enforced.
+  // Admin panel only, which views apps across all workspaces, so ownership is not enforced
   async getInstalledWorkspacesGlobal(
     applicationRegistrationId: string,
     limit: number,
@@ -1299,8 +1212,7 @@ export class ApplicationRegistrationService {
       );
     }
 
-    // Claim atomically: only update while still unowned so concurrent
-    // claimers can't overwrite each other (first-claimant-wins).
+    // Conditional update so concurrent claimers cannot overwrite each other
     const updateResult = await this.applicationRegistrationRepository.update(
       { id: registration.id, ownerWorkspaceId: IsNull() },
       { ownerWorkspaceId: params.claimingWorkspaceId },
@@ -1333,10 +1245,11 @@ export class ApplicationRegistrationService {
     targetWorkspaceSubdomain: string;
     currentOwnerWorkspaceId: string;
   }): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.findOneById({
-      applicationRegistrationId: params.applicationRegistrationId,
-      ownerWorkspaceId: params.currentOwnerWorkspaceId,
-    });
+    const registration =
+      await this.applicationRegistrationLookupService.findOneByIdOrThrow({
+        applicationRegistrationId: params.applicationRegistrationId,
+        ownerWorkspaceId: params.currentOwnerWorkspaceId,
+      });
 
     const targetWorkspace = await this.workspaceRepository.findOne({
       where: { subdomain: params.targetWorkspaceSubdomain },

@@ -12,7 +12,10 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { SidePanelShareRecordContent } from '@/side-panel/pages/share-record/components/SidePanelShareRecordContent';
-import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
+import {
+  ObjectSharingReach,
+  RecordShareAccessLevel,
+} from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
@@ -43,6 +46,9 @@ const MEMBERS = [
 const SHARING = {
   isEnabled: true,
   hasInheritedAccess: false,
+  isOpenByDefault: false,
+  generalAccessLevel: RecordShareAccessLevel.NONE,
+  sharingReach: ObjectSharingReach.WORKSPACE,
   viewerAccessLevel: RecordShareAccessLevel.FULL,
   permissions: {
     canRead: true,
@@ -57,6 +63,8 @@ const SHARING = {
       principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
       rowCause: RecordShareRowCause.OWNER,
       accessLevel: RecordShareAccessLevel.FULL,
+      canRoleRead: true,
+      canRoleUpdate: true,
     },
     {
       id: 'member-grant',
@@ -64,6 +72,8 @@ const SHARING = {
       principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
       rowCause: RecordShareRowCause.MANUAL,
       accessLevel: RecordShareAccessLevel.READ_WRITE,
+      canRoleRead: true,
+      canRoleUpdate: true,
     },
     {
       id: 'role-grant',
@@ -71,6 +81,8 @@ const SHARING = {
       principalType: RecordSharePrincipalType.ROLE,
       rowCause: RecordShareRowCause.MANUAL,
       accessLevel: RecordShareAccessLevel.READ,
+      canRoleRead: true,
+      canRoleUpdate: true,
     },
   ],
   roles: [{ id: 'sales', label: 'Sales' }],
@@ -115,6 +127,7 @@ const meta: Meta<typeof SidePanelShareRecordContent> = {
   ],
   args: {
     recordUrl: 'https://example.com/chat/shared-chat',
+    objectLabelPlural: 'Chats',
     sharingState: {
       sharing: SHARING,
       loading: false,
@@ -185,7 +198,7 @@ export const ReadOnly: Story = {
     const page = within(canvasElement.ownerDocument.body);
     await expect(
       await page.findByText(
-        'Full access and edit permission are required to manage sharing.',
+        'Only the creator of this record and people with full access to it can change who has access.',
       ),
     ).toBeVisible();
     await expect(page.queryByText('General access')).not.toBeInTheDocument();

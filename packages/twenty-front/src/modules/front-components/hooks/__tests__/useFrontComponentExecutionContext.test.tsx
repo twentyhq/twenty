@@ -1152,8 +1152,7 @@ describe('useFrontComponentExecutionContext', () => {
       new Blob(['recorded-bytes'], { type: 'audio/webm' });
 
     beforeEach(() => {
-      // clearAllMocks keeps implementations; drop resolved/rejected values
-      // so these tests stay order-independent.
+      // clearAllMocks keeps resolved values; reset so these tests stay order-independent.
       mockDirectUploadFile.mockReset();
     });
 

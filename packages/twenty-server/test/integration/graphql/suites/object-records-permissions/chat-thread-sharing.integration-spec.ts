@@ -44,8 +44,7 @@ import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-s
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 
-// Avoid loading the migration runner's ESM file dependencies inside Jest. The
-// command below receives the real migration service from the running test app.
+// Avoids loading the migration runner's ESM dependencies in Jest; the command gets the real service from the test app.
 jest.mock(
   'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service',
   () => ({ WorkspaceMigrationValidateBuildAndRunService: class {} }),
@@ -76,8 +75,6 @@ const readThread = async (
     token,
   );
 };
-// Chats are renamed, soft deleted, restored and destroyed through the record
-// API like any other record
 const updateThreadRecord = (
   threadId: string,
   data: Record<string, unknown>,
@@ -561,8 +558,7 @@ describe('Conversation sharing through the authenticated API', () => {
       expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
     } finally {
       await command.up(options);
-      // The 2.43 command sets threads PRIVATE; later upgrades have moved them
-      // on, so replay those to leave the workspace as other suites expect it.
+      // The 2.43 command resets threads to PRIVATE; replay later upgrades to restore the state other suites expect.
       await getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
         'AddWorkflowRunToChatThreadsCommand',
       ).up(options);
@@ -841,7 +837,6 @@ describe('Conversations through the record API', () => {
         'Renamed through the record API',
       );
 
-      // Archive is soft delete now; the legacy column is no longer writable
       const legacyArchive = await updateThreadRecord(threadId, {
         archivedAt: new Date().toISOString(),
       });
@@ -907,8 +902,6 @@ describe('Conversations through the record API', () => {
     }
   });
 
-  // The application exposes its events through WorkspaceEventEmitter, so the
-  // destroy batch is captured there, as delivered to its subscribers.
   const waitForDestroyedThread = (threadId: string) => {
     const workspaceEventEmitter =
       getAppProviderByClassName<WorkspaceEventEmitter>('WorkspaceEventEmitter');
@@ -988,6 +981,7 @@ describe('Conversations through the record API', () => {
           isSystemContext: false,
           objectsPermissions: rolesPermissions[roleId],
           principalIds: [EVERYONE_PRINCIPAL_ID, workspaceMemberId, roleId],
+          canAccessAllRecords: false,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });

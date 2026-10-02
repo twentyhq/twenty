@@ -54,6 +54,12 @@ const buildManifestWithRequiredServerVersionRange = ({
   return manifest;
 };
 
+const normalizeMessage = (appId: string) => (message: string) =>
+  scrubSemverVersions(message).replace(
+    new RegExp(appId, 'g'),
+    '<applicationUniversalIdentifier>',
+  );
+
 describe('Sync application is gated by the workspace completed upgrade version', () => {
   let currentVersionCommandName: string;
 
@@ -89,8 +95,9 @@ describe('Sync application is gated by the workspace completed upgrade version',
   });
 
   it('rejects sync when the workspace has not completed the required upgrade version', async () => {
+    const appId = uuidv4();
     const manifest = buildManifestWithRequiredServerVersionRange({
-      appId: uuidv4(),
+      appId,
       roleId: uuidv4(),
       requiredServerVersionRange: `>=${TWENTY_CURRENT_VERSION}`,
     });
@@ -106,13 +113,14 @@ describe('Sync application is gated by the workspace completed upgrade version',
 
     expectOneNotInternalServerErrorSnapshot({
       errors,
-      normalizeMessage: scrubSemverVersions,
+      normalizeMessage: normalizeMessage(appId),
     });
   });
 
   it('rejects sync when the workspace upgrade cursor cannot be interpreted', async () => {
+    const appId = uuidv4();
     const manifest = buildManifestWithRequiredServerVersionRange({
-      appId: uuidv4(),
+      appId,
       roleId: uuidv4(),
       requiredServerVersionRange: '>=1.0.0',
     });
@@ -131,7 +139,7 @@ describe('Sync application is gated by the workspace completed upgrade version',
 
     expectOneNotInternalServerErrorSnapshot({
       errors,
-      normalizeMessage: scrubSemverVersions,
+      normalizeMessage: normalizeMessage(appId),
     });
   });
 });
