@@ -21,7 +21,7 @@ import { PropertyBox } from '@/object-record/record-inline-cell/property-box/com
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -110,11 +110,10 @@ export const RecordFieldList = ({
                   isDisplayModeFixHeight: true,
                   isRecordFieldReadOnly: isRecordFieldReadOnly({
                     isRecordReadOnly,
-                    objectPermissions:
-                      getObjectPermissionsFromMapByObjectMetadataId({
-                        objectPermissionsByObjectMetadataId,
-                        objectMetadataId: objectMetadataItem.id,
-                      }),
+                    objectPermissions: getObjectPermissionsForObject(
+                      objectPermissionsByObjectMetadataId,
+                      objectMetadataItem.id,
+                    ),
                     fieldMetadataItem,
                     fieldDefinition,
                     objectPermissionsByObjectMetadataId,
@@ -181,11 +180,10 @@ export const RecordFieldList = ({
                   isDisplayModeFixHeight: true,
                   isRecordFieldReadOnly: isRecordFieldReadOnly({
                     isRecordReadOnly,
-                    objectPermissions:
-                      getObjectPermissionsFromMapByObjectMetadataId({
-                        objectPermissionsByObjectMetadataId,
-                        objectMetadataId: objectMetadataItem.id,
-                      }),
+                    objectPermissions: getObjectPermissionsForObject(
+                      objectPermissionsByObjectMetadataId,
+                      objectMetadataItem.id,
+                    ),
                     fieldMetadataItem,
                     fieldDefinition,
                     objectPermissionsByObjectMetadataId,
