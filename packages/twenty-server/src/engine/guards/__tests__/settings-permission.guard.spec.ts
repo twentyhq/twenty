@@ -25,10 +25,7 @@ describe('SettingsPermissionGuard', () => {
 
   beforeEach(() => {
     mockPermissionsService = {
-      userHasWorkspaceSettingPermission: jest.fn(),
-      userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated:
-        PermissionsService.prototype
-          .userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated,
+      userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated: jest.fn(),
     } as any;
 
     mockGqlContext = {
@@ -58,20 +55,8 @@ describe('SettingsPermissionGuard', () => {
   });
 
   describe('canActivate', () => {
-    it('should bypass permission check when workspace is being created', async () => {
-      mockGqlContext.req.workspace.activationStatus =
-        WorkspaceActivationStatus.PENDING_CREATION;
-
-      const result = await guard.canActivate(mockExecutionContext);
-
-      expect(result).toBe(true);
-      expect(
-        mockPermissionsService.userHasWorkspaceSettingPermission,
-      ).not.toHaveBeenCalled();
-    });
-
     it('should return true when user has required permission', async () => {
-      mockPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+      mockPermissionsService.userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated.mockResolvedValue(
         true,
       );
 
@@ -79,17 +64,21 @@ describe('SettingsPermissionGuard', () => {
 
       expect(result).toBe(true);
       expect(
-        mockPermissionsService.userHasWorkspaceSettingPermission,
+        mockPermissionsService.userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated,
       ).toHaveBeenCalledWith({
+        workspace: {
+          id: 'workspace-id',
+          activationStatus: WorkspaceActivationStatus.ACTIVE,
+        },
         userWorkspaceId: 'user-workspace-id',
         setting: PermissionFlagType.WORKSPACE,
-        workspaceId: 'workspace-id',
         apiKeyId: undefined,
+        applicationId: undefined,
       });
     });
 
     it('should throw PermissionsException when user lacks permission', async () => {
-      mockPermissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+      mockPermissionsService.userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated.mockResolvedValue(
         false,
       );
 

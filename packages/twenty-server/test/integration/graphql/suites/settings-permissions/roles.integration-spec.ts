@@ -439,40 +439,40 @@ describe('roles permissions', () => {
 
         jestExpectToBeDefined(relationsApiKeyToken);
 
-        const query = {
+        const defaultRoleRelationQuery = (roleField: string) => ({
           query: `
-            query CurrentWorkspaceDefaultRoleRelations {
+            query CurrentWorkspaceDefaultRoleRelation {
               currentWorkspace {
                 defaultRole {
-                  apiKeys {
-                    id
-                  }
-                  workspaceMembers {
+                  ${roleField} {
                     id
                   }
                 }
               }
             }
           `,
-        };
+        });
 
-        const deniedResp = await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${relationsApiKeyToken}`)
-          .send(query);
+        for (const roleField of ['apiKeys', 'workspaceMembers']) {
+          const deniedResp = await client
+            .post('/metadata')
+            .set('Authorization', `Bearer ${relationsApiKeyToken}`)
+            .send(defaultRoleRelationQuery(roleField));
 
-        expect(deniedResp.body.data.currentWorkspace.defaultRole).toBeNull();
-        expect(deniedResp.body.errors[0].message).toBe(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-        );
-        expect(deniedResp.body.errors[0].extensions.code).toBe(
-          ErrorCode.FORBIDDEN,
-        );
+          expect(deniedResp.body.data.currentWorkspace.defaultRole).toBeNull();
+          expect(deniedResp.body.errors).toHaveLength(1);
+          expect(deniedResp.body.errors[0].message).toBe(
+            PermissionsExceptionMessage.PERMISSION_DENIED,
+          );
+          expect(deniedResp.body.errors[0].extensions.code).toBe(
+            ErrorCode.FORBIDDEN,
+          );
+        }
 
         const adminApiKeyResp = await client
           .post('/metadata')
           .set('Authorization', `Bearer ${API_KEY_ACCESS_TOKEN}`)
-          .send(query);
+          .send(defaultRoleRelationQuery('workspaceMembers'));
 
         expect(adminApiKeyResp.body.errors).toBeUndefined();
         expect(
