@@ -125,4 +125,21 @@ describe('getAgentChatThreadSnoozeOptions', () => {
       options.find((option) => option.key === 'thisEvening')?.date,
     ).toEqual(new Date('2026-09-03T22:00:00.000Z'));
   });
+
+  it("should keep the member's morning across their clock change", () => {
+    // Saturday 9 am in New York, the day before daylight saving time ends
+    const now = new Date('2026-10-31T13:00:00.000Z');
+
+    const options = getAgentChatThreadSnoozeOptions({
+      now,
+      timeZone: 'America/New_York',
+    });
+
+    expect(options.find((option) => option.key === 'tomorrow')?.date).toEqual(
+      new Date('2026-11-01T14:00:00.000Z'),
+    );
+    expect(options.find((option) => option.key === 'nextWeek')?.date).toEqual(
+      new Date('2026-11-02T14:00:00.000Z'),
+    );
+  });
 });

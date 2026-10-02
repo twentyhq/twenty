@@ -20,6 +20,8 @@ export const CommandMenuItemButtonHotkeyEffect = ({
     },
     containsModifier: false,
     dependencies: [disabled, onHotkeyTriggered],
+    // A bare letter belongs to whatever field is being typed in
+    options: { enableOnFormTags: false, enableOnContentEditable: false },
   });
 
   return null;

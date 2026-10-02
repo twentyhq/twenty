@@ -1,15 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import {
-  addDays,
-  addHours,
-  getMinutes,
-  isSameDay,
-  nextMonday,
-  set,
-  startOfHour,
-} from 'date-fns';
-import { fromZonedTime, toZonedTime } from 'date-fns-tz';
+import { Temporal } from 'temporal-polyfill';
 
 export type AgentChatThreadSnoozeOption = {
   key: 'laterToday' | 'thisEvening' | 'tomorrow' | 'nextWeek';
@@ -20,9 +11,26 @@ export type AgentChatThreadSnoozeOption = {
 const EVENING_HOUR = 18;
 const MORNING_HOUR = 9;
 const LATER_TODAY_HOURS = 3;
+const MONDAY = 1;
+const DAYS_IN_WEEK = 7;
 
-const atHour = (date: Date, hour: number) =>
-  set(date, { hours: hour, minutes: 0, seconds: 0, milliseconds: 0 });
+const atHour = (dateTime: Temporal.ZonedDateTime, hour: number) =>
+  dateTime.with({
+    hour,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+    microsecond: 0,
+    nanosecond: 0,
+  });
+
+const startOfHour = (dateTime: Temporal.ZonedDateTime) =>
+  dateTime.round({ smallestUnit: 'hour', roundingMode: 'floor' });
+
+const isSameDay = (
+  first: Temporal.ZonedDateTime,
+  second: Temporal.ZonedDateTime,
+) => first.toPlainDate().equals(second.toPlainDate());
 
 // An option that is already behind, or that lands on the same moment as
 // another, is left out rather than shown twice.
@@ -34,39 +42,54 @@ export const getAgentChatThreadSnoozeOptions = ({
   timeZone: string;
 }): AgentChatThreadSnoozeOption[] => {
   // Worked out on the member's clock, which can differ from the browser's
-  const now = toZonedTime(instant, timeZone);
+  const now = Temporal.Instant.fromEpochMilliseconds(
+    instant.getTime(),
+  ).toZonedDateTimeISO(timeZone);
   const thisEvening = atHour(now, EVENING_HOUR);
   // Rounded to a round hour, the way a person would say it: up, unless that
   // would push it into tomorrow
   const laterTodayRoundedUp = startOfHour(
-    addHours(now, LATER_TODAY_HOURS + (getMinutes(now) > 0 ? 1 : 0)),
+    now.add({
+      hours: LATER_TODAY_HOURS + (now.minute > 0 ? 1 : 0),
+    }),
   );
   const laterToday = isSameDay(laterTodayRoundedUp, now)
     ? laterTodayRoundedUp
-    : startOfHour(addHours(now, LATER_TODAY_HOURS));
-  const tomorrow = atHour(addDays(now, 1), MORNING_HOUR);
+    : startOfHour(now.add({ hours: LATER_TODAY_HOURS }));
+  const dayAfter = now.add({ days: 1 });
+  const tomorrow = atHour(dayAfter, MORNING_HOUR);
   // From Sunday, next Monday is tomorrow, so next week starts the Monday after
-  const nextWeek = atHour(nextMonday(addDays(now, 1)), MORNING_HOUR);
+  const nextWeek = atHour(
+    dayAfter.add({
+      days:
+        (MONDAY - dayAfter.dayOfWeek + DAYS_IN_WEEK) % DAYS_IN_WEEK ||
+        DAYS_IN_WEEK,
+    }),
+    MORNING_HOUR,
+  );
 
-  const candidates: AgentChatThreadSnoozeOption[] = [
-    { key: 'thisEvening', label: msg`This evening`, date: thisEvening },
-    { key: 'laterToday', label: msg`Later today`, date: laterToday },
-    { key: 'tomorrow', label: msg`Tomorrow`, date: tomorrow },
-    { key: 'nextWeek', label: msg`Next week`, date: nextWeek },
-  ];
+  const candidates = [
+    { key: 'thisEvening', label: msg`This evening`, dateTime: thisEvening },
+    { key: 'laterToday', label: msg`Later today`, dateTime: laterToday },
+    { key: 'tomorrow', label: msg`Tomorrow`, dateTime: tomorrow },
+    { key: 'nextWeek', label: msg`Next week`, dateTime: nextWeek },
+  ] as const;
 
   return candidates
     .filter(
       (option, index) =>
-        option.date > now &&
-        (option.key !== 'laterToday' || isSameDay(option.date, now)) &&
+        Temporal.ZonedDateTime.compare(option.dateTime, now) > 0 &&
+        (option.key !== 'laterToday' || isSameDay(option.dateTime, now)) &&
         candidates
           .slice(0, index)
-          .every((earlier) => earlier.date.getTime() !== option.date.getTime()),
+          .every((earlier) => !earlier.dateTime.equals(option.dateTime)),
     )
-    .sort((first, second) => first.date.getTime() - second.date.getTime())
-    .map((option) => ({
-      ...option,
-      date: fromZonedTime(option.date, timeZone),
+    .sort((first, second) =>
+      Temporal.ZonedDateTime.compare(first.dateTime, second.dateTime),
+    )
+    .map(({ key, label, dateTime }) => ({
+      key,
+      label,
+      date: new Date(dateTime.epochMilliseconds),
     }));
 };
