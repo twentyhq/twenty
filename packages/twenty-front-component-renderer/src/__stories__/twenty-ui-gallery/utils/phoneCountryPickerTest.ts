@@ -16,8 +16,12 @@ export const phoneCountryPickerTest: TwentyUiGalleryPlayFunction = async ({
 
   await userEvent.click(primary);
 
-  const dialog = await body.findByRole('dialog', {
-    name: 'Choose Primary phone country',
+  const dialog = await waitFor(() => {
+    expect(errorHandler).not.toHaveBeenCalled();
+
+    return body.getByRole('dialog', {
+      name: 'Choose Primary phone country',
+    });
   });
   const popup = within(dialog);
   const search = popup.getByRole('searchbox', {

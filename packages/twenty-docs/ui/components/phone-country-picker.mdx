@@ -77,6 +77,10 @@ A phone library adapter can forward the custom selector's ref, disabled state, a
 
 Supply localized country labels in `countries`, an accessible name on `Trigger`, and a stable popup name on `Dropdown.Content`. `searchLabel` defaults to `Search` and names both the search field and its placeholder. `emptyLabel` defaults to `No results`.
 
+## Sandbox renderer
+
+The React and Preact sandbox renderers display the trigger and preserve its disabled state. Opening the popup currently fails with the existing Dropdown viewport error in both runtimes; React also reports a missing event type. The renderer interaction stories retain their assertions so these failures remain visible.
+
 ## Props
 
 <PhoneCountryPickerReference />
