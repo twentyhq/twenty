@@ -1,4 +1,5 @@
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isEqual } from 'date-fns';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -39,11 +40,19 @@ const DATE_TIME_FIELD_NAMES = [
 
 const BOOLEAN_FIELD_NAMES = ['isFullDay', 'isCanceled'] as const;
 
-// Persisted timestamps come back as Date while providers send ISO strings with varying offsets
-const toTimestamp = (value: string | Date | null | undefined): number | null =>
-  value === null || value === undefined || value === ''
-    ? null
-    : new Date(value).getTime();
+const hasDateTimeChanged = (
+  existingValue: string | null,
+  fetchedValue: string | null,
+): boolean => {
+  const existingDateTime = existingValue || null;
+  const fetchedDateTime = fetchedValue || null;
+
+  if (!isDefined(existingDateTime) || !isDefined(fetchedDateTime)) {
+    return existingDateTime !== fetchedDateTime;
+  }
+
+  return !isEqual(existingDateTime, fetchedDateTime);
+};
 
 export const hasCalendarEventChanged = ({
   existingCalendarEvent,
@@ -57,10 +66,11 @@ export const hasCalendarEventChanged = ({
       (existingCalendarEvent[fieldName] ?? '') !==
       (calendarEvent[fieldName] ?? ''),
   ) ||
-  DATE_TIME_FIELD_NAMES.some(
-    (fieldName) =>
-      toTimestamp(existingCalendarEvent[fieldName]) !==
-      toTimestamp(calendarEvent[fieldName]),
+  DATE_TIME_FIELD_NAMES.some((fieldName) =>
+    hasDateTimeChanged(
+      existingCalendarEvent[fieldName],
+      calendarEvent[fieldName],
+    ),
   ) ||
   BOOLEAN_FIELD_NAMES.some(
     (fieldName) =>
