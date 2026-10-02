@@ -40,11 +40,9 @@ exports[`Application token access to another application should fail with a user
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -52,11 +50,9 @@ exports[`Application token access to another application should fail with a user
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -160,11 +156,9 @@ exports[`Application token access to another application should fail with a user
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -172,11 +166,9 @@ exports[`Application token access to another application should fail with a user
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -208,11 +200,9 @@ exports[`Application token access to another application should fail with a user
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -232,11 +222,9 @@ exports[`Application token access to another application should fail with a user
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -244,11 +232,9 @@ exports[`Application token access to another application should fail with a user
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -256,11 +242,9 @@ exports[`Application token access to another application should fail with a user
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -268,11 +252,9 @@ exports[`Application token access to another application should fail with a user
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -302,11 +284,9 @@ exports[`Application token access to another application should fail with a user
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -350,11 +330,9 @@ exports[`Application token access to another application should fail with an app
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -362,11 +340,9 @@ exports[`Application token access to another application should fail with an app
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -470,11 +446,9 @@ exports[`Application token access to another application should fail with an app
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -482,11 +456,9 @@ exports[`Application token access to another application should fail with an app
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -518,11 +490,9 @@ exports[`Application token access to another application should fail with an app
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -542,11 +512,9 @@ exports[`Application token access to another application should fail with an app
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -554,11 +522,9 @@ exports[`Application token access to another application should fail with an app
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -566,11 +532,9 @@ exports[`Application token access to another application should fail with an app
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -578,11 +542,9 @@ exports[`Application token access to another application should fail with an app
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only target its own application",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -612,10 +574,8 @@ exports[`Application token access to another application should fail with an app
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;

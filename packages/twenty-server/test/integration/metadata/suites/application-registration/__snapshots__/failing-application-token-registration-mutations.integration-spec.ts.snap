@@ -4,11 +4,9 @@ exports[`Application token mutations on a registration should fail on another re
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only reach its own application registration",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -16,11 +14,9 @@ exports[`Application token mutations on a registration should fail on another re
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only reach its own application registration",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -28,11 +24,9 @@ exports[`Application token mutations on a registration should fail on another re
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only reach its own application registration",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -50,11 +44,9 @@ exports[`Application token mutations on a registration should fail on another re
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only reach its own application registration",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -62,11 +54,9 @@ exports[`Application token mutations on a registration should fail on another re
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only reach its own application registration",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -74,11 +64,9 @@ exports[`Application token mutations on a registration should fail on another re
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "An application token can only reach its own application registration",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
