@@ -85,6 +85,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
   private readonly context: QueryBuilderContext;
   private readonly whereClauses: WhereClause[] = [];
+  private readonly rowAccessConditions: string[] = [];
   private readonly joinClauses: JoinClause[] = [];
   private readonly existsFilterClauses: ExistsFilterClause[] = [];
   private readonly extraSelectClauses: SelectClause[] = [];
@@ -128,6 +129,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     );
 
     cloned.whereClauses.push(...this.whereClauses);
+    cloned.rowAccessConditions.push(...this.rowAccessConditions);
     cloned.existsFilterClauses.push(
       ...this.existsFilterClauses.map((existsFilterClause) => ({
         ...existsFilterClause,
@@ -167,13 +169,13 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     parameters?: Record<string, unknown>,
   ): this {
     this.whereClauses.length = 0;
-    this.aliasesWithRowLevelPermissionApplied.delete(this.alias);
 
     return this.appendWhere('and', condition, parameters);
   }
 
   copyWhereFrom(source: WorkspaceSelectQueryBuilder): this {
     this.whereClauses.push(...source.whereClauses);
+    this.rowAccessConditions.push(...source.rowAccessConditions);
     this.existsFilterClauses.push(
       ...source.existsFilterClauses.map((existsFilterClause) => ({
         ...existsFilterClause,
@@ -199,18 +201,17 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return this.appendWhere('or', condition, parameters);
   }
 
-  // Kept apart from the caller's filters, which existence reads validate
-  // against the discoverable fields
-  andWhereRowAccessPredicate(
-    sql: string,
-    parameters: Record<string, unknown>,
+  addRowAccessCondition(
+    condition: string,
+    parameters?: Record<string, unknown>,
   ): this {
-    this.setParameters(parameters);
-    this.whereClauses.push({
-      operator: 'and',
-      sql: `(${sql})`,
-      isRowAccessPredicate: true,
-    });
+    if (isDefined(parameters)) {
+      this.setParameters(parameters);
+    }
+
+    if (condition.length > 0) {
+      this.rowAccessConditions.push(condition);
+    }
 
     return this;
   }
@@ -787,9 +788,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   getFilterReferencedColumnNamesByAlias(): Record<string, string[]> {
     const aliases = collectStatementAliases(this.toSelectStatementState());
     const expressions = [
-      ...this.whereClauses
-        .filter((whereClause) => whereClause.isRowAccessPredicate !== true)
-        .map((whereClause) => whereClause.sql),
+      ...this.whereClauses.map((whereClause) => whereClause.sql),
       ...this.existsFilterClauses.flatMap((existsFilterClause) => [
         existsFilterClause.conditionSql,
         existsFilterClause.correlationCondition,
@@ -872,6 +871,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         formatResult: this.context.formatResult,
       },
       whereClauses: this.whereClauses,
+      rowAccessConditions: this.rowAccessConditions,
       includeDeleted: this.includeDeleted,
       parameters: this.parameters,
     });
@@ -1344,6 +1344,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       columnSelections: this.resolveColumnSelections(),
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
+      rowAccessConditions: this.rowAccessConditions,
       existsFilterClauses: this.existsFilterClauses,
       groupByExpressions: this.groupByExpressions,
       orderByClauses: this.orderByClauses,
