@@ -25,7 +25,9 @@ export const phoneCountryPickerTriggerTest: TwentyUiGalleryPlayFunction =
     expect(secondary).toHaveTextContent('🇫🇷');
     expect(disabled).toBeDisabled();
     await userEvent.click(disabled);
-    expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(
+      within(canvasElement.ownerDocument.body).queryByRole('dialog'),
+    ).not.toBeInTheDocument();
     expect(
       canvas.getByRole('status', { name: 'Primary phone country selection' }),
     ).toHaveTextContent('Country: US; Changes: 0');
