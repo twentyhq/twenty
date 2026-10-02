@@ -5,40 +5,49 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
-import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 
 export const buildNavigateToViewOutput = ({
   viewId,
-  view,
+  flatView,
   userWorkspaceId,
+  isInitialObjectViewEnabled,
   flatObjectMetadataMaps,
 }: {
   viewId: string;
-  view:
+  flatView:
     | Pick<
-        ViewDTO,
+        FlatView,
         | 'id'
         | 'name'
         | 'objectMetadataId'
+        | 'deletedAt'
         | 'visibility'
         | 'createdByUserWorkspaceId'
+        | 'universalIdentifier'
+        | 'applicationUniversalIdentifier'
+        | 'objectMetadataUniversalIdentifier'
       >
-    | null
     | undefined;
   userWorkspaceId?: string;
+  isInitialObjectViewEnabled: boolean;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }): ToolOutput<NavigateAppToolOutput> => {
-  const flatObjectMetadata = isDefined(view)
+  const flatObjectMetadata = isDefined(flatView)
     ? findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: view.objectMetadataId,
+        flatEntityId: flatView.objectMetadataId,
         flatEntityMaps: flatObjectMetadataMaps,
       })
     : undefined;
 
   if (
-    !isDefined(view) ||
-    !isViewVisibleToUser(view, userWorkspaceId) ||
+    !isDefined(flatView) ||
+    !isViewAvailableToUser({
+      flatView,
+      userWorkspaceId,
+      isInitialObjectViewEnabled,
+    }) ||
     !isDefined(flatObjectMetadata)
   ) {
     return {
@@ -50,11 +59,11 @@ export const buildNavigateToViewOutput = ({
 
   return {
     success: true,
-    message: `Navigating to view "${view.name}"`,
+    message: `Navigating to view "${flatView.name}"`,
     result: {
       action: 'navigateToView',
-      viewId: view.id,
-      viewName: view.name,
+      viewId: flatView.id,
+      viewName: flatView.name,
       objectNameSingular: flatObjectMetadata.nameSingular,
     },
   };

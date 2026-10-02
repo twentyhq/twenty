@@ -3,9 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { sleep } from 'cloudflare/core';
 import Fuse from 'fuse.js';
 import { NavigateAppToolOutput } from 'twenty-shared/ai';
-import { type ObjectsPermissions } from 'twenty-shared/types';
+import { FeatureFlagKey, type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   type NavigateAppInput,
   NavigateAppInputZodSchema,
@@ -17,9 +18,9 @@ import { ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type'
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -36,7 +37,7 @@ export class NavigateAppTool implements Tool {
 
   constructor(
     private readonly navigationMenuItemService: NavigationMenuItemService,
-    private readonly viewService: ViewService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -105,20 +106,28 @@ export class NavigateAppTool implements Tool {
     workspaceId: string;
     userWorkspaceId?: string;
   }): Promise<ToolOutput<NavigateAppToolOutput>> {
-    const view = await this.viewService.findById(viewId, workspaceId);
-
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatViewMaps'],
         },
+      );
+
+    const isInitialObjectViewEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+        workspaceId,
       );
 
     return buildNavigateToViewOutput({
       viewId,
-      view,
+      flatView: findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: viewId,
+        flatEntityMaps: flatViewMaps,
+      }),
       userWorkspaceId,
+      isInitialObjectViewEnabled,
       flatObjectMetadataMaps,
     });
   }

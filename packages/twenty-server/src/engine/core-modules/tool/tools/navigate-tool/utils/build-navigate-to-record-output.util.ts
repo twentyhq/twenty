@@ -34,7 +34,7 @@ export const buildNavigateToRecordOutput = ({
 
   if (
     !isDefined(flatObjectMetadata) ||
-    objectsPermissions[flatObjectMetadata.id]?.canReadObjectRecords !== true
+    !objectsPermissions[flatObjectMetadata.id]?.canReadObjectRecords
   ) {
     return {
       success: false,
