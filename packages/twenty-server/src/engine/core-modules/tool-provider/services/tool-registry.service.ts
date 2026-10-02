@@ -1,11 +1,14 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
+import * as Sentry from '@sentry/node';
 import { type ToolSet, jsonSchema } from 'ai';
 import { type ToolCategory } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider/interfaces/tool-retrieval-options.type';
 
@@ -53,7 +56,7 @@ export class ToolRegistryService {
         }
 
         if (await provider.isAvailable(executionContext)) {
-          return provider.generateDescriptors(executionContext, {
+          return this.generateProviderDescriptors(provider, executionContext, {
             includeSchemas: false,
           });
         }
@@ -105,10 +108,11 @@ export class ToolRegistryService {
 
       const entryNameSet = new Set(entries.map((entry) => entry.name));
 
-      const descriptors = await provider.generateDescriptors(executionContext, {
-        includeSchemas: true,
-        toolNames: entryNameSet,
-      });
+      const descriptors = await this.generateProviderDescriptors(
+        provider,
+        executionContext,
+        { includeSchemas: true, toolNames: entryNameSet },
+      );
 
       for (const descriptor of descriptors) {
         if (
@@ -402,7 +406,7 @@ export class ToolRegistryService {
         )
         .map(async (provider) => {
           if (await provider.isAvailable(context)) {
-            return provider.generateDescriptors(context, {
+            return this.generateProviderDescriptors(provider, context, {
               includeSchemas: true,
             });
           }
@@ -433,6 +437,28 @@ export class ToolRegistryService {
     );
 
     return toolSet;
+  }
+
+  private generateProviderDescriptors(
+    provider: ToolProvider,
+    context: ToolProviderContext,
+    options: GenerateDescriptorOptions,
+  ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
+    return Sentry.startSpan(
+      {
+        name: `tool provider ${provider.category} descriptors`,
+        op: 'tool.descriptors',
+        onlyIfParent: true,
+        attributes: {
+          'tool.category': provider.category,
+          'tool.include_schemas': options.includeSchemas === true,
+          ...(isDefined(options.toolNames) && {
+            'tool.requested_count': options.toolNames.size,
+          }),
+        },
+      },
+      () => provider.generateDescriptors(context, options),
+    );
   }
 
   private buildContextFromToolContext(
