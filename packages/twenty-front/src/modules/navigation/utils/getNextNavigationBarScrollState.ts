@@ -24,16 +24,14 @@ export const getNextNavigationBarScrollState = ({
   lastScrollTopInPx,
   currentState,
 }: GetNextNavigationBarScrollStateParams): NavigationBarScrollState => {
-  // A container restoring its scroll position would otherwise read as a jump
-  // down from 0 the first time it is seen.
+  // A container restoring its scroll position would otherwise read as a jump down from 0.
   if (!isDefined(lastScrollTopInPx)) {
     return currentState;
   }
 
   const deltaInPx = scrollTopInPx - lastScrollTopInPx;
 
-  // A horizontal scroll fires the same event without moving the container
-  // vertically, so it has to leave the accumulated direction alone.
+  // Horizontal scrolls fire the same event and must not touch the accumulated direction.
   if (deltaInPx === 0) {
     return currentState;
   }

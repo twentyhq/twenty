@@ -7,9 +7,7 @@ import {
   STATUS_STYLE,
 } from '@/__stories__/shared/front-components/styles';
 
-// Deliberately uses the standard web API rather than the SDK helper: this is
-// what a third-party library calls, and it only works if the worker polyfill
-// installed navigator.clipboard in the real sandbox realm.
+// Uses navigator.clipboard, not the SDK helper, to prove the polyfill reached the sandbox realm.
 const HostApiNavigatorClipboardFrontComponent = () => {
   const [status, setStatus] = useState('idle');
 

@@ -64,8 +64,6 @@ export class CompanyEnrichmentResolver {
     ]);
 
     if (enrichmentResult.outcome === 'matched') {
-      // Two independent bars on the same enrichment: a company worth a demo and
-      // a company worth credits are not necessarily the same company.
       await this.onboardingService.setOnboardingBookCallPendingIfQualified({
         userId: user.id,
         workspaceId: workspace.id,

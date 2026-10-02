@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import {
   ASK_QUESTIONS_TOOL_NAME,
   type AskQuestionItem,
-  type ExtendedUIMessagePart,
   PROPOSE_EMAIL_TOOL_NAME,
   type ProposedEmail,
   REQUEST_FORM_TOOL_NAME,
@@ -17,23 +16,19 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v5 } from 'uuid';
 
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
 import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
 import { createProposeEmailTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/agent-chat-seeds.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -200,9 +195,8 @@ type ConversationToSeed = {
   askedBy: Member;
   prompt: string;
   intro: string;
-  // Calls made in the same step, each waiting on its own answer.
   calls: SeededToolCall[];
-  // Answers the first call, in a conversation that made only one.
+  // Only answers the first call
   answer?: {
     response: Record<string, unknown>;
     reply: string;
@@ -310,20 +304,12 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
   },
 ];
 
-// Seeds Tim's conversations that wait on a question, an email or a form, or have
-// just been answered, so each card and each answered state renders without
-// calling a model.
 @Injectable()
 export class DevSeederAgentChatPendingInputWorkspaceService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentTurn')
-    private readonly turnRepository: AgentHistoryRepository<AgentTurnEntity>,
-    @InjectAgentHistoryRepository('agentMessage')
-    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentMessagePart')
-    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartEntity>,
+    private readonly conversationWriterService: AgentConversationWriterService,
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -368,7 +354,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
           ...call,
           pausingToolCall,
           pendingOutput: await call.buildPendingOutput(),
-          // The first call keeps the id it had when conversations made one.
+          // The first call keeps its original seed id
           toolCallId: `call_${seedId(callIndex === 0 ? 'toolCall' : `toolCall${callIndex}`).replace(/-/g, '')}`,
         };
       }),
@@ -387,17 +373,20 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
 
     const questionTurnId = seedId('questionTurn');
 
-    await this.turnRepository.insert(workspaceId, {
+    await this.conversationWriterService.insertTurn({
+      workspaceId,
       id: questionTurnId,
       threadId,
+      agentId: null,
     });
 
-    await this.insertMessage({
+    await this.conversationWriterService.insertMessage({
       workspaceId,
       id: seedId('promptMessage'),
       threadId,
       turnId: questionTurnId,
       role: AgentMessageRole.USER,
+      agentId: null,
       senderUserWorkspaceId: askedBy.userWorkspaceId,
       parts: [{ type: 'text', text: conversation.prompt }],
     });
@@ -406,8 +395,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       ? await firstCall.pausingToolCall.complete({
           output: conversation.answer.response,
           context: {
-            // Seeds never send anything: the email reads as sent, as it would
-            // once the person's own send_email succeeded.
+            // Seeds never send anything; the email reads as sent
             executeTool: async () => ({
               success: true,
               message: 'Email sent successfully',
@@ -416,12 +404,13 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
         })
       : undefined;
 
-    await this.insertMessage({
+    await this.conversationWriterService.insertMessage({
       workspaceId,
       id: seedId('assistantMessage'),
       threadId,
       turnId: questionTurnId,
       role: AgentMessageRole.ASSISTANT,
+      agentId: null,
       senderUserWorkspaceId: null,
       parts: mapAiStepsToUiMessageParts([
         {
@@ -456,66 +445,34 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
 
     const answerTurnId = seedId('answerTurn');
 
-    await this.turnRepository.insert(workspaceId, {
+    await this.conversationWriterService.insertTurn({
+      workspaceId,
       id: answerTurnId,
       threadId,
+      agentId: null,
     });
 
-    await this.insertMessage({
+    await this.conversationWriterService.insertMessage({
       workspaceId,
       id: seedId('answerMessage'),
       threadId,
       turnId: answerTurnId,
       role: AgentMessageRole.USER,
+      agentId: null,
       senderUserWorkspaceId: askedBy.userWorkspaceId,
       parts: [{ type: 'text', text: completion.answerText }],
     });
 
-    await this.insertMessage({
+    await this.conversationWriterService.insertMessage({
       workspaceId,
       id: seedId('replyMessage'),
       threadId,
       turnId: answerTurnId,
       role: AgentMessageRole.ASSISTANT,
+      agentId: null,
       senderUserWorkspaceId: null,
       parts: [{ type: 'text', text: conversation.answer.reply }],
     });
-  }
-
-  private async insertMessage({
-    workspaceId,
-    id,
-    threadId,
-    turnId,
-    role,
-    senderUserWorkspaceId,
-    parts,
-  }: {
-    workspaceId: string;
-    id: string;
-    threadId: string;
-    turnId: string;
-    role: AgentMessageRole;
-    senderUserWorkspaceId: string | null;
-    parts: ExtendedUIMessagePart[];
-  }): Promise<void> {
-    await this.messageRepository.insert(workspaceId, {
-      id,
-      threadId,
-      turnId,
-      role,
-      processedAt: new Date().toISOString(),
-      ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
-    });
-
-    await this.messagePartRepository.insert(
-      workspaceId,
-      mapUIMessagePartsToDBParts(
-        parts,
-        id,
-        workspaceId,
-      ) as QueryDeepPartialEntity<AgentMessagePartEntity>[],
-    );
   }
 
   private async shareConversations(workspaceId: string): Promise<void> {

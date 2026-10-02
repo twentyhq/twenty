@@ -39,8 +39,7 @@ const AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
 export const AgentChatThreadInitializationEffect = () => {
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-  // Chats are read through the record API, whose query is built from the
-  // chat object's fields
+  // The record API builds chat queries from the chat object's fields.
   const areFieldMetadataItemsLoaded =
     useAtomFamilySelectorValue(
       metadataStoreStatusFamilySelector,

@@ -263,7 +263,6 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
-    // Native and action search may both be bound here; the model picks at runtime.
     const nativeCapabilities = getNativeModelCapabilities(
       registeredModel.sdkPackage,
     );
@@ -272,9 +271,6 @@ export class ChatExecutionService {
       twitterSearch: nativeCapabilities?.twitterSearch === true,
     });
 
-    // Tools the model can call directly: preloaded registry tools (already
-    // serialized by the hydrator) plus SDK-native tools (opaque, never
-    // serialized). execute_tool routes discovered tools through the registry.
     const directTools: ToolSet = {
       ...preloadedTools,
       ...nativeTools,
@@ -300,9 +296,7 @@ export class ChatExecutionService {
       modelId: registeredModel.modelId,
     });
 
-    // Judged on the conversation rather than on setup still running: once setup
-    // completes, the member's onboarding carries on in this same conversation,
-    // and it is not one to file under their records.
+    // judged on the conversation, not setup status: onboarding continues here after setup completes
     const canAttachConversationToRecords =
       !isWorkspaceSetupConversation &&
       (await this.featureFlagService.isFeatureEnabled(
@@ -330,8 +324,6 @@ export class ChatExecutionService {
     const isToolAllowed = (toolName: string) =>
       !AI_CHAT_EXCLUDED_TOOL_NAMES.has(toolName);
 
-    // ToolSet is constant for the entire conversation — no mutation.
-    // learn_tools returns schemas as text; execute_tool dispatches via the registry.
     const activeTools: ToolSet = {
       ...directTools,
       [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
@@ -390,8 +382,7 @@ export class ChatExecutionService {
 
     const uploadedFiles = collectUploadedFileReferences(messages);
 
-    // Skills the user tagged with / are inlined into the prompt so the model
-    // does not spend a round trip calling load_skills for them.
+    // inline tagged skills to save the model a load_skills round trip
     const referencedSkills = await this.skillService.findFlatSkillsByIds(
       collectReferencedSkillIds(messages),
       workspace.id,
@@ -560,8 +551,6 @@ export class ChatExecutionService {
         userWorkspaceId,
       );
 
-      // billNativeWebSearchUsage short-circuits when count <= 0, so calling
-      // unconditionally is safe regardless of whether native search fired.
       void this.aiBillingService.billNativeWebSearchUsage(
         countNativeWebSearchCallsFromSteps(steps),
         workspace.id,

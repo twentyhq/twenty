@@ -157,6 +157,7 @@ export const SettingsAccountsConnectionForm = ({
             render={({ field, fieldState }) => (
               <SettingsTextInput
                 instanceId="imap-username-connection-form"
+                ignorePasswordManagers
                 label={t`IMAP Username (Optional)`}
                 placeholder={t`john.doe`}
                 type="text"
@@ -254,6 +255,7 @@ export const SettingsAccountsConnectionForm = ({
             render={({ field, fieldState }) => (
               <SettingsTextInput
                 instanceId="smtp-username-connection-form"
+                ignorePasswordManagers
                 label={t`SMTP Username`}
                 placeholder={t`john.doe`}
                 type="text"
@@ -350,6 +352,7 @@ export const SettingsAccountsConnectionForm = ({
             render={({ field, fieldState }) => (
               <SettingsTextInput
                 instanceId="caldav-username-connection-form"
+                ignorePasswordManagers
                 label={t`CalDAV Username`}
                 placeholder={t`john.doe`}
                 required={false}

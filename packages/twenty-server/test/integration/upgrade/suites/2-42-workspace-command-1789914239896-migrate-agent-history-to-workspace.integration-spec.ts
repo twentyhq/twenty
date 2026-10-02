@@ -28,8 +28,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
 
-// The link object 2.43 adds on top of agent history, as later suites see it:
-// its fields and the relations pointing at it, its indexes and its foreign keys.
+// The link object 2.43 adds on top of agent history.
 const describeAgentChatThreadTarget = async (dataSource: DataSource) => ({
   fields: await dataSource.query<{ objectName: string; fieldName: string }[]>(
     `SELECT objectMetadata."nameSingular" AS "objectName", fieldMetadata.name AS "fieldName"
@@ -133,8 +132,7 @@ describe('versioned agent history upgrade (integration)', () => {
     dataSource = owners.manager.connection;
     const owner = await owners.findOneByOrFail({ workspaceId: WORKSPACE_ID });
 
-    // Threads a workflow run owns arrived with 2.44 and have no member to own
-    // them in the core tables 2.42 moves history back to.
+    // Run-owned threads arrived with 2.44 and have no member owner in the core tables 2.42 restores.
     await dataSource.query(
       `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE "workflowRunId" IS NOT NULL`,
     );
@@ -147,8 +145,7 @@ describe('versioned agent history upgrade (integration)', () => {
     seededAgentChatThreadTarget =
       await describeAgentChatThreadTarget(dataSource);
 
-    // Objects later upgrades add on top of history hold a relation into it,
-    // which the deleted thread object would take along and strand them without.
+    // Later objects relate into history and would be stranded when the thread object is deleted.
     const historyObjectNames = AGENT_HISTORY_TABLES.map(({ name }) => name);
     const laterObjectNames = (
       await dataSource.query<{ nameSingular: string }[]>(
@@ -167,9 +164,7 @@ describe('versioned agent history upgrade (integration)', () => {
 
     expect(laterObjectNames).toContain('agentChatThreadTarget');
 
-    // Recreate a pre-upgrade workspace: history exists only in core, and none
-    // of the five standard objects has been installed yet, nor the objects
-    // later upgrades add on top of them.
+    // Recreate a pre-upgrade workspace: history only in core, no standard or later objects installed.
     await dataSource.query(
       'DELETE FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = ANY($2)',
       [WORKSPACE_ID, [...historyObjectNames, ...laterObjectNames]],
@@ -189,8 +184,7 @@ describe('versioned agent history upgrade (integration)', () => {
     for (const { name } of [...AGENT_HISTORY_TABLES].reverse()) {
       await dataSource.query(`DROP TABLE "${SCHEMA}"."${name}" CASCADE`);
     }
-    // Pre-upgrade workspaces have no attachment side of the chat thread
-    // relation either; the object deletion above only cascades its metadata.
+    // Pre-upgrade workspaces lack the attachment side too, and the deletion above only cascades its metadata.
     await dataSource.query(
       'DELETE FROM core."indexMetadata" WHERE "workspaceId" = $1 AND "universalIdentifier" = $2',
       [
@@ -255,8 +249,7 @@ describe('versioned agent history upgrade (integration)', () => {
       total: 1,
       options: {},
     });
-    // The history objects were rebuilt as 2.42 leaves them; replay the later
-    // upgrades that change them, in order, for the suites that follow.
+    // Replay the later upgrades on the rebuilt 2.42 objects, in order, for the suites that follow.
     for (const laterCommand of [
       getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
         'AddWorkflowRunToChatThreadsCommand',

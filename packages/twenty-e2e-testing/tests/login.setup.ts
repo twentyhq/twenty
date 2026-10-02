@@ -17,7 +17,6 @@ test('Login test', async ({ loginPage, page }) => {
     'Logging in '.concat(page.url(), ' as ', process.env.DEFAULT_LOGIN),
     async () => {
       await page.waitForLoadState('networkidle');
-      // Click "Continue with Email" if visible (may be skipped if password is the only auth method)
       await loginPage.clickLoginWithEmailIfVisible();
       await loginPage.typeEmail(process.env.DEFAULT_LOGIN);
       await loginPage.clickContinueButton();

@@ -12,3 +12,5 @@ export { Banner } from './Banner/Banner';
 export { Loader } from './Loader/Loader';
 export { ProgressBar } from './ProgressBar/ProgressBar';
 export type { ProgressBarProps } from './ProgressBar/types/ProgressBarProps';
+export { ProgressRing } from './ProgressRing/ProgressRing';
+export type { ProgressRingProps } from './ProgressRing/types/ProgressRingProps';

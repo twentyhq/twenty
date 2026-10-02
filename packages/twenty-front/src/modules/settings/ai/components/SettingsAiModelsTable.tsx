@@ -42,8 +42,7 @@ const StyledDeprecatedSuffix = styled.span`
   color: ${themeCssVariables.font.color.light};
 `;
 
-// An evaluation model cannot be chatted with or given to an agent, so a row
-// that looks like every other row would read as interchangeable with them.
+// Evaluation models can't chat or run agents, so their rows are badged apart.
 const StyledKindBadge = styled.span`
   background: ${themeCssVariables.background.transparent.light};
   border-radius: ${themeCssVariables.border.radius.sm};

@@ -20,10 +20,8 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
-import {
-  type AuthContext,
-  type AuthContextUser,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,
@@ -147,7 +145,7 @@ export class UserResolver {
     @AuthUser() { id: userId }: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace: WorkspaceEntity,
     @AuthImpersonationContext()
-    impersonationContext: AuthContext['impersonationContext'],
+    impersonationContext: RawAuthContext['impersonationContext'],
     @AuthIsUserSession() isUserSession: boolean,
   ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
@@ -472,8 +470,7 @@ export class UserResolver {
     const workspaceMemberToDeleteIsAuthenticatedUser =
       workspaceMemberToDelete.userId === userId;
 
-    // Removing oneself deletes the account when it is the last workspace, so it
-    // is the person's to do rather than an application's.
+    // Removing oneself may delete the account, so only the person can do it, not an application.
     if (workspaceMemberToDeleteIsAuthenticatedUser && !isUserSession) {
       throw buildUserSessionRequiredError();
     }
@@ -710,8 +707,7 @@ export class UserResolver {
     return user.userWorkspaces;
   }
 
-  // Same rows as workspaces under the entity's own field name, so guarding only
-  // one of the two leaves the other answering.
+  // Same rows as the workspaces field under the entity's own name, so guarding only one leaves the other answering.
   @ResolveField(() => [UserWorkspaceEntity], {
     name: 'userWorkspaces',
     nullable: false,

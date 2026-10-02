@@ -30,18 +30,7 @@ type CollectDeclaredRecurringChargesParams = {
   flatApplicationMaps: FlatApplicationCacheMaps;
 };
 
-// The recurring charges installed applications declare, read straight from the
-// already-loaded cache. Uninstalled applications are skipped so a removed app
-// stops billing from the next period; the period it was removed in was already
-// raised. Collected before the already-charged lookup so a workspace whose apps
-// declare nothing costs no ClickHouse read.
-//
-// `billing` is jsonb, so a declaration is untrusted input however it got there:
-// the manifest is persisted without a shape check, and nothing stops a row
-// being written by another route. Every declaration is validated here, at the
-// point the platform decides to debit, rather than relying on the SDK having
-// validated it at build time. A rejected declaration is returned rather than
-// dropped silently so the caller can report an app that will not be billed.
+// `billing` is jsonb persisted without a shape check, so declarations are validated here, at the point of debit
 export const collectDeclaredRecurringCharges = ({
   flatApplicationMaps,
 }: CollectDeclaredRecurringChargesParams): CollectDeclaredRecurringChargesResult => {
@@ -57,8 +46,7 @@ export const collectDeclaredRecurringCharges = ({
     const billing: ApplicationBilling = application.billing ?? {};
     const recurring = billing.recurring;
 
-    // An array is typeof 'object', and Object.entries would then bill each
-    // element under its numeric index as if it were a charge name.
+    // Arrays are typeof 'object': Object.entries would bill each element by index
     if (
       !isDefined(recurring) ||
       typeof recurring !== 'object' ||

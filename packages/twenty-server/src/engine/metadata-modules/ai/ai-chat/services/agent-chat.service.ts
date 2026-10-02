@@ -32,6 +32,8 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
@@ -53,70 +55,24 @@ export class AgentChatService {
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly conversationWriterService: AgentConversationWriterService,
+    private readonly threadService: AgentChatThreadService,
   ) {}
 
-  async createThread({
-    workspaceMemberId,
-    workspaceId,
-    id,
-    title,
-  }: {
-    workspaceMemberId: string;
-    workspaceId: string;
-    id?: string;
-    title?: string;
-  }) {
-    const savedThread = await this.sharingService.createThread({
-      workspaceId,
-      workspaceMemberId,
-      id,
-      title,
-    });
-
-    await this.threadRecordEventService.emitThreadCreated({
-      workspaceId,
-      threadId: savedThread.id,
-    });
-
-    return savedThread;
+  createThread(args: Parameters<AgentChatThreadService['createThread']>[0]) {
+    return this.threadService.createThread(args);
   }
 
-  async findWritableThread({
-    threadId,
-    workspaceMemberId,
-    workspaceId,
-  }: {
-    threadId: string;
-    workspaceMemberId: string;
-    workspaceId: string;
-  }) {
-    try {
-      return await this.sharingService.getThreadWithAccess({
-        threadId,
-        workspaceMemberId,
-        workspaceId,
-        operationType: 'update',
-      });
-    } catch (error) {
-      if (
-        error instanceof AiException &&
-        error.code === AiExceptionCode.THREAD_NOT_FOUND
-      ) {
-        return null;
-      }
-      throw error;
-    }
+  findWritableThread(
+    args: Parameters<AgentChatThreadService['findWritableThread']>[0],
+  ) {
+    return this.threadService.findWritableThread(args);
   }
 
-  async getWritableThread(args: {
-    threadId: string;
-    workspaceMemberId: string;
-    workspaceId: string;
-  }) {
-    return this.sharingService.getThreadWithAccess({
-      ...args,
-      operationType: 'update',
-    });
+  getWritableThread(
+    args: Parameters<AgentChatThreadService['getWritableThread']>[0],
+  ) {
+    return this.threadService.getWritableThread(args);
   }
 
   private getMessageSenderValues({
@@ -162,49 +118,32 @@ export class AgentChatService {
     processedAt?: Date;
     userWorkspaceId?: string;
   }) {
-    let actualTurnId = turnId;
-
-    if (!actualTurnId) {
-      const turnInsertResult = await this.turnRepository.insert(workspaceId, {
+    const actualTurnId =
+      turnId ??
+      (await this.conversationWriterService.insertTurn({
+        workspaceId,
         threadId,
         agentId: agentId ?? null,
-      });
+      }));
 
-      actualTurnId = turnInsertResult.identifiers[0].id as string;
-    }
+    const senderValues = this.getMessageSenderValues({
+      workspaceId,
+      userWorkspaceId,
+    });
+    const resolvedProcessedAt = processedAt ?? new Date();
 
-    const messageValues = {
-      ...(id ? { id } : {}),
+    const savedMessageId = await this.conversationWriterService.insertMessage({
+      workspaceId,
+      id,
       threadId,
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
-      processedAt: (processedAt ?? new Date()).toISOString(),
-      ...this.getMessageSenderValues({ workspaceId, userWorkspaceId }),
-      ...(isDefined(isHidden) ? { isHidden } : {}),
-    };
-
-    const insertResult = await this.messageRepository.insert(
-      workspaceId,
-      messageValues,
-    );
-
-    const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
-
-    if (uiMessage.parts && uiMessage.parts.length > 0) {
-      const dbParts = mapUIMessagePartsToPersistedDBParts(
-        uiMessage.parts,
-        savedMessageId,
-        workspaceId,
-      );
-
-      if (dbParts.length > 0) {
-        await this.messagePartRepository.insert(
-          workspaceId,
-          dbParts as QueryDeepPartialEntity<AgentMessagePartWorkspaceEntity>[],
-        );
-      }
-    }
+      ...senderValues,
+      isHidden,
+      processedAt: resolvedProcessedAt,
+      parts: uiMessage.parts ?? [],
+    });
 
     return {
       id: savedMessageId,
@@ -212,9 +151,8 @@ export class AgentChatService {
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
-      processedAt: messageValues.processedAt,
-      senderUserWorkspaceId: messageValues.senderUserWorkspaceId,
-      senderApplicationId: messageValues.senderApplicationId,
+      processedAt: resolvedProcessedAt.toISOString(),
+      ...senderValues,
     };
   }
 
@@ -553,12 +491,11 @@ export class AgentChatService {
     threadId: string;
     workspaceId: string;
   }): Promise<string | null> {
-    const turnInsertResult = await this.turnRepository.insert(workspaceId, {
+    const savedTurnId = await this.conversationWriterService.insertTurn({
+      workspaceId,
       threadId,
       agentId: null,
     });
-
-    const savedTurnId = turnInsertResult.identifiers[0].id as string;
 
     const result = await this.messageRepository.update(
       workspaceId,
@@ -579,8 +516,7 @@ export class AgentChatService {
     return savedTurnId;
   }
 
-  // A tool call id is only unique within the conversation that made it, so
-  // the part is looked up through its message's thread.
+  // tool call ids are only unique within a conversation
   async findToolPart({
     threadId,
     toolCallId,
@@ -645,9 +581,7 @@ export class AgentChatService {
     );
   }
 
-  // The answer and, once no call of the message still waits, the
-  // conversation no longer waiting on it are written together, so an answer
-  // never strands a conversation waiting on calls that are all answered.
+  // written together so an answer never strands a conversation waiting on answered calls
   async recordToolCallAnswer({
     threadId,
     messageId,
@@ -681,8 +615,6 @@ export class AgentChatService {
     );
   }
 
-  // Calls nothing can answer anymore are closed, so the conversation no longer
-  // waits on them.
   async closePendingToolCalls({
     threadId,
     messageId,
@@ -705,7 +637,6 @@ export class AgentChatService {
     });
   }
 
-  // Sending to a soft deleted conversation brings it back to the list
   async restoreThread({
     threadId,
     workspaceMemberId,
@@ -736,36 +667,10 @@ export class AgentChatService {
     return thread;
   }
 
-  async notifyThreadActivityUpdated({
-    threadId,
-    workspaceMemberId,
-    workspaceId,
-  }: {
-    threadId: string;
-    workspaceMemberId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    const thread = await this.getWritableThread({
-      threadId,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    const threadAfter = { ...thread, updatedAt: new Date().toISOString() };
-
-    // Conversations are listed by most recent change, so a message moves its
-    // conversation to the top when it is sent, not only once the turn ends.
-    await this.threadRepository.update(
-      workspaceId,
-      { id: threadId },
-      { updatedAt: threadAfter.updatedAt },
-    );
-
-    await this.threadRecordEventService.emitThreadUpdated({
-      workspaceId,
-      threadBefore: thread,
-      threadAfter,
-    });
+  notifyThreadActivityUpdated(
+    args: Parameters<AgentChatThreadService['notifyThreadActivityUpdated']>[0],
+  ) {
+    return this.threadService.notifyThreadActivityUpdated(args);
   }
 
   async notifyThreadUsageUpdated({
