@@ -260,25 +260,6 @@ describe('2-46 fast instance command 1790953454195 - RenameUsageLimitMeterToUnit
     );
   });
 
-  it('refuses to rename while a limit has no unit, naming it', async () => {
-    await command.down(queryRunner);
-
-    const unmappableUsageLimitId = await insertUsageLimit({
-      resourceType: UsageResourceType.AI,
-      operationType: UsageOperationType.ALL,
-      limitKind: 'quota',
-      column: 'meter',
-      value: 'quantity',
-    });
-
-    await expect(command.up(queryRunner)).rejects.toThrow(
-      unmappableUsageLimitId,
-    );
-    expect(await findUsageLimitColumns()).toEqual([
-      expect.objectContaining({ columnName: 'meter' }),
-    ]);
-  });
-
   it('drops the limits no meter can hold and maps the rest back on down', async () => {
     const insertCodeExecutionUsageLimit = (unit: UsageUnit) =>
       insertUsageLimit({

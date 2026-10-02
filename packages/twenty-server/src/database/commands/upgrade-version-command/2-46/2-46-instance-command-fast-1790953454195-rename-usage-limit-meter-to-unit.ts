@@ -1,4 +1,3 @@
-import { isNonEmptyArray } from 'twenty-shared/utils';
 import { QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -30,35 +29,9 @@ const METER_FROM_UNIT_SQL = `CASE "unit"
   ELSE 'quantity'
 END`;
 
-type UnmappableUsageLimit = {
-  id: string;
-  resourceType: string;
-  operationType: string;
-  limitKind: string;
-  meter: string;
-};
-
 @RegisteredInstanceCommand('2.46.0', 1790953454195)
 export class RenameUsageLimitMeterToUnitFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const unmappableUsageLimits: UnmappableUsageLimit[] =
-      await queryRunner.query(
-        `SELECT "id", "resourceType", "operationType", "limitKind", "meter"
-         FROM "core"."usageLimit"
-         WHERE (${UNIT_FROM_METER_SQL}) IS NULL`,
-      );
-
-    if (isNonEmptyArray(unmappableUsageLimits)) {
-      throw new Error(
-        `Cannot map the meter of these usage limits to a unit: ${unmappableUsageLimits
-          .map(
-            ({ id, resourceType, operationType, limitKind, meter }) =>
-              `${id} (${resourceType} ${operationType} ${limitKind} ${meter})`,
-          )
-          .join(', ')}`,
-      );
-    }
-
     await queryRunner.query(
       `ALTER TABLE "core"."usageLimit" DROP CONSTRAINT "UQ_USAGE_LIMIT_SCOPE"`,
     );
