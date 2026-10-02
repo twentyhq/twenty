@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 
 import type { PartialBlock } from '@blocknote/core';
 import { Lexer, type Token, type Tokens } from 'marked';
+import { isSafeUrl } from 'twenty-shared/utils';
 
 import {
   convertMarkdownInlineTokens,
@@ -24,7 +25,7 @@ const isBlankContent = (content: InlineContent[]) =>
   content.every((item) => item.type === 'text' && item.text.trim() === '');
 
 const isImageToken = (token: Token): token is Tokens.Image =>
-  token.type === 'image';
+  token.type === 'image' && isSafeUrl(token.href);
 
 const convertImage = (image: Tokens.Image): PartialBlock =>
   createBlock({

@@ -1,6 +1,6 @@
 import type { DefaultStyleSchema, Link, StyledText } from '@blocknote/core';
 import { type Token, type Tokens } from 'marked';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isSafeUrl } from 'twenty-shared/utils';
 
 type InlineStyle = 'bold' | 'italic' | 'strike' | 'code';
 
@@ -57,13 +57,18 @@ const collectInlineRuns = (
         runs.push({ text: '\n', styles, href });
         break;
       case 'link':
-        collectInlineRuns(token.tokens ?? [], styles, token.href, runs);
+        collectInlineRuns(
+          token.tokens ?? [],
+          styles,
+          isSafeUrl(token.href) ? token.href : href,
+          runs,
+        );
         break;
       case 'image':
         runs.push({
           text: token.text.length > 0 ? token.text : token.href,
           styles,
-          href: token.href,
+          href: isSafeUrl(token.href) ? token.href : href,
         });
         break;
       case 'checkbox':

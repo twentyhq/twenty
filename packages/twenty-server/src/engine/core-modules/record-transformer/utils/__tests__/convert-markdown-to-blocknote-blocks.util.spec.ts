@@ -169,6 +169,28 @@ describe('convertMarkdownToBlocknoteBlocks', () => {
     ]);
   });
 
+  it('should drop urls the rich text validator would reject', () => {
+    expect(
+      convertWithoutIds(
+        '[click](javascript:alert%281%29) ![pixel](javascript:alert%281%29) [ok](https://example.com)',
+      ),
+    ).toEqual([
+      {
+        type: 'paragraph',
+        props: DEFAULT_PROPS,
+        content: [
+          text('click pixel '),
+          {
+            type: 'link',
+            href: 'https://example.com',
+            content: [text('ok')],
+          },
+        ],
+        children: [],
+      },
+    ]);
+  });
+
   it('should convert tables with their column alignment', () => {
     const cellProps = {
       colspan: 1,
