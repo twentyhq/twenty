@@ -62,8 +62,14 @@ const StyledFieldLabel = styled.span`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
+  max-width: 50%;
+  min-width: 0;
+`;
+
+const StyledFieldLabelText = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const StyledValue = styled.span<{ isEmpty: boolean }>`
@@ -191,7 +197,7 @@ export const SettingsValidationRulePreview = ({
                       size={theme.icon.size.md}
                       stroke={theme.icon.stroke.sm}
                     />
-                    {t`${fieldLabel}:`}
+                    <StyledFieldLabelText>{t`${fieldLabel}:`}</StyledFieldLabelText>
                   </StyledFieldLabel>
                   <StyledValue isEmpty={formattedValue.length === 0}>
                     {formattedValue.length > 0 ? formattedValue : t`Empty`}
