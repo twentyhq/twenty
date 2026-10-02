@@ -3,10 +3,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
+import { buildQuotaCostFromUsageEvents } from 'src/engine/core-modules/usage-limit/utils/build-quota-cost-from-usage-events.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
+import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { type BillingTokenUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/billing-token-usage.type';
@@ -143,7 +145,10 @@ export class AiBillingService {
       workspaceId,
       operationType,
       spenders: { userWorkspaceId, agentId },
-      cost: { creditsUsedMicro, quantity: totalTokens },
+      cost: {
+        [UsageUnit.CREDIT]: creditsUsedMicro,
+        [UsageUnit.TOKEN]: totalTokens,
+      },
     });
 
     await this.emitAiTokenUsageEvent(
@@ -181,7 +186,10 @@ export class AiBillingService {
       workspaceId,
       operationType,
       spenders,
-      cost: { creditsUsedMicro, quantity: totalTokens },
+      cost: {
+        [UsageUnit.CREDIT]: creditsUsedMicro,
+        [UsageUnit.TOKEN]: totalTokens,
+      },
     });
   }
 
@@ -202,14 +210,7 @@ export class AiBillingService {
       `Native web search billing: ${nativeWebSearchCallCount} calls, $${costInDollars.toFixed(4)}`,
     );
 
-    await this.consumeQuota({
-      workspaceId,
-      operationType: UsageOperationType.WEB_SEARCH,
-      spenders: { userWorkspaceId },
-      cost: { creditsUsedMicro, quantity: nativeWebSearchCallCount },
-    });
-
-    await this.usageRecorderService.record(workspaceId, [
+    const usageEvents: RecordUsageInput[] = [
       {
         resourceType: UsageResourceType.AI,
         operationType: UsageOperationType.WEB_SEARCH,
@@ -218,7 +219,16 @@ export class AiBillingService {
         unit: UsageUnit.INVOCATION,
         spenders: { userWorkspaceId },
       },
-    ]);
+    ];
+
+    await this.consumeQuota({
+      workspaceId,
+      operationType: UsageOperationType.WEB_SEARCH,
+      spenders: { userWorkspaceId },
+      cost: buildQuotaCostFromUsageEvents(usageEvents),
+    });
+
+    await this.usageRecorderService.record(workspaceId, usageEvents);
   }
 
   async emitAiTokenUsageEvent(

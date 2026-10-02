@@ -42,7 +42,7 @@ import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { computeLogicFunctionExecutionCreditsMicro } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/compute-logic-function-execution-credits-micro.util';
+import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -55,7 +55,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -651,55 +650,33 @@ export class LogicFunctionExecutorService {
         functionName: flatLogicFunction.name,
       });
 
-    // Billing-exempt apps (first-party maintenance apps whose per-record
-    // triggers fire during mailbox/calendar import) do not consume the
-    // workspace's credits for the execution itself. Explicit chargeCredits
-    // calls and AI token usage from within the function are billed separately
-    // and stay untouched.
-    const { invocationCreditsMicro, durationCreditsMicro, billedDurationMs } =
-      computeLogicFunctionExecutionCreditsMicro({
-        durationMs: result.billedDurationMs,
-        isBillingExempt: isBillingExemptApplication(
-          flatApplication.universalIdentifier,
-        ),
-      });
-
-    const totalCreditsMicro = invocationCreditsMicro + durationCreditsMicro;
-
     const spenders = {
       logicFunctionId: flatLogicFunction.id,
       applicationId: flatApplication.id,
     };
 
-    if (totalCreditsMicro > 0) {
-      await this.usageLimitQuotaService.consumeQuota({
-        workspaceId,
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        operationType: UsageOperationType.CODE_EXECUTION,
-        spenders,
-        cost: { creditsUsedMicro: totalCreditsMicro, quantity: 1 },
-      });
-    }
+    // Billing-exempt apps (first-party maintenance apps whose per-record
+    // triggers fire during mailbox/calendar import) do not consume the
+    // workspace's credits for the execution itself. Explicit chargeCredits
+    // calls and AI token usage from within the function are billed separately
+    // and stay untouched.
+    const { usageEvents, cost } = buildLogicFunctionExecutionUsage({
+      durationMs: result.billedDurationMs,
+      isBillingExempt: isBillingExemptApplication(
+        flatApplication.universalIdentifier,
+      ),
+      resourceId: flatLogicFunction.id,
+      spenders,
+    });
 
-    await this.usageRecorderService.record(workspaceId, [
-      {
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        operationType: UsageOperationType.CODE_EXECUTION,
-        creditsUsedMicro: invocationCreditsMicro,
-        quantity: 1,
-        unit: UsageUnit.INVOCATION,
-        resourceId: flatLogicFunction.id,
-        spenders,
-      },
-      {
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        operationType: UsageOperationType.CODE_EXECUTION,
-        creditsUsedMicro: durationCreditsMicro,
-        quantity: billedDurationMs,
-        unit: UsageUnit.MILLISECOND,
-        resourceId: flatLogicFunction.id,
-        spenders,
-      },
-    ]);
+    await this.usageLimitQuotaService.consumeQuota({
+      workspaceId,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      operationType: UsageOperationType.CODE_EXECUTION,
+      spenders,
+      cost,
+    });
+
+    await this.usageRecorderService.record(workspaceId, usageEvents);
   }
 }

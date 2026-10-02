@@ -14,10 +14,12 @@ import { findActiveFlatApplicationById } from 'src/engine/core-modules/applicati
 import { type ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { buildQuotaCostFromUsageEvents } from 'src/engine/core-modules/usage-limit/utils/build-quota-cost-from-usage-events.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
+import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type AppChargeableOperationType =
@@ -83,18 +85,7 @@ export class AppBillingService {
       applicationId,
     };
 
-    await this.usageLimitQuotaService.consumeQuota({
-      workspaceId,
-      resourceType: UsageResourceType.APP,
-      operationType,
-      spenders,
-      cost: {
-        creditsUsedMicro: charge.creditsUsedMicro,
-        quantity: charge.quantity,
-      },
-    });
-
-    await this.usageRecorderService.record(workspaceId, [
+    const usageEvents: RecordUsageInput[] = [
       {
         resourceType: UsageResourceType.APP,
         operationType,
@@ -105,7 +96,17 @@ export class AppBillingService {
         resourceContext: charge.operation ?? charge.resourceContext ?? null,
         spenders,
       },
-    ]);
+    ];
+
+    await this.usageLimitQuotaService.consumeQuota({
+      workspaceId,
+      resourceType: UsageResourceType.APP,
+      operationType,
+      spenders,
+      cost: buildQuotaCostFromUsageEvents(usageEvents),
+    });
+
+    await this.usageRecorderService.record(workspaceId, usageEvents);
   }
 
   private async resolveOperationType({
