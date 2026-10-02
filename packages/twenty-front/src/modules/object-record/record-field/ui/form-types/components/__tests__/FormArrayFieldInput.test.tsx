@@ -66,7 +66,7 @@ it.each([
   },
 );
 
-it('trims the first item and opens its panel before mounting under StrictMode', async () => {
+it('commits the trimmed first item on Enter and opens its panel with the row menu focused under StrictMode', async () => {
   const user = userEvent.setup();
   const { onChange } = renderArrayField();
   const itemInput = screen.getByPlaceholderText('Enter an item');

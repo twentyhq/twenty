@@ -269,7 +269,11 @@ export const SearchFiltering: Story = {
     });
 
     expect(canvas.queryByText('Social Media')).not.toBeInTheDocument();
-    expect(canvas.getAllByRole('button')).toHaveLength(2);
+    expect(
+      within(canvas.getByRole('dialog', { name: 'Options' })).getAllByRole(
+        'button',
+      ),
+    ).toHaveLength(2);
   },
 };
 

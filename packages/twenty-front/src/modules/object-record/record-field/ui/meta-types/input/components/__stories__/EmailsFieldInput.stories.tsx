@@ -146,9 +146,11 @@ export const TabKeepsFocusInEditor: Story = {
 
     await userEvent.tab();
     expect(input).toHaveFocus();
+    expect(input).toHaveValue('new.email@example.com');
 
     await userEvent.tab({ shift: true });
     expect(input).toHaveFocus();
+    expect(input).toHaveValue('new.email@example.com');
   },
 };
 

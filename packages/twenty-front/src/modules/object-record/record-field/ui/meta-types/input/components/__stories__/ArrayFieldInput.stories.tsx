@@ -182,7 +182,7 @@ export const SearchAndEditItem: Story = {
     });
     expect(handleEscapeMocked).not.toHaveBeenCalled();
     expect(handleClickoutsideMocked).not.toHaveBeenCalled();
-    expect(optionsButton).toHaveFocus();
+    await waitFor(() => expect(optionsButton).toHaveFocus());
 
     await userEvent.click(optionsButton);
     await userEvent.click(await body.findByRole('menuitem', { name: 'Edit' }));

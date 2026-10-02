@@ -17,33 +17,35 @@ export default meta;
 
 type Story = StoryObj<typeof FormMultiSelectFieldInput>;
 
+const WORK_POLICY_ARGS: Story['args'] = {
+  label: 'Work Policy',
+  defaultValue: ['WORK_POLICY_1', 'WORK_POLICY_2'],
+  options: [
+    {
+      label: 'Work Policy 1',
+      value: 'WORK_POLICY_1',
+      color: 'blue',
+    },
+    {
+      label: 'Work Policy 2',
+      value: 'WORK_POLICY_2',
+      color: 'green',
+    },
+    {
+      label: 'Work Policy 3',
+      value: 'WORK_POLICY_3',
+      color: 'red',
+    },
+    {
+      label: 'Work Policy 4',
+      value: 'WORK_POLICY_4',
+      color: 'yellow',
+    },
+  ],
+};
+
 export const Default: Story = {
-  args: {
-    label: 'Work Policy',
-    defaultValue: ['WORK_POLICY_1', 'WORK_POLICY_2'],
-    options: [
-      {
-        label: 'Work Policy 1',
-        value: 'WORK_POLICY_1',
-        color: 'blue',
-      },
-      {
-        label: 'Work Policy 2',
-        value: 'WORK_POLICY_2',
-        color: 'green',
-      },
-      {
-        label: 'Work Policy 3',
-        value: 'WORK_POLICY_3',
-        color: 'red',
-      },
-      {
-        label: 'Work Policy 4',
-        value: 'WORK_POLICY_4',
-        color: 'yellow',
-      },
-    ],
-  },
+  args: WORK_POLICY_ARGS,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -138,7 +140,7 @@ export const DisabledWithVariable: Story = {
 };
 
 export const ToggleAndDismiss: Story = {
-  args: Default.args,
+  args: WORK_POLICY_ARGS,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
@@ -162,7 +164,9 @@ export const ToggleAndDismiss: Story = {
     await waitFor(() => {
       expect(body.queryByRole('dialog')).not.toBeInTheDocument();
     });
-    expect(trigger).toHaveFocus();
+    await waitFor(() => {
+      expect(trigger).toHaveFocus();
+    });
     await userEvent.keyboard('{Enter}');
     expect(
       await body.findByRole('dialog', { name: 'Work Policy' }),
@@ -177,7 +181,7 @@ export const ToggleAndDismiss: Story = {
 };
 
 export const OutsideInputThenTab: Story = {
-  args: Default.args,
+  args: WORK_POLICY_ARGS,
   decorators: [
     (Story) => (
       <>
@@ -224,7 +228,7 @@ export const OutsideInputThenTab: Story = {
 
 export const EmptyLabelUsesPlaceholderAsName: Story = {
   args: {
-    ...Default.args,
+    ...WORK_POLICY_ARGS,
     label: '',
     placeholder: 'Choose policies',
   },
