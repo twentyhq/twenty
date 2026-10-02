@@ -220,13 +220,16 @@ export class AuthService {
       user,
     );
 
-    await this.validatePasswordCredentialsOrThrow(user, input.password);
+    await assertUserPasswordIsValidOrThrow({ user, password: input.password });
 
+    // Joining before the email check lets the user land in this workspace from verifyEmailAndGetLoginToken once their email is verified
     await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
       user,
       workspace,
       workspaceInvitation.roleId,
     );
+
+    await this.checkIsEmailVerified(user.isEmailVerified);
 
     return user;
   }

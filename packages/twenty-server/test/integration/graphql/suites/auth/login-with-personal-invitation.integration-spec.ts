@@ -8,6 +8,7 @@ import {
   seedWorkspaceInvitation,
 } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -91,6 +92,37 @@ describe('getLoginTokenFromCredentials with a personal invitation (integration)'
       response.body.data.getLoginTokenFromCredentials.loginToken.token,
     ).toBeDefined();
     expect(await countAppleMemberships(userId)).toBe(1);
+  });
+  it('joins the workspace on the right password even when the email still needs verification', async () => {
+    await global.testDataSource.query(
+      'UPDATE core."user" SET "isEmailVerified" = false WHERE "id" = $1',
+      [userId],
+    );
+
+    await updateConfigVariable({
+      input: { key: 'IS_EMAIL_VERIFICATION_REQUIRED', value: true },
+    });
+
+    try {
+      const response = await makeMetadataApiRequest(
+        getLoginTokenFromCredentialsQueryFactory({
+          email,
+          password: PASSWORD,
+          origin: buildAppleWorkspaceOrigin(),
+        }),
+        null,
+      );
+
+      expect(response.body.data?.getLoginTokenFromCredentials).toBeFalsy();
+      expect(response.body.errors[0].extensions.subCode).toBe(
+        'EMAIL_NOT_VERIFIED',
+      );
+      expect(await countAppleMemberships(userId)).toBe(1);
+    } finally {
+      await updateConfigVariable({
+        input: { key: 'IS_EMAIL_VERIFICATION_REQUIRED', value: false },
+      });
+    }
   });
 });
 
