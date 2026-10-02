@@ -222,11 +222,16 @@ export const SettingsValidationRuleExpressionEditor = ({
     });
   };
 
-  const getIsWordBeingTyped = () =>
-    isDefined(editor) &&
-    helperContext.replaceFromOffset <
-      getValidationRuleEditorText(editor.state.doc, editor.state.selection.from)
-        .length;
+  const getIsWordBeingTyped = () => {
+    return (
+      isDefined(editor) &&
+      helperContext.replaceFromOffset <
+        getValidationRuleEditorText(
+          editor.state.doc,
+          editor.state.selection.from,
+        ).length
+    );
+  };
 
   const handleEditorKeyDown = (event: KeyboardEvent): boolean => {
     const { items } = helperContext;
