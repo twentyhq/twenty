@@ -233,7 +233,7 @@ export const RichTextFieldEditor = ({
       | { blocknote?: string | null }
       | undefined;
 
-// Capture the old body before persisting; otherwise the attachment diff misses removals.
+    // Capture the old body before persisting; otherwise the attachment diff misses removals.
     // Normalize draft image URLs so a save echo cannot trigger a remote replacement.
     updateDraft({ blocknote: prepareBodyWithSignedUrls(newStringifiedBody) });
 
