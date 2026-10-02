@@ -7,7 +7,6 @@ import {
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -15,6 +14,7 @@ import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
+import { assertCanRunAsWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-can-run-as-workspace-member.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
@@ -39,7 +39,6 @@ export class AgentRunService {
   constructor(
     private readonly agentActorContextService: AgentActorContextService,
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
-    private readonly applicationLookupService: ApplicationLookupService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
@@ -95,17 +94,6 @@ export class AgentRunService {
       );
     }
 
-    const application = await this.applicationLookupService.findById({
-      id: agent.applicationId,
-      workspaceId: workspace.id,
-    });
-
-    if (!application) {
-      throw new NotFoundException(
-        `Application ${agent.applicationId} not found for agent ${input.agentUniversalIdentifier}`,
-      );
-    }
-
     const runAsContext = await this.resolveRunAsContext({
       runAsWorkspaceMemberId: input.runAsWorkspaceMemberId,
       callerApplication,
@@ -114,11 +102,9 @@ export class AgentRunService {
       workspaceId: workspace.id,
     });
 
-    const authContext: WorkspaceAuthContext = runAsContext?.authContext ?? {
-      type: 'application',
-      workspace,
-      application,
-    };
+    // The agent acts as its caller, so row-level predicates bound to the member and the member's own grants follow
+    // who is actually running it
+    const authContext = runAsContext?.authContext ?? callerAuthContext;
 
     try {
       const executionResult = await withDedicatedAiTrace(() =>
@@ -128,7 +114,6 @@ export class AgentRunService {
           baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
           actorContext: runAsContext?.actorContext,
           authContext,
-          principalAuthContext: runAsContext?.authContext ?? callerAuthContext,
           workspaceId: workspace.id,
           userWorkspaceId:
             runAsContext?.authContext.userWorkspaceId ?? requestUserWorkspaceId,
@@ -153,8 +138,7 @@ export class AgentRunService {
     } catch (error) {
       if (
         error instanceof AiException &&
-        (error.code === AiExceptionCode.INVALID_AGENT_INPUT ||
-          error.code === AiExceptionCode.RUN_AGENT_NOT_ALLOWED)
+        error.code === AiExceptionCode.INVALID_AGENT_INPUT
       ) {
         throw error;
       }
@@ -189,35 +173,15 @@ export class AgentRunService {
       return undefined;
     }
 
-    if (!isDefined(callerApplication)) {
-      throw new AiException(
-        'Running an agent as a workspace member requires an application access token',
-        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED,
-      );
-    }
-
-    if (
-      isDefined(requestUserWorkspaceId) &&
-      requestWorkspaceMemberId !== runAsWorkspaceMemberId
-    ) {
-      throw new AiException(
-        'An application token issued for a user can only run an agent as that user',
-        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED,
-      );
-    }
-
-    // The application role caps the member's, so without one the application could act with any member's access
-    if (!isDefined(callerApplication.defaultRoleId)) {
-      throw new AiException(
-        'Running an agent as a workspace member requires an application with a role',
-        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED,
-      );
-    }
-
     return this.agentActorContextService.buildRunAsWorkspaceMemberContext({
       workspaceMemberId: runAsWorkspaceMemberId,
       workspaceId,
-      viaApplication: callerApplication,
+      viaApplication: assertCanRunAsWorkspaceMember({
+        runAsWorkspaceMemberId,
+        callerApplication,
+        requestUserWorkspaceId,
+        requestWorkspaceMemberId,
+      }),
     });
   }
 }

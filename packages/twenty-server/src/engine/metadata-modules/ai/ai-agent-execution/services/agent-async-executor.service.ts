@@ -133,20 +133,18 @@ export class AgentAsyncExecutorService {
     return roleTarget?.roleId;
   }
 
-  // The agent must never get more than the principal it runs for could
+  // The agent must never get more than the principal of its auth context could; a principal without a role leaves
+  // the agent role alone, as a workflow guards its own run context and runAgent callers need a role to reach it
   private async buildRolePermissionConfig({
     agentRoleId,
-    principalAuthContext,
+    authContext,
     workspaceId,
   }: {
     agentRoleId: string;
-    principalAuthContext?: WorkspaceAuthContext;
+    authContext?: WorkspaceAuthContext;
     workspaceId: string;
   }): Promise<RolePermissionConfig> {
-    if (
-      !isDefined(principalAuthContext) ||
-      isSystemAuthContext(principalAuthContext)
-    ) {
+    if (!isDefined(authContext) || isSystemAuthContext(authContext)) {
       return buildAgentRolePermissionConfig({
         agentRoleId,
         principalRoleIds: [],
@@ -160,17 +158,10 @@ export class AgentAsyncExecutorService {
       ]);
 
     const principalRoleIds = resolveRoleIdsFromAuthContext({
-      authContext: principalAuthContext,
+      authContext,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
     });
-
-    if (!isNonEmptyArray(principalRoleIds)) {
-      throw new AiException(
-        'The agent runs for a principal that has no role',
-        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
-      );
-    }
 
     return buildAgentRolePermissionConfig({ agentRoleId, principalRoleIds });
   }
@@ -300,7 +291,6 @@ export class AgentAsyncExecutorService {
     baseSystemPrompt,
     actorContext,
     authContext,
-    principalAuthContext = authContext,
     workspaceId,
     userWorkspaceId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
@@ -316,8 +306,6 @@ export class AgentAsyncExecutorService {
     baseSystemPrompt: string;
     actorContext?: ActorMetadata;
     authContext?: WorkspaceAuthContext;
-    // whose roles cap the agent, when it acts under another identity than the caller's
-    principalAuthContext?: WorkspaceAuthContext;
     workspaceId: string;
     userWorkspaceId?: string | null;
     operationType?: UsageOperationType;
@@ -389,7 +377,7 @@ export class AgentAsyncExecutorService {
         if (isDefined(agentRoleId)) {
           const rolePermissionConfig = await this.buildRolePermissionConfig({
             agentRoleId,
-            principalAuthContext,
+            authContext,
             workspaceId,
           });
 

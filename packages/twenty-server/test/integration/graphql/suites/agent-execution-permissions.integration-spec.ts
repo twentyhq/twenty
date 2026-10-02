@@ -18,13 +18,21 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type Manifest } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
 
+import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { AI_SDK_OPENAI } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import {
@@ -491,5 +499,63 @@ describe('agent execution permissions', () => {
 
     expect(toolOutput).toContain('is not available');
     expect(toolOutput).not.toContain(OPPORTUNITY_NAME);
+  }, 60000);
+
+  it('does not let a share to the calling application reach past the member and agent roles on a run-as', async () => {
+    const recordShareStorageService =
+      getAppProviderByClassName<RecordShareStorageService>(
+        'RecordShareStorageService',
+      );
+    const [{ id: companyObjectMetadataId }] =
+      await globalThis.testDataSource.query(
+        `SELECT id FROM core."objectMetadata" WHERE "nameSingular" = 'company' AND "workspaceId" = $1`,
+        [SEED_APPLE_WORKSPACE_ID],
+      );
+    const [{ defaultRoleId: applicationRoleId }] =
+      await globalThis.testDataSource.query(
+        `SELECT "defaultRoleId" FROM core.application WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+        [APP_ID, SEED_APPLE_WORKSPACE_ID],
+      );
+
+    await recordShareStorageService.insertMany({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      recordShares: [
+        {
+          objectMetadataId: companyObjectMetadataId,
+          recordId: HIDDEN_COMPANY_ID,
+          principalId: applicationRoleId,
+          principalType: RecordSharePrincipalType.ROLE,
+          accessLevel: RecordShareAccessLevel.READ,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: HIDDEN_COMPANY_ID,
+        },
+      ],
+    });
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+
+    try {
+      const toolOutput = await runAgent({
+        executeToolCall: FIND_COMPANIES,
+        runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      });
+
+      expect(toolOutput).toContain(VISIBLE_COMPANY_NAME);
+      expect(toolOutput).not.toContain(HIDDEN_COMPANY_NAME);
+    } finally {
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+      await recordShareStorageService.deleteByRecordIds({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        objectMetadataId: companyObjectMetadataId,
+        recordIds: [HIDDEN_COMPANY_ID],
+      });
+    }
   }, 60000);
 });
