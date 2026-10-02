@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type AggregateOperations } from 'twenty-shared/types';
@@ -9,6 +9,7 @@ import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query
 
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
@@ -27,6 +28,7 @@ import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildRequiredToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/build-required-tool-auth-context.util';
+import { buildToolExecutionFailure } from 'src/engine/core-modules/tool-provider/utils/build-tool-execution-failure.util';
 import { withResolvedToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/with-resolved-tool-auth-context.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -34,8 +36,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 @Injectable()
 export class ToolExecutorService {
-  private readonly logger = new Logger(ToolExecutorService.name);
-
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
@@ -53,6 +53,7 @@ export class ToolExecutorService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async dispatch(
@@ -60,19 +61,33 @@ export class ToolExecutorService {
     args: Record<string, unknown> | undefined,
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
-    const safeArgs = args ?? {};
-    const executionContext = await (context.resolveExecutionContext?.() ??
-      context);
+    try {
+      const executionContext = await (context.resolveExecutionContext?.() ??
+        context);
 
-    return withResolvedToolAuthContext(
-      {
-        context: executionContext,
-        userRepository: this.userRepository,
-        workspaceCacheService: this.workspaceCacheService,
-      },
-      (contextWithAuth) =>
-        this.dispatchByExecutionRef(descriptor, safeArgs, contextWithAuth),
-    );
+      return await withResolvedToolAuthContext(
+        {
+          context: executionContext,
+          userRepository: this.userRepository,
+          workspaceCacheService: this.workspaceCacheService,
+        },
+        (contextWithAuth) =>
+          this.dispatchByExecutionRef(descriptor, args ?? {}, contextWithAuth),
+      );
+    } catch (error) {
+      const { output, shouldCapture } = buildToolExecutionFailure({
+        error,
+        toolName: descriptor.name,
+      });
+
+      if (shouldCapture) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: { id: context.workspaceId },
+        });
+      }
+
+      return output;
+    }
   }
 
   private async dispatchByExecutionRef(
