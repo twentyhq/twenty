@@ -100,7 +100,6 @@ const computeAllowedCredentialedOrigins = ({
   return allowedOrigins;
 };
 
-// Runs on every request, while the inputs only change when an admin edits the config
 let lastComputed:
   | {
       inputs: AllowedCredentialedOriginsInputs;
@@ -109,7 +108,7 @@ let lastComputed:
   | undefined;
 
 export const resolveAllowedCredentialedOrigins = (
-  twentyConfigService: TwentyConfigService,
+  twentyConfigService: Pick<TwentyConfigService, 'get'>,
 ): ReadonlySet<string> => {
   const inputs: AllowedCredentialedOriginsInputs = {
     serverUrl: twentyConfigService.get('SERVER_URL'),
