@@ -54,7 +54,7 @@ export const InvoiceCurrency = () => {
 
 ## Search and selection
 
-Search matches currency codes, names, and the displayed `Name (CODE)` label without case sensitivity. Results keep the supplied order, with the selected currency first when it matches the search. Each row shows `Name (CODE)` and exposes its selected state through `aria-pressed`.
+Search matches currency codes, names, and the displayed `Name (CODE)` label without case sensitivity, using the same matching rules in every browser locale. Results keep the supplied order, with the selected currency first when it matches the search. Each row shows `Name (CODE)` and exposes its selected state through `aria-pressed`.
 
 Search receives focus when the picker opens. With a nonempty search, Enter selects the first enabled match. With an empty search, Enter does nothing until ArrowDown moves focus to an option. Empty results keep the picker open and announce the empty label. Selection closes a single-selection dropdown; Escape and outside interaction use the dropdown's existing dismissal and focus behavior.
 

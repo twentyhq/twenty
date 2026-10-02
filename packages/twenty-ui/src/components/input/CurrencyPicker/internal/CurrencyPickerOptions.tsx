@@ -24,13 +24,11 @@ export const CurrencyPickerOptions = ({
   ...props
 }: CurrencyPickerOptionsProps) => {
   const [search, setSearch] = useState('');
-  const normalizedSearch = search.toLocaleLowerCase();
+  const normalizedSearch = search.toLowerCase();
   const matchingCurrencies = currencies.filter(
     (currency) =>
-      currency.code.toLocaleLowerCase().includes(normalizedSearch) ||
-      getCurrencyPickerLabel(currency)
-        .toLocaleLowerCase()
-        .includes(normalizedSearch),
+      currency.code.toLowerCase().includes(normalizedSearch) ||
+      getCurrencyPickerLabel(currency).toLowerCase().includes(normalizedSearch),
   );
   const selectedCurrency = matchingCurrencies.find(
     ({ code }) => code === value,
