@@ -432,6 +432,26 @@ describe('Share record side panel', () => {
     );
   });
 
+  it('explains that records of an object without record sharing follow roles', async () => {
+    renderSharing({
+      sharingOverrides: {
+        sharingMode: RecordSharingMode.NONE,
+        canManageSharing: false,
+        generalAccessLevel: null,
+        defaultGeneralAccessLevel: null,
+        roles: [],
+      },
+    });
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          'Access to Companies is set by roles, not record by record.',
+        ),
+      ).toBeVisible(),
+    );
+    expect(screen.queryByText(/Only the creator of this record/)).toBeNull();
+  });
+
   it('marks the default access the server reports and lets owners restrict it', async () => {
     const user = userEvent.setup();
     renderSharing({

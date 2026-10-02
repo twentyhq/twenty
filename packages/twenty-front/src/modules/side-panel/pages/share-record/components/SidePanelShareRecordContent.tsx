@@ -249,9 +249,11 @@ export const SidePanelShareRecordContent = ({
               </>
             ) : (
               <StyledDescription>
-                {sharing.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT
-                  ? t`Only the creator of this record, people with full access to it and admins can change who has access.`
-                  : t`Only the creator of this record and people with full access to it can change who has access.`}
+                {sharing.sharingMode === RecordSharingMode.NONE
+                  ? t`Access to ${objectLabelPlural} is set by roles, not record by record.`
+                  : sharing.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT
+                    ? t`Only the creator of this record, people with full access to it and admins can change who has access.`
+                    : t`Only the creator of this record and people with full access to it can change who has access.`}
               </StyledDescription>
             ))
           )}

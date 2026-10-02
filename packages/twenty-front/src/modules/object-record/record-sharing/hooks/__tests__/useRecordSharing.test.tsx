@@ -60,25 +60,23 @@ const SHARED_WITH_MEMBER = {
   ],
 };
 
-const MUTATION_FIELD_BY_OPERATION_NAME: Record<string, string> = {
-  SetRecordShare: 'setRecordShare',
-  SetRecordGeneralAccess: 'setRecordGeneralAccess',
-  RemoveRecordShare: 'removeRecordShare',
+const OPEN_TO_VIEWERS = {
+  ...SHARING,
+  permissions: { ...PERMISSIONS, canSoftDelete: false },
+  generalAccessLevel: 'READ',
+};
+
+const RESPONSE_BY_OPERATION_NAME: Record<string, Record<string, unknown>> = {
+  GetRecordSharing: { recordSharing: SHARING },
+  SetRecordShare: { setRecordShare: SHARED_WITH_MEMBER },
+  SetRecordGeneralAccess: { setRecordGeneralAccess: OPEN_TO_VIEWERS },
+  RemoveRecordShare: { removeRecordShare: SHARING },
 };
 
 const createHarness = () => {
   const request = jest.fn(
-    (
-      operationName: string | undefined,
-      _variables: Record<string, unknown>,
-    ) => {
-      const mutationField =
-        MUTATION_FIELD_BY_OPERATION_NAME[operationName ?? ''];
-
-      return mutationField === undefined
-        ? { recordSharing: SHARING }
-        : { [mutationField]: SHARED_WITH_MEMBER };
-    },
+    (operationName: string | undefined, _variables: Record<string, unknown>) =>
+      RESPONSE_BY_OPERATION_NAME[operationName ?? ''],
   );
   const client = new ApolloClient({
     cache: new InMemoryCache(),
@@ -157,26 +155,61 @@ describe('useRecordSharing', () => {
     expect(mockEnqueueToast).not.toHaveBeenCalled();
   });
 
-  it('sends general access and removals through their own mutations', async () => {
-    const { request, wrapper } = createHarness();
+  it('sends general access and removals through their own mutations and shows their result', async () => {
+    const { request, wrapper, readStoredPermissions } = createHarness();
     const { result } = renderRecordSharing(wrapper);
     await waitFor(() =>
       expect(result.current.sharing?.canManageSharing).toBe(true),
     );
     await act(async () => {
-      await result.current.setGeneralAccess(RecordShareAccessLevel.NONE);
+      await result.current.setGeneralAccess(RecordShareAccessLevel.READ);
     });
     expect(request).toHaveBeenLastCalledWith('SetRecordGeneralAccess', {
       target: RECORD_TARGET,
-      accessLevel: RecordShareAccessLevel.NONE,
+      accessLevel: RecordShareAccessLevel.READ,
     });
+    expect(result.current.sharing?.generalAccessLevel).toBe(
+      RecordShareAccessLevel.READ,
+    );
+    expect(readStoredPermissions()).toEqual(OPEN_TO_VIEWERS.permissions);
     await act(async () => {
-      await result.current.removeShare({ principal: { roleId: 'role' } });
+      await result.current.setShare({
+        principal: { workspaceMemberId: 'member' },
+        accessLevel: RecordShareAccessLevel.READ,
+      });
+    });
+    expect(result.current.sharing?.shares).toHaveLength(1);
+    await act(async () => {
+      await result.current.removeShare({
+        principal: { workspaceMemberId: 'member' },
+      });
     });
     expect(request).toHaveBeenLastCalledWith('RemoveRecordShare', {
       target: RECORD_TARGET,
-      principal: { roleId: 'role' },
+      principal: { workspaceMemberId: 'member' },
     });
+    expect(result.current.sharing?.shares).toEqual([]);
+  });
+
+  it('stores the record permissions of every loaded answer, focus refreshes included', async () => {
+    const { request, wrapper, readStoredPermissions } = createHarness();
+    const TestSharingRefresh = () => {
+      const { refetch } = useRecordSharing({ recordTarget: RECORD_TARGET });
+      return <RecordSharingRefreshEffect refetch={refetch} />;
+    };
+    render(<TestSharingRefresh />, { wrapper });
+    await waitFor(() =>
+      expect(readStoredPermissions()).toEqual(SHARING.permissions),
+    );
+    request.mockImplementationOnce(() => ({
+      recordSharing: OPEN_TO_VIEWERS,
+    }));
+    await act(async () => {
+      window.dispatchEvent(new Event('focus'));
+    });
+    await waitFor(() =>
+      expect(readStoredPermissions()).toEqual(OPEN_TO_VIEWERS.permissions),
+    );
   });
 
   it('reports a rejected mutation without changing the saved audience', async () => {
@@ -195,7 +228,7 @@ describe('useRecordSharing', () => {
       });
     });
     expect(result.current.sharing?.shares).toEqual([]);
-    expect(readStoredPermissions()).toBeUndefined();
+    expect(readStoredPermissions()).toEqual(SHARING.permissions);
     expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
   });
 

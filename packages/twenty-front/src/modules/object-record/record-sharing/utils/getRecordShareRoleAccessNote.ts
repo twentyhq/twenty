@@ -21,7 +21,7 @@ export const getRecordShareRoleAccessNote = ({
   sharingReach: ObjectSharingReach;
   objectLabelPlural: string;
 }): string | undefined => {
-  if (!isDefined(principalRole)) {
+  if (!isDefined(principalRole) || !isDefined(principalRole.canRead)) {
     return undefined;
   }
 
@@ -35,7 +35,8 @@ export const getRecordShareRoleAccessNote = ({
     return t`Won't see it: their role can't access ${objectLabelPlural}`;
   }
 
-  return accessLevel !== RecordShareAccessLevel.READ && !principalRole.canUpdate
+  return accessLevel !== RecordShareAccessLevel.READ &&
+    principalRole.canUpdate === false
     ? t`Can only view: their role can't edit ${objectLabelPlural}`
     : undefined;
 };

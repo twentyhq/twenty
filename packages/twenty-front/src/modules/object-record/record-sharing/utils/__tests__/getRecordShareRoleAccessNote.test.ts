@@ -12,7 +12,9 @@ const getNote = ({
   sharingReach,
 }: {
   accessLevel?: RecordShareAccessLevel;
-  principalRole: { canRead: boolean; canUpdate: boolean } | undefined;
+  principalRole:
+    | { canRead: boolean | null; canUpdate: boolean | null }
+    | undefined;
   sharingReach: ObjectSharingReach;
 }) =>
   getRecordShareRoleAccessNote({
@@ -28,6 +30,15 @@ describe('getRecordShareRoleAccessNote', () => {
       getNote({
         principalRole: undefined,
         sharingReach: ObjectSharingReach.WORKSPACE,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should say nothing when the access of the role is unknown', () => {
+    expect(
+      getNote({
+        principalRole: { canRead: null, canUpdate: null },
+        sharingReach: ObjectSharingReach.ROLE_ACCESS,
       }),
     ).toBeUndefined();
   });
