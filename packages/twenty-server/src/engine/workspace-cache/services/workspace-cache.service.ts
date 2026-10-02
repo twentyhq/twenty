@@ -30,6 +30,10 @@ import {
   WorkspaceCacheException,
   WorkspaceCacheExceptionCode,
 } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
+import {
+  type InFlightWorkspaceCacheRecompute,
+  WorkspaceCacheInFlightRecomputes,
+} from 'src/engine/workspace-cache/services/workspace-cache-in-flight-recomputes';
 import { WorkspaceCacheMetricsService } from 'src/engine/workspace-cache/services/workspace-cache-metrics.service';
 import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 import {
@@ -105,6 +109,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
+  private readonly inFlightRecomputes = new WorkspaceCacheInFlightRecomputes();
 
   private readonly logger = new Logger(WorkspaceCacheService.name);
 
@@ -352,6 +357,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
+    this.inFlightRecomputes.supersede(workspaceId, cacheKeyNames);
+
     await this.deleteFromRedis(workspaceId, cacheKeyNames);
 
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
@@ -525,11 +532,34 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     cacheKeyNames: WorkspaceCacheKeyName[],
     hashResolution: RecomputeHashResolution,
   ): Promise<CacheEntriesResult> {
-    const result: CacheEntriesResult = { data: {}, hashes: {} };
-
     if (cacheKeyNames.length === 0) {
-      return result;
+      return { data: {}, hashes: {} };
     }
+
+    const inFlightRecompute = this.inFlightRecomputes.start(
+      workspaceId,
+      cacheKeyNames,
+    );
+
+    try {
+      return await this.computeAndPublishFromProvider(
+        workspaceId,
+        cacheKeyNames,
+        hashResolution,
+        inFlightRecompute,
+      );
+    } finally {
+      this.inFlightRecomputes.finish(inFlightRecompute);
+    }
+  }
+
+  private async computeAndPublishFromProvider(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+    hashResolution: RecomputeHashResolution,
+    inFlightRecompute: InFlightWorkspaceCacheRecompute,
+  ): Promise<CacheEntriesResult> {
+    const result: CacheEntriesResult = { data: {}, hashes: {} };
 
     const rowsBatchLoader = new WorkspaceCacheRowsBatchLoader(
       this.coreDataSource,
@@ -606,11 +636,20 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       key: string;
       value: StoredCacheDataType | string;
     }> = [];
-    const bootstrapHashEntries: Array<{ key: string; value: string }> = [];
+    const bootstrapHashEntries: Array<{
+      keyName: WorkspaceCacheKeyName;
+      key: string;
+      value: string;
+    }> = [];
 
     for (const { keyName, data, hash, isAdopted } of computed) {
       Object.assign(result.data, { [keyName]: data });
       result.hashes[keyName] = hash;
+
+      // A flush since this recompute started means its data may predate the change behind that flush
+      if (this.inFlightRecomputes.isSuperseded(inFlightRecompute, keyName)) {
+        continue;
+      }
 
       const baseKey = this.buildCacheKey(workspaceId, keyName);
       const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
@@ -618,7 +657,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         hashResolution.strategy === 'recover' && !isAdopted && isLocalDataOnly;
 
       if (isRecoveryBootstrap) {
-        bootstrapHashEntries.push({ key: `${baseKey}:hash`, value: hash });
+        bootstrapHashEntries.push({
+          keyName,
+          key: `${baseKey}:hash`,
+          value: hash,
+        });
       } else if (!isAdopted) {
         redisEntries.push({ key: `${baseKey}:hash`, value: hash });
       }
@@ -645,12 +688,17 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       }
     }
 
-    if (bootstrapHashEntries.length > 0) {
+    const unsupersededBootstrapHashEntries = bootstrapHashEntries.filter(
+      ({ keyName }) =>
+        !this.inFlightRecomputes.isSuperseded(inFlightRecompute, keyName),
+    );
+
+    if (unsupersededBootstrapHashEntries.length > 0) {
       const bootstrapHashTtlMs =
         this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000;
 
       await Promise.all(
-        bootstrapHashEntries.map(({ key, value }) =>
+        unsupersededBootstrapHashEntries.map(({ key, value }) =>
           this.cacheStorage.setIfAbsent(key, value, bootstrapHashTtlMs),
         ),
       );
