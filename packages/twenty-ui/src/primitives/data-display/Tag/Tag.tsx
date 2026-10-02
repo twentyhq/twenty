@@ -62,11 +62,11 @@ export const Tag = ({
       weight,
       disabled,
       interactive: isDefined(onClick),
+      preventShrink,
+      preventPadding,
     },
     props: {
       ...props,
-      'data-prevent-shrink': preventShrink || undefined,
-      'data-prevent-padding': preventPadding || undefined,
       onClick,
       ...(disabled && {
         disabled: true,
