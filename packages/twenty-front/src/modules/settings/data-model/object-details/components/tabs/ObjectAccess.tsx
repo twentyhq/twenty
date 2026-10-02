@@ -59,6 +59,14 @@ export const ObjectAccess = ({ objectMetadataItem }: ObjectAccessProps) => {
     isOpenByDefault ||
     objectMetadataItem.readability === MetadataReadability.PRIVATE;
 
+  const todayDescriptionByReadability: Partial<
+    Record<MetadataReadability, string>
+  > = {
+    [MetadataReadability.OPEN]: t`Records whose access differs from what roles give.`,
+    [MetadataReadability.PRIVATE]: t`New records are private to their creator until shared.`,
+    [MetadataReadability.INHERITED]: t`Records follow the access of the records they are linked to until shared.`,
+  };
+
   return (
     <StyledContentContainer>
       <Section.Root>
@@ -107,12 +115,9 @@ export const ObjectAccess = ({ objectMetadataItem }: ObjectAccessProps) => {
                 <Section.Header
                   title={t`Today`}
                   description={
-                    isOpenByDefault
-                      ? t`Records whose access differs from what roles give.`
-                      : objectMetadataItem.readability ===
-                          MetadataReadability.INHERITED
-                        ? t`Records follow the access of the records they are linked to until shared.`
-                        : t`New records are private to their creator until shared.`
+                    todayDescriptionByReadability[
+                      objectMetadataItem.readability
+                    ]
                   }
                 />
                 <StyledSummary>
