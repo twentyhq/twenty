@@ -215,7 +215,7 @@ describe('roles permissions', () => {
 
         jestExpectToBeDefined(companyNameField);
 
-        const { data: roleData } = await createOneRole({
+        const { data: roleData, errors: roleErrors } = await createOneRole({
           expectToFail: false,
           input: {
             label: `Role relations ${v4()}`,
@@ -231,31 +231,39 @@ describe('roles permissions', () => {
           },
         });
 
+        expect(roleErrors).toBeUndefined();
+        jestExpectToBeDefined(roleData);
+
         relationsRoleId = roleData.createOneRole.id;
 
-        const { data: rowLevelPermissionData } =
-          await upsertRowLevelPermissionPredicates({
-            expectToFail: false,
-            input: {
-              roleId: relationsRoleId,
-              objectMetadataId: companyObjectMetadata.id,
-              predicates: [
-                {
-                  fieldMetadataId: companyNameField.id,
-                  operand: RowLevelPermissionPredicateOperand.CONTAINS,
-                  value: 'Apple',
-                },
-              ],
-              predicateGroups: [
-                {
-                  objectMetadataId: companyObjectMetadata.id,
-                  logicalOperator:
-                    RowLevelPermissionPredicateGroupLogicalOperator.AND,
-                  parentRowLevelPermissionPredicateGroupId: null,
-                },
-              ],
-            },
-          });
+        const {
+          data: rowLevelPermissionData,
+          errors: rowLevelPermissionErrors,
+        } = await upsertRowLevelPermissionPredicates({
+          expectToFail: false,
+          input: {
+            roleId: relationsRoleId,
+            objectMetadataId: companyObjectMetadata.id,
+            predicates: [
+              {
+                fieldMetadataId: companyNameField.id,
+                operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                value: 'Apple',
+              },
+            ],
+            predicateGroups: [
+              {
+                objectMetadataId: companyObjectMetadata.id,
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                parentRowLevelPermissionPredicateGroupId: null,
+              },
+            ],
+          },
+        });
+
+        expect(rowLevelPermissionErrors).toBeUndefined();
+        jestExpectToBeDefined(rowLevelPermissionData);
 
         relationsPredicateId =
           rowLevelPermissionData.upsertRowLevelPermissionPredicates
@@ -281,11 +289,15 @@ describe('roles permissions', () => {
           },
         });
 
+        expect(apiKeyResponse.status).toBe(200);
+        expect(apiKeyResponse.body.errors).toBeUndefined();
+        jestExpectToBeDefined(apiKeyResponse.body.data);
+
         relationsApiKeyId = apiKeyResponse.body.data.createApiKey.id;
       });
 
       afterAll(async () => {
-        await makeMetadataApiRequest({
+        const assignResponse = await makeMetadataApiRequest({
           query: gql`
             mutation AssignRoleToApiKey($apiKeyId: UUID!, $roleId: UUID!) {
               assignRoleToApiKey(apiKeyId: $apiKeyId, roleId: $roleId)
@@ -294,7 +306,7 @@ describe('roles permissions', () => {
           variables: { apiKeyId: relationsApiKeyId, roleId: adminRoleId },
         });
 
-        await makeMetadataApiRequest({
+        const revokeResponse = await makeMetadataApiRequest({
           query: gql`
             mutation RevokeApiKey($input: RevokeApiKeyInput!) {
               revokeApiKey(input: $input) {
@@ -305,7 +317,7 @@ describe('roles permissions', () => {
           variables: { input: { id: relationsApiKeyId } },
         });
 
-        await client
+        const deleteRoleResponse = await client
           .post('/metadata')
           .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
           .send(deleteOneRoleOperationFactory(relationsRoleId));
@@ -313,6 +325,16 @@ describe('roles permissions', () => {
         await testDataSource
           .query('DELETE FROM core."apiKey" WHERE id = $1', [relationsApiKeyId])
           .catch(() => {});
+
+        expect({
+          assignRoleToApiKey: assignResponse.body.errors,
+          revokeApiKey: revokeResponse.body.errors,
+          deleteOneRole: deleteRoleResponse.body.errors,
+        }).toEqual({
+          assignRoleToApiKey: undefined,
+          revokeApiKey: undefined,
+          deleteOneRole: undefined,
+        });
       });
 
       it('should resolve each relation for its own role only', async () => {
