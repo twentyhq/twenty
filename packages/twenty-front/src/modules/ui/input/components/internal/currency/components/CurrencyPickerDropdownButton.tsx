@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { useId } from 'react';
+import { type KeyboardEvent, useId } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
 import { CurrencyPicker } from 'twenty-ui/components';
 
@@ -10,6 +10,16 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 type CurrencyPickerDropdownButtonProps = {
   selectedCurrencyCode: string;
   onChange: (currencyCode: string) => void;
+};
+
+const keepEnterAwayFromFieldHotkeys = (
+  event: KeyboardEvent<HTMLButtonElement>,
+) => {
+  if (event.key !== 'Enter') {
+    return;
+  }
+
+  event.stopPropagation();
 };
 
 export const CurrencyPickerDropdownButton = ({
@@ -27,6 +37,7 @@ export const CurrencyPickerDropdownButton = ({
       <CurrencyPicker.Trigger
         value={currencyCode}
         aria-label={t`Currency: ${currencyCode}`}
+        onKeyDown={keepEnterAwayFromFieldHotkeys}
       />
       <DropdownContent
         side="bottom"
