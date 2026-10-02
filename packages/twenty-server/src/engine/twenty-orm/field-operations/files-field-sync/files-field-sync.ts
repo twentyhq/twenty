@@ -119,6 +119,15 @@ export class FilesFieldSync {
       : null;
   }
 
+  isUpdatingFilesField(
+    updatePayload: Record<string, unknown>,
+    objectMetadataId: string,
+  ): boolean {
+    return this.getFilesFields(objectMetadataId).some((filesField) =>
+      isDefined(updatePayload[filesField.name]),
+    );
+  }
+
   computeFilesFieldDiffBeforeUpdateOne<Entity extends ObjectLiteral>(
     updatePayload: QueryDeepPartialEntity<Entity>,
     target: EntityTarget<Entity>,

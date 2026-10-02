@@ -68,8 +68,6 @@ export type QueryBuilderContext = {
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   isRecordSharingEnabled?: boolean;
-  shouldBypassPermissionChecks?: boolean;
-  internalMutationKey?: symbol;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
@@ -755,50 +753,12 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return this.getReferencedColumnNamesByAlias()[this.alias] ?? [];
   }
 
-  update(): WorkspaceMutationQueryBuilder {
-    return this.toPublicMutationQueryBuilder('update');
-  }
-
-  delete(): WorkspaceMutationQueryBuilder {
-    return this.toPublicMutationQueryBuilder('delete');
-  }
-
-  softDelete(): WorkspaceMutationQueryBuilder {
-    return this.toPublicMutationQueryBuilder('soft-delete');
-  }
-
-  restore(): WorkspaceMutationQueryBuilder {
-    return this.toPublicMutationQueryBuilder('restore');
-  }
-
-  toInternalMutationQueryBuilder(
-    kind: MutationKind,
-    internalMutationKey: symbol,
-  ): WorkspaceMutationQueryBuilder {
-    if (internalMutationKey !== this.context.internalMutationKey) {
-      throw new TwentyOrmException(
-        `Internal mutations can only be built by the workspace repository, after its own permission checks`,
-        TwentyOrmExceptionCode.METHOD_NOT_ALLOWED,
-      );
-    }
-
-    return this.toMutationQueryBuilder(kind, true);
-  }
-
-  private toPublicMutationQueryBuilder(
+  // Not an instance method, so builders from createQueryBuilder expose no write that skips the repository checks
+  static toMutationQueryBuilder(
+    selectQueryBuilder: WorkspaceSelectQueryBuilder,
     kind: MutationKind,
   ): WorkspaceMutationQueryBuilder {
-    return this.toMutationQueryBuilder(
-      kind,
-      this.context.shouldBypassPermissionChecks ?? false,
-    );
-  }
-
-  private toMutationQueryBuilder(
-    kind: MutationKind,
-    isExecutionAllowed: boolean,
-  ): WorkspaceMutationQueryBuilder {
-    if (this.joinClauses.length > 0) {
+    if (selectQueryBuilder.joinClauses.length > 0) {
       throw new TwentyOrmException(
         `A mutation cannot carry a relation join; rewrite the filter as an "id IN (subquery)" predicate first`,
         TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
@@ -806,7 +766,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     }
 
     // Row-level permission predicates are injected on the select path only, so an EXISTS here would be unfiltered
-    if (this.existsFilterClauses.length > 0) {
+    if (selectQueryBuilder.existsFilterClauses.length > 0) {
       throw new TwentyOrmException(
         `A mutation cannot carry a relation filter; rewrite the filter as an "id IN (subquery)" predicate first`,
         TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
@@ -814,17 +774,16 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     }
 
     return new WorkspaceMutationQueryBuilder({
-      alias: this.alias,
+      alias: selectQueryBuilder.alias,
       kind,
       context: {
-        tableShape: this.tableShape,
-        executor: this.context.executor,
-        formatResult: this.context.formatResult,
-        isExecutionAllowed,
+        tableShape: selectQueryBuilder.tableShape,
+        executor: selectQueryBuilder.context.executor,
+        formatResult: selectQueryBuilder.context.formatResult,
       },
-      whereClauses: this.whereClauses,
-      includeDeleted: this.includeDeleted,
-      parameters: this.parameters,
+      whereClauses: selectQueryBuilder.whereClauses,
+      includeDeleted: selectQueryBuilder.includeDeleted,
+      parameters: selectQueryBuilder.parameters,
     });
   }
 
