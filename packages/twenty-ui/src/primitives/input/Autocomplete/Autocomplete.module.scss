@@ -17,6 +17,8 @@
   box-shadow: var(--t-box-shadow-strong);
   box-sizing: border-box;
   color: var(--t-font-color-primary);
+  display: flex;
+  flex-direction: column;
   min-inline-size: var(--anchor-width);
   max-inline-size: var(--available-width);
   max-block-size: var(--available-height);
