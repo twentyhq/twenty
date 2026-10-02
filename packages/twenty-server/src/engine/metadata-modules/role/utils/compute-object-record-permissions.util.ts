@@ -2,53 +2,13 @@ import {
   PermissionFlagType,
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import {
-  IMPLICIT_OBJECT_PERMISSION_RULES,
-  type SettingsGatedObjectPermissionRule,
-} from 'src/engine/metadata-modules/role/constants/implicit-object-permission-rules.constant';
-import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-
-export type ObjectRecordPermissions = Pick<
-  ObjectPermissions,
-  | 'canReadObjectRecords'
-  | 'canUpdateObjectRecords'
-  | 'canSoftDeleteObjectRecords'
-  | 'canDestroyObjectRecords'
->;
-
-export type ComputeObjectRecordPermissionsArgs = {
-  role: Pick<
-    RoleEntity,
-    | 'canReadAllObjectRecords'
-    | 'canUpdateAllObjectRecords'
-    | 'canSoftDeleteAllObjectRecords'
-    | 'canDestroyAllObjectRecords'
-    | 'canUpdateAllSettings'
-    | 'canAccessAllTools'
-  >;
-  rolePermissionFlagUniversalIdentifiers: ReadonlySet<string>;
-  objectMetadata: Pick<
-    ObjectMetadataEntity,
-    'isSystem' | 'universalIdentifier'
-  >;
-  objectPermissionOverride?: Pick<
-    ObjectPermissionEntity,
-    | 'canReadObjectRecords'
-    | 'canUpdateObjectRecords'
-    | 'canSoftDeleteObjectRecords'
-    | 'canDestroyObjectRecords'
-  >;
-};
-
-export type ComputedObjectRecordPermissions = {
-  objectRecordPermissions: ObjectRecordPermissions;
-  appliesFieldPermissions: boolean;
-};
+import { IMPLICIT_OBJECT_PERMISSION_RULES } from 'src/engine/metadata-modules/role/constants/implicit-object-permission-rules.constant';
+import { type ComputeObjectRecordPermissionsArgs } from 'src/engine/metadata-modules/role/types/compute-object-record-permissions-args.type';
+import { type ComputedObjectRecordPermissions } from 'src/engine/metadata-modules/role/types/computed-object-record-permissions.type';
+import { type ObjectRecordPermissions } from 'src/engine/metadata-modules/role/types/object-record-permissions.type';
+import { type SettingsGatedObjectPermissionRule } from 'src/engine/metadata-modules/role/types/settings-gated-object-permission-rule.type';
 
 const hasPermissionFlag = (
   rolePermissionFlagUniversalIdentifiers: ReadonlySet<string>,

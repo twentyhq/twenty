@@ -1,27 +1,6 @@
-import { type AllMetadataName } from 'twenty-shared/metadata';
-
-import { type WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
-import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
-
-export type DerivedWorkspaceCacheInvalidationTrigger = {
-  [TMetadataName in AllMetadataName]: {
-    metadataName: TMetadataName;
-    actionTypes?: readonly WorkspaceMigrationActionType[];
-    // Restricts update actions to the ones touching these properties
-    updatedProperties?: readonly (keyof UniversalFlatEntityUpdate<TMetadataName> &
-      string)[];
-  };
-}[AllMetadataName];
-
-const ROLE_RECORD_PERMISSION_PROPERTIES = [
-  'canReadAllObjectRecords',
-  'canUpdateAllObjectRecords',
-  'canSoftDeleteAllObjectRecords',
-  'canDestroyAllObjectRecords',
-  'canUpdateAllSettings',
-  'canAccessAllTools',
-] as const;
+import { ROLE_RECORD_PERMISSION_PROPERTIES } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/role-record-permission-properties.constant';
+import { type DerivedWorkspaceCacheInvalidationTrigger } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/derived-workspace-cache-invalidation-trigger.type';
 
 // Each entry lists the metadata changes that can alter what the cache provider reads,
 // including rows the database deletes in cascade when a parent row is deleted

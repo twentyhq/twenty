@@ -4,13 +4,17 @@ import {
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
-  type ObjectPermissions,
+  type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
   type RestrictedFieldsPermissions,
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
+import { buildRolesPermissions } from 'src/engine/metadata-modules/role/utils/build-roles-permissions.util';
 
 type RoleRow = {
   id: string;
@@ -54,25 +58,6 @@ type RolePermissionFlagRow = {
 
 type PermissionFlagRow = { id: string; universalIdentifier: string };
 
-type RowLevelPermissionRow = {
-  id: string;
-  roleId: string;
-  objectMetadataId: string;
-};
-
-type ReferenceObjectPermissions = Omit<
-  ObjectPermissions,
-  'rowLevelPermissionPredicates' | 'rowLevelPermissionPredicateGroups'
-> & {
-  rowLevelPermissionPredicates: RowLevelPermissionRow[];
-  rowLevelPermissionPredicateGroups: RowLevelPermissionRow[];
-};
-
-type ReferenceObjectsPermissionsByRoleId = Record<
-  string,
-  Record<string, ReferenceObjectPermissions>
->;
-
 type RolesPermissionsFixture = {
   role: RoleRow[];
   objectMetadata: ObjectMetadataRow[];
@@ -80,8 +65,8 @@ type RolesPermissionsFixture = {
   fieldPermission: FieldPermissionRow[];
   rolePermissionFlag: RolePermissionFlagRow[];
   permissionFlag: PermissionFlagRow[];
-  rowLevelPermissionPredicate: RowLevelPermissionRow[];
-  rowLevelPermissionPredicateGroup: RowLevelPermissionRow[];
+  rowLevelPermissionPredicate: RowLevelPermissionPredicate[];
+  rowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroup[];
 };
 
 const groupByRoleId = <TRow extends { roleId: string }>(rows: TRow[]) => {
@@ -100,7 +85,7 @@ const groupByRoleId = <TRow extends { roleId: string }>(rows: TRow[]) => {
 // The linear-scan build that pre-indexing replaced, used as the equivalence oracle
 const computeRolesPermissionsWithLinearScans = (
   fixture: RolesPermissionsFixture,
-): ReferenceObjectsPermissionsByRoleId => {
+): ObjectsPermissionsByRoleId => {
   const workflowObjectUniversalIdentifiers: string[] = [
     STANDARD_OBJECTS.workflow.universalIdentifier,
     STANDARD_OBJECTS.workflowRun.universalIdentifier,
@@ -122,7 +107,7 @@ const computeRolesPermissionsWithLinearScans = (
           ]) === SystemPermissionFlag[permissionFlagType],
     );
 
-  const permissionsByRoleId: ReferenceObjectsPermissionsByRoleId = {};
+  const permissionsByRoleId: ObjectsPermissionsByRoleId = {};
 
   for (const role of fixture.role) {
     const isOwnedByRole = (row: { roleId: string }) => row.roleId === role.id;
@@ -136,8 +121,7 @@ const computeRolesPermissionsWithLinearScans = (
     const rolePredicateGroups =
       fixture.rowLevelPermissionPredicateGroup.filter(isOwnedByRole);
 
-    const objectRecordsPermissions: Record<string, ReferenceObjectPermissions> =
-      {};
+    const objectRecordsPermissions: ObjectsPermissions = {};
 
     for (const objectMetadata of fixture.objectMetadata) {
       let canRead = role.canReadAllObjectRecords;
@@ -258,6 +242,42 @@ const computeRolesPermissionsWithLinearScans = (
 
   return permissionsByRoleId;
 };
+
+const buildPredicate = ({
+  id,
+  roleId,
+  objectMetadataId,
+}: Pick<
+  RowLevelPermissionPredicate,
+  'id' | 'roleId' | 'objectMetadataId'
+>): RowLevelPermissionPredicate => ({
+  id,
+  roleId,
+  objectMetadataId,
+  fieldMetadataId: `${objectMetadataId}-owner`,
+  operand: RowLevelPermissionPredicateOperand.IS,
+  value: null,
+  subFieldName: null,
+  rowLevelPermissionPredicateGroupId: null,
+  workspaceMemberFieldMetadataId: null,
+  workspaceMemberSubFieldName: null,
+});
+
+const buildPredicateGroup = ({
+  id,
+  roleId,
+  objectMetadataId,
+}: Pick<
+  RowLevelPermissionPredicateGroup,
+  'id' | 'roleId' | 'objectMetadataId'
+>): RowLevelPermissionPredicateGroup => ({
+  id,
+  roleId,
+  objectMetadataId,
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+  parentRowLevelPermissionPredicateGroupId: null,
+  positionInRowLevelPermissionPredicateGroup: null,
+});
 
 const NO_RECORD_ACCESS = {
   canReadAllObjectRecords: false,
@@ -431,47 +451,68 @@ const FIXTURE: RolesPermissionsFixture = {
     },
   ],
   rowLevelPermissionPredicate: [
-    { id: 'predicate-1', roleId: 'restricted', objectMetadataId: 'person' },
-    { id: 'predicate-2', roleId: 'restricted', objectMetadataId: 'company' },
-    { id: 'predicate-3', roleId: 'restricted', objectMetadataId: 'person' },
-    { id: 'predicate-4', roleId: 'member', objectMetadataId: 'workflow' },
+    buildPredicate({
+      id: 'predicate-1',
+      roleId: 'restricted',
+      objectMetadataId: 'person',
+    }),
+    buildPredicate({
+      id: 'predicate-2',
+      roleId: 'restricted',
+      objectMetadataId: 'company',
+    }),
+    buildPredicate({
+      id: 'predicate-3',
+      roleId: 'restricted',
+      objectMetadataId: 'person',
+    }),
+    buildPredicate({
+      id: 'predicate-4',
+      roleId: 'member',
+      objectMetadataId: 'workflow',
+    }),
   ],
   rowLevelPermissionPredicateGroup: [
-    { id: 'group-1', roleId: 'restricted', objectMetadataId: 'person' },
-    { id: 'group-2', roleId: 'member', objectMetadataId: 'company' },
+    buildPredicateGroup({
+      id: 'group-1',
+      roleId: 'restricted',
+      objectMetadataId: 'person',
+    }),
+    buildPredicateGroup({
+      id: 'group-2',
+      roleId: 'member',
+      objectMetadataId: 'company',
+    }),
   ],
 };
 
-const computeWithCacheService = (
+const computeWithIndexedBuild = (
   fixture: RolesPermissionsFixture,
 ): ObjectsPermissionsByRoleId =>
-  new WorkspaceRolesPermissionsCacheService().computeForCache({
-    workspaceId: 'workspace',
-    rows: {
-      role: fixture.role,
-      objectMetadata: fixture.objectMetadata,
-      permissionFlag: fixture.permissionFlag,
-      objectPermission: groupByRoleId(fixture.objectPermission),
-      fieldPermission: groupByRoleId(fixture.fieldPermission),
-      rolePermissionFlag: groupByRoleId(fixture.rolePermissionFlag),
-      rowLevelPermissionPredicate: groupByRoleId(
-        fixture.rowLevelPermissionPredicate,
-      ),
-      rowLevelPermissionPredicateGroup: groupByRoleId(
-        fixture.rowLevelPermissionPredicateGroup,
-      ),
-    },
-  } as never);
+  buildRolesPermissions({
+    role: fixture.role,
+    objectMetadata: fixture.objectMetadata,
+    permissionFlag: fixture.permissionFlag,
+    objectPermission: groupByRoleId(fixture.objectPermission),
+    fieldPermission: groupByRoleId(fixture.fieldPermission),
+    rolePermissionFlag: groupByRoleId(fixture.rolePermissionFlag),
+    rowLevelPermissionPredicate: groupByRoleId(
+      fixture.rowLevelPermissionPredicate,
+    ),
+    rowLevelPermissionPredicateGroup: groupByRoleId(
+      fixture.rowLevelPermissionPredicateGroup,
+    ),
+  });
 
-describe('WorkspaceRolesPermissionsCacheService', () => {
+describe('buildRolesPermissions', () => {
   it('builds the same matrix as the per-object linear scan', () => {
-    expect(computeWithCacheService(FIXTURE)).toEqual(
+    expect(computeWithIndexedBuild(FIXTURE)).toEqual(
       computeRolesPermissionsWithLinearScans(FIXTURE),
     );
   });
 
   it('builds an entry for every role and object', () => {
-    const permissionsByRoleId = computeWithCacheService(FIXTURE);
+    const permissionsByRoleId = computeWithIndexedBuild(FIXTURE);
 
     expect(Object.keys(permissionsByRoleId)).toEqual([
       'admin',
@@ -491,7 +532,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
   });
 
   it('uses the first object override and keeps field and row level rules per object', () => {
-    const permissionsByRoleId = computeWithCacheService(FIXTURE);
+    const permissionsByRoleId = computeWithIndexedBuild(FIXTURE);
 
     expect(permissionsByRoleId.member.company).toEqual({
       canReadObjectRecords: true,
@@ -504,14 +545,26 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       },
       rowLevelPermissionPredicates: [],
       rowLevelPermissionPredicateGroups: [
-        { id: 'group-2', roleId: 'member', objectMetadataId: 'company' },
+        buildPredicateGroup({
+          id: 'group-2',
+          roleId: 'member',
+          objectMetadataId: 'company',
+        }),
       ],
     });
     expect(
       permissionsByRoleId.restricted.person.rowLevelPermissionPredicates,
     ).toEqual([
-      { id: 'predicate-1', roleId: 'restricted', objectMetadataId: 'person' },
-      { id: 'predicate-3', roleId: 'restricted', objectMetadataId: 'person' },
+      buildPredicate({
+        id: 'predicate-1',
+        roleId: 'restricted',
+        objectMetadataId: 'person',
+      }),
+      buildPredicate({
+        id: 'predicate-3',
+        roleId: 'restricted',
+        objectMetadataId: 'person',
+      }),
     ]);
   });
 });

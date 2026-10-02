@@ -1,25 +1,8 @@
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-export type SettingsGatedObjectPermissionRule = {
-  permissionFlag: PermissionFlagType;
-  isAlwaysReadable: boolean;
-  appliesFieldPermissions: boolean;
-};
-
-export type ImplicitObjectPermissionRules = {
-  settingsGatedObjectRuleByUniversalIdentifier: Partial<
-    Record<string, SettingsGatedObjectPermissionRule>
-  >;
-  aiGatedObjectUniversalIdentifiers: readonly string[];
-  systemObjectDefaultRecordPermission: boolean;
-};
-
-const WORKFLOW_OBJECT_PERMISSION_RULE: SettingsGatedObjectPermissionRule = {
-  permissionFlag: PermissionFlagType.WORKFLOWS,
-  isAlwaysReadable: false,
-  appliesFieldPermissions: false,
-};
+import { WORKFLOW_OBJECT_PERMISSION_RULE } from 'src/engine/metadata-modules/role/constants/workflow-object-permission-rule.constant';
+import { type ImplicitObjectPermissionRules } from 'src/engine/metadata-modules/role/types/implicit-object-permission-rules.type';
 
 export const IMPLICIT_OBJECT_PERMISSION_RULES: ImplicitObjectPermissionRules = {
   // Record access follows canUpdateAllSettings or the permission flag, object overrides are ignored

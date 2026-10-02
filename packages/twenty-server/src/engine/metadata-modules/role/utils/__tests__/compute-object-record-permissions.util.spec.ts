@@ -4,10 +4,8 @@ import {
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import {
-  type ComputeObjectRecordPermissionsArgs,
-  computeObjectRecordPermissions,
-} from 'src/engine/metadata-modules/role/utils/compute-object-record-permissions.util';
+import { type ComputeObjectRecordPermissionsArgs } from 'src/engine/metadata-modules/role/types/compute-object-record-permissions-args.type';
+import { computeObjectRecordPermissions } from 'src/engine/metadata-modules/role/utils/compute-object-record-permissions.util';
 
 const NO_ACCESS_ROLE: ComputeObjectRecordPermissionsArgs['role'] = {
   canReadAllObjectRecords: false,

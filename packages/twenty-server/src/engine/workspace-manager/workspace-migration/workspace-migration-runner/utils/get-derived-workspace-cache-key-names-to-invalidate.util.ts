@@ -1,10 +1,8 @@
 import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
 
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
-import {
-  DERIVED_WORKSPACE_CACHE_INVALIDATION_RULES,
-  type DerivedWorkspaceCacheInvalidationTrigger,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/derived-workspace-cache-invalidation-rules.constant';
+import { DERIVED_WORKSPACE_CACHE_INVALIDATION_RULES } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/derived-workspace-cache-invalidation-rules.constant';
+import { type DerivedWorkspaceCacheInvalidationTrigger } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/derived-workspace-cache-invalidation-trigger.type';
 import { type WorkspaceMetadataChange } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-metadata-change.type';
 
 const isTriggeredByMetadataChange = (
