@@ -4,15 +4,19 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { sleep } from 'cloudflare/core';
 import Fuse from 'fuse.js';
 import { NavigateAppToolOutput } from 'twenty-shared/ai';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
 import { escapeForIlike, isDefined, isValidUuid } from 'twenty-shared/utils';
 
+import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
+import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import {
   type NavigateAppInput,
   NavigateAppInputZodSchema,
 } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool.schema';
+import { type RecordReference } from 'src/engine/core-modules/tool/types/record-reference.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
@@ -26,6 +30,8 @@ import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigatio
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const NAVIGATE_TO_RECORD_CANDIDATE_LIMIT = 20;
 
@@ -44,6 +50,7 @@ export class NavigateAppTool implements Tool {
     private readonly viewService: ViewService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly findRecordsService: FindRecordsService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async execute(
@@ -345,41 +352,26 @@ export class NavigateAppTool implements Tool {
       };
     }
 
-    if (!isDefined(authContext)) {
+    if (
+      !isDefined(authContext) ||
+      !isDefined(rolePermissionConfig) ||
+      !(await this.isFieldReadable({
+        workspaceId,
+        objectMetadataId: flatObjectMetadata.id,
+        fieldMetadataId: labelIdentifierField.id,
+        rolePermissionConfig,
+      }))
+    ) {
       return this.buildRecordNotFoundOutput(objectNameSingular, recordName);
     }
 
-    const nameFilter = this.buildRecordNameFilter(
-      labelIdentifierField,
+    const matchingRecord = await this.findBestMatchingRecord({
+      objectNameSingular,
       recordName,
-    );
-
-    if (!isDefined(nameFilter)) {
-      return this.buildRecordNotFoundOutput(objectNameSingular, recordName);
-    }
-
-    // Same permission-scoped path as find_many, so object, field and row-level permissions and record sharing apply
-    const findRecordsOutput = await this.findRecordsService.execute({
-      objectName: objectNameSingular,
-      filter: nameFilter,
-      limit: NAVIGATE_TO_RECORD_CANDIDATE_LIMIT,
-      select: [labelIdentifierField.name],
-      shouldBuildEffectiveSelectFields: true,
+      labelIdentifierField,
       authContext,
       rolePermissionConfig,
     });
-
-    const candidateRecords = findRecordsOutput.success
-      ? (findRecordsOutput.recordReferences ?? [])
-      : [];
-
-    const fuse = new Fuse(candidateRecords, {
-      keys: ['displayName'],
-      threshold: 0.4,
-    });
-
-    const matchingRecord =
-      fuse.search(recordName)[0]?.item ?? candidateRecords[0];
 
     if (!isDefined(matchingRecord)) {
       return this.buildRecordNotFoundOutput(objectNameSingular, recordName);
@@ -396,42 +388,184 @@ export class NavigateAppTool implements Tool {
     };
   }
 
-  private buildRecordNameFilter(
+  // Tiers run from strictest to loosest so the row limit never pushes an exact match out of the candidates
+  private async findBestMatchingRecord({
+    objectNameSingular,
+    recordName,
+    labelIdentifierField,
+    authContext,
+    rolePermissionConfig,
+  }: {
+    objectNameSingular: string;
+    recordName: string;
+    labelIdentifierField: FlatFieldMetadata;
+    authContext: WorkspaceAuthContext;
+    rolePermissionConfig: RolePermissionConfig;
+  }): Promise<RecordReference | undefined> {
+    const nameFilterTiers = this.buildRecordNameFilterTiers(
+      labelIdentifierField,
+      recordName,
+    );
+    const normalizedRecordName = recordName.trim().split(/\s+/).join(' ');
+
+    for (const nameFilter of nameFilterTiers) {
+      // Same permission-scoped path as find_many, so object, field and row-level permissions and record sharing apply
+      const findRecordsOutput = await this.findRecordsService.execute({
+        objectName: objectNameSingular,
+        filter: nameFilter,
+        orderBy: this.buildLabelIdentifierOrderBy(labelIdentifierField),
+        limit: NAVIGATE_TO_RECORD_CANDIDATE_LIMIT,
+        select: [labelIdentifierField.name],
+        shouldBuildEffectiveSelectFields: true,
+        authContext,
+        rolePermissionConfig,
+      });
+
+      if (!findRecordsOutput.success) {
+        return undefined;
+      }
+
+      const fuse = new Fuse(findRecordsOutput.recordReferences ?? [], {
+        keys: ['displayName'],
+        threshold: 0.4,
+        ignoreLocation: true,
+      });
+
+      const bestMatchingRecord = fuse.search(normalizedRecordName)[0]?.item;
+
+      if (isDefined(bestMatchingRecord)) {
+        return bestMatchingRecord;
+      }
+    }
+
+    return undefined;
+  }
+
+  // A label the caller cannot read must not be matched or echoed back, even through a filter
+  private async isFieldReadable({
+    workspaceId,
+    objectMetadataId,
+    fieldMetadataId,
+    rolePermissionConfig,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    fieldMetadataId: string;
+    rolePermissionConfig: RolePermissionConfig;
+  }): Promise<boolean> {
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
+
+    try {
+      assertFieldIsReadableOrThrow({
+        objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
+          rolesPermissions,
+          rolePermissionConfig,
+        }),
+        objectMetadataId,
+        fieldMetadataId,
+      });
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private buildRecordNameFilterTiers(
     labelIdentifierField: FlatFieldMetadata,
     recordName: string,
-  ): Record<string, unknown> | undefined {
+  ): Record<string, unknown>[] {
+    const fieldName = labelIdentifierField.name;
+
     if (labelIdentifierField.type === FieldMetadataType.UUID) {
       const trimmedRecordName = recordName.trim();
 
       return isValidUuid(trimmedRecordName)
-        ? { [labelIdentifierField.name]: { eq: trimmedRecordName } }
-        : undefined;
+        ? [{ [fieldName]: { eq: trimmedRecordName } }]
+        : [];
     }
 
     const searchWords = recordName.trim().split(/\s+/).filter(isNonEmptyString);
 
     if (!isNonEmptyArray(searchWords)) {
-      return undefined;
+      return [];
     }
 
-    return {
-      and: searchWords.map((searchWord) => {
-        const ilikeCondition = { ilike: `%${escapeForIlike(searchWord)}%` };
+    if (labelIdentifierField.type === FieldMetadataType.FULL_NAME) {
+      const matchFirstOrLastName = (pattern: string) => ({
+        or: [
+          { [fieldName]: { firstName: { ilike: pattern } } },
+          { [fieldName]: { lastName: { ilike: pattern } } },
+        ],
+      });
 
-        return labelIdentifierField.type === FieldMetadataType.FULL_NAME
-          ? {
-              or: [
-                {
-                  [labelIdentifierField.name]: { firstName: ilikeCondition },
+      const exactFullNameFilter =
+        searchWords.length === 1
+          ? matchFirstOrLastName(escapeForIlike(searchWords[0]))
+          : {
+              or: searchWords.slice(1).map((_, index) => ({
+                [fieldName]: {
+                  firstName: {
+                    ilike: escapeForIlike(
+                      searchWords.slice(0, index + 1).join(' '),
+                    ),
+                  },
+                  lastName: {
+                    ilike: escapeForIlike(
+                      searchWords.slice(index + 1).join(' '),
+                    ),
+                  },
                 },
-                {
-                  [labelIdentifierField.name]: { lastName: ilikeCondition },
-                },
-              ],
-            }
-          : { [labelIdentifierField.name]: ilikeCondition };
-      }),
-    };
+              })),
+            };
+
+      return [
+        exactFullNameFilter,
+        {
+          and: searchWords.map((searchWord) =>
+            matchFirstOrLastName(`${escapeForIlike(searchWord)}%`),
+          ),
+        },
+        {
+          and: searchWords.map((searchWord) =>
+            matchFirstOrLastName(`%${escapeForIlike(searchWord)}%`),
+          ),
+        },
+      ];
+    }
+
+    const escapedRecordName = escapeForIlike(searchWords.join(' '));
+
+    return [
+      { [fieldName]: { ilike: escapedRecordName } },
+      { [fieldName]: { ilike: `${escapedRecordName}%` } },
+      {
+        and: searchWords.map((searchWord) => ({
+          [fieldName]: { ilike: `%${escapeForIlike(searchWord)}%` },
+        })),
+      },
+    ];
+  }
+
+  // Ascending label order puts the shortest of several labels sharing a prefix first
+  private buildLabelIdentifierOrderBy(
+    labelIdentifierField: FlatFieldMetadata,
+  ): ObjectRecordOrderBy {
+    if (labelIdentifierField.type === FieldMetadataType.FULL_NAME) {
+      return [
+        {
+          [labelIdentifierField.name]: {
+            firstName: OrderByDirection.AscNullsLast,
+            lastName: OrderByDirection.AscNullsLast,
+          },
+        },
+      ];
+    }
+
+    return [{ [labelIdentifierField.name]: OrderByDirection.AscNullsLast }];
   }
 
   private buildRecordNotFoundOutput(
