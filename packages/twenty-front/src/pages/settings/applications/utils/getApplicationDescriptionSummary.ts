@@ -1,4 +1,4 @@
-import { stripMarkdown } from '~/utils/string/stripMarkdown';
+import { getPlainTextFromMarkdown } from '~/utils/string/getPlainTextFromMarkdown';
 
 export const getApplicationDescriptionSummary = (
   description?: string | null,
@@ -8,7 +8,7 @@ export const getApplicationDescriptionSummary = (
   }
 
   for (const block of description.split(/\n\s*\n/)) {
-    const summary = stripMarkdown(block);
+    const summary = getPlainTextFromMarkdown(block);
 
     if (summary.length > 0) {
       return summary;

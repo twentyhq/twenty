@@ -6,7 +6,7 @@ import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { stripMarkdown } from '~/utils/string/stripMarkdown';
+import { getPlainTextFromMarkdown } from '~/utils/string/getPlainTextFromMarkdown';
 
 // Members' messages carry who wrote them; agent replies read as plain text,
 // as they do in the chat itself
@@ -23,7 +23,7 @@ export const getAgentChatThreadPreviewText = ({
   currentWorkspaceMemberId: string | undefined;
 }): string | null => {
   // The server cuts the text short, which can leave half a reference at the end
-  const text = stripMarkdown(
+  const text = getPlainTextFromMarkdown(
     getChatReferenceSegments(thread.lastMessageText ?? '')
       .map((segment) => (isString(segment) ? segment : segment.displayName))
       .join('')
