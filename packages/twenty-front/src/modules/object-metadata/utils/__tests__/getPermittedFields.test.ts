@@ -16,20 +16,22 @@ describe('getPermittedFields', () => {
     const nameField = getCompanyFieldOrThrow('name');
     const employeesField = getCompanyFieldOrThrow('employees');
     const domainNameField = getCompanyFieldOrThrow('domainName');
+    const addressField = getCompanyFieldOrThrow('address');
 
     expect(
       getPermittedFields({
-        fields: [nameField, employeesField, domainNameField],
+        fields: [nameField, employeesField, domainNameField, addressField],
         objectPermissions: {
           restrictedFields: {
             [employeesField.id]: { canRead: false, canUpdate: false },
             [domainNameField.id]: { canRead: true, canUpdate: false },
+            [addressField.id]: { canRead: false, canUpdate: true },
           },
         },
       }),
     ).toEqual({
       readableFields: [nameField, domainNameField],
-      updatableFields: [nameField],
+      updatableFields: [nameField, addressField],
     });
   });
 });

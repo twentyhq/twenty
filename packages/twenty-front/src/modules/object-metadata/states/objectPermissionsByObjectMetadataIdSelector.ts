@@ -1,5 +1,6 @@
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentUserWorkspaceObjectsPermissionsSelector } from '@/auth/states/currentUserWorkspaceObjectsPermissionsSelector';
 import { type ObjectPermissionsByObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsByObjectMetadataId';
+import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -9,29 +10,42 @@ export const objectPermissionsByObjectMetadataIdSelector =
     areEqual: isDeeplyEqual,
     get: ({ get }) => {
       const objectsPermissions =
-        get(currentUserWorkspaceState)?.objectsPermissions ?? [];
+        get(currentUserWorkspaceObjectsPermissionsSelector) ?? [];
 
-      // The GraphQL fields are nullable, so a missing flag gets the same allow default as a missing object
       return Object.fromEntries(
-        objectsPermissions.map((objectPermissions) => [
-          objectPermissions.objectMetadataId,
-          {
-            objectMetadataId: objectPermissions.objectMetadataId,
-            canReadObjectRecords:
-              objectPermissions.canReadObjectRecords ?? true,
-            canUpdateObjectRecords:
-              objectPermissions.canUpdateObjectRecords ?? true,
-            canSoftDeleteObjectRecords:
-              objectPermissions.canSoftDeleteObjectRecords ?? true,
-            canDestroyObjectRecords:
-              objectPermissions.canDestroyObjectRecords ?? true,
-            restrictedFields: objectPermissions.restrictedFields ?? {},
-            rowLevelPermissionPredicates:
-              objectPermissions.rowLevelPermissionPredicates ?? [],
-            rowLevelPermissionPredicateGroups:
-              objectPermissions.rowLevelPermissionPredicateGroups ?? [],
-          },
-        ]),
+        objectsPermissions.map((objectPermissions) => {
+          const defaultObjectPermissions = getDefaultObjectPermissions(
+            objectPermissions.objectMetadataId,
+          );
+
+          return [
+            objectPermissions.objectMetadataId,
+            {
+              objectMetadataId: objectPermissions.objectMetadataId,
+              canReadObjectRecords:
+                objectPermissions.canReadObjectRecords ??
+                defaultObjectPermissions.canReadObjectRecords,
+              canUpdateObjectRecords:
+                objectPermissions.canUpdateObjectRecords ??
+                defaultObjectPermissions.canUpdateObjectRecords,
+              canSoftDeleteObjectRecords:
+                objectPermissions.canSoftDeleteObjectRecords ??
+                defaultObjectPermissions.canSoftDeleteObjectRecords,
+              canDestroyObjectRecords:
+                objectPermissions.canDestroyObjectRecords ??
+                defaultObjectPermissions.canDestroyObjectRecords,
+              restrictedFields:
+                objectPermissions.restrictedFields ??
+                defaultObjectPermissions.restrictedFields,
+              rowLevelPermissionPredicates:
+                objectPermissions.rowLevelPermissionPredicates ??
+                defaultObjectPermissions.rowLevelPermissionPredicates,
+              rowLevelPermissionPredicateGroups:
+                objectPermissions.rowLevelPermissionPredicateGroups ??
+                defaultObjectPermissions.rowLevelPermissionPredicateGroups,
+            },
+          ];
+        }),
       );
     },
   });

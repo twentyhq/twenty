@@ -4,6 +4,7 @@ import {
   type CurrentUserWorkspace,
   currentUserWorkspaceState,
 } from '@/auth/states/currentUserWorkspaceState';
+import { type CurrentUserWorkspaceObjectPermissions } from '@/auth/types/CurrentUserWorkspaceObjectPermissions';
 import { objectPermissionsByObjectMetadataIdSelector } from '@/object-metadata/states/objectPermissionsByObjectMetadataIdSelector';
 import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsWithObjectMetadataId';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -20,6 +21,14 @@ const COMPANY_OBJECT_PERMISSIONS: ObjectPermissionsWithObjectMetadataId = {
   rowLevelPermissionPredicates: [],
   rowLevelPermissionPredicateGroups: [],
 };
+
+const PERSON_OBJECT_PERMISSIONS_WITH_UNSET_FLAGS: CurrentUserWorkspaceObjectPermissions =
+  {
+    objectMetadataId: 'person-object-metadata-id',
+    canReadObjectRecords: false,
+    canUpdateObjectRecords: null,
+    restrictedFields: null,
+  };
 
 const buildCurrentUserWorkspace = (
   objectsPermissions: CurrentUserWorkspace['objectsPermissions'],
@@ -66,12 +75,7 @@ describe('objectPermissionsByObjectMetadataIdSelector', () => {
 
     store.set(
       currentUserWorkspaceState.atom,
-      buildCurrentUserWorkspace([
-        {
-          objectMetadataId: 'person-object-metadata-id',
-          canReadObjectRecords: false,
-        } as ObjectPermissionsWithObjectMetadataId,
-      ]),
+      buildCurrentUserWorkspace([PERSON_OBJECT_PERMISSIONS_WITH_UNSET_FLAGS]),
     );
 
     expect(
