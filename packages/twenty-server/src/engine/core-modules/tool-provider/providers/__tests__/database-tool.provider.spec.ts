@@ -2,6 +2,7 @@ import { type ObjectPermissions } from 'twenty-shared/types';
 
 import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -49,7 +50,7 @@ type GenerateDescriptorsTestOptions = {
 };
 
 describe('DatabaseToolProvider', () => {
-  const generateDescriptors = async (
+  const createProvider = (
     objects: FlatObjectMetadata[],
     options?: GenerateDescriptorsTestOptions,
   ) => {
@@ -90,11 +91,19 @@ describe('DatabaseToolProvider', () => {
       }),
     } as unknown as WorkspaceCacheService;
 
+    const metadataHashes = {
+      flatObjectMetadataMaps: 'object-metadata-hash',
+      flatFieldMetadataMaps: 'field-metadata-hash',
+    };
+
     const flatEntityMapsCacheService = {
-      getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-      }),
+      getOrRecomputeManyOrAllFlatEntityMapsWithHashes: jest.fn(async () => ({
+        data: {
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        },
+        hashes: { ...metadataHashes },
+      })),
     } as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService;
 
     // Echo the messageId so labels fall back to the English source, as at runtime without a translation.
@@ -126,15 +135,36 @@ describe('DatabaseToolProvider', () => {
       applicationTranslationCatalogService,
     );
 
-    return (await provider.generateDescriptors(
-      {
-        workspaceId,
-        roleId,
-        rolePermissionConfig: { unionOf: [roleId] },
-        requireExplicitObjectGrants: options?.requireExplicitObjectGrants,
-      },
-      { includeSchemas: false },
-    )) as (ToolIndexEntry | ToolDescriptor)[];
+    const generate = async (generateOptions?: GenerateDescriptorOptions) =>
+      (await provider.generateDescriptors(
+        {
+          workspaceId,
+          roleId,
+          rolePermissionConfig: { unionOf: [roleId] },
+          requireExplicitObjectGrants: options?.requireExplicitObjectGrants,
+        },
+        generateOptions ?? { includeSchemas: false },
+      )) as (ToolIndexEntry | ToolDescriptor)[];
+
+    return { generate, metadataHashes };
+  };
+
+  const generateDescriptors = (
+    objects: FlatObjectMetadata[],
+    options?: GenerateDescriptorsTestOptions,
+  ) => createProvider(objects, options).generate();
+
+  const findInputSchema = (
+    descriptors: (ToolIndexEntry | ToolDescriptor)[],
+    toolName: string,
+  ) => {
+    const descriptor = descriptors.find(
+      (descriptorItem) => descriptorItem.name === toolName,
+    );
+
+    return descriptor && 'inputSchema' in descriptor
+      ? descriptor.inputSchema
+      : undefined;
   };
 
   const generateDescriptorNames = async (
@@ -315,6 +345,69 @@ describe('DatabaseToolProvider', () => {
 
       expect(descriptor.widgetName).toBe('records');
     }
+  });
+
+  describe('input schemas', () => {
+    // Schema generation yields to the event loop between objects
+    beforeEach(() => {
+      jest.useRealTimers();
+    });
+
+    const personObject = createFlatObject({
+      nameSingular: 'person',
+      namePlural: 'people',
+    });
+
+    it('reuses generated schemas while the metadata is unchanged', async () => {
+      const { generate } = createProvider([personObject]);
+
+      const firstDescriptors = await generate({ includeSchemas: true });
+      const secondDescriptors = await generate({ includeSchemas: true });
+
+      const firstSchema = findInputSchema(firstDescriptors, 'find_many_people');
+
+      expect(firstSchema).toBeDefined();
+      expect(findInputSchema(secondDescriptors, 'find_many_people')).toBe(
+        firstSchema,
+      );
+    });
+
+    it('regenerates schemas once the metadata changes', async () => {
+      const { generate, metadataHashes } = createProvider([personObject]);
+
+      const firstSchema = findInputSchema(
+        await generate({ includeSchemas: true }),
+        'find_many_people',
+      );
+
+      metadataHashes.flatFieldMetadataMaps = 'updated-field-metadata-hash';
+
+      const regeneratedSchema = findInputSchema(
+        await generate({ includeSchemas: true }),
+        'find_many_people',
+      );
+
+      expect(regeneratedSchema).not.toBe(firstSchema);
+      expect(regeneratedSchema).toEqual(firstSchema);
+    });
+
+    it('only attaches schemas to the requested tools', async () => {
+      const { generate } = createProvider([
+        personObject,
+        createFlatObject({ nameSingular: 'company', namePlural: 'companies' }),
+      ]);
+
+      const descriptors = await generate({
+        includeSchemas: true,
+        toolNames: new Set(['create_one_person']),
+      });
+
+      expect(findInputSchema(descriptors, 'create_one_person')).toBeDefined();
+      expect(findInputSchema(descriptors, 'find_many_people')).toBeUndefined();
+      expect(
+        descriptors.some((descriptor) => descriptor.objectName === 'company'),
+      ).toBe(false);
+    });
   });
 
   describe('requireExplicitObjectGrants', () => {

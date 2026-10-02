@@ -8,6 +8,8 @@ import { type RequestTraceContext } from 'src/engine/utils/compute-request-trace
 const MAX_LOGGED_RESOLVERS_LENGTH = 512;
 const MAX_LOGGED_REQUEST_ID_LENGTH = 128;
 const REQUEST_ID_PATTERN = /^[A-Za-z0-9_.:-]+$/;
+const MAX_LOGGED_MCP_FIELD_LENGTH = 128;
+const MCP_FIELD_PATTERN = /^[A-Za-z0-9_.:/-]+$/;
 
 export const buildApiAccessLogLine = ({
   request,
@@ -27,6 +29,8 @@ export const buildApiAccessLogLine = ({
     method: request.method,
     url_path: urlPath,
     resolvers: formatResolvers(request.executedRootResolvers),
+    mcp_method: formatMcpField(request.mcpMethod),
+    mcp_tool: formatMcpField(request.mcpToolName),
     status: completed ? response.statusCode : undefined,
     aborted: completed ? undefined : true,
     duration_ms: durationMs,
@@ -60,6 +64,14 @@ const formatRequestId = (value: string | string[] | undefined) => {
     ? requestId
     : undefined;
 };
+
+// Both values come from the JSON-RPC body, so anything unexpected is dropped rather than logged
+const formatMcpField = (value: string | undefined) =>
+  isNonEmptyString(value) &&
+  value.length <= MAX_LOGGED_MCP_FIELD_LENGTH &&
+  MCP_FIELD_PATTERN.test(value)
+    ? value
+    : undefined;
 
 const formatResolvers = (resolvers: string[] | undefined) => {
   if (!isNonEmptyArray(resolvers)) {

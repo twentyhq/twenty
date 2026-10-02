@@ -1,9 +1,10 @@
-import { type I18n } from '@lingui/core';
 import { Injectable } from '@nestjs/common';
 
+import * as Sentry from '@sentry/node';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
+import { type z } from 'zod';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
@@ -11,9 +12,14 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { getCrudToolLabels } from 'src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util';
 import { resolveEffectiveFieldDescription } from 'src/engine/core-modules/tool-provider/utils/resolve-effective-field-description.util';
+import {
+  ToolSchemaLocalCache,
+  type ToolSchemaStore,
+} from 'src/engine/core-modules/tool-provider/utils/tool-schema-local-cache.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
 import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
@@ -36,14 +42,33 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
+// Schemas are pure functions of the object and field metadata, so they are cached against its hash
+const SCHEMA_METADATA_CACHE_KEYS = [
+  'flatObjectMetadataMaps',
+  'flatFieldMetadataMaps',
+] as const;
+// Serialized size; a ~60 objects / ~1,500 fields workspace weighs a few MB
+const SCHEMA_CACHE_MAX_SIZE_BYTES = 64 * 1024 * 1024;
+const SCHEMA_CACHE_IDLE_TTL_MS = 30 * 60 * 1000;
+
+type InputSchemaGenerator = (
+  objectMetadata: ObjectMetadataForToolSchema,
+) => z.ZodTypeAny | null;
+
 @Injectable()
 export class DatabaseToolProvider implements ToolProvider {
   readonly category = ToolCategory.DATABASE_CRUD;
+
+  private readonly schemaCache = new ToolSchemaLocalCache({
+    maxSizeBytes: SCHEMA_CACHE_MAX_SIZE_BYTES,
+    idleTtlMs: SCHEMA_CACHE_IDLE_TTL_MS,
+  });
 
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -118,11 +143,14 @@ export class DatabaseToolProvider implements ToolProvider {
       }
     }
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+    const {
+      data: { flatObjectMetadataMaps, flatFieldMetadataMaps },
+      hashes,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMapsWithHashes(
         {
           workspaceId: context.workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          flatMapsKeys: [...SCHEMA_METADATA_CACHE_KEYS],
         },
       );
 
@@ -130,19 +158,19 @@ export class DatabaseToolProvider implements ToolProvider {
       flatObjectMetadataMaps.byUniversalIdentifier,
     );
 
-    const i18nInstance = this.i18nService.getI18nInstance(
-      context.locale ?? SOURCE_LOCALE,
-    );
-
-    const resolveFields = includeSchemas
-      ? await this.buildFieldsResolver({
+    const { resolveFields, schemaStore } = includeSchemas
+      ? await this.buildSchemaResolver({
           context,
           flatFieldMetadataMaps,
-          i18nInstance,
+          metadataHash: combineCacheHashes(hashes, SCHEMA_METADATA_CACHE_KEYS),
         })
-      : () => [];
+      : { resolveFields: () => [], schemaStore: undefined };
+
+    let schemaRequestCount = 0;
+    let schemaCacheMissCount = 0;
 
     for (const flatObject of allFlatObjects) {
+      const schemaCacheMissCountBeforeObject = schemaCacheMissCount;
       const permission = objectPermissions[flatObject.id];
       const explicitPermission = explicitPermissionByObjectId.get(
         flatObject.id,
@@ -175,17 +203,56 @@ export class DatabaseToolProvider implements ToolProvider {
         continue;
       }
 
-      const fields = resolveFields(flatObject);
+      let objectMetadataWithFields: ObjectMetadataForToolSchema | undefined;
 
-      const objectMetadata = { ...flatObject, fields };
+      const getObjectMetadata = (): ObjectMetadataForToolSchema => {
+        objectMetadataWithFields ??= {
+          ...flatObject,
+          fields: resolveFields(flatObject),
+        };
+
+        return objectMetadataWithFields;
+      };
 
       const restrictedFields = permission.restrictedFields;
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
-        nameSingular: objectMetadata.nameSingular,
+        nameSingular: flatObject.nameSingular,
       });
 
-      const shouldIncludeSchema = (name: string) =>
-        includeSchemas && (!toolNames || toolNames.has(name));
+      // undefined when the schema was not requested, null when the tool has no valid schema
+      const getInputSchema = (
+        name: string,
+        generateInputSchema: InputSchemaGenerator,
+      ): object | null | undefined => {
+        if (
+          !isDefined(schemaStore) ||
+          (isDefined(toolNames) && !toolNames.has(name))
+        ) {
+          return undefined;
+        }
+
+        schemaRequestCount++;
+
+        return schemaStore.getOrCompute(
+          `${name}:${JSON.stringify(restrictedFields ?? {})}`,
+          () => {
+            schemaCacheMissCount++;
+
+            const zodSchema = generateInputSchema(getObjectMetadata());
+
+            return isDefined(zodSchema) ? toToolJsonSchema(zodSchema) : null;
+          },
+        );
+      };
+
+      const withInputSchema = (
+        name: string,
+        generateInputSchema: InputSchemaGenerator,
+      ): { inputSchema?: object } => {
+        const inputSchema = getInputSchema(name, generateInputSchema);
+
+        return isDefined(inputSchema) ? { inputSchema } : {};
+      };
 
       if (canReadRecords) {
         descriptors.push({
@@ -196,19 +263,17 @@ export class DatabaseToolProvider implements ToolProvider {
             this.i18nService,
             context.locale,
           ),
-          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }; composite fields take their sub-field: { <field>: { <subField>: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data, plus a "count" of total matches and a "hasNextPage" flag. When "hasNextPage" is true, more records match than were returned: continue with a higher offset (or increase the limit) before concluding a record is absent or answering count/enumeration questions.`,
+          description: `Search for ${flatObject.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }; composite fields take their sub-field: { <field>: { <subField>: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data, plus a "count" of total matches and a "hasNextPage" flag. When "hasNextPage" is true, more records match than were returned: continue with a higher offset (or increase the limit) before concluding a record is absent or answering count/enumeration questions.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(shouldIncludeSchema(`find_many_${snakePlural}`) && {
-            inputSchema: toToolJsonSchema(
-              generateFindToolInputSchema(objectMetadata, restrictedFields),
-            ),
-          }),
+          ...withInputSchema(`find_many_${snakePlural}`, (objectMetadata) =>
+            generateFindToolInputSchema(objectMetadata, restrictedFields),
+          ),
           executionRef: {
             kind: 'database_crud',
-            objectNameSingular: objectMetadata.nameSingular,
+            objectNameSingular: flatObject.nameSingular,
             operation: 'find_many',
           },
-          objectName: objectMetadata.nameSingular,
+          objectName: flatObject.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'find_many',
         });
@@ -221,31 +286,32 @@ export class DatabaseToolProvider implements ToolProvider {
             this.i18nService,
             context.locale,
           ),
-          description: `Retrieve a single ${objectMetadata.labelSingular} by ID.`,
+          description: `Retrieve a single ${flatObject.labelSingular} by ID.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(shouldIncludeSchema(`find_one_${snakeSingular}`) && {
-            inputSchema: toToolJsonSchema(FindOneToolInputSchema),
-          }),
+          ...withInputSchema(
+            `find_one_${snakeSingular}`,
+            () => FindOneToolInputSchema,
+          ),
           executionRef: {
             kind: 'database_crud',
-            objectNameSingular: objectMetadata.nameSingular,
+            objectNameSingular: flatObject.nameSingular,
             operation: 'find_one',
           },
-          objectName: objectMetadata.nameSingular,
+          objectName: flatObject.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'find_one',
         });
 
         const groupByName = `group_by_${snakePlural}`;
-        const shouldGenerateGroupBy = shouldIncludeSchema(groupByName);
-        const groupBySchema = shouldGenerateGroupBy
-          ? generateGroupByToolInputSchema(objectMetadata, restrictedFields)
-          : null;
+        const groupBySchema = getInputSchema(groupByName, (objectMetadata) =>
+          generateGroupByToolInputSchema(objectMetadata, restrictedFields),
+        );
 
         const hasGroupBySchema =
           !includeSchemas ||
-          groupBySchema !== null ||
-          hasGroupByToolInputSchema(objectMetadata, restrictedFields);
+          isDefined(groupBySchema) ||
+          (groupBySchema === undefined &&
+            hasGroupByToolInputSchema(getObjectMetadata(), restrictedFields));
 
         if (hasGroupBySchema) {
           descriptors.push({
@@ -256,18 +322,15 @@ export class DatabaseToolProvider implements ToolProvider {
               this.i18nService,
               context.locale,
             ),
-            description: `Group ${objectMetadata.labelPlural} records by one or two fields and compute an aggregate (COUNT, SUM, AVG, MIN, MAX, etc.). Use for questions like "how many deals per stage?" or "total revenue by company". Returns groups with dimension values and aggregate results, ordered by the aggregate value.`,
+            description: `Group ${flatObject.labelPlural} records by one or two fields and compute an aggregate (COUNT, SUM, AVG, MIN, MAX, etc.). Use for questions like "how many deals per stage?" or "total revenue by company". Returns groups with dimension values and aggregate results, ordered by the aggregate value.`,
             category: ToolCategory.DATABASE_CRUD,
-            ...(shouldGenerateGroupBy &&
-              groupBySchema && {
-                inputSchema: toToolJsonSchema(groupBySchema),
-              }),
+            ...(isDefined(groupBySchema) && { inputSchema: groupBySchema }),
             executionRef: {
               kind: 'database_crud',
-              objectNameSingular: objectMetadata.nameSingular,
+              objectNameSingular: flatObject.nameSingular,
               operation: 'group_by',
             },
-            objectName: objectMetadata.nameSingular,
+            objectName: flatObject.nameSingular,
             icon: flatObject.icon ?? undefined,
             operation: 'group_by',
           });
@@ -283,19 +346,17 @@ export class DatabaseToolProvider implements ToolProvider {
             this.i18nService,
             context.locale,
           ),
-          description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
+          description: `Create a new ${flatObject.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(shouldIncludeSchema(`create_one_${snakeSingular}`) && {
-            inputSchema: toToolJsonSchema(
-              generateCreateRecordInputSchema(objectMetadata, restrictedFields),
-            ),
-          }),
+          ...withInputSchema(`create_one_${snakeSingular}`, (objectMetadata) =>
+            generateCreateRecordInputSchema(objectMetadata, restrictedFields),
+          ),
           executionRef: {
             kind: 'database_crud',
-            objectNameSingular: objectMetadata.nameSingular,
+            objectNameSingular: flatObject.nameSingular,
             operation: 'create_one',
           },
-          objectName: objectMetadata.nameSingular,
+          objectName: flatObject.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'create_one',
         });
@@ -308,22 +369,20 @@ export class DatabaseToolProvider implements ToolProvider {
             this.i18nService,
             context.locale,
           ),
-          description: `Create multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. Returns the created records.`,
+          description: `Create multiple ${flatObject.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. Returns the created records.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(shouldIncludeSchema(`create_many_${snakePlural}`) && {
-            inputSchema: toToolJsonSchema(
-              generateCreateManyRecordInputSchema(
-                objectMetadata,
-                restrictedFields,
-              ),
+          ...withInputSchema(`create_many_${snakePlural}`, (objectMetadata) =>
+            generateCreateManyRecordInputSchema(
+              objectMetadata,
+              restrictedFields,
             ),
-          }),
+          ),
           executionRef: {
             kind: 'database_crud',
-            objectNameSingular: objectMetadata.nameSingular,
+            objectNameSingular: flatObject.nameSingular,
             operation: 'create_many',
           },
-          objectName: objectMetadata.nameSingular,
+          objectName: flatObject.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'create_many',
         });
@@ -336,19 +395,17 @@ export class DatabaseToolProvider implements ToolProvider {
             this.i18nService,
             context.locale,
           ),
-          description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
+          description: `Update an existing ${flatObject.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(shouldIncludeSchema(`update_one_${snakeSingular}`) && {
-            inputSchema: toToolJsonSchema(
-              generateUpdateRecordInputSchema(objectMetadata, restrictedFields),
-            ),
-          }),
+          ...withInputSchema(`update_one_${snakeSingular}`, (objectMetadata) =>
+            generateUpdateRecordInputSchema(objectMetadata, restrictedFields),
+          ),
           executionRef: {
             kind: 'database_crud',
-            objectNameSingular: objectMetadata.nameSingular,
+            objectNameSingular: flatObject.nameSingular,
             operation: 'update_one',
           },
-          objectName: objectMetadata.nameSingular,
+          objectName: flatObject.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'update_one',
         });
@@ -361,22 +418,20 @@ export class DatabaseToolProvider implements ToolProvider {
             this.i18nService,
             context.locale,
           ),
-          description: `Apply the SAME field values to all ${objectMetadata.labelPlural} records matching a filter. Use when every matched record gets identical changes (e.g. bulk status change). For records that each have different data to update, use upsert_many_${snakePlural} instead. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first.`,
+          description: `Apply the SAME field values to all ${flatObject.labelPlural} records matching a filter. Use when every matched record gets identical changes (e.g. bulk status change). For records that each have different data to update, use upsert_many_${snakePlural} instead. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(shouldIncludeSchema(`update_many_${snakePlural}`) && {
-            inputSchema: toToolJsonSchema(
-              generateUpdateManyRecordInputSchema(
-                objectMetadata,
-                restrictedFields,
-              ),
+          ...withInputSchema(`update_many_${snakePlural}`, (objectMetadata) =>
+            generateUpdateManyRecordInputSchema(
+              objectMetadata,
+              restrictedFields,
             ),
-          }),
+          ),
           executionRef: {
             kind: 'database_crud',
-            objectNameSingular: objectMetadata.nameSingular,
+            objectNameSingular: flatObject.nameSingular,
             operation: 'update_many',
           },
-          objectName: objectMetadata.nameSingular,
+          objectName: flatObject.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'update_many',
         });
@@ -389,22 +444,20 @@ export class DatabaseToolProvider implements ToolProvider {
             this.i18nService,
             context.locale,
           ),
-          description: `Insert or update multiple ${objectMetadata.labelPlural} records in a single call, where each record has its own individual data. Use this instead of update_many_${snakePlural} when records need different field values. Existing records are matched by unique fields and updated; records with no match are created. Maximum 20 records per call. Returns the upserted records.`,
+          description: `Insert or update multiple ${flatObject.labelPlural} records in a single call, where each record has its own individual data. Use this instead of update_many_${snakePlural} when records need different field values. Existing records are matched by unique fields and updated; records with no match are created. Maximum 20 records per call. Returns the upserted records.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(shouldIncludeSchema(`upsert_many_${snakePlural}`) && {
-            inputSchema: toToolJsonSchema(
-              generateCreateManyRecordInputSchema(
-                objectMetadata,
-                restrictedFields,
-              ),
+          ...withInputSchema(`upsert_many_${snakePlural}`, (objectMetadata) =>
+            generateCreateManyRecordInputSchema(
+              objectMetadata,
+              restrictedFields,
             ),
-          }),
+          ),
           executionRef: {
             kind: 'database_crud',
-            objectNameSingular: objectMetadata.nameSingular,
+            objectNameSingular: flatObject.nameSingular,
             operation: 'upsert_many',
           },
-          objectName: objectMetadata.nameSingular,
+          objectName: flatObject.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'upsert_many',
         });
@@ -419,17 +472,18 @@ export class DatabaseToolProvider implements ToolProvider {
             this.i18nService,
             context.locale,
           ),
-          description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
+          description: `Delete a ${flatObject.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: toToolJsonSchema(DeleteToolInputSchema),
-          }),
+          ...withInputSchema(
+            `delete_one_${snakeSingular}`,
+            () => DeleteToolInputSchema,
+          ),
           executionRef: {
             kind: 'database_crud',
-            objectNameSingular: objectMetadata.nameSingular,
+            objectNameSingular: flatObject.nameSingular,
             operation: 'delete_one',
           },
-          objectName: objectMetadata.nameSingular,
+          objectName: flatObject.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'delete_one',
         });
@@ -442,26 +496,34 @@ export class DatabaseToolProvider implements ToolProvider {
             this.i18nService,
             context.locale,
           ),
-          description: `Soft-delete multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. Deleted records are hidden from normal queries and the operation is reversible. WARNING: Use specific filters to avoid unintended mass deletions.`,
+          description: `Soft-delete multiple ${flatObject.labelPlural} records matching a filter in a single operation. Deleted records are hidden from normal queries and the operation is reversible. WARNING: Use specific filters to avoid unintended mass deletions.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: toToolJsonSchema(
-              generateBulkDeleteToolInputSchema(
-                objectMetadata,
-                restrictedFields,
-              ),
-            ),
-          }),
+          ...withInputSchema(`delete_many_${snakePlural}`, (objectMetadata) =>
+            generateBulkDeleteToolInputSchema(objectMetadata, restrictedFields),
+          ),
           executionRef: {
             kind: 'database_crud',
-            objectNameSingular: objectMetadata.nameSingular,
+            objectNameSingular: flatObject.nameSingular,
             operation: 'delete_many',
           },
-          objectName: objectMetadata.nameSingular,
+          objectName: flatObject.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'delete_many',
         });
       }
+
+      // Generating one object's schemas takes tens of ms on large objects; yield so a
+      // cold cache does not stall every other request on the event loop
+      if (schemaCacheMissCount > schemaCacheMissCountBeforeObject) {
+        await new Promise((resolve) => setImmediate(resolve));
+      }
+    }
+
+    if (includeSchemas) {
+      Sentry.getActiveSpan()?.setAttributes({
+        'tool.schema_cache.request_count': schemaRequestCount,
+        'tool.schema_cache.miss_count': schemaCacheMissCount,
+      });
     }
 
     // group_by answers with aggregates, not the recordReferences the records widget links.
@@ -472,15 +534,21 @@ export class DatabaseToolProvider implements ToolProvider {
     );
   }
 
-  private async buildFieldsResolver({
+  private async buildSchemaResolver({
     context,
     flatFieldMetadataMaps,
-    i18nInstance,
+    metadataHash,
   }: {
     context: ToolProviderContext;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    i18nInstance: I18n;
-  }): Promise<(flatObject: FlatObjectMetadata) => FlatFieldMetadata[]> {
+    metadataHash: string;
+  }): Promise<{
+    resolveFields: (flatObject: FlatObjectMetadata) => FlatFieldMetadata[];
+    schemaStore: ToolSchemaStore;
+  }> {
+    const locale = context.locale ?? SOURCE_LOCALE;
+    const i18nInstance = this.i18nService.getI18nInstance(locale);
+
     const { workspaceCustomApplicationUniversalIdentifier } =
       await this.applicationTranslationCatalogService.getApplicationAuthorIdentifiers(
         {
@@ -490,19 +558,33 @@ export class DatabaseToolProvider implements ToolProvider {
         },
       );
 
-    return (flatObject) =>
-      getFlatFieldsFromFlatObjectMetadata(
-        flatObject,
-        flatFieldMetadataMaps,
-      ).map((flatFieldMetadata) => ({
-        ...flatFieldMetadata,
-        description: resolveEffectiveFieldDescription({
-          flatFieldMetadata,
-          locale: context.locale,
-          i18nInstance,
-          workspaceCustomApplicationUniversalIdentifier,
-        }),
-      }));
+    const workspaceSchemaStore = this.schemaCache.getStore(
+      context.workspaceId,
+      `${metadataHash}:${workspaceCustomApplicationUniversalIdentifier}`,
+    );
+
+    // Field descriptions are translated, so each locale gets its own schemas
+    const schemaStore: ToolSchemaStore = {
+      getOrCompute: (key, compute) =>
+        workspaceSchemaStore.getOrCompute(`${locale}:${key}`, compute),
+    };
+
+    return {
+      resolveFields: (flatObject) =>
+        getFlatFieldsFromFlatObjectMetadata(
+          flatObject,
+          flatFieldMetadataMaps,
+        ).map((flatFieldMetadata) => ({
+          ...flatFieldMetadata,
+          description: resolveEffectiveFieldDescription({
+            flatFieldMetadata,
+            locale: context.locale,
+            i18nInstance,
+            workspaceCustomApplicationUniversalIdentifier,
+          }),
+        })),
+      schemaStore,
+    };
   }
 
   private hasMatchingTool(

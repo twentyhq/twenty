@@ -72,6 +72,8 @@ describe('McpCoreController', () => {
     const mockUser = { id: 'user-1' } as UserEntity;
     const mockUserWorkspaceId = 'user-workspace-1';
     const mockApiKey = { id: 'api-key-1' } as FlatApiKey;
+    const mockHttpRequest = {} as import('express').Request;
+
     const mockRes = {
       status: jest.fn().mockReturnThis(),
       setHeader: jest.fn(),
@@ -113,6 +115,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         undefined,
+        mockHttpRequest,
         mockRes,
       );
 
@@ -162,6 +165,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         undefined,
+        mockHttpRequest,
         mockRes,
       );
 
@@ -210,6 +214,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         undefined,
+        mockHttpRequest,
         mockRes,
       );
 
@@ -243,6 +248,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         undefined,
+        mockHttpRequest,
         mockRes,
       );
 
@@ -277,6 +283,7 @@ describe('McpCoreController', () => {
         undefined,
         undefined,
         undefined,
+        mockHttpRequest,
         mockRes,
       );
 
@@ -320,6 +327,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         'application/json, text/event-stream',
+        mockHttpRequest,
         mockRes,
       );
 
@@ -381,6 +389,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         'application/json',
+        mockHttpRequest,
         mockRes,
       );
 
@@ -406,6 +415,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         'application/json, text/event-stream',
+        mockHttpRequest,
         mockRes,
       );
 
