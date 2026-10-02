@@ -1,23 +1,20 @@
-import uniqBy from 'lodash.uniqby';
 import { useCallback, useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useDetachChatThreadFromRecord } from '@/ai/hooks/useDetachChatThreadFromRecord';
-import { type AgentChatConversationTarget } from '@/ai/types/AgentChatConversationTarget';
 import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
+import { useOpenJunctionRelationPicker } from '@/object-record/record-field/ui/hooks/useOpenJunctionRelationPicker';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { getRelatedRecordIdFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordIdFromJunction';
-import { getSearchableObjectMetadataItems } from '@/object-record/record-field/ui/utils/junction/getSearchableObjectMetadataItems';
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useFieldWidgetJunctionRelationRecords } from '@/page-layout/widgets/field/hooks/useFieldWidgetJunctionRelationRecords';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
@@ -25,12 +22,12 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-export const useAiChatThreadLinkedRecords = ({
+export const useAiChatThreadRecordTargets = ({
   threadId,
-  instanceId,
+  recordPickerInstanceId,
 }: {
   threadId: string;
-  instanceId: string;
+  recordPickerInstanceId: string;
 }) => {
   const isConversationsTabEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
@@ -79,7 +76,7 @@ export const useAiChatThreadLinkedRecords = ({
   );
 
   useListenToEventsForQuery({
-    queryId: `${instanceId}-${threadId}-linked-records`,
+    queryId: `${recordPickerInstanceId}-record-targets`,
     operationSignature: linksOperationSignature,
     skip: isThreadQuerySkipped,
   });
@@ -98,31 +95,10 @@ export const useAiChatThreadLinkedRecords = ({
     ? thread?.[junctionConfig.junctionField.name]
     : undefined;
 
-  const junctionRelationRecords = useFieldWidgetJunctionRelationRecords({
+  const targetRecords = useFieldWidgetJunctionRelationRecords({
     relationValue: junctionRecords,
     junctionConfig: { targetFields: junctionConfig?.targetFields ?? [] },
   });
-  // A custom leg allows duplicate links, so a record is listed once
-  const linkedRecords = uniqBy(
-    junctionRelationRecords,
-    ({ objectNameSingular, record }) => `${objectNameSingular}-${record.id}`,
-  );
-
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  // A search over an object the member cannot read fails as a whole
-  const linkableObjectMetadataItems = useMemo(
-    () =>
-      isDefined(junctionConfig)
-        ? filterReadableActiveObjectMetadataItems(
-            getSearchableObjectMetadataItems(
-              junctionConfig.targetFields,
-              objectMetadataItems,
-            ),
-            objectPermissionsByObjectMetadataId,
-          )
-        : [],
-    [junctionConfig, objectMetadataItems, objectPermissionsByObjectMetadataId],
-  );
 
   const permissions = useAtomFamilySelectorValue(
     agentChatThreadPermissionsFamilySelector,
@@ -130,55 +106,71 @@ export const useAiChatThreadLinkedRecords = ({
   );
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
   const { detachChatThreadFromRecord } = useDetachChatThreadFromRecord();
+  const { openJunctionRelationPicker } = useOpenJunctionRelationPicker();
 
-  const linkRecord = ({
-    objectNameSingular,
-    recordId,
-  }: AgentChatConversationTarget) =>
-    attachChatThreadToRecord({ threadId, objectNameSingular, recordId });
-
-  // Every link to the record goes, duplicates included
-  const unlinkRecord = ({
-    objectNameSingular,
-    recordId,
-  }: AgentChatConversationTarget) => {
-    const objectMetadataItem = objectMetadataItems.find(
-      ({ nameSingular }) => nameSingular === objectNameSingular,
-    );
-    const targetFieldInfo =
-      isDefined(junctionConfig) && isDefined(objectMetadataItem)
-        ? findTargetFieldInfo(
-            junctionConfig.targetFields,
-            objectMetadataItem.id,
-            objectMetadataItems,
-          )
-        : undefined;
-    const joinColumnName = targetFieldInfo?.joinColumnName;
-
-    if (!isDefined(targetFieldInfo) || !isDefined(joinColumnName)) {
+  const openRecordPicker = () => {
+    if (!isDefined(junctionConfig)) {
       return;
     }
 
-    const linkIds = (junctionRecords ?? [])
+    openJunctionRelationPicker({
+      recordPickerInstanceId,
+      junctionRecords,
+      targetFields: junctionConfig.targetFields,
+    });
+  };
+
+  const handleRecordPickerChange = (
+    morphItem: RecordPickerPickableMorphItem,
+  ) => {
+    const objectMetadataItem = objectMetadataItems.find(
+      ({ id }) => id === morphItem.objectMetadataId,
+    );
+
+    if (!isDefined(objectMetadataItem) || !isDefined(junctionConfig)) {
+      return;
+    }
+
+    if (morphItem.isSelected) {
+      void attachChatThreadToRecord({
+        threadId,
+        objectNameSingular: objectMetadataItem.nameSingular,
+        recordId: morphItem.recordId,
+      });
+
+      return;
+    }
+
+    const targetFieldInfo = findTargetFieldInfo(
+      junctionConfig.targetFields,
+      morphItem.objectMetadataId,
+      objectMetadataItems,
+    );
+    const targetJoinColumnName = targetFieldInfo?.joinColumnName;
+
+    if (!isDefined(targetFieldInfo) || !isDefined(targetJoinColumnName)) {
+      return;
+    }
+
+    const linkIdsToRecord = (junctionRecords ?? [])
       .filter(
         (junctionRecord) =>
           getRelatedRecordIdFromJunction({
             junctionRecord,
             relationFieldName: targetFieldInfo.fieldName,
-            joinColumnName,
-          }) === recordId,
+            joinColumnName: targetJoinColumnName,
+          }) === morphItem.recordId,
       )
       .map(({ id }) => id);
 
-    return detachChatThreadFromRecord(linkIds);
+    void detachChatThreadFromRecord(linkIdsToRecord);
   };
 
   return {
     isAvailable: !isThreadQuerySkipped && isDefined(thread),
-    linkedRecords,
-    linkableObjectMetadataItems,
-    canEditLinkedRecords: permissions?.canUpdate ?? false,
-    linkRecord,
-    unlinkRecord,
+    targetRecords,
+    canEditRecordTargets: permissions?.canUpdate ?? false,
+    openRecordPicker,
+    handleRecordPickerChange,
   };
 };

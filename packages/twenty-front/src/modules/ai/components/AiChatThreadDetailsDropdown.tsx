@@ -1,40 +1,40 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useRef } from 'react';
+import { useRef } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import {
-  Dropdown,
-  LightIconButton,
-  useDropdownPage,
-} from 'twenty-ui/components';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import {
   IconBell,
   IconLink,
   IconListSearch,
   IconPencil,
   IconPlus,
-  type IconComponent,
 } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadLinkedRecordsPage } from '@/ai/components/AiChatThreadLinkedRecordsPage';
+import { AiChatThreadDetailsRow } from '@/ai/components/AiChatThreadDetailsRow';
 import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
-import { useAiChatThreadLinkedRecords } from '@/ai/hooks/useAiChatThreadLinkedRecords';
+import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
+import { Dropdown as LegacyDropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
-const AI_CHAT_THREAD_DETAILS_PAGE = {
-  DETAILS: 'details',
-  LINKED_RECORDS: 'linked-records',
-} as const;
+const StyledEmptyValue = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
 
 const StyledDetails = styled.div`
   display: flex;
@@ -42,97 +42,6 @@ const StyledDetails = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[2]};
 `;
-
-const StyledRow = styled.div`
-  align-items: flex-start;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledLabel = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[1]};
-  height: ${themeCssVariables.spacing[6]};
-  width: 96px;
-`;
-
-const StyledLabelText = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledValue = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[1]};
-  min-height: ${themeCssVariables.spacing[6]};
-  min-width: 0;
-`;
-
-const StyledEmptyValue = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.sm};
-`;
-
-type AiChatThreadDetailsRowProps = {
-  Icon: IconComponent;
-  label: string;
-  action?: ReactNode;
-  children: ReactNode;
-};
-
-const AiChatThreadDetailsRow = ({
-  Icon,
-  label,
-  action,
-  children,
-}: AiChatThreadDetailsRowProps) => {
-  const theme = useTheme();
-
-  return (
-    <StyledRow>
-      <StyledLabel>
-        <Icon size={theme.icon.size.sm} />
-        <StyledLabelText>{label}</StyledLabelText>
-      </StyledLabel>
-      <StyledValue>{children}</StyledValue>
-      {action}
-    </StyledRow>
-  );
-};
-
-type AiChatThreadEditLinkedRecordsButtonProps = {
-  hasLinkedRecords: boolean;
-};
-
-const AiChatThreadEditLinkedRecordsButton = ({
-  hasLinkedRecords,
-}: AiChatThreadEditLinkedRecordsButtonProps) => {
-  const { t } = useLingui();
-  const { goToPage } = useDropdownPage();
-  const editLabel = hasLinkedRecords
-    ? t`Edit linked records`
-    : t`Link to a record`;
-  const EditIcon = hasLinkedRecords ? IconPencil : IconPlus;
-
-  return (
-    <LightIconButton
-      aria-label={editLabel}
-      title={editLabel}
-      emphasis="subtle"
-      onClick={() => goToPage(AI_CHAT_THREAD_DETAILS_PAGE.LINKED_RECORDS)}
-    >
-      <EditIcon />
-    </LightIconButton>
-  );
-};
 
 type AiChatThreadDetailsDropdownProps = {
   threadId: string;
@@ -145,14 +54,6 @@ export const AiChatThreadDetailsDropdown = ({
   const dropdownId = useWorkspaceSurfaceScopedComponentInstanceId(
     `ai-chat-thread-details-${threadId}`,
   );
-  const {
-    isAvailable: areLinkedRecordsAvailable,
-    linkedRecords,
-    linkableObjectMetadataItems,
-    canEditLinkedRecords,
-    linkRecord,
-    unlinkRecord,
-  } = useAiChatThreadLinkedRecords({ threadId, instanceId: dropdownId });
   const thread = useAtomFamilySelectorValue(
     agentChatThreadRecordFamilySelector,
     threadId,
@@ -162,51 +63,79 @@ export const AiChatThreadDetailsDropdown = ({
   const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
   const { openRecordTarget } = useChatTargetNavigation();
   const dropdownContentRef = useRef<HTMLDivElement>(null);
+  const recordPickerDropdownId = `${dropdownId}-record-picker`;
+  const {
+    isAvailable: areRecordTargetsAvailable,
+    targetRecords,
+    canEditRecordTargets,
+    openRecordPicker,
+    handleRecordPickerChange,
+  } = useAiChatThreadRecordTargets({
+    threadId,
+    recordPickerInstanceId: recordPickerDropdownId,
+  });
+  const { openDropdown } = useOpenDropdown();
+  const setRecordPickerSearchFilter = useSetAtomComponentState(
+    multipleRecordPickerSearchFilterComponentState,
+    recordPickerDropdownId,
+  );
+  const hasTargetRecords = targetRecords.length > 0;
+  const editRecordTargetsLabel = hasTargetRecords
+    ? t`Edit linked records`
+    : t`Link to a record`;
+  const EditRecordTargetsIcon = hasTargetRecords ? IconPencil : IconPlus;
+
+  // The picker is a dropdown of its own, so it opens where the details were
+  const editRecordTargets = () => {
+    closeDropdown(dropdownId);
+    openRecordPicker();
+    openDropdown({
+      dropdownComponentInstanceIdFromProps: recordPickerDropdownId,
+    });
+  };
 
   return (
-    <DropdownRoot
-      dropdownId={dropdownId}
-      type="panel"
-      defaultPage={AI_CHAT_THREAD_DETAILS_PAGE.DETAILS}
-      multiple
-    >
-      <Dropdown.Trigger
-        render={
-          <LightIconButton
-            aria-label={t`Chat details`}
-            title={t`Chat details`}
-            emphasis="subtle"
-          >
-            <IconListSearch />
-          </LightIconButton>
-        }
-      />
-      <DropdownContent
-        ref={dropdownContentRef}
-        // The details are read first, so focus stays off the first chip
-        initialFocus={() => dropdownContentRef.current}
-        align="start"
-        width={GenericDropdownContentWidth.ExtraLarge}
-        aria-label={t`Chat details`}
-      >
-        <Dropdown.Page id={AI_CHAT_THREAD_DETAILS_PAGE.DETAILS} type="panel">
+    <>
+      <DropdownRoot dropdownId={dropdownId} type="panel">
+        <Dropdown.Trigger
+          render={
+            <LightIconButton
+              aria-label={t`Chat details`}
+              title={t`Chat details`}
+              emphasis="subtle"
+            >
+              <IconListSearch />
+            </LightIconButton>
+          }
+        />
+        <DropdownContent
+          ref={dropdownContentRef}
+          // The details are read first, so focus stays off the first chip
+          initialFocus={() => dropdownContentRef.current}
+          align="start"
+          width={GenericDropdownContentWidth.ExtraLarge}
+          aria-label={t`Chat details`}
+        >
           <StyledDetails>
-            {areLinkedRecordsAvailable && (
+            {areRecordTargetsAvailable && (
               <AiChatThreadDetailsRow
                 Icon={IconLink}
                 label={t`Linked to`}
                 action={
-                  canEditLinkedRecords && (
-                    <AiChatThreadEditLinkedRecordsButton
-                      hasLinkedRecords={linkedRecords.length > 0}
-                    />
+                  canEditRecordTargets && (
+                    <LightIconButton
+                      aria-label={editRecordTargetsLabel}
+                      title={editRecordTargetsLabel}
+                      emphasis="subtle"
+                      onClick={editRecordTargets}
+                    >
+                      <EditRecordTargetsIcon />
+                    </LightIconButton>
                   )
                 }
               >
-                {linkedRecords.length === 0 ? (
-                  <StyledEmptyValue>{t`None`}</StyledEmptyValue>
-                ) : (
-                  linkedRecords.map(({ record, objectNameSingular }) => (
+                {hasTargetRecords ? (
+                  targetRecords.map(({ record, objectNameSingular }) => (
                     <RecordChip
                       key={`${objectNameSingular}-${record.id}`}
                       objectNameSingular={objectNameSingular}
@@ -225,6 +154,8 @@ export const AiChatThreadDetailsDropdown = ({
                       }
                     />
                   ))
+                ) : (
+                  <StyledEmptyValue>{t`None`}</StyledEmptyValue>
                 )}
               </AiChatThreadDetailsRow>
             )}
@@ -238,19 +169,27 @@ export const AiChatThreadDetailsDropdown = ({
               ))}
             </AiChatThreadDetailsRow>
           </StyledDetails>
-        </Dropdown.Page>
-        <Dropdown.Page
-          id={AI_CHAT_THREAD_DETAILS_PAGE.LINKED_RECORDS}
-          type="picker"
-        >
-          <AiChatThreadLinkedRecordsPage
-            linkedRecords={linkedRecords}
-            linkableObjectMetadataItems={linkableObjectMetadataItems}
-            onLink={(target) => void linkRecord(target)}
-            onUnlink={(target) => void unlinkRecord(target)}
-          />
-        </Dropdown.Page>
-      </DropdownContent>
-    </DropdownRoot>
+        </DropdownContent>
+      </DropdownRoot>
+      {canEditRecordTargets && (
+        <LegacyDropdown
+          dropdownId={recordPickerDropdownId}
+          dropdownPlacement="bottom-start"
+          disableClickForClickableComponent
+          clickableComponent={<span />}
+          onClose={() => setRecordPickerSearchFilter('')}
+          dropdownComponents={
+            <MultipleRecordPicker
+              focusId={recordPickerDropdownId}
+              componentInstanceId={recordPickerDropdownId}
+              onChange={handleRecordPickerChange}
+              onSubmit={() => closeDropdown(recordPickerDropdownId)}
+              onClickOutside={() => closeDropdown(recordPickerDropdownId)}
+              layoutDirection="search-bar-on-top"
+            />
+          }
+        />
+      )}
+    </>
   );
 };

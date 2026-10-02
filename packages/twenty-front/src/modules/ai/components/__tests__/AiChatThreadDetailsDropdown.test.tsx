@@ -12,6 +12,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -26,6 +27,7 @@ const GLOBEX_ID = '20202020-0000-4000-8000-000000000003';
 const OWNER_ID = '20202020-0000-4000-8000-000000000010';
 const WRITER_ID = '20202020-0000-4000-8000-000000000011';
 
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 // The test workspace has no conversation objects; person.company stands in for the company leg.
 const companyTargetField = getMockFieldMetadataItemOrThrow({
@@ -37,7 +39,7 @@ const attachChatThreadToRecord = jest.fn(() => Promise.resolve(true));
 const detachChatThreadFromRecord = jest.fn((_linkIds: string[]) =>
   Promise.resolve(),
 );
-const refetchThread = jest.fn(() => Promise.resolve());
+const performSearch = jest.fn();
 const mockThread: { current: ObjectRecord | undefined } = {
   current: undefined,
 };
@@ -53,6 +55,8 @@ jest.mock('@/ai/hooks/useDetachChatThreadFromRecord', () => ({
   }),
 }));
 
+const refetchThread = jest.fn(() => Promise.resolve());
+
 jest.mock('@/object-record/hooks/useFindOneRecord', () => ({
   useFindOneRecord: () => ({
     record: mockThread.current,
@@ -62,27 +66,6 @@ jest.mock('@/object-record/hooks/useFindOneRecord', () => ({
 
 jest.mock('@/sse-db-event/hooks/useListenToEventsForQuery', () => ({
   useListenToEventsForQuery: jest.fn(),
-}));
-
-jest.mock('@/object-record/hooks/useObjectRecordSearchRecords', () => ({
-  useObjectRecordSearchRecords: ({ searchInput }: { searchInput: string }) => ({
-    searchRecords:
-      searchInput === 'Globex'
-        ? [
-            {
-              __typename: 'SearchRecord',
-              recordId: GLOBEX_ID,
-              objectNameSingular: 'company',
-              objectLabelSingular: 'Company',
-              label: 'Globex',
-              imageUrl: null,
-              tsRankCD: 1,
-              tsRank: 1,
-            },
-          ]
-        : [],
-    loading: false,
-  }),
 }));
 
 jest.mock(
@@ -95,6 +78,38 @@ jest.mock(
       isMorphRelation: true,
       isValid: true,
     }),
+  }),
+);
+
+// MockedProvider can't answer the picker's network search.
+jest.mock(
+  '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch',
+  () => ({
+    useMultipleRecordPickerPerformSearch: () => ({ performSearch }),
+  }),
+);
+
+jest.mock(
+  '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker',
+  () => ({
+    MultipleRecordPicker: ({
+      onChange,
+    }: {
+      onChange: (morphItem: RecordPickerPickableMorphItem) => void;
+    }) => (
+      <button
+        onClick={() =>
+          onChange({
+            recordId: ACME_ID,
+            objectMetadataId: companyObjectMetadataItem.id,
+            isSelected: false,
+            isMatchingSearchFilter: true,
+          })
+        }
+      >
+        Unlink Acme
+      </button>
+    ),
   }),
 );
 
@@ -122,7 +137,11 @@ const ACME_LINK: ObjectRecord = {
   company: { __typename: 'Company', id: ACME_ID, name: 'Acme' },
 };
 
-const buildThread = (recordTargets: ObjectRecord[] = [ACME_LINK]) => ({
+const buildThread = ({
+  recordTargets = [ACME_LINK],
+}: {
+  recordTargets?: ObjectRecord[];
+} = {}): ObjectRecord => ({
   __typename: 'AgentChatThread',
   id: THREAD_ID,
   recordTargets,
@@ -138,7 +157,7 @@ const buildWorkspaceMember = (id: string, firstName: string) => ({
   avatarUrl: null,
 });
 
-const renderDetails = ({
+const renderDetails = async ({
   permissions = EDITABLE_PERMISSIONS,
   isConversationsTabEnabled = true,
 }: {
@@ -167,7 +186,6 @@ const renderDetails = ({
         title: 'Pricing questions',
         deletedAt: null,
         workspaceMemberId: OWNER_ID,
-        lastActivityAt: '2026-10-01T10:00:00.000Z',
         writerWorkspaceMemberIds: [WRITER_ID, OWNER_ID],
       });
       store.set(currentWorkspaceMembersState.atom, [
@@ -190,10 +208,10 @@ const renderDetails = ({
   render(<AiChatThreadDetailsDropdown threadId={THREAD_ID} />, {
     wrapper: Wrapper,
   });
-};
 
-const openDetails = async (user: ReturnType<typeof userEvent.setup>) => {
-  await user.click(await screen.findByRole('button', { name: 'Chat details' }));
+  await userEvent.click(
+    await screen.findByRole('button', { name: 'Chat details' }),
+  );
 };
 
 describe('AiChatThreadDetailsDropdown', () => {
@@ -202,74 +220,90 @@ describe('AiChatThreadDetailsDropdown', () => {
     mockThread.current = buildThread();
   });
 
-  it('shows the linked records and the members following the chat', async () => {
-    const user = userEvent.setup();
+  it('shows the members following the chat', async () => {
+    await renderDetails();
 
-    renderDetails();
-    await openDetails(user);
-
-    expect(await screen.findByText('Acme')).toBeVisible();
-    expect(screen.getByText('Owner Member')).toBeVisible();
+    expect(await screen.findByText('Owner Member')).toBeVisible();
     expect(screen.getByText('Writer Member')).toBeVisible();
   });
 
-  it('links a record found by search', async () => {
+  it('opens the record picker on the linked records, searching the objects a conversation can be linked to', async () => {
     const user = userEvent.setup();
 
-    renderDetails();
-    await openDetails(user);
+    await renderDetails();
+
+    expect(await screen.findByText('Acme')).toBeVisible();
+
     await user.click(
-      await screen.findByRole('button', { name: 'Edit linked records' }),
-    );
-    await user.type(
-      await screen.findByRole('searchbox', { name: 'Search records' }),
-      'Globex',
-    );
-    await user.click(
-      await screen.findByRole('button', { name: /Globex/, pressed: false }),
+      screen.getByRole('button', { name: 'Edit linked records' }),
     );
 
-    expect(attachChatThreadToRecord).toHaveBeenCalledWith({
-      threadId: THREAD_ID,
-      objectNameSingular: 'company',
-      recordId: GLOBEX_ID,
+    expect(performSearch).toHaveBeenCalledWith({
+      multipleRecordPickerInstanceId: expect.stringContaining('record-picker'),
+      forceSearchFilter: '',
+      forceSearchableObjectMetadataItems: [
+        expect.objectContaining({ nameSingular: 'company' }),
+      ],
+      forcePickableMorphItems: [
+        {
+          recordId: ACME_ID,
+          objectMetadataId: companyObjectMetadataItem.id,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        },
+      ],
     });
   });
 
-  it('unlinks every link between the chat and a linked record', async () => {
+  it('lets the conversation editor unlink a record', async () => {
     const user = userEvent.setup();
-    mockThread.current = buildThread([
-      ACME_LINK,
-      { ...ACME_LINK, id: 'link-2' },
-      {
-        __typename: 'AgentChatThreadTarget',
-        id: 'link-3',
-        company: { __typename: 'Company', id: GLOBEX_ID, name: 'Globex' },
-      },
-    ]);
 
-    renderDetails();
-    await openDetails(user);
+    await renderDetails();
+
     await user.click(
       await screen.findByRole('button', { name: 'Edit linked records' }),
     );
     await user.click(
-      await screen.findByRole('button', { name: /Acme/, pressed: true }),
+      await screen.findByRole('button', { name: 'Unlink Acme' }),
+    );
+
+    expect(detachChatThreadFromRecord).toHaveBeenCalledWith(['link-1']);
+    expect(attachChatThreadToRecord).not.toHaveBeenCalled();
+  });
+
+  it('unlinks every link between the conversation and the record', async () => {
+    const user = userEvent.setup();
+    mockThread.current = buildThread({
+      recordTargets: [
+        ACME_LINK,
+        { ...ACME_LINK, id: 'link-2' },
+        {
+          __typename: 'AgentChatThreadTarget',
+          id: 'link-3',
+          company: { __typename: 'Company', id: GLOBEX_ID, name: 'Globex' },
+        },
+      ],
+    });
+
+    await renderDetails();
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Edit linked records' }),
+    );
+    await user.click(
+      await screen.findByRole('button', { name: 'Unlink Acme' }),
     );
 
     expect(detachChatThreadFromRecord).toHaveBeenCalledWith([
       'link-1',
       'link-2',
     ]);
-    expect(attachChatThreadToRecord).not.toHaveBeenCalled();
   });
 
-  it('offers to link a record when the chat has none', async () => {
-    const user = userEvent.setup();
-    mockThread.current = buildThread([]);
+  it('offers to link a record when the conversation has none', async () => {
+    mockThread.current = buildThread({ recordTargets: [] });
 
-    renderDetails();
-    await openDetails(user);
+    await renderDetails();
 
     expect(
       await screen.findByRole('button', { name: 'Link to a record' }),
@@ -277,12 +311,9 @@ describe('AiChatThreadDetailsDropdown', () => {
   });
 
   it('shows the links read-only to a shared viewer', async () => {
-    const user = userEvent.setup();
-
-    renderDetails({
+    await renderDetails({
       permissions: { ...EDITABLE_PERMISSIONS, canUpdate: false },
     });
-    await openDetails(user);
 
     expect(await screen.findByText('Acme')).toBeVisible();
     expect(
@@ -291,8 +322,7 @@ describe('AiChatThreadDetailsDropdown', () => {
   });
 
   it('reads the links again when one is written elsewhere', async () => {
-    renderDetails();
-    await screen.findByRole('button', { name: 'Chat details' });
+    await renderDetails();
 
     act(() => {
       dispatchObjectRecordOperationBrowserEvent({
@@ -308,12 +338,8 @@ describe('AiChatThreadDetailsDropdown', () => {
   });
 
   it('leaves out the linked records until the conversations tab is enabled', async () => {
-    const user = userEvent.setup();
+    await renderDetails({ isConversationsTabEnabled: false });
 
-    renderDetails({ isConversationsTabEnabled: false });
-    await openDetails(user);
-
-    expect(await screen.findByText('Owner Member')).toBeVisible();
-    expect(screen.queryByText('Linked to')).not.toBeInTheDocument();
+    expect(screen.queryByText('Acme')).not.toBeInTheDocument();
   });
 });
