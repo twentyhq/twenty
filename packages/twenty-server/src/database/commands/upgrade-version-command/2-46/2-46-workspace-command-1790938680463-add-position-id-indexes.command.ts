@@ -147,6 +147,22 @@ export class AddPositionIdIndexesCommand extends ProvisionedWorkspaceCommandRunn
       return;
     }
 
+    // Dropped concurrently first so the metadata migration's DROP INDEX IF
+    // EXISTS finds nothing and takes no lock; this also covers indexes left
+    // by an up interrupted before its metadata sync
+    await this.forEachIndex({
+      dataSource,
+      workspaceId,
+      indexes: positionIdIndexes,
+      apply: ({ queryRunner, schemaName, index }) =>
+        this.workspaceSchemaManagerService.indexManager.dropIndex({
+          queryRunner,
+          schemaName,
+          indexName: index.name,
+          concurrently: true,
+        }),
+    });
+
     for (const [
       applicationUniversalIdentifier,
       applicationIndexes,
@@ -160,21 +176,6 @@ export class AddPositionIdIndexesCommand extends ProvisionedWorkspaceCommandRunn
         flatEntityToDelete: applicationIndexes,
       });
     }
-
-    // An up interrupted between the build and the metadata sync leaves indexes
-    // the metadata migration does not know about
-    await this.forEachIndex({
-      dataSource,
-      workspaceId,
-      indexes: positionIdIndexes,
-      apply: ({ queryRunner, schemaName, index }) =>
-        this.workspaceSchemaManagerService.indexManager.dropIndex({
-          queryRunner,
-          schemaName,
-          indexName: index.name,
-          concurrently: true,
-        }),
-    });
   }
 
   private async loadPositionIdIndexes(workspaceId: string) {
