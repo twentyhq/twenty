@@ -31,6 +31,7 @@ import { AuthApplication } from 'src/engine/decorators/auth/auth-application.dec
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { hasSettingsPermission } from 'src/engine/guards/utils/has-settings-permission.util';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
@@ -375,7 +376,10 @@ export class RoleResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders; req: RawAuthContext },
   ): Promise<FlatWorkspaceMember[]> {
-    await this.assertHasRolesPermission(workspace.id, context.req);
+    await this.assertHasRolesPermission({
+      workspace,
+      authContext: context.req,
+    });
 
     return context.loaders.workspaceMembersByRoleIdLoader.load({
       workspaceId: workspace.id,
@@ -389,7 +393,10 @@ export class RoleResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders; req: RawAuthContext },
   ): Promise<AgentDTO[]> {
-    await this.assertHasRolesPermission(workspace.id, context.req);
+    await this.assertHasRolesPermission({
+      workspace,
+      authContext: context.req,
+    });
 
     return context.loaders.agentsByRoleIdLoader.load({
       workspaceId: workspace.id,
@@ -403,7 +410,10 @@ export class RoleResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders; req: RawAuthContext },
   ): Promise<ApiKeyForRoleDTO[]> {
-    await this.assertHasRolesPermission(workspace.id, context.req);
+    await this.assertHasRolesPermission({
+      workspace,
+      authContext: context.req,
+    });
 
     return context.loaders.apiKeysByRoleIdLoader.load({
       workspaceId: workspace.id,
@@ -421,7 +431,10 @@ export class RoleResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders; req: RawAuthContext },
   ): Promise<RowLevelPermissionPredicateDTO[]> {
-    await this.assertHasRolesPermission(workspace.id, context.req);
+    await this.assertHasRolesPermission({
+      workspace,
+      authContext: context.req,
+    });
 
     const { rowLevelPermissionPredicates } =
       await context.loaders.rowLevelPermissionsByRoleIdLoader.load({
@@ -442,7 +455,10 @@ export class RoleResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders; req: RawAuthContext },
   ): Promise<RowLevelPermissionPredicateGroupDTO[]> {
-    await this.assertHasRolesPermission(workspace.id, context.req);
+    await this.assertHasRolesPermission({
+      workspace,
+      authContext: context.req,
+    });
 
     const { rowLevelPermissionPredicateGroups } =
       await context.loaders.rowLevelPermissionsByRoleIdLoader.load({
@@ -454,18 +470,19 @@ export class RoleResolver {
   }
 
   // Field resolvers skip class-level guards, and Role is reachable outside getRoles (e.g. currentWorkspace.defaultRole)
-  private async assertHasRolesPermission(
-    workspaceId: string,
-    { userWorkspaceId, apiKey, application }: RawAuthContext,
-  ): Promise<void> {
-    const hasRolesPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        workspaceId,
-        userWorkspaceId,
-        apiKeyId: apiKey?.id,
-        applicationId: application?.id,
-        setting: PermissionFlagType.ROLES,
-      });
+  private async assertHasRolesPermission({
+    workspace,
+    authContext,
+  }: {
+    workspace: WorkspaceEntity;
+    authContext: RawAuthContext;
+  }): Promise<void> {
+    const hasRolesPermission = await hasSettingsPermission({
+      permissionsService: this.permissionsService,
+      workspace,
+      authContext,
+      setting: PermissionFlagType.ROLES,
+    });
 
     if (!hasRolesPermission) {
       permissionGraphqlApiExceptionHandler(
