@@ -12,8 +12,6 @@ import { type ValidationRuleHelperItem } from '@/validation-rules/types/Validati
 import { getValidationRuleHelperItemIcon } from '@/validation-rules/utils/getValidationRuleHelperItemIcon';
 
 const StyledPanel = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
   display: grid;
   font-size: ${themeCssVariables.font.size.md};
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -26,7 +24,7 @@ const StyledList = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[4]};
 `;
 
 const StyledEmpty = styled.div`
