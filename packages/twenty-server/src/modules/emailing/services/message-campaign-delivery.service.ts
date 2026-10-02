@@ -188,26 +188,21 @@ export class MessageCampaignDeliveryService {
     campaignId: string;
     messageId: string;
   }): Promise<void> {
-    const { generatedMaps: failedDeliveries } = await this.workspaceOrmManager
+    const { affected: failedDeliveryCount } = await this.workspaceOrmManager
       .getRepository(
         CampaignDeliveryWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       )
-      .createQueryBuilder()
-      .where({
-        id: messageId,
-        state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
-      })
-      .update()
-      .set({
-        state: CAMPAIGN_DELIVERY_STATE.FAILED,
-        failureReason: CAMPAIGN_FAILURE_REASON.RATE_LIMITED,
-      })
-      .returning(['id'])
-      .execute();
+      .update(
+        { id: messageId, state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES) },
+        {
+          state: CAMPAIGN_DELIVERY_STATE.FAILED,
+          failureReason: CAMPAIGN_FAILURE_REASON.RATE_LIMITED,
+        },
+      );
 
-    if (failedDeliveries.length === 1) {
+    if (failedDeliveryCount === 1) {
       this.logger.warn(
         `Campaign ${campaignId} of workspace ${workspaceId} gave up on message ${messageId} after ${SEND_SLOT_RETRY.attemptLimit} refused send slots`,
       );
@@ -483,27 +478,22 @@ export class MessageCampaignDeliveryService {
   }): Promise<string | null> {
     const claimToken = v4();
 
-    const { generatedMaps: claimedDeliveries } = await this.workspaceOrmManager
+    const { affected: claimedDeliveryCount } = await this.workspaceOrmManager
       .getRepository(
         CampaignDeliveryWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       )
-      .createQueryBuilder()
-      .where({
-        id: messageId,
-        state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
-      })
-      .update()
-      .set({
-        state: CAMPAIGN_DELIVERY_STATE.SENDING,
-        claimToken,
-        claimExpiresAt: new Date(Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS),
-      })
-      .returning(['id'])
-      .execute();
+      .update(
+        { id: messageId, state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES) },
+        {
+          state: CAMPAIGN_DELIVERY_STATE.SENDING,
+          claimToken,
+          claimExpiresAt: new Date(Date.now() + CAMPAIGN_DELIVERY_CLAIM_TTL_MS),
+        },
+      );
 
-    return claimedDeliveries.length === 1 ? claimToken : null;
+    return claimedDeliveryCount === 1 ? claimToken : null;
   }
 
   private async settleClaimedDelivery({
@@ -524,19 +514,17 @@ export class MessageCampaignDeliveryService {
       >
     >;
   }): Promise<number> {
-    const { generatedMaps: settledDeliveries } = await this.workspaceOrmManager
+    const { affected: settledDeliveryCount } = await this.workspaceOrmManager
       .getRepository(
         CampaignDeliveryWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       )
-      .createQueryBuilder()
-      .where({ id: messageId, claimToken })
-      .update()
-      .set({ ...update, claimToken: null, claimExpiresAt: null })
-      .returning(['id'])
-      .execute();
+      .update(
+        { id: messageId, claimToken },
+        { ...update, claimToken: null, claimExpiresAt: null },
+      );
 
-    return settledDeliveries.length;
+    return settledDeliveryCount ?? 0;
   }
 }
