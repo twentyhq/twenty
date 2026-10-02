@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
+import * as Sentry from '@sentry/node';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ToolSet, zodSchema } from 'ai';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
@@ -401,17 +402,16 @@ export class McpProtocolService {
         ? buildApiKeyAuthContext({ workspace, apiKey })
         : undefined;
 
-      const { toolSet, toolContext } = await this.buildMcpToolSet(
-        workspace,
-        roleId,
-        rolePermissionConfig,
-        {
-          authContext,
-          application,
-          userId,
-          userWorkspaceId,
-          apiKey,
-        },
+      const { toolSet, toolContext } = await Sentry.startSpan(
+        { name: 'mcp build tool set', op: 'mcp.tools', onlyIfParent: true },
+        () =>
+          this.buildMcpToolSet(workspace, roleId, rolePermissionConfig, {
+            authContext,
+            application,
+            userId,
+            userWorkspaceId,
+            apiKey,
+          }),
       );
 
       if (method === 'tools/call') {
@@ -454,9 +454,16 @@ export class McpProtocolService {
           ...nativeTools
         } = toolSet;
 
-        const registryTools = await this.toolRegistry.getToolsByCategories(
-          toolContext,
-          { excludeTools: [...MCP_EXCLUDED_TOOL_NAMES] },
+        const registryTools = await Sentry.startSpan(
+          {
+            name: 'mcp list registry tools',
+            op: 'mcp.tools',
+            onlyIfParent: true,
+          },
+          () =>
+            this.toolRegistry.getToolsByCategories(toolContext, {
+              excludeTools: [...MCP_EXCLUDED_TOOL_NAMES],
+            }),
         );
 
         const annotatedRegistryTools = Object.fromEntries(
