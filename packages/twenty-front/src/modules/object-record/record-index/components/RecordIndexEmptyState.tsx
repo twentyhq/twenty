@@ -12,11 +12,11 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { IconFilterOff, IconPlus, IconSettings } from 'twenty-ui/icon';
-import { type ObjectPermission } from '~/generated-metadata/graphql';
+import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsWithObjectMetadataId';
 
 type RecordIndexEmptyStateProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
-  objectPermissions: ObjectPermission;
+  objectPermissions: ObjectPermissionsWithObjectMetadataId;
   isSoftDeleteFilterActive: boolean;
   onRemoveSoftDeleteFilter?: () => void;
   onGoToSettings?: () => void;
