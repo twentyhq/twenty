@@ -1,7 +1,7 @@
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
-import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { isRecordCalendarReadOnlyComponentState } from '@/object-record/record-calendar/states/isRecordCalendarReadOnlyComponentState';
 import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
@@ -31,10 +31,10 @@ export const useIsRecordCalendarCardDragDisabled = (recordId: string) => {
   const calendarFieldIsReadOnly =
     calendarFieldMetadataItem?.isUIEditable === false ||
     (isDefined(calendarFieldMetadataItem) &&
-      isFieldMetadataReadOnlyByPermissions({
+      !getFieldPermissions({
         objectPermissions,
         fieldMetadataId: calendarFieldMetadataItem.id,
-      }));
+      }).canUpdateField);
 
   return (
     isRecordCalendarReadOnly || recordIsReadOnly || calendarFieldIsReadOnly

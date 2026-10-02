@@ -43,14 +43,10 @@ export class AgentHistoryTransactionService {
                   );
                 },
                 update: async (name, where, values) => {
-                  const result = await getRepository(name)
-                    .createQueryBuilder()
-                    .withDeleted()
-                    .where(where)
-                    .update()
-                    .set(values)
-                    .returning(['id'])
-                    .execute();
+                  const result = await getRepository(name).update(
+                    where,
+                    values,
+                  );
 
                   return result.generatedMaps.length;
                 },

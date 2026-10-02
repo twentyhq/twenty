@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -14,6 +14,8 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 
 @Injectable()
 export class AgentChatStreamRecoveryService {
+  private readonly logger = new Logger(AgentChatStreamRecoveryService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -61,6 +63,10 @@ export class AgentChatStreamRecoveryService {
         error_code: interruptedError.code,
       },
     });
+
+    this.logger.error(
+      `[AI_CHAT_TURN_FAILED] failurePhase=interrupted, threadId=${thread.id}, workspaceId=${workspaceId}: stream ${thread.activeStreamId} stopped sending heartbeats`,
+    );
 
     await this.eventPublisherService.resetStreamState(thread.id);
     await this.eventPublisherService

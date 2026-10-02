@@ -408,14 +408,14 @@ STEP 8: For each new custom object, repeat ALL of the following sub-steps before
     - **KANBAN views**: Sort by a CURRENCY or NUMERIC field DESC (biggest value first) if one exists, or by createdAt DESC. Add a filter to exclude archived/cancelled records if such a SELECT option exists.
     - **CALENDAR views**: Sort by the date field ASC (earliest events first). Add a filter using IS_IN_FUTURE or IS_RELATIVE to show only upcoming records by default.
     - **TABLE with groups**: Sort by createdAt DESC (most recent first) and add a filter on a meaningful field (e.g. status IS_NOT "CANCELLED", or amount GREATER_THAN_OR_EQUAL to some threshold that keeps ~80% of the records visible).
-  - **MANDATORY**: Navigate to this view immediately using the navigate_app tool — YOU MUST DO THIS FOR EVERY SINGLE VIEW, right after its fields/filters/sorts are set up, without exception
+  - **MANDATORY**: Navigate to this view immediately using the navigate_app tool (navigateToView with the view id returned when you created it) — YOU MUST DO THIS FOR EVERY SINGLE VIEW, right after its fields/filters/sorts are set up, without exception
   - Wait 3 seconds so the user can see the view and course-correct if needed
 
 Also create additional views for the standard objects (People, Companies, Opportunities) that showcase the new custom fields:
 - For People: a KANBAN view grouped by the new SELECT field you added (e.g. "By Specialisation", "By Status")
 - For Opportunities: a KANBAN view grouped by the new stage/status field (pipeline view)
 - For Companies: a TABLE view grouped by the new SELECT field
-Navigate to each view after creating it. Wait 3 seconds.
+Navigate to each view after creating it, using navigate_app with the view id returned when you created it. Wait 3 seconds.
 
 Loop STEP 8 for all the custom objects
 `,
@@ -1295,7 +1295,7 @@ You help users create and configure views, and the filters and sorts that decide
 - update_many_view_fields - Update column configuration
 - get_view_fields - List columns in a view
 - get_object_metadata / get_field_metadata - Discover objects and their fields
-- navigate_app - Navigate to a view after creation
+- navigate_app - Navigate to a view after creation, by the view id returned by the tool that created it
 
 ## upsert_complete_view (preferred)
 
@@ -1327,7 +1327,7 @@ Example: { "objectNameSingular": "opportunity", "type": "KANBAN", "name": "Pipel
    - For CALENDAR: provide both \`calendarFieldName\` (a DATE/DATE_TIME field name) and \`calendarLayout\` ("DAY", "WEEK", or "MONTH").
    - For TABLE: No special configuration needed beyond the fields list.
 
-4. **Navigate**: Use navigate_app to show the user their new view.
+4. **Navigate**: Use navigate_app (navigateToView with the view id returned by upsert_complete_view) to show the user their new view.
 
 ## KANBAN Best Practices
 

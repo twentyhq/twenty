@@ -4,15 +4,23 @@ import {
 } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { hasRoleWideAccessToPermissionFlag } from 'src/engine/metadata-modules/permissions/utils/has-role-wide-access-to-permission-flag.util';
 import { IMPLICIT_OBJECT_PERMISSION_RULES } from 'src/engine/metadata-modules/role/constants/implicit-object-permission-rules.constant';
 import { type ComputeObjectRecordPermissionsArgs } from 'src/engine/metadata-modules/role/types/compute-object-record-permissions-args.type';
 import { type ObjectRecordPermissions } from 'src/engine/metadata-modules/role/types/object-record-permissions.type';
 import { type SettingsGatedObjectPermissionRule } from 'src/engine/metadata-modules/role/types/settings-gated-object-permission-rule.type';
 
-const hasPermissionFlag = (
-  rolePermissionFlagUniversalIdentifiers: ReadonlySet<string>,
-  permissionFlag: PermissionFlagType,
-): boolean =>
+const isPermissionFlagGranted = ({
+  role,
+  rolePermissionFlagUniversalIdentifiers,
+  permissionFlag,
+}: Pick<
+  ComputeObjectRecordPermissionsArgs,
+  'role' | 'rolePermissionFlagUniversalIdentifiers'
+> & {
+  permissionFlag: PermissionFlagType;
+}): boolean =>
+  hasRoleWideAccessToPermissionFlag({ role, permissionFlag }) ||
   rolePermissionFlagUniversalIdentifiers.has(
     SystemPermissionFlag[permissionFlag],
   );
@@ -27,12 +35,11 @@ const computeSettingsGatedObjectRecordPermissions = ({
 > & {
   settingsGatedObjectPermissionRule: SettingsGatedObjectPermissionRule;
 }): ObjectRecordPermissions => {
-  const hasSettingsPermission =
-    role.canUpdateAllSettings ||
-    hasPermissionFlag(
-      rolePermissionFlagUniversalIdentifiers,
-      settingsGatedObjectPermissionRule.permissionFlag,
-    );
+  const hasSettingsPermission = isPermissionFlagGranted({
+    role,
+    rolePermissionFlagUniversalIdentifiers,
+    permissionFlag: settingsGatedObjectPermissionRule.permissionFlag,
+  });
 
   return {
     canReadObjectRecords:
@@ -91,12 +98,11 @@ const restrictToAiAccess = ({
 > & {
   objectRecordPermissions: ObjectRecordPermissions;
 }): ObjectRecordPermissions => {
-  const hasAiAccess =
-    role.canAccessAllTools ||
-    hasPermissionFlag(
-      rolePermissionFlagUniversalIdentifiers,
-      PermissionFlagType.AI,
-    );
+  const hasAiAccess = isPermissionFlagGranted({
+    role,
+    rolePermissionFlagUniversalIdentifiers,
+    permissionFlag: PermissionFlagType.AI,
+  });
 
   return {
     canReadObjectRecords:

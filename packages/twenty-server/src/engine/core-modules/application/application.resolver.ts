@@ -16,6 +16,7 @@ import {
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
@@ -122,8 +123,10 @@ export class ApplicationResolver {
     callingApplication: FlatApplication | undefined,
   ): ApplicationVariableEntity[] | undefined {
     if (
-      isDefined(callingApplication) &&
-      callingApplication.id !== application.id
+      !canCallerReachApplication({
+        callingApplication,
+        applicationId: application.id,
+      })
     ) {
       throw new ForbiddenError(
         new ApplicationException(

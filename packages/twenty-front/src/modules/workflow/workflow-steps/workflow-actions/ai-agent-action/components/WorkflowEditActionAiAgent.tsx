@@ -26,7 +26,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   FindOneAgentDocument,
-  GetRolesDocument,
+  GetRoleDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
@@ -121,16 +121,18 @@ export const WorkflowEditActionAiAgent = ({
     (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
 
   const navigateSettings = useNavigateSettings();
-  const { data: rolesData } = useQuery(GetRolesDocument);
+  const agentRoleId = workflowAiAgentActionAgent?.roleId;
+  const { data: roleData } = useQuery(GetRoleDocument, {
+    variables: { id: agentRoleId ?? '' },
+    skip: !isDefined(agentRoleId),
+  });
 
   const [
     workflowAiAgentPermissionsIsAddingPermission,
     setWorkflowAiAgentPermissionsIsAddingPermission,
   ] = useAtomState(workflowAiAgentPermissionsIsAddingPermissionState);
 
-  const role = rolesData?.getRoles.find(
-    (item) => item.id === workflowAiAgentActionAgent?.roleId,
-  );
+  const role = roleData?.getRole;
 
   const isCurrentAgentLoaded =
     isDefined(workflowAiAgentActionAgent) &&
