@@ -1,0 +1,66 @@
+import { render } from '@testing-library/react';
+import { createStore, Provider } from 'jotai';
+import { MemoryRouter } from 'react-router-dom';
+
+import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
+
+const openAskAiPage = jest.fn();
+const onContinueChatFromFullWidth = jest.fn();
+
+jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
+  useOpenAskAiPageInSidePanel: () => ({ openAskAiPage }),
+}));
+
+const leaveChatPageFor = (pathname: string) => {
+  const store = createStore();
+
+  store.set(shouldContinueAiChatInSidePanelState.atom, true);
+  store.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+
+  render(
+    <Provider store={store}>
+      <MemoryRouter initialEntries={[pathname]}>
+        <SidePanelAskAiHandoffEffect
+          onContinueChatFromFullWidth={onContinueChatFromFullWidth}
+        />
+      </MemoryRouter>
+    </Provider>,
+  );
+
+  return store;
+};
+
+describe('SidePanelAskAiHandoffEffect', () => {
+  beforeEach(() => {
+    openAskAiPage.mockClear();
+    onContinueChatFromFullWidth.mockClear();
+  });
+
+  it('continues the chat in the side panel when leaving it for a record', () => {
+    leaveChatPageFor('/objects/companies');
+
+    expect(openAskAiPage).toHaveBeenCalledWith({ resetNavigationStack: true });
+    expect(onContinueChatFromFullWidth).toHaveBeenCalled();
+  });
+
+  it('closes the chat when leaving it for settings', () => {
+    const store = leaveChatPageFor('/settings/profile');
+
+    expect(openAskAiPage).not.toHaveBeenCalled();
+    expect(onContinueChatFromFullWidth).not.toHaveBeenCalled();
+    expect(store.get(shouldContinueAiChatInSidePanelState.atom)).toBe(false);
+  });
+
+  it.each(['/inbox', '/inbox/20202020-0000-4000-8000-000000000001'])(
+    'leaves the chat to the page it moves to on %s',
+    (pathname) => {
+      const store = leaveChatPageFor(pathname);
+
+      expect(openAskAiPage).not.toHaveBeenCalled();
+      expect(store.get(shouldContinueAiChatInSidePanelState.atom)).toBe(true);
+      expect(store.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(false);
+    },
+  );
+});

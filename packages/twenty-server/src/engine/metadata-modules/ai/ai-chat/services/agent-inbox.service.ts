@@ -120,10 +120,10 @@ export class AgentInboxService {
     );
 
     if (isWritten) {
-      await this.threadService.notifyThreadActivityUpdated({
-        threadId,
-        workspaceMemberId: input.workspaceMemberId,
+      await this.threadService.recordThreadActivity({
         workspaceId,
+        threadId,
+        text: input.text,
       });
     }
 

@@ -5,12 +5,12 @@ const tableName = 'featureFlag';
 
 const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: true,
-  [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: false,
+  [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: true,
   [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: false,
   [FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED]: true,
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: true,
   [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: true,
-  [FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED]: false,
+  [FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED]: true,
   [FeatureFlagKey.IS_VALIDATION_RULES_ENABLED]: true,
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: false,
   [FeatureFlagKey.IS_OBJECT_ACCESS_VIEW_ENABLED]: false,
