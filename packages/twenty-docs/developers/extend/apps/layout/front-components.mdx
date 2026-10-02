@@ -944,7 +944,7 @@ A `ref` gives you a sandbox element, not an `HTMLElement`.
 | `canvas` | Renders nothing, no error | SVG, or draw offscreen and show the result in an `img` element |
 | `createPortal(node, document.body)` | Renders nothing, while `isConnected` reports success | Overlays inline with `position: absolute`, or pass the library your own container element |
 
-`element.classList` works, backed by the `class` attribute: `add`, `remove`, `toggle`, `replace`, `contains`, `item`, `length`, `value` and iteration all behave as they do in a browser, and `className` stays in sync.
+`element.classList` works, backed by the `class` attribute: `add`, `remove`, `toggle`, `replace`, `contains`, `item`, `length`, `value` and iteration all behave as they do in a browser, and `className` stays in sync. `element.dataset` works the same way, backed by the `data-*` attributes; write `data-*` names in lowercase, since the sandbox keeps attribute names as written instead of lowercasing them like a browser.
 
 The portal gap is why Radix, Headless UI, MUI and react-select popovers render nothing by default. Most accept a container prop; point it at an element you rendered.
 
@@ -954,7 +954,13 @@ Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll
 
 Handlers receive typed events built from the page event, `PointerEvent`, `MouseEvent`, `KeyboardEvent`, `InputEvent`, `WheelEvent` or `FocusEvent`, and those constructors exist in the sandbox for `dispatchEvent()`. Each forwarded event also carries React's synthetic event surface (`nativeEvent`, `isDefaultPrevented()`, `isPropagationStopped()`, `persist()`), so code written against React events keeps working even though the sandbox hands the event object to your handler directly.
 
-`document.addEventListener()` and `window.addEventListener()` register without error and never fire, which is why a drag stops as soon as the pointer leaves the element it started on. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
+A page event crosses when the element the user interacted with, or one of its ancestors in your component, has a handler for that event type. It crosses once and then propagates inside the sandbox as it does on the page: `event.target` is the element the user interacted with, `currentTarget` is the element whose handler is running, `stopPropagation()` keeps ancestors' handlers from running, and `relatedTarget` points to the sandbox element focus or the pointer moved from or to, or is `null` when that element is outside your component. Like in React, `onFocus` and `onBlur` also run for focus changes inside the element, and `onClickCapture` and the other capture handlers run during the capture phase.
+
+Handlers a library adds with `React.cloneElement`, such as the ones behind Base UI's `render` prop, run after the element's own handlers instead of replacing them, so passing `onClick: undefined` to `cloneElement` does not remove the element's handler. A handler on a Base UI `render` element can still call `event.preventBaseUIHandler()` to skip Base UI's own handler.
+
+`event.target.value` and `checked` reflect the control once the browser has applied the user's change: in `input`, `change`, `click`, `blur` and `focusout` handlers, and in `keyup` handlers for `value`. In `keydown`, `beforeinput` and pointer handlers they still hold the value from the last of those events, so read live values from a controlled input or an `onChange` handler.
+
+`document` listeners receive the events that cross from your component, but nothing that happens elsewhere on the page, so to catch shortcuts with `document.addEventListener('keydown', ...)`, put an `onKeyDown` on an element that wraps your component. `window` listeners only receive `error` and `unhandledrejection`. Pointer moves only cross over elements that have a move handler, and pointer capture stays on the page, which is why a drag stops as soon as the pointer leaves those elements. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
 
 ### Attributes and styling
 

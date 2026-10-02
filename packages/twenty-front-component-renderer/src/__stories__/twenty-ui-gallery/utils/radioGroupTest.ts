@@ -2,5 +2,4 @@ import { createRadioGroupTest } from '@/__stories__/twenty-ui-gallery/utils/crea
 
 export const radioGroupTest = createRadioGroupTest({
   optionName: 'Daily',
-  clickActivatesOption: true,
 });

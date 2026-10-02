@@ -8,15 +8,18 @@ type FrontComponentStory = StoryObj<typeof FrontComponentRenderer>;
 type RunFrontComponentStoryParams = {
   frontComponentBundleName: string;
   play: NonNullable<FrontComponentStory['play']>;
+  runtime?: 'react' | 'preact';
 };
 
 export const runFrontComponentStory = ({
   frontComponentBundleName,
   play,
+  runtime = 'react',
 }: RunFrontComponentStoryParams): FrontComponentStory => ({
   args: {
     componentUrl: getBuiltStoryComponentPathForRender(
       `${frontComponentBundleName}.front-component`,
+      runtime,
     ),
     executionContext: {
       frontComponentId: frontComponentBundleName,

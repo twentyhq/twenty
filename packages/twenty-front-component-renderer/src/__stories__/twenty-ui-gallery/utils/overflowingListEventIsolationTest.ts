@@ -1,11 +1,16 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
-import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
+import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { SANDBOX_ROUND_TRIP_SETTLE_DELAY } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
-export const overflowingListEventIsolationFailureTest: TwentyUiGalleryPlayFunction =
+const waitForSandboxRoundTrip = () =>
+  new Promise((resolve) =>
+    setTimeout(resolve, SANDBOX_ROUND_TRIP_SETTLE_DELAY),
+  );
+
+export const overflowingListEventIsolationTest: TwentyUiGalleryPlayFunction =
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
@@ -16,17 +21,14 @@ export const overflowingListEventIsolationFailureTest: TwentyUiGalleryPlayFuncti
     });
     trigger.focus();
     await userEvent.keyboard('{Enter}');
+
     const popup = await page.findByRole('dialog', { name: 'Show all targets' });
     const lastTarget = within(popup).getByRole('button', { name: 'Delta' });
     await waitFor(() => expect(lastTarget).toBeVisible());
-    await waitFor(() =>
-      expect(
-        Number(canvas.getByLabelText('Host activations').textContent),
-      ).toBeGreaterThan(0),
-    );
-    const hostActivationsBeforeSelection = Number(
-      canvas.getByLabelText('Host activations').textContent,
-    );
+    expect(trigger).toHaveAttribute('aria-expanded', 'true');
+
+    await waitForSandboxRoundTrip();
+    expect(canvas.getByLabelText('Host activations')).toHaveTextContent('0');
 
     await userEvent.click(lastTarget);
     await waitFor(() =>
@@ -34,16 +36,8 @@ export const overflowingListEventIsolationFailureTest: TwentyUiGalleryPlayFuncti
         'Delta',
       ),
     );
-    await waitFor(() =>
-      expect(
-        Number(canvas.getByLabelText('Host activations').textContent),
-      ).toBe(hostActivationsBeforeSelection),
-    );
-    await expectSandboxErrors({
-      requiredErrors: [SANDBOX_ERROR_PATTERNS.NATIVE_EVENT_DEFAULT_PREVENTED],
-      allowedAdditionalErrors: [
-        SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH,
-        SANDBOX_ERROR_PATTERNS.MISSING_EVENT_CONSTRUCTOR,
-      ],
-    });
+
+    await waitForSandboxRoundTrip();
+    expect(canvas.getByLabelText('Host activations')).toHaveTextContent('0');
+    expect(errorHandler).not.toHaveBeenCalled();
   };

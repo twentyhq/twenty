@@ -10,6 +10,7 @@ import { expectEventLogged } from '@/__stories__/shared/test-utils/matchers/expe
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { expectFrontComponentValue } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentValue';
 import { runFrontComponentStory } from '@/__stories__/shared/test-utils/runFrontComponentStory';
+import { SANDBOX_ROUND_TRIP_SETTLE_DELAY } from '@/__stories__/shared/test-utils/timeouts';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/HtmlTag/Grouping/Div/Events',
@@ -121,6 +122,99 @@ export const FocusInOut: Story = runFrontComponentStory({
     subject.blur();
     await expectEventLogged({ canvas, matcher: { type: 'focusout' } });
   },
+});
+
+const playPropagation: NonNullable<Story['play']> = async ({
+  canvasElement,
+}) => {
+  const canvas = within(canvasElement);
+
+  await expectFrontComponentMounted(canvas);
+
+  await userEvent.click(await canvas.findByTestId('label'));
+  await waitFor(() =>
+    expect(canvas.getByTestId('container-click')).toHaveTextContent(
+      'propagation-label in propagation-container',
+    ),
+  );
+  await waitFor(() =>
+    expect(canvas.getByTestId('document-click')).toHaveTextContent(
+      'propagation-label',
+    ),
+  );
+
+  await userEvent.click(canvas.getByTestId('isolated-button'));
+  await waitFor(() =>
+    expect(canvas.getByTestId('isolated-click-count')).toHaveTextContent('1'),
+  );
+  await new Promise((resolve) =>
+    setTimeout(resolve, SANDBOX_ROUND_TRIP_SETTLE_DELAY),
+  );
+  expect(canvas.getByTestId('container-click-count')).toHaveTextContent('1');
+  expect(canvas.getByTestId('document-click')).toHaveTextContent(
+    'propagation-label',
+  );
+
+  await userEvent.click(canvas.getByTestId('first-field'));
+  await userEvent.click(canvas.getByTestId('second-field'));
+  await waitFor(() =>
+    expect(canvas.getByTestId('blur-related-target')).toHaveTextContent(
+      'propagation-second-field',
+    ),
+  );
+};
+
+export const Propagation: Story = runFrontComponentStory({
+  frontComponentBundleName: 'div-propagation',
+  play: playPropagation,
+});
+
+export const PropagationPreact: Story = runFrontComponentStory({
+  frontComponentBundleName: 'div-propagation',
+  runtime: 'preact',
+  play: playPropagation,
+});
+
+const playCloneHandlers: NonNullable<Story['play']> = async ({
+  canvasElement,
+}) => {
+  const canvas = within(canvasElement);
+
+  await expectFrontComponentMounted(canvas);
+
+  const subject = await canvas.findByTestId('subject');
+
+  await userEvent.click(subject);
+  await expectFrontComponentValue({ canvas, expected: 'capture,jsx,clone' });
+
+  await userEvent.click(subject);
+  await expectFrontComponentValue({
+    canvas,
+    expected: 'capture,jsx,clone,capture,jsx,clone',
+  });
+
+  const saveOnce = canvas.getByTestId('save-once');
+
+  await userEvent.click(saveOnce);
+  await waitFor(() =>
+    expect(canvas.getByTestId('save-count')).toHaveTextContent('1'),
+  );
+  await userEvent.click(saveOnce);
+  await new Promise((resolve) =>
+    setTimeout(resolve, SANDBOX_ROUND_TRIP_SETTLE_DELAY),
+  );
+  expect(canvas.getByTestId('save-count')).toHaveTextContent('1');
+};
+
+export const CloneHandlers: Story = runFrontComponentStory({
+  frontComponentBundleName: 'div-clone-handlers',
+  play: playCloneHandlers,
+});
+
+export const CloneHandlersPreact: Story = runFrontComponentStory({
+  frontComponentBundleName: 'div-clone-handlers',
+  runtime: 'preact',
+  play: playCloneHandlers,
 });
 
 export const PointerMove: Story = runFrontComponentStory({

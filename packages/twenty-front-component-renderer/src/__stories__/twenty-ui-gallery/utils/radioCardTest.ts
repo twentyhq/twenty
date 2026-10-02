@@ -2,5 +2,4 @@ import { createRadioGroupTest } from '@/__stories__/twenty-ui-gallery/utils/crea
 
 export const radioCardTest = createRadioGroupTest({
   optionName: 'Pro plan',
-  clickActivatesOption: true,
 });
