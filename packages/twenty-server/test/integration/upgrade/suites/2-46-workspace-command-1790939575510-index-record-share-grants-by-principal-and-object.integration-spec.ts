@@ -2,11 +2,11 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { In } from 'typeorm';
 
-import { type IndexRecordShareGrantsByPrincipalAndObjectCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790924660152-index-record-share-grants-by-principal-and-object.command';
+import { type IndexRecordShareGrantsByPrincipalAndObjectCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790939575510-index-record-share-grants-by-principal-and-object.command';
 import {
   LEGACY_RECORD_SHARE_INDEXES,
   PRINCIPAL_ID_OBJECT_METADATA_ID_INDEX,
-} from 'src/database/commands/upgrade-version-command/2-45/utils/build-record-share-index-sync-plan-or-throw.util';
+} from 'src/database/commands/upgrade-version-command/2-46/utils/build-record-share-index-sync-plan-or-throw.util';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -21,7 +21,7 @@ const LEGACY_INDEX_UNIVERSAL_IDENTIFIERS = LEGACY_RECORD_SHARE_INDEXES.map(
   ({ universalIdentifier }) => universalIdentifier,
 );
 
-describe('2-45 workspace command 1790924660152 - IndexRecordShareGrantsByPrincipalAndObjectCommand (integration)', () => {
+describe('2-46 workspace command 1790939575510 - IndexRecordShareGrantsByPrincipalAndObjectCommand (integration)', () => {
   let command: IndexRecordShareGrantsByPrincipalAndObjectCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
 
@@ -104,14 +104,14 @@ describe('2-45 workspace command 1790924660152 - IndexRecordShareGrantsByPrincip
     await run('up');
   });
 
-  it('is registered in the 2.45 bundle', () => {
+  it('is registered in the 2.46 bundle', () => {
     const registry = getAppProviderByClassName<UpgradeCommandRegistryService>(
       'UpgradeCommandRegistryService',
     );
 
-    expect(registry.getBundleForVersion('2.45.0').workspaceCommands).toEqual(
+    expect(registry.getBundleForVersion('2.46.0').workspaceCommands).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ command, timestamp: 1790924660152 }),
+        expect.objectContaining({ command, timestamp: 1790939575510 }),
       ]),
     );
   });

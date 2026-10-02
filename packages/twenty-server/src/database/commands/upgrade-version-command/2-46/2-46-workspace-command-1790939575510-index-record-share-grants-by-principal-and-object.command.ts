@@ -12,7 +12,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import {
   type RecordShareIndexToCreate,
   buildRecordShareIndexSyncPlanOrThrow,
-} from 'src/database/commands/upgrade-version-command/2-45/utils/build-record-share-index-sync-plan-or-throw.util';
+} from 'src/database/commands/upgrade-version-command/2-46/utils/build-record-share-index-sync-plan-or-throw.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -27,9 +27,9 @@ import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-mana
 // indexes. New indexes are built CONCURRENTLY outside the migration
 // transaction first, so a large recordShare table is not write-locked for the
 // whole build; the migration then finds them through IF NOT EXISTS.
-@RegisteredWorkspaceCommand('2.45.0', 1790924660152)
+@RegisteredWorkspaceCommand('2.46.0', 1790939575510)
 @Command({
-  name: 'upgrade:2-45:index-record-share-grants-by-principal-and-object',
+  name: 'upgrade:2-46:index-record-share-grants-by-principal-and-object',
   description:
     'Replace the recordShare principalId and sourceId indexes with a (principalId, objectMetadataId) index serving the read gate',
 })

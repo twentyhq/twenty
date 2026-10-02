@@ -5,7 +5,7 @@ import {
   LEGACY_RECORD_SHARE_INDEXES,
   PRINCIPAL_ID_OBJECT_METADATA_ID_INDEX,
   buildRecordShareIndexSyncPlanOrThrow,
-} from 'src/database/commands/upgrade-version-command/2-45/utils/build-record-share-index-sync-plan-or-throw.util';
+} from 'src/database/commands/upgrade-version-command/2-46/utils/build-record-share-index-sync-plan-or-throw.util';
 import { FlatEntityMapsException } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
