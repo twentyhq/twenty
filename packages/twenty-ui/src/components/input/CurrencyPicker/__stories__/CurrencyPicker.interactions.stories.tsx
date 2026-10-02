@@ -10,6 +10,7 @@ import { openCurrencyPicker } from './openCurrencyPicker';
 const meta: Meta<typeof CurrencyPickerExample> = {
   title: 'UI/Input/CurrencyPicker/Interactions',
   component: CurrencyPickerExample,
+  render: (args) => <CurrencyPickerExample key={args.defaultValue} {...args} />,
   decorators: [ComponentDecorator],
   args: { onValueChange: fn() },
   parameters: {
@@ -263,7 +264,7 @@ export const IndependentInstances: Story = {
 export const OutsideDismissal: Story = {
   render: (args) => (
     <>
-      <CurrencyPickerExample {...args} />
+      <CurrencyPickerExample key={args.defaultValue} {...args} />
       <Button>Continue</Button>
     </>
   ),

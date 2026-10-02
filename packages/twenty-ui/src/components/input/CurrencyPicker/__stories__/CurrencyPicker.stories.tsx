@@ -9,6 +9,7 @@ import { openCurrencyPicker } from './openCurrencyPicker';
 const meta: Meta<typeof CurrencyPickerExample> = {
   title: 'UI/Input/CurrencyPicker',
   component: CurrencyPickerExample,
+  render: (args) => <CurrencyPickerExample key={args.defaultValue} {...args} />,
   decorators: [ComponentDecorator],
   parameters: {
     container: { width: 320, height: 340 },

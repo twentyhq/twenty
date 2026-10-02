@@ -18,7 +18,13 @@ const meta: Meta<typeof CurrencyPickerDropdownButton> = {
     selectedCurrencyCode: 'USD',
     onChange: onCurrencyChange,
   },
-  render: CurrencyPickerDropdownButtonExample,
+  render: ({ selectedCurrencyCode, onChange }) => (
+    <CurrencyPickerDropdownButtonExample
+      key={selectedCurrencyCode}
+      selectedCurrencyCode={selectedCurrencyCode}
+      onChange={onChange}
+    />
+  ),
 };
 
 export default meta;
