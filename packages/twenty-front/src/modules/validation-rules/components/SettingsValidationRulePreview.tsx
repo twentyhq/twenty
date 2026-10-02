@@ -185,7 +185,9 @@ export const SettingsValidationRulePreview = ({
               const fieldLabel = isDefined(editorField)
                 ? getValidationRuleEditorFieldChipLabel(editorField)
                 : path;
-              const FieldIcon = getIcon(editorField?.iconName);
+              const FieldIcon = isDefined(editorField)
+                ? getIcon(editorField.iconName)
+                : undefined;
               const formattedValue = formatValidationRulePreviewValue(
                 getValidationRulePreviewValue(record, path),
               );
@@ -193,10 +195,12 @@ export const SettingsValidationRulePreview = ({
               return (
                 <StyledFieldValue key={path}>
                   <StyledFieldLabel>
-                    <FieldIcon
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
-                    />
+                    {isDefined(FieldIcon) && (
+                      <FieldIcon
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.sm}
+                      />
+                    )}
                     <StyledFieldLabelText>{t`${fieldLabel}:`}</StyledFieldLabelText>
                   </StyledFieldLabel>
                   <StyledValue isEmpty={formattedValue.length === 0}>
