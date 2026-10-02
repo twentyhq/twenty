@@ -2104,11 +2104,11 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Ask OpenAI and Azure reasoning models for reasoning summaries in AI chat. OpenAI rejects these requests for organizations that are not verified.',
+      'Ask OpenAI and Azure reasoning models for reasoning summaries in AI chat. Disable it if your OpenAI organization is not verified, since OpenAI rejects these requests.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_OPENAI_REASONING_SUMMARY_ENABLED = false;
+  IS_OPENAI_REASONING_SUMMARY_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
