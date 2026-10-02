@@ -41,7 +41,7 @@ import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
-import { formatAgentChatTurnFailedLog } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-agent-chat-turn-failed-log.util';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import {
   AiException,
@@ -263,7 +263,6 @@ export class AgentChatStreamingService {
       this.recordEnqueueFailure({
         threadId,
         workspaceId: workspace.id,
-        streamId,
         model: modelId ?? 'unknown',
         error,
       });
@@ -365,7 +364,6 @@ export class AgentChatStreamingService {
       this.recordEnqueueFailure({
         threadId,
         workspaceId: workspace.id,
-        streamId,
         model: modelId,
         error,
       });
@@ -514,7 +512,6 @@ export class AgentChatStreamingService {
       this.recordEnqueueFailure({
         threadId,
         workspaceId: workspace.id,
-        streamId,
         model: modelId ?? 'unknown',
         error,
       });
@@ -740,8 +737,7 @@ export class AgentChatStreamingService {
       await this.releaseStreamClaim(threadId, workspaceId, streamId);
       this.recordEnqueueFailure({
         threadId,
-        workspaceId: workspaceId,
-        streamId,
+        workspaceId,
         model: 'unknown',
         error,
       });
@@ -799,38 +795,26 @@ export class AgentChatStreamingService {
   private recordEnqueueFailure({
     threadId,
     workspaceId,
-    streamId,
     model,
     error,
   }: {
     threadId: string;
     workspaceId: string;
-    streamId: string;
     model: string;
     error: unknown;
   }): void {
-    const streamError = mapErrorToStreamError(error);
-
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.AiChatTurnFailed,
       amount: 1,
       attributes: {
         model,
         failure_phase: 'enqueue',
-        error_code: streamError.code,
+        error_code: mapErrorToStreamError(error).code,
       },
     });
 
     this.logger.error(
-      formatAgentChatTurnFailedLog({
-        threadId,
-        workspaceId,
-        streamId,
-        model,
-        failurePhase: 'enqueue',
-        errorCode: streamError.code,
-        error,
-      }),
+      `[AI_CHAT_TURN_FAILED] failurePhase=enqueue, model=${model}, threadId=${threadId}, workspaceId=${workspaceId}: ${formatErrorWithCause(error)}`,
     );
   }
 

@@ -49,7 +49,7 @@ import {
   resolveSupersededTurnOutcome,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
-import { formatAgentChatTurnFailedLog } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-agent-chat-turn-failed-log.util';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
@@ -187,18 +187,19 @@ export class StreamAgentChatJob {
         turnModelId,
       );
     } catch (error) {
+      this.logger.error(
+        `[AI_CHAT_TURN_FAILED] failurePhase=execution, model=${turnModelId}, threadId=${data.threadId}, workspaceId=${data.workspaceId}: ${formatErrorWithCause(error)}`,
+      );
       const streamError = mapErrorToStreamError(error);
 
-      this.recordTurnOutcome({
-        outcome: {
+      this.recordTurnOutcome(
+        {
           kind: 'failed',
           failurePhase: 'execution',
           errorCode: streamError.code,
         },
         turnModelId,
-        data,
-        error,
-      });
+      );
 
       await this.threadRepository
         .update(
@@ -288,17 +289,10 @@ export class StreamAgentChatJob {
     }
   }
 
-  private recordTurnOutcome({
-    outcome,
-    turnModelId,
-    data,
-    error,
-  }: {
-    outcome: AgentChatTurnOutcome;
-    turnModelId: string;
-    data: Pick<StreamAgentChatJobData, 'threadId' | 'workspaceId' | 'streamId'>;
-    error?: unknown;
-  }): void {
+  private recordTurnOutcome(
+    outcome: AgentChatTurnOutcome,
+    turnModelId: string,
+  ): void {
     if (this.hasRecordedTurnOutcome) {
       return;
     }
@@ -334,18 +328,6 @@ export class StreamAgentChatJob {
             }),
           },
         });
-
-        this.logger.error(
-          formatAgentChatTurnFailedLog({
-            threadId: data.threadId,
-            workspaceId: data.workspaceId,
-            streamId: data.streamId,
-            model: turnModelId,
-            failurePhase: outcome.failurePhase,
-            errorCode: outcome.errorCode,
-            error,
-          }),
-        );
 
         return;
       default:
@@ -781,11 +763,7 @@ export class StreamAgentChatJob {
     const outcome = await this.persistStreamFinish(args);
 
     if (isDefined(outcome)) {
-      this.recordTurnOutcome({
-        outcome,
-        turnModelId: args.turnModelId,
-        data: args,
-      });
+      this.recordTurnOutcome(outcome, args.turnModelId);
     }
   }
 

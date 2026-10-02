@@ -9,7 +9,6 @@ import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
-import { formatAgentChatTurnFailedLog } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-agent-chat-turn-failed-log.util';
 
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 
@@ -66,13 +65,7 @@ export class AgentChatStreamRecoveryService {
     });
 
     this.logger.error(
-      formatAgentChatTurnFailedLog({
-        threadId: thread.id,
-        workspaceId,
-        streamId: thread.activeStreamId,
-        failurePhase: 'interrupted',
-        errorCode: interruptedError.code,
-      }),
+      `[AI_CHAT_TURN_FAILED] failurePhase=interrupted, threadId=${thread.id}, workspaceId=${workspaceId}: stream ${thread.activeStreamId} stopped sending heartbeats`,
     );
 
     await this.eventPublisherService.resetStreamState(thread.id);
