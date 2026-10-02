@@ -67,7 +67,7 @@ describe('2-46 workspace command 1790938680463 - AddPositionIdIndexesCommand (in
 
     expect(registry.getBundleForVersion('2.46.0').workspaceCommands).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ command, timestamp: 1790876939146 }),
+        expect.objectContaining({ command, timestamp: 1790938680463 }),
       ]),
     );
   });
