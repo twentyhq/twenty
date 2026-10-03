@@ -24,14 +24,48 @@ describe('resolveRunAgentMessagesOrThrow', () => {
     expect(resolveRunAgentMessagesOrThrow({ messages })).toEqual(messages);
   });
 
+  it('should keep accepting blank turns in legacy messages', () => {
+    const messages = [
+      { role: 'user' as const, content: 'Who owns Acme?' },
+      { role: 'assistant' as const, content: '' },
+    ];
+
+    expect(resolveRunAgentMessagesOrThrow({ messages })).toEqual(messages);
+  });
+
+  it('should accept an input message that only carries files', () => {
+    const input = [
+      {
+        role: 'user' as const,
+        content: '',
+        attachments: [{ fileId: 'file-id' }],
+      },
+    ];
+
+    expect(resolveRunAgentMessagesOrThrow({ input })).toEqual(input);
+  });
+
   it.each([
-    {},
-    { input: [], messages: [] },
-    {
-      input: [{ role: 'user' as const, content: 'Hello' }],
-      prompt: 'Hello',
-    },
-  ])('should refuse anything but exactly one of them', (sources) => {
+    ['nothing', {}],
+    [
+      'an empty input next to a prompt',
+      { input: [], prompt: 'Who owns Acme?' },
+    ],
+    [
+      'input and prompt',
+      {
+        input: [{ role: 'user' as const, content: 'Hello' }],
+        prompt: 'Hello',
+      },
+    ],
+    ['an empty input', { input: [] }],
+    [
+      'a blank input message',
+      { input: [{ role: 'user' as const, content: '  ' }] },
+    ],
+    ['an empty prompt', { prompt: '' }],
+    ['empty messages', { messages: [] }],
+  ])('should refuse %s', (_, sources) => {
     expect(() => resolveRunAgentMessagesOrThrow(sources)).toThrow(
       expect.objectContaining({ code: AiExceptionCode.INVALID_AGENT_INPUT }),
     );

@@ -75,7 +75,14 @@ export class AgentRunService {
       messages: input.messages,
     });
 
-    const thread = isNonEmptyString(input.thread?.key) ? input.thread : null;
+    if (isDefined(input.thread) && !isNonEmptyString(input.thread.key.trim())) {
+      throw new AiException(
+        'thread.key must not be empty',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
+
+    const thread = input.thread ?? null;
 
     if (isDefined(thread)) {
       this.assertCanContinueConversation({ callerApplication, messages });

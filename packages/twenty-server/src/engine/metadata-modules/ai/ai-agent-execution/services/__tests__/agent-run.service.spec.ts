@@ -209,6 +209,15 @@ describe('AgentRunService', () => {
     ).rejects.toMatchObject({ code: AiExceptionCode.RUN_AGENT_NOT_ALLOWED });
   });
 
+  it('refuses a thread with a blank key', async () => {
+    const { service, agentAsyncExecutorService } = buildService();
+
+    await expect(
+      run(service, { input: userInput('Hello'), thread: { key: '  ' } }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
   it('refuses assistant messages sent to a thread', async () => {
     const { service } = buildService();
 
