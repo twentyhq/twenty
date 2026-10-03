@@ -13,6 +13,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import {
   resetJotaiStore,
@@ -39,11 +40,9 @@ const THREADS = [
   buildThread('9d2a4c6e-8b1f-4e3a-8c5d-7f9b1a3c5e40', 'Third chat'),
 ];
 
-const chatObjectMetadataItemAtom = atom<unknown>({
-  id: 'chat-object',
-  nameSingular: 'agentChatThread',
-  namePlural: 'agentChatThreads',
-});
+const chatObjectMetadataItemAtom = atom<Pick<EnrichedObjectMetadataItem, 'id'>>(
+  { id: 'chat-object' },
+);
 
 jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
   objectMetadataItemFamilySelector: {
@@ -77,10 +76,6 @@ jest.mock('@/ai/components/AiChatThreadList', () => ({
         {thread.title}
       </button>
     )),
-}));
-
-jest.mock('@/ai/components/AiChatThreadFilterDropdown', () => ({
-  AiChatThreadFilterDropdown: () => null,
 }));
 
 jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
