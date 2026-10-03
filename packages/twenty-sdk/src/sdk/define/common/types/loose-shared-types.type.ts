@@ -1,36 +1,5 @@
-import {
-  type CommandMenuItemManifest as StrictCommandMenuItemManifest,
-  type IndexFieldManifest as StrictIndexFieldManifest,
-  type IndexManifest as StrictIndexManifest,
-  type ObjectFieldManifest as StrictObjectFieldManifest,
-  type PageLayoutManifest as StrictPageLayoutManifest,
-  type PageLayoutTabManifest as StrictPageLayoutTabManifest,
-  type PageLayoutWidgetManifest as StrictPageLayoutWidgetManifest,
-  type PermissionFlagManifest as StrictPermissionFlagManifest,
-  type RowLevelPermissionPredicateGroupManifest as StrictRowLevelPermissionPredicateGroupManifest,
-  type RowLevelPermissionPredicateManifest as StrictRowLevelPermissionPredicateManifest,
-  type SendInboxMessageInput as StrictSendInboxMessageInput,
-  type SettingsMenuItemManifest as StrictSettingsMenuItemManifest,
-  type StandalonePageLayoutWidgetManifest as StrictStandalonePageLayoutWidgetManifest,
-  type StandaloneViewFieldManifest as StrictStandaloneViewFieldManifest,
-  type TimelineActivityTypeManifest as StrictTimelineActivityTypeManifest,
-  type ViewFieldGroupManifest as StrictViewFieldGroupManifest,
-  type ViewFieldManifest as StrictViewFieldManifest,
-  type ViewFilterGroupManifest as StrictViewFilterGroupManifest,
-  type ViewFilterManifest as StrictViewFilterManifest,
-  type ViewGroupManifest as StrictViewGroupManifest,
-  type ViewSortManifest as StrictViewSortManifest,
-} from 'twenty-shared/application';
-import {
-  type MessageChannelVisibility as StrictMessageChannelVisibility,
-  type MessageParticipantRole as StrictMessageParticipantRole,
-  type PageLayoutWidgetCanvasPosition as StrictPageLayoutWidgetCanvasPosition,
-  type PageLayoutWidgetConditionalDisplay as StrictPageLayoutWidgetConditionalDisplay,
-  type PageLayoutWidgetGridPosition as StrictPageLayoutWidgetGridPosition,
-  type PageLayoutWidgetPosition as StrictPageLayoutWidgetPosition,
-  type PageLayoutWidgetUniversalConfiguration as StrictPageLayoutWidgetUniversalConfiguration,
-  type PageLayoutWidgetVerticalListPosition as StrictPageLayoutWidgetVerticalListPosition,
-} from 'twenty-shared/types';
+import type * as SharedApplication from 'twenty-shared/application';
+import type * as SharedTypes from 'twenty-shared/types';
 
 import { type ApplicationConfig as StrictApplicationConfig } from '@/sdk/define/application/application-config';
 import { type CommandMenuItemConfig as StrictCommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
@@ -52,67 +21,74 @@ export type ApplicationConfig = LooseEnumValues<StrictApplicationConfig>;
 export type CommandMenuItemConfig =
   LooseEnumValues<StrictCommandMenuItemConfig>;
 export type CommandMenuItemManifest =
-  LooseEnumValues<StrictCommandMenuItemManifest>;
+  LooseEnumValues<SharedApplication.CommandMenuItemManifest>;
 export type FrontComponentConfig = LooseEnumValues<StrictFrontComponentConfig>;
 export type HealthCheckLogicFunctionConfig =
   LooseEnumValues<StrictHealthCheckLogicFunctionConfig>;
 export type IndexConfig = LooseEnumValues<StrictIndexConfig>;
-export type IndexFieldManifest = LooseEnumValues<StrictIndexFieldManifest>;
-export type IndexManifest = LooseEnumValues<StrictIndexManifest>;
+export type IndexFieldManifest =
+  LooseEnumValues<SharedApplication.IndexFieldManifest>;
+export type IndexManifest = LooseEnumValues<SharedApplication.IndexManifest>;
 export type LogicFunctionConfig = LooseEnumValues<StrictLogicFunctionConfig>;
 export type MessageChannelVisibility =
-  LooseEnumValues<StrictMessageChannelVisibility>;
+  LooseEnumValues<SharedTypes.MessageChannelVisibility>;
 export type MessageParticipantRole =
-  LooseEnumValues<StrictMessageParticipantRole>;
-export type ObjectFieldManifest = LooseEnumValues<StrictObjectFieldManifest>;
+  LooseEnumValues<SharedTypes.MessageParticipantRole>;
+export type ObjectFieldManifest =
+  LooseEnumValues<SharedApplication.ObjectFieldManifest>;
 export type PageLayoutConfig = LooseEnumValues<StrictPageLayoutConfig>;
-export type PageLayoutManifest = LooseEnumValues<StrictPageLayoutManifest>;
+export type PageLayoutManifest =
+  LooseEnumValues<SharedApplication.PageLayoutManifest>;
 export type PageLayoutTabConfig = LooseEnumValues<StrictPageLayoutTabConfig>;
 export type PageLayoutTabManifest =
-  LooseEnumValues<StrictPageLayoutTabManifest>;
+  LooseEnumValues<SharedApplication.PageLayoutTabManifest>;
 export type PageLayoutWidgetCanvasPosition =
-  LooseEnumValues<StrictPageLayoutWidgetCanvasPosition>;
+  LooseEnumValues<SharedTypes.PageLayoutWidgetCanvasPosition>;
 export type PageLayoutWidgetConditionalDisplay =
-  LooseEnumValues<StrictPageLayoutWidgetConditionalDisplay>;
+  LooseEnumValues<SharedTypes.PageLayoutWidgetConditionalDisplay>;
 export type PageLayoutWidgetGridPosition =
-  LooseEnumValues<StrictPageLayoutWidgetGridPosition>;
+  LooseEnumValues<SharedTypes.PageLayoutWidgetGridPosition>;
 export type PageLayoutWidgetManifest =
-  LooseEnumValues<StrictPageLayoutWidgetManifest>;
+  LooseEnumValues<SharedApplication.PageLayoutWidgetManifest>;
 export type PageLayoutWidgetPosition =
-  LooseEnumValues<StrictPageLayoutWidgetPosition>;
+  LooseEnumValues<SharedTypes.PageLayoutWidgetPosition>;
 export type PageLayoutWidgetUniversalConfiguration =
-  LooseEnumValues<StrictPageLayoutWidgetUniversalConfiguration>;
+  LooseEnumValues<SharedTypes.PageLayoutWidgetUniversalConfiguration>;
 export type PageLayoutWidgetVerticalListPosition =
-  LooseEnumValues<StrictPageLayoutWidgetVerticalListPosition>;
+  LooseEnumValues<SharedTypes.PageLayoutWidgetVerticalListPosition>;
 export type PermissionFlagConfig = LooseEnumValues<StrictPermissionFlagConfig>;
 export type PermissionFlagManifest =
-  LooseEnumValues<StrictPermissionFlagManifest>;
+  LooseEnumValues<SharedApplication.PermissionFlagManifest>;
 export type RowLevelPermissionPredicateGroupManifest =
-  LooseEnumValues<StrictRowLevelPermissionPredicateGroupManifest>;
+  LooseEnumValues<SharedApplication.RowLevelPermissionPredicateGroupManifest>;
 export type RowLevelPermissionPredicateManifest =
-  LooseEnumValues<StrictRowLevelPermissionPredicateManifest>;
+  LooseEnumValues<SharedApplication.RowLevelPermissionPredicateManifest>;
 export type SendInboxMessageInput =
-  LooseEnumValues<StrictSendInboxMessageInput>;
+  LooseEnumValues<SharedApplication.SendInboxMessageInput>;
 export type SettingsFrontComponentConfig =
   LooseEnumValues<StrictSettingsFrontComponentConfig>;
 export type SettingsMenuItemConfig =
   LooseEnumValues<StrictSettingsMenuItemConfig>;
 export type SettingsMenuItemManifest =
-  LooseEnumValues<StrictSettingsMenuItemManifest>;
+  LooseEnumValues<SharedApplication.SettingsMenuItemManifest>;
 export type StandalonePageLayoutWidgetManifest =
-  LooseEnumValues<StrictStandalonePageLayoutWidgetManifest>;
+  LooseEnumValues<SharedApplication.StandalonePageLayoutWidgetManifest>;
 export type StandaloneViewFieldManifest =
-  LooseEnumValues<StrictStandaloneViewFieldManifest>;
+  LooseEnumValues<SharedApplication.StandaloneViewFieldManifest>;
 export type TimelineActivityTypeConfig =
   LooseEnumValues<StrictTimelineActivityTypeConfig>;
 export type TimelineActivityTypeManifest =
-  LooseEnumValues<StrictTimelineActivityTypeManifest>;
+  LooseEnumValues<SharedApplication.TimelineActivityTypeManifest>;
 export type ViewConfig = LooseEnumValues<StrictViewConfig>;
 export type ViewFieldGroupManifest =
-  LooseEnumValues<StrictViewFieldGroupManifest>;
-export type ViewFieldManifest = LooseEnumValues<StrictViewFieldManifest>;
+  LooseEnumValues<SharedApplication.ViewFieldGroupManifest>;
+export type ViewFieldManifest =
+  LooseEnumValues<SharedApplication.ViewFieldManifest>;
 export type ViewFilterGroupManifest =
-  LooseEnumValues<StrictViewFilterGroupManifest>;
-export type ViewFilterManifest = LooseEnumValues<StrictViewFilterManifest>;
-export type ViewGroupManifest = LooseEnumValues<StrictViewGroupManifest>;
-export type ViewSortManifest = LooseEnumValues<StrictViewSortManifest>;
+  LooseEnumValues<SharedApplication.ViewFilterGroupManifest>;
+export type ViewFilterManifest =
+  LooseEnumValues<SharedApplication.ViewFilterManifest>;
+export type ViewGroupManifest =
+  LooseEnumValues<SharedApplication.ViewGroupManifest>;
+export type ViewSortManifest =
+  LooseEnumValues<SharedApplication.ViewSortManifest>;

@@ -1,4 +1,3 @@
-// Apps write enum fields as plain strings, often without importing the enum
 export type LooseEnumValues<T> = T extends string
   ? T | `${T}`
   : T extends
