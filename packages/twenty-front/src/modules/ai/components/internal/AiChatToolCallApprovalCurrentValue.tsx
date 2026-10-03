@@ -14,9 +14,11 @@ const StyledCurrentValue = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
+  flex-wrap: wrap;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
+  overflow-wrap: anywhere;
 `;
 
 type AiChatToolCallApprovalCurrentValueProps = {
