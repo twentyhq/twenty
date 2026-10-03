@@ -30,10 +30,25 @@ const QUESTIONS = [
 const closeParts = async (
   parts: Partial<AgentMessagePartWorkspaceEntity>[],
 ) => {
-  const update = jest.fn();
+  const writes: { id: string; result: unknown; expectedStatus: string }[] = [];
   const messagePartRepository = {
     find: jest.fn().mockResolvedValue(parts),
-    update,
+    query: jest.fn(async (_workspaceId, run) =>
+      run({
+        table: (name: string) => name,
+        manager: {
+          query: async (
+            _sql: string,
+            [id, toolOutput, expectedStatus]: [string, string, string],
+          ) =>
+            writes.push({
+              id,
+              result: JSON.parse(toolOutput).result,
+              expectedStatus,
+            }),
+        },
+      }),
+    ),
   } as unknown as AgentHistoryRepository<AgentMessagePartWorkspaceEntity>;
 
   await closeOpenToolParts({
@@ -42,10 +57,7 @@ const closeParts = async (
     workspaceId: 'workspace-id',
   });
 
-  return update.mock.calls.map(([, { id }, { toolOutput }]) => ({
-    id,
-    result: toolOutput.result,
-  }));
+  return writes;
 };
 
 describe('closeOpenToolParts', () => {
@@ -63,6 +75,7 @@ describe('closeOpenToolParts', () => {
       {
         id: 'questions',
         result: expect.objectContaining({ status: 'skipped' }),
+        expectedStatus: 'pending',
       },
     ]);
   });
@@ -86,6 +99,7 @@ describe('closeOpenToolParts', () => {
           error:
             'Interrupted before its outcome was recorded. It may or may not have run.',
         },
+        expectedStatus: 'running',
       },
     ]);
   });

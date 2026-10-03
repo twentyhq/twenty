@@ -33,8 +33,12 @@ export const definePausingTool = <
         definition.toSkippedToolResult(input, pendingToolOutput),
       ...(isDefined(toRunningToolResult)
         ? {
-            toRunningToolResult: () =>
-              toRunningToolResult(input, pendingToolOutput),
+            toRunningToolResult: (output: Record<string, unknown>) =>
+              toRunningToolResult({
+                output: outputSchema.parse(output),
+                input,
+                pendingToolOutput,
+              }),
           }
         : {}),
       ...(isDefined(toInterruptedToolResult)

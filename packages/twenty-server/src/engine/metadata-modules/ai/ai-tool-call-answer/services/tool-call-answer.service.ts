@@ -215,7 +215,9 @@ export class ToolCallAnswerService {
         }
       }
 
-      const runningToolResult = pausingToolCall.toRunningToolResult?.();
+      const runningToolResult = pausingToolCall.toRunningToolResult?.(
+        validation.output,
+      );
 
       if (isDefined(runningToolResult)) {
         if (

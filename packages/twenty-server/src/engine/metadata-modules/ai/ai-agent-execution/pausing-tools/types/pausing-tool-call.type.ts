@@ -13,6 +13,9 @@ export type PausingToolCall = {
     context: PausingToolCompletionContext;
   }) => Promise<PausingToolCompletion>;
   toSkippedToolResult: () => Record<string, unknown>;
-  toRunningToolResult?: () => Record<string, unknown>;
+  // Takes an output validate accepted.
+  toRunningToolResult?: (
+    output: Record<string, unknown>,
+  ) => Record<string, unknown> | undefined;
   toInterruptedToolResult?: () => Record<string, unknown>;
 };

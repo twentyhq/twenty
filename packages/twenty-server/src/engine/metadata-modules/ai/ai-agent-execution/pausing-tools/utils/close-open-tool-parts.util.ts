@@ -1,4 +1,4 @@
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -28,28 +28,31 @@ export const closeOpenToolParts = async ({
       continue;
     }
 
-    const closedToolOutput = pausingTool.isAwaitingOutput(part.toolOutput)
-      ? pausingTool
-          .parseCall(part.toolInput, part.toolOutput)
-          ?.toSkippedToolResult()
-      : pausingTool.isRunningOutput(part.toolOutput)
-        ? pausingTool
-            .parseCall(part.toolInput, part.toolOutput)
-            ?.toInterruptedToolResult?.()
-        : undefined;
+    const isAwaiting = pausingTool.isAwaitingOutput(part.toolOutput);
+    const pausingToolCall =
+      isAwaiting || pausingTool.isRunningOutput(part.toolOutput)
+        ? pausingTool.parseCall(part.toolInput, part.toolOutput)
+        : null;
+    const closedToolOutput = isAwaiting
+      ? pausingToolCall?.toSkippedToolResult()
+      : pausingToolCall?.toInterruptedToolResult?.();
 
-    // the rest of the output, such as the workflow step that posted the call, stays readable
-    if (isDefined(closedToolOutput)) {
-      await messagePartRepository.update(
-        workspaceId,
-        { id: part.id },
-        {
-          toolOutput: {
-            ...(isPlainObject(part.toolOutput) ? part.toolOutput : {}),
-            ...closedToolOutput,
-          },
-        },
-      );
+    if (!isDefined(closedToolOutput)) {
+      continue;
     }
+
+    // written only while the call is as it was read, so an answer recorded meanwhile is kept, and
+    // the rest of the output, such as the workflow step that posted the call, stays readable
+    await messagePartRepository.query(workspaceId, ({ manager, table }) =>
+      manager.query(
+        `UPDATE ${table('agentMessagePart')} SET "toolOutput" = "toolOutput" || $2::jsonb, "updatedAt" = now()
+         WHERE id = $1 AND "toolOutput"->'result'->>'status' = $3`,
+        [
+          part.id,
+          JSON.stringify(closedToolOutput),
+          isAwaiting ? 'pending' : 'running',
+        ],
+      ),
+    );
   }
 };

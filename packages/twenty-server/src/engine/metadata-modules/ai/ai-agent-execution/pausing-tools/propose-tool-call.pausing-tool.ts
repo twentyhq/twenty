@@ -291,14 +291,18 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
       });
     }
   },
-  toRunningToolResult: (input, pendingToolOutput) => ({
-    success: true,
-    message: 'The answer is being applied.',
-    result: {
-      status: 'running',
-      proposal: readProposal(input, pendingToolOutput).proposal,
-    } satisfies ProposeToolCallToolResult,
-  }),
+  // only an approval runs something, so a rejection is never claimed
+  toRunningToolResult: ({ output, input, pendingToolOutput }) =>
+    output.decision === 'approve'
+      ? {
+          success: true,
+          message: 'The user approved the call and it is running.',
+          result: {
+            status: 'running',
+            proposal: readProposal(input, pendingToolOutput).proposal,
+          } satisfies ProposeToolCallToolResult,
+        }
+      : undefined,
   toInterruptedToolResult: (input, runningToolOutput) => ({
     success: false,
     message:
