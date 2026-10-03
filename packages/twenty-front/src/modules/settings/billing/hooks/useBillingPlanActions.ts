@@ -8,7 +8,7 @@ import { type SettingsBillingPlanInterval } from '@/settings/billing/types/Setti
 import { getBillingPlanCell } from '@/settings/billing/utils/getBillingPlanCell';
 import { isBillingSubscriptionChangeUpgrade } from '@/settings/billing/utils/isBillingSubscriptionChangeUpgrade';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
@@ -51,7 +51,9 @@ export const useBillingPlanActions = ({
   const subscriptionStatus = useSubscriptionStatus();
   const { nextPlan } = useNextPlan();
   const { nextInterval } = useNextInterval();
-  const permissionMap = usePermissionFlagMap();
+  const hasPermissionToManageBilling = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
 
   const { isBillingPortalSessionDisabled, openBillingPortal } =
     useBillingPortalSession(getSettingsPath(SettingsPath.BillingPlans));
@@ -59,8 +61,6 @@ export const useBillingPlanActions = ({
   const currentBillingSubscription =
     currentWorkspace?.currentBillingSubscription;
   const currentInterval = currentBillingSubscription?.interval;
-  const hasPermissionToManageBilling =
-    permissionMap[PermissionFlagType.BILLING] ?? false;
 
   const shouldUpdatePayment = isSubscriptionPaymentOverdue(subscriptionStatus);
   const isSubscriptionCanceled =

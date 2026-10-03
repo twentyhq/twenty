@@ -6,7 +6,7 @@ export const doesUsageLimitRowSuppressDefault = ({
   scope,
   usageLimitDefault,
 }: {
-  scope: UsageLimitScope;
+  scope: SuppressibleScope;
   usageLimitDefault: SuppressibleScope & { isOverridable: boolean };
 }): boolean =>
   usageLimitDefault.isOverridable &&

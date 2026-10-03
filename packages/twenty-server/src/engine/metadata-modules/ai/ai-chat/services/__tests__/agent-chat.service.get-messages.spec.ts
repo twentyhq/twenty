@@ -1,14 +1,19 @@
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 
 const WORKSPACE_ID = 'workspace-id';
 const THREAD_ID = 'thread-id';
-const USER_WORKSPACE_ID = 'user-workspace-id';
+const WORKSPACE_MEMBER_ID = 'user-workspace-id';
 
 const buildService = () => {
   const threadRepository = {
     findOne: jest.fn().mockResolvedValue({ id: THREAD_ID }),
   };
   const messageRepository = { find: jest.fn().mockResolvedValue([]) };
+  const sharingService = {
+    getThreadWithAccess: jest.fn().mockResolvedValue({ id: THREAD_ID }),
+    getReadableThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
+  };
 
   const service = new AgentChatService(
     threadRepository as never,
@@ -17,12 +22,15 @@ const buildService = () => {
     {} as never,
     {} as never,
     {} as never,
+    sharingService as never,
     {} as never,
     {} as never,
-    {
-      getThreadWithAccess: jest.fn().mockResolvedValue({ id: THREAD_ID }),
-      getReadableThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
-    } as never,
+    new AgentChatThreadService(
+      threadRepository as never,
+      sharingService as never,
+      {} as never,
+      {} as never,
+    ),
   );
 
   return { service, messageRepository };
@@ -38,7 +46,7 @@ describe('AgentChatService getMessagesForThread', () => {
 
     await service.getMessagesForThread({
       threadId: THREAD_ID,
-      userWorkspaceId: USER_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
       workspaceId: WORKSPACE_ID,
     });
 
@@ -55,7 +63,7 @@ describe('AgentChatService getMessagesForThread', () => {
 
     await service.getMessagesForThread({
       threadId: THREAD_ID,
-      userWorkspaceId: USER_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
       workspaceId: WORKSPACE_ID,
       includeHidden: true,
     });

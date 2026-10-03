@@ -66,6 +66,15 @@ type AskQuestionsPendingOutput = {
   result: AskQuestionsToolResult;
 };
 
+// An application that asks through the inbox writes the same output.
+export const buildAskQuestionsPendingOutput = (
+  input: AskQuestionsToolInput,
+): AskQuestionsPendingOutput => ({
+  success: true,
+  message: 'Questions presented to the user; awaiting their answer.',
+  result: { questions: input.questions, status: 'pending' },
+});
+
 const STANDARD_DESCRIPTION =
   'Ask the user one or more multiple-choice questions when you need a decision you cannot ' +
   'infer from the request or context and that has no obvious default. The conversation ' +
@@ -91,9 +100,6 @@ export const createAskQuestionsTool = ({
   inputSchema: askQuestionsInputSchema,
   execute: async (
     input: AskQuestionsToolInput,
-  ): Promise<AskQuestionsPendingOutput> => ({
-    success: true,
-    message: 'Questions presented to the user; awaiting their answer.',
-    result: { questions: input.questions, status: 'pending' },
-  }),
+  ): Promise<AskQuestionsPendingOutput> =>
+    buildAskQuestionsPendingOutput(input),
 });

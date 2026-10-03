@@ -3,8 +3,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-// One translated value for one property in one locale. A null or empty value
-// removes the stored translation, reverting that locale to shipped-or-source.
+// a null or empty value removes the stored translation
 @InputType()
 export class MetadataTranslationOverrideInput {
   @IsIn(Object.keys(APP_LOCALES))

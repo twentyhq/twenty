@@ -1,8 +1,7 @@
 import { test as base, expect } from '@playwright/test';
-import path from 'path';
+import { AUTH_STORAGE_STATE_PATH } from '../lib/constants/authStorageStatePath';
 import { LoginPage } from '../lib/pom/loginPage';
 
-// fixture
 const test = base.extend<{ loginPage: LoginPage }>({
   loginPage: async ({ page }, use) => {
     const loginPage = new LoginPage(page);
@@ -18,7 +17,6 @@ test('Login test', async ({ loginPage, page }) => {
     'Logging in '.concat(page.url(), ' as ', process.env.DEFAULT_LOGIN),
     async () => {
       await page.waitForLoadState('networkidle');
-      // Click "Continue with Email" if visible (may be skipped if password is the only auth method)
       await loginPage.clickLoginWithEmailIfVisible();
       await loginPage.typeEmail(process.env.DEFAULT_LOGIN);
       await loginPage.clickContinueButton();
@@ -36,8 +34,6 @@ test('Login test', async ({ loginPage, page }) => {
   );
 
   await test.step('Saved auth state', async () => {
-    await page.context().storageState({
-      path: path.resolve(__dirname, '..', '.auth', 'user.json'),
-    });
+    await page.context().storageState({ path: AUTH_STORAGE_STATE_PATH });
   });
 });

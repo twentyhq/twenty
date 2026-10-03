@@ -6,18 +6,16 @@ import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-
 import { getAgentHistoryColumn } from 'src/database/commands/agent-history/utils/get-agent-history-column.util';
 import { getAgentHistoryMigrationColumns } from 'src/database/commands/agent-history/utils/get-agent-history-migration-columns.util';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
-import { type AgentHistoryStorageState } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-state.type';
+import { type AgentHistoryMigrationState } from 'src/database/commands/agent-history/agent-history-migration-state.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-type Storage = AgentHistoryStorageState['storage'];
+type Storage = AgentHistoryMigrationState['storage'];
 
 @Injectable()
 export class AgentHistoryMigrationValidationService {
-  // agentChatThreadTarget rows point at the workspace-schema thread table. A
-  // rollback leaves that store in place, but the next forward migration clears
-  // it, cascading the links away with no way to rebuild them from core. Refuse
-  // instead of losing them silently.
+  // A rollback keeps the workspace thread store, but the next forward migration clears it and cascades these links away
+  // with no way to rebuild them from core, so refuse instead
   async assertNoThreadTargets({
     runner,
     workspaceId,
@@ -36,10 +34,7 @@ export class AgentHistoryMigrationValidationService {
       return;
     }
 
-    // A custom object leg is set to null when its record is destroyed, as on
-    // noteTarget, so such a row links nothing and there is no record left to
-    // detach it from. Every leg's column is target<Object>Id, whatever the
-    // object, which finds the legs without reading the metadata.
+    // A destroyed custom record nulls its leg, so only non-null legs count; every leg column is target<Object>Id, found without metadata
     const rows: { id: string }[] = await runner.query(
       `SELECT target.id FROM ${table} target
        WHERE target."deletedAt" IS NULL

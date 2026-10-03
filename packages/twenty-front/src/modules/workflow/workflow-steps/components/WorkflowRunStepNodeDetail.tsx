@@ -8,6 +8,7 @@ import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-ac
 import { WorkflowEditActionClassify } from '@/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify';
 import { WorkflowActionCode } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionCode';
 import { WorkflowEditActionCreateCalendarEvent } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent';
+import { WorkflowEditActionSendChatMessage } from '@/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
 import { WorkflowEditActionEmpty } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmpty';
@@ -134,6 +135,17 @@ export const WorkflowRunStepNodeDetail = ({
         case 'DRAFT_EMAIL': {
           return (
             <WorkflowEditActionEmailBase
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+        case 'SEND_CHAT_MESSAGE': {
+          return (
+            <WorkflowEditActionSendChatMessage
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{

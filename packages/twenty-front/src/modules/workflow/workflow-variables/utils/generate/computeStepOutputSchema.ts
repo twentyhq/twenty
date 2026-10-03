@@ -139,7 +139,6 @@ export const computeStepOutputSchema = ({
           };
         }
 
-        // BULK_RECORDS - array indicator nested under payload
         return {
           [WORKFLOW_TRIGGER_PAYLOAD_KEY]: {
             isLeaf: false,
@@ -217,6 +216,17 @@ export const computeStepOutputSchema = ({
       }
 
       return generateFormOutputSchema(formFields, objectMetadataItems);
+    }
+
+    case 'SEND_CHAT_MESSAGE': {
+      return {
+        threadId: {
+          isLeaf: true,
+          type: FieldMetadataType.UUID,
+          label: 'Conversation ID',
+          value: '',
+        },
+      };
     }
 
     case 'SEND_EMAIL': {

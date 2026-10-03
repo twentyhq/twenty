@@ -1,19 +1,35 @@
-import { UseGuards } from '@nestjs/common';
-import { Args, Parent, Query, ResolveField } from '@nestjs/graphql';
+import { UseFilters, UseGuards } from '@nestjs/common';
+import { Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationConnectionProviderDTO } from 'src/engine/core-modules/application/connection-provider/dtos/application-connection-provider.dto';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @MetadataResolver(() => ApplicationConnectionProviderDTO)
+@UseFilters(ApplicationExceptionFilter)
 export class ApplicationConnectionProviderResolver {
   constructor(
     private readonly oauthProviderService: ConnectionProviderService,
@@ -21,9 +37,13 @@ export class ApplicationConnectionProviderResolver {
   ) {}
 
   @Query(() => [ApplicationConnectionProviderDTO])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
   async applicationConnectionProviders(
-    @Args('applicationId', { type: () => UUIDScalarType })
+    @ApplicationTargetArg(
+      'applicationId',
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
+      { type: () => UUIDScalarType },
+    )
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ApplicationConnectionProviderDTO[]> {

@@ -52,19 +52,19 @@ import {
 } from 'src/engine/workspace-cache/utils/serialize-cache-blob.util';
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
-const LOCAL_TTL_MS = 100; // 100ms
-const MEMOIZER_TTL_MS = 10_000; // 10 seconds
-const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
-const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
+const LOCAL_TTL_MS = 100;
+const MEMOIZER_TTL_MS = 10_000;
+const STALE_VERSION_TTL_MS = 5_000;
+const MAX_LOCAL_STALE_VERSIONS = 5;
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling.
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
-const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
+const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000;
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const PACKING_INTERVAL_MS = 500;
 const PACKING_PONDERATION_BUDGET = 64;
-const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
-// Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
+const MIN_IDLE_BEFORE_PACKING_MS = 10 * 60 * 1000;
+// Per-cache-key entry caps; ORM graphs are ~5 MB each
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
   ['ORMEntityMetadatas', 128],
   ['flatFieldMetadataMaps', 256],
@@ -317,8 +317,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           strategy: 'mint',
         });
 
-        // Clear memoizer again after recomputation to evict any stale entries
-        // cached by concurrent getOrRecompute calls during the flush window.
+        // Clear again to evict entries concurrent getOrRecompute calls cached during the flush window
         await this.memoizer.clearKeys(`${workspaceId}-`);
       },
     );
@@ -482,7 +481,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return { redisEntries, missingInRedis };
     }
 
-    // Interleave data and hash keys for atomic fetch: [data1, hash1, data2, hash2, ...]
     const allKeys = cacheKeyNames.flatMap((keyName) => {
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 

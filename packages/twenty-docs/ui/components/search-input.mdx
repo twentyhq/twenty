@@ -1,0 +1,41 @@
+---
+title: SearchInput
+description: Controlled search text with an optional filter popup.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SearchInputReference from '/snippets/ui/generated/components/search-input.mdx';
+
+`SearchInput` supplies a search icon and text input. `onValueChange` receives the new string; `onChange` receives the native React change event. Filtering, fetching, and debouncing belong to your application.
+
+```tsx
+import { useState } from 'react';
+import { SearchInput } from 'twenty-ui/components';
+
+export const PeopleSearch = () => {
+  const [search, setSearch] = useState('');
+
+  return (
+    <SearchInput
+      aria-label="Search people"
+      placeholder="Name or email"
+      value={search}
+      onValueChange={setSearch}
+    />
+  );
+};
+```
+
+Use `aria-label` or `aria-labelledby` for an accessible name. `filterDropdown` receives a filter button that you can compose with a [Dropdown](/ui/components/dropdown) trigger using `render`. Supply `filterButtonAriaLabel` to name that action. `disabled` disables the text input; configure the optional filter controls separately.
+
+<StoryEmbed
+  storyId="ui-input-searchinput--default"
+  title="SearchInput example"
+  height={280}
+/>
+
+Native input props, `className`, `style`, and `ref` apply to the input itself. The shared `InputGroup` owns the search adornment and focus treatment. Use `size="sm"` for a compact search field.
+
+## Props
+
+<SearchInputReference />

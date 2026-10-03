@@ -3,21 +3,23 @@ import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { getToolName, type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { JsonTree } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 
 import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
+import { ToolRecordsWidget } from '@/ai/components/ToolRecordsWidget';
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
 import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
+import { getToolRecordOutput } from '@/ai/utils/getToolRecordOutput';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
@@ -214,6 +216,10 @@ const StyledToolDetailsContainer = styled.div`
   overflow: hidden;
 `;
 
+const StyledToolRecordsContainer = styled.div`
+  padding: 0 ${themeCssVariables.spacing[2]};
+`;
+
 const StyledToolTabListContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   padding-left: ${themeCssVariables.spacing[1]};
@@ -279,6 +285,8 @@ const ThinkingToolStepRow = ({
     output: part.output,
   });
   const hasError = isDefined(part.errorText);
+  const { message: recordsMessage, recordReferences } =
+    getToolRecordOutput(part);
   const isExpandable = isDefined(part.output) || hasError;
 
   const outputObj =
@@ -337,8 +345,16 @@ const ThinkingToolStepRow = ({
       </StyledToolRowButton>
 
       {isExpandable && (
-        <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
+        <Collapsible isExpanded={isExpanded}>
           <StyledToolDetailsContainer>
+            {isNonEmptyArray(recordReferences) && (
+              <StyledToolRecordsContainer>
+                <ToolRecordsWidget
+                  message={recordsMessage ?? ''}
+                  recordReferences={recordReferences}
+                />
+              </StyledToolRecordsContainer>
+            )}
             {hasError ? (
               <StyledToolErrorText>{part.errorText}</StyledToolErrorText>
             ) : (
@@ -377,7 +393,7 @@ const ThinkingToolStepRow = ({
               </TabListRoot>
             )}
           </StyledToolDetailsContainer>
-        </AnimatedExpandableContainer>
+        </Collapsible>
       )}
     </StyledToolRowContainer>
   );

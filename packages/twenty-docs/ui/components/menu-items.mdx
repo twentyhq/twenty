@@ -1,0 +1,83 @@
+---
+title: Menu rows
+description: MenuItem, MenuItemAvatar, MenuItemDraggable, and MenuItemSuggestion presentation presets.
+---
+
+import MenuItemReference from '/snippets/ui/generated/components/menu-item.mdx';
+import MenuItemAvatarReference from '/snippets/ui/generated/components/menu-item-avatar.mdx';
+import MenuItemDraggableReference from '/snippets/ui/generated/components/menu-item-draggable.mdx';
+import MenuItemSuggestionReference from '/snippets/ui/generated/components/menu-item-suggestion.mdx';
+
+These components provide row presentation. For complete menu semantics, keyboard navigation, and dismissal, use [Dropdown](/ui/components/dropdown) or [Menu](/ui/primitives/surfaces/menu).
+
+## MenuItem
+
+`MenuItem` accepts a main `text` label, leading and trailing content, supporting text, shortcut hints, and submenu indicators. `focused` and `selected` change its appearance; the application owns actual focus and selection.
+
+```tsx
+import { MenuItem } from 'twenty-ui/components';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const CopyRowPreview = () => (
+  <MenuItem text="Copy record" LeftIcon={IconCopy} shortcut={['Mod', 'C']} />
+);
+```
+
+The root is a div. `onClick` alone does not provide keyboard activation or menu semantics. Native attributes and refs are not exposed by this preset. Use `Dropdown.ActionItem` for accessible commands. Shortcut hints and `hasSubMenu` are visual; they do not register handlers or create a submenu. `isTooltipOpen` is currently accepted but unused.
+
+<MenuItemReference />
+
+## MenuItemAvatar
+
+`MenuItemAvatar` places an [Avatar](/ui/primitives/data-display/avatar) before a text label. Its `avatar` accepts `name`, `src`, `colorSeed`, `size`, and `shape`. Omit it to render no avatar.
+
+```tsx
+import { MenuItemAvatar } from 'twenty-ui/components';
+
+export const PersonRowPreview = () => (
+  <MenuItemAvatar
+    text="Ada Lovelace"
+    avatar={{ name: 'Ada Lovelace', shape: 'circle' }}
+  />
+);
+```
+
+It shares MenuItem's pointer and keyboard limitations. For a selectable person, compose an Avatar inside `Dropdown.OptionItem` instead.
+
+<MenuItemAvatarReference />
+
+## MenuItemDraggable
+
+`MenuItemDraggable` renders a menu row that can show a drag grip. The application supplies drag behavior. `gripMode` defaults to `never`, which shows no grip; `always` shows the grip, and `onHover` swaps `LeftIcon` for the grip while the row is hovered, so it shows nothing without a `LeftIcon`. `isDragDisabled` affects the appearance, not external drag handlers.
+
+```tsx
+import { MenuItemDraggable } from 'twenty-ui/components';
+
+export const ReorderRowPreview = () => (
+  <MenuItemDraggable text="Company name" gripMode="always" />
+);
+```
+
+The root remains a div without keyboard drag behavior. `isTooltipOpen` and `isHoverDisabled` are currently accepted but unused. Provide an accessible reordering interface in the surrounding application.
+
+<MenuItemDraggableReference />
+
+## MenuItemSuggestion
+
+`MenuItemSuggestion` renders a list item with optional icon and supporting text. Supplying `onClick` gives it button semantics, a tab stop, and Enter/Space activation. The `li` root then has the button role instead of `listitem`, so keep clickable suggestions in a `ul` with `role="none"`: the markup stays valid and assistive technology does not expect list items. `selected` applies visual styling and does not implement a listbox selection model.
+
+```tsx
+import { MenuItemSuggestion } from 'twenty-ui/components';
+
+export const SuggestedName = ({ onChoose }: { onChoose: () => void }) => (
+  <ul role="none">
+    <MenuItemSuggestion
+      text="Acme"
+      contextualText="Company"
+      onClick={onChoose}
+    />
+  </ul>
+);
+```
+
+<MenuItemSuggestionReference />

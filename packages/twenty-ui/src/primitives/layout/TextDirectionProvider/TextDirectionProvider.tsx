@@ -1,8 +1,11 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { type ReactNode } from 'react';
 
+import { TextDirectionContext } from './internal/TextDirectionContext';
+import { type TextDirection } from './internal/TextDirection';
+
 type TextDirectionProviderProps = {
-  direction: 'ltr' | 'rtl';
+  direction: TextDirection;
   children: ReactNode;
 };
 
@@ -13,5 +16,7 @@ export const TextDirectionProvider = ({
   direction,
   children,
 }: TextDirectionProviderProps) => (
-  <DirectionProvider direction={direction}>{children}</DirectionProvider>
+  <TextDirectionContext.Provider value={direction}>
+    <DirectionProvider direction={direction}>{children}</DirectionProvider>
+  </TextDirectionContext.Provider>
 );

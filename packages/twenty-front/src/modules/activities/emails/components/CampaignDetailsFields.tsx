@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useId } from 'react';
 import {
   CoreObjectNameSingular,
   MessageChannelType,
@@ -21,6 +22,10 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { Select } from '@/ui/input/components/Select';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 
 const StyledSubjectInput = styled.input`
   background: transparent;
@@ -48,6 +53,30 @@ export const CampaignDetailsFields = ({
   width,
 }: CampaignDetailsFieldsProps) => {
   const detailsState = useCampaignDetailsState({ campaign });
+  const instanceId = useId();
+  const subjectFocusId = `campaign-subject-input-${instanceId}`;
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
+  useRemoveFocusItemFromFocusStackOnUnmount({
+    focusId: subjectFocusId,
+    isEnabled: true,
+  });
+
+  const handleSubjectFocus = () =>
+    pushFocusItemToFocusStack({
+      focusId: subjectFocusId,
+      component: {
+        type: FocusComponentType.FORM_FIELD_INPUT,
+        instanceId: subjectFocusId,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+
+  const handleSubjectBlur = () =>
+    removeFocusItemFromFocusStackById({ focusId: subjectFocusId });
 
   const { channels } = useMyMessageChannels();
   const { unsubscribeTopics } = useUnsubscribeTopics();
@@ -139,6 +168,8 @@ export const CampaignDetailsFields = ({
           aria-label={t`Subject`}
           defaultValue={detailsState.subject}
           onChange={(event) => detailsState.setSubject(event.target.value)}
+          onFocus={handleSubjectFocus}
+          onBlur={handleSubjectBlur}
         />
       </CampaignEnvelopeRow>
     </CampaignEnvelopeBox>

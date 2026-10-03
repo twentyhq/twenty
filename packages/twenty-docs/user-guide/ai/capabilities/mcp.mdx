@@ -108,6 +108,8 @@ Record operation names follow a grammar, so an assistant can build them without 
 
 For anything else, `get_tool_catalog` browses the remaining tools one category at a time. It is a fallback: an unfiltered call returns hundreds of operations and most assistants will truncate the response.
 
+`/mcp?mode=direct` lists every tool directly and needs a client that loads tools on demand.
+
 ## Permissions
 
 MCP connections inherit the permissions of the authenticated user (OAuth) or the role assigned to the API key. To restrict what the MCP server can do:

@@ -1,4 +1,6 @@
 import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
+import { AgentChatThreadRecordOperationsEffect } from '@/ai/components/AgentChatThreadRecordOperationsEffect';
+import { AgentChatThreadInboxClockEffect } from '@/ai/components/AgentChatThreadInboxClockEffect';
 import { AgentChatThreadInitializationEffect } from '@/ai/components/AgentChatThreadInitializationEffect';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { Suspense } from 'react';
@@ -14,6 +16,8 @@ export const AgentChatProviderContent = ({
         value={{ instanceId: 'agentChatComponentInstance' }}
       >
         <AgentChatThreadInitializationEffect />
+        <AgentChatThreadRecordOperationsEffect />
+        <AgentChatThreadInboxClockEffect />
         <AgentChatRuntimeEffects />
         {children}
       </AgentChatComponentInstanceContext.Provider>

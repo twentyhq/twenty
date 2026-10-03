@@ -8,7 +8,6 @@ import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDr
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER } from '@/ai/constants/AgentChatThreadLastActivityFilter';
-import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { agentChatThreadLastActivityFilterState } from '@/ai/states/agentChatThreadLastActivityFilterState';
@@ -29,9 +28,7 @@ const renderFilterDropdown = () => {
   render(
     <I18nProvider i18n={i18n}>
       <Provider store={store}>
-        <AiChatThreadFilterDropdown
-          surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-        />
+        <AiChatThreadFilterDropdown />
       </Provider>
     </I18nProvider>,
   );
@@ -42,13 +39,15 @@ const renderFilterDropdown = () => {
 describe('AiChatThreadFilterDropdown', () => {
   it('applies a filter, restores the trigger, and reopens at the root page', async () => {
     const { store, user } = renderFilterDropdown();
-    const trigger = screen.getByRole('button', { name: 'Filter chats' });
+    const trigger = screen.getByRole('button', { name: 'Open' });
 
     await user.click(trigger);
     await user.click(await screen.findByRole('menuitem', { name: /Status/ }));
-    await user.click(await screen.findByRole('button', { name: 'Archived' }));
+    await user.click(await screen.findByRole('button', { name: 'Deleted' }));
 
-    expect(store.get(agentChatThreadFilterStatusState.atom)).toBe('archived');
+    expect(store.get(agentChatThreadFilterStatusState.atom)).toBe(
+      AGENT_CHAT_THREAD_FILTER_STATUS.DELETED,
+    );
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     );
@@ -57,7 +56,7 @@ describe('AiChatThreadFilterDropdown', () => {
 
     await user.click(trigger);
     expect(
-      await screen.findByRole('menuitem', { name: /Status Archived/ }),
+      await screen.findByRole('menuitem', { name: /Status Deleted/ }),
     ).toBeVisible();
     await user.click(screen.getByRole('menuitem', { name: 'Clear filters' }));
     expect(store.get(agentChatThreadFilterStatusState.atom)).toBe('active');
@@ -65,7 +64,7 @@ describe('AiChatThreadFilterDropdown', () => {
 
   it('returns from a picker without changing its value and releases shortcut scope on dismissal', async () => {
     const { store, user } = renderFilterDropdown();
-    await user.click(screen.getByRole('button', { name: 'Filter chats' }));
+    await user.click(screen.getByRole('button', { name: 'Open' }));
     await user.click(await screen.findByRole('menuitem', { name: /Group by/ }));
     expect(
       await screen.findByRole('button', { name: 'Date', pressed: true }),

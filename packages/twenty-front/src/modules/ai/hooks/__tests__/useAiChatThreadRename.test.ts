@@ -1,10 +1,26 @@
 import { act, renderHook } from '@testing-library/react';
 
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { useRenameChatThread } from '@/ai/hooks/useRenameChatThread';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
-jest.mock('@/ai/hooks/useRenameChatThread');
+jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
+  useUpdateOneRecord: jest.fn(),
+}));
+jest.mock('twenty-ui/components', () => ({
+  useToast: () => ({ enqueueToast: jest.fn() }),
+}));
+
+const expectRenamedTo = (
+  updateOneRecord: jest.Mock,
+  id: string,
+  title: string,
+) =>
+  expect(updateOneRecord).toHaveBeenCalledWith({
+    objectNameSingular: 'agentChatThread',
+    idToUpdate: id,
+    updateOneRecordInput: { title },
+  });
 
 const buildThread = (
   overrides: Partial<AgentChatThread> = {},
@@ -24,12 +40,12 @@ const buildThread = (
   }) as AgentChatThread;
 
 describe('useAiChatThreadRename', () => {
-  const renameChatThread = jest.fn();
+  const updateOneRecord = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    renameChatThread.mockResolvedValue(true);
-    (useRenameChatThread as jest.Mock).mockReturnValue({ renameChatThread });
+    updateOneRecord.mockResolvedValue({});
+    (useUpdateOneRecord as jest.Mock).mockReturnValue({ updateOneRecord });
   });
 
   it('starts in non-renaming state with the current thread title as draft', () => {
@@ -91,7 +107,7 @@ describe('useAiChatThreadRename', () => {
       await result.current.commitRename('   ');
     });
 
-    expect(renameChatThread).not.toHaveBeenCalled();
+    expect(updateOneRecord).not.toHaveBeenCalled();
     expect(result.current.isRenaming).toBe(false);
   });
 
@@ -104,7 +120,7 @@ describe('useAiChatThreadRename', () => {
       await result.current.commitRename('Existing title');
     });
 
-    expect(renameChatThread).not.toHaveBeenCalled();
+    expect(updateOneRecord).not.toHaveBeenCalled();
   });
 
   it('trims surrounding whitespace before comparing to the current title', async () => {
@@ -116,7 +132,7 @@ describe('useAiChatThreadRename', () => {
       await result.current.commitRename('  Existing title  ');
     });
 
-    expect(renameChatThread).not.toHaveBeenCalled();
+    expect(updateOneRecord).not.toHaveBeenCalled();
   });
 
   it('renames with the trimmed title when it differs from the current one', async () => {
@@ -130,12 +146,12 @@ describe('useAiChatThreadRename', () => {
       await result.current.commitRename('  New title  ');
     });
 
-    expect(renameChatThread).toHaveBeenCalledWith('thread-7', 'New title');
+    expectRenamedTo(updateOneRecord, 'thread-7', 'New title');
     expect(result.current.isRenaming).toBe(false);
   });
 
-  it('keeps renaming mode open when the rename mutation reports failure', async () => {
-    renameChatThread.mockResolvedValueOnce(false);
+  it('keeps renaming mode open when the rename fails', async () => {
+    updateOneRecord.mockRejectedValueOnce(new Error('Forbidden'));
 
     const { result } = renderHook(() =>
       useAiChatThreadRename(buildThread({ id: 'thread-fail', title: 'Old' })),
@@ -149,7 +165,7 @@ describe('useAiChatThreadRename', () => {
       await result.current.commitRename('New title');
     });
 
-    expect(renameChatThread).toHaveBeenCalledWith('thread-fail', 'New title');
+    expectRenamedTo(updateOneRecord, 'thread-fail', 'New title');
     expect(result.current.isRenaming).toBe(true);
   });
 
@@ -162,6 +178,6 @@ describe('useAiChatThreadRename', () => {
       await result.current.commitRename('First name');
     });
 
-    expect(renameChatThread).toHaveBeenCalledWith('thread-9', 'First name');
+    expectRenamedTo(updateOneRecord, 'thread-9', 'First name');
   });
 });

@@ -1,3 +1,4 @@
+import { type ShortcutDefinition } from '@ui/primitives/typography/Shortcut/types/ShortcutDefinition';
 import { type Button as ButtonPrimitive } from '@base-ui/react/button';
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
@@ -18,7 +19,6 @@ export type ButtonProps = Omit<
     elevated?: boolean;
     startIcon?: ReactNode;
     endIcon?: ReactNode;
-    hotkeys?: string[];
-    soon?: boolean;
-    soonLabel?: string;
+    shortcut?: ShortcutDefinition;
+    shortcutJoinLabel?: string;
   };

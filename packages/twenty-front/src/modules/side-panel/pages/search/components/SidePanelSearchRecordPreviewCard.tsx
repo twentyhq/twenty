@@ -138,8 +138,6 @@ export const SidePanelSearchRecordPreviewCard = ({
     { recordId, allowRequestsToTwentyIcons },
   );
 
-  // Collapsed shows at most a handful of the view's visible columns; everything
-  // past that, plus the view's hidden columns, sits behind the expander
   const collapsedFields = visibleFields.slice(
     0,
     SIDE_PANEL_SEARCH_RECORD_PREVIEW_MAX_COLLAPSED_FIELDS,

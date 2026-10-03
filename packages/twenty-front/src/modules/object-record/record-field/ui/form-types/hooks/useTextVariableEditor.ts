@@ -19,11 +19,9 @@ type UseTextVariableEditorProps = {
   readonly: boolean | undefined;
   defaultValue: string | undefined | null;
   onUpdate: (editor: Editor) => void;
+  ariaLabelledBy?: string;
 };
 
-/**
- * Checks if the given text is a valid JSON object (not array, primitive, or null)
- */
 const isJsonObject = (text: string): boolean => {
   try {
     const parsed = JSON.parse(text);
@@ -39,6 +37,7 @@ export const useTextVariableEditor = ({
   readonly,
   defaultValue,
   onUpdate,
+  ariaLabelledBy,
 }: UseTextVariableEditorProps) => {
   const editor = useEditor({
     extensions: [
@@ -66,6 +65,13 @@ export const useTextVariableEditor = ({
       onUpdate(editor);
     },
     editorProps: {
+      // Re-applied props replace Tiptap's default attributes, so the role must be restated.
+      attributes: {
+        role: 'textbox',
+        ...(isDefined(ariaLabelledBy)
+          ? { 'aria-labelledby': ariaLabelledBy }
+          : {}),
+      },
       handleKeyDown: (view, event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
           event.preventDefault();

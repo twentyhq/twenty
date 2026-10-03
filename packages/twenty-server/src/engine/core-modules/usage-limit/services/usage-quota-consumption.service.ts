@@ -85,6 +85,7 @@ export class UsageQuotaConsumptionService {
           workspaceId,
           resourceType: scope.resourceType,
           operationType: scope.operationType,
+          unit: null,
           spenderType: scope.spenderType,
           spenderId: normalizeSpenderId(scope.spenderId ?? ''),
           periodStart: period.periodStart,

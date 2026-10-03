@@ -31,13 +31,6 @@ type WidgetViewLayoutSettingsRowsProps = {
   isLayoutRowHidden?: boolean;
 };
 
-// The embedded-view layout rows (layout type + group-by / calendar field /
-// calendar view / hide-empty-groups) shared by widgets backed by a record table
-// view: dashboard record table widgets and relation field widgets in table
-// display mode. The source object is passed in (fixed to the relation target
-// for field widgets), so this component makes no assumption about where the
-// widget lives. Hosts that surface the layout choice elsewhere (the field
-// widget's merged layout picker) hide the layout row via isLayoutRowHidden.
 export const WidgetViewLayoutSettingsRows = ({
   pageLayoutId,
   widgetId,

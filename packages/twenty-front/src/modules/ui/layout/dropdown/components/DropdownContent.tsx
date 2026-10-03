@@ -17,8 +17,12 @@ type DropdownContentProps = Pick<
   | 'align'
   | 'sideOffset'
   | 'alignOffset'
+  | 'anchor'
+  | 'collisionPadding'
   | 'width'
   | 'initialFocus'
+  | 'finalFocus'
+  | 'className'
   | 'aria-label'
   | 'ref'
 >;
@@ -29,8 +33,12 @@ export const DropdownContent = ({
   align,
   sideOffset,
   alignOffset,
+  anchor,
+  collisionPadding,
   width,
   initialFocus,
+  finalFocus,
+  className,
   'aria-label': ariaLabel,
   ref,
 }: DropdownContentProps) => {
@@ -45,8 +53,12 @@ export const DropdownContent = ({
       align={align}
       sideOffset={sideOffset}
       alignOffset={alignOffset}
+      anchor={anchor}
+      collisionPadding={collisionPadding}
       width={width}
       initialFocus={initialFocus}
+      finalFocus={finalFocus}
+      className={className}
       aria-label={ariaLabel}
     >
       {isDefined(excludedClickOutsideId) ? (

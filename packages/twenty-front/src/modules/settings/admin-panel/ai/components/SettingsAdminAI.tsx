@@ -131,8 +131,7 @@ export const SettingsAdminAI = () => {
 
   const defaultModelByTier = data?.getAdminAiModels?.defaultModelByTier ?? [];
 
-  // A tier default names the model that answers chats and agent runs, so only a
-  // language model can fill one: an evaluation model here is refused server-side.
+  // Tier defaults answer chats and agent runs, so the server refuses evaluation models here.
   const enabledModels = models.filter(
     (model) =>
       model.kind === 'language' &&
@@ -205,7 +204,7 @@ export const SettingsAdminAI = () => {
             description={t`The model behind each mode for every workspace. Workspaces can pin their own.`}
           />
 
-          <Card rounded>
+          <Card.Root rounded>
             <StyledSettingsSelectGroup controlWidth={260}>
               {AI_MODEL_TIERS.map((tier, index) => (
                 <SettingsOptionCardContentSelect
@@ -232,7 +231,7 @@ export const SettingsAdminAI = () => {
                 </SettingsOptionCardContentSelect>
               ))}
             </StyledSettingsSelectGroup>
-          </Card>
+          </Card.Root>
         </Section.Root>
       )}
 
@@ -293,7 +292,7 @@ export const SettingsAdminAI = () => {
               ))}
             </Table>
           ) : (
-            <Card rounded>
+            <Card.Root rounded>
               <TableRow gridTemplateColumns="1fr">
                 <TableCell
                   color={themeCssVariables.font.color.tertiary}
@@ -302,7 +301,7 @@ export const SettingsAdminAI = () => {
                   {t`No AI usage data recorded yet.`}
                 </TableCell>
               </TableRow>
-            </Card>
+            </Card.Root>
           )
         ) : (
           <SettingsEnterpriseFeatureGateCard

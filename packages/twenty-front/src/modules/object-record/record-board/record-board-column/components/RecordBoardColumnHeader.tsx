@@ -48,9 +48,7 @@ const StyledHeaderActions = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  // padding + negative margin cancel out in layout and exist only so
-  // overflow:hidden clips 4px outside each button, leaving room for
-  // LightIconButton's 3px focus ring
+  // Padding and negative margin cancel out in layout; they only let overflow:hidden keep LightIconButton's 3px focus ring.
   margin: calc(-1 * ${themeCssVariables.spacing[1]});
   max-width: 0;
   min-width: 0;
@@ -150,8 +148,7 @@ export const RecordBoardColumnHeader = () => {
 
   const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
-  // Creating in a nested relation or junction widget requires picking the
-  // related record, which only the table layout offers today.
+  // Creating through a nested relation or junction needs a record picker only the table layout offers.
   const isCreateThroughRelationWidget =
     isDefined(recordTableWidgetContext?.nestedRelationCreateThrough) ||
     isDefined(recordTableWidgetContext?.junctionCreateThrough);

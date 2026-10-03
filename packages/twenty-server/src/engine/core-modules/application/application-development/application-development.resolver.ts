@@ -31,19 +31,31 @@ import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
 export class ApplicationDevelopmentResolver {
@@ -53,8 +65,14 @@ export class ApplicationDevelopmentResolver {
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
+  @UseGuards(ApplicationTargetGuard)
   async createDevelopmentApplication(
-    @Args() { universalIdentifier, name }: CreateDevelopmentApplicationInput,
+    @ApplicationTargetArgs<CreateDevelopmentApplicationInput>({
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: true,
+    })
+    { universalIdentifier, name }: CreateDevelopmentApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<DevelopmentApplicationDTO> {
     return this.applicationDevelopmentService.createDevelopmentApplication({
@@ -65,8 +83,14 @@ export class ApplicationDevelopmentResolver {
   }
 
   @Query(() => ApplicationExportDTO)
+  @UseGuards(ApplicationTargetGuard)
   async exportApplication(
-    @Args() { universalIdentifier }: ExportApplicationInput,
+    @ApplicationTargetArgs<ExportApplicationInput>({
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: true,
+    })
+    { universalIdentifier }: ExportApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationExportDTO> {
     return this.applicationDevelopmentService.exportApplication({
@@ -76,8 +100,13 @@ export class ApplicationDevelopmentResolver {
   }
 
   @Mutation(() => WorkspaceMigrationDTO)
+  @UseGuards(ApplicationTargetGuard)
   async syncApplication(
-    @Args()
+    @ApplicationTargetArgs<ApplicationInput>({
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'manifest.application.universalIdentifier',
+      requireApplicationRegistrationOwnership: true,
+    })
     { manifest, dryRun, inferDeletionFromMissingEntities }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<WorkspaceMigrationDTO> {
@@ -93,12 +122,19 @@ export class ApplicationDevelopmentResolver {
     deprecationReason:
       'Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage.',
   })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
+    ApplicationTargetGuard,
+  )
   async uploadApplicationFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream }: FileUpload,
-    @Args()
+    @ApplicationTargetArgs<UploadApplicationFileInput>({
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: true,
+    })
     {
       applicationUniversalIdentifier,
       fileFolder,
@@ -119,10 +155,18 @@ export class ApplicationDevelopmentResolver {
   }
 
   @Mutation(() => CreateApplicationFileUploadsResultDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
+    ApplicationTargetGuard,
+  )
   async createApplicationFileUploads(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args() {
+    @ApplicationTargetArgs<CreateApplicationFileUploadsInput>({
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: true,
+    })
+    {
       applicationUniversalIdentifier,
       files,
     }: CreateApplicationFileUploadsInput,
@@ -135,10 +179,18 @@ export class ApplicationDevelopmentResolver {
   }
 
   @Mutation(() => CompleteApplicationFileUploadsResultDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
+    ApplicationTargetGuard,
+  )
   async completeApplicationFileUploads(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args() {
+    @ApplicationTargetArgs<CompleteApplicationFileUploadsInput>({
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: true,
+    })
+    {
       applicationUniversalIdentifier,
       fileIds,
     }: CompleteApplicationFileUploadsInput,

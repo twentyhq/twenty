@@ -3,23 +3,36 @@ import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDelet
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
+import { ObjectSharingReachPicker } from '@/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
+import { SettingsObjectValidationRulesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
-import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
+import {
+  type SettingsDataModelObjectAboutFormValues,
+  settingsDataModelObjectAboutFormSchema,
+} from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
+import { SettingsTranslationsCard } from '@/settings/translations/components/SettingsTranslationsCard';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
+import { isEmptyObject } from 'twenty-shared/utils';
 import { Section, useToast } from 'twenty-ui/components';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type ObjectSettingsProps = {
@@ -62,8 +75,35 @@ export const ObjectSettings = ({
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
+  const aboutFormConfig = useForm<SettingsDataModelObjectAboutFormValues>({
+    mode: 'onTouched',
+    resolver: zodResolver(settingsDataModelObjectAboutFormSchema),
+    defaultValues: {
+      description: objectMetadataItem.description,
+      icon: objectMetadataItem.icon ?? undefined,
+      isLabelSyncedWithName: objectMetadataItem.isLabelSyncedWithName,
+      labelPlural: objectMetadataItem.labelPlural,
+      labelSingular: objectMetadataItem.labelSingular,
+      namePlural: objectMetadataItem.namePlural,
+      nameSingular: objectMetadataItem.nameSingular,
+      ...(getIsMetadataItemCustom(objectMetadataItem)
+        ? { color: getObjectColorWithFallback(objectMetadataItem) }
+        : {}),
+    },
+  });
+  const hasUnsavedAboutEdits = !isEmptyObject(
+    aboutFormConfig.formState.dirtyFields,
+  );
+
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
+
+  const isValidationRulesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+  );
+  const isRecordLevelSharingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+  );
 
   const handleDisable = async () => {
     const result = await updateOneObjectMetadataItem({
@@ -107,6 +147,7 @@ export const ObjectSettings = ({
           />
           <SettingsUpdateDataModelObjectAboutForm
             objectMetadataItem={objectMetadataItem}
+            formConfig={aboutFormConfig}
           />
         </Section.Root>
       </StyledFormSectionContainer>
@@ -127,15 +168,43 @@ export const ObjectSettings = ({
             title={t`Translations`}
             description={t`What each language displays for this object's labels`}
           />
-          <SettingsTranslationsButton
-            target={{
-              metadataName: 'objectMetadata',
-              recordId: objectMetadataItem.id,
-              label: objectMetadataItem.labelPlural,
-            }}
+          <SettingsTranslationsCard
+            objectNamePlural={objectMetadataItem.namePlural}
+            disabled={hasUnsavedAboutEdits}
           />
         </Section.Root>
       </StyledFormSectionContainer>
+      {isValidationRulesEnabled &&
+        !objectMetadataItem.isRemote &&
+        !objectMetadataItem.isSystem && (
+          <StyledFormSectionContainer>
+            <Section.Root>
+              <Section.Header
+                title={t`Validation rules`}
+                description={t`A record saves only when every active rule is true. Rules run on every write: forms, API, imports and workflows.`}
+              />
+              <SettingsObjectValidationRulesSection
+                objectMetadataItem={objectMetadataItem}
+                isReadOnly={isReadOnly}
+              />
+            </Section.Root>
+          </StyledFormSectionContainer>
+        )}
+      {isRecordLevelSharingEnabled &&
+        isShareableObjectMetadataItem(objectMetadataItem) && (
+          <StyledFormSectionContainer>
+            <Section.Root>
+              <Section.Header
+                title={t`Record sharing`}
+                description={t`Who a record of ${objectLabel} can be shared with. Roles still decide what people see by default.`}
+              />
+              <ObjectSharingReachPicker
+                objectMetadataItem={objectMetadataItem}
+                isReadOnly={isReadOnly}
+              />
+            </Section.Root>
+          </StyledFormSectionContainer>
+        )}
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
           <Section.Root>

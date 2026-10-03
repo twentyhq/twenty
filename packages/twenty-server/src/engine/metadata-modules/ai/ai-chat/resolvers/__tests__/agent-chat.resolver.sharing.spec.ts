@@ -3,7 +3,11 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
+import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 
 const WORKSPACE_ID = 'workspace';
 const THREAD_ID = 'thread';
@@ -20,43 +24,37 @@ const buildResolver = () => {
     findOne: jest.fn().mockResolvedValue({ id: 'queued', threadId: THREAD_ID }),
     find: jest.fn(),
     delete: jest.fn(),
+    query: jest.fn().mockResolvedValue([]),
   };
   const sharing = {
+    getAuthContext: jest.fn().mockResolvedValue({ userWorkspaceId: 'owner' }),
     getReadableThread: jest
       .fn()
-      .mockResolvedValue({ id: THREAD_ID, userWorkspaceId: 'owner' }),
+      .mockResolvedValue({ id: THREAD_ID, workspaceMemberId: 'owner' }),
     getThreadWithAccess: jest
       .fn()
-      .mockImplementation(async ({ userWorkspaceId }) => {
-        if (userWorkspaceId !== 'owner')
+      .mockImplementation(async ({ workspaceMemberId }) => {
+        if (workspaceMemberId !== 'owner')
           throw new AiException(
             'Thread not found',
             AiExceptionCode.THREAD_NOT_FOUND,
           );
         return {
           id: THREAD_ID,
-          userWorkspaceId: 'owner',
+          workspaceMemberId: 'owner',
           workspaceId: WORKSPACE_ID,
         };
       }),
-    getPermissions: jest
-      .fn()
-      .mockImplementation(async ({ userWorkspaceId }) => ({
-        canRead: true,
-        canUpdate: userWorkspaceId === 'owner',
-        canDelete: userWorkspaceId === 'owner',
-        canSoftDelete: userWorkspaceId === 'owner',
-      })),
-    updateThreadWithAccess: jest
+    restoreThreadWithAccess: jest
       .fn()
       .mockRejectedValue(
         new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
       ),
-    deleteThreadWithShares: jest.fn(),
   };
-  const broadcaster = { broadcast: jest.fn() };
-  const sandbox = {
-    releaseThreadSandbox: jest.fn().mockResolvedValue(undefined),
+  const recordEvents = {
+    emitThreadCreated: jest.fn(),
+    emitThreadUpdated: jest.fn(),
+    emitThreadDestroyed: jest.fn(),
   };
   const chatService = new AgentChatService(
     threadRepository as never,
@@ -65,15 +63,25 @@ const buildResolver = () => {
     {} as never,
     {} as never,
     {} as never,
-    broadcaster as never,
-    sandbox as never,
     sharing as never,
+    recordEvents as never,
+    {} as never,
+    new AgentChatThreadService(
+      threadRepository as never,
+      sharing as never,
+      recordEvents as never,
+      {
+        recordMemberActivity: jest.fn().mockResolvedValue({
+          lastActivityAt: new Date(),
+          updatedAt: new Date(),
+        }),
+      } as never,
+    ),
   );
   const streaming = {
     streamAgentChat: jest
       .fn()
       .mockResolvedValue({ queued: false, messageId: 'message' }),
-    answerPendingQuestionAndResumeStream: jest.fn(),
     reapDeadStream: jest.fn().mockResolvedValue(null),
   };
   const events = {
@@ -83,20 +91,27 @@ const buildResolver = () => {
       .mockResolvedValue({ chunks: [], maxSeq: 0 }),
   };
   const redis = { getClient: jest.fn() };
+  const threadLifecycle = new AgentChatThreadLifecycleService(
+    threadRepository as never,
+    redis as never,
+    {} as never,
+    recordEvents as never,
+  );
   const resolver = new AgentChatResolver(
     chatService,
-    {} as never,
     sharing as never,
     streaming as never,
     events as never,
     {} as never,
-    { assertAiExecutionAllowed: jest.fn() } as never,
-    {
-      getAvailableModels: () => ['model'],
-      validateModelAvailability: jest.fn(),
-    } as never,
-    redis as never,
-    threadRepository as never,
+    new AgentChatTurnPreflightService(
+      {
+        getAvailableModels: () => ['model'],
+        validateModelAvailability: jest.fn(),
+      } as never,
+      chatService,
+      { assertAiExecutionAllowed: jest.fn() } as never,
+    ),
+    threadLifecycle,
   );
   return {
     resolver,
@@ -107,31 +122,70 @@ const buildResolver = () => {
     streaming,
     events,
     redis,
-    broadcaster,
-    sandbox,
+    recordEvents,
   };
 };
 
 describe('Shared conversation API boundaries', () => {
-  it('does not announce deletion or release a sandbox when the transaction rolls back', async () => {
+  it('does not announce a restore when the transaction rolls back', async () => {
     const context = buildResolver();
     context.threadRepository.findOne.mockResolvedValue({
       id: THREAD_ID,
-      userWorkspaceId: 'owner',
+      workspaceMemberId: 'owner',
       workspaceId: WORKSPACE_ID,
+      deletedAt: '2026-09-01T00:00:00.000Z',
     });
-    context.sharing.deleteThreadWithShares.mockRejectedValue(
-      new Error('cleanup failed'),
+    context.sharing.restoreThreadWithAccess.mockRejectedValue(
+      new Error('restore failed'),
     );
     await expect(
-      context.chatService.hardDeleteThread({
+      context.chatService.restoreThread({
         threadId: THREAD_ID,
-        userWorkspaceId: 'owner',
+        workspaceMemberId: 'owner',
         workspaceId: WORKSPACE_ID,
       }),
-    ).rejects.toThrow('cleanup failed');
-    expect(context.broadcaster.broadcast).not.toHaveBeenCalled();
-    expect(context.sandbox.releaseThreadSandbox).not.toHaveBeenCalled();
+    ).rejects.toThrow('restore failed');
+    expect(context.recordEvents.emitThreadUpdated).not.toHaveBeenCalled();
+  });
+
+  it('restores a soft deleted conversation before sending to it', async () => {
+    const { resolver, sharing, streaming, recordEvents, threadRepository } =
+      buildResolver();
+    const deletedThread = {
+      id: THREAD_ID,
+      workspaceMemberId: 'owner',
+      workspaceId: WORKSPACE_ID,
+      deletedAt: '2026-09-01T00:00:00.000Z',
+    };
+    sharing.getThreadWithAccess.mockResolvedValue(deletedThread);
+    threadRepository.findOne.mockResolvedValue(deletedThread);
+    sharing.restoreThreadWithAccess.mockResolvedValue({
+      ...deletedThread,
+      deletedAt: null,
+    });
+    await resolver.sendChatMessage(
+      THREAD_ID,
+      'Pick this back up',
+      'message',
+      null,
+      undefined,
+      null,
+      VIEWER_ID,
+      'member',
+      workspace,
+    );
+    expect(sharing.restoreThreadWithAccess).toHaveBeenCalledWith({
+      threadId: THREAD_ID,
+      workspaceMemberId: 'member',
+      workspaceId: WORKSPACE_ID,
+    });
+    expect(recordEvents.emitThreadUpdated).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadBefore: deletedThread,
+        action: DatabaseEventAction.RESTORED,
+      }),
+    );
+    expect(streaming.streamAgentChat).toHaveBeenCalled();
   });
 
   it('returns readable threads and catchup to viewers without granting ownership', async () => {
@@ -144,15 +198,7 @@ describe('Shared conversation API boundaries', () => {
     ).resolves.toMatchObject({ chunks: [] });
   });
 
-  it.each([
-    'send',
-    'answer',
-    'rename',
-    'archive',
-    'unarchive',
-    'delete',
-    'deleteQueued',
-  ] as const)(
+  it.each(['send', 'restore', 'deleteQueued'] as const)(
     'rejects %s from a viewer without mutating or executing',
     async (operation) => {
       const context = buildResolver();
@@ -167,26 +213,15 @@ describe('Shared conversation API boundaries', () => {
             undefined,
             null,
             VIEWER_ID,
+            'member',
             workspace,
           ),
-        answer: () =>
-          resolver.answerAgentChatQuestion(
-            THREAD_ID,
-            'message',
-            [],
-            undefined,
-            null,
-            VIEWER_ID,
-            workspace,
-          ),
-        rename: () =>
-          resolver.renameChatThread(THREAD_ID, 'Changed', VIEWER_ID, workspace),
-        archive: () =>
-          resolver.archiveChatThread(THREAD_ID, VIEWER_ID, workspace),
-        unarchive: () =>
-          resolver.unarchiveChatThread(THREAD_ID, VIEWER_ID, workspace),
-        delete: () =>
-          resolver.deleteChatThread(THREAD_ID, VIEWER_ID, workspace),
+        restore: () =>
+          context.chatService.restoreThread({
+            threadId: THREAD_ID,
+            workspaceMemberId: VIEWER_ID,
+            workspaceId: WORKSPACE_ID,
+          }),
         deleteQueued: () =>
           resolver.deleteQueuedChatMessage('queued', VIEWER_ID, workspace),
       };
@@ -196,18 +231,16 @@ describe('Shared conversation API boundaries', () => {
       if (operation === 'deleteQueued') {
         expect(context.sharing.getThreadWithAccess).toHaveBeenCalledWith(
           expect.objectContaining({
-            userWorkspaceId: VIEWER_ID,
+            workspaceMemberId: VIEWER_ID,
             operationType: 'update',
           }),
         );
       }
       expect(context.threadRepository.update).not.toHaveBeenCalled();
       expect(context.threadRepository.delete).not.toHaveBeenCalled();
+      expect(context.recordEvents.emitThreadUpdated).not.toHaveBeenCalled();
       expect(context.messages.delete).not.toHaveBeenCalled();
       expect(context.streaming.streamAgentChat).not.toHaveBeenCalled();
-      expect(
-        context.streaming.answerPendingQuestionAndResumeStream,
-      ).not.toHaveBeenCalled();
       expect(context.events.publish).not.toHaveBeenCalled();
       expect(context.redis.getClient).not.toHaveBeenCalled();
     },
@@ -217,7 +250,7 @@ describe('Shared conversation API boundaries', () => {
     const { resolver, sharing, streaming } = buildResolver();
     sharing.getThreadWithAccess.mockResolvedValue({
       id: THREAD_ID,
-      userWorkspaceId: 'owner',
+      workspaceMemberId: 'owner',
       workspaceId: WORKSPACE_ID,
     });
     await resolver.sendChatMessage(
@@ -228,12 +261,14 @@ describe('Shared conversation API boundaries', () => {
       undefined,
       null,
       VIEWER_ID,
+      'member',
       workspace,
     );
     expect(streaming.streamAgentChat).toHaveBeenCalledWith(
       expect.objectContaining({
         threadId: THREAD_ID,
         userWorkspaceId: VIEWER_ID,
+        workspaceMemberId: 'member',
         text: 'My request',
       }),
     );
@@ -243,14 +278,14 @@ describe('Shared conversation API boundaries', () => {
     const { resolver, sharing, messages } = buildResolver();
     sharing.getThreadWithAccess.mockResolvedValue({
       id: THREAD_ID,
-      userWorkspaceId: 'owner',
+      workspaceMemberId: 'owner',
       workspaceId: WORKSPACE_ID,
     });
     messages.delete.mockResolvedValue({ affected: 1 });
     await resolver.deleteQueuedChatMessage('queued', VIEWER_ID, workspace);
     expect(sharing.getThreadWithAccess).toHaveBeenCalledWith(
       expect.objectContaining({
-        userWorkspaceId: VIEWER_ID,
+        workspaceMemberId: VIEWER_ID,
         operationType: 'update',
       }),
     );
@@ -265,7 +300,7 @@ describe('Shared conversation API boundaries', () => {
     await expect(
       chatService.getWritableThread({
         threadId: THREAD_ID,
-        userWorkspaceId: 'owner',
+        workspaceMemberId: 'owner',
         workspaceId: WORKSPACE_ID,
       }),
     ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
@@ -293,7 +328,7 @@ describe('Shared conversation API boundaries', () => {
     await expect(
       chatService.getMessagesForThread({
         threadId: THREAD_ID,
-        userWorkspaceId: VIEWER_ID,
+        workspaceMemberId: VIEWER_ID,
         workspaceId: WORKSPACE_ID,
         includeHidden: true,
       }),

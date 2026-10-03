@@ -2,20 +2,22 @@ import { IconMessage } from 'twenty-ui/icon';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useLingui } from '@lingui/react/macro';
 
-import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
+import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
+import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
 
 type NavigationDrawerAiChatThreadItemProps = {
-  thread: AgentChatThread;
+  thread: AgentChatThreadListItem;
   isActive: boolean;
-  onClick: (thread: AgentChatThread) => void;
+  onClick: (thread: AgentChatThreadListItem) => void;
 };
 
 export const NavigationDrawerAiChatThreadItem = ({
@@ -34,7 +36,11 @@ export const NavigationDrawerAiChatThreadItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isArchived = Boolean(thread.deletedAt);
+  const isDeleted = Boolean(thread.deletedAt);
+  const { isUnread } = useAtomFamilySelectorValue(
+    agentChatThreadInboxStatusFamilySelector,
+    thread.id,
+  );
   const displayLabel = thread.title || t`New chat`;
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
@@ -62,13 +68,12 @@ export const NavigationDrawerAiChatThreadItem = ({
       label={displayLabel}
       active={isActive}
       onClick={() => onClick(thread)}
-      variant={isArchived ? 'tertiary' : 'default'}
+      variant={isDeleted ? 'tertiary' : 'default'}
+      isUnread={!isDeleted && isUnread}
       isRightOptionsDropdownOpen={isDropdownOpen}
       rightOptions={
-        <AiChatThreadItemMenu
-          threadId={thread.id}
-          threadTitle={displayLabel}
-          isArchived={isArchived}
+        <AiChatThreadActionsDropdown
+          thread={thread}
           surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
           onRenameRequested={startRename}
         />

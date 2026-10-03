@@ -8,8 +8,7 @@ type SellablePriceCandidate = {
   isSellable?: boolean | null;
 };
 
-// Mirrors the server: two live sellable prices at one interval would make the
-// displayed and charged amount depend on catalog order.
+// Mirrors the server: two live sellable prices at one interval would make the amount depend on catalog order.
 export const findSellablePriceForIntervalOrThrow = <
   TPrice extends SellablePriceCandidate,
 >(

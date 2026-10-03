@@ -50,7 +50,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
           adornment={<OrganizationAdornment />}
         />
         <StyledCardContainer>
-          <Card rounded>
+          <Card.Root rounded>
             <SettingsOptionCardContentButton
               Icon={IconLock}
               title={t`Upgrade to access`}
@@ -71,7 +71,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
                 >{t`Upgrade`}</Button>
               }
             />
-          </Card>
+          </Card.Root>
         </StyledCardContainer>
       </Section.Root>
     );

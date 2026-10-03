@@ -1,8 +1,4 @@
-// JSON.stringify output is inlined into a <script> body, where the HTML parser
-// still scans for "</script" and "<!--" before any JSON parsing happens. Names
-// reaching this payload come from the marketplace and partners APIs, so they
-// could otherwise close the tag and inject markup. Escaping as JSON unicode
-// sequences parses back to the same string while staying inert in HTML.
+// Names come from the marketplace and partners APIs and could close the <script> tag, so escape to inert JSON unicode.
 const HTML_SIGNIFICANT_CHARACTERS_PATTERN = /[<>&]/g;
 
 const HTML_SIGNIFICANT_CHARACTER_ESCAPES: Record<string, string> = {

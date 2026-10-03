@@ -53,6 +53,9 @@ jest.mock('@/ai/components/AiChatLastMessageWithStreamingState', () => ({
 jest.mock('@/ai/components/AiChatPendingResponseIndicator', () => ({
   AiChatPendingResponseIndicator: () => null,
 }));
+jest.mock('@/ai/components/AiChatThreadInboxStateNotice', () => ({
+  AiChatThreadInboxStateNotice: () => null,
+}));
 jest.mock('@/ai/components/AiChatErrorUnderMessageList', () => ({
   AiChatErrorUnderMessageList: () => null,
 }));

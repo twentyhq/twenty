@@ -34,6 +34,9 @@ import { DuplicateMessageListSingleRecordCommand } from '@/command-menu-item/eng
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
 import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/SaveDashboardSingleRecordCommand';
 import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
+import { AgentChatThreadInboxSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/AgentChatThreadInboxSingleRecordCommand';
+import { NewAiChatSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/NewAiChatSingleRecordCommand';
+import { ShareRecordCommand } from '@/command-menu-item/engine-command/record/components/ShareRecordCommand';
 import { SeeVersionWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordCommand';
 import { SeeWorkflowWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordCommand';
 import { RetryWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/RetryWorkflowRunSingleRecordCommand';
@@ -47,6 +50,7 @@ import { AddNodeWorkflowSingleRecordCommand } from '@/command-menu-item/engine-c
 import { DeactivateWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/DeactivateWorkflowSingleRecordCommand';
 import { DiscardDraftWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/DiscardDraftWorkflowSingleRecordCommand';
 import { DuplicateWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand';
+import { ToggleWorkflowVisibilitySingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/ToggleWorkflowVisibilitySingleRecordCommand';
 import { SeeActiveVersionWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/SeeActiveVersionWorkflowSingleRecordCommand';
 import { SeeRunsWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/SeeRunsWorkflowSingleRecordCommand';
 import { SeeVersionsWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/SeeVersionsWorkflowSingleRecordCommand';
@@ -79,6 +83,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.DUPLICATE_WORKFLOW]: (
     <DuplicateWorkflowSingleRecordCommand />
+  ),
+  [EngineComponentKey.TOGGLE_WORKFLOW_VISIBILITY]: (
+    <ToggleWorkflowVisibilitySingleRecordCommand />
   ),
   [EngineComponentKey.ACTIVATE_WORKFLOW]: (
     <ActivateWorkflowSingleRecordCommand />
@@ -135,8 +142,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     <CancelDashboardSingleRecordCommand />
   ),
   [EngineComponentKey.NAVIGATION]: <NavigationEngineCommand />,
-  // TODO: Remove these keys once we have ran the migration command `upgrade:1-21:refactor-navigation-commands`
-  // These keys are kept for backward compatibility during migration
+  // TODO: remove these keys once `upgrade:1-21:refactor-navigation-commands` has run
   [EngineComponentKey.GO_TO_PEOPLE]: (
     <HeadlessNavigateEngineCommand
       to={AppPath.RecordIndexPage}
@@ -254,6 +260,23 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     <HeadlessFrontComponentRendererEngineCommand />
   ),
   [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: <ReplyToEmailThreadCommand />,
+  [EngineComponentKey.NEW_AI_CHAT]: <NewAiChatSingleRecordCommand />,
+  [EngineComponentKey.SHARE_RECORD]: <ShareRecordCommand />,
+  [EngineComponentKey.MARK_AI_CHAT_AS_READ]: (
+    <AgentChatThreadInboxSingleRecordCommand action="read" />
+  ),
+  [EngineComponentKey.MARK_AI_CHAT_AS_UNREAD]: (
+    <AgentChatThreadInboxSingleRecordCommand action="unread" />
+  ),
+  [EngineComponentKey.MARK_AI_CHAT_AS_DONE]: (
+    <AgentChatThreadInboxSingleRecordCommand action="done" />
+  ),
+  [EngineComponentKey.REOPEN_AI_CHAT]: (
+    <AgentChatThreadInboxSingleRecordCommand action="reopen" />
+  ),
+  [EngineComponentKey.SNOOZE_AI_CHAT]: (
+    <AgentChatThreadInboxSingleRecordCommand action="snooze" />
+  ),
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
   [EngineComponentKey.COMPOSE_CAMPAIGN]: <ComposeCampaignCommand />,
   [EngineComponentKey.SEND_MESSAGE_CAMPAIGN]: (

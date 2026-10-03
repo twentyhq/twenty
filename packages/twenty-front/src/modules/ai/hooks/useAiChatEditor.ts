@@ -103,8 +103,7 @@ export const useAiChatEditor = () => {
     },
   });
 
-  // Keep search functions in sync via Tiptap extension storage,
-  // avoiding stale closures without useRef
+  // Extension storage avoids stale closures without a ref.
   if (isDefined(editor)) {
     const storage = editor.extensionStorage as unknown as Record<
       string,

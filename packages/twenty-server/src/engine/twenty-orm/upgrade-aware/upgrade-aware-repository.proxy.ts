@@ -164,8 +164,7 @@ const stripUnavailableSelect = (
   return options;
 };
 
-// A skipped update never reaches the driver, so the counts TypeORM would have
-// filled in have to be stated rather than left undefined: no rows matched.
+// A skipped update never reaches the driver, so state the no-match counts TypeORM would have filled in
 const buildSkippedUpdateResult = (): UpdateResult => {
   const updateResult = new UpdateResult();
 
@@ -371,8 +370,7 @@ const handleRepositoryMethodCall = <Entity extends object>({
       args[1],
     );
 
-    // Nothing the caller asked to write exists at this cursor, and TypeORM
-    // rejects an empty value set, so report the no-op instead of running it.
+    // TypeORM rejects an empty value set, so report the no-op instead
     if (
       updateValues !== args[1] &&
       Object.keys(updateValues as Record<string, unknown>).length === 0

@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { type PermissionFlagType } from 'twenty-shared/constants';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -37,13 +36,10 @@ import {
 } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
-import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
-import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -62,12 +58,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
@@ -100,8 +90,6 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
   @Inject()
-  protected readonly permissionsService: PermissionsService;
-  @Inject()
   protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
   protected readonly commonResultGettersService: CommonResultGettersService;
@@ -129,20 +117,14 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps,
     } = queryRunnerContext;
 
-    if ((queryRunnerContext.nestedOperationDepth ?? 0) === 0) {
+    const isRootOperation =
+      (queryRunnerContext.nestedOperationDepth ?? 0) === 0;
+
+    if (isRootOperation) {
       await this.consumeApiSpeedLimit(authContext);
     }
 
-    this.recordApiUsage(authContext);
-
     await this.validate(args, queryRunnerContext);
-
-    if (flatObjectMetadata.isSystem === true) {
-      await this.validateSettingsPermissionsOnObjectOrThrow(
-        authContext,
-        queryRunnerContext,
-      );
-    }
 
     const commonQueryParser = new GraphqlQueryParser(
       flatObjectMetadata,
@@ -159,11 +141,15 @@ export abstract class CommonBaseQueryRunnerService<
       selectedFieldsResult,
     } as CommonExtendedInput<Args>;
 
-    this.validateQueryComplexity(
+    const queryComplexity = this.validateQueryComplexity(
       selectedFieldsResult,
       processedArgs,
       queryRunnerContext,
     );
+
+    if (isRootOperation) {
+      this.recordApiComplexityUsage(authContext, queryComplexity);
+    }
 
     const results = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () =>
@@ -304,48 +290,6 @@ export abstract class CommonBaseQueryRunnerService<
     return resultWithGetters as Output;
   }
 
-  private async validateSettingsPermissionsOnObjectOrThrow(
-    authContext: WorkspaceAuthContext,
-    queryRunnerContext: CommonBaseQueryRunnerContext,
-  ) {
-    const { flatObjectMetadata } = queryRunnerContext;
-
-    const workspace = authContext.workspace;
-
-    if (
-      Object.keys(OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS).includes(
-        flatObjectMetadata.nameSingular,
-      )
-    ) {
-      const permissionRequired: PermissionFlagType =
-        OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS[
-          flatObjectMetadata.nameSingular as keyof typeof OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS
-        ];
-
-      const userHasPermission =
-        await this.permissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId: isUserAuthContext(authContext)
-            ? authContext.userWorkspaceId
-            : undefined,
-          setting: permissionRequired,
-          workspaceId: workspace.id,
-          apiKeyId: isApiKeyAuthContext(authContext)
-            ? authContext.apiKey.id
-            : undefined,
-          applicationId: isUserAuthContext(authContext)
-            ? authContext.application?.id
-            : undefined,
-        });
-
-      if (!userHasPermission) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
-    }
-  }
-
   private async prepareExtendedQueryRunnerContextWithGlobalDatasource(
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
@@ -387,9 +331,7 @@ export abstract class CommonBaseQueryRunnerService<
     };
   }
 
-  // useReplica follows isReadOnly so reads on read-only runners hit the replica
-  // and everything else the primary, keeping root read and nested-relation
-  // loading consistent.
+  // The repository already uses the replica only on read-only runners, so root reads and nested-relation loading agree
   protected getReadRepository({
     repository,
   }: Pick<
@@ -544,26 +486,23 @@ export abstract class CommonBaseQueryRunnerService<
     };
   }
 
-  private recordApiUsage(authContext: WorkspaceAuthContext) {
+  private recordApiComplexityUsage(
+    authContext: WorkspaceAuthContext,
+    queryComplexity: number,
+  ) {
     const apiType = getApiType();
 
     if (!isDefined(apiType)) {
       return;
     }
 
-    const spenders = buildUsageSpendersFromAuthContext(authContext);
-
-    if (!isDefined(spenders.apiKeyId) && !isDefined(spenders.applicationId)) {
-      return;
-    }
-
     this.usageRecorderService.accumulate(authContext.workspace.id, {
       resourceType: UsageResourceType.API,
       operationType: UsageOperationType.API_REQUEST,
-      quantity: 1,
-      unit: UsageUnit.REQUEST,
+      quantity: queryComplexity,
+      unit: UsageUnit.COMPLEXITY,
       resourceContext: apiType,
-      spenders,
+      spenders: buildUsageSpendersFromAuthContext(authContext),
     });
   }
 
@@ -624,7 +563,7 @@ export abstract class CommonBaseQueryRunnerService<
     selectedFieldsResult: CommonSelectedFieldsResult,
     args: CommonExtendedInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-  ) {
+  ): number {
     const maximumComplexity = this.twentyConfigService.get(
       'COMMON_QUERY_COMPLEXITY_LIMIT',
     );
@@ -654,5 +593,7 @@ export abstract class CommonBaseQueryRunnerService<
         },
       );
     }
+
+    return queryComplexity;
   }
 }

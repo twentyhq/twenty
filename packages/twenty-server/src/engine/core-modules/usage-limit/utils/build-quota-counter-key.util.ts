@@ -17,6 +17,7 @@ export const buildQuotaCounterKey = ({
   meter,
   periodUnit,
   periodStart,
+  limitValue,
 }: {
   workspaceId: string;
   resourceType: UsageResourceType;
@@ -26,5 +27,6 @@ export const buildQuotaCounterKey = ({
   meter: UsageMeter;
   periodUnit: PeriodUnit;
   periodStart: Date;
+  limitValue: number;
 }): string =>
-  `{${workspaceId}}:quota:${resourceType}:${operationType}:${spenderType}:${isNonEmptyString(spenderId) ? spenderId : ABSENT}:${meter}:${periodUnit}:${periodStart.getTime()}`;
+  `{${workspaceId}}:quota:${resourceType}:${operationType}:${spenderType}:${isNonEmptyString(spenderId) ? spenderId : ABSENT}:${meter}:${periodUnit}:${periodStart.getTime()}:${limitValue}`;

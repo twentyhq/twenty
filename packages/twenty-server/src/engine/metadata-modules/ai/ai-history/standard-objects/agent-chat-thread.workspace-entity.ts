@@ -2,19 +2,32 @@ import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
+import { type AgentChatThreadParticipantWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-participant.workspace-entity';
 import { type AgentChatThreadTargetWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-target.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   messages: EntityRelation<AgentMessageWorkspaceEntity[]>;
   turns: EntityRelation<AgentTurnWorkspaceEntity[]>;
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
+  workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   recordTargets: EntityRelation<AgentChatThreadTargetWorkspaceEntity[]>;
+  participants: EntityRelation<AgentChatThreadParticipantWorkspaceEntity[]>;
+  workflowRun: EntityRelation<WorkflowRunWorkspaceEntity> | null;
 
   archivedAt: string | null;
-  userWorkspaceId: string;
+  userWorkspaceId: string | null;
+
+  workspaceMemberId: string | null;
+  workflowRunId: string | null;
   title: string | null;
+  lastActivityAt: string | null;
+  lastMessageText: string | null;
+  lastMessageSenderWorkspaceMemberId: string | null;
+  writerWorkspaceMemberIds: string[] | null;
   totalInputTokens: number;
   totalOutputTokens: number;
   contextWindowTokens: number | null;

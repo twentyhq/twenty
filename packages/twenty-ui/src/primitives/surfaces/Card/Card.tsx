@@ -1,40 +1,11 @@
-import { clsx } from 'clsx';
-import { type ComponentPropsWithoutRef, type CSSProperties } from 'react';
-import { isDefined } from '@ui/utilities/utils/isDefined';
+import { CardContent } from './internal/CardContent';
+import { CardFooter } from './internal/CardFooter';
+import { CardHeader } from './internal/CardHeader';
+import { CardRoot } from './internal/CardRoot';
 
-import styles from './Card.module.scss';
-
-type CardProps = ComponentPropsWithoutRef<'div'> & {
-  fullWidth?: boolean;
-  rounded?: boolean;
-  backgroundColor?: string;
-};
-
-export const Card = ({
-  children,
-  className,
-  fullWidth,
-  rounded,
-  backgroundColor,
-  style,
-  ...rest
-}: CardProps) => {
-  return (
-    <div
-      className={clsx(styles.card, className)}
-      data-full-width={fullWidth || undefined}
-      data-rounded={rounded || undefined}
-      style={
-        isDefined(backgroundColor)
-          ? ({
-              ...style,
-              '--card-background-color': backgroundColor,
-            } as CSSProperties)
-          : style
-      }
-      {...rest}
-    >
-      {children}
-    </div>
-  );
+export const Card = {
+  Root: CardRoot,
+  Header: CardHeader,
+  Content: CardContent,
+  Footer: CardFooter,
 };

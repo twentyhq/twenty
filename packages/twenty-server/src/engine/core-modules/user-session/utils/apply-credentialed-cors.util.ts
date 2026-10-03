@@ -20,10 +20,7 @@ const toComparableOrigin = (value: string): string | undefined => {
   }
 };
 
-// The browser reports a rejected credentialed wildcard response only in its
-// own console, leaving nothing server-side for the operator to act on
-// (#24037). Warn once per origin on cross-origin browser preflights that will
-// be answered with the wildcard.
+// Browsers report a rejected credentialed wildcard only in their console (#24037), so warn once per origin.
 export const warnOnceOnDisallowedBrowserPreflight = ({
   request,
   twentyConfigService,
@@ -77,17 +74,14 @@ export const warnOnceOnDisallowedBrowserPreflight = ({
   );
 };
 
-// Shared between the production bootstrap and the integration test harness so
-// the CORS behavior under test is the deployed one.
+// Shared with the integration test harness so the CORS behavior under test is the deployed one.
 export const applyCredentialedCors = (
   app: INestApplication,
   twentyConfigService: TwentyConfigService,
 ): void => {
   const warnedOrigins = new Set<string>();
 
-  // The cors package only emits Vary: Origin when it reflects one, so wildcard
-  // and reflected responses would share a cache entry and a credentialed
-  // request could be served the wildcard, which browsers reject.
+  // cors only emits Vary: Origin when reflecting, so wildcard and reflected responses would share a cache entry.
   app.use((request: Request, response: Response, next: NextFunction) => {
     response.vary('Origin');
     warnOnceOnDisallowedBrowserPreflight({
@@ -99,10 +93,7 @@ export const applyCredentialedCors = (
   });
 
   app.enableCors({
-    // Resolved per request rather than once at boot: the origins derive from
-    // config the admin panel can change, and a snapshot would drift from the
-    // CSRF guard, which resolves them per request and would then disagree with
-    // CORS about the same origin.
+    // Per request: the admin panel can change the origins, and a boot snapshot would disagree with the CSRF guard.
     origin: (
       origin: string | undefined,
       callback: (error: Error | null, allow?: boolean | string) => void,
@@ -119,8 +110,7 @@ export const applyCredentialedCors = (
       return callback(null, '*');
     },
     credentials: true,
-    // Expose WWW-Authenticate so browser-based MCP clients can read the
-    // resource_metadata pointer on 401. Required by MCP authorization spec.
+    // Browser-based MCP clients must read the resource_metadata pointer on 401 (MCP authorization spec).
     exposedHeaders: ['WWW-Authenticate'],
   });
 };

@@ -157,6 +157,23 @@
                 ]
               },
               {
+                "group": "Email Campaigns",
+                "icon": "paper-plane",
+                "pages": [
+                  "user-guide/email-campaigns/overview",
+                  {
+                    "group": "How-Tos",
+                    "pages": [
+                      "user-guide/email-campaigns/how-tos/set-up-a-sending-domain",
+                      "user-guide/email-campaigns/how-tos/email-campaign-best-practices",
+                      "user-guide/email-campaigns/how-tos/send-your-first-campaign",
+                      "user-guide/email-campaigns/how-tos/create-a-campaign-with-ai",
+                      "user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics"
+                    ]
+                  }
+                ]
+              },
+              {
                 "group": "Workflows",
                 "icon": "bolt",
                 "pages": [
@@ -508,7 +525,9 @@
                       "ui/tokens",
                       "ui/dark-mode",
                       "ui/ssr",
-                      "ui/accessibility"
+                      "ui/accessibility",
+                      "ui/icons",
+                      "ui/testing"
                     ]
                   },
                   {
@@ -516,12 +535,29 @@
                     "pages": [
                       "ui/primitives/overview",
                       {
+                        "group": "Accessibility",
+                        "pages": [
+                          "ui/primitives/accessibility/visibility-hidden"
+                        ]
+                      },
+                      {
                         "group": "Data display",
                         "pages": [
                           "ui/primitives/data-display/avatar",
                           "ui/primitives/data-display/chip",
                           "ui/primitives/data-display/tag",
-                          "ui/primitives/data-display/status"
+                          "ui/primitives/data-display/status",
+                          "ui/primitives/data-display/color-sample",
+                          "ui/primitives/data-display/pill"
+                        ]
+                      },
+                      {
+                        "group": "Feedback",
+                        "pages": [
+                          "ui/primitives/feedback/banner",
+                          "ui/primitives/feedback/loader",
+                          "ui/primitives/feedback/progress-bar",
+                          "ui/primitives/feedback/progress-ring"
                         ]
                       },
                       {
@@ -532,18 +568,30 @@
                           "ui/primitives/input/field",
                           "ui/primitives/input/input",
                           "ui/primitives/input/input-group",
+                          "ui/primitives/input/number-stepper",
                           "ui/primitives/input/textarea",
                           "ui/primitives/input/checkbox",
                           "ui/primitives/input/radio",
                           "ui/primitives/input/radio-group",
                           "ui/primitives/input/select",
                           "ui/primitives/input/slider",
-                          "ui/primitives/input/switch"
+                          "ui/primitives/input/switch",
+                          "ui/primitives/input/segmented-control"
+                        ]
+                      },
+                      {
+                        "group": "Layout",
+                        "pages": [
+                          "ui/primitives/layout/collapsible",
+                          "ui/primitives/layout/horizontal-separator",
+                          "ui/primitives/layout/resize-handle",
+                          "ui/primitives/layout/text-direction-provider"
                         ]
                       },
                       {
                         "group": "Navigation",
                         "pages": [
+                          "ui/primitives/navigation/breadcrumb",
                           "ui/primitives/navigation/list-item",
                           "ui/primitives/navigation/tabs"
                         ]
@@ -552,6 +600,7 @@
                         "group": "Surfaces",
                         "pages": [
                           "ui/primitives/surfaces/alert-dialog",
+                          "ui/primitives/surfaces/card",
                           "ui/primitives/surfaces/dialog",
                           "ui/primitives/surfaces/menu",
                           "ui/primitives/surfaces/popover",
@@ -562,7 +611,9 @@
                         "group": "Typography",
                         "pages": [
                           "ui/primitives/typography/heading",
-                          "ui/primitives/typography/text"
+                          "ui/primitives/typography/text",
+                          "ui/primitives/typography/shortcut",
+                          "ui/primitives/typography/overflowing-text-with-tooltip"
                         ]
                       }
                     ]
@@ -576,11 +627,26 @@
                       "ui/components/input/icon-button",
                       "ui/components/input/light-icon-button",
                       "ui/components/section",
+                      "ui/components/overflowing-list",
                       "ui/components/settings-row",
                       "ui/components/dropdown",
                       "ui/components/tab-button",
                       "ui/components/code-editor",
-                      "ui/components/toast"
+                      "ui/components/toast",
+                      "ui/components/animated-icon-crossfade",
+                      "ui/components/avatar-group",
+                      "ui/components/callout",
+                      "ui/components/command-block",
+                      "ui/components/currency-picker",
+                      "ui/components/image-input",
+                      "ui/components/inline-banner",
+                      "ui/components/json-tree",
+                      "ui/components/menu-items",
+                      "ui/components/menu-picker",
+                      "ui/components/metric-row",
+                      "ui/components/notification-counter",
+                      "ui/components/search-input",
+                      "ui/components/tinted-icon-tile"
                     ]
                   }
                 ]
@@ -6619,6 +6685,14 @@
   },
   "redirects": [
     {
+      "source": "/ui/components/info",
+      "destination": "/ui/components/inline-banner"
+    },
+    {
+      "source": "/ui/primitives/layout/animated-expandable-container",
+      "destination": "/ui/primitives/layout/collapsible"
+    },
+    {
       "source": "/twenty-ui/input/checkbox",
       "destination": "/ui/primitives/input/checkbox"
     },
@@ -7365,6 +7439,22 @@
     {
       "source": "/ui/primitives/feedback/toast",
       "destination": "/ui/components/toast"
+    },
+    {
+      "source": "/ui/primitives/surfaces/card-header",
+      "destination": "/ui/primitives/surfaces/card"
+    },
+    {
+      "source": "/ui/primitives/surfaces/card-content",
+      "destination": "/ui/primitives/surfaces/card"
+    },
+    {
+      "source": "/ui/primitives/surfaces/card-footer",
+      "destination": "/ui/primitives/surfaces/card"
+    },
+    {
+      "source": "/ui/components/card-picker",
+      "destination": "/ui/primitives/input/radio#card-options"
     }
   ]
 }

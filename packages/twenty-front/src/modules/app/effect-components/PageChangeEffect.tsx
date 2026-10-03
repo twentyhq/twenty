@@ -3,6 +3,7 @@ import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRout
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
 import { useIsOnAuthOrOnboardingPage } from '@/auth/hooks/useIsOnAuthOrOnboardingPage';
+import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SIDE_PANEL_PATH_SEARCH_PARAM } from '@/side-panel/routing/constants/SidePanelPathSearchParam';
 import { isWorkspaceLocationAvailableOnSurface } from '@/app/routing/utils/isWorkspaceLocationAvailableOnSurface';
@@ -40,7 +41,6 @@ import { getPageLayoutIdForLocation } from '~/modules/app/utils/getPageLayoutIdF
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 // TODO: break down into smaller functions and / or hooks
-//  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
   const store = useStore();
   const navigate = useNavigate();
@@ -66,8 +66,7 @@ export const PageChangeEffect = () => {
   const pageChangeEffectNavigateLocation =
     usePageChangeEffectNavigateLocation();
 
-  //TODO: refactor useResetTableRowSelection hook to not throw when the argument `recordTableId` is an empty string
-  // - replace CoreObjectNamePlural.Person
+  // TODO: make useResetTableRowSelection accept an empty recordTableId, then drop CoreObjectNamePlural.Person
   const objectNamePlural =
     matchPath(AppPath.RecordIndexPage, location.pathname)?.params
       .objectNamePlural ?? CoreObjectNamePlural.Person;
@@ -131,6 +130,7 @@ export const PageChangeEffect = () => {
 
       setPreviousLocation(location.pathname);
       executeTasksOnAnyLocationChange();
+      store.set(isLogConsoleFullScreenState.atom, false);
 
       const newPageLayoutId = getPageLayoutIdForLocation({
         location,
@@ -334,6 +334,22 @@ export const PageChangeEffect = () => {
             componentInstance: {
               componentType: FocusComponentType.PAGE,
               componentInstanceId: PageFocusId.SyncEmail,
+            },
+            globalHotkeysConfig: {
+              enableGlobalHotkeysWithModifiers: false,
+              enableGlobalHotkeysConflictingWithKeyboard: false,
+            },
+          },
+        });
+        break;
+      }
+      case isMatchingLocation(location, AppPath.InstallApps): {
+        resetFocusStackToFocusItem({
+          focusStackItem: {
+            focusId: PageFocusId.InstallApps,
+            componentInstance: {
+              componentType: FocusComponentType.PAGE,
+              componentInstanceId: PageFocusId.InstallApps,
             },
             globalHotkeysConfig: {
               enableGlobalHotkeysWithModifiers: false,

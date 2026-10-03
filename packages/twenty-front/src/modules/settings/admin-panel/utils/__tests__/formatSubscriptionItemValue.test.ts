@@ -62,8 +62,6 @@ describe('formatSubscriptionItemValue', () => {
   });
 
   it('formats the amount through the caller formatter, not its own', () => {
-    // The digits have to honour the workspace member's number format, so the
-    // injected formatter is what decides how an amount reads.
     expect(
       formatSubscriptionItemValue({
         item: {
