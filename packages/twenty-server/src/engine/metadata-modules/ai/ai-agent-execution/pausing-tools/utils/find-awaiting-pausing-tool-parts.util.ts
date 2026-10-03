@@ -30,7 +30,7 @@ export const findAwaitingPausingToolParts = (
       {
         toolName,
         toolCallId: part.toolCallId,
-        isAnswerable: isDefined(pausingTool.parseCall(part.input)),
+        isAnswerable: isDefined(pausingTool.parseCall(part.input, part.output)),
       },
     ];
   });

@@ -12,6 +12,7 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
+import { buildToolPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-tool-part.util';
 import { getAgentInboxSenderDetails } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-sender-details.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -42,10 +43,17 @@ export class AgentInboxService {
     workspaceId,
     sender,
     input,
+    awaitingToolCall,
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
     input: Omit<SendInboxMessageInput, 'toolCall'> & { toolCall?: unknown };
+    // a pausing call the server already resolved, with its pending output
+    awaitingToolCall?: {
+      toolName: string;
+      input: Record<string, unknown>;
+      output: Record<string, unknown>;
+    };
   }): Promise<SendInboxMessageResult> {
     const senderDetails = getAgentInboxSenderDetails(sender);
     const { threadId, turnId, openingMessageId, messageId, toolCallId } =
@@ -67,18 +75,23 @@ export class AgentInboxService {
       return { threadId };
     }
 
-    const toolCallPart = isDefined(input.toolCall)
-      ? await buildInboxMessageToolCallPart({
-          toolCall: input.toolCall,
-          toolCallId,
-          findApplicationTool: (logicFunctionUniversalIdentifier) =>
-            this.findApplicationTool({
-              workspaceId,
-              applicationId: senderDetails.applicationId,
-              logicFunctionUniversalIdentifier,
-            }),
-        })
-      : undefined;
+    const toolCallPart = isDefined(awaitingToolCall)
+      ? {
+          part: buildToolPart({ ...awaitingToolCall, toolCallId }),
+          isAwaitingAnswer: true,
+        }
+      : isDefined(input.toolCall)
+        ? await buildInboxMessageToolCallPart({
+            toolCall: input.toolCall,
+            toolCallId,
+            findApplicationTool: (logicFunctionUniversalIdentifier) =>
+              this.findApplicationTool({
+                workspaceId,
+                applicationId: senderDetails.applicationId,
+                logicFunctionUniversalIdentifier,
+              }),
+          })
+        : undefined;
 
     const thread =
       existingThread ??

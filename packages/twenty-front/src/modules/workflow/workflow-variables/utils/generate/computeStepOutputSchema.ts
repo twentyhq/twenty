@@ -219,12 +219,62 @@ export const computeStepOutputSchema = ({
     }
 
     case 'SEND_CHAT_MESSAGE': {
-      return {
+      const threadIdOutputSchema: OutputSchemaV2 = {
         threadId: {
           isLeaf: true,
           type: FieldMetadataType.UUID,
           label: 'Conversation ID',
           value: '',
+        },
+      };
+
+      if (!isDefined(step.settings?.input?.toolCall)) {
+        return threadIdOutputSchema;
+      }
+
+      return {
+        ...threadIdOutputSchema,
+        isApproved: {
+          isLeaf: true,
+          type: FieldMetadataType.BOOLEAN,
+          label: 'Approved',
+          value: true,
+        },
+        approvedToolName: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Approved action',
+          value: '',
+        },
+        status: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Status',
+          value: 'approved',
+        },
+        feedback: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Feedback',
+          value: '',
+        },
+        error: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Error',
+          value: '',
+        },
+        arguments: {
+          isLeaf: true,
+          type: FieldMetadataType.RAW_JSON,
+          label: 'Approved arguments',
+          value: null,
+        },
+        output: {
+          isLeaf: true,
+          type: FieldMetadataType.RAW_JSON,
+          label: 'Action result',
+          value: null,
         },
       };
     }

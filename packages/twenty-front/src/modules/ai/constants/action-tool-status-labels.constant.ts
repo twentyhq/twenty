@@ -23,4 +23,8 @@ export const ACTION_TOOL_STATUS_LABELS: Record<string, ToolStatusLabels> = {
     loading: msg`Navigating in the app`,
     completed: msg`Navigated in the app`,
   },
+  share_record: {
+    loading: msg`Sharing record`,
+    completed: msg`Shared record`,
+  },
 };

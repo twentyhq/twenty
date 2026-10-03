@@ -151,16 +151,27 @@ export const useAgentChatThreadParticipants = () => {
     [updateParticipant],
   );
 
-  const snoozeAgentChatThread = useCallback(
-    ({ threadId, snoozedUntil }: { threadId: string; snoozedUntil: Date }) =>
-      updateParticipant({
-        mutation: SnoozeAgentChatThreadDocument,
-        variables: { threadId, snoozedUntil: snoozedUntil.toISOString() },
-        optimisticParticipant: {
-          archivedAt: new Date().toISOString(),
-          snoozedUntil: snoozedUntil.toISOString(),
-        },
-      }),
+  // One chat at a time: a failed update reloads every chat's state, which
+  // would undo the optimistic change of an update still on its way
+  const snoozeAgentChatThreads = useCallback(
+    async ({
+      threadIds,
+      snoozedUntil,
+    }: {
+      threadIds: string[];
+      snoozedUntil: Date;
+    }) => {
+      for (const threadId of threadIds) {
+        await updateParticipant({
+          mutation: SnoozeAgentChatThreadDocument,
+          variables: { threadId, snoozedUntil: snoozedUntil.toISOString() },
+          optimisticParticipant: {
+            archivedAt: new Date().toISOString(),
+            snoozedUntil: snoozedUntil.toISOString(),
+          },
+        });
+      }
+    },
     [updateParticipant],
   );
 
@@ -179,7 +190,7 @@ export const useAgentChatThreadParticipants = () => {
     markAgentChatThreadAsRead,
     markAgentChatThreadAsUnread,
     archiveAgentChatThread,
-    snoozeAgentChatThread,
+    snoozeAgentChatThreads,
     moveAgentChatThreadToInbox,
   };
 };

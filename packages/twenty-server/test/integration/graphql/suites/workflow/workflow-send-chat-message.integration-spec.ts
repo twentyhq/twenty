@@ -1,5 +1,8 @@
 import gql from 'graphql-tag';
+import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
+import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
+import { waitForWorkflowRunStepStatus } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
@@ -83,6 +86,238 @@ describe('Send chat message workflow step', () => {
       }
     }
   }, 120000);
+
+  describe('with an action to approve', () => {
+    let companyId: string;
+
+    const readEmployees = async (): Promise<number | null> => {
+      const [company] = await global.testDataSource.query(
+        `SELECT employees FROM "${SCHEMA}"."company" WHERE id = $1`,
+        [companyId],
+      );
+
+      return company?.employees ?? null;
+    };
+
+    // set as soon as the step posts, so a failing test still removes its conversation
+    let postedThreadId: string | undefined;
+
+    // the step waits on the recipient, who answers the call it posted to their inbox
+    const answerPostedCall = async ({
+      workflowRunId,
+      stepId,
+      response,
+    }: {
+      workflowRunId: string;
+      stepId: string;
+      response: Record<string, unknown>;
+    }) => {
+      await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
+
+      const [{ threadId }] = await global.testDataSource.query(
+        `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+        [workflowRunId, stepId],
+      );
+
+      postedThreadId = threadId;
+
+      const [part] = await global.testDataSource.query(
+        `SELECT p."toolCallId", p."toolOutput"
+         FROM "${SCHEMA}"."agentMessagePart" p
+         JOIN "${SCHEMA}"."agentMessage" m ON m.id = p."messageId"
+         WHERE m."threadId" = $1 AND p."toolName" = 'propose_tool_call'`,
+        [threadId],
+      );
+
+      expect(part.toolOutput.result).toMatchObject({
+        status: 'pending',
+        proposal: {
+          template: 'recordUpdate',
+          recordId: companyId,
+          currentValues: { employees: 10 },
+        },
+      });
+
+      const answer = await answerToolCall({
+        toolCall: { threadId, toolCallId: part.toolCallId },
+        response,
+      });
+
+      expect(answer.body.errors).toBeUndefined();
+    };
+
+    beforeEach(async () => {
+      await setSendChatMessageEnabled(true);
+
+      const response = await makeGraphqlApiRequest({
+        query: gql`
+          mutation CreateCompany($data: CompanyCreateInput!) {
+            createCompany(data: $data) {
+              id
+            }
+          }
+        `,
+        variables: {
+          data: { name: `Approval ${uuidv4()}`, employees: 10 },
+        },
+      });
+
+      companyId = response.body.data.createCompany.id;
+    });
+
+    afterEach(async () => {
+      if (postedThreadId !== undefined) {
+        await destroyAgentChatThread({ threadId: postedThreadId });
+        postedThreadId = undefined;
+      }
+
+      await makeGraphqlApiRequest({
+        query: gql`
+          mutation DestroyCompany($id: UUID!) {
+            destroyCompany(id: $id) {
+              id
+            }
+          }
+        `,
+        variables: { id: companyId },
+      });
+    });
+
+    it('runs the action as the recipient approved it, then goes on', async () => {
+      const { status, stepStatus, stepResult } = await runWorkflowActionStep({
+        name: 'Approve a headcount change',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Headcount check',
+          text: 'Raise the headcount to 25?',
+          toolCall: {
+            toolName: 'update_one_company',
+            arguments: { id: companyId, employees: 25 },
+          },
+        },
+        whileRunning: ({ workflowRunId, stepId }) =>
+          answerPostedCall({
+            workflowRunId,
+            stepId,
+            response: {
+              decision: 'approve',
+              arguments: { id: companyId, employees: 30 },
+            },
+          }),
+      });
+
+      expect({ status, stepStatus }).toEqual({
+        status: 'COMPLETED',
+        stepStatus: 'SUCCESS',
+      });
+      expect(stepResult).toMatchObject({
+        threadId: postedThreadId,
+        isApproved: true,
+        approvedToolName: 'update_one_company',
+        status: 'approved',
+        arguments: { id: companyId, employees: 30 },
+      });
+      expect(await readEmployees()).toBe(30);
+    }, 120000);
+
+    it('runs nothing when the recipient rejects the action', async () => {
+      const { status, stepResult } = await runWorkflowActionStep({
+        name: 'Reject a headcount change',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Headcount check',
+          text: 'Raise the headcount to 25?',
+          toolCall: {
+            toolName: 'update_one_company',
+            arguments: { id: companyId, employees: 25 },
+          },
+        },
+        whileRunning: ({ workflowRunId, stepId }) =>
+          answerPostedCall({
+            workflowRunId,
+            stepId,
+            response: { decision: 'reject', feedback: 'Wait for the audit' },
+          }),
+      });
+
+      expect(status).toBe('COMPLETED');
+      expect(stepResult).toMatchObject({
+        isApproved: false,
+        approvedToolName: null,
+        status: 'rejected',
+        feedback: 'Wait for the audit',
+      });
+      expect(await readEmployees()).toBe(10);
+    }, 120000);
+
+    it('closes the call in the inbox when the run is stopped before the answer', async () => {
+      const { status } = await runWorkflowActionStep({
+        name: 'Stop a headcount check',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Headcount check',
+          text: 'Raise the headcount to 25?',
+          toolCall: {
+            toolName: 'update_one_company',
+            arguments: { id: companyId, employees: 25 },
+          },
+        },
+        whileRunning: async ({ workflowRunId, stepId }) => {
+          await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
+
+          const [{ threadId }] = await global.testDataSource.query(
+            `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+            [workflowRunId, stepId],
+          );
+
+          postedThreadId = threadId;
+
+          const stop = await workflowGraphqlRequest(
+            'mutation Stop($id: UUID!) { stopWorkflowRun(workflowRunId: $id) { id status } }',
+            { id: workflowRunId },
+          );
+
+          expect(stop.body.errors).toBeUndefined();
+        },
+      });
+
+      const [thread] = await global.testDataSource.query(
+        `SELECT "pendingQuestionMessageId" FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
+        [postedThreadId],
+      );
+      const [part] = await global.testDataSource.query(
+        `SELECT p."toolOutput" FROM "${SCHEMA}"."agentMessagePart" p
+         JOIN "${SCHEMA}"."agentMessage" m ON m.id = p."messageId"
+         WHERE m."threadId" = $1 AND p."toolName" = 'propose_tool_call'`,
+        [postedThreadId],
+      );
+
+      expect(status).toBe('STOPPED');
+      expect(thread.pendingQuestionMessageId).toBeNull();
+      expect(part.toolOutput.result.status).toBe('skipped');
+      expect(await readEmployees()).toBe(10);
+    }, 120000);
+
+    it('fails the step when its action cannot be proposed', async () => {
+      const { stepStatus, stepError } = await runWorkflowActionStep({
+        name: 'Propose an unknown action',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Unknown action',
+          text: 'Approve this?',
+          toolCall: { toolName: 'drop_everything', arguments: {} },
+        },
+      });
+
+      expect(stepStatus).toBe('FAILED');
+      expect(stepError).toContain('cannot be proposed');
+      expect(await readEmployees()).toBe(10);
+    }, 120000);
+  });
 
   it('fails a step that runs after the feature flag is turned off', async () => {
     await setSendChatMessageEnabled(true);
