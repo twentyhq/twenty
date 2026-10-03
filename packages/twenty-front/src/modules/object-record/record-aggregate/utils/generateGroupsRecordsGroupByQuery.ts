@@ -45,6 +45,7 @@ export const generateGroupsRecordsGroupByQuery = ({
         offsetForRecords: $offsetForRecords
       ) {
         groupByDimensionValues
+        totalCount
         edges {
           node ${mapObjectMetadataToGraphQLQuery({
             objectMetadataItems,

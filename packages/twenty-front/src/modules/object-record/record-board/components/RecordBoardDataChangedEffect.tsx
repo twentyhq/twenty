@@ -6,6 +6,7 @@ import { useGetRecordBoardEffectsForUpdateInputs } from '@/object-record/record-
 import { useRemoveRecordsFromBoard } from '@/object-record/record-board/hooks/useRemoveRecordsFromBoard';
 import { useRepositionRecordsOnBoard } from '@/object-record/record-board/hooks/useRepositionRecordsOnBoard';
 import { useTriggerRecordBoardInitialQuery } from '@/object-record/record-board/hooks/useTriggerRecordBoardInitialQuery';
+import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordGroupFromGroupValueComponentFamilySelector } from '@/object-record/record-group/states/selectors/recordGroupFromGroupValueComponentFamilySelector';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -37,6 +38,10 @@ export const RecordBoardDataChangedEffect = () => {
   const recordIndexRecordIdsByGroupCallbackState =
     useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
+    );
+  const recordBoardShouldFetchMoreInColumnCallbackState =
+    useAtomComponentFamilyStateCallbackState(
+      recordBoardShouldFetchMoreInColumnComponentFamilyState,
     );
 
   const { removeRecordsFromBoard } = useRemoveRecordsFromBoard();
@@ -116,6 +121,20 @@ export const RecordBoardDataChangedEffect = () => {
               return;
             }
 
+            if (
+              !store.get(
+                recordBoardShouldFetchMoreInColumnCallbackState(
+                  recordGroupDefinitionFromGroupValue.id,
+                ),
+              )
+            ) {
+              triggerRecordBoardInitialQuery({
+                shouldResetScroll: false,
+                recordGroupId: recordGroupDefinitionFromGroupValue.id,
+              });
+              return;
+            }
+
             const recordIdsForGroup = store.get(
               recordIndexRecordIdsByGroupCallbackState(
                 recordGroupDefinitionFromGroupValue.id,
@@ -183,6 +202,7 @@ export const RecordBoardDataChangedEffect = () => {
       recordIndexGroupFieldMetadataItem,
       recordGroupFromGroupValueCallbackState,
       recordIndexRecordIdsByGroupCallbackState,
+      recordBoardShouldFetchMoreInColumnCallbackState,
       removeRecordsFromBoard,
     ],
   );

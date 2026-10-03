@@ -188,7 +188,7 @@ export const useTriggerRecordBoardFetchMore = () => {
 
       upsertRecordsInStore({ partialRecords: newRecords });
 
-      if (newRecords.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
+      if (newOffset + newRecords.length >= foundGroupInResult.totalCount) {
         store.set(
           recordBoardShouldFetchMoreInColumnFamilyCallbackState(
             recordGroupDefinition.id,
