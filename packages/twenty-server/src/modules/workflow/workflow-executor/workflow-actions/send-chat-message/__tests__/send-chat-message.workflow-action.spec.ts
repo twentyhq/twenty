@@ -20,7 +20,7 @@ const buildStep = (input: Record<string, unknown>): WorkflowAction =>
   ({
     id: 'step-1',
     type: WorkflowActionType.SEND_CHAT_MESSAGE,
-    name: 'Send Chat Message',
+    name: 'Send to Inbox',
     valid: true,
     settings: {
       outputSchema: {},
@@ -140,7 +140,7 @@ describe('SendChatMessageWorkflowAction', () => {
 
     expect(sendMessage).toHaveBeenCalledWith(
       expect.objectContaining({
-        input: expect.objectContaining({ title: 'Send Chat Message' }),
+        input: expect.objectContaining({ title: 'Send to Inbox' }),
       }),
     );
   });

@@ -18,13 +18,21 @@ const buildService = ({ claimAffected = 1 } = {}) => {
     find: jest.fn().mockResolvedValue([
       {
         id: 'part-id',
-        toolName: 'ask_questions',
-        toolInput: { questions: QUESTIONS },
-        toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
+        toolName: 'ask_question',
+        toolInput: QUESTIONS[0],
+        toolOutput: { result: { question: QUESTIONS[0], status: 'pending' } },
       },
     ]),
-    update: jest.fn().mockResolvedValue({ affected: 1 }),
+    writePart: jest.fn(),
+    query: jest.fn(),
   };
+
+  messagePartRepository.query.mockImplementation(async (_workspaceId, run) =>
+    run({
+      table: (name: string) => name,
+      manager: { query: messagePartRepository.writePart },
+    }),
+  );
 
   const service = new AgentChatService(
     threadRepository as never,
@@ -64,15 +72,19 @@ describe('AgentChatService closePendingToolCalls', () => {
       },
       { pendingQuestionMessageId: null },
     );
-    expect(messagePartRepository.update).toHaveBeenCalledWith(
-      'workspace-id',
-      { id: 'part-id' },
-      {
-        toolOutput: expect.objectContaining({
-          result: { questions: QUESTIONS, status: 'skipped' },
-        }),
-      },
-    );
+    const [[closeQuery, [partId, closedToolOutput, expectedStatus]]] =
+      messagePartRepository.writePart.mock.calls;
+
+    expect(closeQuery).toContain(`"toolOutput"->'result'->>'status' = $3`);
+
+    expect({ partId, expectedStatus }).toEqual({
+      partId: 'part-id',
+      expectedStatus: 'pending',
+    });
+    expect(JSON.parse(closedToolOutput).result).toEqual({
+      question: QUESTIONS[0],
+      status: 'skipped',
+    });
   });
 
   it('leaves the call as it is when an answer holds the conversation', async () => {
@@ -82,6 +94,6 @@ describe('AgentChatService closePendingToolCalls', () => {
 
     await service.closePendingToolCalls(closeArguments);
 
-    expect(messagePartRepository.update).not.toHaveBeenCalled();
+    expect(messagePartRepository.writePart).not.toHaveBeenCalled();
   });
 });

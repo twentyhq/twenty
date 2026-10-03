@@ -10,7 +10,7 @@ const toolPart = ({
   toolName,
   status,
   toolCallId = 'call-1',
-  input = { questions: QUESTIONS },
+  input = QUESTIONS[0],
 }: {
   toolName: string;
   status: 'pending' | 'answered';
@@ -22,7 +22,7 @@ const toolPart = ({
     toolCallId,
     state: 'output-available',
     input,
-    output: { success: true, result: { questions: QUESTIONS, status } },
+    output: { success: true, result: { question: QUESTIONS[0], status } },
   }) as unknown as ExtendedUIMessagePart;
 
 const textPart = { type: 'text', text: 'hello' } as ExtendedUIMessagePart;
@@ -32,10 +32,10 @@ describe('findAwaitingPausingToolParts', () => {
     expect(
       findAwaitingPausingToolParts([
         textPart,
-        toolPart({ toolName: 'ask_questions', status: 'pending' }),
+        toolPart({ toolName: 'ask_question', status: 'pending' }),
       ]),
     ).toEqual([
-      { toolName: 'ask_questions', toolCallId: 'call-1', isAnswerable: true },
+      { toolName: 'ask_question', toolCallId: 'call-1', isAnswerable: true },
     ]);
   });
 
@@ -43,13 +43,13 @@ describe('findAwaitingPausingToolParts', () => {
     expect(
       findAwaitingPausingToolParts([
         toolPart({
-          toolName: 'ask_questions',
+          toolName: 'ask_question',
           status: 'pending',
           input: { questions: [] },
         }),
       ]),
     ).toEqual([
-      { toolName: 'ask_questions', toolCallId: 'call-1', isAnswerable: false },
+      { toolName: 'ask_question', toolCallId: 'call-1', isAnswerable: false },
     ]);
   });
 
@@ -57,17 +57,17 @@ describe('findAwaitingPausingToolParts', () => {
     expect(
       findAwaitingPausingToolParts([
         toolPart({
-          toolName: 'ask_questions',
+          toolName: 'ask_question',
           status: 'pending',
           toolCallId: 'call-1',
         }),
         toolPart({
-          toolName: 'ask_questions',
+          toolName: 'ask_question',
           status: 'answered',
           toolCallId: 'call-2',
         }),
         toolPart({
-          toolName: 'ask_questions',
+          toolName: 'ask_question',
           status: 'pending',
           toolCallId: 'call-3',
         }),
@@ -78,7 +78,7 @@ describe('findAwaitingPausingToolParts', () => {
   it('ignores a pausing tool call already answered', () => {
     expect(
       findAwaitingPausingToolParts([
-        toolPart({ toolName: 'ask_questions', status: 'answered' }),
+        toolPart({ toolName: 'ask_question', status: 'answered' }),
       ]),
     ).toEqual([]);
   });

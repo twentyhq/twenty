@@ -1,17 +1,15 @@
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
-import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { type WorkflowSendChatMessageAction } from '@/workflow/types/Workflow';
-import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { WorkflowSendChatMessageToolArguments } from '@/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import { useEffect, useMemo, useState } from 'react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
@@ -41,9 +39,6 @@ export const WorkflowEditActionSendChatMessage = ({
   const [formData, setFormData] = useState<SendChatMessageFormData>(
     action.settings.input,
   );
-  const [toolArgumentsError, setToolArgumentsError] = useState<
-    string | undefined
-  >(undefined);
 
   const saveAction = useDebouncedCallback(
     (nextFormData: SendChatMessageFormData) => {
@@ -85,34 +80,18 @@ export const WorkflowEditActionSendChatMessage = ({
   };
 
   const handleToolNameChange = (toolName: string) => {
-    setToolArgumentsError(undefined);
     // another tool takes other arguments
     handleToolCallChange(toolName === '' ? null : { toolName, arguments: {} });
   };
 
-  // variables sit inside JSON strings, so arguments are saved only once they parse
-  const handleToolArgumentsChange = (value: string | null) => {
-    const toolName = formData.toolCall?.toolName;
-
-    if (!isDefined(toolName)) {
+  const handleToolArgumentsChange = (
+    toolArguments: SendChatMessageToolCall['arguments'],
+  ) => {
+    if (!isDefined(formData.toolCall)) {
       return;
     }
 
-    const parsedArguments = parseAndValidateVariableFriendlyStringifiedJson(
-      isNonEmptyString(value) ? value : '{}',
-    );
-
-    if (!parsedArguments.isValid) {
-      setToolArgumentsError(t`Arguments must be a valid JSON object.`);
-
-      return;
-    }
-
-    setToolArgumentsError(undefined);
-    handleToolCallChange({
-      toolName,
-      arguments: parsedArguments.data as SendChatMessageToolCall['arguments'],
-    });
+    handleToolCallChange({ ...formData.toolCall, arguments: toolArguments });
   };
 
   const storedToolName = formData.toolCall?.toolName;
@@ -123,16 +102,19 @@ export const WorkflowEditActionSendChatMessage = ({
     }));
 
     // a saved tool the editor cannot see still runs, so it stays shown rather than reading as none
+    const noneOption = { label: t`None, only send the message`, value: '' };
+
     return isDefined(storedToolName) &&
       !indexedToolOptions.some((option) => option.value === storedToolName)
       ? [
+          noneOption,
           ...indexedToolOptions,
           {
             label: t`${storedToolName} (not available to you)`,
             value: storedToolName,
           },
         ]
-      : indexedToolOptions;
+      : [noneOption, ...indexedToolOptions];
   }, [toolIndex, storedToolName]);
 
   return (
@@ -172,7 +154,6 @@ export const WorkflowEditActionSendChatMessage = ({
           fullWidth
           disabled={actionOptions.readonly}
           value={formData.toolCall?.toolName ?? ''}
-          emptyOption={{ label: t`None, only send the message`, value: '' }}
           options={toolOptions}
           onChange={handleToolNameChange}
           withSearchInput
@@ -180,15 +161,12 @@ export const WorkflowEditActionSendChatMessage = ({
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
         {isDefined(formData.toolCall) && (
-          <FormRawJsonFieldInput
+          <WorkflowSendChatMessageToolArguments
             key={formData.toolCall.toolName}
-            label={t`Action arguments`}
-            placeholder={t`Enter the arguments as a JSON object`}
-            defaultValue={JSON.stringify(formData.toolCall.arguments, null, 2)}
-            onChange={handleToolArgumentsChange}
-            error={toolArgumentsError}
+            toolName={formData.toolCall.toolName}
+            toolArguments={formData.toolCall.arguments}
             readonly={actionOptions.readonly}
-            VariablePicker={WorkflowVariablePicker}
+            onChange={handleToolArgumentsChange}
           />
         )}
       </WorkflowStepBody>

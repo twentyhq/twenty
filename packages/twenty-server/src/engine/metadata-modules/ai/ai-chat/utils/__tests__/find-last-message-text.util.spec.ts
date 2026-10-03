@@ -19,7 +19,7 @@ describe('findLastMessageText', () => {
       findLastMessageText([
         textPart('Draft ready'),
         {
-          type: 'tool-ask_questions',
+          type: 'tool-ask_question',
           toolCallId: 'ask-1',
           state: 'input-available',
           input: {},
