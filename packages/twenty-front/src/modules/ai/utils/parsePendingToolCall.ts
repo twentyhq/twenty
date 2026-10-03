@@ -3,6 +3,7 @@ import { getToolName, isToolUIPart } from 'ai';
 import {
   ASK_QUESTIONS_TOOL_NAME,
   type AskQuestionItem,
+  buildFallbackProposedToolCall,
   type ExtendedUIMessagePart,
   PROPOSE_EMAIL_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
@@ -82,13 +83,11 @@ export const parsePendingToolCall = (
         ? {
             toolCallId,
             kind: 'toolCallApproval',
-            proposal: {
+            proposal: buildFallbackProposedToolCall({
               toolName: input.toolName,
-              toolLabel: input.toolName,
               summary: input.summary,
               arguments: input.arguments,
-              template: 'generic',
-            },
+            }),
           }
         : null;
     }

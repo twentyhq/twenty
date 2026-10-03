@@ -16,15 +16,16 @@ export type ProposedToolCallResolution =
 
 const resolveRecordProposal = async ({
   baseProposal,
+  template,
   toolIndexEntry,
   executeTool,
 }: {
   baseProposal: Omit<ProposedToolCall, 'template'>;
+  template: 'recordCreate' | 'recordUpdate' | 'recordDelete';
   toolIndexEntry: ToolIndexEntry;
   executeTool: PausingToolCompletionContext['executeTool'];
 }): Promise<ProposedToolCallResolution> => {
   const { executionRef } = toolIndexEntry;
-  const template = toolIndexEntry.approval?.template;
 
   if (executionRef.kind !== 'database_crud') {
     return { proposal: { ...baseProposal, template: 'generic' } };
@@ -65,22 +66,13 @@ const resolveRecordProposal = async ({
   }
 
   return {
-    proposal:
-      template === 'recordUpdate'
-        ? {
-            ...baseProposal,
-            template,
-            objectNameSingular,
-            recordId,
-            currentValues: currentRecord.values,
-          }
-        : {
-            ...baseProposal,
-            template: 'recordDelete',
-            objectNameSingular,
-            recordId,
-            currentValues: currentRecord.values,
-          },
+    proposal: {
+      ...baseProposal,
+      template,
+      objectNameSingular,
+      recordId,
+      currentValues: currentRecord.values,
+    },
   };
 };
 
@@ -126,6 +118,7 @@ export const resolveProposedToolCall = async ({
     case 'recordDelete':
       return resolveRecordProposal({
         baseProposal,
+        template,
         toolIndexEntry,
         executeTool,
       });

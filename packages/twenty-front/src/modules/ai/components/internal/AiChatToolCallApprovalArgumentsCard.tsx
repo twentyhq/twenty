@@ -45,16 +45,22 @@ export const AiChatToolCallApprovalArgumentsCard = ({
 }: AiChatToolCallApprovalArgumentsCardProps) => {
   const { t } = useLingui();
   const { handleFieldFocus, handleFieldBlur } = useAiChatAskCardFieldFocus();
-  const { pendingResponse, isAnswering, answerToolCallApproval } =
-    useAnswerToolCallApproval({ toolCallId, proposal });
+  const {
+    pendingResponse,
+    isAnswering,
+    isFeedbackShown,
+    showFeedback,
+    feedback,
+    setFeedback,
+    approve,
+    reject,
+  } = useAnswerToolCallApproval({ toolCallId, proposal });
 
   // null while the raw arguments do not parse, which blocks approving
   const [toolArguments, setToolArguments] = useState<Record<
     string,
     unknown
   > | null>(proposal.arguments);
-  const [isFeedbackShown, setIsFeedbackShown] = useState(false);
-  const [feedback, setFeedback] = useState('');
 
   const { template, objectNameSingular, recordId } = proposal;
 
@@ -63,25 +69,6 @@ export const AiChatToolCallApprovalArgumentsCard = ({
       ...previousArguments,
       [fieldName]: value,
     }));
-  };
-
-  const trimmedFeedback = feedback.trim();
-  // feedback goes with either answer, so the agent hears it whatever the person decides
-  const feedbackFields =
-    trimmedFeedback.length > 0 ? { feedback: trimmedFeedback } : {};
-
-  const approve = () => {
-    if (isDefined(toolArguments)) {
-      void answerToolCallApproval({
-        decision: 'approve',
-        arguments: toolArguments,
-        ...feedbackFields,
-      });
-    }
-  };
-
-  const reject = () => {
-    void answerToolCallApproval({ decision: 'reject', ...feedbackFields });
   };
 
   const hasRecordFields =
@@ -139,10 +126,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
       </StyledToolCallApprovalBody>
       <StyledToolCallApprovalActions>
         {!isFeedbackShown && (
-          <LightButton
-            disabled={isAnswering}
-            onClick={() => setIsFeedbackShown(true)}
-          >
+          <LightButton disabled={isAnswering} onClick={showFeedback}>
             {t`Add feedback`}
           </LightButton>
         )}
@@ -164,7 +148,11 @@ export const AiChatToolCallApprovalArgumentsCard = ({
           startIcon={<IconCheck />}
           disabled={isAnswering || !isDefined(toolArguments)}
           loading={pendingResponse?.decision === 'approve'}
-          onClick={approve}
+          onClick={() => {
+            if (isDefined(toolArguments)) {
+              approve({ arguments: toolArguments });
+            }
+          }}
         >
           {t`Approve`}
         </Button>

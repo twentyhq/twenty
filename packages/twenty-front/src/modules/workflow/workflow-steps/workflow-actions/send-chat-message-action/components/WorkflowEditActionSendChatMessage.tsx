@@ -5,13 +5,15 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { type WorkflowSendChatMessageAction } from '@/workflow/types/Workflow';
+import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 type SendChatMessageFormData =
@@ -79,14 +81,7 @@ export const WorkflowEditActionSendChatMessage = ({
   };
 
   const handleToolCallChange = (toolCall: SendChatMessageToolCall | null) => {
-    const { toolCall: _previousToolCall, ...formDataWithoutToolCall } =
-      formData;
-
-    updateFormData(
-      isDefined(toolCall)
-        ? { ...formDataWithoutToolCall, toolCall }
-        : formDataWithoutToolCall,
-    );
+    updateFormData({ ...formData, toolCall: toolCall ?? undefined });
   };
 
   const handleToolNameChange = (toolName: string) => {
@@ -103,35 +98,33 @@ export const WorkflowEditActionSendChatMessage = ({
       return;
     }
 
-    try {
-      const parsedArguments: unknown = JSON.parse(value ?? '{}');
+    const parsedArguments = parseAndValidateVariableFriendlyStringifiedJson(
+      isNonEmptyString(value) ? value : '{}',
+    );
 
-      if (!isPlainObject(parsedArguments)) {
-        setToolArgumentsError(t`Arguments must be a JSON object`);
+    if (!parsedArguments.isValid) {
+      setToolArgumentsError(t`Arguments must be a valid JSON object.`);
 
-        return;
-      }
-
-      setToolArgumentsError(undefined);
-      handleToolCallChange({
-        toolName,
-        arguments: parsedArguments as SendChatMessageToolCall['arguments'],
-      });
-    } catch {
-      setToolArgumentsError(t`Arguments must be valid JSON`);
+      return;
     }
+
+    setToolArgumentsError(undefined);
+    handleToolCallChange({
+      toolName,
+      arguments: parsedArguments.data as SendChatMessageToolCall['arguments'],
+    });
   };
 
   const storedToolName = formData.toolCall?.toolName;
-  const indexedToolOptions = toolIndex.map((toolIndexEntry) => ({
-    label: toolIndexEntry.label,
-    value: toolIndexEntry.name,
-  }));
+  const toolOptions = useMemo(() => {
+    const indexedToolOptions = toolIndex.map((toolIndexEntry) => ({
+      label: toolIndexEntry.label,
+      value: toolIndexEntry.name,
+    }));
 
-  // a saved tool the editor cannot see still runs, so it stays shown rather than reading as none
-  const toolOptions =
-    isDefined(storedToolName) &&
-    !indexedToolOptions.some((option) => option.value === storedToolName)
+    // a saved tool the editor cannot see still runs, so it stays shown rather than reading as none
+    return isDefined(storedToolName) &&
+      !indexedToolOptions.some((option) => option.value === storedToolName)
       ? [
           ...indexedToolOptions,
           {
@@ -140,6 +133,7 @@ export const WorkflowEditActionSendChatMessage = ({
           },
         ]
       : indexedToolOptions;
+  }, [toolIndex, storedToolName]);
 
   return (
     <>

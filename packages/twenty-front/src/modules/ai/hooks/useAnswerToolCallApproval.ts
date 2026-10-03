@@ -18,6 +18,8 @@ export const useAnswerToolCallApproval = ({
   const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
   const [pendingResponse, setPendingResponse] =
     useState<ToolCallApprovalResponse | null>(null);
+  const [isFeedbackShown, setIsFeedbackShown] = useState(false);
+  const [feedback, setFeedback] = useState('');
 
   const answerToolCallApproval = async (response: ToolCallApprovalResponse) => {
     setPendingResponse(response);
@@ -47,9 +49,36 @@ export const useAnswerToolCallApproval = ({
     }
   };
 
+  const trimmedFeedback = feedback.trim();
+  // feedback goes with either answer, so the agent hears it whatever the person decides
+  const feedbackFields =
+    trimmedFeedback.length > 0 ? { feedback: trimmedFeedback } : {};
+
+  const approve = (
+    approval: Omit<
+      Extract<ToolCallApprovalResponse, { decision: 'approve' }>,
+      'decision' | 'feedback'
+    >,
+  ) => {
+    void answerToolCallApproval({
+      decision: 'approve',
+      ...approval,
+      ...feedbackFields,
+    });
+  };
+
+  const reject = () => {
+    void answerToolCallApproval({ decision: 'reject', ...feedbackFields });
+  };
+
   return {
     pendingResponse,
     isAnswering: isDefined(pendingResponse),
-    answerToolCallApproval,
+    isFeedbackShown,
+    showFeedback: () => setIsFeedbackShown(true),
+    feedback,
+    setFeedback,
+    approve,
+    reject,
   };
 };

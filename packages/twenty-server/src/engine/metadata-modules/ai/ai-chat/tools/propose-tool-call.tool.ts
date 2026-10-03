@@ -1,4 +1,5 @@
 import {
+  PROPOSED_TOOL_CALL_TEMPLATES,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   type ProposeToolCallToolInput,
   type ProposeToolCallToolResult,
@@ -35,13 +36,7 @@ export const proposedToolCallSchema: z.ZodType<ProposedToolCall> = z.object({
   toolLabel: z.string(),
   summary: z.string(),
   arguments: z.record(z.string(), z.unknown()),
-  template: z.enum([
-    'recordCreate',
-    'recordUpdate',
-    'recordDelete',
-    'email',
-    'generic',
-  ]),
+  template: z.enum(PROPOSED_TOOL_CALL_TEMPLATES),
   alternativeToolNames: z.array(z.string()).optional(),
   objectNameSingular: z.string().optional(),
   recordId: z.string().optional(),

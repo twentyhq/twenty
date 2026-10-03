@@ -61,7 +61,7 @@ const parseOptionalRecord = (
     : throwInvalidToolCall(`${name} must be an object`);
 };
 
-const buildToolPart = ({
+export const buildToolPart = ({
   toolName,
   toolCallId,
   input,

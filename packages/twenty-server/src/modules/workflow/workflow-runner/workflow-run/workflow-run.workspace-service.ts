@@ -207,19 +207,19 @@ export class WorkflowRunWorkspaceService {
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
 
+    const stepThreadIds = Object.values(
+      workflowRunToUpdate.state?.stepInfos ?? {},
+    )
+      .map((stepInfo) => stepInfo?.threadId)
+      .filter(isDefined);
+
     // An ended run cannot consume answers, so close the calls its conversations wait on.
     // Best effort: a failure only leaves a call that looks waiting.
-    if (
-      Object.values(workflowRunToUpdate.state?.stepInfos ?? {}).some(
-        (stepInfo) => isDefined(stepInfo?.threadId),
-      )
-    ) {
+    if (stepThreadIds.length > 0) {
       await this.closeWaitingConversations({
         workflowRunId,
         workspaceId,
-        stepThreadIds: Object.values(workflowRunToUpdate.state?.stepInfos ?? {})
-          .map((stepInfo) => stepInfo?.threadId)
-          .filter(isDefined),
+        stepThreadIds,
       }).catch((error: unknown) => {
         this.logger.error(
           `Failed to close the conversations of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
@@ -696,29 +696,27 @@ export class WorkflowRunWorkspaceService {
     workspaceId: string;
     stepThreadIds: string[];
   }): Promise<void> {
-    // An answer holding a conversation's claim closes its calls itself once it finds the run over
-    const runThreads = await this.threadRepository.find(workspaceId, {
-      where: {
-        workflowRunId,
-        pendingQuestionMessageId: Not(IsNull()),
-        activeStreamId: IsNull(),
-      },
-      select: ['id', 'pendingQuestionMessageId'],
-    });
-
-    // a step can also wait in a member's inbox, whose conversation is theirs, not the run's
-    const inboxThreads =
-      stepThreadIds.length > 0
-        ? await this.threadRepository.find(workspaceId, {
-            where: {
-              id: In(stepThreadIds),
-              workflowRunId: IsNull(),
-              pendingQuestionMessageId: Not(IsNull()),
-              activeStreamId: IsNull(),
-            },
-            select: ['id', 'pendingQuestionMessageId'],
-          })
-        : [];
+    // An answer holding a conversation's claim closes its calls itself once it finds the run over.
+    // A step can also wait in a member's inbox, whose conversation is theirs, not the run's
+    const [runThreads, inboxThreads] = await Promise.all([
+      this.threadRepository.find(workspaceId, {
+        where: {
+          workflowRunId,
+          pendingQuestionMessageId: Not(IsNull()),
+          activeStreamId: IsNull(),
+        },
+        select: ['id', 'pendingQuestionMessageId'],
+      }),
+      this.threadRepository.find(workspaceId, {
+        where: {
+          id: In(stepThreadIds),
+          workflowRunId: IsNull(),
+          pendingQuestionMessageId: Not(IsNull()),
+          activeStreamId: IsNull(),
+        },
+        select: ['id', 'pendingQuestionMessageId'],
+      }),
+    ]);
 
     const waitingThreads = [
       ...runThreads,

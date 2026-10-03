@@ -477,44 +477,69 @@ export class ToolCallAnswerService {
     userWorkspaceId: string;
     threadId: string;
   }): PausingToolCompletionContext {
+    let toolContext: Promise<ToolContext> | undefined;
+
     return {
       executeTool: async ({ toolName, args }) => {
-        const authContext = workspaceAuthContextStorage.getStore();
-
-        if (!isDefined(authContext) || !isUserAuthContext(authContext)) {
-          throw new AiException(
-            'Answering requires a signed-in person',
-            AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
-          );
-        }
-
-        const { userWorkspaceRoleMap } =
-          await this.workspaceCacheService.getOrRecompute(workspaceId, [
-            'userWorkspaceRoleMap',
-          ]);
-        const { actorContext, roleId, userId, userContext } =
-          await this.agentActorContextService.buildUserAndAgentActorContext(
-            userWorkspaceId,
-            workspaceId,
-          );
-
-        return this.toolRegistryService.resolveAndExecute(toolName, args, {
+        // an approved record call reads the record again before running, so both calls share one context
+        toolContext ??= this.buildAnswerToolContext({
           workspaceId,
-          roleId,
-          rolePermissionConfig:
-            resolveRolePermissionConfig({
-              authContext,
-              userWorkspaceRoleMap,
-              apiKeyRoleMap: {},
-            }) ?? undefined,
-          authContext,
-          actorContext,
-          userId,
           userWorkspaceId,
           threadId,
-          locale: userContext.locale as ToolContext['locale'],
         });
+
+        return this.toolRegistryService.resolveAndExecute(
+          toolName,
+          args,
+          await toolContext,
+        );
       },
+    };
+  }
+
+  private async buildAnswerToolContext({
+    workspaceId,
+    userWorkspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    threadId: string;
+  }): Promise<ToolContext> {
+    const authContext = workspaceAuthContextStorage.getStore();
+
+    if (!isDefined(authContext) || !isUserAuthContext(authContext)) {
+      throw new AiException(
+        'Answering requires a signed-in person',
+        AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
+      );
+    }
+
+    const { userWorkspaceRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+      ]);
+    const { actorContext, roleId, userId, userContext } =
+      await this.agentActorContextService.buildUserAndAgentActorContext(
+        userWorkspaceId,
+        workspaceId,
+      );
+
+    return {
+      workspaceId,
+      roleId,
+      rolePermissionConfig:
+        resolveRolePermissionConfig({
+          authContext,
+          userWorkspaceRoleMap,
+          apiKeyRoleMap: {},
+        }) ?? undefined,
+      authContext,
+      actorContext,
+      userId,
+      userWorkspaceId,
+      threadId,
+      locale: userContext.locale as ToolContext['locale'],
     };
   }
 

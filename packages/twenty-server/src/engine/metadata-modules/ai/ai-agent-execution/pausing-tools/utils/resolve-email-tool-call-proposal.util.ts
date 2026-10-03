@@ -2,18 +2,14 @@ import { type ProposeToolCallToolInput } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ACTION_TOOL_LABELS } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
+import { EMAIL_TOOL_APPROVALS } from 'src/engine/core-modules/tool-provider/constants/email-tool-approvals.constant';
 import { findEmailArgumentsError } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-email-arguments-error.util';
 import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 
-const EMAIL_TOOL_ALTERNATIVES = {
-  send_email: 'draft_email',
-  draft_email: 'send_email',
-} as const;
-
 const isEmailToolName = (
   toolName: string,
-): toolName is keyof typeof EMAIL_TOOL_ALTERNATIVES =>
-  Object.prototype.hasOwnProperty.call(EMAIL_TOOL_ALTERNATIVES, toolName);
+): toolName is keyof typeof EMAIL_TOOL_APPROVALS =>
+  Object.prototype.hasOwnProperty.call(EMAIL_TOOL_APPROVALS, toolName);
 
 // for proposers without registry tools (apps posting to the inbox, workflow steps without an agent):
 // an email runs only once approved, with the approver's own permissions, so nothing is looked up here
@@ -37,9 +33,8 @@ export const resolveEmailToolCallProposal = (
   return {
     proposal: {
       ...input,
+      ...EMAIL_TOOL_APPROVALS[toolName],
       toolLabel: ACTION_TOOL_LABELS[toolName].label,
-      template: 'email',
-      alternativeToolNames: [EMAIL_TOOL_ALTERNATIVES[toolName]],
     },
   };
 };

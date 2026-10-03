@@ -75,16 +75,17 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       );
     }
 
-    const workflow = await this.findRunWorkflowOrThrow(runInfo);
-
-    const awaitingToolCall = isDefined(toolCall)
-      ? await this.buildAwaitingToolCall({
-          toolCall,
-          summary: text,
-          runInfo,
-          stepId: currentStepId,
-        })
-      : undefined;
+    const [workflow, awaitingToolCall] = await Promise.all([
+      this.findRunWorkflowOrThrow(runInfo),
+      isDefined(toolCall)
+        ? this.buildAwaitingToolCall({
+            toolCall,
+            summary: text,
+            runInfo,
+            stepId: currentStepId,
+          })
+        : undefined,
+    ]);
 
     // Each run gets its own conversation with the member, so every message
     // a run sends reads as one exchange.

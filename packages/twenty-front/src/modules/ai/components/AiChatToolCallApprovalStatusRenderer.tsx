@@ -15,6 +15,7 @@ import {
   StyledAiChatAskStatusMessage,
 } from '@/ai/components/AiChatAskStyledComponents';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
+import { EMAIL_TOOL_NAMES } from '@/ai/constants/EmailToolNames';
 
 const StyledContent = styled.div`
   display: flex;
@@ -28,8 +29,6 @@ const StyledDetail = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
   overflow-wrap: anywhere;
 `;
-
-const EMAIL_TOOL_NAMES = new Set(['send_email', 'draft_email']);
 
 export const AiChatToolCallApprovalStatusRenderer = ({
   toolPart,
@@ -60,7 +59,8 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     : undefined;
   const isEmail = isDefined(result)
     ? result.proposal.template === 'email'
-    : isString(proposedToolName) && EMAIL_TOOL_NAMES.has(proposedToolName);
+    : isString(proposedToolName) &&
+      Object.values<string>(EMAIL_TOOL_NAMES).includes(proposedToolName);
 
   const messageByStatus: Record<ProposeToolCallToolStatus, string> = isEmail
     ? {
@@ -68,7 +68,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
           ? t`Email waiting for your review`
           : t`Drafting an email...`,
         approved:
-          result?.proposal.toolName === 'draft_email'
+          result?.proposal.toolName === EMAIL_TOOL_NAMES.draft
             ? t`Email saved as draft`
             : t`Email sent`,
         rejected: t`Email discarded`,

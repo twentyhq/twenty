@@ -28,11 +28,9 @@ import {
   StyledToolCallApprovalLabel,
   StyledToolCallApprovalSummary,
 } from '@/ai/components/internal/AiChatToolCallApprovalStyledComponents';
+import { EMAIL_TOOL_NAMES } from '@/ai/constants/EmailToolNames';
 import { useAiChatAskCardFieldFocus } from '@/ai/hooks/useAiChatAskCardFieldFocus';
 import { useAnswerToolCallApproval } from '@/ai/hooks/useAnswerToolCallApproval';
-
-const SEND_EMAIL_TOOL_NAME = 'send_email';
-const DRAFT_EMAIL_TOOL_NAME = 'draft_email';
 
 const StyledFields = styled.div`
   display: flex;
@@ -89,8 +87,16 @@ export const AiChatToolCallApprovalEmailCard = ({
 }: AiChatToolCallApprovalEmailCardProps) => {
   const { t } = useLingui();
   const { handleFieldFocus, handleFieldBlur } = useAiChatAskCardFieldFocus();
-  const { pendingResponse, isAnswering, answerToolCallApproval } =
-    useAnswerToolCallApproval({ toolCallId, proposal });
+  const {
+    pendingResponse,
+    isAnswering,
+    isFeedbackShown,
+    showFeedback,
+    feedback,
+    setFeedback,
+    approve,
+    reject,
+  } = useAnswerToolCallApproval({ toolCallId, proposal });
 
   const initialRecipients = readRecipients(proposal.arguments);
   const [to, setTo] = useState(initialRecipients.to);
@@ -103,30 +109,21 @@ export const AiChatToolCallApprovalEmailCard = ({
     isString(proposal.arguments.subject) ? proposal.arguments.subject : '',
   );
   const [body, setBody] = useState<unknown>(proposal.arguments.body);
-  const [isFeedbackShown, setIsFeedbackShown] = useState(false);
-  const [feedback, setFeedback] = useState('');
 
   const runnableToolNames = [
     proposal.toolName,
     ...(proposal.alternativeToolNames ?? []),
   ];
-  const canSend = runnableToolNames.includes(SEND_EMAIL_TOOL_NAME);
-  const canSaveDraft = runnableToolNames.includes(DRAFT_EMAIL_TOOL_NAME);
+  const canSend = runnableToolNames.includes(EMAIL_TOOL_NAMES.send);
+  const canSaveDraft = runnableToolNames.includes(EMAIL_TOOL_NAMES.draft);
 
   const handleBodyChange = (serializedBody: string) => {
     setBody(parseCanonicalTipTapJsonDocument(serializedBody) ?? serializedBody);
   };
 
-  const trimmedFeedback = feedback.trim();
-  // feedback goes with either answer, so the agent hears it whatever the person decides
-  const feedbackFields =
-    trimmedFeedback.length > 0 ? { feedback: trimmedFeedback } : {};
-
-  const approve = (toolName: string) => {
-    void answerToolCallApproval({
-      decision: 'approve',
+  const approveWith = (toolName: string) => {
+    approve({
       toolName,
-      ...feedbackFields,
       arguments: {
         ...proposal.arguments,
         recipients: {
@@ -138,10 +135,6 @@ export const AiChatToolCallApprovalEmailCard = ({
         body,
       },
     });
-  };
-
-  const discard = () => {
-    void answerToolCallApproval({ decision: 'reject', ...feedbackFields });
   };
 
   const pendingToolName =
@@ -226,10 +219,7 @@ export const AiChatToolCallApprovalEmailCard = ({
       </StyledFields>
       <StyledToolCallApprovalActions>
         {!isFeedbackShown && (
-          <LightButton
-            disabled={isAnswering}
-            onClick={() => setIsFeedbackShown(true)}
-          >
+          <LightButton disabled={isAnswering} onClick={showFeedback}>
             {t`Add feedback`}
           </LightButton>
         )}
@@ -240,7 +230,7 @@ export const AiChatToolCallApprovalEmailCard = ({
           startIcon={<IconTrash />}
           disabled={isAnswering}
           loading={pendingResponse?.decision === 'reject'}
-          onClick={discard}
+          onClick={reject}
         >
           {t`Discard`}
         </Button>
@@ -250,8 +240,8 @@ export const AiChatToolCallApprovalEmailCard = ({
             variant="outline"
             startIcon={<IconDeviceFloppy />}
             disabled={isAnswering}
-            loading={pendingToolName === DRAFT_EMAIL_TOOL_NAME}
-            onClick={() => approve(DRAFT_EMAIL_TOOL_NAME)}
+            loading={pendingToolName === EMAIL_TOOL_NAMES.draft}
+            onClick={() => approveWith(EMAIL_TOOL_NAMES.draft)}
           >
             {t`Save as draft`}
           </Button>
@@ -263,8 +253,8 @@ export const AiChatToolCallApprovalEmailCard = ({
             color="accent"
             startIcon={<IconSend />}
             disabled={isAnswering || to.length === 0}
-            loading={pendingToolName === SEND_EMAIL_TOOL_NAME}
-            onClick={() => approve(SEND_EMAIL_TOOL_NAME)}
+            loading={pendingToolName === EMAIL_TOOL_NAMES.send}
+            onClick={() => approveWith(EMAIL_TOOL_NAMES.send)}
           >
             {t`Send`}
           </Button>

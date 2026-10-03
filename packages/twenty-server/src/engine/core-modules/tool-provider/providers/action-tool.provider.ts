@@ -8,6 +8,7 @@ import {
   ACTION_TOOL_LABELS,
   type ActionToolId,
 } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
+import { EMAIL_TOOL_APPROVALS } from 'src/engine/core-modules/tool-provider/constants/email-tool-approvals.constant';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -125,7 +126,7 @@ export class ActionToolProvider implements ToolProvider {
           this.sendEmailTool,
           includeSchemas,
           context.locale,
-          { template: 'email', alternativeToolNames: ['draft_email'] },
+          EMAIL_TOOL_APPROVALS.send_email,
         ),
       );
       descriptors.push(
@@ -134,7 +135,7 @@ export class ActionToolProvider implements ToolProvider {
           this.draftEmailTool,
           includeSchemas,
           context.locale,
-          { template: 'email', alternativeToolNames: ['send_email'] },
+          EMAIL_TOOL_APPROVALS.draft_email,
         ),
       );
       descriptors.push(

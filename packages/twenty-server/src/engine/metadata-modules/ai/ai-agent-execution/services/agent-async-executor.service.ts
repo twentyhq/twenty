@@ -75,6 +75,7 @@ import {
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
+import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -95,8 +96,9 @@ const buildUnavailableToolOutput = (toolName: string): ToolOutput => ({
 });
 
 type ProposableTools = {
+  isToolAllowed: (toolName: string) => boolean;
   findTool: (toolName: string) => Promise<ToolIndexEntry | undefined>;
-  executeTool: PausingToolCompletionContext['executeTool'];
+  toolContext: ToolContext;
 };
 
 const EMPTY_USAGE: LanguageModelUsage = {
@@ -212,18 +214,19 @@ export class AgentAsyncExecutorService {
       userWorkspaceId,
     };
 
+    // the context lacks the explicit grants the preloaded tools were built with, so calls stay within those tools
+    const isToolAllowed = (toolName: string): boolean =>
+      Object.prototype.hasOwnProperty.call(tools, toolName);
+
     return {
       tools,
       proposableTools: {
+        isToolAllowed,
         findTool: async (toolName) =>
-          Object.prototype.hasOwnProperty.call(tools, toolName)
+          isToolAllowed(toolName)
             ? this.toolRegistry.findCatalogEntry(toolName, toolContext)
             : undefined,
-        // the context lacks the explicit grants the preloaded tools were built with, so reads stay within those tools
-        executeTool: ({ toolName, args }) =>
-          Object.prototype.hasOwnProperty.call(tools, toolName)
-            ? this.toolRegistry.resolveAndExecute(toolName, args, toolContext)
-            : Promise.resolve(buildUnavailableToolOutput(toolName)),
+        toolContext,
       },
     };
   }
@@ -305,14 +308,37 @@ export class AgentAsyncExecutorService {
       tools,
       catalogSection: buildToolCatalogSection(catalog, []),
       proposableTools: {
+        isToolAllowed,
         findTool: async (toolName) =>
           catalog.find((toolIndexEntry) => toolIndexEntry.name === toolName),
-        executeTool: ({ toolName, args }) =>
-          isToolAllowed(toolName)
-            ? this.toolRegistry.resolveAndExecute(toolName, args, toolContext)
-            : Promise.resolve(buildUnavailableToolOutput(toolName)),
+        toolContext,
       },
     };
+  }
+
+  private buildProposeToolCallTool(
+    proposableTools: ProposableTools | undefined,
+  ) {
+    // an email runs only once approved, with the approver's own permissions
+    if (!isDefined(proposableTools)) {
+      return createProposeToolCallTool({
+        resolveProposal: async (input) => resolveEmailToolCallProposal(input),
+      });
+    }
+
+    const { isToolAllowed, findTool, toolContext } = proposableTools;
+    const executeTool: PausingToolCompletionContext['executeTool'] = ({
+      toolName,
+      args,
+    }) =>
+      isToolAllowed(toolName)
+        ? this.toolRegistry.resolveAndExecute(toolName, args, toolContext)
+        : Promise.resolve(buildUnavailableToolOutput(toolName));
+
+    return createProposeToolCallTool({
+      resolveProposal: (input) =>
+        resolveProposedToolCall({ input, findTool, executeTool }),
+    });
   }
 
   async executeAgent({
@@ -335,7 +361,7 @@ export class AgentAsyncExecutorService {
     // a continued conversation, with the tool calls and results plain run messages cannot carry
     priorModelMessages?: ModelMessage[];
     pausingTools?: ToolSet;
-    // offers propose_tool_call over the registry tools the agent can call itself
+    // offers propose_tool_call over the registry tools the agent can call itself, or emails without an agent
     canProposeToolCalls?: boolean;
     baseSystemPrompt: string;
     actorContext?: ActorMetadata;
@@ -386,7 +412,7 @@ export class AgentAsyncExecutorService {
 
       let tools: ToolSet = {};
       let toolCatalogSection = '';
-      let offeredPausingTools: ToolSet = pausingTools;
+      let proposableTools: ProposableTools | undefined;
       const providerOptions = getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
         providerOptions:
@@ -433,18 +459,7 @@ export class AgentAsyncExecutorService {
 
           registryTools = registryToolset.tools;
           toolCatalogSection = registryToolset.catalogSection;
-
-          if (canProposeToolCalls) {
-            const { findTool, executeTool } = registryToolset.proposableTools;
-
-            offeredPausingTools = {
-              ...offeredPausingTools,
-              [PROPOSE_TOOL_CALL_TOOL_NAME]: createProposeToolCallTool({
-                resolveProposal: (input) =>
-                  resolveProposedToolCall({ input, findTool, executeTool }),
-              }),
-            };
-          }
+          proposableTools = registryToolset.proposableTools;
         }
 
         const nativeTools = this.nativeToolBinder.bind(
@@ -471,6 +486,15 @@ export class AgentAsyncExecutorService {
           )?.modalities,
         });
 
+      // an agent proposes its own tools; a step without an agent has none, so it proposes only emails
+      const offeredPausingTools: ToolSet =
+        canProposeToolCalls && (!isDefined(agent) || isDefined(proposableTools))
+          ? {
+              ...pausingTools,
+              [PROPOSE_TOOL_CALL_TOOL_NAME]:
+                this.buildProposeToolCallTool(proposableTools),
+            }
+          : pausingTools;
       const offeredToolNames = Object.keys(offeredPausingTools);
 
       const textResponse = await generateText({

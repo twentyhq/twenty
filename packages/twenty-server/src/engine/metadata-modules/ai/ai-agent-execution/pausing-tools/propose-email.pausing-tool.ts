@@ -4,12 +4,26 @@ import {
   type ProposeEmailToolResult,
   type ProposedEmail,
 } from 'twenty-shared/ai';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { convertPlainTextToEmailHtml } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/convert-plain-text-to-email-html.util';
 import { definePausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/define-pausing-tool.util';
-import { proposeEmailInputSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
+
+// no agent is offered propose_email any more; calls recorded before still parse through this schema
+const proposeEmailInputSchema = z.object({
+  recipients: z.object({
+    to: z.string(),
+    cc: z.string().optional().default(''),
+    bcc: z.string().optional().default(''),
+  }),
+  subject: z.string(),
+  body: z.string(),
+  connectedAccountId: z
+    .string()
+    .refine((value) => isValidUuid(value))
+    .optional(),
+});
 
 type ProposeEmailToolOutput = {
   decision: EmailApprovalDecision;

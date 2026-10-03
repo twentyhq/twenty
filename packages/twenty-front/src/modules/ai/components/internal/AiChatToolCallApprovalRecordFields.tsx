@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -12,10 +13,8 @@ import { readFieldOptionLabels } from '@/ai/utils/readFieldOptionLabels';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
-import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { RelationType } from '~/generated-metadata/graphql';
 
 // approvers read amounts as the currency units the "Currently" line shows, not as micros
 const CURRENCY_INPUT_SETTINGS = {
@@ -66,32 +65,37 @@ export const AiChatToolCallApprovalRecordFields = ({
     { objectName: objectNameSingular, objectNameType: 'singular' },
   );
 
-  const fieldDefinitions = isDefined(objectMetadataItem)
-    ? objectMetadataItem.fields.map((field) =>
-        formatFieldMetadataItemAsFieldDefinition({
-          field,
-          objectMetadataItem,
-          showLabel: true,
-          labelWidth: 90,
-        }),
-      )
-    : [];
-
   // a many-to-one relation is set through its foreign key
-  const findFieldDefinition = (fieldName: string) =>
-    fieldDefinitions.find((fieldDefinition) =>
-      isFieldRelation(fieldDefinition) &&
-      fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE
-        ? `${fieldDefinition.metadata.fieldName}Id` === fieldName
-        : fieldDefinition.metadata.fieldName === fieldName,
-    );
+  const fieldDefinitionsByArgumentName = useMemo(
+    () =>
+      new Map(
+        isDefined(objectMetadataItem)
+          ? objectMetadataItem.fields.map((field) => {
+              const fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
+                field,
+                objectMetadataItem,
+                showLabel: true,
+                labelWidth: 90,
+              });
+
+              return [
+                isFieldRelationManyToOne(fieldDefinition)
+                  ? `${field.name}Id`
+                  : field.name,
+                fieldDefinition,
+              ] as const;
+            })
+          : [],
+      ),
+    [objectMetadataItem],
+  );
 
   return (
     <>
       {Object.entries(values)
         .filter(([fieldName]) => fieldName !== 'id')
         .map(([fieldName, value]) => {
-          const fieldDefinition = findFieldDefinition(fieldName);
+          const fieldDefinition = fieldDefinitionsByArgumentName.get(fieldName);
 
           if (!isDefined(fieldDefinition)) {
             return (

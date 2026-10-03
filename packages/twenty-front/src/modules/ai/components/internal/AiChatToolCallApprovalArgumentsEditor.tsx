@@ -2,8 +2,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
-import { isPlainObject } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+
+import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
 
 const StyledTextarea = styled(TextareaAutosize)`
   background: ${themeCssVariables.background.transparent.lighter};
@@ -48,16 +49,11 @@ export const AiChatToolCallApprovalArgumentsEditor = ({
   const handleChange = (nextText: string) => {
     setText(nextText);
 
-    try {
-      const parsedArguments: unknown = JSON.parse(nextText);
-      const isValid = isPlainObject(parsedArguments);
+    const parsedArguments =
+      parseAndValidateVariableFriendlyStringifiedJson(nextText);
 
-      setHasError(!isValid);
-      onChange(isValid ? parsedArguments : null);
-    } catch {
-      setHasError(true);
-      onChange(null);
-    }
+    setHasError(!parsedArguments.isValid);
+    onChange(parsedArguments.isValid ? parsedArguments.data : null);
   };
 
   return (

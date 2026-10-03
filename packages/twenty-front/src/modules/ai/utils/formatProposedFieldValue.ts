@@ -2,7 +2,7 @@ import { isNumber, isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-const MICROS_PER_UNIT = 1_000_000;
+import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';
 
 // a compact reading of a stored value, enough to compare it with the proposed one
 export const formatProposedFieldValue = (
@@ -26,7 +26,7 @@ export const formatProposedFieldValue = (
       fieldType === FieldMetadataType.CURRENCY &&
       isNumber(value.amountMicros)
     ) {
-      const amount = value.amountMicros / MICROS_PER_UNIT;
+      const amount = convertCurrencyMicrosToCurrencyAmount(value.amountMicros);
 
       return isString(value.currencyCode)
         ? `${amount} ${value.currencyCode}`

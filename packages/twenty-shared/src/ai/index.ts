@@ -32,6 +32,8 @@ export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-ti
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
 export { PROPOSE_EMAIL_TOOL_NAME } from './constants/propose-email-tool-name.const';
 export { PROPOSE_TOOL_CALL_TOOL_NAME } from './constants/propose-tool-call-tool-name.const';
+export type { ProposedToolCallTemplate } from './constants/proposed-tool-call-templates.const';
+export { PROPOSED_TOOL_CALL_TEMPLATES } from './constants/proposed-tool-call-templates.const';
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
@@ -71,7 +73,6 @@ export type { ModelConfiguration } from './types/ModelConfiguration';
 export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
 export type { ProposedEmail } from './types/ProposedEmail';
 export type { ProposedToolCall } from './types/ProposedToolCall';
-export type { ProposedToolCallTemplate } from './types/ProposedToolCallTemplate';
 export type {
   ProposeEmailToolStatus,
   ProposeEmailToolResult,
@@ -97,6 +98,7 @@ export {
   TOOL_WIDGET_NAMES,
   isToolWidgetName,
 } from './types/ToolWidget';
+export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-tool-call.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
