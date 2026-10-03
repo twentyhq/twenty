@@ -187,7 +187,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
         modelId: 'default-fast-model',
         lastUserMessageText: kickoffText,
         hasTitle: true,
-        turnId: 'kickoff-turn-id',
+        existingTurnId: 'kickoff-turn-id',
       }),
     );
     expect(threadService.notifyThreadActivityUpdated).not.toHaveBeenCalled();

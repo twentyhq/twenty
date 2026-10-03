@@ -78,7 +78,7 @@ describe('Sender-aware queue draining', () => {
       expect.objectContaining({
         userWorkspaceId: 'participant-b',
         messageId: 'message-b',
-        turnId: 'turn-b',
+        existingTurnId: 'turn-b',
       }),
     );
   });

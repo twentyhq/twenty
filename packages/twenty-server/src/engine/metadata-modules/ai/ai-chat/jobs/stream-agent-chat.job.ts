@@ -115,7 +115,7 @@ export class StreamAgentChatJob {
   ): Promise<void> {
     tagAiChatStreamScope({
       streamId: data.streamId,
-      turnId: data.turnId,
+      turnId: data.existingTurnId,
       threadId: data.threadId,
       workspaceId: data.workspaceId,
     });
@@ -184,7 +184,7 @@ export class StreamAgentChatJob {
           workspaceId: data.workspaceId,
           threadId: data.threadId,
           messageId: data.messageId,
-          turnId: data.turnId,
+          turnId: data.existingTurnId,
           userWorkspaceId: data.userWorkspaceId,
         });
 

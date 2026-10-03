@@ -216,7 +216,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       expect.any(String),
       expect.objectContaining({
         threadId: 'thread-id',
-        turnId: 'turn-id',
+        existingTurnId: 'turn-id',
         lastUserMessageText: 'hello',
         modelId: 'model-id',
         hasTitle: true,
@@ -266,7 +266,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     expect(messageQueueService.add).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
-        turnId: 'kickoff-turn-id',
+        existingTurnId: 'kickoff-turn-id',
         lastUserMessageText: 'kickoff prompt',
         hasTitle: true,
       }),

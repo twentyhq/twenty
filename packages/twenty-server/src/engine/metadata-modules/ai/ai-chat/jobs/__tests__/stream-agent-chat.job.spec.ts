@@ -190,7 +190,7 @@ describe('StreamAgentChatJob', () => {
     lastUserMessageText: 'hello',
     hasTitle: true,
     conversationSizeTokens: 0,
-    turnId: 'turn-id',
+    existingTurnId: 'turn-id',
     messageId: 'user-message-id',
   };
 
@@ -387,6 +387,36 @@ describe('StreamAgentChatJob', () => {
     expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
       expect.objectContaining({ turnId: 'turn-id' }),
     );
+  });
+
+  it('runs a job queued before sender attribution with only its turn', async () => {
+    const { job, actorService, agentChatService } = buildJob();
+    await job.handle({ ...jobData, messageId: undefined });
+    expect(actorService.authorizeJob).toHaveBeenCalledWith(
+      expect.objectContaining({ messageId: undefined, turnId: 'turn-id' }),
+    );
+    expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ turnId: 'turn-id' }),
+    );
+  });
+
+  it('uses the persisted turn when a job supplies only its message ID', async () => {
+    const { job, agentChatService } = buildJob();
+    await job.handle({ ...jobData, existingTurnId: undefined });
+    expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ turnId: 'turn-id' }),
+    );
+  });
+
+  it('rejects a persisted message without a turn', async () => {
+    const { job, actorService, chatExecutionService } = buildJob();
+    actorService.authorizeJob.mockResolvedValue({
+      message: { id: 'user-message-id', turnId: null },
+    } as never);
+    await expect(job.handle(jobData)).rejects.toMatchObject({
+      code: 'MESSAGE_NOT_FOUND',
+    });
+    expect(chatExecutionService.streamChat).not.toHaveBeenCalled();
   });
 
   it('generates a title as the turn sender when the thread has none', async () => {

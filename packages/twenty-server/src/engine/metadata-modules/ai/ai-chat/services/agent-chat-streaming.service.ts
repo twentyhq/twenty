@@ -693,15 +693,25 @@ export class AgentChatStreamingService {
 
   private async enqueueStreamJob({
     thread,
+    turnId,
     ...data
   }: Omit<
     StreamAgentChatJobData,
-    'threadId' | 'hasTitle' | 'conversationSizeTokens'
-  > & { thread: StreamJobThread }): Promise<void> {
+    | 'threadId'
+    | 'hasTitle'
+    | 'conversationSizeTokens'
+    | 'existingTurnId'
+    | 'messageId'
+  > & {
+    thread: StreamJobThread;
+    turnId: string;
+    messageId: string;
+  }): Promise<void> {
     await this.messageQueueService.add<StreamAgentChatJobData>(
       STREAM_AGENT_CHAT_JOB_NAME,
       {
         ...data,
+        existingTurnId: turnId,
         threadId: thread.id,
         hasTitle: isNonEmptyString(thread.title),
         conversationSizeTokens: thread.conversationSize,
