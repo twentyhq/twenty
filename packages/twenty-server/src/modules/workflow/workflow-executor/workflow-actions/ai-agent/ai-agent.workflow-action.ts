@@ -15,6 +15,7 @@ import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-age
 import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/workflow-base-system-prompt.const';
+import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -46,6 +47,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
+    private readonly conversationReaderService: AgentConversationReaderService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
@@ -151,11 +153,10 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       ...(isDefined(resumedThreadId)
         ? {
             messages: [],
-            priorModelMessages:
-              await this.workflowAgentConversationService.loadModelMessages({
-                workspaceId,
-                threadId: resumedThreadId,
-              }),
+            priorMessages: await this.conversationReaderService.loadMessages({
+              workspaceId,
+              threadId: resumedThreadId,
+            }),
           }
         : { messages: [{ role: 'user', content: resolvedPrompt }] }),
       baseSystemPrompt: isAskingQuestionsAllowed

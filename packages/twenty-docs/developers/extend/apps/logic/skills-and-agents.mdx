@@ -103,38 +103,22 @@ Schema notes:
 
 `runAgent()` lets a logic function run one of your app's agents (with its
 skills and tools). Identify the agent by the `universalIdentifier` you passed
-to `defineAgent()`. Pass either a `prompt` string or a `messages` conversation
-history — not both:
+to `defineAgent()`, and pass what you want it to work on as `input`:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
 const { result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
-});
-```
-
-For multi-turn bots (Slack, Discord, Teams, …), pass thread history as
-`messages` instead of a single `prompt`:
-
-```ts src/logic-functions/reply-in-thread.ts
-import { runAgent } from 'twenty-sdk/logic-function';
-
-const { result, error, success } = await runAgent({
-  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  messages: [
-    { role: 'user', content: 'Who owns Acme?' },
-    { role: 'assistant', content: 'Sarah owns the Acme account.' },
-    { role: 'user', content: 'What was the last touchpoint?' },
-  ],
+  input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
 ```
 
 Key points:
-- Provide **exactly one** of `prompt` (string) or `messages` (1 to 100 entries
-  of `{ role: 'user' | 'assistant', content: string }`). A `user` message can
-  also carry file attachments — see below.
+- `input` is a string, or a list of 1 to 100 messages
+  (`{ role: 'user' | 'assistant', content: string }`). A `user` message can
+  also carry file attachments (see below). To hold a conversation, pass a
+  `thread` rather than replaying earlier turns yourself.
 - The agent runs **synchronously** and can read/update records itself via its
   own tools — `runAgent()` resolves once the run completes.
 - An app can only run its own agents.
@@ -175,7 +159,7 @@ uploaded into the `agent-chat` folder:
 ```ts src/logic-functions/describe-screenshot.ts
 const { result } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  messages: [
+  input: [
     {
       role: 'user',
       content: 'What does this error screen say?',
@@ -195,6 +179,37 @@ alongside `AI`. `filename` is optional and only labels the file for the model.
   `agent-chat` folder. Anything else fails the call instead of quietly
   answering without the file.
 
+### Continuing a conversation
+
+Pass a `thread` and Twenty keeps the conversation for you: each call sends only
+the new input, and the agent sees the earlier turns, including what its tools
+returned. Use any stable identifier from your side as the key, such as a Slack
+channel and thread timestamp:
+
+```ts src/logic-functions/reply-in-thread.ts
+const { result, threadId } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: 'What was the last touchpoint?',
+  additionalInstructions: 'Answer in Slack markdown.',
+  thread: { key: `${channelId}:${threadTs}`, title: 'Acme renewal' },
+});
+```
+
+- Keys are scoped to your app and agent, so two apps never share a
+  conversation. Only app access tokens can pass a `thread`.
+- `input` may only hold `user` messages: the conversation already holds the
+  agent's replies.
+- `additionalInstructions` are given to the model for this call only and are not
+  stored, which suits per-request guidance such as formatting rules or a
+  deadline. They work without a `thread` too.
+- A turn is stored once the run succeeds. A failed run leaves the conversation
+  as it was.
+- Calls on the same thread run one at a time: a second call waits for the
+  first to finish, so each one sees the turns before it.
+- When turns run as different members (see below), each one only sees the text
+  of the others' turns, never their tool results, since those were read with
+  someone else's permissions.
+
 ### Running on behalf of a workspace member
 
 Pass `runAsWorkspaceMemberId` when the run is triggered by a person — a chat
@@ -204,7 +219,7 @@ instead of as the app:
 ```ts src/logic-functions/answer-question.ts
 const { result } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  prompt: 'How many open opportunities do we have?',
+  input: 'How many open opportunities do we have?',
   runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
 });
 ```
