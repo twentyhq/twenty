@@ -5,6 +5,7 @@ import {
   type AskQuestionItem,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   type ProposedEmail,
+  type ProposedToolCall,
   REQUEST_FORM_TOOL_NAME,
   type RequestFormField,
 } from 'twenty-shared/ai';
@@ -34,6 +35,8 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/agent-chat-seeds.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { OPPORTUNITY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const AGENT_CHAT_PENDING_INPUT_SEED_NAMESPACE =
@@ -125,6 +128,62 @@ export const proposeEmailCall = (email: ProposedEmail): SeededToolCall => {
     buildPendingOutput: async () => buildProposeToolCallPendingOutput(proposal),
   };
 };
+
+// mirrors what resolveProposedToolCall builds, so the cards render as they would for a live agent
+export const proposeRecordCall = (
+  proposal: Omit<ProposedToolCall, 'alternativeToolNames'>,
+): SeededToolCall => ({
+  toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
+  input: {
+    toolName: proposal.toolName,
+    arguments: proposal.arguments,
+    summary: proposal.summary,
+  },
+  buildPendingOutput: async () => buildProposeToolCallPendingOutput(proposal),
+});
+
+// the snapshot holds the seeded values, so approving the update runs instead of reporting a conflict
+const IPAD_DEAL_HANDOVER_CALL = proposeRecordCall({
+  toolName: 'update_one_opportunity',
+  toolLabel: 'Update opportunity',
+  summary: 'Mark the iPad deployment deal as won and hand it to Phil',
+  template: 'recordUpdate',
+  objectNameSingular: 'opportunity',
+  recordId: OPPORTUNITY_DATA_SEED_IDS.ID_1,
+  arguments: {
+    id: OPPORTUNITY_DATA_SEED_IDS.ID_1,
+    stage: 'CUSTOMER',
+    ownerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+  },
+  currentValues: {
+    stage: 'PROPOSAL',
+    ownerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+  },
+});
+
+const GOOGLE_CONTACT_CALL = proposeRecordCall({
+  toolName: 'create_one_person',
+  toolLabel: 'Create person',
+  summary: 'Add Priya Raman, Google’s new IT director',
+  template: 'recordCreate',
+  objectNameSingular: 'person',
+  arguments: {
+    name: { firstName: 'Priya', lastName: 'Raman' },
+    emails: { primaryEmail: 'priya.raman@google.com' },
+    jobTitle: 'IT Director',
+    companyId: COMPANY_DATA_SEED_IDS.ID_1,
+  },
+});
+
+const STALE_DEAL_DELETION_CALL = proposeRecordCall({
+  toolName: 'delete_one_opportunity',
+  toolLabel: 'Delete opportunity',
+  summary: 'Delete the Apple Watch wellness deal, idle since March',
+  template: 'recordDelete',
+  objectNameSingular: 'opportunity',
+  recordId: OPPORTUNITY_DATA_SEED_IDS.ID_7,
+  arguments: { id: OPPORTUNITY_DATA_SEED_IDS.ID_7 },
+});
 
 export const askQuestionsCall = (
   questions: AskQuestionItem[],
@@ -284,6 +343,44 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
     ],
   },
   {
+    threadId:
+      AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.PENDING_RECORD_UPDATE,
+    title: 'Close the iPad deployment deal',
+    askedBy: 'TIM',
+    prompt:
+      'Google signed the iPad deployment. Update the deal and hand it to Phil for onboarding.',
+    intro: 'Here is the change. Approve it and I will update the deal:',
+    calls: [IPAD_DEAL_HANDOVER_CALL],
+    sharedWith: { member: 'PHIL', accessLevel: RecordShareAccessLevel.READ },
+  },
+  {
+    threadId:
+      AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.PENDING_RECORD_CREATE,
+    title: 'Add Google’s new IT director',
+    askedBy: 'TIM',
+    prompt:
+      'Priya Raman is Google’s new IT director, priya.raman@google.com. Add her to the CRM.',
+    intro: 'Check the contact before I create it:',
+    calls: [GOOGLE_CONTACT_CALL],
+  },
+  {
+    threadId:
+      AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.REJECTED_RECORD_DELETE,
+    title: 'Clean up stale deals',
+    askedBy: 'TIM',
+    prompt: 'Clean up the deals nobody has touched in months.',
+    intro: 'This deal has been idle since March. Delete it?',
+    calls: [STALE_DEAL_DELETION_CALL],
+    answer: {
+      response: {
+        decision: 'reject',
+        feedback: 'Keep it, they are revisiting budgets in January.',
+      },
+      reply:
+        'I left the deal as is. Want me to set a reminder to check in with them in January?',
+    },
+  },
+  {
     threadId: AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.PENDING_FORM,
     title: 'Open the Airbnb expansion deal',
     askedBy: 'TIM',
@@ -348,8 +445,10 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
     const askedBy = MEMBERS[conversation.askedBy];
     const calls = await Promise.all(
       conversation.calls.map(async (call, callIndex) => {
+        const pendingOutput = await call.buildPendingOutput();
         const pausingToolCall = PAUSING_TOOLS.get(call.toolName)?.parseCall(
           call.input,
+          pendingOutput,
         );
 
         if (!isDefined(pausingToolCall)) {
@@ -359,7 +458,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
         return {
           ...call,
           pausingToolCall,
-          pendingOutput: await call.buildPendingOutput(),
+          pendingOutput,
           // The first call keeps its original seed id
           toolCallId: `call_${seedId(callIndex === 0 ? 'toolCall' : `toolCall${callIndex}`).replace(/-/g, '')}`,
         };
