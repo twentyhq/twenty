@@ -36,12 +36,10 @@ export const useProcessRecordGroupDrop = () => {
 
   const currentRecordSorts = useAtomComponentStateCallbackState(
     currentRecordSortsComponentState,
-    recordIndexId,
   );
 
   const selectedRecordIdsCallbackState = useAtomComponentSelectorCallbackState(
     selectedRecordIdsComponentSelector,
-    recordIndexId,
   );
 
   const isDraggingRecord = useAtomComponentStateCallbackState(

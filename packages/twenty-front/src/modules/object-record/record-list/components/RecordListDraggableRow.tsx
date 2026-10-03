@@ -4,10 +4,12 @@ import { styled } from '@linaria/react';
 import { useIsRecordSecondaryDragged } from '@/object-record/record-drag/hooks/useIsRecordSecondaryDragged';
 import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
 import { RecordListRow } from '@/object-record/record-list/components/RecordListRow';
+import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
 import { RECORD_LIST_ROW_DND_TYPE } from '@/object-record/record-list/constants/RecordListRowDndType';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC } from '@/ui/utilities/drag-and-drop/constants/DndKitPluginsWithoutOptimistic';
 import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
+import { preventNativeDragStart } from '@/ui/utilities/drag-and-drop/utils/preventNativeDragStart';
 
 const StyledDraggableRow = styled.div<{ $isDragSourceFaded: boolean }>`
   opacity: ${({ $isDragSourceFaded }) =>
@@ -33,6 +35,7 @@ export const RecordListDraggableRow = ({
   index,
   droppableId,
 }: RecordListDraggableRowProps) => {
+  const { objectPermissions } = useRecordListContextOrThrow();
   const { isSecondaryDragged } = useIsRecordSecondaryDragged(recordId);
 
   const rowDragData: RecordDragData = {
@@ -48,13 +51,17 @@ export const RecordListDraggableRow = ({
     type: RECORD_LIST_ROW_DND_TYPE,
     accept: RECORD_LIST_ROW_DND_TYPE,
     data: rowDragData,
+    disabled: !objectPermissions.canUpdateObjectRecords,
     transition: null,
     plugins: DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC,
     feedback: 'clone',
   });
 
   return (
-    <StyledDraggableRow $isDragSourceFaded={isDragSource || isSecondaryDragged}>
+    <StyledDraggableRow
+      $isDragSourceFaded={isDragSource || isSecondaryDragged}
+      onDragStart={preventNativeDragStart}
+    >
       <RecordListRow recordId={recordId} rowRef={ref} />
       {!isDragSource && (
         <StyledRowDropTargetSlot>
