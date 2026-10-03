@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { convertToModelMessages, type ModelMessage } from 'ai';
 import {
@@ -44,6 +44,10 @@ export type RecordedConversation = {
 // It belongs to the run, and is owned by the workflow's creator so a call waiting on input reaches their inbox.
 @Injectable()
 export class WorkflowAgentConversationWorkspaceService {
+  private readonly logger = new Logger(
+    WorkflowAgentConversationWorkspaceService.name,
+  );
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -145,11 +149,7 @@ export class WorkflowAgentConversationWorkspaceService {
       ],
     });
 
-    await this.threadService.recordThreadActivity({
-      workspaceId,
-      threadId,
-      text: title,
-    });
+    await this.recordWaitingActivity({ workspaceId, threadId, text: title });
   }
 
   // The answer is already the last message, so only the agent's reply is added
@@ -251,7 +251,7 @@ export class WorkflowAgentConversationWorkspaceService {
     });
 
     if (isAwaitingAnswer) {
-      await this.threadService.recordThreadActivity({
+      await this.recordWaitingActivity({
         workspaceId,
         threadId,
         text: findLastMessageText(replyParts) ?? title,
@@ -259,6 +259,22 @@ export class WorkflowAgentConversationWorkspaceService {
     }
 
     return isAwaitingAnswer;
+  }
+
+  // the waiting call is already saved and can be answered from the run, so a failure to
+  // surface it in the inbox must not fail the step
+  private async recordWaitingActivity(args: {
+    workspaceId: string;
+    threadId: string;
+    text: string;
+  }): Promise<void> {
+    await this.threadService
+      .recordThreadActivity(args)
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not record waiting activity on thread ${args.threadId}: ${error instanceof Error ? error.message : String(error)}`,
+        ),
+      );
   }
 
   private async openConversation({

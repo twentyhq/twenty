@@ -30,6 +30,7 @@ import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/a
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 
 import { type AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
@@ -1370,6 +1371,30 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         isWaiting: false,
         calls: [{ toolCallId: 'ask-1', status: 'answered' }],
       });
+    });
+
+    it('still waits on the question when its conversation cannot be surfaced in the inbox', async () => {
+      mockAgent();
+      const recordThreadActivity = jest
+        .spyOn(
+          getAppProviderByClassName<AgentChatThreadService>(
+            'AgentChatThreadService',
+          ),
+          'recordThreadActivity',
+        )
+        .mockRejectedValueOnce(new Error('Database unavailable'));
+
+      try {
+        const { runId, threadId } = await startAskingRun();
+
+        expect(await getToolCalls(threadId)).toMatchObject({
+          isWaiting: true,
+        });
+        expect((await answer({ threadId })).body.errors).toBeUndefined();
+        await waitForRun(runId, 'COMPLETED');
+      } finally {
+        recordThreadActivity.mockRestore();
+      }
     });
 
     it('pauses the run on the question and resumes the same conversation with the answer', async () => {
