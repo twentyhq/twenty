@@ -32,6 +32,10 @@ type WorkspaceAccessSettings = {
   isMicrosoftAuthEnabled: boolean;
   isPasswordAuthEnabled: boolean;
   isTwoFactorAuthenticationEnforced: boolean;
+  editableProfileFields: string[] | null;
+  subdomain: string;
+  customDomain: string | null;
+  eventLogRetentionDays: number;
 };
 
 type GlobalTestContext = {
@@ -145,6 +149,44 @@ const fieldTestCases: EachTestingContext<FieldTestContext>[] = [
       }),
     },
   },
+  {
+    title: 'editableProfileFields',
+    context: {
+      update: ({ settings }) => ({
+        editableProfileFields: (settings.editableProfileFields ?? []).includes(
+          'email',
+        )
+          ? (settings.editableProfileFields ?? []).filter(
+              (field) => field !== 'email',
+            )
+          : [...(settings.editableProfileFields ?? []), 'email'],
+      }),
+    },
+  },
+  {
+    title: 'subdomain',
+    context: {
+      update: () => ({
+        subdomain: `probe-${randomUUID().slice(0, 8)}`,
+      }),
+    },
+  },
+  {
+    title: 'customDomain',
+    context: {
+      update: () => ({
+        customDomain: `probe-${randomUUID().slice(0, 8)}.example.com`,
+      }),
+    },
+  },
+  {
+    title: 'eventLogRetentionDays',
+    context: {
+      update: ({ settings }) => ({
+        eventLogRetentionDays: settings.eventLogRetentionDays + 1,
+      }),
+    },
+  },
 ];
 
 const readWorkspaceAccessSettings =
@@ -153,7 +195,9 @@ const readWorkspaceAccessSettings =
       `SELECT "defaultRoleId", "inviteHash", "isPublicInviteLinkEnabled",
               "workspaceDiscoverability", "allowImpersonation",
               "isGoogleAuthEnabled", "isMicrosoftAuthEnabled",
-              "isPasswordAuthEnabled", "isTwoFactorAuthenticationEnforced"
+              "isPasswordAuthEnabled", "isTwoFactorAuthenticationEnforced",
+              "editableProfileFields", "subdomain", "customDomain",
+              "eventLogRetentionDays"
        FROM core."workspace" WHERE id = $1`,
       [SEED_APPLE_WORKSPACE_ID],
     );
