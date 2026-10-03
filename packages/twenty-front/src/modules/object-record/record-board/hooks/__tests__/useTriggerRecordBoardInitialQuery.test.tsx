@@ -92,13 +92,17 @@ jest.mock('@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement', () => ({
 
 const INSTANCE_ID = 'board-view';
 
-const groupedPage = (recordIds: string[], totalCount = recordIds.length) => ({
+const groupedPage = (
+  recordIds: string[],
+  totalCount = recordIds.length,
+  status = 'TODO',
+) => ({
   data: {
     tasksGroupBy: [
       {
-        groupByDimensionValues: ['TODO'],
+        groupByDimensionValues: [status],
         totalCount,
-        edges: recordIds.map((id) => ({ node: { id, status: 'TODO' } })),
+        edges: recordIds.map((id) => ({ node: { id, status } })),
       },
     ],
   },
@@ -226,6 +230,156 @@ describe('useTriggerRecordBoardInitialQuery', () => {
 
     expect(executeGroupedQueryMock).toHaveBeenCalledTimes(1);
     expect(store.get(todoHasMoreAtom)).toBe(false);
+  });
+
+  it('keeps independent column refreshes when they overlap', async () => {
+    const { result } = renderBoardHook(useTriggerRecordBoardInitialQuery);
+    const finishQueries = new Map<
+      string,
+      (value: ReturnType<typeof groupedPage>) => void
+    >();
+
+    executeGroupedQueryMock.mockImplementation(
+      ({ variables }) =>
+        new Promise<ReturnType<typeof groupedPage>>((resolve) => {
+          finishQueries.set(variables.filter.status.in[0], resolve);
+        }),
+    );
+
+    let todoQuery: Promise<void>;
+    let doneQuery: Promise<void>;
+
+    act(() => {
+      todoQuery = result.current.triggerRecordBoardInitialQuery({
+        shouldResetScroll: false,
+        recordGroupId: 'todo',
+      });
+      doneQuery = result.current.triggerRecordBoardInitialQuery({
+        shouldResetScroll: false,
+        recordGroupId: 'done',
+      });
+    });
+
+    await act(async () => {
+      finishQueries.get('DONE')?.(groupedPage(['done-task'], 1, 'DONE'));
+      await doneQuery;
+      finishQueries.get('TODO')?.(groupedPage(['todo-task']));
+      await todoQuery;
+    });
+
+    expect(setRecordIdsForColumnMock).toHaveBeenCalledTimes(2);
+    expect(setRecordIdsForColumnMock).toHaveBeenCalledWith('todo', [
+      { id: 'todo-task', status: 'TODO' },
+    ]);
+    expect(setRecordIdsForColumnMock).toHaveBeenCalledWith('done', [
+      { id: 'done-task', status: 'DONE' },
+    ]);
+  });
+
+  it('ignores an older refresh of the same column', async () => {
+    const { result } = renderBoardHook(useTriggerRecordBoardInitialQuery);
+    let finishOldQuery: (
+      value: ReturnType<typeof groupedPage>,
+    ) => void = () => {};
+
+    executeGroupedQueryMock.mockImplementationOnce(
+      () =>
+        new Promise<ReturnType<typeof groupedPage>>((resolve) => {
+          finishOldQuery = resolve;
+        }),
+    );
+    executeGroupedQueryMock.mockResolvedValueOnce(groupedPage(['new-task']));
+
+    let oldQuery: Promise<void>;
+
+    act(() => {
+      oldQuery = result.current.triggerRecordBoardInitialQuery({
+        shouldResetScroll: false,
+        recordGroupId: 'todo',
+      });
+    });
+
+    await act(async () => {
+      await result.current.triggerRecordBoardInitialQuery({
+        shouldResetScroll: false,
+        recordGroupId: 'todo',
+      });
+      finishOldQuery(groupedPage(['old-task']));
+      await oldQuery;
+    });
+
+    expect(setRecordIdsForColumnMock).toHaveBeenCalledTimes(1);
+    expect(setRecordIdsForColumnMock).toHaveBeenCalledWith('todo', [
+      { id: 'new-task', status: 'TODO' },
+    ]);
+  });
+
+  it('leaves the completed column intact when its refresh fails', async () => {
+    const { store, result } = renderBoardHook(
+      useTriggerRecordBoardInitialQuery,
+    );
+    const loadingAtom =
+      recordIndexRecordGroupsAreInInitialLoadingComponentState.atomFamily({
+        instanceId: INSTANCE_ID,
+      });
+    const todoHasMoreAtom =
+      recordBoardShouldFetchMoreInColumnComponentFamilyState.atomFamily({
+        instanceId: INSTANCE_ID,
+        familyKey: 'todo',
+      });
+
+    store.set(todoHasMoreAtom, false);
+    executeGroupedQueryMock.mockRejectedValue(new Error('network error'));
+
+    await act(async () => {
+      await result.current.triggerRecordBoardInitialQuery({
+        shouldResetScroll: false,
+        recordGroupId: 'todo',
+      });
+    });
+
+    expect(store.get(loadingAtom)).toBe(false);
+    expect(store.get(todoHasMoreAtom)).toBe(false);
+    expect(setRecordIdsForColumnMock).not.toHaveBeenCalled();
+  });
+
+  it('does not let an older full query replace a newer targeted refresh', async () => {
+    const { result } = renderBoardHook(useTriggerRecordBoardInitialQuery);
+    let finishFullQuery: (
+      value: ReturnType<typeof groupedPage>,
+    ) => void = () => {};
+
+    executeGroupedQueryMock.mockImplementationOnce(
+      () =>
+        new Promise<ReturnType<typeof groupedPage>>((resolve) => {
+          finishFullQuery = resolve;
+        }),
+    );
+    executeGroupedQueryMock.mockResolvedValueOnce(groupedPage(['new-task']));
+
+    let fullQuery: Promise<void>;
+
+    act(() => {
+      fullQuery = result.current.triggerRecordBoardInitialQuery({
+        shouldResetScroll: false,
+      });
+    });
+
+    await act(async () => {
+      await result.current.triggerRecordBoardInitialQuery({
+        shouldResetScroll: false,
+        recordGroupId: 'todo',
+      });
+      finishFullQuery(groupedPage(['old-task']));
+      await fullQuery;
+    });
+
+    expect(setRecordIdsForColumnMock).toHaveBeenCalledWith('todo', [
+      { id: 'new-task', status: 'TODO' },
+    ]);
+    expect(setRecordIdsForColumnMock).not.toHaveBeenCalledWith('todo', [
+      { id: 'old-task', status: 'TODO' },
+    ]);
   });
 
   it('ignores a pending result after the board query generation is invalidated', async () => {

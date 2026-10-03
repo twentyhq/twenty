@@ -4,6 +4,7 @@ import { useRecordBoardQueryIdentifier } from '@/object-record/record-board/hook
 import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/useSetRecordIdsForColumn';
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
+import { recordBoardGroupQueryGenerationComponentFamilyState } from '@/object-record/record-board/states/recordBoardGroupQueryGenerationComponentFamilyState';
 import { recordBoardQueryGenerationComponentState } from '@/object-record/record-board/states/recordBoardQueryGenerationComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
@@ -54,6 +55,10 @@ export const useTriggerRecordBoardInitialQuery = () => {
   const recordBoardQueryGeneration = useAtomComponentStateCallbackState(
     recordBoardQueryGenerationComponentState,
   );
+  const recordBoardGroupQueryGenerationFamilyCallbackState =
+    useAtomComponentFamilyStateCallbackState(
+      recordBoardGroupQueryGenerationComponentFamilyState,
+    );
 
   const store = useStore();
 
@@ -83,14 +88,6 @@ export const useTriggerRecordBoardInitialQuery = () => {
       shouldResetScroll: boolean;
       recordGroupId?: string;
     }) => {
-      const queryGeneration = store.get(recordBoardQueryGeneration) + 1;
-
-      store.set(recordBoardQueryGeneration, queryGeneration);
-      store.set(recordIndexRecordGroupsAreInInitialLoading, true);
-
-      const queryIsCurrent = () =>
-        store.get(recordBoardQueryGeneration) === queryGeneration;
-
       const targetRecordGroup = isDefined(recordGroupId)
         ? recordGroupDefinitions.find(
             (recordGroupDefinition) =>
@@ -99,18 +96,48 @@ export const useTriggerRecordBoardInitialQuery = () => {
         : undefined;
 
       if (isDefined(recordGroupId) && !isDefined(targetRecordGroup)) {
-        store.set(recordIndexRecordGroupsAreInInitialLoading, false);
         return;
       }
 
+      const queryGeneration =
+        store.get(recordBoardQueryGeneration) +
+        (isDefined(targetRecordGroup) ? 0 : 1);
+
+      if (!isDefined(targetRecordGroup)) {
+        store.set(recordBoardQueryGeneration, queryGeneration);
+        store.set(recordIndexRecordGroupsAreInInitialLoading, true);
+      }
+
+      const targetGroupGenerationAtom = isDefined(targetRecordGroup)
+        ? recordBoardGroupQueryGenerationFamilyCallbackState(
+            targetRecordGroup.id,
+          )
+        : undefined;
+      const targetGroupGeneration = isDefined(targetGroupGenerationAtom)
+        ? store.get(targetGroupGenerationAtom) + 1
+        : undefined;
+
+      if (
+        isDefined(targetGroupGenerationAtom) &&
+        isDefined(targetGroupGeneration)
+      ) {
+        store.set(targetGroupGenerationAtom, targetGroupGeneration);
+      }
+
+      const queryIsCurrent = () =>
+        store.get(recordBoardQueryGeneration) === queryGeneration &&
+        (!isDefined(targetGroupGenerationAtom) ||
+          store.get(targetGroupGenerationAtom) === targetGroupGeneration);
+
       const cleanStateBeforeExit = () => {
+        if (isDefined(targetRecordGroup)) {
+          return;
+        }
+
         store.set(recordIndexRecordGroupsAreInInitialLoading, false);
 
         setLastRecordBoardQueryIdentifier(queryIdentifier);
-
-        if (!isDefined(targetRecordGroup)) {
-          setRecordBoardCurrentGroupByQueryOffset(0);
-        }
+        setRecordBoardCurrentGroupByQueryOffset(0);
 
         if (shouldResetScroll) {
           scrollWrapperHTMLElement?.scrollTo({ top: 0, left: 0 });
@@ -123,6 +150,16 @@ export const useTriggerRecordBoardInitialQuery = () => {
       const recordGroupsToUpdate = isDefined(targetRecordGroup)
         ? [targetRecordGroup]
         : recordGroupDefinitions;
+      const groupGenerationsAtStart = new Map(
+        recordGroupsToUpdate.map((recordGroupDefinition) => [
+          recordGroupDefinition.id,
+          store.get(
+            recordBoardGroupQueryGenerationFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+          ),
+        ]),
+      );
       const recordsByGroupId = new Map<string, ObjectRecord[]>();
       const lastPageSizeByGroupId = new Map<string, number>();
       const totalCountByGroupId = new Map<string, number>();
@@ -133,9 +170,13 @@ export const useTriggerRecordBoardInitialQuery = () => {
           })
         : {};
 
-      let offsetForRecords = 0;
+      let expectedTotalCount: number | undefined;
 
-      while (true) {
+      for (
+        let offsetForRecords = 0;
+        !isDefined(expectedTotalCount) || offsetForRecords < expectedTotalCount;
+        offsetForRecords += RECORD_BOARD_QUERY_PAGE_SIZE
+      ) {
         const queryResult = await executeRecordIndexGroupsRecordsLazyGroupBy(
           isDefined(targetRecordGroup)
             ? {
@@ -149,7 +190,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
                 },
               }
             : undefined,
-        );
+        ).catch(() => null);
 
         if (!queryIsCurrent()) {
           return;
@@ -185,20 +226,32 @@ export const useTriggerRecordBoardInitialQuery = () => {
           );
         }
 
+        expectedTotalCount = isDefined(targetRecordGroup)
+          ? (totalCountByGroupId.get(targetRecordGroup.id) ?? 0)
+          : 0;
+
         if (
           !isDefined(targetRecordGroup) ||
           (lastPageSizeByGroupId.get(targetRecordGroup.id) ?? 0) === 0 ||
           offsetForRecords +
             (lastPageSizeByGroupId.get(targetRecordGroup.id) ?? 0) >=
-            (totalCountByGroupId.get(targetRecordGroup.id) ?? 0)
+            expectedTotalCount
         ) {
           break;
         }
-
-        offsetForRecords += RECORD_BOARD_QUERY_PAGE_SIZE;
       }
 
       for (const recordGroupDefinition of recordGroupsToUpdate) {
+        if (
+          store.get(
+            recordBoardGroupQueryGenerationFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+          ) !== groupGenerationsAtStart.get(recordGroupDefinition.id)
+        ) {
+          continue;
+        }
+
         const records = recordsByGroupId.get(recordGroupDefinition.id) ?? [];
 
         if (records.length > 0) {
@@ -221,6 +274,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
     [
       recordIndexRecordGroupsAreInInitialLoading,
       recordBoardQueryGeneration,
+      recordBoardGroupQueryGenerationFamilyCallbackState,
       store,
       executeRecordIndexGroupsRecordsLazyGroupBy,
       objectMetadataItem,
