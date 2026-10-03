@@ -1,24 +1,17 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
+import { useCreateAgentChatThread } from '@/ai/hooks/useCreateAgentChatThread';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
-import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
-import { pendingCreateFromDraftPromiseState } from '@/ai/states/pendingCreateFromDraftPromiseState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
-export const useEnsureAgentChatThreadExistsForDraft = (
-  createChatThread: () => Promise<any>,
-) => {
-  const setIsCreatingChatThread = useSetAtomState(isCreatingChatThreadState);
-  const setPendingCreateFromDraftPromise = useSetAtomState(
-    pendingCreateFromDraftPromiseState,
-  );
+export const useEnsureAgentChatThreadExistsForDraft = () => {
+  const { createChatThread } = useCreateAgentChatThread();
   const store = useStore();
 
   const ensureThreadExistsForDraft = useCallback(() => {
@@ -33,36 +26,15 @@ export const useEnsureAgentChatThreadExistsForDraft = (
         AGENT_CHAT_NEW_THREAD_DRAFT_KEY
       ] ?? '';
 
-    if (tipTapDocumentToMarkdown(draft).trim() === '') {
+    if (
+      tipTapDocumentToMarkdown(draft).trim() === '' ||
+      store.get(hasTriggeredCreateForDraftState.atom)
+    ) {
       return;
     }
 
-    if (store.get(hasTriggeredCreateForDraftState.atom)) {
-      return;
-    }
-
-    if (store.get(isCreatingChatThreadState.atom)) {
-      return;
-    }
-
-    setIsCreatingChatThread(true);
-
-    const createPromise = createChatThread();
-    const threadIdPromise = createPromise.then(
-      (result) => result?.data?.createChatThread?.id ?? null,
-    );
-
-    setPendingCreateFromDraftPromise(threadIdPromise);
-
-    threadIdPromise.finally(() => {
-      setPendingCreateFromDraftPromise(null);
-    });
-  }, [
-    createChatThread,
-    setPendingCreateFromDraftPromise,
-    store,
-    setIsCreatingChatThread,
-  ]);
+    void createChatThread();
+  }, [createChatThread, store]);
 
   return { ensureThreadExistsForDraft };
 };

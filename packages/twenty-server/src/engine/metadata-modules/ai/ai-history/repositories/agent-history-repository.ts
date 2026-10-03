@@ -9,7 +9,7 @@ import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   type AgentHistoryWorkspaceStorageService,
@@ -142,7 +142,12 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
   ) {
     return this.run(workspaceId, async (repository, context) => {
       return repository.insert(
-        await this.addSenderRelation(values, workspaceId, context),
+        await addAgentMessageSenderWorkspaceMember({
+          name: this.name,
+          values,
+          workspaceId,
+          context,
+        }),
       );
     });
   }
@@ -153,22 +158,15 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
   ): Promise<TRecord> {
     return this.run(workspaceId, async (repository, context) => {
       const result = await repository.insert(
-        await this.addSenderRelation(values, workspaceId, context),
+        await addAgentMessageSenderWorkspaceMember({
+          name: this.name,
+          values,
+          workspaceId,
+          context,
+        }),
       );
       return result.raw[0] as TRecord;
     });
-  }
-
-  private async addSenderRelation(
-    values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
-    workspaceId: string,
-    context: AgentHistoryStorageContext,
-  ) {
-    const records: ObjectLiteral[] = Array.isArray(values) ? values : [values];
-    return this.name === 'agentMessage' &&
-      records.some((record) => isNonEmptyString(record.senderUserWorkspaceId))
-      ? await addAgentMessageSenderWorkspaceMember(values, workspaceId, context)
-      : values;
   }
 
   update(
@@ -218,11 +216,12 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
         ],
       );
       return repository.upsert(
-        (await this.addSenderRelation(
+        (await addAgentMessageSenderWorkspaceMember({
+          name: this.name,
           values,
           workspaceId,
           context,
-        )) as QueryDeepPartialEntity<TRecord>,
+        })) as QueryDeepPartialEntity<TRecord>,
         conflictPaths,
       );
     });

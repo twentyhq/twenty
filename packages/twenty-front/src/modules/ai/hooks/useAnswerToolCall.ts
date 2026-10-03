@@ -1,11 +1,7 @@
 import { useCallback } from 'react';
 
-import { ANSWER_TOOL_CALL } from '@/ai/graphql/mutations/answerToolCall';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import {
-  type AnswerToolCallMutation,
-  type AnswerToolCallMutationVariables,
-} from '~/generated/graphql';
+import { AnswerToolCallDocument } from '~/generated/graphql';
 
 export const useAnswerToolCall = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -22,11 +18,8 @@ export const useAnswerToolCall = () => {
       response: Record<string, unknown>;
       modelId?: string;
     }) => {
-      const { data } = await apolloCoreClient.mutate<
-        AnswerToolCallMutation,
-        AnswerToolCallMutationVariables
-      >({
-        mutation: ANSWER_TOOL_CALL,
+      const { data } = await apolloCoreClient.mutate({
+        mutation: AnswerToolCallDocument,
         variables: { input: { threadId, toolCallId, response, modelId } },
       });
 

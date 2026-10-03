@@ -3338,6 +3338,30 @@ type ImapSmtpCaldavConnectionSuccess {
   connectedAccountId: String!
 }
 
+type Webhook {
+  id: UUID!
+  targetUrl: String!
+  operations: [String!]!
+  description: String
+  secret: String!
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+}
+
+type ToolIndexEntry {
+  name: String!
+  label: String!
+  description: String!
+  category: String!
+  objectName: String
+  icon: String
+  widgetName: String
+  frontComponentId: String
+  inputSchema: JSON
+}
+
 type AgentMessagePart {
   id: UUID!
   messageId: UUID!
@@ -3379,30 +3403,6 @@ type AgentMessage {
   parts: [AgentMessagePart!]!
   processedAt: DateTime
   createdAt: DateTime!
-}
-
-type Webhook {
-  id: UUID!
-  targetUrl: String!
-  operations: [String!]!
-  description: String
-  secret: String!
-  applicationId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  deletedAt: DateTime
-}
-
-type ToolIndexEntry {
-  name: String!
-  label: String!
-  description: String!
-  category: String!
-  objectName: String
-  icon: String
-  widgetName: String
-  frontComponentId: String
-  inputSchema: JSON
 }
 
 type RunAgentResult {

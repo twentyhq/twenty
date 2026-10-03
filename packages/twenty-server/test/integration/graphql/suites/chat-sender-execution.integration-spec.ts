@@ -7,13 +7,17 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { type AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { type AttributeChatMessageSendersCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790171503075-attribute-chat-message-senders.command';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+
+const getAgentChatThreadService = () =>
+  getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const workspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE;
@@ -29,7 +33,7 @@ describe('Persisted chat senders', () => {
     actors = getAppProviderByClassName<AgentChatActorService>(
       'AgentChatActorService',
     );
-    await chat.createThread({
+    await getAgentChatThreadService().createThread({
       workspaceId,
       workspaceMemberId,
       id: threadId,

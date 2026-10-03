@@ -2,7 +2,6 @@ import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
-import { AgentInboxModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-inbox.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { AiChatUsageService } from 'src/engine/metadata-modules/ai/ai-chat/services/ai-chat-usage.service';
@@ -33,30 +32,29 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
-import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
-import { StreamAgentChatJob } from './jobs/stream-agent-chat.job';
-import { AgentChatResolver } from './resolvers/agent-chat.resolver';
-import { AgentChatThreadParticipantResolver } from './resolvers/agent-chat-thread-participant.resolver';
-import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
-import { AgentInboxResolver } from './resolvers/agent-inbox.resolver';
-import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
-import { WorkspaceSetupChatService } from './services/workspace-setup-chat.service';
-import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-subscriber.service';
-import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
-import { AgentChatService } from './services/agent-chat.service';
-import { AgentChatThreadTargetService } from './services/agent-chat-thread-target.service';
-import { AgentChatTurnPreflightService } from './services/agent-chat-turn-preflight.service';
-import { AgentTitleGenerationService } from './services/agent-title-generation.service';
-import { ChatExecutionService } from './services/chat-execution.service';
-import { MessagePruningService } from './services/message-pruning.service';
-import { SystemPromptBuilderService } from './services/system-prompt-builder.service';
+import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
+import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
+import { AgentChatThreadParticipantResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-thread-participant.resolver';
+import { AgentChatSubscriptionResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-subscription.resolver';
+import { AgentInboxResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox.resolver';
+import { WorkspaceSetupChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/workspace-setup-chat.resolver';
+import { WorkspaceSetupChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service';
+import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
+import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
+import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
+import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
+import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
+import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
+import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 
 @Module({
   imports: [
     AgentChatStreamStateModule,
     AgentChatThreadLifecycleModule,
     AgentChatThreadModule,
-    AgentInboxModule,
     AgentHistoryModule,
     UsageLimitModule,
     TypeOrmModule.forFeature([

@@ -13,7 +13,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
-import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -90,8 +90,8 @@ const readLastActivityAt = async (threadId: string): Promise<Date> =>
 const createThread = async (): Promise<string> => {
   const threadId = randomUUID();
 
-  await getAppProviderByClassName<AgentChatService>(
-    'AgentChatService',
+  await getAppProviderByClassName<AgentChatThreadService>(
+    'AgentChatThreadService',
   ).createThread({
     workspaceId: SEED_APPLE_WORKSPACE_ID,
     workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
@@ -322,8 +322,8 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(archived.body.errors).toBeUndefined();
     expect(archived.body.data.archiveAgentChatThread.archivedAt).not.toBeNull();
 
-    await getAppProviderByClassName<AgentChatService>(
-      'AgentChatService',
+    await getAppProviderByClassName<AgentChatThreadService>(
+      'AgentChatThreadService',
     ).recordThreadActivity({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       threadId,

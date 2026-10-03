@@ -3,6 +3,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -37,16 +38,24 @@ const build = () => {
       .mockResolvedValue({ authContext: { workspaceMemberId: 'member' } }),
   };
   const heartbeat = { markClaimed: jest.fn(), clear: jest.fn() };
+  const events = { publish: jest.fn() };
+  const metrics = { incrementCounterBy: jest.fn() };
   const service = new AgentChatStreamingService(
     threads as never,
     {} as never,
     queue as never,
     chat as never,
-    { publish: jest.fn() } as never,
+    {} as never,
+    events as never,
     {} as never,
     heartbeat as never,
-    { incrementCounterBy: jest.fn() } as never,
-    {} as never,
+    metrics as never,
+    new AgentChatStreamRecoveryService(
+      threads as never,
+      heartbeat as never,
+      events as never,
+      metrics as never,
+    ),
     actors as never,
     {
       findPendingForThread: jest.fn().mockResolvedValue([]),
@@ -55,7 +64,7 @@ const build = () => {
   );
   return { service, threads, queue, chat, actors, heartbeat };
 };
-const args = { workspaceId: 'workspace', threadId: 'thread', hasTitle: true };
+const args = { workspaceId: 'workspace', threadId: 'thread' };
 
 describe('Sender-aware queue draining', () => {
   it('starts the next turn as its saved sender', async () => {
