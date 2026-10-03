@@ -90,7 +90,6 @@ export const AiChatInboxPage = () => {
       {isListShown && (
         <StyledListPane $isFullWidth={isMobile}>
           <PageCardLayout
-            // On desktop the thread pane already shows the banner at full width
             showInformationBanner={isMobile}
             header={
               <PageCardHeader
