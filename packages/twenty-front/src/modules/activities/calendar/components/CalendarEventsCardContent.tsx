@@ -38,6 +38,7 @@ const StyledTitleContainer = styled.div`
 
 type CalendarEventsCardContentProps = {
   firstQueryLoading: boolean;
+  isDateRangeFiltered: boolean;
   isFetchingMore: boolean;
   objectName: string;
   onLastRowVisible: () => Promise<void>;
@@ -46,6 +47,7 @@ type CalendarEventsCardContentProps = {
 
 export const CalendarEventsCardContent = ({
   firstQueryLoading,
+  isDateRangeFiltered,
   isFetchingMore,
   objectName,
   onLastRowVisible,
@@ -73,7 +75,9 @@ export const CalendarEventsCardContent = ({
         <EmptyState.Content>
           <EmptyState.Title>{t`No Events`}</EmptyState.Title>
           <EmptyState.Description>
-            {t`No events have been scheduled with this ${objectName} yet.`}
+            {isDateRangeFiltered
+              ? t`No events with this ${objectName} in the selected period.`
+              : t`No events have been scheduled with this ${objectName} yet.`}
           </EmptyState.Description>
         </EmptyState.Content>
       </EmptyState.Root>
