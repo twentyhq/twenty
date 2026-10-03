@@ -8,6 +8,7 @@ import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecord
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
 import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
 import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
+import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
@@ -38,7 +39,6 @@ export const RecordDragDropContextProvider = ({
 
   const selectedRecordIds = useAtomComponentSelectorCallbackState(
     selectedRecordIdsComponentSelector,
-    recordIndexId,
   );
 
   const store = useStore();
@@ -123,7 +123,17 @@ export const RecordDragDropContextProvider = ({
 
     const isSameDroppable = sourceData.droppableId === resolvedDrop.droppableId;
 
-    if (isSameDroppable && destinationIndex === sourceData.index) {
+    const isMultiDrag =
+      getDragOperationType({
+        draggedRecordId: sourceData.recordId,
+        selectedRecordIds: store.get(selectedRecordIds),
+      }) === 'multi';
+
+    if (
+      isSameDroppable &&
+      destinationIndex === sourceData.index &&
+      !isMultiDrag
+    ) {
       clearDragState();
       return;
     }
