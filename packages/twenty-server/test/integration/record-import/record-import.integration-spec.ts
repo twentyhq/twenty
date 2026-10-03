@@ -465,7 +465,7 @@ describe('record import (integration)', () => {
     const unmappedEdit = await request(editRecordImportRowsMutation, {
       id: ready.id,
       version: current.version,
-      edits: [{ rowNumber: 4, values: { __proto__: 'x', jobTitle: 'x' } }],
+      edits: [{ rowNumber: 4, values: { ['__proto__']: 'x', jobTitle: 'x' } }],
     });
 
     expect(unmappedEdit.errors).toBeDefined();

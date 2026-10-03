@@ -335,12 +335,34 @@ export const useCreateRecordImportServerAdapter = (
                   throw error;
                 }
 
-                // The server rejects the same edits on every retry, and a
-                // later edit of the row still carries the rejected value
+                // The server rejects the same edits on every retry, so the
+                // rejected values are dropped, keeping cells edited since
                 rejectedEditsErrorMessage = error.message;
 
                 for (const edit of requestEdits) {
-                  unsavedEdits.delete(edit.rowNumber);
+                  const current = unsavedEdits.get(edit.rowNumber);
+
+                  if (current === edit) {
+                    unsavedEdits.delete(edit.rowNumber);
+                    continue;
+                  }
+
+                  if (!isDefined(current)) {
+                    continue;
+                  }
+
+                  const values = Object.fromEntries(
+                    Object.entries(current.values ?? {}).filter(
+                      ([fieldName, value]) =>
+                        edit.values?.[fieldName] !== value,
+                    ),
+                  );
+
+                  if (Object.keys(values).length === 0 && !current.isDeleted) {
+                    unsavedEdits.delete(edit.rowNumber);
+                  } else {
+                    unsavedEdits.set(edit.rowNumber, { ...current, values });
+                  }
                 }
 
                 continue;
