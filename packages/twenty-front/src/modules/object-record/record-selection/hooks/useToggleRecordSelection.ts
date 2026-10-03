@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { recordIndexDisplayedRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexDisplayedRecordIdsComponentSelector';
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { recordSelectionRangeComponentState } from '@/object-record/record-selection/states/recordSelectionRangeComponentState';
@@ -23,8 +23,8 @@ export const useToggleRecordSelection = (recordIndexId?: string) => {
     instanceId,
   );
 
-  const allRecordIds = useAtomComponentSelectorCallbackState(
-    recordIndexAllRecordIdsComponentSelector,
+  const displayedRecordIds = useAtomComponentSelectorCallbackState(
+    recordIndexDisplayedRecordIdsComponentSelector,
     instanceId,
   );
 
@@ -44,30 +44,30 @@ export const useToggleRecordSelection = (recordIndexId?: string) => {
       shouldSelectRange?: boolean;
     }) => {
       const range = store.get(recordSelectionRange);
-      const recordIds = store.get(allRecordIds);
+      const recordIds = store.get(displayedRecordIds);
 
       if (
         shouldSelectRange &&
         isDefined(range) &&
         recordIds.includes(range.anchorRecordId)
       ) {
-        const previousRangeRecordIds = getRecordIdsBetween({
+        const previouslyAddedRecordIds = new Set(range.addedRecordIds);
+        const rangeRecordIds = getRecordIdsBetween({
           recordIds,
           firstRecordId: range.anchorRecordId,
-          secondRecordId: range.leadRecordId,
+          secondRecordId: recordId,
         });
-        const rangeRecordIds = new Set(
-          getRecordIdsBetween({
-            recordIds,
-            firstRecordId: range.anchorRecordId,
-            secondRecordId: recordId,
-          }),
+        const rangeRecordIdSet = new Set(rangeRecordIds);
+        const addedRecordIds = rangeRecordIds.filter(
+          (rangeRecordId) =>
+            previouslyAddedRecordIds.has(rangeRecordId) ||
+            !store.get(isRecordSelectedFamilyState(rangeRecordId)),
         );
 
-        for (const previousRangeRecordId of previousRangeRecordIds) {
-          if (!rangeRecordIds.has(previousRangeRecordId)) {
+        for (const previouslyAddedRecordId of previouslyAddedRecordIds) {
+          if (!rangeRecordIdSet.has(previouslyAddedRecordId)) {
             store.set(
-              isRecordSelectedFamilyState(previousRangeRecordId),
+              isRecordSelectedFamilyState(previouslyAddedRecordId),
               false,
             );
           }
@@ -79,7 +79,7 @@ export const useToggleRecordSelection = (recordIndexId?: string) => {
 
         store.set(recordSelectionRange, {
           anchorRecordId: range.anchorRecordId,
-          leadRecordId: recordId,
+          addedRecordIds,
         });
 
         return;
@@ -90,12 +90,15 @@ export const useToggleRecordSelection = (recordIndexId?: string) => {
       store.set(isRecordSelectedFamilyState(recordId), isSelected);
       store.set(
         recordSelectionRange,
-        isSelected
-          ? { anchorRecordId: recordId, leadRecordId: recordId }
-          : null,
+        isSelected ? { anchorRecordId: recordId, addedRecordIds: [] } : null,
       );
     },
-    [allRecordIds, isRecordSelectedFamilyState, recordSelectionRange, store],
+    [
+      displayedRecordIds,
+      isRecordSelectedFamilyState,
+      recordSelectionRange,
+      store,
+    ],
   );
 
   return {

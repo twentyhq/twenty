@@ -34,6 +34,10 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
     toggleRecordSelection({ recordId });
   };
 
+  const handleSelectCardWithShift = () => {
+    toggleRecordSelection({ recordId, shouldSelectRange: true });
+  };
+
   const handleOpenRecordInSidePanel = () => {
     openRecordInSidePanel({
       recordId,
@@ -60,6 +64,13 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
     callback: handleSelectCard,
     focusId,
     dependencies: [handleSelectCard],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: [`${Key.Shift}+x`],
+    callback: handleSelectCardWithShift,
+    focusId,
+    dependencies: [handleSelectCardWithShift],
   });
 
   useHotkeysOnFocusedElement({
