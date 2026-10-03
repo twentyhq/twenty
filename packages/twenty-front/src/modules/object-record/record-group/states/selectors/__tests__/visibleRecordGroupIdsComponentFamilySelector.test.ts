@@ -2,7 +2,7 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { visibleRecordGroupIdsIncludingEmptyComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsIncludingEmptyComponentSelector';
-import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import {
@@ -49,10 +49,13 @@ describe('visible record group ids selectors', () => {
         recordGroupDefinitionFamilyState.atomFamily(recordGroupId),
         {
           id: recordGroupId,
+          type: RecordGroupDefinitionType.Value,
+          title: recordGroupId,
+          value: recordGroupId,
+          color: 'transparent',
           position,
           isVisible,
-          title: recordGroupId,
-        } as RecordGroupDefinition,
+        },
       );
       jotaiStore.set(
         recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({

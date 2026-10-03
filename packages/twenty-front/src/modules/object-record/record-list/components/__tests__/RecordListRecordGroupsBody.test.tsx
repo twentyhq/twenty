@@ -3,7 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
-import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { RecordListRecordGroupsBody } from '@/object-record/record-list/components/RecordListRecordGroupsBody';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -90,10 +90,13 @@ describe('RecordListRecordGroupsBody', () => {
         recordGroupDefinitionFamilyState.atomFamily(recordGroupId),
         {
           id: recordGroupId,
+          type: RecordGroupDefinitionType.Value,
+          title: recordGroupId,
+          value: recordGroupId,
+          color: 'transparent',
           position,
           isVisible: true,
-          title: recordGroupId,
-        } as RecordGroupDefinition,
+        },
       );
     }
 
