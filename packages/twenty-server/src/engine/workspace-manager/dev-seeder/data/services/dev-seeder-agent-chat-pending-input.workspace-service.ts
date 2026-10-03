@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   ASK_QUESTIONS_TOOL_NAME,
   type AskQuestionItem,
-  PROPOSE_EMAIL_TOOL_NAME,
+  PROPOSE_TOOL_CALL_TOOL_NAME,
   type ProposedEmail,
   REQUEST_FORM_TOOL_NAME,
   type RequestFormField,
@@ -23,7 +23,8 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execut
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
-import { createProposeEmailTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
+import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
+import { buildEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-email-tool-call-proposal.util';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -115,11 +116,15 @@ export type SeededToolCall = {
   buildPendingOutput: () => Promise<Record<string, unknown>>;
 };
 
-export const proposeEmailCall = (email: ProposedEmail): SeededToolCall => ({
-  toolName: PROPOSE_EMAIL_TOOL_NAME,
-  input: email,
-  buildPendingOutput: () => createProposeEmailTool().execute(email),
-});
+export const proposeEmailCall = (email: ProposedEmail): SeededToolCall => {
+  const { input, proposal } = buildEmailToolCallProposal(email);
+
+  return {
+    toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
+    input,
+    buildPendingOutput: async () => buildProposeToolCallPendingOutput(proposal),
+  };
+};
 
 export const askQuestionsCall = (
   questions: AskQuestionItem[],

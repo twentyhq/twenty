@@ -35,7 +35,14 @@ export const proposedToolCallSchema: z.ZodType<ProposedToolCall> = z.object({
   toolLabel: z.string(),
   summary: z.string(),
   arguments: z.record(z.string(), z.unknown()),
-  template: z.enum(['recordCreate', 'recordUpdate', 'recordDelete', 'generic']),
+  template: z.enum([
+    'recordCreate',
+    'recordUpdate',
+    'recordDelete',
+    'email',
+    'generic',
+  ]),
+  alternativeToolNames: z.array(z.string()).optional(),
   objectNameSingular: z.string().optional(),
   recordId: z.string().optional(),
   currentValues: z.record(z.string(), z.unknown()).optional(),
@@ -68,7 +75,9 @@ export const createProposeToolCallTool = ({
     'the workspace, when you are unsure it matches what the person wants, or when your instructions ask ' +
     'for approval. Never use it for reads. The conversation pauses until the person approves it, possibly ' +
     'after editing the arguments, or rejects it with optional feedback. You then get the tool result or ' +
-    'their feedback. Propose one call at a time.',
+    'their feedback. Propose one call at a time. To have an email reviewed before it goes out, propose ' +
+    'send_email or draft_email with the arguments you would send it with: the person can edit it, ' +
+    'send it, save it as a draft or discard it.',
   inputSchema: proposeToolCallInputSchema,
   execute: async (
     input: ProposeToolCallToolInput,

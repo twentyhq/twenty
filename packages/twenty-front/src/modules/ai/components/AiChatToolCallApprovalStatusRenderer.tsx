@@ -7,7 +7,7 @@ import {
   type ProposeToolCallToolStatus,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconTool } from 'twenty-ui/icon';
+import { IconMail, IconTool } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import {
@@ -47,16 +47,30 @@ export const AiChatToolCallApprovalStatusRenderer = ({
   const status: ProposeToolCallToolStatus = result?.status ?? 'pending';
   const isRefused = isDefined(output) && !isDefined(result);
 
-  const messageByStatus: Record<ProposeToolCallToolStatus, string> = {
-    pending: isDefined(result)
-      ? t`Action waiting for your approval`
-      : t`Preparing an action to approve...`,
-    approved: t`Action approved`,
-    rejected: t`Action rejected`,
-    failed: t`Action approved but it failed`,
-    conflict: t`Action not run: the record changed since it was proposed`,
-    skipped: t`Action skipped`,
-  };
+  const isEmail = result?.proposal.template === 'email';
+
+  const messageByStatus: Record<ProposeToolCallToolStatus, string> = isEmail
+    ? {
+        pending: t`Email waiting for your review`,
+        approved:
+          result?.proposal.toolName === 'draft_email'
+            ? t`Email saved as draft`
+            : t`Email sent`,
+        rejected: t`Email discarded`,
+        failed: t`Email could not go through`,
+        conflict: t`Email not sent`,
+        skipped: t`Email skipped`,
+      }
+    : {
+        pending: isDefined(result)
+          ? t`Action waiting for your approval`
+          : t`Preparing an action to approve...`,
+        approved: t`Action approved`,
+        rejected: t`Action rejected`,
+        failed: t`Action approved but it failed`,
+        conflict: t`Action not run: the record changed since it was proposed`,
+        skipped: t`Action skipped`,
+      };
   const message = isRefused
     ? t`Action could not be proposed`
     : messageByStatus[status];
@@ -70,7 +84,11 @@ export const AiChatToolCallApprovalStatusRenderer = ({
 
   return (
     <StyledAiChatAskStatusContainer>
-      <IconTool size={theme.icon.size.sm} />
+      {isEmail ? (
+        <IconMail size={theme.icon.size.sm} />
+      ) : (
+        <IconTool size={theme.icon.size.sm} />
+      )}
       <StyledContent>
         {isStreaming && status === 'pending' && !isRefused ? (
           <ShimmeringText>

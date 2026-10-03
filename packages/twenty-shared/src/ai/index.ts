@@ -89,6 +89,7 @@ export type {
   RequestFormToolStatus,
   RequestFormToolResult,
 } from './types/RequestFormToolResult';
+export type { ToolApproval } from './types/ToolApproval';
 export type { ToolCallApprovalResponse } from './types/ToolCallApprovalResponse';
 export type { ToolWidgetName, ToolRecordReference } from './types/ToolWidget';
 export {

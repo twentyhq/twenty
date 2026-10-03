@@ -1,90 +1,72 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import {
-  PROPOSE_EMAIL_TOOL_NAME,
   type ProposeToolCallToolInput,
   type ProposedToolCall,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isNonEmptyArray,
+  parseEmailDocument,
+} from 'twenty-shared/utils';
 
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
 import { readRecordFieldValues } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-record-field-values.util';
 
-// propose_email has a card made for writing emails
-const EMAIL_TOOL_NAMES = new Set(['send_email', 'draft_email']);
-
 export type ProposedToolCallResolution =
   | { proposal: ProposedToolCall }
   | { error: string };
 
-// findTool only returns tools the proposer could call itself, so nothing outside its reach is proposed
-export const resolveProposedToolCall = async ({
-  input,
-  findTool,
+// the email card edits a structured document, and reads an HTML string as one
+const findEmailArgumentsError = (
+  toolArguments: Record<string, unknown>,
+): string | null => {
+  if (isString(toolArguments.body)) {
+    return null;
+  }
+
+  const parsedBody = parseEmailDocument(toolArguments.body);
+
+  return parsedBody.success
+    ? null
+    : `The email body must be a structured email document ({type: "doc", content: [...]}) or an HTML string: ${parsedBody.error}`;
+};
+
+const resolveRecordProposal = async ({
+  baseProposal,
+  toolIndexEntry,
   executeTool,
 }: {
-  input: ProposeToolCallToolInput;
-  findTool: (toolName: string) => Promise<ToolIndexEntry | undefined>;
+  baseProposal: Omit<ProposedToolCall, 'template'>;
+  toolIndexEntry: ToolIndexEntry;
   executeTool: PausingToolCompletionContext['executeTool'];
 }): Promise<ProposedToolCallResolution> => {
-  const { toolName, summary } = input;
-  const toolArguments = input.arguments;
-
-  if (EMAIL_TOOL_NAMES.has(toolName)) {
-    return {
-      error: `Emails are proposed with ${PROPOSE_EMAIL_TOOL_NAME}, which lets the person edit them before they go out.`,
-    };
-  }
-
-  const toolIndexEntry = await findTool(toolName);
-
-  if (!isDefined(toolIndexEntry)) {
-    return {
-      error: `Tool "${toolName}" is not available here. Propose a tool you could call yourself.`,
-    };
-  }
-
-  const baseProposal = {
-    toolName,
-    toolLabel: toolIndexEntry.label,
-    summary,
-    arguments: toolArguments,
-  };
   const { executionRef } = toolIndexEntry;
+  const template = toolIndexEntry.approval?.template;
 
   if (executionRef.kind !== 'database_crud') {
     return { proposal: { ...baseProposal, template: 'generic' } };
   }
 
-  const { objectNameSingular, operation } = executionRef;
+  const { objectNameSingular } = executionRef;
 
-  if (operation === 'create_one') {
+  if (template === 'recordCreate') {
     return {
-      proposal: {
-        ...baseProposal,
-        template: 'recordCreate',
-        objectNameSingular,
-      },
+      proposal: { ...baseProposal, template, objectNameSingular },
     };
   }
 
-  if (operation !== 'update_one' && operation !== 'delete_one') {
-    return {
-      proposal: { ...baseProposal, template: 'generic', objectNameSingular },
-    };
-  }
-
-  const recordId = toolArguments.id;
+  const recordId = baseProposal.arguments.id;
 
   if (!isNonEmptyString(recordId)) {
     return { error: 'arguments.id must be the id of the record.' };
   }
 
-  const changedFieldNames = Object.keys(toolArguments).filter(
+  const changedFieldNames = Object.keys(baseProposal.arguments).filter(
     (fieldName) => fieldName !== 'id',
   );
 
-  if (operation === 'update_one' && changedFieldNames.length === 0) {
+  if (template === 'recordUpdate' && changedFieldNames.length === 0) {
     return { error: 'Propose at least one field to change.' };
   }
 
@@ -101,10 +83,10 @@ export const resolveProposedToolCall = async ({
 
   return {
     proposal:
-      operation === 'update_one'
+      template === 'recordUpdate'
         ? {
             ...baseProposal,
-            template: 'recordUpdate',
+            template,
             objectNameSingular,
             recordId,
             currentValues: currentRecord.values,
@@ -116,4 +98,65 @@ export const resolveProposedToolCall = async ({
             recordId,
           },
   };
+};
+
+// findTool only returns tools the proposer could call itself, so nothing outside its reach is proposed
+export const resolveProposedToolCall = async ({
+  input,
+  findTool,
+  executeTool,
+}: {
+  input: ProposeToolCallToolInput;
+  findTool: (toolName: string) => Promise<ToolIndexEntry | undefined>;
+  executeTool: PausingToolCompletionContext['executeTool'];
+}): Promise<ProposedToolCallResolution> => {
+  const { toolName, summary } = input;
+  const toolIndexEntry = await findTool(toolName);
+
+  if (!isDefined(toolIndexEntry)) {
+    return {
+      error: `Tool "${toolName}" is not available here. Propose a tool you could call yourself.`,
+    };
+  }
+
+  const { template = 'generic', alternativeToolNames } =
+    toolIndexEntry.approval ?? {};
+  const baseProposal = {
+    toolName,
+    toolLabel: toolIndexEntry.label,
+    summary,
+    arguments: input.arguments,
+    ...(isNonEmptyArray(alternativeToolNames) ? { alternativeToolNames } : {}),
+  };
+
+  switch (template) {
+    case 'email': {
+      const emailArgumentsError = findEmailArgumentsError(input.arguments);
+
+      return isDefined(emailArgumentsError)
+        ? { error: emailArgumentsError }
+        : { proposal: { ...baseProposal, template } };
+    }
+    case 'recordCreate':
+    case 'recordUpdate':
+    case 'recordDelete':
+      return resolveRecordProposal({
+        baseProposal,
+        toolIndexEntry,
+        executeTool,
+      });
+    default:
+      return {
+        proposal: {
+          ...baseProposal,
+          template: 'generic',
+          ...(toolIndexEntry.executionRef.kind === 'database_crud'
+            ? {
+                objectNameSingular:
+                  toolIndexEntry.executionRef.objectNameSingular,
+              }
+            : {}),
+        },
+      };
+  }
 };

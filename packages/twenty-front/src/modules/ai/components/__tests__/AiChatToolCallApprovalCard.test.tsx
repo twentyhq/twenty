@@ -20,6 +20,9 @@ jest.mock(
 jest.mock('@/ai/components/internal/AiChatToolCallApprovalRecordChip', () => ({
   AiChatToolCallApprovalRecordChip: () => null,
 }));
+jest.mock('@/ai/components/internal/AiChatToolCallApprovalEmailCard', () => ({
+  AiChatToolCallApprovalEmailCard: () => null,
+}));
 
 const PROPOSAL: ProposedToolCall = {
   toolName: 'http_request',

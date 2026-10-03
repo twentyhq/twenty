@@ -298,6 +298,7 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'create_one',
+          approval: { template: 'recordCreate' },
         });
 
         descriptors.push({
@@ -351,6 +352,7 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'update_one',
+          approval: { template: 'recordUpdate' },
         });
 
         descriptors.push({
@@ -432,6 +434,7 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'delete_one',
+          approval: { template: 'recordDelete' },
         });
 
         descriptors.push({

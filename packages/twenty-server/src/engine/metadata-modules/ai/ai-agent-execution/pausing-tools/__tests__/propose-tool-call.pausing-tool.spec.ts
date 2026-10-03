@@ -174,4 +174,95 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
       result: { status: 'skipped', proposal: PROPOSAL },
     });
   });
+
+  describe('an email', () => {
+    const EMAIL_INPUT = {
+      toolName: 'send_email',
+      arguments: {
+        recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
+        subject: 'Renewal',
+        body: { type: 'doc', content: [] },
+        connectedAccountId: 'proposed-account-id',
+      },
+      summary: 'Follow up on the renewal',
+    };
+
+    const parseEmailCall = () => {
+      const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(EMAIL_INPUT, {
+        success: true,
+        result: {
+          status: 'pending',
+          proposal: {
+            ...EMAIL_INPUT,
+            toolLabel: 'Send email',
+            template: 'email',
+            alternativeToolNames: ['draft_email'],
+          },
+        },
+      });
+
+      if (call === null) {
+        throw new Error('Expected the call to parse');
+      }
+
+      return call;
+    };
+
+    it('saves it as a draft, an alternative the proposal offers', async () => {
+      const executeTool = jest
+        .fn()
+        .mockResolvedValue({ success: true, message: 'Draft saved' });
+
+      const completion = await parseEmailCall().complete({
+        output: {
+          decision: 'approve',
+          toolName: 'draft_email',
+          arguments: { ...EMAIL_INPUT.arguments, subject: 'Renewal terms' },
+        },
+        context: { executeTool },
+      });
+
+      expect(executeTool).toHaveBeenCalledWith({
+        toolName: 'draft_email',
+        args: { ...EMAIL_INPUT.arguments, subject: 'Renewal terms' },
+      });
+      expect(completion.toolResult).toMatchObject({
+        result: { status: 'approved', proposal: { toolName: 'draft_email' } },
+      });
+      expect(completion.answerText).toBe(
+        'Approve "Follow up on the renewal", running draft_email instead.',
+      );
+    });
+
+    it('refuses a tool the proposal does not offer', () => {
+      expect(
+        parseEmailCall().validate({
+          decision: 'approve',
+          toolName: 'delete_one_company',
+        }),
+      ).toMatchObject({ isValid: false });
+    });
+
+    it('sends from the proposed account even when the answer names another', async () => {
+      const executeTool = jest
+        .fn()
+        .mockResolvedValue({ success: true, message: 'Email sent' });
+
+      await parseEmailCall().complete({
+        output: {
+          decision: 'approve',
+          arguments: {
+            ...EMAIL_INPUT.arguments,
+            connectedAccountId: 'another-account-id',
+          },
+        },
+        context: { executeTool },
+      });
+
+      expect(executeTool).toHaveBeenCalledWith({
+        toolName: 'send_email',
+        args: EMAIL_INPUT.arguments,
+      });
+    });
+  });
 });

@@ -3,6 +3,7 @@ import {
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
   PROPOSE_EMAIL_TOOL_NAME,
+  PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
@@ -13,14 +14,13 @@ import {
   askQuestionsInputSchema,
   buildAskQuestionsPendingOutput,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
-import {
-  buildProposeEmailPendingOutput,
-  proposeEmailInputSchema,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
+import { proposeEmailInputSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
+import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
 import {
   buildRequestFormPendingOutput,
   requestFormInputSchema,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
+import { buildEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-email-tool-call-proposal.util';
 import {
   AiException,
   AiExceptionCode,
@@ -106,13 +106,14 @@ const buildPausingToolPart = ({
         output: buildRequestFormPendingOutput(),
       });
     case PROPOSE_EMAIL_TOOL_NAME: {
-      const email = parseInput(proposeEmailInputSchema, input);
+      const { input: proposeToolCallInput, proposal } =
+        buildEmailToolCallProposal(parseInput(proposeEmailInputSchema, input));
 
       return buildToolPart({
-        toolName,
+        toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
         toolCallId,
-        input: email,
-        output: buildProposeEmailPendingOutput(email),
+        input: proposeToolCallInput,
+        output: buildProposeToolCallPendingOutput(proposal),
       });
     }
     default:

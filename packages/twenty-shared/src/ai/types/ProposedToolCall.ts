@@ -8,6 +8,7 @@ export type ProposedToolCall = {
   summary: string;
   arguments: Record<string, unknown>;
   template: ProposedToolCallTemplate;
+  alternativeToolNames?: string[];
   objectNameSingular?: string;
   recordId?: string;
   currentValues?: Record<string, unknown>;

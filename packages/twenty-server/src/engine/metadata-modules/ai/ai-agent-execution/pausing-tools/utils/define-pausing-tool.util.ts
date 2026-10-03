@@ -21,7 +21,7 @@ export const definePausingTool = <
     }
 
     const input = parsedInput.data;
-    const outputSchema = definition.outputSchema(input);
+    const outputSchema = definition.outputSchema(input, pendingToolOutput);
 
     return {
       toSkippedToolResult: () =>

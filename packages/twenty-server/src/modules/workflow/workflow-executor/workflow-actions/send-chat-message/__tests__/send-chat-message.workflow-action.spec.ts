@@ -77,6 +77,7 @@ describe('SendChatMessageWorkflowAction', () => {
         objectNameSingular: 'company',
         operation: 'update_one',
       },
+      approval: { template: 'recordUpdate' },
     });
     resolveAndExecute.mockResolvedValue({
       success: true,

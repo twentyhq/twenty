@@ -5,7 +5,10 @@ import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/a
 
 export type PausingToolDefinition<TInput, TOutput> = {
   inputSchema: z.ZodType<TInput>;
-  outputSchema: (input: TInput) => z.ZodType<TOutput>;
+  outputSchema: (
+    input: TInput,
+    pendingToolOutput: unknown,
+  ) => z.ZodType<TOutput>;
   // runs only after the output is accepted, so side effects on the person's behalf belong here
   complete: (args: {
     output: TOutput;

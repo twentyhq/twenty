@@ -3,9 +3,16 @@ import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent
 
 const RECORD_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
+const APPROVAL_BY_OPERATION = {
+  create_one: { template: 'recordCreate' },
+  update_one: { template: 'recordUpdate' },
+  delete_one: { template: 'recordDelete' },
+  update_many: undefined,
+} as const;
+
 const buildCrudEntry = (
   name: string,
-  operation: 'create_one' | 'update_one' | 'delete_one' | 'update_many',
+  operation: keyof typeof APPROVAL_BY_OPERATION,
 ): ToolIndexEntry => ({
   name,
   label: name,
@@ -16,7 +23,14 @@ const buildCrudEntry = (
     objectNameSingular: 'opportunity',
     operation,
   },
+  approval: APPROVAL_BY_OPERATION[operation],
 });
+
+const EMAIL_BODY = {
+  type: 'doc',
+  attrs: { schemaVersion: 1 },
+  content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] }],
+};
 
 const findTool = async (toolName: string) =>
   [
@@ -24,6 +38,14 @@ const findTool = async (toolName: string) =>
     buildCrudEntry('update_one_opportunity', 'update_one'),
     buildCrudEntry('delete_one_opportunity', 'delete_one'),
     buildCrudEntry('update_many_opportunities', 'update_many'),
+    {
+      name: 'send_email',
+      label: 'Send email',
+      description: '',
+      category: 'ACTION' as ToolIndexEntry['category'],
+      executionRef: { kind: 'static', toolId: 'send_email' },
+      approval: { template: 'email', alternativeToolNames: ['draft_email'] },
+    } satisfies ToolIndexEntry,
     {
       name: 'http_request',
       label: 'HTTP request',
@@ -55,14 +77,51 @@ describe('resolveProposedToolCall', () => {
     ).toEqual({ error: expect.stringContaining('not available') });
   });
 
-  it('sends emails to propose_email', async () => {
+  it('proposes an email with a document body the person can edit, or send as a draft', async () => {
+    const toolArguments = {
+      recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
+      subject: 'Renewal',
+      body: EMAIL_BODY,
+    };
+
     expect(
       await resolveProposedToolCall({
-        input: { toolName: 'send_email', arguments: {}, summary: 'Follow up' },
+        input: {
+          toolName: 'send_email',
+          arguments: toolArguments,
+          summary: 'Follow up',
+        },
         findTool,
         executeTool: jest.fn(),
       }),
-    ).toEqual({ error: expect.stringContaining('propose_email') });
+    ).toEqual({
+      proposal: {
+        toolName: 'send_email',
+        toolLabel: 'Send email',
+        summary: 'Follow up',
+        arguments: toolArguments,
+        template: 'email',
+        alternativeToolNames: ['draft_email'],
+      },
+    });
+  });
+
+  it('refuses an email whose body is neither a document nor HTML', async () => {
+    expect(
+      await resolveProposedToolCall({
+        input: {
+          toolName: 'send_email',
+          arguments: {
+            recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
+            subject: 'Renewal',
+            body: { type: 'paragraph' },
+          },
+          summary: 'Follow up',
+        },
+        findTool,
+        executeTool: jest.fn(),
+      }),
+    ).toEqual({ error: expect.stringContaining('structured email document') });
   });
 
   it('snapshots the fields an update changes', async () => {

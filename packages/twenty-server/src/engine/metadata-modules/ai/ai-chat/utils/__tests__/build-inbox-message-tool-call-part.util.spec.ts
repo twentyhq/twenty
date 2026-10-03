@@ -62,11 +62,30 @@ describe('buildInboxMessageToolCallPart', () => {
     });
   });
 
-  it('proposes an email as a pending propose_email call', async () => {
+  it('proposes an email as a send_email call to approve, with its body as a document', async () => {
     const email = {
       recipients: { to: 'team@acme.com', cc: '', bcc: '' },
       subject: 'Recap',
-      body: 'Here is the recap.',
+      body: 'Here is the recap.\nSee you soon.\n\nJane',
+    };
+    const emailArguments = {
+      recipients: email.recipients,
+      subject: 'Recap',
+      body: {
+        type: 'doc',
+        attrs: { schemaVersion: 1 },
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: 'Here is the recap.' },
+              { type: 'hardBreak' },
+              { type: 'text', text: 'See you soon.' },
+            ],
+          },
+          { type: 'paragraph', content: [{ type: 'text', text: 'Jane' }] },
+        ],
+      },
     };
 
     await expect(
@@ -74,10 +93,22 @@ describe('buildInboxMessageToolCallPart', () => {
     ).resolves.toEqual({
       isAwaitingAnswer: true,
       part: expect.objectContaining({
-        type: 'tool-propose_email',
-        input: email,
+        type: 'tool-propose_tool_call',
+        input: {
+          toolName: 'send_email',
+          arguments: emailArguments,
+          summary: 'Recap',
+        },
         output: expect.objectContaining({
-          result: { status: 'pending', email },
+          result: {
+            status: 'pending',
+            proposal: expect.objectContaining({
+              toolName: 'send_email',
+              template: 'email',
+              alternativeToolNames: ['draft_email'],
+              arguments: emailArguments,
+            }),
+          },
         }),
       }),
     });

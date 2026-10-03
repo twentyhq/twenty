@@ -16,10 +16,25 @@ import {
   proposedToolCallSchema,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
 
-const toolCallApprovalResponseSchema: z.ZodType<ToolCallApprovalResponse> =
-  z.discriminatedUnion('decision', [
+// the person may run the proposed tool or one of the alternatives it offers
+const buildToolCallApprovalResponseSchema = (
+  proposal: ProposedToolCall,
+): z.ZodType<ToolCallApprovalResponse> => {
+  const allowedToolNames = new Set([
+    proposal.toolName,
+    ...(proposal.alternativeToolNames ?? []),
+  ]);
+
+  return z.discriminatedUnion('decision', [
     z.object({
       decision: z.literal('approve'),
+      toolName: z
+        .string()
+        .refine((toolName) => allowedToolNames.has(toolName), {
+          message:
+            'This call can only run the proposed tool or one of its alternatives.',
+        })
+        .optional(),
       arguments: z.record(z.string(), z.unknown()).optional(),
     }),
     z.object({
@@ -27,6 +42,7 @@ const toolCallApprovalResponseSchema: z.ZodType<ToolCallApprovalResponse> =
       feedback: z.string().optional(),
     }),
   ]);
+};
 
 // a call recorded without its resolved proposal is still answerable, as a generic one
 const readProposal = (
@@ -44,24 +60,46 @@ const readProposal = (
     : { ...input, toolLabel: input.toolName, template: 'generic' };
 };
 
-// the record is fixed when proposed, so an edit cannot retarget the call
+// the record and the sending account are fixed when proposed, since no card lets the person
+// change them, so an edit cannot retarget the call
 const buildApprovedArguments = (
   proposal: ProposedToolCall,
   editedArguments: Record<string, unknown> | undefined,
 ): Record<string, unknown> => {
   const toolArguments = editedArguments ?? proposal.arguments;
 
-  return isDefined(proposal.recordId)
-    ? { ...toolArguments, id: proposal.recordId }
-    : toolArguments;
+  if (isDefined(proposal.recordId)) {
+    return { ...toolArguments, id: proposal.recordId };
+  }
+
+  if (proposal.template === 'email') {
+    const { connectedAccountId: _editedAccountId, ...emailArguments } =
+      toolArguments;
+    const { connectedAccountId } = proposal.arguments;
+
+    return isDefined(connectedAccountId)
+      ? { ...emailArguments, connectedAccountId }
+      : emailArguments;
+  }
+
+  return toolArguments;
 };
+
+const buildApprovalAnswerText = (
+  proposal: ProposedToolCall,
+  approvedToolName: string,
+): string =>
+  approvedToolName === proposal.toolName
+    ? `Approve "${proposal.summary}".`
+    : `Approve "${proposal.summary}", running ${approvedToolName} instead.`;
 
 export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
   ProposeToolCallToolInput,
   ToolCallApprovalResponse
 >({
   inputSchema: proposeToolCallInputSchema,
-  outputSchema: () => toolCallApprovalResponseSchema,
+  outputSchema: (input, pendingToolOutput) =>
+    buildToolCallApprovalResponseSchema(readProposal(input, pendingToolOutput)),
   complete: async ({ output, input, pendingToolOutput, context }) => {
     const proposal = readProposal(input, pendingToolOutput);
 
@@ -87,10 +125,13 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
       };
     }
 
+    const approvedToolName = output.toolName ?? proposal.toolName;
     const approvedProposal: ProposedToolCall = {
       ...proposal,
+      toolName: approvedToolName,
       arguments: buildApprovedArguments(proposal, output.arguments),
     };
+    const answerText = buildApprovalAnswerText(proposal, approvedToolName);
     const { currentValues, objectNameSingular, recordId } = approvedProposal;
 
     if (
@@ -121,7 +162,7 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
               output: { latestValues: latestRecord.values },
             } satisfies ProposeToolCallToolResult,
           },
-          answerText: `Approve "${proposal.summary}".`,
+          answerText,
         };
       }
     }
@@ -145,7 +186,7 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
             : { error: toolOutput.error ?? toolOutput.message }),
         } satisfies ProposeToolCallToolResult,
       },
-      answerText: `Approve "${proposal.summary}".`,
+      answerText,
     };
   },
   toSkippedToolResult: (input, pendingToolOutput) => ({
