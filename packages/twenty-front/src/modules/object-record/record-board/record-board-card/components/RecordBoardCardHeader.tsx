@@ -1,5 +1,4 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
@@ -59,9 +58,6 @@ export const RecordBoardCardHeader = () => {
 
   const [recordBoardCardIsExpanded, setRecordBoardCardIsExpanded] =
     useAtomComponentState(recordBoardCardIsExpandedComponentState);
-
-  const { checkIfLastUnselectAndCloseDropdown } =
-    useRecordBoardSelection(recordBoardId);
 
   const isRecordSelected = useAtomComponentFamilyStateValue(
     isRecordSelectedComponentFamilyState,
@@ -133,7 +129,6 @@ export const RecordBoardCardHeader = () => {
                   recordId,
                   shouldSelectRange: event.shiftKey,
                 });
-                checkIfLastUnselectAndCloseDropdown();
               }}
               variant="outline"
             />

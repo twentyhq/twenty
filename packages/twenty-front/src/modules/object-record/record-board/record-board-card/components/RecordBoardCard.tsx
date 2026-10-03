@@ -19,7 +19,6 @@ import { RecordDragMultiDragStack } from '@/object-record/record-drag/components
 import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -100,12 +99,6 @@ export const RecordBoardCard = () => {
   const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const {
-    onPointerCancel: handlePointerCancel,
-    onPointerDown: handlePointerDown,
-    onPointerUp: handlePointerUp,
-  } = useDisableDragSelectOnPointerDown();
-
   const handleCardClick = () => {
     activateBoardCard({ rowIndex, columnIndex });
     unfocusBoardCard();
@@ -127,9 +120,6 @@ export const RecordBoardCard = () => {
       <StyledBoardCardWrapper
         data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
         onContextMenu={(event) => openRecordContextMenu({ event, recordId })}
-        onPointerCancel={handlePointerCancel}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
       >
         <StyledCardContainer isPrimaryMultiDrag={isMultiDragOverlay}>
           {isMultiDragOverlay && <RecordDragMultiDragStack />}

@@ -2,9 +2,9 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { type PositionType } from '@/command-menu-item/types/PositionType';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const recordIndexCommandMenuDropdownPositionComponentState =
+export const commandMenuDropdownPositionComponentState =
   createAtomComponentState<PositionType>({
-    key: 'recordIndexCommandMenuDropdownPositionComponentState',
+    key: 'commandMenuDropdownPositionComponentState',
     defaultValue: {
       x: null,
       y: null,

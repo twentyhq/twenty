@@ -73,7 +73,7 @@ export const RecordCalendarCard = ({
       recordId,
     );
 
-  const { isCommandMenuAvailable, openCommandMenuDropdownAtCursor } =
+  const { openCommandMenuDropdownAtCursor } =
     useOpenCommandMenuDropdownAtCursor();
 
   const handleCardClick = () => {
@@ -85,12 +85,9 @@ export const RecordCalendarCard = ({
   };
 
   const handleContextMenuOpen = (event: React.MouseEvent) => {
-    if (!isCommandMenuAvailable) {
-      return;
+    if (openCommandMenuDropdownAtCursor(event)) {
+      setIsRecordCalendarCardSelected(true);
     }
-
-    openCommandMenuDropdownAtCursor(event);
-    setIsRecordCalendarCardSelected(true);
   };
 
   return (
