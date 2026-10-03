@@ -15,6 +15,7 @@ import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/w
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
+import { readToolCallStatus } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-tool-call-status.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-propose-tool-call-pending-output.util';
@@ -37,11 +38,6 @@ import { type WorkflowSendChatMessageActionInput } from 'src/modules/workflow/wo
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const MAX_SEND_ATTEMPTS = 10;
-
-const readToolCallStatus = (toolOutput: unknown): unknown =>
-  isPlainObject(toolOutput) && isPlainObject(toolOutput.result)
-    ? toolOutput.result.status
-    : undefined;
 
 @Injectable()
 export class SendChatMessageWorkflowAction implements WorkflowAction {

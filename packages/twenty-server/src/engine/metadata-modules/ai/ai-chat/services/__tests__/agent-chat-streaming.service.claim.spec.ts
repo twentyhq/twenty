@@ -69,8 +69,16 @@ describe('AgentChatStreamingService claim & reap', () => {
           toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
         },
       ]),
-      update: jest.fn().mockResolvedValue({ affected: 1 }),
+      writePart: jest.fn(),
+      query: jest.fn(),
     };
+
+    messagePartRepository.query.mockImplementation(async (_workspaceId, run) =>
+      run({
+        table: (name: string) => name,
+        manager: { query: messagePartRepository.writePart },
+      }),
+    );
     const eventPublisherService = {
       publish: jest.fn().mockImplementation(({ event }) => {
         publishedEvents.push(event);
@@ -260,17 +268,16 @@ describe('AgentChatStreamingService claim & reap', () => {
         },
         { pendingQuestionMessageId: null },
       );
-      expect(messagePartRepository.update).toHaveBeenCalledWith(
-        'workspace-id',
-        { id: 'part-id' },
-        {
-          toolOutput: expect.objectContaining({
-            result: { questions: QUESTIONS, status: 'skipped' },
-          }),
-        },
-      );
+      const [[, [partId, closedToolOutput]]] =
+        messagePartRepository.writePart.mock.calls;
+
+      expect(partId).toBe('part-id');
+      expect(JSON.parse(closedToolOutput).result).toEqual({
+        questions: QUESTIONS,
+        status: 'skipped',
+      });
       expect(
-        messagePartRepository.update.mock.invocationCallOrder[0],
+        messagePartRepository.writePart.mock.invocationCallOrder[0],
       ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
     });
 
@@ -283,7 +290,7 @@ describe('AgentChatStreamingService claim & reap', () => {
 
       await service.streamAgentChat(sendArguments);
 
-      expect(messagePartRepository.update).not.toHaveBeenCalled();
+      expect(messagePartRepository.writePart).not.toHaveBeenCalled();
     });
 
     it('refuses a message while its workflow run waits on the conversation', async () => {
@@ -301,7 +308,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       ).rejects.toMatchObject({
         code: AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT,
       });
-      expect(messagePartRepository.update).not.toHaveBeenCalled();
+      expect(messagePartRepository.writePart).not.toHaveBeenCalled();
       expect(agentChatService.addMessage).not.toHaveBeenCalled();
       expect(agentChatService.queueMessage).not.toHaveBeenCalled();
       expect(messageQueueService.add).not.toHaveBeenCalled();
