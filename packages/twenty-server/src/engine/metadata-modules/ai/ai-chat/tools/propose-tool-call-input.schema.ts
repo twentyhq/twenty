@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const proposeToolCallInputSchema = z.object({
   toolName: z
     .string()
+    .trim()
     .min(1)
     .describe(
       'The name of the tool to run once approved, as you would call it yourself.',
@@ -14,6 +15,7 @@ export const proposeToolCallInputSchema = z.object({
     ),
   summary: z
     .string()
+    .trim()
     .min(1)
     .describe(
       'One sentence on what the call does and why, shown to the person deciding (e.g. "Raise the Acme renewal to 120k based on the signed quote").',
