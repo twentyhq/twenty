@@ -15,6 +15,12 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 
 const instanceId = 'record-index-id';
 
+const firstRecord: ObjectRecord = { id: 'record-1', __typename: 'Opportunity' };
+const secondRecord: ObjectRecord = {
+  id: 'record-2',
+  __typename: 'Opportunity',
+};
+
 let mockRecordsByGroupId: Record<string, ObjectRecord[]> = {};
 
 jest.mock(
@@ -110,8 +116,8 @@ describe('RecordListRecordGroupsBody', () => {
 
   it('should show a hidden empty group again once its records come back', () => {
     mockRecordsByGroupId = {
-      new: [{ id: 'record-1', __typename: 'Opportunity' } as ObjectRecord],
-      meeting: [{ id: 'record-2', __typename: 'Opportunity' } as ObjectRecord],
+      new: [firstRecord],
+      meeting: [secondRecord],
     };
 
     const { rerender } = render(getGroupsBody());
@@ -120,7 +126,7 @@ describe('RecordListRecordGroupsBody', () => {
     expect(screen.getByText('Group meeting')).toBeInTheDocument();
 
     mockRecordsByGroupId = {
-      new: [{ id: 'record-1', __typename: 'Opportunity' } as ObjectRecord],
+      new: [firstRecord],
       meeting: [],
     };
     rerender(getGroupsBody());
@@ -128,8 +134,8 @@ describe('RecordListRecordGroupsBody', () => {
     expect(screen.queryByText('Group meeting')).not.toBeInTheDocument();
 
     mockRecordsByGroupId = {
-      new: [{ id: 'record-1', __typename: 'Opportunity' } as ObjectRecord],
-      meeting: [{ id: 'record-2', __typename: 'Opportunity' } as ObjectRecord],
+      new: [firstRecord],
+      meeting: [secondRecord],
     };
     rerender(getGroupsBody());
 
@@ -144,7 +150,7 @@ describe('RecordListRecordGroupsBody', () => {
     expect(screen.queryByText('Group new')).not.toBeInTheDocument();
 
     mockRecordsByGroupId = {
-      new: [{ id: 'record-1', __typename: 'Opportunity' } as ObjectRecord],
+      new: [firstRecord],
     };
     rerender(getGroupsBody());
 
