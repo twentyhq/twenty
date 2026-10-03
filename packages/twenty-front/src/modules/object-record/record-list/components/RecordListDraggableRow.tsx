@@ -5,7 +5,8 @@ import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-re
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
 import { RecordListRow } from '@/object-record/record-list/components/RecordListRow';
-import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RECORD_LIST_ROW_DND_TYPE } from '@/object-record/record-list/constants/RecordListRowDndType';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC } from '@/ui/utilities/drag-and-drop/constants/DndKitPluginsWithoutOptimistic';
@@ -36,7 +37,10 @@ export const RecordListDraggableRow = ({
   index,
   droppableId,
 }: RecordListDraggableRowProps) => {
-  const { objectPermissions } = useRecordListContextOrThrow();
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
   const isRecordIdSecondaryDragMultiple = useAtomComponentFamilyStateValue(
     isRecordIdSecondaryDragMultipleComponentFamilyState,
     { recordId },
