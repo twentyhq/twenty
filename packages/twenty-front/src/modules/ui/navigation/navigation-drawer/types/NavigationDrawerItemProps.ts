@@ -24,4 +24,5 @@ export type NavigationDrawerItemProps = {
   preventCollapseOnMobile?: boolean;
   isSelectedInEditMode?: boolean;
   variant?: 'default' | 'tertiary' | 'placeholder';
+  isUnread?: boolean;
 };

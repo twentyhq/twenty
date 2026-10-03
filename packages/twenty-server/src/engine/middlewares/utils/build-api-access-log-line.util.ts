@@ -27,6 +27,8 @@ export const buildApiAccessLogLine = ({
     method: request.method,
     url_path: urlPath,
     resolvers: formatResolvers(request.executedRootResolvers),
+    mcp_method: request.mcpMethod,
+    mcp_tool: request.mcpToolName,
     status: completed ? response.statusCode : undefined,
     aborted: completed ? undefined : true,
     duration_ms: durationMs,
