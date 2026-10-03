@@ -72,6 +72,11 @@ export const RecordBoardQueryEffect = () => {
     [...lastRecordGroupIds].sort(),
   );
 
+  useEffect(
+    () => () => setLastRecordBoardQueryIdentifier(''),
+    [setLastRecordBoardQueryIdentifier],
+  );
+
   useEffect(() => {
     if (isDraggingRecord) {
       return;
