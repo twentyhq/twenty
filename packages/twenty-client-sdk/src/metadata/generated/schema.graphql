@@ -5510,12 +5510,12 @@ input CreateEmailingDomainInput {
 
 input RunAgentInput {
   agentUniversalIdentifier: String!
-  prompt: String
+  prompt: String @deprecated(reason: "Use input instead.")
   runAsWorkspaceMemberId: UUID
-  messages: [RunAgentMessageInput!]
-  threadKey: String
-  threadTitle: String
-  context: String
+  messages: [RunAgentMessageInput!] @deprecated(reason: "Use input instead.")
+  input: [RunAgentMessageInput!]
+  additionalInstructions: String
+  thread: RunAgentThreadInput
 }
 
 input RunAgentMessageInput {
@@ -5532,6 +5532,11 @@ enum RunAgentMessageRole {
 input RunAgentMessageAttachmentInput {
   fileId: UUID!
   filename: String
+}
+
+input RunAgentThreadInput {
+  key: String!
+  title: String
 }
 
 input CreateWebhookInput {

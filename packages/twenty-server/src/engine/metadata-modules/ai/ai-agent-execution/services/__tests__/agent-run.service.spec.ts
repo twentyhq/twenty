@@ -72,8 +72,10 @@ const run = (
     input: { agentUniversalIdentifier: AGENT.universalIdentifier, ...input },
   });
 
+const userInput = (content: string) => [{ role: 'user', content }];
+
 describe('AgentRunService', () => {
-  it('runs without a conversation when no thread key is given', async () => {
+  it('runs without a conversation when no thread is given', async () => {
     const {
       service,
       agentAsyncExecutorService,
@@ -82,7 +84,7 @@ describe('AgentRunService', () => {
     } = buildService();
 
     const result = await run(service, {
-      prompt: 'Who is our biggest customer?',
+      input: userInput('Who is our biggest customer?'),
     });
 
     expect(result).toEqual({
@@ -98,7 +100,19 @@ describe('AgentRunService', () => {
     );
   });
 
-  it('continues the conversation of the thread key as the member it runs as', async () => {
+  it('keeps accepting a prompt', async () => {
+    const { service, agentAsyncExecutorService } = buildService();
+
+    await run(service, { prompt: 'Who is our biggest customer?' });
+
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        messages: userInput('Who is our biggest customer?'),
+      }),
+    );
+  });
+
+  it('continues the thread as the member it runs as', async () => {
     const {
       service,
       executionResult,
@@ -113,8 +127,8 @@ describe('AgentRunService', () => {
     });
 
     const result = await run(service, {
-      prompt: 'And the second one?',
-      threadKey: 'C123:1700000000.000100',
+      input: userInput('And the second one?'),
+      thread: { key: 'C123:1700000000.000100' },
       runAsWorkspaceMemberId: 'workspace-member-id',
     });
 
@@ -137,35 +151,31 @@ describe('AgentRunService', () => {
         threadId,
         title: AGENT.label,
         actor,
-        messages: [{ role: 'user', content: 'And the second one?' }],
+        messages: userInput('And the second one?'),
         execution: executionResult,
       }),
     );
   });
 
-  it('gives the context to the model without recording it', async () => {
+  it('gives the additional instructions to the model without recording them', async () => {
     const { service, agentAsyncExecutorService, agentRunConversationService } =
       buildService();
 
     await run(service, {
-      prompt: 'And the second one?',
-      threadKey: 'thread',
-      context: 'Answer in Slack markdown',
+      input: userInput('And the second one?'),
+      thread: { key: 'thread', title: 'Acme renewal' },
+      additionalInstructions: 'Answer in Slack markdown',
     });
 
     expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
       expect.objectContaining({
-        messages: [
-          {
-            role: 'user',
-            content: 'Answer in Slack markdown\n\nAnd the second one?',
-          },
-        ],
+        messages: userInput('Answer in Slack markdown\n\nAnd the second one?'),
       }),
     );
     expect(agentRunConversationService.recordTurn).toHaveBeenCalledWith(
       expect.objectContaining({
-        messages: [{ role: 'user', content: 'And the second one?' }],
+        title: 'Acme renewal',
+        messages: userInput('And the second one?'),
         actor: { type: 'application', applicationId: APPLICATION.id },
       }),
     );
@@ -180,32 +190,32 @@ describe('AgentRunService', () => {
     );
 
     const result = await run(service, {
-      prompt: 'And the second one?',
-      threadKey: 'thread',
+      input: userInput('And the second one?'),
+      thread: { key: 'thread' },
     });
 
     expect(result.success).toBe(true);
   });
 
-  it('refuses a thread key without an application token', async () => {
+  it('refuses a thread without an application token', async () => {
     const { service } = buildService();
 
     await expect(
       run(
         service,
-        { prompt: 'Hello', threadKey: 'thread' },
+        { input: userInput('Hello'), thread: { key: 'thread' } },
         { isCalledByApplication: false },
       ),
     ).rejects.toMatchObject({ code: AiExceptionCode.RUN_AGENT_NOT_ALLOWED });
   });
 
-  it('refuses assistant messages sent to a conversation', async () => {
+  it('refuses assistant messages sent to a thread', async () => {
     const { service } = buildService();
 
     await expect(
       run(service, {
-        threadKey: 'thread',
-        messages: [
+        thread: { key: 'thread' },
+        input: [
           { role: 'user', content: 'Hello' },
           { role: 'assistant', content: 'Hi' },
         ],

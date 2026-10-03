@@ -4,8 +4,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   type RunAgentMessage,
   type RunAgentResult,
+  type RunAgentThread,
 } from 'twenty-shared/application';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -16,8 +17,9 @@ import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agen
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
-import { addContextToLastRunAgentMessage } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/add-context-to-last-run-agent-message.util';
+import { addAdditionalInstructionsToLastRunAgentMessage } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/add-additional-instructions-to-last-run-agent-message.util';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
+import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
@@ -32,12 +34,12 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 type RunAgentServiceInput = {
   agentUniversalIdentifier: string;
+  input?: RunAgentMessage[] | null;
   prompt?: string | null;
   messages?: RunAgentMessage[] | null;
+  additionalInstructions?: string | null;
+  thread?: RunAgentThread | null;
   runAsWorkspaceMemberId?: string;
-  threadKey?: string | null;
-  threadTitle?: string | null;
-  context?: string | null;
 };
 
 @Injectable()
@@ -67,25 +69,15 @@ export class AgentRunService {
     callerApplication?: FlatApplication;
     input: RunAgentServiceInput;
   }): Promise<RunAgentResult> {
-    const prompt = input.prompt;
+    const messages = resolveRunAgentMessagesOrThrow({
+      input: input.input,
+      prompt: input.prompt,
+      messages: input.messages,
+    });
 
-    // GraphQL cannot express XOR; enforce exactly one of prompt or messages
-    if (isNonEmptyArray(input.messages) === isNonEmptyString(prompt)) {
-      throw new AiException(
-        'Provide exactly one of prompt or messages',
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
-    }
+    const thread = isNonEmptyString(input.thread?.key) ? input.thread : null;
 
-    const messages: RunAgentMessage[] = isNonEmptyString(prompt)
-      ? [{ role: 'user', content: prompt }]
-      : (input.messages ?? []);
-
-    const threadKey = isNonEmptyString(input.threadKey)
-      ? input.threadKey
-      : null;
-
-    if (isDefined(threadKey)) {
+    if (isDefined(thread)) {
       this.assertCanContinueConversation({ callerApplication, messages });
     }
 
@@ -144,16 +136,23 @@ export class AgentRunService {
         }
       : { type: 'application', applicationId: application.id };
 
-    const threadId = isDefined(threadKey)
+    const threadTitle = isNonEmptyString(thread?.title)
+      ? thread.title
+      : agent.label;
+
+    const threadId = isDefined(thread)
       ? buildAgentRunThreadId({
           applicationId: application.id,
           agentId: agent.id,
-          threadKey,
+          threadKey: thread.key,
         })
       : null;
 
-    const executionMessages = isNonEmptyString(input.context)
-      ? addContextToLastRunAgentMessage({ messages, context: input.context })
+    const executionMessages = isNonEmptyString(input.additionalInstructions)
+      ? addAdditionalInstructionsToLastRunAgentMessage({
+          messages,
+          additionalInstructions: input.additionalInstructions,
+        })
       : messages;
 
     const runTurn = async (): Promise<RunAgentResult> => {
@@ -198,9 +197,7 @@ export class AgentRunService {
           .recordTurn({
             workspaceId: workspace.id,
             threadId,
-            title: isNonEmptyString(input.threadTitle)
-              ? input.threadTitle
-              : agent.label,
+            title: threadTitle,
             agentId: agent.id,
             applicationId: application.id,
             actor,

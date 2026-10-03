@@ -203,6 +203,7 @@ export type { RunAgentMessageAttachment } from './runAgentMessageAttachmentType'
 export type {
   RunAgentMessageRole,
   RunAgentMessage,
+  RunAgentThread,
   RunAgentInput,
   RunAgentResult,
 } from './runAgentType';

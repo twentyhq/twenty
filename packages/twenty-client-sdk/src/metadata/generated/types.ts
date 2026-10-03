@@ -111,7 +111,7 @@ export default {
         453,
         573,
         577,
-        607
+        608
     ],
     "types": {
         "BillingProductDTO": {
@@ -10471,7 +10471,7 @@ export default {
                 367,
                 {
                     "input": [
-                        579,
+                        580,
                         "CreateWebhookInput!"
                     ]
                 }
@@ -10480,7 +10480,7 @@ export default {
                 367,
                 {
                     "input": [
-                        580,
+                        581,
                         "UpdateWebhookInput!"
                     ]
                 }
@@ -10498,7 +10498,7 @@ export default {
                 410,
                 {
                     "input": [
-                        582,
+                        583,
                         "UpdateMessageFolderInput!"
                     ]
                 }
@@ -10507,7 +10507,7 @@ export default {
                 410,
                 {
                     "input": [
-                        584,
+                        585,
                         "UpdateMessageFoldersInput!"
                     ]
                 }
@@ -10516,7 +10516,7 @@ export default {
                 405,
                 {
                     "input": [
-                        585,
+                        586,
                         "UpdateCalendarChannelInput!"
                     ]
                 }
@@ -10525,7 +10525,7 @@ export default {
                 403,
                 {
                     "input": [
-                        587,
+                        588,
                         "SetAppKeyValueInput!"
                     ]
                 }
@@ -10546,7 +10546,7 @@ export default {
                 401,
                 {
                     "input": [
-                        588,
+                        589,
                         "EnqueueJobInput!"
                     ]
                 }
@@ -10555,7 +10555,7 @@ export default {
                 402,
                 {
                     "input": [
-                        589,
+                        590,
                         "EnqueueJobsInput!"
                     ]
                 }
@@ -10564,7 +10564,7 @@ export default {
                 8,
                 {
                     "input": [
-                        591,
+                        592,
                         "ReportAppConnectionAuthFailureInput!"
                     ]
                 }
@@ -10594,7 +10594,7 @@ export default {
                         1
                     ],
                     "fileAttachments": [
-                        592,
+                        593,
                         "[FileAttachmentInput!]"
                     ]
                 }
@@ -10644,7 +10644,7 @@ export default {
                 389,
                 {
                     "input": [
-                        593,
+                        594,
                         "SendInboxMessageInput!"
                     ]
                 }
@@ -10653,7 +10653,7 @@ export default {
                 381,
                 {
                     "input": [
-                        594,
+                        595,
                         "CreateSkillInput!"
                     ]
                 }
@@ -10662,7 +10662,7 @@ export default {
                 381,
                 {
                     "input": [
-                        595,
+                        596,
                         "UpdateSkillInput!"
                     ]
                 }
@@ -10720,7 +10720,7 @@ export default {
                 417,
                 {
                     "input": [
-                        596,
+                        597,
                         "CreateValidationRuleInput!"
                     ]
                 }
@@ -10729,7 +10729,7 @@ export default {
                 417,
                 {
                     "input": [
-                        597,
+                        598,
                         "UpdateValidationRuleInput!"
                     ]
                 }
@@ -10747,7 +10747,7 @@ export default {
                 416,
                 {
                     "input": [
-                        599,
+                        600,
                         "UpdateTimelineActivityTypeInput!"
                     ]
                 }
@@ -10765,7 +10765,7 @@ export default {
                 299,
                 {
                     "input": [
-                        600,
+                        601,
                         "GetAuthorizationUrlForSSOInput!"
                     ]
                 }
@@ -10931,7 +10931,7 @@ export default {
                 302,
                 {
                     "input": [
-                        601
+                        602
                     ]
                 }
             ],
@@ -11139,7 +11139,7 @@ export default {
                 8,
                 {
                     "input": [
-                        602,
+                        603,
                         "UpdateWorkspaceMemberSettingsInput!"
                     ]
                 }
@@ -11173,7 +11173,7 @@ export default {
                 250,
                 {
                     "input": [
-                        603,
+                        604,
                         "SetupOIDCSsoInput!"
                     ]
                 }
@@ -11182,7 +11182,7 @@ export default {
                 250,
                 {
                     "input": [
-                        604,
+                        605,
                         "SetupSAMLSsoInput!"
                     ]
                 }
@@ -11191,7 +11191,7 @@ export default {
                 246,
                 {
                     "input": [
-                        605,
+                        606,
                         "DeleteSsoInput!"
                     ]
                 }
@@ -11200,7 +11200,7 @@ export default {
                 247,
                 {
                     "input": [
-                        606,
+                        607,
                         "EditSsoInput!"
                     ]
                 }
@@ -11229,7 +11229,7 @@ export default {
                 393,
                 {
                     "type": [
-                        607,
+                        608,
                         "AnalyticsType!"
                     ],
                     "name": [
@@ -11272,7 +11272,7 @@ export default {
                 371,
                 {
                     "input": [
-                        608,
+                        609,
                         "CreateCalendarEventInput!"
                     ]
                 }
@@ -11281,7 +11281,7 @@ export default {
                 392,
                 {
                     "input": [
-                        609,
+                        610,
                         "SendEmailInput!"
                     ]
                 }
@@ -11303,7 +11303,7 @@ export default {
                         "String!"
                     ],
                     "connectionParameters": [
-                        611,
+                        612,
                         "EmailAccountConnectionParameters!"
                     ],
                     "id": [
@@ -11315,7 +11315,7 @@ export default {
                 210,
                 {
                     "input": [
-                        613,
+                        614,
                         "UpdateLabPublicFeatureFlagInput!"
                     ]
                 }
@@ -11408,7 +11408,7 @@ export default {
                         "String!"
                     ],
                     "files": [
-                        614,
+                        615,
                         "[ApplicationFileUploadRequestInput!]!"
                     ]
                 }
@@ -13926,14 +13926,14 @@ export default {
             "messages": [
                 576
             ],
-            "threadKey": [
+            "input": [
+                576
+            ],
+            "additionalInstructions": [
                 1
             ],
-            "threadTitle": [
-                1
-            ],
-            "context": [
-                1
+            "thread": [
+                579
             ],
             "__typename": [
                 1
@@ -13965,6 +13965,17 @@ export default {
                 1
             ]
         },
+        "RunAgentThreadInput": {
+            "key": [
+                1
+            ],
+            "title": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "CreateWebhookInput": {
             "id": [
                 3
@@ -13990,7 +14001,7 @@ export default {
                 3
             ],
             "update": [
-                581
+                582
             ],
             "__typename": [
                 1
@@ -14018,7 +14029,7 @@ export default {
                 3
             ],
             "update": [
-                583
+                584
             ],
             "__typename": [
                 1
@@ -14037,7 +14048,7 @@ export default {
                 3
             ],
             "update": [
-                583
+                584
             ],
             "__typename": [
                 1
@@ -14048,7 +14059,7 @@ export default {
                 3
             ],
             "update": [
-                586
+                587
             ],
             "__typename": [
                 1
@@ -14113,7 +14124,7 @@ export default {
                 9
             ],
             "jobs": [
-                590
+                591
             ],
             "retryLimit": [
                 31
@@ -14264,7 +14275,7 @@ export default {
                 3
             ],
             "update": [
-                598
+                599
             ],
             "__typename": [
                 1
@@ -14476,7 +14487,7 @@ export default {
                 1
             ],
             "files": [
-                610
+                611
             ],
             "__typename": [
                 1
@@ -14498,13 +14509,13 @@ export default {
                 1
             ],
             "IMAP": [
-                612
+                613
             ],
             "SMTP": [
-                612
+                613
             ],
             "CALDAV": [
-                612
+                613
             ],
             "__typename": [
                 1
@@ -14569,7 +14580,7 @@ export default {
                 291,
                 {
                     "input": [
-                        616,
+                        617,
                         "LogicFunctionLogsInput!"
                     ]
                 }
@@ -14600,7 +14611,7 @@ export default {
                 397,
                 {
                     "input": [
-                        617,
+                        618,
                         "CreateRecordExportInput!"
                     ]
                 }
