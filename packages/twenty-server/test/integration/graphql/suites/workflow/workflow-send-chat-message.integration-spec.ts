@@ -214,6 +214,7 @@ describe('Send chat message workflow step', () => {
       expect(stepResult).toMatchObject({
         threadId: postedThreadId,
         isApproved: true,
+        approvedToolName: 'update_one_company',
         status: 'approved',
         arguments: { id: companyId, employees: 30 },
       });
@@ -244,6 +245,7 @@ describe('Send chat message workflow step', () => {
       expect(status).toBe('COMPLETED');
       expect(stepResult).toMatchObject({
         isApproved: false,
+        approvedToolName: null,
         status: 'rejected',
         feedback: 'Wait for the audit',
       });

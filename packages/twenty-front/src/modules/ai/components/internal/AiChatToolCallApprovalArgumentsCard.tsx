@@ -115,7 +115,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
         {hasRecordFields && (
           <AiChatToolCallApprovalRecordFields
             objectNameSingular={objectNameSingular}
-            values={proposal.arguments}
+            values={toolArguments ?? proposal.arguments}
             currentValues={proposal.currentValues}
             readonly={isAnswering}
             onChange={handleRecordFieldChange}

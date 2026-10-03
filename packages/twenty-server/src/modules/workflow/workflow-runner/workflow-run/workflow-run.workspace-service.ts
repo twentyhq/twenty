@@ -469,14 +469,17 @@ export class WorkflowRunWorkspaceService {
   }
 
   // A conversation replaced by a retry or a later loop iteration belongs to no step
+  // several Send Message steps of one run post to the same inbox thread, so the step a call names wins
   async findStepAwaitingAnswer({
     threadId,
     workflowRunId,
     workspaceId,
+    expectedStepId,
   }: {
     threadId: string;
     workflowRunId: string;
     workspaceId: string;
+    expectedStepId?: string;
   }): Promise<WorkflowAction | null> {
     const workflowRun = await this.getWorkflowRunOrFail({
       workflowRunId,
@@ -485,7 +488,11 @@ export class WorkflowRunWorkspaceService {
 
     const [stepId, stepInfo] =
       Object.entries(workflowRun.state?.stepInfos ?? {}).find(
-        ([, stepInfo]) => stepInfo?.threadId === threadId,
+        ([candidateStepId, stepInfo]) =>
+          stepInfo?.threadId === threadId &&
+          (isDefined(expectedStepId)
+            ? candidateStepId === expectedStepId
+            : stepInfo?.status === StepStatus.PENDING),
       ) ?? [];
 
     if (

@@ -3,19 +3,31 @@ import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
+import { type ReactNode } from 'react';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 
 import { AiChatToolCallApprovalCard } from '@/ai/components/AiChatToolCallApprovalCard';
+
+type RecordFieldsStubProps = {
+  values: Record<string, unknown>;
+  onChange: (fieldName: string, value: unknown) => void;
+};
 
 const answerAgentChatToolCall = jest.fn();
 jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
   useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),
 }));
 
-// record cards need workspace metadata, which a generic call never reads
+// record fields need workspace metadata, so a stub stands in for them
+const mockRecordFields = jest.fn(
+  (_props: RecordFieldsStubProps): ReactNode => null,
+);
 jest.mock(
   '@/ai/components/internal/AiChatToolCallApprovalRecordFields',
-  () => ({ AiChatToolCallApprovalRecordFields: () => null }),
+  () => ({
+    AiChatToolCallApprovalRecordFields: (props: RecordFieldsStubProps) =>
+      mockRecordFields(props),
+  }),
 );
 jest.mock('@/ai/components/internal/AiChatToolCallApprovalRecordChip', () => ({
   AiChatToolCallApprovalRecordChip: () => null,
@@ -32,11 +44,11 @@ const PROPOSAL: ProposedToolCall = {
   template: 'generic',
 };
 
-const renderCard = () =>
+const renderCard = (proposal: ProposedToolCall = PROPOSAL) =>
   render(
     <I18nProvider i18n={i18n}>
       <Provider store={createStore()}>
-        <AiChatToolCallApprovalCard toolCallId="call-1" proposal={PROPOSAL} />
+        <AiChatToolCallApprovalCard toolCallId="call-1" proposal={proposal} />
       </Provider>
     </I18nProvider>,
   );
@@ -98,6 +110,52 @@ describe('AiChatToolCallApprovalCard', () => {
     expect(screen.getByRole('button', { name: 'Approve' })).toBeDisabled();
     expect(screen.getByRole('alert')).toHaveTextContent(
       'Arguments must be a valid JSON object.',
+    );
+  });
+
+  it('keeps every edit to one composite field when approving a record', async () => {
+    const user = userEvent.setup();
+    answerAgentChatToolCall.mockReturnValue(new Promise(() => {}));
+    // like the composite form inputs, each part is changed from the values it is given
+    mockRecordFields.mockImplementation(({ values, onChange }) => {
+      const name = values.name as Record<string, string>;
+
+      return (
+        <>
+          <button
+            onClick={() => onChange('name', { ...name, firstName: 'Grace' })}
+          >
+            Set first name
+          </button>
+          <button
+            onClick={() => onChange('name', { ...name, lastName: 'Hopper' })}
+          >
+            Set last name
+          </button>
+        </>
+      );
+    });
+
+    renderCard({
+      toolName: 'create_one_person',
+      toolLabel: 'Create person',
+      summary: 'Add the new contact',
+      arguments: { name: { firstName: 'Ada', lastName: 'Lovelace' } },
+      template: 'recordCreate',
+      objectNameSingular: 'person',
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Set first name' }));
+    await user.click(screen.getByRole('button', { name: 'Set last name' }));
+    await user.click(screen.getByRole('button', { name: 'Approve' }));
+
+    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+      expect.objectContaining({
+        response: {
+          decision: 'approve',
+          arguments: { name: { firstName: 'Grace', lastName: 'Hopper' } },
+        },
+      }),
     );
   });
 

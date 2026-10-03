@@ -185,6 +185,7 @@ export class ToolCallAnswerService {
           threadId,
           workflowRunId,
           workspaceId,
+          expectedStepId: inboxWorkflowStep?.stepId,
         });
 
         if (
@@ -204,10 +205,7 @@ export class ToolCallAnswerService {
           );
         }
 
-        if (
-          !isDefined(step) ||
-          (isDefined(inboxWorkflowStep) && step.id !== inboxWorkflowStep.stepId)
-        ) {
+        if (!isDefined(step)) {
           await this.agentChatService.closePendingToolCalls({
             threadId,
             messageId: toolPart.messageId,

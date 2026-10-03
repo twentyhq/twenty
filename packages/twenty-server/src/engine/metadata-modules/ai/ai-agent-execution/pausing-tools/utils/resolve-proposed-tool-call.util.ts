@@ -17,10 +17,18 @@ export type ProposedToolCallResolution =
   | { proposal: ProposedToolCall }
   | { error: string };
 
-// the email card edits a structured document, and reads an HTML string as one
+// the email card edits a structured document, and reads an HTML string as one; it cannot show
+// attachments, so an email carrying files would send them without the person seeing them
 export const findEmailArgumentsError = (
   toolArguments: Record<string, unknown>,
 ): string | null => {
+  if (
+    Array.isArray(toolArguments.files) &&
+    isNonEmptyArray(toolArguments.files)
+  ) {
+    return 'An email with attachments cannot be proposed yet. Propose it without files, or send it yourself.';
+  }
+
   if (isString(toolArguments.body)) {
     return null;
   }

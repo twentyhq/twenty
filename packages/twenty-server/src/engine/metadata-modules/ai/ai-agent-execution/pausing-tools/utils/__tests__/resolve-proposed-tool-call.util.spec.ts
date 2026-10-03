@@ -124,6 +124,25 @@ describe('resolveProposedToolCall', () => {
     ).toEqual({ error: expect.stringContaining('structured email document') });
   });
 
+  it('refuses an email with attachments, which the card cannot show', async () => {
+    expect(
+      await resolveProposedToolCall({
+        input: {
+          toolName: 'send_email',
+          arguments: {
+            recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
+            subject: 'Renewal',
+            body: '<p>Quote attached</p>',
+            files: [{ id: 'file-id', name: 'quote.pdf' }],
+          },
+          summary: 'Send the quote',
+        },
+        findTool,
+        executeTool: jest.fn(),
+      }),
+    ).toEqual({ error: expect.stringContaining('attachments') });
+  });
+
   it('snapshots the fields an update changes', async () => {
     const executeTool = foundRecord({ stage: 'PROPOSAL', amount: null });
 
