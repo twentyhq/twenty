@@ -23,15 +23,19 @@ describe('NORMALIZATION_RULES', () => {
       'escaped-every-character',
       'escaped-inline-code-tags',
       'translated-identifier',
+      'localized-expression-digits',
     ]);
   });
 
-  it('runs every rule but the MDX-specific one against PO catalogs', () => {
+  it('runs every rule but the MDX-specific ones against PO catalogs', () => {
     const mdxOnly = NORMALIZATION_RULES.filter(
       (rule) => !rule.formats.includes('po'),
     ).map((rule) => rule.name);
 
-    expect(mdxOnly).toEqual(['translated-identifier']);
+    expect(mdxOnly).toEqual([
+      'translated-identifier',
+      'localized-expression-digits',
+    ]);
     expect(namesFor('po')).toHaveLength(
       NORMALIZATION_RULES.length - mdxOnly.length,
     );
