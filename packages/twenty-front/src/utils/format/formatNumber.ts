@@ -59,16 +59,21 @@ export const formatNumber = (
 
   if (options.abbreviate) {
     const abs = Math.abs(value);
+    const roundToDecimals = (n: number) => {
+      const factor = Math.pow(10, options.decimals);
+      return Math.round(n * factor) / factor;
+    };
+
     let suffix = '';
     let divisor = 1;
 
-    if (abs >= 1e9) {
+    if (roundToDecimals(abs / 1e9) >= 1) {
       suffix = 'B';
       divisor = 1e9;
-    } else if (abs >= 1e6) {
+    } else if (roundToDecimals(abs / 1e6) >= 1) {
       suffix = 'M';
       divisor = 1e6;
-    } else if (abs >= 1e3) {
+    } else if (roundToDecimals(abs / 1e3) >= 1) {
       suffix = 'k';
       divisor = 1e3;
     }
