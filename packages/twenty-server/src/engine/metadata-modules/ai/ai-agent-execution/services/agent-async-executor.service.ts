@@ -217,12 +217,12 @@ export class AgentAsyncExecutorService {
       tools,
       proposableTools: {
         findTool: async (toolName) =>
-          toolName in tools
+          Object.prototype.hasOwnProperty.call(tools, toolName)
             ? this.toolRegistry.findCatalogEntry(toolName, toolContext)
             : undefined,
         // the context lacks the explicit grants the preloaded tools were built with, so reads stay within those tools
         executeTool: ({ toolName, args }) =>
-          toolName in tools
+          Object.prototype.hasOwnProperty.call(tools, toolName)
             ? this.toolRegistry.resolveAndExecute(toolName, args, toolContext)
             : Promise.resolve(buildUnavailableToolOutput(toolName)),
       },
