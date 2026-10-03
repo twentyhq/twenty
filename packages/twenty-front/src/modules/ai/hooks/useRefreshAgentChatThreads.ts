@@ -155,7 +155,7 @@ export const useRefreshAgentChatThreads = () => {
         const selectedThreadId = store.get(currentAiChatThreadState.atom);
         const pageThreadIds = page.threads.map(({ id }) => id);
 
-        await Promise.all([
+        const [, areParticipantsLoaded] = await Promise.all([
           refreshAgentChatThreadPermissions([
             ...pageThreadIds,
             ...(isDefined(selectedThreadId) && isValidUuid(selectedThreadId)
@@ -164,6 +164,11 @@ export const useRefreshAgentChatThreads = () => {
           ]),
           loadAgentChatThreadParticipants(pageThreadIds),
         ]);
+
+        // without their member state, archived or read chats would show as new
+        if (!areParticipantsLoaded) {
+          return undefined;
+        }
 
         if (!isSameSession() || hasChangedSinceRequest()) {
           continue;
@@ -231,10 +236,14 @@ export const useRefreshAgentChatThreads = () => {
           return null;
         }
 
-        await Promise.all([
+        const [, isParticipantLoaded] = await Promise.all([
           refreshAgentChatThreadPermissions([thread.id]),
           loadAgentChatThreadParticipants([thread.id]),
         ]);
+
+        if (!isParticipantLoaded) {
+          return undefined;
+        }
 
         if (
           store.get(agentChatThreadRecordUpdateCountState.atom) !==

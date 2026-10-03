@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
 import { type AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
@@ -41,7 +41,7 @@ export class AgentChatThreadParticipantService {
     threadIds: string[];
   }): Promise<AgentChatThreadParticipantDTO[]> {
     if (
-      threadIds.length === 0 ||
+      !isNonEmptyArray(threadIds) ||
       !(await this.sharingService.hasInboxState(workspaceId))
     ) {
       return [];

@@ -2,7 +2,7 @@ import { type TypedDocumentNode } from '@apollo/client';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
@@ -27,39 +27,57 @@ export const useAgentChatThreadParticipants = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
 
-  // Merged per thread, so a thread asked for without a row is cleared
+  // Merged per thread, so a thread asked for without a row is cleared; false when the request failed
   const loadAgentChatThreadParticipants = useCallback(
-    async (threadIds: string[]) => {
-      const result =
-        threadIds.length > 0
-          ? await client
-              .query({
-                query: GetMyAgentChatThreadParticipantsDocument,
-                variables: { threadIds },
-                fetchPolicy: 'network-only',
-              })
-              .catch(() => undefined)
-          : { data: { myAgentChatThreadParticipants: [] } };
+    async (threadIds: string[]): Promise<boolean> => {
+      const participantsBeforeRequest = store.get(
+        agentChatThreadParticipantsState.atom,
+      );
+      const result = isNonEmptyArray(threadIds)
+        ? await client
+            .query({
+              query: GetMyAgentChatThreadParticipantsDocument,
+              variables: { threadIds },
+              fetchPolicy: 'network-only',
+            })
+            .catch(() => undefined)
+        : { data: { myAgentChatThreadParticipants: [] } };
 
       if (!isDefined(result?.data)) {
-        return;
+        return false;
       }
 
-      const loadedParticipants = result.data.myAgentChatThreadParticipants;
+      const loadedParticipantByThreadId = new Map(
+        result.data.myAgentChatThreadParticipants.map((participant) => [
+          participant.threadId,
+          participant,
+        ]),
+      );
 
-      store.set(agentChatThreadParticipantsState.atom, (participants) => ({
-        ...Object.fromEntries(
-          Object.entries(participants ?? {}).filter(
-            ([threadId]) => !threadIds.includes(threadId),
-          ),
-        ),
-        ...Object.fromEntries(
-          loadedParticipants.map((participant) => [
-            participant.threadId,
-            participant,
-          ]),
-        ),
-      }));
+      store.set(agentChatThreadParticipantsState.atom, (participants) => {
+        const nextParticipants = { ...participants };
+
+        for (const threadId of threadIds) {
+          // a chat changed here while the request ran keeps its newer state
+          if (
+            participants?.[threadId] !== participantsBeforeRequest?.[threadId]
+          ) {
+            continue;
+          }
+
+          const loadedParticipant = loadedParticipantByThreadId.get(threadId);
+
+          if (isDefined(loadedParticipant)) {
+            nextParticipants[threadId] = loadedParticipant;
+          } else {
+            delete nextParticipants[threadId];
+          }
+        }
+
+        return nextParticipants;
+      });
+
+      return true;
     },
     [client, store],
   );

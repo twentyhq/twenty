@@ -102,6 +102,46 @@ describe('useAgentChatThreadParticipants', () => {
     expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({});
   });
 
+  it('keeps a change made while the request ran and reports a failed request', async () => {
+    const archivedParticipant = {
+      ...READ_PARTICIPANT,
+      archivedAt: '2026-10-01T11:00:00.000Z',
+    };
+    let answerQuery: (value: unknown) => void = () => {};
+    query.mockReturnValueOnce(
+      new Promise((resolve) => {
+        answerQuery = resolve;
+      }),
+    );
+    const { result, store } = renderParticipants();
+
+    let isLoaded: boolean | undefined;
+    await act(async () => {
+      const load = result.current.loadAgentChatThreadParticipants([THREAD_ID]);
+      store.set(agentChatThreadParticipantsState.atom, {
+        [THREAD_ID]: archivedParticipant,
+      });
+      answerQuery({
+        data: { myAgentChatThreadParticipants: [READ_PARTICIPANT] },
+      });
+      isLoaded = await load;
+    });
+
+    expect(isLoaded).toBe(true);
+    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
+      [THREAD_ID]: archivedParticipant,
+    });
+
+    query.mockRejectedValueOnce(new Error('Network error'));
+    await act(async () => {
+      isLoaded = await result.current.loadAgentChatThreadParticipants([
+        THREAD_ID,
+      ]);
+    });
+
+    expect(isLoaded).toBe(false);
+  });
+
   it('reads a thread up to its last activity before the server answers', async () => {
     mutate.mockReturnValue(new Promise(() => undefined));
     const { result, store } = renderParticipants();

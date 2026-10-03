@@ -94,6 +94,22 @@ describe('useRefreshAgentChatThreads', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     refreshAgentChatThreadPermissions.mockResolvedValue(undefined);
+    loadAgentChatThreadParticipants.mockResolvedValue(true);
+  });
+
+  it('does not list a page whose member state could not be loaded', async () => {
+    const store = buildStore();
+    queryMock.mockResolvedValue(
+      buildPage([buildThread('thread-1', 'Loaded thread')]),
+    );
+    loadAgentChatThreadParticipants.mockResolvedValue(false);
+    const result = renderRefresh(store);
+
+    await act(async () => {
+      expect(await result.current.refreshAgentChatThreads()).toBeUndefined();
+    });
+
+    expect(store.get(agentChatThreadListState.atom)).toBeNull();
   });
 
   it('keeps the refresh callback stable so render updates do not restart subscriptions', () => {
