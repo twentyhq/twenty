@@ -80,6 +80,11 @@ const parseNumericFilterValue = (value: string): number => {
   return parsed.success ? parsed.data : parseFloat(value);
 };
 
+// Stored amountMicros are integers (the front end rounds on save), while
+// amount * 1e6 is not for many decimal amounts (2.01 -> 2009999.9999999998).
+const parseCurrencyAmountFilterValueToAmountMicros = (value: string): number =>
+  Math.round(parseNumericFilterValue(value) * 1000000);
+
 const parseActorSourceFilterValue = (value: string): string[] => {
   const parsed = actorSourceFilterValueSchema.safeParse(value);
 
@@ -806,7 +811,9 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  gte: parseNumericFilterValue(recordFilter.value) * 1000000,
+                  gte: parseCurrencyAmountFilterValueToAmountMicros(
+                    recordFilter.value,
+                  ),
                 },
               } as CurrencyFilter,
             };
@@ -814,7 +821,9 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  lte: parseNumericFilterValue(recordFilter.value) * 1000000,
+                  lte: parseCurrencyAmountFilterValueToAmountMicros(
+                    recordFilter.value,
+                  ),
                 },
               } as CurrencyFilter,
             };
@@ -822,7 +831,9 @@ const buildDirectFieldGqlOperationFilter = ({
             return {
               [fieldMetadataItem.name]: {
                 amountMicros: {
-                  eq: parseNumericFilterValue(recordFilter.value) * 1000000,
+                  eq: parseCurrencyAmountFilterValueToAmountMicros(
+                    recordFilter.value,
+                  ),
                 },
               } as CurrencyFilter,
             };
@@ -831,7 +842,9 @@ const buildDirectFieldGqlOperationFilter = ({
               not: {
                 [fieldMetadataItem.name]: {
                   amountMicros: {
-                    eq: parseNumericFilterValue(recordFilter.value) * 1000000,
+                    eq: parseCurrencyAmountFilterValueToAmountMicros(
+                      recordFilter.value,
+                    ),
                   },
                 } as CurrencyFilter,
               },
