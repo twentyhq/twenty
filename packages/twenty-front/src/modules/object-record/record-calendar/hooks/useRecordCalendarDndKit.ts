@@ -60,7 +60,7 @@ export const useRecordCalendarDndKit = (): {
     recordCalendarSelectedRecordIdsComponentSelector,
   );
 
-  const originalDragSelectionCallbackState = useAtomComponentStateCallbackState(
+  const draggedRecordIdsCallbackState = useAtomComponentStateCallbackState(
     draggedRecordIdsComponentState,
   );
 
@@ -162,14 +162,14 @@ export const useRecordCalendarDndKit = (): {
       return;
     }
 
-    const originalDragSelection = store.get(originalDragSelectionCallbackState);
+    const draggedRecordIds = store.get(draggedRecordIdsCallbackState);
 
     void processCalendarCardDrop({
       recordId: sourceRecordId,
       sourceDate: sourceDroppableId,
       destinationDate: destinationDroppableId,
       destinationIndex,
-      draggedRecordIds: originalDragSelection,
+      draggedRecordIds,
     }).catch((error) => {
       logError(error);
       enqueueToast({ variant: 'error', children: t`Failed to move record` });
