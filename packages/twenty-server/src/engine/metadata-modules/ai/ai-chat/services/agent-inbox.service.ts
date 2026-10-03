@@ -10,10 +10,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
+import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import {
   buildInboxMessageToolCallPart,
   buildToolPart,
+  type ResolveInboxProposal,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
 import { getAgentInboxSenderDetails } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-sender-details.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
@@ -46,10 +48,14 @@ export class AgentInboxService {
     sender,
     input,
     awaitingToolCall,
+    resolveProposal = async (proposeToolCallInput) =>
+      resolveEmailToolCallProposal(proposeToolCallInput),
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
     input: Omit<SendInboxMessageInput, 'toolCall'> & { toolCall?: unknown };
+    // without a resolver, only emails can be proposed: they need no tool of the sender's
+    resolveProposal?: ResolveInboxProposal;
     // a pausing call the server already resolved, with its pending output
     awaitingToolCall?: {
       toolName: string;
@@ -86,6 +92,7 @@ export class AgentInboxService {
         ? await buildInboxMessageToolCallPart({
             toolCall: input.toolCall,
             toolCallId,
+            resolveProposal,
             findApplicationTool: (logicFunctionUniversalIdentifier) =>
               this.findApplicationTool({
                 workspaceId,

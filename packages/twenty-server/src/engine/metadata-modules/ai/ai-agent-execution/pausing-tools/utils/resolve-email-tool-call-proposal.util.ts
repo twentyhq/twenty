@@ -5,7 +5,7 @@ import { EMAIL_TOOL_APPROVALS } from 'src/engine/core-modules/tool-provider/cons
 import { buildEmailProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/build-email-proposal.util';
 import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 
-const isEmailToolName = (
+export const isEmailToolName = (
   toolName: string,
 ): toolName is keyof typeof EMAIL_TOOL_APPROVALS =>
   Object.prototype.hasOwnProperty.call(EMAIL_TOOL_APPROVALS, toolName);

@@ -3,13 +3,14 @@ import {
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
   PROPOSE_TOOL_CALL_TOOL_NAME,
+  type ProposeToolCallToolInput,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { type z } from 'zod';
 
 import { buildLogicFunctionToolName } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-name.util';
-import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
+import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import {
   askQuestionsInputSchema,
   buildAskQuestionsPendingOutput,
@@ -27,6 +28,10 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+
+export type ResolveInboxProposal = (
+  input: ProposeToolCallToolInput,
+) => Promise<ProposedToolCallResolution>;
 
 type InboxMessageToolCallPart = {
   part: ExtendedUIMessagePart;
@@ -79,15 +84,17 @@ export const buildToolPart = ({
   output,
 });
 
-const buildPausingToolPart = ({
+const buildPausingToolPart = async ({
   toolName,
   toolCallId,
   input,
+  resolveProposal,
 }: {
   toolName: unknown;
   toolCallId: string;
   input: unknown;
-}): ExtendedUIMessagePart => {
+  resolveProposal: ResolveInboxProposal;
+}): Promise<ExtendedUIMessagePart> => {
   switch (toolName) {
     case ASK_QUESTIONS_TOOL_NAME: {
       const questionsInput = parseInput(askQuestionsInputSchema, input);
@@ -111,7 +118,7 @@ const buildPausingToolPart = ({
         proposeToolCallInputSchema,
         input,
       );
-      const resolution = resolveEmailToolCallProposal(proposeToolCallInput);
+      const resolution = await resolveProposal(proposeToolCallInput);
 
       if ('error' in resolution) {
         return throwInvalidToolCall(resolution.error);
@@ -134,17 +141,19 @@ const buildPausingToolPart = ({
 // A tool call is either one the member answers, which pauses the
 // conversation, or one of the application's own tools, rendered by its front
 // component with the input and output the application gives. The caller
-// resolves that tool, scoped to the sending application.
+// resolves that tool, and any proposed call, scoped to the sending application.
 export const buildInboxMessageToolCallPart = async ({
   toolCall,
   toolCallId,
   findApplicationTool,
+  resolveProposal,
 }: {
   toolCall: unknown;
   toolCallId: string;
   findApplicationTool: (
     logicFunctionUniversalIdentifier: string,
   ) => Promise<FlatLogicFunction | undefined>;
+  resolveProposal: ResolveInboxProposal;
 }): Promise<InboxMessageToolCallPart> => {
   if (!isPlainObject(toolCall)) {
     return throwInvalidToolCall('toolCall must be an object');
@@ -152,10 +161,11 @@ export const buildInboxMessageToolCallPart = async ({
 
   if (!isNonEmptyString(toolCall.logicFunctionUniversalIdentifier)) {
     return {
-      part: buildPausingToolPart({
+      part: await buildPausingToolPart({
         toolName: toolCall.toolName,
         toolCallId,
         input: toolCall.input,
+        resolveProposal,
       }),
       isAwaitingAnswer: true,
     };

@@ -14,11 +14,9 @@ export type SendInboxMessageToolCall =
       logicFunctionUniversalIdentifier?: never;
     }
   | {
-      // apps propose emails only, which run with the member's permissions once approved
+      // a call the app could run itself, which runs with the member's permissions once approved
       toolName: 'propose_tool_call';
-      input: ProposeToolCallToolInput & {
-        toolName: 'send_email' | 'draft_email';
-      };
+      input: ProposeToolCallToolInput;
       logicFunctionUniversalIdentifier?: never;
     }
   | {

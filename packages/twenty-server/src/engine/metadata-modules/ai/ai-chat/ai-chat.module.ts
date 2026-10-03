@@ -39,6 +39,7 @@ import { AgentChatResolver } from './resolvers/agent-chat.resolver';
 import { AgentChatThreadParticipantResolver } from './resolvers/agent-chat-thread-participant.resolver';
 import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
 import { AgentInboxResolver } from './resolvers/agent-inbox.resolver';
+import { AgentInboxProposalService } from './services/agent-inbox-proposal.service';
 import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
 import { WorkspaceSetupChatService } from './services/workspace-setup-chat.service';
 import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-subscriber.service';
@@ -93,6 +94,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatSubscriptionResolver,
     WorkspaceSetupChatResolver,
     AgentInboxResolver,
+    AgentInboxProposalService,
     AgentChatService,
     AgentChatThreadTargetService,
     AgentChatStreamingService,

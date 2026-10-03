@@ -278,12 +278,14 @@ Key points:
 - `toolCall` (optional) ends the message on one of:
   - a call the member answers, which pauses the conversation: `ask_questions`
     (1 to 4 multiple-choice questions), `request_form` (fields to fill in) or
-    `propose_tool_call` with a `send_email` or `draft_email` call (an email to
-    review, then send, save as a draft or discard). Its `input` takes the
-    `toolName`, the `arguments` you would send the email with (`recipients`,
-    `subject`, and a `body` in HTML) and a one-sentence `summary`. The member
-    reviews it in the same email editor as an email the assistant proposes, and
-    the action they choose (send or save as a draft) runs with their own access;
+    `propose_tool_call` (a call to approve). Its `input` takes the `toolName`,
+    the `arguments` you would call the tool with and a one-sentence `summary`.
+    The tool must be one your app's default role could run itself, such as
+    `create_one_person` or `update_one_opportunity` (with the record `id`); an
+    email (`send_email` or `draft_email`, with `recipients`, `subject` and a
+    `body` in HTML) needs no permission of your app. The member reviews the call
+    in the same card as a call the assistant proposes, edits it if they want, and
+    the approved call runs with their own access;
   - one of your app's own tools, by `logicFunctionUniversalIdentifier`, rendered
     by its front component with the `input` and `output` you pass. It does not
     pause the conversation.
