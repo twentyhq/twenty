@@ -49,6 +49,7 @@ export const RecordListRecordGroup = () => {
         hasNextPage={hasNextPage}
         fetchMoreRecords={fetchMoreRecords}
         isVisible={isRecordListGroupSectionToggled}
+        recordGroupId={currentRecordGroupId}
       />
     </StyledSection>
   );

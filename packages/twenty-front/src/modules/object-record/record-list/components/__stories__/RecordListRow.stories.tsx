@@ -86,3 +86,30 @@ export const ResponsiveFields: Story = {
     await body.findByRole('tooltip', {}, { timeout: 3000 });
   },
 };
+
+export const SelectsRecordsWithModifierClicks: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(
+      mockedCompanyRecords[0].name,
+      {},
+      { timeout: 3000 },
+    );
+
+    const rows = canvas.getAllByRole('button', { name: 'Open record' });
+
+    await userEvent.keyboard('{Meta>}');
+    await userEvent.click(rows[0]);
+    await userEvent.keyboard('{/Meta}');
+
+    await userEvent.keyboard('{Shift>}');
+    await userEvent.click(rows[2]);
+    await userEvent.keyboard('{/Shift}');
+
+    await expect(rows[0]).toHaveAttribute('data-selected', 'true');
+    await expect(rows[1]).toHaveAttribute('data-selected', 'true');
+    await expect(rows[2]).toHaveAttribute('data-selected', 'true');
+    await expect(rows[3]).toHaveAttribute('data-selected', 'false');
+  },
+};

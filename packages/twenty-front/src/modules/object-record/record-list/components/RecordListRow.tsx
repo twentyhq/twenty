@@ -11,14 +11,19 @@ import { RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH } from '@/object-record/record
 import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
 import { recordListRowWidthComponentState } from '@/object-record/record-list/states/recordListRowWidthComponentState';
 import { computeRecordListDisplayedFields } from '@/object-record/record-list/utils/computeRecordListDisplayedFields';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
+import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -31,7 +36,8 @@ const StyledRowContainer = styled.div`
     background: ${themeCssVariables.background.transparent.lighter};
   }
 
-  &:active > div {
+  &:active > div,
+  &[data-selected='true'] > div {
     background: ${themeCssVariables.accent.quaternary};
   }
 `;
@@ -92,6 +98,13 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
+  const isRecordSelected = useAtomComponentFamilyStateValue(
+    isRecordSelectedComponentFamilyState,
+    recordId,
+  );
+  const { toggleRecordSelection } = useToggleRecordSelection();
+  const { resetRecordSelection } = useResetRecordSelection();
+
   if (!isDefined(recordStore)) {
     return null;
   }
@@ -133,7 +146,22 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
   const hiddenFieldCount =
     nonEmptyRecordFields.length - displayedRecordFields.length;
 
-  const openRecord = () => openRecordFromIndexView({ recordId });
+  const openRecord = () => {
+    resetRecordSelection();
+    openRecordFromIndexView({ recordId });
+  };
+
+  // Caught before the chip and field links, so a modifier click selects the
+  // record instead of opening a link
+  const handleClickCapture = (event: MouseEvent<HTMLDivElement>) => {
+    if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    toggleRecordSelection({ recordId, shouldSelectRange: event.shiftKey });
+  };
 
   const linkToRecord = getLinkToShowPage(objectNameSingular, recordStore);
 
@@ -148,6 +176,14 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
       role="button"
       tabIndex={0}
       aria-label={t`Open record`}
+      data-selected={isRecordSelected}
+      onClickCapture={handleClickCapture}
+      onMouseDown={(event) => {
+        // Shift+click selects a range of records, not the text in between
+        if (event.shiftKey) {
+          event.preventDefault();
+        }
+      }}
       onClick={openRecord}
       onKeyDown={(event) => {
         if (event.target !== event.currentTarget) {

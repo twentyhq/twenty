@@ -1,6 +1,7 @@
 import { RecordListAddNew } from '@/object-record/record-list/components/RecordListAddNew';
 import { RecordListRow } from '@/object-record/record-list/components/RecordListRow';
 import { RecordListUpsertRecordsInStoreEffect } from '@/object-record/record-list/components/RecordListUpsertRecordsInStoreEffect';
+import { RecordSelectionRecordIdsEffect } from '@/object-record/record-selection/components/RecordSelectionRecordIdsEffect';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { styled } from '@linaria/react';
 import { useInView } from 'react-intersection-observer';
@@ -17,6 +18,7 @@ type RecordListRecordsProps = {
   hasNextPage: boolean;
   fetchMoreRecords: () => void;
   isVisible?: boolean;
+  recordGroupId?: string;
 };
 
 export const RecordListRecords = ({
@@ -26,6 +28,7 @@ export const RecordListRecords = ({
   hasNextPage,
   fetchMoreRecords,
   isVisible = true,
+  recordGroupId,
 }: RecordListRecordsProps) => {
   const { ref: fetchMoreRef } = useInView({
     onChange: (inView) => {
@@ -38,6 +41,12 @@ export const RecordListRecords = ({
   return (
     <>
       <RecordListUpsertRecordsInStoreEffect records={records} />
+      {isVisible && (
+        <RecordSelectionRecordIdsEffect
+          records={records}
+          recordGroupId={recordGroupId}
+        />
+      )}
       {isVisible && !isDefined(error) && (
         <>
           {records.map((record) => (

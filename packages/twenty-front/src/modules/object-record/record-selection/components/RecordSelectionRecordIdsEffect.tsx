@@ -11,12 +11,14 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 
 type RecordSelectionRecordIdsEffectProps = {
   records: Pick<ObjectRecord, 'id'>[];
+  recordGroupId?: string;
 };
 
-// Record selection reads the records where a record index keeps them, so a
-// list that is not a record index keeps its records there, in display order
+// Record selection reads the records where the table and board keep them, so
+// a list that loads its records elsewhere keeps them there, in display order
 export const RecordSelectionRecordIdsEffect = ({
   records,
+  recordGroupId = NO_RECORD_GROUP_FAMILY_KEY,
 }: RecordSelectionRecordIdsEffectProps) => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordSelectionComponentInstanceContext,
@@ -27,7 +29,7 @@ export const RecordSelectionRecordIdsEffect = ({
     const recordIdsAtom =
       recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
         instanceId,
-        familyKey: NO_RECORD_GROUP_FAMILY_KEY,
+        familyKey: recordGroupId,
       });
     const recordIds = records.map(({ id }) => id);
     const recordIdSet = new Set(recordIds);
@@ -47,18 +49,18 @@ export const RecordSelectionRecordIdsEffect = ({
     }
 
     store.set(recordIdsAtom, recordIds);
-  }, [instanceId, records, store]);
+  }, [instanceId, recordGroupId, records, store]);
 
   // The list owns its selection, so leaving it clears the selection rather
   // than bringing it back on return
   useEffect(
     () => () => {
-      const recordIds = store.get(
+      const recordIdsAtom =
         recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
           instanceId,
-          familyKey: NO_RECORD_GROUP_FAMILY_KEY,
-        }),
-      );
+          familyKey: recordGroupId,
+        });
+      const recordIds = store.get(recordIdsAtom);
 
       for (const recordId of recordIds) {
         store.set(
@@ -70,12 +72,13 @@ export const RecordSelectionRecordIdsEffect = ({
         );
       }
 
+      store.set(recordIdsAtom, []);
       store.set(
         recordSelectionRangeComponentState.atomFamily({ instanceId }),
         null,
       );
     },
-    [instanceId, store],
+    [instanceId, recordGroupId, store],
   );
 
   return null;
