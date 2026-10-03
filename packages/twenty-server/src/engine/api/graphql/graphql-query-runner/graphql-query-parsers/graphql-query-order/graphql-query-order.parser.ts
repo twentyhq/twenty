@@ -75,16 +75,21 @@ export class GraphqlQueryOrderFieldParser {
         addedJoinAliases.add(leafColumn.tableAlias);
       }
 
+      const { order, nulls } = convertOrderByToFindOptionsOrder(
+        orderByLeaf.direction,
+        isForwardPagination,
+      );
+
+      // A plain direction on a column without nulls matches its btree index,
+      // which Postgres will not use for an explicit NULLS FIRST
       orderByConditions[
         buildOrderByColumnExpression(
           leafColumn.tableAlias,
           leafColumn.columnName,
         )
       ] = {
-        ...convertOrderByToFindOptionsOrder(
-          orderByLeaf.direction,
-          isForwardPagination,
-        ),
+        order,
+        ...(leafColumn.isNullable ? { nulls } : {}),
         useLower: shouldUseCaseInsensitiveOrder(leafColumn.columnType),
         castToText: shouldCastToText(leafColumn.columnType),
       };

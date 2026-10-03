@@ -42,6 +42,7 @@ import { buildWorkflowRunStandardFlatIndexMetadatas } from 'src/engine/workspace
 import { buildWorkflowStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-workflow-standard-flat-index-metadata.util';
 import { buildWorkflowVersionStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-workflow-version-standard-flat-index-metadata.util';
 import { buildWorkspaceMemberStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-workspace-member-standard-flat-index-metadata.util';
+import { buildStandardPositionIdFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-position-id-flat-index-metadatas.util';
 import { type CreateStandardIndexArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
 type StandardIndexBuilder<P extends AllStandardObjectName> = (
@@ -116,6 +117,8 @@ export const buildStandardFlatIndexMetadataMaps = (
 
     return Object.values(result);
   });
+
+  allIndexMetadatas.push(...buildStandardPositionIdFlatIndexMetadatas(args));
 
   let flatIndexMetadataMaps = createEmptyFlatEntityMaps();
 

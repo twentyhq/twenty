@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
+import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
 } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
+import { buildPositionIdIndexForObject } from 'src/engine/metadata-modules/object-metadata/utils/build-position-id-index-for-object.util';
 import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class ObjectSystemFieldsOnCreateSideEffectHandlerService extends Metadata
     metadataName: 'objectMetadata',
     name: 'objectSystemFieldsOnCreate',
     description:
-      'When an object is created, provision its 7 reserved system fields (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position), all isSystemSideEffect so the engine owns their lifecycle; searchVector is handled by objectSearchVectorOnCreate and the name field is caller-provided. Their view fields are owned by the view handlers (objectIndexViewOnCreate, objectRecordPageOnCreate), which re-derive the same reserved fields statelessly from the object identity, so there is no ordering dependency between handlers. twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and authors its own system fields.',
+      'When an object is created, provision its 7 reserved system fields (id, createdAt, updatedAt, deletedAt, createdBy, updatedBy, position), all isSystemSideEffect so the engine owns their lifecycle, and the (position, id) index backing the default list order; searchVector is handled by objectSearchVectorOnCreate and the name field is caller-provided. Their view fields are owned by the view handlers (objectIndexViewOnCreate, objectRecordPageOnCreate), which re-derive the same reserved fields statelessly from the object identity, so there is no ordering dependency between handlers. twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and authors its own system fields.',
   },
 ) {
   buildSideEffects({
@@ -34,6 +35,12 @@ export class ObjectSystemFieldsOnCreateSideEffectHandlerService extends Metadata
       }),
     );
 
+    const positionIdFlatIndex = buildPositionIdIndexForObject({
+      flatObjectMetadata: sourceFlatObjectMetadata,
+      objectFlatFieldMetadatas: systemFlatFieldMetadatas,
+      now: new Date().toISOString(),
+    });
+
     return {
       status: 'success',
       operations: {
@@ -43,6 +50,16 @@ export class ObjectSystemFieldsOnCreateSideEffectHandlerService extends Metadata
             uniqueKey: 'universalIdentifier',
           }),
         },
+        ...(isDefined(positionIdFlatIndex)
+          ? {
+              index: {
+                flatEntityToCreate: {
+                  [positionIdFlatIndex.universalIdentifier]:
+                    positionIdFlatIndex,
+                },
+              },
+            }
+          : {}),
       },
     };
   }
