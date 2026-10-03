@@ -588,7 +588,7 @@ describe('Admin panel global chat threads (integration)', () => {
 
     it('filters threads without user replies via userNeverEngagedOnly', async () => {
       const result = await fetchThreads({
-        scope: 'ONBOARDING',
+        scope: 'ALL',
         userNeverEngagedOnly: true,
         limit: 100,
       });
