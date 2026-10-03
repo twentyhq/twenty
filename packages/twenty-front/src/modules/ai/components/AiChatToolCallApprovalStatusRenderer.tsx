@@ -92,13 +92,17 @@ export const AiChatToolCallApprovalStatusRenderer = ({
       : t`Action could not be proposed`
     : messageByStatus[status];
 
-  const detail = hasFailedToPropose
-    ? proposeErrorText
-    : status === 'failed'
-      ? result?.error
-      : status === 'rejected'
-        ? result?.feedback
-        : result?.proposal.summary;
+  const summary = result?.proposal.summary;
+  const detailByStatus: Record<ProposeToolCallToolStatus, string | undefined> =
+    {
+      pending: summary,
+      approved: summary,
+      rejected: result?.feedback,
+      failed: result?.error,
+      conflict: summary,
+      skipped: summary,
+    };
+  const detail = hasFailedToPropose ? proposeErrorText : detailByStatus[status];
 
   return (
     <StyledAiChatAskStatusContainer>
