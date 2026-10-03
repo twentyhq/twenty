@@ -33,7 +33,7 @@ export class AgentChatThreadRecordEventService {
     threadId: string;
   }): Promise<void> {
     const thread = await this.findThread({ workspaceId, threadId });
-    const objectMetadata = await this.findThreadObjectMetadata(workspaceId);
+    const { objectMetadata } = await this.findThreadMetadata(workspaceId);
 
     if (!isDefined(thread) || !isDefined(objectMetadata)) {
       return;
@@ -67,16 +67,12 @@ export class AgentChatThreadRecordEventService {
     const storedThreadAfter =
       threadAfter ??
       (await this.findThread({ workspaceId, threadId: threadBefore.id }));
-    const objectMetadata = await this.findThreadObjectMetadata(workspaceId);
+    const { objectMetadata, flatFieldMetadataMaps } =
+      await this.findThreadMetadata(workspaceId);
 
     if (!isDefined(storedThreadAfter) || !isDefined(objectMetadata)) {
       return;
     }
-
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
 
     const event = buildAgentChatThreadUpdateEvent({
       threadBefore,
@@ -114,11 +110,19 @@ export class AgentChatThreadRecordEventService {
     });
   }
 
-  private findThreadObjectMetadata(workspaceId: string) {
-    return findAgentChatFlatObjectMetadata({
-      workspaceCacheService: this.workspaceCacheService,
-      workspaceId,
-      standardObjectName: 'agentChatThread',
-    });
+  private async findThreadMetadata(workspaceId: string) {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
+
+    return {
+      objectMetadata: findAgentChatFlatObjectMetadata(
+        flatObjectMetadataMaps,
+        'agentChatThread',
+      ),
+      flatFieldMetadataMaps,
+    };
   }
 }

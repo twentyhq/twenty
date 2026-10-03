@@ -1,22 +1,12 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export const findAgentChatFlatObjectMetadata = async ({
-  workspaceCacheService,
-  workspaceId,
-  standardObjectName,
-}: {
-  workspaceCacheService: WorkspaceCacheService;
-  workspaceId: string;
-  standardObjectName: 'agentChatThread' | 'agentChatThreadParticipant';
-}) => {
-  const { flatObjectMetadataMaps } = await workspaceCacheService.getOrRecompute(
-    workspaceId,
-    ['flatObjectMetadataMaps'],
-  );
-
-  return flatObjectMetadataMaps.byUniversalIdentifier[
+export const findAgentChatFlatObjectMetadata = (
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  standardObjectName: 'agentChatThread' | 'agentChatThreadParticipant',
+) =>
+  flatObjectMetadataMaps.byUniversalIdentifier[
     STANDARD_OBJECTS[standardObjectName].universalIdentifier
   ];
-};

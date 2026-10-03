@@ -5,7 +5,7 @@ import {
 } from 'twenty-shared/ai';
 import { type AgentMessagePart } from '~/generated-metadata/graphql';
 
-// keep in sync with twenty-server/src/engine/metadata-modules/ai/ai-agent-execution/utils/map-db-parts-to-ui-message-parts.util.ts
+// keep in sync with packages/twenty-server/src/engine/metadata-modules/ai/ai-agent-execution/utils/map-db-parts-to-ui-message-parts.util.ts
 
 export const mapDBPartToUIMessagePart = (
   part: AgentMessagePart,

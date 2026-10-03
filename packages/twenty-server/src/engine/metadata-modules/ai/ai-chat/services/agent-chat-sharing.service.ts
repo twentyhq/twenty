@@ -45,12 +45,16 @@ export class AgentChatSharingService {
   // workspace, it has neither the participant table nor the thread's
   // lastActivityAt column. Remove once 2.46 leaves the window.
   async hasInboxState(workspaceId: string): Promise<boolean> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
     return isDefined(
-      await findAgentChatFlatObjectMetadata({
-        workspaceCacheService: this.workspaceCacheService,
-        workspaceId,
-        standardObjectName: 'agentChatThreadParticipant',
-      }),
+      findAgentChatFlatObjectMetadata(
+        flatObjectMetadataMaps,
+        'agentChatThreadParticipant',
+      ),
     );
   }
 
@@ -270,11 +274,16 @@ export class AgentChatSharingService {
   }
 
   private async getThreadObjectMetadata(workspaceId: string) {
-    const objectMetadata = await findAgentChatFlatObjectMetadata({
-      workspaceCacheService: this.workspaceCacheService,
-      workspaceId,
-      standardObjectName: 'agentChatThread',
-    });
-    return objectMetadata ?? throwAgentChatThreadNotFound();
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    return (
+      findAgentChatFlatObjectMetadata(
+        flatObjectMetadataMaps,
+        'agentChatThread',
+      ) ?? throwAgentChatThreadNotFound()
+    );
   }
 }
