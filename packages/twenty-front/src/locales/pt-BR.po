@@ -532,7 +532,7 @@ msgstr "{heading}: {contextLabel}"
 #. js-lingui-id: 4xzh1W
 #: src/modules/object-record/record-list/components/RecordListRow.tsx
 msgid "{hiddenFieldCount, plural, one {# more populated field available} other {# more populated fields available}}"
-msgstr "{hiddenFieldCount, plural, one {# campo preenchido adicional disponível} other {# campos preenchidos adicionais disponíveis}}"
+msgstr "{hiddenFieldCount, plural, one {mais # campo preenchido disponível} other {mais # campos preenchidos disponíveis}}"
 
 #. js-lingui-id: pEl0a0
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -574,7 +574,7 @@ msgstr "{jobCount, plural, one {Isso irá repetir o trabalho selecionado. Ele se
 #. js-lingui-id: Xs84Pv
 #: src/modules/settings/ai/utils/getAiModelModeDescription.ts
 msgid "{label} (Auto)"
-msgstr "{label} (Automático)"
+msgstr "{label} (Auto)"
 
 #. js-lingui-id: Oq2RUh
 #: src/modules/settings/ai/utils/getAiModelPinOptions.ts
@@ -584,7 +584,7 @@ msgstr "{label} (obsoleto)"
 #. js-lingui-id: cNJhkq
 #: src/modules/object-record/record-sharing/components/RecordSharingDropdownContent.tsx
 msgid "{label} access"
-msgstr "acesso a {label}"
+msgstr "Acesso a {label}"
 
 #. js-lingui-id: FdY/eP
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
