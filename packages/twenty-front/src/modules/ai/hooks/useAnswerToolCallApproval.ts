@@ -49,7 +49,7 @@ export const useAnswerToolCallApproval = ({
 
   return {
     pendingResponse,
-    isAnswering: pendingResponse !== null,
+    isAnswering: isDefined(pendingResponse),
     answerToolCallApproval,
   };
 };
