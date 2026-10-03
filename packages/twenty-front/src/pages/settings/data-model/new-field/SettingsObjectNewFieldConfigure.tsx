@@ -1,12 +1,14 @@
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsObjectNewFieldHeaderIcon } from '@/settings/data-model/fields/components/SettingsObjectNewFieldHeaderIcon';
+import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
@@ -31,6 +33,8 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
+import { getFieldMetadataItemCopyFormValues } from '~/pages/settings/data-model/utils/getFieldMetadataItemCopyFormValues';
+import { isFieldMetadataItemCopyable } from '~/pages/settings/data-model/utils/isFieldMetadataItemCopyable';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
@@ -51,6 +55,15 @@ export const SettingsObjectNewFieldConfigure = () => {
   const fieldType =
     (searchParams.get('fieldType') as FieldMetadataType) ||
     FieldMetadataType.TEXT;
+  const { fieldMetadataItem: sourceFieldMetadataItem } =
+    useFieldMetadataItemById(searchParams.get('sourceFieldMetadataId') ?? '');
+  const fieldMetadataItemToCopy =
+    isDefined(sourceFieldMetadataItem) &&
+    sourceFieldMetadataItem.type === fieldType &&
+    isFieldMetadataItemCopyable(sourceFieldMetadataItem)
+      ? sourceFieldMetadataItem
+      : undefined;
+  const fieldMetadataItemToCopyId = fieldMetadataItemToCopy?.id;
   const { enqueueToast } = useToast();
 
   const { findObjectMetadataItemByNamePlural } =
@@ -69,21 +82,35 @@ export const SettingsObjectNewFieldConfigure = () => {
         sourceObjectMetadataId: activeObjectMetadataItem?.id,
       }),
     ),
-    defaultValues: {
-      type: fieldType,
-      icon:
-        DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
-      label: '',
-      name: '',
-    },
+    defaultValues: isDefined(fieldMetadataItemToCopy)
+      ? getFieldMetadataItemCopyFormValues(fieldMetadataItemToCopy)
+      : {
+          type: fieldType,
+          icon:
+            DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ??
+            DEFAULT_ICON_FOR_NEW_FIELD,
+          label: '',
+          name: '',
+        },
   });
 
   useEffect(() => {
+    if (isDefined(fieldMetadataItemToCopyId)) {
+      return;
+    }
+
     formConfig.setValue(
       'icon',
       DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
     );
-  }, [fieldType, formConfig]);
+  }, [fieldMetadataItemToCopyId, fieldType, formConfig]);
+
+  useEffect(() => {
+    // Copied values are untouched, so surface a label clash with the target object right away
+    if (isDefined(fieldMetadataItemToCopyId)) {
+      formConfig.trigger('label');
+    }
+  }, [fieldMetadataItemToCopyId, formConfig]);
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -257,6 +284,13 @@ export const SettingsObjectNewFieldConfigure = () => {
               existingFieldMetadataId=""
               objectNameSingular={activeObjectMetadataItem.nameSingular}
             />
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
+              title={t`Description`}
+              description={t`The description of this field`}
+            />
+            <SettingsDataModelFieldDescriptionForm />
           </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
