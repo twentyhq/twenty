@@ -79,6 +79,10 @@ const renderGate = () =>
   );
 
 describe('AiChatPendingAskGate', () => {
+  afterEach(() => {
+    displayedThreadId = 'thread-1';
+  });
+
   it('shows the question the thread waits on in place of the composer', () => {
     useAgentChatPendingToolCalls.mockReturnValue([
       { toolCallId: 'call-1', kind: 'question', question: QUESTION },
@@ -201,7 +205,6 @@ describe('AiChatPendingAskGate', () => {
 
     expect(screen.getByText('Request 1 of 2')).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'Questions' })).toBeVisible();
-    displayedThreadId = 'thread-1';
   });
 
   it('opens a later batch of requests on its oldest one', async () => {
