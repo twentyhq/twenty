@@ -86,4 +86,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Skip unchanged calendar records`,
     description: msg`Only write calendar events and participants that changed since the last sync.`,
   },
+  [FeatureFlagKey.IS_RECORD_SHARE_GATE_BYPASS_ENABLED]: {
+    label: msg`Bypass record share gate`,
+    description: msg`Stop restricting private and inherited records to the people they are shared with. Object, field and row-level role permissions still apply.`,
+  },
 };

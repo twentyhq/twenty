@@ -38,6 +38,13 @@ export const buildRecordShareGate = ({
     readability: target.flatObjectMetadata.readability,
     isOwningApplication,
   });
+
+  // An operator kill switch: only readabilities that deny workspace users
+  // outright are kept, every share-based restriction is lifted
+  if (gateKind !== 'deny' && context.environment.isRecordShareGateBypassed) {
+    return { kind: 'open' };
+  }
+
   switch (gateKind) {
     case 'open':
       return shouldEnforceRecordShareExceptions({

@@ -180,6 +180,10 @@ export class RecordAccessPolicyService {
                 featureFlagsMap[
                   FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED
                 ] ?? false,
+              isRecordShareGateBypassed:
+                featureFlagsMap[
+                  FeatureFlagKey.IS_RECORD_SHARE_GATE_BYPASS_ENABLED
+                ] ?? false,
             },
             tableAlias: objectMetadata.nameSingular,
             flatObjectMetadata: objectMetadata,

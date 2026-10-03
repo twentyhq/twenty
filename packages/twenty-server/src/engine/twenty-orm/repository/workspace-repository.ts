@@ -2514,13 +2514,26 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       resolveTableExpression: (objectMetadataId) =>
         this.getTableExpression(objectMetadataId),
       isRecordSharingEnabled: this.isRecordSharingEnabled,
+      isRecordShareGateBypassed: this.isRecordShareGateBypassed,
     };
   }
 
+  // Share exceptions and records shared by name beyond the role are part of
+  // the record share gate, so bypassing the gate turns them off too
   private get isRecordSharingEnabled(): boolean {
     return (
-      this.options.internalContext.featureFlagsMap[
+      !this.isRecordShareGateBypassed &&
+      (this.options.internalContext.featureFlagsMap[
         FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED
+      ] ??
+        false)
+    );
+  }
+
+  private get isRecordShareGateBypassed(): boolean {
+    return (
+      this.options.internalContext.featureFlagsMap[
+        FeatureFlagKey.IS_RECORD_SHARE_GATE_BYPASS_ENABLED
       ] ?? false
     );
   }

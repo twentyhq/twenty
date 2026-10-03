@@ -22,10 +22,15 @@ export const useCanReadObjectRecordsOrSharedRecords = (
   const isRecordLevelSharingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
   );
+  // The server stops admitting records shared by name once the gate is bypassed
+  const isRecordShareGateBypassed = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_SHARE_GATE_BYPASS_ENABLED,
+  );
 
   return (
     objectPermissions.canReadObjectRecords ||
     (isRecordLevelSharingEnabled &&
+      !isRecordShareGateBypassed &&
       isShareableObjectMetadataItem(objectMetadataItem) &&
       objectMetadataItem.sharingReach === ObjectSharingReach.WORKSPACE)
   );

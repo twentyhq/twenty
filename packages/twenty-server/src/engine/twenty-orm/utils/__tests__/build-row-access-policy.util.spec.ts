@@ -64,6 +64,7 @@ const environment: RowAccessPolicyEnvironment &
   resolveTableExpression: (objectMetadataId) =>
     `"workspace"."${objectMetadataId}"`,
   isRecordSharingEnabled: false,
+  isRecordShareGateBypassed: false,
 };
 
 const buildCompiledRowAccessPolicy = (
@@ -439,6 +440,75 @@ describe('buildRowAccessPolicy', () => {
       expect(policy.condition.sql).toContain('recordShare');
     },
   );
+
+  describe('with the record share gate bypassed', () => {
+    const bypassedEnvironment = {
+      ...environment,
+      isRecordSharingEnabled: true,
+      isRecordShareGateBypassed: true,
+    };
+    const buildBypassed = (
+      subject: RowAccessPolicySubject,
+      flatObjectMetadata: FlatObjectMetadata,
+    ) =>
+      buildCompiledRowAccessPolicy({
+        subject,
+        environment: bypassedEnvironment,
+        tableAlias: flatObjectMetadata.nameSingular,
+        flatObjectMetadata,
+        operationType: 'select',
+        depth: 0,
+      });
+
+    it.each([person, attachment, note])(
+      'opens $readability records without any share check',
+      (flatObjectMetadata) => {
+        expect(buildBypassed(readEverything, flatObjectMetadata)).toEqual({
+          kind: 'open',
+        });
+      },
+    );
+
+    it('keeps the role predicate on a PRIVATE object', () => {
+      expect(
+        buildBypassed(
+          {
+            ...readEverything,
+            resolveRowLevelPermissionRecordFilter: () => NOTE_FILTER,
+          },
+          person,
+        ),
+      ).toEqual({
+        kind: 'gated',
+        condition: {
+          sql: '("person"."title" = :restricted)',
+          parameters: { restricted: 'restricted' },
+        },
+      });
+    });
+
+    it.each([MetadataReadability.SYSTEM, MetadataReadability.APPLICATION])(
+      'keeps %s records denied',
+      (readability) => {
+        expect(buildBypassed(readEverything, { ...note, readability })).toEqual(
+          { kind: 'denied' },
+        );
+      },
+    );
+
+    it('denies an object the role cannot read instead of admitting named grants', () => {
+      expect(
+        buildBypassed(
+          {
+            ...readEverything,
+            principalIds: ['member-1'],
+            objectsPermissions: {},
+          },
+          buildObject({ id: 'company', readability: MetadataReadability.OPEN }),
+        ),
+      ).toEqual({ kind: 'denied' });
+    });
+  });
 
   it('keeps private records gated regardless of the sharing UI flag', () => {
     const policy = buildCompiledRowAccessPolicy({
