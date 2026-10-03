@@ -13,11 +13,11 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
+import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
 import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPane';
-import { AiChatThreadList } from '@/ai/components/AiChatThreadList';
+import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
-import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
@@ -145,68 +145,69 @@ const AiChatInboxPageContent = () => {
           threads={threads}
         />
       )}
-      {isListShown && (
-        <StyledListPane $isFullWidth={isMobile}>
-          <PageCardLayout
-            header={
-              <PageCardHeader
-                icon={<FilterStatusIcon size={theme.icon.size.md} />}
-                title={t(
-                  AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[
-                    agentChatThreadFilterStatus
-                  ],
-                )}
-                actionButton={
-                  <Button
-                    size="sm"
-                    variant="solid"
-                    color="accent"
-                    startIcon={<IconPlus />}
-                    onClick={switchToNewChat}
-                  >
-                    {t`New chat`}
-                  </Button>
-                }
-              />
-            }
-          >
-            <StyledThreadListContainer ref={threadListContainerRef}>
-              <StyledThreadList>
-                {loading && threads.length === 0 ? (
-                  <SkeletonLoader />
-                ) : threads.length === 0 ? (
-                  <EmptyState.Root>
-                    <AnimatedPlaceholder type="emptyInbox" />
-                    <EmptyState.Content>
-                      <EmptyState.Title>{t`No conversations`}</EmptyState.Title>
-                      <EmptyState.Description>
-                        {t`Conversations you can open will appear here.`}
-                      </EmptyState.Description>
-                    </EmptyState.Content>
-                  </EmptyState.Root>
-                ) : (
-                  <AiChatThreadList
-                    threads={threads}
-                    surface={AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE}
-                    selectedThreadIds={highlightedThreadIds}
-                    onThreadClick={handleThreadClick}
+      <AiChatInboxCommandMenuScope>
+        {isListShown && (
+          <StyledListPane $isFullWidth={isMobile}>
+            <PageCardLayout
+              header={
+                <PageCardHeader
+                  icon={<FilterStatusIcon size={theme.icon.size.md} />}
+                  title={t(
+                    AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[
+                      agentChatThreadFilterStatus
+                    ],
+                  )}
+                  actionButton={
+                    <Button
+                      size="sm"
+                      variant="solid"
+                      color="accent"
+                      startIcon={<IconPlus />}
+                      onClick={switchToNewChat}
+                    >
+                      {t`New chat`}
+                    </Button>
+                  }
+                />
+              }
+            >
+              <StyledThreadListContainer ref={threadListContainerRef}>
+                <StyledThreadList>
+                  {loading && threads.length === 0 ? (
+                    <SkeletonLoader />
+                  ) : threads.length === 0 ? (
+                    <EmptyState.Root>
+                      <AnimatedPlaceholder type="emptyInbox" />
+                      <EmptyState.Content>
+                        <EmptyState.Title>{t`No conversations`}</EmptyState.Title>
+                        <EmptyState.Description>
+                          {t`Conversations you can open will appear here.`}
+                        </EmptyState.Description>
+                      </EmptyState.Content>
+                    </EmptyState.Root>
+                  ) : (
+                    <AiChatInboxThreadList
+                      threads={threads}
+                      selectedThreadIds={highlightedThreadIds}
+                      onThreadClick={handleThreadClick}
+                    />
+                  )}
+                  <AgentChatThreadsFetchMoreTrigger />
+                </StyledThreadList>
+                {!isMobile && (
+                  <RecordSelectionDragSelect
+                    selectableItemsContainerRef={threadListContainerRef}
                   />
                 )}
-                <AgentChatThreadsFetchMoreTrigger />
-              </StyledThreadList>
-              {!isMobile && (
-                <RecordSelectionDragSelect
-                  selectableItemsContainerRef={threadListContainerRef}
-                />
-              )}
-            </StyledThreadListContainer>
-          </PageCardLayout>
-        </StyledListPane>
-      )}
+              </StyledThreadListContainer>
+            </PageCardLayout>
+          </StyledListPane>
+        )}
+        {isThreadShown && isSelectionShown && <AiChatInboxSelectionPane />}
+      </AiChatInboxCommandMenuScope>
       {isThreadShown &&
-        (isSelectionShown ? (
-          <AiChatInboxSelectionPane />
-        ) : isDefined(selectedThreadId) ? (
+        !isSelectionShown &&
+        (isDefined(selectedThreadId) ? (
           <>
             <AiChatPageEffects />
             <AiChatThreadPageContent

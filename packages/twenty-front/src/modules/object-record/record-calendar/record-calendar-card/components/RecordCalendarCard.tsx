@@ -1,6 +1,4 @@
-import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
-import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
-import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
+import { useOpenCommandMenuDropdownAtCursor } from '@/command-menu-item/hooks/useOpenCommandMenuDropdownAtCursor';
 import { RecordCalendarCardCellEditModePortal } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellEditModePortal';
 import { RecordCalendarCardCellHoveredPortal } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellHoveredPortal';
 import { RecordCalendarCardBody } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardBody';
@@ -8,7 +6,6 @@ import { RecordCalendarCardHeader } from '@/object-record/record-calendar/record
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
-import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { RecordDragMultiDragStack } from '@/object-record/record-drag/components/RecordDragMultiDragStack';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
@@ -16,12 +13,9 @@ import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-reco
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
 import { Collapsible } from 'twenty-ui/primitives/layout';
@@ -89,21 +83,8 @@ export const RecordCalendarCard = ({
       recordId,
     );
 
-  const recordCalendarId = useAvailableComponentInstanceIdOrThrow(
-    RecordCalendarComponentInstanceContext,
-  );
-
-  const commandMenuId = getCommandMenuIdFromRecordIndexId(recordCalendarId);
-
-  const commandMenuDropdownId =
-    getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
-
-  const setRecordIndexCommandMenuDropdownPosition = useSetAtomComponentState(
-    recordIndexCommandMenuDropdownPositionComponentState,
-    commandMenuDropdownId,
-  );
-
-  const { openDropdown } = useOpenDropdown();
+  const { isCommandMenuAvailable, openCommandMenuDropdownAtCursor } =
+    useOpenCommandMenuDropdownAtCursor();
 
   const handleCardClick = () => {
     if (isDraggingRecord) {
@@ -114,19 +95,12 @@ export const RecordCalendarCard = ({
   };
 
   const handleContextMenuOpen = (event: React.MouseEvent) => {
-    event.preventDefault();
+    if (!isCommandMenuAvailable) {
+      return;
+    }
+
     setIsRecordCalendarCardSelected(true);
-    setRecordIndexCommandMenuDropdownPosition({
-      x: event.clientX,
-      y: event.clientY,
-    });
-    openDropdown({
-      dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
-      globalHotkeysConfig: {
-        enableGlobalHotkeysWithModifiers: true,
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      },
-    });
+    openCommandMenuDropdownAtCursor(event);
   };
 
   return (

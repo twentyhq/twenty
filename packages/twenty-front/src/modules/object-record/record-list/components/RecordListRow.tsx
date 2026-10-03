@@ -10,6 +10,7 @@ import { RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH } from '@/object-record/record
 import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
 import { recordListRowWidthComponentState } from '@/object-record/record-list/states/recordListRowWidthComponentState';
 import { computeRecordListDisplayedFields } from '@/object-record/record-list/utils/computeRecordListDisplayedFields';
+import { useOpenRecordContextMenu } from '@/object-record/record-selection/hooks/useOpenRecordContextMenu';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
@@ -104,6 +105,7 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
   );
   const { toggleRecordSelection } = useToggleRecordSelection();
   const { resetRecordSelection } = useResetRecordSelection();
+  const { openRecordContextMenu } = useOpenRecordContextMenu();
 
   if (!isDefined(recordStore)) {
     return null;
@@ -184,6 +186,7 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
         }
       }}
       onClick={openRecord}
+      onContextMenu={(event) => openRecordContextMenu({ event, recordId })}
       onKeyDown={(event) => {
         if (event.target !== event.currentTarget) {
           return;
