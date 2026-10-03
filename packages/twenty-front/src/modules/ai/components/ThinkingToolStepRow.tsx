@@ -193,7 +193,7 @@ export const ThinkingToolStepRow = ({
     isPlainObject(part.output) && isNonEmptyString(part.output.error)
       ? { error: part.output.error }
       : part.output;
-  const toolTabListComponentInstanceId = `ai-thinking-tool-tabs-${part.toolCallId}`;
+  const toolTabListComponentInstanceId = `ai-thinking-tool-tabs-${part.toolCallId ?? rawToolName}`;
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     toolTabListComponentInstanceId,

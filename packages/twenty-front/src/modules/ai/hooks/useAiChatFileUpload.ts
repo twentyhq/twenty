@@ -42,9 +42,7 @@ export const useAiChatFileUpload = () => {
       return null;
     } finally {
       setAgentChatSelectedFiles((previousSelectedFiles) =>
-        previousSelectedFiles.filter(
-          (selectedFile) => selectedFile.name !== file.name,
-        ),
+        previousSelectedFiles.filter((selectedFile) => selectedFile !== file),
       );
     }
   };

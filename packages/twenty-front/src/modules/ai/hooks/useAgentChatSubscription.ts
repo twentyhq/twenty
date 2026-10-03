@@ -16,7 +16,7 @@ import {
   type ExtendedUIMessage,
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
@@ -259,11 +259,14 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         const title = extendedMessage.parts.find(isThreadTitleDataPart)?.data
           .title;
 
+        const threadRecord = store.get(
+          agentChatThreadRecordFamilySelector.selectorFamily(threadId),
+        );
+
         if (
           isDefined(title) &&
-          store.get(
-            agentChatThreadRecordFamilySelector.selectorFamily(threadId),
-          )?.title !== title
+          isDefined(threadRecord) &&
+          !isNonEmptyString(threadRecord.title)
         ) {
           applyAgentChatThreadUpdate({ id: threadId, title });
         }
