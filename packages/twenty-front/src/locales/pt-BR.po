@@ -3737,7 +3737,7 @@ msgstr "Negrito"
 #. js-lingui-id: SkYx9p
 #: src/pages/onboarding/BookCall.tsx
 msgid "Book a 30-minute call and we'll help you get your workspace production-ready."
-msgstr "Agende uma chamada de 30 minutos e nós ajudaremos você a deixar seu espaço de trabalho pronto para produção."
+msgstr "Agende uma chamada de 30 minutos e ajudaremos você a deixar seu workspace pronto para produção."
 
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -3800,12 +3800,12 @@ msgstr "Marrom"
 #. js-lingui-id: 041SWy
 #: src/pages/settings/admin-panel/SettingsAdminChats.tsx
 msgid "Browse AI chat threads across all workspaces ({totalCount} matching)"
-msgstr "Navegue por threads de chat de IA em todos os espaços de trabalho ({totalCount} correspondentes)"
+msgstr "Navegue por threads de chat de IA em todos os workspaces ({totalCount} correspondentes)"
 
 #. js-lingui-id: IXoy1p
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Browse AI chat threads across all workspaces, including onboarding chats"
-msgstr "Navegue por threads de chat de IA em todos os espaços de trabalho, incluindo chats de onboarding"
+msgstr "Navegue por threads de chat de IA em todos os workspaces, incluindo chats de onboarding"
 
 #. js-lingui-id: hKAV/O
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -4098,7 +4098,7 @@ msgstr "Câmera"
 #. js-lingui-id: w3vNoK
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Campaign Email Send"
-msgstr "Envio de e-mail de campanha"
+msgstr "Envio de E-mail de Campanha"
 
 #. js-lingui-id: YKJ+pg
 #: src/modules/activities/emails/hooks/useSendMessageCampaign.ts
@@ -4154,7 +4154,7 @@ msgstr "Cancelar"
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 #: src/modules/command-menu-item/engine-command/record/single-record/message-campaign/components/CancelMessageCampaignSingleRecordCommand.tsx
 msgid "Cancel Campaign"
-msgstr "Cancelar campanha"
+msgstr "Cancelar Campanha"
 
 #. js-lingui-id: J8nuSF
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -6880,17 +6880,17 @@ msgstr "Granularidade da data"
 #. js-lingui-id: dhHZTJ
 #: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity"
-msgstr "Granularidade da data"
+msgstr "Granularidade da Data"
 
 #. js-lingui-id: agXC4d
 #: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity X"
-msgstr "Granularidade da data X"
+msgstr "Granularidade da Data X"
 
 #. js-lingui-id: YsCGZL
 #: src/modules/side-panel/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity Y"
-msgstr "Granularidade da data Y"
+msgstr "Granularidade da Data Y"
 
 #. js-lingui-id: H7OUPr
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
@@ -8270,7 +8270,7 @@ msgstr "Edite o nome do seu subdomínio ou defina um domínio personalizado."
 #. js-lingui-id: xMkLkW
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Editable Profile Fields"
-msgstr "Campos de perfil editáveis"
+msgstr "Campos de Perfil Editáveis"
 
 #. js-lingui-id: uBAxNB
 #: src/modules/object-record/record-sharing/constants/RecordShareAccessLevelOptions.ts
@@ -8396,7 +8396,7 @@ msgstr "O e-mail ou domínio já está na lista de bloqueio"
 #. js-lingui-id: xUDbZ0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Email Send"
-msgstr "Envio de e-mail"
+msgstr "Envio de E-mail"
 
 #. js-lingui-id: Xl929X
 #: src/modules/activities/emails/hooks/useSendEmail.ts
