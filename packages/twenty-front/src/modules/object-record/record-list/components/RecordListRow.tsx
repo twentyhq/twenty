@@ -1,6 +1,5 @@
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -197,17 +196,15 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
     >
       <StyledRow>
         <StyledRecordChipContainer>
-          <StopPropagationContainer>
-            <RecordChip
-              objectNameSingular={objectNameSingular}
-              record={recordStore}
-              to={linkToRecord}
-              variant="ghost"
-              isBold
-              onClick={openRecord}
-              triggerEvent={'CLICK'}
-            />
-          </StopPropagationContainer>
+          <RecordChip
+            objectNameSingular={objectNameSingular}
+            record={recordStore}
+            to={linkToRecord}
+            variant="ghost"
+            isBold
+            onClick={openRecord}
+            triggerEvent={'CLICK'}
+          />
         </StyledRecordChipContainer>
         <StyledFieldsContainer>
           {displayedRecordFields.map(({ recordField, fieldDefinition }) => (
