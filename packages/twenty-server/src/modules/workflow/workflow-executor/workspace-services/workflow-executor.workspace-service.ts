@@ -761,9 +761,7 @@ export class WorkflowExecutorWorkspaceService {
         {
           workspaceId,
           workflowRunId,
-          ...(isDefined(resumedThreadId)
-            ? { stepToResume: { stepId, threadId: resumedThreadId } }
-            : { stepIdsToRetry: [stepId] }),
+          stepIdsToRetry: [stepId],
         },
         { ...buildRunWorkflowJobOptions(workflowRunId), delay: retryDelayMs },
       );
