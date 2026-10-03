@@ -12,7 +12,10 @@ import {
 } from 'twenty-shared/utils';
 
 const getSelectOptionErrors = (field: ObjectFieldManifest): string[] => {
-  if (!isFieldMetadataSelectKind(field.type) || !Array.isArray(field.options)) {
+  if (
+    !isFieldMetadataSelectKind(field.type as FieldMetadataType) ||
+    !Array.isArray(field.options)
+  ) {
     return [];
   }
 

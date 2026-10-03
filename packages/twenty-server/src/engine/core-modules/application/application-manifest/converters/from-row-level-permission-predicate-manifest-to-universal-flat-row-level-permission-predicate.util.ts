@@ -1,4 +1,5 @@
 import { type RowLevelPermissionPredicateManifest } from 'twenty-shared/application';
+import { type RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
 import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
 
@@ -23,7 +24,8 @@ export const fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermi
         rowLevelPermissionPredicateManifest.objectUniversalIdentifier,
       fieldMetadataUniversalIdentifier:
         rowLevelPermissionPredicateManifest.fieldUniversalIdentifier,
-      operand: rowLevelPermissionPredicateManifest.operand,
+      operand:
+        rowLevelPermissionPredicateManifest.operand as RowLevelPermissionPredicateOperand,
       value: rowLevelPermissionPredicateManifest.value ?? null,
       subFieldName: rowLevelPermissionPredicateManifest.subFieldName ?? null,
       workspaceMemberFieldMetadataUniversalIdentifier:

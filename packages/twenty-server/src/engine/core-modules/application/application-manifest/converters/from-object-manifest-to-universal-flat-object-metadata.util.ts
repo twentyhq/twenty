@@ -25,7 +25,8 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     labelSingular: objectManifest.labelSingular,
     labelPlural: objectManifest.labelPlural,
     color: objectManifest.color ?? null,
-    openRecordIn: objectManifest.openRecordIn ?? ObjectOpenRecordIn.USER_CHOICE,
+    openRecordIn: (objectManifest.openRecordIn ??
+      ObjectOpenRecordIn.USER_CHOICE) as ObjectOpenRecordIn,
     description: objectManifest.description ?? null,
     icon: objectManifest.icon ?? null,
     overrides: null,
@@ -35,11 +36,14 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     isSystem: false,
     isUIEditable: objectManifest.isUIEditable ?? true,
     isUICreatable: objectManifest.isUICreatable ?? true,
-    writability: objectManifest.writability ?? MetadataWritability.OPEN,
-    readability: objectManifest.readability ?? MetadataReadability.OPEN,
+    writability: (objectManifest.writability ??
+      MetadataWritability.OPEN) as MetadataWritability,
+    readability: (objectManifest.readability ??
+      MetadataReadability.OPEN) as MetadataReadability,
     readabilityParentFieldUniversalIdentifiers:
       objectManifest.readabilityParentFieldUniversalIdentifiers ?? null,
-    sharingReach: objectManifest.sharingReach ?? ObjectSharingReach.WORKSPACE,
+    sharingReach: (objectManifest.sharingReach ??
+      ObjectSharingReach.WORKSPACE) as ObjectSharingReach,
     isAuditLogged: true,
     isSearchable: objectManifest.isSearchable ?? true,
     duplicateCriteria: null,

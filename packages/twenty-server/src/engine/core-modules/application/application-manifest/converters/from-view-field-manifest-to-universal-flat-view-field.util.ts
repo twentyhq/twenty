@@ -1,4 +1,5 @@
 import { type ViewFieldManifest } from 'twenty-shared/application';
+import { type AggregateOperations } from 'twenty-shared/types';
 
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
@@ -26,7 +27,8 @@ export const fromViewFieldManifestToUniversalFlatViewField = ({
     isSystemSideEffect: false,
     size: viewFieldManifest.size ?? 0,
     position: viewFieldManifest.position,
-    aggregateOperation: viewFieldManifest.aggregateOperation ?? null,
+    aggregateOperation: (viewFieldManifest.aggregateOperation ??
+      null) as AggregateOperations | null,
     universalOverrides: null,
     createdAt: now,
     updatedAt: now,

@@ -1,6 +1,15 @@
 import { type AskQuestionsToolInput } from '@/ai/types/AskQuestionsToolInput';
 import { type ProposeToolCallToolInput } from '@/ai/types/ProposeToolCallToolInput';
-import { type RequestFormToolInput } from '@/ai/types/RequestFormToolInput';
+import {
+  type RequestFormField,
+  type RequestFormToolInput,
+} from '@/ai/types/RequestFormToolInput';
+
+type SendInboxMessageRequestFormInput = Omit<RequestFormToolInput, 'fields'> & {
+  fields: (Omit<RequestFormField, 'type'> & {
+    type: RequestFormField['type'] | `${RequestFormField['type']}`;
+  })[];
+};
 
 export type SendInboxMessageToolCall =
   | {
@@ -10,7 +19,7 @@ export type SendInboxMessageToolCall =
     }
   | {
       toolName: 'request_form';
-      input: RequestFormToolInput;
+      input: SendInboxMessageRequestFormInput;
       logicFunctionUniversalIdentifier?: never;
     }
   | {

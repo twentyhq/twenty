@@ -17,11 +17,11 @@ export type ObjectManifest = SyncableEntityOptions & {
   isSearchable?: boolean;
   isUICreatable?: boolean;
   isUIEditable?: boolean;
-  writability?: MetadataWritability;
-  readability?: MetadataReadability;
+  writability?: MetadataWritability | `${MetadataWritability}`;
+  readability?: MetadataReadability | `${MetadataReadability}`;
   readabilityParentFieldUniversalIdentifiers?: string[] | null;
-  sharingReach?: ObjectSharingReach;
-  openRecordIn?: ObjectOpenRecordIn;
+  sharingReach?: ObjectSharingReach | `${ObjectSharingReach}`;
+  openRecordIn?: ObjectOpenRecordIn | `${ObjectOpenRecordIn}`;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;
   imageIdentifierFieldMetadataUniversalIdentifier?: string | null;

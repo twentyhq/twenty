@@ -7,7 +7,8 @@ export type InputSchemaPropertyType =
   | LeafType
   | NodeType
   | RecordSchemaType
-  | FieldMetadataType;
+  | FieldMetadataType
+  | `${FieldMetadataType}`;
 
 export type InputSchemaProperty = {
   type: InputSchemaPropertyType;

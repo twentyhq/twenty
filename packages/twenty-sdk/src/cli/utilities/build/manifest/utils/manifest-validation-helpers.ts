@@ -15,12 +15,19 @@ export type ManifestField =
 
 type RelationManifestField = Extract<
   ManifestField,
-  { type: RelationAndMorphRelationFieldMetadataType }
+  {
+    type:
+      | RelationAndMorphRelationFieldMetadataType
+      | `${RelationAndMorphRelationFieldMetadataType}`;
+  }
 >;
 
 export const isRelationFieldManifest = (
   field: ManifestField,
-): field is RelationManifestField => RELATION_FIELD_TYPES.includes(field.type);
+): field is RelationManifestField =>
+  RELATION_FIELD_TYPES.some(
+    (relationFieldType) => relationFieldType === field.type,
+  );
 
 export const getDuplicateValues = (values: string[]): string[] => {
   const seen = new Set<string>();

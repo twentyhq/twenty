@@ -8,7 +8,10 @@ import {
   serializeApplicationVariableValue,
 } from 'twenty-shared/application';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type PageLayoutWidgetPosition,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
@@ -583,7 +586,11 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
-            pageLayoutWidgetManifest,
+            pageLayoutWidgetManifest: {
+              ...pageLayoutWidgetManifest,
+              position:
+                pageLayoutWidgetManifest.position as PageLayoutWidgetPosition,
+            },
             pageLayoutTabUniversalIdentifier:
               pageLayoutWidgetManifest.pageLayoutTabUniversalIdentifier,
             applicationUniversalIdentifier,

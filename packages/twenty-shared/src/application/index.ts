@@ -181,6 +181,7 @@ export type { ObjectManifest } from './objectManifestType';
 export type { ObjectPermissionAction } from './objectPermissionActionType';
 export { OBJECT_PERMISSION_ACTIONS } from './objectPermissionActionType';
 export type {
+  PageLayoutWidgetManifestPosition,
   PageLayoutWidgetManifest,
   StandalonePageLayoutWidgetManifest,
   PageLayoutTabManifest,
