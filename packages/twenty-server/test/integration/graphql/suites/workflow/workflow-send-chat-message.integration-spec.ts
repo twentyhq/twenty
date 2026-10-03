@@ -60,7 +60,7 @@ describe('Send chat message workflow step', () => {
         [threadId],
       );
       const messages = await global.testDataSource.query(
-        `SELECT m.role, m."isHidden", p."textContent"
+        `SELECT m.role, p."textContent"
          FROM "${SCHEMA}"."agentMessage" m
          JOIN "${SCHEMA}"."agentMessagePart" p ON p."messageId" = m.id
          WHERE m."threadId" = $1
@@ -72,17 +72,21 @@ describe('Send chat message workflow step', () => {
         title,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       });
+      const turns = await global.testDataSource.query(
+        `SELECT context FROM "${SCHEMA}"."agentTurn" WHERE "threadId" = $1`,
+        [threadId],
+      );
+
       expect(messages).toEqual([
         {
-          role: 'user',
-          isHidden: true,
-          textContent:
-            'The "Welcome new deal owners" workflow started this conversation. Its messages follow.',
-        },
-        {
           role: 'assistant',
-          isHidden: false,
           textContent: 'You now own the **Acme renewal**.',
+        },
+      ]);
+      expect(turns).toEqual([
+        {
+          context:
+            'The "Welcome new deal owners" workflow started this conversation. Its messages follow.',
         },
       ]);
     } finally {

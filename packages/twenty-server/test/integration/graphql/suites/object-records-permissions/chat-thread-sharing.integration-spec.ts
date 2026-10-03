@@ -207,8 +207,6 @@ describe('Conversation sharing through the authenticated API', () => {
           : audience === 'role'
             ? { roleId }
             : 'everyone';
-      const chatService =
-        getAppProviderByClassName<AgentChatService>('AgentChatService');
       const threadId =
         audience === 'setup'
           ? buildWorkspaceSetupChatThreadId({
@@ -245,13 +243,23 @@ describe('Conversation sharing through the authenticated API', () => {
             : RecordShareAccessLevel.NONE,
         });
       try {
-        const kickoff = await chatService.ensureHiddenKickoffMessage({
-          userWorkspaceId: owner.userWorkspaceId,
+        const privateContext =
+          'Private setup enrichment and workspace identity';
+        await getAgentChatThreadService().openAgentTurn({
           workspaceId,
           threadId,
-          text: 'Private setup enrichment and workspace identity',
+          context: privateContext,
         });
-        expect(kickoff.id).toBeDefined();
+        const turnContextsFor = (workspaceMemberId: string) =>
+          getAppProviderByClassName<AgentChatService>(
+            'AgentChatService',
+          ).getTurnContexts({ workspaceId, threadId, workspaceMemberId });
+        expect(await turnContextsFor(owner.workspaceMemberId)).toEqual([
+          expect.objectContaining({ context: privateContext }),
+        ]);
+        expect(
+          await turnContextsFor(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
+        ).toEqual([]);
         expect((await read()).body.errors[0].extensions.code).toBe('NOT_FOUND');
         expect(await listedThreadIds()).not.toContain(threadId);
         expect((await changeShare(true)).body.errors).toBeUndefined();

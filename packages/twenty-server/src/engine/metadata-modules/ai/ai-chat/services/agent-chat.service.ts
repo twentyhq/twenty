@@ -6,7 +6,11 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { Injectable } from '@nestjs/common';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isNonEmptyArray,
+  isNonEmptyString,
+} from 'twenty-shared/utils';
 import { type FindOptionsWhere, In } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -76,7 +80,6 @@ export class AgentChatService {
     turnId,
     id,
     workspaceId,
-    isHidden,
     userWorkspaceId,
   }: {
     threadId: string;
@@ -85,7 +88,6 @@ export class AgentChatService {
     turnId?: string;
     id?: string;
     workspaceId: string;
-    isHidden?: boolean;
     userWorkspaceId?: string;
   }) {
     const actualTurnId =
@@ -110,7 +112,6 @@ export class AgentChatService {
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
       ...senderValues,
-      isHidden,
       processedAt,
       parts: uiMessage.parts ?? [],
     });
@@ -165,41 +166,73 @@ export class AgentChatService {
     );
   }
 
-  async findLatestSentUserMessage({
+  async findLatestTurnId({
     threadId,
     workspaceId,
   }: {
     threadId: string;
     workspaceId: string;
-  }): Promise<Pick<AgentMessageWorkspaceEntity, 'id' | 'turnId'> | null> {
-    return this.messageRepository.findOne(workspaceId, {
-      where: {
-        threadId,
-        role: AgentMessageRole.USER,
-        status: AgentMessageStatus.SENT,
-      },
-      order: {
-        processedAt: { order: 'DESC', nulls: 'NULLS LAST' },
-        createdAt: 'DESC',
-        id: 'DESC',
-      },
-      select: ['id', 'turnId'],
+  }): Promise<string | null> {
+    const latestTurn = await this.turnRepository.findOne(workspaceId, {
+      where: { threadId },
+      order: { createdAt: 'DESC', id: 'DESC' },
+      select: ['id'],
     });
+
+    return latestTurn?.id ?? null;
   }
 
-  async hasConversationMessages({
+  // the contexts are the thread owner's, so the turns of other participants run without them
+  async getTurnContexts({
+    threadId,
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<{ turnId: string; context: string; createdAt: string }[]> {
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+      select: ['id', 'workspaceMemberId'],
+    });
+
+    if (thread?.workspaceMemberId !== workspaceMemberId) {
+      return [];
+    }
+
+    // filtered here rather than in the query: workspaces the 2.46 commands have not reached lack the column
+    const turns = await this.turnRepository.find(workspaceId, {
+      where: { threadId },
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
+
+    return turns.flatMap(({ id, context, createdAt }) =>
+      isNonEmptyString(context) ? [{ turnId: id, context, createdAt }] : [],
+    );
+  }
+
+  async deleteTurns({
+    threadId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.turnRepository.delete(workspaceId, { threadId });
+  }
+
+  async hasMessages({
     threadId,
     workspaceId,
   }: {
     threadId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const visibleMessage = await this.messageRepository.findOne(workspaceId, {
-      where: { threadId, isHidden: false },
-      select: ['id'],
+    return this.messageRepository.existsBy(workspaceId, {
+      threadId,
+      isHidden: false,
     });
-
-    return isDefined(visibleMessage);
   }
 
   async deleteAssistantMessagesForTurn({
@@ -219,87 +252,23 @@ export class AgentChatService {
     threadId,
     workspaceMemberId,
     workspaceId,
-    includeHidden = false,
   }: {
     threadId: string;
     workspaceMemberId: string;
     workspaceId: string;
-    includeHidden?: boolean;
   }) {
-    if (includeHidden) {
-      await this.threadService.getWritableThread({
-        threadId,
-        workspaceMemberId,
-        workspaceId,
-      });
-    } else {
-      await this.sharingService.getReadableThread({
-        threadId,
-        workspaceMemberId,
-        workspaceId,
-      });
-    }
+    await this.sharingService.getReadableThread({
+      threadId,
+      workspaceMemberId,
+      workspaceId,
+    });
 
+    // hidden messages wait for upgrade:2-46:move-hidden-agent-messages-to-turn-context, and are never shown
     return this.messageRepository.find(workspaceId, {
-      where: { threadId, ...(includeHidden ? {} : { isHidden: false }) },
+      where: { threadId, isHidden: false },
       order: { processedAt: { order: 'ASC', nulls: 'NULLS LAST' } },
       relations: ['parts', 'parts.file'],
     });
-  }
-
-  async ensureHiddenKickoffMessage({
-    threadId,
-    workspaceId,
-    text,
-    userWorkspaceId,
-  }: {
-    threadId: string;
-    workspaceId: string;
-    text: string;
-    userWorkspaceId: string;
-  }): Promise<{ id: string; turnId: string }> {
-    const existingKickoffMessage = await this.messageRepository.findOne(
-      workspaceId,
-      {
-        where: { threadId, isHidden: true },
-        relations: ['parts'],
-      },
-    );
-
-    if (isDefined(existingKickoffMessage)) {
-      if (
-        isDefined(existingKickoffMessage.turnId) &&
-        isNonEmptyArray(existingKickoffMessage.parts)
-      ) {
-        return {
-          id: existingKickoffMessage.id,
-          turnId: existingKickoffMessage.turnId,
-        };
-      }
-
-      await this.messageRepository.delete(workspaceId, {
-        id: existingKickoffMessage.id,
-      });
-
-      if (isDefined(existingKickoffMessage.turnId)) {
-        await this.turnRepository.delete(workspaceId, {
-          id: existingKickoffMessage.turnId,
-        });
-      }
-    }
-
-    const { id, turnId } = await this.addMessage({
-      threadId,
-      workspaceId,
-      userWorkspaceId,
-      uiMessage: {
-        role: AgentMessageRole.USER,
-        parts: [{ type: 'text' as const, text }],
-      },
-      isHidden: true,
-    });
-
-    return { id, turnId };
   }
 
   async queueMessage({

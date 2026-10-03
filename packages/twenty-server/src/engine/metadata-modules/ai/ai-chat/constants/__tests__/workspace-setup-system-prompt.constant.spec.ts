@@ -3,7 +3,7 @@ import { WORKSPACE_SETUP_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai
 describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
   const prompt = WORKSPACE_SETUP_SYSTEM_PROMPT;
 
-  it('should stay static with all dynamic content in the first message', () => {
+  it('should stay static with all dynamic content in the context', () => {
     expect(prompt).not.toContain('${');
     expect(prompt).not.toContain('The user locale is');
     expect(prompt).not.toContain('Domain:');
@@ -15,12 +15,12 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
     );
   });
 
-  it('should frame the first message as hidden company context', () => {
+  it('should frame the opening context as hidden company context', () => {
     expect(prompt).toContain(
       'kicking off the setup of this brand-new workspace',
     );
     expect(prompt).toContain(
-      'The first message of this conversation is not from the user',
+      'The conversation opens with a <context> block, not with a message from the user',
     );
     expect(prompt).toContain('the person setting it up');
     expect(prompt).toContain('what you know about them and their company');
@@ -75,9 +75,9 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
     expect(prompt).toContain('never give that question a title of its own');
   });
 
-  it('should branch the first reply on what the first message contains', () => {
+  it('should branch the first reply on what the context contains', () => {
     expect(prompt).toContain('Do not greet them again');
-    expect(prompt).toContain('When the first message describes their company');
+    expect(prompt).toContain('When the context describes their company');
     expect(prompt).toContain('tailored to their business');
     expect(prompt).toContain('when their job title is in your user context');
     expect(prompt).toContain('when it is missing, do not guess it');
@@ -88,7 +88,7 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
   });
 
   it('should fold at most one person detail into the framing without reciting it', () => {
-    expect(prompt).toContain('When the first message carries person context');
+    expect(prompt).toContain('When the context includes the person');
     expect(prompt).toContain('fold at most one specific detail');
     expect(prompt).toContain('never recite their profile back at them');
   });

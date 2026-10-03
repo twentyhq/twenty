@@ -65,6 +65,7 @@ const buildResolver = () => {
         updatedAt: new Date(),
       }),
     } as never,
+    {} as never,
   );
   const chatService = new AgentChatService(
     threadRepository as never,
@@ -324,19 +325,6 @@ describe('Shared conversation API boundaries', () => {
     ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
     expect(redis.getClient).not.toHaveBeenCalled();
     expect(threadRepository.update).not.toHaveBeenCalled();
-  });
-
-  it('denies hidden history to viewers even when the visible thread is shared', async () => {
-    const { chatService, messages } = buildResolver();
-    await expect(
-      chatService.getMessagesForThread({
-        threadId: THREAD_ID,
-        workspaceMemberId: VIEWER_ID,
-        workspaceId: WORKSPACE_ID,
-        includeHidden: true,
-      }),
-    ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
-    expect(messages.find).not.toHaveBeenCalled();
   });
 
   it('does not read messages or catchup after access is revoked', async () => {

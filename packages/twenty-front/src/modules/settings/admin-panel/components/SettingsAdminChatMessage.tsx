@@ -1,9 +1,7 @@
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { SettingsAdminChatCollapsibleSection } from '@/settings/admin-panel/components/SettingsAdminChatCollapsibleSection';
 import { SettingsAdminChatMessagePartRenderer } from '@/settings/admin-panel/components/SettingsAdminChatMessagePartRenderer';
 import { type AdminChatThreadMessage } from '@/settings/admin-panel/types/AdminChatThreadMessage';
 import { isRenderableAdminChatMessagePart } from '@/settings/admin-panel/utils/isRenderableAdminChatMessagePart';
@@ -42,9 +40,9 @@ export const SettingsAdminChatMessage = ({
     .filter(isRenderableAdminChatMessagePart)
     .sort((a, b) => a.orderIndex - b.orderIndex);
 
-  const messageBody = (
-    <StyledMessageBubble isUser={isUser && !message.isHidden}>
-      {!message.isHidden && <StyledRoleLabel>{message.role}</StyledRoleLabel>}
+  return (
+    <StyledMessageBubble isUser={isUser}>
+      <StyledRoleLabel>{message.role}</StyledRoleLabel>
       {renderableParts.map((part) => (
         <SettingsAdminChatMessagePartRenderer
           key={part.orderIndex}
@@ -57,14 +55,4 @@ export const SettingsAdminChatMessage = ({
       </StyledTimestamp>
     </StyledMessageBubble>
   );
-
-  if (message.isHidden) {
-    return (
-      <SettingsAdminChatCollapsibleSection label={t`Kickoff prompt`}>
-        {messageBody}
-      </SettingsAdminChatCollapsibleSection>
-    );
-  }
-
-  return messageBody;
 };

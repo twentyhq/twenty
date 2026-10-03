@@ -27,6 +27,7 @@ const build = () => {
     getQueuedMessages: jest.fn().mockResolvedValue([queued]),
     promoteQueuedMessage: jest.fn().mockResolvedValue('turn-b'),
     getMessagesForThread: jest.fn().mockResolvedValue([]),
+    getTurnContexts: jest.fn().mockResolvedValue([]),
     deleteQueuedMessage: jest.fn().mockResolvedValue(true),
   };
   const actors = {
@@ -150,33 +151,52 @@ describe('Sender-aware queue draining', () => {
     expect(queue.add).not.toHaveBeenCalled();
     expect(heartbeat.clear).toHaveBeenCalled();
   });
-  it('excludes the owner’s hidden setup context from another participant’s execution', async () => {
-    const { service, chat, threads, queue } = build();
-    threads.findOneOrFail.mockResolvedValue({
-      id: 'thread',
-      conversationSize: 0,
-      userWorkspaceId: 'owner',
+  it('places each turn context where its turn opened', async () => {
+    const { service, chat, queue } = build();
+    const message = (id: string, role: string, createdAt: string) => ({
+      id,
+      role,
+      createdAt,
+      parts: [{ type: 'text', textContent: id }],
     });
     chat.getMessagesForThread.mockResolvedValue([
+      message('question', 'user', '2026-01-01T10:00:00.000Z'),
+      message('answer', 'assistant', '2026-01-01T10:01:00.000Z'),
+      message('inbox-message', 'assistant', '2026-01-01T11:00:01.000Z'),
+      message('follow-up', 'user', '2026-01-01T12:00:00.000Z'),
+    ]);
+    chat.getTurnContexts.mockResolvedValue([
       {
-        id: 'hidden-owner',
-        isHidden: true,
-        senderUserWorkspaceId: 'owner',
-        parts: [{ type: 'text', textContent: 'Owner private context' }],
+        turnId: 'inbox-turn',
+        context: 'Billing app started this conversation.',
+        createdAt: '2026-01-01T11:00:00.000Z',
       },
       {
-        id: 'visible',
-        role: 'user',
-        createdAt: new Date(),
-        parts: [{ type: 'text', textContent: 'Shared content' }],
+        turnId: 'silent-turn',
+        context: 'An opening that produced no message.',
+        createdAt: '2026-01-01T11:30:00.000Z',
       },
     ]);
     await service.flushNextQueuedMessage(args);
-    expect(queue.add).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({
-        messages: [expect.objectContaining({ id: 'visible' })],
-      }),
-    );
+    const { messages } = queue.add.mock.calls[0][1];
+    expect(messages.map(({ id }: { id: string }) => id)).toEqual([
+      'question',
+      'answer',
+      'turn-context-inbox-turn',
+      'inbox-message',
+      'turn-context-silent-turn',
+      'follow-up',
+    ]);
+    expect(messages[2]).toMatchObject({
+      role: 'user',
+      parts: [
+        {
+          type: 'text',
+          text: expect.stringContaining(
+            'Billing app started this conversation.',
+          ),
+        },
+      ],
+    });
   });
 });

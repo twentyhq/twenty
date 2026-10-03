@@ -11,4 +11,5 @@ export class AgentTurnWorkspaceEntity extends BaseWorkspaceEntity {
 
   threadId: string;
   agentId: string | null;
+  context: string | null;
 }

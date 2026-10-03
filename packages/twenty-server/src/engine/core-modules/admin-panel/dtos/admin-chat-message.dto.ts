@@ -15,9 +15,6 @@ export class AdminChatMessageDTO {
   @Field(() => AgentMessageRole)
   role: AgentMessageRole;
 
-  @Field(() => Boolean)
-  isHidden: boolean;
-
   @Field(() => [AdminChatMessagePartDTO])
   parts: AdminChatMessagePartDTO[];
 

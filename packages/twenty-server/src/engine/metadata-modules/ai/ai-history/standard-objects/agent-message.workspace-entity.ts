@@ -21,6 +21,7 @@ export class AgentMessageWorkspaceEntity extends BaseWorkspaceEntity {
   senderApplicationId: string | null;
   role: AgentMessageRole;
   status: AgentMessageStatus;
+  // only rows the 2.46 move to turn contexts has not reached yet
   isHidden: boolean;
   processedAt: string | null;
 }

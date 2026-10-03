@@ -4,14 +4,20 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isNonEmptyArray,
+  isNonEmptyString,
+} from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type AdminChatMessageDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-message.dto';
+import { type AdminChatTurnContextDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-turn-context.dto';
 import { type AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-workspace-chat-thread.dto';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 
 @Injectable()
@@ -28,6 +34,8 @@ export class AdminPanelChatService {
     private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly agentMessageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentTurn')
+    private readonly agentTurnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
   ) {}
 
   private async assertWorkspaceAllowsImpersonation(
@@ -90,7 +98,7 @@ export class AdminPanelChatService {
       ({ manager, table }) =>
         manager.query<{ threadId: string; messageCount: number }[]>(
           `SELECT "threadId", COUNT(*)::int AS "messageCount" FROM ${table('agentMessage')}
-       WHERE "threadId" = ANY($1::uuid[]) AND "isHidden" = false
+       WHERE "threadId" = ANY($1::uuid[])
        GROUP BY "threadId"`,
           [threadIds],
         ),
@@ -102,6 +110,7 @@ export class AdminPanelChatService {
   async getChatThreadMessages(threadId: string): Promise<{
     thread: AdminWorkspaceChatThreadDTO;
     messages: AdminChatMessageDTO[];
+    contexts: AdminChatTurnContextDTO[];
   }> {
     const workspaces = await this.workspaceRepository.find({
       where: { allowImpersonation: true },
@@ -145,11 +154,17 @@ export class AdminPanelChatService {
 
     await this.assertWorkspaceAllowsImpersonation(workspaceId);
 
-    const messages = await this.agentMessageRepository.find(workspaceId, {
-      where: { threadId },
-      relations: { parts: true },
-      order: { createdAt: 'ASC' },
-    });
+    const [messages, turns] = await Promise.all([
+      this.agentMessageRepository.find(workspaceId, {
+        where: { threadId },
+        relations: { parts: true },
+        order: { createdAt: 'ASC' },
+      }),
+      this.agentTurnRepository.find(workspaceId, {
+        where: { threadId },
+        order: { createdAt: 'ASC' },
+      }),
+    ]);
 
     return {
       thread: {
@@ -158,14 +173,13 @@ export class AdminPanelChatService {
         totalInputTokens: thread.totalInputTokens,
         totalOutputTokens: thread.totalOutputTokens,
         conversationSize: thread.conversationSize,
-        messageCount: messages.filter((message) => !message.isHidden).length,
+        messageCount: messages.length,
         createdAt: new Date(thread.createdAt),
         updatedAt: new Date(thread.updatedAt),
       },
       messages: messages.map((message) => ({
         id: message.id,
         role: message.role,
-        isHidden: message.isHidden,
         parts: (message.parts ?? [])
           .sort((a, b) => a.orderIndex - b.orderIndex)
           .map((part) => ({
@@ -182,6 +196,11 @@ export class AdminPanelChatService {
           })),
         createdAt: new Date(message.createdAt),
       })),
+      contexts: turns.flatMap(({ context, createdAt }) =>
+        isNonEmptyString(context)
+          ? [{ context, createdAt: new Date(createdAt) }]
+          : [],
+      ),
     };
   }
 }

@@ -21,7 +21,7 @@ describe('sender workspace member expansion', () => {
     const { query, expand } = setup();
     const messages = [
       { senderUserWorkspaceId: 'sender', senderApplicationId: 'application' },
-      { senderUserWorkspaceId: 'sender', isHidden: true },
+      { senderUserWorkspaceId: 'sender' },
       { senderUserWorkspaceId: 'removed' },
     ];
     expect(await expand(messages)).toEqual(

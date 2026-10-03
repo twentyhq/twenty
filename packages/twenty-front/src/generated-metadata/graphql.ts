@@ -6208,7 +6208,7 @@ export type SearchField = {
 
 export type SendChatMessageResult = {
   __typename?: 'SendChatMessageResult';
-  messageId: Scalars['String']['output'];
+  messageId?: Maybe<Scalars['String']['output']>;
   queued: Scalars['Boolean']['output'];
   streamId?: Maybe<Scalars['String']['output']>;
 };
@@ -8118,7 +8118,7 @@ export type RetryChatMessageMutationVariables = Exact<{
 }>;
 
 
-export type RetryChatMessageMutation = { __typename?: 'Mutation', retryChatMessage: { __typename?: 'SendChatMessageResult', messageId: string, queued: boolean, streamId?: string | null } };
+export type RetryChatMessageMutation = { __typename?: 'Mutation', retryChatMessage: { __typename?: 'SendChatMessageResult', messageId?: string | null, queued: boolean, streamId?: string | null } };
 
 export type RunEvaluationInputMutationVariables = Exact<{
   agentId: Scalars['UUID']['input'];
@@ -8138,7 +8138,7 @@ export type SendChatMessageMutationVariables = Exact<{
 }>;
 
 
-export type SendChatMessageMutation = { __typename?: 'Mutation', sendChatMessage: { __typename?: 'SendChatMessageResult', messageId: string, queued: boolean, streamId?: string | null } };
+export type SendChatMessageMutation = { __typename?: 'Mutation', sendChatMessage: { __typename?: 'SendChatMessageResult', messageId?: string | null, queued: boolean, streamId?: string | null } };
 
 export type SnoozeAgentChatThreadMutationVariables = Exact<{
   threadId: Scalars['UUID']['input'];

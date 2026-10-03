@@ -6,7 +6,7 @@ import {
 import { type WorkspaceSetupWorkspaceContext } from 'src/engine/metadata-modules/ai/ai-chat/types/workspace-setup-workspace-context.type';
 import { buildCompanyContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-company-context-message-text.util';
 import { buildPersonContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-person-context-message-text.util';
-import { buildWorkspaceSetupKickoffMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-kickoff-message-text.util';
+import { buildWorkspaceSetupTurnContext } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-turn-context.util';
 
 const companyEnrichment: WorkspaceCompanyEnrichment = {
   domain: 'acme.com',
@@ -48,11 +48,9 @@ const workspaceContext: WorkspaceSetupWorkspaceContext = {
 };
 
 const buildMessage = (
-  overrides: Partial<
-    Parameters<typeof buildWorkspaceSetupKickoffMessageText>[0]
-  > = {},
+  overrides: Partial<Parameters<typeof buildWorkspaceSetupTurnContext>[0]> = {},
 ) =>
-  buildWorkspaceSetupKickoffMessageText({
+  buildWorkspaceSetupTurnContext({
     companyEnrichment,
     personEnrichment: null,
     workspaceContext,
@@ -60,7 +58,7 @@ const buildMessage = (
     ...overrides,
   });
 
-describe('buildWorkspaceSetupKickoffMessageText', () => {
+describe('buildWorkspaceSetupTurnContext', () => {
   it('should carry the company context when a full enrichment is provided', () => {
     const result = buildMessage();
 
