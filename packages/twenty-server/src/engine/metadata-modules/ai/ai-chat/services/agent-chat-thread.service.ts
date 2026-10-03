@@ -26,26 +26,13 @@ export class AgentChatThreadService {
     private readonly participantService: AgentChatThreadParticipantService,
   ) {}
 
-  async createThread({
-    workspaceMemberId,
-    workspaceId,
-    id,
-    title,
-  }: {
-    workspaceMemberId: string;
-    workspaceId: string;
-    id?: string;
-    title?: string;
-  }) {
-    const savedThread = await this.sharingService.createThread({
-      workspaceId,
-      workspaceMemberId,
-      id,
-      title,
-    });
+  async createThread(
+    args: Parameters<AgentChatSharingService['createThread']>[0],
+  ) {
+    const savedThread = await this.sharingService.createThread(args);
 
     await this.threadRecordEventService.emitThreadCreated({
-      workspaceId,
+      workspaceId: args.workspaceId,
       threadId: savedThread.id,
     });
 

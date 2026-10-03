@@ -447,6 +447,11 @@ describe('Proposing a record call as an application', () => {
       [threadId],
     );
 
+    const [opportunity] = await global.testDataSource.query(
+      `SELECT stage FROM "${schema}"."opportunity" WHERE id = $1`,
+      [OPPORTUNITY_DATA_SEED_IDS.ID_1],
+    );
+
     expect(part.toolOutput.result).toMatchObject({
       status: 'pending',
       proposal: {
@@ -454,7 +459,7 @@ describe('Proposing a record call as an application', () => {
         template: 'recordUpdate',
         objectNameSingular: 'opportunity',
         recordId: OPPORTUNITY_DATA_SEED_IDS.ID_1,
-        currentValues: { stage: expect.any(String) },
+        currentValues: { stage: opportunity.stage },
       },
     });
   });

@@ -142,11 +142,13 @@ export class AgentChatSharingService {
     workspaceMemberId: string;
     id?: string;
     title?: string;
+    workflowRunId?: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
     const hasInboxState = await this.hasInboxState(args.workspaceId);
 
+    // workflowRunId is set by the server for a run conversation, never written by the member
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
@@ -163,11 +165,12 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId"${hasInboxState ? ', "lastActivityAt"' : ''})
-           VALUES ($1, $2, $3, $4${hasInboxState ? ', clock_timestamp()' : ''}) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workflowRunId", "workspaceMemberId", "userWorkspaceId"${hasInboxState ? ', "lastActivityAt"' : ''})
+           VALUES ($1, $2, $3, $4, $5${hasInboxState ? ', clock_timestamp()' : ''}) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
+            args.workflowRunId ?? null,
             authContext.workspaceMemberId,
             authContext.userWorkspaceId,
           ],

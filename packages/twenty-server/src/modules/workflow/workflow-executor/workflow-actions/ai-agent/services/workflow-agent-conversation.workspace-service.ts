@@ -22,8 +22,13 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 
 export type RecordedExecutionResult = {
   steps?: Pick<NonNullable<AgentExecutionResult['steps']>[number], 'content'>[];
@@ -91,6 +96,7 @@ export class WorkflowAgentConversationWorkspaceService {
       workspaceId,
       threadId,
       turnId,
+      title,
       agentId,
       executionResult,
     });
@@ -142,7 +148,7 @@ export class WorkflowAgentConversationWorkspaceService {
     await this.threadService.recordThreadActivity({
       workspaceId,
       threadId,
-      text: null,
+      text: title,
     });
   }
 
@@ -150,11 +156,13 @@ export class WorkflowAgentConversationWorkspaceService {
   async recordContinuation({
     workspaceId,
     threadId,
+    title,
     agentId,
     executionResult,
   }: {
     workspaceId: string;
     threadId: string;
+    title: string;
     agentId: string | null;
     executionResult: RecordedExecutionResult;
   }): Promise<RecordedConversation> {
@@ -168,6 +176,7 @@ export class WorkflowAgentConversationWorkspaceService {
       workspaceId,
       threadId,
       turnId,
+      title,
       agentId,
       executionResult,
     });
@@ -207,12 +216,14 @@ export class WorkflowAgentConversationWorkspaceService {
     workspaceId,
     threadId,
     turnId,
+    title,
     agentId,
     executionResult,
   }: {
     workspaceId: string;
     threadId: string;
     turnId: string;
+    title: string;
     agentId: string | null;
     executionResult: RecordedExecutionResult;
   }): Promise<boolean> {
@@ -243,7 +254,7 @@ export class WorkflowAgentConversationWorkspaceService {
       await this.threadService.recordThreadActivity({
         workspaceId,
         threadId,
-        text: null,
+        text: findLastMessageText(replyParts) ?? title,
       });
     }
 
@@ -285,7 +296,8 @@ export class WorkflowAgentConversationWorkspaceService {
     return { threadId, turnId };
   }
 
-  // a workflow without a member creator, such as one an application installs, keeps an ownerless conversation
+  // a workflow without a member creator, such as one an application installs, or whose creator
+  // cannot use AI, keeps an ownerless conversation
   private async createRunThread({
     workspaceId,
     workflowRunId,
@@ -307,27 +319,34 @@ export class WorkflowAgentConversationWorkspaceService {
         })
       : null;
 
-    if (!isDefined(creatorWorkspaceMemberId)) {
-      const threadInsertResult = await this.threadRepository.insert(
-        workspaceId,
-        { title, workflowRunId },
-      );
+    const ownedThread = isDefined(creatorWorkspaceMemberId)
+      ? await this.threadService
+          .createThread({
+            workspaceId,
+            workspaceMemberId: creatorWorkspaceMemberId,
+            title,
+            workflowRunId,
+          })
+          .catch((error: unknown) => {
+            if (
+              error instanceof AiException &&
+              error.code === AiExceptionCode.THREAD_NOT_FOUND
+            ) {
+              return null;
+            }
+            throw error;
+          })
+      : null;
 
-      return threadInsertResult.identifiers[0].id as string;
+    if (isDefined(ownedThread)) {
+      return ownedThread.id;
     }
 
-    const thread = await this.threadService.createThread({
-      workspaceId,
-      workspaceMemberId: creatorWorkspaceMemberId,
+    const threadInsertResult = await this.threadRepository.insert(workspaceId, {
       title,
+      workflowRunId,
     });
 
-    await this.threadRepository.update(
-      workspaceId,
-      { id: thread.id },
-      { workflowRunId },
-    );
-
-    return thread.id;
+    return threadInsertResult.identifiers[0].id as string;
   }
 }

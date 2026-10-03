@@ -1257,20 +1257,31 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const runId = await runFixture(fixture);
       const run = await waitForStep(runId, agent.id, 'PENDING');
       const [conversation] = await global.testDataSource.query(
-        `SELECT "workspaceMemberId", "workflowRunId", "lastActivityAt" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+        `SELECT "workspaceMemberId", "workflowRunId", "lastActivityAt", "lastMessageText" FROM "${schema}"."agentChatThread" WHERE id = $1`,
         [run.state.stepInfos[agent.id].threadId],
       );
 
       expect(conversation).toMatchObject({
         workspaceMemberId: creator.workspaceMemberId,
         workflowRunId: runId,
+        lastMessageText: agent.name,
       });
       expect(conversation.lastActivityAt).not.toBeNull();
     });
 
     it('keeps the conversation of a workflow without a member creator off every inbox', async () => {
       mockAgent();
-      const { threadId } = await startAskingRun();
+      const agent = agentStep([]);
+      const fixture = await createFixture({ steps: [agent] });
+
+      await global.testDataSource.query(
+        `UPDATE core.workflow SET "createdByUserWorkspaceId" = NULL WHERE id = $1`,
+        [fixture.coreWorkflowId],
+      );
+
+      const runId = await runFixture(fixture);
+      const run = await waitForStep(runId, agent.id, 'PENDING');
+      const threadId: string = run.state.stepInfos[agent.id].threadId;
       const [conversation] = await global.testDataSource.query(
         `SELECT "workspaceMemberId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
         [threadId],
