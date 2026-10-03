@@ -30,7 +30,8 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
         objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
-      const selectedFields = await this.computeSelectedFields({
+      const { selectedFields } = await this.computeRecordSelectedFields({
+        request,
         depth,
         flatObjectMetadata,
         flatObjectMetadataMaps,

@@ -52,6 +52,7 @@ export const getRelationsSelectFields = ({
   onlyUseLabelIdentifierFieldsInRelations = false,
   currentDepthLevelIsAJunctionTable = false,
   recurseIntoJunctionTableRelations = false,
+  fieldIdsToSelect,
 }: {
   flatObjectMetadataMaps: FlatEntityMaps<RelationsSelectFlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<RelationsSelectFlatFieldMetadata>;
@@ -61,12 +62,17 @@ export const getRelationsSelectFields = ({
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
   currentDepthLevelIsAJunctionTable?: boolean;
   recurseIntoJunctionTableRelations?: boolean;
+  fieldIdsToSelect?: ReadonlySet<string>;
 }): CommonSelectedFields => {
   if (!isDefined(depth) || depth === 0) return {};
 
   const relationsSelectFields: CommonSelectedFields = {};
 
   for (const fieldId of flatObjectMetadata.fieldIds) {
+    if (isDefined(fieldIdsToSelect) && !fieldIdsToSelect.has(fieldId)) {
+      continue;
+    }
+
     const flatField = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
       flatEntityId: fieldId,

@@ -8,6 +8,7 @@ import {
   type RestrictedFieldsPermissions,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -27,6 +28,7 @@ export const getAllSelectableFields = ({
   flatObjectMetadata,
   flatFieldMetadataMaps,
   onlyUseLabelIdentifierFieldsInRelations = false,
+  fieldIdsToSelect,
 }: {
   restrictedFields: RestrictedFieldsPermissions;
   flatObjectMetadata: Pick<
@@ -49,10 +51,15 @@ export const getAllSelectableFields = ({
     >
   >;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
+  fieldIdsToSelect?: ReadonlySet<string>;
 }): SelectableFieldsStructured => {
   const result: SelectableFieldsStructured = {};
 
   for (const fieldId of flatObjectMetadata.fieldIds) {
+    if (isDefined(fieldIdsToSelect) && !fieldIdsToSelect.has(fieldId)) {
+      continue;
+    }
+
     const flatField = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
       flatEntityId: fieldId,

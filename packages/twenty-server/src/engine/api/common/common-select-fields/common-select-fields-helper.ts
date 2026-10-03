@@ -20,6 +20,7 @@ export class CommonSelectFieldsHelper {
     depth,
     onlyUseLabelIdentifierFieldsInRelations = false,
     recurseIntoJunctionTableRelations = false,
+    fieldIdsToSelect,
   }: {
     objectsPermissions: ObjectsPermissions;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -28,6 +29,7 @@ export class CommonSelectFieldsHelper {
     depth: Depth | undefined;
     onlyUseLabelIdentifierFieldsInRelations?: boolean;
     recurseIntoJunctionTableRelations?: boolean;
+    fieldIdsToSelect?: ReadonlySet<string>;
   }): CommonSelectedFields => {
     const restrictedFields =
       objectsPermissions[flatObjectMetadata.id].restrictedFields;
@@ -40,12 +42,14 @@ export class CommonSelectFieldsHelper {
       depth,
       onlyUseLabelIdentifierFieldsInRelations,
       recurseIntoJunctionTableRelations,
+      fieldIdsToSelect,
     });
 
     const selectableFields = getAllSelectableFields({
       restrictedFields,
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      fieldIdsToSelect,
     });
 
     return {

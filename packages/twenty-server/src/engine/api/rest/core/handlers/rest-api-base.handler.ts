@@ -8,8 +8,12 @@ import {
 } from 'twenty-shared/utils';
 
 import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
+import { computeFieldIdsToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-field-ids-to-select.util';
+import { getReadableFlatFields } from 'src/engine/api/common/common-select-fields/utils/get-readable-flat-fields.util';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { REST_API_DEFAULT_MAX_FIELDS } from 'src/engine/api/rest/input-request-parsers/constants/rest-api-default-max-fields.constant';
+import { parseFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/fields-parser-utils/parse-fields-rest-request.util';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
@@ -150,6 +154,66 @@ export abstract class RestApiBaseHandler {
       flatObjectMetadata,
       depth,
     });
+  }
+
+  async computeRecordSelectedFields({
+    request,
+    authContext,
+    depth,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: {
+    request: AuthenticatedRequest;
+    authContext: WorkspaceAuthContext;
+    depth?: Depth | undefined;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }): Promise<{
+    selectedFields: CommonSelectedFields;
+    isFieldSetRestricted: boolean;
+  }> {
+    const { objectsPermissions } =
+      await this.getObjectsPermissions(authContext);
+
+    const restrictedFields =
+      objectsPermissions[flatObjectMetadata.id].restrictedFields;
+
+    const readableFlatFields = getReadableFlatFields({
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      restrictedFields,
+    });
+
+    const requestedFieldNames = parseFieldsRestRequest({
+      request,
+      objectNameSingular: flatObjectMetadata.nameSingular,
+      readableFlatFields,
+      depth,
+    });
+
+    const fieldIdsToSelect = computeFieldIdsToSelect({
+      flatObjectMetadata,
+      readableFlatFields,
+      depth,
+      requestedFieldNames,
+      maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
+    });
+
+    const selectedFields = this.commonSelectFieldsHelper.computeFromDepth({
+      objectsPermissions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+      depth,
+      fieldIdsToSelect,
+    });
+
+    return {
+      selectedFields,
+      isFieldSetRestricted: isDefined(fieldIdsToSelect),
+    };
   }
 
   async buildCommonOptions(request: AuthenticatedRequest) {
