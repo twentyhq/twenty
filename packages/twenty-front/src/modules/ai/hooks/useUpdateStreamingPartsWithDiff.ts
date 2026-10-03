@@ -3,7 +3,7 @@ import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspa
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRef } from 'react';
+import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -18,7 +18,9 @@ export const useUpdateStreamingPartsWithDiff = () => {
     useProcessWorkspaceSetupCompletion();
 
   // messages are replaced, never mutated, so the last one seen can be kept by reference
-  const lastSeenMessageByIdRef = useRef(new Map<string, ExtendedUIMessage>());
+  const [lastSeenMessageById] = useState(
+    () => new Map<string, ExtendedUIMessage>(),
+  );
 
   const isMessageFromCurrentSession = (message: ExtendedUIMessage) => {
     if (agentChatUISessionStartTime === null) {
@@ -37,15 +39,19 @@ export const useUpdateStreamingPartsWithDiff = () => {
   const updateStreamingPartsWithDiff = (
     incomingMessages: ExtendedUIMessage[],
   ) => {
-    const lastSeenMessageById = lastSeenMessageByIdRef.current;
-
-    // only the messages on screen are kept, so other threads' messages are released
-    lastSeenMessageByIdRef.current = new Map(
-      incomingMessages.map((message) => [message.id, message]),
+    const lastSeenMessages = incomingMessages.map((message) =>
+      lastSeenMessageById.get(message.id),
     );
 
-    for (const incomingMessage of incomingMessages) {
-      const lastSeenMessage = lastSeenMessageById.get(incomingMessage.id);
+    // only the messages on screen are kept, so other threads' messages are released
+    lastSeenMessageById.clear();
+
+    for (const message of incomingMessages) {
+      lastSeenMessageById.set(message.id, message);
+    }
+
+    for (const [index, incomingMessage] of incomingMessages.entries()) {
+      const lastSeenMessage = lastSeenMessages[index];
 
       // a stream flush keeps the unchanged messages, a refetch rebuilds them all
       if (
