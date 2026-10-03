@@ -4,7 +4,7 @@ import { Key } from 'ts-key-enum';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
-import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
+import { isAtLeastOneRecordSelectedComponentSelector } from '@/object-record/record-selection/states/selectors/isAtLeastOneRecordSelectedComponentSelector';
 import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -17,12 +17,10 @@ export const RecordBoardBodyEscapeHotkeyEffect = () => {
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
   const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
 
-  const selectedRecordIds = useAtomComponentSelectorValue(
-    selectedRecordIdsComponentSelector,
+  const isAtLeastOneRecordSelected = useAtomComponentSelectorValue(
+    isAtLeastOneRecordSelectedComponentSelector,
     recordBoardId,
   );
-
-  const isAtLeastOneRecordSelected = selectedRecordIds.length > 0;
 
   const handleEscape = () => {
     unfocusBoardCard();

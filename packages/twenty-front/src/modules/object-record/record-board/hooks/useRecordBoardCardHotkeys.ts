@@ -7,7 +7,7 @@ import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useR
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
-import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
+import { isAtLeastOneRecordSelectedComponentSelector } from '@/object-record/record-selection/states/selectors/isAtLeastOneRecordSelectedComponentSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -32,12 +32,10 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
     recordId,
   );
 
-  const selectedRecordIds = useAtomComponentSelectorValue(
-    selectedRecordIdsComponentSelector,
+  const isAtLeastOneRecordSelected = useAtomComponentSelectorValue(
+    isAtLeastOneRecordSelectedComponentSelector,
     recordBoardId,
   );
-
-  const isAtLeastOneRecordSelected = selectedRecordIds.length > 0;
 
   const handleSelectCard = () => {
     setRecordAsSelected(recordId, !isRecordSelected);

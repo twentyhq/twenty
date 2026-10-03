@@ -16,13 +16,12 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
     recordBoardId,
   );
 
-  const isRecordBoardCardSelectedFamilyState =
-    useAtomComponentFamilyStateCallbackState(
-      isRecordSelectedComponentFamilyState,
-      recordBoardId,
-    );
+  const isRecordSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
+    isRecordSelectedComponentFamilyState,
+    recordBoardId,
+  );
 
-  const recordBoardSelectedRecordIds = useAtomComponentSelectorCallbackState(
+  const selectedRecordIds = useAtomComponentSelectorCallbackState(
     selectedRecordIdsComponentSelector,
     recordBoardId,
   );
@@ -36,7 +35,7 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
 
   const setRecordAsSelected = useCallback(
     (recordId: string, isSelected: boolean) => {
-      const atom = isRecordBoardCardSelectedFamilyState(recordId);
+      const atom = isRecordSelectedFamilyState(recordId);
       const isRecordCurrentlySelected = store.get(atom);
 
       if (isRecordCurrentlySelected === isSelected) {
@@ -45,16 +44,16 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
 
       store.set(atom, isSelected);
     },
-    [isRecordBoardCardSelectedFamilyState, store],
+    [isRecordSelectedFamilyState, store],
   );
 
   const checkIfLastUnselectAndCloseDropdown = useCallback(() => {
-    const recordIds = store.get(recordBoardSelectedRecordIds);
+    const recordIds = store.get(selectedRecordIds);
 
     if (recordIds.length === 0) {
       closeDropdown(dropdownId);
     }
-  }, [recordBoardSelectedRecordIds, store, closeDropdown, dropdownId]);
+  }, [selectedRecordIds, store, closeDropdown, dropdownId]);
 
   return {
     setRecordAsSelected,
