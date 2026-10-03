@@ -1,5 +1,6 @@
 import { type StringFilter } from '@/types';
 import { convertLikePatternToRegexOrThrow } from '@/utils/filter/utils/convertLikePatternToRegexOrThrow';
+import { stripAccents } from '@/utils/filter/utils/stripAccents';
 
 export const isMatchingStringFilter = ({
   stringFilter,
@@ -36,11 +37,11 @@ export const isMatchingStringFilter = ({
     }
     case stringFilter.ilike !== undefined: {
       const regexCaseInsensitive = convertLikePatternToRegexOrThrow({
-        pattern: stringFilter.ilike,
+        pattern: stripAccents(stringFilter.ilike),
         isCaseInsensitive: true,
       });
 
-      return regexCaseInsensitive.test(value);
+      return regexCaseInsensitive.test(stripAccents(value));
     }
     case stringFilter.in !== undefined: {
       return stringFilter.in.includes(value);

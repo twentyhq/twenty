@@ -156,7 +156,7 @@ export const computeWhereConditionParts = ({
       };
     case 'ilike':
       return {
-        sql: `${fieldReference}::text ILIKE :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
+        sql: `public.unaccent_immutable(${fieldReference}::text) ILIKE public.unaccent_immutable(:${key}${paramSuffix})${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
         params: { [`${key}${paramSuffix}`]: `${value}` },
       };
     case 'startsWith':
@@ -200,7 +200,7 @@ export const computeWhereConditionParts = ({
       };
     case 'containsIlike':
       return {
-        sql: `EXISTS (SELECT 1 FROM unnest(${fieldReference}) AS elem WHERE elem ILIKE :${key}${paramSuffix})`,
+        sql: `EXISTS (SELECT 1 FROM unnest(${fieldReference}) AS elem WHERE public.unaccent_immutable(elem) ILIKE public.unaccent_immutable(:${key}${paramSuffix}))`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     default:

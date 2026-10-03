@@ -214,4 +214,33 @@ describe('isMatchingStringFilter', () => {
       ).toBe(false);
     });
   });
+
+  describe('accent insensitivity for ilike', () => {
+    it('matches accented value with unaccented pattern', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: '%geosynthese%' },
+          value: 'Géosynthèse',
+        }),
+      ).toBe(true);
+    });
+
+    it('matches unaccented value with accented pattern', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: '%café%' },
+          value: 'cafe',
+        }),
+      ).toBe(true);
+    });
+
+    it('matches German umlauts and complex diacritics', () => {
+      expect(
+        isMatchingStringFilter({
+          stringFilter: { ilike: '%munchen%' },
+          value: 'München',
+        }),
+      ).toBe(true);
+    });
+  });
 });

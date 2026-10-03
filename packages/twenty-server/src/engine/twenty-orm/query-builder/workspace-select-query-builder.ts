@@ -1113,7 +1113,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         case 'like':
           return `${quotedColumn} LIKE :${nextParameter(value.value)}`;
         case 'ilike':
-          return `${quotedColumn} ILIKE :${nextParameter(value.value)}`;
+          return `public.unaccent_immutable(${quotedColumn}::text) ILIKE public.unaccent_immutable(:${nextParameter(value.value)})`;
         case 'arrayContains':
           return `${quotedColumn} @> :${nextParameter(value.value)}`;
         case 'isNull':
