@@ -35,14 +35,14 @@ export const AgentChatContextPreview = () => {
 
   return (
     <StyledPreviewsContainer>
-      {agentChatSelectedFiles.map((file) => (
+      {agentChatSelectedFiles.map((file, index) => (
         <AgentChatFilePreview
           file={file}
-          key={file.name}
+          key={`${index}-${file.name}`}
           onRemove={() => {
             setAgentChatSelectedFiles(
               agentChatSelectedFiles.filter(
-                (selectedFile) => selectedFile.name !== file.name,
+                (selectedFile) => selectedFile !== file,
               ),
             );
           }}

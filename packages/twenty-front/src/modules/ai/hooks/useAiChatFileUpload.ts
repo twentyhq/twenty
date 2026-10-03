@@ -3,6 +3,7 @@ import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesS
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
+import { useStore } from 'jotai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 
@@ -19,12 +20,17 @@ export const useAiChatFileUpload = () => {
   const setAgentChatUploadedFiles = useSetAtomState(
     agentChatUploadedFilesState,
   );
+  const store = useStore();
 
   const sendFile = async (file: File): Promise<AgentChatFileUIPart | null> => {
     try {
       const uploadedFile = await directUploadFile(file, {
         fileFolder: FileFolder.AgentChat,
       });
+
+      if (!store.get(agentChatSelectedFilesState.atom).includes(file)) {
+        return null;
+      }
 
       return {
         filename: file.name,

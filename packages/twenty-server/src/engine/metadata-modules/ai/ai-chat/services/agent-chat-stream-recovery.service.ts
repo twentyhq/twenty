@@ -73,13 +73,16 @@ export class AgentChatStreamRecoveryService {
       failedAt: new Date().toISOString(),
     };
 
-    await this.releaseStreamClaim({
+    const isReleased = await this.releaseStreamClaim({
       threadId,
       workspaceId,
       streamId,
       lastStreamError,
     });
-    await this.publishStreamError({ threadId, workspaceId, lastStreamError });
+
+    if (isReleased) {
+      await this.publishStreamError({ threadId, workspaceId, lastStreamError });
+    }
   }
 
   async reapDeadStream({

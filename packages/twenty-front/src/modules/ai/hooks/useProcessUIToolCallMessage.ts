@@ -17,9 +17,11 @@ export const useProcessUIToolCallMessage = () => {
       uiToolCallMessage.parts,
     ).filter((part) => part.output?.success === true);
 
-    for (const toolExecutionPart of claimUnprocessedToolCallParts(
-      succeededToolExecutionParts,
-    )) {
+    for (const toolExecutionPart of succeededToolExecutionParts) {
+      if (claimUnprocessedToolCallParts([toolExecutionPart]).length === 0) {
+        continue;
+      }
+
       const navigateAppOutput = toolExecutionPart.output?.result;
 
       if (!isDefined(navigateAppOutput)) {

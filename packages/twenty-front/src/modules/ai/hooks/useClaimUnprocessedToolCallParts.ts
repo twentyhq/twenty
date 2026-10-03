@@ -19,9 +19,16 @@ export const useClaimUnprocessedToolCallParts = () => {
       processedToolExecutionPartIdsCallbackState,
     );
 
-    const unprocessedToolCallParts = toolCallParts.filter(
-      (part) => !processedToolExecutionPartIds.includes(part.toolCallId),
-    );
+    const claimedToolCallIds = new Set(processedToolExecutionPartIds);
+    const unprocessedToolCallParts = toolCallParts.filter((part) => {
+      if (claimedToolCallIds.has(part.toolCallId)) {
+        return false;
+      }
+
+      claimedToolCallIds.add(part.toolCallId);
+
+      return true;
+    });
 
     if (unprocessedToolCallParts.length > 0) {
       store.set(processedToolExecutionPartIdsCallbackState, [

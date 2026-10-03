@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
@@ -19,7 +19,6 @@ import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
-import { getAgentChatThreadDisplayTitle } from '@/ai/utils/getAgentChatThreadDisplayTitle';
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { getAgentChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -168,7 +167,9 @@ export const AiChatThreadListItem = ({
     workspaceMembers: currentWorkspaceMembers,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
   });
-  const displayTitle = getAgentChatThreadDisplayTitle(thread.title);
+  const displayTitle = isNonEmptyString(thread.title)
+    ? thread.title
+    : t`Untitled`;
   const { formatAgentChatThreadDay } = useFormatAgentChatThreadDate();
 
   const getActivityTimeLabel = () => {
