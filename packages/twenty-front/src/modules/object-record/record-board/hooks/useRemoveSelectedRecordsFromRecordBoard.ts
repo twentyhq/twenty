@@ -4,11 +4,13 @@ import { useResetRecordSelection } from '@/object-record/record-selection/hooks/
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { ViewType } from '@/views/types/ViewType';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -39,8 +41,23 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
 
   const { resetRecordSelection } = useResetRecordSelection(recordBoardIndexId);
 
+  const recordIndexViewType = useAtomComponentStateValue(
+    recordIndexViewTypeState,
+    recordBoardIndexId,
+  );
+
+  // Table and board share the selection, but only the board drops deleted
+  // cards from its columns before the server confirms
   const removeSelectedRecordsFromRecordBoard = useCallback(() => {
-    const deletedRecordIds = store.get(selectedRecordIds) as string[];
+    if (recordIndexViewType !== ViewType.KANBAN) {
+      return;
+    }
+
+    const deletedRecordIds = store.get(selectedRecordIds);
+
+    // Cleared while the cards are still listed, since the selection only
+    // covers listed records
+    resetRecordSelection();
 
     if (
       !isDefined(recordIndexGroupFieldMetadataItem) ||
@@ -79,9 +96,8 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
         );
       }
     }
-
-    resetRecordSelection();
   }, [
+    recordIndexViewType,
     store,
     recordIndexGroupFieldMetadataItem,
     recordIndexRecordIdsByGroupCallbackState,
