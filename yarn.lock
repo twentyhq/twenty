@@ -4760,10 +4760,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bufbuild/protobuf@npm:^2.12.1":
-  version: 2.13.0
-  resolution: "@bufbuild/protobuf@npm:2.13.0"
-  checksum: 10c0/bb4d39512302887399355ac2ba1228e562c1cae818ff88b4b85b3060758aba5fec94786fe80f69de8878f98e730911c0bd145741adb582d0abf6b42de921e50c
+"@bufbuild/protobuf@npm:^2.14.1":
+  version: 2.16.0
+  resolution: "@bufbuild/protobuf@npm:2.16.0"
+  checksum: 10c0/ba3bc677e801a71d9cf0bdc138174144e493706efec3a47865eb07e956423315a80ff12301f6835d352202ae4d6599f2946a7c67338cf0079ed2a06af1a18097
   languageName: node
   linkType: hard
 
@@ -5082,22 +5082,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@connectrpc/connect-web@npm:^2.1.2":
-  version: 2.1.2
-  resolution: "@connectrpc/connect-web@npm:2.1.2"
+"@connectrpc/connect-web@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@connectrpc/connect-web@npm:2.2.0"
   peerDependencies:
     "@bufbuild/protobuf": ^2.7.0
-    "@connectrpc/connect": 2.1.2
-  checksum: 10c0/304667186990d79e61ace8af03a39c5474e6ecb21282eeaa9e216a0e214524003891005ff3cfbda33230c21b779cfece530bf8cfdd48550b7861621513d18e0e
+    "@connectrpc/connect": 2.2.0
+  checksum: 10c0/ad98062fc5e9a027a917487d9abcab64dccfc8bbb357e78172be787d669f7b611e6ccd75148633c1b874222060f803f2ae4a5ae72c2708a84658dc9786b2d958
   languageName: node
   linkType: hard
 
-"@connectrpc/connect@npm:^2.1.2":
-  version: 2.1.2
-  resolution: "@connectrpc/connect@npm:2.1.2"
+"@connectrpc/connect@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@connectrpc/connect@npm:2.2.0"
   peerDependencies:
     "@bufbuild/protobuf": ^2.7.0
-  checksum: 10c0/4e1500089023b752efd44fa940a5ae1e1fa00e1bebc4ba0ced272bb935920d8c3b85b77450e644ad442bb8ca9a275b0c17136f896ba8eff036178131db01d615
+  checksum: 10c0/f03a5a8c74d74a9016027280173f44d983f69e9b999dcad47520c2dd474be2289bd33b22e1e374173dc919c6ffb1ab5886464d6c279bca26ff2432231bdf0915
   languageName: node
   linkType: hard
 
@@ -29882,25 +29882,25 @@ __metadata:
   linkType: hard
 
 "e2b@npm:^2.39.0":
-  version: 2.45.0
-  resolution: "e2b@npm:2.45.0"
+  version: 2.51.0
+  resolution: "e2b@npm:2.51.0"
   dependencies:
-    "@bufbuild/protobuf": "npm:^2.12.1"
-    "@connectrpc/connect": "npm:^2.1.2"
-    "@connectrpc/connect-web": "npm:^2.1.2"
+    "@bufbuild/protobuf": "npm:^2.14.1"
+    "@connectrpc/connect": "npm:^2.2.0"
+    "@connectrpc/connect-web": "npm:^2.2.0"
     chalk: "npm:^5.3.0"
     compare-versions: "npm:^6.1.0"
     dockerfile-ast: "npm:^0.7.1"
     glob: "npm:^13.0.6"
     openapi-fetch: "npm:^0.14.1"
     platform: "npm:^1.3.6"
-    tar: "npm:^7.5.19"
-    undici: "npm:^7.29.0"
-    undici8: "npm:undici@8.10.0"
+    tar: "npm:^7.5.22"
+    undici: "npm:^7.29.1"
+    undici8: "npm:undici@8.10.2"
   dependenciesMeta:
     undici8:
       optional: true
-  checksum: 10c0/f171bf07ea115fbfa1ab21f1cb749361fd57a7a313012988860972fac13309eb2ae20090256263debd9b15cf24f7308ba42904a653d139e4b62b841a0cf0543b
+  checksum: 10c0/b5d62b8f11ca94781cccadcc9212891ee9e670c434f24997a4ebe579f31165a24b9d05a450571ae46238f25722ff34cc9a75406abae6bb97beed6f0e5f1d1380
   languageName: node
   linkType: hard
 
@@ -49395,7 +49395,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar@npm:^7.5.19":
+"tar@npm:^7.5.22":
   version: 7.5.22
   resolution: "tar@npm:7.5.22"
   dependencies:
@@ -51595,10 +51595,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici8@npm:undici@8.10.0":
-  version: 8.10.0
-  resolution: "undici@npm:8.10.0"
-  checksum: 10c0/37ae2b1db8f65c3a003504e2040e96887b99f9db16ba07dcf49c37ed8b7f8c72f4452f2d46f52f7c9e49518fe8325e3b5e7e02ac3a2424886bd67d4b62a0ecab
+"undici8@npm:undici@8.10.2":
+  version: 8.10.2
+  resolution: "undici@npm:8.10.2"
+  checksum: 10c0/66d7fc69149207cab570d6abbc9e965b6afe1ae889a7d46945b431165c973d6a56f3dd8b70a856e7ae1e550b6366a1cde6f06e68640587f0dadca38de72995ee
   languageName: node
   linkType: hard
 
