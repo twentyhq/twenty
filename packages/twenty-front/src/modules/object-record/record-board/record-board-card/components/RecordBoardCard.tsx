@@ -4,7 +4,7 @@ import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/get
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
-import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
@@ -82,11 +82,10 @@ export const RecordBoardCard = () => {
       `record-board-card-${recordId}`,
     );
 
-  const [isRecordBoardCardSelected, setIsRecordBoardCardSelected] =
-    useAtomComponentFamilyState(
-      isRecordBoardCardSelectedComponentFamilyState,
-      recordId,
-    );
+  const [isRecordSelected, setIsRecordSelected] = useAtomComponentFamilyState(
+    isRecordSelectedComponentFamilyState,
+    recordId,
+  );
 
   const isRecordBoardCardFocused = useAtomComponentFamilyStateValue(
     isRecordBoardCardFocusedComponentFamilyState,
@@ -128,7 +127,7 @@ export const RecordBoardCard = () => {
 
   const handleContextMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
-    setIsRecordBoardCardSelected(true);
+    setIsRecordSelected(true);
     setRecordIndexCommandMenuDropdownPosition({
       x: event.clientX,
       y: event.clientY,
@@ -180,7 +179,7 @@ export const RecordBoardCard = () => {
             <RecordDragMultiDragStack />
           )}
           <RecordCard
-            data-selected={isRecordBoardCardSelected}
+            data-selected={isRecordSelected}
             data-focused={isRecordBoardCardFocused}
             data-active={isRecordBoardCardActive}
             onMouseLeave={onMouseLeaveBoard}
