@@ -226,6 +226,51 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
+  agentChatThreadParticipant: (
+    args: Omit<
+      CreateStandardObjectArgs<'agentChatThreadParticipant'>,
+      'context' | 'objectName'
+    >,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'agentChatThreadParticipant',
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
+        nameSingular: 'agentChatThreadParticipant',
+        namePlural: 'agentChatThreadParticipants',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Chat thread participant',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Chat thread participants',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Read and inbox state of a member in a chat thread',
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconMessage',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        // Each row is one member's private inbox state, so it is only reached
+        // through the chat resolvers, never through the record API
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+    }),
   agentTurnEvaluation: (
     args: Omit<
       CreateStandardObjectArgs<'agentTurnEvaluation'>,

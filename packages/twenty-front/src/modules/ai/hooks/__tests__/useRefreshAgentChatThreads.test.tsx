@@ -21,7 +21,7 @@ const chatObjectMetadataItemAtom = atom<unknown>({
   id: 'chat-object',
   nameSingular: 'agentChatThread',
   namePlural: 'agentChatThreads',
-  fields: [{ name: 'title' }],
+  fields: [{ name: 'title' }, { name: 'lastActivityAt' }],
   readableFields: [{ name: 'title' }],
 });
 
@@ -40,6 +40,14 @@ const refreshAgentChatThreadPermissions = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAgentChatThreadPermissions', () => ({
   useRefreshAgentChatThreadPermissions: () => ({
     refreshAgentChatThreadPermissions,
+  }),
+}));
+
+const refreshAgentChatThreadParticipants = jest.fn();
+
+jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
+  useAgentChatThreadParticipants: () => ({
+    refreshAgentChatThreadParticipants,
   }),
 }));
 
@@ -99,7 +107,7 @@ describe('useRefreshAgentChatThreads', () => {
     expect(result.current.refreshAgentChatThreads).toBe(refresh);
   });
 
-  it('loads the most recently updated chats through the record API', async () => {
+  it('loads the most recently active chats and the member read state', async () => {
     const store = buildStore();
     const thread = buildThread('thread-1', 'Loaded thread');
     queryMock.mockResolvedValue(buildPage([thread], { hasNextPage: true }));
@@ -112,12 +120,13 @@ describe('useRefreshAgentChatThreads', () => {
     expect(queryMock).toHaveBeenCalledWith(
       expect.objectContaining({
         variables: expect.objectContaining({
-          orderBy: [{ updatedAt: 'DescNullsLast' }],
+          orderBy: [{ lastActivityAt: 'DescNullsLast' }],
           lastCursor: null,
         }),
         fetchPolicy: 'network-only',
       }),
     );
+    expect(refreshAgentChatThreadParticipants).toHaveBeenCalled();
     expect(store.get(agentChatThreadListState.atom)).toEqual({
       threadIds: ['thread-1'],
       hasNextPage: true,
@@ -126,6 +135,31 @@ describe('useRefreshAgentChatThreads', () => {
     expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
       { id: 'thread-1', title: 'Loaded thread' },
     ]);
+  });
+
+  it('orders by last change on a workspace the 2.46 upgrade has not reached', async () => {
+    const store = buildStore();
+    store.set(chatObjectMetadataItemAtom, {
+      id: 'chat-object',
+      nameSingular: 'agentChatThread',
+      namePlural: 'agentChatThreads',
+      fields: [{ name: 'title' }],
+      readableFields: [{ name: 'title' }],
+    });
+    queryMock.mockResolvedValue(buildPage([buildThread('thread-1', 'Chat')]));
+    const result = renderRefresh(store);
+
+    await act(async () => {
+      await result.current.refreshAgentChatThreads();
+    });
+
+    expect(queryMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: expect.objectContaining({
+          orderBy: [{ updatedAt: 'DescNullsLast' }],
+        }),
+      }),
+    );
   });
 
   it('appends the next page after the loaded chats', async () => {

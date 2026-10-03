@@ -613,10 +613,10 @@ export class ChatExecutionService {
       }),
       providerOptions: getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
-        providerOptions:
-          this.aiModelConfigService.getReasoningProviderOptions(
-            registeredModel,
-          ),
+        providerOptions: this.aiModelConfigService.getReasoningProviderOptions(
+          registeredModel,
+          { shouldIncludeReasoningSummary: true },
+        ),
         promptCacheKey: threadId,
       }),
       prepareStep: async ({ messages }) => {
