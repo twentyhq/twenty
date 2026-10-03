@@ -18,8 +18,11 @@ const StyledLink = styled.a`
   gap: var(--t-spacing-1);
   height: 10px;
   justify-content: center;
-  max-width: calc(100% - var(--t-spacing-multiplicator) * 2px);
-  min-width: fit-content;
+  flex-shrink: 0;
+  // Never wider than its container (content box + inline padding + border),
+  // so a long label is ellipsized inside the chip instead of the chip being
+  // clipped by the container, which in RTL cuts the start of an LTR value.
+  max-width: calc(100% - 2 * var(--t-spacing-2) - 2px);
   overflow: hidden;
   padding: var(--t-spacing-1) var(--t-spacing-2);
   text-decoration: none;
@@ -40,10 +43,16 @@ const StyledLink = styled.a`
   }
 `;
 
+const StyledLabel = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
 type RoundedLinkProps = {
   href: string;
   label?: string;
   color?: 'primary' | 'secondary';
+  dir?: 'ltr' | 'rtl' | 'auto';
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
   className?: string;
 };
@@ -52,6 +61,9 @@ export const RoundedLink = ({
   label,
   href,
   color = 'primary',
+  // Emails, URLs and names can read in either direction whatever the page
+  // direction; by default each one is laid out and truncated by its own.
+  dir = 'auto',
   onClick,
   className,
 }: RoundedLinkProps) => {
@@ -69,11 +81,12 @@ export const RoundedLink = ({
       href={getSafeUrl(href)}
       target="_blank"
       rel="noreferrer"
+      dir={dir}
       onClick={handleClick}
       data-color={color}
       className={className}
     >
-      {label}
+      <StyledLabel>{label}</StyledLabel>
     </StyledLink>
   );
 };

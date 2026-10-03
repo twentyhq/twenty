@@ -120,6 +120,9 @@ export const OverflowingTextWithTooltip = memo(
                 ? { lineClamp: displayedMaxRows || 1 }
                 : { truncate: true })}
               data-testid="tooltip"
+              // User-entered values can read in either direction whatever the
+              // page direction; each one truncates at its own end.
+              dir="auto"
               data-content-overflowing={isTitleOverflowing ? '' : undefined}
               className={clsx(
                 isMultiline
