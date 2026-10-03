@@ -49,6 +49,7 @@ import {
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 type PendingRecord = { rowNumber: number; record: Record<string, unknown> };
 
@@ -70,6 +71,7 @@ export class RecordImportRunnerWorkspaceService {
     private readonly recordImportWorkspaceService: RecordImportWorkspaceService,
     private readonly commonCreateManyQueryRunnerService: CommonCreateManyQueryRunnerService,
     private readonly i18nService: I18nService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.entityEventsToDbQueue)
     private readonly entityEventsQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.webhookQueue)
@@ -147,7 +149,12 @@ export class RecordImportRunnerWorkspaceService {
 
     await this.recordImportSessionService.update(session, (current) => ({
       ...current,
-      status,
+      // A cancel requested during the last batch has no checkpoint left to
+      // observe it
+      status:
+        status === 'COMPLETED' && current.status === 'CANCELLING'
+          ? 'CANCELLED'
+          : status,
       result,
       reportFileId,
       errorMessage,
@@ -300,7 +307,11 @@ export class RecordImportRunnerWorkspaceService {
           batchStart,
           batchStart + RECORD_IMPORT_BATCH_SIZE,
         );
-        const failedRowNumbers = await this.writeBatch(context, batch);
+        const failedRowNumbers = await this.writeBatch(
+          context,
+          batch,
+          checkpoint,
+        );
 
         result.importedRecordCount += batch.length - failedRowNumbers.length;
         result.failedRowCount += failedRowNumbers.length;
@@ -406,16 +417,27 @@ export class RecordImportRunnerWorkspaceService {
   private async writeBatch(
     context: RecordImportContext,
     batch: PendingRecord[],
+    checkpoint: () => Promise<void>,
   ): Promise<number[]> {
     try {
+      // A failure after the insert, e.g. while reading the records back, must
+      // roll it back, or the retry below would insert rows without a unique
+      // key a second time
       await withWorkspaceAuthContext(context.requester, () =>
-        this.commonCreateManyQueryRunnerService.execute(
-          {
-            data: batch.map(({ record }) => record),
-            upsert: true,
-            selectedFields: { id: true },
-          },
-          context.queryRunnerContext,
+        this.workspaceOrmManager.executeInWorkspaceContext(
+          () =>
+            this.workspaceOrmManager.runInWorkspaceTransaction(
+              (transactionScope) =>
+                this.commonCreateManyQueryRunnerService.execute(
+                  {
+                    data: batch.map(({ record }) => record),
+                    upsert: true,
+                    selectedFields: { id: true },
+                  },
+                  { ...context.queryRunnerContext, transactionScope },
+                ),
+            ),
+          context.requester,
         ),
       );
 
@@ -427,8 +449,9 @@ export class RecordImportRunnerWorkspaceService {
       ) {
         // The API speed limit paces imports like any other client (LOAD-1)
         await setTimeout(error.exhaustedScope?.retryAfterMs ?? 1000);
+        await checkpoint();
 
-        return this.writeBatch(context, batch);
+        return this.writeBatch(context, batch, checkpoint);
       }
 
       if (
@@ -449,8 +472,8 @@ export class RecordImportRunnerWorkspaceService {
       const middle = Math.ceil(batch.length / 2);
 
       return [
-        ...(await this.writeBatch(context, batch.slice(0, middle))),
-        ...(await this.writeBatch(context, batch.slice(middle))),
+        ...(await this.writeBatch(context, batch.slice(0, middle), checkpoint)),
+        ...(await this.writeBatch(context, batch.slice(middle), checkpoint)),
       ];
     }
   }
