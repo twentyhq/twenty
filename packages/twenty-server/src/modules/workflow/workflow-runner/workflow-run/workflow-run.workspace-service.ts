@@ -529,15 +529,16 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
+    const stepInfos = workflowRun.state?.stepInfos ?? {};
+    const stepInfo = isDefined(stepId)
+      ? stepInfos[stepId]
+      : Object.values(stepInfos).find(
+          (candidateStepInfo) => candidateStepInfo?.threadId === threadId,
+        );
+
     return (
       workflowRun.status === WorkflowRunStatus.RUNNING &&
-      Object.entries(workflowRun.state?.stepInfos ?? {}).some(
-        ([candidateStepId, stepInfo]) =>
-          (isDefined(stepId)
-            ? candidateStepId === stepId
-            : stepInfo?.threadId === threadId) &&
-          stepInfo?.status === StepStatus.RUNNING,
-      )
+      stepInfo?.status === StepStatus.RUNNING
     );
   }
 
