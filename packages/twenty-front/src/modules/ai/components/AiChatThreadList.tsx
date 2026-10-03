@@ -20,7 +20,6 @@ type AiChatThreadListProps = {
   threads: AgentChatThreadRecord[];
   surface: AiChatThreadActionsSurface;
   selectedThreadIds?: string[];
-  isGroupedByDate?: boolean;
   onThreadClick: (
     thread: AgentChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
@@ -32,7 +31,6 @@ export const AiChatThreadList = ({
   threads,
   surface,
   selectedThreadIds = [],
-  isGroupedByDate = true,
   onThreadClick,
   onDetachThread,
 }: AiChatThreadListProps) => {
@@ -53,14 +51,12 @@ export const AiChatThreadList = ({
 
   return (
     <>
-      {isGroupedByDate
-        ? groupThreadsByDate(threads).map((dateGroup) => (
-            <div key={dateGroup.id}>
-              <StyledGroupTitle>{dateGroup.title}</StyledGroupTitle>
-              {dateGroup.threads.map(renderThread)}
-            </div>
-          ))
-        : threads.map(renderThread)}
+      {groupThreadsByDate(threads).map((dateGroup) => (
+        <div key={dateGroup.id}>
+          <StyledGroupTitle>{dateGroup.title}</StyledGroupTitle>
+          {dateGroup.threads.map(renderThread)}
+        </div>
+      ))}
     </>
   );
 };

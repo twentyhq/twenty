@@ -7,21 +7,21 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components';
 import { IconChevronLeft, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
 import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPane';
-import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatThreadList } from '@/ai/components/AiChatThreadList';
-import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
+import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
+import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
+import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
@@ -77,7 +77,12 @@ const AiChatInboxPageContent = () => {
   const { threadId } = useParams();
   const selectedThreadId =
     isDefined(threadId) && isValidUuid(threadId) ? threadId : undefined;
-  const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
+  const theme = useTheme();
+  const agentChatThreadFilterStatus = useAtomStateValue(
+    agentChatThreadFilterStatusState,
+  );
+  const FilterStatusIcon =
+    AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[agentChatThreadFilterStatus];
   const { threads, loading } = useChatThreads(agentChatVisibleThreadsSelector);
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
@@ -146,7 +151,12 @@ const AiChatInboxPageContent = () => {
           <PageCardLayout
             header={
               <PageCardHeader
-                title={<AiChatThreadFilterDropdown />}
+                icon={<FilterStatusIcon size={theme.icon.size.md} />}
+                title={t(
+                  AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[
+                    agentChatThreadFilterStatus
+                  ],
+                )}
                 actionButton={
                   <Button
                     size="sm"
@@ -180,9 +190,6 @@ const AiChatInboxPageContent = () => {
                     threads={threads}
                     surface={AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE}
                     selectedThreadIds={highlightedThreadIds}
-                    isGroupedByDate={
-                      agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE
-                    }
                     onThreadClick={handleThreadClick}
                   />
                 )}
