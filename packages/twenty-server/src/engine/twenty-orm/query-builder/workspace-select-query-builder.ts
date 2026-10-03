@@ -23,6 +23,7 @@ import {
 import { WorkspaceMutationQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-mutation-query-builder';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm/sql/utils/build-order-by-clauses.util';
+import { collectQualifiedAndMainAliasColumnNames } from 'src/engine/twenty-orm/sql/utils/collect-qualified-and-main-alias-column-names.util';
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm/sql/utils/collect-referenced-column-names.util';
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import {
@@ -33,6 +34,7 @@ import {
   buildProjection,
   buildSelectStatement,
   buildWhereExpression,
+  collectJoinedColumnProjections,
   collectStatementAliases,
   createRowToEntityMapper,
   normaliseColumnExpression,
@@ -763,6 +765,62 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
           ),
         })),
       distinctOnExpressions: this.distinctOnExpressions,
+    });
+  }
+
+  getJoinedSelectedColumnNamesByAlias(): Record<string, string[]> {
+    const columnNamesByAlias: Record<string, string[]> = {};
+
+    for (const { joinAlias, columnName } of collectJoinedColumnProjections(
+      this.toSelectStatementState(),
+    )) {
+      columnNamesByAlias[joinAlias] = [
+        ...(columnNamesByAlias[joinAlias] ?? []),
+        columnName,
+      ];
+    }
+
+    return columnNamesByAlias;
+  }
+
+  // Columns the query filters, correlates or groups on, the projection aside.
+  // A column written without its alias counts as the main alias's.
+  getFilterReferencedColumnNamesByAlias(): Record<string, string[]> {
+    const aliases = collectStatementAliases(this.toSelectStatementState());
+    const expressions = [
+      ...this.whereClauses.map((whereClause) => whereClause.sql),
+      ...this.existsFilterClauses.flatMap((existsFilterClause) => [
+        existsFilterClause.conditionSql,
+        existsFilterClause.correlationCondition,
+      ]),
+      ...this.joinClauses
+        .map(
+          (joinClause) =>
+            joinClause.condition ?? joinClause.toManyPlainCondition,
+        )
+        .filter(isDefined),
+      ...this.groupByExpressions,
+    ].map((expression) => quoteQualifiedAliasReferences(expression, aliases));
+
+    return collectQualifiedAndMainAliasColumnNames({
+      expressions,
+      mainAlias: this.alias,
+      columnNamesByAlias: Object.fromEntries(
+        [this.alias, ...this.joinClauses.map(({ alias }) => alias)].map(
+          (alias) => [
+            alias,
+            Object.keys(
+              this.getTableShapeForAlias(alias)?.columnShapeByColumnName ?? {},
+            ),
+          ],
+        ),
+      ),
+      aliases: [
+        ...aliases,
+        ...this.existsFilterClauses.map(
+          (existsFilterClause) => existsFilterClause.alias,
+        ),
+      ],
     });
   }
 

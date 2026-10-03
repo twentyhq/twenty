@@ -4,6 +4,7 @@ import { MetadataReadability } from '~/generated-metadata/graphql';
 const SHAREABLE_READABILITIES = [
   MetadataReadability.OPEN,
   MetadataReadability.PRIVATE,
+  MetadataReadability.DISCOVERABLE,
   MetadataReadability.INHERITED,
 ];
 

@@ -2984,6 +2984,7 @@ export enum MetadataEventAction {
 
 export enum MetadataReadability {
   APPLICATION = 'APPLICATION',
+  DISCOVERABLE = 'DISCOVERABLE',
   INHERITED = 'INHERITED',
   OPEN = 'OPEN',
   PRIVATE = 'PRIVATE',
@@ -4747,6 +4748,7 @@ export type Object = {
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
+  discoverableFieldUniversalIdentifiers?: Maybe<Array<Scalars['UUID']['output']>>;
   duplicateCriteria?: Maybe<Array<Array<Scalars['String']['output']>>>;
   fields: ObjectFieldsConnection;
   fieldsList: Array<Field>;

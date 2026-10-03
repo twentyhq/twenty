@@ -26,6 +26,7 @@ import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm/datasource/u
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
+import { restrictObjectsPermissionsToDiscoverableFields } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-discoverable-fields.util';
 import { resolveObjectRecordsPermissions } from 'src/engine/twenty-orm/utils/resolve-object-records-permissions.util';
 
 const tableShapeCacheByFlatObjectMetadataMaps = new WeakMap<
@@ -203,11 +204,14 @@ export class WorkspaceDataSource {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
-    const { objectRecordsPermissions, shouldBypassPermissionChecks } =
-      resolveObjectRecordsPermissions({
-        rolePermissionConfig,
-        objectPermissionsByRoleId: this.objectPermissionsByRoleId,
-      });
+    const {
+      objectRecordsPermissions,
+      shouldBypassPermissionChecks,
+      readScope,
+    } = resolveObjectRecordsPermissions({
+      rolePermissionConfig,
+      objectPermissionsByRoleId: this.objectPermissionsByRoleId,
+    });
 
     return new WorkspaceRepository<T>({
       tableShape: this.getTableShape(objectMetadataId),
@@ -215,8 +219,16 @@ export class WorkspaceDataSource {
       internalContext,
       authContext: this.authContext,
       executor,
-      objectRecordsPermissions,
+      objectRecordsPermissions:
+        readScope === 'existence'
+          ? restrictObjectsPermissionsToDiscoverableFields({
+              objectsPermissions: objectRecordsPermissions,
+              flatObjectMetadataMaps: internalContext.flatObjectMetadataMaps,
+              flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
+            })
+          : objectRecordsPermissions,
       shouldBypassPermissionChecks,
+      readScope,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>
         this.getTableShape(targetObjectMetadataId),

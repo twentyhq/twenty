@@ -54,6 +54,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     writability: MetadataWritability.OPEN,
     readability: MetadataReadability.OPEN,
     readabilityParentFieldUniversalIdentifiers: null,
+    discoverableFieldUniversalIdentifiers: null,
     sharingReach: ObjectSharingReach.WORKSPACE,
     openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,

@@ -116,6 +116,7 @@ import {
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { type RecordReadScope } from 'src/engine/twenty-orm/types/record-read-scope.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
 import {
@@ -144,6 +145,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
+  readScope: RecordReadScope;
   // Suppresses database events and their snapshot SELECT, for bulk system writes only: webhooks, workflow triggers
   // and timeline activities will NOT fire
   shouldSkipEventEmission: boolean;
@@ -2094,18 +2096,36 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private onBeforeExecute(queryBuilder: WorkspaceSelectQueryBuilder): void {
+    if (this.options.readScope === 'existence') {
+      this.validateQueryIsPermitted(
+        queryBuilder,
+        queryBuilder.getFilterReferencedColumnNamesByAlias(),
+      );
+    }
+
     this.applyRowLevelPermissionPredicates(queryBuilder);
-    this.validateQueryIsPermitted(queryBuilder);
+    this.validateQueryIsPermitted(
+      queryBuilder,
+      queryBuilder.getReferencedColumnNamesByAlias(),
+    );
+
+    // An existence read opens a discoverable parent it joins, so the joined
+    // columns it projects are held to the discoverable fields too
+    if (this.options.readScope === 'existence') {
+      this.validateQueryIsPermitted(
+        queryBuilder,
+        queryBuilder.getJoinedSelectedColumnNamesByAlias(),
+      );
+    }
   }
 
   private validateQueryIsPermitted(
     queryBuilder: WorkspaceSelectQueryBuilder,
+    columnNamesByAlias: Record<string, string[]>,
   ): void {
     if (this.options.shouldBypassPermissionChecks) {
       return;
     }
-
-    const columnNamesByAlias = queryBuilder.getReferencedColumnNamesByAlias();
 
     for (const [alias, columnNames] of Object.entries(columnNamesByAlias)) {
       const nameSingular =
@@ -2340,8 +2360,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         });
       }
 
+      const idQueryBuilder = this.createQueryBuilder(tableAlias).select(['id']);
+
       this.validateQueryIsPermitted(
-        this.createQueryBuilder(tableAlias).select(['id']),
+        idQueryBuilder,
+        idQueryBuilder.getReferencedColumnNamesByAlias(),
       );
 
       const policy = this.buildRowAccessPolicyForAlias({
@@ -2488,6 +2511,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         roleIdsWithAllRecordsAccess:
           this.options.internalContext.roleIdsWithAllRecordsAccess,
       }),
+      readScope: this.options.readScope,
       isOwningApplication: (objectMetadata) =>
         isOwningApplicationAuthContext({
           authContext: this.options.authContext,

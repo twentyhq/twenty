@@ -79,6 +79,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       writability: MetadataWritability.OPEN,
       readability: MetadataReadability.OPEN,
       readabilityParentFieldUniversalIdentifiers: null,
+      discoverableFieldUniversalIdentifiers: null,
       sharingReach: ObjectSharingReach.WORKSPACE,
       isSystem: false,
       labelPlural: capitalize(createObjectInput.labelPlural),

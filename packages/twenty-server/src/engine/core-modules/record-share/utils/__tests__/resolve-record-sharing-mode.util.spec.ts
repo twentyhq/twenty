@@ -9,6 +9,7 @@ describe('resolveRecordSharingMode', () => {
   it.each([
     [MetadataReadability.PRIVATE, false, false, RecordSharingMode.PRIVATE],
     [MetadataReadability.PRIVATE, true, false, RecordSharingMode.PRIVATE],
+    [MetadataReadability.DISCOVERABLE, false, true, RecordSharingMode.PRIVATE],
     [MetadataReadability.INHERITED, false, false, RecordSharingMode.INHERITED],
     [MetadataReadability.OPEN, false, true, RecordSharingMode.OPEN_BY_DEFAULT],
     [MetadataReadability.OPEN, false, false, RecordSharingMode.ROLE_ONLY],

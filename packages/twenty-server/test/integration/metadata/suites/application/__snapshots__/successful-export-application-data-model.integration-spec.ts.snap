@@ -898,6 +898,7 @@ exports[`Application export - data model exports the whole application as a stab
     {
       "color": "blue",
       "description": "A ticket",
+      "discoverableFieldUniversalIdentifiers": null,
       "fields": [
         {
           "defaultValue": null,
@@ -959,6 +960,7 @@ exports[`Application export - data model exports the whole application as a stab
     {
       "color": null,
       "description": "A project",
+      "discoverableFieldUniversalIdentifiers": null,
       "fields": [
         {
           "defaultValue": null,

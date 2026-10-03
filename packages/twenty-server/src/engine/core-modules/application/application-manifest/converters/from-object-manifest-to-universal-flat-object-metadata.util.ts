@@ -39,6 +39,8 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     readability: objectManifest.readability ?? MetadataReadability.OPEN,
     readabilityParentFieldUniversalIdentifiers:
       objectManifest.readabilityParentFieldUniversalIdentifiers ?? null,
+    discoverableFieldUniversalIdentifiers:
+      objectManifest.discoverableFieldUniversalIdentifiers ?? null,
     sharingReach: objectManifest.sharingReach ?? ObjectSharingReach.WORKSPACE,
     isAuditLogged: true,
     isSearchable: objectManifest.isSearchable ?? true,

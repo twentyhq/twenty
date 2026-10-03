@@ -178,6 +178,7 @@ export const mockPersonFlatObjectMetadata = (
   writability: MetadataWritability.OPEN,
   readability: MetadataReadability.OPEN,
   readabilityParentFieldUniversalIdentifiers: null,
+  discoverableFieldUniversalIdentifiers: null,
   sharingReach: ObjectSharingReach.WORKSPACE,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   applicationUniversalIdentifier: 'test-application-id',

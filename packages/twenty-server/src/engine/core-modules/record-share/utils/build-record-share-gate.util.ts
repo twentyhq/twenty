@@ -6,6 +6,7 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
 import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-share/types/inherited-readability-parent.type';
+import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/is-discoverable-object.util';
 import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { shouldEnforceRecordShareExceptions } from 'src/engine/core-modules/record-share/utils/should-enforce-record-share-exceptions.util';
@@ -34,9 +35,18 @@ export const buildRecordShareGate = ({
     target.flatObjectMetadata,
   );
 
+  // Resolved on the queried record and handed down its inheritance chain, so a
+  // parent is only discoverable through a child that is itself discoverable.
+  const isExistenceRead =
+    target.isExistenceRead ??
+    (context.subject.readScope === 'existence' &&
+      target.operationType === 'select' &&
+      isDiscoverableObject(target.flatObjectMetadata));
+
   const gateKind = resolveRecordShareGateKind({
     readability: target.flatObjectMetadata.readability,
     isOwningApplication,
+    isExistenceRead,
   });
   switch (gateKind) {
     case 'open':
@@ -52,7 +62,7 @@ export const buildRecordShareGate = ({
     case 'inherited':
       return buildInheritedReadabilityGate({
         context,
-        target,
+        target: { ...target, isExistenceRead },
         buildParentPolicy,
       });
     case 'private':
@@ -128,8 +138,13 @@ const buildInheritedReadabilityGate = ({
   target,
   buildParentPolicy,
 }: RecordShareGateArgs): RowAccessPolicy => {
-  const { tableAlias, flatObjectMetadata, depth, joinParentRelationShape } =
-    target;
+  const {
+    tableAlias,
+    flatObjectMetadata,
+    depth,
+    joinParentRelationShape,
+    isExistenceRead,
+  } = target;
 
   if (depth > MAX_INHERITED_READABILITY_DEPTH) {
     return { kind: 'denied' };
@@ -141,8 +156,11 @@ const buildInheritedReadabilityGate = ({
     flatObjectMetadataMaps: context.environment.flatObjectMetadataMaps,
   });
 
+  // A parent joined in an existence read was admitted without a grant, which
+  // only a child that is itself discoverable may rely on
   if (
     isDefined(joinParentRelationShape) &&
+    (context.subject.readScope !== 'existence' || isExistenceRead) &&
     parents.some(
       (parent) =>
         parent.kind === 'column' &&
@@ -188,7 +206,7 @@ const buildInheritedReadabilityGate = ({
 };
 
 const buildInheritedReadabilityParentExpression = ({
-  target: { tableAlias, operationType, depth },
+  target: { tableAlias, operationType, depth, isExistenceRead },
   parent,
   buildParentPolicy,
 }: RecordShareGateArgs & {
@@ -207,6 +225,7 @@ const buildInheritedReadabilityParentExpression = ({
         flatObjectMetadata: parent.parentFlatObjectMetadata,
         operationType,
         depth: depth + 1,
+        isExistenceRead,
       }),
     };
   }
@@ -223,6 +242,7 @@ const buildInheritedReadabilityParentExpression = ({
       flatObjectMetadata: parent.childFlatObjectMetadata,
       operationType,
       depth: depth + 1,
+      isExistenceRead,
     }),
   };
 };

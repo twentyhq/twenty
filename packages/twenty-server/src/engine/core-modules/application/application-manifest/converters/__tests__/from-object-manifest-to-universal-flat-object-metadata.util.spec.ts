@@ -137,6 +137,31 @@ describe('fromObjectManifestToUniversalFlatObjectMetadata', () => {
         PARENT_FIELD_UID,
       ]);
     });
+
+    it('defaults the discoverable fields to null when omitted from the manifest', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.discoverableFieldUniversalIdentifiers).toBeNull();
+    });
+
+    it('carries the discoverable fields through', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({
+          readability: MetadataReadability.DISCOVERABLE,
+          discoverableFieldUniversalIdentifiers: [PARENT_FIELD_UID],
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.discoverableFieldUniversalIdentifiers).toEqual([
+        PARENT_FIELD_UID,
+      ]);
+    });
   });
 
   describe('sharingReach', () => {

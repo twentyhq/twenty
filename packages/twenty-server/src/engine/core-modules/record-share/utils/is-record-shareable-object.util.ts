@@ -13,5 +13,6 @@ export const isRecordShareableObject = ({
   isRecordSharingEnabled: boolean;
 }): boolean =>
   flatObjectMetadata.readability === MetadataReadability.PRIVATE ||
+  flatObjectMetadata.readability === MetadataReadability.DISCOVERABLE ||
   flatObjectMetadata.readability === MetadataReadability.INHERITED ||
   (isRecordSharingEnabled && isRecordShareExceptionObject(flatObjectMetadata));

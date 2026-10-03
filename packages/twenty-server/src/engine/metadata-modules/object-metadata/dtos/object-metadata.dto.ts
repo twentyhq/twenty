@@ -90,6 +90,9 @@ export class ObjectMetadataDTO {
   @Field(() => [UUIDScalarType], { nullable: true })
   readabilityParentFieldUniversalIdentifiers: string[] | null;
 
+  @Field(() => [UUIDScalarType], { nullable: true })
+  discoverableFieldUniversalIdentifiers: string[] | null;
+
   @Field(() => ObjectSharingReach)
   sharingReach: ObjectSharingReach;
   @Field(() => MetadataWritability)

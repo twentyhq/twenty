@@ -9,6 +9,7 @@ import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { type RecordReadScope } from 'src/engine/twenty-orm/types/record-read-scope.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 export const resolveObjectRecordsPermissions = ({
@@ -20,11 +21,13 @@ export const resolveObjectRecordsPermissions = ({
 }): {
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
+  readScope: RecordReadScope;
 } => {
   if (!isDefined(rolePermissionConfig)) {
     return {
       objectRecordsPermissions: {},
       shouldBypassPermissionChecks: false,
+      readScope: 'content',
     };
   }
 
@@ -33,8 +36,11 @@ export const resolveObjectRecordsPermissions = ({
       objectRecordsPermissions: {},
       shouldBypassPermissionChecks:
         rolePermissionConfig.shouldBypassPermissionChecks,
+      readScope: 'content',
     };
   }
+
+  const readScope = rolePermissionConfig.readScope ?? 'content';
 
   if ('unionOf' in rolePermissionConfig) {
     if (rolePermissionConfig.unionOf.length !== 1) {
@@ -48,6 +54,7 @@ export const resolveObjectRecordsPermissions = ({
       objectRecordsPermissions:
         objectPermissionsByRoleId[rolePermissionConfig.unionOf[0]] ?? {},
       shouldBypassPermissionChecks: false,
+      readScope,
     };
   }
 
@@ -60,5 +67,6 @@ export const resolveObjectRecordsPermissions = ({
       ? computePermissionIntersection(allRolePermissions)
       : {},
     shouldBypassPermissionChecks: false,
+    readScope,
   };
 };

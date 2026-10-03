@@ -15,6 +15,7 @@ export const resolveRecordSharingMode = ({
 }): RecordSharingMode => {
   switch (flatObjectMetadata.readability) {
     case MetadataReadability.PRIVATE:
+    case MetadataReadability.DISCOVERABLE:
       return RecordSharingMode.PRIVATE;
     case MetadataReadability.INHERITED:
       return RecordSharingMode.INHERITED;

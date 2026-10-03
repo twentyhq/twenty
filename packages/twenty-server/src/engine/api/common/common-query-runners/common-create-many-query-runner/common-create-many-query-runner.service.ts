@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import {
-  FeatureFlagKey,
-  MetadataReadability,
-  ObjectRecord,
-} from 'twenty-shared/types';
+import { FeatureFlagKey, ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   Brackets,
@@ -80,10 +76,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
-    const isPrivateObject =
-      queryRunnerContext.flatObjectMetadata.readability ===
-      MetadataReadability.PRIVATE;
     const { sharingMode } = this.resolveRecordSharing(queryRunnerContext);
+    const isPrivateObject = sharingMode === RecordSharingMode.PRIVATE;
     const isGatedThroughRecordShares =
       sharingMode === RecordSharingMode.PRIVATE ||
       sharingMode === RecordSharingMode.INHERITED;

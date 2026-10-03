@@ -616,6 +616,9 @@ export default {
             "readabilityParentFieldUniversalIdentifiers": [
                 3
             ],
+            "discoverableFieldUniversalIdentifiers": [
+                3
+            ],
             "sharingReach": [
                 28
             ],
