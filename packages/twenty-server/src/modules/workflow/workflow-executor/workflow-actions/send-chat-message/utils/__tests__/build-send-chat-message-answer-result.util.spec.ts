@@ -25,6 +25,7 @@ describe('buildSendChatMessageAnswerResult', () => {
       ).toEqual({
         threadId: 'thread-id',
         isApproved: true,
+        isExecuted: true,
         approvedToolName: toolName,
         status: 'approved',
         arguments: EMAIL_ARGUMENTS,
@@ -35,7 +36,19 @@ describe('buildSendChatMessageAnswerResult', () => {
     },
   );
 
-  it('counts an approved call that failed as approved', () => {
+  it.each(['failed', 'conflict'])(
+    'counts a %s call as approved but not executed',
+    (status) => {
+      expect(
+        buildResult({
+          status,
+          proposal: { toolName: 'send_email', arguments: EMAIL_ARGUMENTS },
+        }),
+      ).toMatchObject({ isApproved: true, isExecuted: false, status });
+    },
+  );
+
+  it('keeps the error of an approved call that failed', () => {
     expect(
       buildResult({
         status: 'failed',
@@ -59,6 +72,7 @@ describe('buildSendChatMessageAnswerResult', () => {
       }),
     ).toMatchObject({
       isApproved: false,
+      isExecuted: false,
       approvedToolName: null,
       feedback: 'Not yet',
     });

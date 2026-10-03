@@ -217,6 +217,7 @@ describe('Send chat message workflow step', () => {
       expect(stepResult).toMatchObject({
         threadId: postedThreadId,
         isApproved: true,
+        isExecuted: true,
         approvedToolName: 'update_one_company',
         status: 'approved',
         arguments: { id: companyId, employees: 30 },
@@ -248,11 +249,48 @@ describe('Send chat message workflow step', () => {
       expect(status).toBe('COMPLETED');
       expect(stepResult).toMatchObject({
         isApproved: false,
+        isExecuted: false,
         approvedToolName: null,
         status: 'rejected',
         feedback: 'Wait for the audit',
       });
       expect(await readEmployees()).toBe(10);
+    }, 120000);
+
+    it('reports an approved action whose record changed as not executed', async () => {
+      const { status, stepResult } = await runWorkflowActionStep({
+        name: 'Approve a stale headcount change',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Headcount check',
+          text: 'Raise the headcount to 25?',
+          toolCall: {
+            toolName: 'update_one_company',
+            arguments: { id: companyId, employees: 25 },
+          },
+        },
+        whileRunning: async ({ workflowRunId, stepId }) => {
+          await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
+          await global.testDataSource.query(
+            `UPDATE "${SCHEMA}"."company" SET employees = 12 WHERE id = $1`,
+            [companyId],
+          );
+          await answerPostedCall({
+            workflowRunId,
+            stepId,
+            response: { decision: 'approve' },
+          });
+        },
+      });
+
+      expect(status).toBe('COMPLETED');
+      expect(stepResult).toMatchObject({
+        isApproved: true,
+        isExecuted: false,
+        status: 'conflict',
+      });
+      expect(await readEmployees()).toBe(12);
     }, 120000);
 
     it('never runs an approved action twice when recording the answer fails', async () => {

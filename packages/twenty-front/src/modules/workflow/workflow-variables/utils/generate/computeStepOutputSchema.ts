@@ -240,6 +240,12 @@ export const computeStepOutputSchema = ({
           label: 'Approved',
           value: true,
         },
+        isExecuted: {
+          isLeaf: true,
+          type: FieldMetadataType.BOOLEAN,
+          label: 'Action ran',
+          value: true,
+        },
         approvedToolName: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
