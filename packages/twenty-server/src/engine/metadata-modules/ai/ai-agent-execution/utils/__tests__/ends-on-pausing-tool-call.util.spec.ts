@@ -1,45 +1,66 @@
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/ends-on-pausing-tool-call.util';
 
-const stepCalling = (...toolNames: string[]) => ({
-  toolCalls: toolNames.map((toolName) => ({ toolName })),
-});
+const PENDING_OUTPUT = { success: true, result: { status: 'pending' } };
+
+const stepWithResults = (
+  ...toolResults: { toolName: string; output: unknown }[]
+) => ({ toolResults });
+
+const awaiting = (toolName: string) => ({ toolName, output: PENDING_OUTPUT });
 
 describe('endsOnPausingToolCall', () => {
-  it('pauses when the last step calls a declared pausing tool', () => {
+  it('pauses when the last step has a pausing call awaiting an answer', () => {
     expect(
       endsOnPausingToolCall({
-        steps: [stepCalling('search'), stepCalling('ask_questions')],
+        steps: [
+          stepWithResults({ toolName: 'search', output: {} }),
+          stepWithResults(awaiting('ask_questions')),
+        ],
       }),
     ).toBe(true);
   });
 
-  it('does not pause on a pausing tool called in an earlier step', () => {
+  it('does not pause on a pausing call made in an earlier step', () => {
     expect(
       endsOnPausingToolCall({
-        steps: [stepCalling('ask_questions'), stepCalling('search')],
+        steps: [
+          stepWithResults(awaiting('ask_questions')),
+          stepWithResults({ toolName: 'search', output: {} }),
+        ],
       }),
     ).toBe(false);
   });
 
   it('does not pause on a tool that is not declared as pausing', () => {
-    expect(endsOnPausingToolCall({ steps: [stepCalling('search')] })).toBe(
-      false,
-    );
+    expect(
+      endsOnPausingToolCall({ steps: [stepWithResults(awaiting('search'))] }),
+    ).toBe(false);
   });
 
   it('only pauses on a pausing tool the run was offered', () => {
+    const steps = [stepWithResults(awaiting('ask_questions'))];
+
+    expect(endsOnPausingToolCall({ steps, offeredToolNames: [] })).toBe(false);
+    expect(
+      endsOnPausingToolCall({ steps, offeredToolNames: ['ask_questions'] }),
+    ).toBe(true);
+  });
+
+  it('does not pause on a pausing call refused when it was made', () => {
     expect(
       endsOnPausingToolCall({
-        steps: [stepCalling('ask_questions')],
-        offeredToolNames: [],
+        steps: [
+          stepWithResults({
+            toolName: 'propose_tool_call',
+            output: { success: false, error: 'Tool is not available' },
+          }),
+        ],
       }),
     ).toBe(false);
-    expect(
-      endsOnPausingToolCall({
-        steps: [stepCalling('ask_questions')],
-        offeredToolNames: ['ask_questions'],
-      }),
-    ).toBe(true);
+  });
+
+  it('does not pause on a pausing call that failed with no result', () => {
+    expect(endsOnPausingToolCall({ steps: [stepWithResults()] })).toBe(false);
   });
 
   it('never pauses without steps', () => {

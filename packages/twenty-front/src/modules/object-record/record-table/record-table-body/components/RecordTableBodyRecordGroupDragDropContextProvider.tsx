@@ -1,10 +1,10 @@
 import { useStore } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { useProcessTableWithGroupRecordDrop } from '@/object-record/record-drag/hooks/useProcessTableWithGroupRecordDrop';
+import { RecordDragDropContextProvider } from '@/object-record/record-drag/components/RecordDragDropContextProvider';
+import { useProcessRecordGroupDrop } from '@/object-record/record-drag/hooks/useProcessRecordGroupDrop';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { RecordTableRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableRecordGroupBodyContextProvider';
-import { RecordTableBodyDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDragDropContextProvider';
 import { RecordTableRowDragOverlayContent } from '@/object-record/record-table/record-table-row/components/RecordTableRowDragOverlayContent';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 
@@ -22,15 +22,14 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
 
   const store = useStore();
 
-  const { processTableWithGroupRecordDrop } =
-    useProcessTableWithGroupRecordDrop();
+  const { processRecordGroupDrop } = useProcessRecordGroupDrop();
 
   return (
-    <RecordTableBodyDragDropContextProvider
+    <RecordDragDropContextProvider
       getDroppableItemCount={(droppableId) =>
         store.get(recordIdsByGroupCallbackState(droppableId)).length
       }
-      onRecordDrop={processTableWithGroupRecordDrop}
+      onRecordDrop={processRecordGroupDrop}
       renderDragOverlay={(source) => (
         <RecordTableRecordGroupBodyContextProvider>
           <RecordTableRowDragOverlayContent source={source} />
@@ -38,6 +37,6 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
       )}
     >
       {children}
-    </RecordTableBodyDragDropContextProvider>
+    </RecordDragDropContextProvider>
   );
 };

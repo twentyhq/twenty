@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -84,5 +84,29 @@ export const ResponsiveFields: Story = {
     await userEvent.hover(within(firstOverflowChip).getByText(/^\+\d+$/));
 
     await body.findByRole('tooltip', {}, { timeout: 3000 });
+  },
+};
+
+export const SelectsRecordsWithModifierClicks: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(
+      mockedCompanyRecords[0].name,
+      {},
+      { timeout: 3000 },
+    );
+
+    const rows = canvas.getAllByRole('button', { name: 'Open record' });
+
+    fireEvent.click(rows[0], { metaKey: true });
+    fireEvent.click(rows[2], { shiftKey: true });
+
+    await waitFor(() =>
+      expect(rows[2]).toHaveAttribute('data-selected', 'true'),
+    );
+    await expect(rows[0]).toHaveAttribute('data-selected', 'true');
+    await expect(rows[1]).toHaveAttribute('data-selected', 'true');
+    await expect(rows[3]).toHaveAttribute('data-selected', 'false');
   },
 };

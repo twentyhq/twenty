@@ -10,9 +10,16 @@ const StyledNotificationCounterContainer = styled.div`
   z-index: 1000;
 `;
 
-export const RecordDragMultiDragCounterChip = () => {
+type RecordDragMultiDragCounterChipProps = {
+  contextStoreInstanceId?: string;
+};
+
+export const RecordDragMultiDragCounterChip = ({
+  contextStoreInstanceId,
+}: RecordDragMultiDragCounterChipProps) => {
   const originalDragSelection = useAtomComponentStateValue(
     originalDragSelectionComponentState,
+    contextStoreInstanceId,
   );
 
   const selectedCount = originalDragSelection.length ?? 0;
