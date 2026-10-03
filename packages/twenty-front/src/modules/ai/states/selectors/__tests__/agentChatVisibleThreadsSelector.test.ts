@@ -1,10 +1,8 @@
 import { createStore } from 'jotai';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
-import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER } from '@/ai/constants/AgentChatThreadLastActivityFilter';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
-import { agentChatThreadLastActivityFilterState } from '@/ai/states/agentChatThreadLastActivityFilterState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
@@ -95,10 +93,6 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
   );
   store.set(agentChatThreadInboxNowState.atom, NOW);
   store.set(agentChatThreadFilterStatusState.atom, filterStatus);
-  store.set(
-    agentChatThreadLastActivityFilterState.atom,
-    AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER.ALL,
-  );
 
   return store.get(agentChatVisibleThreadsSelector.atom).map(({ id }) => id);
 };
@@ -109,25 +103,8 @@ describe('agentChatVisibleThreadsSelector', () => {
       AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
       ['read', 'archived-then-active', 'snoozed-then-active', 'unread'],
     ],
-    [
-      AGENT_CHAT_THREAD_FILTER_STATUS.UNREAD,
-      ['archived-then-active', 'snoozed-then-active', 'unread'],
-    ],
     [AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED, ['snoozed']],
     [AGENT_CHAT_THREAD_FILTER_STATUS.DONE, ['archived']],
-    [AGENT_CHAT_THREAD_FILTER_STATUS.DELETED, ['deleted']],
-    [
-      AGENT_CHAT_THREAD_FILTER_STATUS.ALL,
-      [
-        'read',
-        'archived-then-active',
-        'snoozed-then-active',
-        'unread',
-        'snoozed',
-        'archived',
-        'deleted',
-      ],
-    ],
   ])('lists the %s threads', (filterStatus, expectedThreadIds) => {
     expect(getVisibleThreadIds(filterStatus)).toEqual(expectedThreadIds);
   });

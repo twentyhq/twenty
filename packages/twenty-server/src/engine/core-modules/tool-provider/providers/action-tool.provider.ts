@@ -33,6 +33,7 @@ import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-too
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
+import { ShareRecordTool } from 'src/engine/core-modules/tool/tools/share-record-tool/share-record-tool';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -58,6 +59,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly extractJsonPathsTool: ExtractJsonPathsTool,
     private readonly searchOutputTool: SearchOutputTool,
     private readonly saveCampaignTool: SaveCampaignTool,
+    private readonly shareRecordTool: ShareRecordTool,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly permissionsService: PermissionsService,
     private readonly i18nService: I18nService,
@@ -76,6 +78,7 @@ export class ActionToolProvider implements ToolProvider {
       ['extract_json_paths', this.extractJsonPathsTool],
       ['search_output', this.searchOutputTool],
       ['save_campaign', this.saveCampaignTool],
+      ['share_record', this.shareRecordTool],
     ]);
   }
 
@@ -229,6 +232,17 @@ export class ActionToolProvider implements ToolProvider {
       ),
     );
 
+    if (await this.shareRecordTool.isEnabled(context.workspaceId)) {
+      descriptors.push(
+        this.buildDescriptor(
+          'share_record',
+          this.shareRecordTool,
+          includeSchemas,
+          context.locale,
+        ),
+      );
+    }
+
     const hasCodeInterpreterPermission =
       this.codeInterpreterService.isEnabled() &&
       (await this.permissionsService.checkRolesPermissions(
@@ -270,6 +284,7 @@ export class ActionToolProvider implements ToolProvider {
       userWorkspaceId: context.userWorkspaceId,
       threadId: context.threadId,
       rolePermissionConfig: context.rolePermissionConfig,
+      authContext: context.authContext,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
     });
   }

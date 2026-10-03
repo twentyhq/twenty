@@ -9,7 +9,7 @@ import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRe
 import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
+import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
@@ -39,7 +39,7 @@ export const RecordTableBodyDragDropContextProvider = ({
   const { recordTableId } = useRecordTableContextOrThrow();
 
   const selectedRowIds = useAtomComponentSelectorCallbackState(
-    selectedRowIdsComponentSelector,
+    selectedRecordIdsComponentSelector,
     recordTableId,
   );
 

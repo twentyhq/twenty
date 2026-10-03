@@ -1,8 +1,8 @@
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
-import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
-import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
+import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -16,14 +16,13 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
     recordBoardId,
   );
 
-  const isRecordBoardCardSelectedFamilyState =
-    useAtomComponentFamilyStateCallbackState(
-      isRecordBoardCardSelectedComponentFamilyState,
-      recordBoardId,
-    );
+  const isRecordSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
+    isRecordSelectedComponentFamilyState,
+    recordBoardId,
+  );
 
-  const recordBoardSelectedRecordIds = useAtomComponentSelectorCallbackState(
-    recordBoardSelectedRecordIdsComponentSelector,
+  const selectedRecordIds = useAtomComponentSelectorCallbackState(
+    selectedRecordIdsComponentSelector,
     recordBoardId,
   );
 
@@ -36,7 +35,7 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
 
   const setRecordAsSelected = useCallback(
     (recordId: string, isSelected: boolean) => {
-      const atom = isRecordBoardCardSelectedFamilyState(recordId);
+      const atom = isRecordSelectedFamilyState(recordId);
       const isRecordCurrentlySelected = store.get(atom);
 
       if (isRecordCurrentlySelected === isSelected) {
@@ -45,16 +44,16 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
 
       store.set(atom, isSelected);
     },
-    [isRecordBoardCardSelectedFamilyState, store],
+    [isRecordSelectedFamilyState, store],
   );
 
   const checkIfLastUnselectAndCloseDropdown = useCallback(() => {
-    const recordIds = store.get(recordBoardSelectedRecordIds);
+    const recordIds = store.get(selectedRecordIds);
 
     if (recordIds.length === 0) {
       closeDropdown(dropdownId);
     }
-  }, [recordBoardSelectedRecordIds, store, closeDropdown, dropdownId]);
+  }, [selectedRecordIds, store, closeDropdown, dropdownId]);
 
   return {
     setRecordAsSelected,

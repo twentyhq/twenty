@@ -14,7 +14,7 @@ import { useStore } from 'jotai';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
+import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -35,7 +35,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
   );
 
   const selectedRowIds = useAtomComponentSelectorCallbackState(
-    selectedRowIdsComponentSelector,
+    selectedRecordIdsComponentSelector,
   );
 
   const originalDragSelection = useAtomComponentStateCallbackState(

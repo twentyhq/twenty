@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { isRecordBoardDropProcessingComponentState } from '@/object-record/record-board/states/isRecordBoardDropProcessingComponentState';
-import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
+import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { getBoardCardDropBehavior } from '@/object-record/record-board/utils/getBoardCardDropBehavior';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
@@ -52,7 +52,7 @@ export const useRecordBoardDndKit = (): {
   );
 
   const recordBoardSelectedRecordIds = useAtomComponentSelectorCallbackState(
-    recordBoardSelectedRecordIdsComponentSelector,
+    selectedRecordIdsComponentSelector,
     recordBoardId,
   );
 
