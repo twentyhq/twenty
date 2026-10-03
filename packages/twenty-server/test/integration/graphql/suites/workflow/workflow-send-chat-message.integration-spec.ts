@@ -492,6 +492,27 @@ describe('Send chat message workflow step', () => {
       expect(stepError).toContain('cannot be proposed');
       expect(await readEmployees()).toBe(10);
     }, 120000);
+
+    it('fails the step when its action is missing required arguments', async () => {
+      const { stepStatus, stepError } = await runWorkflowActionStep({
+        name: 'Propose an incomplete event',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Kickoff',
+          text: 'Schedule the kickoff?',
+          toolCall: {
+            toolName: 'create_calendar_event',
+            arguments: { title: 'Kickoff' },
+          },
+        },
+      });
+
+      expect(stepStatus).toBe('FAILED');
+      expect(stepError).toBe(
+        'The action is missing required arguments: startsAt, endsAt',
+      );
+    }, 120000);
   });
 
   it('fails a step that runs after the feature flag is turned off', async () => {
