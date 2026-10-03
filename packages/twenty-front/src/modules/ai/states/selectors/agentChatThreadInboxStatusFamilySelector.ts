@@ -1,6 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
@@ -21,7 +20,6 @@ export const agentChatThreadInboxStatusFamilySelector =
           lastActivityAt: get(agentChatThreadRecordFamilySelector, threadId)
             ?.lastActivityAt,
           participant: participants?.[threadId],
-          now: new Date(get(agentChatThreadInboxNowState)),
         });
 
         // Before the rows load every thread would read as unread. The thread
