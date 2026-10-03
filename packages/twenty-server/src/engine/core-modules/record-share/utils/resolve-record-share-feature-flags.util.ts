@@ -11,8 +11,9 @@ export const resolveRecordShareFeatureFlags = (
   'isRecordSharingEnabled' | 'isRecordShareVisibilityGatingEnabled'
 > => {
   const isRecordShareVisibilityGatingEnabled =
-    featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED] !==
-    false;
+    featureFlagsMap[
+      FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
+    ] !== false;
 
   return {
     isRecordShareVisibilityGatingEnabled,
