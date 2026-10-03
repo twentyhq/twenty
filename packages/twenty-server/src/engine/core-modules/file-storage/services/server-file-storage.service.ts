@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { basename, dirname, join } from 'path';
+import { basename, dirname, join } from 'path/posix';
 import { type Readable } from 'stream';
 
 import { type ServerFileFolder } from 'twenty-shared/types';

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { join } from 'path';
+import { join } from 'path/posix';
 
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';

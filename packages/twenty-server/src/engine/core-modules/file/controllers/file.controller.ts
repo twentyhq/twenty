@@ -12,7 +12,7 @@ import {
 
 import { Request, Response } from 'express';
 import { pipeline } from 'node:stream/promises';
-import { join } from 'path';
+import { join } from 'path/posix';
 import { type Readable } from 'stream';
 import { ApiPath, FileFolder, ServerFileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';

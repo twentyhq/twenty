@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isString } from '@sniptt/guards';
-import { basename, dirname, join } from 'path';
+import { basename, dirname, join } from 'path/posix';
 import { type Readable } from 'stream';
 import { v4 } from 'uuid';
 
