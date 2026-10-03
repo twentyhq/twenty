@@ -12,7 +12,6 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
-import { AiChatInboxRecordIdsEffect } from '@/ai/components/AiChatInboxRecordIdsEffect';
 import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
 import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPane';
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
@@ -25,8 +24,10 @@ import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { RecordSelectionRecordIdsEffect } from '@/object-record/record-selection/components/RecordSelectionRecordIdsEffect';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
+import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
@@ -61,7 +62,7 @@ const StyledThreadList = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-export const AiChatInboxPage = () => {
+const AiChatInboxPageContent = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const navigate = useNavigateApp();
@@ -76,14 +77,9 @@ export const AiChatInboxPage = () => {
 
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
-    AI_CHAT_INBOX_RECORD_SELECTION_INSTANCE_ID,
   );
-  const { toggleRecordSelection } = useToggleRecordSelection(
-    AI_CHAT_INBOX_RECORD_SELECTION_INSTANCE_ID,
-  );
-  const { resetRecordSelection } = useResetRecordSelection(
-    AI_CHAT_INBOX_RECORD_SELECTION_INSTANCE_ID,
-  );
+  const { toggleRecordSelection } = useToggleRecordSelection();
+  const { resetRecordSelection } = useResetRecordSelection();
 
   // Rows hold a menu and a rename input, which a link cannot contain
   const selectThread = (nextThreadId: string | null) =>
@@ -116,6 +112,11 @@ export const AiChatInboxPage = () => {
     selectedRecordIds.length > 1 ||
     (selectedRecordIds.length === 1 &&
       selectedRecordIds[0] !== selectedThreadId);
+  const highlightedThreadIds = isSelectionShown
+    ? selectedRecordIds
+    : isDefined(selectedThreadId)
+      ? [selectedThreadId]
+      : [];
 
   // A phone has room for the list or the chat, not both
   const isListShown = !isMobile || !isDefined(selectedThreadId);
@@ -123,7 +124,7 @@ export const AiChatInboxPage = () => {
 
   return (
     <StyledInbox>
-      <AiChatInboxRecordIdsEffect threads={threads} />
+      <RecordSelectionRecordIdsEffect records={threads} />
       {!isMobile && (
         <AiChatInboxSelectionEffect
           selectedThreadId={selectedThreadId}
@@ -167,13 +168,7 @@ export const AiChatInboxPage = () => {
                 <AiChatThreadList
                   threads={threads}
                   surface={AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE}
-                  selectedThreadIds={
-                    isSelectionShown
-                      ? selectedRecordIds
-                      : isDefined(selectedThreadId)
-                        ? [selectedThreadId]
-                        : []
-                  }
+                  selectedThreadIds={highlightedThreadIds}
                   isGroupedByDate={
                     agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE
                   }
@@ -187,10 +182,7 @@ export const AiChatInboxPage = () => {
       )}
       {isThreadShown &&
         (isSelectionShown ? (
-          <AiChatInboxSelectionPane
-            numberOfSelectedThreads={selectedRecordIds.length}
-            onClearSelection={resetRecordSelection}
-          />
+          <AiChatInboxSelectionPane />
         ) : isDefined(selectedThreadId) ? (
           <>
             <AiChatPageEffects />
@@ -222,3 +214,11 @@ export const AiChatInboxPage = () => {
     </StyledInbox>
   );
 };
+
+export const AiChatInboxPage = () => (
+  <RecordSelectionComponentInstanceContext.Provider
+    value={{ instanceId: AI_CHAT_INBOX_RECORD_SELECTION_INSTANCE_ID }}
+  >
+    <AiChatInboxPageContent />
+  </RecordSelectionComponentInstanceContext.Provider>
+);

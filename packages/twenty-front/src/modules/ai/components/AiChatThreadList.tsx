@@ -36,12 +36,14 @@ export const AiChatThreadList = ({
   onThreadClick,
   onDetachThread,
 }: AiChatThreadListProps) => {
+  const selectedThreadIdSet = new Set(selectedThreadIds);
+
   const renderThread = (thread: AgentChatThreadRecord) => (
     <AiChatThreadListItem
       key={thread.id}
       thread={thread}
       surface={surface}
-      isSelected={selectedThreadIds.includes(thread.id)}
+      isSelected={selectedThreadIdSet.has(thread.id)}
       onClick={onThreadClick}
       onDetach={
         isDefined(onDetachThread) ? () => onDetachThread(thread.id) : undefined

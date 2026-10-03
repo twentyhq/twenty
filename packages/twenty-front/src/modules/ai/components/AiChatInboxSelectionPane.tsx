@@ -4,33 +4,30 @@ import { Key } from 'ts-key-enum';
 import { IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
-import { AI_CHAT_INBOX_RECORD_SELECTION_INSTANCE_ID } from '@/ai/constants/AiChatInboxRecordSelectionInstanceId';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { RecordSelectionToContextStoreEffect } from '@/object-record/record-selection/components/RecordSelectionToContextStoreEffect';
-import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
+import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
-type AiChatInboxSelectionPaneProps = {
-  numberOfSelectedThreads: number;
-  onClearSelection: () => void;
-};
-
-export const AiChatInboxSelectionPane = ({
-  numberOfSelectedThreads,
-  onClearSelection,
-}: AiChatInboxSelectionPaneProps) => {
+export const AiChatInboxSelectionPane = () => {
   const { t } = useLingui();
+  const numberOfSelectedThreads = useAtomComponentSelectorValue(
+    selectedRecordIdsComponentSelector,
+  ).length;
+  const { resetRecordSelection } = useResetRecordSelection();
 
   useGlobalHotkeys({
     keys: [Key.Escape],
-    callback: onClearSelection,
+    callback: resetRecordSelection,
     containsModifier: false,
-    dependencies: [onClearSelection],
+    dependencies: [resetRecordSelection],
   });
 
   return (
@@ -48,11 +45,7 @@ export const AiChatInboxSelectionPane = ({
         />
       }
     >
-      <RecordSelectionComponentInstanceContext.Provider
-        value={{ instanceId: AI_CHAT_INBOX_RECORD_SELECTION_INSTANCE_ID }}
-      >
-        <RecordSelectionToContextStoreEffect />
-      </RecordSelectionComponentInstanceContext.Provider>
+      <RecordSelectionToContextStoreEffect />
       <EmptyState.Root>
         <EmptyState.Content>
           <EmptyState.Title>
@@ -65,7 +58,7 @@ export const AiChatInboxSelectionPane = ({
         <Button
           variant="outline"
           startIcon={<IconX />}
-          onClick={onClearSelection}
+          onClick={resetRecordSelection}
         >
           {t`Clear selection`}
         </Button>
