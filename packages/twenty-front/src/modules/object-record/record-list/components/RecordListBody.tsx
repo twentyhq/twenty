@@ -2,6 +2,7 @@ import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/use
 import { RecordListEmptyState } from '@/object-record/record-list/components/RecordListEmptyState';
 import { RecordListRecords } from '@/object-record/record-list/components/RecordListRecords';
 import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
+import { RecordSelectionRecordIdsEffect } from '@/object-record/record-selection/components/RecordSelectionRecordIdsEffect';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,6 +25,9 @@ export const RecordListBody = () => {
 
   return (
     <StyledBody>
+      {!isDefined(error) && (
+        <RecordSelectionRecordIdsEffect records={records} />
+      )}
       <RecordListRecords
         records={records}
         loading={loading}
