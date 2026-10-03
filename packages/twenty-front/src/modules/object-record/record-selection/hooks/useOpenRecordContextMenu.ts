@@ -1,7 +1,10 @@
 import { useStore } from 'jotai';
-import { type MouseEvent, useCallback } from 'react';
+import { useCallback } from 'react';
 
-import { useOpenCommandMenuDropdownAtCursor } from '@/command-menu-item/hooks/useOpenCommandMenuDropdownAtCursor';
+import {
+  type CommandMenuDropdownTriggerEvent,
+  useOpenCommandMenuDropdownAtCursor,
+} from '@/command-menu-item/hooks/useOpenCommandMenuDropdownAtCursor';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 
@@ -16,7 +19,13 @@ export const useOpenRecordContextMenu = () => {
     useOpenCommandMenuDropdownAtCursor();
 
   const openRecordContextMenu = useCallback(
-    ({ event, recordId }: { event: MouseEvent; recordId: string }) => {
+    ({
+      event,
+      recordId,
+    }: {
+      event: CommandMenuDropdownTriggerEvent;
+      recordId: string;
+    }) => {
       if (!isCommandMenuAvailable) {
         return;
       }

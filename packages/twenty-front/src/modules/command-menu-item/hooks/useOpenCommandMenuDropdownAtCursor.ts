@@ -10,6 +10,11 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 
+export type CommandMenuDropdownTriggerEvent = Pick<
+  MouseEvent,
+  'preventDefault' | 'clientX' | 'clientY'
+>;
+
 export const useOpenCommandMenuDropdownAtCursor = () => {
   const store = useStore();
   const { openDropdown } = useOpenDropdown();
@@ -23,7 +28,7 @@ export const useOpenCommandMenuDropdownAtCursor = () => {
   const isCommandMenuAvailable = isDefined(commandMenuInstanceId);
 
   const openCommandMenuDropdownAtCursor = useCallback(
-    (event: MouseEvent) => {
+    (event: CommandMenuDropdownTriggerEvent) => {
       if (!isDefined(commandMenuInstanceId)) {
         return;
       }
