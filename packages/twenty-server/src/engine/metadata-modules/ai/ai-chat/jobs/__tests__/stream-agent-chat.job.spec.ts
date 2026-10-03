@@ -413,7 +413,9 @@ describe('StreamAgentChatJob', () => {
     actorService.authorizeJob.mockResolvedValue({
       message: { id: 'user-message-id', turnId: null },
     } as never);
-    await expect(job.handle(jobData)).rejects.toMatchObject({
+    await expect(
+      job.handle({ ...jobData, existingTurnId: undefined }),
+    ).rejects.toMatchObject({
       code: 'MESSAGE_NOT_FOUND',
     });
     expect(chatExecutionService.streamChat).not.toHaveBeenCalled();

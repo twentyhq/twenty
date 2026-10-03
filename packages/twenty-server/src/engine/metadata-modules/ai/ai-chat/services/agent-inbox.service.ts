@@ -62,13 +62,12 @@ export class AgentInboxService {
     };
   }): Promise<SendInboxMessageResult> {
     const senderDetails = getAgentInboxSenderDetails(sender);
-    const { threadId, turnId, openingMessageId, messageId, toolCallId } =
-      buildInboxMessageIds({
-        senderKey: senderDetails.key,
-        workspaceMemberId: input.workspaceMemberId,
-        threadKey: input.threadKey,
-        idempotencyKey: input.idempotencyKey,
-      });
+    const { threadId, turnId, messageId, toolCallId } = buildInboxMessageIds({
+      senderKey: senderDetails.key,
+      workspaceMemberId: input.workspaceMemberId,
+      threadKey: input.threadKey,
+      idempotencyKey: input.idempotencyKey,
+    });
 
     const existingThread = await this.findThread({ workspaceId, threadId });
 
@@ -100,23 +99,23 @@ export class AgentInboxService {
           })
         : undefined;
 
-    const thread =
-      existingThread ??
-      (await this.createThread({
+    if (!isDefined(existingThread)) {
+      await this.createThread({
         workspaceId,
         threadId,
         workspaceMemberId: input.workspaceMemberId,
         title: input.title,
-      }));
+      });
+    }
 
-    await this.ensureOpener({
-      workspaceId,
-      threadId,
-      turnId,
-      openingMessageId,
-      memberUserWorkspaceId: thread.userWorkspaceId,
-      senderDescription: senderDetails.description,
-    });
+    await this.ignoreDuplicate(() =>
+      this.threadService.openAgentTurn({
+        workspaceId,
+        threadId,
+        id: turnId,
+        context: `${senderDetails.description} started this conversation. Its messages follow.`,
+      }),
+    );
 
     const parts: ExtendedUIMessagePart[] = [{ type: 'text', text: input.text }];
 
@@ -148,54 +147,6 @@ export class AgentInboxService {
     }
 
     return { threadId };
-  }
-
-  // Answering a tool call resolves who may answer from the user message of
-  // its turn, and models expect a conversation to open with one. It holds
-  // no text from the sender, so nothing the sender wrote reads as the
-  // member's request.
-  private async ensureOpener({
-    workspaceId,
-    threadId,
-    turnId,
-    openingMessageId,
-    memberUserWorkspaceId,
-    senderDescription,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    turnId: string;
-    openingMessageId: string;
-    memberUserWorkspaceId: string | null;
-    senderDescription: string;
-  }): Promise<void> {
-    await this.ignoreDuplicate(() =>
-      this.conversationWriterService.insertTurn({
-        workspaceId,
-        id: turnId,
-        threadId,
-        agentId: null,
-      }),
-    );
-
-    await this.ignoreDuplicate(() =>
-      this.conversationWriterService.insertMessage({
-        workspaceId,
-        id: openingMessageId,
-        threadId,
-        turnId,
-        role: AgentMessageRole.USER,
-        agentId: null,
-        senderUserWorkspaceId: memberUserWorkspaceId,
-        isHidden: true,
-        parts: [
-          {
-            type: 'text',
-            text: `${senderDescription} started this conversation. Its messages follow.`,
-          },
-        ],
-      }),
-    );
   }
 
   private findThread({

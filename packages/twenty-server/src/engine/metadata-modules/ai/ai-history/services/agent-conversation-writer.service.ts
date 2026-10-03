@@ -41,18 +41,25 @@ export class AgentConversationWriterService {
     threadId,
     agentId,
     id,
+    context,
     scope,
   }: {
     workspaceId: string;
     threadId: string;
     agentId: string | null;
     id?: string;
+    context?: string;
     scope?: AgentHistoryTransactionScope;
   }): Promise<string> {
     if (isDefined(scope)) {
       const turnId = id ?? randomUUID();
 
-      await scope.insert('agentTurn', { id: turnId, threadId, agentId });
+      await scope.insert('agentTurn', {
+        id: turnId,
+        threadId,
+        agentId,
+        ...(isDefined(context) ? { context } : {}),
+      });
 
       return turnId;
     }
@@ -61,6 +68,7 @@ export class AgentConversationWriterService {
       ...(isDefined(id) ? { id } : {}),
       threadId,
       agentId,
+      ...(isDefined(context) ? { context } : {}),
     });
 
     return (id ?? turnInsertResult.identifiers[0].id) as string;
@@ -79,7 +87,6 @@ export class AgentConversationWriterService {
     agentId,
     senderUserWorkspaceId,
     senderApplicationId,
-    isHidden,
     isAwaitingAnswer,
     processedAt,
     parts,
@@ -93,7 +100,6 @@ export class AgentConversationWriterService {
     agentId: string | null;
     senderUserWorkspaceId: string | null;
     senderApplicationId?: string | null;
-    isHidden?: boolean;
     isAwaitingAnswer?: boolean;
     processedAt?: Date;
     parts: ExtendedUIMessagePart[];
@@ -111,7 +117,6 @@ export class AgentConversationWriterService {
         processedAt: (processedAt ?? new Date()).toISOString(),
         ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
         ...(isDefined(senderApplicationId) ? { senderApplicationId } : {}),
-        ...(isDefined(isHidden) ? { isHidden } : {}),
       });
 
       const dbParts = mapUIMessagePartsToDBParts(parts, messageId);

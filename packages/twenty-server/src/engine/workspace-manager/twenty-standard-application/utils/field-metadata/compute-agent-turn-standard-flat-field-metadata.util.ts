@@ -63,6 +63,31 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  context: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'context',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: 'Context', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message:
+              'What the agent was given to open the turn, in place of a user message',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconFileText',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
   createdAt: {
     ...createStandardFieldFlatMetadata({
       ...args,

@@ -10,4 +10,8 @@ export class AdminChatThreadMessagesDTO {
 
   @Field(() => [AdminChatMessageDTO])
   messages: AdminChatMessageDTO[];
+
+  // what the agent was given in place of a user message, in turn order
+  @Field(() => [String])
+  contexts: string[];
 }

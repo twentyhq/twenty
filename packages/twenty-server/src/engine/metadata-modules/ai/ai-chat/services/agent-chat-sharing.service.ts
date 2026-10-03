@@ -40,10 +40,10 @@ export class AgentChatSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  // Fence for the 2.46 cross-upgrade window: until
-  // upgrade:2-46:add-agent-chat-thread-participant-object has reached a
-  // workspace, it has neither the participant table nor the thread's
-  // lastActivityAt column. Remove once 2.46 leaves the window.
+  // Fence for the 2.46 cross-upgrade window: until the 2.46 commands have
+  // reached a workspace, it has neither the participant table, the thread's
+  // lastActivityAt column nor the turn's context column. Remove once 2.46
+  // leaves the window.
   async hasInboxState(workspaceId: string): Promise<boolean> {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [

@@ -27,6 +27,7 @@ const build = () => {
     getQueuedMessages: jest.fn().mockResolvedValue([queued]),
     promoteQueuedMessage: jest.fn().mockResolvedValue('turn-b'),
     getMessagesForThread: jest.fn().mockResolvedValue([]),
+    getTurnContexts: jest.fn().mockResolvedValue(new Map()),
     deleteQueuedMessage: jest.fn().mockResolvedValue(true),
   };
   const actors = {
@@ -150,33 +151,41 @@ describe('Sender-aware queue draining', () => {
     expect(queue.add).not.toHaveBeenCalled();
     expect(heartbeat.clear).toHaveBeenCalled();
   });
-  it('excludes the owner’s hidden setup context from another participant’s execution', async () => {
-    const { service, chat, threads, queue } = build();
-    threads.findOneOrFail.mockResolvedValue({
-      id: 'thread',
-      conversationSize: 0,
-      userWorkspaceId: 'owner',
+  it('places a turn context where the user message of its turn would be', async () => {
+    const { service, chat, queue } = build();
+    const message = (id: string, turnId: string, role: string) => ({
+      id,
+      turnId,
+      role,
+      createdAt: new Date(),
+      parts: [{ type: 'text', textContent: id }],
     });
     chat.getMessagesForThread.mockResolvedValue([
-      {
-        id: 'hidden-owner',
-        isHidden: true,
-        senderUserWorkspaceId: 'owner',
-        parts: [{ type: 'text', textContent: 'Owner private context' }],
-      },
-      {
-        id: 'visible',
-        role: 'user',
-        createdAt: new Date(),
-        parts: [{ type: 'text', textContent: 'Shared content' }],
-      },
+      message('question', 'turn-a', 'user'),
+      message('answer', 'turn-a', 'assistant'),
+      message('inbox-message', 'turn-b', 'assistant'),
     ]);
-    await service.flushNextQueuedMessage(args);
-    expect(queue.add).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({
-        messages: [expect.objectContaining({ id: 'visible' })],
-      }),
+    chat.getTurnContexts.mockResolvedValue(
+      new Map([['turn-b', 'Billing app started this conversation.']]),
     );
+    await service.flushNextQueuedMessage(args);
+    const { messages } = queue.add.mock.calls[0][1];
+    expect(messages.map(({ id }: { id: string }) => id)).toEqual([
+      'question',
+      'answer',
+      'turn-context-turn-b',
+      'inbox-message',
+    ]);
+    expect(messages[2]).toMatchObject({
+      role: 'user',
+      parts: [
+        {
+          type: 'text',
+          text: expect.stringContaining(
+            'Billing app started this conversation.',
+          ),
+        },
+      ],
+    });
   });
 });

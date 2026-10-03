@@ -1,17 +1,12 @@
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
-import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
-import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
-import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
-describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
+describe('AgentChatStreamingService.startOpeningTurn', () => {
   const workspace = { id: 'workspace-id' } as WorkspaceEntity;
-  const kickoffText = 'Set up the workspace for Acme Inc';
 
-  const kickoffThread = {
+  const thread = {
     id: 'thread-id',
     title: 'Workspace setup',
     conversationSize: 0,
@@ -19,40 +14,23 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     lastStreamError: null,
   } as unknown as AgentChatThreadWorkspaceEntity;
 
-  const hiddenKickoffMessageEntity = {
-    id: 'kickoff-message-id',
-    role: AgentMessageRole.USER,
-    status: AgentMessageStatus.SENT,
-    isHidden: true,
-    parts: [{ type: 'text', textContent: kickoffText, orderIndex: 0 }],
-  } as unknown as AgentMessageWorkspaceEntity;
-
-  const buildService = ({
-    claimAffected = 1,
-    hasConversationMessages = false,
-    threadMessages = [hiddenKickoffMessageEntity],
-  } = {}) => {
+  const buildService = ({ claimAffected = 1, hasMessages = false } = {}) => {
     const threadRepository = {
-      findOneOrFail: jest
-        .fn()
-        .mockResolvedValue({ workspaceMemberId: 'member' }),
-      findOne: jest.fn().mockResolvedValue(kickoffThread),
+      findOne: jest.fn().mockResolvedValue(thread),
       update: jest.fn().mockResolvedValue({ affected: claimAffected }),
     };
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const agentChatService = {
-      hasConversationMessages: jest
-        .fn()
-        .mockResolvedValue(hasConversationMessages),
-      ensureHiddenKickoffMessage: jest.fn().mockResolvedValue({
-        id: 'kickoff-message-id',
-        turnId: 'kickoff-turn-id',
-      }),
-      getMessagesForThread: jest.fn().mockResolvedValue(threadMessages),
+      hasMessages: jest.fn().mockResolvedValue(hasMessages),
       getQueuedMessages: jest.fn().mockResolvedValue([]),
-      queueMessage: jest.fn().mockResolvedValue({ id: 'queued-message-id' }),
+      deleteTurns: jest.fn().mockResolvedValue(undefined),
+      getMessagesForThread: jest.fn().mockResolvedValue([]),
+      getTurnContexts: jest
+        .fn()
+        .mockResolvedValue(new Map([['opening-turn-id', 'Company: Acme Inc']])),
     };
     const threadService = {
+      openAgentTurn: jest.fn().mockResolvedValue('opening-turn-id'),
       notifyThreadActivityUpdated: jest.fn().mockResolvedValue(undefined),
     };
     const streamHeartbeatService = {
@@ -61,7 +39,6 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
       clear: jest.fn().mockResolvedValue(undefined),
     };
     const metricsService = { incrementCounterBy: jest.fn() };
-
     const eventPublisherService = {
       publish: jest.fn(),
       resetStreamState: jest.fn(),
@@ -83,23 +60,8 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
         eventPublisherService as never,
         metricsService as never,
       ),
-      {
-        authorizeRetry: jest.fn().mockResolvedValue(undefined),
-        authorize: jest
-          .fn()
-          .mockResolvedValue({ authContext: { workspaceMemberId: 'member' } }),
-        resolveMessage: jest.fn().mockResolvedValue({
-          sender: {
-            userWorkspaceId: 'user-workspace-id',
-            applicationId: null,
-          },
-        }),
-      } as never,
-      {
-        findPendingForThread: jest.fn().mockResolvedValue([]),
-        hasPendingForThread: jest.fn().mockResolvedValue(false),
-        cancel: jest.fn().mockResolvedValue(false),
-      } as never,
+      {} as never,
+      {} as never,
     );
 
     return {
@@ -113,40 +75,44 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     };
   };
 
-  const kickoffArguments = {
-    workspaceMemberId: 'member',
-    thread: kickoffThread,
+  const openingTurnArguments = {
+    thread,
     userWorkspaceId: 'user-workspace-id',
+    workspaceMemberId: 'member-id',
     workspace,
-    text: kickoffText,
+    context: 'Company: Acme Inc',
     modelId: 'default-fast-model',
   };
 
-  it('should return null without queueing a visible copy when the claim is lost', async () => {
+  it('returns null without starting a turn when the claim is lost', async () => {
     const {
       service,
-      agentChatService,
+      threadService,
       messageQueueService,
       streamHeartbeatService,
     } = buildService({ claimAffected: 0 });
 
-    const result = await service.startHiddenKickoffStream(kickoffArguments);
+    const result = await service.startOpeningTurn(openingTurnArguments);
 
     expect(result).toBeNull();
-    expect(agentChatService.queueMessage).not.toHaveBeenCalled();
-    expect(agentChatService.ensureHiddenKickoffMessage).not.toHaveBeenCalled();
+    expect(threadService.openAgentTurn).not.toHaveBeenCalled();
     expect(messageQueueService.add).not.toHaveBeenCalled();
     expect(streamHeartbeatService.clear).toHaveBeenCalled();
   });
 
-  it('should release the claim, flush the queue and return null when the thread already has conversation messages', async () => {
-    const { service, threadRepository, agentChatService, messageQueueService } =
-      buildService({ hasConversationMessages: true });
+  it('releases the claim and flushes the queue when the conversation already started', async () => {
+    const {
+      service,
+      threadRepository,
+      agentChatService,
+      threadService,
+      messageQueueService,
+    } = buildService({ hasMessages: true });
 
-    const result = await service.startHiddenKickoffStream(kickoffArguments);
+    const result = await service.startOpeningTurn(openingTurnArguments);
 
     expect(result).toBeNull();
-    expect(agentChatService.ensureHiddenKickoffMessage).not.toHaveBeenCalled();
+    expect(threadService.openAgentTurn).not.toHaveBeenCalled();
     expect(messageQueueService.add).not.toHaveBeenCalled();
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
@@ -159,7 +125,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     });
   });
 
-  it('should enqueue the hidden kickoff turn with the given model and without notifying thread activity', async () => {
+  it('starts over the turns of an empty thread and opens one on the context alone', async () => {
     const {
       service,
       threadRepository,
@@ -168,33 +134,40 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
       messageQueueService,
     } = buildService();
 
-    const result = await service.startHiddenKickoffStream(kickoffArguments);
+    const result = await service.startOpeningTurn(openingTurnArguments);
 
-    expect(agentChatService.ensureHiddenKickoffMessage).toHaveBeenCalledWith({
+    expect(agentChatService.deleteTurns).toHaveBeenCalledWith({
       threadId: 'thread-id',
       workspaceId: 'workspace-id',
-      userWorkspaceId: 'user-workspace-id',
-      text: kickoffText,
     });
-    expect(agentChatService.getMessagesForThread).toHaveBeenCalledWith(
-      expect.objectContaining({ includeHidden: true }),
-    );
+    expect(threadService.openAgentTurn).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      context: 'Company: Acme Inc',
+    });
     expect(messageQueueService.add).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
         threadId: 'thread-id',
+        messages: [
+          expect.objectContaining({
+            id: 'turn-context-opening-turn-id',
+            role: 'user',
+          }),
+        ],
         browsingContext: null,
         modelId: 'default-fast-model',
-        lastUserMessageText: kickoffText,
         hasTitle: true,
-        existingTurnId: 'kickoff-turn-id',
+        existingTurnId: 'opening-turn-id',
       }),
+    );
+    expect(messageQueueService.add.mock.calls[0][1]).not.toHaveProperty(
+      'messageId',
     );
     expect(threadService.notifyThreadActivityUpdated).not.toHaveBeenCalled();
     expect(result).toEqual({
       streamId: expect.any(String),
-      messageId: 'kickoff-message-id',
-      turnId: 'kickoff-turn-id',
+      turnId: 'opening-turn-id',
     });
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
@@ -203,27 +176,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     );
   });
 
-  it('should throw MESSAGE_NOT_FOUND and release the claim when the loaded messages do not end with the kickoff message', async () => {
-    const staleMessageEntity = {
-      ...hiddenKickoffMessageEntity,
-      id: 'other-message-id',
-    } as unknown as AgentMessageWorkspaceEntity;
-    const { service, threadRepository, messageQueueService } = buildService({
-      threadMessages: [staleMessageEntity],
-    });
-
-    await expect(
-      service.startHiddenKickoffStream(kickoffArguments),
-    ).rejects.toMatchObject({ code: AiExceptionCode.MESSAGE_NOT_FOUND });
-    expect(messageQueueService.add).not.toHaveBeenCalled();
-    expect(threadRepository.update).toHaveBeenLastCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: expect.any(String) },
-      { activeStreamId: null },
-    );
-  });
-
-  it('should release the claim and report an enqueue failure when adding the job fails', async () => {
+  it('releases the claim and reports an enqueue failure when adding the job fails', async () => {
     const {
       service,
       threadRepository,
@@ -235,7 +188,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     messageQueueService.add.mockRejectedValue(new Error('redis down'));
 
     await expect(
-      service.startHiddenKickoffStream(kickoffArguments),
+      service.startOpeningTurn(openingTurnArguments),
     ).rejects.toThrow('redis down');
 
     expect(threadRepository.update).toHaveBeenLastCalledWith(
