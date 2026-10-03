@@ -13,6 +13,7 @@ describe('getOrComputeMemoizedBySourceHash', () => {
       memoKey: 'workspace-1',
       sourceHash: 'hash-1',
       maxEntries: 10,
+      now: 1_000,
       compute,
     });
     const secondValue = getOrComputeMemoizedBySourceHash({
@@ -20,11 +21,30 @@ describe('getOrComputeMemoizedBySourceHash', () => {
       memoKey: 'workspace-1',
       sourceHash: 'hash-1',
       maxEntries: 10,
+      now: 1_000,
       compute,
     });
 
     expect(compute).toHaveBeenCalledTimes(1);
     expect(secondValue).toBe(firstValue);
+  });
+
+  it('refreshes the last read time when the memoized value is reused', () => {
+    const memo = new Map<string, SourceHashMemoEntry<string>>();
+    const memoize = (now: number) =>
+      getOrComputeMemoizedBySourceHash({
+        memo,
+        memoKey: 'workspace-1',
+        sourceHash: 'hash-1',
+        maxEntries: 10,
+        now,
+        compute: () => 'value',
+      });
+
+    memoize(1_000);
+    memoize(5_000);
+
+    expect(memo.get('workspace-1')?.lastReadAt).toBe(5_000);
   });
 
   it('recomputes and replaces the entry when the source hash changes', () => {
@@ -35,6 +55,7 @@ describe('getOrComputeMemoizedBySourceHash', () => {
       memoKey: 'workspace-1',
       sourceHash: 'hash-1',
       maxEntries: 10,
+      now: 1_000,
       compute: () => 'first',
     });
 
@@ -43,6 +64,7 @@ describe('getOrComputeMemoizedBySourceHash', () => {
       memoKey: 'workspace-1',
       sourceHash: 'hash-2',
       maxEntries: 10,
+      now: 1_000,
       compute: () => 'second',
     });
 
@@ -51,6 +73,7 @@ describe('getOrComputeMemoizedBySourceHash', () => {
     expect(memo.get('workspace-1')).toEqual({
       sourceHash: 'hash-2',
       value: 'second',
+      lastReadAt: 1_000,
     });
   });
 
@@ -62,6 +85,7 @@ describe('getOrComputeMemoizedBySourceHash', () => {
       memoKey: 'workspace-1',
       sourceHash: 'hash-1',
       maxEntries: 10,
+      now: 1_000,
       compute: () => 'first-workspace',
     });
     getOrComputeMemoizedBySourceHash({
@@ -69,6 +93,7 @@ describe('getOrComputeMemoizedBySourceHash', () => {
       memoKey: 'workspace-2',
       sourceHash: 'hash-1',
       maxEntries: 10,
+      now: 1_000,
       compute: () => 'second-workspace',
     });
 
@@ -84,6 +109,7 @@ describe('getOrComputeMemoizedBySourceHash', () => {
         memoKey,
         sourceHash: 'hash',
         maxEntries: 2,
+        now: 1_000,
         compute: () => memoKey,
       });
 
@@ -104,6 +130,7 @@ describe('getOrComputeMemoizedBySourceHash', () => {
         memoKey: 'workspace-1',
         sourceHash: 'hash-1',
         maxEntries: 10,
+        now: 1_000,
         compute: () => {
           throw new Error('compute failed');
         },

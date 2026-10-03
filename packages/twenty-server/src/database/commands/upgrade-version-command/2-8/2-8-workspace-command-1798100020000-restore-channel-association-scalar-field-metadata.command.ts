@@ -235,6 +235,7 @@ export class RestoreChannelAssociationScalarFieldMetadataCommand extends Provisi
     await this.workspaceCacheService.flush(workspaceId, [
       ...cacheKeysToFlush,
       'ORMEntityMetadatas',
+      'graphQLResolverNameMap',
     ]);
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(

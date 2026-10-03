@@ -4,16 +4,16 @@ import {
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { partitionWorkspaceCacheKeyNames } from 'src/engine/workspace-cache/utils/partition-workspace-cache-key-names.util';
 
-const SOURCE_KEY_NAMES_BY_DERIVED_KEY_NAME = {
+const SOURCE_KEY_NAMES_BY_DERIVED_KEY_NAME: Record<
+  WorkspaceDerivedCacheKeyName,
+  WorkspaceCacheKeyName[]
+> = {
   roleIdsWithAllRecordsAccess: ['flatRoleMaps'],
   userWorkspaceRoleMap: ['flatRoleTargetMaps'],
   apiKeyRoleMap: ['flatRoleTargetMaps'],
   flatRoleTargetByAgentIdMaps: ['flatRoleTargetMaps'],
   graphQLResolverNameMap: ['flatObjectMetadataMaps'],
-} as const satisfies Record<
-  WorkspaceDerivedCacheKeyName,
-  readonly WorkspaceCacheKeyName[]
->;
+};
 
 const getSourceKeyNames = (derivedKeyName: WorkspaceDerivedCacheKeyName) =>
   SOURCE_KEY_NAMES_BY_DERIVED_KEY_NAME[derivedKeyName];

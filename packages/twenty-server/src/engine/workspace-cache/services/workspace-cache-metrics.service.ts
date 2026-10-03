@@ -18,10 +18,16 @@ import {
 } from 'src/engine/workspace-cache/utils/compute-local-cache-stats.util';
 import { deepSizeBytes } from 'src/engine/workspace-cache/utils/deep-size-bytes.util';
 import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/get-key-name-from-local-cache-key.util';
+import { type SourceHashMemoEntry } from 'src/engine/workspace-cache/utils/get-or-compute-memoized-by-source-hash.util';
 
 type LocalCache = ReadonlyMap<
   string,
   WorkspaceLocalCacheEntry<WorkspaceCacheDataMap[WorkspaceCacheKeyName]>
+>;
+
+type DerivedCacheMemoByKeyName = ReadonlyMap<
+  string,
+  ReadonlyMap<string, Pick<SourceHashMemoEntry<unknown>, 'value'>>
 >;
 
 const CACHE_DURATION_BUCKETS_SECONDS = [
@@ -43,6 +49,7 @@ export class WorkspaceCacheMetricsService {
   private readonly unpackingDurationHistogram: Histogram;
 
   private localCache?: LocalCache;
+  private derivedCacheMemoByKeyName: DerivedCacheMemoByKeyName = new Map();
   private cacheSizeByKeyName: Record<string, number> = {};
   private cacheSizeTotalBytes = 0;
   private sizeSampler?: ReturnType<typeof setInterval>;
@@ -91,8 +98,12 @@ export class WorkspaceCacheMetricsService {
     );
   }
 
-  start(localCache: LocalCache): void {
+  start(
+    localCache: LocalCache,
+    derivedCacheMemoByKeyName: DerivedCacheMemoByKeyName,
+  ): void {
     this.localCache = localCache;
+    this.derivedCacheMemoByKeyName = derivedCacheMemoByKeyName;
     this.registerGauges();
     this.scheduleSizeSampler();
   }
@@ -230,6 +241,27 @@ export class WorkspaceCacheMetricsService {
       }
     }
 
+    for (const [derivedKeyName, memo] of this.derivedCacheMemoByKeyName) {
+      const stats = (perKeyName[derivedKeyName] ??= {
+        count: 0,
+        sampledBytes: 0,
+        sampled: 0,
+      });
+
+      for (const memoEntry of memo.values()) {
+        stats.count += 1;
+
+        if (stats.sampled < SIZE_SAMPLE_PER_PROVIDER) {
+          stats.sampledBytes += deepSizeBytes(
+            memoEntry.value,
+            SIZE_WALK_NODE_CAP,
+          );
+          stats.sampled += 1;
+          await new Promise((resolve) => setImmediate(resolve));
+        }
+      }
+    }
+
     const byKeyName: Record<string, number> = {};
     let total = 0;
 
@@ -349,6 +381,19 @@ export class WorkspaceCacheMetricsService {
           ),
         ];
       },
+      perPod: true,
+    });
+    this.metricsService.createMultiObservableGauge({
+      metricName: 'twenty_workspace_cache_derived_entries_by_provider',
+      options: {
+        description:
+          'Memoized derived workspace cache entries per derived provider',
+      },
+      callback: async () =>
+        [...this.derivedCacheMemoByKeyName].map(([derivedKeyName, memo]) => ({
+          value: memo.size,
+          attributes: { provider: derivedKeyName },
+        })),
       perPod: true,
     });
     this.metricsService.createObservableGauge({
