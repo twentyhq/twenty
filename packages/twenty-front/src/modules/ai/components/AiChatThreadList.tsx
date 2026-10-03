@@ -24,6 +24,10 @@ type AiChatThreadListProps = {
     thread: AgentChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
+  onThreadContextMenu?: (
+    thread: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) => void;
   onDetachThread?: (threadId: string) => void;
 };
 
@@ -32,6 +36,7 @@ export const AiChatThreadList = ({
   surface,
   selectedThreadIds = [],
   onThreadClick,
+  onThreadContextMenu,
   onDetachThread,
 }: AiChatThreadListProps) => {
   const selectedThreadIdSet = new Set(selectedThreadIds);
@@ -43,6 +48,7 @@ export const AiChatThreadList = ({
       surface={surface}
       isSelected={selectedThreadIdSet.has(thread.id)}
       onClick={onThreadClick}
+      onContextMenu={onThreadContextMenu}
       onDetach={
         isDefined(onDetachThread) ? () => onDetachThread(thread.id) : undefined
       }

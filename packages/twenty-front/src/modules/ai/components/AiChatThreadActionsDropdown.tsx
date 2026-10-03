@@ -1,19 +1,18 @@
 import { useLingui } from '@lingui/react/macro';
-import { type ReactElement, type MouseEvent, useContext } from 'react';
+import { type ReactElement, type MouseEvent } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { IconDotsVertical, IconPencil, IconUnlink } from 'twenty-ui/icon';
 
+import { AiChatThreadCommandMenuItems } from '@/ai/components/AiChatThreadCommandMenuItems';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { useTargetAiChatThreadsInContextStore } from '@/ai/hooks/useTargetAiChatThreadsInContextStore';
 import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { getAiChatThreadActionsInstanceId } from '@/ai/utils/getAiChatThreadActionsInstanceId';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
-import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
-import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -22,10 +21,6 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import {
-  CommandMenuItemAvailabilityType,
-  EngineComponentKey,
-} from '~/generated-metadata/graphql';
 
 type AiChatThreadActionsDropdownProps = {
   thread: {
@@ -38,20 +33,6 @@ type AiChatThreadActionsDropdownProps = {
   onRenameRequested: () => void;
   onDetach?: () => void;
   trigger?: ReactElement;
-};
-
-const AiChatThreadCommandMenuItems = () => {
-  const { commandMenuItems } = useContext(CommandMenuContext);
-
-  // A row is not the chat page, so it does not start a new chat
-  return commandMenuItems
-    .filter(
-      (item) =>
-        item.availabilityType ===
-          CommandMenuItemAvailabilityType.RECORD_SELECTION &&
-        item.engineComponentKey !== EngineComponentKey.NEW_AI_CHAT,
-    )
-    .map((item) => <CommandMenuItemRenderer item={item} key={item.id} />);
 };
 
 export const AiChatThreadActionsDropdown = ({

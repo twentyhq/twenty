@@ -126,6 +126,10 @@ type AiChatThreadListItemProps = {
     thread: AgentChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
+  onContextMenu?: (
+    thread: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) => void;
   onDetach?: () => void;
 };
 
@@ -135,6 +139,7 @@ export const AiChatThreadListItem = ({
   surface,
   isSelected,
   onClick,
+  onContextMenu,
   onDetach,
 }: AiChatThreadListItemProps) => {
   const { t } = useLingui();
@@ -207,6 +212,11 @@ export const AiChatThreadListItem = ({
       onClick={(event) => {
         if (!isRenaming) {
           onClick(thread, event);
+        }
+      }}
+      onContextMenu={(event) => {
+        if (!isRenaming) {
+          onContextMenu?.(thread, event);
         }
       }}
     >
