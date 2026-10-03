@@ -7,11 +7,9 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
-export const AddToFavoritesSingleRecordCommand = () => {
+export const AddToFavoritesCommand = () => {
   const { objectMetadataItem, selectedRecords } =
     useHeadlessCommandContextApi();
-
-  const selectedRecord = selectedRecords[0];
 
   if (!isDefined(objectMetadataItem)) {
     throw new Error('Object metadata item is required to add to favorites');
@@ -22,9 +20,15 @@ export const AddToFavoritesSingleRecordCommand = () => {
     useNavigationMenuItemsData();
 
   const handleExecute = () => {
-    if (!isDefined(selectedRecord)) {
-      return;
-    }
+    const favoriteRecordIds = new Set(
+      navigationMenuItems
+        .filter((item) => item.targetObjectMetadataId === objectMetadataItem.id)
+        .map((item) => item.targetRecordId),
+    );
+
+    const recordsToAdd = selectedRecords.filter(
+      (record) => !favoriteRecordIds.has(record.id),
+    );
 
     const relevantItems = navigationMenuItems.filter(
       (item) => !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
@@ -35,16 +39,16 @@ export const AddToFavoritesSingleRecordCommand = () => {
       0,
     );
 
-    createManyNavigationMenuItems([
-      {
+    createManyNavigationMenuItems(
+      recordsToAdd.map((record, index) => ({
         id: uuidv4(),
         type: NavigationMenuItemType.RECORD,
-        targetRecordId: selectedRecord.id,
+        targetRecordId: record.id,
         targetObjectMetadataId: objectMetadataItem.id,
         userWorkspaceId: currentUserWorkspaceId,
-        position: maxPosition + 1,
-      },
-    ]);
+        position: maxPosition + index + 1,
+      })),
+    );
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
