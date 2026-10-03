@@ -33,6 +33,7 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { buildStepExecutionKey } from 'src/modules/workflow/workflow-executor/utils/build-step-execution-key.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowSendChatMessageAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/guards/is-workflow-send-chat-message-action.guard';
+import { findMissingRequiredToolArguments } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/utils/find-missing-required-tool-arguments.util';
 import { buildSendChatMessageAnswerResult } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/utils/build-send-chat-message-answer-result.util';
 import { type WorkflowSendChatMessageActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/types/workflow-send-chat-message-action-input.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -193,13 +194,31 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
     const { authContext, rolePermissionConfig, application } =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const toolContext: ToolContext = {
+    const toolContext = {
       workspaceId: runInfo.workspaceId,
       roleId: getRoleIdsFromRolePermissionConfig(rolePermissionConfig)[0] ?? '',
       rolePermissionConfig,
       authContext,
       application: application ?? undefined,
-    };
+    } satisfies ToolContext;
+
+    const catalog = await this.toolRegistryService.getCatalog(toolContext);
+    const inputSchemas = await this.toolRegistryService.resolveSchemas({
+      toolNames: [toolCall.toolName],
+      context: toolContext,
+      precomputedCatalog: catalog,
+    });
+    const missingArgumentNames = findMissingRequiredToolArguments({
+      inputSchema: inputSchemas.get(toolCall.toolName),
+      toolArguments: toolCall.arguments,
+    });
+
+    if (missingArgumentNames.length > 0) {
+      throw new WorkflowStepExecutorException(
+        `The action is missing required arguments: ${missingArgumentNames.join(', ')}`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     const input = {
       toolName: toolCall.toolName,
@@ -209,8 +228,8 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
 
     const resolution = await resolveProposedToolCall({
       input,
-      findTool: (toolName) =>
-        this.toolRegistryService.findCatalogEntry(toolName, toolContext),
+      findTool: async (toolName) =>
+        catalog.find((catalogEntry) => catalogEntry.name === toolName),
       executeTool: ({ toolName, args }) =>
         this.toolRegistryService.resolveAndExecute(toolName, args, toolContext),
     });
