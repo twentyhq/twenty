@@ -1,5 +1,6 @@
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
@@ -44,6 +45,17 @@ export const RecordSelectionRecordIdsEffect = ({
           false,
         );
       }
+    }
+
+    const recordSelectionRangeAtom =
+      recordSelectionRangeComponentState.atomFamily({ instanceId });
+    const recordSelectionRange = store.get(recordSelectionRangeAtom);
+
+    if (
+      isDefined(recordSelectionRange) &&
+      !recordIdSet.has(recordSelectionRange.anchorRecordId)
+    ) {
+      store.set(recordSelectionRangeAtom, null);
     }
 
     store.set(recordIdsAtom, recordIds);

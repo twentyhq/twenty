@@ -59,6 +59,12 @@ jest.mock(
       ],
       workspaceNavigationMenuItems: [
         {
+          id: 'workspace-favorite-2',
+          position: 0,
+          targetRecordId: 'record-2',
+          targetObjectMetadataId: mockObjectMetadataItem.id,
+        },
+        {
           id: 'workspace-favorite-3',
           position: 1,
           targetRecordId: 'record-3',
@@ -100,7 +106,7 @@ it('adds every selected record that is not a favorite yet', async () => {
   );
 });
 
-it('removes the favorites of every selected record', async () => {
+it('removes one favorite per selected record, the personal one first', async () => {
   renderCommand(<RemoveFromFavoritesCommand />);
 
   await waitFor(() =>
