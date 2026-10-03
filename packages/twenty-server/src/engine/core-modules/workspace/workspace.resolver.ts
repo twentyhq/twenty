@@ -165,7 +165,7 @@ export class WorkspaceResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     CustomPermissionGuard,
   )

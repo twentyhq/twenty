@@ -70,6 +70,16 @@ exports[`Administration operations with an application token should fail with a 
 }
 `;
 
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse completeWorkspaceLogoUpload 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse createApplicationFileUploads 1`] = `
 {
   "extensions": {
@@ -610,6 +620,16 @@ exports[`Administration operations with an application token should fail with a 
 }
 `;
 
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateWorkspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateWorkspaceAllowedIframeOrigins 1`] = `
 {
   "extensions": {
@@ -631,6 +651,16 @@ exports[`Administration operations with an application token should fail with a 
 `;
 
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse upgradeApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse uploadWorkspaceLogo 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -751,6 +781,16 @@ exports[`Administration operations with an application token should fail with an
 `;
 
 exports[`Administration operations with an application token should fail with an application token without user binding should refuse completeApplicationFileUploads 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse completeWorkspaceLogoUpload 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -1300,6 +1340,16 @@ exports[`Administration operations with an application token should fail with an
 }
 `;
 
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateWorkspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
 exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateWorkspaceAllowedIframeOrigins 1`] = `
 {
   "extensions": {
@@ -1321,6 +1371,16 @@ exports[`Administration operations with an application token should fail with an
 `;
 
 exports[`Administration operations with an application token should fail with an application token without user binding should refuse upgradeApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse uploadWorkspaceLogo 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",

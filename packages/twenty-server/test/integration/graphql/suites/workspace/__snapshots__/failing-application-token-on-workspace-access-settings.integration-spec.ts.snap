@@ -24,11 +24,19 @@ exports[`Workspace access settings with an application token should fail with a 
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update customDomain, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -36,11 +44,29 @@ exports[`Workspace access settings with an application token should fail with a 
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update editableProfileFields, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update eventLogRetentionDays, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -48,11 +74,9 @@ exports[`Workspace access settings with an application token should fail with a 
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -60,11 +84,9 @@ exports[`Workspace access settings with an application token should fail with a 
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -72,11 +94,9 @@ exports[`Workspace access settings with an application token should fail with a 
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -84,11 +104,9 @@ exports[`Workspace access settings with an application token should fail with a 
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -96,11 +114,9 @@ exports[`Workspace access settings with an application token should fail with a 
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -108,11 +124,19 @@ exports[`Workspace access settings with an application token should fail with a 
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update subdomain, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -120,11 +144,9 @@ exports[`Workspace access settings with an application token should fail with a 
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -132,9 +154,19 @@ exports[`Workspace access settings with an application token should fail with an
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "This endpoint requires a token bound to a user workspace.",
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update customDomain, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -142,9 +174,29 @@ exports[`Workspace access settings with an application token should fail with an
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "This endpoint requires a token bound to a user workspace.",
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update editableProfileFields, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update eventLogRetentionDays, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -152,9 +204,9 @@ exports[`Workspace access settings with an application token should fail with an
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "This endpoint requires a token bound to a user workspace.",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -162,9 +214,9 @@ exports[`Workspace access settings with an application token should fail with an
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "This endpoint requires a token bound to a user workspace.",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -172,9 +224,9 @@ exports[`Workspace access settings with an application token should fail with an
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "This endpoint requires a token bound to a user workspace.",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -182,9 +234,9 @@ exports[`Workspace access settings with an application token should fail with an
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "This endpoint requires a token bound to a user workspace.",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -192,9 +244,9 @@ exports[`Workspace access settings with an application token should fail with an
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "This endpoint requires a token bound to a user workspace.",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -202,9 +254,19 @@ exports[`Workspace access settings with an application token should fail with an
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "This endpoint requires a token bound to a user workspace.",
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update subdomain, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -212,8 +274,8 @@ exports[`Workspace access settings with an application token should fail with an
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "This endpoint requires a token bound to a user workspace.",
+  "message": "This endpoint is not available to this caller",
 }
 `;

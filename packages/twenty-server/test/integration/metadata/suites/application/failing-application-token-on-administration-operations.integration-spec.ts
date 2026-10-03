@@ -1,3 +1,4 @@
+import gql from 'graphql-tag';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import {
   ADMINISTRATION_OPERATION_QUERY_FACTORIES,
@@ -10,6 +11,7 @@ import {
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-variable.util';
 import { updateOneRoleQueryFactory } from 'test/integration/metadata/suites/role/utils/update-one-role-query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -131,6 +133,32 @@ describe('Administration operations with an application token should fail', () =
           ADMINISTRATION_OPERATION_QUERY_FACTORIES[operationName](
             globalTestContext.callingApplication,
           ),
+          context.token(globalTestContext),
+        );
+
+        expectOneNotInternalServerErrorSnapshot({
+          errors: response.body.errors,
+        });
+      });
+
+      it('should refuse uploadWorkspaceLogo', async () => {
+        const response = await makeMetadataApiRequestWithFileUpload(
+          {
+            query: gql`
+              mutation UploadWorkspaceLogo($file: Upload!) {
+                uploadWorkspaceLogo(file: $file) {
+                  __typename
+                }
+              }
+            `,
+            variables: { file: null },
+          },
+          {
+            field: 'file',
+            buffer: Buffer.from('application-token-probe'),
+            filename: 'logo.png',
+            contentType: 'image/png',
+          },
           context.token(globalTestContext),
         );
 

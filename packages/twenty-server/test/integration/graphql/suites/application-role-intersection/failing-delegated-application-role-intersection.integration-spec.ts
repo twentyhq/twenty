@@ -18,7 +18,6 @@ import { findOneApplication } from 'test/integration/metadata/suites/application
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { uploadWorkspaceMemberProfilePicture } from 'test/integration/graphql/suites/application-role-intersection/utils/upload-workspace-member-profile-picture.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { updateWorkspace } from 'test/integration/graphql/utils/update-workspace.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { findOneView } from 'test/integration/metadata/suites/view/utils/find-one-view.util';
@@ -26,7 +25,6 @@ import { updateOneView } from 'test/integration/metadata/suites/view/utils/updat
 import {
   countWorkspaceBlocklistEntries,
   countWorkspaceFiles,
-  readWorkspaceDisplayName,
   readWorkspaceMemberTimeZone,
   workspaceBlocklistEntryExists,
   workspaceMemberExists,
@@ -79,18 +77,6 @@ const testCases: EachTestingContext<TestContext>[] = [
         }),
       readTarget: () =>
         workspaceMemberExists(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
-    },
-  },
-  {
-    title: 'updateWorkspace',
-    context: {
-      attempt: (token) =>
-        updateWorkspace({
-          data: { displayName: `Renamed by an app ${randomUUID()}` },
-          token,
-          expectToFail: true,
-        }),
-      readTarget: readWorkspaceDisplayName,
     },
   },
   {

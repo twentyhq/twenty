@@ -436,6 +436,26 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
     `,
     variables: { input: { id: PLACEHOLDER_ID, status: 'Active' } },
   }),
+  updateWorkspace: () => ({
+    query: gql`
+      mutation UpdateWorkspace($data: UpdateWorkspaceInput!) {
+        updateWorkspace(data: $data) {
+          __typename
+        }
+      }
+    `,
+    variables: { data: { displayName: PLACEHOLDER_TEXT } },
+  }),
+  completeWorkspaceLogoUpload: () => ({
+    query: gql`
+      mutation CompleteWorkspaceLogoUpload($fileId: String!) {
+        completeWorkspaceLogoUpload(fileId: $fileId) {
+          __typename
+        }
+      }
+    `,
+    variables: { fileId: PLACEHOLDER_ID },
+  }),
   updateWorkspaceAllowedIframeOrigins: () => ({
     query: gql`
       mutation UpdateWorkspaceAllowedIframeOrigins(

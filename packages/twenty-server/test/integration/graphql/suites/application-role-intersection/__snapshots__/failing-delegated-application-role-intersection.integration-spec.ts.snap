@@ -68,18 +68,6 @@ exports[`A delegated application without the flag is refused should refuse the p
 }
 `;
 
-exports[`A delegated application without the flag is refused should refuse updateWorkspace 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
-  },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
-}
-`;
-
 exports[`A delegated application without the flag is refused should refuse updateWorkspaceMemberSettings on another member 1`] = `
 {
   "extensions": {

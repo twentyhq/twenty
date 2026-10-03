@@ -56,8 +56,8 @@ type FieldTestContext = {
   }) => UpdateWorkspaceInput;
 };
 
-// Every flag these settings gate on, so the per-field permission check lets
-// the application through and the refusal is the application check's.
+// Every flag these settings gate on, so a missing permission is never what
+// refuses the application.
 const ACCESS_SETTINGS_PERMISSION_FLAGS = [
   SystemPermissionFlag.WORKSPACE,
   SystemPermissionFlag.WORKSPACE_MEMBERS,
