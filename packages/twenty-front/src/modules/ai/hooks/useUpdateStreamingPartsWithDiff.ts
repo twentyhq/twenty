@@ -3,7 +3,7 @@ import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspa
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { useRef } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -18,9 +18,7 @@ export const useUpdateStreamingPartsWithDiff = () => {
     useProcessWorkspaceSetupCompletion();
 
   // messages are replaced, never mutated, so the last one seen can be kept by reference
-  const [lastSeenMessageById] = useState(
-    () => new Map<string, ExtendedUIMessage>(),
-  );
+  const lastSeenMessageByIdRef = useRef(new Map<string, ExtendedUIMessage>());
 
   const isMessageFromCurrentSession = (message: ExtendedUIMessage) => {
     if (agentChatUISessionStartTime === null) {
@@ -39,10 +37,15 @@ export const useUpdateStreamingPartsWithDiff = () => {
   const updateStreamingPartsWithDiff = (
     incomingMessages: ExtendedUIMessage[],
   ) => {
+    const lastSeenMessageById = lastSeenMessageByIdRef.current;
+
+    // only the messages on screen are kept, so other threads' messages are released
+    lastSeenMessageByIdRef.current = new Map(
+      incomingMessages.map((message) => [message.id, message]),
+    );
+
     for (const incomingMessage of incomingMessages) {
       const lastSeenMessage = lastSeenMessageById.get(incomingMessage.id);
-
-      lastSeenMessageById.set(incomingMessage.id, incomingMessage);
 
       // a stream flush keeps the unchanged messages, a refetch rebuilds them all
       if (
