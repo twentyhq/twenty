@@ -225,7 +225,13 @@ export const ViewBarDetails = ({
       isViewBarExpanded);
 
   if (!shouldExpandViewBar) {
-    return null;
+    // Stays mounted so a toggle filter left by a removed All/Mine field is cleaned up
+    return (
+      <ToggleMineFilterEffect
+        viewBarId={viewBarId}
+        objectNameSingular={objectNameSingular}
+      />
+    );
   }
 
   return (

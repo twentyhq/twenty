@@ -35,6 +35,10 @@ export const ToggleMineFilterEffect = ({
     isToggleMineSelectedPerViewState,
   );
 
+  const setToggleMineFilterPerView = useSetAtomState(
+    toggleMineFilterPerViewState,
+  );
+
   const { upsertRecordFilter } = useUpsertRecordFilter(viewBarId);
   const { removeRecordFilter } = useRemoveRecordFilter(viewBarId);
 
@@ -54,6 +58,12 @@ export const ToggleMineFilterEffect = ({
 
     if (isDefined(viewId) && isMineSelected && isToggleMineFilterBlocked) {
       setIsToggleMineSelectedPerView((previous) => ({
+        ...previous,
+        [viewId]: false,
+      }));
+
+      // Keeps the stored last choice in line, else a reload shows Mine for one render
+      setToggleMineFilterPerView((previous) => ({
         ...previous,
         [viewId]: false,
       }));
@@ -89,6 +99,7 @@ export const ToggleMineFilterEffect = ({
     isMineSelected,
     isMineSelectionInitialized,
     setIsToggleMineSelectedPerView,
+    setToggleMineFilterPerView,
     store,
     upsertRecordFilter,
     removeRecordFilter,

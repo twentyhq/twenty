@@ -62,6 +62,9 @@ export const ObjectOptionsDropdownToggleMineFilterFieldsContent = () => {
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
+        {toggleMineFilterableFields.length === 0 && (
+          <ListItem disabled>{t`No results`}</ListItem>
+        )}
         {toggleMineFilterableFields.map((fieldMetadataItem) => (
           <ListItem
             key={fieldMetadataItem.id}

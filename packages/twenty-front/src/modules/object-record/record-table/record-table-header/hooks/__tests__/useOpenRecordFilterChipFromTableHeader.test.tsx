@@ -12,6 +12,7 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { TOGGLE_MINE_RECORD_FILTER_ID } from '@/views/constants/ToggleMineRecordFilterId';
+import { getEditableChipDropdownId } from '@/views/editable-chip/utils/getEditableChipDropdownId';
 import { buildToggleMineRecordFilter } from '@/views/utils/buildToggleMineRecordFilter';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -109,5 +110,10 @@ describe('useOpenRecordFilterChipFromTableHeader', () => {
     expect(mockSetEditableFilterChipDropdownStates).toHaveBeenCalledWith(
       newRecordFilter,
     );
+    expect(mockOpenDropdown).toHaveBeenCalledWith({
+      dropdownComponentInstanceIdFromProps: getEditableChipDropdownId({
+        recordFilterId: newRecordFilter?.id ?? '',
+      }),
+    });
   });
 });

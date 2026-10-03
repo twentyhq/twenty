@@ -135,6 +135,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             mainGroupByFieldMetadataId: shouldCopyFiltersAndSortsAndAggregate
               ? sourceView.mainGroupByFieldMetadataId
               : mainGroupByFieldMetadataId,
+            toggleMineFilterFieldMetadataId:
+              shouldCopyFiltersAndSortsAndAggregate
+                ? sourceView.toggleMineFilterFieldMetadataId
+                : undefined,
             type: viewType,
             objectMetadataId: sourceView.objectMetadataId,
             anyFieldFilterValue: anyFieldFilterValue,
