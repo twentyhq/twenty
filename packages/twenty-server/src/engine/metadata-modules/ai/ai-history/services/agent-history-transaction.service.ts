@@ -49,6 +49,31 @@ export class AgentHistoryTransactionService {
 
                   return result.generatedMaps.length;
                 },
+                upsert: async (name, values, conflictPaths) => {
+                  // workspace upsert selects before inserting, so concurrent writers of one identity take turns
+                  const identity = [...conflictPaths]
+                    .sort()
+                    .map((field) => [field, values[field]]);
+
+                  await transactionScope.executeRawQuery(
+                    'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+                    [
+                      `agent-history-upsert:${workspaceId}:${name}:${JSON.stringify(identity)}`,
+                    ],
+                  );
+                  await getRepository(name).upsert(
+                    await addAgentMessageSenderWorkspaceMember({
+                      name,
+                      values,
+                      workspaceId,
+                      context,
+                    }),
+                    conflictPaths,
+                  );
+                },
+                delete: async (name, where) => {
+                  await getRepository(name).delete(where);
+                },
               });
             },
           ),
