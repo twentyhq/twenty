@@ -1,25 +1,18 @@
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-
-import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
-import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
-import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
-import { processMultiDrag } from '@/object-record/record-drag/utils/processMultiDrag';
-import { processSingleDrag } from '@/object-record/record-drag/utils/processSingleDrag';
-import { getRecordIndexRemoveSortingModalId } from '@/object-record/record-index/utils/getRecordIndexRemoveSortingModalId';
-import { allRecordIdsWithoutGroupsComponentSelector } from '@/object-record/record-index/states/selectors/allRecordIdsWithoutGroupsComponentSelector';
-import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
+import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
+import { computeDroppedRecordPositions } from '@/object-record/record-drag/utils/computeDroppedRecordPositions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
+import { allRecordIdsWithoutGroupsComponentSelector } from '@/object-record/record-index/states/selectors/allRecordIdsWithoutGroupsComponentSelector';
+import { getRecordIndexRemoveSortingModalId } from '@/object-record/record-index/utils/getRecordIndexRemoveSortingModalId';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 type UseProcessRecordWithoutGroupDropProps = {
   onBeforeRecordsUpdate?: (updatedRecords: RecordWithPosition[]) => void;
@@ -30,138 +23,55 @@ export const useProcessRecordWithoutGroupDrop = ({
 }: UseProcessRecordWithoutGroupDropProps = {}) => {
   const store = useStore();
   const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();
-
   const { updateOneRecord } = useUpdateOneRecord();
+  const { openDialog } = useDialog();
 
-  const allRecordIdsWithoutGroup = useAtomComponentSelectorCallbackState(
-    allRecordIdsWithoutGroupsComponentSelector,
-  );
-
-  const selectedRowIds = useAtomComponentSelectorCallbackState(
-    selectedRecordIdsComponentSelector,
-  );
-
-  const originalDragSelection = useAtomComponentStateCallbackState(
+  const allRecordIdsWithoutGroupCallbackState =
+    useAtomComponentSelectorCallbackState(
+      allRecordIdsWithoutGroupsComponentSelector,
+    );
+  const draggedRecordIdsCallbackState = useAtomComponentStateCallbackState(
     draggedRecordIdsComponentState,
   );
-
-  const currentRecordSorts = useAtomComponentStateValue(
+  const currentRecordSortsCallbackState = useAtomComponentStateCallbackState(
     currentRecordSortsComponentState,
   );
 
-  const { openDialog } = useDialog();
-
   const processRecordWithoutGroupDrop = useCallback(
-    async (recordDropResult: RecordDragDropResult) => {
-      if (!recordDropResult.destination) return;
-
-      if (currentRecordSorts.length > 0) {
+    ({ draggedRecordId, destinationIndex }: RecordDragDropResult) => {
+      if (store.get(currentRecordSortsCallbackState).length > 0) {
         openDialog(getRecordIndexRemoveSortingModalId(recordIndexId));
         return;
       }
 
-      const allSparseRecordIds = store.get(allRecordIdsWithoutGroup);
-
-      const draggedRecordId = recordDropResult.draggableId;
-      const selectedRecordIds = store.get(selectedRowIds);
-
-      const isDroppedAfterList =
-        recordDropResult.destination.index + 1 >= allSparseRecordIds.length;
-
-      const recordsWithPosition: RecordWithPosition[] = allSparseRecordIds
-        .filter((recordId): recordId is string => isDefined(recordId))
-        .map((recordId: string) => {
-          const record = store.get(recordStoreFamilyState.atomFamily(recordId));
-          return {
-            id: recordId,
-            position: record?.position ?? 0,
-          };
-        });
-
-      const contiguousRecordsWithPosition =
-        recordsWithPosition.filter(isDefined);
-
-      const dragOperationType = getDragOperationType({
+      const updatedRecords = computeDroppedRecordPositions({
+        destinationRecordIds: store.get(allRecordIdsWithoutGroupCallbackState),
+        destinationIndex,
         draggedRecordId,
-        selectedRecordIds,
+        draggedRecordIds: store.get(draggedRecordIdsCallbackState),
+        store,
       });
 
-      if (dragOperationType === 'single') {
-        const targetRecordId = allSparseRecordIds.at(
-          recordDropResult.destination.index,
-        );
+      onBeforeRecordsUpdate?.(updatedRecords);
 
-        if (!isDefined(targetRecordId)) {
-          throw new Error(
-            `Target record id cannot be found, this should not happen`,
-          );
-        }
-
-        const singleDragResult = processSingleDrag({
-          sourceRecordId: draggedRecordId,
-          targetRecordId: targetRecordId ?? '',
-          recordsWithPosition: contiguousRecordsWithPosition,
-          isDroppedAfterList,
-        });
-
-        if (!isDefined(singleDragResult.position)) {
-          return;
-        }
-
-        onBeforeRecordsUpdate?.([singleDragResult]);
-
+      for (const { id, position } of updatedRecords) {
         updateOneRecord({
           objectNameSingular,
-          idToUpdate: singleDragResult.id,
-          updateOneRecordInput: {
-            position: singleDragResult.position,
-          },
+          idToUpdate: id,
+          updateOneRecordInput: { position },
         });
-      } else {
-        const targetRecordId = allSparseRecordIds.at(
-          recordDropResult.destination.index,
-        );
-
-        if (!isDefined(targetRecordId)) {
-          throw new Error(
-            `Target record id cannot be found, this should not happen`,
-          );
-        }
-
-        const existingOriginalDragSelection = store.get(originalDragSelection);
-
-        const multiDragResult = processMultiDrag({
-          draggedRecordId,
-          targetRecordId: targetRecordId ?? '',
-          selectedRecordIds: existingOriginalDragSelection,
-          recordsWithPosition: contiguousRecordsWithPosition,
-          isDroppedAfterList,
-        });
-
-        onBeforeRecordsUpdate?.(multiDragResult.recordUpdates);
-
-        for (const update of multiDragResult.recordUpdates) {
-          updateOneRecord({
-            objectNameSingular,
-            idToUpdate: update.id,
-            updateOneRecordInput: {
-              position: update.position,
-            },
-          });
-        }
       }
     },
     [
-      objectNameSingular,
-      recordIndexId,
-      selectedRowIds,
       store,
-      updateOneRecord,
+      recordIndexId,
+      objectNameSingular,
       openDialog,
-      currentRecordSorts,
-      originalDragSelection,
-      allRecordIdsWithoutGroup,
+      updateOneRecord,
       onBeforeRecordsUpdate,
+      allRecordIdsWithoutGroupCallbackState,
+      draggedRecordIdsCallbackState,
+      currentRecordSortsCallbackState,
     ],
   );
 

@@ -2,129 +2,99 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
-import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
-import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
-import { processGroupDrop } from '@/object-record/record-drag/utils/processGroupDrop';
-import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
-import { getRecordIndexRemoveSortingModalId } from '@/object-record/record-index/utils/getRecordIndexRemoveSortingModalId';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
+import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
+import { computeDroppedRecordPositions } from '@/object-record/record-drag/utils/computeDroppedRecordPositions';
+import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { getRecordIndexRemoveSortingModalId } from '@/object-record/record-index/utils/getRecordIndexRemoveSortingModalId';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
-import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useProcessRecordGroupDrop = () => {
   const store = useStore();
-  const { recordIndexId, objectNameSingular, objectMetadataItem } =
-    useRecordIndexContextOrThrow();
-
+  const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();
   const { updateOneRecord } = useUpdateOneRecord();
-
   const { openDialog } = useDialog();
 
-  const recordIdsByGroupFamilyState = useAtomComponentFamilyStateCallbackState(
-    recordIndexRecordIdsByGroupComponentFamilyState,
-  );
-
-  const currentRecordSorts = useAtomComponentStateCallbackState(
-    currentRecordSortsComponentState,
-  );
-
-  const selectedRecordIdsCallbackState = useAtomComponentSelectorCallbackState(
-    selectedRecordIdsComponentSelector,
-  );
-
-  const isDraggingRecord = useAtomComponentStateCallbackState(
-    isDraggingRecordComponentState,
-  );
-
-  const originalDragSelection = useAtomComponentStateCallbackState(
+  const recordIdsByGroupCallbackState =
+    useAtomComponentFamilyStateCallbackState(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+    );
+  const draggedRecordIdsCallbackState = useAtomComponentStateCallbackState(
     draggedRecordIdsComponentState,
   );
-
+  const currentRecordSortsCallbackState = useAtomComponentStateCallbackState(
+    currentRecordSortsComponentState,
+  );
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
   const processRecordGroupDrop = useCallback(
-    (result: RecordDragDropResult) => {
-      if (!result.destination) return;
-
-      const destinationRecordGroupId = result.destination.droppableId;
-      const destinationRecordGroup = store.get(
-        recordGroupDefinitionFamilyState.atomFamily(destinationRecordGroupId),
-      );
-
-      if (!isDefined(destinationRecordGroup)) {
-        throw new Error('Record group is not defined');
-      }
-
-      const fieldMetadata = objectMetadataItem.fields.find(
-        (field) => field.id === recordIndexGroupFieldMetadataItem?.id,
-      );
-
-      if (!isDefined(fieldMetadata)) {
-        throw new Error('Field metadata is not defined');
-      }
-
-      const recordGroupColumnName =
-        getFieldMetadataItemGqlFieldName(fieldMetadata);
-
-      const existingOriginalDragSelection = store.get(originalDragSelection);
-
-      const isCurrentlyDraggingRecord = store.get(isDraggingRecord);
-
-      const selectedRecordIds = isCurrentlyDraggingRecord
-        ? existingOriginalDragSelection
-        : store.get(selectedRecordIdsCallbackState);
-
-      const existingRecordSorts = store.get(currentRecordSorts);
-
-      if (existingRecordSorts.length > 0) {
+    ({
+      draggedRecordId,
+      destinationDroppableId,
+      destinationIndex,
+    }: RecordDragDropResult) => {
+      if (store.get(currentRecordSortsCallbackState).length > 0) {
         openDialog(getRecordIndexRemoveSortingModalId(recordIndexId));
         return;
       }
 
-      processGroupDrop({
-        droppableId: destinationRecordGroupId,
-        draggableId: result.draggableId,
-        targetIndex: result.destination.index,
+      const destinationRecordGroup = store.get(
+        recordGroupDefinitionFamilyState.atomFamily(destinationDroppableId),
+      );
+
+      if (
+        !isDefined(destinationRecordGroup) ||
+        !isDefined(recordIndexGroupFieldMetadataItem)
+      ) {
+        throw new Error('Record group is not defined');
+      }
+
+      const updatedRecords = computeDroppedRecordPositions({
+        destinationRecordIds: store.get(
+          recordIdsByGroupCallbackState(destinationDroppableId),
+        ),
+        destinationIndex,
+        draggedRecordId,
+        draggedRecordIds: store.get(draggedRecordIdsCallbackState),
         store,
-        selectedRecordIds,
-        recordIdsByGroupFamilyState,
-        onUpdateRecord: ({ recordId, position }) => {
-          updateOneRecord({
-            objectNameSingular,
-            idToUpdate: recordId,
-            updateOneRecordInput: {
-              position,
-              [recordGroupColumnName]: destinationRecordGroup.value,
-            },
-          });
-        },
       });
+
+      const recordGroupFieldName = getFieldMetadataItemGqlFieldName(
+        recordIndexGroupFieldMetadataItem,
+      );
+
+      for (const { id, position } of updatedRecords) {
+        updateOneRecord({
+          objectNameSingular,
+          idToUpdate: id,
+          updateOneRecordInput: {
+            position,
+            [recordGroupFieldName]: destinationRecordGroup.value,
+          },
+        });
+      }
     },
     [
-      currentRecordSorts,
-      recordIndexId,
       store,
+      recordIndexId,
       objectNameSingular,
-      objectMetadataItem.fields,
-      originalDragSelection,
-      isDraggingRecord,
-      selectedRecordIdsCallbackState,
-      recordIdsByGroupFamilyState,
-      recordIndexGroupFieldMetadataItem?.id,
       openDialog,
       updateOneRecord,
+      recordIndexGroupFieldMetadataItem,
+      recordIdsByGroupCallbackState,
+      draggedRecordIdsCallbackState,
+      currentRecordSortsCallbackState,
     ],
   );
 

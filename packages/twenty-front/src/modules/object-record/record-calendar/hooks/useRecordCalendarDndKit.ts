@@ -169,7 +169,7 @@ export const useRecordCalendarDndKit = (): {
       sourceDate: sourceDroppableId,
       destinationDate: destinationDroppableId,
       destinationIndex,
-      selectedRecordIds: originalDragSelection,
+      draggedRecordIds: originalDragSelection,
     }).catch((error) => {
       logError(error);
       enqueueToast({ variant: 'error', children: t`Failed to move record` });

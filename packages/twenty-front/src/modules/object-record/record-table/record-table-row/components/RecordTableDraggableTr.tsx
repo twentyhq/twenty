@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
-import { RECORD_TABLE_NO_RECORD_GROUP_DROPPABLE_ID } from '@/object-record/record-table/constants/RecordTableNoRecordGroupDroppableId';
+import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
@@ -55,7 +55,7 @@ export const RecordTableDraggableTr = ({
 
   const droppableId = isDefined(recordGroupId)
     ? recordGroupId
-    : RECORD_TABLE_NO_RECORD_GROUP_DROPPABLE_ID;
+    : NO_RECORD_GROUP_FAMILY_KEY;
 
   const rowDragData: RecordTableRowDragData = {
     droppableId,
