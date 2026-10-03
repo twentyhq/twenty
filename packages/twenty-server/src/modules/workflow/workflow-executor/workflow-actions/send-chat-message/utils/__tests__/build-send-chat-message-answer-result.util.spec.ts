@@ -14,7 +14,7 @@ const buildResult = (result: Record<string, unknown>) =>
 
 describe('buildSendChatMessageAnswerResult', () => {
   it.each(['send_email', 'draft_email'])(
-    'tells later steps the member approved %s',
+    'reports %s as executed once approved',
     (toolName) => {
       expect(
         buildResult({
@@ -24,10 +24,8 @@ describe('buildSendChatMessageAnswerResult', () => {
         }),
       ).toEqual({
         threadId: 'thread-id',
-        isApproved: true,
-        isExecuted: true,
-        approvedToolName: toolName,
-        status: 'approved',
+        outcome: 'executed',
+        toolName,
         arguments: EMAIL_ARGUMENTS,
         output: { messageId: 'message-id' },
         feedback: null,
@@ -37,33 +35,25 @@ describe('buildSendChatMessageAnswerResult', () => {
   );
 
   it.each(['failed', 'conflict'])(
-    'counts a %s call as approved but not executed',
+    'reports a %s call without output',
     (status) => {
       expect(
         buildResult({
           status,
           proposal: { toolName: 'send_email', arguments: EMAIL_ARGUMENTS },
+          output: { partial: true },
+          error: 'No connected account',
         }),
-      ).toMatchObject({ isApproved: true, isExecuted: false, status });
+      ).toMatchObject({
+        outcome: status,
+        toolName: 'send_email',
+        output: null,
+        error: 'No connected account',
+      });
     },
   );
 
-  it('keeps the error of an approved call that failed', () => {
-    expect(
-      buildResult({
-        status: 'failed',
-        proposal: { toolName: 'send_email', arguments: EMAIL_ARGUMENTS },
-        error: 'No connected account',
-      }),
-    ).toMatchObject({
-      isApproved: true,
-      approvedToolName: 'send_email',
-      status: 'failed',
-      error: 'No connected account',
-    });
-  });
-
-  it('names no action when the member rejects the call', () => {
+  it('keeps the feedback of a rejected call', () => {
     expect(
       buildResult({
         status: 'rejected',
@@ -71,10 +61,21 @@ describe('buildSendChatMessageAnswerResult', () => {
         feedback: 'Not yet',
       }),
     ).toMatchObject({
-      isApproved: false,
-      isExecuted: false,
-      approvedToolName: null,
+      outcome: 'rejected',
+      toolName: 'send_email',
       feedback: 'Not yet',
     });
   });
+
+  it.each(['pending', 'running', 'skipped', undefined])(
+    'refuses to report a %s call',
+    (status) => {
+      expect(() =>
+        buildResult({
+          status,
+          proposal: { toolName: 'send_email', arguments: EMAIL_ARGUMENTS },
+        }),
+      ).toThrow('The answer to the action could not be read');
+    },
+  );
 });

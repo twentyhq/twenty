@@ -219,10 +219,8 @@ describe('Send chat message workflow step', () => {
       });
       expect(stepResult).toMatchObject({
         threadId: postedThreadId,
-        isApproved: true,
-        isExecuted: true,
-        approvedToolName: 'update_one_company',
-        status: 'approved',
+        outcome: 'executed',
+        toolName: 'update_one_company',
         arguments: { id: companyId, employees: 30 },
       });
       expect(await readEmployees()).toBe(30);
@@ -251,16 +249,13 @@ describe('Send chat message workflow step', () => {
 
       expect(status).toBe('COMPLETED');
       expect(stepResult).toMatchObject({
-        isApproved: false,
-        isExecuted: false,
-        approvedToolName: null,
-        status: 'rejected',
+        outcome: 'rejected',
         feedback: 'Wait for the audit',
       });
       expect(await readEmployees()).toBe(10);
     }, 120000);
 
-    it('reports an approved action whose record changed as not executed', async () => {
+    it('reports a conflict when the record changed before approval', async () => {
       const { status, stepResult } = await runWorkflowActionStep({
         name: 'Approve a stale headcount change',
         stepType: 'SEND_CHAT_MESSAGE',
@@ -289,9 +284,8 @@ describe('Send chat message workflow step', () => {
 
       expect(status).toBe('COMPLETED');
       expect(stepResult).toMatchObject({
-        isApproved: true,
-        isExecuted: false,
-        status: 'conflict',
+        outcome: 'conflict',
+        output: null,
       });
       expect(await readEmployees()).toBe(12);
     }, 120000);
@@ -426,7 +420,7 @@ describe('Send chat message workflow step', () => {
       );
 
       expect(status).toBe('COMPLETED');
-      expect(stepResult).toMatchObject({ isExecuted: true });
+      expect(stepResult).toMatchObject({ outcome: 'executed' });
       expect(
         proposalStatuses.map(({ status }: { status: string }) => status),
       ).toEqual(['skipped', 'approved']);

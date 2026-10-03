@@ -58,10 +58,8 @@ describe('computeStepOutputSchema', () => {
 
       expect(Object.keys(result ?? {})).toEqual([
         'threadId',
-        'isApproved',
-        'isExecuted',
-        'approvedToolName',
-        'status',
+        'outcome',
+        'toolName',
         'feedback',
         'error',
         'arguments',

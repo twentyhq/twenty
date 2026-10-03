@@ -157,15 +157,15 @@ export class AgentInboxService {
       });
     }
 
-    return {
-      threadId,
-      isDismissed: false,
-      awaitedToolOutput: !isDefined(awaitingToolCall)
-        ? undefined
-        : isWritten
-          ? awaitingToolCall.output
-          : await this.findToolOutput({ workspaceId, toolCallId }),
-    };
+    if (!isDefined(awaitingToolCall)) {
+      return { threadId, isDismissed: false };
+    }
+
+    const awaitedToolOutput = isWritten
+      ? awaitingToolCall.output
+      : await this.findToolOutput({ workspaceId, toolCallId });
+
+    return { threadId, isDismissed: false, awaitedToolOutput };
   }
 
   private async findToolOutput({
