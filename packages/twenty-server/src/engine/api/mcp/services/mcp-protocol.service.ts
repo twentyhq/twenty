@@ -3,6 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ToolSet, zodSchema } from 'ai';
+import { ToolCategory } from 'twenty-shared/ai';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -27,6 +28,7 @@ import {
   listSkillsInputSchema,
 } from 'src/engine/api/mcp/tools/list-skills.tool';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
+import { getMcpRegistryToolAnnotations } from 'src/engine/api/mcp/utils/get-mcp-registry-tool-annotations.util';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
@@ -454,23 +456,37 @@ export class McpProtocolService {
           ...nativeTools
         } = toolSet;
 
-        const registryTools = await Sentry.startSpan(
-          {
-            name: 'mcp list registry tools',
-            op: 'mcp.tools',
-            onlyIfParent: true,
-          },
-          () =>
-            this.toolRegistry.getToolsByCategories(toolContext, {
-              excludeTools: [...MCP_EXCLUDED_TOOL_NAMES],
-            }),
+        const [registryTools, databaseCrudCatalog] = await Promise.all([
+          Sentry.startSpan(
+            {
+              name: 'mcp list registry tools',
+              op: 'mcp.tools',
+              onlyIfParent: true,
+            },
+            () =>
+              this.toolRegistry.getToolsByCategories(toolContext, {
+                excludeTools: [...MCP_EXCLUDED_TOOL_NAMES],
+              }),
+          ),
+          this.toolRegistry.getCatalog(toolContext, {
+            categories: [ToolCategory.DATABASE_CRUD],
+          }),
+        ]);
+
+        const executionRefByToolName = new Map(
+          databaseCrudCatalog.map((entry) => [entry.name, entry.executionRef]),
         );
 
         const annotatedRegistryTools = Object.fromEntries(
           Object.entries(registryTools).map(
             ([toolName, registryTool]): [string, McpAnnotatedTool] => [
               toolName,
-              { ...registryTool, annotations: MCP_EXECUTE_TOOL_ANNOTATIONS },
+              {
+                ...registryTool,
+                annotations: getMcpRegistryToolAnnotations(
+                  executionRefByToolName.get(toolName),
+                ),
+              },
             ],
           ),
         );
