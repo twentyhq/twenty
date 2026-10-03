@@ -11,6 +11,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -128,7 +130,8 @@ describe('Send chat message workflow step', () => {
         `SELECT p."toolCallId", p."toolOutput"
          FROM "${SCHEMA}"."agentMessagePart" p
          JOIN "${SCHEMA}"."agentMessage" m ON m.id = p."messageId"
-         WHERE m."threadId" = $1 AND p."toolName" = 'propose_tool_call'`,
+         WHERE m."threadId" = $1 AND p."toolName" = 'propose_tool_call'
+           AND p."toolOutput"->'result'->>'status' = 'pending'`,
         [threadId],
       );
 
@@ -365,6 +368,69 @@ describe('Send chat message workflow step', () => {
 
       expect(secondAnswerErrors).toContain('TOOL_CALL_NOT_PENDING');
       expect(partStatus).toBe('running');
+      expect(await readEmployees()).toBe(25);
+    }, 120000);
+
+    it('asks again when a failed run is retried before the action was answered', async () => {
+      const { status, stepResult } = await runWorkflowActionStep({
+        name: 'Retry a headcount check',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Headcount check',
+          text: 'Raise the headcount to 25?',
+          toolCall: {
+            toolName: 'update_one_company',
+            arguments: { id: companyId, employees: 25 },
+          },
+        },
+        whileRunning: async ({ workflowRunId, stepId }) => {
+          await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
+
+          const [{ threadId }] = await global.testDataSource.query(
+            `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+            [workflowRunId, stepId],
+          );
+
+          postedThreadId = threadId;
+
+          await getAppProviderByClassName<WorkflowRunWorkspaceService>(
+            'WorkflowRunWorkspaceService',
+          ).endWorkflowRun({
+            workflowRunId,
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            status: WorkflowRunStatus.FAILED,
+            error: 'Another branch failed',
+          });
+
+          const retry = await workflowGraphqlRequest(
+            'mutation Retry($id: UUID!) { retryWorkflowRun(workflowRunId: $id) { id } }',
+            { id: workflowRunId },
+          );
+
+          expect(retry.body.errors).toBeUndefined();
+
+          await answerPostedCall({
+            workflowRunId,
+            stepId,
+            response: { decision: 'approve' },
+          });
+        },
+      });
+
+      const proposalStatuses = await global.testDataSource.query(
+        `SELECT p."toolOutput"->'result'->>'status' AS status FROM "${SCHEMA}"."agentMessagePart" p
+         JOIN "${SCHEMA}"."agentMessage" m ON m.id = p."messageId"
+         WHERE m."threadId" = $1 AND p."toolName" = 'propose_tool_call'
+         ORDER BY m."createdAt"`,
+        [postedThreadId],
+      );
+
+      expect(status).toBe('COMPLETED');
+      expect(stepResult).toMatchObject({ isExecuted: true });
+      expect(
+        proposalStatuses.map(({ status }: { status: string }) => status),
+      ).toEqual(['skipped', 'approved']);
       expect(await readEmployees()).toBe(25);
     }, 120000);
 
