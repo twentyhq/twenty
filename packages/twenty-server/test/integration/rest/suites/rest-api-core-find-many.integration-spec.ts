@@ -472,8 +472,6 @@ describe('Core REST API Find Many endpoint', () => {
         );
         expect(person.emails).toHaveProperty('primaryEmail');
       }
-
-      expect(response.headers['x-twenty-fields-capped']).toBeUndefined();
     });
 
     it('should paginate on a field that is not requested', async () => {

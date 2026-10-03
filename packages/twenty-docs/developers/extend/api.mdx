@@ -60,7 +60,7 @@ GET /rest/people?fields=id,name,emails,company
 - A many-to-one relation field returns its join column (e.g. `companyId`) with `depth=0`. One-to-many relation fields are only returned with `depth=1`. With `depth=1`, only the relation fields listed in `fields` are expanded.
 - Unknown fields, or fields your role cannot read, return a `400` error.
 
-When `fields` is omitted on an object with more than 200 readable fields, only 200 fields are returned: `id`, the label and image identifier fields, `createdAt`, `updatedAt`, `deletedAt`, `position`, then standard fields before custom fields, ordered by name. The response then carries the `X-Twenty-Fields-Capped: true` and `X-Twenty-Fields-Max: 200` headers. Pass `fields` explicitly to read any field beyond that default set.
+When `fields` is omitted on an object with more than 200 readable fields, each record returns a default set of 200 fields: `id`, the label and image identifier fields, `createdAt`, `updatedAt`, `deletedAt`, `position`, then standard fields before custom fields, ordered by name. Pass `fields` explicitly to read any field beyond that default set.
 
 ## Rate limits
 

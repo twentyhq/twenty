@@ -13,7 +13,6 @@ import {
   getCreateOneResponse201,
   getDeleteManyResponse200,
   getDeleteResponse200,
-  getFieldsCappedResponseHeaders,
   getFindDuplicatesResponse200,
   getFindManyResponse200,
   getFindOneResponse200,
@@ -42,10 +41,7 @@ export const computeBatchPath = (
       ],
       requestBody: getArrayRequestBody(capitalize(item.nameSingular)),
       responses: {
-        '201': {
-          ...getCreateManyResponse201(item),
-          headers: getFieldsCappedResponseHeaders(),
-        },
+        '201': getCreateManyResponse201(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -72,10 +68,7 @@ export const computeManyResultPath = (
         { $ref: '#/components/parameters/endingBefore' },
       ],
       responses: {
-        '200': {
-          ...getFindManyResponse200({ item }),
-          headers: getFieldsCappedResponseHeaders(),
-        },
+        '200': getFindManyResponse200({ item }),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -91,10 +84,7 @@ export const computeManyResultPath = (
       ],
       requestBody: getRequestBody(capitalize(item.nameSingular)),
       responses: {
-        '201': {
-          ...getCreateOneResponse201(item),
-          headers: getFieldsCappedResponseHeaders(),
-        },
+        '201': getCreateOneResponse201(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -124,10 +114,7 @@ export const computeManyResultPath = (
       ],
       requestBody: getUpdateRequestBody(capitalize(item.nameSingular)),
       responses: {
-        '200': {
-          ...getUpdateManyResponse200(item),
-          headers: getFieldsCappedResponseHeaders(),
-        },
+        '200': getUpdateManyResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -150,10 +137,7 @@ export const computeSingleResultPath = (
         { $ref: '#/components/parameters/fields' },
       ],
       responses: {
-        '200': {
-          ...getFindOneResponse200(item),
-          headers: getFieldsCappedResponseHeaders(),
-        },
+        '200': getFindOneResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -183,10 +167,7 @@ export const computeSingleResultPath = (
       ],
       requestBody: getUpdateRequestBody(capitalize(item.nameSingular)),
       responses: {
-        '200': {
-          ...getUpdateOneResponse200(item),
-          headers: getFieldsCappedResponseHeaders(),
-        },
+        '200': getUpdateOneResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -229,10 +210,7 @@ export const computeDuplicatesResultPath = (
       ],
       requestBody: getFindDuplicatesRequestBody(capitalize(item.nameSingular)),
       responses: {
-        '200': {
-          ...getFindDuplicatesResponse200(item),
-          headers: getFieldsCappedResponseHeaders(),
-        },
+        '200': getFindDuplicatesResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -254,10 +232,7 @@ export const computeRestoreOneResultPath = (
         { $ref: '#/components/parameters/fields' },
       ],
       responses: {
-        '200': {
-          ...getRestoreOneResponse200(item),
-          headers: getFieldsCappedResponseHeaders(),
-        },
+        '200': getRestoreOneResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -279,10 +254,7 @@ export const computeRestoreManyResultPath = (
         { $ref: '#/components/parameters/fields' },
       ],
       responses: {
-        '200': {
-          ...getRestoreManyResponse200(item),
-          headers: getFieldsCappedResponseHeaders(),
-        },
+        '200': getRestoreManyResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -304,10 +276,7 @@ export const computeMergeManyResultPath = (
       ],
       requestBody: getMergeManyRequestBody(),
       responses: {
-        '200': {
-          ...getMergeManyResponse200(item),
-          headers: getFieldsCappedResponseHeaders(),
-        },
+        '200': getMergeManyResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },

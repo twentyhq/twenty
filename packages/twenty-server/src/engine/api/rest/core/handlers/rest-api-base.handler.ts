@@ -12,8 +12,6 @@ import { computeFieldIdsToSelect } from 'src/engine/api/common/common-select-fie
 import { getReadableFlatFields } from 'src/engine/api/common/common-select-fields/utils/get-readable-flat-fields.util';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { REST_API_FIELDS_CAPPED_HEADER_NAME } from 'src/engine/api/rest/core/constants/rest-api-fields-capped-header-name.constant';
-import { REST_API_FIELDS_MAX_HEADER_NAME } from 'src/engine/api/rest/core/constants/rest-api-fields-max-header-name.constant';
 import { REST_API_DEFAULT_MAX_FIELDS } from 'src/engine/api/rest/input-request-parsers/constants/rest-api-default-max-fields.constant';
 import { parseFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/fields-parser-utils/parse-fields-rest-request.util';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
@@ -195,22 +193,13 @@ export abstract class RestApiBaseHandler {
       depth,
     });
 
-    const { fieldIdsToSelect, isDefaultFieldSetCapped } =
-      computeFieldIdsToSelect({
-        flatObjectMetadata,
-        readableFlatFields,
-        depth,
-        requestedFieldNames,
-        maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
-      });
-
-    if (isDefaultFieldSetCapped) {
-      request.res?.setHeader(REST_API_FIELDS_CAPPED_HEADER_NAME, 'true');
-      request.res?.setHeader(
-        REST_API_FIELDS_MAX_HEADER_NAME,
-        String(REST_API_DEFAULT_MAX_FIELDS),
-      );
-    }
+    const fieldIdsToSelect = computeFieldIdsToSelect({
+      flatObjectMetadata,
+      readableFlatFields,
+      depth,
+      requestedFieldNames,
+      maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
+    });
 
     const selectedFields = this.commonSelectFieldsHelper.computeFromDepth({
       objectsPermissions,

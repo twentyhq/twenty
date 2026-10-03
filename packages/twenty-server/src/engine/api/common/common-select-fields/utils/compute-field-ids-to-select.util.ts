@@ -26,11 +26,6 @@ type FieldIdsToSelectFlatFieldMetadata = Pick<
   'id' | 'applicationId' | 'name' | 'type' | 'settings'
 >;
 
-export type FieldIdsToSelect = {
-  fieldIdsToSelect: Set<string> | undefined;
-  isDefaultFieldSetCapped: boolean;
-};
-
 const compareFieldNames = (
   firstFieldName: string,
   secondFieldName: string,
@@ -118,19 +113,17 @@ export const computeFieldIdsToSelect = ({
   depth: Depth | undefined;
   requestedFieldNames?: string[];
   maximumDefaultFieldCount?: number;
-}): FieldIdsToSelect => {
+}): Set<string> | undefined => {
   if (isDefined(requestedFieldNames)) {
     const readableFlatFieldByName = new Map(
       readableFlatFields.map((flatField) => [flatField.name, flatField]),
     );
 
-    const fieldIdsToSelect = new Set(
+    return new Set(
       ['id', ...requestedFieldNames]
         .map((fieldName) => readableFlatFieldByName.get(fieldName)?.id)
         .filter(isDefined),
     );
-
-    return { fieldIdsToSelect, isDefaultFieldSetCapped: false };
   }
 
   const isRelationExpansionDisabled = !isDefined(depth) || depth === 0;
@@ -145,7 +138,7 @@ export const computeFieldIdsToSelect = ({
     !isDefined(maximumDefaultFieldCount) ||
     outputtingFlatFields.length <= maximumDefaultFieldCount
   ) {
-    return { fieldIdsToSelect: undefined, isDefaultFieldSetCapped: false };
+    return undefined;
   }
 
   const cappedFlatFields = sortFlatFieldsByCappedFieldSetPriority({
@@ -153,10 +146,5 @@ export const computeFieldIdsToSelect = ({
     flatObjectMetadata,
   }).slice(0, maximumDefaultFieldCount);
 
-  return {
-    fieldIdsToSelect: new Set(
-      cappedFlatFields.map((flatField) => flatField.id),
-    ),
-    isDefaultFieldSetCapped: true,
-  };
+  return new Set(cappedFlatFields.map((flatField) => flatField.id));
 };

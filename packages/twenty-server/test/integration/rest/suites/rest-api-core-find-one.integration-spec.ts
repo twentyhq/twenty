@@ -154,7 +154,6 @@ describe('Core REST API Find One endpoint', () => {
           expect(person.id).toBe(TEST_PERSON_1_ID);
           expect(person.jobTitle).toBe(personJobTitle);
           expect(person.emails).toHaveProperty('primaryEmail');
-          expect(res.headers['x-twenty-fields-capped']).toBeUndefined();
         });
     });
 

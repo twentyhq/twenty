@@ -97,27 +97,25 @@ describe('computeFieldIdsToSelect', () => {
         ...buildArgs({ fields: WIDE_OBJECT_FIELDS }),
         maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length,
       }),
-    ).toEqual({ fieldIdsToSelect: undefined, isDefaultFieldSetCapped: false });
+    ).toBeUndefined();
   });
 
   it('should not restrict the selection when no maximum is given', () => {
     expect(
       computeFieldIdsToSelect(buildArgs({ fields: WIDE_OBJECT_FIELDS })),
-    ).toEqual({ fieldIdsToSelect: undefined, isDefaultFieldSetCapped: false });
+    ).toBeUndefined();
   });
 
   it('should order the capped field set by priority then standard before custom fields', () => {
-    const { fieldIdsToSelect, isDefaultFieldSetCapped } =
-      computeFieldIdsToSelect({
-        ...buildArgs({
-          fields: WIDE_OBJECT_FIELDS,
-          labelIdentifierFieldName: 'name',
-          imageIdentifierFieldName: 'avatarUrl',
-        }),
-        maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length - 1,
-      });
+    const fieldIdsToSelect = computeFieldIdsToSelect({
+      ...buildArgs({
+        fields: WIDE_OBJECT_FIELDS,
+        labelIdentifierFieldName: 'name',
+        imageIdentifierFieldName: 'avatarUrl',
+      }),
+      maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length - 1,
+    });
 
-    expect(isDefaultFieldSetCapped).toBe(true);
     expect([...(fieldIdsToSelect ?? [])]).toEqual([
       'id-id',
       'name-id',
@@ -133,7 +131,7 @@ describe('computeFieldIdsToSelect', () => {
   });
 
   it('should drop custom fields first when capping', () => {
-    const { fieldIdsToSelect } = computeFieldIdsToSelect({
+    const fieldIdsToSelect = computeFieldIdsToSelect({
       ...buildArgs({ fields: WIDE_OBJECT_FIELDS }),
       maximumDefaultFieldCount: 7,
     });
@@ -152,7 +150,7 @@ describe('computeFieldIdsToSelect', () => {
   });
 
   it('should treat every field as custom on a custom object', () => {
-    const { fieldIdsToSelect } = computeFieldIdsToSelect({
+    const fieldIdsToSelect = computeFieldIdsToSelect({
       ...buildArgs({
         fields: WIDE_OBJECT_FIELDS,
         applicationUniversalIdentifier: 'custom-application-universal-id',
@@ -178,9 +176,9 @@ describe('computeFieldIdsToSelect', () => {
         ...buildArgs({ fields, depth: 0 }),
         maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length,
       }),
-    ).toEqual({ fieldIdsToSelect: undefined, isDefaultFieldSetCapped: false });
+    ).toBeUndefined();
 
-    const { fieldIdsToSelect } = computeFieldIdsToSelect({
+    const fieldIdsToSelect = computeFieldIdsToSelect({
       ...buildArgs({ fields, depth: 0 }),
       maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length - 1,
     });
@@ -193,13 +191,11 @@ describe('computeFieldIdsToSelect', () => {
   it('should count and select one-to-many relations at depth 1', () => {
     const fields = [...WIDE_OBJECT_FIELDS, ...ONE_TO_MANY_RELATION_FIELDS];
 
-    const { fieldIdsToSelect, isDefaultFieldSetCapped } =
-      computeFieldIdsToSelect({
-        ...buildArgs({ fields, depth: 1 }),
-        maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length,
-      });
+    const fieldIdsToSelect = computeFieldIdsToSelect({
+      ...buildArgs({ fields, depth: 1 }),
+      maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length,
+    });
 
-    expect(isDefaultFieldSetCapped).toBe(true);
     expect(fieldIdsToSelect?.has('activities-id')).toBe(true);
     expect(fieldIdsToSelect?.has('attachments-id')).toBe(true);
   });
@@ -215,13 +211,11 @@ describe('computeFieldIdsToSelect', () => {
       ),
     ];
 
-    const { fieldIdsToSelect, isDefaultFieldSetCapped } =
-      computeFieldIdsToSelect({
-        ...buildArgs({ fields }),
-        maximumDefaultFieldCount: 200,
-      });
+    const fieldIdsToSelect = computeFieldIdsToSelect({
+      ...buildArgs({ fields }),
+      maximumDefaultFieldCount: 200,
+    });
 
-    expect(isDefaultFieldSetCapped).toBe(true);
     expect(fieldIdsToSelect?.size).toBe(200);
     expect(fieldIdsToSelect?.has('id-id')).toBe(true);
     expect(fieldIdsToSelect?.has('customField198-id')).toBe(true);
@@ -235,10 +229,7 @@ describe('computeFieldIdsToSelect', () => {
         requestedFieldNames: ['zCustom', 'name'],
         maximumDefaultFieldCount: 1,
       }),
-    ).toEqual({
-      fieldIdsToSelect: new Set(['id-id', 'zCustom-id', 'name-id']),
-      isDefaultFieldSetCapped: false,
-    });
+    ).toEqual(new Set(['id-id', 'zCustom-id', 'name-id']));
   });
 
   it('should not select requested fields that are not readable', () => {
@@ -249,9 +240,6 @@ describe('computeFieldIdsToSelect', () => {
         }),
         requestedFieldNames: ['name', 'position'],
       }),
-    ).toEqual({
-      fieldIdsToSelect: new Set(['id-id', 'position-id']),
-      isDefaultFieldSetCapped: false,
-    });
+    ).toEqual(new Set(['id-id', 'position-id']));
   });
 });
