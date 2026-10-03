@@ -31,12 +31,14 @@ export const useSelectAllRecords = (recordIndexId?: string) => {
   const selectAllRecords = useCallback(() => {
     if (store.get(allRecordsSelectedStatus) === 'all') {
       resetRecordSelection();
-      return;
+      return false;
     }
 
     for (const recordId of store.get(allRecordIds)) {
       store.set(isRecordSelectedFamilyState(recordId), true);
     }
+
+    return true;
   }, [
     allRecordsSelectedStatus,
     allRecordIds,
