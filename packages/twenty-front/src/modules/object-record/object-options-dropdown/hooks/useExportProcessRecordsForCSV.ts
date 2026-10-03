@@ -19,16 +19,20 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
           }
 
           switch (field.type) {
-            case FieldMetadataType.CURRENCY:
+            case FieldMetadataType.CURRENCY: {
+              const amountMicros = record[field.name].amountMicros;
+
               return {
                 ...processedRecord,
                 [field.name]: {
-                  amountMicros: convertCurrencyMicrosToCurrencyAmount(
-                    record[field.name].amountMicros,
-                  ),
+                  // Preserve empty amounts instead of coercing null to 0
+                  amountMicros: isDefined(amountMicros)
+                    ? convertCurrencyMicrosToCurrencyAmount(amountMicros)
+                    : null,
                   currencyCode: record[field.name].currencyCode,
                 } satisfies FieldCurrencyValue,
               };
+            }
             case FieldMetadataType.MULTI_SELECT:
             case FieldMetadataType.ARRAY:
             case FieldMetadataType.RAW_JSON:
