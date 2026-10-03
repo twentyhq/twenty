@@ -23,7 +23,8 @@ export const AiChatThreadRenameCommandMenuItem = () => {
   const canRename =
     selectedRecords.length === 1 &&
     !isDefined(thread.deletedAt) &&
-    thread.recordPermissions?.canUpdate === true;
+    isDefined(thread.recordPermissions) &&
+    thread.recordPermissions.canUpdate;
 
   if (!canRename) {
     return null;
