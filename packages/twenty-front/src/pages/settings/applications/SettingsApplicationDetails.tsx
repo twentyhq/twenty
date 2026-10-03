@@ -5,12 +5,16 @@ import { useResolvedApplicationDescription } from '@/applications/hooks/useResol
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsApplicationPermissionValidationModal } from '@/marketplace/components/SettingsApplicationPermissionValidationModal';
+import { useApplicationUpgradePermissionSummary } from '@/marketplace/hooks/useApplicationUpgradePermissionSummary';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -29,6 +33,7 @@ import { InlineBanner } from 'twenty-ui/components';
 import {
   IconAlertTriangle,
   IconDeviceFloppy,
+  IconLock,
   IconSettings,
   IconVariable,
   useIcons,
@@ -38,6 +43,7 @@ import {
   FindMarketplaceAppDetailDocument,
   FindOneApplicationDocument,
   IsApplicationStoppedDocument,
+  PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
@@ -61,6 +67,9 @@ const APPLICATION_DETAIL_ID = 'application-detail-id';
 
 const GENERAL_TAB_ID = 'general';
 const VARIABLES_TAB_ID = 'variables';
+
+const UPGRADE_PERMISSION_VALIDATION_MODAL_ID =
+  'upgrade-permission-validation-modal';
 
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
@@ -136,7 +145,23 @@ export const SettingsApplicationDetails = () => {
     isDefined(currentVersion) &&
     isNewerSemver(latestAvailableVersion, currentVersion);
 
-  const handleUpgrade = async () => {
+  const canManageApplications = useHasPermissionFlag(
+    PermissionFlagType.APPLICATIONS,
+  );
+  const {
+    permissionSummaryItems,
+    isPermissionSummaryReady,
+    hasPermissionSummaryError,
+    refetchPermissionSummary,
+  } = useApplicationUpgradePermissionSummary({
+    applicationId,
+    skip: !hasUpdate || !canManageApplications,
+  });
+  const requiresPermissionApproval = permissionSummaryItems.length > 0;
+  const isUpgradeDisabled = isUpgrading || !isPermissionSummaryReady;
+  const { openDialog } = useDialog();
+
+  const upgradeToLatestVersion = async (hasUserApprovedRoleGrants: boolean) => {
     if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {
       return;
     }
@@ -144,7 +169,23 @@ export const SettingsApplicationDetails = () => {
     await upgrade({
       appRegistrationId: registrationId,
       targetVersion: latestAvailableVersion,
+      hasUserApprovedRoleGrants,
     });
+    await refetchPermissionSummary().catch(() => {});
+  };
+
+  const handleUpgrade = async () => {
+    if (isUpgradeDisabled) {
+      return;
+    }
+
+    if (requiresPermissionApproval) {
+      openDialog(UPGRADE_PERMISSION_VALIDATION_MODAL_ID);
+
+      return;
+    }
+
+    await upgradeToLatestVersion(false);
   };
 
   const navigate = useNavigateSettings();
@@ -254,8 +295,10 @@ export const SettingsApplicationDetails = () => {
             marketplaceUniversalIdentifier={detail?.universalIdentifier}
             hasUpdate={hasUpdate}
             latestAvailableVersion={latestAvailableVersion ?? undefined}
+            requiresPermissionApproval={requiresPermissionApproval}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}
+            isUpgradeDisabled={isUpgradeDisabled}
             onUninstall={uninstall}
             isUninstalling={isUninstalling}
           />
@@ -354,6 +397,29 @@ export const SettingsApplicationDetails = () => {
               action={healthBannerButton}
             />
           )}
+          {hasPermissionSummaryError && (
+            <InlineBanner
+              color="danger"
+              LeftIcon={IconAlertTriangle}
+              message={t`Could not load the permissions requested by version ${latestAvailableVersion ?? ''}.`}
+              button={{
+                title: t`Retry`,
+                onClick: () => void refetchPermissionSummary().catch(() => {}),
+              }}
+            />
+          )}
+          {requiresPermissionApproval && (
+            <InlineBanner
+              color="blue"
+              LeftIcon={IconLock}
+              message={t`Version ${latestAvailableVersion ?? ''} asks for more permissions. Review them to upgrade.`}
+              button={{
+                title: t`Review`,
+                onClick: handleUpgrade,
+                disabled: isUpgradeDisabled,
+              }}
+            />
+          )}
           {isApplicationStopped && (
             <InlineBanner
               color="danger"
@@ -363,6 +429,16 @@ export const SettingsApplicationDetails = () => {
           )}
           {renderActiveTabContent()}
         </SettingsPageContainer>
+        <SettingsApplicationPermissionValidationModal
+          modalInstanceId={UPGRADE_PERMISSION_VALIDATION_MODAL_ID}
+          appDisplayName={displayName}
+          appLogoUrl={application?.logoUrl ?? undefined}
+          title={t`Upgrade ${displayName} to ${latestAvailableVersion ?? ''}`}
+          permissionsTitle={t`This version would also like to:`}
+          permissionItems={permissionSummaryItems}
+          onAuthorize={() => upgradeToLatestVersion(true)}
+          isLoading={isUpgrading}
+        />
       </SettingsPageLayout>
     </CurrentApplicationContext.Provider>
   );

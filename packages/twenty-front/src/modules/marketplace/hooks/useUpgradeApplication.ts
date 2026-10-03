@@ -13,6 +13,7 @@ export const useUpgradeApplication = () => {
   const upgrade = async (params: {
     appRegistrationId: string;
     targetVersion: string;
+    hasUserApprovedRoleGrants?: boolean;
   }) => {
     setIsUpgrading(true);
 
