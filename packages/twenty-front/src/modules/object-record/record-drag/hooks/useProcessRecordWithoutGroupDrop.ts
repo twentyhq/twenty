@@ -1,6 +1,5 @@
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
-import { useTriggerTableWithoutGroupDragAndDropOptimisticUpdate } from '@/object-record/record-drag/hooks/useTriggerTableWithoutGroupDragAndDropOptimisticUpdate';
 import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
@@ -13,7 +12,6 @@ import { useStore } from 'jotai';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -23,10 +21,15 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useProcessTableWithoutGroupRecordDrop = () => {
+type UseProcessRecordWithoutGroupDropProps = {
+  onBeforeRecordsUpdate?: (updatedRecords: RecordWithPosition[]) => void;
+};
+
+export const useProcessRecordWithoutGroupDrop = ({
+  onBeforeRecordsUpdate,
+}: UseProcessRecordWithoutGroupDropProps = {}) => {
   const store = useStore();
-  const { recordIndexId } = useRecordIndexContextOrThrow();
-  const { objectNameSingular } = useRecordTableContextOrThrow();
+  const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();
 
   const { updateOneRecord } = useUpdateOneRecord();
 
@@ -49,12 +52,9 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
 
   const { openDialog } = useDialog();
 
-  const { triggerTableWithoutGroupDragAndDropOptimisticUpdate } =
-    useTriggerTableWithoutGroupDragAndDropOptimisticUpdate();
-
-  const processTableWithoutGroupRecordDrop = useCallback(
-    async (tableRecordDropResult: RecordDragDropResult) => {
-      if (!tableRecordDropResult.destination) return;
+  const processRecordWithoutGroupDrop = useCallback(
+    async (recordDropResult: RecordDragDropResult) => {
+      if (!recordDropResult.destination) return;
 
       if (currentRecordSorts.length > 0) {
         openDialog(getRecordIndexRemoveSortingModalId(recordIndexId));
@@ -63,12 +63,11 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
 
       const allSparseRecordIds = store.get(allRecordIdsWithoutGroup);
 
-      const draggedRecordId = tableRecordDropResult.draggableId;
+      const draggedRecordId = recordDropResult.draggableId;
       const selectedRecordIds = store.get(selectedRowIds);
 
       const isDroppedAfterList =
-        tableRecordDropResult.destination.index + 1 >=
-        allSparseRecordIds.length;
+        recordDropResult.destination.index + 1 >= allSparseRecordIds.length;
 
       const recordsWithPosition: RecordWithPosition[] = allSparseRecordIds
         .filter((recordId): recordId is string => isDefined(recordId))
@@ -90,7 +89,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
 
       if (dragOperationType === 'single') {
         const targetRecordId = allSparseRecordIds.at(
-          tableRecordDropResult.destination.index,
+          recordDropResult.destination.index,
         );
 
         if (!isDefined(targetRecordId)) {
@@ -110,7 +109,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
           return;
         }
 
-        triggerTableWithoutGroupDragAndDropOptimisticUpdate([singleDragResult]);
+        onBeforeRecordsUpdate?.([singleDragResult]);
 
         updateOneRecord({
           objectNameSingular,
@@ -121,7 +120,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
         });
       } else {
         const targetRecordId = allSparseRecordIds.at(
-          tableRecordDropResult.destination.index,
+          recordDropResult.destination.index,
         );
 
         if (!isDefined(targetRecordId)) {
@@ -140,9 +139,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
           isDroppedAfterList,
         });
 
-        triggerTableWithoutGroupDragAndDropOptimisticUpdate(
-          multiDragResult.recordUpdates,
-        );
+        onBeforeRecordsUpdate?.(multiDragResult.recordUpdates);
 
         for (const update of multiDragResult.recordUpdates) {
           updateOneRecord({
@@ -165,9 +162,9 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
       currentRecordSorts,
       originalDragSelection,
       allRecordIdsWithoutGroup,
-      triggerTableWithoutGroupDragAndDropOptimisticUpdate,
+      onBeforeRecordsUpdate,
     ],
   );
 
-  return { processTableWithoutGroupRecordDrop };
+  return { processRecordWithoutGroupDrop };
 };

@@ -101,7 +101,9 @@ export const ChatThreadsCardContent = ({
       <AiChatThreadList
         threads={threads}
         surface={AI_CHAT_THREAD_ACTIONS_SURFACE.RECORD_PAGE}
-        selectedThreadId={sidePanelThreadId}
+        selectedThreadIds={
+          isDefined(sidePanelThreadId) ? [sidePanelThreadId] : []
+        }
         onThreadClick={({ id }) =>
           openRecordInSidePanel({
             recordId: id,
