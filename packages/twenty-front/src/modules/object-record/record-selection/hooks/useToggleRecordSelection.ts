@@ -44,19 +44,29 @@ export const useToggleRecordSelection = (recordIndexId?: string) => {
         isDefined(range) &&
         recordIds.includes(range.anchorRecordId)
       ) {
-        for (const previousRangeRecordId of getRecordIdsBetween({
+        const previousRangeRecordIds = getRecordIdsBetween({
           recordIds,
           firstRecordId: range.anchorRecordId,
           secondRecordId: range.leadRecordId,
-        })) {
-          store.set(isRecordSelectedFamilyState(previousRangeRecordId), false);
+        });
+        const rangeRecordIds = new Set(
+          getRecordIdsBetween({
+            recordIds,
+            firstRecordId: range.anchorRecordId,
+            secondRecordId: recordId,
+          }),
+        );
+
+        for (const previousRangeRecordId of previousRangeRecordIds) {
+          if (!rangeRecordIds.has(previousRangeRecordId)) {
+            store.set(
+              isRecordSelectedFamilyState(previousRangeRecordId),
+              false,
+            );
+          }
         }
 
-        for (const rangeRecordId of getRecordIdsBetween({
-          recordIds,
-          firstRecordId: range.anchorRecordId,
-          secondRecordId: recordId,
-        })) {
+        for (const rangeRecordId of rangeRecordIds) {
           store.set(isRecordSelectedFamilyState(rangeRecordId), true);
         }
 
