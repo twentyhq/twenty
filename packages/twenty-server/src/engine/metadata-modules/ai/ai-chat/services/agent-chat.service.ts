@@ -8,7 +8,6 @@ import { Injectable } from '@nestjs/common';
 import { ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type FindOptionsWhere, In } from 'typeorm';
-import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
@@ -140,28 +139,30 @@ export class AgentChatService {
     parts: ExtendedUIMessage['parts'];
     workspaceId: string;
   }): Promise<void> {
-    await this.messageRepository.upsert(
-      workspaceId,
-      {
-        id,
-        threadId,
-        turnId,
-        role: AgentMessageRole.ASSISTANT,
-        processedAt: new Date().toISOString(),
-      },
-      ['id'],
-    );
-
-    await this.messagePartRepository.delete(workspaceId, { messageId: id });
-
     const dbParts = mapUIMessagePartsToDBParts(parts, id);
 
-    if (dbParts.length > 0) {
-      await this.messagePartRepository.insert(
-        workspaceId,
-        dbParts as QueryDeepPartialEntity<AgentMessagePartWorkspaceEntity>[],
-      );
-    }
+    // the message is replaced whole, so no reader or crash ever finds it without its parts
+    await this.conversationWriterService.runInTransaction(
+      workspaceId,
+      async (scope) => {
+        await scope.upsert(
+          'agentMessage',
+          {
+            id,
+            threadId,
+            turnId,
+            role: AgentMessageRole.ASSISTANT,
+            processedAt: new Date().toISOString(),
+          },
+          ['id'],
+        );
+        await scope.delete('agentMessagePart', { messageId: id });
+
+        if (dbParts.length > 0) {
+          await scope.insert('agentMessagePart', dbParts);
+        }
+      },
+    );
   }
 
   async findLatestSentUserMessage({
