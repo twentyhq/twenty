@@ -108,6 +108,8 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
+import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
+import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
@@ -171,18 +173,21 @@ export class ChatExecutionService {
     abortSignal,
     conversationSizeTokens,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
-    const resolveExecutionContext = async (): Promise<ToolContext> => {
-      const authorization = await this.chatActorService.authorize({
-        workspaceId: workspace.id,
-        threadId,
-        sender,
-      });
-      return {
-        ...toolContext,
-        ...authorization,
-        resolveExecutionContext: undefined,
-      };
-    };
+    const getAuthorization = createTurnAuthorizer({
+      authorize: () =>
+        this.chatActorService.authorize({
+          workspaceId: workspace.id,
+          threadId,
+          sender,
+        }),
+      authorization,
+      maxAgeMs: AGENT_CHAT_KEEPALIVE_INTERVAL_MS,
+    });
+    const resolveExecutionContext = async (): Promise<ToolContext> => ({
+      ...toolContext,
+      ...(await getAuthorization()),
+      resolveExecutionContext: undefined,
+    });
     const { actorContext, roleId, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
@@ -557,11 +562,7 @@ export class ChatExecutionService {
         promptCacheKey: threadId,
       }),
       prepareStep: async ({ messages }) => {
-        await this.chatActorService.authorize({
-          workspaceId: workspace.id,
-          threadId,
-          sender,
-        });
+        await getAuthorization();
         stepStartedAt = performance.now();
 
         return {
