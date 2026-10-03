@@ -17,6 +17,8 @@ import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 
+export { AgentMessageRole };
+
 @Entity({ name: 'agentMessage', schema: 'core' })
 @Index('IDX_AGENT_MESSAGE_THREAD_ID_IS_HIDDEN_UNIQUE', ['threadId'], {
   unique: true,
