@@ -39,7 +39,7 @@ export const getAgentChatThreadInboxStatus = ({
   }
 
   // Still archived with no newer activity: the snooze ran out
-  if (participant?.hasSnoozeEnded === true) {
+  if (isDefined(participant) && participant.hasSnoozeEnded) {
     return {
       scope: 'INBOX',
       isUnread,

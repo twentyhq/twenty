@@ -6,6 +6,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
+import { AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-job-retry-options.constant';
 import { AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-recheck-minimum-delay-ms.constant';
 import { type AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { END_AGENT_CHAT_THREAD_SNOOZE_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze-job-name.constant';
@@ -127,15 +128,15 @@ export class AgentChatThreadParticipantService {
       );
     }
 
-    const participant = await this.setArchive(args, snoozedUntil);
-
+    // Queued first, so no saved snooze lacks its end; the end of a snooze
+    // that was never saved finds nothing to end
     await this.scheduleSnoozeEnd({
       ...args,
       snoozedUntil: snoozedUntil.toISOString(),
       delay: Math.max(snoozedUntil.getTime() - Date.now(), 0),
     });
 
-    return participant;
+    return this.setArchive(args, snoozedUntil);
   }
 
   // Nothing is written when a snooze ends, so the member's open apps hear of
@@ -296,7 +297,7 @@ export class AgentChatThreadParticipantService {
     await this.delayedJobsQueueService.add<EndAgentChatThreadSnoozeJobData>(
       END_AGENT_CHAT_THREAD_SNOOZE_JOB_NAME,
       data,
-      { delay },
+      { delay, ...AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS },
     );
   }
 
