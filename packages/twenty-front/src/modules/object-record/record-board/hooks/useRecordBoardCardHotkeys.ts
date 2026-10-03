@@ -4,10 +4,10 @@ import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/use
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardSelectAllHotkeys } from '@/object-record/record-board/hooks/useRecordBoardSelectAllHotkeys';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
-import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks/useResetRecordBoardSelection';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
-import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
-import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
+import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -24,23 +24,23 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
   const { activateBoardCard } = useActiveRecordBoardCard();
   const { setRecordAsSelected } = useRecordBoardSelection();
 
-  const { resetRecordBoardSelection } = useResetRecordBoardSelection();
+  const { resetRecordSelection } = useResetRecordSelection();
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const isRecordBoardCardSelected = useAtomComponentFamilyStateValue(
-    isRecordBoardCardSelectedComponentFamilyState,
+  const isRecordSelected = useAtomComponentFamilyStateValue(
+    isRecordSelectedComponentFamilyState,
     recordId,
   );
 
   const selectedRecordIds = useAtomComponentSelectorValue(
-    recordBoardSelectedRecordIdsComponentSelector,
+    selectedRecordIdsComponentSelector,
     recordBoardId,
   );
 
   const isAtLeastOneRecordSelected = selectedRecordIds.length > 0;
 
   const handleSelectCard = () => {
-    setRecordAsSelected(recordId, !isRecordBoardCardSelected);
+    setRecordAsSelected(recordId, !isRecordSelected);
   };
 
   const handleOpenRecordInSidePanel = () => {
@@ -60,7 +60,7 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
     unfocusBoardCard();
 
     if (isAtLeastOneRecordSelected) {
-      resetRecordBoardSelection();
+      resetRecordSelection();
     }
   };
 

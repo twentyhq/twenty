@@ -15,9 +15,9 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
-import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
+import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
+import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
+import { unselectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/unselectedRecordIdsComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -44,18 +44,18 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     recordIndexId,
   );
 
-  const hasUserSelectedAllRows = useAtomComponentStateValue(
-    hasUserSelectedAllRowsComponentState,
+  const hasUserSelectedAllRecords = useAtomComponentStateValue(
+    hasUserSelectedAllRecordsComponentState,
     recordIndexId,
   );
 
   const selectedRowIds = useAtomComponentSelectorValue(
-    selectedRowIdsComponentSelector,
+    selectedRecordIdsComponentSelector,
     recordIndexId,
   );
 
   const unselectedRowIds = useAtomComponentSelectorValue(
-    unselectedRowIdsComponentSelector,
+    unselectedRecordIdsComponentSelector,
     recordIndexId,
   );
 
@@ -97,7 +97,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
         ) => {
           let newRule: ContextStoreTargetedRecordsRule;
 
-          if (hasUserSelectedAllRows) {
+          if (hasUserSelectedAllRecords) {
             newRule = {
               mode: 'exclusion',
               excludedRecordIds: unselectedRowIds,
@@ -119,7 +119,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
           );
           const newRecordIdsInSelectionOrder = orderRecordIdsBySelection({
             previousRecordIdsInSelectionOrder: currentRecordIdsInSelectionOrder,
-            selectedRecordIds: hasUserSelectedAllRows ? [] : selectedRowIds,
+            selectedRecordIds: hasUserSelectedAllRecords ? [] : selectedRowIds,
           });
           if (
             !isDeeplyEqual(
@@ -155,7 +155,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
         },
       ),
     [
-      hasUserSelectedAllRows,
+      hasUserSelectedAllRecords,
       selectedRowIds,
       unselectedRowIds,
       contextStoreTargetedRecordsRuleAtom,

@@ -1,8 +1,8 @@
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
-import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
-import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
+import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -18,12 +18,12 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
 
   const isRecordBoardCardSelectedFamilyState =
     useAtomComponentFamilyStateCallbackState(
-      isRecordBoardCardSelectedComponentFamilyState,
+      isRecordSelectedComponentFamilyState,
       recordBoardId,
     );
 
   const recordBoardSelectedRecordIds = useAtomComponentSelectorCallbackState(
-    recordBoardSelectedRecordIdsComponentSelector,
+    selectedRecordIdsComponentSelector,
     recordBoardId,
   );
 

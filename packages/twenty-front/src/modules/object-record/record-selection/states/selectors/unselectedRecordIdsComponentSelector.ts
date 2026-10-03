@@ -1,13 +1,13 @@
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
+import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 
-export const unselectedRowIdsComponentSelector = createAtomComponentSelector<
+export const unselectedRecordIdsComponentSelector = createAtomComponentSelector<
   string[]
 >({
-  key: 'unselectedRowIdsComponentSelector',
-  componentInstanceContext: RecordTableComponentInstanceContext,
+  key: 'unselectedRecordIdsComponentSelector',
+  componentInstanceContext: RecordSelectionComponentInstanceContext,
   get:
     ({ instanceId }) =>
     ({ get }) => {
@@ -17,7 +17,7 @@ export const unselectedRowIdsComponentSelector = createAtomComponentSelector<
 
       return allRecordIds.filter(
         (recordId) =>
-          get(isRowSelectedComponentFamilyState, {
+          get(isRecordSelectedComponentFamilyState, {
             instanceId,
             familyKey: recordId,
           }) === false,

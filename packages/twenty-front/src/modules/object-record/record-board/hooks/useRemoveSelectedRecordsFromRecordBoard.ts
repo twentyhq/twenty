@@ -1,7 +1,7 @@
 import { useStore } from 'jotai';
 
-import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks/useResetRecordBoardSelection';
-import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
+import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -33,12 +33,11 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
     );
 
   const recordBoardSelectedRecordIds = useAtomComponentSelectorCallbackState(
-    recordBoardSelectedRecordIdsComponentSelector,
+    selectedRecordIdsComponentSelector,
     recordBoardIndexId,
   );
 
-  const { resetRecordBoardSelection } =
-    useResetRecordBoardSelection(recordBoardIndexId);
+  const { resetRecordSelection } = useResetRecordSelection(recordBoardIndexId);
 
   const removeSelectedRecordsFromRecordBoard = useCallback(() => {
     const deletedRecordIds = store.get(
@@ -83,14 +82,14 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
       }
     }
 
-    resetRecordBoardSelection();
+    resetRecordSelection();
   }, [
     store,
     recordIndexGroupFieldMetadataItem,
     recordIndexRecordIdsByGroupCallbackState,
     recordGroupDefinitions,
     recordBoardSelectedRecordIds,
-    resetRecordBoardSelection,
+    resetRecordSelection,
   ]);
 
   return {

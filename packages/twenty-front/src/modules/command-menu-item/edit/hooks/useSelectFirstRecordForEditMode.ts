@@ -1,11 +1,8 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { getRecordIndexId } from '@/command-menu-item/edit/utils/getRecordIndexId';
-import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { useResetRecordIndexSelection } from '@/object-record/record-index/hooks/useResetRecordIndexSelection';
-import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { ViewType } from '@/views/types/ViewType';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -37,32 +34,13 @@ export const useSelectFirstRecordForEditMode = () => {
       return;
     }
 
-    const viewType = store.get(
-      recordIndexViewTypeState.atomFamily({ instanceId: recordIndexId }),
+    store.set(
+      isRecordSelectedComponentFamilyState.atomFamily({
+        instanceId: recordIndexId,
+        familyKey: firstRecordId,
+      }),
+      true,
     );
-
-    switch (viewType) {
-      case ViewType.TABLE: {
-        store.set(
-          isRowSelectedComponentFamilyState.atomFamily({
-            instanceId: recordIndexId,
-            familyKey: firstRecordId,
-          }),
-          true,
-        );
-        break;
-      }
-      case ViewType.KANBAN: {
-        store.set(
-          isRecordBoardCardSelectedComponentFamilyState.atomFamily({
-            instanceId: recordIndexId,
-            familyKey: firstRecordId,
-          }),
-          true,
-        );
-        break;
-      }
-    }
   }, [store, resetRecordIndexSelection]);
 
   return { selectFirstRecordForEditMode };

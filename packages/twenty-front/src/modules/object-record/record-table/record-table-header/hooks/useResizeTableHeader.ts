@@ -6,7 +6,7 @@ import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/obj
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
 import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthVariableName';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
 
 import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
@@ -59,7 +59,7 @@ export const useResizeTableHeader = () => {
     findByProperty('fieldMetadataItemId', resizedFieldMetadataId),
   );
 
-  const { resetTableRowSelection } = useResetTableRowSelection();
+  const { resetRecordSelection } = useResetRecordSelection();
 
   const { saveRecordFields } = useSaveRecordFields();
 
@@ -86,11 +86,11 @@ export const useResizeTableHeader = () => {
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
-      resetTableRowSelection();
+      resetRecordSelection();
       setDragUiZoom(getUiZoom());
       setInitialPointerPositionX(x);
     },
-    [resetTableRowSelection],
+    [resetRecordSelection],
   );
 
   const handleResizeHandlerMove = useCallback<PointerEventListener>(

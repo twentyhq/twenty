@@ -3,8 +3,8 @@ import { useStore } from 'jotai';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { lastSelectedRowIndexComponentState } from '@/object-record/record-table/record-table-row/states/lastSelectedRowIndexComponentState';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
+import { lastSelectedRecordIndexComponentState } from '@/object-record/record-selection/states/lastSelectedRecordIndexComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
@@ -14,7 +14,7 @@ export const useSetCurrentRowSelected = () => {
   const { recordId, rowIndex } = useRecordTableRowContextOrThrow();
 
   const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
-    isRowSelectedComponentFamilyState,
+    isRecordSelectedComponentFamilyState,
   );
 
   const recordIndexAllRecordIds = useAtomComponentSelectorCallbackState(
@@ -22,7 +22,7 @@ export const useSetCurrentRowSelected = () => {
   );
 
   const lastSelectedRowIndexComponentCallbackState =
-    useAtomComponentStateCallbackState(lastSelectedRowIndexComponentState);
+    useAtomComponentStateCallbackState(lastSelectedRecordIndexComponentState);
 
   const store = useStore();
 

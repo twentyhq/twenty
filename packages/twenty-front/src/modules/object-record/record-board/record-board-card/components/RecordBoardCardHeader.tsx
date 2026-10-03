@@ -1,7 +1,7 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
-import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { t } from '@lingui/core/macro';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
@@ -62,11 +62,10 @@ export const RecordBoardCardHeader = () => {
   const { checkIfLastUnselectAndCloseDropdown } =
     useRecordBoardSelection(recordBoardId);
 
-  const [isRecordBoardCardSelected, setIsRecordBoardCardSelected] =
-    useAtomComponentFamilyState(
-      isRecordBoardCardSelectedComponentFamilyState,
-      recordId,
-    );
+  const [isRecordSelected, setIsRecordSelected] = useAtomComponentFamilyState(
+    isRecordSelectedComponentFamilyState,
+    recordId,
+  );
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
@@ -125,9 +124,9 @@ export const RecordBoardCardHeader = () => {
           <StopPropagationContainer>
             <Checkbox
               hoverable
-              checked={isRecordBoardCardSelected}
+              checked={isRecordSelected}
               onCheckedChange={(isChecked) => {
-                setIsRecordBoardCardSelected(isChecked);
+                setIsRecordSelected(isChecked);
                 checkIfLastUnselectAndCloseDropdown();
               }}
               variant="outline"
