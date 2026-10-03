@@ -77,6 +77,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'calendarEndViewUniversalIdentifiers',
     },
+    toggleMineFilterViews: {
+      metadataName: 'view',
+      flatEntityForeignKeyAggregator: 'toggleMineFilterViewIds',
+      universalFlatEntityForeignKeyAggregator:
+        'toggleMineFilterViewUniversalIdentifiers',
+    },
     mainGroupByFieldMetadataViews: {
       metadataName: 'view',
       flatEntityForeignKeyAggregator: 'mainGroupByFieldMetadataViewIds',

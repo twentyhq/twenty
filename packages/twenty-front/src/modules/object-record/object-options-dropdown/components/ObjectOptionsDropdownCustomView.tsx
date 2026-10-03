@@ -36,6 +36,7 @@ import {
   IconListDetails,
   IconShare,
   IconTrash,
+  IconUser,
 } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
@@ -71,6 +72,10 @@ export const ObjectOptionsDropdownCustomView = ({
   );
   const recordIndexCalendarFieldMetadataId = useAtomComponentStateValue(
     recordIndexCalendarFieldMetadataIdComponentState,
+  );
+
+  const toggleMineFilterFieldMetadata = objectMetadataItem.fields.find(
+    (field) => field.id === currentView?.toggleMineFilterFieldMetadataId,
   );
 
   const calendarFieldMetadata = recordIndexCalendarFieldMetadataId
@@ -123,6 +128,7 @@ export const ObjectOptionsDropdownCustomView = ({
       ? ['CalendarDateField', 'CalendarView']
       : []),
     ...(customViewData?.type !== ViewType.CALENDAR ? ['Group'] : []),
+    'ToggleMineFilterField',
     'Delete view',
   ];
 
@@ -277,6 +283,19 @@ export const ObjectOptionsDropdownCustomView = ({
               </div>
             </Tooltip>
           )}
+          <SelectableListItem
+            itemId="ToggleMineFilterField"
+            onEnter={() => onContentChange('toggleMineFilterFields')}
+          >
+            <ListItem
+              focused={selectedItemId === 'ToggleMineFilterField'}
+              onClick={() => onContentChange('toggleMineFilterFields')}
+              startIcon={<IconUser />}
+              description={toggleMineFilterFieldMetadata?.label}
+              descriptionPlacement="end"
+              hasSubmenu
+            >{t`All/Mine field`}</ListItem>
+          </SelectableListItem>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer scrollable={false}>

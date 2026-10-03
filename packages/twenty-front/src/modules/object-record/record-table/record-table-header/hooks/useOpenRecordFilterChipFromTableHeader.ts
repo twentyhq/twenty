@@ -6,6 +6,7 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getEditableChipDropdownId } from '@/views/editable-chip/utils/getEditableChipDropdownId';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
+import { omitToggleMineRecordFilter } from '@/views/utils/omitToggleMineRecordFilter';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenRecordFilterChipFromTableHeader = () => {
@@ -38,7 +39,9 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
       );
     }
 
-    const existingNonAdvancedRecordFilter = currentRecordFilters.find(
+    const existingNonAdvancedRecordFilter = omitToggleMineRecordFilter(
+      currentRecordFilters,
+    ).find(
       (recordFilter) =>
         recordFilter.fieldMetadataId === fieldMetadataItemId &&
         !isDefined(recordFilter.recordFilterGroupId),

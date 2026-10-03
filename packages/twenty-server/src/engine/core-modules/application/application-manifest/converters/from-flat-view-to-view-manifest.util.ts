@@ -80,5 +80,11 @@ export const fromFlatViewToViewManifest = ({
           flatView.calendarEndFieldMetadataUniversalIdentifier,
       }
     : {}),
+  ...(isDefined(flatView.toggleMineFilterFieldMetadataUniversalIdentifier)
+    ? {
+        toggleMineFilterFieldMetadataUniversalIdentifier:
+          flatView.toggleMineFilterFieldMetadataUniversalIdentifier,
+      }
+    : {}),
   ...withoutEmptyCollections(children),
 });

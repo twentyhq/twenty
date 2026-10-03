@@ -82,6 +82,7 @@ export const getDefaultFlatFieldMetadata = ({
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     calendarEndViewUniversalIdentifiers: [],
+    toggleMineFilterViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     universalSettings: settings ?? null,
     viewSortUniversalIdentifiers: [],

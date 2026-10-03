@@ -5,6 +5,7 @@ import { ObjectOptionsDropdownFieldsContent } from '@/object-record/object-optio
 import { ObjectOptionsDropdownHiddenFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent';
 import { ObjectOptionsDropdownHiddenRecordGroupsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent';
 import { ObjectOptionsDropdownLayoutContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent';
+import { ObjectOptionsDropdownToggleMineFilterFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownToggleMineFilterFieldsContent';
 import { ObjectOptionsDropdownMenuContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent';
 import { ObjectOptionsDropdownRecordGroupFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent';
 import { ObjectOptionsDropdownRecordGroupLoadLimitContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupLoadLimitContent';
@@ -39,6 +40,8 @@ export const ObjectOptionsDropdownContent = () => {
       return <ObjectOptionsDropdownCalendarViewContent />;
     case 'calendarFields':
       return <ObjectOptionsDropdownCalendarFieldsContent />;
+    case 'toggleMineFilterFields':
+      return <ObjectOptionsDropdownToggleMineFilterFieldsContent />;
     case 'visibility':
       return <ObjectOptionsDropdownVisibilityContent />;
     default:

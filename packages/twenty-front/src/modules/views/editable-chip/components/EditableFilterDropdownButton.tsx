@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { isFilterOnActorWorkspaceMemberSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorWorkspaceMemberSubField';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { EditableFilterChip } from '@/views/editable-chip/components/EditableFilterChip';
@@ -53,7 +54,11 @@ export const EditableFilterDropdownButton = ({
           recordFilterId: recordFilter.id,
         })}
         clickableComponent={
-          recordFilter.type === 'RELATION' ? (
+          recordFilter.type === 'RELATION' ||
+          (recordFilter.type === 'ACTOR' &&
+            isFilterOnActorWorkspaceMemberSubField(
+              recordFilter.subFieldName,
+            )) ? (
             <EditableRelationFilterChip
               recordFilter={recordFilter}
               onRemove={handleRemove}

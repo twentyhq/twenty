@@ -113,6 +113,8 @@ const updateView = ({
     calendarFieldMetadataUniversalIdentifier: null,
     calendarEndFieldMetadataId: null,
     calendarEndFieldMetadataUniversalIdentifier: null,
+    toggleMineFilterFieldMetadataId: null,
+    toggleMineFilterFieldMetadataUniversalIdentifier: null,
     anyFieldFilterValue: null,
     shouldHideEmptyGroups: false,
     kanbanColumnWidth: null,

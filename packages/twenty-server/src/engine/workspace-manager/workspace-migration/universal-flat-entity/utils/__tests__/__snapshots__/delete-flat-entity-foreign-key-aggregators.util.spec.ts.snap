@@ -30,6 +30,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "relationTargetFieldMetadataUniversalIdentifier": null,
   "relationTargetObjectMetadataUniversalIdentifier": null,
   "searchFieldMetadataUniversalIdentifiers": [],
+  "toggleMineFilterViewUniversalIdentifiers": [],
   "type": "TEXT",
   "universalIdentifier": "field-universal-identifier",
   "universalSettings": null,

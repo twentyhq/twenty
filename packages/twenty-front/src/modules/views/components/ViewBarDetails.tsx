@@ -12,6 +12,10 @@ import { EditableSortChip } from '@/views/editable-chip/components/EditableSortC
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { SoftDeleteFilterChip } from '@/views/components/SoftDeleteFilterChip';
+import { ToggleMineFilterButton } from '@/views/components/ToggleMineFilterButton';
+import { ToggleMineFilterEffect } from '@/views/components/ToggleMineFilterEffect';
+import { omitToggleMineRecordFilter } from '@/views/utils/omitToggleMineRecordFilter';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
 import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
 import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAreViewFiltersDifferentFromRecordFilters';
@@ -114,6 +118,8 @@ export const ViewBarDetails = ({
 
   const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
+  const { currentView } = useGetCurrentViewOnly();
+
   const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
     viewBarId,
@@ -161,7 +167,7 @@ export const ViewBarDetails = ({
   );
 
   const recordFilters = useMemo(() => {
-    return currentRecordFilters.filter(
+    return omitToggleMineRecordFilter(currentRecordFilters).filter(
       (recordFilter) =>
         !recordFilter.recordFilterGroupId &&
         !isSeeDeletedRecordsFilter(recordFilter),
@@ -207,6 +213,7 @@ export const ViewBarDetails = ({
     isNonEmptyString(anyFieldFilterValue) || isDropdownOpen;
 
   const shouldExpandViewBar =
+    isDefined(currentView?.toggleMineFilterFieldMetadataId) ||
     shouldShowAnyFieldSearchChip ||
     viewFiltersAreDifferentFromRecordFilters ||
     viewSortsAreDifferentFromRecordSorts ||
@@ -218,12 +225,26 @@ export const ViewBarDetails = ({
       isViewBarExpanded);
 
   if (!shouldExpandViewBar) {
-    return null;
+    // Stays mounted so a toggle filter left by a removed All/Mine field is cleaned up
+    return (
+      <ToggleMineFilterEffect
+        viewBarId={viewBarId}
+        objectNameSingular={objectNameSingular}
+      />
+    );
   }
 
   return (
     <StyledBar>
       <StyledFilterContainer>
+        <ToggleMineFilterEffect
+          viewBarId={viewBarId}
+          objectNameSingular={objectNameSingular}
+        />
+        <ToggleMineFilterButton
+          viewBarId={viewBarId}
+          objectNameSingular={objectNameSingular}
+        />
         <ScrollWrapper
           componentInstanceId={viewBarId}
           defaultEnableYScroll={false}

@@ -70,6 +70,8 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
     calendarEndViewIds: fieldMetadataEntity.calendarEndViews.map(
       ({ id }) => id,
     ),
+    toggleMineFilterViewIds:
+      fieldMetadataEntity.toggleMineFilterViews?.map(({ id }) => id) ?? [],
     mainGroupByFieldMetadataViewIds:
       fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(({ id }) => id) ??
       [],
@@ -94,6 +96,10 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
       fieldMetadataEntity.calendarEndViews.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
+    toggleMineFilterViewUniversalIdentifiers:
+      fieldMetadataEntity.toggleMineFilterViews?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
     mainGroupByFieldMetadataViewUniversalIdentifiers:
       fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(
         ({ universalIdentifier }) => universalIdentifier,

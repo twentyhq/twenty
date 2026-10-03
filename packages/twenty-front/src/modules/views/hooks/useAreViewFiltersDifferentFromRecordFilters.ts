@@ -5,6 +5,7 @@ import { getViewFiltersToCreate } from '@/views/utils/getViewFiltersToCreate';
 import { getViewFiltersToDelete } from '@/views/utils/getViewFiltersToDelete';
 import { getViewFiltersToUpdate } from '@/views/utils/getViewFiltersToUpdate';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
+import { omitToggleMineRecordFilter } from '@/views/utils/omitToggleMineRecordFilter';
 import { useMemo } from 'react';
 
 export const useAreViewFiltersDifferentFromRecordFilters = () => {
@@ -15,9 +16,9 @@ export const useAreViewFiltersDifferentFromRecordFilters = () => {
 
   const viewFiltersAreDifferentFromRecordFilters = useMemo(() => {
     const currentViewFilters = currentView?.viewFilters ?? [];
-    const viewFiltersFromCurrentRecordFilters = currentRecordFilters.map(
-      mapRecordFilterToViewFilter,
-    );
+    const viewFiltersFromCurrentRecordFilters = omitToggleMineRecordFilter(
+      currentRecordFilters,
+    ).map(mapRecordFilterToViewFilter);
 
     const viewFiltersToCreate = getViewFiltersToCreate(
       currentViewFilters,

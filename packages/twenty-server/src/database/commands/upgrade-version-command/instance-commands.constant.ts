@@ -219,6 +219,7 @@ import { ReapplyUsageLimitPeriodReshapeFastInstanceCommand } from 'src/database/
 import { AddChatWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790756560653-add-chat-widget-type';
 import { DropLegacyCampaignSendingCoreTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790842027068-drop-legacy-campaign-sending-core-tables';
 import { AddSharingReachToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790876699146-add-sharing-reach-to-object-metadata';
+import { AddToggleMineFilterFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1790942456000-add-toggle-mine-filter-field-metadata-id-to-view';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -440,4 +441,5 @@ export const INSTANCE_COMMANDS = [
   DropLegacyCampaignSendingCoreTablesFastInstanceCommand,
   AddApplicationWorkflowSideEffectsFastInstanceCommand,
   AddSharingReachToObjectMetadataFastInstanceCommand,
+  AddToggleMineFilterFieldMetadataIdToViewFastInstanceCommand,
 ];
