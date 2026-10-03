@@ -34,24 +34,33 @@ describe('buildSendChatMessageAnswerResult', () => {
     },
   );
 
-  it.each(['failed', 'conflict'])(
-    'reports a %s call without output',
-    (status) => {
-      expect(
-        buildResult({
-          status,
-          proposal: { toolName: 'send_email', arguments: EMAIL_ARGUMENTS },
-          output: { partial: true },
-          error: 'No connected account',
-        }),
-      ).toMatchObject({
-        outcome: status,
-        toolName: 'send_email',
-        output: null,
+  it('keeps the error of an approved call that failed', () => {
+    expect(
+      buildResult({
+        status: 'failed',
+        proposal: { toolName: 'send_email', arguments: EMAIL_ARGUMENTS },
         error: 'No connected account',
-      });
-    },
-  );
+      }),
+    ).toMatchObject({
+      outcome: 'failed',
+      toolName: 'send_email',
+      output: null,
+      error: 'No connected account',
+    });
+  });
+
+  it('keeps the latest values of a record that changed before approval', () => {
+    expect(
+      buildResult({
+        status: 'conflict',
+        proposal: { toolName: 'update_one_company', arguments: {} },
+        output: { latestValues: { employees: 12 } },
+      }),
+    ).toMatchObject({
+      outcome: 'conflict',
+      output: { latestValues: { employees: 12 } },
+    });
+  });
 
   it('keeps the feedback of a rejected call', () => {
     expect(

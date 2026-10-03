@@ -267,7 +267,7 @@ export const computeStepOutputSchema = ({
         output: {
           isLeaf: true,
           type: FieldMetadataType.RAW_JSON,
-          label: 'Action result',
+          label: 'Output',
           value: null,
         },
       };

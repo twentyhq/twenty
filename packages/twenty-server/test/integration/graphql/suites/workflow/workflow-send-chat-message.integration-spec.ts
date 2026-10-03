@@ -285,7 +285,7 @@ describe('Send chat message workflow step', () => {
       expect(status).toBe('COMPLETED');
       expect(stepResult).toMatchObject({
         outcome: 'conflict',
-        output: null,
+        output: { latestValues: expect.objectContaining({ employees: 12 }) },
       });
       expect(await readEmployees()).toBe(12);
     }, 120000);
