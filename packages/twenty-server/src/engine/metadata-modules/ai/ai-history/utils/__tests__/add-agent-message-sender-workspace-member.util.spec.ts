@@ -7,12 +7,12 @@ const setup = () => {
   const expand = (
     values: Record<string, unknown> | Record<string, unknown>[],
   ) =>
-    addAgentMessageSenderWorkspaceMember(
-      'agentMessage',
+    addAgentMessageSenderWorkspaceMember({
+      name: 'agentMessage',
       values,
-      '20202020-1111-4111-8111-111111111111',
-      { manager: { query } } as never,
-    );
+      workspaceId: '20202020-1111-4111-8111-111111111111',
+      context: { manager: { query } } as never,
+    });
   return { query, expand };
 };
 
@@ -48,12 +48,12 @@ describe('sender workspace member expansion', () => {
     const query = jest.fn();
     const turn = { senderUserWorkspaceId: 'sender' };
     expect(
-      await addAgentMessageSenderWorkspaceMember(
-        'agentTurn',
-        turn,
-        '20202020-1111-4111-8111-111111111111',
-        { manager: { query } } as never,
-      ),
+      await addAgentMessageSenderWorkspaceMember({
+        name: 'agentTurn',
+        values: turn,
+        workspaceId: '20202020-1111-4111-8111-111111111111',
+        context: { manager: { query } } as never,
+      }),
     ).toBe(turn);
     expect(query).not.toHaveBeenCalled();
   });

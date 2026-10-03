@@ -142,12 +142,12 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
   ) {
     return this.run(workspaceId, async (repository, context) => {
       return repository.insert(
-        await addAgentMessageSenderWorkspaceMember(
-          this.name,
+        await addAgentMessageSenderWorkspaceMember({
+          name: this.name,
           values,
           workspaceId,
           context,
-        ),
+        }),
       );
     });
   }
@@ -158,12 +158,12 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
   ): Promise<TRecord> {
     return this.run(workspaceId, async (repository, context) => {
       const result = await repository.insert(
-        await addAgentMessageSenderWorkspaceMember(
-          this.name,
+        await addAgentMessageSenderWorkspaceMember({
+          name: this.name,
           values,
           workspaceId,
           context,
-        ),
+        }),
       );
       return result.raw[0] as TRecord;
     });
@@ -216,12 +216,12 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
         ],
       );
       return repository.upsert(
-        (await addAgentMessageSenderWorkspaceMember(
-          this.name,
+        (await addAgentMessageSenderWorkspaceMember({
+          name: this.name,
           values,
           workspaceId,
           context,
-        )) as QueryDeepPartialEntity<TRecord>,
+        })) as QueryDeepPartialEntity<TRecord>,
         conflictPaths,
       );
     });

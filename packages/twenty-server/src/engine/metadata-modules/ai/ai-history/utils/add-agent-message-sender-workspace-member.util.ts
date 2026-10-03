@@ -6,12 +6,17 @@ import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-h
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-export const addAgentMessageSenderWorkspaceMember = async (
-  name: AgentHistoryObjectName,
-  values: ObjectLiteral | ObjectLiteral[],
-  workspaceId: string,
-  { manager }: AgentHistoryStorageContext,
-): Promise<ObjectLiteral | ObjectLiteral[]> => {
+export const addAgentMessageSenderWorkspaceMember = async ({
+  name,
+  values,
+  workspaceId,
+  context: { manager },
+}: {
+  name: AgentHistoryObjectName;
+  values: ObjectLiteral | ObjectLiteral[];
+  workspaceId: string;
+  context: AgentHistoryStorageContext;
+}): Promise<ObjectLiteral | ObjectLiteral[]> => {
   if (name !== 'agentMessage') {
     return values;
   }

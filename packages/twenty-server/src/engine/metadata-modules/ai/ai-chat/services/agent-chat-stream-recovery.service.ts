@@ -40,26 +40,42 @@ export class AgentChatStreamRecoveryService {
   }: AgentChatStreamClaim & {
     lastStreamError?: AgentChatThreadLastStreamError;
   }): Promise<boolean> {
-    const release = await this.threadRepository
-      .update(
-        workspaceId,
-        { id: threadId, activeStreamId: streamId },
-        {
-          activeStreamId: null,
-          ...(isDefined(lastStreamError) ? { lastStreamError } : {}),
-        },
-      )
-      .catch((error: unknown) => {
-        this.logger.error(
-          `Failed to release stream claim for thread ${threadId}: ${formatErrorWithCause(error)}`,
-        );
+    const isReleased = await this.clearStreamClaim({
+      threadId,
+      workspaceId,
+      streamId,
+      lastStreamError,
+    }).catch((error: unknown) => {
+      this.logger.error(
+        `Failed to release stream claim for thread ${threadId}: ${formatErrorWithCause(error)}`,
+      );
 
-        return null;
-      });
+      return false;
+    });
 
     await this.streamHeartbeatService.clear(streamId);
 
-    return Boolean(release?.affected);
+    return isReleased;
+  }
+
+  private async clearStreamClaim({
+    threadId,
+    workspaceId,
+    streamId,
+    lastStreamError,
+  }: AgentChatStreamClaim & {
+    lastStreamError?: AgentChatThreadLastStreamError;
+  }): Promise<boolean> {
+    const result = await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, activeStreamId: streamId },
+      {
+        activeStreamId: null,
+        ...(isDefined(lastStreamError) ? { lastStreamError } : {}),
+      },
+    );
+
+    return Boolean(result.affected);
   }
 
   async failStream({
@@ -106,7 +122,7 @@ export class AgentChatStreamRecoveryService {
       failedAt: new Date().toISOString(),
     };
 
-    const hasReaped = await this.releaseStreamClaim({
+    const hasReaped = await this.clearStreamClaim({
       threadId: thread.id,
       workspaceId,
       streamId: thread.activeStreamId,
