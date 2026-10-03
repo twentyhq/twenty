@@ -5,10 +5,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { SHARED_FILTER_JSON_SCHEMAS } from 'src/engine/core-modules/record-crud/json-schemas/shared-filter-definitions.json-schema';
 import { type JsonSchemaDefinitions } from 'src/engine/core-modules/record-crud/types/json-schema-definitions.type';
 import { getFieldOptionValues } from 'src/engine/core-modules/record-crud/utils/get-field-option-values.util';
-import { getManyToOneJoinColumnName } from 'src/engine/core-modules/record-crud/utils/get-many-to-one-join-column-name.util';
 import { referenceJsonSchemaDefinition } from 'src/engine/core-modules/record-crud/utils/reference-json-schema-definition.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { isManyToOneFlatFieldMetadata } from 'src/engine/twenty-orm/utils/is-many-to-one-flat-field-metadata.util';
 
 type SharedFilterName = keyof typeof SHARED_FILTER_JSON_SCHEMAS;
 
@@ -95,7 +95,7 @@ export const generateFieldFilterJsonSchema = ({
   const nullCheck = referenceSharedFilter({ definitions, name: 'NullCheck' });
 
   if (isMorphOrRelationFlatFieldMetadata(field)) {
-    return isDefined(getManyToOneJoinColumnName(field))
+    return isManyToOneFlatFieldMetadata(field)
       ? referenceSharedFilter({ definitions, name: 'UuidFilter' })
       : null;
   }

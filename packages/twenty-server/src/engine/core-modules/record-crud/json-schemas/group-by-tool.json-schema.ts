@@ -17,11 +17,12 @@ import { generateRecordFilterJsonSchema } from 'src/engine/core-modules/record-c
 import { type JsonSchemaDefinitions } from 'src/engine/core-modules/record-crud/types/json-schema-definitions.type';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { buildObjectJsonSchema } from 'src/engine/core-modules/record-crud/utils/build-object-json-schema.util';
-import { getManyToOneJoinColumnName } from 'src/engine/core-modules/record-crud/utils/get-many-to-one-join-column-name.util';
 import { referenceJsonSchemaDefinition } from 'src/engine/core-modules/record-crud/utils/reference-json-schema-definition.util';
 import { getGroupableSubFieldsForCompositeType } from 'src/engine/metadata-modules/field-metadata/utils/get-groupable-sub-fields-for-composite-type.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { isManyToOneFlatFieldMetadata } from 'src/engine/twenty-orm/utils/is-many-to-one-flat-field-metadata.util';
 
 const TRUE_JSON_SCHEMA: JSONSchema7 = { type: 'boolean', const: true };
 
@@ -84,19 +85,23 @@ const buildGroupByEntries = ({
     )
     .flatMap((field) => {
       if (isMorphOrRelationFlatFieldMetadata(field)) {
-        const joinColumnName = getManyToOneJoinColumnName(field);
+        if (!isManyToOneFlatFieldMetadata(field)) {
+          return [];
+        }
 
-        return isDefined(joinColumnName)
-          ? [
-              {
-                schema: buildSingleKeyObject({
-                  key: joinColumnName,
-                  value: TRUE_JSON_SCHEMA,
-                }),
-                label: joinColumnName,
-              },
-            ]
-          : [];
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+          name: field.name,
+        });
+
+        return [
+          {
+            schema: buildSingleKeyObject({
+              key: joinColumnName,
+              value: TRUE_JSON_SCHEMA,
+            }),
+            label: joinColumnName,
+          },
+        ];
       }
 
       if (isFieldMetadataDateKind(field.type)) {

@@ -12,12 +12,13 @@ import { SHARED_VALUE_JSON_SCHEMAS } from 'src/engine/core-modules/record-crud/j
 import { type JsonSchemaDefinitions } from 'src/engine/core-modules/record-crud/types/json-schema-definitions.type';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { getFieldOptionValues } from 'src/engine/core-modules/record-crud/utils/get-field-option-values.util';
-import { getManyToOneJoinColumnName } from 'src/engine/core-modules/record-crud/utils/get-many-to-one-join-column-name.util';
 import { referenceJsonSchemaDefinition } from 'src/engine/core-modules/record-crud/utils/reference-json-schema-definition.util';
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { isManyToOneFlatFieldMetadata } from 'src/engine/twenty-orm/utils/is-many-to-one-flat-field-metadata.util';
 
 type SharedValueName = keyof typeof SHARED_VALUE_JSON_SCHEMAS;
 
@@ -177,25 +178,34 @@ export const generateRecordPropertiesJsonSchema = ({
       continue;
     }
 
-    const isRelation = isMorphOrRelationFlatFieldMetadata(field);
-    const propertyName = isRelation
-      ? getManyToOneJoinColumnName(field)
-      : field.name;
+    const isRequired = !field.isNullable && !isPartial;
 
-    if (!isDefined(propertyName)) {
+    if (isMorphOrRelationFlatFieldMetadata(field)) {
+      if (!isManyToOneFlatFieldMetadata(field)) {
+        continue;
+      }
+
+      const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+        name: field.name,
+      });
+
+      properties[joinColumnName] = referenceJsonSchemaDefinition({
+        definitions,
+        name: 'UuidValue',
+        schema: SHARED_VALUE_JSON_SCHEMAS.UuidValue,
+      });
+
+      if (isRequired) {
+        required.push(joinColumnName);
+      }
+
       continue;
     }
 
-    properties[propertyName] = isRelation
-      ? referenceJsonSchemaDefinition({
-          definitions,
-          name: 'UuidValue',
-          schema: SHARED_VALUE_JSON_SCHEMAS.UuidValue,
-        })
-      : getPropertyJsonSchema({ field, definitions });
+    properties[field.name] = getPropertyJsonSchema({ field, definitions });
 
-    if (!field.isNullable && !isPartial) {
-      required.push(propertyName);
+    if (isRequired) {
+      required.push(field.name);
     }
   }
 

@@ -8,8 +8,9 @@ import {
 import { generateFieldFilterJsonSchema } from 'src/engine/core-modules/record-crud/json-schemas/field-filters.json-schema';
 import { type JsonSchemaDefinitions } from 'src/engine/core-modules/record-crud/types/json-schema-definitions.type';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
-import { getManyToOneJoinColumnName } from 'src/engine/core-modules/record-crud/utils/get-many-to-one-join-column-name.util';
 import { referenceJsonSchemaDefinition } from 'src/engine/core-modules/record-crud/utils/reference-json-schema-definition.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 
 const RECORD_FILTER_NAME = 'RecordFilter';
 
@@ -61,9 +62,15 @@ export const generateRecordFilterJsonSchema = ({
 
     const fieldFilter = generateFieldFilterJsonSchema({ field, definitions });
 
-    if (isDefined(fieldFilter)) {
-      properties[getManyToOneJoinColumnName(field) ?? field.name] = fieldFilter;
+    if (!isDefined(fieldFilter)) {
+      continue;
     }
+
+    const propertyName = isMorphOrRelationFlatFieldMetadata(field)
+      ? computeMorphOrRelationFieldJoinColumnName({ name: field.name })
+      : field.name;
+
+    properties[propertyName] = fieldFilter;
   }
 
   Object.assign(properties, LOGICAL_FILTER_PROPERTIES);
