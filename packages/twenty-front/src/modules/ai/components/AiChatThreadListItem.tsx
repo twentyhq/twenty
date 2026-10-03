@@ -196,6 +196,8 @@ export const AiChatThreadListItem = ({
   return (
     <StyledThreadItem
       $isSelected={isSelected}
+      data-selectable-id={thread.id}
+      data-select-disable={isRenaming || undefined}
       onMouseDown={(event) => {
         // Shift+click selects a range of chats, not the text in between
         if (event.shiftKey && !isRenaming) {
