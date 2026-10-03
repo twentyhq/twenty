@@ -2,6 +2,7 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
+import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
 import { t } from '@lingui/core/macro';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
@@ -13,7 +14,7 @@ import { RecordCardHeaderContainer } from '@/object-record/record-card/component
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -62,10 +63,12 @@ export const RecordBoardCardHeader = () => {
   const { checkIfLastUnselectAndCloseDropdown } =
     useRecordBoardSelection(recordBoardId);
 
-  const [isRecordSelected, setIsRecordSelected] = useAtomComponentFamilyState(
+  const isRecordSelected = useAtomComponentFamilyStateValue(
     isRecordSelectedComponentFamilyState,
     recordId,
   );
+
+  const { toggleRecordSelection } = useToggleRecordSelection(recordBoardId);
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
@@ -125,8 +128,11 @@ export const RecordBoardCardHeader = () => {
             <Checkbox
               hoverable
               checked={isRecordSelected}
-              onCheckedChange={(isChecked) => {
-                setIsRecordSelected(isChecked);
+              onClick={(event) => {
+                toggleRecordSelection({
+                  recordId,
+                  shouldSelectRange: event.shiftKey,
+                });
                 checkIfLastUnselectAndCloseDropdown();
               }}
               variant="outline"
