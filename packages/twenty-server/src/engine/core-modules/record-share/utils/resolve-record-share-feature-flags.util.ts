@@ -17,8 +17,6 @@ export const resolveRecordShareFeatureFlags = (
       featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED],
   });
 
-  // Share exceptions and records shared by name beyond the role are part of
-  // the visibility gating, so turning it off turns them off too
   return {
     isRecordShareVisibilityGatingEnabled,
     isRecordSharingEnabled:

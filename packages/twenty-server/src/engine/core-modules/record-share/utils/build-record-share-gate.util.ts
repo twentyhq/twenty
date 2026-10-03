@@ -184,8 +184,6 @@ const buildInheritedReadabilityGate = ({
     }),
   );
 
-  // Without gating, parents are built without their share checks too, so the
-  // chain only matters where a parent is denied or filtered by the role
   if (
     !isGatingEnabled &&
     parentExpressions.every(

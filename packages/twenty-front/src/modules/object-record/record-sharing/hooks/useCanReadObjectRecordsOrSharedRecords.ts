@@ -22,7 +22,6 @@ export const useCanReadObjectRecordsOrSharedRecords = (
   const isRecordLevelSharingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
   );
-  // The server stops admitting records shared by name once gating is off
   const isRecordShareVisibilityGatingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED,
   );
