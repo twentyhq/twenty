@@ -51,6 +51,7 @@ export const useOptimisticallyRestoreOnSend = () => {
               lastReadAt: optimisticUpdatedAt,
               archivedAt: null,
               snoozedUntil: null,
+              hasSnoozeEnded: false,
             },
           }
         : participants,

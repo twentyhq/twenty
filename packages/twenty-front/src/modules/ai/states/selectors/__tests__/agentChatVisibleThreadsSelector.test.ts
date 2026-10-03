@@ -2,15 +2,17 @@ import { createStore } from 'jotai';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
 
-const NOW = new Date('2026-10-01T12:00:00.000Z').getTime();
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
-const READ = { lastReadAt: LAST_ACTIVITY_AT, snoozedUntil: null };
+const READ = {
+  lastReadAt: LAST_ACTIVITY_AT,
+  snoozedUntil: null,
+  hasSnoozeEnded: false,
+};
 
 const ACTIVITY_AFTER_ARCHIVE_AT = '2026-10-01T11:30:00.000Z';
 
@@ -23,6 +25,7 @@ const THREADS: {
         lastReadAt: string;
         archivedAt: string | null;
         snoozedUntil: string | null;
+        hasSnoozeEnded: boolean;
       }
     | undefined;
 }[] = [
@@ -51,6 +54,16 @@ const THREADS: {
       ...READ,
       archivedAt: '2026-10-01T11:00:00.000Z',
       snoozedUntil: '2026-10-02T09:00:00.000Z',
+    },
+  },
+  {
+    id: 'snooze-ended',
+    deletedAt: null,
+    participant: {
+      ...READ,
+      archivedAt: '2026-10-01T11:00:00.000Z',
+      snoozedUntil: '2026-10-01T11:30:00.000Z',
+      hasSnoozeEnded: true,
     },
   },
   {
@@ -91,7 +104,6 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
       ),
     ),
   );
-  store.set(agentChatThreadInboxNowState.atom, NOW);
   store.set(agentChatThreadFilterStatusState.atom, filterStatus);
 
   return store.get(agentChatVisibleThreadsSelector.atom).map(({ id }) => id);
@@ -101,7 +113,13 @@ describe('agentChatVisibleThreadsSelector', () => {
   it.each([
     [
       AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
-      ['read', 'archived-then-active', 'snoozed-then-active', 'unread'],
+      [
+        'read',
+        'archived-then-active',
+        'snoozed-then-active',
+        'unread',
+        'snooze-ended',
+      ],
     ],
     [AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED, ['snoozed']],
     [AGENT_CHAT_THREAD_FILTER_STATUS.DONE, ['archived']],

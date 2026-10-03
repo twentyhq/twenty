@@ -3539,6 +3539,7 @@ type AgentChatThreadParticipant {
   lastReadAt: DateTime
   archivedAt: DateTime
   snoozedUntil: DateTime
+  hasSnoozeEnded: Boolean!
 }
 
 type AgentChatEvent {

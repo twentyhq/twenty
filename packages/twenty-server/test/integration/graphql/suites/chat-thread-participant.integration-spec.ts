@@ -14,6 +14,7 @@ import { setManualRecordShare } from 'test/integration/utils/set-manual-record-s
 
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -21,7 +22,8 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
-const PARTICIPANT_FIELDS = 'threadId lastReadAt archivedAt snoozedUntil';
+const PARTICIPANT_FIELDS =
+  'threadId lastReadAt archivedAt snoozedUntil hasSnoozeEnded';
 
 const MY_PARTICIPANTS = parse(
   `query MyParticipants { myAgentChatThreadParticipants { ${PARTICIPANT_FIELDS} } }`,
@@ -36,11 +38,16 @@ const SNOOZE = parse(
   `mutation Snooze($threadId: UUID!, $snoozedUntil: DateTime!) { snoozeAgentChatThread(threadId: $threadId, snoozedUntil: $snoozedUntil) { ${PARTICIPANT_FIELDS} } }`,
 );
 
+// Close enough for the test queue to run the snooze end it schedules
+const buildFutureSnoozedUntil = () =>
+  new Date(Date.now() + 5_000).toISOString();
+
 type Participant = {
   threadId: string;
   lastReadAt: string | null;
   archivedAt: string | null;
   snoozedUntil: string | null;
+  hasSnoozeEnded: boolean;
 };
 
 const runThreadMutation = (
@@ -102,6 +109,37 @@ const createThread = async (): Promise<string> => {
   return threadId;
 };
 
+const findJaneUserWorkspaceId = async (): Promise<string | undefined> => {
+  const { flatWorkspaceMemberMaps } =
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkspaceMemberMaps']);
+  const userId =
+    flatWorkspaceMemberMaps.byId[WORKSPACE_MEMBER_DATA_SEED_IDS.JANE]?.userId;
+
+  return flatWorkspaceMemberMaps.userWorkspaceIdByUserId[userId!];
+};
+
+const spyOnParticipantBroadcasts = () =>
+  jest.spyOn(
+    getAppProviderByClassName<WorkspaceEventBroadcaster>(
+      'WorkspaceEventBroadcaster',
+    ),
+    'broadcast',
+  );
+
+const findParticipantBroadcasts = (
+  broadcastSpy: ReturnType<typeof spyOnParticipantBroadcasts>,
+  threadId: string,
+) =>
+  broadcastSpy.mock.calls
+    .flatMap(([{ events }]) => events)
+    .filter(
+      (event) =>
+        event.entityName === 'agentChatThreadParticipant' &&
+        event.recordId === threadId,
+    );
+
 const setShareWithJony = async (threadId: string, enabled: boolean) => {
   const { flatObjectMetadataMaps } =
     await getAppProviderByClassName<WorkspaceCacheService>(
@@ -137,6 +175,8 @@ describe('Chat thread participant state through the authenticated API', () => {
   };
 
   afterEach(async () => {
+    jest.restoreAllMocks();
+
     for (const threadId of createdThreadIds.splice(0)) {
       await setShareWithJony(threadId, false);
       await destroyAgentChatThread({ threadId });
@@ -241,7 +281,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(pastSnooze.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
 
-    const snoozedUntil = new Date(Date.now() + 86_400_000).toISOString();
+    const snoozedUntil = buildFutureSnoozedUntil();
     const snoozed = await makeMetadataApiRequest({
       query: SNOOZE,
       variables: { threadId, snoozedUntil },
@@ -262,6 +302,109 @@ describe('Chat thread participant state through the authenticated API', () => {
       archivedAt: null,
       snoozedUntil: null,
     });
+  });
+
+  it("sends each change to the member's own event streams only", async () => {
+    const broadcastSpy = spyOnParticipantBroadcasts();
+    const threadId = await createTestThread();
+
+    await runThreadMutation('markAgentChatThreadAsUnread', threadId);
+
+    const janeUserWorkspaceId = await findJaneUserWorkspaceId();
+
+    expect(findParticipantBroadcasts(broadcastSpy, threadId)).toEqual([
+      expect.objectContaining({
+        type: 'updated',
+        recipientUserWorkspaceIds: [janeUserWorkspaceId],
+        requiredPermissionFlag: 'AI',
+        properties: {
+          after: expect.objectContaining({
+            threadId,
+            lastReadAt: expect.anything(),
+          }),
+        },
+      }),
+      expect.objectContaining({
+        recipientUserWorkspaceIds: [janeUserWorkspaceId],
+        properties: {
+          after: expect.objectContaining({
+            threadId,
+            lastReadAt: null,
+            hasSnoozeEnded: false,
+          }),
+        },
+      }),
+    ]);
+  });
+
+  it('ends a snooze once its time passes and tells the member', async () => {
+    const threadId = await createTestThread();
+    const snoozed = await makeMetadataApiRequest({
+      query: SNOOZE,
+      variables: {
+        threadId,
+        snoozedUntil: buildFutureSnoozedUntil(),
+      },
+    });
+
+    expect(snoozed.body.data.snoozeAgentChatThread.hasSnoozeEnded).toBe(false);
+
+    const snoozedUntil = new Date(Date.now() - 1000);
+
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThreadParticipant" SET "snoozedUntil" = $3
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE, snoozedUntil],
+    );
+
+    const broadcastSpy = spyOnParticipantBroadcasts();
+
+    await getAppProviderByClassName<AgentChatThreadParticipantService>(
+      'AgentChatThreadParticipantService',
+    ).endSnooze({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      threadId,
+      snoozedUntil: snoozedUntil.toISOString(),
+    });
+
+    // The snooze stays recorded, so the chat shows when it came back
+    expect(await findMyParticipant(threadId)).toMatchObject({
+      archivedAt: expect.any(String),
+      hasSnoozeEnded: true,
+    });
+    expect(findParticipantBroadcasts(broadcastSpy, threadId)).toEqual([
+      expect.objectContaining({
+        properties: {
+          after: expect.objectContaining({ hasSnoozeEnded: true }),
+        },
+      }),
+    ]);
+  });
+
+  it('leaves alone a snooze the member replaced since', async () => {
+    const threadId = await createTestThread();
+
+    await makeMetadataApiRequest({
+      query: SNOOZE,
+      variables: {
+        threadId,
+        snoozedUntil: buildFutureSnoozedUntil(),
+      },
+    });
+
+    const broadcastSpy = spyOnParticipantBroadcasts();
+
+    await getAppProviderByClassName<AgentChatThreadParticipantService>(
+      'AgentChatThreadParticipantService',
+    ).endSnooze({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      threadId,
+      snoozedUntil: new Date(Date.now() - 1000).toISOString(),
+    });
+
+    expect(findParticipantBroadcasts(broadcastSpy, threadId)).toEqual([]);
   });
 
   it('brings the thread back and marks it read for the member who writes in it', async () => {

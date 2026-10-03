@@ -168,6 +168,7 @@ export const useAgentChatThreadParticipants = () => {
           optimisticParticipant: {
             archivedAt: new Date().toISOString(),
             snoozedUntil: snoozedUntil.toISOString(),
+            hasSnoozeEnded: false,
           },
         });
       }

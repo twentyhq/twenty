@@ -14,6 +14,7 @@ const READ_PARTICIPANT = {
   lastReadAt: LAST_ACTIVITY_AT,
   archivedAt: null,
   snoozedUntil: null,
+  hasSnoozeEnded: false,
 };
 
 const query = jest.fn();

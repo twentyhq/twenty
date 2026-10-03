@@ -7,15 +7,13 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 // Activity and archiving have different writers and are compared rather than
 // folded into a status, so a message landing right after an archive brings the
 // thread back whichever write committed last. Snooze is an archive with a
-// wake-up time
+// wake-up time, which the server reports as passed
 export const getAgentChatThreadInboxStatus = ({
   lastActivityAt,
   participant,
-  now,
 }: {
   lastActivityAt: string | null | undefined;
   participant: AgentChatThreadParticipantFieldsFragment | undefined;
-  now: Date;
 }): AgentChatThreadInboxStatus => {
   const isUnread =
     isDefined(lastActivityAt) &&
@@ -40,18 +38,18 @@ export const getAgentChatThreadInboxStatus = ({
     };
   }
 
-  if (isAfter(snoozedUntil, now)) {
+  // Still archived with no newer activity: the snooze ran out
+  if (participant?.hasSnoozeEnded === true) {
     return {
-      scope: 'SNOOZED',
+      scope: 'INBOX',
       isUnread,
-      event: { type: 'SNOOZED', at: snoozedUntil },
+      event: { type: 'SNOOZE_ENDED', at: snoozedUntil },
     };
   }
 
-  // Still archived with no newer activity: the snooze ran out
   return {
-    scope: 'INBOX',
+    scope: 'SNOOZED',
     isUnread,
-    event: { type: 'SNOOZE_ENDED', at: snoozedUntil },
+    event: { type: 'SNOOZED', at: snoozedUntil },
   };
 };

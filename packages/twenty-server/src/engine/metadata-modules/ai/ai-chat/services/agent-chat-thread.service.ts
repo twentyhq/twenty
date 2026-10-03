@@ -33,6 +33,13 @@ export class AgentChatThreadService {
   ) {
     const savedThread = await this.sharingService.createThread(args);
 
+    // Sent first, so the new thread never shows as unread to its owner
+    await this.participantService.emitParticipant({
+      workspaceId: args.workspaceId,
+      workspaceMemberId: args.workspaceMemberId,
+      threadId: savedThread.id,
+    });
+
     await this.threadRecordEventService.emitThreadCreated({
       workspaceId: args.workspaceId,
       threadId: savedThread.id,

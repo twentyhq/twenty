@@ -15,4 +15,7 @@ export class AgentChatThreadParticipantDTO {
 
   @Field(() => Date, { nullable: true })
   snoozedUntil: Date | null;
+
+  @Field(() => Boolean)
+  hasSnoozeEnded: boolean;
 }
