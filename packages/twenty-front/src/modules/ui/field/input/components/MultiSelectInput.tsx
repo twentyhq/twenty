@@ -21,9 +21,11 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
+import { IconCircleOff } from 'twenty-ui/icon';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
+const CLEAR_OPTION_ID = '__clear__';
 type MultiSelectInputProps = {
   selectableListComponentInstanceId: string;
   values: FieldMultiSelectValue;
@@ -33,6 +35,8 @@ type MultiSelectInputProps = {
   onOptionSelected: (value: FieldMultiSelectValue) => void;
   dropdownWidth?: number;
   onAddSelectOption?: (optionName: string) => void;
+  clearOptionLabel?: string;
+  onClear?: () => void;
 };
 
 export const MultiSelectInput = ({
@@ -44,6 +48,8 @@ export const MultiSelectInput = ({
   onOptionSelected,
   dropdownWidth,
   onAddSelectOption,
+  clearOptionLabel,
+  onClear,
 }: MultiSelectInputProps) => {
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
@@ -110,7 +116,17 @@ export const MultiSelectInput = ({
     listenerId: 'MultiSelectFieldInput',
   });
 
-  const optionIds = filteredOptionsInDropDown.map((option) => option.value);
+  const shouldShowClearOption = isDefined(onClear) && searchFilter === '';
+
+  const handleClear = () => {
+    onClear?.();
+    resetSelectedItem();
+  };
+
+  const optionIds = [
+    ...(shouldShowClearOption ? [CLEAR_OPTION_ID] : []),
+    ...filteredOptionsInDropDown.map((option) => option.value),
+  ];
 
   return (
     <SelectableList
@@ -135,6 +151,24 @@ export const MultiSelectInput = ({
         />
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
+          {shouldShowClearOption && (
+            <SelectableListItem itemId={CLEAR_OPTION_ID} onEnter={handleClear}>
+              <ListItem
+                onClick={handleClear}
+                focused={selectedItemId === CLEAR_OPTION_ID}
+                role="option"
+                aria-selected={false}
+                indicator="checkbox"
+              >
+                <Tag
+                  color="transparent"
+                  startIcon={createElement(IconCircleOff)}
+                >
+                  {clearOptionLabel ?? t`No value`}
+                </Tag>
+              </ListItem>
+            </SelectableListItem>
+          )}
           {filteredOptionsInDropDown.length === 0 ? (
             <ListItem disabled>{t`No option found`}</ListItem>
           ) : (

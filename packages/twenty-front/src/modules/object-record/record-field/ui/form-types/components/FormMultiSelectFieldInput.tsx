@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
@@ -11,25 +10,27 @@ import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/obje
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
-import { Field, type SelectOption } from 'twenty-ui/primitives/input';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { isArray } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
+import { Field, type SelectOption } from 'twenty-ui/primitives/input';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
   defaultValue: FieldMultiSelectValue | string | undefined;
   options: SelectOption[];
-  onChange: (value: FieldMultiSelectValue | string) => void;
+  onChange: (value: FieldMultiSelectValue | string | null) => void;
+  isNullable?: boolean;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   placeholder?: string;
@@ -97,6 +98,7 @@ export const FormMultiSelectFieldInput = ({
   testId,
   hint,
   dropdownWidth,
+  isNullable,
 }: FormMultiSelectFieldInputProps) => {
   const theme = useTheme();
   const instanceId = useId();
@@ -177,6 +179,18 @@ export const FormMultiSelectFieldInput = ({
     });
 
     removeFocusItemFromFocusStackById({ focusId: instanceId });
+  };
+
+  const handleClear = () => {
+    setDraftValue({
+      type: 'static',
+      value: [],
+      editingMode: 'view',
+    });
+
+    removeFocusItemFromFocusStackById({ focusId: instanceId });
+
+    onChange(null);
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -286,6 +300,8 @@ export const FormMultiSelectFieldInput = ({
                   options={options}
                   onCancel={onCancel}
                   onOptionSelected={onOptionSelected}
+                  onClear={isNullable ? handleClear : undefined}
+                  clearOptionLabel={label ? t`No ${label}` : t`No value`}
                   values={selectedNames}
                   dropdownWidth={
                     dropdownWidth ?? GenericDropdownContentWidth.ExtraLarge

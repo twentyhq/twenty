@@ -176,6 +176,7 @@ export type FieldSelectMetadata = BaseFieldMetadata & {
 
 export type FieldMultiSelectMetadata = BaseFieldMetadata & {
   options: { label: string; color: ThemeColor; value: string }[];
+  isNullable: boolean;
   settings?: null;
 };
 
