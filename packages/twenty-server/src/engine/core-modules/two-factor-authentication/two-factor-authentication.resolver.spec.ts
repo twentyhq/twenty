@@ -4,6 +4,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
@@ -13,6 +14,8 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 
 import { TwoFactorAuthenticationResolver } from './two-factor-authentication.resolver';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
+import { TwoFactorAuthenticationRecoveryService } from './services/two-factor-authentication-recovery.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 import { type DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
 import { type InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate-two-factor-authentication-provisioning.input';
@@ -90,6 +93,18 @@ describe('TwoFactorAuthenticationResolver', () => {
         {
           provide: TwoFactorAuthenticationService,
           useFactory: createMockTwoFactorAuthenticationService,
+        },
+        {
+          provide: TwoFactorAuthenticationRecoveryService,
+          useValue: {},
+        },
+        {
+          provide: PermissionsService,
+          useValue: {},
+        },
+        {
+          provide: FeatureFlagService,
+          useValue: {},
         },
         {
           provide: LoginTokenService,

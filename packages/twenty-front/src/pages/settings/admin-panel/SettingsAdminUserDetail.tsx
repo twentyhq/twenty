@@ -17,6 +17,7 @@ import {
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminServerAdminAccess } from '@/settings/admin-panel/components/SettingsAdminServerAdminAccess';
+import { SettingsAdminTwoFactorAuthenticationRecoveryCode } from '@/settings/admin-panel/components/SettingsAdminTwoFactorAuthenticationRecoveryCode';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
@@ -43,6 +44,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
+  FeatureFlagKey,
   type UserLookupAdminPanelQuery,
   UserLookupAdminPanelDocument,
 } from '~/generated-admin/graphql';
@@ -163,6 +165,23 @@ export const SettingsAdminUserDetail = () => {
                 : t`Impersonate`}
             </Button>
           </StyledButtonContainer>
+        )}
+      {currentUser?.canAccessFullAdminPanel &&
+        activeWorkspace &&
+        activeWorkspace.featureFlags.some(
+          (featureFlag) =>
+            featureFlag.key ===
+              FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED &&
+            featureFlag.value,
+        ) &&
+        isDefined(user) &&
+        user.id !== currentUser.id && (
+          <SettingsAdminTwoFactorAuthenticationRecoveryCode
+            key={`${user.id}-${activeWorkspace.id}`}
+            userId={user.id}
+            workspaceId={activeWorkspace.id}
+            memberName={displayName}
+          />
         )}
     </Section.Root>
   );

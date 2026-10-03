@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import GraphQLJSON from 'graphql-type-json';
 import { AI_MODEL_TIERS } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
@@ -35,6 +36,7 @@ import { ServerAdminDTO } from 'src/engine/core-modules/admin-panel/dtos/server-
 import { SigningKeyDTO } from 'src/engine/core-modules/admin-panel/dtos/signing-key.dto';
 import { SigningKeysAdminPanelDTO } from 'src/engine/core-modules/admin-panel/dtos/signing-keys-admin-panel.dto';
 import { SystemHealthDTO } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
+import { GenerateTwoFactorAuthenticationRecoveryCodeAsServerAdminInput } from 'src/engine/core-modules/admin-panel/dtos/generate-two-factor-authentication-recovery-code-as-server-admin.input';
 import { UpdateServerAdminAccessInput } from 'src/engine/core-modules/admin-panel/dtos/update-server-admin-access.input';
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
@@ -76,7 +78,10 @@ import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  ForbiddenError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -86,6 +91,8 @@ import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
+import { TwoFactorAuthenticationRecoveryCodeDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-code.dto';
+import { TwoFactorAuthenticationRecoveryService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service';
 import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -133,6 +140,7 @@ export class AdminPanelResolver {
   constructor(
     private readonly adminUserLookupService: AdminPanelUserLookupService,
     private readonly adminServerAdminService: AdminPanelServerAdminService,
+    private readonly twoFactorAuthenticationRecoveryService: TwoFactorAuthenticationRecoveryService,
     private readonly adminStatisticsService: AdminPanelStatisticsService,
     private readonly adminBillingService: AdminPanelBillingService,
     private readonly adminChatService: AdminPanelChatService,
@@ -239,6 +247,48 @@ export class AdminPanelResolver {
       canAccessFullAdminPanel: input.canAccessFullAdminPanel,
       canImpersonate: input.canImpersonate,
       otp: input.otp,
+    });
+  }
+
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    AdminPanelGuard,
+  )
+  @Mutation(() => TwoFactorAuthenticationRecoveryCodeDTO)
+  async generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin(
+    @Args()
+    input: GenerateTwoFactorAuthenticationRecoveryCodeAsServerAdminInput,
+    @AuthUser() actor: AuthContextUser,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<TwoFactorAuthenticationRecoveryCodeDTO> {
+    const isRecoveryCodeEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
+        input.workspaceId,
+      );
+
+    if (!isRecoveryCodeEnabled) {
+      throw new ForbiddenError(
+        `Feature flag "${FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED}" is not enabled for this workspace`,
+      );
+    }
+
+    return this.twoFactorAuthenticationRecoveryService.generateRecoveryCode({
+      actor,
+      actorWorkspaceId: workspace.id,
+      otp: input.otp,
+      targetUserId: input.userId,
+      targetWorkspaceId: input.workspaceId,
     });
   }
 

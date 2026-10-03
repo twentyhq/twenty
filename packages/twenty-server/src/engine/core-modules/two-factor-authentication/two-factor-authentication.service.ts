@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { type MessageDescriptor } from '@lingui/core';
+import { isNonEmptyString } from '@sniptt/guards';
 import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull } from 'typeorm';
 
 import {
   AuthException,
@@ -18,6 +21,7 @@ import {
   TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-otp-rate-limit.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationRecoveryCodeEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-recovery-code.entity';
 import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 import { buildTwoFactorAuthenticationOtpRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-otp-rate-limit-key.util';
@@ -42,6 +46,8 @@ export class TwoFactorAuthenticationService {
   constructor(
     @InjectWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity)
     private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
+    @InjectWorkspaceScopedRepository(TwoFactorAuthenticationRecoveryCodeEntity)
+    private readonly twoFactorAuthenticationRecoveryCodeRepository: WorkspaceScopedRepository<TwoFactorAuthenticationRecoveryCodeEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly throttlerService: ThrottlerService,
@@ -217,6 +223,69 @@ export class TwoFactorAuthenticationService {
       workspaceId,
       { id: userTwoFactorAuthenticationMethod.id },
       { status: OTPStatus.VERIFIED },
+    );
+
+    await this.revokePendingRecoveryCodes({
+      workspaceId,
+      userWorkspaceId: userTwoFactorAuthenticationMethod.userWorkspaceId,
+    });
+  }
+
+  async revokePendingRecoveryCodes({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: WorkspaceEntity['id'];
+    userWorkspaceId: string;
+  }): Promise<number> {
+    const updateResult =
+      await this.twoFactorAuthenticationRecoveryCodeRepository.update(
+        workspaceId,
+        { userWorkspaceId, usedAt: IsNull(), revokedAt: IsNull() },
+        { revokedAt: new Date() },
+      );
+
+    return updateResult.affected ?? 0;
+  }
+
+  async assertFreshStepUpAuthenticationOrThrow({
+    userId,
+    workspaceId,
+    otp,
+    otpRequiredMessage,
+    twoFactorAuthenticationRequiredMessage,
+  }: {
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+    otp?: string;
+    otpRequiredMessage: MessageDescriptor;
+    twoFactorAuthenticationRequiredMessage: MessageDescriptor;
+  }): Promise<void> {
+    if (!isNonEmptyString(otp)) {
+      throw new TwoFactorAuthenticationException(
+        'A two-factor authentication code is required for this action',
+        TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
+        { userFriendlyMessage: otpRequiredMessage },
+      );
+    }
+
+    const hasVerifiedTwoFactorAuthenticationMethod =
+      await this.twoFactorAuthenticationMethodRepository.exists(workspaceId, {
+        where: { userWorkspace: { userId }, status: OTPStatus.VERIFIED },
+      });
+
+    if (!hasVerifiedTwoFactorAuthenticationMethod) {
+      throw new TwoFactorAuthenticationException(
+        'Two-factor authentication must be enabled in the current workspace for this action',
+        TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
+        { userFriendlyMessage: twoFactorAuthenticationRequiredMessage },
+      );
+    }
+
+    await this.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+      userId,
+      otp,
+      workspaceId,
     );
   }
 
