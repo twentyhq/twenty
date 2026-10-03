@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -18,16 +19,19 @@ const StyledGroupTitle = styled.div`
 type AiChatThreadListProps = {
   threads: AgentChatThreadRecord[];
   surface: AiChatThreadActionsSurface;
-  selectedThreadId?: string;
+  selectedThreadIds?: string[];
   isGroupedByDate?: boolean;
-  onThreadClick: (thread: AgentChatThreadRecord) => void;
+  onThreadClick: (
+    thread: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) => void;
   onDetachThread?: (threadId: string) => void;
 };
 
 export const AiChatThreadList = ({
   threads,
   surface,
-  selectedThreadId,
+  selectedThreadIds = [],
   isGroupedByDate = true,
   onThreadClick,
   onDetachThread,
@@ -37,7 +41,7 @@ export const AiChatThreadList = ({
       key={thread.id}
       thread={thread}
       surface={surface}
-      isSelected={thread.id === selectedThreadId}
+      isSelected={selectedThreadIds.includes(thread.id)}
       onClick={onThreadClick}
       onDetach={
         isDefined(onDetachThread) ? () => onDetachThread(thread.id) : undefined

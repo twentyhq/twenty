@@ -1,17 +1,15 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
 
-type AgentChatThreadInboxSingleRecordCommandProps = {
+type AgentChatThreadInboxCommandProps = {
   action: 'read' | 'unread' | 'done' | 'reopen' | 'snooze';
 };
 
-export const AgentChatThreadInboxSingleRecordCommand = ({
+export const AgentChatThreadInboxCommand = ({
   action,
-}: AgentChatThreadInboxSingleRecordCommandProps) => {
+}: AgentChatThreadInboxCommandProps) => {
   const { selectedRecords } = useHeadlessCommandContextApi();
   const {
     markAgentChatThreadAsRead,
@@ -22,24 +20,24 @@ export const AgentChatThreadInboxSingleRecordCommand = ({
   const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
 
   const handleExecute = async () => {
-    const threadId = selectedRecords[0]?.id;
+    const threadIds = selectedRecords.map(({ id }) => id);
 
-    if (!isDefined(threadId)) {
+    if (threadIds.length === 0) {
       return;
     }
 
-    switch (action) {
-      case 'read':
-        return markAgentChatThreadAsRead(threadId);
-      case 'unread':
-        return markAgentChatThreadAsUnread(threadId);
-      case 'done':
-        return archiveAgentChatThread(threadId);
-      case 'reopen':
-        return moveAgentChatThreadToInbox(threadId);
-      case 'snooze':
-        return openSnoozeAiChatInSidePanel(threadId);
+    if (action === 'snooze') {
+      return openSnoozeAiChatInSidePanel(threadIds);
     }
+
+    const updateThread = {
+      read: markAgentChatThreadAsRead,
+      unread: markAgentChatThreadAsUnread,
+      done: archiveAgentChatThread,
+      reopen: moveAgentChatThreadToInbox,
+    }[action];
+
+    await Promise.all(threadIds.map(updateThread));
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;

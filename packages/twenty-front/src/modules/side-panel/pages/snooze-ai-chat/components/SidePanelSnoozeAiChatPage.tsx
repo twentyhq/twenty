@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useId, useState } from 'react';
 import { IconCalendar, IconClock } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -16,7 +15,7 @@ import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuIt
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SnoozeAiChatUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
-import { snoozeAiChatThreadIdComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdComponentState';
+import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -31,8 +30,8 @@ const StyledSeparatorContainer = styled.div`
 
 export const SidePanelSnoozeAiChatPage = () => {
   const { t } = useLingui();
-  const snoozeAiChatThreadId = useAtomComponentStateValue(
-    snoozeAiChatThreadIdComponentState,
+  const snoozeAiChatThreadIds = useAtomComponentStateValue(
+    snoozeAiChatThreadIdsComponentState,
   );
   const { snoozeAgentChatThread } = useAgentChatThreadParticipants();
   const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
@@ -40,8 +39,9 @@ export const SidePanelSnoozeAiChatPage = () => {
   const { openDropdown } = useOpenDropdown();
   const { userTimezone } = useUserTimezone();
   const [optionsComputedAt, setOptionsComputedAt] = useState(() => new Date());
+  const untilDateDropdownId = useId();
 
-  if (!isDefined(snoozeAiChatThreadId)) {
+  if (snoozeAiChatThreadIds.length === 0) {
     return null;
   }
 
@@ -61,13 +61,10 @@ export const SidePanelSnoozeAiChatPage = () => {
     }
 
     void closeSidePanelMenu();
-    void snoozeAgentChatThread({
-      threadId: snoozeAiChatThreadId,
-      snoozedUntil: option.date,
-    });
+    for (const threadId of snoozeAiChatThreadIds) {
+      void snoozeAgentChatThread({ threadId, snoozedUntil: option.date });
+    }
   };
-
-  const untilDateDropdownId = `snooze-ai-chat-until-date-dropdown-${snoozeAiChatThreadId}`;
 
   return (
     <SidePanelList
@@ -111,7 +108,7 @@ export const SidePanelSnoozeAiChatPage = () => {
           dropdownPlacement="bottom-start"
           dropdownComponents={
             <SnoozeAiChatUntilDatePicker
-              threadId={snoozeAiChatThreadId}
+              threadIds={snoozeAiChatThreadIds}
               onSnoozed={closeSidePanelMenu}
             />
           }

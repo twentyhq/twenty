@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
@@ -22,18 +22,19 @@ const StyledContainer = styled.div`
 `;
 
 type SnoozeAiChatUntilDatePickerProps = {
-  threadId: string;
+  threadIds: string[];
   onSnoozed: () => void;
 };
 
 export const SnoozeAiChatUntilDatePicker = ({
-  threadId,
+  threadIds,
   onSnoozed,
 }: SnoozeAiChatUntilDatePickerProps) => {
   const { t } = useLingui();
   const { snoozeAgentChatThread } = useAgentChatThreadParticipants();
   const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
   const { userTimezone } = useUserTimezone();
+  const dateTimePickerInstanceId = useId();
   const agentChatThreadInboxNow = useAtomStateValue(
     agentChatThreadInboxNowState,
   );
@@ -66,16 +67,15 @@ export const SnoozeAiChatUntilDatePicker = ({
     }
 
     onSnoozed();
-    void snoozeAgentChatThread({
-      threadId,
-      snoozedUntil: snoozedUntilDate,
-    });
+    for (const threadId of threadIds) {
+      void snoozeAgentChatThread({ threadId, snoozedUntil: snoozedUntilDate });
+    }
   };
 
   return (
     <StyledContainer>
       <DateTimePicker
-        instanceId={`snooze-ai-chat-until-date-${threadId}`}
+        instanceId={dateTimePickerInstanceId}
         date={snoozedUntil}
         onChange={handleChange}
         clearable={false}

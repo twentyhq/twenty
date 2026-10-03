@@ -70,7 +70,10 @@ describe('SnoozeAiChatUntilDatePicker', () => {
 
   it('snoozes the chat until tomorrow morning by default', () => {
     render(
-      <SnoozeAiChatUntilDatePicker threadId="thread-1" onSnoozed={onSnoozed} />,
+      <SnoozeAiChatUntilDatePicker
+        threadIds={['thread-1']}
+        onSnoozed={onSnoozed}
+      />,
       { wrapper: Wrapper },
     );
 
@@ -85,7 +88,10 @@ describe('SnoozeAiChatUntilDatePicker', () => {
 
   it('does not snooze until a time that has passed', () => {
     render(
-      <SnoozeAiChatUntilDatePicker threadId="thread-1" onSnoozed={onSnoozed} />,
+      <SnoozeAiChatUntilDatePicker
+        threadIds={['thread-1']}
+        onSnoozed={onSnoozed}
+      />,
       { wrapper: Wrapper },
     );
 
@@ -103,7 +109,10 @@ describe('SnoozeAiChatUntilDatePicker', () => {
 
   it('turns the button off once the picked time passes', () => {
     render(
-      <SnoozeAiChatUntilDatePicker threadId="thread-1" onSnoozed={onSnoozed} />,
+      <SnoozeAiChatUntilDatePicker
+        threadIds={['thread-1']}
+        onSnoozed={onSnoozed}
+      />,
       { wrapper: Wrapper },
     );
 

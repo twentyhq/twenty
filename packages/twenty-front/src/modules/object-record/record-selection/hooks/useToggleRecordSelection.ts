@@ -3,27 +3,34 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { recordSelectionRangeComponentState } from '@/object-record/record-selection/states/recordSelectionRangeComponentState';
 import { getRecordIdsBetween } from '@/object-record/record-selection/utils/getRecordIdsBetween';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 export const useToggleRecordSelection = (recordIndexId?: string) => {
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordSelectionComponentInstanceContext,
+    recordIndexId,
+  );
+
   const isRecordSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
     isRecordSelectedComponentFamilyState,
-    recordIndexId,
+    instanceId,
   );
 
   const allRecordIds = useAtomComponentSelectorCallbackState(
     recordIndexAllRecordIdsComponentSelector,
-    recordIndexId,
+    instanceId,
   );
 
   const recordSelectionRange = useAtomComponentStateCallbackState(
     recordSelectionRangeComponentState,
-    recordIndexId,
+    instanceId,
   );
 
   const store = useStore();
