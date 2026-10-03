@@ -7,7 +7,7 @@ import { type ASTNode } from 'graphql';
 import { METADATA_GRAPHQL_OPERATIONS_TO_CACHE } from 'src/engine/api/graphql/graphql-config/constants/metadata-graphql-operations-to-cache.constant';
 import { FIND_ALL_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-views-graphql-operation.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+import { type WorkspaceCacheReadableKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 // Mirrors OBJECT_METADATA_FRAGMENT from twenty-front
 // (packages/twenty-front/src/modules/object-metadata/graphql/fragment.ts):
@@ -233,7 +233,7 @@ const FIND_ALL_VIEWS_BASELINE_QUERY = gql`
 describe('metadata GraphQL operations cache dependencies', () => {
   const recordAccessedCacheKeys = async (
     query: ASTNode,
-  ): Promise<Set<WorkspaceCacheKeyName>> => {
+  ): Promise<Set<WorkspaceCacheReadableKeyName>> => {
     const workspaceCacheService =
       getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
     const spy = jest.spyOn(workspaceCacheService, 'getOrRecomputeWithHashes');
@@ -243,7 +243,7 @@ describe('metadata GraphQL operations cache dependencies', () => {
 
       expect(response.body.errors).toBeUndefined();
 
-      return new Set<WorkspaceCacheKeyName>(
+      return new Set<WorkspaceCacheReadableKeyName>(
         spy.mock.calls.flatMap(([, cacheKeyNames]) => cacheKeyNames),
       );
     } finally {
@@ -259,8 +259,8 @@ describe('metadata GraphQL operations cache dependencies', () => {
     operationName: string;
     fullQuery: ASTNode;
     baselineQuery: ASTNode;
-  }): Promise<WorkspaceCacheKeyName[]> => {
-    const declaredDependencies = new Set<WorkspaceCacheKeyName>(
+  }): Promise<WorkspaceCacheReadableKeyName[]> => {
+    const declaredDependencies = new Set<WorkspaceCacheReadableKeyName>(
       METADATA_GRAPHQL_OPERATIONS_TO_CACHE[operationName].dependencies,
     );
     const requestInfrastructureKeys =

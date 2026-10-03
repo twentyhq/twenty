@@ -5,10 +5,10 @@ import { type Request } from 'express';
 import { type Plugin } from 'graphql-yoga';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+import { type WorkspaceCacheReadableKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 export type CachedOperationConfig = {
-  dependencies: WorkspaceCacheKeyName[];
+  dependencies: WorkspaceCacheReadableKeyName[];
   scope: 'workspace' | 'userWorkspace';
 };
 
@@ -20,7 +20,7 @@ export type CacheMetadataPluginConfig = {
   operationsToCache: Record<string, CachedOperationConfig>;
   dependencyHashGetter: (
     workspaceId: string,
-    cacheKeyNames: WorkspaceCacheKeyName[],
+    cacheKeyNames: WorkspaceCacheReadableKeyName[],
   ) => Promise<string>;
 };
 
