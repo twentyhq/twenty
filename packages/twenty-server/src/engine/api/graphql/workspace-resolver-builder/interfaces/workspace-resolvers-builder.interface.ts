@@ -30,6 +30,8 @@ export interface FindManyResolverArgs<
   filter?: Filter;
   orderBy?: OrderBy;
   offset?: number;
+  // Only on objects whose records can be discovered without a grant
+  discover?: boolean;
 }
 
 export interface FindOneResolverArgs<Filter = ObjectRecordFilter> {

@@ -2,6 +2,7 @@
 
 import { randomUUID } from 'node:crypto';
 
+import gql from 'graphql-tag';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   MetadataReadability,
@@ -26,6 +27,7 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
@@ -128,6 +130,30 @@ const findNoteIdsAsJony = async () => {
     (edge: { node: { id: string } }) => edge.node.id,
   );
 };
+
+const discoverNotesAsJonyThroughGraphql = (gqlFields: string) =>
+  makeGraphqlApiRequestWithMemberRole({
+    query: gql`
+      query DiscoverNotes($id: UUID) {
+        notes(discover: true, filter: { id: { eq: $id } }) {
+          totalCount
+          edges {
+            node {
+              ${gqlFields}
+            }
+          }
+        }
+      }
+    `,
+    variables: { id: NOTE_ID },
+  });
+
+const discoverAsJonyThroughRest = (path: string) =>
+  makeRestApiRequest({
+    method: 'get',
+    path,
+    bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+  });
 
 describe('DISCOVERABLE readability (integration)', () => {
   let noteObjectMetadata: ObjectMetadataEntity;
@@ -345,6 +371,119 @@ describe('DISCOVERABLE readability (integration)', () => {
 
   it('does not discover a child that declares no discoverable fields', async () => {
     expect(await discoverAsJony('attachment', ['id', 'name'])).toEqual([]);
+  });
+
+  it('lets GraphQL discover the record with its discoverable fields', async () => {
+    const response = await discoverNotesAsJonyThroughGraphql('id createdAt');
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.notes.totalCount).toBe(1);
+    expect(response.body.data.notes.edges).toEqual([
+      { node: { id: NOTE_ID, createdAt: expect.any(String) } },
+    ]);
+  });
+
+  it('lets GraphQL discover declared relations of a discovered record', async () => {
+    const response = await makeGraphqlApiRequestWithMemberRole({
+      query: gql`
+        query DiscoverNotesWithTargets($id: UUID) {
+          notes(discover: true, first: 1, filter: { id: { eq: $id } }) {
+            edges {
+              node {
+                id
+                noteTargets {
+                  edges {
+                    node {
+                      id
+                      targetPersonId
+                    }
+                  }
+                }
+              }
+            }
+            pageInfo {
+              endCursor
+            }
+          }
+        }
+      `,
+      variables: { id: NOTE_ID },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.notes.pageInfo.endCursor).toEqual(
+      expect.any(String),
+    );
+    expect(response.body.data.notes.edges).toEqual([
+      {
+        node: {
+          id: NOTE_ID,
+          noteTargets: {
+            edges: [
+              { node: { id: NOTE_TARGET_ID, targetPersonId: PERSON_ID } },
+            ],
+          },
+        },
+      },
+    ]);
+  });
+
+  it('refuses a GraphQL discover query that selects another field', async () => {
+    const response = await discoverNotesAsJonyThroughGraphql('id title');
+
+    expect(response.body.data?.notes ?? null).toBeNull();
+    expect(response.body.errors?.[0]?.message).toContain('title');
+  });
+
+  it.each([true, false])(
+    'refuses GraphQL discover: %s on other objects',
+    async (discover) => {
+      const response = await makeGraphqlApiRequestWithMemberRole({
+        query: gql`
+        query DiscoverTasks {
+          tasks(discover: ${discover}) {
+            totalCount
+          }
+        }
+      `,
+      });
+
+      expect(response.body.errors?.[0]?.message).toBe(
+        'Records of tasks cannot be discovered',
+      );
+    },
+  );
+
+  it('lets REST discover the record with only its discoverable fields', async () => {
+    const response = await discoverAsJonyThroughRest(
+      `/notes?discover=true&depth=0&filter=id[eq]:${NOTE_ID}`,
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.notes).toEqual([
+      {
+        id: NOTE_ID,
+        createdAt: expect.any(String),
+        createdBy: expect.any(Object),
+      },
+    ]);
+  });
+
+  it.each(['true', 'false'])(
+    'refuses REST discover=%s on other objects',
+    async (discover) => {
+      const response = await discoverAsJonyThroughRest(
+        `/tasks?discover=${discover}`,
+      );
+
+      expect(response.status).toBe(400);
+    },
+  );
+
+  it('refuses REST discovery with an invalid value', async () => {
+    const response = await discoverAsJonyThroughRest('/notes?discover=yes');
+
+    expect(response.status).toBe(400);
   });
 
   it('shows the record to ordinary reads once it is shared', async () => {

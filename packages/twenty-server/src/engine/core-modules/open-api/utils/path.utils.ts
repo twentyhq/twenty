@@ -24,6 +24,7 @@ import {
   getUpdateManyResponse200,
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
+import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/is-discoverable-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const computeBatchPath = (
@@ -49,7 +50,13 @@ export const computeBatchPath = (
 };
 
 export const computeManyResultPath = (
-  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
+  item: Pick<
+    FlatObjectMetadata,
+    | 'nameSingular'
+    | 'namePlural'
+    | 'readability'
+    | 'discoverableFieldUniversalIdentifiers'
+  >,
 ): OpenAPIV3_1.PathItemObject => {
   return {
     get: {
@@ -64,6 +71,9 @@ export const computeManyResultPath = (
         { $ref: '#/components/parameters/depth' },
         { $ref: '#/components/parameters/startingAfter' },
         { $ref: '#/components/parameters/endingBefore' },
+        ...(isDiscoverableObject(item)
+          ? [{ $ref: '#/components/parameters/discover' }]
+          : []),
       ],
       responses: {
         '200': getFindManyResponse200({ item }),

@@ -8,6 +8,8 @@ import {
 } from 'twenty-shared/utils';
 
 import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
+import { type RecordReadScope } from 'src/engine/twenty-orm/types/record-read-scope.type';
+import { restrictObjectsPermissionsToDiscoverableFields } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-discoverable-fields.util';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
@@ -133,18 +135,27 @@ export abstract class RestApiBaseHandler {
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    readScope = 'content',
   }: {
     authContext: WorkspaceAuthContext;
     depth?: Depth | undefined;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    readScope?: RecordReadScope;
   }): Promise<CommonSelectedFields> {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
 
     return this.commonSelectFieldsHelper.computeFromDepth({
-      objectsPermissions,
+      objectsPermissions:
+        readScope === 'existence'
+          ? restrictObjectsPermissionsToDiscoverableFields({
+              objectsPermissions,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+            })
+          : objectsPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,

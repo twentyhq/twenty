@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {
@@ -29,12 +30,19 @@ export class FindManyResolverFactory implements WorkspaceResolverBuilderFactoryI
   ): Resolver<FindManyResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, _requestContext, info) => {
+    return async (_source, { discover, ...args }, _requestContext, info) => {
       const selectedFields = graphqlFields(info);
 
-      const resolverContext = createQueryRunnerContext({
-        workspaceSchemaBuilderContext: internalContext,
-      });
+      const resolverContext = {
+        ...createQueryRunnerContext({
+          workspaceSchemaBuilderContext: internalContext,
+        }),
+        readScope: isDefined(discover)
+          ? discover
+            ? ('existence' as const)
+            : ('content' as const)
+          : undefined,
+      };
 
       try {
         const {

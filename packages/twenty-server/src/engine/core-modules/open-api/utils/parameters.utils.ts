@@ -59,6 +59,20 @@ export const computeDepthParameters = (): OpenAPIV3_1.ParameterObject => {
   };
 };
 
+export const computeDiscoverParameters = (): OpenAPIV3_1.ParameterObject => {
+  return {
+    name: 'discover',
+    in: 'query',
+    description:
+      'If true, returns every record your role can read, including those not shared with you, but only with the fields that tell a record exists. Other fields cannot be selected, filtered or sorted on.',
+    required: false,
+    schema: {
+      type: 'boolean',
+      default: false,
+    },
+  };
+};
+
 export const computeUpsertParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'upsert',
