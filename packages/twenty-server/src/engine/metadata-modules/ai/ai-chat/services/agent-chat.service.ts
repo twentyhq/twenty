@@ -228,7 +228,10 @@ export class AgentChatService {
     threadId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    return this.messageRepository.existsBy(workspaceId, { threadId });
+    return this.messageRepository.existsBy(workspaceId, {
+      threadId,
+      isHidden: false,
+    });
   }
 
   async deleteAssistantMessagesForTurn({

@@ -38,12 +38,12 @@ const buildService = () => {
     {} as never,
   );
 
-  return { service, turnRepository };
+  return { service, threadRepository, turnRepository };
 };
 
 describe('AgentChatService getTurnContexts', () => {
   it('gives the thread owner the context of the turns the agent opened', async () => {
-    const { service } = buildService();
+    const { service, threadRepository, turnRepository } = buildService();
 
     await expect(
       service.getTurnContexts({
@@ -58,6 +58,14 @@ describe('AgentChatService getTurnContexts', () => {
         createdAt: '2026-01-01T00:00:00.000Z',
       },
     ]);
+    expect(threadRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
+      where: { id: THREAD_ID },
+      select: ['id', 'workspaceMemberId'],
+    });
+    expect(turnRepository.find).toHaveBeenCalledWith(WORKSPACE_ID, {
+      where: { threadId: THREAD_ID },
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
   });
 
   it('keeps the owner’s contexts from the turns of other participants', async () => {

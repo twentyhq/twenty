@@ -201,6 +201,13 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       turnUserMessage: null,
       threadMessages: [],
     });
+    agentChatService.getTurnContexts.mockResolvedValue([
+      {
+        turnId: 'turn-id',
+        context: 'Company: Acme Inc',
+        createdAt: '2026-01-01T00:00:00.000Z',
+      },
+    ]);
 
     const result = await service.retryLastFailedTurn(retryArguments);
 
@@ -210,7 +217,18 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     expect(messageQueueService.add).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
-        messages: [],
+        messages: [
+          expect.objectContaining({
+            id: 'turn-context-turn-id',
+            role: 'user',
+            parts: [
+              {
+                type: 'text',
+                text: expect.stringContaining('Company: Acme Inc'),
+              },
+            ],
+          }),
+        ],
         existingTurnId: 'turn-id',
         lastUserMessageText: '',
       }),

@@ -57,14 +57,17 @@ const moveHiddenMessagesToTurnContext = async ({
      WHERE turn.id = hidden."turnId" AND turn.context IS NULL`,
   );
 
+  // only rows whose turn now holds their text go, so nothing unmoved is lost
+  const movedHiddenMessagesSql = `SELECT message.id FROM ${tables.message} message
+     JOIN ${tables.turn} turn ON turn.id = message."turnId"
+     WHERE message."isHidden" = true AND turn.context IS NOT NULL`;
+
   await manager.query(
-    `DELETE FROM ${tables.messagePart} part
-     USING ${tables.message} message
-     WHERE part."messageId" = message.id AND message."isHidden" = true`,
+    `DELETE FROM ${tables.messagePart} WHERE "messageId" IN (${movedHiddenMessagesSql})`,
   );
 
   const [, messageCount]: [unknown[], number] = await manager.query(
-    `DELETE FROM ${tables.message} WHERE "isHidden" = true`,
+    `DELETE FROM ${tables.message} WHERE id IN (${movedHiddenMessagesSql})`,
   );
 
   return { turnCount, messageCount };
@@ -79,25 +82,27 @@ const moveTurnContextToHiddenMessages = async ({
 }) => {
   const tables = getTables(workspaceId);
 
-  const [, messageCount]: [unknown[], number] = await manager.query(
+  const hiddenParts: { messageId: string }[] = await manager.query(
     `WITH hidden AS (
        INSERT INTO ${tables.message} (id, "threadId", "turnId", role, status, "isHidden", "processedAt", "createdAt")
-       SELECT public.uuid_generate_v4(), turn."threadId", turn.id, 'user', 'sent', true, turn."createdAt", turn."createdAt"
+       SELECT DISTINCT ON (turn."threadId") public.uuid_generate_v4(), turn."threadId", turn.id, 'user', 'sent', true, turn."createdAt", turn."createdAt"
        FROM ${tables.turn} turn
        WHERE turn.context IS NOT NULL
          AND NOT EXISTS (
            SELECT 1 FROM ${tables.message} message
            WHERE message."threadId" = turn."threadId" AND message."isHidden" = true AND message."deletedAt" IS NULL
          )
+       ORDER BY turn."threadId", turn."createdAt", turn.id
        RETURNING id, "turnId"
      )
      INSERT INTO ${tables.messagePart} ("messageId", "orderIndex", type, "textContent")
      SELECT hidden.id, 0, 'text', turn.context
      FROM hidden
-     JOIN ${tables.turn} turn ON turn.id = hidden."turnId"`,
+     JOIN ${tables.turn} turn ON turn.id = hidden."turnId"
+     RETURNING "messageId"`,
   );
 
-  return messageCount;
+  return hiddenParts.length;
 };
 
 @RegisteredWorkspaceCommand('2.46.0', 1791049424391)

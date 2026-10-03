@@ -12,7 +12,7 @@ export const buildTurnContextMessage = ({
   parts: [
     {
       type: 'text',
-      text: `<context note="Given to you to open this part of the conversation. The user did not write it and does not see it.">\n${context}\n</context>`,
+      text: `<context note="Given to you to open this part of the conversation. The user did not write it and does not see it.">\n${context.replace(/<\/context>/gi, '&lt;/context>')}\n</context>`,
     },
   ],
 });
