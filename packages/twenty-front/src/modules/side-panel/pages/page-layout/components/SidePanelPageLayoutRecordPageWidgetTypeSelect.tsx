@@ -3,6 +3,7 @@ import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/f
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
 import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateRecordPageNoteWidget';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { widgetCreationTargetTabIdComponentState } from '@/page-layout/states/widgetCreationTargetTabIdComponentState';
@@ -11,6 +12,10 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
+import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
+import { buildTabWidgetLayouts } from '@/page-layout/utils/buildTabWidgetLayouts';
+import { getWidgetGridPosition } from '@/page-layout/utils/getWidgetGridPosition';
+import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
@@ -30,10 +35,11 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { SidePanelPages } from 'twenty-shared/types';
+import { FieldMetadataType, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
+  IconFiles,
   IconListDetails,
   IconListSearch,
   IconNotes,
@@ -66,6 +72,11 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     pageLayoutId,
   );
 
+  const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
+    pageLayoutCurrentLayoutsComponentState,
+    pageLayoutId,
+  );
+
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useAtomComponentState(
       pageLayoutEditingWidgetIdComponentState,
@@ -90,6 +101,14 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetObjectNameSingular,
   });
+
+  const canAddFilesWidget = objectMetadataItem.fields.some(
+    (field) =>
+      field.name === 'attachments' &&
+      field.isActive &&
+      (field.type === FieldMetadataType.RELATION ||
+        field.type === FieldMetadataType.MORPH_RELATION),
+  );
 
   const allFieldWidgetFields = useFieldWidgetEligibleFields(
     targetObjectNameSingular,
@@ -284,6 +303,129 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
   };
 
+  const handleCreateFilesWidget = () => {
+    const replacePositionIndex = getExistingWidgetPositionIndex();
+    removeExistingWidgetIfReplacing();
+
+    const updatedPageLayout = store.get(pageLayoutDraftState);
+    const activeTab = updatedPageLayout.tabs.find((tab) => tab.id === tabId);
+    const widgetId = uuidv4();
+    const isGridTab = activeTab?.layoutMode === PageLayoutTabLayoutMode.GRID;
+    const currentTabLayouts =
+      store.get(pageLayoutCurrentLayoutsState)[tabId] ??
+      buildTabWidgetLayouts(activeTab?.widgets ?? []);
+    const existingGridPosition =
+      isReplaceMode && isDefined(existingWidget)
+        ? getWidgetGridPosition(existingWidget)
+        : undefined;
+    const existingDesktopLayout = isReplaceMode
+      ? currentTabLayouts.desktop?.find(
+          (layout) => layout.i === existingWidget?.id,
+        )
+      : undefined;
+    const existingMobileLayout = isReplaceMode
+      ? currentTabLayouts.mobile?.find(
+          (layout) => layout.i === existingWidget?.id,
+        )
+      : undefined;
+    const gridSize = getWidgetSize(WidgetConfigurationType.FILES, 'default');
+    const gridMinimumSize = getWidgetSize(
+      WidgetConfigurationType.FILES,
+      'minimum',
+    );
+    const gridBottomRow = [
+      ...(currentTabLayouts.desktop ?? []),
+      ...(currentTabLayouts.mobile ?? []),
+    ].reduce(
+      (bottomRow, layout) => Math.max(bottomRow, layout.y + layout.h),
+      0,
+    );
+    const gridPosition = {
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row:
+        existingGridPosition?.row ?? existingDesktopLayout?.y ?? gridBottomRow,
+      column: existingGridPosition?.column ?? existingDesktopLayout?.x ?? 0,
+      rowSpan:
+        existingGridPosition?.rowSpan ?? existingDesktopLayout?.h ?? gridSize.h,
+      columnSpan:
+        existingGridPosition?.columnSpan ??
+        existingDesktopLayout?.w ??
+        gridSize.w,
+    };
+
+    const newWidget = buildDraftPageLayoutWidget({
+      id: widgetId,
+      pageLayoutTabId: tabId,
+      title: t`Files`,
+      type: WidgetType.FILES,
+      configuration: {
+        __typename: 'FilesConfiguration',
+        configurationType: WidgetConfigurationType.FILES,
+      },
+      position: isGridTab
+        ? gridPosition
+        : {
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: replacePositionIndex ?? activeTab?.widgets.length ?? 0,
+          },
+      objectMetadataId: objectMetadataItem.id,
+    });
+
+    store.set(pageLayoutDraftState, (prev) => ({
+      ...prev,
+      tabs: addWidgetToTab(prev.tabs, tabId, newWidget),
+    }));
+
+    if (isGridTab) {
+      store.set(pageLayoutCurrentLayoutsState, (prev) => {
+        const layoutsWithoutReplacedWidget = {
+          desktop: currentTabLayouts.desktop?.filter(
+            (layout) => layout.i !== existingWidget?.id,
+          ),
+          mobile: currentTabLayouts.mobile?.filter(
+            (layout) => layout.i !== existingWidget?.id,
+          ),
+        };
+
+        const newLayout = {
+          i: widgetId,
+          x: gridPosition.column,
+          y: gridPosition.row,
+          w: gridPosition.columnSpan,
+          h: gridPosition.rowSpan,
+          minW: gridMinimumSize.w,
+          minH: gridMinimumSize.h,
+        };
+
+        return {
+          ...prev,
+          [tabId]: {
+            desktop: [
+              ...(layoutsWithoutReplacedWidget.desktop ?? []),
+              newLayout,
+            ],
+            mobile: [
+              ...(layoutsWithoutReplacedWidget.mobile ?? []),
+              {
+                ...newLayout,
+                x: 0,
+                y: existingMobileLayout?.y ?? newLayout.y,
+                w: 1,
+                h: existingMobileLayout?.h ?? newLayout.h,
+              },
+            ],
+          },
+        };
+      });
+    }
+
+    setPageLayoutEditingWidgetId(widgetId);
+    if (!isGridTab) {
+      insertCreatedWidgetAtContext({ newWidgetId: widgetId });
+    }
+    closeSidePanelMenu();
+  };
+
   const handleCreateFrontComponentWidget = useCallback(
     (frontComponent: FrontComponent) => {
       const replacePositionIndex = getExistingWidgetPositionIndex();
@@ -347,6 +489,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     'fields',
     'field',
     'note',
+    ...(canAddFilesWidget ? ['files'] : []),
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
   ];
 
@@ -378,6 +521,16 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
             onClick={handleCreateNoteWidget}
           />
         </SelectableListItem>
+        {canAddFilesWidget && (
+          <SelectableListItem itemId="files" onEnter={handleCreateFilesWidget}>
+            <CommandMenuItem
+              Icon={IconFiles}
+              label={t`Files`}
+              id="files"
+              onClick={handleCreateFilesWidget}
+            />
+          </SelectableListItem>
+        )}
       </SidePanelGroup>
 
       {frontComponentsWithSelectItemId.length > 0 && (
