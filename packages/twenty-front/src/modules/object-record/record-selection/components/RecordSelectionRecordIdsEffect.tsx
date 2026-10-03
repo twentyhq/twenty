@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
+import { recordSelectionRangeComponentState } from '@/object-record/record-selection/states/recordSelectionRangeComponentState';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -47,6 +48,35 @@ export const RecordSelectionRecordIdsEffect = ({
 
     store.set(recordIdsAtom, recordIds);
   }, [instanceId, records, store]);
+
+  // The list owns its selection, so leaving it clears the selection rather
+  // than bringing it back on return
+  useEffect(
+    () => () => {
+      const recordIds = store.get(
+        recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
+          instanceId,
+          familyKey: NO_RECORD_GROUP_FAMILY_KEY,
+        }),
+      );
+
+      for (const recordId of recordIds) {
+        store.set(
+          isRecordSelectedComponentFamilyState.atomFamily({
+            instanceId,
+            familyKey: recordId,
+          }),
+          false,
+        );
+      }
+
+      store.set(
+        recordSelectionRangeComponentState.atomFamily({ instanceId }),
+        null,
+      );
+    },
+    [instanceId, store],
+  );
 
   return null;
 };

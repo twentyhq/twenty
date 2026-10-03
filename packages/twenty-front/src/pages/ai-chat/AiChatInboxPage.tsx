@@ -101,7 +101,8 @@ const AiChatInboxPageContent = () => {
     if (
       selectedRecordIds.length === 0 &&
       isDefined(selectedThreadId) &&
-      selectedThreadId !== id
+      selectedThreadId !== id &&
+      threads.some((thread) => thread.id === selectedThreadId)
     ) {
       toggleRecordSelection({ recordId: selectedThreadId });
     }

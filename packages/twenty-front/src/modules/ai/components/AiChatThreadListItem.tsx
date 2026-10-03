@@ -198,7 +198,7 @@ export const AiChatThreadListItem = ({
       $isSelected={isSelected}
       onMouseDown={(event) => {
         // Shift+click selects a range of chats, not the text in between
-        if (event.shiftKey) {
+        if (event.shiftKey && !isRenaming) {
           event.preventDefault();
         }
       }}

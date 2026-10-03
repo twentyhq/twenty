@@ -9,6 +9,8 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { AI_CHAT_INBOX_RECORD_SELECTION_INSTANCE_ID } from '@/ai/constants/AiChatInboxRecordSelectionInstanceId';
+import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import {
   resetJotaiStore,
@@ -164,5 +166,22 @@ describe('AiChatInboxPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Clear selection' }));
 
     expect(screen.getByText(`Chat page ${firstThread.id}`)).toBeInTheDocument();
+  });
+
+  it('clears the selection when leaving the inbox', () => {
+    const { unmount } = renderInbox();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Second chat' }), {
+      metaKey: true,
+    });
+    unmount();
+
+    expect(
+      jotaiStore.get(
+        selectedRecordIdsComponentSelector.selectorFamily({
+          instanceId: AI_CHAT_INBOX_RECORD_SELECTION_INSTANCE_ID,
+        }),
+      ),
+    ).toEqual([]);
   });
 });
