@@ -48,7 +48,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
       <Section.Root>
         <Section.Header
           title={t`Event visibility`}
-          description={t`Define what will be visible to other users in your workspace`}
+          description={t`Choose who can read the events this calendar syncs`}
         />
         <SettingsAccountsEventVisibilitySettingsCard
           value={calendarChannel.visibility}

@@ -8,6 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 import { EventCardMessageForbidden } from '@/activities/timeline-activities/rows/message/components/EventCardMessageForbidden';
+import { useIsMessageDiscoverable } from '@/activities/timeline-activities/rows/message/hooks/useIsMessageDiscoverable';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 
@@ -80,6 +81,18 @@ export const EventCardMessage = ({
     },
   });
 
+  const isMessageNotFound =
+    CombinedGraphQLErrors.is(error) &&
+    error.errors.some(
+      (graphQLError) => graphQLError.extensions?.code === 'NOT_FOUND',
+    );
+
+  const {
+    isMessageDiscoverable,
+    loading: isMessageDiscoverableLoading,
+    error: isMessageDiscoverableError,
+  } = useIsMessageDiscoverable({ messageId, skip: !isMessageNotFound });
+
   if (isDefined(error)) {
     if (CombinedGraphQLErrors.is(error)) {
       if (
@@ -92,12 +105,16 @@ export const EventCardMessage = ({
         );
       }
 
-      if (
-        error.errors.some(
-          (graphQLError) => graphQLError.extensions?.code === 'NOT_FOUND',
-        )
-      ) {
-        return <Trans>Message not found</Trans>;
+      if (isMessageNotFound && !isDefined(isMessageDiscoverableError)) {
+        if (isMessageDiscoverableLoading) {
+          return <Trans>Loading...</Trans>;
+        }
+
+        return isMessageDiscoverable ? (
+          <EventCardMessageForbidden notSharedByFullName={authorFullName} />
+        ) : (
+          <Trans>Message not found</Trans>
+        );
       }
     }
 

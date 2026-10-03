@@ -106,7 +106,7 @@ export const SettingsAccountsMessageChannelDetails = ({
         <Section.Root>
           <Section.Header
             title={t`Visibility`}
-            description={t`Define what will be visible to other users in your workspace`}
+            description={t`Choose who can read the emails this account syncs`}
           />
           <SettingsAccountsMessageVisibilityCard
             value={messageChannel.visibility}

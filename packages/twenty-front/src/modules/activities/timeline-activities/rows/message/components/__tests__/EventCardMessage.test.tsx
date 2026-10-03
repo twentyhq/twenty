@@ -5,11 +5,21 @@ import { render, screen } from '@testing-library/react';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
 import { EventCardMessage } from '@/activities/timeline-activities/rows/message/components/EventCardMessage';
+import { useIsMessageDiscoverable } from '@/activities/timeline-activities/rows/message/hooks/useIsMessageDiscoverable';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 
 jest.mock('@/object-record/hooks/useFindOneRecord', () => ({
   useFindOneRecord: jest.fn(),
 }));
+jest.mock(
+  '@/activities/timeline-activities/rows/message/hooks/useIsMessageDiscoverable',
+  () => ({
+    useIsMessageDiscoverable: jest.fn(() => ({
+      isMessageDiscoverable: false,
+      loading: false,
+    })),
+  }),
+);
 jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
   useOpenRecordInSidePanel: () => ({ openRecordInSidePanel: jest.fn() }),
 }));
@@ -64,6 +74,64 @@ describe('EventCardMessage', () => {
 
     expect(screen.getByText('Subject not shared')).toBeInTheDocument();
     expect(screen.getByText('Not shared by Ada Lovelace')).toBeInTheDocument();
+  });
+
+  describe('when the message cannot be found', () => {
+    beforeEach(() => {
+      jest.mocked(useFindOneRecord).mockReturnValue({
+        record: undefined,
+        loading: false,
+        error: new CombinedGraphQLErrors({
+          data: null,
+          errors: [
+            {
+              message: 'Record not found',
+              extensions: { code: 'NOT_FOUND' },
+            },
+          ],
+        }),
+      } as never);
+    });
+
+    it('renders the not-shared state when the message can still be discovered', () => {
+      jest.mocked(useIsMessageDiscoverable).mockReturnValue({
+        isMessageDiscoverable: true,
+        loading: false,
+        error: undefined,
+      });
+
+      renderCard();
+
+      expect(screen.getByText('Subject not shared')).toBeInTheDocument();
+      expect(
+        screen.getByText('Not shared by Ada Lovelace'),
+      ).toBeInTheDocument();
+    });
+
+    it('renders not found when the message no longer exists', () => {
+      jest.mocked(useIsMessageDiscoverable).mockReturnValue({
+        isMessageDiscoverable: false,
+        loading: false,
+        error: undefined,
+      });
+
+      renderCard();
+
+      expect(screen.getByText('Message not found')).toBeInTheDocument();
+    });
+
+    it('renders a loading error when the discovery check fails', () => {
+      jest.mocked(useIsMessageDiscoverable).mockReturnValue({
+        isMessageDiscoverable: false,
+        loading: false,
+        error: new Error('Network error'),
+      });
+
+      renderCard();
+
+      expect(screen.getByText('Error loading message')).toBeInTheDocument();
+      expect(screen.queryByText('Message not found')).not.toBeInTheDocument();
+    });
   });
 
   it('fails closed when a hidden record is omitted without an error', () => {
