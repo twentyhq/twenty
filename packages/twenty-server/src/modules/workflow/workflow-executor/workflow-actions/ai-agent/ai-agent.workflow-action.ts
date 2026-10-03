@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   ASK_QUESTIONS_TOOL_NAME,
-  PROPOSE_EMAIL_TOOL_NAME,
+  PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { isDefined, resolveInput } from 'twenty-shared/utils';
@@ -11,10 +11,11 @@ import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
-import { createProposeEmailTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
+import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/workflow-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -169,10 +170,15 @@ export class AiAgentWorkflowAction implements WorkflowAction {
               isWorkspaceSetupThread: false,
             }),
             [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
-            // propose_tool_call needs the agent's tools, which a step without an agent has none of
+            // the executor offers an agent its own tools to propose; a step without an agent has none, so only emails
             ...(isDefined(agent)
               ? {}
-              : { [PROPOSE_EMAIL_TOOL_NAME]: createProposeEmailTool() }),
+              : {
+                  [PROPOSE_TOOL_CALL_TOOL_NAME]: createProposeToolCallTool({
+                    resolveProposal: async (input) =>
+                      resolveEmailToolCallProposal(input),
+                  }),
+                }),
           }
         : {},
       canProposeToolCalls: isAskingQuestionsAllowed,

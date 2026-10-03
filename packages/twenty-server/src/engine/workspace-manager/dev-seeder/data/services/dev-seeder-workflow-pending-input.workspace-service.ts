@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  type AskQuestionItem,
-  type ProposedEmail,
-  REQUEST_FORM_TOOL_NAME,
-} from 'twenty-shared/ai';
+import { type AskQuestionItem, REQUEST_FORM_TOOL_NAME } from 'twenty-shared/ai';
 import {
   type ActorMetadata,
   FieldActorSource,
@@ -32,6 +28,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 import {
   askQuestionsCall,
   proposeEmailCall,
+  type SeededEmail,
   type SeededToolCall,
 } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-pending-input.workspace-service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -111,8 +108,8 @@ const QUALIFICATION_QUESTIONS: AskQuestionItem[] = [
   },
 ];
 
-const RENEWAL_REMINDER_EMAIL: ProposedEmail = {
-  recipients: { to: 'procurement@stripe.com', cc: '', bcc: '' },
+const RENEWAL_REMINDER_EMAIL: SeededEmail = {
+  to: 'procurement@stripe.com',
   subject: 'Your Twenty renewal on October 31',
   body: 'Hi Stripe team,\n\nYour Twenty subscription renews on October 31 for another year at the same price. If you want to add seats or change plans before then, just reply to this email.\n\nBest,\nPhil',
 };

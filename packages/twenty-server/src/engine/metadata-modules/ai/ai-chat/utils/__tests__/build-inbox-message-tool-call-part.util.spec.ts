@@ -62,52 +62,33 @@ describe('buildInboxMessageToolCallPart', () => {
     });
   });
 
-  it('proposes an email as a send_email call to approve, with its body as a document', async () => {
-    const email = {
-      recipients: { to: 'team@acme.com', cc: '', bcc: '' },
-      subject: 'Recap',
-      body: 'Here is the recap.\nSee you soon.\n\nJane',
-    };
-    const emailArguments = {
-      recipients: email.recipients,
-      subject: 'Recap',
-      body: {
-        type: 'doc',
-        attrs: { schemaVersion: 1 },
-        content: [
-          {
-            type: 'paragraph',
-            content: [
-              { type: 'text', text: 'Here is the recap.' },
-              { type: 'hardBreak' },
-              { type: 'text', text: 'See you soon.' },
-            ],
-          },
-          { type: 'paragraph', content: [{ type: 'text', text: 'Jane' }] },
-        ],
+  it('proposes an email for the member to send, save as a draft or discard', async () => {
+    const emailCall = {
+      toolName: 'send_email',
+      arguments: {
+        recipients: { to: 'team@acme.com', cc: '', bcc: '' },
+        subject: 'Recap',
+        body: '<p>Here is the recap.</p><p>Jane</p>',
       },
+      summary: 'Send the call recap to the team',
     };
 
     await expect(
-      build({ toolName: 'propose_email', input: email }),
+      build({ toolName: 'propose_tool_call', input: emailCall }),
     ).resolves.toEqual({
       isAwaitingAnswer: true,
       part: expect.objectContaining({
         type: 'tool-propose_tool_call',
-        input: {
-          toolName: 'send_email',
-          arguments: emailArguments,
-          summary: 'Recap',
-        },
+        input: emailCall,
         output: expect.objectContaining({
           result: {
             status: 'pending',
-            proposal: expect.objectContaining({
-              toolName: 'send_email',
+            proposal: {
+              ...emailCall,
+              toolLabel: 'Send Email',
               template: 'email',
               alternativeToolNames: ['draft_email'],
-              arguments: emailArguments,
-            }),
+            },
           },
         }),
       }),
@@ -134,6 +115,29 @@ describe('buildInboxMessageToolCallPart', () => {
 
   it.each([
     ['an unknown tool', { toolName: 'send_email', input: {} }],
+    [
+      'a proposed call that is not an email',
+      {
+        toolName: 'propose_tool_call',
+        input: {
+          toolName: 'delete_one_company',
+          arguments: { id: 'company-1' },
+          summary: 'Delete the company',
+        },
+      },
+    ],
+    [
+      'a proposed email whose body is neither a document nor HTML',
+      {
+        toolName: 'propose_tool_call',
+        input: {
+          toolName: 'send_email',
+          arguments: { subject: 'Recap', body: 42 },
+          summary: 'Send the recap',
+        },
+      },
+    ],
+    ['the retired propose_email', { toolName: 'propose_email', input: {} }],
     ['invalid input', { toolName: 'ask_questions', input: { questions: [] } }],
     [
       'a tool of another application',

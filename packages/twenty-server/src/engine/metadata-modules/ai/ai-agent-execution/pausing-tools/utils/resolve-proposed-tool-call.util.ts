@@ -18,7 +18,7 @@ export type ProposedToolCallResolution =
   | { error: string };
 
 // the email card edits a structured document, and reads an HTML string as one
-const findEmailArgumentsError = (
+export const findEmailArgumentsError = (
   toolArguments: Record<string, unknown>,
 ): string | null => {
   if (isString(toolArguments.body)) {

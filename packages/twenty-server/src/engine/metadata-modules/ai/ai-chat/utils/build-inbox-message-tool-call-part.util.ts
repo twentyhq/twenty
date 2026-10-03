@@ -2,7 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
-  PROPOSE_EMAIL_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
@@ -10,17 +9,19 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { type z } from 'zod';
 
 import { buildLogicFunctionToolName } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-name.util';
+import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import {
   askQuestionsInputSchema,
   buildAskQuestionsPendingOutput,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
-import { proposeEmailInputSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
-import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
+import {
+  buildProposeToolCallPendingOutput,
+  proposeToolCallInputSchema,
+} from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
 import {
   buildRequestFormPendingOutput,
   requestFormInputSchema,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
-import { buildEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-email-tool-call-proposal.util';
 import {
   AiException,
   AiExceptionCode,
@@ -105,20 +106,27 @@ const buildPausingToolPart = ({
         input: parseInput(requestFormInputSchema, input),
         output: buildRequestFormPendingOutput(),
       });
-    case PROPOSE_EMAIL_TOOL_NAME: {
-      const { input: proposeToolCallInput, proposal } =
-        buildEmailToolCallProposal(parseInput(proposeEmailInputSchema, input));
+    case PROPOSE_TOOL_CALL_TOOL_NAME: {
+      const proposeToolCallInput = parseInput(
+        proposeToolCallInputSchema,
+        input,
+      );
+      const resolution = resolveEmailToolCallProposal(proposeToolCallInput);
+
+      if ('error' in resolution) {
+        return throwInvalidToolCall(resolution.error);
+      }
 
       return buildToolPart({
-        toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
+        toolName,
         toolCallId,
         input: proposeToolCallInput,
-        output: buildProposeToolCallPendingOutput(proposal),
+        output: buildProposeToolCallPendingOutput(resolution.proposal),
       });
     }
     default:
       return throwInvalidToolCall(
-        `toolName must be ${ASK_QUESTIONS_TOOL_NAME}, ${REQUEST_FORM_TOOL_NAME} or ${PROPOSE_EMAIL_TOOL_NAME}`,
+        `toolName must be ${ASK_QUESTIONS_TOOL_NAME}, ${REQUEST_FORM_TOOL_NAME} or ${PROPOSE_TOOL_CALL_TOOL_NAME}`,
       );
   }
 };

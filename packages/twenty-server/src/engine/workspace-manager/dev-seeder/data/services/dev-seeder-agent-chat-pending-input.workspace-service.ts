@@ -4,7 +4,7 @@ import {
   ASK_QUESTIONS_TOOL_NAME,
   type AskQuestionItem,
   PROPOSE_TOOL_CALL_TOOL_NAME,
-  type ProposedEmail,
+  type ProposeToolCallToolInput,
   type ProposedToolCall,
   REQUEST_FORM_TOOL_NAME,
   type RequestFormField,
@@ -22,10 +22,11 @@ import { v5 } from 'uuid';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
+import { convertPlainTextToEmailHtml } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/convert-plain-text-to-email-html.util';
+import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
 import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
-import { buildEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-email-tool-call-proposal.util';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -97,18 +98,22 @@ const ONBOARDING_OWNER_QUESTIONS: AskQuestionItem[] = [
   },
 ];
 
-const AIRBNB_FOLLOW_UP_EMAIL: ProposedEmail = {
-  recipients: {
-    to: 'partnerships@airbnb.com',
-    cc: 'tim@apple.dev',
-    bcc: '',
-  },
+export type SeededEmail = {
+  to: string;
+  cc?: string;
+  subject: string;
+  body: string;
+};
+
+const AIRBNB_FOLLOW_UP_EMAIL: SeededEmail = {
+  to: 'partnerships@airbnb.com',
+  cc: 'tim@apple.dev',
   subject: 'Next steps after our demo',
   body: 'Hi Airbnb team,\n\nThanks for your time on Tuesday. As promised, here is a summary of what we covered: shared inboxes for your host support team, and workflows that route requests by region.\n\nWould next Thursday work for a technical deep dive with your IT team?\n\nBest,\nJony',
 };
 
-const STRIPE_QUOTE_EMAIL: ProposedEmail = {
-  recipients: { to: 'procurement@stripe.com', cc: '', bcc: '' },
+const STRIPE_QUOTE_EMAIL: SeededEmail = {
+  to: 'procurement@stripe.com',
   subject: 'Your renewal quote for 2027',
   body: 'Hi Stripe team,\n\nPlease find your renewal quote for 2027 below: 120 seats on the Organization plan, with the 10% multi-year discount we discussed.\n\nLet me know if anything needs to change before you sign.\n\nBest,\nTim',
 };
@@ -119,13 +124,29 @@ export type SeededToolCall = {
   buildPendingOutput: () => Promise<Record<string, unknown>>;
 };
 
-export const proposeEmailCall = (email: ProposedEmail): SeededToolCall => {
-  const { input, proposal } = buildEmailToolCallProposal(email);
+export const buildSendEmailArguments = (email: SeededEmail) => ({
+  recipients: { to: email.to, cc: email.cc ?? '', bcc: '' },
+  subject: email.subject,
+  body: convertPlainTextToEmailHtml(email.body),
+});
+
+export const proposeEmailCall = (email: SeededEmail): SeededToolCall => {
+  const input: ProposeToolCallToolInput = {
+    toolName: 'send_email',
+    arguments: buildSendEmailArguments(email),
+    summary: email.subject,
+  };
+  const resolution = resolveEmailToolCallProposal(input);
+
+  if ('error' in resolution) {
+    throw new Error(`Seeded email does not resolve: ${resolution.error}`);
+  }
 
   return {
     toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
     input,
-    buildPendingOutput: async () => buildProposeToolCallPendingOutput(proposal),
+    buildPendingOutput: async () =>
+      buildProposeToolCallPendingOutput(resolution.proposal),
   };
 };
 
@@ -241,14 +262,14 @@ const FIGMA_CALL_FIELDS: RequestFormField[] = [
   },
 ];
 
-const LINEAR_WELCOME_EMAIL: ProposedEmail = {
-  recipients: { to: 'ops@linear.app', cc: '', bcc: '' },
+const LINEAR_WELCOME_EMAIL: SeededEmail = {
+  to: 'ops@linear.app',
   subject: 'Welcome to Twenty, Linear',
   body: 'Hi Linear team,\n\nWelcome aboard! Phil will run your onboarding: expect a kickoff invite from him this week, with SSO and your data import on the agenda.\n\nBest,\nTim',
 };
 
-const FIGMA_WELCOME_EMAIL: ProposedEmail = {
-  recipients: { to: 'it@figma.com', cc: '', bcc: '' },
+const FIGMA_WELCOME_EMAIL: SeededEmail = {
+  to: 'it@figma.com',
   subject: 'Welcome to Twenty, Figma',
   body: 'Hi Figma team,\n\nWelcome aboard! Your workspace is ready, and we will start with the pipeline import you asked about on our last call.\n\nBest,\nTim',
 };
@@ -301,13 +322,10 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
       response: {
         decision: 'approve',
         toolName: 'send_email',
-        arguments: {
-          ...buildEmailToolCallProposal(STRIPE_QUOTE_EMAIL).input.arguments,
-          recipients: {
-            ...STRIPE_QUOTE_EMAIL.recipients,
-            cc: 'phil.schiler@apple.dev',
-          },
-        },
+        arguments: buildSendEmailArguments({
+          ...STRIPE_QUOTE_EMAIL,
+          cc: 'phil.schiler@apple.dev',
+        }),
       },
       reply:
         'Sent. I copied Phil so he can follow up on the signature. Want me to set a reminder for Friday if Stripe hasn’t signed?',
