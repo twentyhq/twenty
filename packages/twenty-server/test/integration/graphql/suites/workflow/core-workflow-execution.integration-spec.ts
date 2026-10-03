@@ -1,3 +1,4 @@
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { randomUUID } from 'node:crypto';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
@@ -1242,9 +1243,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         `SELECT membership.id AS "userWorkspaceId", member.id AS "workspaceMemberId"
          FROM core."userWorkspace" membership
          JOIN "${schema}"."workspaceMember" member ON member."userId" = membership."userId"
-         WHERE membership."workspaceId" = $1 AND membership."deletedAt" IS NULL
-         LIMIT 1`,
-        [workspaceId],
+         WHERE membership."workspaceId" = $1 AND membership."deletedAt" IS NULL AND member.id = $2`,
+        [workspaceId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
       );
       const agent = agentStep([]);
       const fixture = await createFixture({ steps: [agent] });
@@ -1267,6 +1267,19 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         lastMessageText: agent.name,
       });
       expect(conversation.lastActivityAt).not.toBeNull();
+
+      const readByAnotherMember = await request(`http://localhost:${APP_PORT}`)
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `query ReadRunConversation($threadId: UUID!) { chatMessages(threadId: $threadId) { role } }`,
+          variables: { threadId: run.state.stepInfos[agent.id].threadId },
+        });
+
+      expect(readByAnotherMember.body.errors).toBeUndefined();
+      expect(readByAnotherMember.body.data.chatMessages.length).toBeGreaterThan(
+        0,
+      );
     });
 
     it('keeps the conversation of a workflow without a member creator off every inbox', async () => {

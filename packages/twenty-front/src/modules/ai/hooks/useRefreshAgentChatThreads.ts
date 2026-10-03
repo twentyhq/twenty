@@ -64,10 +64,11 @@ export const useRefreshAgentChatThreads = () => {
         return undefined;
       }
 
-      const listFilter = buildAgentChatThreadListFilter(
+      const listFilter = buildAgentChatThreadListFilter({
         chatObjectMetadataItem,
-        store.get(currentWorkspaceMemberState.atom)?.id,
-      );
+        currentWorkspaceMemberId: store.get(currentWorkspaceMemberState.atom)
+          ?.id,
+      });
 
       const result = await apolloCoreClient
         .query<RecordGqlOperationFindManyResult>({

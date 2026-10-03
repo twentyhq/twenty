@@ -13,16 +13,19 @@ const buildChatObject = (fieldNames: string[]) =>
 describe('buildAgentChatThreadListFilter', () => {
   it('lists deleted chats so they can be restored', () => {
     expect(
-      buildAgentChatThreadListFilter(buildChatObject(['title']), 'member-id'),
+      buildAgentChatThreadListFilter({
+        chatObjectMetadataItem: buildChatObject(['title']),
+        currentWorkspaceMemberId: 'member-id',
+      }),
     ).toEqual(INCLUDE_DELETED_FILTER);
   });
 
   it('lists only the workflow run conversations routed to the member', () => {
     expect(
-      buildAgentChatThreadListFilter(
-        buildChatObject(['title', 'workflowRun']),
-        'member-id',
-      ),
+      buildAgentChatThreadListFilter({
+        chatObjectMetadataItem: buildChatObject(['title', 'workflowRun']),
+        currentWorkspaceMemberId: 'member-id',
+      }),
     ).toEqual({
       and: [
         {
@@ -38,10 +41,10 @@ describe('buildAgentChatThreadListFilter', () => {
 
   it('leaves workflow run conversations out without a current member', () => {
     expect(
-      buildAgentChatThreadListFilter(
-        buildChatObject(['title', 'workflowRun']),
-        undefined,
-      ),
+      buildAgentChatThreadListFilter({
+        chatObjectMetadataItem: buildChatObject(['title', 'workflowRun']),
+        currentWorkspaceMemberId: undefined,
+      }),
     ).toEqual({
       and: [
         { or: [{ workflowRunId: { is: 'NULL' } }] },
