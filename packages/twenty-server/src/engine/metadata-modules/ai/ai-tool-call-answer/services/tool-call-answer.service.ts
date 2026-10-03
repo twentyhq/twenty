@@ -269,6 +269,7 @@ export class ToolCallAnswerService {
               threadId,
               messageId: toolPart.messageId,
               workspaceId,
+              where: { activeStreamId: streamId },
             })
             .catch((closeError: unknown) =>
               this.logger.warn(
