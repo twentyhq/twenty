@@ -13,10 +13,7 @@ import {
 import { type ObjectFieldManifest } from '@/sdk/define/common/types/loose-shared-types.type';
 
 const getSelectOptionErrors = (field: ObjectFieldManifest): string[] => {
-  if (
-    !isFieldMetadataSelectKind(FieldMetadataType[field.type]) ||
-    !Array.isArray(field.options)
-  ) {
+  if (!isFieldMetadataSelectKind(field.type) || !Array.isArray(field.options)) {
     return [];
   }
 
