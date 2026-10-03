@@ -13,7 +13,7 @@ import { type PausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execut
 
 export const PAUSING_TOOLS: ReadonlyMap<string, PausingTool> = new Map([
   [ASK_QUESTIONS_TOOL_NAME, ASK_QUESTIONS_PAUSING_TOOL],
-  // no longer offered, kept to answer the propose_email calls recorded before emails moved to propose_tool_call
+  // offered only to agents without registry tools, which cannot propose send_email
   [PROPOSE_EMAIL_TOOL_NAME, PROPOSE_EMAIL_PAUSING_TOOL],
   [PROPOSE_TOOL_CALL_TOOL_NAME, PROPOSE_TOOL_CALL_PAUSING_TOOL],
   [REQUEST_FORM_TOOL_NAME, REQUEST_FORM_PAUSING_TOOL],

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   ASK_QUESTIONS_TOOL_NAME,
+  PROPOSE_EMAIL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { isDefined, resolveInput } from 'twenty-shared/utils';
@@ -13,6 +14,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
+import { createProposeEmailTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/workflow-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -167,6 +169,10 @@ export class AiAgentWorkflowAction implements WorkflowAction {
               isWorkspaceSetupThread: false,
             }),
             [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
+            // propose_tool_call needs the agent's tools, which a step without an agent has none of
+            ...(isDefined(agent)
+              ? {}
+              : { [PROPOSE_EMAIL_TOOL_NAME]: createProposeEmailTool() }),
           }
         : {},
       canProposeToolCalls: isAskingQuestionsAllowed,

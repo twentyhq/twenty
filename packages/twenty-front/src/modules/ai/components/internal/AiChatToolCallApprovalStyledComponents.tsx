@@ -30,6 +30,7 @@ export const StyledToolCallApprovalActions = styled.div`
   align-items: center;
   border-top: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
   padding: ${themeCssVariables.spacing[2]};

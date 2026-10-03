@@ -80,7 +80,10 @@ export const AiChatToolCallApprovalRecordFields = ({
           const hasCurrentValue =
             isDefined(currentValues) && fieldName in currentValues;
           const formattedCurrentValue = hasCurrentValue
-            ? (formatProposedFieldValue(currentValues[fieldName]) ?? t`Empty`)
+            ? (formatProposedFieldValue(
+                currentValues[fieldName],
+                fieldDefinition?.type,
+              ) ?? t`Empty`)
             : null;
 
           if (!isDefined(fieldDefinition)) {

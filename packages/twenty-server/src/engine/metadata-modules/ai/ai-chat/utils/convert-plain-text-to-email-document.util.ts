@@ -11,6 +11,7 @@ export const convertPlainTextToEmailDocument = (
   type: TIPTAP_NODE_TYPES.DOCUMENT,
   attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
   content: text
+    .replace(/\r\n?/g, '\n')
     .split(/\n\s*\n/)
     .map((paragraph) => paragraph.trim())
     .filter((paragraph) => paragraph.length > 0)

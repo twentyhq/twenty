@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { formatProposedFieldValue } from '@/ai/utils/formatProposedFieldValue';
 
 describe('formatProposedFieldValue', () => {
@@ -7,11 +9,7 @@ describe('formatProposedFieldValue', () => {
     ['a number', 42, '42'],
     ['a boolean', false, 'false'],
     ['a list', ['VIP', 'Partner'], 'VIP, Partner'],
-    [
-      'an amount',
-      { amountMicros: 120_000_000_000, currencyCode: 'EUR' },
-      '120000 EUR',
-    ],
+
     ['a full name', { firstName: 'Tim', lastName: 'Cook' }, 'Tim Cook'],
     ['an empty composite', { firstName: '', lastName: '' }, null],
     [
@@ -21,5 +19,18 @@ describe('formatProposedFieldValue', () => {
     ],
   ])('formats %s', (_description, value, expected) => {
     expect(formatProposedFieldValue(value)).toBe(expected);
+  });
+
+  it('reads an amount in a currency field', () => {
+    expect(
+      formatProposedFieldValue(
+        { amountMicros: 120_000_000_000, currencyCode: 'EUR' },
+        FieldMetadataType.CURRENCY,
+      ),
+    ).toBe('120000 EUR');
+  });
+
+  it('leaves amountMicros alone outside a currency field', () => {
+    expect(formatProposedFieldValue({ amountMicros: 5 })).toBe('5');
   });
 });

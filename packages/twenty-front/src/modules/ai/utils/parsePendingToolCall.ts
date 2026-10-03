@@ -59,17 +59,39 @@ export const parsePendingToolCall = (
             fields: input.fields as RequestFormField[],
           }
         : null;
-    case PROPOSE_TOOL_CALL_TOOL_NAME:
-      return isPlainObject(proposal) &&
+    case PROPOSE_TOOL_CALL_TOOL_NAME: {
+      if (
+        isPlainObject(proposal) &&
         isString(proposal.toolName) &&
+        isString(proposal.toolLabel) &&
+        isString(proposal.summary) &&
         isString(proposal.template) &&
         isPlainObject(proposal.arguments)
+      ) {
+        return {
+          toolCallId,
+          kind: 'toolCallApproval',
+          proposal: proposal as ProposedToolCall,
+        };
+      }
+
+      // the server answers a call recorded without its proposal as a generic one, so the card does too
+      return isString(input.toolName) &&
+        isString(input.summary) &&
+        isPlainObject(input.arguments)
         ? {
             toolCallId,
             kind: 'toolCallApproval',
-            proposal: proposal as ProposedToolCall,
+            proposal: {
+              toolName: input.toolName,
+              toolLabel: input.toolName,
+              summary: input.summary,
+              arguments: input.arguments,
+              template: 'generic',
+            },
           }
         : null;
+    }
     default:
       return null;
   }

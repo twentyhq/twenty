@@ -91,11 +91,8 @@ export const WorkflowEditActionSendChatMessage = ({
 
   const handleToolNameChange = (toolName: string) => {
     setToolArgumentsError(undefined);
-    handleToolCallChange(
-      toolName === ''
-        ? null
-        : { toolName, arguments: formData.toolCall?.arguments ?? {} },
-    );
+    // another tool takes other arguments
+    handleToolCallChange(toolName === '' ? null : { toolName, arguments: {} });
   };
 
   // variables sit inside JSON strings, so arguments are saved only once they parse

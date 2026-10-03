@@ -21,7 +21,7 @@ export const AiChatToolCallApprovalRecordChip = ({
   recordId,
 }: AiChatToolCallApprovalRecordChipProps) => {
   const { t } = useLingui();
-  const { record, loading } = useFindOneRecord({
+  const { record, loading, error } = useFindOneRecord({
     objectNameSingular,
     objectRecordId: recordId,
   });
@@ -32,10 +32,16 @@ export const AiChatToolCallApprovalRecordChip = ({
     );
   }
 
+  if (loading) {
+    return null;
+  }
+
   // approving still runs the call, which then fails, so the person must see why
-  return loading ? null : (
+  return (
     <StyledMissingRecord>
-      {t`This record no longer exists or you cannot see it.`}
+      {isDefined(error)
+        ? t`This record could not be loaded.`
+        : t`This record no longer exists or you cannot see it.`}
     </StyledMissingRecord>
   );
 };

@@ -4,6 +4,7 @@ import {
   type ProposedToolCall,
   type ToolCallApprovalResponse,
 } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
 
@@ -32,7 +33,7 @@ export const useAnswerToolCallApproval = ({
               result: {
                 status: 'rejected',
                 proposal,
-                ...(response.feedback !== undefined
+                ...(isDefined(response.feedback)
                   ? { feedback: response.feedback }
                   : {}),
               } satisfies ProposeToolCallToolResult,

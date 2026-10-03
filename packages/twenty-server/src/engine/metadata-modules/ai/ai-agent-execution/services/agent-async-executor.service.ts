@@ -45,6 +45,7 @@ import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
@@ -86,6 +87,12 @@ import {
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+const buildUnavailableToolOutput = (toolName: string): ToolOutput => ({
+  success: false,
+  message: `Tool "${toolName}" is not available`,
+  error: `Tool "${toolName}" is not available to this agent.`,
+});
 
 type ProposableTools = {
   findTool: (toolName: string) => Promise<ToolIndexEntry | undefined>;
@@ -213,8 +220,11 @@ export class AgentAsyncExecutorService {
           toolName in tools
             ? this.toolRegistry.findCatalogEntry(toolName, toolContext)
             : undefined,
+        // the context lacks the explicit grants the preloaded tools were built with, so reads stay within those tools
         executeTool: ({ toolName, args }) =>
-          this.toolRegistry.resolveAndExecute(toolName, args, toolContext),
+          toolName in tools
+            ? this.toolRegistry.resolveAndExecute(toolName, args, toolContext)
+            : Promise.resolve(buildUnavailableToolOutput(toolName)),
       },
     };
   }
@@ -299,7 +309,9 @@ export class AgentAsyncExecutorService {
         findTool: async (toolName) =>
           catalog.find((toolIndexEntry) => toolIndexEntry.name === toolName),
         executeTool: ({ toolName, args }) =>
-          this.toolRegistry.resolveAndExecute(toolName, args, toolContext),
+          isToolAllowed(toolName)
+            ? this.toolRegistry.resolveAndExecute(toolName, args, toolContext)
+            : Promise.resolve(buildUnavailableToolOutput(toolName)),
       },
     };
   }

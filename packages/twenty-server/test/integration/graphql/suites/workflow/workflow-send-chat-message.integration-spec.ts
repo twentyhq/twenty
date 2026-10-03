@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
+import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { waitForWorkflowRunStepStatus } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
@@ -246,6 +247,55 @@ describe('Send chat message workflow step', () => {
         status: 'rejected',
         feedback: 'Wait for the audit',
       });
+      expect(await readEmployees()).toBe(10);
+    }, 120000);
+
+    it('closes the call in the inbox when the run is stopped before the answer', async () => {
+      const { status } = await runWorkflowActionStep({
+        name: 'Stop a headcount check',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Headcount check',
+          text: 'Raise the headcount to 25?',
+          toolCall: {
+            toolName: 'update_one_company',
+            arguments: { id: companyId, employees: 25 },
+          },
+        },
+        whileRunning: async ({ workflowRunId, stepId }) => {
+          await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
+
+          const [{ threadId }] = await global.testDataSource.query(
+            `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+            [workflowRunId, stepId],
+          );
+
+          postedThreadId = threadId;
+
+          const stop = await workflowGraphqlRequest(
+            'mutation Stop($id: UUID!) { stopWorkflowRun(workflowRunId: $id) { id status } }',
+            { id: workflowRunId },
+          );
+
+          expect(stop.body.errors).toBeUndefined();
+        },
+      });
+
+      const [thread] = await global.testDataSource.query(
+        `SELECT "pendingQuestionMessageId" FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
+        [postedThreadId],
+      );
+      const [part] = await global.testDataSource.query(
+        `SELECT p."toolOutput" FROM "${SCHEMA}"."agentMessagePart" p
+         JOIN "${SCHEMA}"."agentMessage" m ON m.id = p."messageId"
+         WHERE m."threadId" = $1 AND p."toolName" = 'propose_tool_call'`,
+        [postedThreadId],
+      );
+
+      expect(status).toBe('STOPPED');
+      expect(thread.pendingQuestionMessageId).toBeNull();
+      expect(part.toolOutput.result.status).toBe('skipped');
       expect(await readEmployees()).toBe(10);
     }, 120000);
 

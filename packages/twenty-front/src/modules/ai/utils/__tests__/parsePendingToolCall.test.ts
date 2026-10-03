@@ -113,13 +113,31 @@ describe('parsePendingToolCall', () => {
     });
   });
 
-  it('ignores a tool call to approve without its proposal', () => {
+  it('reads a tool call to approve without its proposal as a generic one', () => {
     expect(
       parsePendingToolCall(
         toolPart({
           toolName: 'propose_tool_call',
-          input: { toolName: 'x', arguments: {}, summary: 'Do x' },
+          input: { toolName: 'http_request', arguments: {}, summary: 'Ping' },
         }),
+      ),
+    ).toEqual({
+      toolCallId: 'call-1',
+      kind: 'toolCallApproval',
+      proposal: {
+        toolName: 'http_request',
+        toolLabel: 'http_request',
+        summary: 'Ping',
+        arguments: {},
+        template: 'generic',
+      },
+    });
+  });
+
+  it('ignores a tool call to approve whose input cannot be read', () => {
+    expect(
+      parsePendingToolCall(
+        toolPart({ toolName: 'propose_tool_call', input: { toolName: 'x' } }),
       ),
     ).toBeNull();
   });

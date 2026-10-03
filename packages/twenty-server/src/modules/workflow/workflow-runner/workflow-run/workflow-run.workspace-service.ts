@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
-import { IsNull, Not } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
@@ -14,6 +14,7 @@ import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { readToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/utils/read-tool-call-workflow-step.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
@@ -216,6 +217,9 @@ export class WorkflowRunWorkspaceService {
       await this.closeWaitingConversations({
         workflowRunId,
         workspaceId,
+        stepThreadIds: Object.values(workflowRunToUpdate.state?.stepInfos ?? {})
+          .map((stepInfo) => stepInfo?.threadId)
+          .filter(isDefined),
       }).catch((error: unknown) => {
         this.logger.error(
           `Failed to close the conversations of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
@@ -679,12 +683,14 @@ export class WorkflowRunWorkspaceService {
   private async closeWaitingConversations({
     workflowRunId,
     workspaceId,
+    stepThreadIds,
   }: {
     workflowRunId: string;
     workspaceId: string;
+    stepThreadIds: string[];
   }): Promise<void> {
     // An answer holding a conversation's claim closes its calls itself once it finds the run over
-    const waitingThreads = await this.threadRepository.find(workspaceId, {
+    const runThreads = await this.threadRepository.find(workspaceId, {
       where: {
         workflowRunId,
         pendingQuestionMessageId: Not(IsNull()),
@@ -692,6 +698,29 @@ export class WorkflowRunWorkspaceService {
       },
       select: ['id', 'pendingQuestionMessageId'],
     });
+
+    // a step can also wait in a member's inbox, whose conversation is theirs, not the run's
+    const inboxThreads =
+      stepThreadIds.length > 0
+        ? await this.threadRepository.find(workspaceId, {
+            where: {
+              id: In(stepThreadIds),
+              workflowRunId: IsNull(),
+              pendingQuestionMessageId: Not(IsNull()),
+              activeStreamId: IsNull(),
+            },
+            select: ['id', 'pendingQuestionMessageId'],
+          })
+        : [];
+
+    const waitingThreads = [
+      ...runThreads,
+      ...(await this.filterThreadsWaitingOnRun({
+        threads: inboxThreads,
+        workflowRunId,
+        workspaceId,
+      })),
+    ];
 
     for (const { id, pendingQuestionMessageId } of waitingThreads) {
       if (!isDefined(pendingQuestionMessageId)) {
@@ -714,6 +743,48 @@ export class WorkflowRunWorkspaceService {
         workspaceId,
       });
     }
+  }
+
+  // the member may have moved on to another question in their conversation, which the run must not close
+  private async filterThreadsWaitingOnRun<
+    TThread extends { pendingQuestionMessageId: string | null },
+  >({
+    threads,
+    workflowRunId,
+    workspaceId,
+  }: {
+    threads: TThread[];
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<TThread[]> {
+    const pendingMessageIds = threads
+      .map((thread) => thread.pendingQuestionMessageId)
+      .filter(isDefined);
+
+    if (pendingMessageIds.length === 0) {
+      return [];
+    }
+
+    const pendingParts = await this.messagePartRepository.find(workspaceId, {
+      where: { messageId: In(pendingMessageIds) },
+      select: ['messageId', 'toolOutput'],
+    });
+
+    const messageIdsWaitingOnRun = new Set(
+      pendingParts
+        .filter(
+          (part) =>
+            readToolCallWorkflowStep(part.toolOutput)?.workflowRunId ===
+            workflowRunId,
+        )
+        .map((part) => part.messageId),
+    );
+
+    return threads.filter(
+      (thread) =>
+        isDefined(thread.pendingQuestionMessageId) &&
+        messageIdsWaitingOnRun.has(thread.pendingQuestionMessageId),
+    );
   }
 
   private getInitState(
