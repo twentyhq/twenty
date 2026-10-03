@@ -2,9 +2,10 @@ import { Temporal } from 'temporal-polyfill';
 
 import { parseToPlainDateOrThrow } from '@/utils/date/parseToPlainDateOrThrow';
 
-// An offset or zone name after a time, e.g. "10:00Z", "10:00:00 +02:00", "GMT+2".
+// An offset or zone name after a time, e.g. "10:00Z", "10:00:00 +02:00",
+// "GMT+2", or one of the US zone names `new Date()` applies, e.g. "EST".
 const EXPLICIT_TIME_ZONE_PATTERN =
-  /(\d{1,2}:\d{2}(:\d{2}(\.\d+)?)?\s*(z|[+-]\d{2}(:?\d{2})?)\s*$)|\b(gmt|utc)\b/i;
+  /(\d{1,2}:\d{2}(:\d{2}(\.\d+)?)?\s*(z|[+-]\d{2}(:?\d{2})?)\s*$)|\b(gmt|utc?|[ecmp][sd]t)\b/i;
 
 // ECMAScript reads ISO dates without a time as UTC, not local time.
 const ISO_DATE_ONLY_PATTERN = /^[+-]?\d{4,6}(-\d{2}(-\d{2})?)?$/;
