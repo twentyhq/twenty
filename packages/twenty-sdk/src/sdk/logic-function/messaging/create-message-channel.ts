@@ -20,7 +20,7 @@ export type CreateMessageChannelInput = {
   displayName?: string;
   // Required: decides whether one member's conversations are readable by the whole workspace, and only the app
   // knows how private its messages are ('METADATA' for personal inboxes, 'SHARE_EVERYTHING' for shared ones)
-  visibility: MessageChannelVisibility;
+  visibility: MessageChannelVisibility | `${MessageChannelVisibility}`;
 };
 
 export const createMessageChannel = async (
