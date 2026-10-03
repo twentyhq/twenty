@@ -151,8 +151,6 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
     openRecordFromIndexView({ recordId });
   };
 
-  // Caught before the chip and field links, so a modifier click selects the
-  // record instead of opening a link
   const handleClickCapture = (event: MouseEvent<HTMLDivElement>) => {
     if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
       return;
