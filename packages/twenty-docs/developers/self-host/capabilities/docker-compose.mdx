@@ -74,7 +74,11 @@ Follow these steps for a manual setup.
 
 4. **Set the Postgres Password**
 
-    Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters.
+    Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters. The password goes into the database URL as is, so don't use `openssl rand -base64` here: its output often contains a `/`, which breaks the URL. Generate one with:
+
+    ```bash
+    openssl rand -hex 32
+    ```
 
     ```ini
     PG_DATABASE_PASSWORD=my_strong_password
