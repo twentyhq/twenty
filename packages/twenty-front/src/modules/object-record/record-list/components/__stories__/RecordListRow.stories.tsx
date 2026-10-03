@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -99,17 +99,14 @@ export const SelectsRecordsWithModifierClicks: Story = {
 
     const rows = canvas.getAllByRole('button', { name: 'Open record' });
 
-    await userEvent.keyboard('{Meta>}');
-    await userEvent.click(rows[0]);
-    await userEvent.keyboard('{/Meta}');
+    fireEvent.click(rows[0], { metaKey: true });
+    fireEvent.click(rows[2], { shiftKey: true });
 
-    await userEvent.keyboard('{Shift>}');
-    await userEvent.click(rows[2]);
-    await userEvent.keyboard('{/Shift}');
-
+    await waitFor(() =>
+      expect(rows[2]).toHaveAttribute('data-selected', 'true'),
+    );
     await expect(rows[0]).toHaveAttribute('data-selected', 'true');
     await expect(rows[1]).toHaveAttribute('data-selected', 'true');
-    await expect(rows[2]).toHaveAttribute('data-selected', 'true');
     await expect(rows[3]).toHaveAttribute('data-selected', 'false');
   },
 };
