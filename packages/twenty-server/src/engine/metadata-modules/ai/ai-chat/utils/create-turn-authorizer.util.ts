@@ -11,12 +11,16 @@ export const createTurnAuthorizer = <TAuthorization>({
 }): (() => Promise<TAuthorization>) => {
   let latestAuthorization: Promise<TAuthorization> =
     Promise.resolve(authorization);
-  let checkedAt = Date.now();
+  let checkedAt = performance.now();
+  let isChecking = false;
 
   return () => {
-    if (Date.now() - checkedAt >= maxAgeMs) {
-      checkedAt = Date.now();
-      latestAuthorization = authorize();
+    if (!isChecking && performance.now() - checkedAt >= maxAgeMs) {
+      isChecking = true;
+      latestAuthorization = authorize().finally(() => {
+        checkedAt = performance.now();
+        isChecking = false;
+      });
     }
 
     return latestAuthorization;

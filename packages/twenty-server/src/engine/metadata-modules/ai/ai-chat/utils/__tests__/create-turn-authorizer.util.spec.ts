@@ -56,5 +56,34 @@ describe('createTurnAuthorizer', () => {
     await expect(getAuthorization()).rejects.toThrow('revoked');
     await expect(getAuthorization()).rejects.toThrow('revoked');
     expect(authorize).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(2_000);
+    await expect(getAuthorization()).resolves.toBe('restored');
+    expect(authorize).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps sharing a check that outlasts the window', async () => {
+    let finishCheck: (authorization: string) => void = () => {};
+    const authorize = jest.fn(
+      () =>
+        new Promise<string>((resolve) => {
+          finishCheck = resolve;
+        }),
+    );
+    const getAuthorization = createTurnAuthorizer({
+      authorize,
+      authorization: 'initial',
+      maxAgeMs: 2_000,
+    });
+
+    jest.advanceTimersByTime(2_000);
+    const firstCaller = getAuthorization();
+    jest.advanceTimersByTime(5_000);
+    const secondCaller = getAuthorization();
+    finishCheck('rechecked');
+
+    await expect(firstCaller).resolves.toBe('rechecked');
+    await expect(secondCaller).resolves.toBe('rechecked');
+    expect(authorize).toHaveBeenCalledTimes(1);
   });
 });
