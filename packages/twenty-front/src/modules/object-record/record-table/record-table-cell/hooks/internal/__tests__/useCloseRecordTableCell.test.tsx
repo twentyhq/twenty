@@ -17,7 +17,7 @@ import {
   recordTableRowContextValue,
   recordTableRowDraggableContextValue,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
-import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
+import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCell';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -75,7 +75,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-describe('useCloseRecordTableCellNoGroup', () => {
+describe('useCloseRecordTableCell', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
@@ -85,7 +85,7 @@ describe('useCloseRecordTableCellNoGroup', () => {
         );
 
         return {
-          ...useCloseRecordTableCellNoGroup(),
+          ...useCloseRecordTableCell(),
           ...useDragSelect(),
           recordTableCellEditModePosition,
         };
@@ -96,7 +96,7 @@ describe('useCloseRecordTableCellNoGroup', () => {
     );
 
     act(() => {
-      result.current.closeTableCellNoGroup();
+      result.current.closeTableCell();
     });
 
     expect(result.current.isDragSelectionStartEnabled()).toBe(true);

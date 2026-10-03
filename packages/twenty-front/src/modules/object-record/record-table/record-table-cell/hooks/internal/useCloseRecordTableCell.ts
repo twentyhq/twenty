@@ -9,7 +9,7 @@ import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/po
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-export const useCloseRecordTableCellNoGroup = () => {
+export const useCloseRecordTableCell = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
   const store = useStore();
 
@@ -22,7 +22,7 @@ export const useCloseRecordTableCellNoGroup = () => {
   const closeCurrentTableCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
 
-  const closeTableCellNoGroup = useCallback(() => {
+  const closeTableCell = useCallback(() => {
     toggleClickOutside(true);
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();
@@ -40,6 +40,6 @@ export const useCloseRecordTableCellNoGroup = () => {
   ]);
 
   return {
-    closeTableCellNoGroup,
+    closeTableCell,
   };
 };

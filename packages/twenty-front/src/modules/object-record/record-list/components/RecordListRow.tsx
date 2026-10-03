@@ -7,7 +7,6 @@ import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/u
 import { RecordListRowField } from '@/object-record/record-list/components/RecordListRowField';
 import { RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH } from '@/object-record/record-list/constants/RecordListRowLabelIdentifierWidth';
 import { RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH } from '@/object-record/record-list/constants/RecordListRowOverflowChipSlotWidth';
-import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
 import { recordListRowWidthComponentState } from '@/object-record/record-list/states/recordListRowWidthComponentState';
 import { computeRecordListDisplayedFields } from '@/object-record/record-list/utils/computeRecordListDisplayedFields';
 import { useOpenRecordContextMenu } from '@/object-record/record-selection/hooks/useOpenRecordContextMenu';
@@ -81,7 +80,7 @@ type RecordListRowProps = {
 };
 
 export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
-  const { objectNameSingular } = useRecordListContextOrThrow();
+  const { objectNameSingular } = useRecordIndexContextOrThrow();
   const {
     labelIdentifierFieldMetadataItem,
     fieldDefinitionByFieldMetadataItemId,

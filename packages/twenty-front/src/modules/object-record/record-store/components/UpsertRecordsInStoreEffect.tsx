@@ -2,13 +2,13 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useEffect } from 'react';
 
-type RecordListUpsertRecordsInStoreEffectProps = {
+type UpsertRecordsInStoreEffectProps = {
   records: ObjectRecord[];
 };
 
-export const RecordListUpsertRecordsInStoreEffect = ({
+export const UpsertRecordsInStoreEffect = ({
   records,
-}: RecordListUpsertRecordsInStoreEffectProps) => {
+}: UpsertRecordsInStoreEffectProps) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   useEffect(() => {
