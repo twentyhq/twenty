@@ -121,5 +121,32 @@ describe('formatNumber', () => {
         '-1.5k',
       );
     });
+
+    it('should move to the next suffix when rounding reaches 1000', () => {
+      expect(formatNumber(999999, { abbreviate: true, decimals: 1 })).toEqual(
+        '1M',
+      );
+      expect(formatNumber(999500, { abbreviate: true })).toEqual('1M');
+      expect(
+        formatNumber(999999999, { abbreviate: true, decimals: 2 }),
+      ).toEqual('1B');
+      expect(formatNumber(999.6, { abbreviate: true })).toEqual('1k');
+      expect(formatNumber(-999960, { abbreviate: true, decimals: 1 })).toEqual(
+        '-1M',
+      );
+      expect(
+        formatNumber(999.9999995, { abbreviate: true, decimals: 6 }),
+      ).toEqual('1k');
+      expect(
+        formatNumber(999999999.5, { abbreviate: true, decimals: 6 }),
+      ).toEqual('1B');
+    });
+
+    it('should keep the current suffix just below the rounding boundary', () => {
+      expect(formatNumber(999940, { abbreviate: true, decimals: 1 })).toEqual(
+        '999.9k',
+      );
+      expect(formatNumber(999.4, { abbreviate: true })).toEqual('999');
+    });
   });
 });
