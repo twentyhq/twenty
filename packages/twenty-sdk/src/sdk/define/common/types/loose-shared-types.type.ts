@@ -2,12 +2,14 @@ import {
   type CommandMenuItemManifest as StrictCommandMenuItemManifest,
   type IndexFieldManifest as StrictIndexFieldManifest,
   type IndexManifest as StrictIndexManifest,
+  type ObjectFieldManifest as StrictObjectFieldManifest,
   type PageLayoutManifest as StrictPageLayoutManifest,
   type PageLayoutTabManifest as StrictPageLayoutTabManifest,
   type PageLayoutWidgetManifest as StrictPageLayoutWidgetManifest,
   type PermissionFlagManifest as StrictPermissionFlagManifest,
   type RowLevelPermissionPredicateGroupManifest as StrictRowLevelPermissionPredicateGroupManifest,
   type RowLevelPermissionPredicateManifest as StrictRowLevelPermissionPredicateManifest,
+  type SendInboxMessageInput as StrictSendInboxMessageInput,
   type SettingsMenuItemManifest as StrictSettingsMenuItemManifest,
   type StandalonePageLayoutWidgetManifest as StrictStandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest as StrictStandaloneViewFieldManifest,
@@ -20,6 +22,8 @@ import {
   type ViewSortManifest as StrictViewSortManifest,
 } from 'twenty-shared/application';
 import {
+  type MessageChannelVisibility as StrictMessageChannelVisibility,
+  type MessageParticipantRole as StrictMessageParticipantRole,
   type PageLayoutWidgetCanvasPosition as StrictPageLayoutWidgetCanvasPosition,
   type PageLayoutWidgetConditionalDisplay as StrictPageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetGridPosition as StrictPageLayoutWidgetGridPosition,
@@ -43,7 +47,7 @@ import { type SettingsMenuItemConfig as StrictSettingsMenuItemConfig } from '@/s
 import { type TimelineActivityTypeConfig as StrictTimelineActivityTypeConfig } from '@/sdk/define/timeline-activity-types/timeline-activity-type-config';
 import { type ViewConfig as StrictViewConfig } from '@/sdk/define/views/view-config';
 
-// Public SDK shapes; SDK internals and the server keep the strict types
+// What apps write; code building the manifest and the server keep the strict types
 export type ApplicationConfig = LooseEnumValues<StrictApplicationConfig>;
 export type CommandMenuItemConfig =
   LooseEnumValues<StrictCommandMenuItemConfig>;
@@ -56,6 +60,11 @@ export type IndexConfig = LooseEnumValues<StrictIndexConfig>;
 export type IndexFieldManifest = LooseEnumValues<StrictIndexFieldManifest>;
 export type IndexManifest = LooseEnumValues<StrictIndexManifest>;
 export type LogicFunctionConfig = LooseEnumValues<StrictLogicFunctionConfig>;
+export type MessageChannelVisibility =
+  LooseEnumValues<StrictMessageChannelVisibility>;
+export type MessageParticipantRole =
+  LooseEnumValues<StrictMessageParticipantRole>;
+export type ObjectFieldManifest = LooseEnumValues<StrictObjectFieldManifest>;
 export type PageLayoutConfig = LooseEnumValues<StrictPageLayoutConfig>;
 export type PageLayoutManifest = LooseEnumValues<StrictPageLayoutManifest>;
 export type PageLayoutTabConfig = LooseEnumValues<StrictPageLayoutTabConfig>;
@@ -82,6 +91,8 @@ export type RowLevelPermissionPredicateGroupManifest =
   LooseEnumValues<StrictRowLevelPermissionPredicateGroupManifest>;
 export type RowLevelPermissionPredicateManifest =
   LooseEnumValues<StrictRowLevelPermissionPredicateManifest>;
+export type SendInboxMessageInput =
+  LooseEnumValues<StrictSendInboxMessageInput>;
 export type SettingsFrontComponentConfig =
   LooseEnumValues<StrictSettingsFrontComponentConfig>;
 export type SettingsMenuItemConfig =

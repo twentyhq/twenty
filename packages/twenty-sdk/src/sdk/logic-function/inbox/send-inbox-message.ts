@@ -1,13 +1,7 @@
-import {
-  type SendInboxMessageInput as StrictSendInboxMessageInput,
-  type SendInboxMessageResult,
-} from 'twenty-shared/application';
+import { type SendInboxMessageResult } from 'twenty-shared/application';
 
-import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
+import { type SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
-
-export type SendInboxMessageInput =
-  LooseEnumValues<StrictSendInboxMessageInput>;
 
 const SEND_INBOX_MESSAGE_MUTATION = `
   mutation SendInboxMessage($input: SendInboxMessageInput!) {

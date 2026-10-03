@@ -1,6 +1,6 @@
 export { defineAgent } from '@/sdk/define/agents/define-agent';
 
-export type { ApplicationConfig } from '@/sdk/define/common/types/loose-manifest-types.type';
+export type { ApplicationConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 export { defineApplication } from '@/sdk/define/application/define-application';
 
 export type {
@@ -35,19 +35,19 @@ export { defineCommandMenuItem } from '@/sdk/define/command-menu-items/define-co
 export type {
   CommandMenuItemConfig,
   CommandMenuItemManifest,
-} from '@/sdk/define/common/types/loose-manifest-types.type';
+} from '@/sdk/define/common/types/loose-shared-types.type';
 
 export { defineTimelineActivityType } from '@/sdk/define/timeline-activity-types/define-timeline-activity-type';
 export type {
   TimelineActivityTypeConfig,
   TimelineActivityTypeManifest,
-} from '@/sdk/define/common/types/loose-manifest-types.type';
+} from '@/sdk/define/common/types/loose-shared-types.type';
 
 export { defineSettingsMenuItem } from '@/sdk/define/settings-menu-items/define-settings-menu-item';
 export type {
   SettingsMenuItemConfig,
   SettingsMenuItemManifest,
-} from '@/sdk/define/common/types/loose-manifest-types.type';
+} from '@/sdk/define/common/types/loose-shared-types.type';
 export type { SettingsMenuItemScope } from 'twenty-shared/application';
 
 export {
@@ -90,14 +90,14 @@ export type { FrontComponentType } from '@/sdk/define/front-component/front-comp
 export type {
   FrontComponentConfig,
   SettingsFrontComponentConfig,
-} from '@/sdk/define/common/types/loose-manifest-types.type';
+} from '@/sdk/define/common/types/loose-shared-types.type';
 
 export { defineIndex } from '@/sdk/define/indexes/define-index';
 export type {
   IndexConfig,
   IndexFieldManifest,
   IndexManifest,
-} from '@/sdk/define/common/types/loose-manifest-types.type';
+} from '@/sdk/define/common/types/loose-shared-types.type';
 
 export { defineHealthCheck } from '@/sdk/define/logic-functions/define-health-check';
 export { defineLogicFunction } from '@/sdk/define/logic-functions/define-logic-function';
@@ -113,13 +113,13 @@ export type {
   UninstallPayload,
 } from '@/sdk/define/logic-functions/uninstall-payload-type';
 export type { HealthCheckHandler } from '@/sdk/define/logic-functions/health-check-handler-type';
-export type { HealthCheckLogicFunctionConfig } from '@/sdk/define/common/types/loose-manifest-types.type';
+export type { HealthCheckLogicFunctionConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 export type {
   ApplicationHealthCheckAction,
   ApplicationHealthCheckResult,
 } from 'twenty-shared/application';
 export { ApplicationHealthStatus } from 'twenty-shared/application';
-export type { LogicFunctionConfig } from '@/sdk/define/common/types/loose-manifest-types.type';
+export type { LogicFunctionConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 export type {
   LogicFunctionHandler,
   ServerRouteResolverResult,
@@ -158,7 +158,7 @@ export { definePageLayoutWidget } from '@/sdk/define/page-layouts/define-page-la
 export type {
   PageLayoutConfig,
   PageLayoutTabConfig,
-} from '@/sdk/define/common/types/loose-manifest-types.type';
+} from '@/sdk/define/common/types/loose-shared-types.type';
 export {
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS as STANDARD_PAGE_LAYOUT,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
@@ -168,13 +168,13 @@ export type {
   PageLayoutTabManifest,
   PageLayoutWidgetManifest,
   StandalonePageLayoutWidgetManifest,
-} from '@/sdk/define/common/types/loose-manifest-types.type';
+} from '@/sdk/define/common/types/loose-shared-types.type';
 
 export { definePermissionFlag } from '@/sdk/define/permission-flags/define-permission-flag';
 export type {
   PermissionFlagConfig,
   PermissionFlagManifest,
-} from '@/sdk/define/common/types/loose-manifest-types.type';
+} from '@/sdk/define/common/types/loose-shared-types.type';
 export type { PermissionFlagPermissionType } from 'twenty-shared/application';
 
 export { defineApplicationRole } from '@/sdk/define/roles/define-application-role';
@@ -182,7 +182,7 @@ export { defineRole } from '@/sdk/define/roles/define-role';
 export type {
   RowLevelPermissionPredicateManifest,
   RowLevelPermissionPredicateGroupManifest,
-} from '@/sdk/define/common/types/loose-manifest-types.type';
+} from '@/sdk/define/common/types/loose-shared-types.type';
 export {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
@@ -201,7 +201,7 @@ export {
   SYSTEM_VIEW_KEYS,
   type SystemViewKey,
 } from 'twenty-shared/application';
-export type { ViewConfig } from '@/sdk/define/common/types/loose-manifest-types.type';
+export type { ViewConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 export { ViewKey } from '@/sdk/define/views/view-key';
 export type {
   StandaloneViewFieldManifest,
@@ -211,7 +211,7 @@ export type {
   ViewFilterManifest,
   ViewGroupManifest,
   ViewSortManifest,
-} from '@/sdk/define/common/types/loose-manifest-types.type';
+} from '@/sdk/define/common/types/loose-shared-types.type';
 export type { ViewManifestFilterValue } from 'twenty-shared/application';
 
 export {
@@ -247,4 +247,4 @@ export type {
   PageLayoutWidgetPosition,
   PageLayoutWidgetUniversalConfiguration,
   PageLayoutWidgetVerticalListPosition,
-} from '@/sdk/define/common/types/loose-manifest-types.type';
+} from '@/sdk/define/common/types/loose-shared-types.type';

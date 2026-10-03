@@ -1,4 +1,3 @@
-import { type ObjectFieldManifest } from 'twenty-shared/application';
 import { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from 'twenty-shared/constants';
 import {
   fieldMetadataDefaultValueFunctionName,
@@ -8,7 +7,7 @@ import {
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { isString } from '@sniptt/guards';
 
-import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
+import { type ObjectFieldManifest } from '@/sdk/define/common/types/loose-shared-types.type';
 
 const isQuotedString = (value: string): boolean =>
   value.length >= 2 && value.startsWith("'") && value.endsWith("'");
@@ -18,9 +17,7 @@ const isComputedDefaultValue = (value: string): boolean =>
     value as FieldMetadataDefaultValueFunctionNames,
   );
 
-const collectUnquotedStrings = (
-  field: LooseEnumValues<ObjectFieldManifest>,
-): string[] => {
+const collectUnquotedStrings = (field: ObjectFieldManifest): string[] => {
   const { defaultValue, type } = field;
 
   if (!isDefined(defaultValue)) {
@@ -58,7 +55,7 @@ const collectUnquotedStrings = (
 };
 
 export const getFieldDefaultValueWarnings = (
-  fields: LooseEnumValues<ObjectFieldManifest>[] | undefined,
+  fields: ObjectFieldManifest[] | undefined,
 ): string[] => {
   if (!isDefined(fields)) {
     return [];

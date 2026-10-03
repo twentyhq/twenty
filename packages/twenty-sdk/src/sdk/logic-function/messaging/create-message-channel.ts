@@ -1,6 +1,4 @@
-import { type MessageChannelVisibility } from 'twenty-shared/types';
-
-import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
+import { type MessageChannelVisibility } from '@/sdk/define/common/types/loose-shared-types.type';
 import { APP_MESSAGE_CHANNEL_SELECTION } from '@/sdk/logic-function/messaging/message-channel-fields.constant';
 import { type AppMessageChannel } from '@/sdk/logic-function/messaging/types/app-message-channel.type';
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
@@ -21,7 +19,7 @@ export type CreateMessageChannelInput = {
   displayName?: string;
   // Required: decides whether one member's conversations are readable by the whole workspace, and only the app
   // knows how private its messages are ('METADATA' for personal inboxes, 'SHARE_EVERYTHING' for shared ones)
-  visibility: LooseEnumValues<MessageChannelVisibility>;
+  visibility: MessageChannelVisibility;
 };
 
 export const createMessageChannel = async (

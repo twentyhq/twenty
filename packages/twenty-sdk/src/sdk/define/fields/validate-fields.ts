@@ -2,7 +2,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type ObjectFieldManifest } from 'twenty-shared/application';
 import { TAG_COLORS } from 'twenty-shared/constants';
 import {
   isDefined,
@@ -11,11 +10,9 @@ import {
   isTagColor,
 } from 'twenty-shared/utils';
 
-import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
+import { type ObjectFieldManifest } from '@/sdk/define/common/types/loose-shared-types.type';
 
-const getSelectOptionErrors = (
-  field: LooseEnumValues<ObjectFieldManifest>,
-): string[] => {
+const getSelectOptionErrors = (field: ObjectFieldManifest): string[] => {
   if (
     !isFieldMetadataSelectKind(FieldMetadataType[field.type]) ||
     !Array.isArray(field.options)
@@ -45,7 +42,7 @@ const getSelectOptionErrors = (
 };
 
 export const validateFields = (
-  fields: LooseEnumValues<ObjectFieldManifest>[] | undefined,
+  fields: ObjectFieldManifest[] | undefined,
 ): string[] => {
   if (!fields) {
     return [];

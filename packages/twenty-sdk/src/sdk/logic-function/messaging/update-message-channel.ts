@@ -1,6 +1,4 @@
-import { type MessageChannelVisibility } from 'twenty-shared/types';
-
-import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
+import { type MessageChannelVisibility } from '@/sdk/define/common/types/loose-shared-types.type';
 import { APP_MESSAGE_CHANNEL_SELECTION } from '@/sdk/logic-function/messaging/message-channel-fields.constant';
 import { type AppMessageChannel } from '@/sdk/logic-function/messaging/types/app-message-channel.type';
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
@@ -18,7 +16,7 @@ export type UpdateMessageChannelInput = {
   // Omitted leaves the current label untouched; null clears it.
   displayName?: string | null;
   // Changes who can read every message already ingested, not just the ones that follow
-  visibility?: LooseEnumValues<MessageChannelVisibility>;
+  visibility?: MessageChannelVisibility;
   // False pauses ingestion (further ingests are rejected) without deleting the history
   isSyncEnabled?: boolean;
 };
