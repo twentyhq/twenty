@@ -23,7 +23,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const PARTICIPANT_FIELDS =
-  'threadId lastReadAt archivedAt snoozedUntil hasSnoozeEnded';
+  'threadId lastReadAt archivedAt snoozedUntil hasSnoozeEnded updatedAt';
 
 const MY_PARTICIPANTS = parse(
   `query MyParticipants { myAgentChatThreadParticipants { ${PARTICIPANT_FIELDS} } }`,
@@ -38,9 +38,9 @@ const SNOOZE = parse(
   `mutation Snooze($threadId: UUID!, $snoozedUntil: DateTime!) { snoozeAgentChatThread(threadId: $threadId, snoozedUntil: $snoozedUntil) { ${PARTICIPANT_FIELDS} } }`,
 );
 
-// Close enough for the test queue to run the snooze end it schedules
+// Outlasts any test, yet within the delay the test queue fast-forwards
 const buildFutureSnoozedUntil = () =>
-  new Date(Date.now() + 5_000).toISOString();
+  new Date(Date.now() + 30_000).toISOString();
 
 type Participant = {
   threadId: string;
@@ -380,6 +380,32 @@ describe('Chat thread participant state through the authenticated API', () => {
         },
       }),
     ]);
+  });
+
+  it('waits for the database clock before ending a snooze', async () => {
+    const threadId = await createTestThread();
+    const snoozedUntil = buildFutureSnoozedUntil();
+
+    await makeMetadataApiRequest({
+      query: SNOOZE,
+      variables: { threadId, snoozedUntil },
+    });
+
+    const broadcastSpy = spyOnParticipantBroadcasts();
+
+    await getAppProviderByClassName<AgentChatThreadParticipantService>(
+      'AgentChatThreadParticipantService',
+    ).endSnooze({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      threadId,
+      snoozedUntil,
+    });
+
+    expect(findParticipantBroadcasts(broadcastSpy, threadId)).toEqual([]);
+    expect(await findMyParticipant(threadId)).toMatchObject({
+      hasSnoozeEnded: false,
+    });
   });
 
   it('leaves alone a snooze the member replaced since', async () => {

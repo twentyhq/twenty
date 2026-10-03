@@ -49,6 +49,7 @@ const receiveOpenChat = (
       archivedAt: null,
       snoozedUntil: null,
       hasSnoozeEnded: false,
+      updatedAt: LAST_ACTIVITY_AT,
     },
   });
 };

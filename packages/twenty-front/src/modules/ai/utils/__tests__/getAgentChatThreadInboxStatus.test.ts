@@ -24,6 +24,7 @@ const getStatus = ({
       archivedAt,
       snoozedUntil,
       hasSnoozeEnded,
+      updatedAt: ARCHIVED_AT,
     },
   });
 

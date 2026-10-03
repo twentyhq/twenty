@@ -14,6 +14,7 @@ const ARCHIVED_PARTICIPANT = {
   archivedAt: '2026-10-01T11:00:00.000Z',
   snoozedUntil: null,
   hasSnoozeEnded: false,
+  updatedAt: '2026-10-01T11:00:00.000Z',
 };
 
 describe('useOptimisticallyRestoreOnSend', () => {
@@ -55,6 +56,7 @@ describe('useOptimisticallyRestoreOnSend', () => {
       archivedAt: null,
       snoozedUntil: null,
       hasSnoozeEnded: false,
+      updatedAt: ARCHIVED_PARTICIPANT.updatedAt,
     });
 
     act(() => rollback());

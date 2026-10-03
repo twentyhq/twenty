@@ -18,4 +18,8 @@ export class AgentChatThreadParticipantDTO {
 
   @Field(() => Boolean)
   hasSnoozeEnded: boolean;
+
+  // Orders the copies a member's apps receive, so an older one never wins
+  @Field(() => Date)
+  updatedAt: Date;
 }

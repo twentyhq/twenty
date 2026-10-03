@@ -70,6 +70,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
         archivedAt: null,
         snoozedUntil: null,
         hasSnoozeEnded: false,
+        updatedAt: '2026-10-01T10:00:00.000Z',
       },
     }));
 

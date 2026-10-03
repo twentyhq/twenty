@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
@@ -15,6 +16,7 @@ const READ_PARTICIPANT = {
   archivedAt: null,
   snoozedUntil: null,
   hasSnoozeEnded: false,
+  updatedAt: '2026-10-01T10:00:00.000Z',
 };
 
 const query = jest.fn();
@@ -69,6 +71,31 @@ describe('useAgentChatThreadParticipants', () => {
 
     expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
+    });
+  });
+
+  it('keeps a change the server sent while the member state was loading', async () => {
+    const { result, store } = renderParticipants();
+    const unreadParticipant = {
+      ...READ_PARTICIPANT,
+      lastReadAt: null,
+      updatedAt: '2026-10-01T10:05:00.000Z',
+    };
+
+    query.mockImplementation(async () => {
+      store.set(agentChatThreadStreamedParticipantsState.atom, {
+        [THREAD_ID]: unreadParticipant,
+      });
+
+      return { data: { myAgentChatThreadParticipants: [READ_PARTICIPANT] } };
+    });
+
+    await act(async () => {
+      await result.current.refreshAgentChatThreadParticipants();
+    });
+
+    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
+      [THREAD_ID]: unreadParticipant,
     });
   });
 

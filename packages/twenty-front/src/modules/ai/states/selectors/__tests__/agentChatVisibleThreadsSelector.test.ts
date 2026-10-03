@@ -12,6 +12,7 @@ const READ = {
   lastReadAt: LAST_ACTIVITY_AT,
   snoozedUntil: null,
   hasSnoozeEnded: false,
+  updatedAt: LAST_ACTIVITY_AT,
 };
 
 const ACTIVITY_AFTER_ARCHIVE_AT = '2026-10-01T11:30:00.000Z';
@@ -26,6 +27,7 @@ const THREADS: {
         archivedAt: string | null;
         snoozedUntil: string | null;
         hasSnoozeEnded: boolean;
+        updatedAt: string;
       }
     | undefined;
 }[] = [

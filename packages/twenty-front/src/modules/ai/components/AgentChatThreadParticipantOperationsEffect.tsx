@@ -3,6 +3,8 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
+import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
@@ -22,10 +24,14 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
 
       const { updatedRecord: participant } = operation;
 
-      // Before the first load there is nothing to keep up to date
+      store.set(
+        agentChatThreadStreamedParticipantsState.atom,
+        (streamedParticipants) =>
+          mergeAgentChatThreadParticipants(streamedParticipants, [participant]),
+      );
       store.set(agentChatThreadParticipantsState.atom, (participants) =>
         isDefined(participants)
-          ? { ...participants, [participant.threadId]: participant }
+          ? mergeAgentChatThreadParticipants(participants, [participant])
           : participants,
       );
     },

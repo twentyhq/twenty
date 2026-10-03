@@ -7,5 +7,6 @@ export const AGENT_CHAT_THREAD_PARTICIPANT_FRAGMENT = gql`
     archivedAt
     snoozedUntil
     hasSnoozeEnded
+    updatedAt
   }
 `;

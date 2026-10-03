@@ -6,7 +6,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
-import { AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-recheck-delay-ms.constant';
+import { AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-recheck-minimum-delay-ms.constant';
 import { type AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { END_AGENT_CHAT_THREAD_SNOOZE_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze-job-name.constant';
 import { type EndAgentChatThreadSnoozeJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze-job.types';
@@ -29,7 +29,7 @@ import {
 // The database clock decides when a snooze ends, as it stamps every other
 // inbox time
 const PARTICIPANT_COLUMNS = `"threadId", "lastReadAt", "archivedAt", "snoozedUntil",
-  COALESCE("snoozedUntil" <= clock_timestamp(), false) AS "hasSnoozeEnded"`;
+  COALESCE("snoozedUntil" <= clock_timestamp(), false) AS "hasSnoozeEnded", "updatedAt"`;
 
 // Timestamps compared against thread.lastActivityAt are stamped by Postgres
 // (clock_timestamp), so ordering follows the database rather than app servers.
@@ -129,7 +129,11 @@ export class AgentChatThreadParticipantService {
 
     const participant = await this.setArchive(args, snoozedUntil);
 
-    await this.scheduleSnoozeEnd({ ...args, snoozedUntil });
+    await this.scheduleSnoozeEnd({
+      ...args,
+      snoozedUntil: snoozedUntil.toISOString(),
+      delay: Math.max(snoozedUntil.getTime() - Date.now(), 0),
+    });
 
     return participant;
   }
@@ -140,25 +144,6 @@ export class AgentChatThreadParticipantService {
     snoozedUntil,
     ...args
   }: EndAgentChatThreadSnoozeJobData): Promise<void> {
-    const participant = await this.findOne(args);
-
-    if (
-      !isDefined(participant?.snoozedUntil) ||
-      participant.snoozedUntil.getTime() !== new Date(snoozedUntil).getTime()
-    ) {
-      return;
-    }
-
-    if (!participant.hasSnoozeEnded) {
-      await this.scheduleSnoozeEnd({
-        ...args,
-        snoozedUntil: participant.snoozedUntil,
-        minimumDelay: AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_DELAY_MS,
-      });
-
-      return;
-    }
-
     const [readableThreadId] = await this.sharingService.findReadableThreadIds({
       workspaceId: args.workspaceId,
       workspaceMemberId: args.workspaceMemberId,
@@ -166,6 +151,40 @@ export class AgentChatThreadParticipantService {
     });
 
     if (!isDefined(readableThreadId)) {
+      return;
+    }
+
+    const [snooze] = await this.threadRepository.query(
+      args.workspaceId,
+      ({ manager }) =>
+        manager.query<
+          (AgentChatThreadParticipantDTO & { remainingDelay: number })[]
+        >(
+          `SELECT ${PARTICIPANT_COLUMNS},
+             GREATEST(CEIL(EXTRACT(EPOCH FROM "snoozedUntil" - clock_timestamp()) * 1000), 0)::int AS "remainingDelay"
+           FROM ${getAgentChatThreadParticipantTable(args.workspaceId)}
+           WHERE "threadId" = $1 AND "workspaceMemberId" = $2 AND "snoozedUntil" = $3`,
+          [args.threadId, args.workspaceMemberId, snoozedUntil],
+        ),
+    );
+
+    if (!isDefined(snooze)) {
+      return;
+    }
+
+    const { remainingDelay, ...participant } = snooze;
+
+    // This server's clock ran ahead of the database's
+    if (!participant.hasSnoozeEnded) {
+      await this.scheduleSnoozeEnd({
+        ...args,
+        snoozedUntil,
+        delay: Math.max(
+          remainingDelay,
+          AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS,
+        ),
+      });
+
       return;
     }
 
@@ -271,17 +290,13 @@ export class AgentChatThreadParticipantService {
   }
 
   private async scheduleSnoozeEnd({
-    snoozedUntil,
-    minimumDelay = 0,
-    ...args
-  }: AgentChatThreadAccessArgs & {
-    snoozedUntil: Date;
-    minimumDelay?: number;
-  }): Promise<void> {
+    delay,
+    ...data
+  }: EndAgentChatThreadSnoozeJobData & { delay: number }): Promise<void> {
     await this.delayedJobsQueueService.add<EndAgentChatThreadSnoozeJobData>(
       END_AGENT_CHAT_THREAD_SNOOZE_JOB_NAME,
-      { ...args, snoozedUntil: snoozedUntil.toISOString() },
-      { delay: Math.max(snoozedUntil.getTime() - Date.now(), minimumDelay) },
+      data,
+      { delay },
     );
   }
 
