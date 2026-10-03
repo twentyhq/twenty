@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool.type';
-import { readToolCallStatus } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-tool-call-status.util';
 import { type PausingToolDefinition } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-definition.type';
 
 export const definePausingTool = <
@@ -10,9 +9,6 @@ export const definePausingTool = <
 >(
   definition: PausingToolDefinition<TInput, TOutput>,
 ): PausingTool => ({
-  isAwaitingOutput: (toolOutput) =>
-    readToolCallStatus(toolOutput) === 'pending',
-  isRunningOutput: (toolOutput) => readToolCallStatus(toolOutput) === 'running',
   parseCall: (toolInput, pendingToolOutput) => {
     const parsedInput = definition.inputSchema.safeParse(toolInput);
 

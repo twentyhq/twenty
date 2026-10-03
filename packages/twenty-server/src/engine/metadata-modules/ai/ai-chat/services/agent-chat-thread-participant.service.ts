@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_THREAD_LAST_MESSAGE_TEXT_MAX_LENGTH } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-last-message-text-max-length.constant';
+import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
 import { type AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
+import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
+import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
+import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
+import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -13,26 +18,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-
-type ParticipantArgs = {
-  workspaceId: string;
-  workspaceMemberId: string;
-  threadId: string;
-};
-
-export type AgentChatThreadActivity = {
-  lastActivityAt: Date | null;
-  updatedAt: Date;
-} & Partial<
-  Pick<
-    AgentChatThreadWorkspaceEntity,
-    | 'lastMessageText'
-    | 'lastMessageSenderWorkspaceMemberId'
-    | 'writerWorkspaceMemberIds'
-  >
->;
-
-const THREAD_ACTIVITY_COLUMNS = `"lastActivityAt", "updatedAt", "lastMessageText", "lastMessageSenderWorkspaceMemberId", "writerWorkspaceMemberIds"`;
 
 const PARTICIPANT_COLUMNS = `"threadId", "lastReadAt", "archivedAt", "snoozedUntil"`;
 
@@ -51,7 +36,7 @@ export class AgentChatThreadParticipantService {
   async findForWorkspaceMember({
     workspaceId,
     workspaceMemberId,
-  }: Omit<ParticipantArgs, 'threadId'>): Promise<
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'>): Promise<
     AgentChatThreadParticipantDTO[]
   > {
     if (!(await this.sharingService.hasInboxState(workspaceId))) {
@@ -79,7 +64,7 @@ export class AgentChatThreadParticipantService {
   }
 
   async markAsRead(
-    args: ParticipantArgs,
+    args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadParticipantDTO> {
     // Read up to what the thread holds now, never past it, and never back
     return this.upsertOne(
@@ -95,7 +80,7 @@ export class AgentChatThreadParticipantService {
   }
 
   async markAsUnread(
-    args: ParticipantArgs,
+    args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadParticipantDTO> {
     return this.upsertOne(
       args,
@@ -109,14 +94,16 @@ export class AgentChatThreadParticipantService {
     );
   }
 
-  archive(args: ParticipantArgs): Promise<AgentChatThreadParticipantDTO> {
+  archive(
+    args: AgentChatThreadAccessArgs,
+  ): Promise<AgentChatThreadParticipantDTO> {
     return this.setArchive(args, null);
   }
 
   async snooze({
     snoozedUntil,
     ...args
-  }: ParticipantArgs & {
+  }: AgentChatThreadAccessArgs & {
     snoozedUntil: Date;
   }): Promise<AgentChatThreadParticipantDTO> {
     if (snoozedUntil.getTime() <= Date.now()) {
@@ -130,7 +117,7 @@ export class AgentChatThreadParticipantService {
   }
 
   async moveToInbox(
-    args: ParticipantArgs,
+    args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadParticipantDTO> {
     return this.upsertOne(
       args,
@@ -152,18 +139,17 @@ export class AgentChatThreadParticipantService {
     workspaceMemberId,
     threadId,
     text,
-  }: ParticipantArgs & { text: string }): Promise<AgentChatThreadActivity> {
+  }: AgentChatThreadAccessArgs & {
+    text: string;
+  }): Promise<AgentChatThreadActivity> {
     if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      const activity = await this.touchThread({ workspaceId, threadId });
-
-      if (!isDefined(activity)) {
-        throw new AiException(
-          'Thread not found',
-          AiExceptionCode.THREAD_NOT_FOUND,
-        );
-      }
-
-      return activity;
+      return (
+        (await touchAgentChatThread({
+          repository: this.threadRepository,
+          workspaceId,
+          threadId,
+        })) ?? throwAgentChatThreadNotFound()
+      );
     }
 
     const participantTable = getAgentChatThreadParticipantTable(workspaceId);
@@ -174,15 +160,14 @@ export class AgentChatThreadParticipantService {
         manager.query<AgentChatThreadActivity[]>(
           `WITH thread AS (
              UPDATE ${table('agentChatThread')}
-             SET "lastActivityAt" = clock_timestamp(), "updatedAt" = now(),
-               "lastMessageText" = left(NULLIF(btrim($3), ''), ${AGENT_CHAT_THREAD_LAST_MESSAGE_TEXT_MAX_LENGTH}),
-               "lastMessageSenderWorkspaceMemberId" = $2::uuid,
+             SET "updatedAt" = now(),
+               ${buildAgentChatThreadActivitySetClause({ textParameter: '$3', senderWorkspaceMemberIdParameter: '$2::uuid' })},
                "writerWorkspaceMemberIds" = CASE
                  WHEN $2::uuid::text = ANY(COALESCE("writerWorkspaceMemberIds", '{}')) THEN "writerWorkspaceMemberIds"
                  ELSE array_append(COALESCE("writerWorkspaceMemberIds", '{}'), $2::uuid::text)
                END
              WHERE id = $1
-             RETURNING id, ${THREAD_ACTIVITY_COLUMNS}
+             RETURNING id, ${AGENT_CHAT_THREAD_ACTIVITY_COLUMNS}
            ), participant AS (
              INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
              SELECT thread.id, $2, thread."lastActivityAt" FROM thread
@@ -192,80 +177,20 @@ export class AgentChatThreadParticipantService {
                "snoozedUntil" = NULL,
                "updatedAt" = now()
            )
-           SELECT ${THREAD_ACTIVITY_COLUMNS} FROM thread`,
+           SELECT ${AGENT_CHAT_THREAD_ACTIVITY_COLUMNS} FROM thread`,
           [threadId, workspaceMemberId, text],
         ),
     );
 
     if (rows.length !== 1) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
+      return throwAgentChatThreadNotFound();
     }
 
     return rows[0];
   }
 
-  async recordThreadActivity({
-    workspaceId,
-    threadId,
-    text,
-  }: Omit<ParticipantArgs, 'workspaceMemberId'> & {
-    text: string | null;
-  }): Promise<AgentChatThreadActivity | null> {
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      return this.touchThread({ workspaceId, threadId });
-    }
-
-    const rows = await this.threadRepository.query(
-      workspaceId,
-      ({ manager, table }) =>
-        manager.query<AgentChatThreadActivity[]>(
-          `WITH thread AS (
-             UPDATE ${table('agentChatThread')}
-             SET "lastActivityAt" = clock_timestamp(), "updatedAt" = now(),
-               "lastMessageText" = left(NULLIF(btrim($2), ''), ${AGENT_CHAT_THREAD_LAST_MESSAGE_TEXT_MAX_LENGTH}),
-               "lastMessageSenderWorkspaceMemberId" = NULL
-             WHERE id = $1
-             RETURNING ${THREAD_ACTIVITY_COLUMNS}
-           )
-           SELECT ${THREAD_ACTIVITY_COLUMNS} FROM thread`,
-          [threadId, text],
-        ),
-    );
-
-    return rows[0] ?? null;
-  }
-
-  // Before the 2.46 upgrade only updatedAt exists to order chats by
-  private async touchThread({
-    workspaceId,
-    threadId,
-  }: Omit<
-    ParticipantArgs,
-    'workspaceMemberId'
-  >): Promise<AgentChatThreadActivity | null> {
-    const rows = await this.threadRepository.query(
-      workspaceId,
-      ({ manager, table }) =>
-        manager.query<AgentChatThreadActivity[]>(
-          `WITH thread AS (
-             UPDATE ${table('agentChatThread')}
-             SET "updatedAt" = now()
-             WHERE id = $1
-             RETURNING NULL::timestamptz AS "lastActivityAt", "updatedAt"
-           )
-           SELECT "lastActivityAt", "updatedAt" FROM thread`,
-          [threadId],
-        ),
-    );
-
-    return rows[0] ?? null;
-  }
-
   private setArchive(
-    args: ParticipantArgs,
+    args: AgentChatThreadAccessArgs,
     snoozedUntil: Date | null,
   ): Promise<AgentChatThreadParticipantDTO> {
     return this.upsertOne(
@@ -283,7 +208,7 @@ export class AgentChatThreadParticipantService {
   }
 
   private async upsertOne(
-    { workspaceId, workspaceMemberId, threadId }: ParticipantArgs,
+    { workspaceId, workspaceMemberId, threadId }: AgentChatThreadAccessArgs,
     buildQuery: (tables: {
       participantTable: string;
       threadTable: string;
@@ -297,10 +222,7 @@ export class AgentChatThreadParticipantService {
     });
 
     if (!isDefined(readableThreadId)) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
+      throwAgentChatThreadNotFound();
     }
 
     if (!(await this.sharingService.hasInboxState(workspaceId))) {
@@ -323,10 +245,7 @@ export class AgentChatThreadParticipantService {
     );
 
     if (rows.length !== 1) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
+      return throwAgentChatThreadNotFound();
     }
 
     return rows[0];

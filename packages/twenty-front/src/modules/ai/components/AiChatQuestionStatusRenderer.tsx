@@ -4,13 +4,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import { type AskQuestionsToolResult } from 'twenty-shared/ai';
 import { IconHelpCircle } from 'twenty-ui/icon';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
 import {
-  StyledAiChatAskStatusContainer,
+  StyledAiChatAskStatusDetail,
   StyledAiChatAskStatusMessage,
 } from '@/ai/components/AiChatAskStyledComponents';
-import { ShimmeringText } from '@/ai/components/ShimmeringText';
 
 const StyledAnswersCard = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
@@ -36,12 +36,6 @@ const StyledAnswerQuestion = styled.span`
   overflow-wrap: anywhere;
 `;
 
-const StyledAnswerValue = styled.span`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  overflow-wrap: anywhere;
-`;
-
 export const AiChatQuestionStatusRenderer = ({
   toolPart,
   isStreaming,
@@ -50,7 +44,6 @@ export const AiChatQuestionStatusRenderer = ({
   isStreaming: boolean;
 }) => {
   const { t } = useLingui();
-  const theme = useTheme();
 
   const result = (toolPart.output as { result?: AskQuestionsToolResult } | null)
     ?.result;
@@ -58,19 +51,12 @@ export const AiChatQuestionStatusRenderer = ({
   const status = result?.status ?? 'pending';
 
   if (status === 'pending') {
-    const label = t`Asking questions...`;
-
     return (
-      <StyledAiChatAskStatusContainer>
-        <IconHelpCircle size={theme.icon.size.sm} />
-        {isStreaming ? (
-          <ShimmeringText>
-            <StyledAiChatAskStatusMessage>{label}</StyledAiChatAskStatusMessage>
-          </ShimmeringText>
-        ) : (
-          <StyledAiChatAskStatusMessage>{label}</StyledAiChatAskStatusMessage>
-        )}
-      </StyledAiChatAskStatusContainer>
+      <AiChatAskStatusRow
+        Icon={IconHelpCircle}
+        message={t`Asking questions...`}
+        isShimmering={isStreaming}
+      />
     );
   }
 
@@ -99,7 +85,7 @@ export const AiChatQuestionStatusRenderer = ({
         return (
           <StyledAnswerBlock key={index}>
             <StyledAnswerQuestion>{question.question}</StyledAnswerQuestion>
-            <StyledAnswerValue>{value}</StyledAnswerValue>
+            <StyledAiChatAskStatusDetail>{value}</StyledAiChatAskStatusDetail>
           </StyledAnswerBlock>
         );
       })}

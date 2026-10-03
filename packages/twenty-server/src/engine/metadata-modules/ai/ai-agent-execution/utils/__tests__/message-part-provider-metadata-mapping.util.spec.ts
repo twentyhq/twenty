@@ -1,8 +1,8 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
-import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartToUIMessagePart';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
+import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-db-parts-to-ui-message-parts.util';
+import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-db-parts.util';
 
 describe('message part provider metadata mapping', () => {
   it('persists and restores OpenAI encrypted reasoning metadata', () => {
@@ -20,11 +20,7 @@ describe('message part provider metadata mapping', () => {
       providerMetadata,
     } satisfies ExtendedUIMessagePart;
 
-    const dbParts = mapUIMessagePartsToDBParts(
-      [reasoningPart],
-      'message-id',
-      'workspace-id',
-    );
+    const dbParts = mapUIMessagePartsToDBParts([reasoningPart], 'message-id');
 
     expect(dbParts).toEqual([
       expect.objectContaining({

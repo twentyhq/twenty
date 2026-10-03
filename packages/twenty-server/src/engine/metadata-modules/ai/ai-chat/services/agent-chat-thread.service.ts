@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import {
-  type AgentChatThreadActivity,
-  AgentChatThreadParticipantService,
-} from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
+import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
+import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
+import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
+import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -39,21 +41,9 @@ export class AgentChatThreadService {
     return savedThread;
   }
 
-  async findWritableThread({
-    threadId,
-    workspaceMemberId,
-    workspaceId,
-  }: {
-    threadId: string;
-    workspaceMemberId: string;
-    workspaceId: string;
-  }) {
+  async findWritableThread(args: AgentChatThreadAccessArgs) {
     try {
-      return await this.getWritableThread({
-        threadId,
-        workspaceMemberId,
-        workspaceId,
-      });
+      return await this.getWritableThread(args);
     } catch (error) {
       if (
         error instanceof AiException &&
@@ -65,11 +55,7 @@ export class AgentChatThreadService {
     }
   }
 
-  async getWritableThread(args: {
-    threadId: string;
-    workspaceMemberId: string;
-    workspaceId: string;
-  }) {
+  async getWritableThread(args: AgentChatThreadAccessArgs) {
     return this.sharingService.getThreadWithAccess({
       ...args,
       operationType: 'update',
@@ -124,17 +110,47 @@ export class AgentChatThreadService {
       return;
     }
 
-    const activity = await this.participantService.recordThreadActivity({
-      workspaceId,
-      threadId,
-      text,
-    });
+    const activity = (await this.sharingService.hasInboxState(workspaceId))
+      ? await this.recordAgentActivity({ workspaceId, threadId, text })
+      : await touchAgentChatThread({
+          repository: this.threadRepository,
+          workspaceId,
+          threadId,
+        });
 
     if (!isDefined(activity)) {
       return;
     }
 
     await this.emitThreadActivityUpdated({ workspaceId, thread, activity });
+  }
+
+  private async recordAgentActivity({
+    workspaceId,
+    threadId,
+    text,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    text: string | null;
+  }): Promise<AgentChatThreadActivity | null> {
+    const [activity] = await this.threadRepository.query(
+      workspaceId,
+      ({ manager, table }) =>
+        manager.query<AgentChatThreadActivity[]>(
+          `WITH thread AS (
+             UPDATE ${table('agentChatThread')}
+             SET "updatedAt" = now(),
+               ${buildAgentChatThreadActivitySetClause({ textParameter: '$2' })}
+             WHERE id = $1
+             RETURNING ${AGENT_CHAT_THREAD_ACTIVITY_COLUMNS}
+           )
+           SELECT ${AGENT_CHAT_THREAD_ACTIVITY_COLUMNS} FROM thread`,
+          [threadId, text],
+        ),
+    );
+
+    return activity ?? null;
   }
 
   // Open chat lists reorder and bring the chat back from these events

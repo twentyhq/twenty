@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { type MouseEvent, useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
+import { commandMenuDropdownPositionComponentState } from '@/command-menu-item/states/commandMenuDropdownPositionComponentState';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -25,12 +25,10 @@ export const useOpenCommandMenuDropdownAtCursor = () => {
     CommandMenuComponentInstanceContext,
   );
 
-  const isCommandMenuAvailable = isDefined(commandMenuInstanceId);
-
   const openCommandMenuDropdownAtCursor = useCallback(
     (event: CommandMenuDropdownTriggerEvent) => {
       if (!isDefined(commandMenuInstanceId)) {
-        return;
+        return false;
       }
 
       event.preventDefault();
@@ -40,8 +38,8 @@ export const useOpenCommandMenuDropdownAtCursor = () => {
       );
 
       store.set(
-        recordIndexCommandMenuDropdownPositionComponentState.atomFamily({
-          instanceId: commandMenuDropdownId,
+        commandMenuDropdownPositionComponentState.atomFamily({
+          instanceId: commandMenuInstanceId,
         }),
         { x: event.clientX, y: event.clientY },
       );
@@ -57,6 +55,8 @@ export const useOpenCommandMenuDropdownAtCursor = () => {
           enableGlobalHotkeysConflictingWithKeyboard: false,
         },
       });
+
+      return true;
     },
     [
       closeSidePanelMenu,
@@ -67,5 +67,5 @@ export const useOpenCommandMenuDropdownAtCursor = () => {
     ],
   );
 
-  return { isCommandMenuAvailable, openCommandMenuDropdownAtCursor };
+  return { openCommandMenuDropdownAtCursor };
 };

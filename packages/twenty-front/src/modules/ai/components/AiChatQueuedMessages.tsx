@@ -1,7 +1,7 @@
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 
 import { useDeleteQueuedMessage } from '@/ai/hooks/useDeleteQueuedMessage';
 import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
@@ -60,7 +60,10 @@ export const AiChatQueuedMessages = () => {
   return (
     <StyledQueueContainer>
       <StyledQueueLabel>
-        {agentChatQueuedMessages.length} Queued
+        {plural(agentChatQueuedMessages.length, {
+          one: '# Queued',
+          other: '# Queued',
+        })}
       </StyledQueueLabel>
       {agentChatQueuedMessages.map((message) => {
         const textPart = message.parts?.find((part) => part.type === 'text');
