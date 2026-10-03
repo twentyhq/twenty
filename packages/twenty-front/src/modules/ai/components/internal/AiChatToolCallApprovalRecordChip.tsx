@@ -1,6 +1,15 @@
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
+
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { isDefined } from 'twenty-shared/utils';
+
+const StyledMissingRecord = styled.span`
+  color: ${themeCssVariables.font.color.danger};
+  font-size: ${themeCssVariables.font.size.md};
+`;
 
 type AiChatToolCallApprovalRecordChipProps = {
   objectNameSingular: string;
@@ -11,14 +20,22 @@ export const AiChatToolCallApprovalRecordChip = ({
   objectNameSingular,
   recordId,
 }: AiChatToolCallApprovalRecordChipProps) => {
-  const { record } = useFindOneRecord({
+  const { t } = useLingui();
+  const { record, loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId: recordId,
   });
 
-  if (!isDefined(record)) {
-    return null;
+  if (isDefined(record)) {
+    return (
+      <RecordChip objectNameSingular={objectNameSingular} record={record} />
+    );
   }
 
-  return <RecordChip objectNameSingular={objectNameSingular} record={record} />;
+  // approving still runs the call, which then fails, so the person must see why
+  return loading ? null : (
+    <StyledMissingRecord>
+      {t`This record no longer exists or you cannot see it.`}
+    </StyledMissingRecord>
+  );
 };

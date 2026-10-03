@@ -16,7 +16,8 @@ import {
   proposedToolCallSchema,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
 
-// the person may run the proposed tool or one of the alternatives it offers
+// the person may run the proposed tool or one of the alternatives it offers, and an update
+// may only change the fields it proposed, since only those were snapshotted to detect a conflict
 const buildToolCallApprovalResponseSchema = (
   proposal: ProposedToolCall,
 ): z.ZodType<ToolCallApprovalResponse> => {
@@ -24,8 +25,9 @@ const buildToolCallApprovalResponseSchema = (
     proposal.toolName,
     ...(proposal.alternativeToolNames ?? []),
   ]);
+  const proposedArgumentNames = new Set(Object.keys(proposal.arguments));
 
-  return z.discriminatedUnion('decision', [
+  const responseSchema = z.discriminatedUnion('decision', [
     z.object({
       decision: z.literal('approve'),
       toolName: z
@@ -42,6 +44,21 @@ const buildToolCallApprovalResponseSchema = (
       feedback: z.string().optional(),
     }),
   ]);
+
+  return responseSchema.superRefine((response, context) => {
+    if (
+      proposal.template === 'recordUpdate' &&
+      response.decision === 'approve' &&
+      Object.keys(response.arguments ?? {}).some(
+        (argumentName) => !proposedArgumentNames.has(argumentName),
+      )
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'An approved update can only change the fields it proposed.',
+      });
+    }
+  });
 };
 
 // a call recorded without its resolved proposal is still answerable, as a generic one
@@ -147,10 +164,23 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
         fieldNames: Object.keys(currentValues),
       });
 
-      if (
-        latestRecord.isFound &&
-        !isEqual(latestRecord.values, currentValues)
-      ) {
+      // an update whose record cannot be read again cannot be shown to be safe, so it does not run
+      if (!latestRecord.isFound) {
+        return {
+          toolResult: {
+            success: false,
+            message: `The user approved the call, but the record could not be read again, so nothing was run: ${latestRecord.error}`,
+            result: {
+              status: 'failed',
+              proposal: approvedProposal,
+              error: latestRecord.error,
+            } satisfies ProposeToolCallToolResult,
+          },
+          answerText,
+        };
+      }
+
+      if (!isEqual(latestRecord.values, currentValues)) {
         return {
           toolResult: {
             success: false,

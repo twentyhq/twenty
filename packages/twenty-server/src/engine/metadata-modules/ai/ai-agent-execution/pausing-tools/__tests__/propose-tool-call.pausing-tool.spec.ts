@@ -111,6 +111,34 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
     });
   });
 
+  it('refuses an approved update that changes a field it did not propose', () => {
+    expect(
+      parseCall().validate({
+        decision: 'approve',
+        arguments: { id: RECORD_ID, stage: 'WON', amount: 0 },
+      }),
+    ).toMatchObject({ isValid: false });
+  });
+
+  it('runs nothing when the record cannot be read again', async () => {
+    const executeTool = jest.fn().mockResolvedValueOnce({
+      success: false,
+      message: 'Failed to find opportunity records',
+      error: 'Permission denied',
+    });
+
+    const completion = await parseCall().complete({
+      output: { decision: 'approve' },
+      context: { executeTool },
+    });
+
+    expect(executeTool).toHaveBeenCalledTimes(1);
+    expect(completion.toolResult).toMatchObject({
+      success: false,
+      result: { status: 'failed', error: 'Permission denied' },
+    });
+  });
+
   it('reports a failed call with its error', async () => {
     const executeTool = jest
       .fn()
