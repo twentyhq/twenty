@@ -16,8 +16,9 @@ export const useSelectAllRows = (recordTableId?: string) => {
   const store = useStore();
 
   const selectAllRows = useCallback(() => {
-    selectAllRecords();
-    store.set(hasUserSelectedAllRecords, true);
+    if (selectAllRecords()) {
+      store.set(hasUserSelectedAllRecords, true);
+    }
   }, [selectAllRecords, hasUserSelectedAllRecords, store]);
 
   return {
