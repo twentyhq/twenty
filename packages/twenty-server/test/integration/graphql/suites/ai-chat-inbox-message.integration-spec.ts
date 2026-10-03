@@ -83,9 +83,15 @@ describe('Sending an inbox message as an application', () => {
 
   const readMessages = (id: string) =>
     global.testDataSource.query(
-      `SELECT id, role, "isHidden", "senderUserWorkspaceId", "senderApplicationId"
+      `SELECT id, role, "senderUserWorkspaceId", "senderApplicationId"
        FROM "${schema}"."agentMessage" WHERE "threadId" = $1
        ORDER BY "processedAt" ASC`,
+      [id],
+    );
+
+  const readTurnContexts = (id: string) =>
+    global.testDataSource.query(
+      `SELECT context FROM "${schema}"."agentTurn" WHERE "threadId" = $1`,
       [id],
     );
 
@@ -191,18 +197,17 @@ describe('Sending an inbox message as an application', () => {
     });
     expect(messages).toEqual([
       expect.objectContaining({
-        role: 'user',
-        isHidden: true,
-        senderUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-        senderApplicationId: null,
-      }),
-      expect.objectContaining({
         role: 'assistant',
-        isHidden: false,
         senderApplicationId: application.id,
       }),
     ]);
-    expect(thread.pendingQuestionMessageId).toBe(messages[1].id);
+    expect(await readTurnContexts(threadId)).toEqual([
+      {
+        context:
+          'The "Inbox Application" application started this conversation. Its messages follow.',
+      },
+    ]);
+    expect(thread.pendingQuestionMessageId).toBe(messages[0].id);
   });
 
   it('returns the same conversation when sent again with the same key', async () => {
@@ -210,7 +215,7 @@ describe('Sending an inbox message as an application', () => {
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.sendInboxMessage.threadId).toBe(threadId);
-    expect(await readMessages(threadId)).toHaveLength(2);
+    expect(await readMessages(threadId)).toHaveLength(1);
   });
 
   it('refuses another question while an earlier one waits on the member', async () => {
@@ -235,7 +240,7 @@ describe('Sending an inbox message as an application', () => {
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.sendInboxMessage.threadId).toBe(threadId);
-    expect(await readMessages(threadId)).toHaveLength(3);
+    expect(await readMessages(threadId)).toHaveLength(2);
     expect(await readPendingQuestionMessageId()).toBe(pendingQuestionMessageId);
   });
 
@@ -260,7 +265,7 @@ describe('Sending an inbox message as an application', () => {
             .errors,
         ),
       ).toContain('THREAD_AWAITING_ANSWER');
-      expect(await readMessages(concurrentThreadId)).toHaveLength(2);
+      expect(await readMessages(concurrentThreadId)).toHaveLength(1);
     } finally {
       if (concurrentThreadId !== undefined) {
         await destroyAgentChatThread({ threadId: concurrentThreadId });
@@ -300,10 +305,9 @@ describe('Sending an inbox message as an application', () => {
           }
         ).options;
 
-        // The opener's parts come first, then the application message's.
         if (
           tableShape.nameSingular === 'agentMessagePart' &&
-          ++partWriteCount === 2
+          ++partWriteCount === 1
         ) {
           return Promise.reject(new Error('Message parts write failed'));
         }
@@ -328,7 +332,7 @@ describe('Sending an inbox message as an application', () => {
 
     try {
       expect(failedResponse.body.errors).toBeDefined();
-      expect(await readMessages(failedThreadId)).toHaveLength(1);
+      expect(await readMessages(failedThreadId)).toHaveLength(0);
       expect(
         (
           await global.testDataSource.query(
@@ -344,14 +348,14 @@ describe('Sending an inbox message as an application', () => {
       const messages = await readMessages(failedThreadId);
       const [assistantParts] = await global.testDataSource.query(
         `SELECT COUNT(*)::int AS count FROM "${schema}"."agentMessagePart" WHERE "messageId" = $1`,
-        [messages[1]?.id],
+        [messages[0]?.id],
       );
 
       expect(retryResponse.body.errors).toBeUndefined();
       expect(retryResponse.body.data.sendInboxMessage.threadId).toBe(
         failedThreadId,
       );
-      expect(messages).toHaveLength(2);
+      expect(messages).toHaveLength(1);
       expect(assistantParts.count).toBe(2);
     } finally {
       await destroyAgentChatThread({ threadId: failedThreadId });
