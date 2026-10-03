@@ -68,7 +68,7 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+import { type WorkspaceCacheReadableKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 
 export type RecordExportQueryContext = {
@@ -77,7 +77,7 @@ export type RecordExportQueryContext = {
   selectedFields: CommonSelectedFields;
 };
 
-const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheKeyName[] = [
+const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheReadableKeyName[] = [
   'rolesPermissions',
   'userWorkspaceRoleMap',
   'flatRoleMaps',

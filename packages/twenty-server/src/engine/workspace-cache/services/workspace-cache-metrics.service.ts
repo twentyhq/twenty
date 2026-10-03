@@ -9,6 +9,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import {
   type WorkspaceCacheDataMap,
   type WorkspaceCacheKeyName,
+  type WorkspaceCacheReadableKeyName,
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import {
@@ -105,7 +106,10 @@ export class WorkspaceCacheMetricsService {
     }
   }
 
-  recordRecompute(seconds: number, cacheKey: WorkspaceCacheKeyName): void {
+  recordRecompute(
+    seconds: number,
+    cacheKey: WorkspaceCacheReadableKeyName,
+  ): void {
     this.recomputeDurationHistogram.record(seconds, { cache_key: cacheKey });
   }
 
