@@ -1,10 +1,13 @@
 import { type CanActivate, type Type } from '@nestjs/common';
 import { GUARDS_METADATA, PATH_METADATA } from '@nestjs/common/constants';
-import { MetadataScanner, Reflector } from '@nestjs/core';
-import { NestContainer } from '@nestjs/core/injector/container';
-import { GraphInspector } from '@nestjs/core/inspector/graph-inspector';
-import { DependenciesScanner } from '@nestjs/core/scanner';
+import {
+  type DiscoveryService,
+  type MetadataScanner,
+  type Reflector,
+} from '@nestjs/core';
+import { type InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { RESOLVER_TYPE_METADATA } from '@nestjs/graphql/dist/graphql.constants.js';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
@@ -22,47 +25,34 @@ type EndpointClass = Type<object>;
 
 type EndpointHandler = (...args: never[]) => unknown;
 
-type ScannedClass = { endpointClass: EndpointClass; isController: boolean };
+type DiscoveredClass = { endpointClass: EndpointClass; isController: boolean };
 
 type Guard = Type<CanActivate> | CanActivate;
 
 const GRAPHQL_OPERATION_TYPES = new Set(['Query', 'Mutation', 'Subscription']);
 
-const reflector = new Reflector();
-const metadataScanner = new MetadataScanner();
-
-const scanClasses = async (
-  rootModule: Type<object>,
-): Promise<ScannedClass[]> => {
-  const container = new NestContainer();
-
-  await new DependenciesScanner(
-    container,
-    metadataScanner,
-    new GraphInspector(container),
-  ).scan(rootModule);
-
+const discoverClasses = (
+  discoveryService: DiscoveryService,
+): DiscoveredClass[] => {
   const isControllerByClass = new Map<EndpointClass, boolean>();
 
-  for (const moduleRef of container.getModules().values()) {
-    for (const [wrappers, isController] of [
-      [moduleRef.controllers, true],
-      [moduleRef.providers, false],
-    ] as const) {
-      for (const { metatype } of wrappers.values()) {
-        if (typeof metatype !== 'function' || !isDefined(metatype.prototype)) {
-          continue;
-        }
-
-        const endpointClass = metatype as EndpointClass;
-
-        isControllerByClass.set(
-          endpointClass,
-          isController || (isControllerByClass.get(endpointClass) ?? false),
-        );
+  const register = (wrappers: InstanceWrapper[], isController: boolean) => {
+    for (const { metatype } of wrappers) {
+      if (typeof metatype !== 'function' || !isDefined(metatype.prototype)) {
+        continue;
       }
+
+      const endpointClass = metatype as EndpointClass;
+
+      isControllerByClass.set(
+        endpointClass,
+        isController || (isControllerByClass.get(endpointClass) ?? false),
+      );
     }
-  }
+  };
+
+  register(discoveryService.getControllers(), true);
+  register(discoveryService.getProviders(), false);
 
   return [...isControllerByClass.entries()].map(
     ([endpointClass, isController]) => ({ endpointClass, isController }),
@@ -71,17 +61,21 @@ const scanClasses = async (
 
 const isEndpointHandler = (
   handler: unknown,
-  isController: boolean,
+  { reflector, isController }: { reflector: Reflector; isController: boolean },
 ): handler is EndpointHandler =>
   typeof handler === 'function' &&
   (GRAPHQL_OPERATION_TYPES.has(
-    Reflect.getMetadata(RESOLVER_TYPE_METADATA, handler),
+    reflector.get<string | undefined>(RESOLVER_TYPE_METADATA, handler) ?? '',
   ) ||
     (isController && isDefined(reflector.get(PATH_METADATA, handler))));
 
-const readAuthPrincipalGuardConfigs = (
-  guardsOwner: EndpointClass | EndpointHandler,
-): AuthPrincipalGuardConfig[] =>
+const readAuthPrincipalGuardConfigs = ({
+  reflector,
+  guardsOwner,
+}: {
+  reflector: Reflector;
+  guardsOwner: EndpointClass | EndpointHandler;
+}): AuthPrincipalGuardConfig[] =>
   (reflector.get<Guard[] | undefined>(GUARDS_METADATA, guardsOwner) ?? [])
     .map((guard) =>
       reflector.get<AuthPrincipalGuardConfig | undefined>(
@@ -91,32 +85,41 @@ const readAuthPrincipalGuardConfigs = (
     )
     .filter(isDefined);
 
+const compareCodePoints = (left: string, right: string): number =>
+  left < right ? -1 : left > right ? 1 : 0;
+
 const stringifyWithSortedKeys = (value: unknown): string =>
   JSON.stringify(value, (_key, nestedValue: unknown) =>
     isPlainObject(nestedValue)
       ? Object.fromEntries(
           Object.entries(nestedValue).sort(([left], [right]) =>
-            left.localeCompare(right),
+            compareCodePoints(left, right),
           ),
         )
       : nestedValue,
   );
 
-export const collectEndpointPermissionDeclarations = async (
-  rootModule: Type<object>,
-): Promise<string[]> => {
+export const collectEndpointPermissionDeclarations = (): string[] => {
+  const discoveryService =
+    getAppProviderByClassName<DiscoveryService>('DiscoveryService');
+  const reflector = getAppProviderByClassName<Reflector>('Reflector');
+  const metadataScanner =
+    getAppProviderByClassName<MetadataScanner>('MetadataScanner');
+
   const declarationsByEndpoint = new Map<
     string,
     EndpointPermissionDeclarations
   >();
 
-  for (const { endpointClass, isController } of await scanClasses(rootModule)) {
+  for (const { endpointClass, isController } of discoverClasses(
+    discoveryService,
+  )) {
     const prototype = endpointClass.prototype;
 
     for (const methodName of metadataScanner.getAllMethodNames(prototype)) {
       const handler: unknown = prototype[methodName as keyof typeof prototype];
 
-      if (!isEndpointHandler(handler, isController)) {
+      if (!isEndpointHandler(handler, { reflector, isController })) {
         continue;
       }
 
@@ -130,8 +133,11 @@ export const collectEndpointPermissionDeclarations = async (
 
       declarationsByEndpoint.set(endpoint, {
         authPrincipalGuards: [
-          ...readAuthPrincipalGuardConfigs(endpointClass),
-          ...readAuthPrincipalGuardConfigs(handler),
+          ...readAuthPrincipalGuardConfigs({
+            reflector,
+            guardsOwner: endpointClass,
+          }),
+          ...readAuthPrincipalGuardConfigs({ reflector, guardsOwner: handler }),
         ],
         applicationTarget:
           reflector.get<ApplicationTarget | undefined>(
@@ -143,7 +149,7 @@ export const collectEndpointPermissionDeclarations = async (
   }
 
   return [...declarationsByEndpoint.entries()]
-    .sort(([left], [right]) => left.localeCompare(right))
+    .sort(([left], [right]) => compareCodePoints(left, right))
     .map(
       ([endpoint, declarations]) =>
         `${endpoint} ${stringifyWithSortedKeys(declarations)}`,

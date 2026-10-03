@@ -1121,6 +1121,22 @@ type BillingCustomer {
   hasPaymentMethod: Boolean
 }
 
+type EnterpriseLicenseInfoDTO {
+  isValid: Boolean!
+  licensee: String
+  expiresAt: DateTime
+  subscriptionId: String
+}
+
+type EnterpriseSubscriptionStatusDTO {
+  status: String!
+  licensee: String
+  expiresAt: DateTime
+  cancelAt: DateTime
+  currentPeriodEnd: DateTime
+  isCancellationScheduled: Boolean!
+}
+
 type SdkClientChecksums {
   core: String
   metadata: String!
@@ -1615,22 +1631,6 @@ enum LogicFunctionExecutionStatus {
   IDLE
   SUCCESS
   ERROR
-}
-
-type EnterpriseLicenseInfoDTO {
-  isValid: Boolean!
-  licensee: String
-  expiresAt: DateTime
-  subscriptionId: String
-}
-
-type EnterpriseSubscriptionStatusDTO {
-  status: String!
-  licensee: String
-  expiresAt: DateTime
-  cancelAt: DateTime
-  currentPeriodEnd: DateTime
-  isCancellationScheduled: Boolean!
 }
 
 type UsageQuotaDefinition {
@@ -3391,6 +3391,7 @@ type RunAgentResult {
   result: JSON
   error: String
   success: Boolean!
+  threadId: UUID
 }
 
 type ChannelSyncSuccess {
@@ -5551,9 +5552,12 @@ input UpdateWebhookInputUpdates {
 
 input RunAgentInput {
   agentUniversalIdentifier: String!
-  prompt: String
+  prompt: String @deprecated(reason: "Use input instead.")
   runAsWorkspaceMemberId: UUID
-  messages: [RunAgentMessageInput!]
+  messages: [RunAgentMessageInput!] @deprecated(reason: "Use input instead.")
+  input: [RunAgentMessageInput!]
+  additionalInstructions: String
+  thread: RunAgentThreadInput
 }
 
 input RunAgentMessageInput {
@@ -5570,6 +5574,11 @@ enum RunAgentMessageRole {
 input RunAgentMessageAttachmentInput {
   fileId: UUID!
   filename: String
+}
+
+input RunAgentThreadInput {
+  key: String!
+  title: String
 }
 
 input UpdateMessageFolderInput {

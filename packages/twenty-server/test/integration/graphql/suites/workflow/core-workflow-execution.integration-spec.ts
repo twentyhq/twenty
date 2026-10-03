@@ -1426,9 +1426,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const resumedWith = executeAgent.mock.calls[1][0];
 
       expect(resumedWith.messages).toEqual([]);
-      expect(JSON.stringify(resumedWith.priorModelMessages)).toContain(
-        'Send it',
-      );
+      expect(JSON.stringify(resumedWith.priorMessages)).toContain('Send it');
 
       const { messages, questionPart } = await getConversation(threadId);
 
@@ -1535,7 +1533,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
       expect(executeAgent).toHaveBeenCalledTimes(2);
       expect(
-        JSON.stringify(executeAgent.mock.calls[1][0].priorModelMessages),
+        JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
       ).not.toContain('"pending"');
     });
 
