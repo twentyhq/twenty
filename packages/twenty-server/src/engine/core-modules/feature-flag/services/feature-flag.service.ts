@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isFeatureFlagEnabled } from 'twenty-shared/utils';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
@@ -31,10 +30,7 @@ export class FeatureFlagService {
   ): Promise<boolean> {
     const featureFlagMap = await this.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    return isFeatureFlagEnabled({
-      featureFlagKey: key,
-      value: featureFlagMap[key],
-    });
+    return !!featureFlagMap[key];
   }
 
   public async getWorkspaceFeatureFlags(

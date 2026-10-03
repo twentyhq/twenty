@@ -1,7 +1,9 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   FeatureFlagKey,
   ObjectSharingReach,
@@ -22,9 +24,13 @@ export const useCanReadObjectRecordsOrSharedRecords = (
   const isRecordLevelSharingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
   );
-  const isRecordShareVisibilityGatingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED,
-  );
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isRecordShareVisibilityGatingEnabled =
+    currentWorkspace?.featureFlags?.find(
+      (featureFlag) =>
+        featureFlag.key ===
+        FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED,
+    )?.value !== false;
 
   return (
     objectPermissions.canReadObjectRecords ||

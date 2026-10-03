@@ -8,14 +8,14 @@ import {
 } from '~/generated-metadata/graphql';
 
 const mockIsRecordLevelSharingEnabled = jest.fn();
-const mockIsRecordShareVisibilityGatingEnabled = jest.fn();
+const mockWorkspaceFeatureFlags = jest.fn();
 const mockCanReadObjectRecords = jest.fn();
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: (featureFlagKey: FeatureFlagKey) =>
-    featureFlagKey === FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
-      ? mockIsRecordShareVisibilityGatingEnabled()
-      : mockIsRecordLevelSharingEnabled(),
+  useIsFeatureEnabled: () => mockIsRecordLevelSharingEnabled(),
+}));
+jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
+  useAtomStateValue: () => ({ featureFlags: mockWorkspaceFeatureFlags() }),
 }));
 jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
   useObjectPermissionsForObject: () => ({
@@ -43,7 +43,7 @@ const renderCanRead = (
 describe('useCanReadObjectRecordsOrSharedRecords', () => {
   beforeEach(() => {
     mockIsRecordLevelSharingEnabled.mockReturnValue(true);
-    mockIsRecordShareVisibilityGatingEnabled.mockReturnValue(true);
+    mockWorkspaceFeatureFlags.mockReturnValue([]);
     mockCanReadObjectRecords.mockReturnValue(false);
   });
 
@@ -88,14 +88,39 @@ describe('useCanReadObjectRecordsOrSharedRecords', () => {
     expect(renderCanRead()).toBe(false);
   });
 
-  it('denies shared records when record share visibility gating is off', () => {
-    mockIsRecordShareVisibilityGatingEnabled.mockReturnValue(false);
+  it('keeps shared records readable when the workspace has no visibility gating flag', () => {
+    expect(renderCanRead()).toBe(true);
+  });
+
+  it('keeps shared records readable when visibility gating is explicitly on', () => {
+    mockWorkspaceFeatureFlags.mockReturnValue([
+      {
+        key: FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED,
+        value: true,
+      },
+    ]);
+
+    expect(renderCanRead()).toBe(true);
+  });
+
+  it('denies shared records when visibility gating is explicitly off', () => {
+    mockWorkspaceFeatureFlags.mockReturnValue([
+      {
+        key: FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED,
+        value: false,
+      },
+    ]);
 
     expect(renderCanRead()).toBe(false);
   });
 
-  it('still allows reading through the role when record share visibility gating is off', () => {
-    mockIsRecordShareVisibilityGatingEnabled.mockReturnValue(false);
+  it('still allows reading through the role when visibility gating is explicitly off', () => {
+    mockWorkspaceFeatureFlags.mockReturnValue([
+      {
+        key: FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED,
+        value: false,
+      },
+    ]);
     mockCanReadObjectRecords.mockReturnValue(true);
 
     expect(renderCanRead()).toBe(true);

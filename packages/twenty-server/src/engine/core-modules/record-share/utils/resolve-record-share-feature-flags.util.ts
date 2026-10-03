@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isFeatureFlagEnabled } from 'twenty-shared/utils';
 
 import { type RowAccessPolicyEnvironment } from 'src/engine/twenty-orm/types/row-access-policy.type';
 
@@ -11,19 +10,15 @@ export const resolveRecordShareFeatureFlags = (
   RowAccessPolicyEnvironment,
   'isRecordSharingEnabled' | 'isRecordShareVisibilityGatingEnabled'
 > => {
-  const isRecordShareVisibilityGatingEnabled = isFeatureFlagEnabled({
-    featureFlagKey: FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED,
-    value:
-      featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED],
-  });
+  const isRecordShareVisibilityGatingEnabled =
+    featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED] !==
+    false;
 
   return {
     isRecordShareVisibilityGatingEnabled,
     isRecordSharingEnabled:
       isRecordShareVisibilityGatingEnabled &&
-      isFeatureFlagEnabled({
-        featureFlagKey: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-        value: featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
-      }),
+      (featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ??
+        false),
   };
 };

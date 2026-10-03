@@ -498,6 +498,17 @@ describe('buildRowAccessPolicy', () => {
       },
     );
 
+    it('opens a detached INHERITED record to the role instead of requiring its own share', () => {
+      jest.mocked(resolveInheritedReadabilityParents).mockReturnValue([]);
+
+      expect(buildBypassed(readEverything, attachment)).toEqual({
+        kind: 'open',
+      });
+      expect(gatedSql(readEverything, attachment)).toContain(
+        '"attachment_recordShare"."recordId" = "attachment"."id"',
+      );
+    });
+
     it('opens an INHERITED record whose OPEN and PRIVATE parents are open', () => {
       expect(buildBypassed(readEverything, attachment)).toEqual({
         kind: 'open',
