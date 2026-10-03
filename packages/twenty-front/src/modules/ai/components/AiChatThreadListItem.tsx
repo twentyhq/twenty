@@ -201,15 +201,14 @@ export const AiChatThreadListItem = ({
         );
     }
   };
-  const isCommandMenuDropdownOpen = useAtomComponentStateValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     getCommandMenuDropdownIdFromCommandMenuId(commandMenuInstanceId),
   );
 
   // The shared menu opens on the selected chats, so only they keep "..." shown
-  const isDropdownOpen =
-    isCommandMenuDropdownOpen &&
-    (!isDefined(sharedCommandMenuInstanceId) || isSelected);
+  const isMenuOpenOnThread =
+    isDropdownOpen && (!isDefined(sharedCommandMenuInstanceId) || isSelected);
   return (
     <StyledThreadItem
       $isSelected={isSelected}
@@ -272,7 +271,7 @@ export const AiChatThreadListItem = ({
                 <VisibilityHidden>{t`, unread`}</VisibilityHidden>
               )}
             </StyledThreadTitle>
-            <StyledActivityTime $isDropdownOpen={isDropdownOpen}>
+            <StyledActivityTime $isDropdownOpen={isMenuOpenOnThread}>
               {getActivityTimeLabel()}
             </StyledActivityTime>
           </StyledThreadHeading>
@@ -280,14 +279,14 @@ export const AiChatThreadListItem = ({
         <StyledThreadPreview>{previewText}</StyledThreadPreview>
       </StyledThreadContent>
       <StyledMenuTrigger
-        $isDropdownOpen={isDropdownOpen}
+        $isDropdownOpen={isMenuOpenOnThread}
         onClick={(event) => event.stopPropagation()}
       >
         {isDefined(sharedCommandMenuInstanceId) ? (
           <LightIconButton
             aria-label={t`Chat actions`}
             aria-haspopup="menu"
-            aria-expanded={isDropdownOpen}
+            aria-expanded={isMenuOpenOnThread}
             emphasis="subtle"
             onClick={(event) => {
               const { left, bottom } =
