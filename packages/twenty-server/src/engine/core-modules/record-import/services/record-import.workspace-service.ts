@@ -345,6 +345,7 @@ export class RecordImportWorkspaceService {
       (current) => ({
         ...current,
         status: 'VALIDATING',
+        jobId: undefined,
         columns: parsedColumns,
         mappedFields: buildRecordImportMappedFields(
           parsedColumns,
@@ -783,7 +784,11 @@ export class RecordImportWorkspaceService {
     const interrupted = await this.recordImportSessionService.update(
       session,
       (current) => {
-        if (!RUNNING_STATUSES.includes(current.status)) {
+        // A newer run may have started since the job was read
+        if (
+          !RUNNING_STATUSES.includes(current.status) ||
+          current.jobId !== session.jobId
+        ) {
           return undefined;
         }
 
