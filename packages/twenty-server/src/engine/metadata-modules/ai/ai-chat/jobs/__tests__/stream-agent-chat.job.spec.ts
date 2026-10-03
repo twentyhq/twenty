@@ -1,5 +1,5 @@
 import { type LanguageModelUsage, type TextStreamPart, type ToolSet } from 'ai';
-import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
+import { ASK_QUESTION_TOOL_NAME } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -88,20 +88,20 @@ const PENDING_QUESTION_PARTS: ModelStreamPart[] = [
   {
     type: 'tool-input-start',
     id: 'tool-call-id',
-    toolName: ASK_QUESTIONS_TOOL_NAME,
+    toolName: ASK_QUESTION_TOOL_NAME,
   },
   {
     type: 'tool-call',
     toolCallId: 'tool-call-id',
-    toolName: ASK_QUESTIONS_TOOL_NAME,
-    input: { questions: QUESTIONS },
+    toolName: ASK_QUESTION_TOOL_NAME,
+    input: QUESTIONS[0],
   },
   {
     type: 'tool-result',
     toolCallId: 'tool-call-id',
-    toolName: ASK_QUESTIONS_TOOL_NAME,
-    input: { questions: QUESTIONS },
-    output: { result: { questions: QUESTIONS, status: 'pending' } },
+    toolName: ASK_QUESTION_TOOL_NAME,
+    input: QUESTIONS[0],
+    output: { result: { question: QUESTIONS[0], status: 'pending' } },
   },
   ...FINISH_PARTS,
 ];

@@ -14,7 +14,7 @@ import {
   type ToolSet,
 } from 'ai';
 import {
-  ASK_QUESTIONS_TOOL_NAME,
+  ASK_QUESTION_TOOL_NAME,
   ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
@@ -73,7 +73,7 @@ import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
-import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
+import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
@@ -287,7 +287,7 @@ export class ChatExecutionService {
     const preloadedToolSet: ToolSet = {
       ...preloadedTools,
       ...nativeTools,
-      [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
+      [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
         isWorkspaceSetupThread,
       }),
       [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),

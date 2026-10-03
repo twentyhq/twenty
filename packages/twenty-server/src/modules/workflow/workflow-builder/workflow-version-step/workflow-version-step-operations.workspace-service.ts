@@ -342,7 +342,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           builtStep: {
             ...baseStep,
-            name: 'Send Chat Message',
+            name: 'Send to Inbox',
             type: WorkflowActionType.SEND_CHAT_MESSAGE,
             settings: {
               ...BASE_STEP_DEFINITION,

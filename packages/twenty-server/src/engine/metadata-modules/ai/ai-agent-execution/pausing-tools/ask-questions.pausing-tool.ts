@@ -9,7 +9,7 @@ import { z } from 'zod';
 
 import { definePausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/define-pausing-tool.util';
 
-export const askQuestionsInputSchema = z.object({
+const askQuestionsInputSchema = z.object({
   questions: z
     .array(
       z.object({
@@ -59,19 +59,6 @@ export const askQuestionsInputSchema = z.object({
     .min(1)
     .max(4)
     .describe('One to four questions to ask the user.'),
-});
-
-// An application that asks through the inbox writes the same output.
-export const buildAskQuestionsPendingOutput = (
-  input: AskQuestionsToolInput,
-): {
-  success: true;
-  message: string;
-  result: AskQuestionsToolResult;
-} => ({
-  success: true,
-  message: 'Questions presented to the user; awaiting their answer.',
-  result: { questions: input.questions, status: 'pending' },
 });
 
 type AskQuestionsToolOutput = {
@@ -166,7 +153,8 @@ const buildAnswerText = ({
     })
     .join('\n\n');
 
-// result shape is read by the chat renderer, the admin panel and seeded runs
+// the multi-question tool ask_question replaced, kept so calls stored before can still be
+// answered and read
 export const ASK_QUESTIONS_PAUSING_TOOL = definePausingTool<
   AskQuestionsToolInput,
   AskQuestionsToolOutput
