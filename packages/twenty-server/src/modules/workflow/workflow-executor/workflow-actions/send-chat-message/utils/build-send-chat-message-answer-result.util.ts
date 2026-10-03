@@ -1,16 +1,7 @@
 import { isString } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
 
-export type SendChatMessageAnswerResult = {
-  threadId: string;
-  isApproved: boolean;
-  approvedToolName: string | null;
-  status: string | null;
-  arguments: Record<string, unknown> | null;
-  output: unknown;
-  feedback: string | null;
-  error: string | null;
-};
+import { type SendChatMessageAnswerResult } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/types/send-chat-message-answer-result.type';
 
 // the member approved whenever the call was attempted, whatever its outcome, which status carries
 const APPROVED_STATUSES = new Set(['approved', 'failed', 'conflict']);

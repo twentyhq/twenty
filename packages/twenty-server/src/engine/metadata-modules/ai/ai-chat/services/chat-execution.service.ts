@@ -14,7 +14,10 @@ import {
   type SystemModelMessage,
   type ToolSet,
 } from 'ai';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  type ExtendedUIMessage,
+  PROPOSE_TOOL_CALL_TOOL_NAME,
+} from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -75,10 +78,7 @@ import {
   ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   createAttachConversationToRecordTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
-import {
-  PROPOSE_TOOL_CALL_TOOL_NAME,
-  createProposeToolCallTool,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
+import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
 import {
   REQUEST_FORM_TOOL_NAME,
   createRequestFormTool,

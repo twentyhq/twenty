@@ -3,7 +3,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { EmailToolInputZodSchema } from 'src/engine/core-modules/tool/tools/email-tool/email-tool.schema';
-import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
+import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/proposed-tool-call-resolution.type';
 
 // the email tools' own schema decides what can be proposed; the card cannot show attachments,
 // so an email carrying files would send them without the person seeing them

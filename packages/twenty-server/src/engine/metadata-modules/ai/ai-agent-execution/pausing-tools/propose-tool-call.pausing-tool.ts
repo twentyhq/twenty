@@ -12,10 +12,8 @@ import { z } from 'zod';
 
 import { definePausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/define-pausing-tool.util';
 import { readRecordFieldValues } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-record-field-values.util';
-import {
-  proposeToolCallInputSchema,
-  proposedToolCallSchema,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
+import { proposeToolCallInputSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call-input.schema';
+import { proposedToolCallSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/proposed-tool-call.schema';
 
 // the person may run the proposed tool or one of the alternatives it offers, and an update
 // may only change the fields it proposed, since only those were snapshotted to detect a conflict

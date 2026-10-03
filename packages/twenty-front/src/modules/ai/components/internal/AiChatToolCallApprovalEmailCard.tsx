@@ -18,30 +18,14 @@ import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/s
 import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
-import { StyledAiChatAskCard } from '@/ai/components/AiChatAskStyledComponents';
 import { AiChatEmailRecipientsRow } from '@/ai/components/internal/AiChatEmailRecipientsRow';
-import { AiChatToolCallApprovalFeedbackInput } from '@/ai/components/internal/AiChatToolCallApprovalFeedbackInput';
-import {
-  StyledToolCallApprovalActions,
-  StyledToolCallApprovalActionsSpacer,
-  StyledToolCallApprovalHeader,
-  StyledToolCallApprovalLabel,
-  StyledToolCallApprovalSummary,
-} from '@/ai/components/internal/AiChatToolCallApprovalStyledComponents';
-import { useAiChatAskCardFieldFocus } from '@/ai/hooks/useAiChatAskCardFieldFocus';
+import { AiChatToolCallApprovalCardLayout } from '@/ai/components/internal/AiChatToolCallApprovalCardLayout';
 import { useAnswerToolCallApproval } from '@/ai/hooks/useAnswerToolCallApproval';
 
 const EMAIL_TOOL_NAMES = {
   send: 'send_email',
   draft: 'draft_email',
 } as const;
-
-const StyledFields = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
-`;
 
 const StyledSubjectInput = styled.input`
   background: transparent;
@@ -90,17 +74,8 @@ export const AiChatToolCallApprovalEmailCard = ({
   proposal,
 }: AiChatToolCallApprovalEmailCardProps) => {
   const { t } = useLingui();
-  const { handleFieldFocus, handleFieldBlur } = useAiChatAskCardFieldFocus();
-  const {
-    pendingResponse,
-    isAnswering,
-    isFeedbackShown,
-    showFeedback,
-    feedback,
-    setFeedback,
-    approve,
-    reject,
-  } = useAnswerToolCallApproval({ toolCallId, proposal });
+  const approval = useAnswerToolCallApproval({ toolCallId, proposal });
+  const { pendingResponse, isAnswering, approve, reject } = approval;
 
   const initialRecipients = readRecipients(proposal.arguments);
   const [to, setTo] = useState(initialRecipients.to);
@@ -147,123 +122,106 @@ export const AiChatToolCallApprovalEmailCard = ({
       : null;
 
   return (
-    <StyledAiChatAskCard>
-      <StyledToolCallApprovalHeader>
-        <StyledToolCallApprovalLabel>
-          {t`Review this email before it goes out`}
-        </StyledToolCallApprovalLabel>
-        <StyledToolCallApprovalSummary>
-          {proposal.summary}
-        </StyledToolCallApprovalSummary>
-      </StyledToolCallApprovalHeader>
-      <StyledFields onFocus={handleFieldFocus} onBlur={handleFieldBlur}>
+    <AiChatToolCallApprovalCardLayout
+      label={t`Review this email before it goes out`}
+      summary={proposal.summary}
+      approval={approval}
+      actions={
+        <>
+          <Button
+            size="sm"
+            variant="ghost"
+            startIcon={<IconTrash />}
+            disabled={isAnswering}
+            loading={pendingResponse?.decision === 'reject'}
+            onClick={reject}
+          >
+            {t`Discard`}
+          </Button>
+          {canSaveDraft && (
+            <Button
+              size="sm"
+              variant="outline"
+              startIcon={<IconDeviceFloppy />}
+              disabled={isAnswering}
+              loading={pendingToolName === EMAIL_TOOL_NAMES.draft}
+              onClick={() => approveWith(EMAIL_TOOL_NAMES.draft)}
+            >
+              {t`Save as draft`}
+            </Button>
+          )}
+          {canSend && (
+            <Button
+              size="sm"
+              variant="solid"
+              color="accent"
+              startIcon={<IconSend />}
+              disabled={isAnswering || to.length === 0}
+              loading={pendingToolName === EMAIL_TOOL_NAMES.send}
+              onClick={() => approveWith(EMAIL_TOOL_NAMES.send)}
+            >
+              {t`Send`}
+            </Button>
+          )}
+        </>
+      }
+    >
+      <AiChatEmailRecipientsRow
+        label={t`To`}
+        recipients={to}
+        disabled={isAnswering}
+        onChange={setTo}
+      />
+      {(!isCcShown || !isBccShown) && (
+        <StyledRecipientToggles>
+          {!isCcShown && (
+            <LightButton
+              disabled={isAnswering}
+              onClick={() => setIsCcShown(true)}
+            >
+              {t`Cc`}
+            </LightButton>
+          )}
+          {!isBccShown && (
+            <LightButton
+              disabled={isAnswering}
+              onClick={() => setIsBccShown(true)}
+            >
+              {t`Bcc`}
+            </LightButton>
+          )}
+        </StyledRecipientToggles>
+      )}
+      {isCcShown && (
         <AiChatEmailRecipientsRow
-          label={t`To`}
-          recipients={to}
+          label={t`Cc`}
+          recipients={cc}
           disabled={isAnswering}
-          onChange={setTo}
+          onChange={setCc}
         />
-        {(!isCcShown || !isBccShown) && (
-          <StyledRecipientToggles>
-            {!isCcShown && (
-              <LightButton
-                disabled={isAnswering}
-                onClick={() => setIsCcShown(true)}
-              >
-                {t`Cc`}
-              </LightButton>
-            )}
-            {!isBccShown && (
-              <LightButton
-                disabled={isAnswering}
-                onClick={() => setIsBccShown(true)}
-              >
-                {t`Bcc`}
-              </LightButton>
-            )}
-          </StyledRecipientToggles>
-        )}
-        {isCcShown && (
-          <AiChatEmailRecipientsRow
-            label={t`Cc`}
-            recipients={cc}
-            disabled={isAnswering}
-            onChange={setCc}
-          />
-        )}
-        {isBccShown && (
-          <AiChatEmailRecipientsRow
-            label={t`Bcc`}
-            recipients={bcc}
-            disabled={isAnswering}
-            onChange={setBcc}
-          />
-        )}
-        <StyledSubjectInput
-          aria-label={t`Subject`}
-          placeholder={t`Subject`}
-          value={subject}
+      )}
+      {isBccShown && (
+        <AiChatEmailRecipientsRow
+          label={t`Bcc`}
+          recipients={bcc}
           disabled={isAnswering}
-          onChange={(event) => setSubject(event.target.value)}
+          onChange={setBcc}
         />
-        <FormAdvancedTextFieldInput
-          defaultValue={serializeEmailBody(proposal.arguments.body)}
-          onChange={handleBodyChange}
-          readonly={isAnswering}
-          placeholder={t`Write the email`}
-          profile={INLINE_EMAIL_BODY_EDITOR_PROFILE}
-        />
-        {isFeedbackShown && (
-          <AiChatToolCallApprovalFeedbackInput
-            value={feedback}
-            disabled={isAnswering}
-            onChange={setFeedback}
-          />
-        )}
-      </StyledFields>
-      <StyledToolCallApprovalActions>
-        {!isFeedbackShown && (
-          <LightButton disabled={isAnswering} onClick={showFeedback}>
-            {t`Add feedback`}
-          </LightButton>
-        )}
-        <StyledToolCallApprovalActionsSpacer />
-        <Button
-          size="sm"
-          variant="ghost"
-          startIcon={<IconTrash />}
-          disabled={isAnswering}
-          loading={pendingResponse?.decision === 'reject'}
-          onClick={reject}
-        >
-          {t`Discard`}
-        </Button>
-        {canSaveDraft && (
-          <Button
-            size="sm"
-            variant="outline"
-            startIcon={<IconDeviceFloppy />}
-            disabled={isAnswering}
-            loading={pendingToolName === EMAIL_TOOL_NAMES.draft}
-            onClick={() => approveWith(EMAIL_TOOL_NAMES.draft)}
-          >
-            {t`Save as draft`}
-          </Button>
-        )}
-        {canSend && (
-          <Button
-            size="sm"
-            variant="solid"
-            color="accent"
-            startIcon={<IconSend />}
-            disabled={isAnswering || to.length === 0}
-            loading={pendingToolName === EMAIL_TOOL_NAMES.send}
-            onClick={() => approveWith(EMAIL_TOOL_NAMES.send)}
-          >
-            {t`Send`}
-          </Button>
-        )}
-      </StyledToolCallApprovalActions>
-    </StyledAiChatAskCard>
+      )}
+      <StyledSubjectInput
+        aria-label={t`Subject`}
+        placeholder={t`Subject`}
+        value={subject}
+        disabled={isAnswering}
+        onChange={(event) => setSubject(event.target.value)}
+      />
+      <FormAdvancedTextFieldInput
+        defaultValue={serializeEmailBody(proposal.arguments.body)}
+        onChange={handleBodyChange}
+        readonly={isAnswering}
+        placeholder={t`Write the email`}
+        profile={INLINE_EMAIL_BODY_EDITOR_PROFILE}
+      />
+    </AiChatToolCallApprovalCardLayout>
   );
 };

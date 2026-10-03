@@ -3,22 +3,20 @@ import {
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
   PROPOSE_TOOL_CALL_TOOL_NAME,
-  type ProposeToolCallToolInput,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { type z } from 'zod';
 
+import { buildToolPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-tool-part.util';
 import { buildLogicFunctionToolName } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-name.util';
-import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
+import { type ResolveInboxProposal } from 'src/engine/metadata-modules/ai/ai-chat/types/resolve-inbox-proposal.type';
 import {
   askQuestionsInputSchema,
   buildAskQuestionsPendingOutput,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
-import {
-  buildProposeToolCallPendingOutput,
-  proposeToolCallInputSchema,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
+import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-propose-tool-call-pending-output.util';
+import { proposeToolCallInputSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call-input.schema';
 import {
   buildRequestFormPendingOutput,
   requestFormInputSchema,
@@ -28,10 +26,6 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-
-export type ResolveInboxProposal = (
-  input: ProposeToolCallToolInput,
-) => Promise<ProposedToolCallResolution>;
 
 type InboxMessageToolCallPart = {
   part: ExtendedUIMessagePart;
@@ -65,24 +59,6 @@ const parseOptionalRecord = (
     ? value
     : throwInvalidToolCall(`${name} must be an object`);
 };
-
-export const buildToolPart = ({
-  toolName,
-  toolCallId,
-  input,
-  output,
-}: {
-  toolName: string;
-  toolCallId: string;
-  input: unknown;
-  output: unknown;
-}): ExtendedUIMessagePart => ({
-  type: `tool-${toolName}`,
-  toolCallId,
-  state: 'output-available',
-  input,
-  output,
-});
 
 const buildPausingToolPart = async ({
   toolName,
