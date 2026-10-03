@@ -61,34 +61,5 @@ export const RecordSelectionRecordIdsEffect = ({
     store.set(recordIdsAtom, recordIds);
   }, [instanceId, records, store]);
 
-  // The list owns its selection, so leaving it clears the selection rather
-  // than bringing it back on return
-  useEffect(
-    () => () => {
-      const recordIds = store.get(
-        recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
-          instanceId,
-          familyKey: NO_RECORD_GROUP_FAMILY_KEY,
-        }),
-      );
-
-      for (const recordId of recordIds) {
-        store.set(
-          isRecordSelectedComponentFamilyState.atomFamily({
-            instanceId,
-            familyKey: recordId,
-          }),
-          false,
-        );
-      }
-
-      store.set(
-        recordSelectionRangeComponentState.atomFamily({ instanceId }),
-        null,
-      );
-    },
-    [instanceId, store],
-  );
-
   return null;
 };
