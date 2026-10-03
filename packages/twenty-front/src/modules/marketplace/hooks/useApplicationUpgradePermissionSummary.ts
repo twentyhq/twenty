@@ -43,7 +43,8 @@ export const useApplicationUpgradePermissionSummary = ({
   return {
     permissionSummaryItems:
       skip || hasPermissionSummaryError ? [] : permissionSummaryItems,
-    isPermissionSummaryReady: skip || (!loading && !isDefined(error)),
+    isPermissionSummaryReady:
+      skip || (!loading && !isDefined(error) && isDefined(data)),
     hasPermissionSummaryError,
     refetchPermissionSummary: refetch,
   };
