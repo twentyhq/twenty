@@ -1116,6 +1116,22 @@ type BillingCustomer {
   hasPaymentMethod: Boolean
 }
 
+type EnterpriseLicenseInfoDTO {
+  isValid: Boolean!
+  licensee: String
+  expiresAt: DateTime
+  subscriptionId: String
+}
+
+type EnterpriseSubscriptionStatusDTO {
+  status: String!
+  licensee: String
+  expiresAt: DateTime
+  cancelAt: DateTime
+  currentPeriodEnd: DateTime
+  isCancellationScheduled: Boolean!
+}
+
 type SdkClientChecksums {
   core: String
   metadata: String!
@@ -1610,22 +1626,6 @@ enum LogicFunctionExecutionStatus {
   IDLE
   SUCCESS
   ERROR
-}
-
-type EnterpriseLicenseInfoDTO {
-  isValid: Boolean!
-  licensee: String
-  expiresAt: DateTime
-  subscriptionId: String
-}
-
-type EnterpriseSubscriptionStatusDTO {
-  status: String!
-  licensee: String
-  expiresAt: DateTime
-  cancelAt: DateTime
-  currentPeriodEnd: DateTime
-  isCancellationScheduled: Boolean!
 }
 
 type UsageQuotaDefinition {

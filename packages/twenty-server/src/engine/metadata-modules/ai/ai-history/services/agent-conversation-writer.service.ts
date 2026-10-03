@@ -14,6 +14,7 @@ import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
+import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { type RecordableAgentExecution } from 'src/engine/metadata-modules/ai/ai-history/types/recordable-agent-execution.type';
 import {
   AiException,
@@ -28,17 +29,34 @@ export class AgentConversationWriterService {
     private readonly transactionService: AgentHistoryTransactionService,
   ) {}
 
+  runInTransaction<TResult>(
+    workspaceId: string,
+    work: (scope: AgentHistoryTransactionScope) => Promise<TResult>,
+  ): Promise<TResult> {
+    return this.transactionService.run(workspaceId, work);
+  }
+
   async insertTurn({
     workspaceId,
     threadId,
     agentId,
     id,
+    scope,
   }: {
     workspaceId: string;
     threadId: string;
     agentId: string | null;
     id?: string;
+    scope?: AgentHistoryTransactionScope;
   }): Promise<string> {
+    if (isDefined(scope)) {
+      const turnId = id ?? randomUUID();
+
+      await scope.insert('agentTurn', { id: turnId, threadId, agentId });
+
+      return turnId;
+    }
+
     const turnInsertResult = await this.turnRepository.insert(workspaceId, {
       ...(isDefined(id) ? { id } : {}),
       threadId,
@@ -65,6 +83,7 @@ export class AgentConversationWriterService {
     isAwaitingAnswer,
     processedAt,
     parts,
+    scope,
   }: {
     workspaceId: string;
     id?: string;
@@ -78,11 +97,12 @@ export class AgentConversationWriterService {
     isAwaitingAnswer?: boolean;
     processedAt?: Date;
     parts: ExtendedUIMessagePart[];
+    scope?: AgentHistoryTransactionScope;
   }): Promise<string> {
     const messageId = id ?? randomUUID();
 
-    await this.transactionService.run(workspaceId, async (scope) => {
-      await scope.insert('agentMessage', {
+    const write = async (transactionScope: AgentHistoryTransactionScope) => {
+      await transactionScope.insert('agentMessage', {
         id: messageId,
         threadId,
         turnId,
@@ -101,14 +121,14 @@ export class AgentConversationWriterService {
       );
 
       if (dbParts.length > 0) {
-        await scope.insert('agentMessagePart', dbParts);
+        await transactionScope.insert('agentMessagePart', dbParts);
       }
 
       if (!isAwaitingAnswer) {
         return;
       }
 
-      const claimedThreadCount = await scope.update(
+      const claimedThreadCount = await transactionScope.update(
         'agentChatThread',
         { id: threadId, pendingQuestionMessageId: IsNull() },
         { pendingQuestionMessageId: messageId },
@@ -120,7 +140,13 @@ export class AgentConversationWriterService {
           AiExceptionCode.THREAD_AWAITING_ANSWER,
         );
       }
-    });
+    };
+
+    if (isDefined(scope)) {
+      await write(scope);
+    } else {
+      await this.transactionService.run(workspaceId, write);
+    }
 
     return messageId;
   }
@@ -132,12 +158,14 @@ export class AgentConversationWriterService {
     turnId,
     agentId,
     execution,
+    scope,
   }: {
     workspaceId: string;
     threadId: string;
     turnId: string;
     agentId: string | null;
     execution: RecordableAgentExecution;
+    scope?: AgentHistoryTransactionScope;
   }): Promise<{ isAwaitingAnswer: boolean }> {
     const replyParts = mapAiStepsToUiMessageParts(execution.steps ?? []);
 
@@ -160,6 +188,7 @@ export class AgentConversationWriterService {
       senderUserWorkspaceId: null,
       isAwaitingAnswer,
       parts: replyParts,
+      scope,
     });
 
     return { isAwaitingAnswer };

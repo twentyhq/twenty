@@ -26,6 +26,7 @@ const buildService = () => {
   };
   const agentRunConversationService = {
     recordTurn: jest.fn().mockResolvedValue(undefined),
+    withThreadLock: jest.fn(({ work }) => work()),
   };
   const conversationReaderService = {
     loadMessages: jest.fn().mockResolvedValue(PRIOR_MESSAGES),
@@ -120,6 +121,9 @@ describe('AgentRunService', () => {
     const actor = { type: 'user', userWorkspaceId: RUN_AS_USER_WORKSPACE_ID };
 
     expect(result.threadId).toBe(threadId);
+    expect(agentRunConversationService.withThreadLock).toHaveBeenCalledWith(
+      expect.objectContaining({ workspaceId: 'workspace-id', threadId }),
+    );
     expect(conversationReaderService.loadMessages).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
       threadId,

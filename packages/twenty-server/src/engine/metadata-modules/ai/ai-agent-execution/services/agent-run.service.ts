@@ -156,7 +156,7 @@ export class AgentRunService {
       ? addContextToLastRunAgentMessage({ messages, context: input.context })
       : messages;
 
-    try {
+    const runTurn = async (): Promise<RunAgentResult> => {
       const priorMessages = isDefined(threadId)
         ? await this.conversationReaderService.loadMessages({
             workspaceId: workspace.id,
@@ -222,6 +222,16 @@ export class AgentRunService {
         success: true,
         threadId,
       };
+    };
+
+    try {
+      return isDefined(threadId)
+        ? await this.agentRunConversationService.withThreadLock({
+            workspaceId: workspace.id,
+            threadId,
+            work: runTurn,
+          })
+        : await runTurn();
     } catch (error) {
       if (
         error instanceof AiException &&

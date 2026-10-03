@@ -220,6 +220,8 @@ const { result, threadId } = await runAgent({
   suits per-request instructions such as formatting rules or a deadline.
 - A turn is stored once the run succeeds. A failed run leaves the conversation
   as it was.
+- Calls on the same thread run one at a time: a second call waits for the
+  first to finish, so each one sees the turns before it.
 - When turns run as different members (see below), each one only sees the text
   of the others' turns, never their tool results, since those were read with
   someone else's permissions.

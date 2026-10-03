@@ -1,3 +1,5 @@
+import { FileFolder } from 'twenty-shared/types';
+
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 
 const WORKSPACE_ID = 'workspace-id';
@@ -52,18 +54,43 @@ const buildService = (messages: unknown[]) => {
       .mockImplementation(({ fileId }) => `https://files/${fileId}`),
   };
 
-  return new AgentConversationReaderService(
+  const service = new AgentConversationReaderService(
     messageRepository as never,
     fileUrlService as never,
   );
+
+  return { service, messageRepository, fileUrlService };
 };
+
+const buildFileMessage = ({
+  turnId,
+  senderUserWorkspaceId,
+}: {
+  turnId: string;
+  senderUserWorkspaceId: string;
+}) => ({
+  id: `${turnId}-user`,
+  turnId,
+  role: 'user',
+  senderUserWorkspaceId,
+  senderApplicationId: APPLICATION_ID,
+  parts: [
+    { type: 'text', textContent: 'What does this deck say?' },
+    {
+      type: 'file',
+      fileId: 'file-1',
+      fileFilename: 'deck.pdf',
+      file: { mimeType: 'application/pdf' },
+    },
+  ],
+});
 
 const getPartTypes = (message: { parts: { type: string }[] }) =>
   message.parts.map((part) => part.type);
 
 describe('AgentConversationReaderService', () => {
   it('keeps every part when no actor is given', async () => {
-    const service = buildService([
+    const { service } = buildService([
       ...buildTurn({
         turnId: 'turn-1',
         senderUserWorkspaceId: MEMBER_A,
@@ -81,7 +108,7 @@ describe('AgentConversationReaderService', () => {
   });
 
   it('reduces turns sent by someone else to their text', async () => {
-    const service = buildService([
+    const { service } = buildService([
       ...buildTurn({
         turnId: 'turn-1',
         senderUserWorkspaceId: MEMBER_A,
@@ -111,7 +138,7 @@ describe('AgentConversationReaderService', () => {
   });
 
   it('treats a member and the application acting alone as different actors', async () => {
-    const service = buildService([
+    const { service } = buildService([
       ...buildTurn({
         turnId: 'turn-1',
         senderUserWorkspaceId: MEMBER_A,
@@ -140,23 +167,9 @@ describe('AgentConversationReaderService', () => {
     ]);
   });
 
-  it('signs the files of the actor turns', async () => {
-    const service = buildService([
-      {
-        id: 'message-1',
-        turnId: 'turn-1',
-        role: 'user',
-        senderUserWorkspaceId: MEMBER_A,
-        senderApplicationId: APPLICATION_ID,
-        parts: [
-          {
-            type: 'file',
-            fileId: 'file-1',
-            fileFilename: 'deck.pdf',
-            file: { mimeType: 'application/pdf' },
-          },
-        ],
-      },
+  it('loads files with their type and signs them for the actor', async () => {
+    const { service, messageRepository, fileUrlService } = buildService([
+      buildFileMessage({ turnId: 'turn-1', senderUserWorkspaceId: MEMBER_A }),
     ]);
 
     const messages = await service.loadMessages({
@@ -165,14 +178,36 @@ describe('AgentConversationReaderService', () => {
       actor: { type: 'user', userWorkspaceId: MEMBER_A },
     });
 
-    expect(messages[0].parts).toEqual([
-      {
-        type: 'file',
-        fileId: 'file-1',
-        filename: 'deck.pdf',
-        mediaType: 'application/pdf',
-        url: 'https://files/file-1',
-      },
+    expect(messageRepository.find).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      expect.objectContaining({ relations: ['parts', 'parts.file'] }),
+    );
+    expect(fileUrlService.signFileByIdUrl).toHaveBeenCalledWith({
+      fileId: 'file-1',
+      workspaceId: WORKSPACE_ID,
+      fileFolder: FileFolder.AgentChat,
+    });
+    expect(messages[0].parts[1]).toEqual({
+      type: 'file',
+      fileId: 'file-1',
+      filename: 'deck.pdf',
+      mediaType: 'application/pdf',
+      url: 'https://files/file-1',
+    });
+  });
+
+  it('drops the files of turns sent by someone else without signing them', async () => {
+    const { service, fileUrlService } = buildService([
+      buildFileMessage({ turnId: 'turn-1', senderUserWorkspaceId: MEMBER_A }),
     ]);
+
+    const messages = await service.loadMessages({
+      workspaceId: WORKSPACE_ID,
+      threadId: THREAD_ID,
+      actor: { type: 'user', userWorkspaceId: MEMBER_B },
+    });
+
+    expect(getPartTypes(messages[0])).toEqual(['text']);
+    expect(fileUrlService.signFileByIdUrl).not.toHaveBeenCalled();
   });
 });

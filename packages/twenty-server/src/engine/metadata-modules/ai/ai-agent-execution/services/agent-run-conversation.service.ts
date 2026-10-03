@@ -6,9 +6,14 @@ import {
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import {
+  AGENT_RUN_THREAD_LOCK_RETRY_INTERVAL_MS,
+  AGENT_RUN_THREAD_LOCK_TTL_MS,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-thread-lock.const';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -22,7 +27,30 @@ export class AgentRunConversationService {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly conversationWriterService: AgentConversationWriterService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
+
+  withThreadLock<TResult>({
+    workspaceId,
+    threadId,
+    work,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    work: () => Promise<TResult>;
+  }): Promise<TResult> {
+    return this.cacheLockService.withLock(
+      work,
+      `agent-run-thread:${workspaceId}:${threadId}`,
+      {
+        ttl: AGENT_RUN_THREAD_LOCK_TTL_MS,
+        ms: AGENT_RUN_THREAD_LOCK_RETRY_INTERVAL_MS,
+        maxRetries:
+          AGENT_RUN_THREAD_LOCK_TTL_MS /
+          AGENT_RUN_THREAD_LOCK_RETRY_INTERVAL_MS,
+      },
+    );
+  }
 
   async recordTurn({
     workspaceId,
@@ -45,63 +73,51 @@ export class AgentRunConversationService {
     startedAt: Date;
     execution: RecordableAgentExecution;
   }): Promise<void> {
-    await this.ensureThread({ workspaceId, threadId, title });
-
-    const turnId = await this.conversationWriterService.insertTurn({
-      workspaceId,
-      threadId,
-      agentId,
-    });
-
-    for (const message of messages) {
-      await this.conversationWriterService.insertMessage({
-        workspaceId,
-        threadId,
-        turnId,
-        role: AgentMessageRole.USER,
-        agentId: null,
-        senderUserWorkspaceId:
-          actor.type === 'user' ? actor.userWorkspaceId : null,
-        senderApplicationId: applicationId,
-        processedAt: startedAt,
-        parts: this.buildUserMessageParts(message),
-      });
-    }
-
-    await this.conversationWriterService.insertExecutionReply({
-      workspaceId,
-      threadId,
-      turnId,
-      agentId,
-      execution,
-    });
-  }
-
-  private async ensureThread({
-    workspaceId,
-    threadId,
-    title,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    title: string;
-  }): Promise<void> {
     const existingThread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
       select: ['id'],
     });
 
-    if (existingThread) {
-      return;
-    }
+    await this.conversationWriterService.runInTransaction(
+      workspaceId,
+      async (scope) => {
+        if (!isDefined(existingThread)) {
+          await scope.insert('agentChatThread', { id: threadId, title });
+        }
 
-    try {
-      await this.threadRepository.insert(workspaceId, { id: threadId, title });
-    } catch (error) {
-      if (!isUniqueViolationError(error)) {
-        throw error;
-      }
-    }
+        const turnId = await this.conversationWriterService.insertTurn({
+          workspaceId,
+          threadId,
+          agentId,
+          scope,
+        });
+
+        for (const message of messages) {
+          await this.conversationWriterService.insertMessage({
+            workspaceId,
+            threadId,
+            turnId,
+            role: AgentMessageRole.USER,
+            agentId: null,
+            senderUserWorkspaceId:
+              actor.type === 'user' ? actor.userWorkspaceId : null,
+            senderApplicationId: applicationId,
+            processedAt: startedAt,
+            parts: this.buildUserMessageParts(message),
+            scope,
+          });
+        }
+
+        await this.conversationWriterService.insertExecutionReply({
+          workspaceId,
+          threadId,
+          turnId,
+          agentId,
+          execution,
+          scope,
+        });
+      },
+    );
   }
 
   private buildUserMessageParts(

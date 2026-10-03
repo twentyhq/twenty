@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
@@ -42,6 +43,7 @@ import { RunAgentAttachmentService } from './services/run-agent-attachment.servi
     AiAgentModule,
     ApplicationLookupModule,
     BillingModule,
+    CacheLockModule,
     FileUrlModule,
     WorkspaceDomainsModule,
     MetricsModule,

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  type ExtendedFileUIPart,
   type ExtendedUIMessage,
   type ExtendedUIMessagePart,
   isExtendedFileUIPart,
@@ -41,7 +40,7 @@ export class AgentConversationReaderService {
         processedAt: { order: 'ASC', nulls: 'NULLS LAST' },
         createdAt: 'ASC',
       },
-      relations: ['parts'],
+      relations: ['parts', 'parts.file'],
     });
 
     const turnIdsActedByOthers = isDefined(actor)
@@ -75,22 +74,18 @@ export class AgentConversationReaderService {
     parts: ExtendedUIMessagePart[];
   }): Promise<ExtendedUIMessagePart[]> {
     return Promise.all(
-      parts.map(async (part) => {
-        if (!isExtendedFileUIPart(part as Record<string, unknown>)) {
-          return part;
-        }
-
-        const filePart = part as ExtendedFileUIPart;
-
-        return {
-          ...filePart,
-          url: await this.fileUrlService.signFileByIdUrl({
-            fileId: filePart.fileId,
-            workspaceId,
-            fileFolder: FileFolder.AgentChat,
-          }),
-        } as ExtendedFileUIPart;
-      }),
+      parts.map(async (part) =>
+        isExtendedFileUIPart(part)
+          ? {
+              ...part,
+              url: await this.fileUrlService.signFileByIdUrl({
+                fileId: part.fileId,
+                workspaceId,
+                fileFolder: FileFolder.AgentChat,
+              }),
+            }
+          : part,
+      ),
     );
   }
 }
