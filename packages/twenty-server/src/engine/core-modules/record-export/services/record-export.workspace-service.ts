@@ -46,7 +46,7 @@ import {
   RECORD_EXPORT_PROGRESS_INTERVAL_MS,
   RECORD_EXPORT_PAGE_SIZE,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
-import { UPDATE_RECORD_EXPORT_LEASE_SCRIPT } from 'src/engine/core-modules/record-export/constants/update-record-export-lease-script.constant';
+import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import { type RecordExportColumn } from 'src/engine/core-modules/record-export/types/record-export-column.type';
@@ -454,7 +454,7 @@ export class RecordExportWorkspaceService {
   ): Promise<boolean> {
     return (
       (await this.cacheStorageService.runScript<number>({
-        script: UPDATE_RECORD_EXPORT_LEASE_SCRIPT,
+        script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
         keys: [`{${workspaceId}}:active`],
         args: [JSON.stringify(id), String(ttl)],
       })) === 1
