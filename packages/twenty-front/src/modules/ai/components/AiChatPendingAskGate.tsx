@@ -49,7 +49,9 @@ export const AiChatPendingAskGate = ({
 }: AiChatPendingAskGateProps) => {
   const { t } = useLingui();
   const pendingToolCalls = useAgentChatPendingToolCalls();
-  const displayedThreadId = useAtomStateValue(agentChatDisplayedThreadState);
+  const agentChatDisplayedThread = useAtomStateValue(
+    agentChatDisplayedThreadState,
+  );
   const [selection, setSelection] = useState<RequestSelection>({
     threadId: null,
     toolCallId: null,
@@ -69,7 +71,7 @@ export const AiChatPendingAskGate = ({
   // a selection made in another conversation or for an earlier batch does not carry over, so
   // each new set of requests opens on its oldest one
   const isSameBatch =
-    selection.threadId === displayedThreadId &&
+    selection.threadId === agentChatDisplayedThread &&
     pendingToolCalls.some((pendingToolCall) =>
       selection.batchToolCallIds.includes(pendingToolCall.toolCallId),
     );
@@ -82,7 +84,7 @@ export const AiChatPendingAskGate = ({
 
   const selectRequest = (index: number) =>
     setSelection({
-      threadId: displayedThreadId,
+      threadId: agentChatDisplayedThread,
       toolCallId: pendingToolCalls[index].toolCallId,
       index,
       batchToolCallIds: pendingToolCalls.map(
