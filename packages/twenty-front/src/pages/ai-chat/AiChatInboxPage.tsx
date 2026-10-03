@@ -90,7 +90,8 @@ const AiChatInboxPageContent = () => {
     { id }: AgentChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => {
-    if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
+    // A phone shows the list or a chat, with no room for the selection pane
+    if (isMobile || (!event.metaKey && !event.ctrlKey && !event.shiftKey)) {
       resetRecordSelection();
       selectThread(id);
       return;

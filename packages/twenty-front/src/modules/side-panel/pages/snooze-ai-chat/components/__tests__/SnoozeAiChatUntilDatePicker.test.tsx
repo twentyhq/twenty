@@ -12,11 +12,11 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const snoozeAgentChatThread = jest.fn();
+const snoozeAgentChatThreads = jest.fn();
 const onSnoozed = jest.fn();
 
 jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
-  useAgentChatThreadParticipants: () => ({ snoozeAgentChatThread }),
+  useAgentChatThreadParticipants: () => ({ snoozeAgentChatThreads }),
 }));
 
 jest.mock('@/ui/input/components/internal/date/hooks/useUserTimezone', () => ({
@@ -80,8 +80,8 @@ describe('SnoozeAiChatUntilDatePicker', () => {
     fireEvent.click(screen.getByRole('button', { name: /Snooze until/ }));
 
     expect(onSnoozed).toHaveBeenCalled();
-    expect(snoozeAgentChatThread).toHaveBeenCalledWith({
-      threadId: 'thread-1',
+    expect(snoozeAgentChatThreads).toHaveBeenCalledWith({
+      threadIds: ['thread-1'],
       snoozedUntil: new Date(2026, 9, 2, 9, 0),
     });
   });
@@ -103,7 +103,7 @@ describe('SnoozeAiChatUntilDatePicker', () => {
     expect(
       screen.getByRole('button', { name: 'Pick a time in the future' }),
     ).toBeDisabled();
-    expect(snoozeAgentChatThread).not.toHaveBeenCalled();
+    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
     expect(onSnoozed).not.toHaveBeenCalled();
   });
 

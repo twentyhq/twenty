@@ -31,7 +31,7 @@ export const SnoozeAiChatUntilDatePicker = ({
   onSnoozed,
 }: SnoozeAiChatUntilDatePickerProps) => {
   const { t } = useLingui();
-  const { snoozeAgentChatThread } = useAgentChatThreadParticipants();
+  const { snoozeAgentChatThreads } = useAgentChatThreadParticipants();
   const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
   const { userTimezone } = useUserTimezone();
   const dateTimePickerInstanceId = useId();
@@ -67,9 +67,7 @@ export const SnoozeAiChatUntilDatePicker = ({
     }
 
     onSnoozed();
-    for (const threadId of threadIds) {
-      void snoozeAgentChatThread({ threadId, snoozedUntil: snoozedUntilDate });
-    }
+    void snoozeAgentChatThreads({ threadIds, snoozedUntil: snoozedUntilDate });
   };
 
   return (

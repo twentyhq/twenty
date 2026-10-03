@@ -15,11 +15,11 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const snoozeAgentChatThread = jest.fn();
+const snoozeAgentChatThreads = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
 jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
-  useAgentChatThreadParticipants: () => ({ snoozeAgentChatThread }),
+  useAgentChatThreadParticipants: () => ({ snoozeAgentChatThreads }),
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
@@ -63,12 +63,8 @@ describe('SidePanelSnoozeAiChatPage', () => {
     fireEvent.click(screen.getByText('This evening'));
 
     expect(closeSidePanelMenu).toHaveBeenCalled();
-    expect(snoozeAgentChatThread).toHaveBeenCalledWith({
-      threadId: 'thread-1',
-      snoozedUntil: new Date(2026, 9, 1, 18, 0),
-    });
-    expect(snoozeAgentChatThread).toHaveBeenCalledWith({
-      threadId: 'thread-2',
+    expect(snoozeAgentChatThreads).toHaveBeenCalledWith({
+      threadIds: ['thread-1', 'thread-2'],
       snoozedUntil: new Date(2026, 9, 1, 18, 0),
     });
   });
@@ -89,7 +85,7 @@ describe('SidePanelSnoozeAiChatPage', () => {
     expect(
       await screen.findByRole('button', { name: /^Snooze until/ }),
     ).toBeInTheDocument();
-    expect(snoozeAgentChatThread).not.toHaveBeenCalled();
+    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
     expect(
       screen.getByText('Day & Time').closest('[data-focused]'),
     ).toHaveAttribute('data-focused', 'true');
@@ -103,7 +99,7 @@ describe('SidePanelSnoozeAiChatPage', () => {
     });
     fireEvent.click(screen.getByText('This evening'));
 
-    expect(snoozeAgentChatThread).not.toHaveBeenCalled();
+    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
     expect(screen.queryByText('This evening')).not.toBeInTheDocument();
     expect(screen.getByText('Tomorrow')).toBeInTheDocument();
   });

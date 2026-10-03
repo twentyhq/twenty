@@ -6,6 +6,9 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import {
   resetJotaiStore,
@@ -81,22 +84,21 @@ jest.mock('@/command-menu-item/contexts/CommandMenuContextProvider', () => ({
   CommandMenuContextProvider: () => null,
 }));
 
-jest.mock(
-  '@/object-record/record-selection/components/RecordSelectionToContextStoreEffect',
-  () => ({ RecordSelectionToContextStoreEffect: () => null }),
-);
-
-const [firstThread, secondThread] = THREADS;
+const [firstThread, secondThread, thirdThread] = THREADS;
 
 const renderInbox = () =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <MemoryRouter initialEntries={[`/inbox/${firstThread.id}`]}>
-          <Routes>
-            <Route path={AppPath.AiChatInbox} element={<AiChatInboxPage />} />
-          </Routes>
-        </MemoryRouter>
+        <ContextStoreComponentInstanceContext.Provider
+          value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+        >
+          <MemoryRouter initialEntries={[`/inbox/${firstThread.id}`]}>
+            <Routes>
+              <Route path={AppPath.AiChatInbox} element={<AiChatInboxPage />} />
+            </Routes>
+          </MemoryRouter>
+        </ContextStoreComponentInstanceContext.Provider>
       </I18nProvider>
     </JotaiProvider>,
   );
@@ -128,6 +130,16 @@ describe('AiChatInboxPage', () => {
     });
 
     expect(screen.getByText('2 chats selected')).toBeInTheDocument();
+    expect(
+      jotaiStore.get(
+        contextStoreTargetedRecordsRuleComponentState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
+      ),
+    ).toEqual({
+      mode: 'selection',
+      selectedRecordIds: [firstThread.id, thirdThread.id],
+    });
     expect(isRowHighlighted('First chat')).toBe(true);
     expect(isRowHighlighted('Second chat')).toBe(false);
     expect(isRowHighlighted('Third chat')).toBe(true);

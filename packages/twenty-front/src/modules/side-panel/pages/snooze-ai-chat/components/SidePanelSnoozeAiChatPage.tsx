@@ -33,7 +33,7 @@ export const SidePanelSnoozeAiChatPage = () => {
   const snoozeAiChatThreadIds = useAtomComponentStateValue(
     snoozeAiChatThreadIdsComponentState,
   );
-  const { snoozeAgentChatThread } = useAgentChatThreadParticipants();
+  const { snoozeAgentChatThreads } = useAgentChatThreadParticipants();
   const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openDropdown } = useOpenDropdown();
@@ -61,9 +61,10 @@ export const SidePanelSnoozeAiChatPage = () => {
     }
 
     void closeSidePanelMenu();
-    for (const threadId of snoozeAiChatThreadIds) {
-      void snoozeAgentChatThread({ threadId, snoozedUntil: option.date });
-    }
+    void snoozeAgentChatThreads({
+      threadIds: snoozeAiChatThreadIds,
+      snoozedUntil: option.date,
+    });
   };
 
   return (

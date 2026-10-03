@@ -37,7 +37,11 @@ export const AgentChatThreadInboxCommand = ({
       reopen: moveAgentChatThreadToInbox,
     }[action];
 
-    await Promise.all(threadIds.map(updateThread));
+    // One at a time: a failed update reloads every chat's state, which would
+    // undo the optimistic change of an update still on its way
+    for (const threadId of threadIds) {
+      await updateThread(threadId);
+    }
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
