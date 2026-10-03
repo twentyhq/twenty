@@ -21,9 +21,11 @@ export const useOpenRecordContextMenu = () => {
         return;
       }
 
-      store.set(isRecordSelectedFamilyState(recordId), true);
-
+      // Opening the menu can close the side panel, which resets the selection
+      // in layout customization mode
       openCommandMenuDropdownAtCursor(event);
+
+      store.set(isRecordSelectedFamilyState(recordId), true);
     },
     [
       isCommandMenuAvailable,

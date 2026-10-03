@@ -99,8 +99,8 @@ export const RecordCalendarCard = ({
       return;
     }
 
-    setIsRecordCalendarCardSelected(true);
     openCommandMenuDropdownAtCursor(event);
+    setIsRecordCalendarCardSelected(true);
   };
 
   return (
