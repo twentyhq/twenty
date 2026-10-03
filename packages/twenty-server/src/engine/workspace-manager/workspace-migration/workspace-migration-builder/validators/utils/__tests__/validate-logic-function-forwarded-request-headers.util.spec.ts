@@ -1,9 +1,10 @@
+import { HTTPMethod } from 'twenty-shared/types';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { validateLogicFunctionForwardedRequestHeaders } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util';
 
 const buildHttpRouteTriggerSettings = (forwardedRequestHeaders: unknown) => ({
   path: '/route',
-  httpMethod: 'POST' as const,
+  httpMethod: HTTPMethod.POST,
   isAuthRequired: false,
   forwardedRequestHeaders: forwardedRequestHeaders as string[],
 });
