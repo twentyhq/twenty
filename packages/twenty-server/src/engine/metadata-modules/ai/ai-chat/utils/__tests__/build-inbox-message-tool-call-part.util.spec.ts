@@ -62,22 +62,34 @@ describe('buildInboxMessageToolCallPart', () => {
     });
   });
 
-  it('proposes an email as a pending propose_email call', async () => {
-    const email = {
-      recipients: { to: 'team@acme.com', cc: '', bcc: '' },
-      subject: 'Recap',
-      body: 'Here is the recap.',
+  it('proposes an email for the member to send, save as a draft or discard', async () => {
+    const emailCall = {
+      toolName: 'send_email',
+      arguments: {
+        recipients: { to: 'team@acme.com', cc: '', bcc: '' },
+        subject: 'Recap',
+        body: '<p>Here is the recap.</p><p>Jane</p>',
+      },
+      summary: 'Send the call recap to the team',
     };
 
     await expect(
-      build({ toolName: 'propose_email', input: email }),
+      build({ toolName: 'propose_tool_call', input: emailCall }),
     ).resolves.toEqual({
       isAwaitingAnswer: true,
       part: expect.objectContaining({
-        type: 'tool-propose_email',
-        input: email,
+        type: 'tool-propose_tool_call',
+        input: emailCall,
         output: expect.objectContaining({
-          result: { status: 'pending', email },
+          result: {
+            status: 'pending',
+            proposal: {
+              ...emailCall,
+              toolLabel: 'Send Email',
+              template: 'email',
+              alternativeToolNames: ['draft_email'],
+            },
+          },
         }),
       }),
     });
@@ -103,6 +115,28 @@ describe('buildInboxMessageToolCallPart', () => {
 
   it.each([
     ['an unknown tool', { toolName: 'send_email', input: {} }],
+    [
+      'a proposed call that is not an email',
+      {
+        toolName: 'propose_tool_call',
+        input: {
+          toolName: 'delete_one_company',
+          arguments: { id: 'company-1' },
+          summary: 'Delete the company',
+        },
+      },
+    ],
+    [
+      'a proposed email whose body is neither a document nor HTML',
+      {
+        toolName: 'propose_tool_call',
+        input: {
+          toolName: 'send_email',
+          arguments: { subject: 'Recap', body: 42 },
+          summary: 'Send the recap',
+        },
+      },
+    ],
     ['invalid input', { toolName: 'ask_questions', input: { questions: [] } }],
     [
       'a tool of another application',

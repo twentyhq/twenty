@@ -23,6 +23,8 @@ import {
   type WorkflowAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
+import { isWorkflowSendChatMessageAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/guards/is-workflow-send-chat-message-action.guard';
+import { buildSendChatMessageAnswerResult } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/utils/build-send-chat-message-answer-result.util';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
@@ -112,13 +114,28 @@ export class WorkflowRunnerWorkspaceService {
     step,
     threadId,
     response,
+    toolResult,
   }: {
     workspaceId: string;
     workflowRunId: string;
     step: WorkflowAction;
     threadId: string;
     response: Record<string, unknown>;
+    toolResult: Record<string, unknown>;
   }): Promise<void> {
+    // the member's answer already ran the call, so the step only reports it
+    if (isWorkflowSendChatMessageAction(step)) {
+      await this.completeAnsweredStep({
+        workspaceId,
+        workflowRunId,
+        stepId: step.id,
+        threadId,
+        result: buildSendChatMessageAnswerResult({ threadId, toolResult }),
+      });
+
+      return;
+    }
+
     if (!isWorkflowFormAction(step)) {
       await this.messageQueueService.add<RunWorkflowJobData>(
         RunWorkflowJob.name,
@@ -147,12 +164,34 @@ export class WorkflowRunnerWorkspaceService {
         },
       );
 
+    await this.completeAnsweredStep({
+      workspaceId,
+      workflowRunId,
+      stepId: step.id,
+      threadId,
+      result: enrichedResponse,
+    });
+  }
+
+  private async completeAnsweredStep({
+    workspaceId,
+    workflowRunId,
+    stepId,
+    threadId,
+    result,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    stepId: string;
+    threadId: string;
+    result: object;
+  }): Promise<void> {
     const hasCompletedStep =
       await this.workflowRunWorkspaceService.updateStepInfoIfPending({
-        stepId: step.id,
+        stepId,
         stepInfo: {
           status: StepStatus.SUCCESS,
-          result: enrichedResponse,
+          result,
         },
         expectedThreadId: threadId,
         workspaceId,
@@ -163,7 +202,7 @@ export class WorkflowRunnerWorkspaceService {
       await this.resume({
         workspaceId,
         workflowRunId,
-        lastExecutedStepId: step.id,
+        lastExecutedStepId: stepId,
       });
     }
   }

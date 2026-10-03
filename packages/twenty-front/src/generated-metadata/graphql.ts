@@ -2165,6 +2165,7 @@ export enum FeatureFlagKey {
   IS_AI_CHAT_SHARING_DROPDOWN_ENABLED = 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED',
   IS_APPLICATION_WORKFLOWS_ENABLED = 'IS_APPLICATION_WORKFLOWS_ENABLED',
   IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
+  IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED = 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CONVERSATIONS_TAB_ENABLED = 'IS_CONVERSATIONS_TAB_ENABLED',
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
@@ -6156,10 +6157,11 @@ export enum RowLevelPermissionPredicateOperand {
 }
 
 export type RunAgentInput = {
+  additionalInstructions?: InputMaybe<Scalars['String']['input']>;
   agentUniversalIdentifier: Scalars['String']['input'];
-  messages?: InputMaybe<Array<RunAgentMessageInput>>;
-  prompt?: InputMaybe<Scalars['String']['input']>;
+  input?: InputMaybe<Array<RunAgentMessageInput>>;
   runAsWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
+  thread?: InputMaybe<RunAgentThreadInput>;
 };
 
 export type RunAgentMessageAttachmentInput = {
@@ -6183,6 +6185,12 @@ export type RunAgentResult = {
   error?: Maybe<Scalars['String']['output']>;
   result?: Maybe<Scalars['JSON']['output']>;
   success: Scalars['Boolean']['output'];
+  threadId?: Maybe<Scalars['UUID']['output']>;
+};
+
+export type RunAgentThreadInput = {
+  key: Scalars['String']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SsoConnection = {

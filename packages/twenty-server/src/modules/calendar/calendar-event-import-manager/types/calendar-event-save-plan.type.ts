@@ -3,6 +3,7 @@ import { type FetchedParticipantWithCalendarEventId } from 'src/modules/calendar
 
 export type CalendarEventSavePlan = {
   saveOperations: CalendarEventSaveOperations;
+  existingCalendarEventIds: string[];
   participantsOfNewEvents: FetchedParticipantWithCalendarEventId[];
   participantsOfExistingEvents: FetchedParticipantWithCalendarEventId[];
 };

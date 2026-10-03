@@ -30,6 +30,7 @@ import {
   AgentMessageStatus,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { skipAwaitingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/skip-awaiting-tool-parts.util';
+import { readToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/utils/read-tool-call-workflow-step.util';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -765,7 +766,10 @@ export class AgentChatStreamingService {
       return;
     }
 
-    if (isDefined(thread.workflowRunId)) {
+    if (
+      isDefined(thread.workflowRunId) ||
+      (await this.isAwaitingWorkflowStep({ messageId, workspaceId }))
+    ) {
       throw new AiException(
         'This conversation is waiting on an answer to its workflow run',
         AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT,
@@ -791,6 +795,24 @@ export class AgentChatStreamingService {
       messageId,
       workspaceId,
     });
+  }
+
+  // a call a workflow step posted to the inbox gates that step like a run's own call
+  private async isAwaitingWorkflowStep({
+    messageId,
+    workspaceId,
+  }: {
+    messageId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const parts = await this.messagePartRepository.find(workspaceId, {
+      where: { messageId },
+      select: ['id', 'toolOutput'],
+    });
+
+    return parts.some((part) =>
+      isDefined(readToolCallWorkflowStep(part.toolOutput)),
+    );
   }
 
   private recordEnqueueFailure({
