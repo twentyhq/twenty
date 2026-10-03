@@ -205,6 +205,7 @@ export const FormFieldInput = ({
       options={field.metadata?.options}
       readonly={readonly}
       placeholder={placeholder}
+      isNullable={field.metadata.isNullable}
     />
   ) : isFieldRawJson(field) ? (
     <FormRawJsonFieldInput

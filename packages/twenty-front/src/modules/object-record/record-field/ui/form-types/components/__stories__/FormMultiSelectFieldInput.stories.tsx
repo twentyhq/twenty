@@ -1,6 +1,6 @@
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, screen, userEvent, within } from 'storybook/test';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 
@@ -133,5 +133,61 @@ export const DisabledWithVariable: Story = {
 
     const searchInputInModal = canvas.queryByPlaceholderText('Search');
     expect(searchInputInModal).not.toBeInTheDocument();
+  },
+};
+
+export const WithClearOption: Story = {
+  args: {
+    label: 'Work Policy',
+    defaultValue: ['WORK_POLICY_1', 'WORK_POLICY_2'],
+    isNullable: true,
+    options: [
+      {
+        label: 'Work Policy 1',
+        value: 'WORK_POLICY_1',
+        color: 'blue',
+      },
+      {
+        label: 'Work Policy 2',
+        value: 'WORK_POLICY_2',
+        color: 'green',
+      },
+    ],
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    const firstChip = await canvas.findByText('Work Policy 1');
+    await userEvent.click(firstChip);
+
+    const clearOption = await screen.findByText('No Work Policy');
+    await userEvent.click(clearOption);
+
+    expect(args.onChange).toHaveBeenCalledWith(null);
+  },
+};
+
+export const WithoutClearOptionWhenNotNullable: Story = {
+  args: {
+    label: 'Work Policy',
+    defaultValue: ['WORK_POLICY_1'],
+    options: [
+      {
+        label: 'Work Policy 1',
+        value: 'WORK_POLICY_1',
+        color: 'blue',
+      },
+    ],
+    onChange: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const firstChip = await canvas.findByText('Work Policy 1');
+    await userEvent.click(firstChip);
+
+    await screen.findByPlaceholderText('Search');
+    expect(screen.queryByText('No Work Policy')).not.toBeInTheDocument();
   },
 };
