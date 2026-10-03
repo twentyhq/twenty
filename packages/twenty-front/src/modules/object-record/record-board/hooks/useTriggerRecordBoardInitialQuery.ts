@@ -125,6 +125,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
         : recordGroupDefinitions;
       const recordsByGroupId = new Map<string, ObjectRecord[]>();
       const lastPageSizeByGroupId = new Map<string, number>();
+      const totalCountByGroupId = new Map<string, number>();
       const recordGroupOptionsFilter = isDefined(targetRecordGroup)
         ? computeRecordGroupOptionsFilter({
             recordGroupFieldMetadata: recordIndexGroupFieldMetadataItem,
@@ -178,12 +179,18 @@ export const useTriggerRecordBoardInitialQuery = () => {
             ...records,
           ]);
           lastPageSizeByGroupId.set(recordGroupDefinition.id, records.length);
+          totalCountByGroupId.set(
+            recordGroupDefinition.id,
+            foundGroupInResult?.totalCount ?? 0,
+          );
         }
 
         if (
           !isDefined(targetRecordGroup) ||
-          (lastPageSizeByGroupId.get(targetRecordGroup.id) ?? 0) <
-            RECORD_BOARD_QUERY_PAGE_SIZE
+          (lastPageSizeByGroupId.get(targetRecordGroup.id) ?? 0) === 0 ||
+          offsetForRecords +
+            (lastPageSizeByGroupId.get(targetRecordGroup.id) ?? 0) >=
+            (totalCountByGroupId.get(targetRecordGroup.id) ?? 0)
         ) {
           break;
         }
@@ -199,12 +206,13 @@ export const useTriggerRecordBoardInitialQuery = () => {
         }
 
         setRecordIdsForColumn(recordGroupDefinition.id, records);
+        // Group-by pageInfo.hasNextPage is always false for record pages.
         store.set(
           recordBoardShouldFetchMoreInColumnFamilyCallbackState(
             recordGroupDefinition.id,
           ),
-          (lastPageSizeByGroupId.get(recordGroupDefinition.id) ?? 0) >=
-            RECORD_BOARD_QUERY_PAGE_SIZE,
+          records.length <
+            (totalCountByGroupId.get(recordGroupDefinition.id) ?? 0),
         );
       }
 

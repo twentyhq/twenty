@@ -16,6 +16,7 @@ import { type PageInfo } from '~/generated-metadata/graphql';
 export type GroupsRecordsGroupByLazyResult = {
   [queryGqlFieldName: string]: Array<{
     groupByDimensionValues: string[];
+    totalCount: number;
     edges: RecordGqlEdge[];
     pageInfo: PageInfo;
     __typename: string;
