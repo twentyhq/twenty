@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { RelationType, compositeTypeDefinitions } from 'twenty-shared/types';
+import {
+  IndexType,
+  RelationType,
+  compositeTypeDefinitions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
@@ -13,8 +17,17 @@ import { IndexExceptionCode } from 'src/engine/metadata-modules/flat-index-metad
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import {
+  type FlatEntityEnumPropertyRules,
+  validateFlatEntityEnumProperties,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldDefaultValueCompatibleWithUniqueIndex } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/is-composite-field-default-value-compatible-with-unique-index.util';
+
+const FLAT_INDEX_ENUM_PROPERTY_RULES = {
+  indexType: { enumObject: IndexType },
+} satisfies FlatEntityEnumPropertyRules<UniversalFlatIndexMetadata>;
 
 @Injectable()
 export class FlatIndexValidatorService {
@@ -67,6 +80,14 @@ export class FlatIndexValidatorService {
       metadataName: 'index',
       type: 'create',
     });
+
+    validationResult.errors.push(
+      ...validateFlatEntityEnumProperties({
+        flatEntity: flatIndexToValidate,
+        enumPropertyRules: FLAT_INDEX_ENUM_PROPERTY_RULES,
+        code: IndexExceptionCode.INDEX_INVALID_TYPE,
+      }),
+    );
 
     const existingFlatIndex = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatIndexToValidate.universalIdentifier,

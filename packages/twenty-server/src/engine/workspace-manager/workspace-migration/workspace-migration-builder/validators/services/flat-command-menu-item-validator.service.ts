@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuItemExceptionCode } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
@@ -10,10 +11,19 @@ import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modu
 import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import {
+  type FlatEntityEnumPropertyRules,
+  validateFlatEntityEnumProperties,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
+
+const FLAT_COMMAND_MENU_ITEM_ENUM_PROPERTY_RULES = {
+  availabilityType: { enumObject: CommandMenuItemAvailabilityType },
+} satisfies FlatEntityEnumPropertyRules<UniversalFlatCommandMenuItem>;
 
 @Injectable()
 export class FlatCommandMenuItemValidatorService {
@@ -49,6 +59,14 @@ export class FlatCommandMenuItemValidatorService {
         userFriendlyMessage: msg`Engine component key is required`,
       });
     }
+
+    validationResult.errors.push(
+      ...validateFlatEntityEnumProperties({
+        flatEntity: flatCommandMenuItem,
+        enumPropertyRules: FLAT_COMMAND_MENU_ITEM_ENUM_PROPERTY_RULES,
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+      }),
+    );
 
     this.validateEngineComponentKeyCoherence({
       engineComponentKey: flatCommandMenuItem.engineComponentKey,
@@ -161,6 +179,14 @@ export class FlatCommandMenuItemValidatorService {
         userFriendlyMessage: msg`Label is required`,
       });
     }
+
+    validationResult.errors.push(
+      ...validateFlatEntityEnumProperties({
+        flatEntity: flatEntityUpdate,
+        enumPropertyRules: FLAT_COMMAND_MENU_ITEM_ENUM_PROPERTY_RULES,
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+      }),
+    );
 
     const engineComponentKey =
       flatEntityUpdate.engineComponentKey ??

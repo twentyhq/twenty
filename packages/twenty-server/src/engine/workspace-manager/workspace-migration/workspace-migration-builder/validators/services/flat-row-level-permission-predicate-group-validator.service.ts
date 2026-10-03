@@ -4,14 +4,26 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { RowLevelPermissionPredicateGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { RowLevelPermissionPredicateGroupExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception';
+import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import {
+  type FlatEntityEnumPropertyRules,
+  validateFlatEntityEnumProperties,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
+
+const FLAT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_ENUM_PROPERTY_RULES = {
+  logicalOperator: {
+    enumObject: RowLevelPermissionPredicateGroupLogicalOperator,
+  },
+} satisfies FlatEntityEnumPropertyRules<UniversalFlatRowLevelPermissionPredicateGroup>;
 
 @Injectable()
 export class FlatRowLevelPermissionPredicateGroupValidatorService {
@@ -34,6 +46,15 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
       metadataName: 'rowLevelPermissionPredicateGroup',
       type: 'create',
     });
+
+    validationResult.errors.push(
+      ...validateFlatEntityEnumProperties({
+        flatEntity: flatPredicateGroupToValidate,
+        enumPropertyRules:
+          FLAT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_ENUM_PROPERTY_RULES,
+        code: RowLevelPermissionPredicateGroupExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA,
+      }),
+    );
 
     const existingPredicateGroup = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatPredicateGroupToValidate.universalIdentifier,
@@ -179,6 +200,15 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
       ...existingPredicateGroup,
       ...flatEntityUpdate,
     };
+
+    validationResult.errors.push(
+      ...validateFlatEntityEnumProperties({
+        flatEntity: flatEntityUpdate,
+        enumPropertyRules:
+          FLAT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_ENUM_PROPERTY_RULES,
+        code: RowLevelPermissionPredicateGroupExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA,
+      }),
+    );
 
     if (
       updatedPredicateGroup.roleUniversalIdentifier !==
