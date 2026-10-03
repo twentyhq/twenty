@@ -3358,6 +3358,7 @@ type AgentMessagePart {
   state: String
   providerExecuted: Boolean
   errorMessage: String
+  errorDetails: JSON @deprecated(reason: "Never populated; use errorMessage instead")
   sourceUrlSourceId: String
   sourceUrlUrl: String
   sourceUrlTitle: String

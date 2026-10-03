@@ -46,6 +46,12 @@ export class AgentMessagePartDTO {
   @Field(() => String, { nullable: true })
   errorMessage: string | null;
 
+  @Field(() => GraphQLJSON, {
+    nullable: true,
+    deprecationReason: 'Never populated; use errorMessage instead',
+  })
+  errorDetails: Record<string, unknown> | null;
+
   @Field(() => String, { nullable: true })
   sourceUrlSourceId: string | null;
 

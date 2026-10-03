@@ -104,6 +104,8 @@ export type AgentMessage = {
 export type AgentMessagePart = {
   __typename?: 'AgentMessagePart';
   createdAt: Scalars['DateTime']['output'];
+  /** @deprecated Never populated; use errorMessage instead */
+  errorDetails?: Maybe<Scalars['JSON']['output']>;
   errorMessage?: Maybe<Scalars['String']['output']>;
   fileFilename?: Maybe<Scalars['String']['output']>;
   fileId?: Maybe<Scalars['UUID']['output']>;
