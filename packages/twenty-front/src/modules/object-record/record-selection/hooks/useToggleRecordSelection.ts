@@ -42,7 +42,8 @@ export const useToggleRecordSelection = (recordIndexId?: string) => {
       if (
         shouldSelectRange &&
         isDefined(range) &&
-        recordIds.includes(range.anchorRecordId)
+        recordIds.includes(range.anchorRecordId) &&
+        recordIds.includes(recordId)
       ) {
         const previouslyAddedRecordIds = new Set(range.addedRecordIds);
         const rangeRecordIds = getRecordIdsBetween({
