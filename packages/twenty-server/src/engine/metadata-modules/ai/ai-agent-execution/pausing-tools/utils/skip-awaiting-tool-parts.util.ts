@@ -23,7 +23,7 @@ export const skipAwaitingToolParts = async ({
       ? PAUSING_TOOLS.get(part.toolName)
       : undefined;
     const pausingToolCall = pausingTool?.isAwaitingOutput(part.toolOutput)
-      ? pausingTool.parseCall(part.toolInput)
+      ? pausingTool.parseCall(part.toolInput, part.toolOutput)
       : null;
 
     if (isDefined(pausingToolCall)) {

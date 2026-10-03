@@ -10,7 +10,7 @@ import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constant
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
-import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/record-table-row/hooks/useIsRecordSecondaryDragged';
+import { useIsRecordSecondaryDragged } from '@/object-record/record-drag/hooks/useIsRecordSecondaryDragged';
 import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC } from '@/ui/utilities/drag-and-drop/constants/DndKitPluginsWithoutOptimistic';
@@ -45,7 +45,7 @@ export const RecordTableDraggableTr = ({
   onClick,
   children,
 }: RecordTableDraggableTrProps) => {
-  const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
+  const { isSecondaryDragged } = useIsRecordSecondaryDragged(recordId);
 
   const { recordGroupId } = useContext(RecordGroupContext);
 

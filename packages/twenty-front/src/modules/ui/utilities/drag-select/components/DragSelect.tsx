@@ -126,6 +126,9 @@ export const DragSelect = ({
         newEndPoint.x = relativeX;
         newEndPoint.y = relativeY;
 
+        let currentSelectionBox = selectionBox;
+        let isCurrentlySelecting = isSelecting;
+
         if (!isDeeplyEqual(newEndPoint, endPoint)) {
           setEndPoint(newEndPoint);
 
@@ -136,22 +139,23 @@ export const DragSelect = ({
             height: Math.abs(newEndPoint.y - startPoint.y),
           };
 
-          if (isValidSelectionStart(newSelectionBox)) {
-            if (!isSelecting) {
-              setIsSelecting(true);
-              onDragSelectionStart?.(event);
-            }
+          if (!isSelecting && isValidSelectionStart(newSelectionBox)) {
+            setIsSelecting(true);
+            onDragSelectionStart?.(event);
+            isCurrentlySelecting = true;
+          }
+
+          if (isCurrentlySelecting) {
             setSelectionBox(newSelectionBox);
-          } else if (isSelecting) {
-            setSelectionBox(newSelectionBox);
+            currentSelectionBox = newSelectionBox;
           }
         }
 
-        if (isSelecting && isDefined(selectionBox)) {
+        if (isCurrentlySelecting) {
           const scrollAwareBox = {
-            ...selectionBox,
-            top: selectionBox.top + window.scrollY,
-            left: selectionBox.left + window.scrollX,
+            ...currentSelectionBox,
+            top: currentSelectionBox.top + window.scrollY,
+            left: currentSelectionBox.left + window.scrollX,
           };
 
           Array.from(

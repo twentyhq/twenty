@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { type MouseEvent } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -121,7 +122,14 @@ type AiChatThreadListItemProps = {
   thread: AgentChatThreadRecord;
   surface: AiChatThreadActionsSurface;
   isSelected: boolean;
-  onClick: (thread: AgentChatThreadRecord) => void;
+  onClick: (
+    thread: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) => void;
+  onContextMenu?: (
+    thread: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) => void;
   onDetach?: () => void;
 };
 
@@ -131,6 +139,7 @@ export const AiChatThreadListItem = ({
   surface,
   isSelected,
   onClick,
+  onContextMenu,
   onDetach,
 }: AiChatThreadListItemProps) => {
   const { t } = useLingui();
@@ -192,9 +201,22 @@ export const AiChatThreadListItem = ({
   return (
     <StyledThreadItem
       $isSelected={isSelected}
-      onClick={() => {
+      data-selectable-id={thread.id}
+      data-select-disable={isRenaming || undefined}
+      onMouseDown={(event) => {
+        // Shift+click selects a range of chats, not the text in between
+        if (event.shiftKey && !isRenaming) {
+          event.preventDefault();
+        }
+      }}
+      onClick={(event) => {
         if (!isRenaming) {
-          onClick(thread);
+          onClick(thread, event);
+        }
+      }}
+      onContextMenu={(event) => {
+        if (!isRenaming) {
+          onContextMenu?.(thread, event);
         }
       }}
     >
