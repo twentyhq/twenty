@@ -30,9 +30,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   WorkflowRunStatus,
   type WorkflowRunWorkspaceEntity,
@@ -73,7 +71,6 @@ export class ToolCallAnswerService {
     private readonly permissionsService: PermissionsService,
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly toolRegistryService: ToolRegistryService,
   ) {}
@@ -515,11 +512,20 @@ export class ToolCallAnswerService {
       );
     }
 
-    const { userWorkspaceRoleMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'userWorkspaceRoleMap',
-      ]);
-    const { actorContext, roleId, userId, userContext } =
+    const rolePermissions = await this.actorService.resolveRolePermissions({
+      workspaceId,
+      userWorkspaceId,
+      authContext,
+    });
+
+    if (!isDefined(rolePermissions)) {
+      throw new AiException(
+        'Answering requires a role in the workspace',
+        AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
+      );
+    }
+
+    const { actorContext, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspaceId,
@@ -527,13 +533,7 @@ export class ToolCallAnswerService {
 
     return {
       workspaceId,
-      roleId,
-      rolePermissionConfig:
-        resolveRolePermissionConfig({
-          authContext,
-          userWorkspaceRoleMap,
-          apiKeyRoleMap: {},
-        }) ?? undefined,
+      ...rolePermissions,
       authContext,
       actorContext,
       userId,

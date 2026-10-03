@@ -137,7 +137,6 @@ describe('buildInboxMessageToolCallPart', () => {
         },
       },
     ],
-    ['the retired propose_email', { toolName: 'propose_email', input: {} }],
     ['invalid input', { toolName: 'ask_questions', input: { questions: [] } }],
     [
       'a tool of another application',

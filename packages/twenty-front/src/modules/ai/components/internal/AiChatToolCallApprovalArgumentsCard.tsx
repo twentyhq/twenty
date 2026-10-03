@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { type ProposedToolCall } from 'twenty-shared/ai';
@@ -6,13 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components';
 import { IconCheck, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 
 import { StyledAiChatAskCard } from '@/ai/components/AiChatAskStyledComponents';
 import { AiChatToolCallApprovalArgumentsEditor } from '@/ai/components/internal/AiChatToolCallApprovalArgumentsEditor';
 import { AiChatToolCallApprovalFeedbackInput } from '@/ai/components/internal/AiChatToolCallApprovalFeedbackInput';
-import { AiChatToolCallApprovalRecordChip } from '@/ai/components/internal/AiChatToolCallApprovalRecordChip';
+import { AiChatToolCallApprovalRecord } from '@/ai/components/internal/AiChatToolCallApprovalRecord';
 import { AiChatToolCallApprovalRecordFields } from '@/ai/components/internal/AiChatToolCallApprovalRecordFields';
 import {
   StyledToolCallApprovalActions,
@@ -24,15 +22,6 @@ import {
 } from '@/ai/components/internal/AiChatToolCallApprovalStyledComponents';
 import { useAiChatAskCardFieldFocus } from '@/ai/hooks/useAiChatAskCardFieldFocus';
 import { useAnswerToolCallApproval } from '@/ai/hooks/useAnswerToolCallApproval';
-
-const StyledRecordRow = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  flex-wrap: wrap;
-  font-size: ${themeCssVariables.font.size.md};
-  gap: ${themeCssVariables.spacing[1]};
-`;
 
 type AiChatToolCallApprovalArgumentsCardProps = {
   toolCallId: string;
@@ -90,21 +79,17 @@ export const AiChatToolCallApprovalArgumentsCard = ({
         onBlur={handleFieldBlur}
       >
         {isDefined(objectNameSingular) && isDefined(recordId) && (
-          <StyledRecordRow>
-            {template === 'recordDelete'
-              ? t`This record will be deleted:`
-              : t`Record:`}
-            <AiChatToolCallApprovalRecordChip
-              objectNameSingular={objectNameSingular}
-              recordId={recordId}
-            />
-          </StyledRecordRow>
+          <AiChatToolCallApprovalRecord
+            objectNameSingular={objectNameSingular}
+            recordId={recordId}
+            isDeletion={template === 'recordDelete'}
+          />
         )}
         {hasRecordFields && (
           <AiChatToolCallApprovalRecordFields
             objectNameSingular={objectNameSingular}
             values={toolArguments ?? proposal.arguments}
-            currentValues={proposal.currentValues}
+            recordId={recordId}
             readonly={isAnswering}
             onChange={handleRecordFieldChange}
           />

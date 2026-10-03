@@ -4,7 +4,6 @@ import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 
-import { AiChatEmailApprovalStatusRenderer } from '@/ai/components/AiChatEmailApprovalStatusRenderer';
 import { AiChatFormStatusRenderer } from '@/ai/components/AiChatFormStatusRenderer';
 import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStatusRenderer';
 import { AiChatToolCallApprovalStatusRenderer } from '@/ai/components/AiChatToolCallApprovalStatusRenderer';
@@ -25,7 +24,6 @@ import {
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
   isSucceededCompleteWorkspaceSetupToolPart,
-  PROPOSE_EMAIL_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
@@ -71,15 +69,6 @@ const MessagePartRenderer = ({
         if (getToolName(part) === ASK_QUESTIONS_TOOL_NAME) {
           return (
             <AiChatQuestionStatusRenderer
-              toolPart={part}
-              isStreaming={isStreaming}
-            />
-          );
-        }
-
-        if (getToolName(part) === PROPOSE_EMAIL_TOOL_NAME) {
-          return (
-            <AiChatEmailApprovalStatusRenderer
               toolPart={part}
               isStreaming={isStreaming}
             />

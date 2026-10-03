@@ -3,7 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import {
   type AskQuestionItem,
-  type ProposedEmail,
+  type ProposedToolCall,
   type RequestFormField,
 } from 'twenty-shared/ai';
 
@@ -33,14 +33,13 @@ jest.mock('@/ai/components/AiChatFormCard', () => ({
   ),
 }));
 jest.mock('@/ai/components/AiChatToolCallApprovalCard', () => ({
-  AiChatToolCallApprovalCard: () => (
-    <div role="group" aria-label="Tool call approval" />
-  ),
-}));
-jest.mock('@/ai/components/AiChatEmailApprovalCard', () => ({
-  AiChatEmailApprovalCard: ({ email }: { email: ProposedEmail }) => (
-    <div role="group" aria-label="Email approval">
-      {email.subject}
+  AiChatToolCallApprovalCard: ({
+    proposal,
+  }: {
+    proposal: ProposedToolCall;
+  }) => (
+    <div role="group" aria-label="Tool call approval">
+      {proposal.summary}
     </div>
   ),
 }));
@@ -55,11 +54,13 @@ const QUESTIONS: AskQuestionItem[] = [
 
 const EMAIL_APPROVAL = {
   toolCallId: 'call-2',
-  kind: 'emailApproval',
-  email: {
-    recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
-    subject: 'Your renewal',
-    body: 'Hi Tim',
+  kind: 'toolCallApproval',
+  proposal: {
+    toolName: 'send_email',
+    toolLabel: 'Send Email',
+    summary: 'Your renewal',
+    arguments: {},
+    template: 'email',
   },
 };
 
@@ -92,7 +93,7 @@ describe('AiChatPendingAskGate', () => {
     renderGate();
 
     expect(
-      screen.getByRole('group', { name: 'Email approval' }),
+      screen.getByRole('group', { name: 'Tool call approval' }),
     ).toHaveTextContent('Your renewal');
     expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
   });
@@ -123,7 +124,7 @@ describe('AiChatPendingAskGate', () => {
     renderGate();
 
     expect(
-      screen.getByRole('group', { name: 'Email approval' }),
+      screen.getByRole('group', { name: 'Tool call approval' }),
     ).toHaveTextContent('Your renewal');
     expect(screen.queryByRole('group', { name: 'Questions' })).toBeNull();
     expect(

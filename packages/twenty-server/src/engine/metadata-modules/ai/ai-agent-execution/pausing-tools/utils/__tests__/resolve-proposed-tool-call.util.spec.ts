@@ -106,7 +106,7 @@ describe('resolveProposedToolCall', () => {
     });
   });
 
-  it('refuses an email whose body is neither a document nor HTML', async () => {
+  it('refuses an email the email tool would not accept', async () => {
     expect(
       await resolveProposedToolCall({
         input: {
@@ -121,7 +121,7 @@ describe('resolveProposedToolCall', () => {
         findTool,
         executeTool: jest.fn(),
       }),
-    ).toEqual({ error: expect.stringContaining('structured email document') });
+    ).toEqual({ error: expect.stringContaining('at body') });
   });
 
   it('refuses an email with attachments, which the card cannot show', async () => {
@@ -133,7 +133,15 @@ describe('resolveProposedToolCall', () => {
             recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
             subject: 'Renewal',
             body: '<p>Quote attached</p>',
-            files: [{ id: 'file-id', name: 'quote.pdf' }],
+            files: [
+              {
+                id: '20202020-9b5e-4d0c-a4a8-7c4bd7d1e001',
+                name: 'quote.pdf',
+                size: 1024,
+                type: 'application/pdf',
+                createdAt: '2026-10-01T00:00:00.000Z',
+              },
+            ],
           },
           summary: 'Send the quote',
         },

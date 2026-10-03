@@ -28,9 +28,13 @@ import {
   StyledToolCallApprovalLabel,
   StyledToolCallApprovalSummary,
 } from '@/ai/components/internal/AiChatToolCallApprovalStyledComponents';
-import { EMAIL_TOOL_NAMES } from '@/ai/constants/EmailToolNames';
 import { useAiChatAskCardFieldFocus } from '@/ai/hooks/useAiChatAskCardFieldFocus';
 import { useAnswerToolCallApproval } from '@/ai/hooks/useAnswerToolCallApproval';
+
+const EMAIL_TOOL_NAMES = {
+  send: 'send_email',
+  draft: 'draft_email',
+} as const;
 
 const StyledFields = styled.div`
   display: flex;

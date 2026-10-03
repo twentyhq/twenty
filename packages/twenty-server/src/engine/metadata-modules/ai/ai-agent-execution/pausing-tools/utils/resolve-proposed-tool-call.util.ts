@@ -6,7 +6,7 @@ import {
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
-import { findEmailArgumentsError } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-email-arguments-error.util';
+import { buildEmailProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/build-email-proposal.util';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
 import { readRecordFieldValues } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-record-field-values.util';
 
@@ -106,13 +106,8 @@ export const resolveProposedToolCall = async ({
   };
 
   switch (template) {
-    case 'email': {
-      const emailArgumentsError = findEmailArgumentsError(input.arguments);
-
-      return isDefined(emailArgumentsError)
-        ? { error: emailArgumentsError }
-        : { proposal: { ...baseProposal, template } };
-    }
+    case 'email':
+      return buildEmailProposal(baseProposal);
     case 'recordCreate':
     case 'recordUpdate':
     case 'recordDelete':

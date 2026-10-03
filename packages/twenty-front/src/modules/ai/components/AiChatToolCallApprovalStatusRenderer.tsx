@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import {
   type ProposeToolCallToolResult,
   type ProposeToolCallToolStatus,
 } from 'twenty-shared/ai';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconMail, IconTool } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -15,7 +15,6 @@ import {
   StyledAiChatAskStatusMessage,
 } from '@/ai/components/AiChatAskStyledComponents';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import { EMAIL_TOOL_NAMES } from '@/ai/constants/EmailToolNames';
 
 const StyledContent = styled.div`
   display: flex;
@@ -53,43 +52,18 @@ export const AiChatToolCallApprovalStatusRenderer = ({
   const proposeErrorText =
     toolPart.state === 'output-error' ? toolPart.errorText : output?.error;
 
-  // the input names the tool before the proposal is resolved
-  const proposedToolName = isPlainObject(toolPart.input)
-    ? toolPart.input.toolName
-    : undefined;
-  const isEmail = isDefined(result)
-    ? result.proposal.template === 'email'
-    : isString(proposedToolName) &&
-      Object.values<string>(EMAIL_TOOL_NAMES).includes(proposedToolName);
-
-  const messageByStatus: Record<ProposeToolCallToolStatus, string> = isEmail
-    ? {
-        pending: isDefined(result)
-          ? t`Email waiting for your review`
-          : t`Drafting an email...`,
-        approved:
-          result?.proposal.toolName === EMAIL_TOOL_NAMES.draft
-            ? t`Email saved as draft`
-            : t`Email sent`,
-        rejected: t`Email discarded`,
-        failed: t`Email could not go through`,
-        conflict: t`Email not sent`,
-        skipped: t`Email skipped`,
-      }
-    : {
-        pending: isDefined(result)
-          ? t`Action waiting for your approval`
-          : t`Preparing an action to approve...`,
-        approved: t`Action approved`,
-        rejected: t`Action rejected`,
-        failed: t`Action approved but it failed`,
-        conflict: t`Action not run: the record changed since it was proposed`,
-        skipped: t`Action skipped`,
-      };
+  const messageByStatus: Record<ProposeToolCallToolStatus, string> = {
+    pending: isDefined(result)
+      ? t`Waiting for your approval`
+      : t`Preparing an action to approve...`,
+    approved: t`Approved`,
+    rejected: t`Rejected`,
+    failed: t`Approved but it failed`,
+    conflict: t`Not run: the record changed since it was proposed`,
+    skipped: t`Skipped`,
+  };
   const message = hasFailedToPropose
-    ? isEmail
-      ? t`Email could not be proposed`
-      : t`Action could not be proposed`
+    ? t`Could not be proposed`
     : messageByStatus[status];
 
   const summary = result?.proposal.summary;
@@ -106,7 +80,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
 
   return (
     <StyledAiChatAskStatusContainer>
-      {isEmail ? (
+      {result?.proposal.template === 'email' ? (
         <IconMail size={theme.icon.size.sm} />
       ) : (
         <IconTool size={theme.icon.size.sm} />

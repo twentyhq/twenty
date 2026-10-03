@@ -1,9 +1,4 @@
-import { useEffect } from 'react';
-
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { isDefined } from 'twenty-shared/utils';
+import { useLoadRecordInStore } from '@/object-record/record-store/hooks/useLoadRecordInStore';
 
 type RecordDetailRelationRecordsListItemEffectProps = {
   relationRecordId: string;
@@ -14,18 +9,10 @@ export const RecordDetailRelationRecordsListItemEffect = ({
   relationRecordId,
   relationObjectMetadataNameSingular,
 }: RecordDetailRelationRecordsListItemEffectProps) => {
-  const { record } = useFindOneRecord({
+  useLoadRecordInStore({
     objectNameSingular: relationObjectMetadataNameSingular,
-    objectRecordId: relationRecordId,
+    recordId: relationRecordId,
   });
-
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
-
-  useEffect(() => {
-    if (isDefined(record)) {
-      upsertRecordsInStore({ partialRecords: [record] });
-    }
-  }, [record, upsertRecordsInStore]);
 
   return null;
 };

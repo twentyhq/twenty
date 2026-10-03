@@ -5,9 +5,7 @@ import {
   type AskQuestionItem,
   buildFallbackProposedToolCall,
   type ExtendedUIMessagePart,
-  PROPOSE_EMAIL_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
-  type ProposedEmail,
   type ProposedToolCall,
   REQUEST_FORM_TOOL_NAME,
   type RequestFormField,
@@ -40,16 +38,6 @@ export const parsePendingToolCall = (
             toolCallId,
             kind: 'questions',
             questions: input.questions as AskQuestionItem[],
-          }
-        : null;
-    case PROPOSE_EMAIL_TOOL_NAME:
-      return isPlainObject(input.recipients) &&
-        isString(input.subject) &&
-        isString(input.body)
-        ? {
-            toolCallId,
-            kind: 'emailApproval',
-            email: input as ProposedEmail,
           }
         : null;
     case REQUEST_FORM_TOOL_NAME:

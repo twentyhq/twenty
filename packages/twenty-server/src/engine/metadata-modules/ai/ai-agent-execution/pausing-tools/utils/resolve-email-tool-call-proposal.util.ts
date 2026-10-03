@@ -1,9 +1,8 @@
 import { type ProposeToolCallToolInput } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ACTION_TOOL_LABELS } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
 import { EMAIL_TOOL_APPROVALS } from 'src/engine/core-modules/tool-provider/constants/email-tool-approvals.constant';
-import { findEmailArgumentsError } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-email-arguments-error.util';
+import { buildEmailProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/build-email-proposal.util';
 import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 
 const isEmailToolName = (
@@ -24,17 +23,9 @@ export const resolveEmailToolCallProposal = (
     };
   }
 
-  const emailArgumentsError = findEmailArgumentsError(input.arguments);
-
-  if (isDefined(emailArgumentsError)) {
-    return { error: emailArgumentsError };
-  }
-
-  return {
-    proposal: {
-      ...input,
-      ...EMAIL_TOOL_APPROVALS[toolName],
-      toolLabel: ACTION_TOOL_LABELS[toolName].label,
-    },
-  };
+  return buildEmailProposal({
+    ...input,
+    alternativeToolNames: EMAIL_TOOL_APPROVALS[toolName].alternativeToolNames,
+    toolLabel: ACTION_TOOL_LABELS[toolName].label,
+  });
 };

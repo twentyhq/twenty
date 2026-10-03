@@ -29,8 +29,8 @@ jest.mock(
       mockRecordFields(props),
   }),
 );
-jest.mock('@/ai/components/internal/AiChatToolCallApprovalRecordChip', () => ({
-  AiChatToolCallApprovalRecordChip: () => null,
+jest.mock('@/ai/components/internal/AiChatToolCallApprovalRecord', () => ({
+  AiChatToolCallApprovalRecord: () => null,
 }));
 jest.mock('@/ai/components/internal/AiChatToolCallApprovalEmailCard', () => ({
   AiChatToolCallApprovalEmailCard: () => null,

@@ -32,9 +32,7 @@ describe('AiChatToolCallApprovalStatusRenderer', () => {
       },
     });
 
-    expect(
-      screen.getByText('Action could not be proposed'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('Could not be proposed')).toBeInTheDocument();
     expect(
       screen.getByText('Tool "drop_everything" is not available here.'),
     ).toBeInTheDocument();
@@ -47,28 +45,30 @@ describe('AiChatToolCallApprovalStatusRenderer', () => {
       errorText: 'Registry unavailable',
     });
 
-    expect(
-      screen.getByText('Action could not be proposed'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('Could not be proposed')).toBeInTheDocument();
     expect(screen.getByText('Registry unavailable')).toBeInTheDocument();
   });
 
-  it('reports an email that could not be proposed', () => {
+  it('reads an approved call from its result', () => {
     renderStatus({
-      state: 'output-error',
+      state: 'output-available',
       input: { toolName: 'send_email', arguments: {}, summary: 'Follow up' },
-      errorText: 'No connected account',
+      output: {
+        success: true,
+        result: {
+          status: 'approved',
+          proposal: {
+            toolName: 'draft_email',
+            toolLabel: 'Send Email',
+            summary: 'Follow up',
+            arguments: {},
+            template: 'email',
+          },
+        },
+      },
     });
 
-    expect(screen.getByText('Email could not be proposed')).toBeInTheDocument();
-  });
-
-  it('reads an email from its tool before the proposal is resolved', () => {
-    renderStatus({
-      state: 'input-available',
-      input: { toolName: 'send_email', arguments: {}, summary: 'Follow up' },
-    });
-
-    expect(screen.getByText('Drafting an email...')).toBeInTheDocument();
+    expect(screen.getByText('Approved')).toBeInTheDocument();
+    expect(screen.getByText('Follow up')).toBeInTheDocument();
   });
 });

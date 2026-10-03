@@ -1,22 +1,18 @@
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 
-import { AiChatToolCallApprovalRecordChip } from '@/ai/components/internal/AiChatToolCallApprovalRecordChip';
-import { formatProposedFieldValue } from '@/ai/utils/formatProposedFieldValue';
-import { readFieldOptionLabels } from '@/ai/utils/readFieldOptionLabels';
+import { AiChatToolCallApprovalCurrentValue } from '@/ai/components/internal/AiChatToolCallApprovalCurrentValue';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
-// approvers read amounts as the currency units the "Currently" line shows, not as micros
+// approvers read amounts in currency units, as the record shows them, not as micros
 const CURRENCY_INPUT_SETTINGS = {
   type: FieldMetadataType.CURRENCY,
   amountUnit: 'units',
@@ -28,16 +24,6 @@ const StyledField = styled.div`
   gap: ${themeCssVariables.spacing['0.5']};
 `;
 
-const StyledCurrentValue = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex-wrap: wrap;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[1]};
-  overflow-wrap: anywhere;
-`;
-
 const StyledUnknownField = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
@@ -47,7 +33,8 @@ const StyledUnknownField = styled.div`
 type AiChatToolCallApprovalRecordFieldsProps = {
   objectNameSingular: string;
   values: Record<string, unknown>;
-  currentValues?: Record<string, unknown>;
+  // an update shows each field's current value next to the proposed one
+  recordId?: string;
   readonly: boolean;
   onChange: (fieldName: string, value: JsonValue) => void;
 };
@@ -55,11 +42,10 @@ type AiChatToolCallApprovalRecordFieldsProps = {
 export const AiChatToolCallApprovalRecordFields = ({
   objectNameSingular,
   values,
-  currentValues,
+  recordId,
   readonly,
   onChange,
 }: AiChatToolCallApprovalRecordFieldsProps) => {
-  const { t } = useLingui();
   const objectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     { objectName: objectNameSingular, objectNameType: 'singular' },
@@ -105,25 +91,6 @@ export const AiChatToolCallApprovalRecordFields = ({
             );
           }
 
-          const hasCurrentValue =
-            isDefined(currentValues) && fieldName in currentValues;
-          const currentValue = currentValues?.[fieldName];
-          const currentRelatedRecord =
-            isFieldRelationManyToOne(fieldDefinition) &&
-            isNonEmptyString(currentValue)
-              ? {
-                  objectNameSingular:
-                    fieldDefinition.metadata.relationObjectMetadataNameSingular,
-                  recordId: currentValue,
-                }
-              : null;
-          const formattedCurrentValue = hasCurrentValue
-            ? (formatProposedFieldValue(
-                readFieldOptionLabels(fieldDefinition, currentValue),
-                fieldDefinition.type,
-              ) ?? t`Empty`)
-            : null;
-
           return (
             <StyledField key={fieldName}>
               <FormFieldInput
@@ -134,20 +101,12 @@ export const AiChatToolCallApprovalRecordFields = ({
                 onChange={(updatedValue) => onChange(fieldName, updatedValue)}
                 onClear={() => onChange(fieldName, null)}
               />
-              {isDefined(currentRelatedRecord) ? (
-                <StyledCurrentValue>
-                  {t`Currently:`}
-                  <AiChatToolCallApprovalRecordChip
-                    objectNameSingular={currentRelatedRecord.objectNameSingular}
-                    recordId={currentRelatedRecord.recordId}
-                  />
-                </StyledCurrentValue>
-              ) : (
-                isDefined(formattedCurrentValue) && (
-                  <StyledCurrentValue>
-                    {t`Currently: ${formattedCurrentValue}`}
-                  </StyledCurrentValue>
-                )
+              {isDefined(recordId) && (
+                <AiChatToolCallApprovalCurrentValue
+                  objectNameSingular={objectNameSingular}
+                  recordId={recordId}
+                  fieldDefinition={fieldDefinition}
+                />
               )}
             </StyledField>
           );
