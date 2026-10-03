@@ -1,10 +1,11 @@
 import { type PageLayoutWidgetManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
 import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
 
 export const validatePageLayoutWidget = (
-  widget: PageLayoutWidgetManifest,
+  widget: LooseEnumValues<PageLayoutWidgetManifest>,
 ): string[] => {
   const errors: string[] = [];
 

@@ -22,9 +22,7 @@ export type FieldPermissionManifest = Partial<SyncableEntityOptions> & {
 
 export type RowLevelPermissionPredicateGroupManifest = SyncableEntityOptions & {
   objectUniversalIdentifier: string;
-  logicalOperator:
-    | RowLevelPermissionPredicateGroupLogicalOperator
-    | `${RowLevelPermissionPredicateGroupLogicalOperator}`;
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
   parentPredicateGroupUniversalIdentifier?: string | null;
   position?: number | null;
 };
@@ -32,9 +30,7 @@ export type RowLevelPermissionPredicateGroupManifest = SyncableEntityOptions & {
 export type RowLevelPermissionPredicateManifest = SyncableEntityOptions & {
   objectUniversalIdentifier: string;
   fieldUniversalIdentifier: string;
-  operand:
-    | RowLevelPermissionPredicateOperand
-    | `${RowLevelPermissionPredicateOperand}`;
+  operand: RowLevelPermissionPredicateOperand;
   value?: RowLevelPermissionPredicateValue | null;
   subFieldName?: string | null;
   workspaceMemberFieldUniversalIdentifier?: string | null;

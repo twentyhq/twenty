@@ -4,8 +4,6 @@ import {
   VIEW_GROUP_LOAD_LIMIT_OPTIONS,
 } from 'twenty-shared/constants';
 import {
-  type AggregateOperations,
-  type ViewCalendarLayout,
   ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
@@ -54,23 +52,19 @@ export const fromViewManifestToUniversalFlatView = ({
     applicationUniversalIdentifier,
     name: viewManifest.name,
     objectMetadataUniversalIdentifier: viewManifest.objectUniversalIdentifier,
-    type: (viewManifest.type ?? ViewType.TABLE) as ViewType,
+    type: viewManifest.type ?? ViewType.TABLE,
     icon: viewManifest.icon ?? 'IconList',
     position: viewManifest.position ?? 0,
     isCompact: viewManifest.isCompact ?? false,
     isCustom: true,
-    visibility: (viewManifest.visibility ??
-      ViewVisibility.WORKSPACE) as ViewVisibility,
-    openRecordIn: (viewManifest.openRecordIn ??
-      ViewOpenRecordIn.SIDE_PANEL) as ViewOpenRecordIn,
+    visibility: viewManifest.visibility ?? ViewVisibility.WORKSPACE,
+    openRecordIn: viewManifest.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     key: null,
-    kanbanAggregateOperation: (viewManifest.kanbanAggregateOperation ??
-      null) as AggregateOperations | null,
+    kanbanAggregateOperation: viewManifest.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier:
       viewManifest.kanbanAggregateOperationFieldMetadataUniversalIdentifier ??
       null,
-    calendarLayout: (viewManifest.calendarLayout ??
-      null) as ViewCalendarLayout | null,
+    calendarLayout: viewManifest.calendarLayout ?? null,
     calendarFieldMetadataUniversalIdentifier:
       viewManifest.calendarFieldMetadataUniversalIdentifier ?? null,
     calendarEndFieldMetadataUniversalIdentifier:

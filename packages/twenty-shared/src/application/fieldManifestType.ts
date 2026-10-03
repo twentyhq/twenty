@@ -14,7 +14,7 @@ type BaseRegularFieldManifest<
     RelationAndMorphRelationFieldMetadataType
   >,
 > = SyncableEntityOptions & {
-  type: T | `${T}`;
+  type: T;
   name: string;
   label: string;
   description?: string;
@@ -22,7 +22,7 @@ type BaseRegularFieldManifest<
   options?: FieldManifestOptions<T>;
   universalSettings?: FieldMetadataUniversalSettings<T>;
   isUIEditable?: boolean;
-  writability?: MetadataWritability | `${MetadataWritability}`;
+  writability?: MetadataWritability;
   isUnique?: boolean;
   isLabelSyncedWithName?: boolean;
   isSearchable?: boolean;
@@ -51,7 +51,7 @@ export type RelationFieldManifest<
   T extends RelationAndMorphRelationFieldMetadataType =
     RelationAndMorphRelationFieldMetadataType,
 > = Omit<BaseRegularFieldManifest<T>, 'universalSettings' | 'type'> & {
-  type: T | `${T}`;
+  type: T;
   isNullable?: boolean;
   defaultValue?: FieldMetadataDefaultValue<T>;
   relationTargetFieldMetadataUniversalIdentifier: string;

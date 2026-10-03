@@ -3,6 +3,7 @@ import {
   type SendInboxMessageResult,
 } from 'twenty-shared/application';
 
+import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
 
 const SEND_INBOX_MESSAGE_MUTATION = `
@@ -14,10 +15,10 @@ const SEND_INBOX_MESSAGE_MUTATION = `
 `;
 
 export const sendInboxMessage = async (
-  input: SendInboxMessageInput,
+  input: LooseEnumValues<SendInboxMessageInput>,
 ): Promise<SendInboxMessageResult> => {
   const { sendInboxMessage: result } = await postGraphqlRequest<
-    { input: SendInboxMessageInput },
+    { input: LooseEnumValues<SendInboxMessageInput> },
     { sendInboxMessage: SendInboxMessageResult }
   >({
     query: SEND_INBOX_MESSAGE_MUTATION,

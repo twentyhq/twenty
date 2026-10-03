@@ -1,5 +1,4 @@
 import { type ViewFilterManifest } from 'twenty-shared/application';
-import { type ViewFilterOperand } from 'twenty-shared/types';
 
 import { type UniversalFlatViewFilter } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter.type';
 
@@ -22,7 +21,7 @@ export const fromViewFilterManifestToUniversalFlatViewFilter = ({
     viewUniversalIdentifier,
     viewFilterGroupUniversalIdentifier:
       viewFilterManifest.viewFilterGroupUniversalIdentifier ?? null,
-    operand: viewFilterManifest.operand as ViewFilterOperand,
+    operand: viewFilterManifest.operand,
     value: viewFilterManifest.value,
     subFieldName: viewFilterManifest.subFieldName ?? null,
     relationTargetFieldMetadataUniversalIdentifier:

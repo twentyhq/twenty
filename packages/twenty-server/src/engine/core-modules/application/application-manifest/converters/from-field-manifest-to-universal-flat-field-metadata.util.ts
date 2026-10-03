@@ -22,7 +22,7 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 const isRelationFieldManifest = (
   fieldManifest: FieldManifest,
 ): fieldManifest is FieldManifest<RelationAndMorphRelationFieldMetadataType> =>
-  isMorphOrRelationFieldMetadataType(fieldManifest.type as FieldMetadataType);
+  isMorphOrRelationFieldMetadataType(fieldManifest.type);
 
 const getRelationTargetUniversalIdentifiers = (
   fieldManifest: FieldManifest,
@@ -82,7 +82,7 @@ const resolveManifestFieldOptions = (
     return null;
   }
 
-  return isFieldMetadataSelectKind(fieldManifest.type as FieldMetadataType)
+  return isFieldMetadataSelectKind(fieldManifest.type)
     ? sanitizeSelectOptionColors(fieldManifest.options)
     : fieldManifest.options;
 };
@@ -107,20 +107,19 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     relationTargetObjectMetadataUniversalIdentifier,
   } = getRelationTargetUniversalIdentifiers(fieldManifest);
 
-  const fieldType = fieldManifest.type as FieldMetadataType;
   const rawDefaultValue =
-    fieldManifest.defaultValue ?? generateDefaultValue(fieldType);
-  const defaultValue = isCompositeFieldMetadataType(fieldType)
+    fieldManifest.defaultValue ?? generateDefaultValue(fieldManifest.type);
+  const defaultValue = isCompositeFieldMetadataType(fieldManifest.type)
     ? nullifyEmptyCompositeDefaultValue({
         defaultValue: rawDefaultValue,
-        fieldType: fieldType as CompositeFieldMetadataType,
+        fieldType: fieldManifest.type as CompositeFieldMetadataType,
       })
     : rawDefaultValue;
 
   return {
     universalIdentifier: fieldManifest.universalIdentifier,
     applicationUniversalIdentifier,
-    type: fieldType,
+    type: fieldManifest.type,
     name: fieldManifest.name,
     label: fieldManifest.label,
     description: fieldManifest.description ?? null,
@@ -133,8 +132,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     isSystem: false,
     isSystemSideEffect: false,
     isUIEditable: fieldManifest.isUIEditable ?? true,
-    writability: (fieldManifest.writability ??
-      MetadataWritability.OPEN) as MetadataWritability,
+    writability: fieldManifest.writability ?? MetadataWritability.OPEN,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,
     isSearchable: resolveManifestFieldIsSearchable({
@@ -143,7 +141,8 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
       objectIsSearchable,
     }),
     isAuditLogged:
-      fieldManifest.isAuditLogged ?? isAuditLoggableFieldType(fieldType),
+      fieldManifest.isAuditLogged ??
+      isAuditLoggableFieldType(fieldManifest.type),
     isLabelSyncedWithName: fieldManifest.isLabelSyncedWithName ?? false,
     morphId:
       fieldManifest.type === FieldMetadataType.MORPH_RELATION

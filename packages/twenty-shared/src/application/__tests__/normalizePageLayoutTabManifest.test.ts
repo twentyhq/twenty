@@ -412,43 +412,6 @@ describe('normalizePageLayoutTabManifest', () => {
     });
   });
 
-  it('accepts layout modes written as plain strings', () => {
-    expect(
-      normalizePageLayoutTabManifest({
-        pageLayoutTabManifest: {
-          ...tab,
-          layoutMode: 'VERTICAL_LIST',
-          widgets: [
-            {
-              ...widget,
-              position: {
-                layoutMode: 'VERTICAL_LIST',
-                index: 0,
-                heightBehavior: 'FIT_CONTENT',
-              },
-            },
-          ],
-        },
-        pageLayoutType: undefined,
-      }),
-    ).toMatchObject({
-      status: 'success',
-      pageLayoutTab: {
-        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-        widgets: [
-          {
-            position: {
-              layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-              index: 0,
-              heightBehavior:
-                PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT,
-            },
-          },
-        ],
-      },
-    });
-  });
-
   it.each(['position', 'gridPosition'])(
     'preserves legacy grid coordinates in %s',
     (positionKey) => {

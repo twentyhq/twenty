@@ -23,7 +23,7 @@ export type ViewFieldManifest = SyncableEntityOptions & {
   isVisible?: boolean;
   size?: number;
   position: number;
-  aggregateOperation?: AggregateOperations | `${AggregateOperations}`;
+  aggregateOperation?: AggregateOperations;
   viewFieldGroupUniversalIdentifier?: string;
 };
 
@@ -33,7 +33,7 @@ export type StandaloneViewFieldManifest = ViewFieldManifest & {
 
 export type ViewFilterManifest = SyncableEntityOptions & {
   fieldMetadataUniversalIdentifier: string;
-  operand: ViewFilterOperand | `${ViewFilterOperand}`;
+  operand: ViewFilterOperand;
   value: ViewManifestFilterValue;
   subFieldName?: string;
   relationTargetFieldMetadataUniversalIdentifier?: string;
@@ -42,9 +42,7 @@ export type ViewFilterManifest = SyncableEntityOptions & {
 };
 
 export type ViewFilterGroupManifest = SyncableEntityOptions & {
-  logicalOperator:
-    | ViewFilterGroupLogicalOperator
-    | `${ViewFilterGroupLogicalOperator}`;
+  logicalOperator: ViewFilterGroupLogicalOperator;
   parentViewFilterGroupUniversalIdentifier?: string;
   positionInViewFilterGroup?: number;
 };
@@ -63,34 +61,34 @@ export type ViewFieldGroupManifest = SyncableEntityOptions & {
 
 export type ViewSortManifest = SyncableEntityOptions & {
   fieldMetadataUniversalIdentifier: string;
-  direction: ViewSortDirection | `${ViewSortDirection}`;
+  direction: ViewSortDirection;
   subFieldName?: string;
 };
 
 export type ViewManifest = SyncableEntityOptions & {
   name: string;
   objectUniversalIdentifier: string;
-  type?: ViewType | `${ViewType}`;
+  type?: ViewType;
   /**
    * @deprecated View keys (INDEX, FIELDS_WIDGET) are reserved for the
    * engine-owned default views, which the server provisions automatically for
    * every object. This field is ignored: manifest views are always created as
    * additional views.
    */
-  key?: ViewKey | `${ViewKey}`;
+  key?: ViewKey;
   icon?: string;
   position?: number;
   isCompact?: boolean;
-  visibility?: ViewVisibility | `${ViewVisibility}`;
-  openRecordIn?: ViewOpenRecordIn | `${ViewOpenRecordIn}`;
+  visibility?: ViewVisibility;
+  openRecordIn?: ViewOpenRecordIn;
   mainGroupByFieldMetadataUniversalIdentifier?: string;
   shouldHideEmptyGroups?: boolean;
   groupLoadLimit?: number;
   anyFieldFilterValue?: string | null;
   kanbanColumnWidth?: number | null;
-  kanbanAggregateOperation?: AggregateOperations | `${AggregateOperations}`;
+  kanbanAggregateOperation?: AggregateOperations;
   kanbanAggregateOperationFieldMetadataUniversalIdentifier?: string;
-  calendarLayout?: ViewCalendarLayout | `${ViewCalendarLayout}`;
+  calendarLayout?: ViewCalendarLayout;
   calendarFieldMetadataUniversalIdentifier?: string;
   calendarEndFieldMetadataUniversalIdentifier?: string;
   fields?: ViewFieldManifest[];

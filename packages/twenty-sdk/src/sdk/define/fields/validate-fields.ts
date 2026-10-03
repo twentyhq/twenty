@@ -11,9 +11,13 @@ import {
   isTagColor,
 } from 'twenty-shared/utils';
 
-const getSelectOptionErrors = (field: ObjectFieldManifest): string[] => {
+import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
+
+const getSelectOptionErrors = (
+  field: LooseEnumValues<ObjectFieldManifest>,
+): string[] => {
   if (
-    !isFieldMetadataSelectKind(field.type as FieldMetadataType) ||
+    !isFieldMetadataSelectKind(FieldMetadataType[field.type]) ||
     !Array.isArray(field.options)
   ) {
     return [];
@@ -26,7 +30,11 @@ const getSelectOptionErrors = (field: ObjectFieldManifest): string[] => {
       ];
     }
 
-    if (!isDefined(option.color) || isTagColor(option.color)) {
+    if (
+      !('color' in option) ||
+      !isDefined(option.color) ||
+      isTagColor(option.color)
+    ) {
       return [];
     }
 
@@ -37,7 +45,7 @@ const getSelectOptionErrors = (field: ObjectFieldManifest): string[] => {
 };
 
 export const validateFields = (
-  fields: ObjectFieldManifest[] | undefined,
+  fields: LooseEnumValues<ObjectFieldManifest>[] | undefined,
 ): string[] => {
   if (!fields) {
     return [];

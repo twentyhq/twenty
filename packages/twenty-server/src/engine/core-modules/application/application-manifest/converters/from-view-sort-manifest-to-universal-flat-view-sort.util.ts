@@ -1,5 +1,4 @@
 import { type ViewSortManifest } from 'twenty-shared/application';
-import { type ViewSortDirection } from 'twenty-shared/types';
 
 import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-sort.type';
 
@@ -20,7 +19,7 @@ export const fromViewSortManifestToUniversalFlatViewSort = ({
     fieldMetadataUniversalIdentifier:
       viewSortManifest.fieldMetadataUniversalIdentifier,
     viewUniversalIdentifier,
-    direction: viewSortManifest.direction as ViewSortDirection,
+    direction: viewSortManifest.direction,
     subFieldName: viewSortManifest.subFieldName ?? null,
     createdAt: now,
     updatedAt: now,

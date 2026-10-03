@@ -26,6 +26,20 @@ describe('definePageLayoutWidget', () => {
     expect(result.errors).toEqual([]);
   });
 
+  it('accepts nested enum values written as plain strings', () => {
+    const result = definePageLayoutWidget({
+      ...WIDGET_CONFIG,
+      position: {
+        layoutMode: 'VERTICAL_LIST',
+        index: 1000,
+        heightBehavior: 'FIT_CONTENT',
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
   it('rejects a widget without a tab or a position', () => {
     const result = definePageLayoutWidget({
       ...WIDGET_CONFIG,

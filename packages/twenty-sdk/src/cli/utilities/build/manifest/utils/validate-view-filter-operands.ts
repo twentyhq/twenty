@@ -50,13 +50,12 @@ export const validateViewFilterOperands = ({
         continue;
       }
 
-      const effectiveFieldType = (
+      const effectiveFieldType: FieldMetadataType =
         referencedField.type === FieldMetadataType.RELATION
           ? (fieldByUniversalIdentifier.get(
               referencedField.relationTargetFieldMetadataUniversalIdentifier,
             )?.type ?? referencedField.type)
-          : referencedField.type
-      ) as FieldMetadataType;
+          : referencedField.type;
 
       if (!(effectiveFieldType in FILTER_OPERANDS_MAP)) {
         continue;
@@ -67,7 +66,7 @@ export const validateViewFilterOperands = ({
         subFieldName: filter.subFieldName,
       });
 
-      if (!allowedOperands.some((operand) => operand === filter.operand)) {
+      if (!allowedOperands.includes(filter.operand)) {
         errors.push(
           `Operand "${filter.operand}" is not supported on field "${referencedField.name}" (type "${effectiveFieldType}"). Supported operands: ${allowedOperands.join(', ')}.`,
         );

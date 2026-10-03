@@ -1,9 +1,10 @@
 import { isAbsoluteUrl } from 'twenty-shared/utils';
 
 import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
 
 export const normalizeApplicationAssets = (
-  application: ApplicationConfig,
+  application: LooseEnumValues<ApplicationConfig>,
 ): {
   logo?: string;
   galleryImages: string[];

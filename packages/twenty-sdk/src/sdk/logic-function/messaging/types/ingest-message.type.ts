@@ -1,8 +1,10 @@
 import { type MessageParticipantRole } from 'twenty-shared/types';
 
+import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
+
 export type IngestMessageParticipant = {
   // Exactly one participant must be 'FROM'; when its handle equals the channel's, the message is outgoing
-  role: MessageParticipantRole | `${MessageParticipantRole}`;
+  role: LooseEnumValues<MessageParticipantRole>;
   // Same namespace as the channel's own handle
   handle: string;
   // Omitting it on a later delivery keeps the stored name

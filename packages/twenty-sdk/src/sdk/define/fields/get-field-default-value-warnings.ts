@@ -8,6 +8,8 @@ import {
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { isString } from '@sniptt/guards';
 
+import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
+
 const isQuotedString = (value: string): boolean =>
   value.length >= 2 && value.startsWith("'") && value.endsWith("'");
 
@@ -16,7 +18,9 @@ const isComputedDefaultValue = (value: string): boolean =>
     value as FieldMetadataDefaultValueFunctionNames,
   );
 
-const collectUnquotedStrings = (field: ObjectFieldManifest): string[] => {
+const collectUnquotedStrings = (
+  field: LooseEnumValues<ObjectFieldManifest>,
+): string[] => {
   const { defaultValue, type } = field;
 
   if (!isDefined(defaultValue)) {
@@ -54,7 +58,7 @@ const collectUnquotedStrings = (field: ObjectFieldManifest): string[] => {
 };
 
 export const getFieldDefaultValueWarnings = (
-  fields: ObjectFieldManifest[] | undefined,
+  fields: LooseEnumValues<ObjectFieldManifest>[] | undefined,
 ): string[] => {
   if (!isDefined(fields)) {
     return [];

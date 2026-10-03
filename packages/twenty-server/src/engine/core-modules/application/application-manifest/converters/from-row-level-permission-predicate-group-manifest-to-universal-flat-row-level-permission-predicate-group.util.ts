@@ -1,5 +1,4 @@
 import { type RowLevelPermissionPredicateGroupManifest } from 'twenty-shared/application';
-import { type RowLevelPermissionPredicateGroupLogicalOperator } from 'twenty-shared/types';
 
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 
@@ -22,8 +21,7 @@ export const fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevel
       roleUniversalIdentifier,
       objectMetadataUniversalIdentifier:
         rowLevelPermissionPredicateGroupManifest.objectUniversalIdentifier,
-      logicalOperator:
-        rowLevelPermissionPredicateGroupManifest.logicalOperator as RowLevelPermissionPredicateGroupLogicalOperator,
+      logicalOperator: rowLevelPermissionPredicateGroupManifest.logicalOperator,
       parentRowLevelPermissionPredicateGroupUniversalIdentifier:
         rowLevelPermissionPredicateGroupManifest.parentPredicateGroupUniversalIdentifier ??
         null,

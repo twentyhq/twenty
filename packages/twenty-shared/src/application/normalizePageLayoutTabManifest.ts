@@ -11,7 +11,6 @@ import { DEFAULT_WIDGET_SIZE } from '@/constants';
 import {
   type GridPosition,
   PageLayoutTabLayoutMode,
-  type PageLayoutWidgetPosition,
   PageLayoutType,
   PageLayoutWidgetVerticalListHeightBehavior,
   WidgetType,
@@ -30,7 +29,7 @@ export const normalizePageLayoutTabManifest = ({
 }):
   | { status: 'success'; pageLayoutTab: NormalizedPageLayoutTabManifest }
   | { status: 'fail'; errors: string[] } => {
-  const manifestLayoutMode =
+  const layoutMode =
     pageLayoutTabManifest.layoutMode ??
     (pageLayoutType === PageLayoutType.STANDALONE_PAGE
       ? PageLayoutTabLayoutMode.VERTICAL_LIST
@@ -40,18 +39,16 @@ export const normalizePageLayoutTabManifest = ({
 
   if (
     !Object.values(PageLayoutTabLayoutMode).some(
-      (supportedLayoutMode) => supportedLayoutMode === manifestLayoutMode,
+      (supportedLayoutMode) => supportedLayoutMode === layoutMode,
     )
   ) {
     return {
       status: 'fail',
       errors: [
-        `Page layout tab "${pageLayoutTabManifest.title}" defines unsupported layoutMode "${manifestLayoutMode}". Expected GRID, VERTICAL_LIST or CANVAS.`,
+        `Page layout tab "${pageLayoutTabManifest.title}" defines unsupported layoutMode "${layoutMode}". Expected GRID, VERTICAL_LIST or CANVAS.`,
       ],
     };
   }
-
-  const layoutMode = PageLayoutTabLayoutMode[manifestLayoutMode];
 
   for (const widget of widgets) {
     const heightBehaviors = [
@@ -102,23 +99,19 @@ export const normalizePageLayoutTabManifest = ({
         index,
       ): NormalizedPageLayoutWidgetManifest => {
         if (isDefined(position)) {
-          // String values are the enum values at runtime; unknown ones are rejected by the layoutMode check below
-          const enumPosition = position as PageLayoutWidgetPosition;
-
           return {
             ...widget,
             position:
-              enumPosition.layoutMode ===
-                PageLayoutTabLayoutMode.VERTICAL_LIST &&
+              position.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
               isDefined(heightBehavior)
                 ? {
-                    ...enumPosition,
+                    ...position,
                     heightBehavior:
                       PageLayoutWidgetVerticalListHeightBehavior[
                         heightBehavior
                       ],
                   }
-                : enumPosition,
+                : position,
           };
         }
 
