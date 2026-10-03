@@ -27,14 +27,9 @@ export const NavigationDrawerAiChatThreadItem = ({
 }: NavigationDrawerAiChatThreadItemProps) => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
-  const {
-    isRenaming,
-    draftTitle,
-    setDraftTitle,
-    startRename,
-    cancelRename,
-    commitRename,
-  } = useAiChatThreadRename(thread);
+  const actionsInstanceId = useId();
+  const { isRenaming, draftTitle, setDraftTitle, cancelRename, commitRename } =
+    useAiChatThreadRename({ thread, commandMenuInstanceId: actionsInstanceId });
 
   const isDeleted = Boolean(thread.deletedAt);
   const { isUnread } = useAtomFamilySelectorValue(
@@ -42,7 +37,6 @@ export const NavigationDrawerAiChatThreadItem = ({
     thread.id,
   );
   const displayLabel = thread.title || t`New chat`;
-  const actionsInstanceId = useId();
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     getCommandMenuDropdownIdFromCommandMenuId(actionsInstanceId),
@@ -73,7 +67,6 @@ export const NavigationDrawerAiChatThreadItem = ({
         <AiChatThreadActionsDropdown
           thread={thread}
           instanceId={actionsInstanceId}
-          onRenameRequested={startRename}
         />
       }
     />

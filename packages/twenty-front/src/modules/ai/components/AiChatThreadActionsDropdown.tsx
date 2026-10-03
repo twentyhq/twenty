@@ -3,7 +3,7 @@ import { type MouseEvent } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
-import { IconDotsVertical, IconPencil, IconUnlink } from 'twenty-ui/icon';
+import { IconDotsVertical, IconUnlink } from 'twenty-ui/icon';
 
 import { AiChatThreadCommandMenuItems } from '@/ai/components/AiChatThreadCommandMenuItems';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
@@ -28,14 +28,12 @@ type AiChatThreadActionsDropdownProps = {
     lastActivityAt?: string | null;
   };
   instanceId: string;
-  onRenameRequested: () => void;
   onDetach?: () => void;
 };
 
 export const AiChatThreadActionsDropdown = ({
   thread,
   instanceId,
-  onRenameRequested,
   onDetach,
 }: AiChatThreadActionsDropdownProps) => {
   const { t } = useLingui();
@@ -60,12 +58,6 @@ export const AiChatThreadActionsDropdown = ({
   }
 
   const canUpdate = isDefined(permissions) && permissions.canUpdate;
-  const isDeleted = isDefined(thread.deletedAt);
-
-  const handleRename = (event: MouseEvent) => {
-    event.stopPropagation();
-    onRenameRequested();
-  };
 
   const handleDetach = (event: MouseEvent) => {
     event.stopPropagation();
@@ -116,14 +108,6 @@ export const AiChatThreadActionsDropdown = ({
                   onClick={handleDetach}
                 >
                   {t`Detach`}
-                </Dropdown.ActionItem>
-              )}
-              {canUpdate && !isDeleted && (
-                <Dropdown.ActionItem
-                  startIcon={<IconPencil />}
-                  onClick={handleRename}
-                >
-                  {t`Rename`}
                 </Dropdown.ActionItem>
               )}
               <CommandMenuContextProvider
