@@ -123,7 +123,6 @@ export const useDuplicatePageLayoutTab = ({
       const newTabPosition = calculateNewPosition({
         items: sortedTabs,
         destinationIndex: sourceIndex + 1,
-        sourceIndex,
       });
 
       const newTab: PageLayoutTab = {

@@ -213,6 +213,8 @@ export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
 export { parseJson } from './parseJson';
+export { computeEvenlySpacedPositions } from './position/computeEvenlySpacedPositions';
+export { computeMidpointPosition } from './position/computeMidpointPosition';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
 export { resolveRichTextVariables } from './rich-text-variable-resolver';

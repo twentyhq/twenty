@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { computeMidpointPosition, isDefined } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export type RecordWithPosition = {
@@ -58,11 +58,10 @@ export const computeNewPositionOfDraggedRecord = ({
       const itemBeforeTargetItem =
         sortedRecordsByAscendingPosition[indexOfTargetItem - 1];
 
-      const intermediaryPosition =
-        targetItem.position -
-        (targetItem.position - itemBeforeTargetItem.position) / 2;
-
-      return intermediaryPosition;
+      return computeMidpointPosition(
+        itemBeforeTargetItem.position,
+        targetItem.position,
+      );
     }
 
     const shouldGoAfterTargetItem = indexOfItemToMove < indexOfTargetItem;
@@ -75,11 +74,10 @@ export const computeNewPositionOfDraggedRecord = ({
         return targetItem.position + 1;
       }
 
-      const intermediaryPosition =
-        targetItem.position +
-        (itemAfterTargetItem.position - targetItem.position) / 2;
-
-      return intermediaryPosition;
+      return computeMidpointPosition(
+        targetItem.position,
+        itemAfterTargetItem.position,
+      );
     } else {
       const itemBeforeTargetItem =
         sortedRecordsByAscendingPosition[indexOfTargetItem - 1];
@@ -88,11 +86,10 @@ export const computeNewPositionOfDraggedRecord = ({
         return targetItem.position - 1;
       }
 
-      const intermediaryPosition =
-        targetItem.position -
-        (targetItem.position - itemBeforeTargetItem.position) / 2;
-
-      return intermediaryPosition;
+      return computeMidpointPosition(
+        itemBeforeTargetItem.position,
+        targetItem.position,
+      );
     }
   }
 };

@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { computeMidpointPosition, isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const computeInsertIndexAndPosition = (
@@ -18,6 +18,6 @@ export const computeInsertIndexAndPosition = (
       : items.length;
   const prevPosition = itemsInFolder[targetIndex - 1]?.position ?? 0;
   const nextPosition = itemsInFolder[targetIndex]?.position ?? prevPosition + 1;
-  const position = (prevPosition + nextPosition) / 2;
+  const position = computeMidpointPosition(prevPosition, nextPosition);
   return { flatIndex, position };
 };

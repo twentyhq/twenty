@@ -10,7 +10,6 @@ describe('calculateNewPosition', () => {
 
       const result = calculateNewPosition({
         destinationIndex: 0,
-        sourceIndex: 1,
         items,
       });
 
@@ -22,7 +21,6 @@ describe('calculateNewPosition', () => {
 
       const result = calculateNewPosition({
         destinationIndex: 0,
-        sourceIndex: 0,
         items,
       });
 
@@ -36,7 +34,6 @@ describe('calculateNewPosition', () => {
 
       const result = calculateNewPosition({
         destinationIndex: 3,
-        sourceIndex: 0,
         items,
       });
 
@@ -48,7 +45,6 @@ describe('calculateNewPosition', () => {
 
       const result = calculateNewPosition({
         destinationIndex: 1,
-        sourceIndex: 0,
         items,
       });
 
@@ -56,55 +52,27 @@ describe('calculateNewPosition', () => {
     });
   });
 
-  describe('when moving down (destinationIndex > sourceIndex)', () => {
+  describe('when inserting between two items', () => {
     it('should return midpoint between destination and previous item', () => {
       const items = createItems([10, 20, 30]);
 
-      const result = calculateNewPosition({
-        destinationIndex: 2,
-        sourceIndex: 0,
-        items,
-      });
-
-      expect(result).toBe(25);
+      expect(calculateNewPosition({ destinationIndex: 1, items })).toBe(15);
+      expect(calculateNewPosition({ destinationIndex: 2, items })).toBe(25);
     });
 
     it('should return fractional midpoints for adjacent positions', () => {
-      const items = createItems([1, 2, 5]);
-
-      const result = calculateNewPosition({
-        destinationIndex: 2,
-        sourceIndex: 0,
-        items,
-      });
-
-      expect(result).toBe(3.5);
-    });
-  });
-
-  describe('when moving up (destinationIndex <= sourceIndex and not at edges)', () => {
-    it('should return midpoint between destination and previous item', () => {
-      const items = createItems([10, 20, 30]);
-
-      const result = calculateNewPosition({
-        destinationIndex: 1,
-        sourceIndex: 2,
-        items,
-      });
-
-      expect(result).toBe(15);
-    });
-
-    it('should return fractional midpoints for adjacent positions', () => {
-      const items = createItems([1, 4, 10]);
-
-      const result = calculateNewPosition({
-        destinationIndex: 1,
-        sourceIndex: 2,
-        items,
-      });
-
-      expect(result).toBe(2.5);
+      expect(
+        calculateNewPosition({
+          destinationIndex: 2,
+          items: createItems([1, 2, 5]),
+        }),
+      ).toBe(3.5);
+      expect(
+        calculateNewPosition({
+          destinationIndex: 1,
+          items: createItems([1, 4, 10]),
+        }),
+      ).toBe(2.5);
     });
 
     it('should produce unique position for sequential integers', () => {
@@ -112,7 +80,6 @@ describe('calculateNewPosition', () => {
 
       const result = calculateNewPosition({
         destinationIndex: 1,
-        sourceIndex: 2,
         items,
       });
 
@@ -121,16 +88,10 @@ describe('calculateNewPosition', () => {
       expect(result).not.toBe(items[1].position);
     });
 
-    it('should handle destinationIndex equal to sourceIndex', () => {
-      const items = createItems([10, 20, 30]);
+    it('should not introduce floating point artifacts', () => {
+      const items = createItems([0.1, 0.2]);
 
-      const result = calculateNewPosition({
-        destinationIndex: 1,
-        sourceIndex: 1,
-        items,
-      });
-
-      expect(result).toBe(15);
+      expect(calculateNewPosition({ destinationIndex: 1, items })).toBe(0.15);
     });
   });
 });

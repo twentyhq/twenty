@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { computeMidpointPosition, isDefined } from 'twenty-shared/utils';
 
 export const computeInsertPositionFromBounds = (
   previousPosition: number | undefined,
@@ -17,7 +17,7 @@ export const computeInsertPositionFromBounds = (
       return previousPosition - 1;
     }
 
-    return (previousPosition + nextPosition) / 2;
+    return computeMidpointPosition(previousPosition, nextPosition);
   }
 
   return 0;

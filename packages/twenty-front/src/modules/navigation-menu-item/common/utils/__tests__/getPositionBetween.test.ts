@@ -24,4 +24,8 @@ describe('getPositionBetween', () => {
     expect(getPositionBetween(null, null)).toBe(0);
     expect(getPositionBetween(undefined, undefined)).toBe(0);
   });
+
+  it('does not introduce floating point artifacts', () => {
+    expect(getPositionBetween(0.1, 0.2)).toBe(0.15);
+  });
 });
