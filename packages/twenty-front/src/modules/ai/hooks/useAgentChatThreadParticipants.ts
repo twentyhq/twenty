@@ -27,7 +27,6 @@ export const useAgentChatThreadParticipants = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
 
-  // Merged per thread, so a thread asked for without a row is cleared; false when the request failed
   const loadAgentChatThreadParticipants = useCallback(
     async (threadIds: string[]): Promise<boolean> => {
       const participantsBeforeRequest = store.get(

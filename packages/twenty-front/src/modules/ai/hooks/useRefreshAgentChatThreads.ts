@@ -240,14 +240,10 @@ export const useRefreshAgentChatThreads = () => {
           return null;
         }
 
-        const [, isParticipantLoaded] = await Promise.all([
+        await Promise.all([
           refreshAgentChatThreadPermissions([thread.id]),
           loadAgentChatThreadParticipants([thread.id]),
         ]);
-
-        if (!isParticipantLoaded) {
-          return undefined;
-        }
 
         if (
           store.get(agentChatThreadRecordUpdateCountState.atom) !==

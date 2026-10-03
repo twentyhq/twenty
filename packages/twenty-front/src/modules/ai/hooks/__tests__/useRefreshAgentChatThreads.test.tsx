@@ -424,6 +424,21 @@ describe('useRefreshAgentChatThreads', () => {
     });
   });
 
+  it('still opens a chat whose member state failed to load', async () => {
+    const store = buildStore();
+    loadAgentChatThreadParticipants.mockResolvedValueOnce(false);
+    queryMock.mockResolvedValueOnce(
+      buildPage([buildThread('old-thread', 'Old chat')]),
+    );
+    const result = renderRefresh(store);
+
+    await act(async () => {
+      expect(
+        await result.current.loadAgentChatThread('old-thread'),
+      ).toMatchObject({ id: 'old-thread' });
+    });
+  });
+
   it('restores the usage of a chat opened past the loaded pages', async () => {
     const store = buildStore();
     queryMock.mockResolvedValueOnce(
