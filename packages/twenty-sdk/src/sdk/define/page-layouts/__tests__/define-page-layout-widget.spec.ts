@@ -4,14 +4,13 @@ import {
   definePageLayoutWidget,
   PageLayoutTabLayoutMode,
   type StandalonePageLayoutWidgetManifest,
-  WidgetType,
 } from '@/sdk/define';
 
 const WIDGET_CONFIG: StandalonePageLayoutWidgetManifest = {
   universalIdentifier: '11111111-1111-4111-8111-111111111111',
   pageLayoutTabUniversalIdentifier: '22222222-2222-4222-8222-222222222222',
   title: 'Docs',
-  type: WidgetType.IFRAME,
+  type: 'IFRAME',
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1000 },
   configuration: {
     configurationType: 'IFRAME',
