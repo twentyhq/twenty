@@ -24,14 +24,6 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
       hasMessages: jest.fn().mockResolvedValue(hasMessages),
       getQueuedMessages: jest.fn().mockResolvedValue([]),
       deleteTurns: jest.fn().mockResolvedValue(undefined),
-      getMessagesForThread: jest.fn().mockResolvedValue([]),
-      getTurnContexts: jest.fn().mockResolvedValue([
-        {
-          turnId: 'opening-turn-id',
-          context: 'Company: Acme Inc',
-          createdAt: '2026-01-01T00:00:00.000Z',
-        },
-      ]),
     };
     const threadService = {
       openAgentTurn: jest.fn().mockResolvedValue('opening-turn-id'),
@@ -82,7 +74,6 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
   const openingTurnArguments = {
     thread,
     userWorkspaceId: 'user-workspace-id',
-    workspaceMemberId: 'member-id',
     workspace,
     context: 'Company: Acme Inc',
     modelId: 'default-fast-model',
@@ -153,12 +144,6 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
       expect.any(String),
       expect.objectContaining({
         threadId: 'thread-id',
-        messages: [
-          expect.objectContaining({
-            id: 'turn-context-opening-turn-id',
-            role: 'user',
-          }),
-        ],
         browsingContext: null,
         modelId: 'default-fast-model',
         hasTitle: true,
