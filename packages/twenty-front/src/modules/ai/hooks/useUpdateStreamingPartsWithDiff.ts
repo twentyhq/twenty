@@ -6,7 +6,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useUpdateStreamingPartsWithDiff = () => {
   const agentChatUISessionStartTime = useAtomStateValue(
@@ -17,9 +16,8 @@ export const useUpdateStreamingPartsWithDiff = () => {
   const { processWorkspaceSetupCompletion } =
     useProcessWorkspaceSetupCompletion();
 
-  const [lastSeenMessageById] = useState(
-    () => new Map<string, ExtendedUIMessage>(),
-  );
+  // a message only changes by being replaced, so an unchanged one keeps its reference
+  const [processedMessages] = useState(() => new WeakSet<ExtendedUIMessage>());
 
   const isMessageFromCurrentSession = (message: ExtendedUIMessage) => {
     if (agentChatUISessionStartTime === null) {
@@ -39,19 +37,11 @@ export const useUpdateStreamingPartsWithDiff = () => {
     incomingMessages: ExtendedUIMessage[],
   ) => {
     for (const incomingMessage of incomingMessages) {
-      if (
-        isDeeplyEqual(
-          lastSeenMessageById.get(incomingMessage.id),
-          incomingMessage,
-        )
-      ) {
+      if (processedMessages.has(incomingMessage)) {
         continue;
       }
 
-      lastSeenMessageById.set(
-        incomingMessage.id,
-        structuredClone(incomingMessage),
-      );
+      processedMessages.add(incomingMessage);
 
       if (!isMessageFromCurrentSession(incomingMessage)) {
         continue;
