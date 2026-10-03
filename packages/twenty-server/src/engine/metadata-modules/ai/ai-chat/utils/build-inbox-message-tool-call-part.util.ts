@@ -14,13 +14,15 @@ import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-
 import {
   askQuestionsInputSchema,
   buildAskQuestionsPendingOutput,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
-import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-propose-tool-call-pending-output.util';
-import { proposeToolCallInputSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call-input.schema';
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-questions.pausing-tool';
+import {
+  buildProposeToolCallPendingOutput,
+  proposeToolCallInputSchema,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import {
   buildRequestFormPendingOutput,
   requestFormInputSchema,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/request-form.pausing-tool';
 import {
   AiException,
   AiExceptionCode,

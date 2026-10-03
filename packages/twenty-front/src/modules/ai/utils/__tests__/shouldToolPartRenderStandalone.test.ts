@@ -1,6 +1,5 @@
 import { type ToolUIPart } from 'ai';
 
-import { type ToolWidget } from '@/ai/types/ToolWidget';
 import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
 
 const buildToolPart = (state: string): ToolUIPart =>
@@ -11,11 +10,7 @@ const buildToolPart = (state: string): ToolUIPart =>
     input: {},
   }) as unknown as ToolUIPart;
 
-const BUILTIN_WIDGET: ToolWidget = { kind: 'builtin', name: 'records' };
-const APP_WIDGET: ToolWidget = {
-  kind: 'front-component',
-  frontComponentId: '20202020-0000-4000-8000-000000000001',
-};
+const APP_FRONT_COMPONENT_ID = '20202020-0000-4000-8000-000000000001';
 
 describe('shouldToolPartRenderStandalone', () => {
   it('leaves a call with no widget in the step group', () => {
@@ -27,20 +22,6 @@ describe('shouldToolPartRenderStandalone', () => {
     ).toBe(false);
   });
 
-  it.each([
-    'input-streaming',
-    'input-available',
-    'output-available',
-    'output-error',
-  ])(
-    'leaves a built-in records widget in the step group in the %s state',
-    (state) => {
-      expect(
-        shouldToolPartRenderStandalone(buildToolPart(state), BUILTIN_WIDGET),
-      ).toBe(false);
-    },
-  );
-
   describe('an app widget', () => {
     it.each([
       'input-available',
@@ -51,7 +32,10 @@ describe('shouldToolPartRenderStandalone', () => {
       'output-error',
     ])('owns the call in the %s state', (state) => {
       expect(
-        shouldToolPartRenderStandalone(buildToolPart(state), APP_WIDGET),
+        shouldToolPartRenderStandalone(
+          buildToolPart(state),
+          APP_FRONT_COMPONENT_ID,
+        ),
       ).toBe(true);
     });
 
@@ -59,7 +43,7 @@ describe('shouldToolPartRenderStandalone', () => {
       expect(
         shouldToolPartRenderStandalone(
           buildToolPart('input-streaming'),
-          APP_WIDGET,
+          APP_FRONT_COMPONENT_ID,
         ),
       ).toBe(false);
     });

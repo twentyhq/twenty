@@ -1,6 +1,6 @@
 import { type ReasoningUIPart } from 'ai';
 
-import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
+import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
 
 export const getActiveReasoningContent = (
   parts: ThinkingStepPart[],

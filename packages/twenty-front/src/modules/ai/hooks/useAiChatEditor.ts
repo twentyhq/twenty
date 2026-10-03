@@ -12,10 +12,10 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { dispatchAgentChatEnsureThreadForDraftEvent } from '@/ai/utils/dispatchAgentChatEnsureThreadForDraftEvent';
-import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
+import { AGENT_CHAT_ENSURE_THREAD_FOR_DRAFT_EVENT_NAME } from '@/ai/constants/AgentChatEnsureThreadForDraftEventName';
+import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
@@ -26,11 +26,9 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 export const useAiChatEditor = () => {
-  const setAgentChatInput = useSetAtomState(agentChatInputState);
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const [agentChatDraftsByThreadId, setAgentChatDraftsByThreadId] =
     useAtomState(agentChatDraftsByThreadIdState);
@@ -61,7 +59,7 @@ export const useAiChatEditor = () => {
           }
 
           event.preventDefault();
-          dispatchAgentChatSendMessageEvent();
+          dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
 
           const { state } = view;
           view.dispatch(state.tr.delete(0, state.doc.content.size));
@@ -77,13 +75,12 @@ export const useAiChatEditor = () => {
       const serializedDraft =
         text === '' ? '' : serializeAdvancedTextEditorDocument(currentEditor);
 
-      setAgentChatInput(text);
       setAgentChatDraftsByThreadId((prev) => ({
         ...prev,
         [draftKey]: serializedDraft,
       }));
       if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY && text.trim() !== '') {
-        dispatchAgentChatEnsureThreadForDraftEvent();
+        dispatchBrowserEvent(AGENT_CHAT_ENSURE_THREAD_FOR_DRAFT_EVENT_NAME);
       }
     },
     onFocus: () => {
@@ -139,7 +136,7 @@ export const useAiChatEditor = () => {
   });
 
   const handleSendAndClear = () => {
-    dispatchAgentChatSendMessageEvent();
+    dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
     editor?.commands.clearContent();
   };
 

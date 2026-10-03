@@ -8,10 +8,9 @@ import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
-import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
-import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
+import { AiChatNoMoreBillingCreditsBanner } from '@/ai/components/AiChatNoMoreBillingCreditsBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
@@ -19,7 +18,7 @@ import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
 import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
 import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
-import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
+import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
 import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatSentMessageHandOffEffect';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
@@ -132,25 +131,6 @@ const StyledComposerBottomSpacer = styled.div`
   }
 `;
 
-const StyledButtonsContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const StyledLeftButtonsContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing['0.5']};
-`;
-
-const StyledRightButtonsContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
 const EditableAiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
@@ -173,23 +153,21 @@ const EditableAiChatEditorSection = () => {
         <EditorContent editor={editor} />
       </StyledEditorWrapper>
       <AiChatDictationHint interimText={dictationInterimText} />
-      <StyledButtonsContainer>
-        <StyledLeftButtonsContainer>
-          <AiChatAddMenu editor={editor} />
-          <AiChatDictationButton />
-          <AiChatContextUsageButton />
-        </StyledLeftButtonsContainer>
-        <StyledRightButtonsContainer>
-          <AiModelTierDropdown
-            dropdownId="ai-chat-model-tier-dropdown"
-            disabled={hasNoEnabledModels}
-          />
+      <AiChatComposerActionsRow
+        leftActions={
+          <>
+            <AiChatAddMenu editor={editor} />
+            <AiChatDictationButton />
+          </>
+        }
+        modelTierDropdownId="ai-chat-model-tier-dropdown"
+        sendButton={
           <SendMessageButton
             onSend={handleSendAndClear}
             isDisabled={hasNoEnabledModels}
           />
-        </StyledRightButtonsContainer>
-      </StyledButtonsContainer>
+        }
+      />
     </StyledInputBox>
   );
   const hasMessages = useAtomComponentSelectorValue(
@@ -221,7 +199,7 @@ const EditableAiChatEditorSection = () => {
             message={t`No AI provider is configured on this instance.`}
           />
         )}
-        {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
+        {hasReachedAiChatCreditsCap && <AiChatNoMoreBillingCreditsBanner />}
         {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
         <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
       </StyledInputArea>
