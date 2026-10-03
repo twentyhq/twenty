@@ -165,6 +165,7 @@ export const WithClearOption: Story = {
     await userEvent.click(clearOption);
 
     expect(args.onChange).toHaveBeenCalledWith(null);
+    expect(args.onChange).toHaveBeenCalledTimes(1);
   },
 };
 
