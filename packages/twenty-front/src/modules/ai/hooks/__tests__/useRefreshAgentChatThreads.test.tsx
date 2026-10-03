@@ -43,11 +43,11 @@ jest.mock('@/ai/hooks/useRefreshAgentChatThreadPermissions', () => ({
   }),
 }));
 
-const refreshAgentChatThreadParticipants = jest.fn();
+const loadAgentChatThreadParticipants = jest.fn();
 
 jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
   useAgentChatThreadParticipants: () => ({
-    refreshAgentChatThreadParticipants,
+    loadAgentChatThreadParticipants,
   }),
 }));
 
@@ -107,7 +107,7 @@ describe('useRefreshAgentChatThreads', () => {
     expect(result.current.refreshAgentChatThreads).toBe(refresh);
   });
 
-  it('loads the most recently active chats and the member read state', async () => {
+  it('loads the most recently active chats and the member state of that page', async () => {
     const store = buildStore();
     const thread = buildThread('thread-1', 'Loaded thread');
     queryMock.mockResolvedValue(buildPage([thread], { hasNextPage: true }));
@@ -126,7 +126,7 @@ describe('useRefreshAgentChatThreads', () => {
         fetchPolicy: 'network-only',
       }),
     );
-    expect(refreshAgentChatThreadParticipants).toHaveBeenCalled();
+    expect(loadAgentChatThreadParticipants).toHaveBeenCalledWith(['thread-1']);
     expect(store.get(agentChatThreadListState.atom)).toEqual({
       threadIds: ['thread-1'],
       hasNextPage: true,
@@ -191,6 +191,9 @@ describe('useRefreshAgentChatThreads', () => {
       hasNextPage: false,
       endCursor: 'page-2',
     });
+    expect(loadAgentChatThreadParticipants).toHaveBeenLastCalledWith([
+      'thread-2',
+    ]);
 
     await act(async () => {
       expect(await result.current.fetchMoreAgentChatThreads()).toBeUndefined();
@@ -351,6 +354,9 @@ describe('useRefreshAgentChatThreads', () => {
         await result.current.loadAgentChatThread('old-thread'),
       ).toMatchObject({ id: 'old-thread' });
     });
+    expect(loadAgentChatThreadParticipants).toHaveBeenCalledWith([
+      'old-thread',
+    ]);
     expect(queryMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
         variables: expect.objectContaining({

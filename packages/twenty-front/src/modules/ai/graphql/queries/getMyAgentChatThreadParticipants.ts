@@ -4,8 +4,8 @@ import { AGENT_CHAT_THREAD_PARTICIPANT_FRAGMENT } from '@/ai/graphql/fragments/a
 
 export const GET_MY_AGENT_CHAT_THREAD_PARTICIPANTS = gql`
   ${AGENT_CHAT_THREAD_PARTICIPANT_FRAGMENT}
-  query GetMyAgentChatThreadParticipants {
-    myAgentChatThreadParticipants {
+  query GetMyAgentChatThreadParticipants($threadIds: [UUID!]!) {
+    myAgentChatThreadParticipants(threadIds: $threadIds) {
       ...AgentChatThreadParticipantFields
     }
   }

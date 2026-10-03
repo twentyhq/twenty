@@ -195,6 +195,7 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
       participants: await participantService.findForWorkspaceMember({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        threadIds: [createdBeforeUpgradeThreadId],
       }),
     };
 

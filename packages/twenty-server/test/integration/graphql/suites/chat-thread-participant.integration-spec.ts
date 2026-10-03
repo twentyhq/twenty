@@ -24,7 +24,7 @@ const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const PARTICIPANT_FIELDS = 'threadId lastReadAt archivedAt snoozedUntil';
 
 const MY_PARTICIPANTS = parse(
-  `query MyParticipants { myAgentChatThreadParticipants { ${PARTICIPANT_FIELDS} } }`,
+  `query MyParticipants($threadIds: [UUID!]!) { myAgentChatThreadParticipants(threadIds: $threadIds) { ${PARTICIPANT_FIELDS} } }`,
 );
 
 const buildThreadMutation = (name: string) =>
@@ -58,7 +58,7 @@ const findMyParticipant = async (
   token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 ): Promise<Participant | undefined> => {
   const response = await makeMetadataApiRequest(
-    { query: MY_PARTICIPANTS },
+    { query: MY_PARTICIPANTS, variables: { threadIds: [threadId] } },
     token,
   );
 
@@ -155,6 +155,23 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(new Date(participant!.lastReadAt!).getTime()).toBe(
       lastActivityAt.getTime(),
     );
+  });
+
+  it('returns only the threads asked for', async () => {
+    const askedThreadId = await createTestThread();
+    await createTestThread();
+
+    const response = await makeMetadataApiRequest(
+      { query: MY_PARTICIPANTS, variables: { threadIds: [askedThreadId] } },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      (response.body.data.myAgentChatThreadParticipants as Participant[]).map(
+        ({ threadId }) => threadId,
+      ),
+    ).toEqual([askedThreadId]);
   });
 
   it('refuses a member who cannot read the thread', async () => {
@@ -358,7 +375,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
 
     const response = await makeMetadataApiRequest(
-      { query: MY_PARTICIPANTS },
+      { query: MY_PARTICIPANTS, variables: { threadIds: [threadId] } },
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
     const rows: { workspaceMemberId: string }[] =

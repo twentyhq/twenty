@@ -36,10 +36,14 @@ export class AgentChatThreadParticipantService {
   async findForWorkspaceMember({
     workspaceId,
     workspaceMemberId,
-  }: Omit<AgentChatThreadAccessArgs, 'threadId'>): Promise<
-    AgentChatThreadParticipantDTO[]
-  > {
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
+    threadIds,
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+    threadIds: string[];
+  }): Promise<AgentChatThreadParticipantDTO[]> {
+    if (
+      threadIds.length === 0 ||
+      !(await this.sharingService.hasInboxState(workspaceId))
+    ) {
       return [];
     }
 
@@ -47,8 +51,8 @@ export class AgentChatThreadParticipantService {
       manager.query<AgentChatThreadParticipantDTO[]>(
         `SELECT ${PARTICIPANT_COLUMNS}
          FROM ${getAgentChatThreadParticipantTable(workspaceId)}
-         WHERE "workspaceMemberId" = $1`,
-        [workspaceMemberId],
+         WHERE "workspaceMemberId" = $1 AND "threadId" = ANY($2::uuid[])`,
+        [workspaceMemberId, threadIds],
       ),
     );
 

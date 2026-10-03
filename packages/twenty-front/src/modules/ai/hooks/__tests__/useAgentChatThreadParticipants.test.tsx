@@ -54,7 +54,11 @@ describe('useAgentChatThreadParticipants', () => {
     jest.clearAllMocks();
   });
 
-  it('loads the member state of every thread', async () => {
+  it('loads the member state of the threads asked for and keeps the others', async () => {
+    const OTHER_THREAD_ID = '20202020-0000-4000-8000-0000000000bb';
+    const UNREAD_THREAD_ID = '20202020-0000-4000-8000-0000000000cc';
+    const otherParticipant = { ...READ_PARTICIPANT, threadId: OTHER_THREAD_ID };
+
     query.mockResolvedValue({
       data: {
         myAgentChatThreadParticipants: [READ_PARTICIPANT],
@@ -62,13 +66,40 @@ describe('useAgentChatThreadParticipants', () => {
     });
     const { result, store } = renderParticipants();
 
-    await act(async () => {
-      await result.current.refreshAgentChatThreadParticipants();
+    store.set(agentChatThreadParticipantsState.atom, {
+      [OTHER_THREAD_ID]: otherParticipant,
+      [UNREAD_THREAD_ID]: { ...READ_PARTICIPANT, threadId: UNREAD_THREAD_ID },
     });
 
+    await act(async () => {
+      await result.current.loadAgentChatThreadParticipants([
+        THREAD_ID,
+        UNREAD_THREAD_ID,
+      ]);
+    });
+
+    expect(query).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: { threadIds: [THREAD_ID, UNREAD_THREAD_ID] },
+      }),
+    );
     expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
+      [OTHER_THREAD_ID]: otherParticipant,
     });
+  });
+
+  it('marks the state loaded without asking the server for an empty page', async () => {
+    const { result, store } = renderParticipants();
+
+    store.set(agentChatThreadParticipantsState.atom, null);
+
+    await act(async () => {
+      await result.current.loadAgentChatThreadParticipants([]);
+    });
+
+    expect(query).not.toHaveBeenCalled();
+    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({});
   });
 
   it('reads a thread up to its last activity before the server answers', async () => {
