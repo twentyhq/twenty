@@ -91,7 +91,7 @@ export class ApiKeyResolver {
       },
       apiKey: false,
       oauthClient: false,
-      application: false,
+      application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.ROLES),
   )
@@ -119,7 +119,7 @@ export class ApiKeyResolver {
       },
       apiKey: false,
       oauthClient: false,
-      application: false,
+      application: true,
     }),
   )
   @Mutation(() => ApiKeyEntity, { nullable: true })
@@ -158,7 +158,7 @@ export class ApiKeyResolver {
       },
       apiKey: false,
       oauthClient: false,
-      application: false,
+      application: true,
     }),
   )
   @Mutation(() => ApiKeyEntity, { nullable: true })
@@ -180,7 +180,7 @@ export class ApiKeyResolver {
       },
       apiKey: false,
       oauthClient: false,
-      application: false,
+      application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.ROLES),
   )
