@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type JSONSchema7 } from 'json-schema';
 
 const NULL_CHECK_REFERENCE: JSONSchema7 = { $ref: '#/$defs/NullCheck' };
@@ -8,7 +9,11 @@ const stringOperator = ({
 }: {
   description: string;
   format?: string;
-}): JSONSchema7 => ({ description, type: 'string', ...(format && { format }) });
+}): JSONSchema7 => ({
+  description,
+  type: 'string',
+  ...(isNonEmptyString(format) && { format }),
+});
 
 const numberOperator = (description: string): JSONSchema7 => ({
   description,

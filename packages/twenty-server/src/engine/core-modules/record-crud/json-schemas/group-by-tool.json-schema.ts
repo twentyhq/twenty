@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type JSONSchema7 } from 'json-schema';
 import {
   AggregateOperations,
@@ -204,7 +205,7 @@ export const generateGroupByToolInputSchema = ({
             aggregation.aggregateOperation !== AggregateOperations.COUNT,
         )
         .map((aggregation) =>
-          aggregation.subFieldForNumericOperation
+          isNonEmptyString(aggregation.subFieldForNumericOperation)
             ? `${aggregation.fromField}.${aggregation.subFieldForNumericOperation}`
             : aggregation.fromField,
         ),
