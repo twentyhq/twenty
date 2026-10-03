@@ -24,11 +24,37 @@ export const computeNewPositionsOfDraggedRecords = ({
     throw new Error(`Cannot find item to move for id : ${targetRecordId}`);
   }
 
-  if (targetRecordId === draggedRecordId) {
-    return null;
-  }
-
   const targetPosition = targetItem.position;
+
+  // Dropping the dragged record where it was still gathers the rest of the
+  // selection around it
+  if (targetRecordId === draggedRecordId) {
+    const sourceRecordIdSet = new Set(sourceRecordIds);
+    const indexOfDraggedRecord = arrayOfRecordsWithPosition.findIndex(
+      (recordToFind) => recordToFind.id === draggedRecordId,
+    );
+
+    const previousUnselectedRecord = arrayOfRecordsWithPosition
+      .slice(0, indexOfDraggedRecord)
+      .findLast((record) => !sourceRecordIdSet.has(record.id));
+    const nextUnselectedRecord = arrayOfRecordsWithPosition
+      .slice(indexOfDraggedRecord + 1)
+      .find((record) => !sourceRecordIdSet.has(record.id));
+
+    const newPositions = computeNewEvenlySpacedPositions({
+      startingPosition:
+        previousUnselectedRecord?.position ?? targetPosition - 1,
+      endingPosition:
+        nextUnselectedRecord?.position ??
+        targetPosition + sourceRecordIds.length + 1,
+      numberOfRecordsToInsertBetween: sourceRecordIds.length,
+    });
+
+    return sourceRecordIds.map((recordId, index) => ({
+      id: recordId,
+      position: newPositions[index],
+    }));
+  }
 
   const indexOfItemToMove = arrayOfRecordsWithPosition.findIndex(
     (recordToFind) => recordToFind.id === draggedRecordId,

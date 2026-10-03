@@ -3,13 +3,13 @@ import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-reco
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 
-type RecordTableRowMultiDragPreviewProps = {
+type RecordDragMultiDragPreviewProps = {
   recordId: string;
 };
 
-export const RecordTableRowMultiDragPreview = ({
+export const RecordDragMultiDragPreview = ({
   recordId,
-}: RecordTableRowMultiDragPreviewProps) => {
+}: RecordDragMultiDragPreviewProps) => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const isRecordIdPrimaryDragMultiple = useAtomComponentFamilyStateValue(
@@ -22,5 +22,7 @@ export const RecordTableRowMultiDragPreview = ({
     return null;
   }
 
-  return <RecordDragMultiDragCounterChip />;
+  return (
+    <RecordDragMultiDragCounterChip contextStoreInstanceId={recordIndexId} />
+  );
 };

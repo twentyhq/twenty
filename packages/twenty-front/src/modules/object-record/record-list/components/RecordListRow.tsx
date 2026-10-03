@@ -22,7 +22,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type MouseEvent } from 'react';
+import { type MouseEvent, type Ref } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -76,9 +76,10 @@ const StyledOverflowChipContainer = styled.div`
 
 type RecordListRowProps = {
   recordId: string;
+  rowRef?: Ref<HTMLDivElement>;
 };
 
-export const RecordListRow = ({ recordId }: RecordListRowProps) => {
+export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
   const { objectNameSingular } = useRecordListContextOrThrow();
   const {
     labelIdentifierFieldMetadataItem,
@@ -170,6 +171,7 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
 
   return (
     <StyledRowContainer
+      ref={rowRef}
       role="button"
       tabIndex={0}
       aria-label={t`Open record`}
