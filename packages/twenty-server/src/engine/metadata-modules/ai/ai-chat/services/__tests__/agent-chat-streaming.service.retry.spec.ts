@@ -173,6 +173,12 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
         conversationSizeTokens: 42,
       }),
     );
+    expect(messageQueueService.add.mock.calls[0][1]).not.toHaveProperty(
+      'messages',
+    );
+    expect(messageQueueService.add.mock.calls[0][1]).not.toHaveProperty(
+      'lastUserMessageText',
+    );
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
       expect.objectContaining({ id: 'thread-id' }),

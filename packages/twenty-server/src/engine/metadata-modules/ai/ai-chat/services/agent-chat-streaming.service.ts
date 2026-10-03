@@ -685,11 +685,15 @@ export class AgentChatStreamingService {
     );
   }
 
-  async loadMessagesFromDB(
-    threadId: string,
-    workspaceId: string,
-    workspaceMemberId: string,
-  ): Promise<ExtendedUIMessage[]> {
+  async loadMessagesFromDB({
+    threadId,
+    workspaceId,
+    workspaceMemberId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    workspaceMemberId: string;
+  }): Promise<ExtendedUIMessage[]> {
     const [allMessages, turnContexts] = await Promise.all([
       this.agentChatService.getMessagesForThread({
         threadId,

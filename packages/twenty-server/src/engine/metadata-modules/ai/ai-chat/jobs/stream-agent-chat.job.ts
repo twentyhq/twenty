@@ -198,11 +198,11 @@ export class StreamAgentChatJob {
         );
       }
 
-      const messages = await this.agentChatStreamingService.loadMessagesFromDB(
-        data.threadId,
-        data.workspaceId,
-        authorization.authContext.workspaceMemberId,
-      );
+      const messages = await this.agentChatStreamingService.loadMessagesFromDB({
+        threadId: data.threadId,
+        workspaceId: data.workspaceId,
+        workspaceMemberId: authorization.authContext.workspaceMemberId,
+      });
 
       const titlePromise = data.hasTitle
         ? Promise.resolve(null)

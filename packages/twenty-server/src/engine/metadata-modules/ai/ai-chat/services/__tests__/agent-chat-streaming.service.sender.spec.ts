@@ -182,11 +182,11 @@ describe('Loading a conversation for a turn', () => {
         createdAt: '2026-01-01T11:30:00.000Z',
       },
     ]);
-    const messages = await service.loadMessagesFromDB(
-      'thread',
-      'workspace',
-      'member',
-    );
+    const messages = await service.loadMessagesFromDB({
+      threadId: 'thread',
+      workspaceId: 'workspace',
+      workspaceMemberId: 'member',
+    });
     expect(messages.map(({ id }: { id: string }) => id)).toEqual([
       'question',
       'answer',

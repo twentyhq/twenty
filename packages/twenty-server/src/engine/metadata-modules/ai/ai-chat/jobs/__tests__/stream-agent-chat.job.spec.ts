@@ -372,11 +372,11 @@ describe('StreamAgentChatJob', () => {
   it('streams the conversation as the authorized sender reads it', async () => {
     const { job, agentChatStreamingService, chatExecutionService } = buildJob();
     await job.handle(jobData);
-    expect(agentChatStreamingService.loadMessagesFromDB).toHaveBeenCalledWith(
-      'thread-id',
-      'workspace-id',
-      'member',
-    );
+    expect(agentChatStreamingService.loadMessagesFromDB).toHaveBeenCalledWith({
+      threadId: 'thread-id',
+      workspaceId: 'workspace-id',
+      workspaceMemberId: 'member',
+    });
     expect(chatExecutionService.streamChat).toHaveBeenCalledWith(
       expect.objectContaining({ messages: conversation }),
     );
