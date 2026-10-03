@@ -2898,7 +2898,6 @@ export interface AgentMessagePart {
     state?: Scalars['String']
     providerExecuted?: Scalars['Boolean']
     errorMessage?: Scalars['String']
-    errorDetails?: Scalars['JSON']
     sourceUrlSourceId?: Scalars['String']
     sourceUrlUrl?: Scalars['String']
     sourceUrlTitle?: Scalars['String']
@@ -6825,7 +6824,6 @@ export interface AgentMessagePartGenqlSelection{
     state?: boolean | number
     providerExecuted?: boolean | number
     errorMessage?: boolean | number
-    errorDetails?: boolean | number
     sourceUrlSourceId?: boolean | number
     sourceUrlUrl?: boolean | number
     sourceUrlTitle?: boolean | number
