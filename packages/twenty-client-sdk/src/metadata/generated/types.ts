@@ -110,7 +110,7 @@ export default {
         443,
         454,
         574,
-        578,
+        581,
         609
     ],
     "types": {
@@ -10478,20 +10478,11 @@ export default {
                     ]
                 }
             ],
-            "runAgent": [
-                369,
-                {
-                    "input": [
-                        576,
-                        "RunAgentInput!"
-                    ]
-                }
-            ],
             "createWebhook": [
                 367,
                 {
                     "input": [
-                        581,
+                        576,
                         "CreateWebhookInput!"
                     ]
                 }
@@ -10500,7 +10491,7 @@ export default {
                 367,
                 {
                     "input": [
-                        582,
+                        577,
                         "UpdateWebhookInput!"
                     ]
                 }
@@ -10511,6 +10502,15 @@ export default {
                     "id": [
                         3,
                         "UUID!"
+                    ]
+                }
+            ],
+            "runAgent": [
+                369,
+                {
+                    "input": [
+                        579,
+                        "RunAgentInput!"
                     ]
                 }
             ],
@@ -13982,69 +13982,6 @@ export default {
                 1
             ]
         },
-        "RunAgentInput": {
-            "agentUniversalIdentifier": [
-                1
-            ],
-            "prompt": [
-                1
-            ],
-            "runAsWorkspaceMemberId": [
-                3
-            ],
-            "messages": [
-                577
-            ],
-            "input": [
-                577
-            ],
-            "additionalInstructions": [
-                1
-            ],
-            "thread": [
-                580
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RunAgentMessageInput": {
-            "role": [
-                578
-            ],
-            "content": [
-                1
-            ],
-            "attachments": [
-                579
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RunAgentMessageRole": {},
-        "RunAgentMessageAttachmentInput": {
-            "fileId": [
-                3
-            ],
-            "filename": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RunAgentThreadInput": {
-            "key": [
-                1
-            ],
-            "title": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "CreateWebhookInput": {
             "id": [
                 3
@@ -14070,7 +14007,7 @@ export default {
                 3
             ],
             "update": [
-                583
+                578
             ],
             "__typename": [
                 1
@@ -14087,6 +14024,69 @@ export default {
                 1
             ],
             "secret": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RunAgentInput": {
+            "agentUniversalIdentifier": [
+                1
+            ],
+            "prompt": [
+                1
+            ],
+            "runAsWorkspaceMemberId": [
+                3
+            ],
+            "messages": [
+                580
+            ],
+            "input": [
+                580
+            ],
+            "additionalInstructions": [
+                1
+            ],
+            "thread": [
+                583
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RunAgentMessageInput": {
+            "role": [
+                581
+            ],
+            "content": [
+                1
+            ],
+            "attachments": [
+                582
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RunAgentMessageRole": {},
+        "RunAgentMessageAttachmentInput": {
+            "fileId": [
+                3
+            ],
+            "filename": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RunAgentThreadInput": {
+            "key": [
+                1
+            ],
+            "title": [
                 1
             ],
             "__typename": [

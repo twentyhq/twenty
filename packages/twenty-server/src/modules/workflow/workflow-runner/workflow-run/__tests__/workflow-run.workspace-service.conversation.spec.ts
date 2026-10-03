@@ -56,7 +56,14 @@ describe('WorkflowRunWorkspaceService conversations', () => {
     });
 
     const step = { id: 'step-id', name: 'Ask' };
-    const workflowRun = {
+    const workflowRun: {
+      id: string;
+      status: WorkflowRunStatus;
+      state: {
+        flow: { steps: { id: string; name: string }[] };
+        stepInfos: Record<string, Record<string, unknown>>;
+      };
+    } = {
       id: 'workflow-run-id',
       status,
       state: { flow: { steps: [step] }, stepInfos: { 'step-id': stepInfo } },
@@ -73,6 +80,7 @@ describe('WorkflowRunWorkspaceService conversations', () => {
     return {
       service,
       step,
+      workflowRun,
       threadRepository,
       messagePartRepository,
       updateWorkflowRun,
@@ -91,6 +99,34 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       const { service, step } = buildService();
 
       expect(await findStep(service)).toEqual(step);
+    });
+
+    it('finds the step a call names among steps sharing one inbox conversation', async () => {
+      const { service, workflowRun } = buildService();
+      const approvalStep = { id: 'second-step-id', name: 'Approve' };
+
+      workflowRun.state = {
+        flow: { steps: [...workflowRun.state.flow.steps, approvalStep] },
+        stepInfos: {
+          'step-id': { status: StepStatus.SUCCESS, threadId: 'thread-id' },
+          'second-step-id': {
+            status: StepStatus.PENDING,
+            threadId: 'thread-id',
+          },
+        },
+      };
+
+      const findNamedStep = (expectedStepId: string) =>
+        service.findStepAwaitingAnswer({
+          threadId: 'thread-id',
+          workflowRunId: 'workflow-run-id',
+          workspaceId: 'workspace-id',
+          expectedStepId,
+        });
+
+      expect(await findNamedStep('second-step-id')).toEqual(approvalStep);
+      expect(await findNamedStep('step-id')).toBeNull();
+      expect(await findStep(service)).toEqual(approvalStep);
     });
 
     it.each([

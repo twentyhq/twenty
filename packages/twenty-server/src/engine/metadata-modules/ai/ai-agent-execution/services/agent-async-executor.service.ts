@@ -15,6 +15,7 @@ import { type RunAgentMessage } from 'twenty-shared/application';
 import {
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
   type ExtendedUIMessage,
+  PROPOSE_TOOL_CALL_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import {
@@ -39,16 +40,20 @@ import {
   LEARN_TOOLS_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
 import { WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-excluded-tool-names.const';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
+import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
+import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
@@ -71,6 +76,8 @@ import {
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
+import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
+import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -83,6 +90,18 @@ import {
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+const buildUnavailableToolOutput = (toolName: string): ToolOutput => ({
+  success: false,
+  message: `Tool "${toolName}" is not available`,
+  error: `Tool "${toolName}" is not available to this agent.`,
+});
+
+type ProposableTools = {
+  isToolAllowed: (toolName: string) => boolean;
+  findTool: (toolName: string) => Promise<ToolIndexEntry | undefined>;
+  toolContext: ToolContext;
+};
 
 const EMPTY_USAGE: LanguageModelUsage = {
   inputTokens: 0,
@@ -159,7 +178,7 @@ export class AgentAsyncExecutorService {
     runAsRoleId?: string;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
-  }): Promise<ToolSet> {
+  }): Promise<{ tools: ToolSet; proposableTools: ProposableTools }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
     const toolProviderContext: ToolProviderContext = {
@@ -176,13 +195,42 @@ export class AgentAsyncExecutorService {
       userWorkspaceId,
     };
 
-    return this.toolRegistry.getToolsByCategories(toolProviderContext, {
-      categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
-      excludeTools: [
-        ...OUTPUT_NAVIGATION_TOOL_NAMES,
-        ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
-      ],
-    });
+    const tools = await this.toolRegistry.getToolsByCategories(
+      toolProviderContext,
+      {
+        categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
+        excludeTools: [
+          ...OUTPUT_NAVIGATION_TOOL_NAMES,
+          ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
+        ],
+      },
+    );
+
+    const toolContext: ToolContext = {
+      workspaceId: agent.workspaceId,
+      roleId: agentRoleId,
+      rolePermissionConfig: toolProviderContext.rolePermissionConfig,
+      authContext,
+      actorContext,
+      userId,
+      userWorkspaceId,
+    };
+
+    // the context lacks the explicit grants the preloaded tools were built with, so calls stay within those tools
+    const isToolAllowed = (toolName: string): boolean =>
+      Object.prototype.hasOwnProperty.call(tools, toolName);
+
+    return {
+      tools,
+      proposableTools: {
+        isToolAllowed,
+        findTool: async (toolName) =>
+          isToolAllowed(toolName)
+            ? this.toolRegistry.findCatalogEntry(toolName, toolContext)
+            : undefined,
+        toolContext,
+      },
+    };
   }
 
   // open-ended agents have broad access, so preloading would ship every schema: expose a compact catalog plus
@@ -199,7 +247,11 @@ export class AgentAsyncExecutorService {
     runAsRoleId?: string;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
-  }): Promise<{ tools: ToolSet; catalogSection: string }> {
+  }): Promise<{
+    tools: ToolSet;
+    catalogSection: string;
+    proposableTools: ProposableTools;
+  }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
     const rolePermissionConfig = isDefined(runAsRoleId)
@@ -254,7 +306,41 @@ export class AgentAsyncExecutorService {
       ),
     };
 
-    return { tools, catalogSection: buildToolCatalogSection(catalog, []) };
+    return {
+      tools,
+      catalogSection: buildToolCatalogSection(catalog, []),
+      proposableTools: {
+        isToolAllowed,
+        findTool: async (toolName) =>
+          catalog.find((toolIndexEntry) => toolIndexEntry.name === toolName),
+        toolContext,
+      },
+    };
+  }
+
+  private buildProposeToolCallTool(
+    proposableTools: ProposableTools | undefined,
+  ) {
+    // an email runs only once approved, with the approver's own permissions
+    if (!isDefined(proposableTools)) {
+      return createProposeToolCallTool({
+        resolveProposal: async (input) => resolveEmailToolCallProposal(input),
+      });
+    }
+
+    const { isToolAllowed, findTool, toolContext } = proposableTools;
+    const executeTool: PausingToolCompletionContext['executeTool'] = ({
+      toolName,
+      args,
+    }) =>
+      isToolAllowed(toolName)
+        ? this.toolRegistry.resolveAndExecute(toolName, args, toolContext)
+        : Promise.resolve(buildUnavailableToolOutput(toolName));
+
+    return createProposeToolCallTool({
+      resolveProposal: (input) =>
+        resolveProposedToolCall({ input, findTool, executeTool }),
+    });
   }
 
   async executeAgent({
@@ -270,12 +356,15 @@ export class AgentAsyncExecutorService {
     toolLoadingStrategy = 'preload',
     priorMessages = [],
     pausingTools = {},
+    canProposeToolCalls = false,
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
     // a continued conversation, with the tool calls and results plain run messages cannot carry
     priorMessages?: ExtendedUIMessage[];
     pausingTools?: ToolSet;
+    // offers propose_tool_call over the registry tools the agent can call itself, or emails without an agent
+    canProposeToolCalls?: boolean;
     baseSystemPrompt: string;
     actorContext?: ActorMetadata;
     authContext?: WorkspaceAuthContext;
@@ -325,6 +414,7 @@ export class AgentAsyncExecutorService {
 
       let tools: ToolSet = {};
       let toolCatalogSection = '';
+      let proposableTools: ProposableTools | undefined;
       const providerOptions = getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
         providerOptions:
@@ -349,26 +439,29 @@ export class AgentAsyncExecutorService {
         let registryTools: ToolSet = {};
 
         if (isDefined(agentRoleId)) {
-          if (toolLoadingStrategy === 'lazy') {
-            const lazyToolset = await this.buildLazyRegistryTools({
-              agent,
-              agentRoleId,
-              runAsRoleId,
-              authContext,
-              actorContext,
-            });
+          const registryToolset =
+            toolLoadingStrategy === 'lazy'
+              ? await this.buildLazyRegistryTools({
+                  agent,
+                  agentRoleId,
+                  runAsRoleId,
+                  authContext,
+                  actorContext,
+                })
+              : {
+                  ...(await this.buildPreloadedRegistryTools({
+                    agent,
+                    agentRoleId,
+                    runAsRoleId,
+                    authContext,
+                    actorContext,
+                  })),
+                  catalogSection: '',
+                };
 
-            registryTools = lazyToolset.tools;
-            toolCatalogSection = lazyToolset.catalogSection;
-          } else {
-            registryTools = await this.buildPreloadedRegistryTools({
-              agent,
-              agentRoleId,
-              runAsRoleId,
-              authContext,
-              actorContext,
-            });
-          }
+          registryTools = registryToolset.tools;
+          toolCatalogSection = registryToolset.catalogSection;
+          proposableTools = registryToolset.proposableTools;
         }
 
         const nativeTools = this.nativeToolBinder.bind(
@@ -401,11 +494,20 @@ export class AgentAsyncExecutorService {
           modalities,
         });
 
-      const offeredToolNames = Object.keys(pausingTools);
+      // an agent proposes its own tools; a step without an agent has none, so it proposes only emails
+      const offeredPausingTools: ToolSet =
+        canProposeToolCalls && (!isDefined(agent) || isDefined(proposableTools))
+          ? {
+              ...pausingTools,
+              [PROPOSE_TOOL_CALL_TOOL_NAME]:
+                this.buildProposeToolCallTool(proposableTools),
+            }
+          : pausingTools;
+      const offeredToolNames = Object.keys(offeredPausingTools);
 
       const textResponse = await generateText({
         instructions: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
-        tools: { ...tools, ...pausingTools },
+        tools: { ...tools, ...offeredPausingTools },
         model: registeredModel.model,
         messages: [...priorModelMessages, ...modelMessages],
         stopWhen: (step) =>

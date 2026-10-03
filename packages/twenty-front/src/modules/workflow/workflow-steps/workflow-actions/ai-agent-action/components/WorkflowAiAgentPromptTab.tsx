@@ -163,7 +163,7 @@ export const WorkflowAiAgentPromptTab = ({
       />
 
       <FormBooleanFieldInput
-        label={t`Can ask questions`}
+        label={t`Can ask for input or approval`}
         defaultValue={action.settings.input.canAskQuestions === true}
         readonly={readonly}
         onChange={handleCanAskQuestionsChange}
