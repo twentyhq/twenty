@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent } from 'react';
+import { type MouseEvent, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -24,6 +24,7 @@ import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { RecordSelectionRecordIdsEffect } from '@/object-record/record-selection/components/RecordSelectionRecordIdsEffect';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
@@ -50,6 +51,13 @@ const StyledListPane = styled.div<{ $isFullWidth: boolean }>`
   display: flex;
   flex: ${({ $isFullWidth }) => ($isFullWidth ? '1' : '0 0 400px')};
   min-width: 0;
+`;
+
+const StyledThreadListContainer = styled.div`
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  position: relative;
 `;
 
 const StyledThreadList = styled.div`
@@ -79,6 +87,7 @@ const AiChatInboxPageContent = () => {
     selectedRecordIdsComponentSelector,
   );
   const { toggleRecordSelection } = useToggleRecordSelection();
+  const threadListContainerRef = useRef<HTMLDivElement>(null);
   const { resetRecordSelection } = useResetRecordSelection();
 
   // Rows hold a menu and a rename input, which a link cannot contain
@@ -152,32 +161,39 @@ const AiChatInboxPageContent = () => {
               />
             }
           >
-            <StyledThreadList>
-              {loading && threads.length === 0 ? (
-                <SkeletonLoader />
-              ) : threads.length === 0 ? (
-                <EmptyState.Root>
-                  <AnimatedPlaceholder type="emptyInbox" />
-                  <EmptyState.Content>
-                    <EmptyState.Title>{t`No conversations`}</EmptyState.Title>
-                    <EmptyState.Description>
-                      {t`Conversations you can open will appear here.`}
-                    </EmptyState.Description>
-                  </EmptyState.Content>
-                </EmptyState.Root>
-              ) : (
-                <AiChatThreadList
-                  threads={threads}
-                  surface={AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE}
-                  selectedThreadIds={highlightedThreadIds}
-                  isGroupedByDate={
-                    agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE
-                  }
-                  onThreadClick={handleThreadClick}
+            <StyledThreadListContainer ref={threadListContainerRef}>
+              <StyledThreadList>
+                {loading && threads.length === 0 ? (
+                  <SkeletonLoader />
+                ) : threads.length === 0 ? (
+                  <EmptyState.Root>
+                    <AnimatedPlaceholder type="emptyInbox" />
+                    <EmptyState.Content>
+                      <EmptyState.Title>{t`No conversations`}</EmptyState.Title>
+                      <EmptyState.Description>
+                        {t`Conversations you can open will appear here.`}
+                      </EmptyState.Description>
+                    </EmptyState.Content>
+                  </EmptyState.Root>
+                ) : (
+                  <AiChatThreadList
+                    threads={threads}
+                    surface={AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE}
+                    selectedThreadIds={highlightedThreadIds}
+                    isGroupedByDate={
+                      agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE
+                    }
+                    onThreadClick={handleThreadClick}
+                  />
+                )}
+                <AgentChatThreadsFetchMoreTrigger />
+              </StyledThreadList>
+              {!isMobile && (
+                <RecordSelectionDragSelect
+                  selectableItemsContainerRef={threadListContainerRef}
                 />
               )}
-              <AgentChatThreadsFetchMoreTrigger />
-            </StyledThreadList>
+            </StyledThreadListContainer>
           </PageCardLayout>
         </StyledListPane>
       )}

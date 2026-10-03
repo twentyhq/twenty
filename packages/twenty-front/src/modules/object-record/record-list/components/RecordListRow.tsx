@@ -177,6 +177,7 @@ export const RecordListRow = ({ recordId }: RecordListRowProps) => {
       tabIndex={0}
       aria-label={t`Open record`}
       data-selected={isRecordSelected}
+      data-selectable-id={recordId}
       onClickCapture={handleClickCapture}
       onMouseDown={(event) => {
         // Shift+click selects a range of records, not the text in between
