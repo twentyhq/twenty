@@ -19,6 +19,8 @@ import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-wo
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import {
   AiException,
@@ -137,6 +139,32 @@ export class AgentChatActorService {
         AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
+    const rolePermissions = await this.resolveRolePermissions({
+      workspaceId,
+      userWorkspaceId: sender.userWorkspaceId,
+      authContext,
+    });
+    if (!isDefined(rolePermissions)) {
+      throw new AiException(
+        'Chat execution is not permitted',
+        AiExceptionCode.THREAD_NOT_FOUND,
+      );
+    }
+    return { authContext, ...rolePermissions };
+  }
+
+  // the permissions a member acts with in the chat, also used to run the calls they approve
+  async resolveRolePermissions({
+    workspaceId,
+    userWorkspaceId,
+    authContext,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    authContext: WorkspaceAuthContext;
+  }): Promise<
+    { rolePermissionConfig: RolePermissionConfig; roleId: string } | undefined
+  > {
     const { userWorkspaceRoleMap } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'userWorkspaceRoleMap',
@@ -146,14 +174,11 @@ export class AgentChatActorService {
       userWorkspaceRoleMap,
       apiKeyRoleMap: {},
     });
-    const roleId = userWorkspaceRoleMap[sender.userWorkspaceId];
-    if (!isDefined(rolePermissionConfig) || !isDefined(roleId)) {
-      throw new AiException(
-        'Chat execution is not permitted',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
-    return { authContext, rolePermissionConfig, roleId };
+    const roleId = userWorkspaceRoleMap[userWorkspaceId];
+
+    return isDefined(rolePermissionConfig) && isDefined(roleId)
+      ? { rolePermissionConfig, roleId }
+      : undefined;
   }
 
   // resolved from the application context of the turn that made the call

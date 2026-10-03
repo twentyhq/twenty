@@ -186,8 +186,9 @@ const backfillAgentChatThreadInboxState = async ({
   return {
     threadCount,
     participantCount: participants.length,
-    archivedThreadCount: new Set(archivedThreads.map(({ threadId }) => threadId))
-      .size,
+    archivedThreadCount: new Set(
+      archivedThreads.map(({ threadId }) => threadId),
+    ).size,
   };
 };
 

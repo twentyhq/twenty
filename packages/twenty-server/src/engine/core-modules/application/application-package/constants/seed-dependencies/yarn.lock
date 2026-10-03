@@ -2225,10 +2225,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:^9.0.1":
-  version: 9.1.1
-  resolution: "nodemailer@npm:9.1.1"
-  checksum: 10c0/b213a2a906697a735f6eb21103629b7a77aeac297b6d843efd4588157999bf6d19381853ac1224e472f5a34aec2e2412444151a2c6ec6e8c52150afa3055039c
+"nodemailer@npm:^10.0.12":
+  version: 10.0.12
+  resolution: "nodemailer@npm:10.0.12"
+  checksum: 10c0/1d816272d9b611f3dde6b9b25cb69a54dba558cc4655b60c620d96fee6bedda3c30ae1c002a30c6e45690559324f06a35b7e585d18ae64c303dc2eebc5e6a184
   languageName: node
   linkType: hard
 
@@ -2556,7 +2556,7 @@ __metadata:
     lodash.pickby: "npm:^4.6.0"
     lodash.snakecase: "npm:^4.1.1"
     lodash.upperfirst: "npm:^4.3.1"
-    nodemailer: "npm:^9.0.1"
+    nodemailer: "npm:^10.0.12"
     psl: "npm:^1.15.0"
     sharp: "npm:^0.35.3"
     uuid: "npm:^11.1.1"

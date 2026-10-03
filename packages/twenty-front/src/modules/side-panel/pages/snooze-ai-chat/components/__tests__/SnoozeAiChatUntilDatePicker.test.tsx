@@ -12,11 +12,11 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const snoozeAgentChatThread = jest.fn();
+const snoozeAgentChatThreads = jest.fn();
 const onSnoozed = jest.fn();
 
 jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
-  useAgentChatThreadParticipants: () => ({ snoozeAgentChatThread }),
+  useAgentChatThreadParticipants: () => ({ snoozeAgentChatThreads }),
 }));
 
 jest.mock('@/ui/input/components/internal/date/hooks/useUserTimezone', () => ({
@@ -70,22 +70,28 @@ describe('SnoozeAiChatUntilDatePicker', () => {
 
   it('snoozes the chat until tomorrow morning by default', () => {
     render(
-      <SnoozeAiChatUntilDatePicker threadId="thread-1" onSnoozed={onSnoozed} />,
+      <SnoozeAiChatUntilDatePicker
+        threadIds={['thread-1']}
+        onSnoozed={onSnoozed}
+      />,
       { wrapper: Wrapper },
     );
 
     fireEvent.click(screen.getByRole('button', { name: /Snooze until/ }));
 
     expect(onSnoozed).toHaveBeenCalled();
-    expect(snoozeAgentChatThread).toHaveBeenCalledWith({
-      threadId: 'thread-1',
+    expect(snoozeAgentChatThreads).toHaveBeenCalledWith({
+      threadIds: ['thread-1'],
       snoozedUntil: new Date(2026, 9, 2, 9, 0),
     });
   });
 
   it('does not snooze until a time that has passed', () => {
     render(
-      <SnoozeAiChatUntilDatePicker threadId="thread-1" onSnoozed={onSnoozed} />,
+      <SnoozeAiChatUntilDatePicker
+        threadIds={['thread-1']}
+        onSnoozed={onSnoozed}
+      />,
       { wrapper: Wrapper },
     );
 
@@ -97,13 +103,16 @@ describe('SnoozeAiChatUntilDatePicker', () => {
     expect(
       screen.getByRole('button', { name: 'Pick a time in the future' }),
     ).toBeDisabled();
-    expect(snoozeAgentChatThread).not.toHaveBeenCalled();
+    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
     expect(onSnoozed).not.toHaveBeenCalled();
   });
 
   it('turns the button off once the picked time passes', () => {
     render(
-      <SnoozeAiChatUntilDatePicker threadId="thread-1" onSnoozed={onSnoozed} />,
+      <SnoozeAiChatUntilDatePicker
+        threadIds={['thread-1']}
+        onSnoozed={onSnoozed}
+      />,
       { wrapper: Wrapper },
     );
 

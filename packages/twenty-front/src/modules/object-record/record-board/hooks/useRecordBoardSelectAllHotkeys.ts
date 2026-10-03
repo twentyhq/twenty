@@ -1,4 +1,4 @@
-import { useSelectAllCards } from '@/object-record/record-board/hooks/useSelectAllCards';
+import { useSelectAllRecords } from '@/object-record/record-selection/hooks/useSelectAllRecords';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 
 export const useRecordBoardSelectAllHotkeys = ({
@@ -8,13 +8,13 @@ export const useRecordBoardSelectAllHotkeys = ({
   recordBoardId: string;
   focusId: string;
 }) => {
-  const { selectAllCards } = useSelectAllCards(recordBoardId);
+  const { selectAllRecords } = useSelectAllRecords(recordBoardId);
 
   useHotkeysOnFocusedElement({
     keys: ['ctrl+a', 'meta+a'],
-    callback: selectAllCards,
+    callback: selectAllRecords,
     focusId,
-    dependencies: [selectAllCards],
+    dependencies: [selectAllRecords],
     options: {
       enableOnFormTags: false,
     },

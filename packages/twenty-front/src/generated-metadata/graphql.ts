@@ -6133,10 +6133,11 @@ export enum RowLevelPermissionPredicateOperand {
 }
 
 export type RunAgentInput = {
+  additionalInstructions?: InputMaybe<Scalars['String']['input']>;
   agentUniversalIdentifier: Scalars['String']['input'];
-  messages?: InputMaybe<Array<RunAgentMessageInput>>;
-  prompt?: InputMaybe<Scalars['String']['input']>;
+  input?: InputMaybe<Array<RunAgentMessageInput>>;
   runAsWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
+  thread?: InputMaybe<RunAgentThreadInput>;
 };
 
 export type RunAgentMessageAttachmentInput = {
@@ -6160,6 +6161,12 @@ export type RunAgentResult = {
   error?: Maybe<Scalars['String']['output']>;
   result?: Maybe<Scalars['JSON']['output']>;
   success: Scalars['Boolean']['output'];
+  threadId?: Maybe<Scalars['UUID']['output']>;
+};
+
+export type RunAgentThreadInput = {
+  key: Scalars['String']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SsoConnection = {
