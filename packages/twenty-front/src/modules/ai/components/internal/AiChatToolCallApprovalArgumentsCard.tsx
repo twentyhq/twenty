@@ -39,7 +39,6 @@ type AiChatToolCallApprovalArgumentsCardProps = {
   proposal: ProposedToolCall;
 };
 
-// record calls are edited field by field, any other tool as its raw arguments
 export const AiChatToolCallApprovalArgumentsCard = ({
   toolCallId,
   proposal,
