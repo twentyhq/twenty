@@ -6,7 +6,7 @@ import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/rec
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { useTriggerCommandMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerCommandMenuDropdown';
-import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
+import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
 import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -56,8 +56,8 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
     triggerCommandMenuDropdown(event, recordId);
   };
 
-  const hasUserSelectedAllRows = useAtomComponentStateValue(
-    hasUserSelectedAllRowsComponentState,
+  const hasUserSelectedAllRecords = useAtomComponentStateValue(
+    hasUserSelectedAllRecordsComponentState,
     recordTableId,
   );
 
@@ -69,7 +69,7 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
         onCloseTableCell: handleCloseTableCell,
         onMoveHoverToCurrentCell: handleMoveHoverToCurrentCell,
         onCommandMenuDropdownOpened: handleCommandMenuDropdown,
-        hasUserSelectedAllRows,
+        hasUserSelectedAllRecords,
       }}
     >
       {children}
