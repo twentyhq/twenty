@@ -182,6 +182,19 @@ describe('useAiChatThreadRename', () => {
     expect(result.current.isRenaming).toBe(true);
   });
 
+  it('starts from the current title again after a rename ended from another chat', () => {
+    const { result } = renderRename(buildThread({ title: 'Existing title' }));
+
+    startRename('thread-1');
+    act(() => {
+      result.current.setDraftTitle('Abandoned draft');
+    });
+    startRename('thread-2');
+    startRename('thread-1');
+
+    expect(result.current.draftTitle).toBe('Existing title');
+  });
+
   it('leaves a rename started on another chat open when an earlier save ends', async () => {
     let resolveUpdate: (value: unknown) => void = () => {};
     updateOneRecord.mockReturnValueOnce(

@@ -286,6 +286,8 @@ export const AiChatThreadListItem = ({
         {isDefined(sharedCommandMenuInstanceId) ? (
           <LightIconButton
             aria-label={t`Chat actions`}
+            aria-haspopup="menu"
+            aria-expanded={isDropdownOpen}
             emphasis="subtle"
             onClick={(event) => {
               const { left, bottom } =

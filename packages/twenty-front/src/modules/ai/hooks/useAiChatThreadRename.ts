@@ -7,7 +7,6 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 
-// Rename starts from the Rename item of the command menu the chat belongs to
 export const useAiChatThreadRename = ({
   thread,
   commandMenuInstanceId,
@@ -29,6 +28,14 @@ export const useAiChatThreadRename = ({
   const [draftTitle, setDraftTitle] = useState<string | null>(null);
 
   const isRenaming = aiChatThreadIdBeingRenamed === thread.id;
+
+  // Rename can end from another chat, so each rename starts from the title
+  const [wasRenaming, setWasRenaming] = useState(isRenaming);
+
+  if (wasRenaming !== isRenaming) {
+    setWasRenaming(isRenaming);
+    setDraftTitle(null);
+  }
 
   // A save that ends late must not close a rename started on another chat
   const stopRenaming = () => {
