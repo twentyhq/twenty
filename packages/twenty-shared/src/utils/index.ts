@@ -334,6 +334,7 @@ export { emailSchema } from './validation/emailSchema';
 export { escapeForIlike } from './validation/escapeForIlike';
 export { isDefined } from './validation/isDefined';
 export { isEmptyObject } from './validation/isEmptyObject';
+export { isEnumValue } from './validation/isEnumValue';
 export { isImageIdentifierFieldMetadataType } from './validation/isImageIdentifierFieldMetadataType';
 export { isLabelIdentifierFieldMetadataTypes } from './validation/isLabelIdentifierFieldMetadataTypes';
 export type { SearchableFieldType } from './validation/isSearchableFieldType';

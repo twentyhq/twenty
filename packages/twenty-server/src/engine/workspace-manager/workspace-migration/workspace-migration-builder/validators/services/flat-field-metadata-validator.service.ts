@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isFieldMetadataTypeWithDefaultValue } from 'twenty-shared/types';
+import {
+  isFieldMetadataTypeWithDefaultValue,
+  MetadataWritability,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -21,8 +24,16 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import {
+  type FlatEntityEnumPropertyRules,
+  validateFlatEntityEnumProperties,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { readAuthoredOverrideEntry } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-entry.util';
+
+const FLAT_FIELD_METADATA_ENUM_PROPERTY_RULES = {
+  writability: { enumObject: MetadataWritability },
+} satisfies FlatEntityEnumPropertyRules<UniversalFlatFieldMetadata>;
 
 @Injectable()
 export class FlatFieldMetadataValidatorService {
@@ -78,6 +89,14 @@ export class FlatFieldMetadataValidatorService {
       objectMetadataUniversalIdentifier:
         flatFieldMetadataToValidate.objectMetadataUniversalIdentifier,
     };
+
+    validationResult.errors.push(
+      ...validateFlatEntityEnumProperties({
+        flatEntity: flatEntityUpdate,
+        enumPropertyRules: FLAT_FIELD_METADATA_ENUM_PROPERTY_RULES,
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      }),
+    );
 
     const SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES = [
       'universalSettings',
@@ -451,6 +470,11 @@ export class FlatFieldMetadataValidatorService {
       ...validateFlatFieldMetadataName({
         name: flatFieldMetadataToValidate.name,
         buildOptions,
+      }),
+      ...validateFlatEntityEnumProperties({
+        flatEntity: flatFieldMetadataToValidate,
+        enumPropertyRules: FLAT_FIELD_METADATA_ENUM_PROPERTY_RULES,
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       }),
     );
 

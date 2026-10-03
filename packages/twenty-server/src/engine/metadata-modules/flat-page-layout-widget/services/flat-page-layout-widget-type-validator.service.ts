@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isEnumValue } from 'twenty-shared/utils';
 
 import {
   type FlatPageLayoutWidgetTypeValidatorForCreation,
@@ -198,10 +198,8 @@ export class FlatPageLayoutWidgetTypeValidatorService {
   ): FlatPageLayoutWidgetValidationError[] {
     const { flatEntityToValidate } = args;
     const widgetType = flatEntityToValidate.type;
-    const pageLayoutWidgetTypeValidator =
-      this.PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_CREATION_HASHMAP[widgetType];
 
-    if (!isDefined(pageLayoutWidgetTypeValidator)) {
+    if (!isEnumValue(WidgetType, widgetType)) {
       return [
         {
           code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
@@ -211,6 +209,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
         },
       ];
     }
+
+    const pageLayoutWidgetTypeValidator =
+      this.PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_CREATION_HASHMAP[widgetType];
 
     return pageLayoutWidgetTypeValidator(args);
   }
@@ -220,10 +221,8 @@ export class FlatPageLayoutWidgetTypeValidatorService {
   ): FlatPageLayoutWidgetValidationError[] {
     const { flatEntityToValidate } = args;
     const widgetType = flatEntityToValidate.type;
-    const pageLayoutWidgetTypeValidator =
-      this.PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_UPDATE_HASHMAP[widgetType];
 
-    if (!isDefined(pageLayoutWidgetTypeValidator)) {
+    if (!isEnumValue(WidgetType, widgetType)) {
       return [
         {
           code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
@@ -233,6 +232,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
         },
       ];
     }
+
+    const pageLayoutWidgetTypeValidator =
+      this.PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_UPDATE_HASHMAP[widgetType];
 
     return pageLayoutWidgetTypeValidator(args);
   }

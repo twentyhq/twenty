@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isEnumValue } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import {
@@ -91,10 +92,8 @@ export class FlatFieldMetadataTypeValidatorService {
   ): FlatFieldMetadataValidationError[] {
     const { flatEntityToValidate } = args;
     const fieldType = flatEntityToValidate.type;
-    const fieldMetadataTypeValidator =
-      this.FIELD_METADATA_TYPE_VALIDATOR_HASHMAP[fieldType];
 
-    if (!isDefined(fieldMetadataTypeValidator)) {
+    if (!isEnumValue(FieldMetadataType, fieldType)) {
       return [
         {
           code: FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
@@ -104,6 +103,9 @@ export class FlatFieldMetadataTypeValidatorService {
         },
       ];
     }
+
+    const fieldMetadataTypeValidator =
+      this.FIELD_METADATA_TYPE_VALIDATOR_HASHMAP[fieldType];
 
     return fieldMetadataTypeValidator(
       // @ts-expect-error TODO could be improved
