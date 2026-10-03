@@ -90,7 +90,7 @@ export class ApiKeyController {
       },
       apiKey: false,
       oauthClient: false,
-      application: false,
+      application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.ROLES),
   )
@@ -120,7 +120,7 @@ export class ApiKeyController {
       },
       apiKey: false,
       oauthClient: false,
-      application: false,
+      application: true,
     }),
   )
   @Patch(':id')
@@ -154,7 +154,7 @@ export class ApiKeyController {
       },
       apiKey: false,
       oauthClient: false,
-      application: false,
+      application: true,
     }),
   )
   @Delete(':id')
