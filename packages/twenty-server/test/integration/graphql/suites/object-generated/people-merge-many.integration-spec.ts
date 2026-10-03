@@ -27,6 +27,8 @@ describe('people merge resolvers (integration)', () => {
   let createdPersonIdsForCleaning: string[] = [];
   let createdMessageThreadIdsForCleaning: string[] = [];
   let createdMessageThreadTargetIdsForCleaning: string[] = [];
+  let createdCalendarEventIdsForCleaning: string[] = [];
+  let createdCalendarEventTargetIdsForCleaning: string[] = [];
   let createdTimelineActivityIdsForCleaning: string[] = [];
   let createdTimelineActivityTypeId: string;
 
@@ -93,6 +95,18 @@ describe('people merge resolvers (integration)', () => {
       createdMessageThreadIdsForCleaning,
     );
     createdMessageThreadIdsForCleaning = [];
+
+    await deleteRecordsByIds(
+      'calendarEventTarget',
+      createdCalendarEventTargetIdsForCleaning,
+    );
+    createdCalendarEventTargetIdsForCleaning = [];
+
+    await deleteRecordsByIds(
+      'calendarEvent',
+      createdCalendarEventIdsForCleaning,
+    );
+    createdCalendarEventIdsForCleaning = [];
 
     await deleteRecordsByIds(
       'timelineActivity',
@@ -239,6 +253,78 @@ describe('people merge resolvers (integration)', () => {
       );
     };
 
+    const createCalendarEvent = async () => {
+      const response = await makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'calendarEvent',
+          gqlFields: 'id',
+          data: {
+            title: 'Shared meeting',
+            isFullDay: false,
+            startsAt: new Date().toISOString(),
+            endsAt: new Date().toISOString(),
+          },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      const calendarEventId = response.body.data.createCalendarEvent.id;
+
+      createdCalendarEventIdsForCleaning.push(calendarEventId);
+
+      return calendarEventId;
+    };
+
+    const attachPersonToCalendarEvent = async ({
+      calendarEventId,
+      targetPersonId,
+    }: {
+      calendarEventId: string;
+      targetPersonId: string;
+    }) => {
+      const response = await makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'calendarEventTarget',
+          gqlFields: 'id',
+          data: { calendarEventId, targetPersonId },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      createdCalendarEventTargetIdsForCleaning.push(
+        response.body.data.createCalendarEventTarget.id,
+      );
+    };
+
+    const findCalendarEventIdsOfPerson = async (targetPersonId: string) => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'calendarEventTarget',
+          objectMetadataPluralName: 'calendarEventTargets',
+          gqlFields: 'id calendarEventId targetPersonId',
+          filter: { targetPersonId: { eq: targetPersonId } },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.calendarEventTargets.edges.map(
+        ({ node }: { node: { calendarEventId: string } }) =>
+          node.calendarEventId,
+      );
+    };
+
+    const findMessageThreadIdsOfPerson = async (targetPersonId: string) => {
+      const messageThreadTargets =
+        await findMessageThreadTargetsOfPerson(targetPersonId);
+
+      return messageThreadTargets.map(
+        ({ messageThreadId }: { messageThreadId: string }) => messageThreadId,
+      );
+    };
+
     it('should merge two people attached to the same message thread', async () => {
       const { priorityPersonId, duplicatePersonId } =
         await createPeoplePair('Shared thread');
@@ -288,6 +374,193 @@ describe('people merge resolvers (integration)', () => {
 
       expect(
         await findMessageThreadTargetsOfPerson(duplicatePersonId),
+      ).toHaveLength(0);
+    });
+
+    it('should merge two people attached to the same calendar event', async () => {
+      const { priorityPersonId, duplicatePersonId } =
+        await createPeoplePair('Shared event');
+
+      const sharedCalendarEventId = await createCalendarEvent();
+      const duplicateOnlyCalendarEventId = await createCalendarEvent();
+
+      await attachPersonToCalendarEvent({
+        calendarEventId: sharedCalendarEventId,
+        targetPersonId: priorityPersonId,
+      });
+      await attachPersonToCalendarEvent({
+        calendarEventId: sharedCalendarEventId,
+        targetPersonId: duplicatePersonId,
+      });
+      await attachPersonToCalendarEvent({
+        calendarEventId: duplicateOnlyCalendarEventId,
+        targetPersonId: duplicatePersonId,
+      });
+
+      const mergeResponse = await makeGraphqlApiRequest(
+        mergeManyOperationFactory({
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS,
+          ids: [priorityPersonId, duplicatePersonId],
+          conflictPriorityIndex: 0,
+        }),
+      );
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+
+      const survivingCalendarEventIds =
+        await findCalendarEventIdsOfPerson(priorityPersonId);
+
+      expect(survivingCalendarEventIds).toHaveLength(2);
+      expect(survivingCalendarEventIds).toEqual(
+        expect.arrayContaining([
+          sharedCalendarEventId,
+          duplicateOnlyCalendarEventId,
+        ]),
+      );
+      expect(
+        await findCalendarEventIdsOfPerson(duplicatePersonId),
+      ).toHaveLength(0);
+    });
+
+    // Duplicates synced from a mailbox usually share both the thread and the
+    // meeting that created them, and the merge is often driven by an API key
+    it.each([0, 1])(
+      'should merge people sharing a message thread and a calendar event with an API key when record %i has priority',
+      async (conflictPriorityIndex) => {
+        const { priorityPersonId, duplicatePersonId } = await createPeoplePair(
+          'Shared thread and event',
+        );
+
+        const ids = [priorityPersonId, duplicatePersonId];
+        const survivingPersonId = ids[conflictPriorityIndex];
+        const absorbedPersonId = ids[1 - conflictPriorityIndex];
+
+        const sharedMessageThreadId = await createMessageThread();
+        const sharedCalendarEventId = await createCalendarEvent();
+        const priorityOnlyMessageThreadId = await createMessageThread();
+        const duplicateOnlyCalendarEventId = await createCalendarEvent();
+
+        for (const targetPersonId of ids) {
+          await attachPersonToMessageThread({
+            messageThreadId: sharedMessageThreadId,
+            targetPersonId,
+          });
+          await attachPersonToCalendarEvent({
+            calendarEventId: sharedCalendarEventId,
+            targetPersonId,
+          });
+        }
+        await attachPersonToMessageThread({
+          messageThreadId: priorityOnlyMessageThreadId,
+          targetPersonId: priorityPersonId,
+        });
+        await attachPersonToCalendarEvent({
+          calendarEventId: duplicateOnlyCalendarEventId,
+          targetPersonId: duplicatePersonId,
+        });
+
+        const mergeResponse = await makeGraphqlApiRequest(
+          mergeManyOperationFactory({
+            objectMetadataPluralName: 'people',
+            gqlFields: 'id',
+            ids,
+            conflictPriorityIndex,
+          }),
+          API_KEY_ACCESS_TOKEN,
+        );
+
+        expect(mergeResponse.body.errors).toBeUndefined();
+        expect(mergeResponse.body.data.mergePeople.id).toBe(survivingPersonId);
+
+        const survivingMessageThreadIds =
+          await findMessageThreadIdsOfPerson(survivingPersonId);
+
+        expect(survivingMessageThreadIds).toHaveLength(2);
+        expect(survivingMessageThreadIds).toEqual(
+          expect.arrayContaining([
+            sharedMessageThreadId,
+            priorityOnlyMessageThreadId,
+          ]),
+        );
+
+        const survivingCalendarEventIds =
+          await findCalendarEventIdsOfPerson(survivingPersonId);
+
+        expect(survivingCalendarEventIds).toHaveLength(2);
+        expect(survivingCalendarEventIds).toEqual(
+          expect.arrayContaining([
+            sharedCalendarEventId,
+            duplicateOnlyCalendarEventId,
+          ]),
+        );
+
+        expect(
+          await findMessageThreadIdsOfPerson(absorbedPersonId),
+        ).toHaveLength(0);
+        expect(
+          await findCalendarEventIdsOfPerson(absorbedPersonId),
+        ).toHaveLength(0);
+      },
+    );
+
+    it('should merge three people when only the absorbed ones share a message thread', async () => {
+      const createPersonsResponse = await makeGraphqlApiRequest(
+        createManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: 'id',
+          data: [
+            { name: { firstName: 'Trio', lastName: 'Priority' } },
+            { name: { firstName: 'Trio', lastName: 'First duplicate' } },
+            { name: { firstName: 'Trio', lastName: 'Second duplicate' } },
+          ],
+        }),
+      );
+
+      expect(createPersonsResponse.body.errors).toBeUndefined();
+
+      const ids: string[] = createPersonsResponse.body.data.createPeople.map(
+        ({ id }: { id: string }) => id,
+      );
+
+      createdPersonIdsForCleaning.push(...ids);
+
+      const [
+        priorityPersonId,
+        firstDuplicatePersonId,
+        secondDuplicatePersonId,
+      ] = ids;
+
+      const sharedMessageThreadId = await createMessageThread();
+
+      await attachPersonToMessageThread({
+        messageThreadId: sharedMessageThreadId,
+        targetPersonId: firstDuplicatePersonId,
+      });
+      await attachPersonToMessageThread({
+        messageThreadId: sharedMessageThreadId,
+        targetPersonId: secondDuplicatePersonId,
+      });
+
+      const mergeResponse = await makeGraphqlApiRequest(
+        mergeManyOperationFactory({
+          objectMetadataPluralName: 'people',
+          gqlFields: 'id',
+          ids,
+          conflictPriorityIndex: 0,
+        }),
+      );
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+      expect(await findMessageThreadIdsOfPerson(priorityPersonId)).toEqual([
+        sharedMessageThreadId,
+      ]);
+      expect(
+        await findMessageThreadIdsOfPerson(firstDuplicatePersonId),
+      ).toHaveLength(0);
+      expect(
+        await findMessageThreadIdsOfPerson(secondDuplicatePersonId),
       ).toHaveLength(0);
     });
   });
