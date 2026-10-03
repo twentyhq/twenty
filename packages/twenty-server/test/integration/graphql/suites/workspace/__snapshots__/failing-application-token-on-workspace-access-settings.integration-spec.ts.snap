@@ -1,14 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Workspace access settings with an application token should fail should refuse an invitation with a chosen role, creating no invitation 1`] = `
+exports[`Workspace access settings with an application token should fail should refuse an invitation with the admin role, creating no invitation 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail should refuse an invitation without a role, creating no invitation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
 }
 `;
 

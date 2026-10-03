@@ -248,19 +248,27 @@ describe('Workspace access settings with an application token should fail', () =
     },
   );
 
-  // Sending invitations needs a user, so only the user-bound token reaches it.
-  it('should refuse an invitation with a chosen role, creating no invitation', async () => {
-    const email = `application-token-probe-${randomUUID()}@example.com`;
+  it.each([
+    { title: 'with the admin role', withAdminRole: true },
+    { title: 'without a role', withAdminRole: false },
+  ])(
+    'should refuse an invitation $title, creating no invitation',
+    async ({ withAdminRole }) => {
+      const email = `application-token-probe-${randomUUID()}@example.com`;
 
-    const { errors } = await sendInvitations({
-      input: { emails: [email], roleId: globalTestContext.adminRoleId },
-      token: globalTestContext.userBoundToken,
-      expectToFail: true,
-    });
+      const { errors } = await sendInvitations({
+        input: {
+          emails: [email],
+          roleId: withAdminRole ? globalTestContext.adminRoleId : undefined,
+        },
+        token: globalTestContext.userBoundToken,
+        expectToFail: true,
+      });
 
-    expectOneNotInternalServerErrorSnapshot({ errors });
-    expect(await countInvitations(email)).toBe(0);
-  });
+      expectOneNotInternalServerErrorSnapshot({ errors });
+      expect(await countInvitations(email)).toBe(0);
+    },
+  );
 
   it('should still give the invite link to an admin session', async () => {
     const { data } = await findCurrentWorkspaceInviteHash({

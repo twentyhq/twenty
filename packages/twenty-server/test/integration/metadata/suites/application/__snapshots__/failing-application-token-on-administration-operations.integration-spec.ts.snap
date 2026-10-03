@@ -340,6 +340,16 @@ exports[`Administration operations with an application token should fail with a 
 }
 `;
 
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteWorkspaceInvitation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse editSSOIdentityProvider 1`] = `
 {
   "extensions": {
@@ -390,7 +400,27 @@ exports[`Administration operations with an application token should fail with a 
 }
 `;
 
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse resendWorkspaceInvitation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse rotateApplicationRegistrationClientSecret 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse sendInvitations 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -1000,6 +1030,16 @@ exports[`Administration operations with an application token should fail with an
 }
 `;
 
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteWorkspaceInvitation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
 exports[`Administration operations with an application token should fail with an application token without user binding should refuse editSSOIdentityProvider 1`] = `
 {
   "extensions": {
@@ -1050,7 +1090,27 @@ exports[`Administration operations with an application token should fail with an
 }
 `;
 
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse resendWorkspaceInvitation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
 exports[`Administration operations with an application token should fail with an application token without user binding should refuse rotateApplicationRegistrationClientSecret 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse sendInvitations 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",

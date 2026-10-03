@@ -608,6 +608,34 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
     `,
     variables: {},
   }),
+  sendInvitations: () => ({
+    query: gql`
+      mutation SendInvitations($emails: [String!]!) {
+        sendInvitations(emails: $emails) {
+          __typename
+        }
+      }
+    `,
+    variables: { emails: ['application-token-probe@example.com'] },
+  }),
+  resendWorkspaceInvitation: () => ({
+    query: gql`
+      mutation ResendWorkspaceInvitation($appTokenId: String!) {
+        resendWorkspaceInvitation(appTokenId: $appTokenId) {
+          __typename
+        }
+      }
+    `,
+    variables: { appTokenId: PLACEHOLDER_ID },
+  }),
+  deleteWorkspaceInvitation: () => ({
+    query: gql`
+      mutation DeleteWorkspaceInvitation($appTokenId: String!) {
+        deleteWorkspaceInvitation(appTokenId: $appTokenId)
+      }
+    `,
+    variables: { appTokenId: PLACEHOLDER_ID },
+  }),
   updateLabPublicFeatureFlag: () => ({
     query: gql`
       mutation UpdateLabPublicFeatureFlag(

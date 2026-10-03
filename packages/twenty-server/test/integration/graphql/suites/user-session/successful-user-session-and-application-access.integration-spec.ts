@@ -5,12 +5,10 @@ import { currentUserSessions } from 'test/integration/graphql/suites/user-sessio
 import { currentUser } from 'test/integration/graphql/suites/user-session/utils/current-user.util';
 import { generatePlaygroundToken } from 'test/integration/graphql/suites/user-session/utils/generate-playground-token.util';
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
-import { sendInvitations } from 'test/integration/graphql/suites/user-session/utils/send-invitations.util';
 import { versionInfo } from 'test/integration/graphql/suites/user-session/utils/version-info.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { getAccessTokenForCredentials } from 'test/integration/graphql/utils/get-access-token-for-credentials.util';
 import { impersonate } from 'test/integration/graphql/utils/impersonate.util';
-import { deleteWorkspaceInvitationsByEmail } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { activateWorkspace } from 'test/integration/graphql/utils/activate-workspace.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
@@ -352,23 +350,6 @@ describe('User session operations and application access that must keep working'
         data.currentUser.currentUserWorkspace
           ?.twoFactorAuthenticationMethodSummary,
       ).toBeNull();
-    });
-
-    it('should send invitations when the application role holds the permission', async () => {
-      const email = `user-session-invite-${Date.now()}@example.com`;
-
-      try {
-        const { data, errors } = await sendInvitations({
-          input: { emails: [email] },
-          token: workspaceMembersApplicationToken,
-          expectToFail: false,
-        });
-
-        expect(errors).toBeUndefined();
-        expect(data.sendInvitations.success).toBe(true);
-      } finally {
-        await deleteWorkspaceInvitationsByEmail({ email });
-      }
     });
 
     // Billing is off in the integration environment, so the mutation cannot
