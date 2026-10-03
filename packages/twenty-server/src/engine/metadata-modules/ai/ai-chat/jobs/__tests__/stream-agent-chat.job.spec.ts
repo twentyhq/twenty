@@ -185,14 +185,20 @@ describe('StreamAgentChatJob', () => {
     streamId: 'stream-id',
     userWorkspaceId: 'user-workspace-id',
     workspaceId: 'workspace-id',
-    messages: [],
     browsingContext: null,
-    lastUserMessageText: 'hello',
     hasTitle: true,
     conversationSizeTokens: 0,
     existingTurnId: 'turn-id',
     messageId: 'user-message-id',
   };
+
+  const conversation = [
+    {
+      id: 'user-message-id',
+      role: 'user',
+      parts: [{ type: 'text', text: 'hello' }],
+    },
+  ];
 
   const buildJob = ({
     workspaceFound = true,
@@ -290,6 +296,7 @@ describe('StreamAgentChatJob', () => {
     };
     const agentChatStreamingService = {
       flushNextQueuedMessage: jest.fn().mockResolvedValue(undefined),
+      loadMessagesFromDB: jest.fn().mockResolvedValue(conversation),
     };
     const streamHeartbeatService = {
       startRunning: jest.fn().mockReturnValue(() => {}),
@@ -361,6 +368,19 @@ describe('StreamAgentChatJob', () => {
       turnCounts,
     };
   };
+
+  it('streams the conversation as the authorized sender reads it', async () => {
+    const { job, agentChatStreamingService, chatExecutionService } = buildJob();
+    await job.handle(jobData);
+    expect(agentChatStreamingService.loadMessagesFromDB).toHaveBeenCalledWith({
+      threadId: 'thread-id',
+      workspaceId: 'workspace-id',
+      workspaceMemberId: 'member',
+    });
+    expect(chatExecutionService.streamChat).toHaveBeenCalledWith(
+      expect.objectContaining({ messages: conversation }),
+    );
+  });
 
   it('streams the authorized turn without authorizing it again', async () => {
     const { job, actorService, agentChatService, chatExecutionService } =

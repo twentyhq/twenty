@@ -167,7 +167,6 @@ export class WorkspaceSetupChatService {
     const openingTurn = await this.agentChatStreamingService.startOpeningTurn({
       thread,
       userWorkspaceId,
-      workspaceMemberId,
       workspace,
       context: buildWorkspaceSetupTurnContext({
         companyEnrichment: companyContext,

@@ -307,7 +307,6 @@ export class ToolCallAnswerService {
       await this.agentChatStreamingService.enqueueResumeStream({
         threadId,
         userWorkspaceId,
-        workspaceMemberId: args.workspaceMemberId,
         workspace,
         turnId: answerMessage.turnId,
         streamId,

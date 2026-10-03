@@ -69,10 +69,12 @@ const args = { workspaceId: 'workspace', threadId: 'thread' };
 
 describe('Sender-aware queue draining', () => {
   it('starts the next turn as its saved sender', async () => {
-    const { service, queue, chat } = build();
+    const { service, queue, actors } = build();
     await service.flushNextQueuedMessage(args);
-    expect(chat.getMessagesForThread).toHaveBeenCalledWith(
-      expect.objectContaining({ workspaceMemberId: 'member' }),
+    expect(actors.authorize).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sender: expect.objectContaining({ userWorkspaceId: 'participant-b' }),
+      }),
     );
     expect(queue.add).toHaveBeenCalledWith(
       expect.any(String),
@@ -151,8 +153,11 @@ describe('Sender-aware queue draining', () => {
     expect(queue.add).not.toHaveBeenCalled();
     expect(heartbeat.clear).toHaveBeenCalled();
   });
+});
+
+describe('Loading a conversation for a turn', () => {
   it('places each turn context where its turn opened', async () => {
-    const { service, chat, queue } = build();
+    const { service, chat } = build();
     const message = (id: string, role: string, createdAt: string) => ({
       id,
       role,
@@ -177,8 +182,11 @@ describe('Sender-aware queue draining', () => {
         createdAt: '2026-01-01T11:30:00.000Z',
       },
     ]);
-    await service.flushNextQueuedMessage(args);
-    const { messages } = queue.add.mock.calls[0][1];
+    const messages = await service.loadMessagesFromDB({
+      threadId: 'thread',
+      workspaceId: 'workspace',
+      workspaceMemberId: 'member',
+    });
     expect(messages.map(({ id }: { id: string }) => id)).toEqual([
       'question',
       'answer',

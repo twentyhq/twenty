@@ -198,13 +198,22 @@ export class StreamAgentChatJob {
         );
       }
 
+      const messages = await this.agentChatStreamingService.loadMessagesFromDB({
+        threadId: data.threadId,
+        workspaceId: data.workspaceId,
+        workspaceMemberId: authorization.authContext.workspaceMemberId,
+      });
+
       const titlePromise = data.hasTitle
         ? Promise.resolve(null)
         : this.agentChatService
             .generateTitleIfNeeded({
               userWorkspaceId: data.userWorkspaceId,
               threadId: data.threadId,
-              messageContent: data.lastUserMessageText,
+              messageContent:
+                findLastMessageText(
+                  messages.find(({ id }) => id === message?.id)?.parts ?? [],
+                ) ?? '',
               workspaceId: data.workspaceId,
             })
             .catch(() => null);
@@ -212,6 +221,7 @@ export class StreamAgentChatJob {
       await this.buildAndPublishStream({
         workspace,
         data,
+        messages,
         turnId,
         sender,
         authorization,
@@ -344,6 +354,7 @@ export class StreamAgentChatJob {
   private async buildAndPublishStream({
     workspace,
     data,
+    messages,
     turnId,
     sender,
     authorization,
@@ -353,6 +364,7 @@ export class StreamAgentChatJob {
   }: {
     workspace: WorkspaceEntity;
     data: StreamAgentChatJobData;
+    messages: ExtendedUIMessage[];
     turnId: string;
     sender: ChatExecutionOptions['sender'];
     authorization: ChatExecutionOptions['authorization'];
@@ -450,7 +462,7 @@ export class StreamAgentChatJob {
             threadId: data.threadId,
             streamId: data.streamId,
             turnId,
-            messages: data.messages,
+            messages,
             browsingContext: data.browsingContext,
             modelId: data.modelId,
             onCodeExecutionUpdate,

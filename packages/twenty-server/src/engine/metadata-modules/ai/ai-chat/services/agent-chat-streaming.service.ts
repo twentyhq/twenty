@@ -10,7 +10,7 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Injectable, Logger } from '@nestjs/common';
 
-import { generateId, type TextUIPart } from 'ai';
+import { generateId } from 'ai';
 import {
   type ExtendedFileUIPart,
   type ExtendedUIMessage,
@@ -202,14 +202,8 @@ export class AgentChatStreamingService {
           streamId,
           userWorkspaceId,
           workspaceId,
-          messages: await this.loadMessagesFromDB(
-            threadId,
-            workspaceId,
-            workspaceMemberId,
-          ),
           browsingContext,
           modelId,
-          lastUserMessageText: text,
           turnId: savedUserMessage.turnId,
           messageId: savedUserMessage.id,
         });
@@ -228,14 +222,12 @@ export class AgentChatStreamingService {
   async startOpeningTurn({
     thread,
     userWorkspaceId,
-    workspaceMemberId,
     workspace,
     context,
     modelId,
   }: {
     thread: AgentChatThreadWorkspaceEntity;
     userWorkspaceId: string;
-    workspaceMemberId: string;
     workspace: WorkspaceEntity;
     context: string;
     modelId: string;
@@ -284,14 +276,8 @@ export class AgentChatStreamingService {
           streamId,
           userWorkspaceId,
           workspaceId,
-          messages: await this.loadMessagesFromDB(
-            threadId,
-            workspaceId,
-            workspaceMemberId,
-          ),
           browsingContext: null,
           modelId,
-          lastUserMessageText: '',
           turnId,
         });
 
@@ -375,25 +361,13 @@ export class AgentChatStreamingService {
           workspaceId,
         });
 
-        const messages = await this.loadMessagesFromDB(
-          threadId,
-          workspaceId,
-          workspaceMemberId,
-        );
-
-        const textPart = messages
-          .find(({ id }) => id === message?.id)
-          ?.parts.find((part): part is TextUIPart => part.type === 'text');
-
         await this.enqueueStreamJob({
           thread,
           streamId,
           userWorkspaceId,
           workspaceId,
-          messages,
           browsingContext: null,
           modelId,
-          lastUserMessageText: textPart?.text ?? '',
           turnId,
           messageId: message?.id,
         });
@@ -406,7 +380,6 @@ export class AgentChatStreamingService {
   async enqueueResumeStream({
     threadId,
     userWorkspaceId,
-    workspaceMemberId,
     workspace,
     turnId,
     streamId,
@@ -416,7 +389,6 @@ export class AgentChatStreamingService {
     messageId: string;
     threadId: string;
     userWorkspaceId: string;
-    workspaceMemberId: string;
     workspace: WorkspaceEntity;
     turnId: string;
     streamId: string;
@@ -431,14 +403,8 @@ export class AgentChatStreamingService {
       streamId,
       userWorkspaceId,
       workspaceId: workspace.id,
-      messages: await this.loadMessagesFromDB(
-        threadId,
-        workspace.id,
-        workspaceMemberId,
-      ),
       browsingContext: null,
       modelId,
-      lastUserMessageText: '',
       turnId,
       messageId,
     });
@@ -472,7 +438,6 @@ export class AgentChatStreamingService {
 
     let nextQueued: (typeof queuedMessages)[number] | undefined;
     let userWorkspaceId: string | undefined;
-    let workspaceMemberId: string | undefined;
     for (const candidate of queuedMessages) {
       try {
         const { sender } = await this.actorService.resolveMessage({
@@ -480,12 +445,11 @@ export class AgentChatStreamingService {
           threadId,
           messageId: candidate.id,
         });
-        const authorization = await this.actorService.authorize({
+        await this.actorService.authorize({
           workspaceId,
           threadId,
           sender,
         });
-        workspaceMemberId = authorization.authContext.workspaceMemberId;
         nextQueued = candidate;
         userWorkspaceId = sender.userWorkspaceId;
         break;
@@ -519,11 +483,7 @@ export class AgentChatStreamingService {
         });
       }
     }
-    if (
-      !isDefined(nextQueued) ||
-      !isDefined(userWorkspaceId) ||
-      !isDefined(workspaceMemberId)
-    ) {
+    if (!isDefined(nextQueued) || !isDefined(userWorkspaceId)) {
       return;
     }
 
@@ -585,21 +545,16 @@ export class AgentChatStreamingService {
           event: { type: 'message-persisted', messageId: nextQueued.id },
         });
 
-        const [messages, thread] = await Promise.all([
-          this.loadMessagesFromDB(threadId, workspaceId, workspaceMemberId),
-          this.threadRepository.findOneOrFail(workspaceId, {
-            where: { id: threadId },
-          }),
-        ]);
+        const thread = await this.threadRepository.findOneOrFail(workspaceId, {
+          where: { id: threadId },
+        });
 
         await this.enqueueStreamJob({
           thread,
           streamId,
           userWorkspaceId,
           workspaceId,
-          messages,
           browsingContext: null,
-          lastUserMessageText: messageText,
           turnId,
           messageId: nextQueued.id,
         });
@@ -730,11 +685,15 @@ export class AgentChatStreamingService {
     );
   }
 
-  private async loadMessagesFromDB(
-    threadId: string,
-    workspaceId: string,
-    workspaceMemberId: string,
-  ): Promise<ExtendedUIMessage[]> {
+  async loadMessagesFromDB({
+    threadId,
+    workspaceId,
+    workspaceMemberId,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    workspaceMemberId: string;
+  }): Promise<ExtendedUIMessage[]> {
     const [allMessages, turnContexts] = await Promise.all([
       this.agentChatService.getMessagesForThread({
         threadId,
