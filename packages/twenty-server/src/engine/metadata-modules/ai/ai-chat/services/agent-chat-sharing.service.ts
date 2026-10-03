@@ -2,8 +2,10 @@ import { lockAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/util
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
+import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { Injectable } from '@nestjs/common';
+import chunk from 'lodash.chunk';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -29,6 +31,8 @@ type ThreadAccessArgs = {
   threadId: string;
 };
 
+const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
+
 @Injectable()
 export class AgentChatSharingService {
   constructor(
@@ -40,6 +44,23 @@ export class AgentChatSharingService {
     private readonly permissionsService: PermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
+
+  // Fence for the 2.46 cross-upgrade window: until
+  // upgrade:2-46:add-agent-chat-thread-participant-object has reached a
+  // workspace, it has neither the participant table nor the thread's
+  // lastActivityAt column. Remove once 2.46 leaves the window.
+  async hasInboxState(workspaceId: string): Promise<boolean> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    return isDefined(
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier
+      ],
+    );
+  }
 
   getReadableThread(args: ThreadAccessArgs) {
     return this.getThreadWithAccess({ ...args, operationType: 'select' });
@@ -78,6 +99,44 @@ export class AgentChatSharingService {
     return thread;
   }
 
+  async findReadableThreadIds({
+    threadIds,
+    ...args
+  }: Omit<ThreadAccessArgs, 'threadId'> & {
+    threadIds: string[];
+  }): Promise<string[]> {
+    if (threadIds.length === 0) {
+      return [];
+    }
+
+    const authContext = await this.getAuthContext(args);
+
+    // Each id is a query parameter, so a long chat history is checked in
+    // batches that stay well under PostgreSQL's parameter limit
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository =
+        this.workspaceOrmManager.getRepositoryWithContextPermissions(
+          'agentChatThread',
+        );
+      const readableThreadIds: string[] = [];
+
+      for (const threadIdBatch of chunk(
+        threadIds,
+        READABLE_THREAD_IDS_BATCH_SIZE,
+      )) {
+        readableThreadIds.push(
+          ...(await repository.findRecordIdsAllowedForOperation({
+            recordIds: threadIdBatch,
+            operationType: 'select',
+            withDeleted: true,
+          })),
+        );
+      }
+
+      return readableThreadIds;
+    }, authContext);
+  }
+
   async createThread(args: {
     workspaceId: string;
     workspaceMemberId: string;
@@ -86,6 +145,7 @@ export class AgentChatSharingService {
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
+    const hasInboxState = await this.hasInboxState(args.workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -103,8 +163,8 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId")
-         VALUES ($1, $2, $3, $4) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId"${hasInboxState ? ', "lastActivityAt"' : ''})
+           VALUES ($1, $2, $3, $4${hasInboxState ? ', clock_timestamp()' : ''}) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
@@ -129,6 +189,13 @@ export class AgentChatSharingService {
           throw new AiException(
             'Thread owner is no longer a workspace member',
             AiExceptionCode.THREAD_NOT_FOUND,
+          );
+        }
+        if (hasInboxState) {
+          await manager.query(
+            `INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt")
+             VALUES ($1, $2, $3)`,
+            [record.id, authContext.workspaceMemberId, record.lastActivityAt],
           );
         }
         return record;
