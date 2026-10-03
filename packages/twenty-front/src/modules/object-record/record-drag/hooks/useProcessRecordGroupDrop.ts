@@ -14,7 +14,6 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -22,11 +21,10 @@ import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jota
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-export const useProcessTableWithGroupRecordDrop = () => {
+export const useProcessRecordGroupDrop = () => {
   const store = useStore();
-  const { recordIndexId } = useRecordIndexContextOrThrow();
-  const { objectNameSingular, objectMetadataItem, recordTableId } =
-    useRecordTableContextOrThrow();
+  const { recordIndexId, objectNameSingular, objectMetadataItem } =
+    useRecordIndexContextOrThrow();
 
   const { updateOneRecord } = useUpdateOneRecord();
 
@@ -38,12 +36,10 @@ export const useProcessTableWithGroupRecordDrop = () => {
 
   const currentRecordSorts = useAtomComponentStateCallbackState(
     currentRecordSortsComponentState,
-    recordTableId,
   );
 
-  const selectedRowIds = useAtomComponentSelectorCallbackState(
+  const selectedRecordIdsCallbackState = useAtomComponentSelectorCallbackState(
     selectedRecordIdsComponentSelector,
-    recordTableId,
   );
 
   const isDraggingRecord = useAtomComponentStateCallbackState(
@@ -60,7 +56,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const processTableWithGroupRecordDrop = useCallback(
+  const processRecordGroupDrop = useCallback(
     (result: RecordDragDropResult) => {
       if (!result.destination) return;
 
@@ -90,7 +86,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
 
       const selectedRecordIds = isCurrentlyDraggingRecord
         ? existingOriginalDragSelection
-        : store.get(selectedRowIds);
+        : store.get(selectedRecordIdsCallbackState);
 
       const existingRecordSorts = store.get(currentRecordSorts);
 
@@ -126,7 +122,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
       objectMetadataItem.fields,
       originalDragSelection,
       isDraggingRecord,
-      selectedRowIds,
+      selectedRecordIdsCallbackState,
       recordIdsByGroupFamilyState,
       recordIndexGroupFieldMetadataItem?.id,
       openDialog,
@@ -134,5 +130,5 @@ export const useProcessTableWithGroupRecordDrop = () => {
     ],
   );
 
-  return { processTableWithGroupRecordDrop };
+  return { processRecordGroupDrop };
 };

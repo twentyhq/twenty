@@ -107,8 +107,8 @@ describe('useAgentChatThreadParticipants', () => {
     const { result, store } = renderParticipants();
 
     await act(async () => {
-      await result.current.snoozeAgentChatThread({
-        threadId: THREAD_ID,
+      await result.current.snoozeAgentChatThreads({
+        threadIds: [THREAD_ID],
         snoozedUntil: new Date('2026-10-02T09:00:00.000Z'),
       });
     });

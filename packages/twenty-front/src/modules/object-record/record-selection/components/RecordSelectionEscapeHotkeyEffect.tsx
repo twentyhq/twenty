@@ -6,7 +6,7 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
-export const RecordTableBodyEscapeHotkeyEffect = () => {
+export const RecordSelectionEscapeHotkeyEffect = () => {
   const { resetRecordSelection } = useResetRecordSelection();
 
   const isAtLeastOneRecordSelected = useAtomComponentSelectorValue(
