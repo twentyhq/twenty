@@ -6,7 +6,7 @@ import {
   QUERY_MAX_RECORDS,
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
-import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
+import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
@@ -16,6 +16,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { DEFAULT_ID_ORDER_BY_TIEBREAKER } from 'src/engine/api/common/constants/default-id-order-by-tiebreaker.constant';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -91,12 +92,11 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       appliedFilters,
     );
 
-    // Deduplicated leaves let a caller id ordering override the tie-breaker and keep scan order and keyset conditions in sync.
-    // NULLS LAST matches the primary-key btree order both ways (backward scans flip it to DESC NULLS FIRST), so Postgres can stop at LIMIT instead of sorting every row past the cursor
+    // Deduplicated leaves let a caller id ordering override the tie-breaker and keep scan order and keyset conditions in sync
     const orderByLeaves = resolveOrderByLeaves({
       orderBy: [
         ...(args.orderBy ?? []),
-        { id: OrderByDirection.AscNullsLast },
+        DEFAULT_ID_ORDER_BY_TIEBREAKER,
       ] as ObjectRecordOrderBy,
       flatObjectMetadata,
       flatObjectMetadataMaps,
