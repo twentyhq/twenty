@@ -14,7 +14,7 @@ describe('endsOnPausingToolCall', () => {
       endsOnPausingToolCall({
         steps: [
           stepWithResults({ toolName: 'search', output: {} }),
-          stepWithResults(awaiting('ask_questions')),
+          stepWithResults(awaiting('ask_question')),
         ],
       }),
     ).toBe(true);
@@ -24,7 +24,7 @@ describe('endsOnPausingToolCall', () => {
     expect(
       endsOnPausingToolCall({
         steps: [
-          stepWithResults(awaiting('ask_questions')),
+          stepWithResults(awaiting('ask_question')),
           stepWithResults({ toolName: 'search', output: {} }),
         ],
       }),
@@ -38,11 +38,11 @@ describe('endsOnPausingToolCall', () => {
   });
 
   it('only pauses on a pausing tool the run was offered', () => {
-    const steps = [stepWithResults(awaiting('ask_questions'))];
+    const steps = [stepWithResults(awaiting('ask_question'))];
 
     expect(endsOnPausingToolCall({ steps, offeredToolNames: [] })).toBe(false);
     expect(
-      endsOnPausingToolCall({ steps, offeredToolNames: ['ask_questions'] }),
+      endsOnPausingToolCall({ steps, offeredToolNames: ['ask_question'] }),
     ).toBe(true);
   });
 

@@ -1,11 +1,11 @@
-import { type AskQuestionsToolInput } from '@/ai/types/AskQuestionsToolInput';
+import { type AskQuestionToolInput } from '@/ai/types/AskQuestionToolInput';
 import { type ProposeToolCallToolInput } from '@/ai/types/ProposeToolCallToolInput';
 import { type RequestFormToolInput } from '@/ai/types/RequestFormToolInput';
 
 export type SendInboxMessageToolCall =
   | {
-      toolName: 'ask_questions';
-      input: AskQuestionsToolInput;
+      toolName: 'ask_question';
+      input: AskQuestionToolInput;
       logicFunctionUniversalIdentifier?: never;
     }
   | {
