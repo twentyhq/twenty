@@ -202,9 +202,11 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       application: application ?? undefined,
     } satisfies ToolContext;
 
+    const catalog = await this.toolRegistryService.getCatalog(toolContext);
     const inputSchemas = await this.toolRegistryService.resolveSchemas({
       toolNames: [toolCall.toolName],
       context: toolContext,
+      precomputedCatalog: catalog,
     });
     const missingArgumentNames = findMissingRequiredToolArguments({
       inputSchema: inputSchemas.get(toolCall.toolName),
@@ -226,8 +228,8 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
 
     const resolution = await resolveProposedToolCall({
       input,
-      findTool: (toolName) =>
-        this.toolRegistryService.findCatalogEntry(toolName, toolContext),
+      findTool: async (toolName) =>
+        catalog.find((catalogEntry) => catalogEntry.name === toolName),
       executeTool: ({ toolName, args }) =>
         this.toolRegistryService.resolveAndExecute(toolName, args, toolContext),
     });

@@ -57,14 +57,18 @@ export const WorkflowSendChatMessageToolArguments = ({
     variables: { toolName },
   });
   const fields = useMemo(
-    () => buildToolArgumentFields(data?.getToolInputSchema),
-    [data],
+    () =>
+      buildToolArgumentFields({
+        jsonSchema: data?.getToolInputSchema,
+        savedArgumentNames: Object.keys(toolArguments),
+      }),
+    [data, toolArguments],
   );
   const [isShowingOptionalArguments, setIsShowingOptionalArguments] =
     useState(false);
   const [jsonErrors, setJsonErrors] = useState<Record<string, string>>({});
-  // read once, so clearing an optional argument does not hide it while it is edited
-  const [initiallyFilledNames] = useState(
+  // an optional argument stays shown once it has a value, even while it is cleared to be edited
+  const [revealedNames, setRevealedNames] = useState(
     () => new Set(Object.keys(toolArguments)),
   );
 
@@ -75,6 +79,10 @@ export const WorkflowSendChatMessageToolArguments = ({
   // an empty value is left out, so an update never clears a field nobody filled in
   const handleArgumentChange = (name: string, value: unknown) => {
     const { [name]: _previousValue, ...otherArguments } = toolArguments;
+
+    if (!isEmptyToolArgument(value) && !revealedNames.has(name)) {
+      setRevealedNames(new Set([...revealedNames, name]));
+    }
 
     onChange(
       isEmptyToolArgument(value)
@@ -134,8 +142,9 @@ export const WorkflowSendChatMessageToolArguments = ({
 
   const isShown = (field: ToolArgumentField) =>
     field.isRequired ||
+    !field.isListed ||
     isShowingOptionalArguments ||
-    initiallyFilledNames.has(field.name);
+    revealedNames.has(field.name);
   const hiddenOptionalCount = fields.filter((field) => !isShown(field)).length;
 
   return (
@@ -175,6 +184,11 @@ export const WorkflowSendChatMessageToolArguments = ({
             )}
             {isDefined(field.description) && (
               <StyledHint>{field.description}</StyledHint>
+            )}
+            {!field.isListed && (
+              <StyledHint>
+                {t`This action no longer takes this argument. Clear it to remove it.`}
+              </StyledHint>
             )}
             {isMissing && !readonly && (
               <StyledError>{t`Required to run the action`}</StyledError>

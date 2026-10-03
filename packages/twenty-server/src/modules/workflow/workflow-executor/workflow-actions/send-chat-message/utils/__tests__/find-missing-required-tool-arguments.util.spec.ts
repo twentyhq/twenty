@@ -12,13 +12,25 @@ const CALENDAR_EVENT_SCHEMA = {
 };
 
 describe('findMissingRequiredToolArguments', () => {
-  it('names the required arguments left empty', () => {
+  it('names the required arguments that are absent, once each', () => {
+    expect(
+      findMissingRequiredToolArguments({
+        inputSchema: {
+          ...CALENDAR_EVENT_SCHEMA,
+          required: [...CALENDAR_EVENT_SCHEMA.required, 'endsAt'],
+        },
+        toolArguments: { title: 'Kickoff', location: 'Paris' },
+      }),
+    ).toEqual(['startsAt', 'endsAt']);
+  });
+
+  it('leaves a present value, even null or empty, to the tool', () => {
     expect(
       findMissingRequiredToolArguments({
         inputSchema: CALENDAR_EVENT_SCHEMA,
-        toolArguments: { title: 'Kickoff', startsAt: '', location: 'Paris' },
+        toolArguments: { title: '', startsAt: null, endsAt: '2026-07-01' },
       }),
-    ).toEqual(['startsAt', 'endsAt']);
+    ).toEqual([]);
   });
 
   it('finds nothing missing without a schema', () => {
