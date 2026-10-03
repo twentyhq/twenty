@@ -4,13 +4,12 @@ import { RecordListFieldTooltip } from '@/object-record/record-list/components/R
 import { RecordListRecordGroupsBody } from '@/object-record/record-list/components/RecordListRecordGroupsBody';
 import { RecordListResponsiveFieldsEffect } from '@/object-record/record-list/components/RecordListResponsiveFieldsEffect';
 import { RecordListComponentInstanceContext } from '@/object-record/record-list/states/contexts/RecordListComponentInstanceContext';
-import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { RecordSelectionEscapeHotkeyEffect } from '@/object-record/record-selection/components/RecordSelectionEscapeHotkeyEffect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -20,7 +19,6 @@ const StyledContainer = styled.div`
   height: 100%;
   padding: ${themeCssVariables.spacing[2]};
   padding-left: ${themeCssVariables.spacing[1]};
-  position: relative;
 `;
 
 export const RecordList = () => {
@@ -28,18 +26,12 @@ export const RecordList = () => {
     RecordListComponentInstanceContext,
   );
 
-  const scrollWrapperComponentInstanceId = `scroll-wrapper-record-list-${recordListId}`;
-
   const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
 
   const [containerElement, setContainerElement] =
     useState<HTMLDivElement | null>(null);
-  const containerRef = useMemo(
-    () => ({ current: containerElement }),
-    [containerElement],
-  );
 
   return (
     <StyledContainer ref={setContainerElement}>
@@ -47,7 +39,7 @@ export const RecordList = () => {
       <RecordSelectionEscapeHotkeyEffect />
       <RecordListFieldTooltip>
         <ScrollWrapper
-          componentInstanceId={scrollWrapperComponentInstanceId}
+          componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
           defaultEnableXScroll={false}
         >
           {hasRecordGroups ? (
@@ -57,10 +49,6 @@ export const RecordList = () => {
           )}
         </ScrollWrapper>
       </RecordListFieldTooltip>
-      <RecordSelectionDragSelect
-        selectableItemsContainerRef={containerRef}
-        scrollWrapperComponentInstanceId={scrollWrapperComponentInstanceId}
-      />
     </StyledContainer>
   );
 };
