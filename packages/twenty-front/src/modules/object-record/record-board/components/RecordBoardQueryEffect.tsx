@@ -5,6 +5,7 @@ import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/re
 import { lastRecordGroupIdsComponentState } from '@/object-record/record-board/states/lastRecordGroupIdsComponentState';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
+import { recordBoardQueryGenerationComponentState } from '@/object-record/record-board/states/recordBoardQueryGenerationComponentState';
 import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreComponentState';
 import { recordBoardHasColumnsToFetchMoreComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardHasColumnsToFetchMoreComponentSelector';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
@@ -27,6 +28,9 @@ export const RecordBoardQueryEffect = () => {
 
   const [lastRecordBoardQueryIdentifier, setLastRecordBoardQueryIdentifier] =
     useAtomComponentState(lastRecordBoardQueryIdentifierComponentState);
+  const setRecordBoardQueryGeneration = useSetAtomComponentState(
+    recordBoardQueryGenerationComponentState,
+  );
 
   const [lastRecordGroupIds, setLastRecordGroupIds] = useAtomComponentState(
     lastRecordGroupIdsComponentState,
@@ -35,6 +39,10 @@ export const RecordBoardQueryEffect = () => {
   const recordIndexRecordGroupsAreInInitialLoading = useAtomComponentStateValue(
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
   );
+  const setRecordIndexRecordGroupsAreInInitialLoading =
+    useSetAtomComponentState(
+      recordIndexRecordGroupsAreInInitialLoadingComponentState,
+    );
 
   const setRecordBoardCurrentGroupByQueryOffset = useSetAtomComponentState(
     recordBoardCurrentGroupByQueryOffsetComponentState,
@@ -72,10 +80,17 @@ export const RecordBoardQueryEffect = () => {
     [...lastRecordGroupIds].sort(),
   );
 
-  useEffect(
-    () => () => setLastRecordBoardQueryIdentifier(''),
-    [setLastRecordBoardQueryIdentifier],
-  );
+  useEffect(() => {
+    return () => {
+      setRecordBoardQueryGeneration((generation) => generation + 1);
+      setLastRecordBoardQueryIdentifier('');
+      setRecordIndexRecordGroupsAreInInitialLoading(false);
+    };
+  }, [
+    setRecordBoardQueryGeneration,
+    setLastRecordBoardQueryIdentifier,
+    setRecordIndexRecordGroupsAreInInitialLoading,
+  ]);
 
   useEffect(() => {
     if (isDraggingRecord) {

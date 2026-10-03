@@ -99,7 +99,8 @@ const renderBoardDataChangedEffect = ({
   store.set(recordStoreFamilyState.atomFamily('existing-task'), {
     id: 'existing-task',
     position: 1,
-  } as ObjectRecord);
+    __typename: 'Task',
+  } satisfies ObjectRecord);
   store.set(
     recordBoardShouldFetchMoreInColumnComponentFamilyState.atomFamily({
       instanceId: INSTANCE_ID,
@@ -155,6 +156,7 @@ describe('RecordBoardDataChangedEffect', () => {
 
     expect(triggerRecordBoardInitialQueryMock).toHaveBeenCalledWith({
       shouldResetScroll: false,
+      recordGroupId: GROUP_ID,
     });
   });
 

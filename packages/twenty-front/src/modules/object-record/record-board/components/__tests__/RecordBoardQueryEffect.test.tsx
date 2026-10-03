@@ -3,7 +3,9 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
 import { lastRecordGroupIdsComponentState } from '@/object-record/record-board/states/lastRecordGroupIdsComponentState';
+import { recordBoardQueryGenerationComponentState } from '@/object-record/record-board/states/recordBoardQueryGenerationComponentState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
+import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
@@ -53,6 +55,14 @@ describe('RecordBoardQueryEffect', () => {
       lastRecordBoardQueryIdentifierComponentState.atomFamily({
         instanceId: INSTANCE_ID,
       });
+    const queryGenerationAtom =
+      recordBoardQueryGenerationComponentState.atomFamily({
+        instanceId: INSTANCE_ID,
+      });
+    const loadingAtom =
+      recordIndexRecordGroupsAreInInitialLoadingComponentState.atomFamily({
+        instanceId: INSTANCE_ID,
+      });
 
     triggerRecordBoardInitialQueryMock.mockImplementation(() => {
       store.set(lastQueryIdentifierAtom, 'same-query');
@@ -89,8 +99,11 @@ describe('RecordBoardQueryEffect', () => {
     expect(triggerRecordBoardInitialQueryMock).toHaveBeenCalledTimes(1);
     expect(store.get(lastQueryIdentifierAtom)).toBe('same-query');
 
+    store.set(loadingAtom, true);
     firstVisit.unmount();
     expect(store.get(lastQueryIdentifierAtom)).toBe('');
+    expect(store.get(queryGenerationAtom)).toBe(1);
+    expect(store.get(loadingAtom)).toBe(false);
     render(wrapper);
 
     expect(triggerRecordBoardInitialQueryMock).toHaveBeenCalledTimes(2);

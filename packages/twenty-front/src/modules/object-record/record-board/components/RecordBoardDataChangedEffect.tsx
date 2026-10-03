@@ -128,7 +128,10 @@ export const RecordBoardDataChangedEffect = () => {
                 ),
               )
             ) {
-              triggerRecordBoardInitialQuery({ shouldResetScroll: false });
+              triggerRecordBoardInitialQuery({
+                shouldResetScroll: false,
+                recordGroupId: recordGroupDefinitionFromGroupValue.id,
+              });
               return;
             }
 
