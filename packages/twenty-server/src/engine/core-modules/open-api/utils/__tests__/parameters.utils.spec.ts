@@ -7,6 +7,7 @@ import { OrderByDirection } from 'twenty-shared/types';
 import {
   computeDepthParameters,
   computeEndingBeforeParameters,
+  computeFieldsParameters,
   computeFilterParameters,
   computeIdPathParameter,
   computeLimitParameters,
@@ -70,6 +71,24 @@ describe('computeParameters', () => {
           default: 1,
         },
       });
+    });
+  });
+  describe('computeFields', () => {
+    it('should compute fields and document the default cap', () => {
+      const fieldsParameter = computeFieldsParameters();
+
+      expect(fieldsParameter).toMatchObject({
+        name: 'fields',
+        in: 'query',
+        required: false,
+        schema: { type: 'string' },
+      });
+      expect(fieldsParameter.description).toContain(
+        'more than 200 fields, only 200 fields are returned',
+      );
+      expect(fieldsParameter.description).toContain(
+        'X-Twenty-Fields-Capped: true',
+      );
     });
   });
   describe('computeFilter', () => {

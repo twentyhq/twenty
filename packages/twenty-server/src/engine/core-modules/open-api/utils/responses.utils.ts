@@ -1,7 +1,25 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
 import { capitalize } from 'twenty-shared/utils';
 
+import { REST_API_FIELDS_CAPPED_HEADER_NAME } from 'src/engine/api/rest/core/constants/rest-api-fields-capped-header-name.constant';
+import { REST_API_FIELDS_MAX_HEADER_NAME } from 'src/engine/api/rest/core/constants/rest-api-fields-max-header-name.constant';
+import { REST_API_DEFAULT_MAX_FIELDS } from 'src/engine/api/rest/input-request-parsers/constants/rest-api-default-max-fields.constant';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+
+export const getFieldsCappedResponseHeaders = (): Record<
+  string,
+  OpenAPIV3_1.HeaderObject
+> => ({
+  [REST_API_FIELDS_CAPPED_HEADER_NAME]: {
+    description: `Present and set to true when the fields parameter is omitted and the object has more than ${REST_API_DEFAULT_MAX_FIELDS} fields, so only a capped default set of fields is returned.`,
+    schema: { type: 'string', enum: ['true'] },
+  },
+  [REST_API_FIELDS_MAX_HEADER_NAME]: {
+    description:
+      'Maximum number of fields returned by default, sent along with the capped header.',
+    schema: { type: 'integer' },
+  },
+});
 
 export const getFindManyResponse200 = ({
   item,

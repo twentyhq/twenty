@@ -120,4 +120,66 @@ describe('Core REST API Find One endpoint', () => {
       path: `/people/${TEST_PERSON_1_ID}?depth=2`,
     }).expect(400);
   });
+
+  describe('fields parameter', () => {
+    it('should only return the requested fields and id', async () => {
+      await makeRestApiRequest({
+        method: 'get',
+        path: `/people/${TEST_PERSON_1_ID}?fields=jobTitle,emails`,
+      })
+        .expect(200)
+        .expect((res) => {
+          const person = res.body.data.person;
+
+          expect(Object.keys(person).sort()).toEqual(
+            ['emails', 'id', 'jobTitle'].sort(),
+          );
+          expect(person.id).toBe(TEST_PERSON_1_ID);
+          expect(person.jobTitle).toBe(personJobTitle);
+          expect(person.emails).toHaveProperty('primaryEmail');
+          expect(res.headers['x-twenty-fields-capped']).toBeUndefined();
+        });
+    });
+
+    it('should return the join column of a requested relation at depth 0', async () => {
+      await makeRestApiRequest({
+        method: 'get',
+        path: `/people/${TEST_PERSON_1_ID}?fields=company&depth=0`,
+      })
+        .expect(200)
+        .expect((res) => {
+          const person = res.body.data.person;
+
+          expect(person.companyId).toBe(TEST_COMPANY_1_ID);
+          expect(person.company).toBeUndefined();
+          expect(person.jobTitle).toBeUndefined();
+        });
+    });
+
+    it('should only expand requested relations at depth 1', async () => {
+      await makeRestApiRequest({
+        method: 'get',
+        path: `/people/${TEST_PERSON_1_ID}?fields=jobTitle,company&depth=1`,
+      })
+        .expect(200)
+        .expect((res) => {
+          const person = res.body.data.person;
+
+          expect(person.company.id).toBe(TEST_COMPANY_1_ID);
+          expect(person.pointOfContactForOpportunities).toBeUndefined();
+        });
+    });
+
+    it('should return 400 on unknown fields', async () => {
+      await makeRestApiRequest({
+        method: 'get',
+        path: `/people/${TEST_PERSON_1_ID}?fields=jobTitle,unknownField`,
+      })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.error).toBe('BadRequestException');
+          expect(res.body.messages[0]).toContain('unknownField');
+        });
+    });
+  });
 });

@@ -186,6 +186,24 @@ describe('getRelationsSelectFields', () => {
     });
   });
 
+  it('should only expand relations listed in fieldIdsToSelect at depth 1', () => {
+    expect(
+      getRelationsSelectFields({
+        ...buildArgs(1),
+        fieldIdsToSelect: new Set(['opportunity-name']),
+      }),
+    ).toEqual({});
+
+    expect(
+      getRelationsSelectFields({
+        ...buildArgs(1),
+        fieldIdsToSelect: new Set(['opportunity-company']),
+      }),
+    ).toEqual({
+      company: { name: true, accountOwnerId: true, timelineActivities: true },
+    });
+  });
+
   it('should expand nested relations but not their timeline activities at depth 2', () => {
     expect(getRelationsSelectFields(buildArgs(2))).toEqual({
       company: {

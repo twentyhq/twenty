@@ -98,6 +98,32 @@ describe('getAllSelectableFields', () => {
     });
   });
 
+  it('should only return fields listed in fieldIdsToSelect', () => {
+    const field1 = createMockField({
+      id: 'field-1',
+      name: 'name',
+      type: FieldMetadataType.TEXT,
+    });
+    const field2 = createMockField({
+      id: 'field-2',
+      name: 'email',
+      type: FieldMetadataType.TEXT,
+    });
+    const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([field1, field2]);
+    const flatObjectMetadata = buildFlatObjectMetadata(['field-1', 'field-2']);
+
+    const result = getAllSelectableFields({
+      restrictedFields: {},
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      fieldIdsToSelect: new Set(['field-2']),
+    });
+
+    expect(result).toEqual({
+      email: true,
+    });
+  });
+
   it('should not return restricted fields', () => {
     const field1 = createMockField({
       id: 'field-1',
