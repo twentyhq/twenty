@@ -13,9 +13,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
+import { isUpgradeRoleGrantsApprovalError } from 'src/engine/core-modules/application/utils/is-upgrade-role-grants-approval-error.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { ApplicationUpgradeRoleGrantService } from 'src/engine/core-modules/application/application-manifest/services/application-upgrade-role-grant.service';
 import {
   ApplicationPackageFetcherService,
   type ResolvedPackage,
@@ -37,6 +39,7 @@ import { ApplicationLookupService } from 'src/engine/core-modules/application/ap
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
+import { hasUserApprovedRoleGrantsForVersion } from 'src/engine/core-modules/application/application-install/utils/has-user-approved-role-grants-for-version.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -71,6 +74,7 @@ export class ApplicationInstallService {
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationManifestApplyService: ApplicationManifestApplyService,
+    private readonly applicationUpgradeRoleGrantService: ApplicationUpgradeRoleGrantService,
     private readonly fileStorageService: FileStorageService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly cacheLockService: CacheLockService,
@@ -88,6 +92,7 @@ export class ApplicationInstallService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     hasUserApprovedCapabilities?: boolean;
+    hasUserApprovedRoleGrants?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: params.appRegistrationId },
@@ -129,6 +134,7 @@ export class ApplicationInstallService {
           skipWorkspaceCompatibilityCheck:
             params.skipWorkspaceCompatibilityCheck,
           hasUserApprovedCapabilities: params.hasUserApprovedCapabilities,
+          hasUserApprovedRoleGrants: params.hasUserApprovedRoleGrants,
         }),
       buildApplicationLifecycleLockKey({
         workspaceId: params.workspaceId,
@@ -145,6 +151,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
+      hasUserApprovedRoleGrants?: boolean;
     },
   ): Promise<boolean> {
     // Re-read inside the lock so a concurrent tarball upload cannot make us
@@ -202,6 +209,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
+      hasUserApprovedRoleGrants?: boolean;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -233,6 +241,10 @@ export class ApplicationInstallService {
 
       return result;
     } catch (error) {
+      if (isUpgradeRoleGrantsApprovalError(error)) {
+        throw error;
+      }
+
       this.metricsService.incrementCounterBy({
         key: isVersionUpgrade
           ? MetricsKeys.AppUpgradeFailed
@@ -261,6 +273,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
+      hasUserApprovedRoleGrants?: boolean;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -355,6 +368,19 @@ export class ApplicationInstallService {
             ],
           );
         }
+      }
+
+      if (isVersionUpgrade && !hasNeverCompletedInstall) {
+        await this.assertRoleGrantsApprovedOrThrow({
+          applicationId: application.id,
+          workspaceId: params.workspaceId,
+          manifest: resolvedPackage.manifest,
+          hasUserApprovedRoleGrants: hasUserApprovedRoleGrantsForVersion({
+            hasUserApprovedRoleGrants: params.hasUserApprovedRoleGrants,
+            approvedVersion: params.version,
+            resolvedVersion: newVersion,
+          }),
+        });
       }
 
       if (isVersionUpgrade && shouldApplyApprovedCapabilities) {
@@ -456,9 +482,11 @@ export class ApplicationInstallService {
 
       return true;
     } catch (error) {
-      this.logger.error(
-        `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
-      );
+      if (!isUpgradeRoleGrantsApprovalError(error)) {
+        this.logger.error(
+          `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
+        );
+      }
 
       if (!isVersionUpgrade || hasNeverCompletedInstall) {
         // Rollback of a failed fresh install: the app never finished
@@ -472,6 +500,36 @@ export class ApplicationInstallService {
 
       throw error;
     }
+  }
+
+  private async assertRoleGrantsApprovedOrThrow({
+    applicationId,
+    workspaceId,
+    manifest,
+    hasUserApprovedRoleGrants,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    manifest: Manifest;
+    hasUserApprovedRoleGrants?: boolean;
+  }): Promise<void> {
+    if (hasUserApprovedRoleGrants) {
+      return;
+    }
+
+    const addedGrants =
+      await this.applicationUpgradeRoleGrantService.getDefaultRoleGrantsAddedByManifest(
+        { workspaceId, applicationId, manifest },
+      );
+
+    if (addedGrants.length === 0) {
+      return;
+    }
+
+    throw new ApplicationException(
+      `Upgrading ${manifest.application.universalIdentifier} would grant its default role ${addedGrants.length} permission(s) the installed role does not have; the upgrade needs explicit approval`,
+      ApplicationExceptionCode.UPGRADE_REQUIRES_ROLE_GRANTS_APPROVAL,
+    );
   }
 
   private async runPreInstallHook(params: {

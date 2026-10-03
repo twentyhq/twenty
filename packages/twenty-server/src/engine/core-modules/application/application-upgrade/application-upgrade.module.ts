@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
+import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -28,6 +29,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
       ApplicationRegistrationEntity,
     ]),
     ApplicationInstallModule,
+    ApplicationManifestModule,
     ApplicationPackageModule,
     // Nothing here injects from these two modules any more, but the generated
     // metadata GraphQL schema follows Nest's module registration order, so

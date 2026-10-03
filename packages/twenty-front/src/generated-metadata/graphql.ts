@@ -585,6 +585,25 @@ export type ApplicationTokenPair = {
   applicationRefreshToken: AuthToken;
 };
 
+export type ApplicationUpgradeRoleGrant = {
+  __typename?: 'ApplicationUpgradeRoleGrant';
+  action?: Maybe<Scalars['String']['output']>;
+  fieldUniversalIdentifier?: Maybe<Scalars['String']['output']>;
+  objectUniversalIdentifier?: Maybe<Scalars['String']['output']>;
+  permissionFlagUniversalIdentifier?: Maybe<Scalars['String']['output']>;
+  type: ApplicationUpgradeRoleGrantType;
+};
+
+export enum ApplicationUpgradeRoleGrantType {
+  ALL_OBJECT_RECORDS = 'ALL_OBJECT_RECORDS',
+  ALL_SETTINGS = 'ALL_SETTINGS',
+  ALL_TOOLS = 'ALL_TOOLS',
+  FIELD_VALUE = 'FIELD_VALUE',
+  OBJECT_RECORDS = 'OBJECT_RECORDS',
+  PERMISSION_FLAG = 'PERMISSION_FLAG',
+  ROW_LEVEL_RESTRICTION = 'ROW_LEVEL_RESTRICTION'
+}
+
 export type ApplicationVariable = {
   __typename?: 'ApplicationVariable';
   description: Scalars['String']['output'];
@@ -4602,6 +4621,7 @@ export type MutationUpdateWorkspaceMemberSettingsArgs = {
 
 export type MutationUpgradeApplicationArgs = {
   appRegistrationId: Scalars['String']['input'];
+  hasUserApprovedRoleGrants?: InputMaybe<Scalars['Boolean']['input']>;
   targetVersion: Scalars['String']['input'];
 };
 
@@ -5251,6 +5271,7 @@ export type Query = {
   applicationCoreGraphqlSchema: Scalars['String']['output'];
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
+  applicationUpgradeRoleGrants: Array<ApplicationUpgradeRoleGrant>;
   barChartData: BarChartData;
   billingPortalSession: BillingSession;
   callRecordingIdForCalendarEvent?: Maybe<Scalars['UUID']['output']>;
@@ -5429,6 +5450,11 @@ export type QueryApplicationRegistrationTarballUrlArgs = {
 
 
 export type QueryApplicationSdkClientChecksumsArgs = {
+  applicationId: Scalars['UUID']['input'];
+};
+
+
+export type QueryApplicationUpgradeRoleGrantsArgs = {
   applicationId: Scalars['UUID']['input'];
 };
 

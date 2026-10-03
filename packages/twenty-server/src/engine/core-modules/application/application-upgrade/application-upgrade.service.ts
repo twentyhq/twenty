@@ -2,10 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
+import { type RoleManifestGrant } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { ApplicationUpgradeRoleGrantService } from 'src/engine/core-modules/application/application-manifest/services/application-upgrade-role-grant.service';
+import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -23,6 +26,7 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { isUpgradeRoleGrantsApprovalError } from 'src/engine/core-modules/application/utils/is-upgrade-role-grants-approval-error.util';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -42,6 +46,8 @@ export class ApplicationUpgradeService {
     @InjectRepository(ApplicationEntity)
     private readonly unscopedApplicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
+    private readonly applicationUpgradeRoleGrantService: ApplicationUpgradeRoleGrantService,
+    private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly workspaceVersionService: WorkspaceVersionService,
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
@@ -283,11 +289,23 @@ export class ApplicationUpgradeService {
       return;
     }
 
-    await this.upgradeApplicationToVersion({
-      appRegistration,
-      targetVersion,
-      workspaceId,
-    });
+    try {
+      await this.upgradeApplicationToVersion({
+        appRegistration,
+        targetVersion,
+        workspaceId,
+      });
+    } catch (error) {
+      if (isUpgradeRoleGrantsApprovalError(error)) {
+        this.logger.log(
+          `Skipping upgrade of ${appRegistration.universalIdentifier} on workspace ${workspaceId}: version ${targetVersion} grants its default role more permissions and needs approval from a workspace admin`,
+        );
+
+        return;
+      }
+
+      throw error;
+    }
   }
 
   async upgradeApplication(params: {
@@ -295,17 +313,77 @@ export class ApplicationUpgradeService {
     targetVersion: string;
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
+    hasUserApprovedRoleGrants?: boolean;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
     });
+
+    const hasUserApprovedRoleGrants =
+      (params.hasUserApprovedRoleGrants ?? false) &&
+      params.targetVersion === appRegistration.latestAvailableVersion;
 
     return this.upgradeApplicationToVersion({
       appRegistration,
       targetVersion: params.targetVersion,
       workspaceId: params.workspaceId,
       skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
+      hasUserApprovedRoleGrants,
     });
+  }
+
+  async getRoleGrantsAddedByLatestVersion({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<RoleManifestGrant[]> {
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: { id: applicationId },
+      relations: ['applicationRegistration'],
+    });
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Application ${applicationId} is not installed in workspace ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const appRegistration = application.applicationRegistration;
+
+    if (
+      !isDefined(application.version) ||
+      !isDefined(appRegistration?.latestAvailableVersion) ||
+      appRegistration.latestAvailableVersion === application.version
+    ) {
+      return [];
+    }
+
+    const resolvedPackage =
+      await this.applicationPackageFetcherService.resolvePackage(
+        appRegistration,
+        { targetVersion: appRegistration.latestAvailableVersion },
+      );
+
+    if (!isDefined(resolvedPackage)) {
+      return [];
+    }
+
+    try {
+      return await this.applicationUpgradeRoleGrantService.getDefaultRoleGrantsAddedByManifest(
+        {
+          workspaceId,
+          applicationId,
+          manifest: resolvedPackage.manifest,
+        },
+      );
+    } finally {
+      await this.applicationPackageFetcherService.cleanupExtractedDir(
+        resolvedPackage.cleanupDir,
+      );
+    }
   }
 
   private async upgradeApplicationToVersion(params: {
@@ -313,6 +391,7 @@ export class ApplicationUpgradeService {
     targetVersion: string;
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
+    hasUserApprovedRoleGrants?: boolean;
   }): Promise<boolean> {
     const { appRegistration } = params;
 
@@ -335,12 +414,15 @@ export class ApplicationUpgradeService {
         version: params.targetVersion,
         workspaceId: params.workspaceId,
         skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
+        hasUserApprovedRoleGrants: params.hasUserApprovedRoleGrants,
       });
     } catch (error) {
       const appName =
         appRegistration.sourcePackage ?? appRegistration.universalIdentifier;
 
-      this.logger.error(`Upgrade failed for ${appName}`, error);
+      if (!isUpgradeRoleGrantsApprovalError(error)) {
+        this.logger.error(`Upgrade failed for ${appName}`, error);
+      }
 
       if (error instanceof ApplicationException) {
         throw error;

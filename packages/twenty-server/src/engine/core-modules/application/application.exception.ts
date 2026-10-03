@@ -19,6 +19,7 @@ export enum ApplicationExceptionCode {
   PACKAGE_RESOLUTION_FAILED = 'PACKAGE_RESOLUTION_FAILED',
   TARBALL_EXTRACTION_FAILED = 'TARBALL_EXTRACTION_FAILED',
   UPGRADE_FAILED = 'UPGRADE_FAILED',
+  UPGRADE_REQUIRES_ROLE_GRANTS_APPROVAL = 'UPGRADE_REQUIRES_ROLE_GRANTS_APPROVAL',
   PRE_INSTALL_ERROR = 'PRE_INSTALL_ERROR',
   POST_INSTALL_ERROR = 'POST_INSTALL_ERROR',
   UNINSTALL_ERROR = 'UNINSTALL_ERROR',
@@ -65,6 +66,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Failed to extract tarball.`;
     case ApplicationExceptionCode.UPGRADE_FAILED:
       return msg`Application upgrade failed.`;
+    case ApplicationExceptionCode.UPGRADE_REQUIRES_ROLE_GRANTS_APPROVAL:
+      return msg`This version grants the application more permissions than the installed one. Review and approve them to upgrade.`;
     case ApplicationExceptionCode.PRE_INSTALL_ERROR:
       return msg`Application pre-install logic function failed.`;
     case ApplicationExceptionCode.POST_INSTALL_ERROR:

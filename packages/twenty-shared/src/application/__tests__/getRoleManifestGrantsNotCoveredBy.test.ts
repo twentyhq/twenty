@@ -290,6 +290,32 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
       ).toEqual([]);
     });
 
+    it('ignores a predicate group without predicates', () => {
+      const restrictedRole = buildRestrictedRole({
+        universalIdentifier: 'role',
+        operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+      });
+      const role = {
+        ...restrictedRole,
+        rowLevelPermissionPredicateGroups: [
+          ...(restrictedRole.rowLevelPermissionPredicateGroups ?? []),
+          {
+            universalIdentifier: 'role-empty-group',
+            objectUniversalIdentifier: PERSON,
+            logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+          },
+        ],
+      };
+
+      expect(
+        getRoleManifestGrantsNotCoveredBy({
+          role,
+          superset,
+          toolPermissionFlagUniversalIdentifiers: [],
+        }),
+      ).toEqual([]);
+    });
+
     it('reports a restriction that differs by operand or value', () => {
       const differentOperand = buildRestrictedRole({
         universalIdentifier: 'role',
@@ -330,6 +356,95 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
       ).toEqual([
         { type: 'ROW_LEVEL_RESTRICTION', objectUniversalIdentifier: PERSON },
       ]);
+    });
+
+    const buildRoleWithOrGroupsJoinedByAnd = ({
+      universalIdentifier,
+      orGroupValues,
+    }: {
+      universalIdentifier: string;
+      orGroupValues: string[][];
+    }) =>
+      buildRole({
+        universalIdentifier,
+        objectPermissions: [readablePerson],
+        rowLevelPermissionPredicateGroups: [
+          {
+            universalIdentifier: `${universalIdentifier}-and`,
+            objectUniversalIdentifier: PERSON,
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
+          },
+          ...orGroupValues.map((_values, groupIndex) => ({
+            universalIdentifier: `${universalIdentifier}-or-${groupIndex}`,
+            objectUniversalIdentifier: PERSON,
+            logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+            parentPredicateGroupUniversalIdentifier: `${universalIdentifier}-and`,
+          })),
+        ],
+        rowLevelPermissionPredicates: orGroupValues.flatMap(
+          (values, groupIndex) =>
+            values.map((value) => ({
+              universalIdentifier: `${universalIdentifier}-${value}`,
+              objectUniversalIdentifier: PERSON,
+              fieldUniversalIdentifier: EMAIL_FIELD,
+              operand: RowLevelPermissionPredicateOperand.IS,
+              value,
+              predicateGroupUniversalIdentifier: `${universalIdentifier}-or-${groupIndex}`,
+            })),
+        ),
+      });
+
+    it('reports predicates regrouped under the same operators', () => {
+      const regroupedSuperset = buildRoleWithOrGroupsJoinedByAnd({
+        universalIdentifier: 'superset',
+        orGroupValues: [
+          ['a', 'b'],
+          ['c', 'd'],
+        ],
+      });
+      const role = buildRoleWithOrGroupsJoinedByAnd({
+        universalIdentifier: 'role',
+        orGroupValues: [
+          ['a', 'c'],
+          ['b', 'd'],
+        ],
+      });
+
+      expect(
+        getRoleManifestGrantsNotCoveredBy({
+          role,
+          superset: regroupedSuperset,
+          toolPermissionFlagUniversalIdentifiers: [],
+        }),
+      ).toEqual([
+        { type: 'ROW_LEVEL_RESTRICTION', objectUniversalIdentifier: PERSON },
+      ]);
+    });
+
+    it('accepts the same groups listed in another order', () => {
+      const groupedSuperset = buildRoleWithOrGroupsJoinedByAnd({
+        universalIdentifier: 'superset',
+        orGroupValues: [
+          ['a', 'b'],
+          ['c', 'd'],
+        ],
+      });
+      const role = buildRoleWithOrGroupsJoinedByAnd({
+        universalIdentifier: 'role',
+        orGroupValues: [
+          ['d', 'c'],
+          ['b', 'a'],
+        ],
+      });
+
+      expect(
+        getRoleManifestGrantsNotCoveredBy({
+          role,
+          superset: groupedSuperset,
+          toolPermissionFlagUniversalIdentifiers: [],
+        }),
+      ).toEqual([]);
     });
 
     it('accepts a role that narrows an object the superset leaves open', () => {

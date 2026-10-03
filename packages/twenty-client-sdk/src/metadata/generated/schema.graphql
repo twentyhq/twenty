@@ -2799,6 +2799,24 @@ type SearchField {
   updatedAt: DateTime!
 }
 
+type ApplicationUpgradeRoleGrant {
+  type: ApplicationUpgradeRoleGrantType!
+  action: String
+  objectUniversalIdentifier: String
+  fieldUniversalIdentifier: String
+  permissionFlagUniversalIdentifier: String
+}
+
+enum ApplicationUpgradeRoleGrantType {
+  ALL_OBJECT_RECORDS
+  ALL_SETTINGS
+  ALL_TOOLS
+  PERMISSION_FLAG
+  OBJECT_RECORDS
+  FIELD_VALUE
+  ROW_LEVEL_RESTRICTION
+}
+
 type BillingEntitlement {
   key: BillingEntitlementKey!
   value: Boolean!
@@ -3938,6 +3956,7 @@ type Query {
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
   getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
+  applicationUpgradeRoleGrants(applicationId: UUID!): [ApplicationUpgradeRoleGrant!]!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
   findManyApplicationRegistrations: [ApplicationRegistration!]!
@@ -4286,7 +4305,7 @@ type Mutation {
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
-  upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
+  upgradeApplication(appRegistrationId: String!, targetVersion: String!, hasUserApprovedRoleGrants: Boolean): Boolean!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
   updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
   deleteApplicationRegistration(id: String!): Boolean!
@@ -4296,6 +4315,7 @@ type Mutation {
   uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration! @deprecated(reason: "Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage.")
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
+  runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   grantApplicationCapabilities(input: GrantApplicationCapabilitiesInput!): ApplicationCapabilityGrant!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   installApplication(universalIdentifier: String!, version: String): Application!
@@ -4304,7 +4324,6 @@ type Mutation {
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
   syncMarketplaceCatalog: Boolean!
-  runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   createOneField(input: CreateOneFieldMetadataInput!): Field!
   updateOneField(input: UpdateOneFieldMetadataInput!): Field!
   deleteOneField(input: DeleteOneFieldInput!): Field!

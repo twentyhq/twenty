@@ -213,6 +213,7 @@ Notes:
 - Exactly **one** `defineApplicationRole(...)` is allowed per app — the manifest build will fail if it finds more than one.
 - Use `defineRole()` (not `defineApplicationRole()`) for any **additional** roles your app ships.
 - Setting `defaultRoleUniversalIdentifier` explicitly on `defineApplication()` is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`. The identifier must match a role your app defines, or the build fails.
+- Widening the application role in a new version blocks automatic upgrades: workspaces that installed an earlier version keep it until a workspace admin reviews the added permissions and approves the upgrade from the app's settings. Restricting the role never needs approval.
 
 ### Agent roles
 

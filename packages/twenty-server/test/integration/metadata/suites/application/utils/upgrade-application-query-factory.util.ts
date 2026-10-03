@@ -4,6 +4,7 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 export type UpgradeApplicationFactoryInput = {
   appRegistrationId: string;
   targetVersion: string;
+  hasUserApprovedRoleGrants?: boolean;
 };
 
 export const upgradeApplicationQueryFactory = ({
@@ -13,15 +14,18 @@ export const upgradeApplicationQueryFactory = ({
     mutation UpgradeApplication(
       $appRegistrationId: String!
       $targetVersion: String!
+      $hasUserApprovedRoleGrants: Boolean
     ) {
       upgradeApplication(
         appRegistrationId: $appRegistrationId
         targetVersion: $targetVersion
+        hasUserApprovedRoleGrants: $hasUserApprovedRoleGrants
       )
     }
   `,
   variables: {
     appRegistrationId: input.appRegistrationId,
     targetVersion: input.targetVersion,
+    hasUserApprovedRoleGrants: input.hasUserApprovedRoleGrants,
   },
 });
