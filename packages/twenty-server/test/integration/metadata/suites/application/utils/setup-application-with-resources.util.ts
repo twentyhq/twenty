@@ -62,9 +62,11 @@ const findIdByUniversalIdentifier = async ({
 export const setupApplicationWithResources = async ({
   name,
   permissionFlagUniversalIdentifiers = DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS,
+  canReadAndUpdateAllObjectRecords = false,
 }: {
   name: string;
   permissionFlagUniversalIdentifiers?: string[];
+  canReadAndUpdateAllObjectRecords?: boolean;
 }): Promise<ApplicationWithResources> => {
   const applicationUniversalIdentifier = uuidv4();
   const roleUniversalIdentifier = uuidv4();
@@ -117,6 +119,8 @@ export const setupApplicationWithResources = async ({
             label: `${name} role`,
             description: 'Reaches application resources',
             canUpdateAllSettings: false,
+            canReadAllObjectRecords: canReadAndUpdateAllObjectRecords,
+            canUpdateAllObjectRecords: canReadAndUpdateAllObjectRecords,
             permissionFlagUniversalIdentifiers,
           },
         ],

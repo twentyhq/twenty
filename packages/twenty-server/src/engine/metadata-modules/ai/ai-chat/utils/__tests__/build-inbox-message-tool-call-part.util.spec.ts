@@ -1,3 +1,4 @@
+import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
@@ -19,6 +20,7 @@ const build = (toolCall: unknown) =>
       SHARE_RECORDING_TOOL.universalIdentifier
         ? SHARE_RECORDING_TOOL
         : undefined,
+    resolveProposal: async (input) => resolveEmailToolCallProposal(input),
   });
 
 describe('buildInboxMessageToolCallPart', () => {
@@ -90,6 +92,38 @@ describe('buildInboxMessageToolCallPart', () => {
               alternativeToolNames: ['draft_email'],
             },
           },
+        }),
+      }),
+    });
+  });
+
+  it('proposes any call the resolver resolves for the sender', async () => {
+    const updateCall = {
+      toolName: 'update_one_opportunity',
+      arguments: { id: 'deal-1', stage: 'WON' },
+      summary: 'Mark the deal as won',
+    };
+    const proposal = {
+      ...updateCall,
+      toolLabel: 'Update Opportunity',
+      template: 'recordUpdate' as const,
+      objectNameSingular: 'opportunity',
+      recordId: 'deal-1',
+      currentValues: { stage: 'PROPOSAL' },
+    };
+
+    await expect(
+      buildInboxMessageToolCallPart({
+        toolCall: { toolName: 'propose_tool_call', input: updateCall },
+        toolCallId: TOOL_CALL_ID,
+        findApplicationTool: async () => undefined,
+        resolveProposal: async () => ({ proposal }),
+      }),
+    ).resolves.toEqual({
+      isAwaitingAnswer: true,
+      part: expect.objectContaining({
+        output: expect.objectContaining({
+          result: { status: 'pending', proposal },
         }),
       }),
     });
