@@ -50,18 +50,13 @@ export const useAiChatFileUpload = () => {
   };
 
   const uploadFiles = async (files: File[]) => {
-    const uploadResults = await Promise.allSettled(
-      files.map((file) => sendFile(file)),
-    );
+    setAgentChatSelectedFiles((previousSelectedFiles) => [
+      ...previousSelectedFiles,
+      ...files,
+    ]);
 
-    const successfulUploads = uploadResults.reduce<AgentChatFileUIPart[]>(
-      (acc, result) => {
-        if (result.status === 'fulfilled' && isDefined(result.value)) {
-          acc.push(result.value);
-        }
-        return acc;
-      },
-      [],
+    const successfulUploads = (await Promise.all(files.map(sendFile))).filter(
+      isDefined,
     );
 
     if (isNonEmptyArray(successfulUploads)) {
@@ -69,16 +64,6 @@ export const useAiChatFileUpload = () => {
         ...previousUploadedFiles,
         ...successfulUploads,
       ]);
-    }
-
-    const failedCount = uploadResults.filter(
-      (result) => result.status === 'rejected',
-    ).length;
-    if (failedCount > 0) {
-      enqueueToast({
-        variant: 'error',
-        children: t`${failedCount} file(s) failed to upload`,
-      });
     }
   };
 

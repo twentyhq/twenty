@@ -14,17 +14,8 @@ import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-
-export enum AgentMessageRole {
-  SYSTEM = 'system',
-  USER = 'user',
-  ASSISTANT = 'assistant',
-}
-
-export enum AgentMessageStatus {
-  QUEUED = 'queued',
-  SENT = 'sent',
-}
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 
 @Entity({ name: 'agentMessage', schema: 'core' })
 @Index('IDX_AGENT_MESSAGE_THREAD_ID_IS_HIDDEN_UNIQUE', ['threadId'], {

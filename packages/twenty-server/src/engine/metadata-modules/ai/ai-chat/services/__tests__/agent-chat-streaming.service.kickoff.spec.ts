@@ -1,9 +1,7 @@
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  AgentMessageRole,
-  AgentMessageStatus,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
@@ -43,9 +41,6 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
     };
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const agentChatService = {
-      getWritableThread: jest
-        .fn()
-        .mockImplementation(() => threadRepository.findOne()),
       hasConversationMessages: jest
         .fn()
         .mockResolvedValue(hasConversationMessages),
@@ -56,6 +51,8 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
       getMessagesForThread: jest.fn().mockResolvedValue(threadMessages),
       getQueuedMessages: jest.fn().mockResolvedValue([]),
       queueMessage: jest.fn().mockResolvedValue({ id: 'queued-message-id' }),
+    };
+    const threadService = {
       notifyThreadActivityUpdated: jest.fn().mockResolvedValue(undefined),
     };
     const streamHeartbeatService = {
@@ -75,6 +72,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
       { find: jest.fn().mockResolvedValue([]) } as never,
       messageQueueService as never,
       agentChatService as never,
+      threadService as never,
       eventPublisherService as never,
       { signFileByIdUrl: jest.fn() } as never,
       streamHeartbeatService as never,
@@ -86,7 +84,6 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
         metricsService as never,
       ),
       {
-        authorizeJob: jest.fn().mockResolvedValue(undefined),
         authorizeRetry: jest.fn().mockResolvedValue(undefined),
         authorize: jest
           .fn()
@@ -110,6 +107,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
       threadRepository,
       messageQueueService,
       agentChatService,
+      threadService,
       streamHeartbeatService,
       metricsService,
     };
@@ -162,8 +160,13 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
   });
 
   it('should enqueue the hidden kickoff turn with the given model and without notifying thread activity', async () => {
-    const { service, threadRepository, agentChatService, messageQueueService } =
-      buildService();
+    const {
+      service,
+      threadRepository,
+      agentChatService,
+      threadService,
+      messageQueueService,
+    } = buildService();
 
     const result = await service.startHiddenKickoffStream(kickoffArguments);
 
@@ -184,10 +187,10 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
         modelId: 'default-fast-model',
         lastUserMessageText: kickoffText,
         hasTitle: true,
-        existingTurnId: 'kickoff-turn-id',
+        turnId: 'kickoff-turn-id',
       }),
     );
-    expect(agentChatService.notifyThreadActivityUpdated).not.toHaveBeenCalled();
+    expect(threadService.notifyThreadActivityUpdated).not.toHaveBeenCalled();
     expect(result).toEqual({
       streamId: expect.any(String),
       messageId: 'kickoff-message-id',

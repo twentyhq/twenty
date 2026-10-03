@@ -5,13 +5,11 @@ import {
 } from 'twenty-shared/ai';
 import { type AgentMessagePart } from '~/generated-metadata/graphql';
 
-// Maps GraphQL DTO fields to UI message parts.
-// A parallel mapping for TypeORM entities exists in the server at:
-// packages/twenty-server/src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts.ts
+// keep in sync with twenty-server/src/engine/metadata-modules/ai/ai-agent-execution/utils/map-db-parts-to-ui-message-parts.util.ts
 
 export const mapDBPartToUIMessagePart = (
   part: AgentMessagePart,
-): ExtendedUIMessagePart => {
+): ExtendedUIMessagePart | null => {
   switch (part.type) {
     case 'text':
       return {
@@ -54,37 +52,29 @@ export const mapDBPartToUIMessagePart = (
       return {
         type: part.type,
       };
-    case 'data-routing-status':
-      return {
-        type: part.type,
-        data: {
-          text: part.textContent!,
-          state: part.state!,
-        },
-      };
-    default:
-      {
-        const isStaticToolPart = part.type.startsWith('tool-');
-        const isDynamicToolPart = part.type === 'dynamic-tool';
+    default: {
+      const isStaticToolPart = part.type.startsWith('tool-');
+      const isDynamicToolPart = part.type === 'dynamic-tool';
 
-        if (isStaticToolPart || isDynamicToolPart) {
-          return {
-            type: part.type as `tool-${string}` | 'dynamic-tool',
-            ...(isDynamicToolPart && { toolName: part.toolName ?? '' }),
-            toolCallId: part.toolCallId!,
-            input: part.toolInput ?? {},
-            output: part.toolOutput,
-            errorText: part.errorMessage!,
-            state: part.state,
-            ...(part.providerExecuted != null && {
-              providerExecuted: part.providerExecuted,
-            }),
-            ...(part.providerMetadata != null && {
-              callProviderMetadata: part.providerMetadata,
-            }),
-          } as ExtendedUIMessagePart;
-        }
+      if (isStaticToolPart || isDynamicToolPart) {
+        return {
+          type: part.type as `tool-${string}` | 'dynamic-tool',
+          ...(isDynamicToolPart && { toolName: part.toolName ?? '' }),
+          toolCallId: part.toolCallId!,
+          input: part.toolInput ?? {},
+          output: part.toolOutput,
+          errorText: part.errorMessage!,
+          state: part.state,
+          ...(part.providerExecuted != null && {
+            providerExecuted: part.providerExecuted,
+          }),
+          ...(part.providerMetadata != null && {
+            callProviderMetadata: part.providerMetadata,
+          }),
+        } as ExtendedUIMessagePart;
       }
-      throw new Error(`Unsupported part type: ${part.type}`);
+
+      return null;
+    }
   }
 };

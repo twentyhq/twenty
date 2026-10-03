@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { type ReactElement, type MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
@@ -32,7 +32,6 @@ type AiChatThreadActionsDropdownProps = {
   surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
   onDetach?: () => void;
-  trigger?: ReactElement;
 };
 
 export const AiChatThreadActionsDropdown = ({
@@ -40,7 +39,6 @@ export const AiChatThreadActionsDropdown = ({
   surface,
   onRenameRequested,
   onDetach,
-  trigger,
 }: AiChatThreadActionsDropdownProps) => {
   const { t } = useLingui();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -115,11 +113,9 @@ export const AiChatThreadActionsDropdown = ({
         >
           <Dropdown.Trigger
             render={
-              trigger ?? (
-                <LightIconButton aria-label={t`Chat actions`} emphasis="subtle">
-                  <IconDotsVertical />
-                </LightIconButton>
-              )
+              <LightIconButton aria-label={t`Chat actions`} emphasis="subtle">
+                <IconDotsVertical />
+              </LightIconButton>
             }
           />
           <DropdownContent align="end" aria-label={t`Chat actions`}>

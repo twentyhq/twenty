@@ -19,6 +19,7 @@ import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
+import { getAgentChatThreadDisplayTitle } from '@/ai/utils/getAgentChatThreadDisplayTitle';
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { getAgentChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -167,7 +168,7 @@ export const AiChatThreadListItem = ({
     workspaceMembers: currentWorkspaceMembers,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
   });
-  const displayTitle = thread.title ?? t`Untitled`;
+  const displayTitle = getAgentChatThreadDisplayTitle(thread.title);
   const { formatAgentChatThreadDay } = useFormatAgentChatThreadDate();
 
   const getActivityTimeLabel = () => {

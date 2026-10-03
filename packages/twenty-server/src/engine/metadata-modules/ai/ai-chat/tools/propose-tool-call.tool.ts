@@ -1,9 +1,11 @@
 import { type ProposeToolCallToolInput } from 'twenty-shared/ai';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import {
+  buildProposeToolCallPendingOutput,
+  proposeToolCallInputSchema,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/proposed-tool-call-resolution.type';
-import { proposeToolCallInputSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call-input.schema';
-import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-propose-tool-call-pending-output.util';
 
 export const createProposeToolCallTool = ({
   resolveProposal,

@@ -7,6 +7,7 @@ import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActio
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { getAgentChatThreadDisplayTitle } from '@/ai/utils/getAgentChatThreadDisplayTitle';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -41,7 +42,7 @@ export const NavigationDrawerAiChatThreadItem = ({
     agentChatThreadInboxStatusFamilySelector,
     thread.id,
   );
-  const displayLabel = thread.title || t`New chat`;
+  const displayLabel = getAgentChatThreadDisplayTitle(thread.title);
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     getAiChatThreadItemMenuDropdownId({

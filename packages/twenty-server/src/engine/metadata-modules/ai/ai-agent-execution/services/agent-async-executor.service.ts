@@ -30,7 +30,6 @@ import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-mo
 import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   createExecuteToolTool,
@@ -52,14 +51,14 @@ import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-m
 import { WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-excluded-tool-names.const';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
+import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
+import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
-import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildStrictAgentResponseSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-strict-agent-response-schema.util';
-import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/ends-on-pausing-tool-call.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -75,7 +74,6 @@ import {
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
-import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -86,6 +84,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -100,6 +99,16 @@ type ProposableTools = {
   findTool: (toolName: string) => Promise<ToolIndexEntry | undefined>;
   toolContext: ToolContext;
 };
+
+type RegistryToolContext = Pick<
+  ToolContext,
+  | 'workspaceId'
+  | 'roleId'
+  | 'authContext'
+  | 'actorContext'
+  | 'userId'
+  | 'userWorkspaceId'
+>;
 
 const EMPTY_USAGE: LanguageModelUsage = {
   inputTokens: 0,
@@ -116,7 +125,7 @@ const EMPTY_USAGE: LanguageModelUsage = {
   },
 };
 
-// workflow registry tools are excluded to avoid circular dependencies and recursive workflow execution
+// workflow tools are offered only to open-ended agents, so a workflow step agent cannot recursively run workflows
 @Injectable()
 export class AgentAsyncExecutorService {
   private readonly logger = new Logger(AgentAsyncExecutorService.name);
@@ -165,36 +174,19 @@ export class AgentAsyncExecutorService {
 
   // preloading the few granted object schemas saves the model a learn_tools round trip
   private async buildPreloadedRegistryTools({
-    agent,
-    agentRoleId,
+    toolContext,
     runAsRoleId,
-    authContext,
-    actorContext,
   }: {
-    agent: AgentEntity;
-    agentRoleId: string;
+    toolContext: RegistryToolContext;
     runAsRoleId?: string;
-    authContext?: WorkspaceAuthContext;
-    actorContext?: ActorMetadata;
   }): Promise<{ tools: ToolSet; proposableTools: ProposableTools }> {
-    const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
-
-    const toolProviderContext: ToolProviderContext = {
-      workspaceId: agent.workspaceId,
-      roleId: agentRoleId,
-      rolePermissionConfig: buildAgentRolePermissionConfig({
-        agentRoleId,
-        runAsRoleId,
-      }),
-      requireExplicitObjectGrants: true,
-      authContext,
-      actorContext,
-      userId,
-      userWorkspaceId,
+    const rolePermissionConfig: RolePermissionConfig = {
+      intersectionOf: [runAsRoleId ?? toolContext.roleId],
     };
+    const preloadedToolContext = { ...toolContext, rolePermissionConfig };
 
     const tools = await this.toolRegistry.getToolsByCategories(
-      toolProviderContext,
+      { ...preloadedToolContext, requireExplicitObjectGrants: true },
       {
         categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
         excludeTools: [
@@ -203,16 +195,6 @@ export class AgentAsyncExecutorService {
         ],
       },
     );
-
-    const toolContext: ToolContext = {
-      workspaceId: agent.workspaceId,
-      roleId: agentRoleId,
-      rolePermissionConfig: toolProviderContext.rolePermissionConfig,
-      authContext,
-      actorContext,
-      userId,
-      userWorkspaceId,
-    };
 
     // the context lacks the explicit grants the preloaded tools were built with, so calls stay within those tools
     const isToolAllowed = (toolName: string): boolean =>
@@ -224,9 +206,9 @@ export class AgentAsyncExecutorService {
         isToolAllowed,
         findTool: async (toolName) =>
           isToolAllowed(toolName)
-            ? this.toolRegistry.findCatalogEntry(toolName, toolContext)
+            ? this.toolRegistry.findCatalogEntry(toolName, preloadedToolContext)
             : undefined,
-        toolContext,
+        toolContext: preloadedToolContext,
       },
     };
   }
@@ -234,41 +216,33 @@ export class AgentAsyncExecutorService {
   // open-ended agents have broad access, so preloading would ship every schema: expose a compact catalog plus
   // learn_tools / execute_tool instead, scoped by composed role permissions rather than explicit grants only
   private async buildLazyRegistryTools({
-    agent,
-    agentRoleId,
+    toolContext: baseToolContext,
     runAsRoleId,
-    authContext,
-    actorContext,
   }: {
-    agent: AgentEntity;
-    agentRoleId: string;
+    toolContext: RegistryToolContext;
     runAsRoleId?: string;
-    authContext?: WorkspaceAuthContext;
-    actorContext?: ActorMetadata;
   }): Promise<{
     tools: ToolSet;
     catalogSection: string;
     proposableTools: ProposableTools;
   }> {
-    const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
-
-    const rolePermissionConfig = isDefined(runAsRoleId)
-      ? buildAgentRolePermissionConfig({ agentRoleId, runAsRoleId })
-      : undefined;
-
-    const toolContext: ToolContext = {
-      workspaceId: agent.workspaceId,
-      roleId: agentRoleId,
-      rolePermissionConfig,
-      authContext,
-      actorContext,
+    const toolContext: ToolContext = isDefined(runAsRoleId)
+      ? {
+          ...baseToolContext,
+          rolePermissionConfig: { intersectionOf: [runAsRoleId] },
+        }
+      : baseToolContext;
+    const {
+      workspaceId,
+      roleId,
       userId,
       userWorkspaceId,
-    };
+      rolePermissionConfig,
+    } = toolContext;
 
     const fullCatalog = await this.toolRegistry.buildToolIndex(
-      agent.workspaceId,
-      agentRoleId,
+      workspaceId,
+      roleId,
       { userId, userWorkspaceId, rolePermissionConfig },
     );
 
@@ -350,7 +324,6 @@ export class AgentAsyncExecutorService {
     workspaceId,
     userWorkspaceId,
     runAsRoleId,
-    operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
     priorModelMessages = [],
     pausingTools = {},
@@ -369,7 +342,6 @@ export class AgentAsyncExecutorService {
     workspaceId: string;
     userWorkspaceId?: string | null;
     runAsRoleId?: string;
-    operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
     if (!isNonEmptyArray(messages) && !isNonEmptyArray(priorModelMessages)) {
@@ -383,7 +355,7 @@ export class AgentAsyncExecutorService {
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
-      operationType,
+      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       spenders: { userWorkspaceId, agentId: agent?.id },
     });
 
@@ -437,22 +409,20 @@ export class AgentAsyncExecutorService {
         let registryTools: ToolSet = {};
 
         if (isDefined(agentRoleId)) {
+          const toolContext: RegistryToolContext = {
+            workspaceId: agent.workspaceId,
+            roleId: agentRoleId,
+            authContext,
+            actorContext,
+            ...this.resolveUserIdentity(authContext),
+          };
           const registryToolset =
             toolLoadingStrategy === 'lazy'
-              ? await this.buildLazyRegistryTools({
-                  agent,
-                  agentRoleId,
-                  runAsRoleId,
-                  authContext,
-                  actorContext,
-                })
+              ? await this.buildLazyRegistryTools({ toolContext, runAsRoleId })
               : {
                   ...(await this.buildPreloadedRegistryTools({
-                    agent,
-                    agentRoleId,
+                    toolContext,
                     runAsRoleId,
-                    authContext,
-                    actorContext,
                   })),
                   catalogSection: '',
                 };
@@ -476,6 +446,28 @@ export class AgentAsyncExecutorService {
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
       let hasNoMoreAvailableCredits = false;
+
+      const decrementCreditsForStep = async (
+        step: Pick<StepResult<ToolSet>, 'usage' | 'providerMetadata'>,
+      ) => {
+        const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+          await this.aiBillingService.decrementAndCheckAvailableCredits({
+            modelId: registeredModel.modelId,
+            billingInput: {
+              usage: step.usage,
+              cacheCreationTokens: extractCacheCreationTokens(
+                step.providerMetadata,
+              ),
+            },
+            workspaceId,
+            operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+            spenders: { userWorkspaceId, agentId: agent?.id },
+          });
+
+        if (stepHasNoMoreAvailableCredits) {
+          hasNoMoreAvailableCredits = true;
+        }
+      };
 
       const modelMessages =
         await this.runAgentAttachmentService.buildModelMessagesOrThrow({
@@ -526,23 +518,7 @@ export class AgentAsyncExecutorService {
           });
         },
         onStepEnd: async (step) => {
-          const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-            await this.aiBillingService.decrementAndCheckAvailableCredits({
-              modelId: registeredModel.modelId,
-              billingInput: {
-                usage: step.usage,
-                cacheCreationTokens: extractCacheCreationTokens(
-                  step.providerMetadata,
-                ),
-              },
-              workspaceId,
-              operationType,
-              spenders: { userWorkspaceId, agentId: agent?.id },
-            });
-
-          if (stepHasNoMoreAvailableCredits) {
-            hasNoMoreAvailableCredits = true;
-          }
+          await decrementCreditsForStep(step);
 
           for (const part of step.content) {
             if (part.type !== 'tool-result' && part.type !== 'tool-error') {
@@ -637,25 +613,7 @@ export class AgentAsyncExecutorService {
             userWorkspaceId,
             agentId: agent?.id,
           }),
-          onStepEnd: async (step) => {
-            const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-              await this.aiBillingService.decrementAndCheckAvailableCredits({
-                modelId: registeredModel.modelId,
-                billingInput: {
-                  usage: step.usage,
-                  cacheCreationTokens: extractCacheCreationTokens(
-                    step.providerMetadata,
-                  ),
-                },
-                workspaceId,
-                operationType,
-                spenders: { userWorkspaceId, agentId: agent?.id },
-              });
-
-            if (stepHasNoMoreAvailableCredits) {
-              hasNoMoreAvailableCredits = true;
-            }
-          },
+          onStepEnd: decrementCreditsForStep,
         });
 
         accumulatedUsage = mergeLanguageModelUsage(
@@ -692,7 +650,7 @@ export class AgentAsyncExecutorService {
         // out of credits fails the execution even if it asked something, so it is never left waiting for an answer
         isPaused: endsOnPausingTool && !hasNoMoreAvailableCredits,
         steps: executionSteps,
-        modelId: resolvedModelId,
+        modelId: registeredModel.modelId,
         totalCostInDollars,
         creditsUsedMicro,
       };
@@ -726,7 +684,7 @@ export class AgentAsyncExecutorService {
         creditsUsedMicro,
         totalTokens,
         modelId,
-        operationType,
+        UsageOperationType.AI_WORKFLOW_TOKEN,
         agent?.id ?? null,
         userWorkspaceId,
       );
