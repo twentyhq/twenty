@@ -1076,7 +1076,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         nextStepIds,
         settings: {
           ...settings,
-          input: { prompt: 'Draft the quote', canAskQuestions: true },
+          input: {
+            prompt: 'Draft the quote',
+            humanInputInstructions: 'Ask before choosing a plan.',
+          },
         },
       }) as WorkflowAction;
 
@@ -1231,6 +1234,26 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
 
       expect(threads).toEqual([]);
+    });
+
+    it("routes the waiting conversation to the workflow creator's inbox", async () => {
+      mockAgent();
+      const { threadId } = await startAskingRun();
+
+      const [conversation] = await global.testDataSource.query(
+        `SELECT thread."workspaceMemberId" AS "ownerId", thread."lastActivityAt", member.id AS "creatorId"
+         FROM "${schema}"."agentChatThread" thread
+         JOIN "${schema}"."workflowRun" run ON run.id = thread."workflowRunId"
+         JOIN core.workflow workflow ON workflow.id = run."coreWorkflowId"
+         JOIN core."userWorkspace" membership ON membership.id = workflow."createdByUserWorkspaceId"
+         JOIN "${schema}"."workspaceMember" member ON member."userId" = membership."userId"
+         WHERE thread.id = $1`,
+        [threadId],
+      );
+
+      expect(conversation).toBeDefined();
+      expect(conversation.ownerId).toBe(conversation.creatorId);
+      expect(conversation.lastActivityAt).not.toBeNull();
     });
 
     it('pauses the run on the question and resumes the same conversation with the answer', async () => {

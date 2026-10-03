@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import {
   ASK_QUESTIONS_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
@@ -26,7 +28,7 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import { WORKFLOW_AGENT_ASK_QUESTIONS_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-ask-questions-prompt.constant';
+import { WORKFLOW_AGENT_HUMAN_INPUT_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-human-input-prompt.constant';
 import {
   type RecordedConversation,
   WorkflowAgentConversationWorkspaceService,
@@ -70,7 +72,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { agentId, prompt, canAskQuestions } = step.settings.input;
+    const { agentId, prompt, humanInputInstructions } = step.settings.input;
     const workspaceId = runInfo.workspaceId;
 
     let agent: AgentEntity | null = null;
@@ -142,7 +144,8 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         return null;
       });
 
-    const isAskingQuestionsAllowed = canAskQuestions === true;
+    const trimmedHumanInputInstructions = humanInputInstructions?.trim();
+    const canAskForHumanInput = isNonEmptyString(trimmedHumanInputInstructions);
 
     const startedAtMs = Date.now();
 
@@ -158,10 +161,10 @@ export class AiAgentWorkflowAction implements WorkflowAction {
               }),
           }
         : { messages: [{ role: 'user', content: resolvedPrompt }] }),
-      baseSystemPrompt: isAskingQuestionsAllowed
-        ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_ASK_QUESTIONS_PROMPT}`
+      baseSystemPrompt: canAskForHumanInput
+        ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_HUMAN_INPUT_PROMPT}\n\n${trimmedHumanInputInstructions}`
         : WORKFLOW_BASE_SYSTEM_PROMPT,
-      pausingTools: isAskingQuestionsAllowed
+      pausingTools: canAskForHumanInput
         ? {
             [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
               isWorkspaceSetupThread: false,
@@ -169,7 +172,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
             [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
           }
         : {},
-      canProposeToolCalls: isAskingQuestionsAllowed,
+      canProposeToolCalls: canAskForHumanInput,
       actorContext: executionContext.isActingOnBehalfOfUser
         ? executionContext.initiator
         : undefined,

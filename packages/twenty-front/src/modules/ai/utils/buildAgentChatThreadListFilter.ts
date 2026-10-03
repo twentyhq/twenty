@@ -1,9 +1,11 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-// Deleted chats stay listed for restore; workflow run conversations belong to the run, not the list.
+// Deleted chats stay listed for restore; a workflow run's conversation is listed for the member it is routed to.
 export const buildAgentChatThreadListFilter = (
   chatObjectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'>,
+  currentWorkspaceMemberId: string | undefined,
 ): RecordGqlOperationFilter => {
   const includeDeletedFilter: RecordGqlOperationFilter = {
     or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
@@ -12,7 +14,21 @@ export const buildAgentChatThreadListFilter = (
     ({ name }) => name === 'workflowRun',
   );
 
-  return canNameWorkflowRun
-    ? { and: [{ workflowRunId: { is: 'NULL' } }, includeDeletedFilter] }
-    : includeDeletedFilter;
+  if (!canNameWorkflowRun) {
+    return includeDeletedFilter;
+  }
+
+  return {
+    and: [
+      {
+        or: [
+          { workflowRunId: { is: 'NULL' } },
+          ...(isDefined(currentWorkspaceMemberId)
+            ? [{ workspaceMemberId: { eq: currentWorkspaceMemberId } }]
+            : []),
+        ],
+      },
+      includeDeletedFilter,
+    ],
+  };
 };

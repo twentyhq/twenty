@@ -7,6 +7,7 @@ import {
   REQUEST_FORM_TOOL_NAME,
   type RequestFormToolInput,
 } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -21,6 +22,8 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 
 export type RecordedExecutionResult = {
   steps?: Pick<NonNullable<AgentExecutionResult['steps']>[number], 'content'>[];
@@ -33,7 +36,7 @@ export type RecordedConversation = {
 };
 
 // One conversation per execution, so a loop iteration or retry never reads or continues another's messages.
-// It has no owner: it belongs to the run and is readable by whoever can read the run.
+// It belongs to the run, and is owned by the workflow's creator so a call waiting on input reaches their inbox.
 @Injectable()
 export class WorkflowAgentConversationWorkspaceService {
   constructor(
@@ -42,7 +45,9 @@ export class WorkflowAgentConversationWorkspaceService {
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     private readonly conversationWriterService: AgentConversationWriterService,
+    private readonly threadService: AgentChatThreadService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
   ) {}
 
   async recordExecution({
@@ -132,6 +137,12 @@ export class WorkflowAgentConversationWorkspaceService {
           output: buildRequestFormPendingOutput(),
         } as ExtendedUIMessagePart,
       ],
+    });
+
+    await this.threadService.recordThreadActivity({
+      workspaceId,
+      threadId,
+      text: null,
     });
   }
 
@@ -228,6 +239,14 @@ export class WorkflowAgentConversationWorkspaceService {
       parts: replyParts,
     });
 
+    if (isAwaitingAnswer) {
+      await this.threadService.recordThreadActivity({
+        workspaceId,
+        threadId,
+        text: null,
+      });
+    }
+
     return isAwaitingAnswer;
   }
 
@@ -244,11 +263,11 @@ export class WorkflowAgentConversationWorkspaceService {
     title: string;
     agentId: string | null;
   }): Promise<{ threadId: string; turnId: string }> {
-    const threadInsertResult = await this.threadRepository.insert(workspaceId, {
-      title,
+    const threadId = await this.createRunThread({
+      workspaceId,
       workflowRunId,
+      title,
     });
-    const threadId = threadInsertResult.identifiers[0].id as string;
 
     const turnId = await this.conversationWriterService.insertTurn({
       workspaceId,
@@ -264,5 +283,51 @@ export class WorkflowAgentConversationWorkspaceService {
     });
 
     return { threadId, turnId };
+  }
+
+  // a workflow without a member creator, such as one an application installs, keeps an ownerless conversation
+  private async createRunThread({
+    workspaceId,
+    workflowRunId,
+    title,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    title: string;
+  }): Promise<string> {
+    const { coreWorkflowId } =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+    const creatorWorkspaceMemberId = isDefined(coreWorkflowId)
+      ? await this.workflowRunRecordShareService.findCreatorWorkspaceMemberId({
+          workspaceId,
+          coreWorkflowId,
+        })
+      : null;
+
+    if (!isDefined(creatorWorkspaceMemberId)) {
+      const threadInsertResult = await this.threadRepository.insert(
+        workspaceId,
+        { title, workflowRunId },
+      );
+
+      return threadInsertResult.identifiers[0].id as string;
+    }
+
+    const thread = await this.threadService.createThread({
+      workspaceId,
+      workspaceMemberId: creatorWorkspaceMemberId,
+      title,
+    });
+
+    await this.threadRepository.update(
+      workspaceId,
+      { id: thread.id },
+      { workflowRunId },
+    );
+
+    return thread.id;
   }
 }

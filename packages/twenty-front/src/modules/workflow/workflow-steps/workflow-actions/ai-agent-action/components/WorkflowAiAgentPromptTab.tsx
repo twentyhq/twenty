@@ -5,7 +5,6 @@ import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchem
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
 import { fieldsToSchema } from '@/ai/utils/fieldsToSchema';
 import { schemaToFields } from '@/ai/utils/schemaToFields';
-import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
@@ -30,6 +29,8 @@ type WorkflowAiAgentPromptTabProps = {
   prompt: string;
   readonly: boolean;
   onPromptChange: (value: string) => void;
+  humanInputInstructions: string;
+  onHumanInputInstructionsChange: (value: string) => void;
   onActionUpdate?: (action: WorkflowAiAgentAction) => void;
 };
 
@@ -38,6 +39,8 @@ export const WorkflowAiAgentPromptTab = ({
   prompt,
   readonly,
   onPromptChange,
+  humanInputInstructions,
+  onHumanInputInstructionsChange,
   onActionUpdate,
 }: WorkflowAiAgentPromptTabProps) => {
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
@@ -126,19 +129,6 @@ export const WorkflowAiAgentPromptTab = ({
     });
   };
 
-  const handleCanAskQuestionsChange = (value: boolean | string | null) => {
-    onActionUpdate?.({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: {
-          ...action.settings.input,
-          canAskQuestions: value === true,
-        },
-      },
-    });
-  };
-
   const handleOutputSchemaChange = (updatedFields: OutputSchemaField[]) => {
     setOutputSchemaFields(updatedFields);
     void debouncedUpdateResponseSchema(fieldsToSchema(updatedFields));
@@ -162,11 +152,13 @@ export const WorkflowAiAgentPromptTab = ({
         readonly={readonly}
       />
 
-      <FormBooleanFieldInput
-        label={t`Can ask for input or approval`}
-        defaultValue={action.settings.input.canAskQuestions === true}
+      <FormTextFieldInput
+        multiline
+        label={t`Ask for human input`}
+        placeholder={t`When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop.`}
+        defaultValue={humanInputInstructions}
+        onChange={onHumanInputInstructionsChange}
         readonly={readonly}
-        onChange={handleCanAskQuestionsChange}
       />
 
       <SettingsAgentModelCapabilities
