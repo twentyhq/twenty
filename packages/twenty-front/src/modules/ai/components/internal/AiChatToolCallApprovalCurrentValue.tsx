@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isUndefined } from '@sniptt/guards';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
@@ -36,6 +37,11 @@ export const AiChatToolCallApprovalCurrentValue = ({
   const { t } = useLingui();
   const { fieldName } = fieldDefinition.metadata;
   const fieldValue = useRecordFieldValue(recordId, fieldName, fieldDefinition);
+
+  // undefined until the card loads the record, which would otherwise read as an empty value
+  if (isUndefined(fieldValue)) {
+    return null;
+  }
 
   return (
     <StyledCurrentValue>
