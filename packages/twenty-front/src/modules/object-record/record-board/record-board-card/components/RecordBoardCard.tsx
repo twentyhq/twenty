@@ -1,9 +1,7 @@
-import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
-import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
-import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
+import { useOpenRecordContextMenu } from '@/object-record/record-selection/hooks/useOpenRecordContextMenu';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
@@ -22,14 +20,11 @@ import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-reco
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
@@ -82,7 +77,7 @@ export const RecordBoardCard = () => {
       `record-board-card-${recordId}`,
     );
 
-  const [isRecordSelected, setIsRecordSelected] = useAtomComponentFamilyState(
+  const isRecordSelected = useAtomComponentFamilyStateValue(
     isRecordSelectedComponentFamilyState,
     recordId,
   );
@@ -103,17 +98,7 @@ export const RecordBoardCard = () => {
     },
   );
 
-  const commandMenuId = getCommandMenuIdFromRecordIndexId(recordBoardId);
-
-  const commandMenuDropdownId =
-    getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
-
-  const setRecordIndexCommandMenuDropdownPosition = useSetAtomComponentState(
-    recordIndexCommandMenuDropdownPositionComponentState,
-    commandMenuDropdownId,
-  );
-
-  const { openDropdown } = useOpenDropdown();
+  const { openRecordContextMenu } = useOpenRecordContextMenu();
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
   const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
@@ -126,19 +111,7 @@ export const RecordBoardCard = () => {
   } = useDisableDragSelectOnPointerDown();
 
   const handleContextMenuOpen = (event: React.MouseEvent) => {
-    event.preventDefault();
-    setIsRecordSelected(true);
-    setRecordIndexCommandMenuDropdownPosition({
-      x: event.clientX,
-      y: event.clientY,
-    });
-    openDropdown({
-      dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
-      globalHotkeysConfig: {
-        enableGlobalHotkeysWithModifiers: true,
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      },
-    });
+    openRecordContextMenu({ event, recordId });
   };
 
   const handleCardClick = () => {

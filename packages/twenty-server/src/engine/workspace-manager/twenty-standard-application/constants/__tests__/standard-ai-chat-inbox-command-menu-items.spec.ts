@@ -9,20 +9,20 @@ const INBOX_COMMAND_MENU_ITEM_NAMES = [
   'snoozeAiChat',
 ] as const;
 
-const getAvailableInboxCommands = (scope: 'INBOX' | 'SNOOZED' | 'ARCHIVED') =>
+type InboxScope = 'INBOX' | 'SNOOZED' | 'ARCHIVED';
+
+const getAvailableInboxCommands = (...scopes: InboxScope[]) =>
   INBOX_COMMAND_MENU_ITEM_NAMES.filter((name) =>
     evaluateConditionalAvailabilityExpression(
       STANDARD_COMMAND_MENU_ITEMS[name].conditionalAvailabilityExpression,
       {
-        numberOfSelectedRecords: 1,
+        numberOfSelectedRecords: scopes.length,
         permissionFlags: { AI: true },
-        selectedRecords: [
-          {
-            id: 'thread-1',
-            deletedAt: null,
-            inboxStatus: { scope, isUnread: false, event: null },
-          },
-        ],
+        selectedRecords: scopes.map((scope, index) => ({
+          id: `thread-${index}`,
+          deletedAt: null,
+          inboxStatus: { scope, isUnread: false, event: null },
+        })),
       },
     ),
   );
@@ -42,6 +42,19 @@ describe('AI chat inbox command menu items', () => {
   it('offers reopen and snooze on a done chat', () => {
     expect(getAvailableInboxCommands('ARCHIVED')).toEqual([
       'reopenAiChat',
+      'snoozeAiChat',
+    ]);
+  });
+
+  it('offers done and snooze on several open chats', () => {
+    expect(getAvailableInboxCommands('INBOX', 'INBOX')).toEqual([
+      'markAiChatAsDone',
+      'snoozeAiChat',
+    ]);
+  });
+
+  it('offers only what every selected chat allows', () => {
+    expect(getAvailableInboxCommands('INBOX', 'ARCHIVED')).toEqual([
       'snoozeAiChat',
     ]);
   });
