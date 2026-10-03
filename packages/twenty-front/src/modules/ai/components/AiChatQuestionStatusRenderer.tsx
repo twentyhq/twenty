@@ -55,12 +55,17 @@ export const AiChatQuestionStatusRenderer = ({
     } | null
   )?.result;
   const status = result?.status ?? 'pending';
+  const entries = getAskedQuestionEntries(result);
 
   if (status === 'pending') {
     return (
       <AiChatAskStatusRow
         Icon={IconHelpCircle}
-        message={t`Asking a question...`}
+        message={
+          entries.length === 1
+            ? entries[0].question.question
+            : t`Asking questions...`
+        }
         isShimmering={isStreaming}
       />
     );
@@ -79,7 +84,7 @@ export const AiChatQuestionStatusRenderer = ({
   return (
     <StyledAnswersCard>
       <StyledAiChatAskStatusMessage>{t`Answers`}</StyledAiChatAskStatusMessage>
-      {getAskedQuestionEntries(result).map(({ question, answer }, index) => {
+      {entries.map(({ question, answer }, index) => {
         const selectedLabels = (answer?.selectedOptionIndices ?? [])
           .map((optionIndex) => question.options[optionIndex]?.label)
           .filter(isNonEmptyString);

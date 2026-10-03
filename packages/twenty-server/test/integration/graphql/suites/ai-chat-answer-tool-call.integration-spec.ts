@@ -209,6 +209,33 @@ describe('Answering a chat tool call', () => {
     );
   });
 
+  it('answers the questions of a step in any order', async () => {
+    await pauseOnQuestions(
+      'unordered-first',
+      'unordered-middle',
+      'unordered-last',
+    );
+    enqueueStream.mockClear();
+
+    const middle = await answerQuestions('unordered-middle');
+
+    expect(middle.body.errors).toBeUndefined();
+    expect(middle.body.data.answerToolCall.streamId).toBeNull();
+    expect(await readToolCallStatus('unordered-first')).toBe('pending');
+    expect(await readToolCallStatus('unordered-middle')).toBe('answered');
+
+    const last = await answerQuestions('unordered-last');
+
+    expect(last.body.errors).toBeUndefined();
+
+    const first = await answerQuestions('unordered-first');
+
+    expect(first.body.errors).toBeUndefined();
+    expect(first.body.data.answerToolCall.streamId).toEqual(expect.any(String));
+    expect(await readPendingQuestionMessageId()).toBeNull();
+    expect(enqueueStream).toHaveBeenCalledTimes(1);
+  });
+
   it('closes every pending call when a message is sent instead of the answers', async () => {
     await pauseOnQuestions('call-skipped-first', 'call-skipped-last');
 
