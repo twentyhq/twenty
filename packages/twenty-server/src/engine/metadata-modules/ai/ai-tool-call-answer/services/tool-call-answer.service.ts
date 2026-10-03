@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { generateId } from 'ai';
@@ -59,6 +59,8 @@ type AnswerToolCallOutcome = {
 // an answer takes the stream claim only while the conversation still waits, so each call is answered once
 @Injectable()
 export class ToolCallAnswerService {
+  private readonly logger = new Logger(ToolCallAnswerService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -261,6 +263,25 @@ export class ToolCallAnswerService {
       });
 
       await this.publishToolCallResolved({ threadId, toolCallId, workspaceId });
+
+      // An answer is a message the member sent, so the chat moves up and
+      // comes back to their inbox. A run's conversation is not in chat lists.
+      // The answer is already recorded and cannot be given again, so a
+      // failure here must not fail the turn
+      if (!isDefined(workflowRunId)) {
+        await this.agentChatService
+          .notifyThreadActivityUpdated({
+            threadId,
+            workspaceMemberId: args.workspaceMemberId,
+            workspaceId,
+            text: answerText,
+          })
+          .catch((error: unknown) =>
+            this.logger.warn(
+              `Could not record answer activity on thread ${threadId}: ${error instanceof Error ? error.message : String(error)}`,
+            ),
+          );
+      }
 
       // runs resume in their own executor, and only the last answer resumes a chat
       if (isDefined(step) || !isLastAnswer) {

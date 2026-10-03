@@ -8,7 +8,7 @@ import { AiChatEmailApprovalStatusRenderer } from '@/ai/components/AiChatEmailAp
 import { AiChatFormStatusRenderer } from '@/ai/components/AiChatFormStatusRenderer';
 import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStatusRenderer';
 import { AiChatToolCallApprovalStatusRenderer } from '@/ai/components/AiChatToolCallApprovalStatusRenderer';
-import { AiChatToolPartRenderer } from '@/ai/components/AiChatToolPartRenderer';
+import { AiChatToolWidget } from '@/ai/components/AiChatToolWidget';
 import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { useToolWidgetByName } from '@/ai/hooks/useToolWidgetByName';
@@ -17,6 +17,7 @@ import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
 import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
+import { isEmptyReasoningPart } from '@/ai/utils/isEmptyReasoningPart';
 import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai/utils/isHiddenCompleteWorkspaceSetupToolPart';
 import { styled } from '@linaria/react';
 import { getToolName, isToolUIPart } from 'ai';
@@ -110,9 +111,9 @@ const MessagePartRenderer = ({
         }
 
         return (
-          <AiChatToolPartRenderer
+          <AiChatToolWidget
             toolPart={part}
-            widget={widget}
+            frontComponentId={widget.frontComponentId}
             isStreaming={isStreaming}
           />
         );
@@ -141,6 +142,7 @@ export const AiChatAssistantMessageRenderer = ({
   const filteredParts = messageParts.filter(
     (part) =>
       part.type !== 'data-thread-title' &&
+      !isEmptyReasoningPart(part) &&
       !isHiddenCompleteWorkspaceSetupToolPart(part) &&
       !(hasCodeExecutionData && isCodeInterpreterToolPart(part)),
   );
@@ -157,7 +159,11 @@ export const AiChatAssistantMessageRenderer = ({
   const lastRenderItemIndex = renderItems.length - 1;
 
   if (!renderItems.length && !hasError) {
-    return hasSucceededCompleteWorkspaceSetupToolPart ? null : (
+    const hasOnlyHiddenReasoning =
+      !isLastMessageStreaming && messageParts.some(isEmptyReasoningPart);
+
+    return hasSucceededCompleteWorkspaceSetupToolPart ||
+      hasOnlyHiddenReasoning ? null : (
       <AiChatInitialLoadingIndicator />
     );
   }

@@ -199,7 +199,6 @@ export class AgentAsyncExecutorService {
           ...OUTPUT_NAVIGATION_TOOL_NAMES,
           ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
         ],
-        wrapWithErrorContext: false,
       },
     );
 
