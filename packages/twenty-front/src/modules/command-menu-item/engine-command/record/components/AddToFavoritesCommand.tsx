@@ -8,7 +8,7 @@ import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
 export const AddToFavoritesCommand = () => {
-  const { objectMetadataItem, selectedRecords, favoriteRecordIds } =
+  const { objectMetadataItem, selectedRecords } =
     useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem)) {
@@ -20,8 +20,14 @@ export const AddToFavoritesCommand = () => {
     useNavigationMenuItemsData();
 
   const handleExecute = () => {
+    const favoriteRecordIds = new Set(
+      navigationMenuItems
+        .filter((item) => item.targetObjectMetadataId === objectMetadataItem.id)
+        .map((item) => item.targetRecordId),
+    );
+
     const recordsToAdd = selectedRecords.filter(
-      (record) => !favoriteRecordIds.includes(record.id),
+      (record) => !favoriteRecordIds.has(record.id),
     );
 
     const relevantItems = navigationMenuItems.filter(

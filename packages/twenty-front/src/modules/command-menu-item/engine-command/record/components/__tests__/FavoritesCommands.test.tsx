@@ -21,7 +21,6 @@ jest.mock(
         { id: 'record-2' },
         { id: 'record-3' },
       ],
-      favoriteRecordIds: ['record-2'],
     }),
   }),
 );
