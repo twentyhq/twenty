@@ -8,12 +8,13 @@ import {
 import { type SendChatMessageAnswerOutcome } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/types/send-chat-message-answer-outcome.type';
 import { type SendChatMessageAnswerResult } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/types/send-chat-message-answer-result.type';
 
-const OUTCOME_BY_STATUS: Record<string, SendChatMessageAnswerOutcome> = {
-  approved: 'executed',
-  rejected: 'rejected',
-  failed: 'failed',
-  conflict: 'conflict',
-};
+const OUTCOME_BY_STATUS: ReadonlyMap<string, SendChatMessageAnswerOutcome> =
+  new Map([
+    ['approved', 'executed'],
+    ['rejected', 'rejected'],
+    ['failed', 'failed'],
+    ['conflict', 'conflict'],
+  ]);
 
 export const buildSendChatMessageAnswerResult = ({
   threadId,
@@ -25,7 +26,7 @@ export const buildSendChatMessageAnswerResult = ({
   const result = isPlainObject(toolResult.result) ? toolResult.result : {};
   const proposal = isPlainObject(result.proposal) ? result.proposal : {};
   const outcome = isString(result.status)
-    ? OUTCOME_BY_STATUS[result.status]
+    ? OUTCOME_BY_STATUS.get(result.status)
     : undefined;
 
   if (!isDefined(outcome) || !isString(proposal.toolName)) {

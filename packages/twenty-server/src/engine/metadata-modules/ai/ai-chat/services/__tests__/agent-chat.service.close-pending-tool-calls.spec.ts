@@ -72,8 +72,10 @@ describe('AgentChatService closePendingToolCalls', () => {
       },
       { pendingQuestionMessageId: null },
     );
-    const [[, [partId, closedToolOutput, expectedStatus]]] =
+    const [[closeQuery, [partId, closedToolOutput, expectedStatus]]] =
       messagePartRepository.writePart.mock.calls;
+
+    expect(closeQuery).toContain(`"toolOutput"->'result'->>'status' = $3`);
 
     expect({ partId, expectedStatus }).toEqual({
       partId: 'part-id',

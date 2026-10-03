@@ -272,9 +272,10 @@ describe('WorkflowRunWorkspaceService conversations', () => {
         },
         { pendingQuestionMessageId: null },
       );
-      const [[, [partId, closedToolOutput, expectedStatus]]] =
+      const [[closeQuery, [partId, closedToolOutput, expectedStatus]]] =
         messagePartRepository.writePart.mock.calls;
 
+      expect(closeQuery).toContain(`"toolOutput"->'result'->>'status' = $3`);
       expect({
         partId,
         result: JSON.parse(closedToolOutput).result,
