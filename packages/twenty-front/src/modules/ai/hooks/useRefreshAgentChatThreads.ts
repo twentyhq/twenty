@@ -154,15 +154,19 @@ export const useRefreshAgentChatThreads = () => {
 
         const selectedThreadId = store.get(currentAiChatThreadState.atom);
         const pageThreadIds = page.threads.map(({ id }) => id);
+        // the open chat may be past the loaded pages, and is kept in sync too
+        const refreshedThreadIds = [
+          ...pageThreadIds,
+          ...(isDefined(selectedThreadId) &&
+          isValidUuid(selectedThreadId) &&
+          !pageThreadIds.includes(selectedThreadId)
+            ? [selectedThreadId]
+            : []),
+        ];
 
         const [, areParticipantsLoaded] = await Promise.all([
-          refreshAgentChatThreadPermissions([
-            ...pageThreadIds,
-            ...(isDefined(selectedThreadId) && isValidUuid(selectedThreadId)
-              ? [selectedThreadId]
-              : []),
-          ]),
-          loadAgentChatThreadParticipants(pageThreadIds),
+          refreshAgentChatThreadPermissions(refreshedThreadIds),
+          loadAgentChatThreadParticipants(refreshedThreadIds),
         ]);
 
         // without their member state, archived or read chats would show as new

@@ -8,6 +8,7 @@ import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const queryMock = jest.fn();
@@ -95,6 +96,29 @@ describe('useRefreshAgentChatThreads', () => {
     jest.clearAllMocks();
     refreshAgentChatThreadPermissions.mockResolvedValue(undefined);
     loadAgentChatThreadParticipants.mockResolvedValue(true);
+  });
+
+  it('keeps the open chat in sync when it is past the loaded page', async () => {
+    const openThreadId = '20202020-0000-4000-8000-0000000000dd';
+    const store = buildStore();
+    store.set(currentAiChatThreadState.atom, openThreadId);
+    queryMock.mockResolvedValue(
+      buildPage([buildThread('thread-1', 'Loaded thread')]),
+    );
+    const result = renderRefresh(store);
+
+    await act(async () => {
+      await result.current.refreshAgentChatThreads();
+    });
+
+    expect(loadAgentChatThreadParticipants).toHaveBeenCalledWith([
+      'thread-1',
+      openThreadId,
+    ]);
+    expect(refreshAgentChatThreadPermissions).toHaveBeenCalledWith([
+      'thread-1',
+      openThreadId,
+    ]);
   });
 
   it('does not list a page whose member state could not be loaded', async () => {
