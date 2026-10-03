@@ -1,5 +1,6 @@
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RecordListBody } from '@/object-record/record-list/components/RecordListBody';
+import { RecordListDragDropProvider } from '@/object-record/record-list/components/RecordListDragDropProvider';
 import { RecordListFieldTooltip } from '@/object-record/record-list/components/RecordListFieldTooltip';
 import { RecordListRecordGroupsBody } from '@/object-record/record-list/components/RecordListRecordGroupsBody';
 import { RecordListResponsiveFieldsEffect } from '@/object-record/record-list/components/RecordListResponsiveFieldsEffect';
@@ -42,11 +43,13 @@ export const RecordList = () => {
           componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
           defaultEnableXScroll={false}
         >
-          {hasRecordGroups ? (
-            <RecordListRecordGroupsBody />
-          ) : (
-            <RecordListBody />
-          )}
+          <RecordListDragDropProvider>
+            {hasRecordGroups ? (
+              <RecordListRecordGroupsBody />
+            ) : (
+              <RecordListBody />
+            )}
+          </RecordListDragDropProvider>
         </ScrollWrapper>
       </RecordListFieldTooltip>
     </StyledContainer>

@@ -6,11 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
+import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
 import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
-import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
@@ -22,25 +21,24 @@ import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDesti
 import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 
-type RecordTableBodyDragDropContextProviderProps = {
+type RecordDragDropContextProviderProps = {
   getDroppableItemCount: (droppableId: string) => number;
   onRecordDrop: (result: RecordDragDropResult) => void;
   renderDragOverlay: (source: Draggable) => ReactNode;
   children: ReactNode;
 };
 
-export const RecordTableBodyDragDropContextProvider = ({
+export const RecordDragDropContextProvider = ({
   getDroppableItemCount,
   onRecordDrop,
   renderDragOverlay,
   children,
-}: RecordTableBodyDragDropContextProviderProps) => {
+}: RecordDragDropContextProviderProps) => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
-  const { recordTableId } = useRecordTableContextOrThrow();
 
-  const selectedRowIds = useAtomComponentSelectorCallbackState(
+  const selectedRecordIds = useAtomComponentSelectorCallbackState(
     selectedRecordIdsComponentSelector,
-    recordTableId,
+    recordIndexId,
   );
 
   const store = useStore();
@@ -65,13 +63,13 @@ export const RecordTableBodyDragDropContextProvider = ({
     event: DragDropProviderDragStartEvent<DragDropItemData>,
   ) => {
     const source = event.operation.source;
-    const sourceData = source?.data as RecordTableRowDragData | undefined;
+    const sourceData = source?.data as RecordDragData | undefined;
 
     if (!isDefined(source) || !isDefined(sourceData)) {
       return;
     }
 
-    const currentSelectedRecordIds = store.get(selectedRowIds) as string[];
+    const currentSelectedRecordIds = store.get(selectedRecordIds);
 
     startRecordDrag(sourceData.recordId, currentSelectedRecordIds);
   };
@@ -96,7 +94,7 @@ export const RecordTableBodyDragDropContextProvider = ({
     event: DragDropProviderDragEndEvent<DragDropItemData>,
   ) => {
     const { source, target, position } = event.operation;
-    const sourceData = source?.data as RecordTableRowDragData | undefined;
+    const sourceData = source?.data as RecordDragData | undefined;
 
     if (event.canceled || !isDefined(source) || !isDefined(sourceData)) {
       clearDragState();
@@ -115,7 +113,7 @@ export const RecordTableBodyDragDropContextProvider = ({
       return;
     }
 
-    // Drop targets mark the gap before them; convert it to the dragged row's final index.
+    // Drop targets mark the gap before them; convert it to the dragged record's final index.
     const destinationIndex = getDestinationIndex({
       dropTargetIndex: resolvedDrop.dropTargetIndex,
       sourceIndex: sourceData.index,
