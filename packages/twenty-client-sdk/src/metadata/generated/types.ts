@@ -6493,9 +6493,6 @@ export default {
             "errorMessage": [
                 1
             ],
-            "errorDetails": [
-                9
-            ],
             "sourceUrlSourceId": [
                 1
             ],

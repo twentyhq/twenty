@@ -120,6 +120,7 @@ type AgentWorkflowToSeed = {
   stepKey: string;
   stepName: string;
   stepPrompt: string;
+  humanInputInstructions: string;
   runKey: string;
   initiator: Initiator;
   runPrompt: string;
@@ -135,6 +136,8 @@ const AGENT_WORKFLOWS_TO_SEED: AgentWorkflowToSeed[] = [
     stepKey: 'agentStep',
     stepName: 'Qualify the lead',
     stepPrompt: 'Qualify the inbound lead and draft the first reply.',
+    humanInputInstructions:
+      'Ask me who should follow up when the lead could go to more than one owner.',
     runKey: 'qualification',
     initiator: 'TIM',
     runPrompt:
@@ -150,6 +153,7 @@ const AGENT_WORKFLOWS_TO_SEED: AgentWorkflowToSeed[] = [
     stepName: 'Draft the reminder',
     stepPrompt:
       'Draft a renewal reminder for the account and have it reviewed before it goes out.',
+    humanInputInstructions: 'Have every email reviewed before it goes out.',
     runKey: 'renewalReminder',
     initiator: 'PHIL',
     runPrompt:
@@ -233,7 +237,10 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
           type: WorkflowActionType.AI_AGENT,
           valid: true,
           settings: {
-            input: { prompt: agentWorkflow.stepPrompt, canAskQuestions: true },
+            input: {
+              prompt: agentWorkflow.stepPrompt,
+              humanInputInstructions: agentWorkflow.humanInputInstructions,
+            },
             outputSchema: {},
             errorHandlingOptions: ERROR_HANDLING_OPTIONS,
           },
