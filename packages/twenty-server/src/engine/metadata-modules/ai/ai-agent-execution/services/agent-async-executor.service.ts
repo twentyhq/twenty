@@ -2,10 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
+  convertToModelMessages,
   generateText,
   jsonSchema,
   type LanguageModelUsage,
-  type ModelMessage,
   Output,
   isStepCount,
   type StepResult,
@@ -14,6 +14,7 @@ import {
 import { type RunAgentMessage } from 'twenty-shared/application';
 import {
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  type ExtendedUIMessage,
   PROPOSE_TOOL_CALL_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { type ActorMetadata } from 'twenty-shared/types';
@@ -73,6 +74,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
+import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
@@ -325,14 +327,14 @@ export class AgentAsyncExecutorService {
     userWorkspaceId,
     runAsRoleId,
     toolLoadingStrategy = 'preload',
-    priorModelMessages = [],
+    priorMessages = [],
     pausingTools = {},
     canProposeToolCalls = false,
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
     // a continued conversation, with the tool calls and results plain run messages cannot carry
-    priorModelMessages?: ModelMessage[];
+    priorMessages?: ExtendedUIMessage[];
     pausingTools?: ToolSet;
     // offers propose_tool_call over the registry tools the agent can call itself, or emails without an agent
     canProposeToolCalls?: boolean;
@@ -344,7 +346,7 @@ export class AgentAsyncExecutorService {
     runAsRoleId?: string;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
-    if (!isNonEmptyArray(messages) && !isNonEmptyArray(priorModelMessages)) {
+    if (!isNonEmptyArray(messages) && !isNonEmptyArray(priorMessages)) {
       throw new AiException(
         'Provide at least one message to run an agent',
         AiExceptionCode.INVALID_AGENT_INPUT,
@@ -469,13 +471,19 @@ export class AgentAsyncExecutorService {
         }
       };
 
+      const modalities = this.aiModelRegistryService.getModelConfig(
+        registeredModel.modelId,
+      )?.modalities;
+
+      const priorModelMessages = await convertToModelMessages(
+        replaceUnsupportedFileParts(priorMessages, modalities, false),
+      );
+
       const modelMessages =
         await this.runAgentAttachmentService.buildModelMessagesOrThrow({
           messages,
           workspaceId,
-          modalities: this.aiModelRegistryService.getModelConfig(
-            registeredModel.modelId,
-          )?.modalities,
+          modalities,
         });
 
       // an agent proposes its own tools; a step without an agent has none, so it proposes only emails
