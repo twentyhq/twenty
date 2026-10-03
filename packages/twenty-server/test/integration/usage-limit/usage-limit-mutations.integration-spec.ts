@@ -114,7 +114,7 @@ describe('Usage limit mutations', () => {
   afterEach(async () => {
     await usageLimitRepository.delete({ workspaceId: SEED_APPLE_WORKSPACE_ID });
 
-    const keys = await redis.keys(`*usageLimits:${SEED_APPLE_WORKSPACE_ID}*`);
+    const keys = await redis.keys(`*usageLimits:{${SEED_APPLE_WORKSPACE_ID}}*`);
 
     if (keys.length > 0) {
       await redis.del(keys);
