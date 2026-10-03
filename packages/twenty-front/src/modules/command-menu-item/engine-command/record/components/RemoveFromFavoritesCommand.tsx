@@ -19,18 +19,15 @@ export const RemoveFromFavoritesCommand = () => {
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
   const handleExecute = () => {
-    const selectedRecordIds = new Set(selectedRecords.map(({ id }) => id));
-
-    const navigationMenuItemIdsToDelete = [
-      ...navigationMenuItems,
-      ...workspaceNavigationMenuItems,
-    ]
-      .filter(
-        (item) =>
-          isDefined(item.targetRecordId) &&
-          selectedRecordIds.has(item.targetRecordId) &&
-          item.targetObjectMetadataId === objectMetadataItem.id,
+    const navigationMenuItemIdsToDelete = selectedRecords
+      .map((record) =>
+        [...navigationMenuItems, ...workspaceNavigationMenuItems].find(
+          (item) =>
+            item.targetRecordId === record.id &&
+            item.targetObjectMetadataId === objectMetadataItem.id,
+        ),
       )
+      .filter(isDefined)
       .map(({ id }) => id);
 
     if (navigationMenuItemIdsToDelete.length === 0) {
