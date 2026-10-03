@@ -179,13 +179,21 @@ export class StreamAgentChatJob {
         );
       }
 
-      const { sender, authorization } = await this.actorService.authorizeJob({
-        workspaceId: data.workspaceId,
-        threadId: data.threadId,
-        messageId: data.messageId,
-        turnId: data.turnId,
-        userWorkspaceId: data.userWorkspaceId,
-      });
+      const { message, sender, authorization } =
+        await this.actorService.authorizeJob({
+          workspaceId: data.workspaceId,
+          threadId: data.threadId,
+          messageId: data.messageId,
+          turnId: data.turnId,
+          userWorkspaceId: data.userWorkspaceId,
+        });
+
+      if (!isDefined(message.turnId)) {
+        throw new AiException(
+          'Message turn not found',
+          AiExceptionCode.MESSAGE_NOT_FOUND,
+        );
+      }
 
       const titlePromise = data.hasTitle
         ? Promise.resolve(null)
@@ -201,6 +209,7 @@ export class StreamAgentChatJob {
       await this.buildAndPublishStream({
         workspace,
         data,
+        turnId: message.turnId,
         sender,
         authorization,
         titlePromise,
@@ -332,6 +341,7 @@ export class StreamAgentChatJob {
   private async buildAndPublishStream({
     workspace,
     data,
+    turnId,
     sender,
     authorization,
     titlePromise,
@@ -340,13 +350,13 @@ export class StreamAgentChatJob {
   }: {
     workspace: WorkspaceEntity;
     data: StreamAgentChatJobData;
+    turnId: string;
     sender: ChatExecutionOptions['sender'];
     authorization: ChatExecutionOptions['authorization'];
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
     turnModelId: string;
   }): Promise<void> {
-    const { turnId } = data;
     const assistantMessageId = uuidv5(
       data.streamId,
       ASSISTANT_MESSAGE_ID_NAMESPACE,
