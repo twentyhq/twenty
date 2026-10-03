@@ -19,7 +19,6 @@ export class GetMessagesService {
   ) {}
 
   async getMessagesFromPersonIds(
-    workspaceMemberId: string,
     personIds: string[],
     workspaceId: string,
     page = 1,
@@ -31,7 +30,6 @@ export class GetMessagesService {
     const { messageThreads, totalNumberOfThreads } =
       await this.timelineMessagingService.getAndCountMessageThreads(
         personIds,
-        workspaceId,
         offset,
         pageSize,
         targetFilter,
@@ -55,26 +53,17 @@ export class GetMessagesService {
         workspaceId,
       );
 
-    const threadVisibilityByThreadId =
-      await this.timelineMessagingService.getThreadVisibilityByThreadId(
-        messageThreadIds,
-        workspaceMemberId,
-        workspaceId,
-      );
-
     return {
       totalNumberOfThreads,
       timelineThreads: formatThreads(
         messageThreads,
         threadParticipantsByThreadId,
-        threadVisibilityByThreadId,
       ),
       relatedPersonIds: personIds,
     };
   }
 
   async getMessagesFromObjectRecord(
-    workspaceMemberId: string,
     objectNameSingular: string,
     recordId: string,
     workspaceId: string,
@@ -102,7 +91,6 @@ export class GetMessagesService {
     }
 
     return this.getMessagesFromPersonIds(
-      workspaceMemberId,
       personIds,
       workspaceId,
       page,

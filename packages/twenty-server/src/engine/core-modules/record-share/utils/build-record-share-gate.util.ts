@@ -8,6 +8,7 @@ import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-
 import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-share/types/inherited-readability-parent.type';
 import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/is-discoverable-object.util';
 import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
+import { resolveGatedReadability } from 'src/engine/core-modules/record-share/utils/resolve-gated-readability.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { shouldEnforceRecordShareExceptions } from 'src/engine/core-modules/record-share/utils/should-enforce-record-share-exceptions.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
@@ -44,7 +45,7 @@ export const buildRecordShareGate = ({
       isDiscoverableObject(target.flatObjectMetadata));
 
   const gateKind = resolveRecordShareGateKind({
-    readability: target.flatObjectMetadata.readability,
+    readability: resolveGatedReadability(target.flatObjectMetadata),
     isOwningApplication,
     isExistenceRead,
   });

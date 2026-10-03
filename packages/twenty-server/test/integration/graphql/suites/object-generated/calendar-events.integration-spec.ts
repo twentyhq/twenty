@@ -4,7 +4,20 @@ import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
-import { CALENDAR_EVENT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
+// Seeded events land on random channels, and those of channels that do not
+// share everything are only readable by their owner.
+const findReadableCalendarEventId = async () => {
+  const response = await makeGraphqlApiRequest(
+    findManyOperationFactory({
+      objectMetadataSingularName: 'calendarEvent',
+      objectMetadataPluralName: 'calendarEvents',
+      gqlFields: 'id',
+      first: 1,
+    }),
+  );
+
+  return response.body.data.calendarEvents.edges[0].node.id as string;
+};
 
 describe('calendarEventsResolver (e2e)', () => {
   it('should find many calendarEvents', async () => {
@@ -28,6 +41,7 @@ describe('calendarEventsResolver (e2e)', () => {
     const calendarEvent = edges[0].node;
 
     expect(calendarEvent).toMatchSnapshot({
+      id: expect.any(String),
       createdAt: expect.any(String),
       endsAt: expect.any(String),
       startsAt: expect.any(String),
@@ -40,7 +54,7 @@ describe('calendarEventsResolver (e2e)', () => {
   it('should find one calendarEvent', async () => {
     const graphqlOperation = findOneOperationFactory({
       objectMetadataSingularName: 'calendarEvent',
-      filter: { id: { eq: CALENDAR_EVENT_DATA_SEED_IDS.ID_1 } },
+      filter: { id: { eq: await findReadableCalendarEventId() } },
       gqlFields: CALENDAR_EVENT_GQL_FIELDS,
     });
 
@@ -50,6 +64,7 @@ describe('calendarEventsResolver (e2e)', () => {
 
     expect(data).toBeDefined();
     expect(data).toMatchSnapshot({
+      id: expect.any(String),
       createdAt: expect.any(String),
       endsAt: expect.any(String),
       startsAt: expect.any(String),

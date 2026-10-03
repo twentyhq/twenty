@@ -22,6 +22,7 @@ const INHERITED_STANDARD_OBJECT_PARENT_FIELDS = {
   taskTarget: STANDARD_OBJECT_FIELDS.taskTarget.targetPerson,
   messageThreadTarget: STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread,
   calendarEventTarget: STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent,
+  message: STANDARD_OBJECT_FIELDS.message.messageThread,
   agentChatThreadTarget: STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread,
   agentChatThread: STANDARD_OBJECT_FIELDS.agentChatThread.workflowRun,
 } as const;
@@ -75,6 +76,8 @@ describe('Standard object readability', () => {
 
     STANDARD_OBJECTS.recordShare.universalIdentifier,
     STANDARD_OBJECTS.workflowRun.universalIdentifier,
+    STANDARD_OBJECTS.messageThread.universalIdentifier,
+    STANDARD_OBJECTS.calendarEvent.universalIdentifier,
     STANDARD_OBJECTS.shortLink.universalIdentifier,
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
@@ -246,6 +249,73 @@ describe('Standard object readability', () => {
     ).toEqual([
       { childNameSingular: 'taskTarget', childJoinColumnName: 'taskId' },
     ]);
+  });
+
+  it.each(['messageThread', 'calendarEvent'] as const)(
+    'declares %s DISCOVERABLE',
+    (objectName) => {
+      expect(findStandardFlatObjectMetadata(objectName)).toMatchObject({
+        readability: MetadataReadability.DISCOVERABLE,
+      });
+    },
+  );
+
+  // An existence read shows these fields to members the record was never
+  // shared with. They are what a METADATA channel already showed; a subject,
+  // a body, a title or a description must never join them.
+  it('lets only the fields that tell an interaction happened be discovered', () => {
+    const discoverableFieldNamesByObjectName = Object.fromEntries(
+      standardFlatObjectMetadatas
+        .filter((flatObjectMetadata) =>
+          isDefined(flatObjectMetadata.discoverableFieldUniversalIdentifiers),
+        )
+        .map((flatObjectMetadata) => [
+          flatObjectMetadata.nameSingular,
+          flatObjectMetadata
+            .discoverableFieldUniversalIdentifiers!.map(
+              (universalIdentifier) =>
+                allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+                  universalIdentifier
+                ]?.name,
+            )
+            .sort(),
+        ]),
+    );
+
+    expect(discoverableFieldNamesByObjectName).toEqual({
+      calendarEvent: [
+        'calendarChannelEventAssociations',
+        'calendarEventParticipants',
+        'calendarEventTargets',
+        'callRecordings',
+        'conferenceLink',
+        'conferenceSolution',
+        'endsAt',
+        'externalCreatedAt',
+        'externalUpdatedAt',
+        'iCalUid',
+        'isCanceled',
+        'isFullDay',
+        'location',
+        'startsAt',
+      ],
+      calendarEventTarget: ['calendarEvent', 'targetPerson'],
+      message: [
+        'headerMessageId',
+        'isDraft',
+        'messageCampaign',
+        'messageChannelMessageAssociations',
+        'messageParticipants',
+        'messageThread',
+        'receivedAt',
+      ],
+      messageThread: [
+        'messageChannelMessageAssociations',
+        'messageThreadTargets',
+        'messages',
+      ],
+      messageThreadTarget: ['messageThread', 'targetPerson'],
+    });
   });
 
   it('leaves every other standard object OPEN for readability', () => {

@@ -1,48 +1,20 @@
-import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { MessageChannelVisibility } from 'twenty-shared/types';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
+import { type TimelineThreadWithoutParticipants } from 'src/engine/core-modules/messaging/types/timeline-thread-without-participants.type';
 import { extractParticipantSummary } from 'src/engine/core-modules/messaging/utils/extract-participant-summary.util';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 export const formatThreads = (
-  threads: Omit<
-    TimelineThreadDTO,
-    | 'firstParticipant'
-    | 'lastTwoParticipants'
-    | 'participantCount'
-    | 'read'
-    | 'visibility'
-  >[],
+  threads: TimelineThreadWithoutParticipants[],
   threadParticipantsByThreadId: {
     [key: string]: MessageParticipantWorkspaceEntity[];
   },
-  threadVisibilityByThreadId: {
-    [key: string]: MessageChannelVisibility;
-  },
-): TimelineThreadDTO[] => {
-  return threads
+): TimelineThreadDTO[] =>
+  threads
     .filter((thread) => isDefined(threadParticipantsByThreadId[thread.id]))
-    .map((thread) => {
-      const visibility =
-        threadVisibilityByThreadId[thread.id] ??
-        MessageChannelVisibility.METADATA;
-
-      return {
-        ...thread,
-        subject:
-          visibility === MessageChannelVisibility.SHARE_EVERYTHING ||
-          visibility === MessageChannelVisibility.SUBJECT
-            ? thread.subject
-            : FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
-        lastMessageBody:
-          visibility === MessageChannelVisibility.SHARE_EVERYTHING
-            ? thread.lastMessageBody
-            : FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
-        ...extractParticipantSummary(threadParticipantsByThreadId[thread.id]),
-        visibility,
-        read: true,
-      };
-    });
-};
+    .map((thread) => ({
+      ...thread,
+      ...extractParticipantSummary(threadParticipantsByThreadId[thread.id]),
+      read: true,
+    }));

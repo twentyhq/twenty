@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import omit from 'lodash.omit';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { Any, In, type Repository } from 'typeorm';
+import { Any } from 'typeorm';
 
 import { CalendarChannelVisibility } from 'twenty-shared/types';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
@@ -13,58 +12,38 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { MessageCalendarTargetReadinessService } from 'src/engine/core-modules/target/services/message-calendar-target-readiness.service';
-import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
 import { type CallRecordingWorkspaceEntity } from 'src/modules/call-recording/standard-objects/call-recording.workspace-entity';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class TimelineCalendarEventService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly relatedPersonIdsService: RelatedPersonIdsService,
     private readonly fileUrlService: FileUrlService,
     private readonly messageCalendarTargetReadinessService: MessageCalendarTargetReadinessService,
   ) {}
 
   async getCalendarEventsFromPersonIds({
-    currentWorkspaceMemberId,
     personIds,
     workspaceId,
     page = 1,
     pageSize = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     targetFilter,
   }: {
-    currentWorkspaceMemberId: string;
     personIds: string[];
     workspaceId: string;
     page: number;
     pageSize: number;
     targetFilter?: TargetFilter;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
+    // Runs as the caller: the existence read lists every event their role can
+    // read, and record shares decide which ones show a title and description.
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const offset = (page - 1) * pageSize;
-
-      // System auth context resolves no role, so participant relations would be denied; channel-level redaction below gates access.
-      // TODO: run under the caller's role once unreadable person degrades to redaction https://github.com/twentyhq/core-team-issues/issues/2777
-      const calendarEventRepository =
-        this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
-          'calendarEvent',
-          { shouldBypassPermissionChecks: true },
-        );
 
       const where = isDefined(targetFilter)
         ? {
@@ -78,24 +57,44 @@ export class TimelineCalendarEventService {
             },
           };
 
-      const totalNumberOfCalendarEvents = await calendarEventRepository.count({
-        where,
-      });
+      let totalNumberOfCalendarEvents: number;
+      let ids: string[];
 
-      const calendarEventIds = await calendarEventRepository.find({
-        where,
-        select: {
-          id: true,
-          startsAt: true,
-        },
-        skip: offset,
-        take: pageSize,
-        order: {
-          startsAt: 'DESC',
-        },
-      });
+      try {
+        const discoverableCalendarEventRepository =
+          this.workspaceOrmManager.getRepositoryWithContextPermissions<CalendarEventWorkspaceEntity>(
+            'calendarEvent',
+            undefined,
+            'existence',
+          );
 
-      const ids = calendarEventIds.map(({ id }) => id);
+        const [calendarEventIds, calendarEventCount] =
+          await discoverableCalendarEventRepository.findAndCount({
+            where,
+            select: {
+              id: true,
+              startsAt: true,
+            },
+            skip: offset,
+            take: pageSize,
+            order: {
+              startsAt: 'DESC',
+            },
+          });
+
+        totalNumberOfCalendarEvents = calendarEventCount;
+        ids = calendarEventIds.map(({ id }) => id);
+      } catch (error) {
+        if (error instanceof PermissionsException) {
+          return {
+            totalNumberOfCalendarEvents: 0,
+            timelineCalendarEvents: [],
+            relatedPersonIds: personIds,
+          };
+        }
+
+        throw error;
+      }
 
       if (ids.length <= 0) {
         return {
@@ -105,7 +104,19 @@ export class TimelineCalendarEventService {
         };
       }
 
-      const [events] = await calendarEventRepository.findAndCount({
+      // The caller discovered these events above. Their participants are read
+      // without the caller's role so that a role that cannot read people still
+      // gets a timeline.
+      // TODO run under the caller's role once roles that cannot read person
+      // degrade to a redacted timeline rather than a denied one
+      // https://github.com/twentyhq/core-team-issues/issues/2777
+      const calendarEventRepository =
+        this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+          'calendarEvent',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const events = await calendarEventRepository.find({
         where: {
           id: Any(ids),
         },
@@ -114,9 +125,11 @@ export class TimelineCalendarEventService {
             person: true,
             workspaceMember: true,
           },
-          calendarChannelEventAssociations: true,
         },
       });
+
+      const calendarEventContentById =
+        await this.findReadableCalendarEventContentById(ids);
 
       const callRecordingRepository =
         this.workspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
@@ -161,76 +174,6 @@ export class TimelineCalendarEventService {
 
         return acc;
       }, new Map());
-
-      const allCalendarChannelIds = [
-        ...new Set(
-          events.flatMap((event) =>
-            event.calendarChannelEventAssociations.map(
-              (association) => association.calendarChannelId,
-            ),
-          ),
-        ),
-      ];
-
-      const calendarChannels =
-        allCalendarChannelIds.length > 0
-          ? await this.calendarChannelRepository.find({
-              where: { id: In(allCalendarChannelIds), workspaceId },
-            })
-          : [];
-
-      const workspaceMemberRepo =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const currentMember = await workspaceMemberRepo.findOne({
-        where: { id: currentWorkspaceMemberId },
-        select: { userId: true },
-      });
-
-      const currentUserWorkspaceId = currentMember
-        ? ((
-            await this.userWorkspaceRepository.findOne({
-              where: { userId: currentMember.userId, workspaceId },
-              select: { id: true },
-            })
-          )?.id ?? null)
-        : null;
-
-      const connectedAccountIds = [
-        ...new Set(
-          calendarChannels.map((channel) => channel.connectedAccountId),
-        ),
-      ];
-
-      const ownedAccountIds =
-        connectedAccountIds.length > 0 && currentUserWorkspaceId
-          ? new Set(
-              (
-                await this.connectedAccountRepository.find({
-                  where: {
-                    id: In(connectedAccountIds),
-                    userWorkspaceId: currentUserWorkspaceId,
-                  },
-                  select: { id: true },
-                })
-              ).map((a) => a.id),
-            )
-          : new Set<string>();
-
-      const calendarChannelMap = new Map(
-        calendarChannels.map((channel) => [
-          channel.id,
-          {
-            visibility: channel.visibility,
-            isOwnedByCurrentUser: ownedAccountIds.has(
-              channel.connectedAccountId,
-            ),
-          },
-        ]),
-      );
 
       const orderedEvents = events.sort(
         (a, b) => ids.indexOf(a.id) - ids.indexOf(b.id),
@@ -277,41 +220,23 @@ export class TimelineCalendarEventService {
 
         const participants = await Promise.all(participantPromises);
 
-        const hasFullAccess = event.calendarChannelEventAssociations.some(
-          (association) => {
-            const channel = calendarChannelMap.get(
-              association.calendarChannelId,
-            );
-
-            return (
-              channel?.visibility === 'SHARE_EVERYTHING' ||
-              channel?.isOwnedByCurrentUser
-            );
-          },
-        );
-
-        const visibility = hasFullAccess
-          ? CalendarChannelVisibility.SHARE_EVERYTHING
-          : CalendarChannelVisibility.METADATA;
+        const content = calendarEventContentById.get(event.id);
 
         return {
-          ...omit(event, [
-            'calendarEventParticipants',
-            'calendarChannelEventAssociations',
-          ]),
-          title:
-            visibility === CalendarChannelVisibility.METADATA
-              ? FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
-              : (event.title ?? ''),
-          description:
-            visibility === CalendarChannelVisibility.METADATA
-              ? FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
-              : (event.description ?? ''),
+          ...omit(event, ['calendarEventParticipants']),
+          title: isDefined(content)
+            ? (content.title ?? '')
+            : FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+          description: isDefined(content)
+            ? (content.description ?? '')
+            : FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
           startsAt: event.startsAt as unknown as Date,
           endsAt: event.endsAt as unknown as Date,
           participants,
           callRecordings: callRecordingsByCalendarEventId.get(event.id) ?? [],
-          visibility,
+          visibility: isDefined(content)
+            ? CalendarChannelVisibility.SHARE_EVERYTHING
+            : CalendarChannelVisibility.METADATA,
           location: event.location ?? '',
           conferenceSolution: event.conferenceSolution ?? '',
         };
@@ -326,18 +251,48 @@ export class TimelineCalendarEventService {
         timelineCalendarEvents,
         relatedPersonIds: personIds,
       };
-    }, authContext);
+    });
+  }
+
+  // A role that cannot read titles or descriptions sees every event as
+  // unshared.
+  private async findReadableCalendarEventContentById(
+    calendarEventIds: string[],
+  ): Promise<
+    Map<string, Pick<CalendarEventWorkspaceEntity, 'title' | 'description'>>
+  > {
+    try {
+      const calendarEvents = await this.workspaceOrmManager
+        .getRepositoryWithContextPermissions<CalendarEventWorkspaceEntity>(
+          'calendarEvent',
+        )
+        .find({
+          where: { id: Any(calendarEventIds) },
+          select: { id: true, title: true, description: true },
+        });
+
+      return new Map(
+        calendarEvents.map((calendarEvent) => [
+          calendarEvent.id,
+          calendarEvent,
+        ]),
+      );
+    } catch (error) {
+      if (error instanceof PermissionsException) {
+        return new Map();
+      }
+
+      throw error;
+    }
   }
 
   async getCalendarEventsFromObjectRecord({
-    currentWorkspaceMemberId,
     objectNameSingular,
     recordId,
     workspaceId,
     page = 1,
     pageSize = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
   }: {
-    currentWorkspaceMemberId: string;
     objectNameSingular: string;
     recordId: string;
     workspaceId: string;
@@ -365,7 +320,6 @@ export class TimelineCalendarEventService {
     }
 
     return this.getCalendarEventsFromPersonIds({
-      currentWorkspaceMemberId,
       personIds,
       workspaceId,
       page,

@@ -5,7 +5,6 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
 import { Dropdown, SettingsRow, TintedIconTile } from 'twenty-ui/components';
 import { IconCube } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -36,14 +35,6 @@ export const SidePanelObjectFilterDropdownContent = ({
   const searchFilter = filterSearch.toLowerCase();
 
   const displayedObjects = readableObjectMetadataItems.filter((item) => {
-    if (
-      OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS.includes(
-        item.nameSingular as (typeof OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS)[number],
-      )
-    ) {
-      return false;
-    }
-
     if (!sidePanelShowHiddenObjects && !item.isSearchable) {
       return false;
     }
