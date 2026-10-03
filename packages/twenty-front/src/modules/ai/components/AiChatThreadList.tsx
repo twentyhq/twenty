@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
+import { type CommandMenuDropdownTriggerEvent } from '@/command-menu-item/hooks/useOpenCommandMenuDropdownAtCursor';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 
@@ -24,7 +25,7 @@ type AiChatThreadListProps = {
   ) => void;
   onThreadContextMenu?: (
     thread: AgentChatThreadRecord,
-    event: MouseEvent<HTMLDivElement>,
+    event: CommandMenuDropdownTriggerEvent,
   ) => void;
   onDetachThread?: (threadId: string) => void;
 };

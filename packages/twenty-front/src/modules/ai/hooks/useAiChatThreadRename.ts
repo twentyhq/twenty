@@ -2,34 +2,56 @@ import { useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components';
 
+import { aiChatThreadIdBeingRenamedComponentState } from '@/ai/states/aiChatThreadIdBeingRenamedComponentState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 
-export const useAiChatThreadRename = (thread: {
-  id: string;
-  title?: string | null;
+export const useAiChatThreadRename = ({
+  thread,
+  commandMenuInstanceId,
+}: {
+  thread: {
+    id: string;
+    title?: string | null;
+  };
+  commandMenuInstanceId: string;
 }) => {
   const { updateOneRecord } = useUpdateOneRecord();
   const { enqueueToast } = useToast();
 
-  const [isRenaming, setIsRenaming] = useState(false);
-  const [draftTitle, setDraftTitle] = useState(thread.title ?? '');
+  const [aiChatThreadIdBeingRenamed, setAiChatThreadIdBeingRenamed] =
+    useAtomComponentState(
+      aiChatThreadIdBeingRenamedComponentState,
+      commandMenuInstanceId,
+    );
+  const [draftTitle, setDraftTitle] = useState<string | null>(null);
 
-  const startRename = () => {
-    setDraftTitle(thread.title ?? '');
-    setIsRenaming(true);
+  const isRenaming = aiChatThreadIdBeingRenamed === thread.id;
+
+  // Rename can end from another chat, so each rename starts from the title
+  const [wasRenaming, setWasRenaming] = useState(isRenaming);
+
+  if (wasRenaming !== isRenaming) {
+    setWasRenaming(isRenaming);
+    setDraftTitle(null);
+  }
+
+  // A save that ends late must not close a rename started on another chat
+  const stopRenaming = () => {
+    setAiChatThreadIdBeingRenamed((currentThreadId) =>
+      currentThreadId === thread.id ? null : currentThreadId,
+    );
+    setDraftTitle(null);
   };
 
-  const cancelRename = () => {
-    setIsRenaming(false);
-    setDraftTitle(thread.title ?? '');
-  };
+  const cancelRename = stopRenaming;
 
   const commitRename = async (nextTitle: string) => {
     const trimmed = nextTitle.trim();
 
     if (trimmed.length === 0 || trimmed === (thread.title ?? '')) {
-      setIsRenaming(false);
+      stopRenaming();
       return;
     }
 
@@ -39,7 +61,7 @@ export const useAiChatThreadRename = (thread: {
         idToUpdate: thread.id,
         updateOneRecordInput: { title: trimmed },
       });
-      setIsRenaming(false);
+      stopRenaming();
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }
@@ -47,9 +69,8 @@ export const useAiChatThreadRename = (thread: {
 
   return {
     isRenaming,
-    draftTitle,
+    draftTitle: draftTitle ?? thread.title ?? '',
     setDraftTitle,
-    startRename,
     cancelRename,
     commitRename,
   };

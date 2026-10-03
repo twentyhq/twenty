@@ -3,6 +3,8 @@ import { type MouseEvent, useId } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
+import { IconDotsVertical } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
@@ -11,7 +13,10 @@ import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers'
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { type CommandMenuDropdownTriggerEvent } from '@/command-menu-item/hooks/useOpenCommandMenuDropdownAtCursor';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
@@ -126,7 +131,7 @@ type AiChatThreadListItemProps = {
   ) => void;
   onContextMenu?: (
     thread: AgentChatThreadRecord,
-    event: MouseEvent<HTMLDivElement>,
+    event: CommandMenuDropdownTriggerEvent,
   ) => void;
   onDetach?: () => void;
 };
@@ -139,14 +144,22 @@ export const AiChatThreadListItem = ({
   onDetach,
 }: AiChatThreadListItemProps) => {
   const { t } = useLingui();
-  const {
-    isRenaming,
-    draftTitle,
-    setDraftTitle,
-    startRename,
-    cancelRename,
-    commitRename,
-  } = useAiChatThreadRename(thread);
+  const actionsInstanceId = useId();
+  const commandMenuInstanceIdFromContext = useAvailableComponentInstanceId(
+    CommandMenuComponentInstanceContext,
+  );
+
+  // A list with a context menu opens it from "..." too, so both show the
+  // same items
+  const sharedCommandMenuInstanceId = isDefined(onContextMenu)
+    ? commandMenuInstanceIdFromContext
+    : undefined;
+
+  const commandMenuInstanceId =
+    sharedCommandMenuInstanceId ?? actionsInstanceId;
+
+  const { isRenaming, draftTitle, setDraftTitle, cancelRename, commitRename } =
+    useAiChatThreadRename({ thread, commandMenuInstanceId });
 
   const { isUnread, event } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
@@ -188,13 +201,14 @@ export const AiChatThreadListItem = ({
         );
     }
   };
-  const actionsInstanceId = useId();
-  const itemMenuDropdownId =
-    getCommandMenuDropdownIdFromCommandMenuId(actionsInstanceId);
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    itemMenuDropdownId,
+    getCommandMenuDropdownIdFromCommandMenuId(commandMenuInstanceId),
   );
+
+  // The shared menu opens on the selected chats, so only they keep "..." shown
+  const isMenuOpenOnThread =
+    isDropdownOpen && (!isDefined(sharedCommandMenuInstanceId) || isSelected);
   return (
     <StyledThreadItem
       $isSelected={isSelected}
@@ -257,7 +271,7 @@ export const AiChatThreadListItem = ({
                 <VisibilityHidden>{t`, unread`}</VisibilityHidden>
               )}
             </StyledThreadTitle>
-            <StyledActivityTime $isDropdownOpen={isDropdownOpen}>
+            <StyledActivityTime $isDropdownOpen={isMenuOpenOnThread}>
               {getActivityTimeLabel()}
             </StyledActivityTime>
           </StyledThreadHeading>
@@ -265,15 +279,35 @@ export const AiChatThreadListItem = ({
         <StyledThreadPreview>{previewText}</StyledThreadPreview>
       </StyledThreadContent>
       <StyledMenuTrigger
-        $isDropdownOpen={isDropdownOpen}
+        $isDropdownOpen={isMenuOpenOnThread}
         onClick={(event) => event.stopPropagation()}
       >
-        <AiChatThreadActionsDropdown
-          thread={thread}
-          instanceId={actionsInstanceId}
-          onRenameRequested={startRename}
-          onDetach={onDetach}
-        />
+        {isDefined(sharedCommandMenuInstanceId) ? (
+          <LightIconButton
+            aria-label={t`Chat actions`}
+            aria-haspopup="menu"
+            aria-expanded={isMenuOpenOnThread}
+            emphasis="subtle"
+            onClick={(event) => {
+              const { left, bottom } =
+                event.currentTarget.getBoundingClientRect();
+
+              onContextMenu?.(thread, {
+                preventDefault: () => event.preventDefault(),
+                clientX: left,
+                clientY: bottom,
+              });
+            }}
+          >
+            <IconDotsVertical />
+          </LightIconButton>
+        ) : (
+          <AiChatThreadActionsDropdown
+            thread={thread}
+            instanceId={actionsInstanceId}
+            onDetach={onDetach}
+          />
+        )}
       </StyledMenuTrigger>
     </StyledThreadItem>
   );
