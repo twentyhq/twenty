@@ -6,7 +6,7 @@ import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/get
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
-import { lastSelectedRecordIndexComponentState } from '@/object-record/record-selection/states/lastSelectedRecordIndexComponentState';
+import { recordSelectionRangeComponentState } from '@/object-record/record-selection/states/recordSelectionRangeComponentState';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -35,8 +35,8 @@ export const useResetRecordSelection = (recordIndexId?: string) => {
     instanceId,
   );
 
-  const lastSelectedRecordIndex = useAtomComponentStateCallbackState(
-    lastSelectedRecordIndexComponentState,
+  const recordSelectionRange = useAtomComponentStateCallbackState(
+    recordSelectionRangeComponentState,
     instanceId,
   );
 
@@ -49,7 +49,7 @@ export const useResetRecordSelection = (recordIndexId?: string) => {
     }
 
     store.set(hasUserSelectedAllRecords, false);
-    store.set(lastSelectedRecordIndex, null);
+    store.set(recordSelectionRange, null);
 
     closeDropdown(
       getCommandMenuDropdownIdFromCommandMenuId(
@@ -60,7 +60,7 @@ export const useResetRecordSelection = (recordIndexId?: string) => {
     selectedRecordIds,
     isRecordSelectedFamilyState,
     hasUserSelectedAllRecords,
-    lastSelectedRecordIndex,
+    recordSelectionRange,
     closeDropdown,
     instanceId,
     store,

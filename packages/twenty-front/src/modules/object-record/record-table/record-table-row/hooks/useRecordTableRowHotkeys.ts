@@ -7,7 +7,7 @@ import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useA
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { getRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellFocusId';
-import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
+import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
 import { isAtLeastOneRecordSelectedComponentSelector } from '@/object-record/record-selection/states/selectors/isAtLeastOneRecordSelectedComponentSelector';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -18,10 +18,10 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { Key } from 'ts-key-enum';
 
 export const useRecordTableRowHotkeys = (focusId: string) => {
-  const { isSelected, recordId, objectNameSingular, rowIndex } =
+  const { recordId, objectNameSingular, rowIndex } =
     useRecordTableRowContextOrThrow();
 
-  const { setCurrentRowSelected } = useSetCurrentRowSelected();
+  const { toggleRecordSelection } = useToggleRecordSelection();
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
@@ -38,16 +38,11 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
   const handleSelectRow = () => {
-    setCurrentRowSelected({
-      newSelectedState: !isSelected,
-    });
+    toggleRecordSelection({ recordId });
   };
 
   const handleSelectRowWithShift = () => {
-    setCurrentRowSelected({
-      newSelectedState: !isSelected,
-      shouldSelectRange: true,
-    });
+    toggleRecordSelection({ recordId, shouldSelectRange: true });
   };
 
   const handleOpenRecordInSidePanel = () => {
