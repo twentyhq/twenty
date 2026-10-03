@@ -1,14 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  ASK_QUESTIONS_TOOL_NAME,
-  type AskQuestionItem,
-  PROPOSE_TOOL_CALL_TOOL_NAME,
-  type ProposeToolCallToolInput,
-  type ProposedToolCall,
-  REQUEST_FORM_TOOL_NAME,
-  type RequestFormField,
-} from 'twenty-shared/ai';
+import { type AskQuestionItem, type RequestFormField } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
@@ -22,11 +14,7 @@ import { v5 } from 'uuid';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
-import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
-import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
-import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
-import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -38,6 +26,13 @@ import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { OPPORTUNITY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { askQuestionsCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/ask-questions-call.util';
+import { buildSendEmailArguments } from 'src/engine/workspace-manager/dev-seeder/data/utils/build-send-email-arguments.util';
+import { proposeEmailCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/propose-email-call.util';
+import { proposeRecordCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/propose-record-call.util';
+import { requestFormCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/request-form-call.util';
+import { type SeededEmail } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-email.type';
+import { type SeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-call.type';
 
 const AGENT_CHAT_PENDING_INPUT_SEED_NAMESPACE =
   '3c7e1f52-8a4d-4b0e-9d61-2f5a7c9e0b14';
@@ -97,14 +92,6 @@ const ONBOARDING_OWNER_QUESTIONS: AskQuestionItem[] = [
   },
 ];
 
-export type SeededEmail = {
-  to: string;
-  cc?: string;
-  subject: string;
-  // HTML, as the email tools read a string body
-  body: string;
-};
-
 const AIRBNB_FOLLOW_UP_EMAIL: SeededEmail = {
   to: 'partnerships@airbnb.com',
   cc: 'tim@apple.dev',
@@ -117,51 +104,6 @@ const STRIPE_QUOTE_EMAIL: SeededEmail = {
   subject: 'Your renewal quote for 2027',
   body: '<p>Hi Stripe team,</p><p>Please find your renewal quote for 2027 below: 120 seats on the Organization plan, with the 10% multi-year discount we discussed.</p><p>Let me know if anything needs to change before you sign.</p><p>Best,<br>Tim</p>',
 };
-
-export type SeededToolCall = {
-  toolName: string;
-  input: Record<string, unknown>;
-  buildPendingOutput: () => Promise<Record<string, unknown>>;
-};
-
-export const buildSendEmailArguments = (email: SeededEmail) => ({
-  recipients: { to: email.to, cc: email.cc ?? '', bcc: '' },
-  subject: email.subject,
-  body: email.body,
-});
-
-export const proposeEmailCall = (email: SeededEmail): SeededToolCall => {
-  const input: ProposeToolCallToolInput = {
-    toolName: 'send_email',
-    arguments: buildSendEmailArguments(email),
-    summary: email.subject,
-  };
-  const resolution = resolveEmailToolCallProposal(input);
-
-  if ('error' in resolution) {
-    throw new Error(`Seeded email does not resolve: ${resolution.error}`);
-  }
-
-  return {
-    toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
-    input,
-    buildPendingOutput: async () =>
-      buildProposeToolCallPendingOutput(resolution.proposal),
-  };
-};
-
-// mirrors what resolveProposedToolCall builds, so the cards render as they would for a live agent
-export const proposeRecordCall = (
-  proposal: Omit<ProposedToolCall, 'alternativeToolNames'>,
-): SeededToolCall => ({
-  toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
-  input: {
-    toolName: proposal.toolName,
-    arguments: proposal.arguments,
-    summary: proposal.summary,
-  },
-  buildPendingOutput: async () => buildProposeToolCallPendingOutput(proposal),
-});
 
 // the snapshot holds the seeded values, so approving the update runs instead of reporting a conflict
 const IPAD_DEAL_HANDOVER_CALL = proposeRecordCall({
@@ -204,25 +146,6 @@ const STALE_DEAL_DELETION_CALL = proposeRecordCall({
   objectNameSingular: 'opportunity',
   recordId: OPPORTUNITY_DATA_SEED_IDS.ID_7,
   arguments: { id: OPPORTUNITY_DATA_SEED_IDS.ID_7 },
-});
-
-export const askQuestionsCall = (
-  questions: AskQuestionItem[],
-): SeededToolCall => ({
-  toolName: ASK_QUESTIONS_TOOL_NAME,
-  input: { questions },
-  buildPendingOutput: () =>
-    createAskQuestionsTool({ isWorkspaceSetupThread: false }).execute({
-      questions,
-    }),
-});
-
-export const requestFormCall = (
-  fields: RequestFormField[],
-): SeededToolCall => ({
-  toolName: REQUEST_FORM_TOOL_NAME,
-  input: { fields },
-  buildPendingOutput: () => createRequestFormTool().execute({ fields }),
 });
 
 const AIRBNB_EXPANSION_FIELDS: RequestFormField[] = [

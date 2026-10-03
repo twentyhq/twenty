@@ -4,7 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { useLoadRecordInStore } from '@/object-record/record-store/hooks/useLoadRecordInStore';
+import { AiChatToolCallApprovalRecordStoreEffect } from '@/ai/components/internal/AiChatToolCallApprovalRecordStoreEffect';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 
 const StyledRecordRow = styled.div`
   align-items: center;
@@ -25,16 +26,15 @@ type AiChatToolCallApprovalRecordProps = {
   isDeletion: boolean;
 };
 
-// loads the record in the store, where the fields' current values are read
 export const AiChatToolCallApprovalRecord = ({
   objectNameSingular,
   recordId,
   isDeletion,
 }: AiChatToolCallApprovalRecordProps) => {
   const { t } = useLingui();
-  const { record, loading, error } = useLoadRecordInStore({
+  const { record, loading, error } = useFindOneRecord({
     objectNameSingular,
-    recordId,
+    objectRecordId: recordId,
   });
 
   if (loading) {
@@ -45,7 +45,10 @@ export const AiChatToolCallApprovalRecord = ({
     <StyledRecordRow>
       {isDeletion ? t`This record will be deleted:` : t`Record:`}
       {isDefined(record) ? (
-        <RecordChip objectNameSingular={objectNameSingular} record={record} />
+        <>
+          <AiChatToolCallApprovalRecordStoreEffect record={record} />
+          <RecordChip objectNameSingular={objectNameSingular} record={record} />
+        </>
       ) : (
         // approving still runs the call, which then fails, so the person must see why
         <StyledMissingRecord>

@@ -31,7 +31,6 @@ export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
 export { PROPOSE_TOOL_CALL_TOOL_NAME } from './constants/propose-tool-call-tool-name.const';
-export type { ProposedToolCallTemplate } from './constants/proposed-tool-call-templates.const';
 export { PROPOSED_TOOL_CALL_TEMPLATES } from './constants/proposed-tool-call-templates.const';
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
@@ -69,11 +68,10 @@ export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type { ModelConfiguration } from './types/ModelConfiguration';
 export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
 export type { ProposedToolCall } from './types/ProposedToolCall';
+export type { ProposedToolCallTemplate } from './types/ProposedToolCallTemplate';
 export type { ProposeToolCallToolInput } from './types/ProposeToolCallToolInput';
-export type {
-  ProposeToolCallToolStatus,
-  ProposeToolCallToolResult,
-} from './types/ProposeToolCallToolResult';
+export type { ProposeToolCallToolResult } from './types/ProposeToolCallToolResult';
+export type { ProposeToolCallToolStatus } from './types/ProposeToolCallToolStatus';
 export type {
   RequestFormField,
   RequestFormToolInput,

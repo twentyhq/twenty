@@ -1,4 +1,4 @@
-import { type ProposedToolCallTemplate } from '@/ai/constants/proposed-tool-call-templates.const';
+import { type ProposedToolCallTemplate } from '@/ai/types/ProposedToolCallTemplate';
 
 // Resolved by the server when the call is proposed: the card picks its template from it, and
 // currentValues holds the fields an update changes as they were, so a later edit can be detected.
