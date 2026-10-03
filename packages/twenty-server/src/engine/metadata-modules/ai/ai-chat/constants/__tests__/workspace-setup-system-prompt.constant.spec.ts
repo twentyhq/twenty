@@ -11,7 +11,7 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
 
   it('should state the two-call reply contract up front', () => {
     expect(prompt).toContain(
-      'While the setup runs, every reply of yours ends with one of two tool calls, ask_questions or complete_workspace_setup, as the final section below spells out',
+      'While the setup runs, every reply of yours ends with one of two tool calls, ask_question or complete_workspace_setup, as the final section below spells out',
     );
   });
 
@@ -63,10 +63,10 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
     expect(prompt).not.toContain('browsing_context');
   });
 
-  it('should instruct a text-first first reply with the mandatory ask_questions call', () => {
-    expect(prompt).toContain('required ask_questions call');
+  it('should instruct a text-first first reply with the mandatory ask_question call', () => {
+    expect(prompt).toContain('required ask_question call');
     expect(prompt).toContain(
-      'reply is unfinished until the ask_questions call is made',
+      'reply is unfinished until the ask_question call is made',
     );
     expect(prompt).toContain('needs no skill and no learn_tools step');
     expect(prompt).toContain(
@@ -96,14 +96,14 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
   it('should open with the migration-or-scratch question as a tool call', () => {
     expect(prompt).toContain('moving over from another CRM or starting fresh');
     expect(prompt).toContain(
-      'Then stop writing and make the ask_questions call',
+      'Then stop writing and make the ask_question call',
     );
     expect(prompt).toContain('leaving any other CRM to the free-text answer');
     expect(prompt).toContain('follow the migration path below');
   });
 
   it('should request the CRM export in plain text so the upload composer stays available', () => {
-    expect(prompt).toContain('end that reply without calling ask_questions');
+    expect(prompt).toContain('end that reply without calling ask_question');
     expect(prompt).toContain('cannot take attachments');
     expect(prompt).toContain('upload all their CSV exports at once');
     expect(prompt).toContain('as separate files');
@@ -134,10 +134,10 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
     expect(prompt).not.toContain('under 250 words');
   });
 
-  it('should ask about the data model with the ask_questions tool', () => {
+  it('should ask about the data model with the ask_question tool', () => {
     expect(prompt).toContain('Never stop after presenting the proposal');
     expect(prompt).toContain(
-      'The turn is unfinished until you call ask_questions asking whether to go ahead and build it',
+      'The turn is unfinished until you call ask_question asking whether to go ahead and build it',
     );
     expect(prompt).toContain('Ask it even though the answer seems obvious');
   });
@@ -161,10 +161,10 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
     expect(prompt).not.toContain('navigate_app');
   });
 
-  it('should route what comes next through a mandatory ask_questions call', () => {
+  it('should route what comes next through a mandatory ask_question call', () => {
     expect(prompt).toContain('## What comes next');
     expect(prompt).toContain(
-      'Never stop after that report: the turn is unfinished until you call ask_questions letting them pick what comes next',
+      'Never stop after that report: the turn is unfinished until you call ask_question letting them pick what comes next',
     );
     expect(prompt).not.toContain('Nothing after that is a fixed sequence');
     expect(prompt).not.toContain('which single capability to propose next');
@@ -256,8 +256,8 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
     expect(prompt).toContain('each written as a chip');
   });
 
-  it('should carry the ask_questions shape rules the base prompt no longer provides', () => {
-    expect(prompt).toContain('Route decisions through ask_questions');
+  it('should carry the ask_question shape rules the base prompt no longer provides', () => {
+    expect(prompt).toContain('Route decisions through ask_question');
     expect(prompt).toContain(
       'a question mark in your text means the call is missing',
     );
@@ -280,14 +280,14 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
   it('should end every setup reply on one of the two calls, after its text', () => {
     expect(prompt).toContain('## How every reply ends');
     expect(prompt).toContain(
-      'ends in exactly one of two ways: the ask_questions call, or the complete_workspace_setup call',
+      'ends in exactly one of two ways: the ask_question call, or the complete_workspace_setup call',
     );
     expect(prompt).toContain('The only exception is the CSV upload request');
     expect(prompt).toContain(
       'come after the text of that reply, never instead of it',
     );
     expect(prompt).toContain(
-      'while anything is still worth building, it is the ask_questions call',
+      'while anything is still worth building, it is the ask_question call',
     );
     expect(prompt).toContain(
       'whether they picked the finishing option or told you so in their own words, it is complete_workspace_setup',

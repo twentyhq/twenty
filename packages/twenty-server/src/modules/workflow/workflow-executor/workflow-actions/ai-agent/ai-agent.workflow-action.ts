@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
-  ASK_QUESTIONS_TOOL_NAME,
+  ASK_QUESTION_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { isDefined, resolveInput } from 'twenty-shared/utils';
@@ -13,7 +13,7 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
-import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
+import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/workflow-base-system-prompt.const';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
@@ -167,7 +167,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         : WORKFLOW_BASE_SYSTEM_PROMPT,
       pausingTools: canAskForHumanInput
         ? {
-            [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
+            [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
               isWorkspaceSetupThread: false,
             }),
             [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),

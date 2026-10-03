@@ -17,6 +17,7 @@ import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai/utils/isHiddenCompl
 import { styled } from '@linaria/react';
 import { getToolName, isToolUIPart } from 'ai';
 import {
+  ASK_QUESTION_TOOL_NAME,
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
   isSucceededCompleteWorkspaceSetupToolPart,
@@ -61,7 +62,10 @@ const MessagePartRenderer = ({
       );
     default:
       if (isToolUIPart(part)) {
-        if (getToolName(part) === ASK_QUESTIONS_TOOL_NAME) {
+        if (
+          getToolName(part) === ASK_QUESTION_TOOL_NAME ||
+          getToolName(part) === ASK_QUESTIONS_TOOL_NAME
+        ) {
           return (
             <AiChatQuestionStatusRenderer
               toolPart={part}

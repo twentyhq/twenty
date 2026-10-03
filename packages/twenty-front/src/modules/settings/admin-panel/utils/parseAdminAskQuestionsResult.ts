@@ -1,5 +1,6 @@
 import { isArray, isBoolean, isNumber, isString } from '@sniptt/guards';
 import {
+  ASK_QUESTION_TOOL_NAME,
   ASK_QUESTIONS_TOOL_NAME,
   type AskQuestionAnswer,
   type AskQuestionItem,
@@ -141,29 +142,52 @@ const parseStoredResult = (
 };
 
 const parsePendingResultFromToolInput = (
-  toolInput: unknown,
+  questionsInput: unknown,
 ): AdminAskQuestionsResult | null => {
-  if (!isPlainObject(toolInput)) {
-    return null;
-  }
-
-  const questions = parseQuestions(toolInput.questions);
+  const questions = parseQuestions(questionsInput);
 
   return isDefined(questions) ? { questions, status: 'pending' } : null;
 };
 
+// an ask_question call holds one question, read as a list of one
+const toQuestionList = (
+  result: Record<string, unknown>,
+): Record<string, unknown> => ({
+  questions: [result.question],
+  status: result.status,
+  answers: isPlainObject(result.answer)
+    ? [{ questionIndex: 0, ...result.answer }]
+    : undefined,
+});
+
 export const parseAdminAskQuestionsResult = (
   part: AdminChatThreadMessagePart,
 ): AdminAskQuestionsResult | null => {
-  if (getAdminToolDisplayName(part) !== ASK_QUESTIONS_TOOL_NAME) {
+  const toolName = getAdminToolDisplayName(part);
+
+  if (
+    toolName !== ASK_QUESTION_TOOL_NAME &&
+    toolName !== ASK_QUESTIONS_TOOL_NAME
+  ) {
     return null;
   }
 
+  const isSingleQuestion = toolName === ASK_QUESTION_TOOL_NAME;
   const storedResult = getStoredResult(parseAdminToolJson(part.toolOutput));
 
   if (isDefined(storedResult)) {
-    return parseStoredResult(storedResult);
+    return parseStoredResult(
+      isSingleQuestion ? toQuestionList(storedResult) : storedResult,
+    );
   }
 
-  return parsePendingResultFromToolInput(parseAdminToolJson(part.toolInput));
+  const toolInput = parseAdminToolJson(part.toolInput);
+
+  if (isSingleQuestion) {
+    return parsePendingResultFromToolInput([toolInput]);
+  }
+
+  return isPlainObject(toolInput)
+    ? parsePendingResultFromToolInput(toolInput.questions)
+    : null;
 };

@@ -17,6 +17,7 @@ export { AI_MODEL_TIERS } from './constants/ai-model-tier.const';
 export { AI_SDK_PACKAGE_LABELS } from './constants/ai-sdk-package-labels.const';
 export type { AiSdkPackage } from './constants/ai-sdk-packages.const';
 export { AI_SDK_PACKAGES } from './constants/ai-sdk-packages.const';
+export { ASK_QUESTION_TOOL_NAME } from './constants/ask-question-tool-name.const';
 export { ASK_QUESTIONS_TOOL_NAME } from './constants/ask-questions-tool-name.const';
 export { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from './constants/attach-conversation-to-record-tool-name.const';
 export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier.const';
@@ -49,9 +50,12 @@ export type {
 export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
 export type { AskQuestionItem } from './types/AskQuestionItem';
 export type { AskQuestionOption } from './types/AskQuestionOption';
+export type { AskQuestionResponse } from './types/AskQuestionResponse';
 export type { AskQuestionsToolInput } from './types/AskQuestionsToolInput';
 export type { AskQuestionsToolResult } from './types/AskQuestionsToolResult';
-export type { AskQuestionsToolStatus } from './types/AskQuestionsToolStatus';
+export type { AskQuestionToolInput } from './types/AskQuestionToolInput';
+export type { AskQuestionToolResult } from './types/AskQuestionToolResult';
+export type { AskQuestionToolStatus } from './types/AskQuestionToolStatus';
 export type {
   CodeExecutionFile,
   ExtendedFileUIPart,

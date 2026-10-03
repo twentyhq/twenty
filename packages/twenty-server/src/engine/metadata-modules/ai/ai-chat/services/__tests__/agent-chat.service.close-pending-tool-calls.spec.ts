@@ -18,9 +18,9 @@ const buildService = ({ claimAffected = 1 } = {}) => {
     find: jest.fn().mockResolvedValue([
       {
         id: 'part-id',
-        toolName: 'ask_questions',
-        toolInput: { questions: QUESTIONS },
-        toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
+        toolName: 'ask_question',
+        toolInput: QUESTIONS[0],
+        toolOutput: { result: { question: QUESTIONS[0], status: 'pending' } },
       },
     ]),
     writePart: jest.fn(),
@@ -80,7 +80,7 @@ describe('AgentChatService closePendingToolCalls', () => {
       expectedStatus: 'pending',
     });
     expect(JSON.parse(closedToolOutput).result).toEqual({
-      questions: QUESTIONS,
+      question: QUESTIONS[0],
       status: 'skipped',
     });
   });

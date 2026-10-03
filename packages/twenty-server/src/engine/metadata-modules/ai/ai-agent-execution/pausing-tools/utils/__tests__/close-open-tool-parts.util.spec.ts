@@ -1,5 +1,5 @@
 import {
-  ASK_QUESTIONS_TOOL_NAME,
+  ASK_QUESTION_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
 } from 'twenty-shared/ai';
 
@@ -66,9 +66,9 @@ describe('closeOpenToolParts', () => {
       await closeParts([
         {
           id: 'questions',
-          toolName: ASK_QUESTIONS_TOOL_NAME,
-          toolInput: { questions: QUESTIONS },
-          toolOutput: { result: { status: 'pending', questions: QUESTIONS } },
+          toolName: ASK_QUESTION_TOOL_NAME,
+          toolInput: QUESTIONS[0],
+          toolOutput: { result: { status: 'pending', question: QUESTIONS[0] } },
         },
       ]),
     ).toEqual([

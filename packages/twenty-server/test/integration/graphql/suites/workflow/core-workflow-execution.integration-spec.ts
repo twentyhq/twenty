@@ -1062,13 +1062,11 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   });
 
   describe('an agent step that asks a question', () => {
-    const QUESTIONS = [
-      {
-        header: 'Quote',
-        question: 'Send the quote to the customer?',
-        options: [{ label: 'Send it' }, { label: 'Hold it' }],
-      },
-    ];
+    const QUESTION = {
+      header: 'Quote',
+      question: 'Send the quote to the customer?',
+      options: [{ label: 'Send it' }, { label: 'Hold it' }],
+    };
 
     const agentStep = (nextStepIds: string[]): WorkflowAction =>
       ({
@@ -1106,19 +1104,19 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
             {
               type: 'tool-call',
               toolCallId: 'ask-1',
-              toolName: 'ask_questions',
-              input: { questions: QUESTIONS },
+              toolName: 'ask_question',
+              input: QUESTION,
             },
             {
               type: 'tool-result',
               toolCallId: 'ask-1',
-              toolName: 'ask_questions',
-              input: { questions: QUESTIONS },
+              toolName: 'ask_question',
+              input: QUESTION,
               output: {
                 success: true,
                 message:
-                  'Questions presented to the user; awaiting their answer.',
-                result: { questions: QUESTIONS, status: 'pending' },
+                  'Question presented to the user; awaiting their answer.',
+                result: { question: QUESTION, status: 'pending' },
               },
             },
           ],
@@ -1150,7 +1148,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         [threadId],
       );
       const parts = await global.testDataSource.query(
-        `SELECT part."toolCallId", part."toolOutput" FROM "${schema}"."agentMessagePart" part JOIN "${schema}"."agentMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1 AND part."toolName" = 'ask_questions' ORDER BY part."toolCallId"`,
+        `SELECT part."toolCallId", part."toolOutput" FROM "${schema}"."agentMessagePart" part JOIN "${schema}"."agentMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1 AND part."toolName" = 'ask_question' ORDER BY part."toolCallId"`,
         [threadId],
       );
 
@@ -1163,7 +1161,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           }) => ({
             toolCallId: part.toolCallId,
             status: part.toolOutput.result.status,
-            answers: part.toolOutput.result.answers,
+            answer: part.toolOutput.result.answer,
           }),
         ),
       };
@@ -1203,9 +1201,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }) =>
       answerToolCall({
         toolCall: { threadId, toolCallId },
-        response: {
-          answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
-        },
+        response: { selectedOptionIndices: [0] },
       });
 
     it('records no conversation for an agent that answers without asking', async () => {
@@ -1437,7 +1433,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           {
             toolCallId: 'ask-1',
             status: 'answered',
-            answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+            answer: { selectedOptionIndices: [0] },
           },
         ],
       });
@@ -1471,18 +1467,18 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         {
           type: 'tool-call',
           toolCallId,
-          toolName: 'ask_questions',
-          input: { questions: QUESTIONS },
+          toolName: 'ask_question',
+          input: QUESTION,
         },
         {
           type: 'tool-result',
           toolCallId,
-          toolName: 'ask_questions',
-          input: { questions: QUESTIONS },
+          toolName: 'ask_question',
+          input: QUESTION,
           output: {
             success: true,
-            message: 'Questions presented to the user; awaiting their answer.',
-            result: { questions: QUESTIONS, status: 'pending' },
+            message: 'Question presented to the user; awaiting their answer.',
+            result: { question: QUESTION, status: 'pending' },
           },
         },
       ];

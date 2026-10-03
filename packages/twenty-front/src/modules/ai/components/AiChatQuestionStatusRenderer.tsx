@@ -2,11 +2,15 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
-import { type AskQuestionsToolResult } from 'twenty-shared/ai';
+import {
+  type AskQuestionToolResult,
+  type AskQuestionsToolResult,
+} from 'twenty-shared/ai';
 import { IconHelpCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
+import { getAskedQuestionEntries } from '@/ai/utils/getAskedQuestionEntries';
 import {
   StyledAiChatAskStatusDetail,
   StyledAiChatAskStatusMessage,
@@ -45,30 +49,37 @@ export const AiChatQuestionStatusRenderer = ({
 }) => {
   const { t } = useLingui();
 
-  const result = (toolPart.output as { result?: AskQuestionsToolResult } | null)
-    ?.result;
-  const questions = result?.questions ?? [];
+  const result = (
+    toolPart.output as {
+      result?: AskQuestionToolResult | AskQuestionsToolResult;
+    } | null
+  )?.result;
   const status = result?.status ?? 'pending';
 
   if (status === 'pending') {
     return (
       <AiChatAskStatusRow
         Icon={IconHelpCircle}
-        message={t`Asking questions...`}
+        message={t`Asking a question...`}
         isShimmering={isStreaming}
       />
     );
   }
 
-  const answers = result?.answers ?? [];
+  if (status === 'skipped') {
+    return (
+      <AiChatAskStatusRow
+        Icon={IconHelpCircle}
+        message={t`Question skipped`}
+        isShimmering={false}
+      />
+    );
+  }
 
   return (
     <StyledAnswersCard>
       <StyledAiChatAskStatusMessage>{t`Answers`}</StyledAiChatAskStatusMessage>
-      {questions.map((question, index) => {
-        const answer = answers.find(
-          (candidate) => candidate.questionIndex === index,
-        );
+      {getAskedQuestionEntries(result).map(({ question, answer }, index) => {
         const selectedLabels = (answer?.selectedOptionIndices ?? [])
           .map((optionIndex) => question.options[optionIndex]?.label)
           .filter(isNonEmptyString);

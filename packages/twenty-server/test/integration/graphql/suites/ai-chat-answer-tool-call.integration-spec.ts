@@ -12,7 +12,7 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
+import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -27,13 +27,11 @@ const schema = getWorkspaceSchemaName(workspaceId);
 const workspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE;
 const userWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JANE;
 
-const QUESTIONS = [
-  {
-    header: 'Plan',
-    question: 'Which plan should I quote?',
-    options: [{ label: 'Pro' }, { label: 'Team' }],
-  },
-];
+const QUESTION = {
+  header: 'Plan',
+  question: 'Which plan should I quote?',
+  options: [{ label: 'Pro' }, { label: 'Team' }],
+};
 
 describe('Answering a chat tool call', () => {
   const threadId = randomUUID();
@@ -53,9 +51,9 @@ describe('Answering a chat tool call', () => {
     });
 
     const assistantMessageId = randomUUID();
-    const pendingOutput = await createAskQuestionsTool({
+    const pendingOutput = await createAskQuestionTool({
       isWorkspaceSetupThread: false,
-    }).execute({ questions: QUESTIONS });
+    }).execute(QUESTION);
 
     await chat.upsertAssistantMessage({
       id: assistantMessageId,
@@ -63,10 +61,10 @@ describe('Answering a chat tool call', () => {
       turnId: userMessage.turnId,
       workspaceId,
       parts: toolCallIds.map((toolCallId) => ({
-        type: 'tool-ask_questions',
+        type: 'tool-ask_question',
         toolCallId,
         state: 'output-available',
-        input: { questions: QUESTIONS },
+        input: QUESTION,
         output: pendingOutput,
       })) as never,
     });
@@ -82,7 +80,7 @@ describe('Answering a chat tool call', () => {
   const answerQuestions = (toolCallId: string) =>
     answerToolCall({
       toolCall: { threadId, toolCallId },
-      response: { answers: [{ questionIndex: 0, selectedOptionIndices: [1] }] },
+      response: { selectedOptionIndices: [1] },
     });
 
   const readPendingQuestionMessageId = async () =>

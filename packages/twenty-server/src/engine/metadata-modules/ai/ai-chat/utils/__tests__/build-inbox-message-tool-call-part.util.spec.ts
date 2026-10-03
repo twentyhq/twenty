@@ -24,26 +24,24 @@ const build = (toolCall: unknown) =>
   });
 
 describe('buildInboxMessageToolCallPart', () => {
-  it('asks questions as a pending ask_questions call', async () => {
-    const questions = [
-      {
-        header: 'Share',
-        question: 'Share the recording?',
-        options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
-      },
-    ];
+  it('asks a question as a pending ask_question call', async () => {
+    const question = {
+      header: 'Share',
+      question: 'Share the recording?',
+      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+    };
 
     await expect(
-      build({ toolName: 'ask_questions', input: { questions } }),
+      build({ toolName: 'ask_question', input: question }),
     ).resolves.toEqual({
       isAwaitingAnswer: true,
       part: {
-        type: 'tool-ask_questions',
+        type: 'tool-ask_question',
         toolCallId: TOOL_CALL_ID,
         state: 'output-available',
-        input: { questions },
+        input: question,
         output: expect.objectContaining({
-          result: { questions, status: 'pending' },
+          result: { question, status: 'pending' },
         }),
       },
     });
@@ -171,12 +169,12 @@ describe('buildInboxMessageToolCallPart', () => {
         },
       },
     ],
-    ['invalid input', { toolName: 'ask_questions', input: { questions: [] } }],
+    ['invalid input', { toolName: 'ask_question', input: { options: [] } }],
     [
       'a tool of another application',
       { logicFunctionUniversalIdentifier: 'other-tool' },
     ],
-    ['a non-object tool call', 'ask_questions'],
+    ['a non-object tool call', 'ask_question'],
     [
       'an application tool with a non-object input',
       { logicFunctionUniversalIdentifier: 'share-recording-tool', input: [] },
@@ -191,7 +189,7 @@ describe('buildInboxMessageToolCallPart', () => {
     [
       'a tool call naming both a tool and an application tool',
       {
-        toolName: 'ask_questions',
+        toolName: 'ask_question',
         logicFunctionUniversalIdentifier: 'share-recording-tool',
       },
     ],
