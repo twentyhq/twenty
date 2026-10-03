@@ -55,10 +55,10 @@ export default {
         124,
         136,
         151,
-        155,
+        153,
+        154,
         157,
-        158,
-        161,
+        163,
         168,
         171,
         172,
@@ -3080,6 +3080,148 @@ export default {
             ]
         },
         "PageLayoutType": {},
+        "UsageQuotaDefinition": {
+            "resourceType": [
+                153
+            ],
+            "limitKind": [
+                1
+            ],
+            "allowedOperationTypes": [
+                154
+            ],
+            "allowedSpenderTypes": [
+                1
+            ],
+            "allowedMeters": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageResourceType": {},
+        "UsageOperationType": {},
+        "UsageQuotaDefinitions": {
+            "definitions": [
+                152
+            ],
+            "isIntraWorkspaceLimitEntitled": [
+                8
+            ],
+            "hasAllowancePeriod": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageQuotaWithConsumption": {
+            "id": [
+                3
+            ],
+            "resourceType": [
+                153
+            ],
+            "operationType": [
+                154
+            ],
+            "spenderType": [
+                1
+            ],
+            "spenderId": [
+                1
+            ],
+            "spenderLabel": [
+                1
+            ],
+            "periodUnit": [
+                1
+            ],
+            "meter": [
+                1
+            ],
+            "limitValue": [
+                157
+            ],
+            "isEnforced": [
+                8
+            ],
+            "consumedValue": [
+                157
+            ],
+            "remainingValue": [
+                157
+            ],
+            "periodStart": [
+                4
+            ],
+            "periodEnd": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BigInt": {},
+        "UsageQuotaScopeConsumption": {
+            "consumedValue": [
+                157
+            ],
+            "periodStart": [
+                4
+            ],
+            "periodEnd": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageLimit": {
+            "id": [
+                3
+            ],
+            "resourceType": [
+                153
+            ],
+            "operationType": [
+                154
+            ],
+            "spenderType": [
+                1
+            ],
+            "spenderId": [
+                1
+            ],
+            "limitKind": [
+                1
+            ],
+            "periodCount": [
+                31
+            ],
+            "periodUnit": [
+                1
+            ],
+            "meter": [
+                1
+            ],
+            "limitValue": [
+                157
+            ],
+            "burstValue": [
+                157
+            ],
+            "createdAt": [
+                4
+            ],
+            "updatedAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "ApplicationConnectionProviderOAuthConfig": {
             "scopes": [
                 1
@@ -3108,7 +3250,7 @@ export default {
                 1
             ],
             "oauth": [
-                152
+                160
             ],
             "logoUrl": [
                 1
@@ -3128,7 +3270,7 @@ export default {
                 15
             ],
             "status": [
-                155
+                163
             ],
             "error": [
                 9
@@ -3138,148 +3280,6 @@ export default {
             ]
         },
         "LogicFunctionExecutionStatus": {},
-        "UsageQuotaDefinition": {
-            "resourceType": [
-                157
-            ],
-            "limitKind": [
-                1
-            ],
-            "allowedOperationTypes": [
-                158
-            ],
-            "allowedSpenderTypes": [
-                1
-            ],
-            "allowedMeters": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageResourceType": {},
-        "UsageOperationType": {},
-        "UsageQuotaDefinitions": {
-            "definitions": [
-                156
-            ],
-            "isIntraWorkspaceLimitEntitled": [
-                8
-            ],
-            "hasAllowancePeriod": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageQuotaWithConsumption": {
-            "id": [
-                3
-            ],
-            "resourceType": [
-                157
-            ],
-            "operationType": [
-                158
-            ],
-            "spenderType": [
-                1
-            ],
-            "spenderId": [
-                1
-            ],
-            "spenderLabel": [
-                1
-            ],
-            "periodUnit": [
-                1
-            ],
-            "meter": [
-                1
-            ],
-            "limitValue": [
-                161
-            ],
-            "isEnforced": [
-                8
-            ],
-            "consumedValue": [
-                161
-            ],
-            "remainingValue": [
-                161
-            ],
-            "periodStart": [
-                4
-            ],
-            "periodEnd": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BigInt": {},
-        "UsageQuotaScopeConsumption": {
-            "consumedValue": [
-                161
-            ],
-            "periodStart": [
-                4
-            ],
-            "periodEnd": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageLimit": {
-            "id": [
-                3
-            ],
-            "resourceType": [
-                157
-            ],
-            "operationType": [
-                158
-            ],
-            "spenderType": [
-                1
-            ],
-            "spenderId": [
-                1
-            ],
-            "limitKind": [
-                1
-            ],
-            "periodCount": [
-                31
-            ],
-            "periodUnit": [
-                1
-            ],
-            "meter": [
-                1
-            ],
-            "limitValue": [
-                161
-            ],
-            "burstValue": [
-                161
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "FileWithSignedUrl": {
             "id": [
                 3
@@ -6781,10 +6781,10 @@ export default {
         },
         "AiChatUsage": {
             "limitValue": [
-                161
+                157
             ],
             "consumedValue": [
-                161
+                157
             ],
             "periodEnd": [
                 4
@@ -7595,16 +7595,16 @@ export default {
                 }
             ],
             "usageLimits": [
-                163
-            ],
-            "usageQuotasWithConsumption": [
-                160
-            ],
-            "usageQuotaDefinitions": [
                 159
             ],
+            "usageQuotasWithConsumption": [
+                156
+            ],
+            "usageQuotaDefinitions": [
+                155
+            ],
             "usageQuotaScopeConsumption": [
-                162,
+                158,
                 {
                     "input": [
                         427,
@@ -7866,7 +7866,7 @@ export default {
                 200
             ],
             "applicationConnectionProviders": [
-                153,
+                161,
                 {
                     "applicationId": [
                         3,
@@ -8554,10 +8554,10 @@ export default {
         },
         "UsageQuotaScopeInput": {
             "resourceType": [
-                157
+                153
             ],
             "operationType": [
-                158
+                154
             ],
             "spenderType": [
                 1
@@ -8640,7 +8640,7 @@ export default {
                 1
             ],
             "operationTypes": [
-                158
+                154
             ],
             "__typename": [
                 1
@@ -9034,7 +9034,7 @@ export default {
                 }
             ],
             "createUsageLimit": [
-                163,
+                159,
                 {
                     "input": [
                         455,
@@ -9043,7 +9043,7 @@ export default {
                 }
             ],
             "updateUsageLimit": [
-                163,
+                159,
                 {
                     "input": [
                         456,
@@ -9525,7 +9525,7 @@ export default {
                 }
             ],
             "executeOneLogicFunction": [
-                154,
+                162,
                 {
                     "input": [
                         510,
@@ -11637,10 +11637,10 @@ export default {
         "Upload": {},
         "CreateUsageLimitInput": {
             "resourceType": [
-                157
+                153
             ],
             "operationType": [
-                158
+                154
             ],
             "spenderType": [
                 1
@@ -11661,10 +11661,10 @@ export default {
                 1
             ],
             "limitValue": [
-                161
+                157
             ],
             "burstValue": [
-                161
+                157
             ],
             "__typename": [
                 1

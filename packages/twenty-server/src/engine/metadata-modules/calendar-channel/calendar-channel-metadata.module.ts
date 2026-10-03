@@ -9,6 +9,7 @@ import { CalendarChannelResolver } from 'src/engine/metadata-modules/calendar-ch
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { ChannelRecordShareModule } from 'src/modules/connected-account/channel-record-share/channel-record-share.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     FeatureFlagModule,
     ConnectedAccountMetadataModule,
     WorkspaceEventEmitterModule,
+    ChannelRecordShareModule,
   ],
   providers: [
     CalendarChannelMetadataService,

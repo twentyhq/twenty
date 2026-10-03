@@ -32,6 +32,8 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE } from 'src/modules/connected-account/channel-record-share/constants/message-thread-channel-record-share-source.constant';
+import { ChannelRecordShareService } from 'src/modules/connected-account/channel-record-share/services/channel-record-share.service';
 import { INBOUND_EMAIL_LOCAL_PART_PREFIX } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-prefix.constant';
 import { INBOUND_EMAIL_LOCAL_PART_RANDOM_BYTES } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-random-bytes.constant';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
@@ -45,6 +47,7 @@ export class MessageChannelMetadataService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailingDomainService: EmailingDomainService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly channelRecordShareService: ChannelRecordShareService,
   ) {}
 
   async findAll(workspaceId: string): Promise<MessageChannelDTO[]> {
@@ -242,10 +245,24 @@ export class MessageChannelMetadataService {
     workspaceId: string;
     data: Partial<MessageChannelEntity>;
   }): Promise<MessageChannelDTO> {
-    await this.repository.update(
-      { id, workspaceId },
-      data as Record<string, unknown>,
-    );
+    const { visibility, ...otherFields } = data;
+
+    // Written first so that a failed grant sync leaves the channel untouched
+    if (isDefined(visibility)) {
+      await this.channelRecordShareService.changeChannelVisibility({
+        workspaceId,
+        source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+        channelId: id,
+        visibility,
+      });
+    }
+
+    if (Object.keys(otherFields).length > 0) {
+      await this.repository.update(
+        { id, workspaceId },
+        otherFields as Record<string, unknown>,
+      );
+    }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }

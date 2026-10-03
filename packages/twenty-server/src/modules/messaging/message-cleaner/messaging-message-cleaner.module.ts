@@ -5,6 +5,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { ChannelRecordShareModule } from 'src/modules/connected-account/channel-record-share/channel-record-share.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MatchParticipantModule } from 'src/modules/match-participant/match-participant.module';
 import { MessagingMessageCleanerRemoveOrphansCommand } from 'src/modules/messaging/message-cleaner/commands/messaging-message-clearner-remove-orphans.command';
@@ -23,6 +24,7 @@ import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cl
     MessagingCommonModule,
     MatchParticipantModule,
     WorkspaceIteratorModule,
+    ChannelRecordShareModule,
   ],
   providers: [
     MessagingConnectedAccountDeletionCleanupJob,

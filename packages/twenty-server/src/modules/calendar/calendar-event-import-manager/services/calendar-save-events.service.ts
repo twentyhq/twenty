@@ -8,6 +8,8 @@ import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE } from 'src/modules/connected-account/channel-record-share/constants/calendar-event-channel-record-share-source.constant';
+import { ChannelRecordShareService } from 'src/modules/connected-account/channel-record-share/services/channel-record-share.service';
 import { buildCalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/utils/build-calendar-event-save-operations.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { buildCalendarEventParticipantSaveOperations } from 'src/modules/calendar/calendar-event-participant-manager/utils/build-calendar-event-participant-save-operations.util';
@@ -20,6 +22,7 @@ export class CalendarSaveEventsService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
+    private readonly channelRecordShareService: ChannelRecordShareService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -147,6 +150,22 @@ export class CalendarSaveEventsService {
                 {
                   operations: participantOperations,
                   transactionScope,
+                },
+              );
+
+              await this.channelRecordShareService.syncChannelRecordSharesInTransaction(
+                {
+                  transactionScope,
+                  source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
+                  channelId: calendarChannel.id,
+                  recordIds: [
+                    ...saveOperations.associationsToInsert.map(
+                      ({ calendarEventId }) => calendarEventId,
+                    ),
+                    ...existingAssociations.map(
+                      ({ calendarEventId }) => calendarEventId,
+                    ),
+                  ],
                 },
               );
             },

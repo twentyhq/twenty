@@ -16,6 +16,7 @@ import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
+import { ChannelRecordShareModule } from 'src/modules/connected-account/channel-record-share/channel-record-share.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
@@ -32,6 +33,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     MessagingImportManagerModule,
     EmailingDomainModule,
     WorkspaceEventEmitterModule,
+    ChannelRecordShareModule,
   ],
   providers: [
     MessageChannelMetadataService,

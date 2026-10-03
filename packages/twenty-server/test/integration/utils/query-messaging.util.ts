@@ -2,6 +2,8 @@ import gql from 'graphql-tag';
 
 import {
   type CalendarChannelContactAutoCreationPolicy,
+  type CalendarChannelVisibility,
+  type MessageChannelVisibility,
   type MessageFolderImportPolicy,
 } from 'twenty-shared/types';
 
@@ -67,12 +69,14 @@ export type ConnectedAccountDto = Pick<
 >;
 
 type MessageChannelUpdate = {
+  visibility?: MessageChannelVisibility;
   messageFolderImportPolicy?: MessageFolderImportPolicy;
   isSyncEnabled?: boolean;
   isContactAutoCreationEnabled?: boolean;
 };
 
 type CalendarChannelUpdate = {
+  visibility?: CalendarChannelVisibility;
   isSyncEnabled?: boolean;
   isContactAutoCreationEnabled?: boolean;
   contactAutoCreationPolicy?: CalendarChannelContactAutoCreationPolicy;
@@ -92,17 +96,22 @@ const MESSAGE_CHANNEL_FIELDS = gql`
   }
 `;
 
-export const queryMessageChannels = async (): Promise<MessageChannelDto[]> => {
-  const response = await makeMetadataApiRequest({
-    query: gql`
-      query MessageChannelsForTest {
-        myMessageChannels {
-          ...TestMessageChannelFields
+export const queryMessageChannels = async (
+  token?: string,
+): Promise<MessageChannelDto[]> => {
+  const response = await makeMetadataApiRequest(
+    {
+      query: gql`
+        query MessageChannelsForTest {
+          myMessageChannels {
+            ...TestMessageChannelFields
+          }
         }
-      }
-      ${MESSAGE_CHANNEL_FIELDS}
-    `,
-  });
+        ${MESSAGE_CHANNEL_FIELDS}
+      `,
+    },
+    token,
+  );
 
   return getDataOrThrow(response).myMessageChannels as MessageChannelDto[];
 };
@@ -160,26 +169,30 @@ export const queryMessageFolders = async (
 
 export const queryCalendarChannels = async (
   connectedAccountId: string,
+  token?: string,
 ): Promise<CalendarChannelDto[]> => {
-  const response = await makeMetadataApiRequest({
-    query: gql`
-      query CalendarChannelsForTest($connectedAccountId: UUID) {
-        myCalendarChannels(connectedAccountId: $connectedAccountId) {
-          id
-          handle
-          connectedAccountId
-          syncStatus
-          syncStage
-          syncStageStartedAt
-          throttleFailureCount
-          isContactAutoCreationEnabled
-          contactAutoCreationPolicy
-          visibility
+  const response = await makeMetadataApiRequest(
+    {
+      query: gql`
+        query CalendarChannelsForTest($connectedAccountId: UUID) {
+          myCalendarChannels(connectedAccountId: $connectedAccountId) {
+            id
+            handle
+            connectedAccountId
+            syncStatus
+            syncStage
+            syncStageStartedAt
+            throttleFailureCount
+            isContactAutoCreationEnabled
+            contactAutoCreationPolicy
+            visibility
+          }
         }
-      }
-    `,
-    variables: { connectedAccountId },
-  });
+      `,
+      variables: { connectedAccountId },
+    },
+    token,
+  );
 
   return getDataOrThrow(response).myCalendarChannels as CalendarChannelDto[];
 };
@@ -297,17 +310,21 @@ export const startChannelSync = async (
 
 export const deleteConnectedAccount = async (
   connectedAccountId: string,
+  token?: string,
 ): Promise<void> => {
-  const response = await makeMetadataApiRequest({
-    query: gql`
-      mutation DeleteConnectedAccountForTest($id: UUID!) {
-        deleteConnectedAccount(id: $id) {
-          id
+  const response = await makeMetadataApiRequest(
+    {
+      query: gql`
+        mutation DeleteConnectedAccountForTest($id: UUID!) {
+          deleteConnectedAccount(id: $id) {
+            id
+          }
         }
-      }
-    `,
-    variables: { id: connectedAccountId },
-  });
+      `,
+      variables: { id: connectedAccountId },
+    },
+    token,
+  );
 
   getDataOrThrow(response);
 

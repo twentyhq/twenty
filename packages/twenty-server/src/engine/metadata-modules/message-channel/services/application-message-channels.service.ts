@@ -25,6 +25,8 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE } from 'src/modules/connected-account/channel-record-share/constants/message-thread-channel-record-share-source.constant';
+import { ChannelRecordShareService } from 'src/modules/connected-account/channel-record-share/services/channel-record-share.service';
 
 type ApplicationScope = {
   applicationId: string;
@@ -73,6 +75,7 @@ export class ApplicationMessageChannelsService {
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly channelRecordShareService: ChannelRecordShareService,
   ) {}
 
   async list({
@@ -175,25 +178,33 @@ export class ApplicationMessageChannelsService {
       id,
     });
 
-    const data: UpdatableChannelFields = {};
+    const data: Omit<UpdatableChannelFields, 'visibility'> = {};
 
     if (displayName !== undefined) {
       data.displayName = normalizeDisplayName(displayName);
-    }
-
-    if (isDefined(visibility)) {
-      data.visibility = visibility;
     }
 
     if (isDefined(isSyncEnabled)) {
       data.isSyncEnabled = isSyncEnabled;
     }
 
-    if (Object.keys(data).length === 0) {
+    if (!isDefined(visibility) && Object.keys(data).length === 0) {
       return messageChannel;
     }
 
-    await this.messageChannelRepository.update({ id, workspaceId }, data);
+    // Written first so that a failed grant sync leaves the channel untouched
+    if (isDefined(visibility)) {
+      await this.channelRecordShareService.changeChannelVisibility({
+        workspaceId,
+        source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+        channelId: id,
+        visibility,
+      });
+    }
+
+    if (Object.keys(data).length > 0) {
+      await this.messageChannelRepository.update({ id, workspaceId }, data);
+    }
 
     return this.messageChannelRepository.findOneOrFail({
       where: { id, workspaceId },

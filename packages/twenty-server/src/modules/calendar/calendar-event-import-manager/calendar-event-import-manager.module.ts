@@ -11,6 +11,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { ChannelRecordShareModule } from 'src/modules/connected-account/channel-record-share/channel-record-share.module';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/calendar-event-cleaner/calendar-event-cleaner.module';
 import { CalendarTriggerEventListFetchCommand } from 'src/modules/calendar/calendar-event-import-manager/commands/calendar-trigger-event-list-fetch.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
@@ -54,6 +55,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     ]),
     WorkspaceDataSourceModule,
     CalendarEventCleanerModule,
+    ChannelRecordShareModule,
     GoogleCalendarDriverModule,
     CalDavDriverModule,
     MicrosoftCalendarDriverModule,

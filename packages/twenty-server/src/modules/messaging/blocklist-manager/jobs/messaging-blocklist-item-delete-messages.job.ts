@@ -16,9 +16,12 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { groupBlocklistHandlesByOwner } from 'src/modules/blocklist/utils/group-blocklist-handles-by-owner.util';
+import { MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE } from 'src/modules/connected-account/channel-record-share/constants/message-thread-channel-record-share-source.constant';
+import { ChannelRecordShareService } from 'src/modules/connected-account/channel-record-share/services/channel-record-share.service';
 import { BLOCKLISTED_PARTICIPANT_ROLES } from 'src/modules/messaging/blocklist-manager/constants/blocklisted-participant-roles.constant';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -40,6 +43,7 @@ export class BlocklistItemDeleteMessagesJob {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly channelRecordShareService: ChannelRecordShareService,
   ) {}
 
   @Process(BlocklistItemDeleteMessagesJob.name)
@@ -71,6 +75,7 @@ export class BlocklistItemDeleteMessagesJob {
 
         if (workspaceScopedHandles.length > 0) {
           await this.deleteMessagesForMessageChannels({
+            workspaceId,
             messageChannels:
               await this.findWorkspaceMessageChannels(workspaceId),
             handles: workspaceScopedHandles,
@@ -79,6 +84,7 @@ export class BlocklistItemDeleteMessagesJob {
 
         for (const [workspaceMemberId, handles] of handlesByWorkspaceMemberId) {
           await this.deleteMessagesForMessageChannels({
+            workspaceId,
             messageChannels: await this.findWorkspaceMemberMessageChannels({
               workspaceMemberId,
               workspaceId,
@@ -168,9 +174,11 @@ export class BlocklistItemDeleteMessagesJob {
   }
 
   private async deleteMessagesForMessageChannels({
+    workspaceId,
     messageChannels,
     handles,
   }: {
+    workspaceId: string;
     messageChannels: MessageChannelEntity[];
     handles: string[];
   }): Promise<void> {
@@ -183,6 +191,12 @@ export class BlocklistItemDeleteMessagesJob {
     const messageParticipantRepository =
       this.workspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
         'messageParticipant',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const messageRepository =
+      this.workspaceOrmManager.getRepository<MessageWorkspaceEntity>(
+        'message',
         { shouldBypassPermissionChecks: true },
       );
 
@@ -233,8 +247,39 @@ export class BlocklistItemDeleteMessagesJob {
         continue;
       }
 
-      await messageChannelMessageAssociationRepository.delete(
-        messageChannelMessageAssociationsToDelete.map(({ id }) => id),
+      const messages = await messageRepository.find({
+        where: {
+          id: In(
+            messageChannelMessageAssociationsToDelete.map(
+              ({ messageId }) => messageId,
+            ),
+          ),
+        },
+        select: { messageThreadId: true },
+      });
+
+      await this.workspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          await transactionScope
+            .getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+              'messageChannelMessageAssociation',
+              { shouldBypassPermissionChecks: true },
+            )
+            .delete(
+              messageChannelMessageAssociationsToDelete.map(({ id }) => id),
+            );
+
+          await this.channelRecordShareService.syncChannelRecordSharesInTransaction(
+            {
+              transactionScope,
+              source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+              channelId: messageChannel.id,
+              recordIds: messages
+                .map(({ messageThreadId }) => messageThreadId)
+                .filter(isDefined),
+            },
+          );
+        },
       );
     }
   }
