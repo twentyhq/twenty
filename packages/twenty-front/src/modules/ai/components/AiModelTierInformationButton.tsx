@@ -1,21 +1,6 @@
-import {
-  FloatingPortal,
-  autoUpdate,
-  flip,
-  offset,
-  safePolygon,
-  shift,
-  useClick,
-  useDismiss,
-  useFloating,
-  useFocus,
-  useHover,
-  useInteractions,
-  useRole,
-} from '@floating-ui/react';
+import { FloatingPortal } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { isAiModelEffort } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -30,6 +15,7 @@ import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { MetricRow } from 'twenty-ui/components';
 import { themeCssVariables, useThemeContainer } from 'twenty-ui/theme';
 
+import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
 import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
@@ -80,35 +66,10 @@ export const AiModelTierInformationButton = ({
 }: AiModelTierInformationButtonProps) => {
   const { t } = useLingui();
 
-  const [isOpen, setIsOpen] = useState(false);
-
   const themeContainer = useThemeContainer();
 
-  const { refs, floatingStyles, context } = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    placement: 'top-end',
-    middleware: [offset(8), flip(), shift({ padding: 8 })],
-    whileElementsMounted: autoUpdate,
-  });
-
-  const hover = useHover(context, { handleClose: safePolygon() });
-
-  const focus = useFocus(context);
-
-  const click = useClick(context);
-
-  const dismiss = useDismiss(context);
-
-  const role = useRole(context, { role: 'tooltip' });
-
-  const { getReferenceProps, getFloatingProps } = useInteractions([
-    hover,
-    focus,
-    click,
-    dismiss,
-    role,
-  ]);
+  const { isOpen, refs, floatingStyles, getReferenceProps, getFloatingProps } =
+    useAiChatHoverCard({ placement: 'top-end', role: 'tooltip' });
 
   const model = resolvedTier.model;
 

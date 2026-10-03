@@ -33,13 +33,12 @@ export class AgentHistoryTransactionService {
               return work({
                 insert: async (name, values) => {
                   await getRepository(name).insert(
-                    name === 'agentMessage'
-                      ? await addAgentMessageSenderWorkspaceMember(
-                          values,
-                          workspaceId,
-                          context,
-                        )
-                      : values,
+                    await addAgentMessageSenderWorkspaceMember({
+                      name,
+                      values,
+                      workspaceId,
+                      context,
+                    }),
                   );
                 },
                 update: async (name, where, values) => {

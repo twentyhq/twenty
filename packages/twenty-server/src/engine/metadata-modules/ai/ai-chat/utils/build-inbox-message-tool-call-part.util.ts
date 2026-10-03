@@ -2,25 +2,27 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
-  PROPOSE_EMAIL_TOOL_NAME,
+  PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { type z } from 'zod';
 
+import { buildToolPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-tool-part.util';
 import { buildLogicFunctionToolName } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-name.util';
+import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import {
   askQuestionsInputSchema,
   buildAskQuestionsPendingOutput,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-questions.pausing-tool';
 import {
-  buildProposeEmailPendingOutput,
-  proposeEmailInputSchema,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
+  buildProposeToolCallPendingOutput,
+  proposeToolCallInputSchema,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import {
   buildRequestFormPendingOutput,
   requestFormInputSchema,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/request-form.pausing-tool';
 import {
   AiException,
   AiExceptionCode,
@@ -60,24 +62,6 @@ const parseOptionalRecord = (
     : throwInvalidToolCall(`${name} must be an object`);
 };
 
-const buildToolPart = ({
-  toolName,
-  toolCallId,
-  input,
-  output,
-}: {
-  toolName: string;
-  toolCallId: string;
-  input: unknown;
-  output: unknown;
-}): ExtendedUIMessagePart => ({
-  type: `tool-${toolName}`,
-  toolCallId,
-  state: 'output-available',
-  input,
-  output,
-});
-
 const buildPausingToolPart = ({
   toolName,
   toolCallId,
@@ -105,19 +89,27 @@ const buildPausingToolPart = ({
         input: parseInput(requestFormInputSchema, input),
         output: buildRequestFormPendingOutput(),
       });
-    case PROPOSE_EMAIL_TOOL_NAME: {
-      const email = parseInput(proposeEmailInputSchema, input);
+    case PROPOSE_TOOL_CALL_TOOL_NAME: {
+      const proposeToolCallInput = parseInput(
+        proposeToolCallInputSchema,
+        input,
+      );
+      const resolution = resolveEmailToolCallProposal(proposeToolCallInput);
+
+      if ('error' in resolution) {
+        return throwInvalidToolCall(resolution.error);
+      }
 
       return buildToolPart({
         toolName,
         toolCallId,
-        input: email,
-        output: buildProposeEmailPendingOutput(email),
+        input: proposeToolCallInput,
+        output: buildProposeToolCallPendingOutput(resolution.proposal),
       });
     }
     default:
       return throwInvalidToolCall(
-        `toolName must be ${ASK_QUESTIONS_TOOL_NAME}, ${REQUEST_FORM_TOOL_NAME} or ${PROPOSE_EMAIL_TOOL_NAME}`,
+        `toolName must be ${ASK_QUESTIONS_TOOL_NAME}, ${REQUEST_FORM_TOOL_NAME} or ${PROPOSE_TOOL_CALL_TOOL_NAME}`,
       );
   }
 };

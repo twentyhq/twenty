@@ -1,14 +1,10 @@
-import { z } from 'zod';
-
-import { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
-
-export { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME };
 
 export const attachConversationToRecordInputSchema = z.object({
   objectNameSingular: z

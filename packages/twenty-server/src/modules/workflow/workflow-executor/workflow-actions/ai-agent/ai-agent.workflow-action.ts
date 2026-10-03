@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   ASK_QUESTIONS_TOOL_NAME,
-  PROPOSE_EMAIL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { isDefined, resolveInput } from 'twenty-shared/utils';
@@ -10,13 +9,12 @@ import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
-import { createProposeEmailTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/workflow-base-system-prompt.const';
+import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -37,7 +35,7 @@ import { mergeAiAgentStepLogs } from 'src/modules/workflow/workflow-executor/wor
 import { buildAiAgentStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-ai-agent-step-log.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
-import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
+import { isWorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/guards/is-workflow-ai-agent-action.guard';
 
 @Injectable()
 export class AiAgentWorkflowAction implements WorkflowAction {
@@ -48,6 +46,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
+    private readonly conversationReaderService: AgentConversationReaderService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
@@ -153,11 +152,10 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       ...(isDefined(resumedThreadId)
         ? {
             messages: [],
-            priorModelMessages:
-              await this.workflowAgentConversationService.loadModelMessages({
-                workspaceId,
-                threadId: resumedThreadId,
-              }),
+            priorMessages: await this.conversationReaderService.loadMessages({
+              workspaceId,
+              threadId: resumedThreadId,
+            }),
           }
         : { messages: [{ role: 'user', content: resolvedPrompt }] }),
       baseSystemPrompt: isAskingQuestionsAllowed
@@ -168,24 +166,23 @@ export class AiAgentWorkflowAction implements WorkflowAction {
             [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
               isWorkspaceSetupThread: false,
             }),
-            [PROPOSE_EMAIL_TOOL_NAME]: createProposeEmailTool(),
             [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
           }
         : {},
+      canProposeToolCalls: isAskingQuestionsAllowed,
       actorContext: executionContext.isActingOnBehalfOfUser
         ? executionContext.initiator
         : undefined,
       authContext: executionContext.authContext,
       workspaceId,
       userWorkspaceId,
-      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     });
 
     const durationMs = Date.now() - startedAtMs;
 
     // Only executions that ask get a conversation, saving a thread per execution for looping agents
     const recordedConversation =
-      isDefined(resumedThreadId) || executionResult.isPaused === true
+      isDefined(resumedThreadId) || executionResult.isPaused
         ? await recordConversation(executionResult)
         : null;
 
@@ -204,7 +201,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       };
     }
 
-    if (executionResult.isPaused === true) {
+    if (executionResult.isPaused) {
       // Without the conversation nobody could answer, so the run would wait forever
       if (recordedConversation?.isAwaitingAnswer !== true) {
         return {
@@ -236,10 +233,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     previousStepLog?: WorkflowRunStepLog;
   }): Promise<void> {
     const stepLog = buildAiAgentStepLog({ executionResult, durationMs });
-
-    if (!stepLog) {
-      return;
-    }
 
     try {
       await this.workflowRunStepLogService.setStepLog({

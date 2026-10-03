@@ -84,8 +84,8 @@ When adding AI behavior:
 
 - `workspaceMemberId` is the member who receives it, and `text` is the message, in markdown.
 - `threadKey` picks the conversation per app and member: a new key starts one titled `title`, a known key adds to it. `idempotencyKey` identifies the message in it, so sending again with the same keys writes nothing and retries never duplicate it.
-- `toolCall` (optional) ends the message on `ask_questions`, `request_form` or `propose_email`, which pause the conversation until the member answers, or on one of the app's own tools by `logicFunctionUniversalIdentifier`, rendered by its front component without pausing.
-- Only one call the member answers (`ask_questions`, `request_form`, `propose_email`) can wait at a time; another fails with `THREAD_AWAITING_ANSWER` until they answer. Plain messages and app tool calls are still accepted.
+- `toolCall` (optional) ends the message on `ask_questions`, `request_form` or `propose_tool_call` with a `send_email` or `draft_email` call (`input`: `toolName`, `arguments` with `recipients`, `subject` and an HTML `body`, and a `summary`), which pause the conversation until the member answers, or on one of the app's own tools by `logicFunctionUniversalIdentifier`, rendered by its front component without pausing.
+- Only one call the member answers (`ask_questions`, `request_form`, `propose_tool_call`) can wait at a time; another fails with `THREAD_AWAITING_ANSWER` until they answer. Plain messages and app tool calls are still accepted.
 - A conversation the member deleted is not recreated.
 - The app's default role needs `SystemPermissionFlag.AI`, and the member needs the AI permission.
 - It always uses the app's access and ignores `runAs`.

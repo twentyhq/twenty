@@ -10,10 +10,8 @@ import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
-import {
-  AgentMessageRole,
-  AgentMessageStatus,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
 import { AgentHistoryMigrationDataService } from 'src/database/commands/agent-history/agent-history-migration-data.service';
@@ -207,6 +205,17 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     const chatRecordEvents = {
       emitThreadUpdated: jest.fn().mockResolvedValue(undefined),
     };
+    const chatThreadService = new AgentChatThreadService(
+      threads as never,
+      chatSharing as never,
+      chatRecordEvents as never,
+      {
+        recordMemberActivity: jest.fn().mockResolvedValue({
+          lastActivityAt: new Date(),
+          updatedAt: new Date(),
+        }),
+      } as never,
+    );
     const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
         threads,
@@ -221,24 +230,14 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           turns as never,
           new AgentHistoryTransactionService(workspaceStorage, orm as never),
         ),
-        new AgentChatThreadService(
-          threads as never,
-          chatSharing as never,
-          chatRecordEvents as never,
-          {
-            recordMemberActivity: jest.fn().mockResolvedValue({
-              lastActivityAt: new Date(),
-              updatedAt: new Date(),
-            }),
-          } as never,
-        ),
+        chatThreadService,
       );
 
     const createActorService = (messageRepository: typeof messages) =>
       new AgentChatActorService(
         messageRepository,
         threads,
-        createChatService(messageRepository),
+        chatThreadService,
         {
           resolveWorkspaceMember: jest.fn().mockResolvedValue({
             userWorkspaceId: OWNER_ID,

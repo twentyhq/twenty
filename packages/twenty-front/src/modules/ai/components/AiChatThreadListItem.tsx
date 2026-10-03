@@ -1,18 +1,17 @@
 import { styled } from '@linaria/react';
-import { type MouseEvent } from 'react';
+import { type MouseEvent, useId } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
@@ -120,7 +119,6 @@ const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
 
 type AiChatThreadListItemProps = {
   thread: AgentChatThreadRecord;
-  surface: AiChatThreadActionsSurface;
   isSelected: boolean;
   onClick: (
     thread: AgentChatThreadRecord,
@@ -133,10 +131,8 @@ type AiChatThreadListItemProps = {
   onDetach?: () => void;
 };
 
-// Keyed per surface; every record page uses RECORD_PAGE, so two record pages on screen share it.
 export const AiChatThreadListItem = ({
   thread,
-  surface,
   isSelected,
   onClick,
   onContextMenu,
@@ -167,7 +163,9 @@ export const AiChatThreadListItem = ({
     workspaceMembers: currentWorkspaceMembers,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
   });
-  const displayTitle = thread.title ?? t`Untitled`;
+  const displayTitle = isNonEmptyString(thread.title)
+    ? thread.title
+    : t`Untitled`;
   const { formatAgentChatThreadDay } = useFormatAgentChatThreadDate();
 
   const getActivityTimeLabel = () => {
@@ -190,10 +188,9 @@ export const AiChatThreadListItem = ({
         );
     }
   };
-  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
-    threadId: thread.id,
-    surface,
-  });
+  const actionsInstanceId = useId();
+  const itemMenuDropdownId =
+    getCommandMenuDropdownIdFromCommandMenuId(actionsInstanceId);
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     itemMenuDropdownId,
@@ -273,7 +270,7 @@ export const AiChatThreadListItem = ({
       >
         <AiChatThreadActionsDropdown
           thread={thread}
-          surface={surface}
+          instanceId={actionsInstanceId}
           onRenameRequested={startRename}
           onDetach={onDetach}
         />

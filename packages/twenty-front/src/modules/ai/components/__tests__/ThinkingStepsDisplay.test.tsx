@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
-import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
+import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
 
 jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({

@@ -2,7 +2,8 @@ import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource, type EntityManager } from 'typeorm';
+import { DataSource, type EntityManager, type QueryRunner } from 'typeorm';
+import { type IsolationLevel } from 'typeorm/driver/types/IsolationLevel';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -64,10 +65,7 @@ export class AgentHistoryWorkspaceStorageService {
       );
     }
 
-    const runner = this.dataSource.createQueryRunner('master');
-    try {
-      await runner.connect();
-      await runner.startTransaction();
+    return this.runInTransaction(async (runner) => {
       // A retried upgrade clears its destination; no live write may race that copy.
       await runner.query(
         'SELECT pg_advisory_xact_lock_shared(hashtextextended($1, 0))',
@@ -84,20 +82,11 @@ export class AgentHistoryWorkspaceStorageService {
           'AI history is unavailable until this workspace finishes upgrading.',
         );
       }
-      const result = await work({
+      return work({
         manager: runner.manager,
         table: getWorkspaceAgentHistoryTable(workspaceId),
       });
-      await runner.commitTransaction();
-      return result;
-    } catch (error) {
-      if (runner.isTransactionActive) {
-        await runner.rollbackTransaction();
-      }
-      throw error;
-    } finally {
-      await runner.release();
-    }
+    });
   }
 
   async runReadOnlyReport<TResult>(
@@ -110,10 +99,7 @@ export class AgentHistoryWorkspaceStorageService {
       }[];
     }) => Promise<TResult>,
   ): Promise<TResult> {
-    const runner = this.dataSource.createQueryRunner('master');
-    try {
-      await runner.connect();
-      await runner.startTransaction('REPEATABLE READ');
+    return this.runInTransaction(async (runner) => {
       await runner.query('SET TRANSACTION READ ONLY');
       const provisioned: { workspaceId: string }[] = await runner.query(
         `SELECT id AS "workspaceId" FROM unnest($1::uuid[], $2::text[]) AS candidate(id, table_name) WHERE to_regclass(table_name) IS NOT NULL
@@ -133,11 +119,25 @@ export class AgentHistoryWorkspaceStorageService {
         workspaceIds: [workspaceId],
         table: getWorkspaceAgentHistoryTable(workspaceId),
       }));
-      const result = await work({ manager: runner.manager, partitions });
+      return work({ manager: runner.manager, partitions });
+    }, 'REPEATABLE READ');
+  }
+
+  private async runInTransaction<TResult>(
+    work: (runner: QueryRunner) => Promise<TResult>,
+    isolationLevel?: IsolationLevel,
+  ): Promise<TResult> {
+    const runner = this.dataSource.createQueryRunner('master');
+    try {
+      await runner.connect();
+      await runner.startTransaction(isolationLevel);
+      const result = await work(runner);
       await runner.commitTransaction();
       return result;
     } catch (error) {
-      if (runner.isTransactionActive) await runner.rollbackTransaction();
+      if (runner.isTransactionActive) {
+        await runner.rollbackTransaction();
+      }
       throw error;
     } finally {
       await runner.release();

@@ -7,7 +7,7 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -72,7 +72,7 @@ describe('useLeaveRemovedAiChatThread', () => {
     await leave();
 
     expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(RECENT_CHAT_ID);
-    expect(jotaiStore.get(agentChatInputState.atom)).toBe('Pending question');
+    expect(jotaiStore.get(agentChatInputIsEmptySelector.atom)).toBe(false);
     expect(projectAiChatThreadToUrl).toHaveBeenCalledWith(RECENT_CHAT_ID);
   });
 

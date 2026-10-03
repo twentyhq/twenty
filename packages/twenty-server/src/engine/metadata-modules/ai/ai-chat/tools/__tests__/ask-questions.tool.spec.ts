@@ -1,8 +1,7 @@
-import {
-  ASK_QUESTIONS_TOOL_NAME,
-  askQuestionsInputSchema,
-  createAskQuestionsTool,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
+import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
+
+import { askQuestionsInputSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-questions.pausing-tool';
+import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
 
 describe('ask_questions tool', () => {
   it('is named ask_questions (plural)', () => {
