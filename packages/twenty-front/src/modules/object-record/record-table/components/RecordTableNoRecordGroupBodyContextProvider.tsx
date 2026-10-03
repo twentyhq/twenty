@@ -5,8 +5,8 @@ import { useRecordTableMoveFocusedCell } from '@/object-record/record-table/hook
 import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
-import { useTriggerCommandMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerCommandMenuDropdown';
-import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
+import { useOpenRecordContextMenu } from '@/object-record/record-selection/hooks/useOpenRecordContextMenu';
+import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
 import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -45,19 +45,17 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
     moveHoverToCurrentCell(cellPosition);
   };
 
-  const { triggerCommandMenuDropdown } = useTriggerCommandMenuDropdown({
-    recordTableId,
-  });
+  const { openRecordContextMenu } = useOpenRecordContextMenu();
 
   const handleCommandMenuDropdown = (
     event: React.MouseEvent,
     recordId: string,
   ) => {
-    triggerCommandMenuDropdown(event, recordId);
+    openRecordContextMenu({ event, recordId });
   };
 
-  const hasUserSelectedAllRows = useAtomComponentStateValue(
-    hasUserSelectedAllRowsComponentState,
+  const hasUserSelectedAllRecords = useAtomComponentStateValue(
+    hasUserSelectedAllRecordsComponentState,
     recordTableId,
   );
 
@@ -69,7 +67,7 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
         onCloseTableCell: handleCloseTableCell,
         onMoveHoverToCurrentCell: handleMoveHoverToCurrentCell,
         onCommandMenuDropdownOpened: handleCommandMenuDropdown,
-        hasUserSelectedAllRows,
+        hasUserSelectedAllRecords,
       }}
     >
       {children}

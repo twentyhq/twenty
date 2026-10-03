@@ -30,6 +30,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordShareStorageModule,
     ShareWithService,
     RecordAccessPolicyService,
+    RecordSharingService,
   ],
 })
 export class RecordShareModule {}

@@ -13,7 +13,7 @@ export const definePausingTool = <
     isPlainObject(toolOutput) &&
     isPlainObject(toolOutput.result) &&
     toolOutput.result.status === 'pending',
-  parseCall: (toolInput) => {
+  parseCall: (toolInput, pendingToolOutput) => {
     const parsedInput = definition.inputSchema.safeParse(toolInput);
 
     if (!parsedInput.success) {
@@ -21,10 +21,11 @@ export const definePausingTool = <
     }
 
     const input = parsedInput.data;
-    const outputSchema = definition.outputSchema(input);
+    const outputSchema = definition.outputSchema(input, pendingToolOutput);
 
     return {
-      toSkippedToolResult: () => definition.toSkippedToolResult(input),
+      toSkippedToolResult: () =>
+        definition.toSkippedToolResult(input, pendingToolOutput),
       validate: (output) => {
         const parsedOutput = outputSchema.safeParse(output);
 
@@ -41,6 +42,7 @@ export const definePausingTool = <
         definition.complete({
           output: outputSchema.parse(output),
           input,
+          pendingToolOutput,
           context,
         }),
     };
