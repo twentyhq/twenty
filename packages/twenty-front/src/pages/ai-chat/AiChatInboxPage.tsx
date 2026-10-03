@@ -17,7 +17,7 @@ import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPa
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatThreadList } from '@/ai/components/AiChatThreadList';
 import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
-import { AI_CHAT_INBOX_RECORD_SELECTION_INSTANCE_ID } from '@/ai/constants/AiChatInboxRecordSelectionInstanceId';
+import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
@@ -114,11 +114,10 @@ const AiChatInboxPageContent = () => {
     selectedRecordIds.length > 1 ||
     (selectedRecordIds.length === 1 &&
       selectedRecordIds[0] !== selectedThreadId);
+  const openThreadIds = isDefined(selectedThreadId) ? [selectedThreadId] : [];
   const highlightedThreadIds = isSelectionShown
     ? selectedRecordIds
-    : isDefined(selectedThreadId)
-      ? [selectedThreadId]
-      : [];
+    : openThreadIds;
 
   // A phone has room for the list or the chat, not both
   const isListShown = !isMobile || !isDefined(selectedThreadId);
@@ -184,7 +183,7 @@ const AiChatInboxPageContent = () => {
       )}
       {isThreadShown &&
         (isSelectionShown ? (
-          <AiChatInboxSelectionPane />
+          <AiChatInboxSelectionPane threads={threads} />
         ) : isDefined(selectedThreadId) ? (
           <>
             <AiChatPageEffects />
@@ -219,7 +218,7 @@ const AiChatInboxPageContent = () => {
 
 export const AiChatInboxPage = () => (
   <RecordSelectionComponentInstanceContext.Provider
-    value={{ instanceId: AI_CHAT_INBOX_RECORD_SELECTION_INSTANCE_ID }}
+    value={{ instanceId: AI_CHAT_INBOX_INSTANCE_ID }}
   >
     <AiChatInboxPageContent />
   </RecordSelectionComponentInstanceContext.Provider>

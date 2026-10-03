@@ -1,17 +1,19 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Provider as JotaiProvider } from 'jotai';
+import { atom, Provider as JotaiProvider } from 'jotai';
+import { type ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { AI_CHAT_INBOX_RECORD_SELECTION_INSTANCE_ID } from '@/ai/constants/AiChatInboxRecordSelectionInstanceId';
+import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import {
   resetJotaiStore,
   jotaiStore,
@@ -22,11 +24,32 @@ import { AiChatInboxPage } from '~/pages/ai-chat/AiChatInboxPage';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
+const buildThread = (id: string, title: string): AgentChatThreadRecord => ({
+  __typename: 'AgentChatThread',
+  id,
+  title,
+  deletedAt: null,
+  createdAt: '2026-09-07T00:00:00.000Z',
+  updatedAt: '2026-09-07T00:00:00.000Z',
+});
+
 const THREADS = [
-  { id: '6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60', title: 'First chat' },
-  { id: '0b6e3f1a-2c4d-4b8e-9a7f-1d3c5e7a9b20', title: 'Second chat' },
-  { id: '9d2a4c6e-8b1f-4e3a-8c5d-7f9b1a3c5e40', title: 'Third chat' },
-] as AgentChatThreadRecord[];
+  buildThread('6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60', 'First chat'),
+  buildThread('0b6e3f1a-2c4d-4b8e-9a7f-1d3c5e7a9b20', 'Second chat'),
+  buildThread('9d2a4c6e-8b1f-4e3a-8c5d-7f9b1a3c5e40', 'Third chat'),
+];
+
+const chatObjectMetadataItemAtom = atom<unknown>({
+  id: 'chat-object',
+  nameSingular: 'agentChatThread',
+  namePlural: 'agentChatThreads',
+});
+
+jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
+  objectMetadataItemFamilySelector: {
+    selectorFamily: () => chatObjectMetadataItemAtom,
+  },
+}));
 
 jest.mock('@/ai/hooks/useChatThreads', () => ({
   useChatThreads: () => ({ threads: THREADS, loading: false }),
@@ -82,9 +105,22 @@ jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
   InformationBannerWrapper: () => null,
 }));
 
+// Command menu items throw without the context store and command menu
+// instances, so the stand-in requires them too
 jest.mock('@/command-menu-item/contexts/CommandMenuContextProvider', () => ({
-  CommandMenuContextProvider: () => null,
+  CommandMenuContextProvider: ({ children }: { children: ReactNode }) => {
+    useAvailableComponentInstanceIdOrThrow(
+      ContextStoreComponentInstanceContext,
+    );
+    useAvailableComponentInstanceIdOrThrow(CommandMenuComponentInstanceContext);
+    return children;
+  },
 }));
+
+jest.mock(
+  '@/command-menu-item/display/components/PinnedCommandMenuItemButtons',
+  () => ({ PinnedCommandMenuItemButtons: () => null }),
+);
 
 const [firstThread, secondThread, thirdThread] = THREADS;
 
@@ -92,15 +128,11 @@ const renderInbox = () =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <ContextStoreComponentInstanceContext.Provider
-          value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
-        >
-          <MemoryRouter initialEntries={[`/inbox/${firstThread.id}`]}>
-            <Routes>
-              <Route path={AppPath.AiChatInbox} element={<AiChatInboxPage />} />
-            </Routes>
-          </MemoryRouter>
-        </ContextStoreComponentInstanceContext.Provider>
+        <MemoryRouter initialEntries={[`/inbox/${firstThread.id}`]}>
+          <Routes>
+            <Route path={AppPath.AiChatInbox} element={<AiChatInboxPage />} />
+          </Routes>
+        </MemoryRouter>
       </I18nProvider>
     </JotaiProvider>,
   );
@@ -135,7 +167,7 @@ describe('AiChatInboxPage', () => {
     expect(
       jotaiStore.get(
         contextStoreTargetedRecordsRuleComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          instanceId: AI_CHAT_INBOX_INSTANCE_ID,
         }),
       ),
     ).toEqual({
@@ -179,7 +211,7 @@ describe('AiChatInboxPage', () => {
     expect(
       jotaiStore.get(
         selectedRecordIdsComponentSelector.selectorFamily({
-          instanceId: AI_CHAT_INBOX_RECORD_SELECTION_INSTANCE_ID,
+          instanceId: AI_CHAT_INBOX_INSTANCE_ID,
         }),
       ),
     ).toEqual([]);

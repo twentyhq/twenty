@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreRecordIdsInSelectionOrderComponentState } from '@/context-store/states/contextStoreRecordIdsInSelectionOrderComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { orderRecordIdsBySelection } from '@/context-store/utils/orderRecordIdsBySelection';
@@ -8,17 +7,13 @@ import { selectedRecordIdsComponentSelector } from '@/object-record/record-selec
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
-export const RecordSelectionToContextStoreEffect = () => {
+export const RecordBoardSelectRecordsEffect = () => {
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
   );
 
   const setContextStoreTargetedRecordsRule = useSetAtomComponentState(
     contextStoreTargetedRecordsRuleComponentState,
-  );
-
-  const setContextStoreNumberOfSelectedRecords = useSetAtomComponentState(
-    contextStoreNumberOfSelectedRecordsComponentState,
   );
 
   const setContextStoreRecordIdsInSelectionOrder = useSetAtomComponentState(
@@ -28,9 +23,8 @@ export const RecordSelectionToContextStoreEffect = () => {
   useEffect(() => {
     setContextStoreTargetedRecordsRule({
       mode: 'selection',
-      selectedRecordIds,
+      selectedRecordIds: selectedRecordIds,
     });
-    setContextStoreNumberOfSelectedRecords(selectedRecordIds.length);
     setContextStoreRecordIdsInSelectionOrder(
       (previousRecordIdsInSelectionOrder) =>
         orderRecordIdsBySelection({
@@ -44,14 +38,12 @@ export const RecordSelectionToContextStoreEffect = () => {
         mode: 'selection',
         selectedRecordIds: [],
       });
-      setContextStoreNumberOfSelectedRecords(0);
     };
   }, [
     selectedRecordIds,
     setContextStoreTargetedRecordsRule,
-    setContextStoreNumberOfSelectedRecords,
     setContextStoreRecordIdsInSelectionOrder,
   ]);
 
-  return null;
+  return <></>;
 };

@@ -1,15 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
-import { useStore } from 'jotai';
 import { type ReactElement, type MouseEvent, useContext } from 'react';
-import {
-  ContextStorePageType,
-  CoreObjectNameSingular,
-} from 'twenty-shared/types';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { IconDotsVertical, IconPencil, IconUnlink } from 'twenty-ui/icon';
 
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { useTargetAiChatThreadsInContextStore } from '@/ai/hooks/useTargetAiChatThreadsInContextStore';
 import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { getAiChatThreadActionsInstanceId } from '@/ai/utils/getAiChatThreadActionsInstanceId';
@@ -19,13 +16,8 @@ import { CommandMenuContextProvider } from '@/command-menu-item/contexts/Command
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -69,8 +61,8 @@ export const AiChatThreadActionsDropdown = ({
   trigger,
 }: AiChatThreadActionsDropdownProps) => {
   const { t } = useLingui();
-  const store = useStore();
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { targetAiChatThreadsInContextStore } =
+    useTargetAiChatThreadsInContextStore();
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
@@ -96,42 +88,6 @@ export const AiChatThreadActionsDropdown = ({
   const canUpdate = isDefined(permissions) && permissions.canUpdate;
   const isDeleted = isDefined(thread.deletedAt);
 
-  const targetThreadInContextStore = () => {
-    const instanceKey = { instanceId };
-
-    store.set(
-      contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily(
-        instanceKey,
-      ),
-      chatObjectMetadataItem.id,
-    );
-    store.set(
-      contextStoreCurrentPageTypeComponentState.atomFamily(instanceKey),
-      ContextStorePageType.Record,
-    );
-    store.set(
-      contextStoreTargetedRecordsRuleComponentState.atomFamily(instanceKey),
-      { mode: 'selection', selectedRecordIds: [thread.id] },
-    );
-    store.set(
-      contextStoreNumberOfSelectedRecordsComponentState.atomFamily(instanceKey),
-      1,
-    );
-    upsertRecordsInStore({
-      partialRecords: [
-        {
-          __typename: 'AgentChatThread',
-          id: thread.id,
-          title: thread.title ?? null,
-          deletedAt: thread.deletedAt ?? null,
-          ...(isDefined(thread.lastActivityAt)
-            ? { lastActivityAt: thread.lastActivityAt }
-            : {}),
-        },
-      ],
-    });
-  };
-
   const handleRename = (event: MouseEvent) => {
     event.stopPropagation();
     onRenameRequested();
@@ -153,7 +109,10 @@ export const AiChatThreadActionsDropdown = ({
           type="menu"
           onOpenChange={(isOpen) => {
             if (isOpen) {
-              targetThreadInContextStore();
+              targetAiChatThreadsInContextStore({
+                contextStoreInstanceId: instanceId,
+                threads: [thread],
+              });
               void refreshAgentChatThreadPermissions([thread.id]);
             }
           }}
