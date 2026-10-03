@@ -155,15 +155,18 @@ export class DatabaseToolProvider implements ToolProvider {
         continue;
       }
 
-      const canReadRecords = requireExplicitObjectGrants
-        ? explicitPermission?.canReadObjectRecords === true
-        : permission.canReadObjectRecords;
-      const canUpdateRecords = requireExplicitObjectGrants
-        ? explicitPermission?.canUpdateObjectRecords === true
-        : permission.canUpdateObjectRecords;
-      const canSoftDeleteRecords = requireExplicitObjectGrants
-        ? explicitPermission?.canSoftDeleteObjectRecords === true
-        : permission.canSoftDeleteObjectRecords;
+      const canReadRecords =
+        permission.canReadObjectRecords &&
+        (!requireExplicitObjectGrants ||
+          explicitPermission?.canReadObjectRecords === true);
+      const canUpdateRecords =
+        permission.canUpdateObjectRecords &&
+        (!requireExplicitObjectGrants ||
+          explicitPermission?.canUpdateObjectRecords === true);
+      const canSoftDeleteRecords =
+        permission.canSoftDeleteObjectRecords &&
+        (!requireExplicitObjectGrants ||
+          explicitPermission?.canSoftDeleteObjectRecords === true);
 
       const snakePlural = camelToSnakeCase(flatObject.namePlural);
       const snakeSingular = camelToSnakeCase(flatObject.nameSingular);
