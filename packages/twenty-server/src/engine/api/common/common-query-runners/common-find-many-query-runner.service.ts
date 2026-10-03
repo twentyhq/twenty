@@ -6,7 +6,7 @@ import {
   QUERY_MAX_RECORDS,
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
-import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
+import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
@@ -16,6 +16,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { DEFAULT_ID_ORDER_BY_TIEBREAKER } from 'src/engine/api/common/constants/default-id-order-by-tiebreaker.constant';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -95,7 +96,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     const orderByLeaves = resolveOrderByLeaves({
       orderBy: [
         ...(args.orderBy ?? []),
-        { id: OrderByDirection.AscNullsFirst },
+        DEFAULT_ID_ORDER_BY_TIEBREAKER,
       ] as ObjectRecordOrderBy,
       flatObjectMetadata,
       flatObjectMetadataMaps,
