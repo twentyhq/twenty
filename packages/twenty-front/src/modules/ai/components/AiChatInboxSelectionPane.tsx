@@ -1,13 +1,11 @@
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
+import { AiChatInboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
-import { useTargetAiChatThreadsInContextStore } from '@/ai/hooks/useTargetAiChatThreadsInContextStore';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
@@ -21,29 +19,12 @@ import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
-type AiChatInboxSelectionPaneProps = {
-  threads: AgentChatThreadRecord[];
-};
-
-export const AiChatInboxSelectionPane = ({
-  threads,
-}: AiChatInboxSelectionPaneProps) => {
+export const AiChatInboxSelectionPane = () => {
   const { t } = useLingui();
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
   );
   const { resetRecordSelection } = useResetRecordSelection();
-  const { targetAiChatThreadsInContextStore } =
-    useTargetAiChatThreadsInContextStore();
-
-  useEffect(() => {
-    const selectedRecordIdSet = new Set(selectedRecordIds);
-
-    targetAiChatThreadsInContextStore({
-      contextStoreInstanceId: AI_CHAT_INBOX_INSTANCE_ID,
-      threads: threads.filter(({ id }) => selectedRecordIdSet.has(id)),
-    });
-  }, [selectedRecordIds, threads, targetAiChatThreadsInContextStore]);
 
   useGlobalHotkeys({
     keys: [Key.Escape],
@@ -73,6 +54,7 @@ export const AiChatInboxSelectionPane = ({
             />
           }
         >
+          <AiChatInboxSelectionToContextStoreEffect />
           <EmptyState.Root>
             <EmptyState.Content>
               <EmptyState.Title>

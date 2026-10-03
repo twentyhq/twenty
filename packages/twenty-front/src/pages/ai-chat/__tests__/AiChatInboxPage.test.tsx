@@ -215,5 +215,12 @@ describe('AiChatInboxPage', () => {
         }),
       ),
     ).toEqual([]);
+    expect(
+      jotaiStore.get(
+        contextStoreTargetedRecordsRuleComponentState.atomFamily({
+          instanceId: AI_CHAT_INBOX_INSTANCE_ID,
+        }),
+      ),
+    ).toEqual({ mode: 'selection', selectedRecordIds: [] });
   });
 });

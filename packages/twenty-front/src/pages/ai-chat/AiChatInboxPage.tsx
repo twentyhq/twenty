@@ -183,7 +183,7 @@ const AiChatInboxPageContent = () => {
       )}
       {isThreadShown &&
         (isSelectionShown ? (
-          <AiChatInboxSelectionPane threads={threads} />
+          <AiChatInboxSelectionPane />
         ) : isDefined(selectedThreadId) ? (
           <>
             <AiChatPageEffects />

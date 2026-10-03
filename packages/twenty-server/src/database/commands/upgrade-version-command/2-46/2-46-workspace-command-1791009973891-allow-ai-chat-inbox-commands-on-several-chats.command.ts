@@ -73,8 +73,8 @@ export class AllowAiChatInboxCommandsOnSeveralChatsCommand extends ProvisionedWo
     ).filter(
       (commandMenuItem) =>
         isDefined(commandMenuItem) &&
-        commandMenuItem.conditionalAvailabilityExpression?.startsWith(from) ===
-          true,
+        isDefined(commandMenuItem.conditionalAvailabilityExpression) &&
+        commandMenuItem.conditionalAvailabilityExpression.startsWith(from),
     );
 
     if (commandMenuItemsToUpdate.length === 0) {

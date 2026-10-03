@@ -11,19 +11,10 @@ import { contextStoreCurrentPageTypeComponentState } from '@/context-store/state
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-
-type AiChatThreadToTarget = {
-  id: string;
-  title?: string | null;
-  deletedAt?: string | null;
-  lastActivityAt?: string | null;
-};
 
 export const useTargetAiChatThreadsInContextStore = () => {
   const store = useStore();
-  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
@@ -35,10 +26,10 @@ export const useTargetAiChatThreadsInContextStore = () => {
   const targetAiChatThreadsInContextStore = useCallback(
     ({
       contextStoreInstanceId,
-      threads,
+      threadIds,
     }: {
       contextStoreInstanceId: string;
-      threads: AiChatThreadToTarget[];
+      threadIds: string[];
     }) => {
       if (!isDefined(chatObjectMetadataItem)) {
         return;
@@ -58,27 +49,16 @@ export const useTargetAiChatThreadsInContextStore = () => {
       );
       store.set(
         contextStoreTargetedRecordsRuleComponentState.atomFamily(instanceKey),
-        { mode: 'selection', selectedRecordIds: threads.map(({ id }) => id) },
+        { mode: 'selection', selectedRecordIds: threadIds },
       );
       store.set(
         contextStoreNumberOfSelectedRecordsComponentState.atomFamily(
           instanceKey,
         ),
-        threads.length,
+        threadIds.length,
       );
-      upsertRecordsInStore({
-        partialRecords: threads.map((thread) => ({
-          __typename: 'AgentChatThread',
-          id: thread.id,
-          title: thread.title ?? null,
-          deletedAt: thread.deletedAt ?? null,
-          ...(isDefined(thread.lastActivityAt)
-            ? { lastActivityAt: thread.lastActivityAt }
-            : {}),
-        })),
-      });
     },
-    [store, upsertRecordsInStore, chatObjectMetadataItem],
+    [store, chatObjectMetadataItem],
   );
 
   return { targetAiChatThreadsInContextStore };

@@ -18,6 +18,7 @@ import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandM
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -61,6 +62,7 @@ export const AiChatThreadActionsDropdown = ({
   trigger,
 }: AiChatThreadActionsDropdownProps) => {
   const { t } = useLingui();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { targetAiChatThreadsInContextStore } =
     useTargetAiChatThreadsInContextStore();
   const { refreshAgentChatThreadPermissions } =
@@ -111,7 +113,20 @@ export const AiChatThreadActionsDropdown = ({
             if (isOpen) {
               targetAiChatThreadsInContextStore({
                 contextStoreInstanceId: instanceId,
-                threads: [thread],
+                threadIds: [thread.id],
+              });
+              upsertRecordsInStore({
+                partialRecords: [
+                  {
+                    __typename: 'AgentChatThread',
+                    id: thread.id,
+                    title: thread.title ?? null,
+                    deletedAt: thread.deletedAt ?? null,
+                    ...(isDefined(thread.lastActivityAt)
+                      ? { lastActivityAt: thread.lastActivityAt }
+                      : {}),
+                  },
+                ],
               });
               void refreshAgentChatThreadPermissions([thread.id]);
             }
