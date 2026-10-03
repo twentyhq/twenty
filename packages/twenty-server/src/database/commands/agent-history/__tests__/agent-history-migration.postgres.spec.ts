@@ -156,13 +156,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     const orm = createOrm();
     const threads = new AgentHistoryRepository<AgentChatThreadWorkspaceEntity>(
       'agentChatThread',
-      storage,
+      workspaceStorage,
       orm,
     );
 
     const messages = new AgentHistoryRepository<AgentMessageWorkspaceEntity>(
       'agentMessage',
-      storage,
+      workspaceStorage,
       orm,
     );
 
@@ -178,13 +178,13 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
 
     const turns = new AgentHistoryRepository<AgentTurnWorkspaceEntity>(
       'agentTurn',
-      storage,
+      workspaceStorage,
       orm,
     );
     const messageParts =
       new AgentHistoryRepository<AgentMessagePartWorkspaceEntity>(
         'agentMessagePart',
-        storage,
+        workspaceStorage,
         orm,
       );
 
@@ -554,7 +554,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         'being migrated',
       );
       await expect(
-        workspaceStorage.run(WORKSPACE_ID, operation),
+        new AgentHistoryWorkspaceStorageService(dataSource).run(
+          WORKSPACE_ID,
+          operation,
+        ),
       ).rejects.toBeInstanceOf(ServiceUnavailableException);
       expect(operation).not.toHaveBeenCalled();
       expect(
@@ -620,8 +623,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
       await dataSource.query('DELETE FROM core."keyValuePair"');
       await expect(
-        workspaceStorage.run(WORKSPACE_ID, ({ manager, table }) =>
-          manager.query(`SELECT id FROM ${table('agentChatThread')}`),
+        new AgentHistoryWorkspaceStorageService(dataSource).run(
+          WORKSPACE_ID,
+          ({ manager, table }) =>
+            manager.query(`SELECT id FROM ${table('agentChatThread')}`),
         ),
       ).rejects.toBeInstanceOf(ServiceUnavailableException);
       await expect(
@@ -640,6 +645,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await expect(
         workspaceStorage.run(WORKSPACE_ID, async () => 'ready'),
       ).resolves.toBe('ready');
+      const readinessQuery = jest.spyOn(dataSource, 'query');
+      await workspaceStorage.run(WORKSPACE_ID, async () => 'ready');
+      expect(readinessQuery).not.toHaveBeenCalled();
+      readinessQuery.mockRestore();
       await workspaceStorage.initializeWorkspace(WORKSPACE_ID);
       expect(await readRoute()).toBe('workspace');
     });
@@ -647,7 +656,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     it('does not mark legacy history as migrated during initialization', async () => {
       await workspaceStorage.initializeWorkspace(WORKSPACE_ID);
       await expect(
-        workspaceStorage.run(WORKSPACE_ID, jest.fn()),
+        new AgentHistoryWorkspaceStorageService(dataSource).run(
+          WORKSPACE_ID,
+          jest.fn(),
+        ),
       ).rejects.toBeInstanceOf(ServiceUnavailableException);
     });
 

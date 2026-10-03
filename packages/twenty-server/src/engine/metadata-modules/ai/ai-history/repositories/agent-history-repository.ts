@@ -28,7 +28,7 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     private readonly name: AgentHistoryObjectName,
     private readonly storageService: Pick<
       AgentHistoryWorkspaceStorageService,
-      'run'
+      'run' | 'getContext'
     >,
     private readonly workspaceOrmManager: Pick<
       WorkspaceOrmManager,
@@ -36,27 +36,27 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     >,
   ) {}
 
-  private run<TResult>(
+  private async run<TResult>(
     workspaceId: string,
     work: (
       repository: WorkspaceRepository<TRecord>,
       context: AgentHistoryStorageContext,
     ) => Promise<TResult>,
   ): Promise<TResult> {
-    return this.storageService.run(workspaceId, (context) =>
-      this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          work(
-            this.workspaceOrmManager.getRepository<TRecord>(
-              this.name,
-              { shouldBypassPermissionChecks: true },
-              { shouldSkipEventEmission: true },
-            ),
-            context,
+    const context = await this.storageService.getContext(workspaceId);
+
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        work(
+          this.workspaceOrmManager.getRepository<TRecord>(
+            this.name,
+            { shouldBypassPermissionChecks: true },
+            { shouldSkipEventEmission: true },
           ),
-        buildSystemAuthContext(workspaceId),
-        { lite: true },
-      ),
+          context,
+        ),
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
     );
   }
 

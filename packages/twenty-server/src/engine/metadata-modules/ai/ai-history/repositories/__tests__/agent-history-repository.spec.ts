@@ -9,11 +9,8 @@ it('reads native workspace fields and precision behind the upgrade readiness fen
     activeStreamId: '',
   };
   const storage = {
-    run: jest
-      .fn()
-      .mockImplementation(
-        async (_workspaceId: string, work: () => Promise<unknown>) => work(),
-      ),
+    run: jest.fn(),
+    getContext: jest.fn().mockResolvedValue({}),
   };
   const find = jest.fn().mockResolvedValue([record]);
   const count = jest.fn().mockResolvedValue(1);
@@ -40,5 +37,5 @@ it('reads native workspace fields and precision behind the upgrade readiness fen
       order: { archivedAt: { order: 'DESC', nulls: 'NULLS LAST' } },
     }),
   );
-  expect(storage.run).toHaveBeenCalledTimes(2);
+  expect(storage.getContext).toHaveBeenCalledTimes(2);
 });
