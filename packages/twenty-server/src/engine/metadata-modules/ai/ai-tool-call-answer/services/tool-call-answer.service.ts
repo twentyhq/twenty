@@ -213,6 +213,19 @@ export class ToolCallAnswerService {
         }
       }
 
+      const runningToolResult = pausingToolCall.toRunningToolResult?.();
+
+      if (
+        isDefined(runningToolResult) &&
+        !(await this.agentChatService.claimToolCallAnswer({
+          partId: toolPart.id,
+          toolOutput: runningToolResult,
+          workspaceId,
+        }))
+      ) {
+        throw this.notPending();
+      }
+
       const completion = await pausingToolCall.complete({
         output: validation.output,
         context: this.buildCompletionContext({

@@ -287,11 +287,13 @@ export class WorkflowRunWorkspaceService {
   @WithLock('workflowRunId')
   async moveStepToRetry({
     stepId,
+    resumedThreadId,
     error,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
+    resumedThreadId?: string;
     error: string;
     workflowRunId: string;
     workspaceId: string;
@@ -315,7 +317,7 @@ export class WorkflowRunWorkspaceService {
               ...currentStepInfo,
               status: StepStatus.PENDING,
               error,
-              threadId: undefined,
+              threadId: resumedThreadId,
               history: [
                 ...(currentStepInfo?.history ?? []),
                 {

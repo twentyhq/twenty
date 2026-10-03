@@ -1,4 +1,4 @@
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type PausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool.type';
 import { type PausingToolDefinition } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-definition.type';
@@ -23,9 +23,17 @@ export const definePausingTool = <
     const input = parsedInput.data;
     const outputSchema = definition.outputSchema(input, pendingToolOutput);
 
+    const { toRunningToolResult } = definition;
+
     return {
       toSkippedToolResult: () =>
         definition.toSkippedToolResult(input, pendingToolOutput),
+      ...(isDefined(toRunningToolResult)
+        ? {
+            toRunningToolResult: () =>
+              toRunningToolResult(input, pendingToolOutput),
+          }
+        : {}),
       validate: (output) => {
         const parsedOutput = outputSchema.safeParse(output);
 

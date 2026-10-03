@@ -582,6 +582,30 @@ export class AgentChatService {
     );
   }
 
+  // only a call still pending is claimed, so two answers can never both run it; the rest of the
+  // pending output, such as the workflow step waiting on it, is kept
+  async claimToolCallAnswer({
+    partId,
+    toolOutput,
+    workspaceId,
+  }: {
+    partId: string;
+    toolOutput: Record<string, unknown>;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const claimedParts = await this.messagePartRepository.query(
+      workspaceId,
+      ({ manager, table }) =>
+        manager.query<{ id: string }[]>(
+          `WITH claimed_part AS (UPDATE ${table('agentMessagePart')} SET "toolOutput" = "toolOutput" || $2::jsonb, "updatedAt" = now()
+           WHERE id = $1 AND "toolOutput"->'result'->>'status' = 'pending' RETURNING id) SELECT id FROM claimed_part`,
+          [partId, JSON.stringify(toolOutput)],
+        ),
+    );
+
+    return claimedParts.length === 1;
+  }
+
   // written together so an answer never strands a conversation waiting on answered calls
   async recordToolCallAnswer({
     threadId,

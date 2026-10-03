@@ -56,6 +56,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     pending: isDefined(result)
       ? t`Waiting for your approval`
       : t`Preparing an action to approve...`,
+    running: t`Running...`,
     approved: t`Approved`,
     rejected: t`Rejected`,
     failed: t`Approved but it failed`,
@@ -70,6 +71,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
   const detailByStatus: Record<ProposeToolCallToolStatus, string | undefined> =
     {
       pending: summary,
+      running: summary,
       approved: summary,
       rejected: result?.feedback,
       failed: result?.error,
@@ -86,7 +88,8 @@ export const AiChatToolCallApprovalStatusRenderer = ({
         <IconTool size={theme.icon.size.sm} />
       )}
       <StyledContent>
-        {isStreaming && status === 'pending' && !hasFailedToPropose ? (
+        {((isStreaming && status === 'pending') || status === 'running') &&
+        !hasFailedToPropose ? (
           <ShimmeringText>
             <StyledAiChatAskStatusMessage>
               {message}

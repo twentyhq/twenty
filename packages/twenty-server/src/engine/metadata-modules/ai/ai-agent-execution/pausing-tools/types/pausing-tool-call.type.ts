@@ -13,4 +13,5 @@ export type PausingToolCall = {
     context: PausingToolCompletionContext;
   }) => Promise<PausingToolCompletion>;
   toSkippedToolResult: () => Record<string, unknown>;
+  toRunningToolResult?: () => Record<string, unknown>;
 };
