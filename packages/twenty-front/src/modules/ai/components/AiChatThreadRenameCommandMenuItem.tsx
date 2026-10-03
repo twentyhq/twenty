@@ -16,14 +16,14 @@ export const AiChatThreadRenameCommandMenuItem = () => {
     aiChatThreadIdBeingRenamedComponentState,
   );
 
-  const { selectedRecords, objectPermissions } = commandMenuContextApi;
+  const { selectedRecords } = commandMenuContextApi;
   const [thread] = selectedRecords;
 
+  // Sharing can make a chat read-only, so wait for its own permissions
   const canRename =
     selectedRecords.length === 1 &&
     !isDefined(thread.deletedAt) &&
-    objectPermissions.canUpdateObjectRecords &&
-    thread.recordPermissions?.canUpdate !== false;
+    thread.recordPermissions?.canUpdate === true;
 
   if (!canRename) {
     return null;

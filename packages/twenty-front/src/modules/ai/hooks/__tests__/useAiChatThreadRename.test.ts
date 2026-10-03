@@ -182,6 +182,41 @@ describe('useAiChatThreadRename', () => {
     expect(result.current.isRenaming).toBe(true);
   });
 
+  it('leaves a rename started on another chat open when an earlier save ends', async () => {
+    let resolveUpdate: (value: unknown) => void = () => {};
+    updateOneRecord.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveUpdate = resolve;
+      }),
+    );
+
+    const { result } = renderRename(
+      buildThread({ id: 'thread-1', title: 'Old' }),
+    );
+
+    startRename('thread-1');
+
+    let commitPromise: Promise<void> = Promise.resolve();
+    act(() => {
+      commitPromise = result.current.commitRename('New title');
+    });
+
+    startRename('thread-2');
+
+    await act(async () => {
+      resolveUpdate({});
+      await commitPromise;
+    });
+
+    expect(
+      jotaiStore.get(
+        aiChatThreadIdBeingRenamedComponentState.atomFamily({
+          instanceId: commandMenuInstanceId,
+        }),
+      ),
+    ).toBe('thread-2');
+  });
+
   it('treats a null current title as empty when comparing against committed input', async () => {
     const { result } = renderRename(
       buildThread({ id: 'thread-9', title: null }),

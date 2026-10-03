@@ -30,8 +30,11 @@ export const useAiChatThreadRename = ({
 
   const isRenaming = aiChatThreadIdBeingRenamed === thread.id;
 
+  // A save that ends late must not close a rename started on another chat
   const stopRenaming = () => {
-    setAiChatThreadIdBeingRenamed(null);
+    setAiChatThreadIdBeingRenamed((currentThreadId) =>
+      currentThreadId === thread.id ? null : currentThreadId,
+    );
     setDraftTitle(null);
   };
 

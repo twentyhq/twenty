@@ -155,11 +155,11 @@ export const AiChatThreadListItem = ({
     ? commandMenuInstanceIdFromContext
     : undefined;
 
+  const commandMenuInstanceId =
+    sharedCommandMenuInstanceId ?? actionsInstanceId;
+
   const { isRenaming, draftTitle, setDraftTitle, cancelRename, commitRename } =
-    useAiChatThreadRename({
-      thread,
-      commandMenuInstanceId: sharedCommandMenuInstanceId ?? actionsInstanceId,
-    });
+    useAiChatThreadRename({ thread, commandMenuInstanceId });
 
   const { isUnread, event } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
@@ -201,12 +201,15 @@ export const AiChatThreadListItem = ({
         );
     }
   };
-  const itemMenuDropdownId =
-    getCommandMenuDropdownIdFromCommandMenuId(actionsInstanceId);
-  const isDropdownOpen = useAtomComponentStateValue(
+  const isCommandMenuDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    itemMenuDropdownId,
+    getCommandMenuDropdownIdFromCommandMenuId(commandMenuInstanceId),
   );
+
+  // The shared menu opens on the selected chats, so only they keep "..." shown
+  const isDropdownOpen =
+    isCommandMenuDropdownOpen &&
+    (!isDefined(sharedCommandMenuInstanceId) || isSelected);
   return (
     <StyledThreadItem
       $isSelected={isSelected}
