@@ -3991,7 +3991,7 @@ type Query {
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAiSystemPromptPreview: AiSystemPromptPreview!
-  myAgentChatThreadParticipants: [AgentChatThreadParticipant!]!
+  myAgentChatThreadParticipants(threadIds: [UUID!]!): [AgentChatThreadParticipant!]!
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!

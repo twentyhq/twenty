@@ -8323,7 +8323,13 @@ export default {
                 384
             ],
             "myAgentChatThreadParticipants": [
-                388
+                388,
+                {
+                    "threadIds": [
+                        3,
+                        "[UUID!]!"
+                    ]
+                }
             ],
             "skills": [
                 381
