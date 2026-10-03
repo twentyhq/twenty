@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
+import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
+import { agentChatDisplayedThreadMessagesComponentSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesComponentSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
@@ -41,22 +41,24 @@ export const agentChatFirstUnreadMessageIdComponentSelector =
           ? new Date(visit.lastReadAt).getTime()
           : null;
 
-        const messages = get(agentChatMessagesComponentFamilyState, {
-          instanceId,
-          familyKey: { threadId },
-        });
+        const messages = get(
+          agentChatDisplayedThreadMessagesComponentSelector,
+          {
+            instanceId,
+          },
+        );
 
         const firstUnreadMessage = messages.find((message) => {
           const createdAt = message.metadata?.createdAt;
 
           if (
-            message.role === AgentMessageRole.SYSTEM ||
+            message.role === AGENT_MESSAGE_ROLE.SYSTEM ||
             !isDefined(createdAt)
           ) {
             return false;
           }
 
-          if (message.role === AgentMessageRole.USER) {
+          if (message.role === AGENT_MESSAGE_ROLE.USER) {
             const senderUserWorkspaceId =
               message.metadata?.senderUserWorkspaceId;
 

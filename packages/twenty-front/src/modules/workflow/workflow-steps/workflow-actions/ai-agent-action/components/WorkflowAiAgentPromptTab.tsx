@@ -1,5 +1,5 @@
 import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
-import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
+import { type OutputSchemaField } from '@/ai/types/OutputSchemaField';
 import { AiModelPicker } from '@/ai/components/AiModelPicker';
 import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchemaToOutputSchema';
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
@@ -163,7 +163,7 @@ export const WorkflowAiAgentPromptTab = ({
       />
 
       <FormBooleanFieldInput
-        label={t`Can ask questions`}
+        label={t`Can ask for input or approval`}
         defaultValue={action.settings.input.canAskQuestions === true}
         readonly={readonly}
         onChange={handleCanAskQuestionsChange}

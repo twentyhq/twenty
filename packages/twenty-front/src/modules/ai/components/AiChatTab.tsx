@@ -1,6 +1,4 @@
-import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { styled } from '@linaria/react';
 import { type DragEvent, useState } from 'react';
@@ -76,13 +74,11 @@ export const AiChatTab = () => {
         />
       )}
       {!isDraggingFile && (
-        <AiChatMessageListPreambleContext.Provider
-          value={isWorkspaceSetupChat ? <WorkspaceSetupChatPreamble /> : null}
-        >
+        <>
           <AiChatTabMessageList />
           <AiChatQueuedMessages />
           <AiChatEditorSection key={editorSectionKey} />
-        </AiChatMessageListPreambleContext.Provider>
+        </>
       )}
     </StyledContainer>
   );

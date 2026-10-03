@@ -8,6 +8,7 @@ import {
   ACTION_TOOL_LABELS,
   type ActionToolId,
 } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
+import { EMAIL_TOOL_APPROVALS } from 'src/engine/core-modules/tool-provider/constants/email-tool-approvals.constant';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -16,7 +17,7 @@ import { type ActionToolLabel } from 'src/engine/core-modules/tool-provider/type
 import { translateToolLabel } from 'src/engine/core-modules/tool-provider/utils/translate-tool-label.util';
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 
-import { ToolCategory } from 'twenty-shared/ai';
+import { type ToolApproval, ToolCategory } from 'twenty-shared/ai';
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -125,6 +126,7 @@ export class ActionToolProvider implements ToolProvider {
           this.sendEmailTool,
           includeSchemas,
           context.locale,
+          EMAIL_TOOL_APPROVALS.send_email,
         ),
       );
       descriptors.push(
@@ -133,6 +135,7 @@ export class ActionToolProvider implements ToolProvider {
           this.draftEmailTool,
           includeSchemas,
           context.locale,
+          EMAIL_TOOL_APPROVALS.draft_email,
         ),
       );
       descriptors.push(
@@ -294,6 +297,7 @@ export class ActionToolProvider implements ToolProvider {
     tool: Tool,
     includeSchemas: boolean,
     locale?: ToolProviderContext['locale'],
+    approval?: ToolApproval,
   ): ToolIndexEntry | ToolDescriptor {
     const labels: ActionToolLabel | undefined =
       ACTION_TOOL_LABELS[toolId as ActionToolId];
@@ -310,6 +314,7 @@ export class ActionToolProvider implements ToolProvider {
         inputSchema: toToolJsonSchema(tool.inputSchema as z.ZodType),
       }),
       executionRef: { kind: 'static', toolId },
+      ...(isDefined(approval) && { approval }),
     };
   }
 }

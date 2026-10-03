@@ -3,19 +3,17 @@ import { type RefObject, useCallback } from 'react';
 
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
+import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndexDragSelectBoundaryClass';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 
 type RecordSelectionDragSelectProps = {
   selectableItemsContainerRef: RefObject<HTMLElement | null>;
-  scrollWrapperComponentInstanceId?: string;
   onDragSelectionStart?: () => void;
   onDragSelectionEnd?: () => void;
 };
 
 export const RecordSelectionDragSelect = ({
   selectableItemsContainerRef,
-  scrollWrapperComponentInstanceId,
   onDragSelectionStart,
   onDragSelectionEnd,
 }: RecordSelectionDragSelectProps) => {
@@ -64,7 +62,6 @@ export const RecordSelectionDragSelect = ({
   return (
     <DragSelect
       selectableItemsContainerRef={selectableItemsContainerRef}
-      scrollWrapperComponentInstanceId={scrollWrapperComponentInstanceId}
       onDragSelectionStart={onDragSelectionStart}
       onDragSelectionChange={handleDragSelectionChange}
       onDragSelectionEnd={handleDragSelectionEnd}
