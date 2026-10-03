@@ -156,7 +156,7 @@ const toQuestionList = (
   questions: [result.question],
   status: result.status,
   answers: isPlainObject(result.answer)
-    ? [{ questionIndex: 0, ...result.answer }]
+    ? [{ ...result.answer, questionIndex: 0 }]
     : undefined,
 });
 

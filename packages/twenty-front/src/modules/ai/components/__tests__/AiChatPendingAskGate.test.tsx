@@ -204,6 +204,35 @@ describe('AiChatPendingAskGate', () => {
     displayedThreadId = 'thread-1';
   });
 
+  it('opens a later batch of requests on its oldest one', async () => {
+    useAgentChatPendingToolCalls.mockReturnValue([
+      EMAIL_APPROVAL,
+      { toolCallId: 'call-3', kind: 'question', question: QUESTION },
+    ]);
+
+    const { rerender } = renderGate();
+    const rerenderGate = () =>
+      rerender(
+        <I18nProvider i18n={i18n}>
+          <AiChatPendingAskGate>
+            <textarea aria-label="Message" />
+          </AiChatPendingAskGate>
+        </I18nProvider>,
+      );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Next request' }));
+    useAgentChatPendingToolCalls.mockReturnValue([]);
+    rerenderGate();
+    useAgentChatPendingToolCalls.mockReturnValue([
+      { toolCallId: 'call-6', kind: 'question', question: QUESTION },
+      { ...EMAIL_APPROVAL, toolCallId: 'call-7' },
+    ]);
+    rerenderGate();
+
+    expect(screen.getByText('Request 1 of 2')).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Questions' })).toBeVisible();
+  });
+
   it('shows the composer once nothing is pending', () => {
     useAgentChatPendingToolCalls.mockReturnValue([]);
 

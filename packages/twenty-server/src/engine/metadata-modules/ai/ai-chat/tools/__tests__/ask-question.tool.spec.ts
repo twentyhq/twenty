@@ -41,6 +41,7 @@ describe('ask_question tool', () => {
 
   it.each([
     ['fewer than two options', { options: [{ label: 'only one' }] }],
+    ['a blank option label', { options: [{ label: '  ' }, { label: 'b' }] }],
     [
       'more than four options',
       {

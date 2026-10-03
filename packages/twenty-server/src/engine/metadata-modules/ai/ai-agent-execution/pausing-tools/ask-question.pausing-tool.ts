@@ -23,6 +23,8 @@ export const askQuestionInputSchema = z.object({
       z.object({
         label: z
           .string()
+          .trim()
+          .min(1)
           .describe('Concise option the user can pick (1-5 words).'),
         description: z
           .string()
@@ -68,7 +70,11 @@ const buildAskQuestionOutputSchema = (
 ): z.ZodType<AskQuestionResponse> =>
   z
     .object({
-      selectedOptionIndices: z.array(z.number().int()),
+      selectedOptionIndices: z
+        .array(z.number().int())
+        .refine((indices) => new Set(indices).size === indices.length, {
+          message: 'Each option can be selected only once.',
+        }),
       freeText: z.string().optional(),
     })
     .superRefine(({ selectedOptionIndices, freeText }, context) => {

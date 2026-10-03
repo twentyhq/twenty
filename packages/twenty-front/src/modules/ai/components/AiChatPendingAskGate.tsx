@@ -38,6 +38,8 @@ type RequestSelection = {
   threadId: string | null;
   toolCallId: string | null;
   index: number;
+  // the requests pending when one was picked, to tell a later batch from this one
+  batchToolCallIds: string[];
 };
 
 // The agent resumes once every paused call is answered. Each call is answered on its own, in any
@@ -52,6 +54,7 @@ export const AiChatPendingAskGate = ({
     threadId: null,
     toolCallId: null,
     index: 0,
+    batchToolCallIds: [],
   });
 
   if (pendingToolCalls.length === 0) {
@@ -63,9 +66,14 @@ export const AiChatPendingAskGate = ({
     (pendingToolCall) => pendingToolCall.toolCallId === selection.toolCallId,
   );
   // an answered request leaves the list, so the one taking its place is shown
-  // a selection made in another conversation does not carry over, so each opens on its oldest request
-  const previousIndex =
-    selection.threadId === displayedThreadId ? selection.index : 0;
+  // a selection made in another conversation or for an earlier batch does not carry over, so
+  // each new set of requests opens on its oldest one
+  const isSameBatch =
+    selection.threadId === displayedThreadId &&
+    pendingToolCalls.some((pendingToolCall) =>
+      selection.batchToolCallIds.includes(pendingToolCall.toolCallId),
+    );
+  const previousIndex = isSameBatch ? selection.index : 0;
   const currentIndex =
     selectedIndex >= 0
       ? selectedIndex
@@ -77,6 +85,9 @@ export const AiChatPendingAskGate = ({
       threadId: displayedThreadId,
       toolCallId: pendingToolCalls[index].toolCallId,
       index,
+      batchToolCallIds: pendingToolCalls.map(
+        (pendingToolCall) => pendingToolCall.toolCallId,
+      ),
     });
 
   return (

@@ -75,7 +75,9 @@ export const AiChatQuestionStatusRenderer = ({
     return (
       <AiChatAskStatusRow
         Icon={IconHelpCircle}
-        message={t`Question skipped`}
+        message={
+          entries.length > 1 ? t`Questions skipped` : t`Question skipped`
+        }
         isShimmering={false}
       />
     );

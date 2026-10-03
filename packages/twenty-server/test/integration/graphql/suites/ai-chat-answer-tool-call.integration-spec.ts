@@ -227,6 +227,8 @@ describe('Answering a chat tool call', () => {
     const last = await answerQuestions('unordered-last');
 
     expect(last.body.errors).toBeUndefined();
+    expect(await readToolCallStatus('unordered-last')).toBe('answered');
+    expect(await readToolCallStatus('unordered-first')).toBe('pending');
 
     const first = await answerQuestions('unordered-first');
 

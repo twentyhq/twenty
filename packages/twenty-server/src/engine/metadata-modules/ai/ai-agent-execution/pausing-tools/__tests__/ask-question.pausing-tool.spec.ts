@@ -58,6 +58,7 @@ describe('ASK_QUESTION_PAUSING_TOOL', () => {
   it.each([
     ['an empty answer', { selectedOptionIndices: [], freeText: '  ' }],
     ['an unknown option', { selectedOptionIndices: [2] }],
+    ['the same option twice', { selectedOptionIndices: [1, 1] }],
   ])('refuses %s', (_case, answer) => {
     expect(parseCall().validate(answer).isValid).toBe(false);
   });

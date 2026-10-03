@@ -11,7 +11,7 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
 
   it('should state the two-call reply contract up front', () => {
     expect(prompt).toContain(
-      'While the setup runs, every reply of yours ends with one of two tool calls, ask_question or complete_workspace_setup, as the final section below spells out',
+      'While the setup runs, every reply of yours ends with ask_question calls, one per question, or with the complete_workspace_setup call, as the final section below spells out',
     );
   });
 
@@ -280,14 +280,14 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
   it('should end every setup reply on one of the two calls, after its text', () => {
     expect(prompt).toContain('## How every reply ends');
     expect(prompt).toContain(
-      'ends in exactly one of two ways: the ask_question call, or the complete_workspace_setup call',
+      'ends in exactly one of two ways: ask_question calls, one per question, or the complete_workspace_setup call',
     );
     expect(prompt).toContain('The only exception is the CSV upload request');
     expect(prompt).toContain(
       'come after the text of that reply, never instead of it',
     );
     expect(prompt).toContain(
-      'while anything is still worth building, it is the ask_question call',
+      'while anything is still worth building, it is ask_question calls',
     );
     expect(prompt).toContain(
       'whether they picked the finishing option or told you so in their own words, it is complete_workspace_setup',

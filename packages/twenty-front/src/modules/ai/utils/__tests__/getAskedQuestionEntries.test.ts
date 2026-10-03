@@ -13,6 +13,10 @@ const SEATS = {
 };
 
 describe('getAskedQuestionEntries', () => {
+  it('reads nothing while the call has no result yet', () => {
+    expect(getAskedQuestionEntries(undefined)).toEqual([]);
+  });
+
   it('reads the answer of an ask_question call', () => {
     expect(
       getAskedQuestionEntries({
