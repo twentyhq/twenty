@@ -5,6 +5,7 @@ import { type ReactNode } from 'react';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { useSelectAllRecords } from '@/object-record/record-selection/hooks/useSelectAllRecords';
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
@@ -45,7 +46,9 @@ describe('useSelectAllRecords', () => {
       wrapper: Wrapper,
     });
 
-    act(() => result.current.selectAllRecords());
+    act(() => {
+      result.current.selectAllRecords();
+    });
 
     expect(getSelectedRecordIds()).toEqual([
       'record-1',
@@ -53,7 +56,9 @@ describe('useSelectAllRecords', () => {
       'record-3',
     ]);
 
-    act(() => result.current.selectAllRecords());
+    act(() => {
+      result.current.selectAllRecords();
+    });
 
     expect(getSelectedRecordIds()).toEqual([]);
   });
@@ -67,9 +72,34 @@ describe('useSelectAllRecords', () => {
       { wrapper: Wrapper },
     );
 
-    act(() => result.current.selectAllRecords());
+    act(() => {
+      result.current.selectAllRecords();
+    });
     act(() => result.current.resetRecordSelection());
 
     expect(getSelectedRecordIds()).toEqual([]);
+  });
+
+  it('should select the remaining records when some are already selected', () => {
+    jotaiStore.set(
+      isRecordSelectedComponentFamilyState.atomFamily({
+        instanceId,
+        familyKey: 'record-2',
+      }),
+      true,
+    );
+    const { result } = renderHook(() => useSelectAllRecords(instanceId), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      result.current.selectAllRecords();
+    });
+
+    expect(getSelectedRecordIds()).toEqual([
+      'record-1',
+      'record-2',
+      'record-3',
+    ]);
   });
 });

@@ -55,10 +55,6 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
 
     const deletedRecordIds = store.get(selectedRecordIds);
 
-    // Cleared while the cards are still listed, since the selection only
-    // covers listed records
-    resetRecordSelection();
-
     if (
       !isDefined(recordIndexGroupFieldMetadataItem) ||
       !isNonEmptyArray(recordGroupDefinitions) ||
@@ -66,6 +62,10 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
     ) {
       return;
     }
+
+    // Cleared while the cards are still listed, since the selection only
+    // covers listed records
+    resetRecordSelection();
 
     for (const recordGroup of recordGroupDefinitions) {
       const currentRecordIds = store.get(
