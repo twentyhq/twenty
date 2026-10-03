@@ -38,11 +38,11 @@ export const AiChatToolCallApprovalCurrentValue = ({
 }: AiChatToolCallApprovalCurrentValueProps) => {
   const { t } = useLingui();
   const { fieldName } = fieldDefinition.metadata;
-  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
   const fieldValue = useRecordFieldValue(recordId, fieldName, fieldDefinition);
 
   // the card loads the record, and a value read before then would show as empty
-  if (!isDefined(record)) {
+  if (!isDefined(recordStore)) {
     return null;
   }
 
