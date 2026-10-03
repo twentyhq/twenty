@@ -1,18 +1,12 @@
 import { type AgentChatMessageUIToolCallPart } from '@/ai/types/AgentChatMessageUIToolCallPart';
-import { type UIDataTypes, type UIMessagePart, type UITools } from 'ai';
-
-const isNavigateAppToolCallPart = (
-  part: UIMessagePart<UIDataTypes, UITools>,
-): boolean =>
-  part.type === 'tool-execute_tool' &&
-  typeof part.input === 'object' &&
-  part.input !== null &&
-  'toolName' in part.input &&
-  (part.input as { toolName?: string }).toolName === 'navigate_app';
+import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
+import { type DynamicToolUIPart, isToolUIPart, type ToolUIPart } from 'ai';
+import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 export const extractUIToolCallParts = (
-  messageParts: UIMessagePart<UIDataTypes, UITools>[],
+  messageParts: ExtendedUIMessagePart[],
 ): AgentChatMessageUIToolCallPart[] =>
   messageParts.filter(
-    isNavigateAppToolCallPart,
-  ) as unknown as AgentChatMessageUIToolCallPart[];
+    (part): part is ToolUIPart | DynamicToolUIPart =>
+      isToolUIPart(part) && getEffectiveToolName(part) === 'navigate_app',
+  ) as AgentChatMessageUIToolCallPart[];

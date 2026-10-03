@@ -11,7 +11,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
@@ -185,7 +184,6 @@ export class AgentRunService {
           userWorkspaceId:
             runAsContext?.authContext.userWorkspaceId ?? requestUserWorkspaceId,
           runAsRoleId: runAsContext?.roleId,
-          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
           toolLoadingStrategy: 'lazy',
         }),
       );

@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { RecordDragMultiDragPreview } from '@/object-record/record-drag/components/RecordDragMultiDragPreview';
+import { RecordDragMultiDragCounterChip } from '@/object-record/record-drag/components/RecordDragMultiDragCounterChip';
 import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
 import { RecordListRow } from '@/object-record/record-list/components/RecordListRow';
 
@@ -30,7 +30,7 @@ export const RecordListRowDragOverlay = ({
   return (
     <StyledRowDragOverlay>
       <RecordListRow recordId={sourceData.recordId} />
-      <RecordDragMultiDragPreview recordId={sourceData.recordId} />
+      <RecordDragMultiDragCounterChip />
     </StyledRowDragOverlay>
   );
 };

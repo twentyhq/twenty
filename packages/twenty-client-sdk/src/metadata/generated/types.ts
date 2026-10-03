@@ -6389,6 +6389,70 @@ export default {
                 1
             ]
         },
+        "Webhook": {
+            "id": [
+                3
+            ],
+            "targetUrl": [
+                1
+            ],
+            "operations": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "secret": [
+                1
+            ],
+            "applicationId": [
+                3
+            ],
+            "createdAt": [
+                4
+            ],
+            "updatedAt": [
+                4
+            ],
+            "deletedAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ToolIndexEntry": {
+            "name": [
+                1
+            ],
+            "label": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "category": [
+                1
+            ],
+            "objectName": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "widgetName": [
+                1
+            ],
+            "frontComponentId": [
+                1
+            ],
+            "inputSchema": [
+                9
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "AgentMessagePart": {
             "id": [
                 3
@@ -6428,9 +6492,6 @@ export default {
             ],
             "errorMessage": [
                 1
-            ],
-            "errorDetails": [
-                9
             ],
             "sourceUrlSourceId": [
                 1
@@ -6498,77 +6559,13 @@ export default {
                 1
             ],
             "parts": [
-                365
+                367
             ],
             "processedAt": [
                 4
             ],
             "createdAt": [
                 4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "Webhook": {
-            "id": [
-                3
-            ],
-            "targetUrl": [
-                1
-            ],
-            "operations": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "secret": [
-                1
-            ],
-            "applicationId": [
-                3
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
-            ],
-            "deletedAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ToolIndexEntry": {
-            "name": [
-                1
-            ],
-            "label": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "category": [
-                1
-            ],
-            "objectName": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "widgetName": [
-                1
-            ],
-            "frontComponentId": [
-                1
-            ],
-            "inputSchema": [
-                9
             ],
             "__typename": [
                 1
@@ -7117,7 +7114,7 @@ export default {
                 399
             ],
             "messages": [
-                366
+                368
             ],
             "createdAt": [
                 4
@@ -8206,7 +8203,7 @@ export default {
                 332
             ],
             "getToolIndex": [
-                368
+                366
             ],
             "getToolInputSchema": [
                 9,
@@ -8218,10 +8215,10 @@ export default {
                 }
             ],
             "webhooks": [
-                367
+                365
             ],
             "webhook": [
-                367,
+                365,
                 {
                     "id": [
                         3,
@@ -8305,7 +8302,7 @@ export default {
                 }
             ],
             "chatMessages": [
-                366,
+                368,
                 {
                     "threadId": [
                         3,
@@ -10479,7 +10476,7 @@ export default {
                 }
             ],
             "createWebhook": [
-                367,
+                365,
                 {
                     "input": [
                         576,
@@ -10488,7 +10485,7 @@ export default {
                 }
             ],
             "updateWebhook": [
-                367,
+                365,
                 {
                     "input": [
                         577,
@@ -10497,7 +10494,7 @@ export default {
                 }
             ],
             "deleteWebhook": [
-                367,
+                365,
                 {
                     "id": [
                         3,

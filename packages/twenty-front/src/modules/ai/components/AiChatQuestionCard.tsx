@@ -28,15 +28,12 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledAiChatAskCard } from '@/ai/components/AiChatAskStyledComponents';
-import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
-import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
+import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
 import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
-import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const NUMBER_ICONS: IconComponent[] = [
   IconSquareNumber1,
@@ -49,6 +46,9 @@ const NUMBER_ICONS: IconComponent[] = [
   IconSquareNumber8,
   IconSquareNumber9,
 ];
+
+const getOptionNumberIcon = (optionIndex: number) =>
+  NUMBER_ICONS[Math.min(optionIndex, NUMBER_ICONS.length - 1)];
 
 const StyledQuestionSection = styled.div`
   display: flex;
@@ -156,25 +156,6 @@ const StyledComposerSection = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledActionsRow = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-const StyledLeftActions = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing['0.5']};
-`;
-
-const StyledRightActions = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
 const areAllQuestionsAnswered = (
   questions: AskQuestionItem[],
   selectedByQuestion: Record<number, number[]>,
@@ -212,9 +193,6 @@ export const AiChatQuestionCard = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
-
-  const aiModels = useAtomStateValue(aiModelsState);
-  const hasNoEnabledModels = aiModels.length === 0;
 
   const currentQuestion = questions[currentIndex];
   const hasMultipleQuestions = questions.length > 1;
@@ -416,9 +394,7 @@ export const AiChatQuestionCard = ({
 
         <StyledOptionsList>
           {currentQuestion.options.map((option, optionIndex) => {
-            const NumberIcon =
-              NUMBER_ICONS[optionIndex] ??
-              NUMBER_ICONS[NUMBER_ICONS.length - 1];
+            const NumberIcon = getOptionNumberIcon(optionIndex);
             const isSelected = (
               selectedByQuestion[currentIndex] ?? []
             ).includes(optionIndex);
@@ -427,7 +403,6 @@ export const AiChatQuestionCard = ({
               (otherSelectedByQuestion[currentIndex] ?? false);
             const isHighlighted =
               isSelected || (!hasSelection && option.isRecommended === true);
-            const tooltipId = `ask-question-option-${toolCallId}-${currentIndex}-${optionIndex}`;
 
             return (
               <StyledOptionRow
@@ -465,10 +440,7 @@ export const AiChatQuestionCard = ({
                     delay={TooltipDelay.shortDelay}
                     side="left"
                   >
-                    <span
-                      id={tooltipId}
-                      onClick={(event) => event.stopPropagation()}
-                    >
+                    <span onClick={(event) => event.stopPropagation()}>
                       <LightIconButton
                         size="sm"
                         emphasis="subtle"
@@ -483,10 +455,7 @@ export const AiChatQuestionCard = ({
             );
           })}
           <AiChatQuestionOtherOption
-            NumberIcon={
-              NUMBER_ICONS[currentQuestion.options.length] ??
-              NUMBER_ICONS[NUMBER_ICONS.length - 1]
-            }
+            NumberIcon={getOptionNumberIcon(currentQuestion.options.length)}
             isHighlighted={otherSelectedByQuestion[currentIndex] ?? false}
             value={freeTextByQuestion[currentIndex] ?? ''}
             onChange={handleOtherTextChange}
@@ -499,15 +468,9 @@ export const AiChatQuestionCard = ({
       <StyledDivider />
 
       <StyledComposerSection>
-        <StyledActionsRow>
-          <StyledLeftActions>
-            <AiChatContextUsageButton />
-          </StyledLeftActions>
-          <StyledRightActions>
-            <AiModelTierDropdown
-              dropdownId="ai-chat-question-model-tier-dropdown"
-              disabled={hasNoEnabledModels}
-            />
+        <AiChatComposerActionsRow
+          modelTierDropdownId="ai-chat-question-model-tier-dropdown"
+          sendButton={
             <IconButton
               variant="solid"
               color="accent"
@@ -519,8 +482,8 @@ export const AiChatQuestionCard = ({
             >
               <IconArrowUp />
             </IconButton>
-          </StyledRightActions>
-        </StyledActionsRow>
+          }
+        />
       </StyledComposerSection>
     </StyledAiChatAskCard>
   );
