@@ -18,7 +18,7 @@ import { readToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
-import { skipAwaitingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/skip-awaiting-tool-parts.util';
+import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
 import {
   WorkflowRunStatus,
   type WorkflowRunState,
@@ -753,7 +753,7 @@ export class WorkflowRunWorkspaceService {
         continue;
       }
 
-      await skipAwaitingToolParts({
+      await closeOpenToolParts({
         messagePartRepository: this.messagePartRepository,
         messageId: pendingQuestionMessageId,
         workspaceId,

@@ -88,17 +88,22 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       );
     }
 
-    const [workflow, awaitingToolCall] = await Promise.all([
-      this.findRunWorkflowOrThrow(runInfo),
-      isDefined(toolCall)
-        ? this.buildAwaitingToolCall({
+    const workflow = await this.findRunWorkflowOrThrow(runInfo);
+    let awaitingToolCall:
+      | ReturnType<SendChatMessageWorkflowAction['resolveAwaitingToolCall']>
+      | undefined;
+    const buildAwaitingToolCall = isDefined(toolCall)
+      ? () => {
+          awaitingToolCall ??= this.resolveAwaitingToolCall({
             toolCall,
             summary: text,
             runInfo,
             stepId: currentStepId,
-          })
-        : undefined,
-    ]);
+          });
+
+          return awaitingToolCall;
+        }
+      : undefined;
 
     const sendMessage = (idempotencyKey: string) =>
       // Each run gets its own conversation with the member, so every message
@@ -119,7 +124,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
           title: isNonEmptyString(title) ? title : step.name,
           text,
         },
-        awaitingToolCall,
+        buildAwaitingToolCall,
       });
     const executionKey = buildStepExecutionKey({
       stepId: currentStepId,
@@ -129,12 +134,12 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
 
     // a step run again finds the call it posted before: it keeps waiting on a pending one, reuses
     // an answered one so nothing runs twice, and asks again once an earlier call closed unanswered
-    for (let attempt = 0; ; attempt++) {
+    for (let attempt = 0; attempt < MAX_SEND_ATTEMPTS; attempt++) {
       const { threadId, isDismissed, awaitedToolOutput } = await sendMessage(
         attempt === 0 ? executionKey : `${executionKey}:${attempt}`,
       );
 
-      if (!isDefined(awaitingToolCall)) {
+      if (!isDefined(buildAwaitingToolCall)) {
         return { result: { threadId } };
       }
 
@@ -147,7 +152,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
 
       const status = readToolCallStatus(awaitedToolOutput);
 
-      if (status === 'skipped' && attempt < MAX_SEND_ATTEMPTS) {
+      if (status === 'skipped') {
         continue;
       }
 
@@ -170,10 +175,15 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
         }),
       };
     }
+
+    throw new WorkflowStepExecutorException(
+      `The action was asked ${MAX_SEND_ATTEMPTS} times without an answer`,
+      WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+    );
   }
 
   // resolved with the run's permissions, the ones the step itself acts with
-  private async buildAwaitingToolCall({
+  private async resolveAwaitingToolCall({
     toolCall,
     summary,
     runInfo,

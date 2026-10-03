@@ -20,9 +20,14 @@ export type PausingToolDefinition<TInput, TOutput> = {
     input: TInput,
     pendingToolOutput: unknown,
   ) => Record<string, unknown>;
-  // a call whose completion runs something is recorded as running first, so it can never be answered twice
+  // a call whose completion runs something is recorded as running first, so it can never be answered
+  // twice, and is closed as interrupted when its outcome never got recorded, without running it again
   toRunningToolResult?: (
     input: TInput,
     pendingToolOutput: unknown,
+  ) => Record<string, unknown>;
+  toInterruptedToolResult?: (
+    input: TInput,
+    runningToolOutput: unknown,
   ) => Record<string, unknown>;
 };

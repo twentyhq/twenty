@@ -162,6 +162,7 @@ export class ToolCallAnswerService {
     }
 
     let step: WorkflowAction | null = null;
+    let isClaimedAsRunning = false;
     let isLastAnswer: boolean;
     let answerText: string;
     let toolResult: Record<string, unknown>;
@@ -216,15 +217,18 @@ export class ToolCallAnswerService {
 
       const runningToolResult = pausingToolCall.toRunningToolResult?.();
 
-      if (
-        isDefined(runningToolResult) &&
-        !(await this.agentChatService.claimToolCallAnswer({
-          partId: toolPart.id,
-          toolOutput: runningToolResult,
-          workspaceId,
-        }))
-      ) {
-        throw this.notPending();
+      if (isDefined(runningToolResult)) {
+        if (
+          !(await this.agentChatService.claimToolCallAnswer({
+            partId: toolPart.id,
+            toolOutput: runningToolResult,
+            workspaceId,
+          }))
+        ) {
+          throw this.notPending();
+        }
+
+        isClaimedAsRunning = true;
       }
 
       const completion = await pausingToolCall.complete({
@@ -250,11 +254,37 @@ export class ToolCallAnswerService {
       answerText = completion.answerText;
       toolResult = completion.toolResult;
     } catch (error) {
-      await this.agentChatStreamingService.releaseStreamClaim(
-        threadId,
-        workspaceId,
-        streamId,
-      );
+      // a call claimed as running cannot be answered again, so the run or turn fails, which
+      // closes the call as interrupted instead of leaving it waiting on an outcome
+      if (isClaimedAsRunning) {
+        if (!isDefined(workflowRunId)) {
+          await this.agentChatService
+            .closePendingToolCalls({
+              threadId,
+              messageId: toolPart.messageId,
+              workspaceId,
+            })
+            .catch((closeError: unknown) =>
+              this.logger.warn(
+                `Could not close the interrupted call on thread ${threadId}: ${closeError instanceof Error ? closeError.message : String(closeError)}`,
+              ),
+            );
+        }
+
+        await this.failAfterAnswer({
+          threadId,
+          workspaceId,
+          streamId,
+          workflowRunId,
+          error,
+        });
+      } else {
+        await this.agentChatStreamingService.releaseStreamClaim(
+          threadId,
+          workspaceId,
+          streamId,
+        );
+      }
 
       throw error;
     }

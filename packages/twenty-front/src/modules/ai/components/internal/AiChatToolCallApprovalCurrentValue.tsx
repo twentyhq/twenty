@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isUndefined } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
@@ -10,6 +10,8 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledCurrentValue = styled.div`
   align-items: center;
@@ -36,10 +38,11 @@ export const AiChatToolCallApprovalCurrentValue = ({
 }: AiChatToolCallApprovalCurrentValueProps) => {
   const { t } = useLingui();
   const { fieldName } = fieldDefinition.metadata;
+  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
   const fieldValue = useRecordFieldValue(recordId, fieldName, fieldDefinition);
 
-  // undefined until the card loads the record, which would otherwise read as an empty value
-  if (isUndefined(fieldValue)) {
+  // the card loads the record, and a value read before then would show as empty
+  if (!isDefined(record)) {
     return null;
   }
 

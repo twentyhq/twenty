@@ -46,7 +46,7 @@ export class AgentInboxService {
     workspaceId,
     sender,
     input,
-    awaitingToolCall,
+    buildAwaitingToolCall,
     resolveProposal = async (proposeToolCallInput) =>
       resolveEmailToolCallProposal(proposeToolCallInput),
   }: {
@@ -55,12 +55,13 @@ export class AgentInboxService {
     input: Omit<SendInboxMessageInput, 'toolCall'> & { toolCall?: unknown };
     // without a resolver, only emails can be proposed: they need no tool of the sender's
     resolveProposal?: ResolveInboxProposal;
-    // a pausing call the server already resolved, with its pending output
-    awaitingToolCall?: {
+    // a pausing call the server resolves, with its pending output, only when the message is written,
+    // so a message delivered earlier is found even once the call could no longer be resolved
+    buildAwaitingToolCall?: () => Promise<{
       toolName: string;
       input: Record<string, unknown>;
       output: Record<string, unknown>;
-    };
+    }>;
   }): Promise<AgentInboxDelivery> {
     const senderDetails = getAgentInboxSenderDetails(sender);
     const { threadId, turnId, openingMessageId, messageId, toolCallId } =
@@ -83,12 +84,13 @@ export class AgentInboxService {
       return {
         threadId,
         isDismissed: false,
-        awaitedToolOutput: isDefined(awaitingToolCall)
+        awaitedToolOutput: isDefined(buildAwaitingToolCall)
           ? await this.findToolOutput({ workspaceId, toolCallId })
           : undefined,
       };
     }
 
+    const awaitingToolCall = await buildAwaitingToolCall?.();
     const toolCallPart = isDefined(awaitingToolCall)
       ? {
           part: buildToolPart({ ...awaitingToolCall, toolCallId }),

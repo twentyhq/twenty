@@ -3,16 +3,19 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { type PausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool.type';
 import { type PausingToolDefinition } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-definition.type';
 
+const readStatus = (toolOutput: unknown): unknown =>
+  isPlainObject(toolOutput) && isPlainObject(toolOutput.result)
+    ? toolOutput.result.status
+    : undefined;
+
 export const definePausingTool = <
   TInput,
   TOutput extends Record<string, unknown>,
 >(
   definition: PausingToolDefinition<TInput, TOutput>,
 ): PausingTool => ({
-  isAwaitingOutput: (toolOutput) =>
-    isPlainObject(toolOutput) &&
-    isPlainObject(toolOutput.result) &&
-    toolOutput.result.status === 'pending',
+  isAwaitingOutput: (toolOutput) => readStatus(toolOutput) === 'pending',
+  isRunningOutput: (toolOutput) => readStatus(toolOutput) === 'running',
   parseCall: (toolInput, pendingToolOutput) => {
     const parsedInput = definition.inputSchema.safeParse(toolInput);
 
@@ -23,7 +26,7 @@ export const definePausingTool = <
     const input = parsedInput.data;
     const outputSchema = definition.outputSchema(input, pendingToolOutput);
 
-    const { toRunningToolResult } = definition;
+    const { toRunningToolResult, toInterruptedToolResult } = definition;
 
     return {
       toSkippedToolResult: () =>
@@ -32,6 +35,12 @@ export const definePausingTool = <
         ? {
             toRunningToolResult: () =>
               toRunningToolResult(input, pendingToolOutput),
+          }
+        : {}),
+      ...(isDefined(toInterruptedToolResult)
+        ? {
+            toInterruptedToolResult: () =>
+              toInterruptedToolResult(input, pendingToolOutput),
           }
         : {}),
       validate: (output) => {

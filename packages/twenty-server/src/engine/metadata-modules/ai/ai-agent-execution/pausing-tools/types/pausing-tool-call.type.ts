@@ -14,4 +14,5 @@ export type PausingToolCall = {
   }) => Promise<PausingToolCompletion>;
   toSkippedToolResult: () => Record<string, unknown>;
   toRunningToolResult?: () => Record<string, unknown>;
+  toInterruptedToolResult?: () => Record<string, unknown>;
 };

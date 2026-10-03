@@ -303,7 +303,7 @@ describe('Send chat message workflow step', () => {
         .spyOn(agentChatService, 'recordToolCallAnswer')
         .mockRejectedValueOnce(new Error('Database unavailable'));
       let secondAnswerErrors: string | undefined;
-      let partStatus: unknown;
+      let partResult: Record<string, unknown> | undefined;
 
       try {
         const { status } = await runWorkflowActionStep({
@@ -352,22 +352,21 @@ describe('Send chat message workflow step', () => {
             expect((await approve()).body.errors).toBeDefined();
 
             secondAnswerErrors = JSON.stringify((await approve()).body.errors);
-            partStatus = (await readCall()).toolOutput.result.status;
-
-            await workflowGraphqlRequest(
-              'mutation Stop($id: UUID!) { stopWorkflowRun(workflowRunId: $id) { id } }',
-              { id: workflowRunId },
-            );
+            partResult = (await readCall()).toolOutput.result;
           },
         });
 
-        expect(status).toBe('STOPPED');
+        expect(status).toBe('FAILED');
       } finally {
         recordToolCallAnswer.mockRestore();
       }
 
       expect(secondAnswerErrors).toContain('TOOL_CALL_NOT_PENDING');
-      expect(partStatus).toBe('running');
+      expect(partResult).toMatchObject({
+        status: 'failed',
+        error:
+          'Interrupted before its outcome was recorded. It may or may not have run.',
+      });
       expect(await readEmployees()).toBe(25);
     }, 120000);
 

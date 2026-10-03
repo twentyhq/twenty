@@ -200,13 +200,14 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
       });
     }
 
+    const approvedProposal: ProposedToolCall = {
+      ...proposal,
+      toolName: approvedToolName,
+      arguments: buildApprovedArguments(proposal, output.arguments),
+    };
+
     // the call was claimed as running before this, so it must end with an outcome rather than a throw
     try {
-      const approvedProposal: ProposedToolCall = {
-        ...proposal,
-        toolName: approvedToolName,
-        arguments: buildApprovedArguments(proposal, output.arguments),
-      };
       const { currentValues, objectNameSingular, recordId } = approvedProposal;
 
       if (
@@ -282,7 +283,11 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
       return buildApprovalCompletion({
         success: false,
         message: `The user approved the call, but it failed: ${errorMessage}`,
-        result: { status: 'failed', proposal, error: errorMessage },
+        result: {
+          status: 'failed',
+          proposal: approvedProposal,
+          error: errorMessage,
+        },
       });
     }
   },
@@ -292,6 +297,17 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
     result: {
       status: 'running',
       proposal: readProposal(input, pendingToolOutput).proposal,
+    } satisfies ProposeToolCallToolResult,
+  }),
+  toInterruptedToolResult: (input, runningToolOutput) => ({
+    success: false,
+    message:
+      'The user approved the call, but it was interrupted before its outcome was recorded, so it may or may not have run. Check before proposing it again.',
+    result: {
+      status: 'failed',
+      proposal: readProposal(input, runningToolOutput).proposal,
+      error:
+        'Interrupted before its outcome was recorded. It may or may not have run.',
     } satisfies ProposeToolCallToolResult,
   }),
   toSkippedToolResult: (input, pendingToolOutput) => ({
