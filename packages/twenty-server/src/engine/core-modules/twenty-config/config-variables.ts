@@ -590,7 +590,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
-    description: 'Type of storage to use (local or S3)',
+    description: 'Type of storage to use (local, S3 or GCS)',
     type: ConfigVariableType.ENUM,
     options: Object.values(StorageDriverType),
   })
@@ -680,13 +680,49 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
-    description: 'TTL in seconds for S3 presigned URLs.',
+    description:
+      'TTL in seconds for presigned URLs, used by both the S3 and the GCS drivers.',
     type: ConfigVariableType.NUMBER,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
+  @ValidateIf(
+    (env) =>
+      env.STORAGE_TYPE === StorageDriverType.S_3 ||
+      env.STORAGE_TYPE === StorageDriverType.GCS,
+  )
   @CastToPositiveNumber()
   @IsOptional()
   STORAGE_S3_PRESIGNED_URL_EXPIRES_IN: number = 900;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    description:
+      'Name of the Google Cloud Storage bucket used for file storage. Required when STORAGE_TYPE is GCS. Credentials come from Application Default Credentials (the attached service account on Cloud Run or GKE, or GOOGLE_APPLICATION_CREDENTIALS).',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.GCS)
+  @IsString()
+  @IsNotEmpty()
+  STORAGE_GCS_BUCKET_NAME: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    description:
+      'Google Cloud project ID for GCS storage. Optional — omit to let Application Default Credentials resolve it.',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.GCS)
+  @IsOptional()
+  STORAGE_GCS_PROJECT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    description:
+      'When enabled, file downloads are 302-redirected to V4 signed GCS URLs and direct uploads go straight to GCS via signed PUT URLs instead of being proxied through the server. Signing with Application Default Credentials calls the IAM signBlob API, so the runtime service account needs roles/iam.serviceAccountTokenCreator on itself. Requires a bucket CORS policy allowing PUT from the frontend origin.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.GCS)
+  @IsOptional()
+  STORAGE_GCS_PRESIGNED_URL_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,

@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 
+import { GcsDriver } from 'src/engine/core-modules/file-storage/drivers/gcs.driver';
 import { LocalDriver } from 'src/engine/core-modules/file-storage/drivers/local.driver';
 import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
 import { ValidatedStorageDriver } from 'src/engine/core-modules/file-storage/drivers/validated-storage.driver';
@@ -38,6 +40,14 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
       );
 
       return `s3|${storageConfigHash}`;
+    }
+
+    if (storageType === StorageDriverType.GCS) {
+      const storageConfigHash = this.configGroupHashService.computeHash(
+        ConfigVariablesGroup.STORAGE_CONFIG,
+      );
+
+      return `gcs|${storageConfigHash}`;
     }
 
     throw new Error(`Unsupported storage type: ${storageType}`);
@@ -84,6 +94,29 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
             : fromNodeProviderChain({ clientConfig: { region } }),
           forcePathStyle: true,
           region: region ?? '',
+        });
+        break;
+      }
+
+      case StorageDriverType.GCS: {
+        const bucketName = this.twentyConfigService.get(
+          'STORAGE_GCS_BUCKET_NAME',
+        );
+
+        // Config validation lets unset variables through, so a missing bucket is caught here.
+        if (!isNonEmptyString(bucketName)) {
+          throw new Error(
+            'STORAGE_GCS_BUCKET_NAME is required when STORAGE_TYPE is GCS',
+          );
+        }
+
+        rawDriver = new GcsDriver({
+          bucketName,
+          projectId:
+            this.twentyConfigService.get('STORAGE_GCS_PROJECT_ID') || undefined,
+          presignEnabled: this.twentyConfigService.get(
+            'STORAGE_GCS_PRESIGNED_URL_ENABLED',
+          ),
         });
         break;
       }
