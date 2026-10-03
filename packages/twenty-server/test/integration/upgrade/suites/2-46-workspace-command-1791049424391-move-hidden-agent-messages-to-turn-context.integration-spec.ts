@@ -74,8 +74,8 @@ describe('2-46 workspace command - move hidden agent messages to turn context (i
       [turnId, threadId, KICKOFF_CONTEXT],
     );
     await global.testDataSource.query(
-      `INSERT INTO ${SCHEMA}."agentMessage" (id, "threadId", "turnId", role, status)
-       VALUES ($1, $2, $3, 'assistant', 'sent')`,
+      `INSERT INTO ${SCHEMA}."agentMessage" (id, "threadId", "turnId", role, status, "isHidden")
+       VALUES ($1, $2, $3, 'assistant', 'sent', false)`,
       [randomUUID(), threadId, turnId],
     );
   });
