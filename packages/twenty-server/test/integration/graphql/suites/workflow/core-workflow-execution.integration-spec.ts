@@ -1303,6 +1303,33 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(conversation.workspaceMemberId).toBeNull();
     });
 
+    it('keeps a question waiting when it is answered before its step is marked as waiting', async () => {
+      mockAgent();
+      const { runId, agent, threadId } = await startAskingRun();
+      const setStepStatus = (status: string) =>
+        global.testDataSource.query(
+          `UPDATE "${schema}"."workflowRun" SET state = jsonb_set(state, ARRAY['stepInfos', $2::text, 'status'], to_jsonb($3::text)) WHERE id = $1`,
+          [runId, agent.id, status],
+        );
+
+      await setStepStatus('RUNNING');
+
+      const earlyAnswer = await answer({ threadId });
+
+      expect(JSON.stringify(earlyAnswer.body.errors)).toContain(
+        'TOOL_CALL_NOT_PENDING',
+      );
+      expect(await getToolCalls(threadId)).toEqual({
+        isWaiting: true,
+        calls: [{ toolCallId: 'ask-1', status: 'pending' }],
+      });
+
+      await setStepStatus('PENDING');
+
+      expect((await answer({ threadId })).body.errors).toBeUndefined();
+      await waitForRun(runId, 'COMPLETED');
+    });
+
     it('retries a step that failed after its answer from the same conversation, without asking again', async () => {
       const executeAgent = jest
         .spyOn(

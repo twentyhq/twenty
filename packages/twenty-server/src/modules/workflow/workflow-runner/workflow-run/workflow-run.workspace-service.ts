@@ -511,13 +511,16 @@ export class WorkflowRunWorkspaceService {
     );
   }
 
-  // a step posting a call still runs until its executor marks it pending, and an answer may arrive first
+  // a step posting a call still runs until its executor marks it pending, and an answer may arrive first;
+  // a step is named by its id when it posted to an inbox, or by its conversation on its own run
   async isStepStillRunning({
     stepId,
+    threadId,
     workflowRunId,
     workspaceId,
   }: {
-    stepId: string;
+    stepId?: string;
+    threadId: string;
     workflowRunId: string;
     workspaceId: string;
   }): Promise<boolean> {
@@ -528,7 +531,13 @@ export class WorkflowRunWorkspaceService {
 
     return (
       workflowRun.status === WorkflowRunStatus.RUNNING &&
-      workflowRun.state?.stepInfos?.[stepId]?.status === StepStatus.RUNNING
+      Object.entries(workflowRun.state?.stepInfos ?? {}).some(
+        ([candidateStepId, stepInfo]) =>
+          (isDefined(stepId)
+            ? candidateStepId === stepId
+            : stepInfo?.threadId === threadId) &&
+          stepInfo?.status === StepStatus.RUNNING,
+      )
     );
   }
 

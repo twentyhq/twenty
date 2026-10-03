@@ -187,9 +187,10 @@ export class ToolCallAnswerService {
 
         if (
           !isDefined(step) &&
-          isDefined(inboxWorkflowStep) &&
           (await this.workflowRunWorkspaceService.isStepStillRunning({
-            ...inboxWorkflowStep,
+            stepId: inboxWorkflowStep?.stepId,
+            threadId,
+            workflowRunId,
             workspaceId,
           }))
         ) {
