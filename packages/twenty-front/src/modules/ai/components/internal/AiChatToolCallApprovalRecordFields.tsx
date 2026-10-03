@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
@@ -15,6 +16,12 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { RelationType } from '~/generated-metadata/graphql';
+
+// approvers read amounts as the currency units the "Currently" line shows, not as micros
+const CURRENCY_INPUT_SETTINGS = {
+  type: FieldMetadataType.CURRENCY,
+  amountUnit: 'units',
+} as const;
 
 const StyledField = styled.div`
   display: flex;
@@ -117,6 +124,7 @@ export const AiChatToolCallApprovalRecordFields = ({
             <StyledField key={fieldName}>
               <FormFieldInput
                 field={fieldDefinition}
+                settings={CURRENCY_INPUT_SETTINGS}
                 defaultValue={value as JsonValue}
                 readonly={readonly}
                 onChange={(updatedValue) => onChange(fieldName, updatedValue)}

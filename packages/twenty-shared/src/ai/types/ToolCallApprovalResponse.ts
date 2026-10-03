@@ -4,5 +4,6 @@ export type ToolCallApprovalResponse =
       decision: 'approve';
       toolName?: string;
       arguments?: Record<string, unknown>;
+      feedback?: string;
     }
   | { decision: 'reject'; feedback?: string };

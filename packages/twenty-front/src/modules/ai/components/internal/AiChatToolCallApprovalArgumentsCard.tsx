@@ -65,22 +65,23 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     }));
   };
 
+  const trimmedFeedback = feedback.trim();
+  // feedback goes with either answer, so the agent hears it whatever the person decides
+  const feedbackFields =
+    trimmedFeedback.length > 0 ? { feedback: trimmedFeedback } : {};
+
   const approve = () => {
     if (isDefined(toolArguments)) {
       void answerToolCallApproval({
         decision: 'approve',
         arguments: toolArguments,
+        ...feedbackFields,
       });
     }
   };
 
   const reject = () => {
-    const trimmedFeedback = feedback.trim();
-
-    void answerToolCallApproval({
-      decision: 'reject',
-      ...(trimmedFeedback.length > 0 ? { feedback: trimmedFeedback } : {}),
-    });
+    void answerToolCallApproval({ decision: 'reject', ...feedbackFields });
   };
 
   const hasRecordFields =

@@ -159,6 +159,30 @@ describe('AiChatToolCallApprovalCard', () => {
     );
   });
 
+  it('approves the call with the feedback the person wrote', async () => {
+    const user = userEvent.setup();
+    answerAgentChatToolCall.mockReturnValue(new Promise(() => {}));
+
+    renderCard();
+
+    await user.click(screen.getByRole('button', { name: 'Add feedback' }));
+    await user.type(
+      screen.getByRole('textbox', { name: 'Feedback' }),
+      'Use the staging URL next time',
+    );
+    await user.click(screen.getByRole('button', { name: 'Approve' }));
+
+    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+      expect.objectContaining({
+        response: {
+          decision: 'approve',
+          arguments: PROPOSAL.arguments,
+          feedback: 'Use the staging URL next time',
+        },
+      }),
+    );
+  });
+
   it('rejects the call with the feedback the person wrote', async () => {
     const user = userEvent.setup();
     answerAgentChatToolCall.mockResolvedValue(true);

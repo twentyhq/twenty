@@ -38,6 +38,7 @@ const buildToolCallApprovalResponseSchema = (
         })
         .optional(),
       arguments: z.record(z.string(), z.unknown()).optional(),
+      feedback: z.string().optional(),
     }),
     z.object({
       decision: z.literal('reject'),
@@ -61,11 +62,12 @@ const buildToolCallApprovalResponseSchema = (
   });
 };
 
-// a call recorded without its resolved proposal is still answerable, as a generic one
+// a call whose resolved proposal cannot be read can still be shown, rejected or skipped as a
+// generic one, but never run: its record, snapshot and allowed edits are gone
 const readProposal = (
   input: ProposeToolCallToolInput,
   pendingToolOutput: unknown,
-): ProposedToolCall => {
+): { proposal: ProposedToolCall; isReadable: boolean } => {
   const parsedProposal = proposedToolCallSchema.safeParse(
     isPlainObject(pendingToolOutput) && isPlainObject(pendingToolOutput.result)
       ? pendingToolOutput.result.proposal
@@ -73,8 +75,11 @@ const readProposal = (
   );
 
   return parsedProposal.success
-    ? parsedProposal.data
-    : { ...input, toolLabel: input.toolName, template: 'generic' };
+    ? { proposal: parsedProposal.data, isReadable: true }
+    : {
+        proposal: { ...input, toolLabel: input.toolName, template: 'generic' },
+        isReadable: false,
+      };
 };
 
 // the record and the sending account are fixed when proposed, since no card lets the person
@@ -105,10 +110,17 @@ const buildApprovedArguments = (
 const buildApprovalAnswerText = (
   proposal: ProposedToolCall,
   approvedToolName: string,
-): string =>
-  approvedToolName === proposal.toolName
-    ? `Approve "${proposal.summary}".`
-    : `Approve "${proposal.summary}", running ${approvedToolName} instead.`;
+  feedback: string | undefined,
+): string => {
+  const approval =
+    approvedToolName === proposal.toolName
+      ? `Approve "${proposal.summary}"`
+      : `Approve "${proposal.summary}", running ${approvedToolName} instead`;
+
+  return isNonEmptyString(feedback)
+    ? `${approval}: ${feedback}`
+    : `${approval}.`;
+};
 
 export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
   ProposeToolCallToolInput,
@@ -116,9 +128,11 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
 >({
   inputSchema: proposeToolCallInputSchema,
   outputSchema: (input, pendingToolOutput) =>
-    buildToolCallApprovalResponseSchema(readProposal(input, pendingToolOutput)),
+    buildToolCallApprovalResponseSchema(
+      readProposal(input, pendingToolOutput).proposal,
+    ),
   complete: async ({ output, input, pendingToolOutput, context }) => {
-    const proposal = readProposal(input, pendingToolOutput);
+    const { proposal, isReadable } = readProposal(input, pendingToolOutput);
 
     if (output.decision === 'reject') {
       const feedback = output.feedback?.trim();
@@ -142,13 +156,46 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
       };
     }
 
+    if (!isReadable) {
+      return {
+        toolResult: {
+          success: false,
+          message:
+            'The user approved the call, but its proposal could not be read back, so nothing was run. Propose it again if it is still needed.',
+          result: {
+            status: 'failed',
+            proposal,
+            error:
+              'The proposed call could not be read back, so nothing was run.',
+          } satisfies ProposeToolCallToolResult,
+        },
+        answerText: buildApprovalAnswerText(
+          proposal,
+          proposal.toolName,
+          output.feedback?.trim(),
+        ),
+      };
+    }
+
     const approvedToolName = output.toolName ?? proposal.toolName;
     const approvedProposal: ProposedToolCall = {
       ...proposal,
       toolName: approvedToolName,
       arguments: buildApprovedArguments(proposal, output.arguments),
     };
-    const answerText = buildApprovalAnswerText(proposal, approvedToolName);
+    const approvalFeedback = output.feedback?.trim();
+    // feedback given with an approval steers what the agent does next, so it travels with every outcome
+    const feedbackFields = isNonEmptyString(approvalFeedback)
+      ? { feedback: approvalFeedback }
+      : {};
+    const feedbackNote = isNonEmptyString(approvalFeedback)
+      ? ` The user added: ${approvalFeedback}`
+      : '';
+    const answerText = buildApprovalAnswerText(
+      proposal,
+      approvedToolName,
+      approvalFeedback,
+    );
     const { currentValues, objectNameSingular, recordId } = approvedProposal;
 
     if (
@@ -169,11 +216,12 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
         return {
           toolResult: {
             success: false,
-            message: `The user approved the call, but the record could not be read again, so nothing was run: ${latestRecord.error}`,
+            message: `The user approved the call, but the record could not be read again, so nothing was run: ${latestRecord.error}${feedbackNote}`,
             result: {
               status: 'failed',
               proposal: approvedProposal,
               error: latestRecord.error,
+              ...feedbackFields,
             } satisfies ProposeToolCallToolResult,
           },
           answerText,
@@ -184,12 +232,12 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
         return {
           toolResult: {
             success: false,
-            message:
-              'The user approved the call, but the record changed since it was proposed, so nothing was run. Read the record again and propose a new call if it is still needed.',
+            message: `The user approved the call, but the record changed since it was proposed, so nothing was run. Read the record again and propose a new call if it is still needed.${feedbackNote}`,
             result: {
               status: 'conflict',
               proposal: approvedProposal,
               output: { latestValues: latestRecord.values },
+              ...feedbackFields,
             } satisfies ProposeToolCallToolResult,
           },
           answerText,
@@ -205,15 +253,18 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
     return {
       toolResult: {
         success: toolOutput.success,
-        message: toolOutput.success
-          ? `The user approved the call. ${toolOutput.message}`
-          : `The user approved the call, but it failed: ${toolOutput.error ?? toolOutput.message}`,
+        message: `${
+          toolOutput.success
+            ? `The user approved the call. ${toolOutput.message}`
+            : `The user approved the call, but it failed: ${toolOutput.error ?? toolOutput.message}`
+        }${feedbackNote}`,
         result: {
           status: toolOutput.success ? 'approved' : 'failed',
           proposal: approvedProposal,
           ...(toolOutput.success
             ? { output: toolOutput.result }
             : { error: toolOutput.error ?? toolOutput.message }),
+          ...feedbackFields,
         } satisfies ProposeToolCallToolResult,
       },
       answerText,
@@ -225,7 +276,7 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
       'User sent another message instead of deciding on the proposed call. It was not run.',
     result: {
       status: 'skipped',
-      proposal: readProposal(input, pendingToolOutput),
+      proposal: readProposal(input, pendingToolOutput).proposal,
     } satisfies ProposeToolCallToolResult,
   }),
 });

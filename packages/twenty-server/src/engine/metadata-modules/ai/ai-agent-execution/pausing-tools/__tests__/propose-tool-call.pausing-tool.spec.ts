@@ -180,21 +180,51 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
     );
   });
 
-  it('answers a call recorded without its proposal as a generic one', async () => {
-    const executeTool = jest
-      .fn()
-      .mockResolvedValue({ success: true, message: 'Done' });
+  it('runs nothing when the resolved proposal cannot be read back', async () => {
+    const executeTool = jest.fn();
 
-    await parseCall(null).complete({
+    const completion = await parseCall(null).complete({
       output: { decision: 'approve' },
       context: { executeTool },
     });
 
-    expect(executeTool).toHaveBeenCalledTimes(1);
-    expect(executeTool).toHaveBeenCalledWith({
-      toolName: 'update_one_opportunity',
-      args: INPUT.arguments,
+    expect(executeTool).not.toHaveBeenCalled();
+    expect(completion.toolResult).toMatchObject({
+      success: false,
+      result: { status: 'failed', proposal: { template: 'generic' } },
     });
+  });
+
+  it('can still reject a call whose proposal cannot be read back', async () => {
+    const completion = await parseCall(null).complete({
+      output: { decision: 'reject' },
+      context: { executeTool: jest.fn() },
+    });
+
+    expect(completion.toolResult).toMatchObject({
+      result: { status: 'rejected' },
+    });
+  });
+
+  it('passes the feedback given with an approval on to the agent', async () => {
+    const executeTool = jest
+      .fn()
+      .mockResolvedValueOnce(buildFoundRecordOutput({ stage: 'PROPOSAL' }))
+      .mockResolvedValueOnce({ success: true, message: 'Updated' });
+
+    const completion = await parseCall().complete({
+      output: { decision: 'approve', feedback: ' Tell the account owner ' },
+      context: { executeTool },
+    });
+
+    expect(completion.toolResult).toMatchObject({
+      message:
+        'The user approved the call. Updated The user added: Tell the account owner',
+      result: { status: 'approved', feedback: 'Tell the account owner' },
+    });
+    expect(completion.answerText).toBe(
+      'Approve "Move the Acme renewal to won": Tell the account owner',
+    );
   });
 
   it('keeps the proposal in a skipped result', () => {

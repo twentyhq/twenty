@@ -117,10 +117,16 @@ export const AiChatToolCallApprovalEmailCard = ({
     setBody(parseCanonicalTipTapJsonDocument(serializedBody) ?? serializedBody);
   };
 
+  const trimmedFeedback = feedback.trim();
+  // feedback goes with either answer, so the agent hears it whatever the person decides
+  const feedbackFields =
+    trimmedFeedback.length > 0 ? { feedback: trimmedFeedback } : {};
+
   const approve = (toolName: string) => {
     void answerToolCallApproval({
       decision: 'approve',
       toolName,
+      ...feedbackFields,
       arguments: {
         ...proposal.arguments,
         recipients: {
@@ -135,12 +141,7 @@ export const AiChatToolCallApprovalEmailCard = ({
   };
 
   const discard = () => {
-    const trimmedFeedback = feedback.trim();
-
-    void answerToolCallApproval({
-      decision: 'reject',
-      ...(trimmedFeedback.length > 0 ? { feedback: trimmedFeedback } : {}),
-    });
+    void answerToolCallApproval({ decision: 'reject', ...feedbackFields });
   };
 
   const pendingToolName =
