@@ -6,11 +6,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
 import {
   type AgentChatThreadVisit,
   agentChatThreadVisitState,
 } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
   type AgentChatThreadParticipantFieldsFragment,
@@ -28,6 +30,8 @@ export const useAgentChatThreadParticipants = () => {
   const { enqueueToast } = useToast();
 
   const refreshAgentChatThreadParticipants = useCallback(async () => {
+    store.set(agentChatThreadStreamedParticipantsState.atom, {});
+
     const result = await client
       .query({
         query: GetMyAgentChatThreadParticipantsDocument,
@@ -41,11 +45,14 @@ export const useAgentChatThreadParticipants = () => {
 
     store.set(
       agentChatThreadParticipantsState.atom,
-      Object.fromEntries(
-        result.data.myAgentChatThreadParticipants.map((participant) => [
-          participant.threadId,
-          participant,
-        ]),
+      mergeAgentChatThreadParticipants(
+        Object.fromEntries(
+          result.data.myAgentChatThreadParticipants.map((participant) => [
+            participant.threadId,
+            participant,
+          ]),
+        ),
+        Object.values(store.get(agentChatThreadStreamedParticipantsState.atom)),
       ),
     );
   }, [client, store]);

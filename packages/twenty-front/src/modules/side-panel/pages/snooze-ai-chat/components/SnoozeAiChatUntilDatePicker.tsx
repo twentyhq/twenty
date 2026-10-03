@@ -8,10 +8,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
-import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -35,9 +33,6 @@ export const SnoozeAiChatUntilDatePicker = ({
   const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
   const { userTimezone } = useUserTimezone();
   const dateTimePickerInstanceId = useId();
-  const agentChatThreadInboxNow = useAtomStateValue(
-    agentChatThreadInboxNowState,
-  );
   // Starts on tomorrow morning, like the Tomorrow option
   const [snoozedUntil, setSnoozedUntil] = useState(() =>
     Temporal.Now.plainDateISO(userTimezone)
@@ -49,10 +44,7 @@ export const SnoozeAiChatUntilDatePicker = ({
   );
 
   const snoozedUntilDate = new Date(snoozedUntil.epochMilliseconds);
-  // The inbox clock ticks, so a time that passes while the picker is open turns the button off
-  const isInFuture =
-    snoozedUntil.epochMilliseconds >
-    Math.max(agentChatThreadInboxNow, Date.now());
+  const isInFuture = snoozedUntil.epochMilliseconds > Date.now();
   const snoozedUntilLabel = formatAgentChatThreadDateTime(snoozedUntilDate);
 
   const handleChange = (date: Temporal.ZonedDateTime | null) => {

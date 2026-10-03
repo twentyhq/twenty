@@ -6940,6 +6940,9 @@ export default {
             ]
         },
         "AgentChatThreadParticipant": {
+            "id": [
+                3
+            ],
             "threadId": [
                 3
             ],
@@ -6950,6 +6953,9 @@ export default {
                 4
             ],
             "snoozedUntil": [
+                4
+            ],
+            "updatedAt": [
                 4
             ],
             "__typename": [

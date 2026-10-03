@@ -264,9 +264,9 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        // Each row is one member's private inbox state, so it is only reached
-        // through the chat resolvers, never through the record API
-        readability: MetadataReadability.SYSTEM,
+        // Each row is one member's private inbox state, readable through its
+        // owner grant and written only through the chat resolvers
+        readability: MetadataReadability.PRIVATE,
         writability: MetadataWritability.SYSTEM,
         labelIdentifierFieldMetadataName: 'id',
       },

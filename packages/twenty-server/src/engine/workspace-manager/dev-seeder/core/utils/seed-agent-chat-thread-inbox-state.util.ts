@@ -1,4 +1,7 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
 import { AGENT_CHAT_THREAD_LAST_MESSAGE_TEXT_MAX_LENGTH } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-last-message-text-max-length.constant';
+import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 
@@ -63,10 +66,22 @@ export const seedAgentChatThreadInboxState = async ({
   );
 
   await manager.query(
-    `INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt")
-     SELECT thread.id, thread."workspaceMemberId", thread."lastActivityAt"
-     FROM ${table('agentChatThread')} thread
-     WHERE thread."workspaceMemberId" IS NOT NULL
-     ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING`,
+    `WITH participant AS (
+       INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt")
+       SELECT thread.id, thread."workspaceMemberId", thread."lastActivityAt"
+       FROM ${table('agentChatThread')} thread
+       WHERE thread."workspaceMemberId" IS NOT NULL
+       ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
+       RETURNING id, "workspaceMemberId"
+     )
+     ${buildAgentChatThreadParticipantOwnerShareInsert({
+       workspaceId,
+       participantSource: 'participant',
+       objectMetadataIdParameter: `(SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "universalIdentifier" = $2)`,
+     })}`,
+    [
+      workspaceId,
+      STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
+    ],
   );
 };
