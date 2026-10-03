@@ -1,6 +1,5 @@
 import { type JSONSchema7 } from 'json-schema';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { SHARED_FILTER_JSON_SCHEMAS } from 'src/engine/core-modules/record-crud/json-schemas/shared-filter-definitions.json-schema';
 import { type JsonSchemaDefinitions } from 'src/engine/core-modules/record-crud/types/json-schema-definitions.type';

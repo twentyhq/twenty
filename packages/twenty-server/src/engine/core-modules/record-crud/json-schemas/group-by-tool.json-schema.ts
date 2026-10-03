@@ -6,7 +6,6 @@ import {
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import {
-  isDefined,
   isFieldMetadataArrayKind,
   isFieldMetadataDateKind,
   isFieldMetadataSupportedInGroupBy,
