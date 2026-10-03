@@ -148,6 +148,7 @@ const AiChatInboxPageContent = () => {
       {isListShown && (
         <StyledListPane $isFullWidth={isMobile}>
           <PageCardLayout
+            showInformationBanner={isMobile}
             header={
               <PageCardHeader
                 icon={<FilterStatusIcon size={theme.icon.size.md} />}
