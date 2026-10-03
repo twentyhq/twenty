@@ -14,7 +14,7 @@ export type SendInboxMessageToolCall =
       logicFunctionUniversalIdentifier?: never;
     }
   | {
-      // the approved call runs with the member's permissions
+      // a call the app could run itself, which runs with the member's permissions once approved
       toolName: 'propose_tool_call';
       input: ProposeToolCallToolInput;
       logicFunctionUniversalIdentifier?: never;

@@ -19,6 +19,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { SendInboxMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-inbox-message-result.dto';
 import { SendInboxMessageInputDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-inbox-message.input';
+import { AgentInboxProposalService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-proposal.service';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 
@@ -36,7 +37,10 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 export class AgentInboxResolver {
-  constructor(private readonly agentInboxService: AgentInboxService) {}
+  constructor(
+    private readonly agentInboxService: AgentInboxService,
+    private readonly agentInboxProposalService: AgentInboxProposalService,
+  ) {}
 
   @Mutation(() => SendInboxMessageResultDTO)
   async sendInboxMessage(
@@ -48,6 +52,12 @@ export class AgentInboxResolver {
       workspaceId: workspace.id,
       sender: { type: 'application', application },
       input,
+      resolveProposal: (proposeToolCallInput) =>
+        this.agentInboxProposalService.resolveApplicationProposal({
+          workspaceId: workspace.id,
+          application,
+          input: proposeToolCallInput,
+        }),
     });
   }
 }
