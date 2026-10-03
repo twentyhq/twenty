@@ -84,7 +84,7 @@ describe('computeParameters', () => {
         schema: { type: 'string' },
       });
       expect(fieldsParameter.description).toContain(
-        'more than 200 fields, only 200 fields are returned',
+        'more than 200 readable fields, only 200 fields are returned',
       );
       expect(fieldsParameter.description).toContain(
         'X-Twenty-Fields-Capped: true',

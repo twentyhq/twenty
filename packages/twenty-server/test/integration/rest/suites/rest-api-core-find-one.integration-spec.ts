@@ -13,8 +13,10 @@ import { generateRecordName } from 'test/integration/utils/generate-record-name'
 
 describe('Core REST API Find One endpoint', () => {
   let personJobTitle: string;
+  let opportunityId: string;
 
   beforeAll(async () => {
+    await deleteAllRecords('opportunity');
     await deleteAllRecords('person');
     await deleteAllRecords('company');
 
@@ -40,6 +42,21 @@ describe('Core REST API Find One endpoint', () => {
         companyId: TEST_COMPANY_1_ID,
       },
     });
+
+    const opportunityResponse = await makeRestApiRequest({
+      method: 'post',
+      path: '/opportunities',
+      body: {
+        name: generateRecordName(TEST_PERSON_1_ID),
+        pointOfContactId: TEST_PERSON_1_ID,
+      },
+    });
+
+    opportunityId = opportunityResponse.body.data.createOpportunity.id;
+  });
+
+  afterAll(async () => {
+    await deleteAllRecords('opportunity');
   });
 
   it('should retrieve a person by ID', async () => {
@@ -167,6 +184,35 @@ describe('Core REST API Find One endpoint', () => {
 
           expect(person.company.id).toBe(TEST_COMPANY_1_ID);
           expect(person.pointOfContactForOpportunities).toBeUndefined();
+        });
+
+      await makeRestApiRequest({
+        method: 'get',
+        path: `/people/${TEST_PERSON_1_ID}?fields=jobTitle,company,pointOfContactForOpportunities&depth=1`,
+      })
+        .expect(200)
+        .expect((res) => {
+          const person = res.body.data.person;
+
+          expect(person.company.id).toBe(TEST_COMPANY_1_ID);
+          expect(
+            person.pointOfContactForOpportunities.map(
+              (opportunity: { id: string }) => opportunity.id,
+            ),
+          ).toEqual([opportunityId]);
+        });
+    });
+
+    it('should return 400 on one-to-many relation fields at depth 0', async () => {
+      await makeRestApiRequest({
+        method: 'get',
+        path: `/people/${TEST_PERSON_1_ID}?fields=jobTitle,pointOfContactForOpportunities&depth=0`,
+      })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.messages[0]).toContain(
+            'pointOfContactForOpportunities',
+          );
         });
     });
 

@@ -1,9 +1,8 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { isOneToManyRelationFlatField } from 'src/engine/api/common/common-select-fields/utils/is-one-to-many-relation-flat-field.util';
+import { type Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -16,7 +15,6 @@ const CAPPED_FIELD_SET_PRIORITY_SYSTEM_FIELD_NAMES = [
 
 type FieldIdsToSelectFlatObjectMetadata = Pick<
   FlatObjectMetadata,
-  | 'fieldIds'
   | 'labelIdentifierFieldMetadataId'
   | 'imageIdentifierFieldMetadataId'
   | 'applicationId'
@@ -25,7 +23,7 @@ type FieldIdsToSelectFlatObjectMetadata = Pick<
 
 type FieldIdsToSelectFlatFieldMetadata = Pick<
   OrmFlatFieldMetadata,
-  'id' | 'universalIdentifier' | 'applicationId' | 'workspaceId' | 'name'
+  'id' | 'applicationId' | 'name' | 'type' | 'settings'
 >;
 
 export type FieldIdsToSelect = {
@@ -37,8 +35,13 @@ const compareFieldNames = (
   firstFieldName: string,
   secondFieldName: string,
 ): number => {
-  if (firstFieldName < secondFieldName) return -1;
-  if (firstFieldName > secondFieldName) return 1;
+  if (firstFieldName < secondFieldName) {
+    return -1;
+  }
+
+  if (firstFieldName > secondFieldName) {
+    return 1;
+  }
 
   return 0;
 };
@@ -105,26 +108,17 @@ const sortFlatFieldsByCappedFieldSetPriority = ({
 
 export const computeFieldIdsToSelect = ({
   flatObjectMetadata,
-  flatFieldMetadataMaps,
-  restrictedFields,
+  readableFlatFields,
+  depth,
   requestedFieldNames,
   maximumDefaultFieldCount,
 }: {
   flatObjectMetadata: FieldIdsToSelectFlatObjectMetadata;
-  flatFieldMetadataMaps: FlatEntityMaps<FieldIdsToSelectFlatFieldMetadata>;
-  restrictedFields: RestrictedFieldsPermissions;
+  readableFlatFields: FieldIdsToSelectFlatFieldMetadata[];
+  depth: Depth | undefined;
   requestedFieldNames?: string[];
   maximumDefaultFieldCount?: number;
 }): FieldIdsToSelect => {
-  const readableFlatFields = flatObjectMetadata.fieldIds
-    .map((fieldId) =>
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId: fieldId,
-      }),
-    )
-    .filter((flatField) => restrictedFields[flatField.id]?.canRead !== false);
-
   if (isDefined(requestedFieldNames)) {
     const readableFlatFieldByName = new Map(
       readableFlatFields.map((flatField) => [flatField.name, flatField]),
@@ -139,15 +133,23 @@ export const computeFieldIdsToSelect = ({
     return { fieldIdsToSelect, isDefaultFieldSetCapped: false };
   }
 
+  const isRelationExpansionDisabled = !isDefined(depth) || depth === 0;
+
+  const outputtingFlatFields = isRelationExpansionDisabled
+    ? readableFlatFields.filter(
+        (flatField) => !isOneToManyRelationFlatField(flatField),
+      )
+    : readableFlatFields;
+
   if (
     !isDefined(maximumDefaultFieldCount) ||
-    readableFlatFields.length <= maximumDefaultFieldCount
+    outputtingFlatFields.length <= maximumDefaultFieldCount
   ) {
     return { fieldIdsToSelect: undefined, isDefaultFieldSetCapped: false };
   }
 
   const cappedFlatFields = sortFlatFieldsByCappedFieldSetPriority({
-    readableFlatFields,
+    readableFlatFields: outputtingFlatFields,
     flatObjectMetadata,
   }).slice(0, maximumDefaultFieldCount);
 

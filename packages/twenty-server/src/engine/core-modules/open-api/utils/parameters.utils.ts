@@ -70,9 +70,9 @@ export const computeFieldsParameters = (): OpenAPIV3_1.ParameterObject => {
     description: `Comma-separated list of field names to return, e.g. **id,name,emails,company**.
     - **id** is always returned.
     - Composite fields are selected as a whole by their field name.
-    - A relation field returns its join column (e.g. **companyId**) with depth=0, and its related record with depth=1. With depth=1, only the relation fields listed here are expanded.
+    - A many-to-one relation field returns its join column (e.g. **companyId**) with depth=0, and its related record with depth=1. One-to-many relation fields are only returned with depth=1. With depth=1, only the relation fields listed here are expanded.
     - Unknown fields or fields you cannot read return a 400 error.
-    When omitted on an object with more than ${REST_API_DEFAULT_MAX_FIELDS} fields, only ${REST_API_DEFAULT_MAX_FIELDS} fields are returned (id, label identifier, image identifier, createdAt, updatedAt, deletedAt, position, then standard fields before custom fields, by name) and the response carries the **${REST_API_FIELDS_CAPPED_HEADER_NAME}: true** and **${REST_API_FIELDS_MAX_HEADER_NAME}** headers.`,
+    When omitted on an object with more than ${REST_API_DEFAULT_MAX_FIELDS} readable fields, only ${REST_API_DEFAULT_MAX_FIELDS} fields are returned (id, label identifier, image identifier, createdAt, updatedAt, deletedAt, position, then standard fields before custom fields, by name) and the response carries the **${REST_API_FIELDS_CAPPED_HEADER_NAME}: true** and **${REST_API_FIELDS_MAX_HEADER_NAME}** headers.`,
     required: false,
     schema: {
       type: 'string',

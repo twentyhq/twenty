@@ -9,6 +9,7 @@ import {
 
 import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
 import { computeFieldIdsToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-field-ids-to-select.util';
+import { getReadableFlatFields } from 'src/engine/api/common/common-select-fields/utils/get-readable-flat-fields.util';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { REST_API_FIELDS_CAPPED_HEADER_NAME } from 'src/engine/api/rest/core/constants/rest-api-fields-capped-header-name.constant';
@@ -181,18 +182,24 @@ export abstract class RestApiBaseHandler {
     const restrictedFields =
       objectsPermissions[flatObjectMetadata.id].restrictedFields;
 
-    const requestedFieldNames = parseFieldsRestRequest({
-      request,
+    const readableFlatFields = getReadableFlatFields({
       flatObjectMetadata,
       flatFieldMetadataMaps,
       restrictedFields,
     });
 
+    const requestedFieldNames = parseFieldsRestRequest({
+      request,
+      objectNameSingular: flatObjectMetadata.nameSingular,
+      readableFlatFields,
+      depth,
+    });
+
     const { fieldIdsToSelect, isDefaultFieldSetCapped } =
       computeFieldIdsToSelect({
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        restrictedFields,
+        readableFlatFields,
+        depth,
         requestedFieldNames,
         maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
       });

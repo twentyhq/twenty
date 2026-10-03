@@ -25,4 +25,25 @@ describe('pickSelectedFieldsFromRecord', () => {
       company: { id: 'company-id', name: 'Company' },
     });
   });
+
+  it('should restrict a merge dry-run preview built from every field to the selected fields', () => {
+    expect(
+      pickSelectedFieldsFromRecord({
+        record: {
+          id: 'preview-id',
+          name: { firstName: 'Ada', lastName: 'Lovelace' },
+          jobTitle: 'Engineer',
+          city: 'London',
+          deletedAt: '2026-01-01T00:00:00.000Z',
+        },
+        selectedFields: {
+          id: true,
+          name: { firstName: true, lastName: true },
+        },
+      }),
+    ).toEqual({
+      id: 'preview-id',
+      name: { firstName: 'Ada', lastName: 'Lovelace' },
+    });
+  });
 });

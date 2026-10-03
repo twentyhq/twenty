@@ -1,32 +1,28 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isOneToManyRelationFlatField } from 'src/engine/api/common/common-select-fields/utils/is-one-to-many-relation-flat-field.util';
 import {
   RestInputRequestParserException,
   RestInputRequestParserExceptionCode,
 } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
+import { type Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const parseFieldsRestRequest = ({
   request,
-  flatObjectMetadata,
-  flatFieldMetadataMaps,
-  restrictedFields,
+  objectNameSingular,
+  readableFlatFields,
+  depth,
 }: {
   request: Pick<AuthenticatedRequest, 'query'>;
-  flatObjectMetadata: Pick<FlatObjectMetadata, 'fieldIds' | 'nameSingular'>;
-  flatFieldMetadataMaps: FlatEntityMaps<
-    Pick<
-      OrmFlatFieldMetadata,
-      'id' | 'universalIdentifier' | 'applicationId' | 'workspaceId' | 'name'
-    >
-  >;
-  restrictedFields: RestrictedFieldsPermissions;
+  objectNameSingular: string;
+  readableFlatFields: Pick<
+    OrmFlatFieldMetadata,
+    'name' | 'type' | 'settings'
+  >[];
+  depth: Depth | undefined;
 }): string[] | undefined => {
   const rawFields = request.query.fields;
 
@@ -59,25 +55,34 @@ export const parseFieldsRestRequest = ({
     );
   }
 
-  const readableFieldNames = new Set(
-    flatObjectMetadata.fieldIds
-      .map((fieldId) =>
-        findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityMaps: flatFieldMetadataMaps,
-          flatEntityId: fieldId,
-        }),
-      )
-      .filter((flatField) => restrictedFields[flatField.id]?.canRead !== false)
-      .map((flatField) => flatField.name),
+  const readableFlatFieldByName = new Map(
+    readableFlatFields.map((flatField) => [flatField.name, flatField]),
   );
 
   const invalidFieldNames = fieldNames.filter(
-    (fieldName) => !readableFieldNames.has(fieldName),
+    (fieldName) => !readableFlatFieldByName.has(fieldName),
   );
 
   if (invalidFieldNames.length > 0) {
     throw new RestInputRequestParserException(
-      `'fields' parameter invalid. Unknown or unreadable fields on '${flatObjectMetadata.nameSingular}': ${invalidFieldNames.join(', ')}`,
+      `'fields' parameter invalid. Unknown or unreadable fields on '${objectNameSingular}': ${invalidFieldNames.join(', ')}`,
+      RestInputRequestParserExceptionCode.INVALID_FIELDS_QUERY_PARAM,
+    );
+  }
+
+  const isRelationExpansionDisabled = !isDefined(depth) || depth === 0;
+
+  const oneToManyRelationFieldNames = isRelationExpansionDisabled
+    ? fieldNames.filter((fieldName) => {
+        const flatField = readableFlatFieldByName.get(fieldName);
+
+        return isDefined(flatField) && isOneToManyRelationFlatField(flatField);
+      })
+    : [];
+
+  if (oneToManyRelationFieldNames.length > 0) {
+    throw new RestInputRequestParserException(
+      `'fields' parameter invalid. One-to-many relation fields on '${objectNameSingular}' are only returned with depth=1: ${oneToManyRelationFieldNames.join(', ')}`,
       RestInputRequestParserExceptionCode.INVALID_FIELDS_QUERY_PARAM,
     );
   }

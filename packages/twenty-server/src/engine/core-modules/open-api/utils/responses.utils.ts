@@ -11,7 +11,7 @@ export const getFieldsCappedResponseHeaders = (): Record<
   OpenAPIV3_1.HeaderObject
 > => ({
   [REST_API_FIELDS_CAPPED_HEADER_NAME]: {
-    description: `Present and set to true when the fields parameter is omitted and the object has more than ${REST_API_DEFAULT_MAX_FIELDS} fields, so only a capped default set of fields is returned.`,
+    description: `Present and set to true when the fields parameter is omitted and the object has more than ${REST_API_DEFAULT_MAX_FIELDS} readable fields, so only a capped default set of fields is returned.`,
     schema: { type: 'string', enum: ['true'] },
   },
   [REST_API_FIELDS_MAX_HEADER_NAME]: {

@@ -1,8 +1,7 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { computeFieldIdsToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-field-ids-to-select.util';
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 
 type ComputeFieldIdsToSelectArgs = Parameters<
   typeof computeFieldIdsToSelect
@@ -10,38 +9,28 @@ type ComputeFieldIdsToSelectArgs = Parameters<
 
 type TestFlatObjectMetadata = ComputeFieldIdsToSelectArgs['flatObjectMetadata'];
 
-type TestFlatFieldMetadata = NonNullable<
-  ComputeFieldIdsToSelectArgs['flatFieldMetadataMaps']['byUniversalIdentifier'][string]
->;
+type TestFlatFieldMetadata =
+  ComputeFieldIdsToSelectArgs['readableFlatFields'][number];
 
-const WORKSPACE_ID = 'workspace-id';
 const STANDARD_APPLICATION_ID = 'standard-application-id';
 const CUSTOM_APPLICATION_ID = 'custom-application-id';
 
 const createField = ({
   name,
   applicationId = STANDARD_APPLICATION_ID,
+  type = FieldMetadataType.TEXT,
+  relationType,
 }: {
   name: string;
   applicationId?: string;
+  type?: FieldMetadataType;
+  relationType?: RelationType;
 }): TestFlatFieldMetadata => ({
   id: `${name}-id`,
-  universalIdentifier: `${name}-universal-identifier`,
   applicationId,
-  workspaceId: WORKSPACE_ID,
   name,
-});
-
-const buildFlatEntityMaps = <TEntity extends SyncableFlatEntity>(
-  entities: TEntity[],
-): FlatEntityMaps<TEntity> => ({
-  byUniversalIdentifier: Object.fromEntries(
-    entities.map((entity) => [entity.universalIdentifier, entity]),
-  ),
-  universalIdentifierById: Object.fromEntries(
-    entities.map((entity) => [entity.id, entity.universalIdentifier]),
-  ),
-  universalIdentifiersByApplicationId: {},
+  type,
+  settings: relationType ? { relationType } : null,
 });
 
 const buildArgs = ({
@@ -49,17 +38,18 @@ const buildArgs = ({
   labelIdentifierFieldName,
   imageIdentifierFieldName,
   applicationUniversalIdentifier = TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  depth = 0,
 }: {
   fields: TestFlatFieldMetadata[];
   labelIdentifierFieldName?: string;
   imageIdentifierFieldName?: string;
   applicationUniversalIdentifier?: string;
+  depth?: ComputeFieldIdsToSelectArgs['depth'];
 }): Pick<
   ComputeFieldIdsToSelectArgs,
-  'flatObjectMetadata' | 'flatFieldMetadataMaps' | 'restrictedFields'
+  'flatObjectMetadata' | 'readableFlatFields' | 'depth'
 > => {
   const flatObjectMetadata: TestFlatObjectMetadata = {
-    fieldIds: fields.map((field) => field.id),
     labelIdentifierFieldMetadataId: labelIdentifierFieldName
       ? `${labelIdentifierFieldName}-id`
       : null,
@@ -70,11 +60,7 @@ const buildArgs = ({
     applicationUniversalIdentifier,
   };
 
-  return {
-    flatObjectMetadata,
-    flatFieldMetadataMaps: buildFlatEntityMaps(fields),
-    restrictedFields: {},
-  };
+  return { flatObjectMetadata, readableFlatFields: fields, depth };
 };
 
 const WIDE_OBJECT_FIELDS = [
@@ -89,6 +75,19 @@ const WIDE_OBJECT_FIELDS = [
   createField({ name: 'createdAt' }),
   createField({ name: 'name' }),
   createField({ name: 'id' }),
+];
+
+const ONE_TO_MANY_RELATION_FIELDS = [
+  createField({
+    name: 'activities',
+    type: FieldMetadataType.RELATION,
+    relationType: RelationType.ONE_TO_MANY,
+  }),
+  createField({
+    name: 'attachments',
+    type: FieldMetadataType.MORPH_RELATION,
+    relationType: RelationType.ONE_TO_MANY,
+  }),
 ];
 
 describe('computeFieldIdsToSelect', () => {
@@ -171,28 +170,38 @@ describe('computeFieldIdsToSelect', () => {
     ]);
   });
 
-  it('should ignore unreadable fields when counting and capping', () => {
-    const args = buildArgs({ fields: WIDE_OBJECT_FIELDS });
+  it('should not let one-to-many relations count or take slots at depth 0', () => {
+    const fields = [...WIDE_OBJECT_FIELDS, ...ONE_TO_MANY_RELATION_FIELDS];
 
     expect(
       computeFieldIdsToSelect({
-        ...args,
-        restrictedFields: { 'zCustom-id': { canRead: false } },
-        maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length - 1,
+        ...buildArgs({ fields, depth: 0 }),
+        maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length,
       }),
     ).toEqual({ fieldIdsToSelect: undefined, isDefaultFieldSetCapped: false });
 
     const { fieldIdsToSelect } = computeFieldIdsToSelect({
-      ...args,
-      restrictedFields: { 'createdAt-id': { canRead: false } },
-      maximumDefaultFieldCount: 3,
+      ...buildArgs({ fields, depth: 0 }),
+      maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length - 1,
     });
 
-    expect([...(fieldIdsToSelect ?? [])]).toEqual([
-      'id-id',
-      'updatedAt-id',
-      'deletedAt-id',
-    ]);
+    expect(fieldIdsToSelect?.size).toBe(WIDE_OBJECT_FIELDS.length - 1);
+    expect(fieldIdsToSelect?.has('activities-id')).toBe(false);
+    expect(fieldIdsToSelect?.has('attachments-id')).toBe(false);
+  });
+
+  it('should count and select one-to-many relations at depth 1', () => {
+    const fields = [...WIDE_OBJECT_FIELDS, ...ONE_TO_MANY_RELATION_FIELDS];
+
+    const { fieldIdsToSelect, isDefaultFieldSetCapped } =
+      computeFieldIdsToSelect({
+        ...buildArgs({ fields, depth: 1 }),
+        maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length,
+      });
+
+    expect(isDefaultFieldSetCapped).toBe(true);
+    expect(fieldIdsToSelect?.has('activities-id')).toBe(true);
+    expect(fieldIdsToSelect?.has('attachments-id')).toBe(true);
   });
 
   it('should cap an object wider than the maximum to exactly the maximum', () => {
@@ -235,8 +244,9 @@ describe('computeFieldIdsToSelect', () => {
   it('should not select requested fields that are not readable', () => {
     expect(
       computeFieldIdsToSelect({
-        ...buildArgs({ fields: WIDE_OBJECT_FIELDS }),
-        restrictedFields: { 'name-id': { canRead: false } },
+        ...buildArgs({
+          fields: WIDE_OBJECT_FIELDS.filter((field) => field.name !== 'name'),
+        }),
         requestedFieldNames: ['name', 'position'],
       }),
     ).toEqual({
