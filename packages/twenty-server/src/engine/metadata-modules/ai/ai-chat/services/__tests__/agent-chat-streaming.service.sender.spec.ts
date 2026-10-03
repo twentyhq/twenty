@@ -27,7 +27,7 @@ const build = () => {
     getQueuedMessages: jest.fn().mockResolvedValue([queued]),
     promoteQueuedMessage: jest.fn().mockResolvedValue('turn-b'),
     getMessagesForThread: jest.fn().mockResolvedValue([]),
-    getTurnContexts: jest.fn().mockResolvedValue(new Map()),
+    getTurnContexts: jest.fn().mockResolvedValue([]),
     deleteQueuedMessage: jest.fn().mockResolvedValue(true),
   };
   const actors = {
@@ -151,30 +151,41 @@ describe('Sender-aware queue draining', () => {
     expect(queue.add).not.toHaveBeenCalled();
     expect(heartbeat.clear).toHaveBeenCalled();
   });
-  it('places a turn context where the user message of its turn would be', async () => {
+  it('places each turn context where its turn opened', async () => {
     const { service, chat, queue } = build();
-    const message = (id: string, turnId: string, role: string) => ({
+    const message = (id: string, role: string, createdAt: string) => ({
       id,
-      turnId,
       role,
-      createdAt: new Date(),
+      createdAt,
       parts: [{ type: 'text', textContent: id }],
     });
     chat.getMessagesForThread.mockResolvedValue([
-      message('question', 'turn-a', 'user'),
-      message('answer', 'turn-a', 'assistant'),
-      message('inbox-message', 'turn-b', 'assistant'),
+      message('question', 'user', '2026-01-01T10:00:00.000Z'),
+      message('answer', 'assistant', '2026-01-01T10:01:00.000Z'),
+      message('inbox-message', 'assistant', '2026-01-01T11:00:01.000Z'),
+      message('follow-up', 'user', '2026-01-01T12:00:00.000Z'),
     ]);
-    chat.getTurnContexts.mockResolvedValue(
-      new Map([['turn-b', 'Billing app started this conversation.']]),
-    );
+    chat.getTurnContexts.mockResolvedValue([
+      {
+        turnId: 'inbox-turn',
+        context: 'Billing app started this conversation.',
+        createdAt: '2026-01-01T11:00:00.000Z',
+      },
+      {
+        turnId: 'silent-turn',
+        context: 'An opening that produced no message.',
+        createdAt: '2026-01-01T11:30:00.000Z',
+      },
+    ]);
     await service.flushNextQueuedMessage(args);
     const { messages } = queue.add.mock.calls[0][1];
     expect(messages.map(({ id }: { id: string }) => id)).toEqual([
       'question',
       'answer',
-      'turn-context-turn-b',
+      'turn-context-inbox-turn',
       'inbox-message',
+      'turn-context-silent-turn',
+      'follow-up',
     ]);
     expect(messages[2]).toMatchObject({
       role: 'user',

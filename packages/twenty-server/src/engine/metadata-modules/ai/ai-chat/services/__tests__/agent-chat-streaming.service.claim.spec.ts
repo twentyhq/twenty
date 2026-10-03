@@ -59,7 +59,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         .mockResolvedValue({ id: 'user-message-id', turnId: 'turn-id' }),
       closePendingToolCalls: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue([]),
-      getTurnContexts: jest.fn().mockResolvedValue(new Map()),
+      getTurnContexts: jest.fn().mockResolvedValue([]),
       getQueuedMessages: jest.fn().mockResolvedValue(queuedMessages),
       hasQueuedMessages: jest
         .fn()

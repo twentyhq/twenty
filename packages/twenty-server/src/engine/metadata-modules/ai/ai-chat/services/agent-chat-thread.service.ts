@@ -55,7 +55,8 @@ export class AgentChatThreadService {
     id?: string;
     context: string;
   }): Promise<string> {
-    const hasTurnContext = await this.sharingService.hasInboxState(workspaceId);
+    const hasTurnContext =
+      await this.sharingService.hasTurnContext(workspaceId);
 
     return this.conversationWriterService.insertTurn({
       workspaceId,

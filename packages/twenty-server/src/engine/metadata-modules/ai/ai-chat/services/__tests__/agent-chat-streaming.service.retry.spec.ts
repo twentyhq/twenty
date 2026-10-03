@@ -47,7 +47,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       findLatestTurnId: jest.fn().mockResolvedValue('turn-id'),
       deleteAssistantMessagesForTurn: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue(threadMessages),
-      getTurnContexts: jest.fn().mockResolvedValue(new Map()),
+      getTurnContexts: jest.fn().mockResolvedValue([]),
     };
     const threadService = {
       getWritableThread: jest

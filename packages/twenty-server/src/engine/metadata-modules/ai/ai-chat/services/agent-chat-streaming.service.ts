@@ -781,30 +781,29 @@ export class AgentChatStreamingService {
       })),
     );
 
-    // a context stands where the user message of its turn would be, and alone opens a turn the agent is starting
-    const contextsToPlace = new Map(turnContexts);
-    const takeContext = (turnId: string | null) => {
-      const context = isDefined(turnId)
-        ? contextsToPlace.get(turnId)
-        : undefined;
+    // a context stands where its turn opened, ahead of the messages written after it
+    const pendingContexts = [...turnContexts];
+    const takeContextsOpenedBy = (createdAt: string) => {
+      const firstLaterIndex = pendingContexts.findIndex(
+        (turnContext) =>
+          new Date(turnContext.createdAt).getTime() >
+          new Date(createdAt).getTime(),
+      );
 
-      if (!isDefined(turnId) || !isDefined(context)) {
-        return [];
-      }
-
-      contextsToPlace.delete(turnId);
-
-      return [buildTurnContextMessage({ turnId, context })];
+      return pendingContexts
+        .splice(
+          0,
+          firstLaterIndex === -1 ? pendingContexts.length : firstLaterIndex,
+        )
+        .map(buildTurnContextMessage);
     };
 
     return [
       ...sentMessages.flatMap((message, index) => [
-        ...takeContext(message.turnId),
+        ...takeContextsOpenedBy(message.createdAt),
         uiMessages[index],
       ]),
-      ...[...contextsToPlace].map(([turnId, context]) =>
-        buildTurnContextMessage({ turnId, context }),
-      ),
+      ...pendingContexts.map(buildTurnContextMessage),
     ];
   }
 

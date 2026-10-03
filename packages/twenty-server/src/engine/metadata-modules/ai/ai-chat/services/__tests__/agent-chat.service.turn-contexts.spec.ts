@@ -12,8 +12,16 @@ const buildService = () => {
   };
   const turnRepository = {
     find: jest.fn().mockResolvedValue([
-      { id: 'opening-turn', context: 'Company: Acme Inc' },
-      { id: 'user-turn', context: null },
+      {
+        id: 'opening-turn',
+        context: 'Company: Acme Inc',
+        createdAt: '2026-01-01T00:00:00.000Z',
+      },
+      {
+        id: 'user-turn',
+        context: null,
+        createdAt: '2026-01-01T00:01:00.000Z',
+      },
     ]),
   };
 
@@ -43,7 +51,13 @@ describe('AgentChatService getTurnContexts', () => {
         workspaceMemberId: OWNER_ID,
         workspaceId: WORKSPACE_ID,
       }),
-    ).resolves.toEqual(new Map([['opening-turn', 'Company: Acme Inc']]));
+    ).resolves.toEqual([
+      {
+        turnId: 'opening-turn',
+        context: 'Company: Acme Inc',
+        createdAt: '2026-01-01T00:00:00.000Z',
+      },
+    ]);
   });
 
   it('keeps the owner’s contexts from the turns of other participants', async () => {
@@ -55,7 +69,7 @@ describe('AgentChatService getTurnContexts', () => {
         workspaceMemberId: 'participant-member-id',
         workspaceId: WORKSPACE_ID,
       }),
-    ).resolves.toEqual(new Map());
+    ).resolves.toEqual([]);
     expect(turnRepository.find).not.toHaveBeenCalled();
   });
 });

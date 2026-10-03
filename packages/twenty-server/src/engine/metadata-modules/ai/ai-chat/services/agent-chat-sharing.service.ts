@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
@@ -40,10 +41,10 @@ export class AgentChatSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  // Fence for the 2.46 cross-upgrade window: until the 2.46 commands have
-  // reached a workspace, it has neither the participant table, the thread's
-  // lastActivityAt column nor the turn's context column. Remove once 2.46
-  // leaves the window.
+  // Fence for the 2.46 cross-upgrade window: until
+  // upgrade:2-46:add-agent-chat-thread-participant-object has reached a
+  // workspace, it has neither the participant table nor the thread's
+  // lastActivityAt column. Remove once 2.46 leaves the window.
   async hasInboxState(workspaceId: string): Promise<boolean> {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -55,6 +56,23 @@ export class AgentChatSharingService {
         flatObjectMetadataMaps,
         'agentChatThreadParticipant',
       ),
+    );
+  }
+
+  // Fence for the 2.46 cross-upgrade window: until
+  // upgrade:2-46:move-hidden-agent-messages-to-turn-context has reached a
+  // workspace, its turns have no context column. Remove once 2.46 leaves the
+  // window.
+  async hasTurnContext(workspaceId: string): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentTurn.fields.context.universalIdentifier
+      ],
     );
   }
 

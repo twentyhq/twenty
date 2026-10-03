@@ -12,6 +12,7 @@ import {
 import { Repository } from 'typeorm';
 
 import { type AdminChatMessageDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-message.dto';
+import { type AdminChatTurnContextDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-turn-context.dto';
 import { type AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-workspace-chat-thread.dto';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -109,7 +110,7 @@ export class AdminPanelChatService {
   async getChatThreadMessages(threadId: string): Promise<{
     thread: AdminWorkspaceChatThreadDTO;
     messages: AdminChatMessageDTO[];
-    contexts: string[];
+    contexts: AdminChatTurnContextDTO[];
   }> {
     const workspaces = await this.workspaceRepository.find({
       where: { allowImpersonation: true },
@@ -195,7 +196,11 @@ export class AdminPanelChatService {
           })),
         createdAt: new Date(message.createdAt),
       })),
-      contexts: turns.map((turn) => turn.context).filter(isNonEmptyString),
+      contexts: turns.flatMap(({ context, createdAt }) =>
+        isNonEmptyString(context)
+          ? [{ context, createdAt: new Date(createdAt) }]
+          : [],
+      ),
     };
   }
 }

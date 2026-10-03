@@ -25,9 +25,13 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
       getQueuedMessages: jest.fn().mockResolvedValue([]),
       deleteTurns: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue([]),
-      getTurnContexts: jest
-        .fn()
-        .mockResolvedValue(new Map([['opening-turn-id', 'Company: Acme Inc']])),
+      getTurnContexts: jest.fn().mockResolvedValue([
+        {
+          turnId: 'opening-turn-id',
+          context: 'Company: Acme Inc',
+          createdAt: '2026-01-01T00:00:00.000Z',
+        },
+      ]),
     };
     const threadService = {
       openAgentTurn: jest.fn().mockResolvedValue('opening-turn-id'),

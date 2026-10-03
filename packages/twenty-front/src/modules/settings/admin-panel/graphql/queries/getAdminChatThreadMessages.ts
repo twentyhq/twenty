@@ -30,7 +30,10 @@ export const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
         }
         createdAt
       }
-      contexts
+      contexts {
+        context
+        createdAt
+      }
     }
   }
 `;

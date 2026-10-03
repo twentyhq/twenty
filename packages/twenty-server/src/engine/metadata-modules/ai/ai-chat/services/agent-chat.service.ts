@@ -190,25 +190,24 @@ export class AgentChatService {
     threadId: string;
     workspaceMemberId: string;
     workspaceId: string;
-  }): Promise<Map<string, string>> {
+  }): Promise<{ turnId: string; context: string; createdAt: string }[]> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
       select: ['id', 'workspaceMemberId'],
     });
 
     if (thread?.workspaceMemberId !== workspaceMemberId) {
-      return new Map();
+      return [];
     }
 
     // filtered here rather than in the query: workspaces the 2.46 commands have not reached lack the column
     const turns = await this.turnRepository.find(workspaceId, {
       where: { threadId },
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
 
-    return new Map(
-      turns.flatMap(({ id, context }): [string, string][] =>
-        isNonEmptyString(context) ? [[id, context]] : [],
-      ),
+    return turns.flatMap(({ id, context, createdAt }) =>
+      isNonEmptyString(context) ? [{ turnId: id, context, createdAt }] : [],
     );
   }
 
@@ -260,8 +259,9 @@ export class AgentChatService {
       workspaceId,
     });
 
+    // hidden messages wait for upgrade:2-46:move-hidden-agent-messages-to-turn-context, and are never shown
     return this.messageRepository.find(workspaceId, {
-      where: { threadId },
+      where: { threadId, isHidden: false },
       order: { processedAt: { order: 'ASC', nulls: 'NULLS LAST' } },
       relations: ['parts', 'parts.file'],
     });
