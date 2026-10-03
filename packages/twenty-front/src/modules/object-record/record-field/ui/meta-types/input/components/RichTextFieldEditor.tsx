@@ -155,10 +155,8 @@ export const RichTextFieldEditor = ({
       onPersist: ({ blocknote }) => {
         if (isRecordFieldReadOnly === true) return;
 
-        const preparedBlocknote = prepareBodyWithSignedUrls(blocknote);
-
         if (onPersistBody) {
-          onPersistBody(preparedBlocknote);
+          onPersistBody(blocknote);
           return;
         }
 
@@ -167,7 +165,7 @@ export const RichTextFieldEditor = ({
           objectNameSingular,
           updateOneRecordInput: {
             [fieldName]: {
-              blocknote: preparedBlocknote,
+              blocknote,
               markdown: null,
             },
           },
@@ -205,6 +203,7 @@ export const RichTextFieldEditor = ({
 
   const handleBodyChange = async (newStringifiedBody: string) => {
     const oldRecord = store.get(recordStoreFamilyState.atomFamily(recordId));
+    const preparedBody = prepareBodyWithSignedUrls(newStringifiedBody);
 
     store.set(
       recordStoreFamilyState.atomFamily(recordId),
@@ -212,7 +211,7 @@ export const RichTextFieldEditor = ({
         ...prev,
         id: recordId,
         [fieldName]: {
-          blocknote: newStringifiedBody,
+          blocknote: preparedBody,
           markdown: null,
         },
         __typename: prev?.__typename ?? objectNameSingular,
@@ -223,7 +222,7 @@ export const RichTextFieldEditor = ({
       recordId,
       fieldModifiers: {
         [fieldName]: () => ({
-          blocknote: newStringifiedBody,
+          blocknote: preparedBody,
           markdown: null,
         }),
       },
@@ -235,10 +234,11 @@ export const RichTextFieldEditor = ({
       | { blocknote?: string | null }
       | undefined;
 
-    // Only after capturing the pre-edit body: persisting rewrites the record, so the diff would miss removed attachments.
-    updateDraft({ blocknote: newStringifiedBody });
+    // Capture the old body before persisting; otherwise the attachment diff misses removals.
+    // Use the same body for the draft and optimistic state to avoid a save echo.
+    updateDraft({ blocknote: preparedBody });
 
-    await syncAttachments(newStringifiedBody, oldFieldValue?.blocknote);
+    await syncAttachments(preparedBody, oldFieldValue?.blocknote);
   };
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);

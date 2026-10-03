@@ -17,7 +17,13 @@ export const prepareBodyWithSignedUrls = (
     }
 
     const imageUrl = block.props.url;
-    const parsedImageUrl = new URL(imageUrl);
+    let parsedImageUrl: URL;
+
+    try {
+      parsedImageUrl = new URL(imageUrl);
+    } catch {
+      return block;
+    }
 
     return {
       ...block,

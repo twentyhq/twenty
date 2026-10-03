@@ -43,4 +43,16 @@ describe('prepareBodyWithSignedUrls', () => {
     expect(result[0].type).toBe('image');
     expect(result[0].props.url).toContain('example.com');
   });
+
+  it('keeps a malformed image URL and still normalizes other images', () => {
+    const input = JSON.stringify([
+      { type: 'image', props: { url: 'not-a-url' } },
+      { type: 'image', props: { url: 'https://example.com:443/image.png' } },
+    ]);
+
+    expect(JSON.parse(prepareBodyWithSignedUrls(input))).toEqual([
+      { type: 'image', props: { url: 'not-a-url' } },
+      { type: 'image', props: { url: 'https://example.com/image.png' } },
+    ]);
+  });
 });
