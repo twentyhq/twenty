@@ -170,7 +170,6 @@ export class WorkflowAgentConversationWorkspaceService {
     return { threadId, isAwaitingAnswer };
   }
 
-  // One unanswerable call would keep the step waiting forever, so the step fails instead
   private async recordReply({
     workspaceId,
     threadId,

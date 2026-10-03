@@ -1304,6 +1304,75 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(conversation.workspaceMemberId).toBeNull();
     });
 
+    it('keeps a question waiting when it is answered before its step is marked as waiting', async () => {
+      mockAgent();
+      const { runId, agent, threadId } = await startAskingRun();
+      const setStepStatus = (status: string) =>
+        global.testDataSource.query(
+          `UPDATE "${schema}"."workflowRun" SET state = jsonb_set(state, ARRAY['stepInfos', $2::text, 'status'], to_jsonb($3::text)) WHERE id = $1`,
+          [runId, agent.id, status],
+        );
+
+      await setStepStatus('RUNNING');
+
+      const earlyAnswer = await answer({ threadId });
+
+      expect(JSON.stringify(earlyAnswer.body.errors)).toContain(
+        'TOOL_CALL_NOT_PENDING',
+      );
+      expect(await getToolCalls(threadId)).toEqual({
+        isWaiting: true,
+        calls: [{ toolCallId: 'ask-1', status: 'pending' }],
+      });
+
+      await setStepStatus('PENDING');
+
+      expect((await answer({ threadId })).body.errors).toBeUndefined();
+      await waitForRun(runId, 'COMPLETED');
+    });
+
+    it('retries a step that failed after its answer from the same conversation, without asking again', async () => {
+      const executeAgent = jest
+        .spyOn(
+          getAppProviderByClassName<AgentAsyncExecutorService>(
+            'AgentAsyncExecutorService',
+          ),
+          'executeAgent',
+        )
+        .mockResolvedValueOnce(askingResult)
+        .mockRejectedValueOnce(new Error('The model is overloaded'))
+        .mockResolvedValueOnce(replyingResult);
+      const agent = {
+        ...agentStep([]),
+        settings: {
+          ...agentStep([]).settings,
+          errorHandlingOptions: {
+            retryOnFailure: { value: 1 },
+            continueOnFailure: { value: false },
+          },
+        },
+      } as WorkflowAction;
+      const fixture = await createFixture({ steps: [agent] });
+      const runId = await runFixture(fixture);
+      const pausedRun = await waitForStep(runId, agent.id, 'PENDING');
+      const threadId: string = pausedRun.state.stepInfos[agent.id].threadId;
+
+      expect((await answer({ threadId })).body.errors).toBeUndefined();
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        threadId,
+      });
+      expect(executeAgent).toHaveBeenCalledTimes(3);
+      expect(executeAgent.mock.calls[2][0].messages).toEqual([]);
+      expect(await getToolCalls(threadId)).toMatchObject({
+        isWaiting: false,
+        calls: [{ toolCallId: 'ask-1', status: 'answered' }],
+      });
+    });
+
     it('still waits on the question when its conversation cannot be surfaced in the inbox', async () => {
       mockAgent();
       const recordThreadActivity = jest

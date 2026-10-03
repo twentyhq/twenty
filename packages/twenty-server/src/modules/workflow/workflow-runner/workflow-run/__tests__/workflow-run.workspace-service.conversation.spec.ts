@@ -37,8 +37,16 @@ describe('WorkflowRunWorkspaceService conversations', () => {
           toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
         },
       ]),
-      update: jest.fn().mockResolvedValue({ affected: 1 }),
+      writePart: jest.fn(),
+      query: jest.fn(),
     };
+
+    messagePartRepository.query.mockImplementation(async (_workspaceId, run) =>
+      run({
+        table: (name: string) => name,
+        manager: { query: messagePartRepository.writePart },
+      }),
+    );
     const service = new WorkflowRunWorkspaceService(
       {} as never,
       {} as never,
@@ -264,15 +272,19 @@ describe('WorkflowRunWorkspaceService conversations', () => {
         },
         { pendingQuestionMessageId: null },
       );
-      expect(messagePartRepository.update).toHaveBeenCalledWith(
-        'workspace-id',
-        { id: 'part-id' },
-        {
-          toolOutput: expect.objectContaining({
-            result: { questions: QUESTIONS, status: 'skipped' },
-          }),
-        },
-      );
+      const [[closeQuery, [partId, closedToolOutput, expectedStatus]]] =
+        messagePartRepository.writePart.mock.calls;
+
+      expect(closeQuery).toContain(`"toolOutput"->'result'->>'status' = $3`);
+      expect({
+        partId,
+        result: JSON.parse(closedToolOutput).result,
+        expectedStatus,
+      }).toEqual({
+        partId: 'part-id',
+        result: { questions: QUESTIONS, status: 'skipped' },
+        expectedStatus: 'pending',
+      });
     });
 
     it('leaves a conversation to the answer holding its claim', async () => {
@@ -283,7 +295,7 @@ describe('WorkflowRunWorkspaceService conversations', () => {
 
       await endRun(service);
 
-      expect(messagePartRepository.update).not.toHaveBeenCalled();
+      expect(messagePartRepository.writePart).not.toHaveBeenCalled();
     });
 
     it('still ends the run when its conversations cannot be closed', async () => {
