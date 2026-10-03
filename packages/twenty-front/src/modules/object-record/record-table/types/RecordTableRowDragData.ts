@@ -1,6 +1,5 @@
-import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
 
-export type RecordTableRowDragData = DragDropItemData & {
-  recordId: string;
+export type RecordTableRowDragData = RecordDragData & {
   focusIndex: number;
 };

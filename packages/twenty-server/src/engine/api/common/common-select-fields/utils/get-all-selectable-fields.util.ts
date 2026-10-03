@@ -29,8 +29,25 @@ export const getAllSelectableFields = ({
   onlyUseLabelIdentifierFieldsInRelations = false,
 }: {
   restrictedFields: RestrictedFieldsPermissions;
-  flatObjectMetadata: FlatObjectMetadata;
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatObjectMetadata: Pick<
+    FlatObjectMetadata,
+    | 'fieldIds'
+    | 'nameSingular'
+    | 'labelIdentifierFieldMetadataId'
+    | 'imageIdentifierFieldMetadataId'
+  >;
+  flatFieldMetadataMaps: FlatEntityMaps<
+    Pick<
+      OrmFlatFieldMetadata,
+      | 'id'
+      | 'universalIdentifier'
+      | 'applicationId'
+      | 'workspaceId'
+      | 'type'
+      | 'name'
+      | 'settings'
+    >
+  >;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
 }): SelectableFieldsStructured => {
   const result: SelectableFieldsStructured = {};
