@@ -35,30 +35,14 @@ describe('defineField', () => {
       expect(result.config?.icon).toBe('IconHeart');
     });
 
-    it('should accept enum values written as plain strings', () => {
+    it('should accept SELECT field with options', () => {
       const result = defineField({
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
-        universalIdentifier: '550e8400-e29b-41d4-a716-446655440004',
-        type: 'SELECT',
-        name: 'tier',
-        label: 'Tier',
-        writability: 'OPEN',
-        options: [
-          { value: 'gold', label: 'Gold', color: 'yellow', position: 0 },
-        ],
-      });
-
-      expect(result.success).toBe(true);
-      expect(result.errors).toEqual([]);
-    });
-
-    it('should accept SELECT field with options', () => {
-      const config: FieldManifest = {
-        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
         universalIdentifier: '550e8400-e29b-41d4-a716-446655440003',
-        type: FieldMetadataType.SELECT,
+        type: 'SELECT',
         name: 'churnRisk',
         label: 'Churn Risk',
+        writability: 'OPEN',
         options: [
           { value: 'low', label: 'Low', color: 'green', position: 0 },
           {
@@ -69,9 +53,7 @@ describe('defineField', () => {
           },
           { value: 'high', label: 'High', color: 'red', position: 2 },
         ],
-      };
-
-      const result = defineField(config);
+      });
 
       expect(result.success).toBe(true);
       expect(result.config?.label).toBe('Churn Risk');

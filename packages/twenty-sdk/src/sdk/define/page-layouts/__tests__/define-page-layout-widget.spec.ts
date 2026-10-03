@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
   definePageLayoutWidget,
-  PageLayoutTabLayoutMode,
   type StandalonePageLayoutWidgetManifest,
 } from '@/sdk/define';
 
@@ -11,7 +10,7 @@ const WIDGET_CONFIG: StandalonePageLayoutWidgetManifest = {
   pageLayoutTabUniversalIdentifier: '22222222-2222-4222-8222-222222222222',
   title: 'Docs',
   type: 'IFRAME',
-  position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1000 },
+  position: { layoutMode: 'VERTICAL_LIST', index: 1000 },
   configuration: {
     configurationType: 'IFRAME',
     url: 'https://example.com/docs',
@@ -21,20 +20,6 @@ const WIDGET_CONFIG: StandalonePageLayoutWidgetManifest = {
 describe('definePageLayoutWidget', () => {
   it('accepts a widget with a tab and a position', () => {
     const result = definePageLayoutWidget(WIDGET_CONFIG);
-
-    expect(result.success).toBe(true);
-    expect(result.errors).toEqual([]);
-  });
-
-  it('accepts nested enum values written as plain strings', () => {
-    const result = definePageLayoutWidget({
-      ...WIDGET_CONFIG,
-      position: {
-        layoutMode: 'VERTICAL_LIST',
-        index: 1000,
-        heightBehavior: 'FIT_CONTENT',
-      },
-    });
 
     expect(result.success).toBe(true);
     expect(result.errors).toEqual([]);
