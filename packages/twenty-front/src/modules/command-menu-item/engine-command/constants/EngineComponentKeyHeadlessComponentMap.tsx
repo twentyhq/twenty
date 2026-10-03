@@ -23,11 +23,11 @@ import { CreateNewViewNoSelectionRecordCommand } from '@/command-menu-item/engin
 import { HideDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/HideDeletedRecordsNoSelectionRecordCommand';
 import { ImportRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/ImportRecordsNoSelectionRecordCommand';
 import { SeeDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/SeeDeletedRecordsNoSelectionRecordCommand';
-import { AddToFavoritesSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/AddToFavoritesSingleRecordCommand';
+import { AddToFavoritesCommand } from '@/command-menu-item/engine-command/record/components/AddToFavoritesCommand';
 import { ExportNoteSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/ExportNoteSingleRecordCommand';
 import { NavigateToNextRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToNextRecordSingleRecordCommand';
 import { NavigateToPreviousRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToPreviousRecordSingleRecordCommand';
-import { RemoveFromFavoritesSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/RemoveFromFavoritesSingleRecordCommand';
+import { RemoveFromFavoritesCommand } from '@/command-menu-item/engine-command/record/components/RemoveFromFavoritesCommand';
 import { CancelDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/CancelDashboardSingleRecordCommand';
 import { DuplicateDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand';
 import { DuplicateMessageListSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/message-list/components/DuplicateMessageListSingleRecordCommand';
@@ -70,10 +70,8 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.DELETE_RECORDS]: <DeleteRecordsCommand />,
   [EngineComponentKey.RESTORE_RECORDS]: <RestoreRecordsCommand />,
   [EngineComponentKey.DESTROY_RECORDS]: <DestroyRecordsCommand />,
-  [EngineComponentKey.ADD_TO_FAVORITES]: <AddToFavoritesSingleRecordCommand />,
-  [EngineComponentKey.REMOVE_FROM_FAVORITES]: (
-    <RemoveFromFavoritesSingleRecordCommand />
-  ),
+  [EngineComponentKey.ADD_TO_FAVORITES]: <AddToFavoritesCommand />,
+  [EngineComponentKey.REMOVE_FROM_FAVORITES]: <RemoveFromFavoritesCommand />,
   [EngineComponentKey.MERGE_MULTIPLE_RECORDS]: <MergeMultipleRecordsCommand />,
   [EngineComponentKey.DUPLICATE_DASHBOARD]: (
     <DuplicateDashboardSingleRecordCommand />

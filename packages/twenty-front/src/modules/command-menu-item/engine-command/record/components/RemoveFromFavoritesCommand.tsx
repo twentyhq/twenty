@@ -5,16 +5,12 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
-export const RemoveFromFavoritesSingleRecordCommand = () => {
+export const RemoveFromFavoritesCommand = () => {
   const { selectedRecords, objectMetadataItem } =
     useHeadlessCommandContextApi();
 
-  const recordId = selectedRecords[0]?.id;
-
-  if (!isDefined(recordId) || !isDefined(objectMetadataItem)) {
-    throw new Error(
-      'Record ID and object metadata are required to remove from favorites',
-    );
+  if (!isDefined(objectMetadataItem)) {
+    throw new Error('Object metadata is required to remove from favorites');
   }
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
@@ -22,21 +18,26 @@ export const RemoveFromFavoritesSingleRecordCommand = () => {
 
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
-  const foundNavigationMenuItem = [
-    ...navigationMenuItems,
-    ...workspaceNavigationMenuItems,
-  ].find(
-    (item) =>
-      item.targetRecordId === recordId &&
-      item.targetObjectMetadataId === objectMetadataItem.id,
-  );
-
   const handleExecute = () => {
-    if (!isDefined(foundNavigationMenuItem)) {
+    const selectedRecordIds = new Set(selectedRecords.map(({ id }) => id));
+
+    const navigationMenuItemIdsToDelete = [
+      ...navigationMenuItems,
+      ...workspaceNavigationMenuItems,
+    ]
+      .filter(
+        (item) =>
+          isDefined(item.targetRecordId) &&
+          selectedRecordIds.has(item.targetRecordId) &&
+          item.targetObjectMetadataId === objectMetadataItem.id,
+      )
+      .map(({ id }) => id);
+
+    if (navigationMenuItemIdsToDelete.length === 0) {
       return;
     }
 
-    deleteManyNavigationMenuItems([foundNavigationMenuItem.id]);
+    deleteManyNavigationMenuItems(navigationMenuItemIdsToDelete);
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
