@@ -6,5 +6,10 @@ export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.LOGIN;
   workspaceId: string;
   authProvider: AuthProviderEnum;
+  /**
+   * Unique token identifier used to enforce single-use login tokens.
+   * Consumed atomically on first successful exchange.
+   */
+  jti: string;
   impersonatorUserWorkspaceId?: string;
 };
