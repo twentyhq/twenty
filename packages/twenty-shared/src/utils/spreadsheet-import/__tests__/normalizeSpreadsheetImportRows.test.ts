@@ -132,6 +132,64 @@ describe('normalizeSpreadsheetImportRows', () => {
     ]);
   });
 
+  it('should match entries missing from matched options to field options', () => {
+    const columns: SpreadsheetColumn[] = [
+      {
+        index: 0,
+        header: 'Number',
+        type: SpreadsheetColumnType.matchedSelect,
+        value: 'number',
+        matchedOptions: [{ entry: 'One', value: '1' }, { entry: 'Skipped' }],
+      },
+      {
+        index: 1,
+        header: 'Tags',
+        type: SpreadsheetColumnType.matchedSelect,
+        value: 'tags',
+        matchedOptions: [{ entry: 'A', value: 'a' }],
+      },
+    ];
+
+    const options = [
+      { label: 'One', value: '1' },
+      { label: 'Two', value: '2' },
+      { label: 'Skipped', value: 'skipped' },
+    ];
+
+    const fields = [
+      {
+        key: 'number',
+        label: 'Number',
+        fieldType: { type: 'select' as const, options },
+      },
+      {
+        key: 'tags',
+        label: 'Tags',
+        fieldType: {
+          type: 'multiSelect' as const,
+          options: [
+            { label: 'A', value: 'a' },
+            { label: 'B', value: 'b' },
+          ],
+        },
+      },
+    ];
+
+    const rawData = [
+      ['Two', 'A,B'],
+      ['2', 'b,Unknown'],
+      ['Skipped', 'Unknown'],
+    ];
+
+    const result = normalizeSpreadsheetImportRows(columns, rawData, fields);
+
+    expect(result).toStrictEqual([
+      { number: '2', tags: '["a","b"]' },
+      { number: '2', tags: '["b"]' },
+      { number: undefined, tags: undefined },
+    ]);
+  });
+
   it('should handle empty and ignored columns', () => {
     const columns: SpreadsheetColumn[] = [
       { index: 0, header: 'Empty', type: SpreadsheetColumnType.empty },

@@ -7,8 +7,12 @@ import { type ImportedStructuredRow } from '@/utils/spreadsheet-import/types/Imp
 import {
   SpreadsheetColumnType,
   type SpreadsheetColumns,
+  type SpreadsheetMatchedOptions,
 } from '@/utils/spreadsheet-import/types/SpreadsheetImportColumn';
-import { type SpreadsheetImportFieldType } from '@/utils/spreadsheet-import/types/SpreadsheetImportFieldType';
+import {
+  type SpreadsheetImportFieldType,
+  type SpreadsheetImportSelectOption,
+} from '@/utils/spreadsheet-import/types/SpreadsheetImportFieldType';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type NormalizedField = {
@@ -16,7 +20,29 @@ type NormalizedField = {
   fieldType: {
     readonly type: SpreadsheetImportFieldType['type'];
     readonly booleanMatches?: Readonly<Record<string, boolean>>;
+    readonly options?: readonly SpreadsheetImportSelectOption[];
   };
+};
+
+// Server-side imports build matched options from a sample of the file, so an
+// entry first seen after the sample is matched to the field options the way
+// column matching does.
+const findMatchedOptionValue = (
+  matchedOptions: Partial<SpreadsheetMatchedOptions>[],
+  field: NormalizedField,
+  entry: unknown,
+) => {
+  const matchedOption = matchedOptions.find(
+    (matchedOption) => matchedOption.entry === entry,
+  );
+
+  if (isDefined(matchedOption)) {
+    return matchedOption.value;
+  }
+
+  return field.fieldType.options?.find(
+    (option) => option.value === entry || option.label === entry,
+  )?.value;
 };
 
 const multiSelectOptionsSchema = z.preprocess(
@@ -84,11 +110,12 @@ export const normalizeSpreadsheetImportRows = (
             const matchedOptionValues = [
               ...new Set(
                 rawCurrentOptions
-                  ?.map(
-                    (option) =>
-                      column.matchedOptions.find(
-                        (matchedOption) => matchedOption.entry === option,
-                      )?.value,
+                  ?.map((option) =>
+                    findMatchedOptionValue(
+                      column.matchedOptions,
+                      field,
+                      option,
+                    ),
                   )
                   .filter(isDefined),
               ),
@@ -99,11 +126,9 @@ export const normalizeSpreadsheetImportRows = (
                 ? JSON.stringify(matchedOptionValues)
                 : undefined;
           } else {
-            const matchedOption = column.matchedOptions.find(
-              ({ entry }) => entry === cell,
-            );
-
-            structuredRow[column.value] = matchedOption?.value || undefined;
+            structuredRow[column.value] =
+              findMatchedOptionValue(column.matchedOptions, field, cell) ||
+              undefined;
           }
 
           return structuredRow;
