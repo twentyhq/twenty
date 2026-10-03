@@ -4333,10 +4333,10 @@ type Mutation {
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
-  runAgent(input: RunAgentInput!): RunAgentResult!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
+  runAgent(input: RunAgentInput!): RunAgentResult!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
@@ -5526,29 +5526,6 @@ input CreateEmailingDomainInput {
   domain: String!
 }
 
-input RunAgentInput {
-  agentUniversalIdentifier: String!
-  prompt: String
-  runAsWorkspaceMemberId: UUID
-  messages: [RunAgentMessageInput!]
-}
-
-input RunAgentMessageInput {
-  role: RunAgentMessageRole!
-  content: String!
-  attachments: [RunAgentMessageAttachmentInput!]
-}
-
-enum RunAgentMessageRole {
-  user
-  assistant
-}
-
-input RunAgentMessageAttachmentInput {
-  fileId: UUID!
-  filename: String
-}
-
 input CreateWebhookInput {
   id: UUID
   targetUrl: String!
@@ -5570,6 +5547,29 @@ input UpdateWebhookInputUpdates {
   operations: [String!]
   description: String
   secret: String
+}
+
+input RunAgentInput {
+  agentUniversalIdentifier: String!
+  prompt: String
+  runAsWorkspaceMemberId: UUID
+  messages: [RunAgentMessageInput!]
+}
+
+input RunAgentMessageInput {
+  role: RunAgentMessageRole!
+  content: String!
+  attachments: [RunAgentMessageAttachmentInput!]
+}
+
+enum RunAgentMessageRole {
+  user
+  assistant
+}
+
+input RunAgentMessageAttachmentInput {
+  fileId: UUID!
+  filename: String
 }
 
 input UpdateMessageFolderInput {

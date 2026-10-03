@@ -285,6 +285,17 @@ export class ToolRegistryService {
     });
   }
 
+  async findCatalogEntry(
+    toolName: string,
+    context: ToolContext,
+  ): Promise<ToolIndexEntry | undefined> {
+    const catalog = await this.getCatalog(
+      this.buildContextFromToolContext(context),
+    );
+
+    return catalog.find((entry) => entry.name === toolName);
+  }
+
   async suggestSimilarToolNames(
     toolNames: string[],
     context: ToolContext,
