@@ -170,19 +170,25 @@ jest.mock('@/file/hooks/useDirectFileUpload', () => ({
   }),
 }));
 
-jest.mock('twenty-front-component-renderer', () => ({
-  buildFrontComponentStorageNamespace: ({
-    applicationId,
-    userId,
-  }: {
-    applicationId: string;
-    userId: string;
-  }) => `frontComponentStorage:${applicationId}:${userId}:`,
-  setFrontComponentStorageItem: (...args: unknown[]) => mockStorageSet(...args),
-  deleteFrontComponentStorageItem: (...args: unknown[]) =>
-    mockStorageDelete(...args),
-  clearFrontComponentStorage: (...args: unknown[]) => mockStorageClear(...args),
-}));
+jest.mock(
+  'twenty-front-component-renderer',
+  () => ({
+    buildFrontComponentStorageNamespace: ({
+      applicationId,
+      userId,
+    }: {
+      applicationId: string;
+      userId: string;
+    }) => `frontComponentStorage:${applicationId}:${userId}:`,
+    setFrontComponentStorageItem: (...args: unknown[]) =>
+      mockStorageSet(...args),
+    deleteFrontComponentStorageItem: (...args: unknown[]) =>
+      mockStorageDelete(...args),
+    clearFrontComponentStorage: (...args: unknown[]) =>
+      mockStorageClear(...args),
+  }),
+  { virtual: true },
+);
 
 jest.mock('@/page-layout/utils/setRecordPageActiveTabId', () => ({
   setRecordPageActiveTabId: (params: unknown) =>
@@ -828,7 +834,70 @@ describe('useFrontComponentExecutionContext', () => {
         pageTitle: 'My Component',
         pageIcon: 'icon-IconBolt',
         resetNavigationStack: undefined,
-        recordContext: { recordId: 'lead-1', objectNameSingular: 'lead' },
+        recordContext: {
+          selectedRecordIds: ['lead-1'],
+          objectNameSingular: 'lead',
+        },
+      });
+    });
+
+    it('should pass multiple selected record ids to a front component', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ViewFrontComponent,
+            frontComponentId: 'fc-1',
+            pageTitle: 'My Component',
+            pageIcon: 'IconBolt',
+            selectedRecordIds: ['lead-1', 'lead-2'],
+            objectNameSingular: 'lead',
+          },
+        );
+      });
+
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledTimes(1);
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledWith({
+        frontComponentId: 'fc-1',
+        pageTitle: 'My Component',
+        pageIcon: 'icon-IconBolt',
+        resetNavigationStack: undefined,
+        recordContext: {
+          selectedRecordIds: ['lead-1', 'lead-2'],
+          objectNameSingular: 'lead',
+        },
+      });
+    });
+
+    it('should retain selected ids without an object name', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ViewFrontComponent,
+            frontComponentId: 'fc-1',
+            pageTitle: 'My Component',
+            selectedRecordIds: ['lead-1', 'lead-2'],
+          },
+        );
+      });
+
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledTimes(1);
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledWith({
+        frontComponentId: 'fc-1',
+        pageTitle: 'My Component',
+        pageIcon: 'icon-undefined',
+        resetNavigationStack: undefined,
+        recordContext: {
+          objectNameSingular: undefined,
+          selectedRecordIds: ['lead-1', 'lead-2'],
+        },
       });
     });
 
@@ -854,7 +923,10 @@ describe('useFrontComponentExecutionContext', () => {
         pageTitle: 'My Component',
         pageIcon: 'icon-IconBolt',
         resetNavigationStack: undefined,
-        recordContext: { objectNameSingular: 'lead', recordId: undefined },
+        recordContext: {
+          objectNameSingular: 'lead',
+          selectedRecordIds: undefined,
+        },
       });
     });
   });

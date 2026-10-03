@@ -54,6 +54,7 @@ type OpenPurposeBuiltSidePanelPageParams =
       page: SidePanelPages.ViewFrontComponent;
       frontComponentId: string;
       recordId?: string;
+      selectedRecordIds?: string[];
       objectNameSingular?: string;
       pageTitle: string;
       pageIcon?: string;
