@@ -1,79 +1,9 @@
-import { z } from 'zod';
+import { type AskQuestionsToolInput } from 'twenty-shared/ai';
 
 import {
-  ASK_QUESTIONS_TOOL_NAME,
-  type AskQuestionsToolInput,
-  type AskQuestionsToolResult,
-} from 'twenty-shared/ai';
-
-export { ASK_QUESTIONS_TOOL_NAME };
-
-export const askQuestionsInputSchema = z.object({
-  questions: z
-    .array(
-      z.object({
-        header: z
-          .string()
-          .describe(
-            'Very short label/tag for the question (≤ ~32 chars), e.g. "Email type".',
-          ),
-        question: z
-          .string()
-          .describe(
-            'The full question to ask the user. Be clear and specific.',
-          ),
-        options: z
-          .array(
-            z.object({
-              label: z
-                .string()
-                .describe('Concise option the user can pick (1-5 words).'),
-              description: z
-                .string()
-                .optional()
-                .describe(
-                  'Longer explanation shown when the user opens the option info icon.',
-                ),
-              isRecommended: z
-                .boolean()
-                .optional()
-                .describe('Mark the single suggested option, if any.'),
-            }),
-          )
-          .min(2)
-          .max(4)
-          .refine(
-            (options) =>
-              options.filter((option) => option.isRecommended === true)
-                .length <= 1,
-            { message: 'At most one option can be marked as recommended.' },
-          )
-          .describe('2-4 mutually exclusive options.'),
-        allowMultiSelect: z
-          .boolean()
-          .optional()
-          .describe('Allow the user to select more than one option.'),
-      }),
-    )
-    .min(1)
-    .max(4)
-    .describe('One to four questions to ask the user.'),
-});
-
-type AskQuestionsPendingOutput = {
-  success: true;
-  message: string;
-  result: AskQuestionsToolResult;
-};
-
-// An application that asks through the inbox writes the same output.
-export const buildAskQuestionsPendingOutput = (
-  input: AskQuestionsToolInput,
-): AskQuestionsPendingOutput => ({
-  success: true,
-  message: 'Questions presented to the user; awaiting their answer.',
-  result: { questions: input.questions, status: 'pending' },
-});
+  askQuestionsInputSchema,
+  buildAskQuestionsPendingOutput,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-questions.pausing-tool';
 
 const STANDARD_DESCRIPTION =
   'Ask the user one or more multiple-choice questions when you need a decision you cannot ' +
@@ -98,8 +28,6 @@ export const createAskQuestionsTool = ({
     ? WORKSPACE_SETUP_DESCRIPTION
     : STANDARD_DESCRIPTION,
   inputSchema: askQuestionsInputSchema,
-  execute: async (
-    input: AskQuestionsToolInput,
-  ): Promise<AskQuestionsPendingOutput> =>
+  execute: async (input: AskQuestionsToolInput) =>
     buildAskQuestionsPendingOutput(input),
 });

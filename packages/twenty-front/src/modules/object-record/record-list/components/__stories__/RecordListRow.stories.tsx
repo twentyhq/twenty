@@ -1,10 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordList } from '@/object-record/record-list/components/RecordList';
-import { RecordListContextProvider } from '@/object-record/record-list/contexts/RecordListContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
@@ -15,27 +12,7 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 
-const RecordListRowStory = () => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: 'company',
-  });
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
-  );
-
-  return (
-    <RecordListContextProvider
-      value={{
-        viewBarInstanceId: 'view-bar',
-        objectNameSingular: 'company',
-        objectMetadataItem,
-        objectPermissions,
-      }}
-    >
-      <RecordList />
-    </RecordListContextProvider>
-  );
-};
+const RecordListRowStory = () => <RecordList />;
 
 const meta: Meta<typeof RecordListRowStory> = {
   title: 'Modules/ObjectRecord/RecordList/RecordListRow',

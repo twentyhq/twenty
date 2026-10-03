@@ -1,4 +1,4 @@
-import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { NotificationCounter } from 'twenty-ui/components';
@@ -10,29 +10,18 @@ const StyledNotificationCounterContainer = styled.div`
   z-index: 1000;
 `;
 
-type RecordDragMultiDragCounterChipProps = {
-  contextStoreInstanceId?: string;
-};
-
-export const RecordDragMultiDragCounterChip = ({
-  contextStoreInstanceId,
-}: RecordDragMultiDragCounterChipProps) => {
-  const originalDragSelection = useAtomComponentStateValue(
-    originalDragSelectionComponentState,
-    contextStoreInstanceId,
+export const RecordDragMultiDragCounterChip = () => {
+  const draggedRecordIds = useAtomComponentStateValue(
+    draggedRecordIdsComponentState,
   );
 
-  const selectedCount = originalDragSelection.length ?? 0;
-
-  const shouldShow = selectedCount > 1;
-
-  if (!shouldShow) {
+  if (draggedRecordIds.length <= 1) {
     return null;
   }
 
   return (
     <StyledNotificationCounterContainer>
-      <NotificationCounter count={selectedCount} />
+      <NotificationCounter count={draggedRecordIds.length} />
     </StyledNotificationCounterContainer>
   );
 };

@@ -5,7 +5,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 
 const StyledGroupTitle = styled.div`
@@ -18,7 +17,6 @@ const StyledGroupTitle = styled.div`
 
 type AiChatThreadListProps = {
   threads: AgentChatThreadRecord[];
-  surface: AiChatThreadActionsSurface;
   selectedThreadIds?: string[];
   onThreadClick: (
     thread: AgentChatThreadRecord,
@@ -33,7 +31,6 @@ type AiChatThreadListProps = {
 
 export const AiChatThreadList = ({
   threads,
-  surface,
   selectedThreadIds = [],
   onThreadClick,
   onThreadContextMenu,
@@ -45,7 +42,6 @@ export const AiChatThreadList = ({
     <AiChatThreadListItem
       key={thread.id}
       thread={thread}
-      surface={surface}
       isSelected={selectedThreadIdSet.has(thread.id)}
       onClick={onThreadClick}
       onContextMenu={onThreadContextMenu}

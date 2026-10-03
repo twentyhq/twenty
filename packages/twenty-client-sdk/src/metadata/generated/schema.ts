@@ -2869,6 +2869,32 @@ export interface ImapSmtpCaldavConnectionSuccess {
     __typename: 'ImapSmtpCaldavConnectionSuccess'
 }
 
+export interface Webhook {
+    id: Scalars['UUID']
+    targetUrl: Scalars['String']
+    operations: Scalars['String'][]
+    description?: Scalars['String']
+    secret: Scalars['String']
+    applicationId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    deletedAt?: Scalars['DateTime']
+    __typename: 'Webhook'
+}
+
+export interface ToolIndexEntry {
+    name: Scalars['String']
+    label: Scalars['String']
+    description: Scalars['String']
+    category: Scalars['String']
+    objectName?: Scalars['String']
+    icon?: Scalars['String']
+    widgetName?: Scalars['String']
+    frontComponentId?: Scalars['String']
+    inputSchema?: Scalars['JSON']
+    __typename: 'ToolIndexEntry'
+}
+
 export interface AgentMessagePart {
     id: Scalars['UUID']
     messageId: Scalars['UUID']
@@ -2912,32 +2938,6 @@ export interface AgentMessage {
     processedAt?: Scalars['DateTime']
     createdAt: Scalars['DateTime']
     __typename: 'AgentMessage'
-}
-
-export interface Webhook {
-    id: Scalars['UUID']
-    targetUrl: Scalars['String']
-    operations: Scalars['String'][]
-    description?: Scalars['String']
-    secret: Scalars['String']
-    applicationId: Scalars['UUID']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
-    __typename: 'Webhook'
-}
-
-export interface ToolIndexEntry {
-    name: Scalars['String']
-    label: Scalars['String']
-    description: Scalars['String']
-    category: Scalars['String']
-    objectName?: Scalars['String']
-    icon?: Scalars['String']
-    widgetName?: Scalars['String']
-    frontComponentId?: Scalars['String']
-    inputSchema?: Scalars['JSON']
-    __typename: 'ToolIndexEntry'
 }
 
 export interface RunAgentResult {
@@ -6805,6 +6805,34 @@ export interface ImapSmtpCaldavConnectionSuccessGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface WebhookGenqlSelection{
+    id?: boolean | number
+    targetUrl?: boolean | number
+    operations?: boolean | number
+    description?: boolean | number
+    secret?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    deletedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ToolIndexEntryGenqlSelection{
+    name?: boolean | number
+    label?: boolean | number
+    description?: boolean | number
+    category?: boolean | number
+    objectName?: boolean | number
+    icon?: boolean | number
+    widgetName?: boolean | number
+    frontComponentId?: boolean | number
+    inputSchema?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AgentMessagePartGenqlSelection{
     id?: boolean | number
     messageId?: boolean | number
@@ -6848,34 +6876,6 @@ export interface AgentMessageGenqlSelection{
     parts?: AgentMessagePartGenqlSelection
     processedAt?: boolean | number
     createdAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface WebhookGenqlSelection{
-    id?: boolean | number
-    targetUrl?: boolean | number
-    operations?: boolean | number
-    description?: boolean | number
-    secret?: boolean | number
-    applicationId?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    deletedAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ToolIndexEntryGenqlSelection{
-    name?: boolean | number
-    label?: boolean | number
-    description?: boolean | number
-    category?: boolean | number
-    objectName?: boolean | number
-    icon?: boolean | number
-    widgetName?: boolean | number
-    frontComponentId?: boolean | number
-    inputSchema?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10406,22 +10406,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
-    const AgentMessagePart_possibleTypes: string[] = ['AgentMessagePart']
-    export const isAgentMessagePart = (obj?: { __typename?: any } | null): obj is AgentMessagePart => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessagePart"')
-      return AgentMessagePart_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AgentMessage_possibleTypes: string[] = ['AgentMessage']
-    export const isAgentMessage = (obj?: { __typename?: any } | null): obj is AgentMessage => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessage"')
-      return AgentMessage_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const Webhook_possibleTypes: string[] = ['Webhook']
     export const isWebhook = (obj?: { __typename?: any } | null): obj is Webhook => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWebhook"')
@@ -10434,6 +10418,22 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isToolIndexEntry = (obj?: { __typename?: any } | null): obj is ToolIndexEntry => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isToolIndexEntry"')
       return ToolIndexEntry_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentMessagePart_possibleTypes: string[] = ['AgentMessagePart']
+    export const isAgentMessagePart = (obj?: { __typename?: any } | null): obj is AgentMessagePart => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessagePart"')
+      return AgentMessagePart_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentMessage_possibleTypes: string[] = ['AgentMessage']
+    export const isAgentMessage = (obj?: { __typename?: any } | null): obj is AgentMessage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessage"')
+      return AgentMessage_possibleTypes.includes(obj.__typename)
     }
     
 

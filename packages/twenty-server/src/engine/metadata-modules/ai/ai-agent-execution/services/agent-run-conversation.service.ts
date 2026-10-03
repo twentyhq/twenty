@@ -13,7 +13,7 @@ import {
   AGENT_RUN_THREAD_LOCK_RETRY_INTERVAL_MS,
   AGENT_RUN_THREAD_LOCK_TTL_MS,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-thread-lock.const';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
