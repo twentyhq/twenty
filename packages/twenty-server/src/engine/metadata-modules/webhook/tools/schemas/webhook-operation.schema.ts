@@ -11,8 +11,10 @@ const recordOperationSchema = z.object({
       "Object name singular (e.g. 'person', 'company', 'task'), or '*' for all objects.",
     ),
   event: z
-    .enum(['created', 'updated', 'deleted', '*'])
-    .describe("Event kind. Use '*' to match every event for the given object."),
+    .enum(['created', 'updated', 'deleted', 'destroyed', '*'])
+    .describe(
+      "Event kind: 'deleted' fires when a record is moved to trash, 'destroyed' when it is permanently removed. Use '*' to match every event for the given object.",
+    ),
 });
 
 const metadataOperationSchema = z.object({

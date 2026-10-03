@@ -526,6 +526,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           kind: 'update',
           columnsToReturn,
           data: resolvedMergedData,
+          shouldEmitUnchangedUpdateEvent: true,
         });
 
         if (!isDefined(updatedRecords[0])) {
