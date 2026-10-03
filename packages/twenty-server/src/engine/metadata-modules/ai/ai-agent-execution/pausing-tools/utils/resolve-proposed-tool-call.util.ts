@@ -1,44 +1,18 @@
-import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   type ProposeToolCallToolInput,
   type ProposedToolCall,
 } from 'twenty-shared/ai';
-import {
-  isDefined,
-  isNonEmptyArray,
-  parseEmailDocument,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { findEmailArgumentsError } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-email-arguments-error.util';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
 import { readRecordFieldValues } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-record-field-values.util';
 
 export type ProposedToolCallResolution =
   | { proposal: ProposedToolCall }
   | { error: string };
-
-// the email card edits a structured document, and reads an HTML string as one; it cannot show
-// attachments, so an email carrying files would send them without the person seeing them
-export const findEmailArgumentsError = (
-  toolArguments: Record<string, unknown>,
-): string | null => {
-  if (
-    Array.isArray(toolArguments.files) &&
-    isNonEmptyArray(toolArguments.files)
-  ) {
-    return 'An email with attachments cannot be proposed yet. Propose it without files, or send it yourself.';
-  }
-
-  if (isString(toolArguments.body)) {
-    return null;
-  }
-
-  const parsedBody = parseEmailDocument(toolArguments.body);
-
-  return parsedBody.success
-    ? null
-    : `The email body must be a structured email document ({type: "doc", content: [...]}) or an HTML string: ${parsedBody.error}`;
-};
 
 const resolveRecordProposal = async ({
   baseProposal,

@@ -184,14 +184,18 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
     const executeTool = jest.fn();
 
     const completion = await parseCall(null).complete({
-      output: { decision: 'approve' },
+      output: { decision: 'approve', feedback: 'Use the new quote' },
       context: { executeTool },
     });
 
     expect(executeTool).not.toHaveBeenCalled();
     expect(completion.toolResult).toMatchObject({
       success: false,
-      result: { status: 'failed', proposal: { template: 'generic' } },
+      result: {
+        status: 'failed',
+        proposal: { template: 'generic' },
+        feedback: 'Use the new quote',
+      },
     });
   });
 

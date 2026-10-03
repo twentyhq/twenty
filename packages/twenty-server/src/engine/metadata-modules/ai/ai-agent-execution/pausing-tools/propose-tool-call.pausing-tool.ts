@@ -156,23 +156,32 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
       };
     }
 
+    const approvalFeedback = output.feedback?.trim();
+    // feedback given with an approval steers what the agent does next, so it travels with every outcome
+    const feedbackFields = isNonEmptyString(approvalFeedback)
+      ? { feedback: approvalFeedback }
+      : {};
+    const feedbackNote = isNonEmptyString(approvalFeedback)
+      ? ` The user added: ${approvalFeedback}`
+      : '';
+
     if (!isReadable) {
       return {
         toolResult: {
           success: false,
-          message:
-            'The user approved the call, but its proposal could not be read back, so nothing was run. Propose it again if it is still needed.',
+          message: `The user approved the call, but its proposal could not be read back, so nothing was run. Propose it again if it is still needed.${feedbackNote}`,
           result: {
             status: 'failed',
             proposal,
             error:
               'The proposed call could not be read back, so nothing was run.',
+            ...feedbackFields,
           } satisfies ProposeToolCallToolResult,
         },
         answerText: buildApprovalAnswerText(
           proposal,
           proposal.toolName,
-          output.feedback?.trim(),
+          approvalFeedback,
         ),
       };
     }
@@ -183,14 +192,6 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
       toolName: approvedToolName,
       arguments: buildApprovedArguments(proposal, output.arguments),
     };
-    const approvalFeedback = output.feedback?.trim();
-    // feedback given with an approval steers what the agent does next, so it travels with every outcome
-    const feedbackFields = isNonEmptyString(approvalFeedback)
-      ? { feedback: approvalFeedback }
-      : {};
-    const feedbackNote = isNonEmptyString(approvalFeedback)
-      ? ` The user added: ${approvalFeedback}`
-      : '';
     const answerText = buildApprovalAnswerText(
       proposal,
       approvedToolName,

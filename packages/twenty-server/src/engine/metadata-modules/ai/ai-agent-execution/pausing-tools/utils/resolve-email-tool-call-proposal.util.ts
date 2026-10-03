@@ -2,10 +2,8 @@ import { type ProposeToolCallToolInput } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ACTION_TOOL_LABELS } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
-import {
-  findEmailArgumentsError,
-  type ProposedToolCallResolution,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
+import { findEmailArgumentsError } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-email-arguments-error.util';
+import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 
 const EMAIL_TOOL_ALTERNATIVES = {
   send_email: 'draft_email',
