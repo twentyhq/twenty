@@ -203,7 +203,7 @@ export class WorkspaceResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: false,
+      application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.SECURITY),
   )

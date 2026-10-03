@@ -381,61 +381,6 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
     `,
     variables: { agentId: PLACEHOLDER_ID },
   }),
-  createOIDCIdentityProvider: () => ({
-    query: gql`
-      mutation CreateOIDCIdentityProvider($input: SetupOIDCSsoInput!) {
-        createOIDCIdentityProvider(input: $input) {
-          __typename
-        }
-      }
-    `,
-    variables: {
-      input: {
-        name: PLACEHOLDER_TEXT,
-        issuer: PLACEHOLDER_TEXT,
-        clientID: PLACEHOLDER_TEXT,
-        clientSecret: PLACEHOLDER_TEXT,
-      },
-    },
-  }),
-  createSAMLIdentityProvider: () => ({
-    query: gql`
-      mutation CreateSAMLIdentityProvider($input: SetupSAMLSsoInput!) {
-        createSAMLIdentityProvider(input: $input) {
-          __typename
-        }
-      }
-    `,
-    variables: {
-      input: {
-        name: PLACEHOLDER_TEXT,
-        issuer: PLACEHOLDER_TEXT,
-        id: PLACEHOLDER_ID,
-        ssoURL: PLACEHOLDER_TEXT,
-        certificate: PLACEHOLDER_TEXT,
-      },
-    },
-  }),
-  deleteSSOIdentityProvider: () => ({
-    query: gql`
-      mutation DeleteSSOIdentityProvider($input: DeleteSsoInput!) {
-        deleteSSOIdentityProvider(input: $input) {
-          __typename
-        }
-      }
-    `,
-    variables: { input: { identityProviderId: PLACEHOLDER_ID } },
-  }),
-  editSSOIdentityProvider: () => ({
-    query: gql`
-      mutation EditSSOIdentityProvider($input: EditSsoInput!) {
-        editSSOIdentityProvider(input: $input) {
-          __typename
-        }
-      }
-    `,
-    variables: { input: { id: PLACEHOLDER_ID, status: 'Active' } },
-  }),
   updateWorkspace: () => ({
     query: gql`
       mutation UpdateWorkspace($data: UpdateWorkspaceInput!) {
@@ -455,20 +400,6 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
       }
     `,
     variables: { fileId: PLACEHOLDER_ID },
-  }),
-  updateWorkspaceAllowedIframeOrigins: () => ({
-    query: gql`
-      mutation UpdateWorkspaceAllowedIframeOrigins(
-        $data: UpdateWorkspaceAllowedIframeOriginsInput!
-      ) {
-        updateWorkspaceAllowedIframeOrigins(data: $data) {
-          __typename
-        }
-      }
-    `,
-    variables: {
-      data: { operation: PLACEHOLDER_TEXT, origin: PLACEHOLDER_TEXT },
-    },
   }),
   deleteCurrentWorkspace: () => ({
     query: gql`
@@ -668,36 +599,6 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
     `,
     variables: { input: { publicFeatureFlag: PLACEHOLDER_TEXT, value: false } },
   }),
-  createWebhook: () => ({
-    query: gql`
-      mutation CreateWebhook($input: CreateWebhookInput!) {
-        createWebhook(input: $input) {
-          __typename
-        }
-      }
-    `,
-    variables: { input: { targetUrl: PLACEHOLDER_TEXT, operations: [] } },
-  }),
-  updateWebhook: () => ({
-    query: gql`
-      mutation UpdateWebhook($input: UpdateWebhookInput!) {
-        updateWebhook(input: $input) {
-          __typename
-        }
-      }
-    `,
-    variables: { input: { id: PLACEHOLDER_ID, update: {} } },
-  }),
-  deleteWebhook: () => ({
-    query: gql`
-      mutation DeleteWebhook($id: UUID!) {
-        deleteWebhook(id: $id) {
-          __typename
-        }
-      }
-    `,
-    variables: { id: PLACEHOLDER_ID },
-  }),
   deleteOneLogicFunction: () => ({
     query: gql`
       mutation DeleteOneLogicFunction($input: LogicFunctionIdInput!) {
@@ -752,98 +653,6 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
     query: gql`
       mutation DeleteFrontComponent($id: UUID!) {
         deleteFrontComponent(id: $id) {
-          __typename
-        }
-      }
-    `,
-    variables: { id: PLACEHOLDER_ID },
-  }),
-  createOneAgent: () => ({
-    query: gql`
-      mutation CreateOneAgent($input: CreateAgentInput!) {
-        createOneAgent(input: $input) {
-          __typename
-        }
-      }
-    `,
-    variables: {
-      input: {
-        label: PLACEHOLDER_TEXT,
-        prompt: PLACEHOLDER_TEXT,
-        modelId: PLACEHOLDER_TEXT,
-      },
-    },
-  }),
-  updateOneAgent: () => ({
-    query: gql`
-      mutation UpdateOneAgent($input: UpdateAgentInput!) {
-        updateOneAgent(input: $input) {
-          __typename
-        }
-      }
-    `,
-    variables: { input: { id: PLACEHOLDER_ID } },
-  }),
-  deleteOneAgent: () => ({
-    query: gql`
-      mutation DeleteOneAgent($input: AgentIdInput!) {
-        deleteOneAgent(input: $input) {
-          __typename
-        }
-      }
-    `,
-    variables: { input: { id: PLACEHOLDER_ID } },
-  }),
-  createSkill: () => ({
-    query: gql`
-      mutation CreateSkill($input: CreateSkillInput!) {
-        createSkill(input: $input) {
-          __typename
-        }
-      }
-    `,
-    variables: {
-      input: {
-        name: PLACEHOLDER_TEXT,
-        label: PLACEHOLDER_TEXT,
-        content: PLACEHOLDER_TEXT,
-      },
-    },
-  }),
-  updateSkill: () => ({
-    query: gql`
-      mutation UpdateSkill($input: UpdateSkillInput!) {
-        updateSkill(input: $input) {
-          __typename
-        }
-      }
-    `,
-    variables: { input: { id: PLACEHOLDER_ID } },
-  }),
-  deleteSkill: () => ({
-    query: gql`
-      mutation DeleteSkill($id: UUID!) {
-        deleteSkill(id: $id) {
-          __typename
-        }
-      }
-    `,
-    variables: { id: PLACEHOLDER_ID },
-  }),
-  activateSkill: () => ({
-    query: gql`
-      mutation ActivateSkill($id: UUID!) {
-        activateSkill(id: $id) {
-          __typename
-        }
-      }
-    `,
-    variables: { id: PLACEHOLDER_ID },
-  }),
-  deactivateSkill: () => ({
-    query: gql`
-      mutation DeactivateSkill($id: UUID!) {
-        deactivateSkill(id: $id) {
           __typename
         }
       }

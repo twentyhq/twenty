@@ -1,15 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse activateSkill 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse assignRoleToAgent 1`] = `
 {
   "extensions": {
@@ -150,26 +140,6 @@ exports[`Administration operations with an application token should fail with a 
 }
 `;
 
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse createOIDCIdentityProvider 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse createOneAgent 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse createOneLogicFunction 1`] = `
 {
   "extensions": {
@@ -191,46 +161,6 @@ exports[`Administration operations with an application token should fail with a 
 `;
 
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse createPublicDomain 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse createSAMLIdentityProvider 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse createSkill 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse createWebhook 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse deactivateSkill 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -280,16 +210,6 @@ exports[`Administration operations with an application token should fail with a 
 }
 `;
 
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteOneAgent 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteOneLogicFunction 1`] = `
 {
   "extensions": {
@@ -320,47 +240,7 @@ exports[`Administration operations with an application token should fail with a 
 }
 `;
 
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteSSOIdentityProvider 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteSkill 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteWebhook 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteWorkspaceInvitation 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse editSSOIdentityProvider 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -580,16 +460,6 @@ exports[`Administration operations with an application token should fail with a 
 }
 `;
 
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateOneAgent 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateOneRole 1`] = `
 {
   "extensions": {
@@ -600,37 +470,7 @@ exports[`Administration operations with an application token should fail with a 
 }
 `;
 
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateSkill 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateWebhook 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateWorkspace 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateWorkspaceAllowedIframeOrigins 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -711,16 +551,6 @@ exports[`Administration operations with an application token should fail with a 
 `;
 
 exports[`Administration operations with an application token should fail with a user-bound application token should refuse verifyEmailingDomain 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse activateSkill 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -870,26 +700,6 @@ exports[`Administration operations with an application token should fail with an
 }
 `;
 
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse createOIDCIdentityProvider 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse createOneAgent 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Administration operations with an application token should fail with an application token without user binding should refuse createOneLogicFunction 1`] = `
 {
   "extensions": {
@@ -911,46 +721,6 @@ exports[`Administration operations with an application token should fail with an
 `;
 
 exports[`Administration operations with an application token should fail with an application token without user binding should refuse createPublicDomain 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse createSAMLIdentityProvider 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse createSkill 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse createWebhook 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse deactivateSkill 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -1000,16 +770,6 @@ exports[`Administration operations with an application token should fail with an
 }
 `;
 
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteOneAgent 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteOneLogicFunction 1`] = `
 {
   "extensions": {
@@ -1040,47 +800,7 @@ exports[`Administration operations with an application token should fail with an
 }
 `;
 
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteSSOIdentityProvider 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteSkill 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteWebhook 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteWorkspaceInvitation 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse editSSOIdentityProvider 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -1300,16 +1020,6 @@ exports[`Administration operations with an application token should fail with an
 }
 `;
 
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateOneAgent 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateOneRole 1`] = `
 {
   "extensions": {
@@ -1320,37 +1030,7 @@ exports[`Administration operations with an application token should fail with an
 }
 `;
 
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateSkill 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateWebhook 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
 exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateWorkspace 1`] = `
-{
-  "extensions": {
-    "code": "FORBIDDEN",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
-  },
-  "message": "This endpoint is not available to this caller",
-}
-`;
-
-exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateWorkspaceAllowedIframeOrigins 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",

@@ -42,13 +42,10 @@ const ADMINISTRATION_PERMISSION_FLAGS = [
   SystemPermissionFlag.UPLOAD_FILE,
   SystemPermissionFlag.API_KEYS_AND_WEBHOOKS,
   SystemPermissionFlag.ROLES,
-  SystemPermissionFlag.SECURITY,
   SystemPermissionFlag.WORKSPACE,
   SystemPermissionFlag.WORKSPACE_MEMBERS,
   SystemPermissionFlag.BILLING,
   SystemPermissionFlag.WORKFLOWS,
-  SystemPermissionFlag.AI,
-  SystemPermissionFlag.AI_SETTINGS,
 ];
 
 type OperationName = keyof typeof ADMINISTRATION_OPERATION_QUERY_FACTORIES;

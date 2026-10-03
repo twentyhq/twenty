@@ -56,19 +56,6 @@ export class SsoResolver {
   constructor(private readonly ssoService: SsoService) {}
 
   @Mutation(() => SetupSsoDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async createOIDCIdentityProvider(
     @Args('input') setupSsoInput: SetupOidcSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -87,19 +74,6 @@ export class SsoResolver {
   }
 
   @Mutation(() => SetupSsoDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async createSAMLIdentityProvider(
     @Args('input') setupSsoInput: SetupSamlSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -111,19 +85,6 @@ export class SsoResolver {
   }
 
   @Mutation(() => DeleteSsoDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async deleteSSOIdentityProvider(
     @Args('input') { identityProviderId }: DeleteSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -135,19 +96,6 @@ export class SsoResolver {
   }
 
   @Mutation(() => EditSsoDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async editSSOIdentityProvider(
     @Args('input') input: EditSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

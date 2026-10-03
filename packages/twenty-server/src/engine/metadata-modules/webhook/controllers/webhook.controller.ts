@@ -79,19 +79,6 @@ export class WebhookController {
   }
 
   @Post()
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async create(
     @Body() createWebhookDto: CreateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -100,19 +87,6 @@ export class WebhookController {
   }
 
   @Patch(':id')
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async update(
     @Param('id') id: string,
     @Body()
@@ -133,19 +107,6 @@ export class WebhookController {
   }
 
   @Delete(':id')
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: false,
-    }),
-  )
   async remove(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
