@@ -24,10 +24,17 @@ jest.mock('@/ai/hooks/useProcessWorkspaceSetupCompletion', () => ({
   }),
 }));
 
-const buildMessage = (id: string, text: string): ExtendedUIMessage => ({
+const SESSION_START = '2026-01-01T10:00:00.000Z';
+
+const buildMessage = (
+  id: string,
+  text: string,
+  createdAt = '2026-01-01T10:00:01.000Z',
+): ExtendedUIMessage => ({
   id,
   role: 'assistant',
   parts: [{ type: 'text', text }],
+  metadata: { createdAt },
 });
 
 const renderUpdateStreamingPartsWithDiff = () => {
@@ -46,7 +53,7 @@ describe('useUpdateStreamingPartsWithDiff', () => {
     jest.clearAllMocks();
     jotaiStore.set(
       agentChatUISessionStartTimeState.atom,
-      Temporal.Instant.fromEpochMilliseconds(0),
+      Temporal.Instant.from(SESSION_START),
     );
   });
 
@@ -67,5 +74,25 @@ describe('useUpdateStreamingPartsWithDiff', () => {
       nextStreamingMessage,
     );
     expect(processWorkspaceSetupCompletion).toHaveBeenCalledTimes(3);
+  });
+
+  it('does not process again a refetched message whose content did not change', () => {
+    const updateStreamingPartsWithDiff = renderUpdateStreamingPartsWithDiff();
+
+    updateStreamingPartsWithDiff([buildMessage('answer', 'Done')]);
+    updateStreamingPartsWithDiff([buildMessage('answer', 'Done')]);
+
+    expect(processUIToolCallMessage).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves messages written before this session alone', () => {
+    const updateStreamingPartsWithDiff = renderUpdateStreamingPartsWithDiff();
+
+    updateStreamingPartsWithDiff([
+      buildMessage('earlier', 'Done', '2026-01-01T09:59:59.000Z'),
+    ]);
+
+    expect(processUIToolCallMessage).not.toHaveBeenCalled();
+    expect(processWorkspaceSetupCompletion).not.toHaveBeenCalled();
   });
 });

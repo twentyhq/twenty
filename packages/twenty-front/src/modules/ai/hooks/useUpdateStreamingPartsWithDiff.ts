@@ -6,6 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useUpdateStreamingPartsWithDiff = () => {
   const agentChatUISessionStartTime = useAtomStateValue(
@@ -16,8 +17,10 @@ export const useUpdateStreamingPartsWithDiff = () => {
   const { processWorkspaceSetupCompletion } =
     useProcessWorkspaceSetupCompletion();
 
-  // a message only changes by being replaced, so an unchanged one keeps its reference
-  const [processedMessages] = useState(() => new WeakSet<ExtendedUIMessage>());
+  // messages are replaced, never mutated, so the last one seen can be kept by reference
+  const [lastSeenMessageById] = useState(
+    () => new Map<string, ExtendedUIMessage>(),
+  );
 
   const isMessageFromCurrentSession = (message: ExtendedUIMessage) => {
     if (agentChatUISessionStartTime === null) {
@@ -37,11 +40,17 @@ export const useUpdateStreamingPartsWithDiff = () => {
     incomingMessages: ExtendedUIMessage[],
   ) => {
     for (const incomingMessage of incomingMessages) {
-      if (processedMessages.has(incomingMessage)) {
+      const lastSeenMessage = lastSeenMessageById.get(incomingMessage.id);
+
+      lastSeenMessageById.set(incomingMessage.id, incomingMessage);
+
+      // a stream flush keeps the unchanged messages, a refetch rebuilds them all
+      if (
+        lastSeenMessage === incomingMessage ||
+        isDeeplyEqual(lastSeenMessage, incomingMessage)
+      ) {
         continue;
       }
-
-      processedMessages.add(incomingMessage);
 
       if (!isMessageFromCurrentSession(incomingMessage)) {
         continue;
