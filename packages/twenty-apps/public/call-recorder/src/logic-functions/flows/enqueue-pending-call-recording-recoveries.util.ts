@@ -4,15 +4,10 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
-import { canRescheduleCallRecordingWithoutRecallLookup } from 'src/logic-functions/domain/can-reschedule-call-recording-without-recall-lookup.util';
-import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
-import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
-import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { enqueuePendingCallRecordingRecoveryJobs } from 'src/logic-functions/data/enqueue-pending-call-recording-recovery-jobs.util';
 import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
-import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
-import { findScheduledRecallBotIdsByCallRecordingId } from 'src/logic-functions/recall-api/find-scheduled-recall-bot-ids-by-call-recording-id.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
@@ -24,28 +19,20 @@ export const BOT_SCHEDULE_OUTCOME_UNKNOWN_FAILURE_REASON =
 // pass will resolve the row anymore, so keeping it pending only wastes runs.
 const UNRESOLVED_ATTEMPT_MAX_AGE_DAYS = 7;
 
-export type ScheduleRecallBotsForPendingCallRecordingsResult = {
-  attachedCallRecordingIds: string[];
-  scheduledCallRecordingIds: string[];
+export type EnqueuePendingCallRecordingRecoveriesResult = {
+  enqueuedCallRecordingIds: string[];
   markedFailedCallRecordingIds: string[];
 };
 
-type ResumableCallRecording = {
-  callRecording: CallRecordingRecord;
-  calendarEvent: CalendarEventRecord;
-};
-
-// Resumes a CallRecording inserted before its Recall bot was scheduled.
-export const scheduleRecallBotsForPendingCallRecordings = async ({
+export const enqueuePendingCallRecordingRecoveries = async ({
   client,
   now,
 }: {
   client: CoreApiClient;
   now: Date;
-}): Promise<ScheduleRecallBotsForPendingCallRecordingsResult> => {
-  const result: ScheduleRecallBotsForPendingCallRecordingsResult = {
-    attachedCallRecordingIds: [],
-    scheduledCallRecordingIds: [],
+}): Promise<EnqueuePendingCallRecordingRecoveriesResult> => {
+  const result: EnqueuePendingCallRecordingRecoveriesResult = {
+    enqueuedCallRecordingIds: [],
     markedFailedCallRecordingIds: [],
   };
   const pendingCallRecordings = (
@@ -68,7 +55,6 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
       )
     ).map((calendarEvent) => [calendarEvent.id, calendarEvent]),
   );
-  const resumableCallRecordings: ResumableCallRecording[] = [];
 
   for (const callRecording of pendingCallRecordings) {
     const calendarEvent = isUndefined(callRecording.calendarEventId)
@@ -96,107 +82,15 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
       continue;
     }
 
-    resumableCallRecordings.push({ callRecording, calendarEvent });
+    result.enqueuedCallRecordingIds.push(callRecording.id);
   }
 
-  if (resumableCallRecordings.length === 0) {
-    return result;
-  }
-
-  const workspaceId = getCurrentWorkspaceId();
-  const ambiguousCallRecordings = resumableCallRecordings.filter(
-    ({ callRecording, calendarEvent }) =>
-      !canRescheduleCallRecordingWithoutRecallLookup({
-        callRecording,
-        calendarEvent,
-        workspaceId,
-        now,
-      }),
-  );
-  const unambiguousCallRecordings = resumableCallRecordings.filter(
-    ({ callRecording, calendarEvent }) =>
-      canRescheduleCallRecordingWithoutRecallLookup({
-        callRecording,
-        calendarEvent,
-        workspaceId,
-        now,
-      }),
-  );
-
-  for (const { callRecording, calendarEvent } of unambiguousCallRecordings) {
-    await scheduleBotForResumableCallRecording({
-      client,
-      callRecording,
-      calendarEvent,
-      result,
-    });
-  }
-
-  if (ambiguousCallRecordings.length === 0) {
-    return result;
-  }
-
-  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId(
-    ambiguousCallRecordings.map(({ callRecording }) => callRecording.id),
-  );
-
-  // A failed lookup can hide existing bots; creating one now could duplicate
-  // them, so defer to the next run.
-  if (!lookupResult.ok) {
-    return result;
-  }
-
-  for (const { callRecording, calendarEvent } of ambiguousCallRecordings) {
-    const existingExternalBotId =
-      lookupResult.externalBotIdByCallRecordingId.get(callRecording.id);
-
-    if (!isUndefined(existingExternalBotId)) {
-      await updateCallRecording(client, {
-        id: callRecording.id,
-        data: { externalBotId: existingExternalBotId },
-      });
-      result.attachedCallRecordingIds.push(callRecording.id);
-
-      if (!isUndefined(calendarEvent.startsAt)) {
-        await enqueuePreJoinCreditCheck({
-          callRecordingId: callRecording.id,
-          externalBotId: existingExternalBotId,
-          joinAt: computeRecallBotJoinAt(calendarEvent.startsAt),
-        });
-      }
-      continue;
-    }
-
-    await scheduleBotForResumableCallRecording({
-      client,
-      callRecording,
-      calendarEvent,
-      result,
-    });
-  }
-
-  return result;
-};
-
-const scheduleBotForResumableCallRecording = async ({
-  client,
-  callRecording,
-  calendarEvent,
-  result,
-}: {
-  client: CoreApiClient;
-  callRecording: CallRecordingRecord;
-  calendarEvent: CalendarEventRecord;
-  result: ScheduleRecallBotsForPendingCallRecordingsResult;
-}): Promise<void> => {
-  const scheduleResult = await scheduleRecallBotForCallRecording(client, {
-    callRecording,
-    calendarEvent,
+  await enqueuePendingCallRecordingRecoveryJobs({
+    callRecordingIds: result.enqueuedCallRecordingIds,
+    recoveryDate: now.toISOString().slice(0, 10),
   });
 
-  if (scheduleResult.status === 'scheduled') {
-    result.scheduledCallRecordingIds.push(callRecording.id);
-  }
+  return result;
 };
 
 // Only an absent attempt marker proves no POST reached Recall; a marked row
@@ -213,7 +107,7 @@ const resolveEndedPendingCallRecording = async ({
   callRecording: CallRecordingRecord;
   calendarEvent: CalendarEventRecord;
   now: Date;
-  result: ScheduleRecallBotsForPendingCallRecordingsResult;
+  result: EnqueuePendingCallRecordingRecoveriesResult;
 }): Promise<void> => {
   if (isUndefined(callRecording.botScheduleAttemptedAt)) {
     await markCallRecordingFailed({
