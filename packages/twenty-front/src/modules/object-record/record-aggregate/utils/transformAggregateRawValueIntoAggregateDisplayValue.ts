@@ -79,6 +79,12 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
           : formatNumber(castedValue, { decimals, format: numberFormat });
       }
 
+      case FieldMetadataType.RATING:
+        return formatNumber(Number(aggregateRawValue), {
+          decimals: 1,
+          format: numberFormat,
+        });
+
       case FieldMetadataType.DATE_TIME: {
         const dateFieldSettings = aggregateFieldMetadataItem.settings;
 
