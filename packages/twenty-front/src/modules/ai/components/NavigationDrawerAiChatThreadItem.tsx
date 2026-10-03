@@ -5,6 +5,8 @@ import { useLingui } from '@lingui/react/macro';
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
+import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -35,6 +37,10 @@ export const NavigationDrawerAiChatThreadItem = ({
   } = useAiChatThreadRename(thread);
 
   const isDeleted = Boolean(thread.deletedAt);
+  const { isUnread } = useAtomFamilySelectorValue(
+    agentChatThreadInboxStatusFamilySelector,
+    thread.id,
+  );
   const displayLabel = thread.title || t`New chat`;
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
@@ -63,6 +69,7 @@ export const NavigationDrawerAiChatThreadItem = ({
       active={isActive}
       onClick={() => onClick(thread)}
       variant={isDeleted ? 'tertiary' : 'default'}
+      isUnread={!isDeleted && isUnread}
       isRightOptionsDropdownOpen={isDropdownOpen}
       rightOptions={
         <AiChatThreadActionsDropdown

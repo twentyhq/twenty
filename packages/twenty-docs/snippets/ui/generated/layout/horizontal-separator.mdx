@@ -12,7 +12,7 @@
  */}
 
 <ParamField body="color" type="string">
-  CSS line color. Defaults to the medium border color.
+  CSS color for the line and text. Defaults to the medium border color.
 </ParamField>
 
 <ParamField body="noMargin" type="boolean" default="false">
@@ -21,6 +21,10 @@
 
 <ParamField body="text" type="string" default="">
   Optional label displayed between two lines.
+</ParamField>
+
+<ParamField body="textPosition" type="&quot;center&quot; | &quot;end&quot;" default="center">
+  Places the text between two lines, or at the end of a single line.
 </ParamField>
 
 <ParamField body="visible" type="boolean" default="true">
