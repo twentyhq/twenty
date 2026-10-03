@@ -234,23 +234,17 @@ export const computeStepOutputSchema = ({
 
       return {
         ...threadIdOutputSchema,
-        isApproved: {
-          isLeaf: true,
-          type: FieldMetadataType.BOOLEAN,
-          label: 'Approved',
-          value: true,
-        },
-        approvedToolName: {
+        outcome: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
-          label: 'Approved action',
+          label: 'Outcome',
+          value: 'executed',
+        },
+        toolName: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Action',
           value: '',
-        },
-        status: {
-          isLeaf: true,
-          type: FieldMetadataType.TEXT,
-          label: 'Status',
-          value: 'approved',
         },
         feedback: {
           isLeaf: true,
@@ -267,13 +261,13 @@ export const computeStepOutputSchema = ({
         arguments: {
           isLeaf: true,
           type: FieldMetadataType.RAW_JSON,
-          label: 'Approved arguments',
+          label: 'Arguments',
           value: null,
         },
         output: {
           isLeaf: true,
           type: FieldMetadataType.RAW_JSON,
-          label: 'Action result',
+          label: 'Output',
           value: null,
         },
       };

@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
-import {
-  type SendInboxMessageInput,
-  type SendInboxMessageResult,
-} from 'twenty-shared/application';
+import { type SendInboxMessageInput } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-delivery.type';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
@@ -21,6 +19,7 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -32,6 +31,8 @@ export class AgentInboxService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessagePart')
+    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly threadService: AgentChatThreadService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -45,7 +46,7 @@ export class AgentInboxService {
     workspaceId,
     sender,
     input,
-    awaitingToolCall,
+    buildAwaitingToolCall,
     resolveProposal = async (proposeToolCallInput) =>
       resolveEmailToolCallProposal(proposeToolCallInput),
   }: {
@@ -54,13 +55,14 @@ export class AgentInboxService {
     input: Omit<SendInboxMessageInput, 'toolCall'> & { toolCall?: unknown };
     // without a resolver, only emails can be proposed: they need no tool of the sender's
     resolveProposal?: ResolveInboxProposal;
-    // a pausing call the server already resolved, with its pending output
-    awaitingToolCall?: {
+    // a pausing call the server resolves, with its pending output, only when the message is written,
+    // so a message delivered earlier is found even once the call could no longer be resolved
+    buildAwaitingToolCall?: () => Promise<{
       toolName: string;
       input: Record<string, unknown>;
       output: Record<string, unknown>;
-    };
-  }): Promise<SendInboxMessageResult> {
+    }>;
+  }): Promise<AgentInboxDelivery> {
     const senderDetails = getAgentInboxSenderDetails(sender);
     const { threadId, turnId, messageId, toolCallId } = buildInboxMessageIds({
       senderKey: senderDetails.key,
@@ -73,13 +75,21 @@ export class AgentInboxService {
 
     // A member who deleted the conversation has dismissed it, and a message
     // that exists was already delivered.
-    if (
-      isDefined(existingThread?.deletedAt) ||
-      (await this.messageExists({ workspaceId, id: messageId }))
-    ) {
-      return { threadId };
+    if (isDefined(existingThread?.deletedAt)) {
+      return { threadId, isDismissed: true };
     }
 
+    if (await this.messageExists({ workspaceId, id: messageId })) {
+      return {
+        threadId,
+        isDismissed: false,
+        awaitedToolOutput: isDefined(buildAwaitingToolCall)
+          ? await this.findToolOutput({ workspaceId, toolCallId })
+          : undefined,
+      };
+    }
+
+    const awaitingToolCall = await buildAwaitingToolCall?.();
     const toolCallPart = isDefined(awaitingToolCall)
       ? {
           part: buildToolPart({ ...awaitingToolCall, toolCallId }),
@@ -146,7 +156,30 @@ export class AgentInboxService {
       });
     }
 
-    return { threadId };
+    if (!isDefined(awaitingToolCall)) {
+      return { threadId, isDismissed: false };
+    }
+
+    const awaitedToolOutput = isWritten
+      ? awaitingToolCall.output
+      : await this.findToolOutput({ workspaceId, toolCallId });
+
+    return { threadId, isDismissed: false, awaitedToolOutput };
+  }
+
+  private async findToolOutput({
+    workspaceId,
+    toolCallId,
+  }: {
+    workspaceId: string;
+    toolCallId: string;
+  }): Promise<unknown> {
+    const part = await this.messagePartRepository.findOne(workspaceId, {
+      where: { toolCallId },
+      select: ['toolOutput'],
+    });
+
+    return part?.toolOutput;
   }
 
   private findThread({

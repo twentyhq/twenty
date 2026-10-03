@@ -770,22 +770,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(created.totalInputCredits).toBe('0');
       expect(created).not.toHaveProperty('workspaceId');
       const checkpointId = '20202020-8888-4888-8888-888888888888';
+      const checkpointChatService = createChatService(messages);
       await Promise.all(
-        [1, 2].map(() =>
-          messages.upsert(
-            WORKSPACE_ID,
-            {
-              id: checkpointId,
-              threadId: THREAD_ID,
-              turnId: TURN_ID,
-              role: 'assistant' as AgentMessageWorkspaceEntity['role'],
-            },
-            ['id'],
-          ),
+        ['First checkpoint', 'Second checkpoint'].map((text) =>
+          checkpointChatService.upsertAssistantMessage({
+            id: checkpointId,
+            threadId: THREAD_ID,
+            turnId: TURN_ID,
+            parts: [{ type: 'text', text }],
+            workspaceId: WORKSPACE_ID,
+          }),
         ),
       );
       expect(
         await messages.count(WORKSPACE_ID, { where: { id: checkpointId } }),
+      ).toBe(1);
+      expect(
+        await messageParts.count(WORKSPACE_ID, {
+          where: { messageId: checkpointId },
+        }),
       ).toBe(1);
       expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
     });
