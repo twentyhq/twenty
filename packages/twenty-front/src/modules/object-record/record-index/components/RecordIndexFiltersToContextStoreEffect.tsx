@@ -49,12 +49,12 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     recordIndexId,
   );
 
-  const selectedRowIds = useAtomComponentSelectorValue(
+  const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
     recordIndexId,
   );
 
-  const unselectedRowIds = useAtomComponentSelectorValue(
+  const unselectedRecordIds = useAtomComponentSelectorValue(
     unselectedRecordIdsComponentSelector,
     recordIndexId,
   );
@@ -100,12 +100,12 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
           if (hasUserSelectedAllRecords) {
             newRule = {
               mode: 'exclusion',
-              excludedRecordIds: unselectedRowIds,
+              excludedRecordIds: unselectedRecordIds,
             };
           } else {
             newRule = {
               mode: 'selection',
-              selectedRecordIds: selectedRowIds,
+              selectedRecordIds,
             };
           }
 
@@ -119,7 +119,9 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
           );
           const newRecordIdsInSelectionOrder = orderRecordIdsBySelection({
             previousRecordIdsInSelectionOrder: currentRecordIdsInSelectionOrder,
-            selectedRecordIds: hasUserSelectedAllRecords ? [] : selectedRowIds,
+            selectedRecordIds: hasUserSelectedAllRecords
+              ? []
+              : selectedRecordIds,
           });
           if (
             !isDeeplyEqual(
@@ -156,8 +158,8 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
       ),
     [
       hasUserSelectedAllRecords,
-      selectedRowIds,
-      unselectedRowIds,
+      selectedRecordIds,
+      unselectedRecordIds,
       contextStoreTargetedRecordsRuleAtom,
       contextStoreRecordIdsInSelectionOrderAtom,
       contextStoreFiltersAtom,

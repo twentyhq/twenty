@@ -32,7 +32,7 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
       recordBoardIndexId,
     );
 
-  const recordBoardSelectedRecordIds = useAtomComponentSelectorCallbackState(
+  const selectedRecordIds = useAtomComponentSelectorCallbackState(
     selectedRecordIdsComponentSelector,
     recordBoardIndexId,
   );
@@ -40,9 +40,7 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
   const { resetRecordSelection } = useResetRecordSelection(recordBoardIndexId);
 
   const removeSelectedRecordsFromRecordBoard = useCallback(() => {
-    const deletedRecordIds = store.get(
-      recordBoardSelectedRecordIds,
-    ) as string[];
+    const deletedRecordIds = store.get(selectedRecordIds) as string[];
 
     if (
       !isDefined(recordIndexGroupFieldMetadataItem) ||
@@ -88,7 +86,7 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
     recordIndexGroupFieldMetadataItem,
     recordIndexRecordIdsByGroupCallbackState,
     recordGroupDefinitions,
-    recordBoardSelectedRecordIds,
+    selectedRecordIds,
     resetRecordSelection,
   ]);
 
