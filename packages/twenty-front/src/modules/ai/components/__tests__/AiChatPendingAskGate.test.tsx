@@ -12,6 +12,10 @@ import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 
 const useAgentChatPendingToolCalls = jest.fn();
+let displayedThreadId = 'thread-1';
+jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
+  useAtomStateValue: () => displayedThreadId,
+}));
 jest.mock('@/ai/hooks/useAgentChatPendingToolCalls', () => ({
   useAgentChatPendingToolCalls: () => useAgentChatPendingToolCalls(),
 }));
@@ -170,6 +174,34 @@ describe('AiChatPendingAskGate', () => {
 
     expect(screen.getByText('Request 2 of 2')).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'Form' })).toBeVisible();
+  });
+
+  it('opens another conversation on its oldest request', async () => {
+    useAgentChatPendingToolCalls.mockReturnValue([
+      EMAIL_APPROVAL,
+      { toolCallId: 'call-3', kind: 'question', question: QUESTION },
+    ]);
+
+    const { rerender } = renderGate();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Next request' }));
+
+    displayedThreadId = 'thread-2';
+    useAgentChatPendingToolCalls.mockReturnValue([
+      { toolCallId: 'call-5', kind: 'question', question: QUESTION },
+      EMAIL_APPROVAL,
+    ]);
+    rerender(
+      <I18nProvider i18n={i18n}>
+        <AiChatPendingAskGate>
+          <textarea aria-label="Message" />
+        </AiChatPendingAskGate>
+      </I18nProvider>,
+    );
+
+    expect(screen.getByText('Request 1 of 2')).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Questions' })).toBeVisible();
+    displayedThreadId = 'thread-1';
   });
 
   it('shows the composer once nothing is pending', () => {

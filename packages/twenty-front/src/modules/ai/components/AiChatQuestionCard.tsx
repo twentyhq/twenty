@@ -490,7 +490,7 @@ export const AiChatQuestionCard = ({
 
       <StyledComposerSection>
         <AiChatComposerActionsRow
-          modelTierDropdownId="ai-chat-question-model-tier-dropdown"
+          modelTierDropdownId={`ai-chat-question-model-tier-dropdown-${toolCallId}`}
           sendButton={
             <IconButton
               variant="solid"

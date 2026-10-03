@@ -7,6 +7,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskCard } from '@/ai/components/AiChatAskCard';
 import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledGate = styled.div`
   display: flex;
@@ -33,6 +35,7 @@ type AiChatPendingAskGateProps = {
 };
 
 type RequestSelection = {
+  threadId: string | null;
   toolCallId: string | null;
   index: number;
 };
@@ -44,7 +47,9 @@ export const AiChatPendingAskGate = ({
 }: AiChatPendingAskGateProps) => {
   const { t } = useLingui();
   const pendingToolCalls = useAgentChatPendingToolCalls();
+  const displayedThreadId = useAtomStateValue(agentChatDisplayedThreadState);
   const [selection, setSelection] = useState<RequestSelection>({
+    threadId: null,
     toolCallId: null,
     index: 0,
   });
@@ -58,14 +63,21 @@ export const AiChatPendingAskGate = ({
     (pendingToolCall) => pendingToolCall.toolCallId === selection.toolCallId,
   );
   // an answered request leaves the list, so the one taking its place is shown
+  // a selection made in another conversation does not carry over, so each opens on its oldest request
+  const previousIndex =
+    selection.threadId === displayedThreadId ? selection.index : 0;
   const currentIndex =
     selectedIndex >= 0
       ? selectedIndex
-      : Math.min(selection.index, requestCount - 1);
+      : Math.min(previousIndex, requestCount - 1);
   const requestNumber = currentIndex + 1;
 
   const selectRequest = (index: number) =>
-    setSelection({ toolCallId: pendingToolCalls[index].toolCallId, index });
+    setSelection({
+      threadId: displayedThreadId,
+      toolCallId: pendingToolCalls[index].toolCallId,
+      index,
+    });
 
   return (
     <StyledGate>
