@@ -1,0 +1,9 @@
+name: Tune CI Postgres
+description: Turn off durability settings on a throwaway CI Postgres to speed up migrations, seeding and test writes
+
+runs:
+  using: composite
+  steps:
+    - name: Turn off fsync, synchronous_commit and full_page_writes
+      shell: bash
+      run: PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'ALTER SYSTEM SET fsync = off' -c 'ALTER SYSTEM SET synchronous_commit = off' -c 'ALTER SYSTEM SET full_page_writes = off' -c 'SELECT pg_reload_conf()'

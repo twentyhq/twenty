@@ -198,6 +198,7 @@
     },
     "storybook:test:no-coverage": {
       "executor": "nx:run-commands",
+      "cache": true,
       "inputs": ["^default", "excludeTests"],
       "options": {
         "cwd": "{projectRoot}",
