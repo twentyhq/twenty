@@ -91,11 +91,12 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       appliedFilters,
     );
 
-    // Deduplicated leaves let a caller id ordering override the tie-breaker and keep scan order and keyset conditions in sync
+    // Deduplicated leaves let a caller id ordering override the tie-breaker and keep scan order and keyset conditions in sync.
+    // NULLS LAST matches the primary-key btree order both ways (backward scans flip it to DESC NULLS FIRST), so Postgres can stop at LIMIT instead of sorting every row past the cursor
     const orderByLeaves = resolveOrderByLeaves({
       orderBy: [
         ...(args.orderBy ?? []),
-        { id: OrderByDirection.AscNullsFirst },
+        { id: OrderByDirection.AscNullsLast },
       ] as ObjectRecordOrderBy,
       flatObjectMetadata,
       flatObjectMetadataMaps,

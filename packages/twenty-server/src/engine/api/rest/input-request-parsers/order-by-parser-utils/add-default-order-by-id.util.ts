@@ -7,5 +7,5 @@ export const addDefaultOrderById = (orderBy: ObjectRecordOrderBy) => {
 
   return hasIdOrder
     ? orderBy
-    : [...orderBy, { id: OrderByDirection.AscNullsFirst }];
+    : [...orderBy, { id: OrderByDirection.AscNullsLast }];
 };

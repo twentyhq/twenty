@@ -88,7 +88,7 @@ export class FindRecordsService {
       // Add id to orderBy for consistent pagination
       const orderByWithIdCondition: ObjectRecordOrderBy = [
         ...(orderBy ?? []).filter((item) => item !== undefined),
-        { id: OrderByDirection.AscNullsFirst },
+        { id: OrderByDirection.AscNullsLast },
       ];
 
       const {
