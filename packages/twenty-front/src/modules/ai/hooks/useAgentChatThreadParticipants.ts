@@ -2,7 +2,7 @@ import { type TypedDocumentNode } from '@apollo/client';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
@@ -27,31 +27,62 @@ export const useAgentChatThreadParticipants = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
 
-  const refreshAgentChatThreadParticipants = useCallback(async () => {
-    const result = await client
-      .query({
-        query: GetMyAgentChatThreadParticipantsDocument,
-        fetchPolicy: 'network-only',
-      })
-      .catch(() => undefined);
+  const loadAgentChatThreadParticipants = useCallback(
+    async (threadIds: string[]): Promise<boolean> => {
+      const participantsBeforeRequest = store.get(
+        agentChatThreadParticipantsState.atom,
+      );
+      const result = isNonEmptyArray(threadIds)
+        ? await client
+            .query({
+              query: GetMyAgentChatThreadParticipantsDocument,
+              variables: { threadIds },
+              fetchPolicy: 'network-only',
+            })
+            .catch(() => undefined)
+        : { data: { myAgentChatThreadParticipants: [] } };
 
-    if (!isDefined(result?.data)) {
-      return;
-    }
+      if (!isDefined(result?.data)) {
+        return false;
+      }
 
-    store.set(
-      agentChatThreadParticipantsState.atom,
-      Object.fromEntries(
+      const loadedParticipantByThreadId = new Map(
         result.data.myAgentChatThreadParticipants.map((participant) => [
           participant.threadId,
           participant,
         ]),
-      ),
-    );
-  }, [client, store]);
+      );
+
+      store.set(agentChatThreadParticipantsState.atom, (participants) => {
+        const nextParticipants = { ...participants };
+
+        for (const threadId of threadIds) {
+          // a chat changed here while the request ran keeps its newer state
+          if (
+            participants?.[threadId] !== participantsBeforeRequest?.[threadId]
+          ) {
+            continue;
+          }
+
+          const loadedParticipant = loadedParticipantByThreadId.get(threadId);
+
+          if (isDefined(loadedParticipant)) {
+            nextParticipants[threadId] = loadedParticipant;
+          } else {
+            delete nextParticipants[threadId];
+          }
+        }
+
+        return nextParticipants;
+      });
+
+      return true;
+    },
+    [client, store],
+  );
 
   // The change shows right away; if the server refuses it, the visit is put
-  // back and the member's state is reloaded from the server
+  // back and the chat's state is reloaded from the server
   const updateParticipant = useCallback(
     async <TVariables extends { threadId: string }>({
       mutation,
@@ -99,10 +130,10 @@ export const useAgentChatThreadParticipants = () => {
           );
         }
 
-        await refreshAgentChatThreadParticipants();
+        await loadAgentChatThreadParticipants([threadId]);
       }
     },
-    [client, enqueueToast, refreshAgentChatThreadParticipants, store],
+    [client, enqueueToast, loadAgentChatThreadParticipants, store],
   );
 
   const markAgentChatThreadAsRead = useCallback(
@@ -151,8 +182,7 @@ export const useAgentChatThreadParticipants = () => {
     [updateParticipant],
   );
 
-  // One chat at a time: a failed update reloads every chat's state, which
-  // would undo the optimistic change of an update still on its way
+  // A failed update only reloads its own chat, so the chats are snoozed together
   const snoozeAgentChatThreads = useCallback(
     async ({
       threadIds,
@@ -161,16 +191,18 @@ export const useAgentChatThreadParticipants = () => {
       threadIds: string[];
       snoozedUntil: Date;
     }) => {
-      for (const threadId of threadIds) {
-        await updateParticipant({
-          mutation: SnoozeAgentChatThreadDocument,
-          variables: { threadId, snoozedUntil: snoozedUntil.toISOString() },
-          optimisticParticipant: {
-            archivedAt: new Date().toISOString(),
-            snoozedUntil: snoozedUntil.toISOString(),
-          },
-        });
-      }
+      await Promise.all(
+        threadIds.map((threadId) =>
+          updateParticipant({
+            mutation: SnoozeAgentChatThreadDocument,
+            variables: { threadId, snoozedUntil: snoozedUntil.toISOString() },
+            optimisticParticipant: {
+              archivedAt: new Date().toISOString(),
+              snoozedUntil: snoozedUntil.toISOString(),
+            },
+          }),
+        ),
+      );
     },
     [updateParticipant],
   );
@@ -186,7 +218,7 @@ export const useAgentChatThreadParticipants = () => {
   );
 
   return {
-    refreshAgentChatThreadParticipants,
+    loadAgentChatThreadParticipants,
     markAgentChatThreadAsRead,
     markAgentChatThreadAsUnread,
     archiveAgentChatThread,

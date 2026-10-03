@@ -39,8 +39,7 @@ export const useRefreshAgentChatThreads = () => {
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
   const { addAgentChatThread } = useApplyAgentChatThreadUpdate();
-  const { refreshAgentChatThreadParticipants } =
-    useAgentChatThreadParticipants();
+  const { loadAgentChatThreadParticipants } = useAgentChatThreadParticipants();
 
   const fetchAgentChatThreadsPage = useCallback(
     async ({
@@ -154,12 +153,26 @@ export const useRefreshAgentChatThreads = () => {
         }
 
         const selectedThreadId = store.get(currentAiChatThreadState.atom);
-        await refreshAgentChatThreadPermissions([
-          ...page.threads.map(({ id }) => id),
-          ...(isDefined(selectedThreadId) && isValidUuid(selectedThreadId)
+        const pageThreadIds = page.threads.map(({ id }) => id);
+        // the open chat may be past the loaded pages, and is kept in sync too
+        const refreshedThreadIds = [
+          ...pageThreadIds,
+          ...(isDefined(selectedThreadId) &&
+          isValidUuid(selectedThreadId) &&
+          !pageThreadIds.includes(selectedThreadId)
             ? [selectedThreadId]
             : []),
+        ];
+
+        const [, areParticipantsLoaded] = await Promise.all([
+          refreshAgentChatThreadPermissions(refreshedThreadIds),
+          loadAgentChatThreadParticipants(refreshedThreadIds),
         ]);
+
+        // without their member state, archived or read chats would show as new
+        if (!areParticipantsLoaded) {
+          return undefined;
+        }
 
         if (!isSameSession() || hasChangedSinceRequest()) {
           continue;
@@ -167,7 +180,6 @@ export const useRefreshAgentChatThreads = () => {
 
         upsertRecordsInStore({ partialRecords: page.threads });
 
-        const pageThreadIds = page.threads.map(({ id }) => id);
         const previousThreadIds =
           mode === 'fetch-more' ? (listBeforeRequest?.threadIds ?? []) : [];
 
@@ -189,20 +201,17 @@ export const useRefreshAgentChatThreads = () => {
     },
     [
       fetchAgentChatThreadsPage,
+      loadAgentChatThreadParticipants,
       refreshAgentChatThreadPermissions,
       store,
       upsertRecordsInStore,
     ],
   );
 
-  const refreshAgentChatThreads = useCallback(async () => {
-    const [threads] = await Promise.all([
-      loadAgentChatThreads('refresh'),
-      refreshAgentChatThreadParticipants(),
-    ]);
-
-    return threads;
-  }, [loadAgentChatThreads, refreshAgentChatThreadParticipants]);
+  const refreshAgentChatThreads = useCallback(
+    () => loadAgentChatThreads('refresh'),
+    [loadAgentChatThreads],
+  );
 
   const fetchMoreAgentChatThreads = useCallback(
     () => loadAgentChatThreads('fetch-more'),
@@ -231,7 +240,10 @@ export const useRefreshAgentChatThreads = () => {
           return null;
         }
 
-        await refreshAgentChatThreadPermissions([thread.id]);
+        await Promise.all([
+          refreshAgentChatThreadPermissions([thread.id]),
+          loadAgentChatThreadParticipants([thread.id]),
+        ]);
 
         if (
           store.get(agentChatThreadRecordUpdateCountState.atom) !==
@@ -260,6 +272,7 @@ export const useRefreshAgentChatThreads = () => {
     [
       addAgentChatThread,
       fetchAgentChatThreadsPage,
+      loadAgentChatThreadParticipants,
       refreshAgentChatThreadPermissions,
       store,
     ],

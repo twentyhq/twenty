@@ -8,6 +8,7 @@ import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const queryMock = jest.fn();
@@ -43,11 +44,11 @@ jest.mock('@/ai/hooks/useRefreshAgentChatThreadPermissions', () => ({
   }),
 }));
 
-const refreshAgentChatThreadParticipants = jest.fn();
+const loadAgentChatThreadParticipants = jest.fn();
 
 jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
   useAgentChatThreadParticipants: () => ({
-    refreshAgentChatThreadParticipants,
+    loadAgentChatThreadParticipants,
   }),
 }));
 
@@ -94,6 +95,45 @@ describe('useRefreshAgentChatThreads', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     refreshAgentChatThreadPermissions.mockResolvedValue(undefined);
+    loadAgentChatThreadParticipants.mockResolvedValue(true);
+  });
+
+  it('keeps the open chat in sync when it is past the loaded page', async () => {
+    const openThreadId = '20202020-0000-4000-8000-0000000000dd';
+    const store = buildStore();
+    store.set(currentAiChatThreadState.atom, openThreadId);
+    queryMock.mockResolvedValue(
+      buildPage([buildThread('thread-1', 'Loaded thread')]),
+    );
+    const result = renderRefresh(store);
+
+    await act(async () => {
+      await result.current.refreshAgentChatThreads();
+    });
+
+    expect(loadAgentChatThreadParticipants).toHaveBeenCalledWith([
+      'thread-1',
+      openThreadId,
+    ]);
+    expect(refreshAgentChatThreadPermissions).toHaveBeenCalledWith([
+      'thread-1',
+      openThreadId,
+    ]);
+  });
+
+  it('does not list a page whose member state could not be loaded', async () => {
+    const store = buildStore();
+    queryMock.mockResolvedValue(
+      buildPage([buildThread('thread-1', 'Loaded thread')]),
+    );
+    loadAgentChatThreadParticipants.mockResolvedValue(false);
+    const result = renderRefresh(store);
+
+    await act(async () => {
+      expect(await result.current.refreshAgentChatThreads()).toBeUndefined();
+    });
+
+    expect(store.get(agentChatThreadListState.atom)).toBeNull();
   });
 
   it('keeps the refresh callback stable so render updates do not restart subscriptions', () => {
@@ -107,7 +147,7 @@ describe('useRefreshAgentChatThreads', () => {
     expect(result.current.refreshAgentChatThreads).toBe(refresh);
   });
 
-  it('loads the most recently active chats and the member read state', async () => {
+  it('loads the most recently active chats and the member state of that page', async () => {
     const store = buildStore();
     const thread = buildThread('thread-1', 'Loaded thread');
     queryMock.mockResolvedValue(buildPage([thread], { hasNextPage: true }));
@@ -126,7 +166,7 @@ describe('useRefreshAgentChatThreads', () => {
         fetchPolicy: 'network-only',
       }),
     );
-    expect(refreshAgentChatThreadParticipants).toHaveBeenCalled();
+    expect(loadAgentChatThreadParticipants).toHaveBeenCalledWith(['thread-1']);
     expect(store.get(agentChatThreadListState.atom)).toEqual({
       threadIds: ['thread-1'],
       hasNextPage: true,
@@ -191,6 +231,9 @@ describe('useRefreshAgentChatThreads', () => {
       hasNextPage: false,
       endCursor: 'page-2',
     });
+    expect(loadAgentChatThreadParticipants).toHaveBeenLastCalledWith([
+      'thread-2',
+    ]);
 
     await act(async () => {
       expect(await result.current.fetchMoreAgentChatThreads()).toBeUndefined();
@@ -351,6 +394,9 @@ describe('useRefreshAgentChatThreads', () => {
         await result.current.loadAgentChatThread('old-thread'),
       ).toMatchObject({ id: 'old-thread' });
     });
+    expect(loadAgentChatThreadParticipants).toHaveBeenCalledWith([
+      'old-thread',
+    ]);
     expect(queryMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
         variables: expect.objectContaining({
@@ -375,6 +421,21 @@ describe('useRefreshAgentChatThreads', () => {
       expect(
         await result.current.loadAgentChatThread('unknown'),
       ).toBeUndefined();
+    });
+  });
+
+  it('still opens a chat whose member state failed to load', async () => {
+    const store = buildStore();
+    loadAgentChatThreadParticipants.mockResolvedValueOnce(false);
+    queryMock.mockResolvedValueOnce(
+      buildPage([buildThread('old-thread', 'Old chat')]),
+    );
+    const result = renderRefresh(store);
+
+    await act(async () => {
+      expect(
+        await result.current.loadAgentChatThread('old-thread'),
+      ).toMatchObject({ id: 'old-thread' });
     });
   });
 

@@ -37,14 +37,17 @@ export class AgentChatThreadParticipantResolver {
     private readonly participantService: AgentChatThreadParticipantService,
   ) {}
 
+  // A member keeps a row for every thread they ever touched, so clients ask for the threads they have loaded
   @Query(() => [AgentChatThreadParticipantDTO])
   async myAgentChatThreadParticipants(
+    @Args('threadIds', { type: () => [UUIDScalarType] }) threadIds: string[],
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatThreadParticipantDTO[]> {
     return this.participantService.findForWorkspaceMember({
       workspaceId,
       workspaceMemberId,
+      threadIds,
     });
   }
 
