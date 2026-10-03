@@ -238,7 +238,8 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
   });
 
   it('does not delete another participant’s output if the latest turn changes while claiming a retry', async () => {
-    const { service, agentChatService, messageQueueService } = buildService();
+    const { service, agentChatService, messageQueueService, threadRepository } =
+      buildService();
     agentChatService.findLatestTurnId
       .mockResolvedValueOnce('turn-id')
       .mockResolvedValueOnce('another-turn');
@@ -249,5 +250,13 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       agentChatService.deleteAssistantMessagesForTurn,
     ).not.toHaveBeenCalled();
     expect(messageQueueService.add).not.toHaveBeenCalled();
+    expect(threadRepository.update).toHaveBeenLastCalledWith(
+      'workspace-id',
+      { id: 'thread-id', activeStreamId: expect.any(String) },
+      {
+        activeStreamId: null,
+        lastStreamError: failedThread.lastStreamError,
+      },
+    );
   });
 });
