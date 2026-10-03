@@ -4,7 +4,6 @@ import { styled } from '@linaria/react';
 import { getContiguousIncrementalValues } from 'twenty-shared/utils';
 
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableNoRecordGroupAddNew } from '@/object-record/record-table/components/RecordTableNoRecordGroupAddNew';
 import { RECORD_TABLE_NO_RECORD_GROUP_DROPPABLE_ID } from '@/object-record/record-table/constants/RecordTableNoRecordGroupDroppableId';
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
@@ -29,8 +28,6 @@ const StyledEndDropZone = styled.div`
 `;
 
 export const RecordTableNoRecordGroupRows = () => {
-  const { recordIndexId } = useRecordIndexContextOrThrow();
-
   const totalNumberOfRecordsToVirtualize =
     useAtomComponentStateValue(
       totalNumberOfRecordsToVirtualizeComponentState,
@@ -38,7 +35,6 @@ export const RecordTableNoRecordGroupRows = () => {
 
   const isDraggingRecord = useAtomComponentStateValue(
     isDraggingRecordComponentState,
-    recordIndexId,
   );
 
   const numberOfRows = Math.min(

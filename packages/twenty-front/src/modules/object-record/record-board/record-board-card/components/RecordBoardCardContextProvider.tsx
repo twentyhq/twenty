@@ -74,6 +74,7 @@ export const RecordBoardCardContextProvider = ({
         type={RECORD_BOARD_CARD_DND_TYPE}
         accept={RECORD_BOARD_CARD_DND_TYPE}
         disabled={isRecordBoardDropProcessing || isRecordBoardCellsNonEditable}
+        fadeSourceWhileDragging
       >
         <StyledDraggableContainer
           isDragDisabled={

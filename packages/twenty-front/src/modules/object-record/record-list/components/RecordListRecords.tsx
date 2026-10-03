@@ -2,7 +2,6 @@ import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordListAddNew } from '@/object-record/record-list/components/RecordListAddNew';
 import { RecordListDraggableRow } from '@/object-record/record-list/components/RecordListDraggableRow';
@@ -43,7 +42,6 @@ export const RecordListRecords = ({
   fetchMoreRecords,
   isVisible = true,
 }: RecordListRecordsProps) => {
-  const { recordIndexId } = useRecordIndexContextOrThrow();
   const { recordGroupId } = useContext(RecordGroupContext);
 
   const droppableId = isDefined(recordGroupId)
@@ -52,7 +50,6 @@ export const RecordListRecords = ({
 
   const isDraggingRecord = useAtomComponentStateValue(
     isDraggingRecordComponentState,
-    recordIndexId,
   );
 
   // Catches drops past the last row, where no row is under the pointer

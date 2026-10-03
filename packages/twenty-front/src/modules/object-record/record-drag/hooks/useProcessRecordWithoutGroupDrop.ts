@@ -1,7 +1,7 @@
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
-import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
 import { processMultiDrag } from '@/object-record/record-drag/utils/processMultiDrag';
 import { processSingleDrag } from '@/object-record/record-drag/utils/processSingleDrag';
@@ -42,8 +42,7 @@ export const useProcessRecordWithoutGroupDrop = ({
   );
 
   const originalDragSelection = useAtomComponentStateCallbackState(
-    originalDragSelectionComponentState,
-    recordIndexId,
+    draggedRecordIdsComponentState,
   );
 
   const currentRecordSorts = useAtomComponentStateValue(

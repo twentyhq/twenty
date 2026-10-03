@@ -4,7 +4,6 @@ import { useDroppable } from '@dnd-kit/react';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
@@ -28,15 +27,12 @@ const StyledRecordGroupDropTarget = styled.div`
 `;
 
 export const RecordTableRecordGroupRows = () => {
-  const { recordIndexId } = useRecordIndexContextOrThrow();
-
   const currentRecordGroupId = useCurrentRecordGroupId();
 
   const shouldHide = useShouldHideRecordGroup(currentRecordGroupId);
 
   const isDraggingRecord = useAtomComponentStateValue(
     isDraggingRecordComponentState,
-    recordIndexId,
   );
 
   const allRecordIds = useAtomComponentSelectorValue(

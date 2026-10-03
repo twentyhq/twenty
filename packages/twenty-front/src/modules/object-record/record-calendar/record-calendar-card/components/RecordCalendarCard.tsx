@@ -9,9 +9,8 @@ import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-recor
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { RecordDragMultiDragStack } from '@/object-record/record-drag/components/RecordDragMultiDragStack';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
-import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
-import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -55,25 +54,16 @@ export const RecordCalendarCard = ({
     isDraggingRecordComponentState,
   );
 
-  const isRecordIdPrimaryDragMultiple = useAtomComponentFamilyStateValue(
-    isRecordIdPrimaryDragMultipleComponentFamilyState,
-    { recordId },
-  );
-
   const isRecordIdSecondaryDragMultiple = useAtomComponentFamilyStateValue(
     isRecordIdSecondaryDragMultipleComponentFamilyState,
     { recordId },
   );
 
-  const primaryDraggedRecordId = useAtomComponentStateValue(
-    primaryDraggedRecordIdComponentState,
+  const draggedRecordIds = useAtomComponentStateValue(
+    draggedRecordIdsComponentState,
   );
 
-  const isDraggingThisCard =
-    !isDragOverlay &&
-    (isRecordIdPrimaryDragMultiple ||
-      isRecordIdSecondaryDragMultiple ||
-      primaryDraggedRecordId === recordId);
+  const isMultiDragOverlay = isDragOverlay && draggedRecordIds.length > 1;
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
@@ -111,17 +101,13 @@ export const RecordCalendarCard = ({
     >
       <StyledContainer onContextMenu={handleContextMenuOpen}>
         <StyledRecordCardContainer>
-          <StyledCardContainer
-            isPrimaryMultiDrag={isDragOverlay && isRecordIdPrimaryDragMultiple}
-          >
-            {isDragOverlay && isRecordIdPrimaryDragMultiple && (
-              <RecordDragMultiDragStack />
-            )}
+          <StyledCardContainer isPrimaryMultiDrag={isMultiDragOverlay}>
+            {isMultiDragOverlay && <RecordDragMultiDragStack />}
             <RecordCard
               data-selected={isRecordCalendarCardSelected}
               data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
               onClick={isCompactModeActive ? handleCardClick : undefined}
-              isDragging={isDraggingThisCard}
+              isDragging={!isDragOverlay && isRecordIdSecondaryDragMultiple}
             >
               <RecordCalendarCardHeader recordId={recordId} />
               <Collapsible isExpanded={!isCompactModeActive}>

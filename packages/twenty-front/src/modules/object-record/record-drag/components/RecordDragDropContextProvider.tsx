@@ -9,7 +9,6 @@ import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRe
 import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
 import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
 import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
@@ -35,16 +34,14 @@ export const RecordDragDropContextProvider = ({
   renderDragOverlay,
   children,
 }: RecordDragDropContextProviderProps) => {
-  const { recordIndexId } = useRecordIndexContextOrThrow();
-
   const selectedRecordIds = useAtomComponentSelectorCallbackState(
     selectedRecordIdsComponentSelector,
   );
 
   const store = useStore();
 
-  const { startRecordDrag } = useStartRecordDrag(recordIndexId);
-  const { endRecordDrag } = useEndRecordDrag(recordIndexId);
+  const { startRecordDrag } = useStartRecordDrag();
+  const { endRecordDrag } = useEndRecordDrag();
 
   const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
     number | null

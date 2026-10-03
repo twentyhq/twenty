@@ -10,7 +10,7 @@ import { recordCalendarSelectedRecordIdsComponentSelector } from '@/object-recor
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
 import { useProcessCalendarCardDrop } from '@/object-record/record-drag/hooks/useProcessCalendarCardDrop';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
-import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
@@ -61,7 +61,7 @@ export const useRecordCalendarDndKit = (): {
   );
 
   const originalDragSelectionCallbackState = useAtomComponentStateCallbackState(
-    originalDragSelectionComponentState,
+    draggedRecordIdsComponentState,
   );
 
   const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<

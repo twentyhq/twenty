@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
-import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { processGroupDrop } from '@/object-record/record-drag/utils/processGroupDrop';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
@@ -44,12 +44,10 @@ export const useProcessRecordGroupDrop = () => {
 
   const isDraggingRecord = useAtomComponentStateCallbackState(
     isDraggingRecordComponentState,
-    recordIndexId,
   );
 
   const originalDragSelection = useAtomComponentStateCallbackState(
-    originalDragSelectionComponentState,
-    recordIndexId,
+    draggedRecordIdsComponentState,
   );
 
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(

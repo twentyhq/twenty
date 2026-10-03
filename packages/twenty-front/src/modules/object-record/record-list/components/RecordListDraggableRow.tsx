@@ -1,7 +1,8 @@
 import { useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
 
-import { useIsRecordSecondaryDragged } from '@/object-record/record-drag/hooks/useIsRecordSecondaryDragged';
+import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
 import { RecordListRow } from '@/object-record/record-list/components/RecordListRow';
 import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
@@ -36,7 +37,10 @@ export const RecordListDraggableRow = ({
   droppableId,
 }: RecordListDraggableRowProps) => {
   const { objectPermissions } = useRecordListContextOrThrow();
-  const { isSecondaryDragged } = useIsRecordSecondaryDragged(recordId);
+  const isRecordIdSecondaryDragMultiple = useAtomComponentFamilyStateValue(
+    isRecordIdSecondaryDragMultipleComponentFamilyState,
+    { recordId },
+  );
 
   const rowDragData: RecordDragData = {
     droppableId,
@@ -59,7 +63,7 @@ export const RecordListDraggableRow = ({
 
   return (
     <StyledDraggableRow
-      $isDragSourceFaded={isDragSource || isSecondaryDragged}
+      $isDragSourceFaded={isDragSource || isRecordIdSecondaryDragMultiple}
       onDragStart={preventNativeDragStart}
     >
       <RecordListRow recordId={recordId} rowRef={ref} />

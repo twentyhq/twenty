@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { RECORD_CALENDAR_CARD_DRAG_OVERLAY_CALENDAR_DAY } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardDragOverlayCalendarDay';
 import { RecordCalendarCard } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard';
 import { getRecordIdFromRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
-import { RecordCalendarCardMultiDragPreview } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardMultiDragPreview';
+import { RecordDragMultiDragCounterChip } from '@/object-record/record-drag/components/RecordDragMultiDragCounterChip';
 
 type RecordCalendarCardDragOverlayContentProps = {
   source: Draggable | null;
@@ -27,7 +27,7 @@ export const RecordCalendarCardDragOverlayContent = ({
         calendarDay={RECORD_CALENDAR_CARD_DRAG_OVERLAY_CALENDAR_DAY}
         isDragOverlay
       />
-      <RecordCalendarCardMultiDragPreview recordId={recordId} />
+      <RecordDragMultiDragCounterChip />
     </>
   );
 };
