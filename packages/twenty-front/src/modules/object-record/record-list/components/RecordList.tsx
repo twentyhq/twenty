@@ -28,6 +28,8 @@ export const RecordList = () => {
     RecordListComponentInstanceContext,
   );
 
+  const scrollWrapperComponentInstanceId = `scroll-wrapper-record-list-${recordListId}`;
+
   const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
@@ -45,7 +47,7 @@ export const RecordList = () => {
       <RecordSelectionEscapeHotkeyEffect />
       <RecordListFieldTooltip>
         <ScrollWrapper
-          componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}
+          componentInstanceId={scrollWrapperComponentInstanceId}
           defaultEnableXScroll={false}
         >
           {hasRecordGroups ? (
@@ -55,7 +57,10 @@ export const RecordList = () => {
           )}
         </ScrollWrapper>
       </RecordListFieldTooltip>
-      <RecordSelectionDragSelect selectableItemsContainerRef={containerRef} />
+      <RecordSelectionDragSelect
+        selectableItemsContainerRef={containerRef}
+        scrollWrapperComponentInstanceId={scrollWrapperComponentInstanceId}
+      />
     </StyledContainer>
   );
 };

@@ -8,12 +8,14 @@ import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/j
 
 type RecordSelectionDragSelectProps = {
   selectableItemsContainerRef: RefObject<HTMLElement | null>;
+  scrollWrapperComponentInstanceId?: string;
   onDragSelectionStart?: () => void;
   onDragSelectionEnd?: () => void;
 };
 
 export const RecordSelectionDragSelect = ({
   selectableItemsContainerRef,
+  scrollWrapperComponentInstanceId,
   onDragSelectionStart,
   onDragSelectionEnd,
 }: RecordSelectionDragSelectProps) => {
@@ -36,7 +38,17 @@ export const RecordSelectionDragSelect = ({
   const handleDragSelectionEnd = () => {
     // A drag that ends on the record it started from also clicks it, which
     // would open the record and drop the selection
-    const preventClick = (event: MouseEvent) => event.stopPropagation();
+    const preventClick = (event: MouseEvent) => {
+      if (
+        !(event.target instanceof Node) ||
+        !selectableItemsContainerRef.current?.contains(event.target)
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+    };
 
     window.addEventListener('click', preventClick, {
       capture: true,
@@ -52,6 +64,7 @@ export const RecordSelectionDragSelect = ({
   return (
     <DragSelect
       selectableItemsContainerRef={selectableItemsContainerRef}
+      scrollWrapperComponentInstanceId={scrollWrapperComponentInstanceId}
       onDragSelectionStart={onDragSelectionStart}
       onDragSelectionChange={handleDragSelectionChange}
       onDragSelectionEnd={handleDragSelectionEnd}
