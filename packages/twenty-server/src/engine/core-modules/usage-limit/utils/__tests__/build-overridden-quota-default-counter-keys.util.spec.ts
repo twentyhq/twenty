@@ -5,13 +5,14 @@ import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usag
 import { buildOverriddenQuotaDefaultCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-overridden-quota-default-counter-keys.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const DAY_PERIOD = {
   periodStart: new Date('2026-08-20T00:00:00.000Z'),
   periodEnd: new Date('2026-08-21T00:00:00.000Z'),
 };
 
-const DEFAULT_COUNTER_KEY = `{workspace-1}:quota:EMAIL:EMAIL_SEND:workspace:-:quantity:day:${DAY_PERIOD.periodStart.getTime()}:1000:default`;
+const DEFAULT_COUNTER_KEY = `{workspace-1}:quota:EMAIL:EMAIL_SEND:workspace:-:INVOCATION:day:${DAY_PERIOD.periodStart.getTime()}:1000:default`;
 
 const buildUsageLimit = (
   overrides: Partial<UsageLimitCounterScope> = {},
@@ -23,7 +24,7 @@ const buildUsageLimit = (
   spenderId: '',
   limitKind: 'quota',
   periodUnit: 'day',
-  meter: 'quantity',
+  unit: UsageUnit.INVOCATION,
   limitValue: 500,
   ...overrides,
 });
@@ -36,7 +37,7 @@ const buildDefault = (
   limitKind: 'quota',
   spenderType: 'workspace',
   spenderId: '',
-  meter: 'quantity',
+  unit: UsageUnit.INVOCATION,
   periodUnit: 'day',
   periodCount: 1,
   isOverridable: true,
@@ -72,7 +73,7 @@ describe('buildOverriddenQuotaDefaultCounterKeys', () => {
 
   it.each([
     { spenderType: 'userWorkspace' as const },
-    { meter: 'creditsUsedMicro' as const },
+    { unit: UsageUnit.CREDIT },
     { operationType: UsageOperationType.ALL },
   ])('leaves a default on another scope alone: %j', (overrides) => {
     expect(buildKeys({ usageLimit: buildUsageLimit(overrides) })).toEqual([]);

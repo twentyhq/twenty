@@ -1,13 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { formatBytes } from 'twenty-shared/utils';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { USAGE_LIMIT_QUANTITY_UNIT_LABELS } from '@/settings/billing/constants/UsageLimitQuantityUnitLabels';
-import { isCreditsMeter } from '@/settings/billing/utils/isCreditsMeter';
-import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
+import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
-import { type UsageOperationType } from '~/generated-metadata/graphql';
+import {
+  type UsageOperationType,
+  UsageUnit,
+} from '~/generated-metadata/graphql';
 
 export const useUsageLimitFormatter = () => {
   const { t } = useLingui();
@@ -16,27 +17,26 @@ export const useUsageLimitFormatter = () => {
 
   const formatLimitValue = ({
     value,
-    meter,
+    unit,
     operationType,
   }: {
     value: number;
-    meter: string;
+    unit: UsageUnit;
     operationType: UsageOperationType;
   }): string => {
-    if (isCreditsMeter(meter)) {
+    if (unit === UsageUnit.CREDIT) {
       return formatUsageAmount(value / INTERNAL_CREDITS_PER_DISPLAY_CREDIT, {
         abbreviate: true,
       });
     }
 
-    const unitLabel = getUsageLimitLabel(
-      USAGE_LIMIT_QUANTITY_UNIT_LABELS,
-      operationType,
-    );
+    if (unit === UsageUnit.BYTE) {
+      return formatBytes(value);
+    }
 
-    const unit = isDefined(unitLabel) ? t(unitLabel) : t`operations`;
+    const { suffix } = getUsageLimitUnitLabel({ unit, operationType });
 
-    return `${formatNumber(value, { decimals: 1, abbreviate: true })} ${unit}`;
+    return `${formatNumber(value, { decimals: 1, abbreviate: true })} ${t(suffix)}`;
   };
 
   return { formatLimitValue };
