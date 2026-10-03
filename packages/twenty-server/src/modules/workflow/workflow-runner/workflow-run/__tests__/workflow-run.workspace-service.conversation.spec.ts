@@ -32,9 +32,9 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       find: jest.fn().mockResolvedValue([
         {
           id: 'part-id',
-          toolName: 'ask_questions',
-          toolInput: { questions: QUESTIONS },
-          toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
+          toolName: 'ask_question',
+          toolInput: QUESTIONS[0],
+          toolOutput: { result: { question: QUESTIONS[0], status: 'pending' } },
         },
       ]),
       writePart: jest.fn(),
@@ -282,7 +282,7 @@ describe('WorkflowRunWorkspaceService conversations', () => {
         expectedStatus,
       }).toEqual({
         partId: 'part-id',
-        result: { questions: QUESTIONS, status: 'skipped' },
+        result: { question: QUESTIONS[0], status: 'skipped' },
         expectedStatus: 'pending',
       });
     });

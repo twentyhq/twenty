@@ -269,15 +269,11 @@ const { threadId } = await sendInboxMessage({
   title: 'Your first call recording is ready',
   text: 'Your first call was recorded: **Weekly sync**.',
   toolCall: {
-    toolName: 'ask_questions',
+    toolName: 'ask_question',
     input: {
-      questions: [
-        {
-          header: 'Share',
-          question: 'Do you want to share it with the other attendees?',
-          options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
-        },
-      ],
+      header: 'Share',
+      question: 'Do you want to share it with the other attendees?',
+      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
     },
   },
 });
@@ -291,8 +287,8 @@ Key points:
   again with the same keys writes nothing new, so retries and concurrent runs
   never duplicate a message.
 - `toolCall` (optional) ends the message on one of:
-  - a call the member answers, which pauses the conversation: `ask_questions`
-    (1 to 4 multiple-choice questions), `request_form` (fields to fill in) or
+  - a call the member answers, which pauses the conversation: `ask_question`
+    (one multiple-choice question), `request_form` (fields to fill in) or
     `propose_tool_call` (a call to approve). Its `input` takes the `toolName`,
     the `arguments` you would call the tool with and a one-sentence `summary`.
     The tool must be one your app's default role could run itself, such as

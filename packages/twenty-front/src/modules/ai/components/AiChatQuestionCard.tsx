@@ -4,6 +4,7 @@ import { type KeyboardEvent, useState } from 'react';
 import {
   type AskQuestionAnswer,
   type AskQuestionItem,
+  type AskQuestionToolResult,
   type AskQuestionsToolResult,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -178,7 +179,11 @@ export const AiChatQuestionCard = ({
 }: AiChatQuestionCardProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { toolCallId, questions } = pendingQuestion;
+  const { toolCallId } = pendingQuestion;
+  const questions =
+    pendingQuestion.kind === 'question'
+      ? [pendingQuestion.question]
+      : pendingQuestion.questions;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedByQuestion, setSelectedByQuestion] = useState<
@@ -221,18 +226,34 @@ export const AiChatQuestionCard = ({
 
     setIsSubmitting(true);
 
-    const isAnswered = await answerAgentChatToolCall({
-      toolCallId,
-      response: { answers },
-      optimisticToolOutput: {
-        success: true,
-        result: {
-          questions,
-          status: 'answered',
-          answers,
-        } satisfies AskQuestionsToolResult,
-      },
-    });
+    const [{ selectedOptionIndices, freeText }] = answers;
+    const isAnswered = await answerAgentChatToolCall(
+      pendingQuestion.kind === 'question'
+        ? {
+            toolCallId,
+            response: { selectedOptionIndices, freeText },
+            optimisticToolOutput: {
+              success: true,
+              result: {
+                question: pendingQuestion.question,
+                status: 'answered',
+                answer: { selectedOptionIndices, freeText },
+              } satisfies AskQuestionToolResult,
+            },
+          }
+        : {
+            toolCallId,
+            response: { answers },
+            optimisticToolOutput: {
+              success: true,
+              result: {
+                questions,
+                status: 'answered',
+                answers,
+              } satisfies AskQuestionsToolResult,
+            },
+          },
+    );
 
     // The card goes once its call is closed, so it stays disabled until then.
     if (!isAnswered) {
@@ -469,7 +490,7 @@ export const AiChatQuestionCard = ({
 
       <StyledComposerSection>
         <AiChatComposerActionsRow
-          modelTierDropdownId="ai-chat-question-model-tier-dropdown"
+          modelTierDropdownId={`ai-chat-question-model-tier-dropdown-${toolCallId}`}
           sendButton={
             <IconButton
               variant="solid"

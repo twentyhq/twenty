@@ -36,13 +36,11 @@ const SEND_INBOX_MESSAGE = parse(`
   }
 `);
 
-const QUESTIONS = [
-  {
-    header: 'Share',
-    question: 'Do you want to share it with the other attendees?',
-    options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
-  },
-];
+const QUESTION = {
+  header: 'Share',
+  question: 'Do you want to share it with the other attendees?',
+  options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+};
 
 // The model is not called here: the resumed stream is only checked for being
 // queued.
@@ -53,7 +51,7 @@ describe('Sending an inbox message as an application', () => {
     idempotencyKey: 'first-recording',
     title: 'Your first call recording is ready',
     text: 'Your first call was recorded: **Weekly sync**.',
-    toolCall: { toolName: 'ask_questions', input: { questions: QUESTIONS } },
+    toolCall: { toolName: 'ask_question', input: QUESTION },
   };
   let application: ApplicationWithResources;
   let applicationToken: string;
@@ -365,9 +363,7 @@ describe('Sending an inbox message as an application', () => {
         threadId,
         toolCallId: `call_${pendingQuestionMessageId!.replace(/-/g, '')}`,
       },
-      response: {
-        answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
-      },
+      response: { selectedOptionIndices: [0] },
     });
 
     expect(response.body.errors).toBeUndefined();
