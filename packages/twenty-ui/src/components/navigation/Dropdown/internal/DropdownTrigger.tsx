@@ -36,7 +36,12 @@ export const DropdownTrigger = ({
       onKeyDown={(event) => {
         onKeyDown?.(event);
 
-        if (event.defaultPrevented || props.disabled || type === 'panel') {
+        if (
+          event.defaultPrevented ||
+          event.baseUIHandlerPrevented ||
+          props.disabled ||
+          type === 'panel'
+        ) {
           return;
         }
 

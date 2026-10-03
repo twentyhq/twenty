@@ -1,5 +1,131 @@
 [
   {
+    "name": "CountrySelect",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/country-select",
+    "props": [
+      {
+        "name": "className",
+        "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class applied to the trigger."
+      },
+      {
+        "name": "countries",
+        "type": "readonly CountryChoice[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Prepared country choices with unique non-empty values, display labels, and optional decorative flags."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Prevents opening and selection while the trigger stays focusable. An empty country list is also disabled."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the trigger. Generated when omitted."
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional visible label that names the trigger and the popup."
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+      },
+      {
+        "name": "noCountryLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "No country",
+        "description": "Text of the no-country choice, also displayed when no country is selected."
+      },
+      {
+        "name": "noResultsLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "No results",
+        "description": "Text displayed when no choice matches the search."
+      },
+      {
+        "name": "onOpenChange",
+        "type": "((open: boolean) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Reports popup opening and closing."
+      },
+      {
+        "name": "onValueChange",
+        "type": "(value: string) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Reports the selected choice value, or an empty string when no country is selected."
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controls whether the country popup is open."
+      },
+      {
+        "name": "popupProps",
+        "type": "Omit<DropdownContentProps, \"children\" | \"aria-label\" | \"aria-labelledby\" | \"keepMounted\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Dropdown popup positioning, portal, focus, and event options for host integration."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the trigger element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the trigger element while preserving its behavior and props."
+      },
+      {
+        "name": "searchLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Search",
+        "description": "Placeholder and accessible name of the search input."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Selected choice value. An empty string selects no country."
+      }
+    ]
+  },
+  {
     "name": "CurrencyPicker",
     "entryPoint": "twenty-ui/components",
     "slug": "components/currency-picker",
