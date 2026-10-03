@@ -142,8 +142,8 @@ describe('useToggleRecordSelection', () => {
     ]);
     for (const [recordGroupId, position, isVisible, recordIds] of [
       ['first-group', 0, true, ['a', 'b']],
+      ['hidden-group', 0.5, false, ['e']],
       ['second-group', 1, true, ['c', 'd']],
-      ['hidden-group', 2, false, ['e']],
     ] as const) {
       jotaiStore.set(
         recordGroupDefinitionFamilyState.atomFamily(recordGroupId),
@@ -182,5 +182,26 @@ describe('useToggleRecordSelection', () => {
         ),
       ),
     ).toEqual(['b', 'c', 'd']);
+  });
+
+  it('should toggle the record when the anchor is no longer listed', () => {
+    const result = renderToggleRecordSelection();
+
+    act(() => result.current.toggleRecordSelection({ recordId: 'a' }));
+    jotaiStore.set(
+      recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
+        instanceId,
+        familyKey: NO_RECORD_GROUP_FAMILY_KEY,
+      }),
+      ['b', 'c', 'd', 'e'],
+    );
+    act(() =>
+      result.current.toggleRecordSelection({
+        recordId: 'd',
+        shouldSelectRange: true,
+      }),
+    );
+
+    expect(getSelectedRecordIds()).toEqual(['d']);
   });
 });

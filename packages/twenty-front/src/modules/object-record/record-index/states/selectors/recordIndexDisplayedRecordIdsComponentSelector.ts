@@ -7,8 +7,6 @@ import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/cr
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 
-// Records in the order they are shown: hidden groups are left out and
-// groups follow the view's group sort
 export const recordIndexDisplayedRecordIdsComponentSelector =
   createAtomComponentSelector<string[]>({
     key: 'recordIndexDisplayedRecordIdsComponentSelector',
