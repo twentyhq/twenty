@@ -53,6 +53,16 @@ describe('AiChatToolCallApprovalStatusRenderer', () => {
     expect(screen.getByText('Registry unavailable')).toBeInTheDocument();
   });
 
+  it('reports an email that could not be proposed', () => {
+    renderStatus({
+      state: 'output-error',
+      input: { toolName: 'send_email', arguments: {}, summary: 'Follow up' },
+      errorText: 'No connected account',
+    });
+
+    expect(screen.getByText('Email could not be proposed')).toBeInTheDocument();
+  });
+
   it('reads an email from its tool before the proposal is resolved', () => {
     renderStatus({
       state: 'input-available',

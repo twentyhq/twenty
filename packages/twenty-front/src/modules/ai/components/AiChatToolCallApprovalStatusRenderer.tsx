@@ -87,7 +87,9 @@ export const AiChatToolCallApprovalStatusRenderer = ({
         skipped: t`Action skipped`,
       };
   const message = hasFailedToPropose
-    ? t`Action could not be proposed`
+    ? isEmail
+      ? t`Email could not be proposed`
+      : t`Action could not be proposed`
     : messageByStatus[status];
 
   const detail = hasFailedToPropose
