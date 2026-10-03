@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent } from 'react';
+import { type MouseEvent, useId } from 'react';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -17,7 +17,6 @@ import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPa
 import { AiChatThreadList } from '@/ai/components/AiChatThreadList';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
-import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
@@ -223,10 +222,15 @@ const AiChatInboxPageContent = () => {
   );
 };
 
-export const AiChatInboxPage = () => (
-  <RecordSelectionComponentInstanceContext.Provider
-    value={{ instanceId: AI_CHAT_INBOX_INSTANCE_ID }}
-  >
-    <AiChatInboxPageContent />
-  </RecordSelectionComponentInstanceContext.Provider>
-);
+export const AiChatInboxPage = () => {
+  // A new instance per visit, so a selection does not outlive the inbox
+  const recordSelectionInstanceId = useId();
+
+  return (
+    <RecordSelectionComponentInstanceContext.Provider
+      value={{ instanceId: recordSelectionInstanceId }}
+    >
+      <AiChatInboxPageContent />
+    </RecordSelectionComponentInstanceContext.Provider>
+  );
+};

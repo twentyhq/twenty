@@ -11,7 +11,6 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
-import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -195,7 +194,7 @@ describe('AiChatInboxPage', () => {
     expect(screen.getByText(`Chat page ${firstThread.id}`)).toBeInTheDocument();
   });
 
-  it('clears the selection when leaving the inbox', () => {
+  it('starts with no selection when coming back to the inbox', () => {
     const { unmount } = renderInbox();
 
     fireEvent.click(screen.getByRole('button', { name: 'Second chat' }), {
@@ -205,17 +204,15 @@ describe('AiChatInboxPage', () => {
 
     expect(
       jotaiStore.get(
-        selectedRecordIdsComponentSelector.selectorFamily({
-          instanceId: AI_CHAT_INBOX_INSTANCE_ID,
-        }),
-      ),
-    ).toEqual([]);
-    expect(
-      jotaiStore.get(
         contextStoreTargetedRecordsRuleComponentState.atomFamily({
           instanceId: AI_CHAT_INBOX_INSTANCE_ID,
         }),
       ),
     ).toEqual({ mode: 'selection', selectedRecordIds: [] });
+
+    renderInbox();
+
+    expect(screen.getByText(`Chat page ${firstThread.id}`)).toBeInTheDocument();
+    expect(isRowHighlighted('Second chat')).toBe(false);
   });
 });
