@@ -6,6 +6,7 @@ import {
   RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
+import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -64,7 +65,7 @@ const environment: RowAccessPolicyEnvironment &
   resolveTableExpression: (objectMetadataId) =>
     `"workspace"."${objectMetadataId}"`,
   isRecordSharingEnabled: false,
-  isRecordShareGateBypassed: false,
+  isRecordShareVisibilityGatingEnabled: true,
 };
 
 const buildCompiledRowAccessPolicy = (
@@ -441,23 +442,24 @@ describe('buildRowAccessPolicy', () => {
     },
   );
 
-  describe('with the record share gate bypassed', () => {
-    const bypassedEnvironment = {
+  describe('with record share visibility gating off', () => {
+    const ungatedEnvironment = {
       ...environment,
       isRecordSharingEnabled: true,
-      isRecordShareGateBypassed: true,
+      isRecordShareVisibilityGatingEnabled: false,
     };
     const buildBypassed = (
       subject: RowAccessPolicySubject,
       flatObjectMetadata: FlatObjectMetadata,
+      depth = 0,
     ) =>
       buildCompiledRowAccessPolicy({
         subject,
-        environment: bypassedEnvironment,
+        environment: ungatedEnvironment,
         tableAlias: flatObjectMetadata.nameSingular,
         flatObjectMetadata,
         operationType: 'select',
-        depth: 0,
+        depth,
       });
 
     it.each([person, attachment, note])(
@@ -495,6 +497,62 @@ describe('buildRowAccessPolicy', () => {
         );
       },
     );
+
+    it('opens an INHERITED record whose OPEN and PRIVATE parents are open', () => {
+      expect(buildBypassed(readEverything, attachment)).toEqual({
+        kind: 'open',
+      });
+    });
+
+    it('keeps an INHERITED record behind a parent the subject is denied', () => {
+      jest.mocked(resolveInheritedReadabilityParents).mockReturnValue([
+        {
+          kind: 'column',
+          fieldMetadataId: 'target-note-field-id',
+          joinColumnName: 'targetNoteId',
+          parentFlatObjectMetadata: {
+            ...note,
+            readability: MetadataReadability.APPLICATION,
+          },
+        },
+      ]);
+
+      const policy = buildBypassed(readEverything, attachment);
+
+      expect(policy.kind).toBe('gated');
+      if (policy.kind !== 'gated') throw new Error('Expected a gate');
+      expect(policy.condition.sql).not.toContain('targetNoteId');
+    });
+
+    it('keeps the role predicate of a parent and drops its share check', () => {
+      const policy = buildBypassed(
+        {
+          ...readEverything,
+          resolveRowLevelPermissionRecordFilter: (objectMetadata) =>
+            objectMetadata.id === note.id ? NOTE_FILTER : null,
+        },
+        attachment,
+      );
+
+      expect(policy.kind).toBe('gated');
+      if (policy.kind !== 'gated') throw new Error('Expected a gate');
+      expect(policy.condition.sql).toContain(
+        '"attachment_targetNoteId"."title" = :restricted',
+      );
+      expect(policy.condition.sql).not.toContain(
+        'attachment_targetPersonId_recordShare',
+      );
+    });
+
+    it('denies an INHERITED record past the maximum inheritance depth', () => {
+      expect(
+        buildBypassed(
+          readEverything,
+          attachment,
+          MAX_INHERITED_READABILITY_DEPTH + 1,
+        ),
+      ).toEqual({ kind: 'denied' });
+    });
 
     it('denies an object the role cannot read instead of admitting named grants', () => {
       expect(

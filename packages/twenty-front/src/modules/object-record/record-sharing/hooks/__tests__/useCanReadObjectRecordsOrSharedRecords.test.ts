@@ -8,13 +8,13 @@ import {
 } from '~/generated-metadata/graphql';
 
 const mockIsRecordLevelSharingEnabled = jest.fn();
-const mockIsRecordShareGateBypassed = jest.fn();
+const mockIsRecordShareVisibilityGatingEnabled = jest.fn();
 const mockCanReadObjectRecords = jest.fn();
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: (featureFlagKey: FeatureFlagKey) =>
-    featureFlagKey === FeatureFlagKey.IS_RECORD_SHARE_GATE_BYPASS_ENABLED
-      ? mockIsRecordShareGateBypassed()
+    featureFlagKey === FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
+      ? mockIsRecordShareVisibilityGatingEnabled()
       : mockIsRecordLevelSharingEnabled(),
 }));
 jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
@@ -43,7 +43,7 @@ const renderCanRead = (
 describe('useCanReadObjectRecordsOrSharedRecords', () => {
   beforeEach(() => {
     mockIsRecordLevelSharingEnabled.mockReturnValue(true);
-    mockIsRecordShareGateBypassed.mockReturnValue(false);
+    mockIsRecordShareVisibilityGatingEnabled.mockReturnValue(true);
     mockCanReadObjectRecords.mockReturnValue(false);
   });
 
@@ -88,14 +88,14 @@ describe('useCanReadObjectRecordsOrSharedRecords', () => {
     expect(renderCanRead()).toBe(false);
   });
 
-  it('denies shared records when the record share gate is bypassed', () => {
-    mockIsRecordShareGateBypassed.mockReturnValue(true);
+  it('denies shared records when record share visibility gating is off', () => {
+    mockIsRecordShareVisibilityGatingEnabled.mockReturnValue(false);
 
     expect(renderCanRead()).toBe(false);
   });
 
-  it('still allows reading through the role when the record share gate is bypassed', () => {
-    mockIsRecordShareGateBypassed.mockReturnValue(true);
+  it('still allows reading through the role when record share visibility gating is off', () => {
+    mockIsRecordShareVisibilityGatingEnabled.mockReturnValue(false);
     mockCanReadObjectRecords.mockReturnValue(true);
 
     expect(renderCanRead()).toBe(true);

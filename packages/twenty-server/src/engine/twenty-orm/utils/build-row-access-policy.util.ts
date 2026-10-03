@@ -38,7 +38,7 @@ export const buildRowAccessPolicy = ({
   }
 
   const namedRecordGrant =
-    !environment.isRecordShareGateBypassed &&
+    environment.isRecordShareVisibilityGatingEnabled &&
     isRecordGrantBeyondRoleAllowed({
       flatObjectMetadata: target.flatObjectMetadata,
       operationType: target.operationType,

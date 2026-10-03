@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFeatureFlagEnabled } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
@@ -120,10 +120,12 @@ export class AdminPanelUserLookupService {
           })),
           featureFlags: allFeatureFlagKeys.map((key) => ({
             key,
-            value:
-              userWorkspace.workspace.featureFlags?.find(
+            value: isFeatureFlagEnabled({
+              featureFlagKey: key,
+              value: userWorkspace.workspace.featureFlags?.find(
                 (flag) => flag.key === key,
-              )?.value ?? false,
+              )?.value,
+            }),
           })),
         };
       }),
@@ -201,7 +203,10 @@ export class AdminPanelUserLookupService {
       })),
       featureFlags: allFeatureFlagKeys.map((key) => ({
         key,
-        value: featureFlags.find((flag) => flag.key === key)?.value ?? false,
+        value: isFeatureFlagEnabled({
+          featureFlagKey: key,
+          value: featureFlags.find((flag) => flag.key === key)?.value,
+        }),
       })),
     };
 

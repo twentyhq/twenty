@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isFeatureFlagEnabled } from 'twenty-shared/utils';
 import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useIsFeatureEnabled = (featureKey: FeatureFlagKey | null) => {
@@ -13,5 +14,8 @@ export const useIsFeatureEnabled = (featureKey: FeatureFlagKey | null) => {
     (flag) => flag.key === featureKey,
   );
 
-  return !!featureFlag?.value;
+  return isFeatureFlagEnabled({
+    featureFlagKey: featureKey,
+    value: featureFlag?.value,
+  });
 };
