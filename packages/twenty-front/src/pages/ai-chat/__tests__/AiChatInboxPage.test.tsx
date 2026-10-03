@@ -7,12 +7,14 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import {
   resetJotaiStore,
@@ -58,10 +60,15 @@ jest.mock('@/ai/components/AiChatThreadList', () => ({
     threads,
     selectedThreadIds,
     onThreadClick,
+    onThreadContextMenu,
   }: {
     threads: AgentChatThreadRecord[];
     selectedThreadIds: string[];
     onThreadClick: (
+      thread: AgentChatThreadRecord,
+      event: React.MouseEvent<HTMLButtonElement>,
+    ) => void;
+    onThreadContextMenu?: (
       thread: AgentChatThreadRecord,
       event: React.MouseEvent<HTMLButtonElement>,
     ) => void;
@@ -71,6 +78,7 @@ jest.mock('@/ai/components/AiChatThreadList', () => ({
         key={thread.id}
         aria-pressed={selectedThreadIds.includes(thread.id)}
         onClick={(event) => onThreadClick(thread, event)}
+        onContextMenu={(event) => onThreadContextMenu?.(thread, event)}
       >
         {thread.title}
       </button>
@@ -171,6 +179,34 @@ describe('AiChatInboxPage', () => {
     expect(isRowHighlighted('First chat')).toBe(true);
     expect(isRowHighlighted('Second chat')).toBe(false);
     expect(isRowHighlighted('Third chat')).toBe(true);
+  });
+
+  it('opens the command menu on the right-clicked chats', () => {
+    renderInbox();
+
+    fireEvent.contextMenu(screen.getByRole('button', { name: 'Second chat' }));
+    fireEvent.contextMenu(screen.getByRole('button', { name: 'Third chat' }));
+
+    expect(screen.getByText('2 chats selected')).toBeInTheDocument();
+    expect(
+      jotaiStore.get(
+        contextStoreTargetedRecordsRuleComponentState.atomFamily({
+          instanceId: AI_CHAT_INBOX_INSTANCE_ID,
+        }),
+      ),
+    ).toEqual({
+      mode: 'selection',
+      selectedRecordIds: [secondThread.id, thirdThread.id],
+    });
+    expect(
+      jotaiStore.get(
+        isDropdownOpenComponentState.atomFamily({
+          instanceId: getCommandMenuDropdownIdFromCommandMenuId(
+            AI_CHAT_INBOX_INSTANCE_ID,
+          ),
+        }),
+      ),
+    ).toBe(true);
   });
 
   it('selects every chat from the one on screen with shift+click', () => {

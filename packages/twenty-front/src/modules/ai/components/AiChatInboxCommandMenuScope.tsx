@@ -13,8 +13,6 @@ type AiChatInboxCommandMenuScopeProps = {
   children: ReactNode;
 };
 
-// Commands on selected chats run against the inbox's own context store, not
-// the page's main one
 export const AiChatInboxCommandMenuScope = ({
   children,
 }: AiChatInboxCommandMenuScopeProps) => (
