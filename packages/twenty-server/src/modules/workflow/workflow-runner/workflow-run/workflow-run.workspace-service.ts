@@ -498,6 +498,27 @@ export class WorkflowRunWorkspaceService {
     );
   }
 
+  // a step posting a call still runs until its executor marks it pending, and an answer may arrive first
+  async isStepStillRunning({
+    stepId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const workflowRun = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    return (
+      workflowRun.status === WorkflowRunStatus.RUNNING &&
+      workflowRun.state?.stepInfos?.[stepId]?.status === StepStatus.RUNNING
+    );
+  }
+
   @WithLock('workflowRunId')
   async setStepThreadId({
     stepId,

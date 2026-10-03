@@ -186,6 +186,23 @@ export class ToolCallAnswerService {
         });
 
         if (
+          !isDefined(step) &&
+          isDefined(inboxWorkflowStep) &&
+          (await this.workflowRunWorkspaceService.isStepStillRunning({
+            ...inboxWorkflowStep,
+            workspaceId,
+          }))
+        ) {
+          throw new AiException(
+            'The workflow step is not ready for an answer yet',
+            AiExceptionCode.TOOL_CALL_NOT_PENDING,
+            {
+              userFriendlyMessage: msg`This workflow is still getting ready. Try again in a moment.`,
+            },
+          );
+        }
+
+        if (
           !isDefined(step) ||
           (isDefined(inboxWorkflowStep) && step.id !== inboxWorkflowStep.stepId)
         ) {

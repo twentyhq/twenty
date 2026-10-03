@@ -70,11 +70,12 @@ const resolveRecordProposal = async ({
     return { error: 'Propose at least one field to change.' };
   }
 
+  // a deletion has no fields to compare, so its record's last update stands for its content
   const currentRecord = await readRecordFieldValues({
     executeTool,
     objectNameSingular,
     recordId,
-    fieldNames: changedFieldNames,
+    fieldNames: template === 'recordUpdate' ? changedFieldNames : ['updatedAt'],
   });
 
   if (!currentRecord.isFound) {
@@ -96,6 +97,7 @@ const resolveRecordProposal = async ({
             template: 'recordDelete',
             objectNameSingular,
             recordId,
+            currentValues: currentRecord.values,
           },
   };
 };

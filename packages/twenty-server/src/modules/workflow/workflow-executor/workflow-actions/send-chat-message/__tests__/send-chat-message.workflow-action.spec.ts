@@ -15,7 +15,6 @@ const WORKSPACE_ID = 'workspace-id';
 const WORKFLOW_RUN_ID = 'workflow-run-id';
 const WORKFLOW_ID = 'workflow-id';
 const WORKSPACE_MEMBER_ID = '20202020-2222-4222-8222-222222222222';
-const COMPANY_ID = '20202020-3333-4333-8333-333333333333';
 
 const buildStep = (input: Record<string, unknown>): WorkflowAction =>
   ({
@@ -37,10 +36,6 @@ describe('SendChatMessageWorkflowAction', () => {
   const sendMessage = jest.fn();
   const findWorkflowRun = jest.fn();
   const findCoreWorkflowById = jest.fn();
-  const getExecutionContext = jest.fn();
-  const setStepThreadId = jest.fn();
-  const findCatalogEntry = jest.fn();
-  const resolveAndExecute = jest.fn();
   let action: SendChatMessageWorkflowAction;
 
   const execute = (input: Record<string, unknown>) =>
@@ -62,28 +57,6 @@ describe('SendChatMessageWorkflowAction', () => {
       id: WORKFLOW_ID,
       name: 'New deals',
     });
-    getExecutionContext.mockResolvedValue({
-      authContext: { type: 'system' },
-      rolePermissionConfig: { unionOf: ['role-id'] },
-      application: null,
-    });
-    findCatalogEntry.mockResolvedValue({
-      name: 'update_one_company',
-      label: 'Update Company',
-      description: '',
-      category: 'DATABASE_CRUD',
-      executionRef: {
-        kind: 'database_crud',
-        objectNameSingular: 'company',
-        operation: 'update_one',
-      },
-      approval: { template: 'recordUpdate' },
-    });
-    resolveAndExecute.mockResolvedValue({
-      success: true,
-      message: 'Found 1 company records',
-      result: { records: [{ employees: 10 }] },
-    });
 
     action = new SendChatMessageWorkflowAction(
       { sendMessage } as unknown as AgentInboxService,
@@ -92,12 +65,9 @@ describe('SendChatMessageWorkflowAction', () => {
         getRepository: jest.fn().mockReturnValue({ findOne: findWorkflowRun }),
       } as unknown as WorkspaceOrmManager,
       { findCoreWorkflowById } as unknown as WorkflowCoreSyncService,
-      { getExecutionContext } as unknown as WorkflowExecutionContextService,
-      { setStepThreadId } as unknown as WorkflowRunWorkspaceService,
-      {
-        findCatalogEntry,
-        resolveAndExecute,
-      } as unknown as ToolRegistryService,
+      {} as WorkflowExecutionContextService,
+      {} as WorkflowRunWorkspaceService,
+      {} as ToolRegistryService,
     );
   });
 
@@ -201,72 +171,6 @@ describe('SendChatMessageWorkflowAction', () => {
     ],
   ])('fails the step with %s', async (_, input) => {
     await expect(execute(input)).rejects.toMatchObject({
-      code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
-    });
-    expect(sendMessage).not.toHaveBeenCalled();
-  });
-
-  it('posts a tool call for approval and waits on the member', async () => {
-    const output = await execute({
-      workspaceMemberId: WORKSPACE_MEMBER_ID,
-      title: 'Headcount check',
-      text: 'Update the headcount of {{trigger.name}}?',
-      toolCall: {
-        toolName: 'update_one_company',
-        arguments: { id: COMPANY_ID, employees: 25 },
-      },
-    });
-
-    expect(output).toEqual({ pendingEvent: true });
-    expect(resolveAndExecute).toHaveBeenCalledWith(
-      'find_one_company',
-      { id: COMPANY_ID, select: ['employees'] },
-      expect.objectContaining({
-        rolePermissionConfig: { unionOf: ['role-id'] },
-      }),
-    );
-    expect(sendMessage).toHaveBeenCalledWith(
-      expect.objectContaining({
-        awaitingToolCall: {
-          toolName: 'propose_tool_call',
-          input: {
-            toolName: 'update_one_company',
-            arguments: { id: COMPANY_ID, employees: 25 },
-            summary: 'Update the headcount of Acme?',
-          },
-          output: expect.objectContaining({
-            result: expect.objectContaining({
-              status: 'pending',
-              proposal: expect.objectContaining({
-                template: 'recordUpdate',
-                recordId: COMPANY_ID,
-                currentValues: { employees: 10 },
-              }),
-            }),
-            workflowStep: { workflowRunId: WORKFLOW_RUN_ID, stepId: 'step-1' },
-          }),
-        },
-      }),
-    );
-    expect(setStepThreadId).toHaveBeenCalledWith({
-      stepId: 'step-1',
-      threadId: 'thread-id',
-      workflowRunId: WORKFLOW_RUN_ID,
-      workspaceId: WORKSPACE_ID,
-    });
-  });
-
-  it('fails the step when its tool call cannot be proposed', async () => {
-    findCatalogEntry.mockResolvedValue(undefined);
-
-    await expect(
-      execute({
-        workspaceMemberId: WORKSPACE_MEMBER_ID,
-        title: '',
-        text: 'Hello',
-        toolCall: { toolName: 'drop_everything', arguments: {} },
-      }),
-    ).rejects.toMatchObject({
       code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
     });
     expect(sendMessage).not.toHaveBeenCalled();

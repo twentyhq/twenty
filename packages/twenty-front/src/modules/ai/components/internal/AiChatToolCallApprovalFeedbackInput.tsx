@@ -14,6 +14,10 @@ const StyledFeedbackTextarea = styled(TextareaAutosize)`
   outline: none;
   padding: ${themeCssVariables.spacing[2]};
   resize: none;
+
+  &:focus-visible {
+    border-color: ${themeCssVariables.color.blue};
+  }
 `;
 
 type AiChatToolCallApprovalFeedbackInputProps = {

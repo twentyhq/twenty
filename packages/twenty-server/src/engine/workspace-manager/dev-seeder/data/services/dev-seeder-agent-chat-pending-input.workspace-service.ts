@@ -240,9 +240,10 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
     calls: [proposeEmailCall(STRIPE_QUOTE_EMAIL)],
     answer: {
       response: {
-        decision: 'send',
-        email: {
-          ...STRIPE_QUOTE_EMAIL,
+        decision: 'approve',
+        toolName: 'send_email',
+        arguments: {
+          ...buildEmailToolCallProposal(STRIPE_QUOTE_EMAIL).input.arguments,
           recipients: {
             ...STRIPE_QUOTE_EMAIL.recipients,
             cc: 'phil.schiler@apple.dev',

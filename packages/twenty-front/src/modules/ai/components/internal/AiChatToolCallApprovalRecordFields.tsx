@@ -98,6 +98,7 @@ export const AiChatToolCallApprovalRecordFields = ({
                 defaultValue={value as JsonValue}
                 readonly={readonly}
                 onChange={(updatedValue) => onChange(fieldName, updatedValue)}
+                onClear={() => onChange(fieldName, null)}
               />
               {isDefined(formattedCurrentValue) && (
                 <StyledCurrentValue>

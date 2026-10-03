@@ -88,6 +88,19 @@ describe('AiChatToolCallApprovalCard', () => {
     ).toBeInTheDocument();
   });
 
+  it('cannot approve arguments that are valid JSON but not an object', () => {
+    renderCard();
+
+    fireEvent.change(screen.getByRole('textbox', { name: 'Arguments' }), {
+      target: { value: '[]' },
+    });
+
+    expect(screen.getByRole('button', { name: 'Approve' })).toBeDisabled();
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Arguments must be a valid JSON object.',
+    );
+  });
+
   it('rejects the call with the feedback the person wrote', async () => {
     const user = userEvent.setup();
     answerAgentChatToolCall.mockResolvedValue(true);

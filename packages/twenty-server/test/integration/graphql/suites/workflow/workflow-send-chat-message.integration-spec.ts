@@ -98,6 +98,9 @@ describe('Send chat message workflow step', () => {
       return company?.employees ?? null;
     };
 
+    // set as soon as the step posts, so a failing test still removes its conversation
+    let postedThreadId: string | undefined;
+
     // the step waits on the recipient, who answers the call it posted to their inbox
     const answerPostedCall = async ({
       workflowRunId,
@@ -114,6 +117,9 @@ describe('Send chat message workflow step', () => {
         `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
         [workflowRunId, stepId],
       );
+
+      postedThreadId = threadId;
+
       const [part] = await global.testDataSource.query(
         `SELECT p."toolCallId", p."toolOutput"
          FROM "${SCHEMA}"."agentMessagePart" p
@@ -137,8 +143,6 @@ describe('Send chat message workflow step', () => {
       });
 
       expect(answer.body.errors).toBeUndefined();
-
-      return threadId as string;
     };
 
     beforeEach(async () => {
@@ -161,6 +165,11 @@ describe('Send chat message workflow step', () => {
     });
 
     afterEach(async () => {
+      if (postedThreadId !== undefined) {
+        await destroyAgentChatThread({ threadId: postedThreadId });
+        postedThreadId = undefined;
+      }
+
       await makeGraphqlApiRequest({
         query: gql`
           mutation DestroyCompany($id: UUID!) {
@@ -174,8 +183,6 @@ describe('Send chat message workflow step', () => {
     });
 
     it('runs the action as the recipient approved it, then goes on', async () => {
-      let threadId: string | undefined;
-
       const { status, stepStatus, stepResult } = await runWorkflowActionStep({
         name: 'Approve a headcount change',
         stepType: 'SEND_CHAT_MESSAGE',
@@ -188,40 +195,31 @@ describe('Send chat message workflow step', () => {
             arguments: { id: companyId, employees: 25 },
           },
         },
-        whileRunning: async ({ workflowRunId, stepId }) => {
-          threadId = await answerPostedCall({
+        whileRunning: ({ workflowRunId, stepId }) =>
+          answerPostedCall({
             workflowRunId,
             stepId,
             response: {
               decision: 'approve',
               arguments: { id: companyId, employees: 30 },
             },
-          });
-        },
+          }),
       });
 
-      try {
-        expect({ status, stepStatus }).toEqual({
-          status: 'COMPLETED',
-          stepStatus: 'SUCCESS',
-        });
-        expect(stepResult).toMatchObject({
-          threadId,
-          isApproved: true,
-          status: 'approved',
-          arguments: { id: companyId, employees: 30 },
-        });
-        expect(await readEmployees()).toBe(30);
-      } finally {
-        if (threadId !== undefined) {
-          await destroyAgentChatThread({ threadId });
-        }
-      }
+      expect({ status, stepStatus }).toEqual({
+        status: 'COMPLETED',
+        stepStatus: 'SUCCESS',
+      });
+      expect(stepResult).toMatchObject({
+        threadId: postedThreadId,
+        isApproved: true,
+        status: 'approved',
+        arguments: { id: companyId, employees: 30 },
+      });
+      expect(await readEmployees()).toBe(30);
     }, 120000);
 
     it('runs nothing when the recipient rejects the action', async () => {
-      let threadId: string | undefined;
-
       const { status, stepResult } = await runWorkflowActionStep({
         name: 'Reject a headcount change',
         stepType: 'SEND_CHAT_MESSAGE',
@@ -234,28 +232,38 @@ describe('Send chat message workflow step', () => {
             arguments: { id: companyId, employees: 25 },
           },
         },
-        whileRunning: async ({ workflowRunId, stepId }) => {
-          threadId = await answerPostedCall({
+        whileRunning: ({ workflowRunId, stepId }) =>
+          answerPostedCall({
             workflowRunId,
             stepId,
             response: { decision: 'reject', feedback: 'Wait for the audit' },
-          });
+          }),
+      });
+
+      expect(status).toBe('COMPLETED');
+      expect(stepResult).toMatchObject({
+        isApproved: false,
+        status: 'rejected',
+        feedback: 'Wait for the audit',
+      });
+      expect(await readEmployees()).toBe(10);
+    }, 120000);
+
+    it('fails the step when its action cannot be proposed', async () => {
+      const { stepStatus, stepError } = await runWorkflowActionStep({
+        name: 'Propose an unknown action',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Unknown action',
+          text: 'Approve this?',
+          toolCall: { toolName: 'drop_everything', arguments: {} },
         },
       });
 
-      try {
-        expect(status).toBe('COMPLETED');
-        expect(stepResult).toMatchObject({
-          isApproved: false,
-          status: 'rejected',
-          feedback: 'Wait for the audit',
-        });
-        expect(await readEmployees()).toBe(10);
-      } finally {
-        if (threadId !== undefined) {
-          await destroyAgentChatThread({ threadId });
-        }
-      }
+      expect(stepStatus).toBe('FAILED');
+      expect(stepError).toContain('cannot be proposed');
+      expect(await readEmployees()).toBe(10);
     }, 120000);
   });
 

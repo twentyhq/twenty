@@ -42,12 +42,22 @@ export const readRecordFieldValues = async ({
     };
   }
 
+  // a field the read leaves out could change unnoticed, so a partial read is no read
+  const unreadFieldNames = fieldNames.filter(
+    (fieldName) => !(fieldName in record),
+  );
+
+  if (unreadFieldNames.length > 0) {
+    return {
+      isFound: false,
+      error: `Could not read ${unreadFieldNames.join(', ')} on the ${objectNameSingular} record.`,
+    };
+  }
+
   return {
     isFound: true,
     values: Object.fromEntries(
-      fieldNames
-        .filter((fieldName) => fieldName in record)
-        .map((fieldName) => [fieldName, record[fieldName]]),
+      fieldNames.map((fieldName) => [fieldName, record[fieldName]]),
     ),
   };
 };

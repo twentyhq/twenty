@@ -26,12 +26,15 @@ jest.mock(
   '@/advanced-text-editor/components/FormAdvancedTextFieldInput',
   () => ({
     FormAdvancedTextFieldInput: ({
+      defaultValue,
       onChange,
     }: {
+      defaultValue: string;
       onChange: (value: string) => void;
     }) => (
       <textarea
         aria-label="Email body"
+        defaultValue={JSON.parse(defaultValue).content[0].content[0].text}
         onChange={(event) =>
           onChange(
             JSON.stringify({
@@ -92,6 +95,10 @@ describe('AiChatToolCallApprovalCard for an email', () => {
     answerAgentChatToolCall.mockReturnValue(new Promise(() => {}));
 
     renderCard();
+
+    expect(screen.getByRole('textbox', { name: 'Email body' })).toHaveValue(
+      'Hi Tim',
+    );
 
     const subject = screen.getByRole('textbox', { name: 'Subject' });
     await user.clear(subject);

@@ -16,6 +16,10 @@ const StyledTextarea = styled(TextareaAutosize)`
   outline: none;
   padding: ${themeCssVariables.spacing[2]};
   resize: none;
+
+  &:focus-visible {
+    border-color: ${themeCssVariables.color.blue};
+  }
 `;
 
 const StyledError = styled.span`
@@ -68,7 +72,9 @@ export const AiChatToolCallApprovalArgumentsEditor = ({
         onChange={(event) => handleChange(event.target.value)}
       />
       {hasError && (
-        <StyledError>{t`Arguments must be a valid JSON object.`}</StyledError>
+        <StyledError role="alert">
+          {t`Arguments must be a valid JSON object.`}
+        </StyledError>
       )}
     </>
   );

@@ -279,8 +279,9 @@ Key points:
   - a call the member answers, which pauses the conversation: `ask_questions`
     (1 to 4 multiple-choice questions), `request_form` (fields to fill in) or
     `propose_email` (an email with a plain-text body to review, then send, save
-    as a draft or discard). The member reviews the email in the rich email
-    editor, where line breaks in the body become paragraphs;
+    as a draft or discard). The member reviews it in the same rich email editor
+    as an email the assistant proposes: blank lines in the body start new
+    paragraphs and single line breaks stay line breaks;
   - one of your app's own tools, by `logicFunctionUniversalIdentifier`, rendered
     by its front component with the `input` and `output` you pass. It does not
     pause the conversation.

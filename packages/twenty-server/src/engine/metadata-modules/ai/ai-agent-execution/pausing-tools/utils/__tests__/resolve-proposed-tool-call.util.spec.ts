@@ -192,9 +192,49 @@ describe('resolveProposedToolCall', () => {
     ).toHaveProperty('error');
   });
 
+  it('snapshots when a record to delete was last updated', async () => {
+    const executeTool = foundRecord({ updatedAt: '2026-10-01T09:00:00.000Z' });
+
+    const resolution = await resolveProposedToolCall({
+      input: {
+        toolName: 'delete_one_opportunity',
+        arguments: { id: RECORD_ID },
+        summary: 'Remove the duplicate',
+      },
+      findTool,
+      executeTool,
+    });
+
+    expect(executeTool).toHaveBeenCalledWith({
+      toolName: 'find_one_opportunity',
+      args: { id: RECORD_ID, select: ['updatedAt'] },
+    });
+    expect(resolution).toMatchObject({
+      proposal: {
+        template: 'recordDelete',
+        recordId: RECORD_ID,
+        currentValues: { updatedAt: '2026-10-01T09:00:00.000Z' },
+      },
+    });
+  });
+
+  it('refuses an update whose fields cannot all be read', async () => {
+    expect(
+      await resolveProposedToolCall({
+        input: {
+          toolName: 'update_one_opportunity',
+          arguments: { id: RECORD_ID, stage: 'WON', amount: null },
+          summary: 'Close the deal',
+        },
+        findTool,
+        executeTool: foundRecord({ stage: 'PROPOSAL' }),
+      }),
+    ).toEqual({ error: expect.stringContaining('amount') });
+  });
+
   it.each([
     ['create_one_opportunity', { name: 'Acme' }, 'recordCreate'],
-    ['delete_one_opportunity', { id: RECORD_ID }, 'recordDelete'],
+
     ['update_many_opportunities', { filter: {}, data: {} }, 'generic'],
     ['http_request', { url: 'https://example.com' }, 'generic'],
   ])(

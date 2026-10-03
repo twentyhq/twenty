@@ -14,6 +14,11 @@ describe('formatProposedFieldValue', () => {
     ],
     ['a full name', { firstName: 'Tim', lastName: 'Cook' }, 'Tim Cook'],
     ['an empty composite', { firstName: '', lastName: '' }, null],
+    [
+      'a composite whose only value is nested',
+      { primaryEmail: '', additionalEmails: ['tim@apple.dev'] },
+      'tim@apple.dev',
+    ],
   ])('formats %s', (_description, value, expected) => {
     expect(formatProposedFieldValue(value)).toBe(expected);
   });

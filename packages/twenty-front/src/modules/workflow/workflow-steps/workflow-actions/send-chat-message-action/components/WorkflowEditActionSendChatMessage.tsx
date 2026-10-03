@@ -125,10 +125,24 @@ export const WorkflowEditActionSendChatMessage = ({
     }
   };
 
-  const toolOptions = toolIndex.map((toolIndexEntry) => ({
+  const storedToolName = formData.toolCall?.toolName;
+  const indexedToolOptions = toolIndex.map((toolIndexEntry) => ({
     label: toolIndexEntry.label,
     value: toolIndexEntry.name,
   }));
+
+  // a saved tool the editor cannot see still runs, so it stays shown rather than reading as none
+  const toolOptions =
+    isDefined(storedToolName) &&
+    !indexedToolOptions.some((option) => option.value === storedToolName)
+      ? [
+          ...indexedToolOptions,
+          {
+            label: t`${storedToolName} (not available to you)`,
+            value: storedToolName,
+          },
+        ]
+      : indexedToolOptions;
 
   return (
     <>

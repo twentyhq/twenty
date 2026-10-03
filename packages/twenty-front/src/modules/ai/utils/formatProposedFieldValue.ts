@@ -27,7 +27,6 @@ export const formatProposedFieldValue = (value: unknown): string | null => {
     }
 
     const formattedParts = Object.values(value)
-      .filter((part) => !isPlainObject(part) && !Array.isArray(part))
       .map(formatProposedFieldValue)
       .filter(isDefined);
 
