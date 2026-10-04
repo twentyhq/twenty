@@ -219,7 +219,8 @@ import { ReapplyUsageLimitPeriodReshapeFastInstanceCommand } from 'src/database/
 import { AddChatWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790756560653-add-chat-widget-type';
 import { DropLegacyCampaignSendingCoreTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790842027068-drop-legacy-campaign-sending-core-tables';
 import { AddSharingReachToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790876699146-add-sharing-reach-to-object-metadata';
-import { CreateWorkflowStepWaitTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791121482790-create-workflow-step-wait-table';
+import { AddIsSystemToAgentAndWorkflowFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791130291063-add-is-system-to-agent-and-workflow';
+import { CreateWorkflowStepWaitTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791148642493-create-workflow-step-wait-table';
 import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791094130961-drop-core-agent-history-tables';
 
 export const INSTANCE_COMMANDS = [
@@ -442,6 +443,7 @@ export const INSTANCE_COMMANDS = [
   DropLegacyCampaignSendingCoreTablesFastInstanceCommand,
   AddApplicationWorkflowSideEffectsFastInstanceCommand,
   AddSharingReachToObjectMetadataFastInstanceCommand,
+  AddIsSystemToAgentAndWorkflowFastInstanceCommand,
   CreateWorkflowStepWaitTableFastInstanceCommand,
   DropCoreAgentHistoryTablesFastInstanceCommand,
 ];
