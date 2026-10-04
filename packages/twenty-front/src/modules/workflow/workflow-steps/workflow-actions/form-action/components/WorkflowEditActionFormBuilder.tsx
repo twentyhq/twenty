@@ -267,7 +267,7 @@ export const WorkflowEditActionFormBuilder = ({
               variant={'neutral'}
               isClosable={false}
               title={t`Add inputs to your form`}
-              description={t`Click on "Add Field" below to add the first input to your form. The form pops up for the person who launches the workflow manually, who fills it in right away.`}
+              description={t`Click on "Add Field" below to add the first input to your form. The form pops up for the person who launches the workflow manually. For workflows with other triggers, it is filled in from the workflow run.`}
             />
           </StyledNotClosableCalloutContainer>
         )}
