@@ -423,6 +423,33 @@ export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
     `,
     variables: { input: { domain: PLACEHOLDER_TEXT, email: PLACEHOLDER_TEXT } },
   }),
+  validateApprovedAccessDomain: () => ({
+    query: gql`
+      mutation ValidateApprovedAccessDomain(
+        $input: ValidateApprovedAccessDomainInput!
+      ) {
+        validateApprovedAccessDomain(input: $input) {
+          __typename
+        }
+      }
+    `,
+    variables: {
+      input: {
+        validationToken: PLACEHOLDER_TEXT,
+        approvedAccessDomainId: PLACEHOLDER_ID,
+      },
+    },
+  }),
+  deleteApprovedAccessDomain: () => ({
+    query: gql`
+      mutation DeleteApprovedAccessDomain(
+        $input: DeleteApprovedAccessDomainInput!
+      ) {
+        deleteApprovedAccessDomain(input: $input)
+      }
+    `,
+    variables: { input: { id: PLACEHOLDER_ID } },
+  }),
   createPublicDomain: () => ({
     query: gql`
       mutation CreatePublicDomain($domain: String!, $applicationId: String!) {
