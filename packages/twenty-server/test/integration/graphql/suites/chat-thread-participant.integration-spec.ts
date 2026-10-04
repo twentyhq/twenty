@@ -36,6 +36,20 @@ const SNOOZE = parse(
   `mutation Snooze($threadId: UUID!, $snoozedUntil: DateTime!) { snoozeAgentChatThread(threadId: $threadId, snoozedUntil: $snoozedUntil) { ${PARTICIPANT_FIELDS} } }`,
 );
 
+const ADD_PARTICIPANTS = parse(
+  `mutation AddParticipants($threadId: UUID!, $workspaceMemberIds: [UUID!]!) { addAgentChatThreadParticipants(threadId: $threadId, workspaceMemberIds: $workspaceMemberIds) }`,
+);
+
+const addParticipants = (
+  threadId: string,
+  workspaceMemberIds: string[],
+  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+) =>
+  makeMetadataApiRequest(
+    { query: ADD_PARTICIPANTS, variables: { threadId, workspaceMemberIds } },
+    token,
+  );
+
 type Participant = {
   threadId: string;
   lastReadAt: string | null;
@@ -394,5 +408,75 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toBeUndefined();
+  });
+
+  it('shares the thread with a mentioned member and brings it to their inbox unread', async () => {
+    const threadId = await createTestThread();
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toBeUndefined();
+
+    const response = await addParticipants(threadId, [
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    ]);
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.addAgentChatThreadParticipants).toEqual([
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    ]);
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ lastReadAt: null, archivedAt: null, snoozedUntil: null });
+    expect(
+      (await readThreadActivity(threadId)).writerWorkspaceMemberIds,
+    ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    // Editors can bring others in too, which a viewer cannot
+    const addedByJony = await addParticipants(
+      threadId,
+      [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(addedByJony.body.errors).toBeUndefined();
+    expect(addedByJony.body.data.addAgentChatThreadParticipants).toEqual([]);
+  });
+
+  it('brings the thread back for a participant who had archived it', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await runThreadMutation(
+      'archiveAgentChatThread',
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ archivedAt: null, snoozedUntil: null });
+    expect(
+      (await readThreadActivity(threadId)).writerWorkspaceMemberIds,
+    ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+  });
+
+  it('refuses a member who can only read the thread', async () => {
+    const threadId = await createTestThread();
+
+    await setShareWithJony(threadId, true);
+
+    const response = await addParticipants(
+      threadId,
+      [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
+    expect(
+      (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
+    ).toEqual([]);
   });
 });

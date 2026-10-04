@@ -182,5 +182,41 @@ describe('MentionTag', () => {
       expect(html).toContain('data-type="mentionTag"');
       expect(html).toContain('class="mention-tag"');
     });
+
+    it('should prefix records with # and workspace members with @', () => {
+      editor.commands.setContent({
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'mentionTag',
+                attrs: {
+                  recordId: 'person-id',
+                  objectNameSingular: 'person',
+                  label: 'Ada',
+                },
+              },
+              {
+                type: 'mentionTag',
+                attrs: {
+                  recordId: 'member-id',
+                  objectNameSingular: 'workspaceMember',
+                  label: 'Grace',
+                  shouldAddAsParticipant: true,
+                },
+              },
+            ],
+          },
+        ],
+      });
+
+      const html = editor.getHTML();
+
+      expect(html).toContain('>#Ada<');
+      expect(html).toContain('>@Grace<');
+      expect(html).not.toContain('shouldAddAsParticipant');
+    });
   });
 });

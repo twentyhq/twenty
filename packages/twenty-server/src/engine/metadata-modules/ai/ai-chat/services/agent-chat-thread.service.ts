@@ -9,6 +9,7 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
+import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -89,6 +90,66 @@ export class AgentChatThreadService {
     });
 
     await this.emitThreadActivityUpdated({ workspaceId, thread, activity });
+  }
+
+  // A mentioned member follows the chat like one who wrote in it, and finds
+  // it unread in their inbox even if they had archived it
+  async addParticipants({
+    participantWorkspaceMemberIds,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    participantWorkspaceMemberIds: string[];
+  }): Promise<string[]> {
+    const thread = await this.getWritableThread(args);
+    const candidateMemberIds = [...new Set(participantWorkspaceMemberIds)].filter(
+      (memberId) =>
+        memberId !== args.workspaceMemberId &&
+        memberId !== thread.workspaceMemberId,
+    );
+
+    if (candidateMemberIds.length === 0) {
+      return [];
+    }
+
+    const participantMemberIds = await this.sharingService.shareThreadWithMembers(
+      { ...args, memberIds: candidateMemberIds },
+    );
+
+    if (
+      participantMemberIds.length === 0 ||
+      !(await this.sharingService.hasInboxState(args.workspaceId))
+    ) {
+      return participantMemberIds;
+    }
+
+    await this.threadRepository.query(args.workspaceId, ({ manager, table }) =>
+      manager.query(
+        `WITH thread AS (
+           UPDATE ${table('agentChatThread')}
+           SET "updatedAt" = now(),
+             "writerWorkspaceMemberIds" = COALESCE("writerWorkspaceMemberIds", '{}') || ARRAY(
+               SELECT member_id FROM unnest($2::text[]) AS member_id
+               WHERE NOT member_id = ANY(COALESCE("writerWorkspaceMemberIds", '{}'))
+             )
+           WHERE id = $1
+           RETURNING id
+         )
+         INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} AS participant ("threadId", "workspaceMemberId")
+         SELECT thread.id, member_id::uuid FROM thread, unnest($2::text[]) AS member_id
+         ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+           "archivedAt" = NULL,
+           "snoozedUntil" = NULL,
+           "updatedAt" = now()`,
+        [args.threadId, participantMemberIds],
+      ),
+    );
+
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId: args.workspaceId,
+      threadBefore: thread,
+    });
+
+    return participantMemberIds;
   }
 
   // Activity no member wrote, such as an agent turn or an application's

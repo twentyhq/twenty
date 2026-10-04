@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
@@ -18,6 +19,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AgentChatThreadLifecycleModule,
     AgentHistoryModule,
     PermissionsModule,
+    RecordShareModule,
     RecordShareStorageModule,
     UserWorkspaceModule,
     WorkspaceCacheModule,
