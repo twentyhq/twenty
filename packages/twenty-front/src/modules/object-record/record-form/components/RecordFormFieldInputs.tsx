@@ -44,7 +44,7 @@ export const RecordFormFieldInputs = ({
             showLabel: true,
           })}
           defaultValue={
-            gqlFieldName in draftRecord
+            Object.hasOwn(draftRecord, gqlFieldName)
               ? draftRecord[gqlFieldName]
               : getRecordFormCurrencyFieldDefaultValue(fieldMetadataItem)
           }
