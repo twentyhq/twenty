@@ -1,6 +1,6 @@
 import {
   type WorkspaceCacheKeyName,
-  type WorkspaceCacheReadableKeyName,
+  type WorkspaceCacheOrDerivedCacheKeyName,
   type WorkspaceDerivedCacheKeyName,
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { isWorkspaceDerivedCacheKeyName } from 'src/engine/workspace-cache/utils/is-workspace-derived-cache-key-name.util';
@@ -9,7 +9,7 @@ export const partitionWorkspaceCacheKeyNames = ({
   cacheKeyNames,
   getSourceKeyNames,
 }: {
-  cacheKeyNames: readonly WorkspaceCacheReadableKeyName[];
+  cacheKeyNames: readonly WorkspaceCacheOrDerivedCacheKeyName[];
   getSourceKeyNames: (
     derivedKeyName: WorkspaceDerivedCacheKeyName,
   ) => readonly WorkspaceCacheKeyName[];

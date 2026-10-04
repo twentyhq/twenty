@@ -41,8 +41,8 @@ import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/servic
 import {
   WorkspaceCacheKeyName,
   type WorkspaceCacheDataMap,
-  type WorkspaceCacheReadableDataMap,
-  type WorkspaceCacheReadableKeyName,
+  type WorkspaceCacheOrDerivedCacheDataMap,
+  type WorkspaceCacheOrDerivedCacheKeyName,
   type WorkspaceCacheResult,
   type WorkspaceCacheResultWithHashes,
   type WorkspaceCacheStoredDataMap,
@@ -95,9 +95,9 @@ type CacheEntriesResult = {
   hashes: Partial<Record<WorkspaceCacheKeyName, string>>;
 };
 
-type ReadableCacheEntriesResult = {
-  data: Partial<WorkspaceCacheReadableDataMap>;
-  hashes: Partial<Record<WorkspaceCacheReadableKeyName, string>>;
+type CacheOrDerivedCacheEntriesResult = {
+  data: Partial<WorkspaceCacheOrDerivedCacheDataMap>;
+  hashes: Partial<Record<WorkspaceCacheOrDerivedCacheKeyName, string>>;
 };
 
 type DerivedCacheData =
@@ -248,10 +248,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.packingTimer.unref();
   }
 
-  public async getOrRecompute<const K extends WorkspaceCacheReadableKeyName[]>(
-    workspaceId: string,
-    cacheKeyNames: K,
-  ): Promise<WorkspaceCacheResult<K>> {
+  public async getOrRecompute<
+    const K extends WorkspaceCacheOrDerivedCacheKeyName[],
+  >(workspaceId: string, cacheKeyNames: K): Promise<WorkspaceCacheResult<K>> {
     const { data } = await this.getOrRecomputeWithHashes(
       workspaceId,
       cacheKeyNames,
@@ -261,7 +260,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   public async getOrRecomputeWithHashes<
-    const K extends WorkspaceCacheReadableKeyName[],
+    const K extends WorkspaceCacheOrDerivedCacheKeyName[],
   >(
     workspaceId: string,
     cacheKeyNames: K,
@@ -280,7 +279,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return providerEntries as WorkspaceCacheResultWithHashes<K>;
     }
 
-    const result: ReadableCacheEntriesResult = { data: {}, hashes: {} };
+    const result: CacheOrDerivedCacheEntriesResult = { data: {}, hashes: {} };
 
     for (const providerKeyName of providerKeyNames) {
       Object.assign(result.data, {
@@ -304,7 +303,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   private partitionCacheKeyNames(
-    cacheKeyNames: readonly WorkspaceCacheReadableKeyName[],
+    cacheKeyNames: readonly WorkspaceCacheOrDerivedCacheKeyName[],
   ) {
     return partitionWorkspaceCacheKeyNames({
       cacheKeyNames,
@@ -437,7 +436,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   public async getOrRecomputeCombinedHash(
     workspaceId: string,
-    cacheKeyNames: WorkspaceCacheReadableKeyName[],
+    cacheKeyNames: WorkspaceCacheOrDerivedCacheKeyName[],
   ): Promise<string> {
     this.assertValidCacheParameters(workspaceId, cacheKeyNames);
 
@@ -462,19 +461,19 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             ).hashes,
           };
 
-    const readableHashes: Partial<
-      Record<WorkspaceCacheReadableKeyName, string>
+    const cacheOrDerivedCacheHashes: Partial<
+      Record<WorkspaceCacheOrDerivedCacheKeyName, string>
     > = { ...providerHashes };
 
     for (const derivedKeyName of derivedKeyNames) {
-      readableHashes[derivedKeyName] = combineCacheHashes(
+      cacheOrDerivedCacheHashes[derivedKeyName] = combineCacheHashes(
         providerHashes,
         this.getDerivedCacheRegistrationOrThrow(derivedKeyName).provider
           .sourceKeyNames,
       );
     }
 
-    return combineCacheHashes(readableHashes, cacheKeyNames);
+    return combineCacheHashes(cacheOrDerivedCacheHashes, cacheKeyNames);
   }
 
   private collectRowsRequirements(cacheKeyNames: WorkspaceCacheKeyName[]) {
@@ -535,7 +534,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   public async flush(
     workspaceId: string,
-    cacheKeyNames: WorkspaceCacheReadableKeyName[],
+    cacheKeyNames: WorkspaceCacheOrDerivedCacheKeyName[],
   ): Promise<void> {
     const { providerKeyNames, derivedKeyNames } =
       this.partitionCacheKeyNames(cacheKeyNames);
@@ -585,7 +584,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   private assertValidCacheParameters(
     workspaceId: string,
-    cacheKeyNames: WorkspaceCacheReadableKeyName[],
+    cacheKeyNames: WorkspaceCacheOrDerivedCacheKeyName[],
   ): void {
     if (
       !isDefined(workspaceId) ||

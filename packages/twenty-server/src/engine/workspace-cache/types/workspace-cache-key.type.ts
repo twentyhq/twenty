@@ -53,17 +53,20 @@ export type WorkspaceDerivedCacheDataMap = {
 
 export type WorkspaceDerivedCacheKeyName = keyof WorkspaceDerivedCacheDataMap;
 
-export type WorkspaceCacheReadableDataMap = WorkspaceCacheDataMap &
+export type WorkspaceCacheOrDerivedCacheDataMap = WorkspaceCacheDataMap &
   WorkspaceDerivedCacheDataMap;
 
-export type WorkspaceCacheReadableKeyName = keyof WorkspaceCacheReadableDataMap;
+export type WorkspaceCacheOrDerivedCacheKeyName =
+  keyof WorkspaceCacheOrDerivedCacheDataMap;
 
-export type WorkspaceCacheResult<K extends WorkspaceCacheReadableKeyName[]> = {
-  [P in K[number]]: WorkspaceCacheReadableDataMap[P];
+export type WorkspaceCacheResult<
+  K extends WorkspaceCacheOrDerivedCacheKeyName[],
+> = {
+  [P in K[number]]: WorkspaceCacheOrDerivedCacheDataMap[P];
 };
 
 export type WorkspaceCacheResultWithHashes<
-  K extends WorkspaceCacheReadableKeyName[],
+  K extends WorkspaceCacheOrDerivedCacheKeyName[],
 > = {
   data: WorkspaceCacheResult<K>;
   hashes: { [P in K[number]]: string };
