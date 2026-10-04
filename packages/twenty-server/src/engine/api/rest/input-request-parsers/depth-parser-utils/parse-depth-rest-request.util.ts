@@ -3,7 +3,7 @@ import {
   RestInputRequestParserException,
   RestInputRequestParserExceptionCode,
 } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
-import { type SelectionDepth } from 'src/engine/api/common/metadata-selection/types/selection-depth.type';
+import { type SelectionDepth } from 'src/engine/api/common/common-select-fields/types/selection-depth.type';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 
 export const parseDepthRestRequest = (

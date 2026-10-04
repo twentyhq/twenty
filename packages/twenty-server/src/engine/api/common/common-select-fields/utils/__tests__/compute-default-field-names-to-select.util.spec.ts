@@ -1,7 +1,7 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { computeDefaultFieldNamesToSelect } from 'src/engine/api/common/metadata-selection/utils/compute-default-field-names-to-select.util';
+import { computeDefaultFieldNamesToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-default-field-names-to-select.util';
 
 type ComputeDefaultFieldNamesToSelectArgs = Parameters<
   typeof computeDefaultFieldNamesToSelect

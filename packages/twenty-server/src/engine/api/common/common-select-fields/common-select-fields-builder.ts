@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { MetadataSelectionException } from 'src/engine/api/common/metadata-selection/metadata-selection.exception';
-import { type SelectionDepth } from 'src/engine/api/common/metadata-selection/types/selection-depth.type';
-import { computeDefaultFieldNamesToSelect } from 'src/engine/api/common/metadata-selection/utils/compute-default-field-names-to-select.util';
-import { getAllSelectableFields } from 'src/engine/api/common/metadata-selection/utils/get-all-selectable-fields.util';
-import { getRelationsSelectFields } from 'src/engine/api/common/metadata-selection/utils/get-relations-select-fields.util';
-import { isOneToManyRelationFlatField } from 'src/engine/api/common/metadata-selection/utils/is-one-to-many-relation-flat-field.util';
+import { CommonSelectFieldsException } from 'src/engine/api/common/common-select-fields/common-select-fields.exception';
+import { type SelectionDepth } from 'src/engine/api/common/common-select-fields/types/selection-depth.type';
+import { computeDefaultFieldNamesToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-default-field-names-to-select.util';
+import { getAllSelectableFields } from 'src/engine/api/common/common-select-fields/utils/get-all-selectable-fields.util';
+import { getRelationsSelectFields } from 'src/engine/api/common/common-select-fields/utils/get-relations-select-fields.util';
+import { isOneToManyRelationFlatField } from 'src/engine/api/common/common-select-fields/utils/is-one-to-many-relation-flat-field.util';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -16,7 +16,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
-export class MetadataSelectionBuilder {
+export class CommonSelectFieldsBuilder {
   buildFromDepth = ({
     objectsPermissions,
     flatObjectMetadataMaps,
@@ -57,7 +57,7 @@ export class MetadataSelectionBuilder {
 
     if (isDefined(requestedFields)) {
       if (requestedFields.size === 0) {
-        throw new MetadataSelectionException(
+        throw new CommonSelectFieldsException(
           'Requested fields cannot be empty.',
         );
       }
@@ -70,7 +70,7 @@ export class MetadataSelectionBuilder {
       );
 
       if (invalidFieldNames.length > 0) {
-        throw new MetadataSelectionException(
+        throw new CommonSelectFieldsException(
           `Unknown or unreadable fields on '${flatObjectMetadata.nameSingular}': ${invalidFieldNames.join(', ')}`,
         );
       }
@@ -85,7 +85,7 @@ export class MetadataSelectionBuilder {
           .map((flatField) => flatField.name);
 
         if (oneToManyRelationFieldNames.length > 0) {
-          throw new MetadataSelectionException(
+          throw new CommonSelectFieldsException(
             `One-to-many relation fields on '${flatObjectMetadata.nameSingular}' require a positive depth: ${oneToManyRelationFieldNames.join(', ')}`,
           );
         }

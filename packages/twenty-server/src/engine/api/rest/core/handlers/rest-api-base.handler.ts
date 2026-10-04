@@ -7,8 +7,8 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { MetadataSelectionBuilder } from 'src/engine/api/common/metadata-selection/metadata-selection-builder';
-import { SelectionDepth } from 'src/engine/api/common/metadata-selection/types/selection-depth.type';
+import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
+import { SelectionDepth } from 'src/engine/api/common/common-select-fields/types/selection-depth.type';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { REST_API_DEFAULT_MAX_FIELDS } from 'src/engine/api/rest/input-request-parsers/constants/rest-api-default-max-fields.constant';
@@ -69,7 +69,7 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
   @Inject()
-  protected readonly metadataSelectionBuilder: MetadataSelectionBuilder;
+  protected readonly commonSelectFieldsBuilder: CommonSelectFieldsBuilder;
   @Inject()
   protected readonly userRoleService: UserRoleService;
   @Inject()
@@ -145,7 +145,7 @@ export abstract class RestApiBaseHandler {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
 
-    const { selectedFields } = this.metadataSelectionBuilder.buildFromDepth({
+    const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -177,7 +177,7 @@ export abstract class RestApiBaseHandler {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
 
-    return this.metadataSelectionBuilder.buildFromDepth({
+    return this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

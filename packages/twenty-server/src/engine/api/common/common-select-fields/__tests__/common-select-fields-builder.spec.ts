@@ -6,16 +6,16 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
-import { MetadataSelectionBuilder } from 'src/engine/api/common/metadata-selection/metadata-selection-builder';
-import { MAX_SELECTION_DEPTH } from 'src/engine/api/common/metadata-selection/constants/max-selection-depth.constant';
+import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
+import { MAX_SELECTION_DEPTH } from 'src/engine/api/common/common-select-fields/constants/max-selection-depth.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-describe('MetadataSelectionBuilder', () => {
-  let handler: MetadataSelectionBuilder;
+describe('CommonSelectFieldsBuilder', () => {
+  let handler: CommonSelectFieldsBuilder;
 
   const createMockField = (
     overrides: Partial<FlatFieldMetadata> & {
@@ -120,10 +120,10 @@ describe('MetadataSelectionBuilder', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MetadataSelectionBuilder],
+      providers: [CommonSelectFieldsBuilder],
     }).compile();
 
-    handler = module.get<MetadataSelectionBuilder>(MetadataSelectionBuilder);
+    handler = module.get<CommonSelectFieldsBuilder>(CommonSelectFieldsBuilder);
   });
 
   describe('requested fields and default selection', () => {
