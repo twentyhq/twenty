@@ -10,6 +10,7 @@ import { IconHelpCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
+import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { getAskedQuestionEntries } from '@/ai/utils/getAskedQuestionEntries';
 import {
   StyledAiChatAskStatusDetail,
@@ -102,8 +103,12 @@ export const AiChatQuestionStatusRenderer = ({
 
         return (
           <StyledAnswerBlock key={index}>
-            <StyledAnswerQuestion>{question.question}</StyledAnswerQuestion>
-            <StyledAiChatAskStatusDetail>{value}</StyledAiChatAskStatusDetail>
+            <StyledAnswerQuestion>
+              <TextWithChatReferences text={question.question} />
+            </StyledAnswerQuestion>
+            <StyledAiChatAskStatusDetail>
+              <TextWithChatReferences text={value} />
+            </StyledAiChatAskStatusDetail>
           </StyledAnswerBlock>
         );
       })}

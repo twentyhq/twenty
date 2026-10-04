@@ -48,6 +48,12 @@ jest.mock('@/ui/layout/tab-list/components/TabList', () => ({
   ),
 }));
 
+jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
+  LazyMarkdownRenderer: ({ text }: { text: string }) => (
+    <div data-testid="markdown-renderer">{text}</div>
+  ),
+}));
+
 jest.mock('@/ai/components/ToolRecordsWidget', () => ({
   ToolRecordsWidget: ({
     recordReferences,

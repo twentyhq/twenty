@@ -5,6 +5,7 @@ import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
+import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
 import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
 import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
@@ -98,13 +99,11 @@ const StyledReasoningContainer = styled.div`
   );
 `;
 
-const StyledReasoningText = styled.p`
+const StyledReasoningText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: ${themeCssVariables.text.lineHeight.lg};
-  margin: 0;
-  white-space: pre-wrap;
 `;
 
 const StyledIconContainer = styled.div`
@@ -220,7 +219,9 @@ export const ThinkingStepsDisplay = ({
           </StyledRowsContainer>
           {!!shouldDisplayReasoningContent && (
             <StyledReasoningContainer>
-              <StyledReasoningText>{reasoningContent}</StyledReasoningText>
+              <StyledReasoningText>
+                <LazyMarkdownRenderer text={reasoningContent} />
+              </StyledReasoningText>
             </StyledReasoningContainer>
           )}
         </StyledStepsContentContainer>
