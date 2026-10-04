@@ -1,11 +1,10 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { Temporal } from 'temporal-polyfill';
 
-import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { SnoozeAiChatUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
 import {
   jotaiStore,
@@ -61,7 +60,6 @@ describe('SnoozeAiChatUntilDatePicker', () => {
     jest.setSystemTime(new Date(2026, 9, 1, 17, 59));
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(agentChatThreadInboxNowState.atom, Date.now());
   });
 
   afterEach(() => {
@@ -107,7 +105,7 @@ describe('SnoozeAiChatUntilDatePicker', () => {
     expect(onSnoozed).not.toHaveBeenCalled();
   });
 
-  it('turns the button off once the picked time passes', () => {
+  it('does not snooze once the picked time has passed, and says so', () => {
     render(
       <SnoozeAiChatUntilDatePicker
         threadIds={['thread-1']}
@@ -116,11 +114,12 @@ describe('SnoozeAiChatUntilDatePicker', () => {
       { wrapper: Wrapper },
     );
 
-    act(() => {
-      jest.setSystemTime(new Date(2026, 9, 2, 9, 1));
-      jotaiStore.set(agentChatThreadInboxNowState.atom, Date.now());
-    });
+    jest.setSystemTime(new Date(2026, 9, 2, 9, 1));
 
+    fireEvent.click(screen.getByRole('button', { name: /Snooze until/ }));
+
+    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
+    expect(onSnoozed).not.toHaveBeenCalled();
     expect(
       screen.getByRole('button', { name: 'Pick a time in the future' }),
     ).toBeDisabled();

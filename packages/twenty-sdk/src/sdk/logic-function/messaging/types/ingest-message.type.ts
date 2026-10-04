@@ -1,4 +1,4 @@
-import { type MessageParticipantRole } from 'twenty-shared/types';
+import { type MessageParticipantRole } from '@/sdk/define/common/types/loose-shared-types.type';
 
 export type IngestMessageParticipant = {
   // Exactly one participant must be 'FROM'; when its handle equals the channel's, the message is outgoing

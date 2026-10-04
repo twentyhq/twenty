@@ -1,5 +1,6 @@
 import { useApolloClient } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { useToast } from 'twenty-ui/components';
@@ -59,7 +60,7 @@ export const useAddAgentChatThreadParticipants = () => {
           .map(({ label }) => label)
           .join(', ');
 
-        if (notAddedLabels !== '') {
+        if (isNonEmptyString(notAddedLabels)) {
           enqueueToast({
             variant: 'warning',
             children: t`${notAddedLabels} could not be added to this chat because they can't reply in it.`,

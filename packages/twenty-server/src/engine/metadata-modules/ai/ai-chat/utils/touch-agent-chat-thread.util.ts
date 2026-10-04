@@ -18,9 +18,9 @@ export const touchAgentChatThread = async ({
          UPDATE ${table('agentChatThread')}
          SET "updatedAt" = now()
          WHERE id = $1
-         RETURNING NULL::timestamptz AS "lastActivityAt", "updatedAt"
+         RETURNING NULL::timestamptz AS "lastActivityAt", "updatedAt", "pendingQuestionMessageId"
        )
-       SELECT "lastActivityAt", "updatedAt" FROM thread`,
+       SELECT "lastActivityAt", "updatedAt", "pendingQuestionMessageId" FROM thread`,
       [threadId],
     ),
   );
