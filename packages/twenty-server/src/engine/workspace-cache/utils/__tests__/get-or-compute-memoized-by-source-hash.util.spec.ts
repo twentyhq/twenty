@@ -40,6 +40,10 @@ describe('getOrComputeMemoizedBySourceHash', () => {
 
     expect(memoize('hash-2', 'second')).toBe('second');
     expect(memo.size).toBe(1);
+    expect(memo.get('workspace-1')).toMatchObject({
+      sourceHash: 'hash-2',
+      value: 'second',
+    });
   });
 
   it('evicts the least recently used entry beyond maxEntries', () => {
