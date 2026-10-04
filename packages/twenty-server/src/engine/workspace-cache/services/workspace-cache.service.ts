@@ -217,10 +217,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       }
     }
 
-    this.cacheMetricsService.start(
-      this.localCache,
-      this.getDerivedCacheMemoByKeyName(),
-    );
+    this.cacheMetricsService.start({
+      localCache: this.localCache,
+      derivedCacheMemoByKeyName: this.getDerivedCacheMemoByKeyName(),
+    });
     this.startMaintenanceTimers();
   }
 

@@ -98,10 +98,13 @@ export class WorkspaceCacheMetricsService {
     );
   }
 
-  start(
-    localCache: LocalCache,
-    derivedCacheMemoByKeyName: DerivedCacheMemoByKeyName,
-  ): void {
+  start({
+    localCache,
+    derivedCacheMemoByKeyName,
+  }: {
+    localCache: LocalCache;
+    derivedCacheMemoByKeyName: DerivedCacheMemoByKeyName;
+  }): void {
     this.localCache = localCache;
     this.derivedCacheMemoByKeyName = derivedCacheMemoByKeyName;
     this.registerGauges();
