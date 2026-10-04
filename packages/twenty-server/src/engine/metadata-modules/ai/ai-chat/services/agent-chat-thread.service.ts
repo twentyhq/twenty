@@ -101,7 +101,9 @@ export class AgentChatThreadService {
     participantWorkspaceMemberIds: string[];
   }): Promise<string[]> {
     const thread = await this.getWritableThread(args);
-    const candidateMemberIds = [...new Set(participantWorkspaceMemberIds)].filter(
+    const candidateMemberIds = [
+      ...new Set(participantWorkspaceMemberIds),
+    ].filter(
       (memberId) =>
         memberId !== args.workspaceMemberId &&
         memberId !== thread.workspaceMemberId,
@@ -111,9 +113,11 @@ export class AgentChatThreadService {
       return [];
     }
 
-    const participantMemberIds = await this.sharingService.shareThreadWithMembers(
-      { ...args, memberIds: candidateMemberIds },
-    );
+    const participantMemberIds =
+      await this.sharingService.shareThreadWithMembers({
+        ...args,
+        memberIds: candidateMemberIds,
+      });
 
     if (
       participantMemberIds.length === 0 ||

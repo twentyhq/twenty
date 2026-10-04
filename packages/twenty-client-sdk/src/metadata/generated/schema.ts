@@ -3729,6 +3729,7 @@ export interface Mutation {
     archiveAgentChatThread: AgentChatThreadParticipant
     snoozeAgentChatThread: AgentChatThreadParticipant
     moveAgentChatThreadToInbox: AgentChatThreadParticipant
+    addAgentChatThreadParticipants: Scalars['UUID'][]
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     sendInboxMessage: SendInboxMessageResult
     createSkill: Skill
@@ -7733,6 +7734,7 @@ export interface MutationGenqlSelection{
     archiveAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     snoozeAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID'], snoozedUntil: Scalars['DateTime']} })
     moveAgentChatThreadToInbox?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    addAgentChatThreadParticipants?: { __args: {threadId: Scalars['UUID'], workspaceMemberIds: Scalars['UUID'][]} }
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     sendInboxMessage?: (SendInboxMessageResultGenqlSelection & { __args: {input: SendInboxMessageInput} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })

@@ -4355,6 +4355,7 @@ type Mutation {
   archiveAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
   snoozeAgentChatThread(threadId: UUID!, snoozedUntil: DateTime!): AgentChatThreadParticipant!
   moveAgentChatThreadToInbox(threadId: UUID!): AgentChatThreadParticipant!
+  addAgentChatThreadParticipants(threadId: UUID!, workspaceMemberIds: [UUID!]!): [UUID!]!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   createSkill(input: CreateSkillInput!): Skill!

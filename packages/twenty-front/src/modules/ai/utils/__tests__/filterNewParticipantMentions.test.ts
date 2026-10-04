@@ -12,7 +12,10 @@ describe('filterNewParticipantMentions', () => {
     expect(
       filterNewParticipantMentions({
         participantMentions,
-        thread: { workspaceMemberId: 'jane', writerWorkspaceMemberIds: ['jony'] },
+        thread: {
+          workspaceMemberId: 'jane',
+          writerWorkspaceMemberIds: ['jony'],
+        },
         currentWorkspaceMemberId: 'tim',
       }),
     ).toEqual([{ workspaceMemberId: 'phil', label: 'Phil Schiller' }]);

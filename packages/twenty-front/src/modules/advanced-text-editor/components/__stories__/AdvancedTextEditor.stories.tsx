@@ -309,16 +309,19 @@ export const MinimalDocument: Story = {
     placeholder: 'Ask anything, # a record, @ a teammate or / a skill...',
   },
   play: async ({ canvasElement, step }) => {
-    await step('Verify placeholder hints at #, @ and / references', async () => {
-      await waitFor(() =>
-        expect(
-          canvasElement.querySelector('[data-placeholder]'),
-        ).toHaveAttribute(
-          'data-placeholder',
-          'Ask anything, # a record, @ a teammate or / a skill...',
-        ),
-      );
-    });
+    await step(
+      'Verify placeholder hints at #, @ and / references',
+      async () => {
+        await waitFor(() =>
+          expect(
+            canvasElement.querySelector('[data-placeholder]'),
+          ).toHaveAttribute(
+            'data-placeholder',
+            'Ask anything, # a record, @ a teammate or / a skill...',
+          ),
+        );
+      },
+    );
   },
 };
 

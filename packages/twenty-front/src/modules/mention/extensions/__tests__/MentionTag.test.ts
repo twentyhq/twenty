@@ -195,7 +195,7 @@ describe('MentionTag', () => {
                 attrs: {
                   recordId: 'person-id',
                   objectNameSingular: 'person',
-                  label: 'Ada',
+                  label: 'Linus',
                 },
               },
               {
@@ -213,9 +213,13 @@ describe('MentionTag', () => {
       });
 
       const html = editor.getHTML();
+      const renderedMentionTexts = Array.from(
+        new DOMParser()
+          .parseFromString(html, 'text/html')
+          .querySelectorAll('.mention-tag'),
+      ).map((mention) => mention.textContent);
 
-      expect(html).toContain('>#Ada<');
-      expect(html).toContain('>@Grace<');
+      expect(renderedMentionTexts).toEqual(['#Linus', '@Grace']);
       expect(html).not.toContain('shouldAddAsParticipant');
     });
   });

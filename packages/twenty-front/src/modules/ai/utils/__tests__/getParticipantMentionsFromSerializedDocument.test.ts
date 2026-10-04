@@ -7,9 +7,7 @@ import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 const JANE_ID = '20202020-463f-435b-828c-107e007a2711';
 const JONY_ID = '20202020-77d5-4cb6-b60a-f4a835a85d61';
 
-const serializeParagraph = (
-  content: ReturnType<typeof getMentionTagContent>,
-) =>
+const serializeParagraph = (content: ReturnType<typeof getMentionTagContent>) =>
   serializeJsonContentAsAdvancedTextEditorDocument({
     type: 'doc',
     content: [{ type: 'paragraph', content }],
