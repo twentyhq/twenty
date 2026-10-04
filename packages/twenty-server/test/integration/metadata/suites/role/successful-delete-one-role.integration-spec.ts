@@ -1,5 +1,10 @@
 import { randomUUID } from 'crypto';
 
+import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 import { currentUser } from 'test/integration/graphql/suites/user-session/utils/current-user.util';
 import { deleteUserFromWorkspace } from 'test/integration/graphql/suites/user-session/utils/delete-user-from-workspace.util';
 import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
@@ -8,6 +13,7 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('Role deletion should succeed', () => {
@@ -99,7 +105,7 @@ describe('Role deletion should succeed', () => {
       );
       const { data: memberData } = await currentUser({
         token,
-        gqlFields: 'workspaceMember { id }',
+        gqlFields: 'workspaceMember { id } currentUserWorkspace { id }',
       });
 
       workspaceMemberId = memberData.currentUser.workspaceMember.id;
@@ -114,15 +120,15 @@ describe('Role deletion should succeed', () => {
         input: { workspaceMemberId, roleId },
       });
 
-      // Warm the assignment cache so removal must invalidate it.
-      const roleBeforeRemoval = await findOneRoleByLabel({
-        label: roleLabel,
-        gqlFields: 'id label workspaceMembers { id }',
-      });
+      const userWorkspaceId = memberData.currentUser.currentUserWorkspace?.id;
 
-      expect(roleBeforeRemoval.workspaceMembers).toEqual([
-        expect.objectContaining({ id: workspaceMemberId }),
-      ]);
+      jestExpectToBeDefined(userWorkspaceId);
+      const { userWorkspaceRoleMap } =
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['userWorkspaceRoleMap']);
+
+      expect(userWorkspaceRoleMap[userWorkspaceId]).toBe(roleId);
 
       const { errors: removalErrors } = await deleteUserFromWorkspace({
         input: { workspaceMemberIdToDelete: workspaceMemberId },
@@ -153,6 +159,46 @@ describe('Role deletion should succeed', () => {
           data: { isPublicInviteLinkEnabled: initialPublicInviteLinkEnabled },
         });
       }
+    }
+  });
+
+  it('should attempt workflow-run share synchronization even if role cache refresh fails', async () => {
+    const workspaceCacheService =
+      getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
+    const workflowRunRecordShareService =
+      getAppProviderByClassName<WorkflowRunRecordShareService>(
+        'WorkflowRunRecordShareService',
+      );
+    const cacheError = new Error('Role cache refresh failed');
+    const cacheRefreshSpy = jest
+      .spyOn(workspaceCacheService, 'invalidateAndRecompute')
+      .mockRejectedValueOnce(cacheError);
+    const shareSyncSpy = jest.spyOn(
+      workflowRunRecordShareService,
+      'syncRunsOfCoreWorkflows',
+    );
+
+    try {
+      await expect(
+        getAppProviderByClassName<UserWorkspaceService>(
+          'UserWorkspaceService',
+        ).deleteUserWorkspace({
+          userWorkspaceId: randomUUID(),
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+        }),
+      ).rejects.toBe(cacheError);
+      expect(cacheRefreshSpy).toHaveBeenCalledWith(SEED_APPLE_WORKSPACE_ID, [
+        'flatRoleTargetMaps',
+        'flatRoleMaps',
+        'userWorkspaceRoleMap',
+      ]);
+      expect(shareSyncSpy).toHaveBeenCalledWith({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        coreWorkflowIds: [],
+      });
+    } finally {
+      cacheRefreshSpy.mockRestore();
+      shareSyncSpy.mockRestore();
     }
   });
 });

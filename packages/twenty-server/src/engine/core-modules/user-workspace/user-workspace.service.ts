@@ -378,16 +378,19 @@ export class UserWorkspaceService {
       await this.roleTargetRepository.delete(workspaceId, { userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
       await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
 
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'flatRoleTargetMaps',
-        'flatRoleMaps',
-        'userWorkspaceRoleMap',
-      ]);
-
-      await this.workflowRunRecordShareService.syncRunsOfCoreWorkflows({
-        workspaceId,
-        coreWorkflowIds: createdCoreWorkflowIds,
-      });
+      try {
+        await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'flatRoleTargetMaps',
+          'flatRoleMaps',
+          'userWorkspaceRoleMap',
+        ]);
+      } finally {
+        // Membership deletion cannot be rolled back if refreshing the cache fails.
+        await this.workflowRunRecordShareService.syncRunsOfCoreWorkflows({
+          workspaceId,
+          coreWorkflowIds: createdCoreWorkflowIds,
+        });
+      }
     }
   }
 
