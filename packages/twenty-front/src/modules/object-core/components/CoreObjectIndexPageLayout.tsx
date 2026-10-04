@@ -1,9 +1,10 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode, useEffect } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 
+import { CoreObjectTableFetchMoreEffect } from '@/object-core/components/CoreObjectTableFetchMoreEffect';
 import { RecordIndexEmptyStateDisplay } from '@/object-record/record-index/components/RecordIndexEmptyStateDisplay';
 import { RecordIndexPageHeaderTitle } from '@/object-record/record-index/components/RecordIndexPageHeaderTitle';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -14,10 +15,6 @@ const StyledTableContainer = styled.div`
   height: 100%;
   overflow: auto;
   width: 100%;
-`;
-
-const StyledFetchMoreSentinel = styled.div`
-  height: 1px;
 `;
 
 type CoreObjectIndexPageEmptyState = {
@@ -57,14 +54,6 @@ export const CoreObjectIndexPageLayout = ({
   onFetchNextPage,
   children,
 }: CoreObjectIndexPageLayoutProps) => {
-  const { ref: fetchMoreRef, inView } = useInView();
-
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      onFetchNextPage?.();
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, onFetchNextPage]);
-
   return (
     <>
       <PageTitle title={labelPlural} />
@@ -107,7 +96,12 @@ export const CoreObjectIndexPageLayout = ({
           {!isInitialLoading && !hasError && !isEmpty && (
             <>
               {children}
-              {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}
+              {hasNextPage && isDefined(onFetchNextPage) && (
+                <CoreObjectTableFetchMoreEffect
+                  isFetchingNextPage={isFetchingNextPage}
+                  onFetchNextPage={onFetchNextPage}
+                />
+              )}
             </>
           )}
         </StyledTableContainer>

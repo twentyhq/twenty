@@ -30,7 +30,10 @@ export const useCoreAgents = ({
 } = {}) => {
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
-  const { data, loading, error } = useQuery(FindManyAgentsDocument);
+  // Settings creates and deletes agents without touching this query's cache
+  const { data, loading, error } = useQuery(FindManyAgentsDocument, {
+    fetchPolicy: 'cache-and-network',
+  });
 
   const listedAgents = useMemo(
     () =>

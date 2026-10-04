@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -50,7 +51,7 @@ export const AgentCoreShowPage = () => {
 
   const { data, loading, error } = useQuery(FindOneAgentDocument, {
     variables: { id: agentId },
-    skip: agentId === '',
+    skip: !isNonEmptyString(agentId),
   });
 
   const agent = data?.findOneAgent;
@@ -103,7 +104,7 @@ export const AgentCoreShowPage = () => {
         }
       >
         <StyledContent>
-          {isDefined(agent.description) && agent.description !== '' && (
+          {isNonEmptyString(agent.description) && (
             <Section.Root>
               <Section.Header title={t`Description`} />
               <StyledText>{agent.description}</StyledText>
