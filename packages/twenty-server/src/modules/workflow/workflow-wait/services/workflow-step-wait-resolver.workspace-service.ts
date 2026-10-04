@@ -25,7 +25,7 @@ import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils
 import { buildWaitOutcome } from 'src/modules/workflow/workflow-wait/utils/build-wait-outcome.util';
 
 const PAUSING_STEP_RETRY_DELAY_MS = 2_000;
-const PAUSING_STEP_MAX_ATTEMPTS = 10;
+const PAUSING_STEP_MAX_RETRY_DELAY_MS = 60_000;
 
 @Injectable()
 export class WorkflowStepWaitResolverWorkspaceService {
@@ -63,18 +63,19 @@ export class WorkflowStepWaitResolverWorkspaceService {
     const stepStatus = workflowRun?.state?.stepInfos?.[stepId]?.status;
     const isRunRunning = workflowRun?.status === WorkflowRunStatus.RUNNING;
 
-    // the wait is armed before its step reads as pending
+    // the wait is armed before its step reads as pending, so the event is held until it does or the run ends
     if (isRunRunning && stepStatus === StepStatus.RUNNING) {
-      if (attempt < PAUSING_STEP_MAX_ATTEMPTS) {
-        await this.workflowStepWaitWorkspaceService.scheduleResolution({
-          workspaceId,
-          workflowRunId,
-          waitId,
-          event,
-          attempt: attempt + 1,
-          delayMs: PAUSING_STEP_RETRY_DELAY_MS,
-        });
-      }
+      await this.workflowStepWaitWorkspaceService.scheduleResolution({
+        workspaceId,
+        workflowRunId,
+        waitId,
+        event,
+        attempt: attempt + 1,
+        delayMs: Math.min(
+          PAUSING_STEP_RETRY_DELAY_MS * 2 ** attempt,
+          PAUSING_STEP_MAX_RETRY_DELAY_MS,
+        ),
+      });
 
       return;
     }

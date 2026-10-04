@@ -4,7 +4,7 @@ const WAIT = { type: 'EVENT', eventName: 'company.updated' };
 
 const stepWithResults = (
   ...toolResults: { toolName: string; output: unknown }[]
-) => ({ toolResults }) as never;
+) => ({ toolResults });
 
 describe('findAgentStepWait', () => {
   it('finds the wait an execution ended on', () => {

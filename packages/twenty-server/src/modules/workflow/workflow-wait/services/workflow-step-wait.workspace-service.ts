@@ -98,6 +98,26 @@ export class WorkflowStepWaitWorkspaceService {
     );
   }
 
+  // A wait stays overdue until its job claims it, so each sweep would queue it again
+  async scheduleOverdueResolution({
+    workspaceId,
+    workflowRunId,
+    waitId,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    waitId: string;
+  }): Promise<void> {
+    await this.messageQueueService.add<ResumeWaitingWorkflowStepJobData>(
+      RESUME_WAITING_WORKFLOW_STEP_JOB_NAME,
+      { workspaceId, waitId },
+      {
+        ...buildRunWorkflowJobOptions(workflowRunId),
+        deduplication: { id: `overdue-workflow-step-wait-${waitId}` },
+      },
+    );
+  }
+
   async findWait({
     workspaceId,
     waitId,

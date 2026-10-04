@@ -188,7 +188,7 @@ describe('WorkflowStepWaitResolverWorkspaceService', () => {
     );
   });
 
-  it('stops putting the resolution off after its last attempt', async () => {
+  it('keeps putting the resolution off, at most a minute apart, while the step is pausing', async () => {
     const { service, workflowStepWaitWorkspaceService } = buildService({
       stepStatus: StepStatus.RUNNING,
     });
@@ -196,12 +196,16 @@ describe('WorkflowStepWaitResolverWorkspaceService', () => {
     await service.resolve({
       workspaceId: WORKSPACE_ID,
       waitId: WAIT_ID,
-      attempt: 10,
+      event: EVENT,
+      attempt: 20,
     });
 
+    expect(workflowStepWaitWorkspaceService.claim).not.toHaveBeenCalled();
     expect(
       workflowStepWaitWorkspaceService.scheduleResolution,
-    ).not.toHaveBeenCalled();
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({ event: EVENT, attempt: 21, delayMs: 60_000 }),
+    );
   });
 
   it('reports a timeout when an event wait expires', async () => {

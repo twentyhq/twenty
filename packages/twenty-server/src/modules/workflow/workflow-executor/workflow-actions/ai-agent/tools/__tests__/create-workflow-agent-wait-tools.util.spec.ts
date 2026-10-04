@@ -8,7 +8,8 @@ describe('createWorkflowAgentWaitTools', () => {
   it('refuses a second wait of the same execution so only one is pending', async () => {
     const tools = createWorkflowAgentWaitTools();
     const waitForEvent = tools.wait_for_event as unknown as ExecutableTool;
-    const waitForDuration = tools.wait_for_duration as unknown as ExecutableTool;
+    const waitForDuration =
+      tools.wait_for_duration as unknown as ExecutableTool;
 
     await expect(
       waitForEvent.execute({ objectName: 'company', action: 'updated' }),

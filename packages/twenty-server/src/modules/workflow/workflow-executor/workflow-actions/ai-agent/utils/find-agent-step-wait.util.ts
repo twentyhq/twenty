@@ -1,4 +1,3 @@
-import { type StepResult, type ToolSet } from 'ai';
 import { isPlainObject } from 'twenty-shared/utils';
 import {
   type WorkflowStepWait,
@@ -10,7 +9,7 @@ import { WORKFLOW_AGENT_WAIT_TOOL_NAMES } from 'src/modules/workflow/workflow-ex
 
 // The wait an execution paused on, when it ended on a wait tool call
 export const findAgentStepWait = (
-  steps: StepResult<ToolSet>[],
+  steps: { toolResults: { toolName: string; output: unknown }[] }[],
 ): WorkflowStepWait | undefined => {
   const lastStepToolResults = steps[steps.length - 1]?.toolResults ?? [];
 

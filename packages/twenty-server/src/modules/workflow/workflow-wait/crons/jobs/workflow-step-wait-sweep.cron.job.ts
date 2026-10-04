@@ -46,7 +46,7 @@ export class WorkflowStepWaitSweepCronJob {
     );
 
     for (const { id, workspaceId, workflowRunId } of overdueWaits) {
-      await this.workflowStepWaitWorkspaceService.scheduleResolution({
+      await this.workflowStepWaitWorkspaceService.scheduleOverdueResolution({
         workspaceId,
         workflowRunId,
         waitId: id,
