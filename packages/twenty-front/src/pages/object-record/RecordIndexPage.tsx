@@ -1,6 +1,7 @@
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
 import { isCoreWorkflowsIndexEnabled } from '@/object-core/workflows/utils/isCoreWorkflowsIndexEnabled';
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
@@ -15,6 +16,12 @@ import { isUndefined } from '@sniptt/guards';
 import { lazy, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import { FeatureFlagKey } from 'twenty-shared/types';
+
+const AgentCoreIndexPage = lazy(() =>
+  import('~/pages/object-core/AgentCoreIndexPage').then((module) => ({
+    default: module.AgentCoreIndexPage,
+  })),
+);
 
 const WorkflowCoreIndexPage = lazy(() =>
   import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
@@ -57,6 +64,15 @@ export const RecordIndexPage = () => {
     isUndefined(routeObjectMetadataItem)
   ) {
     return <WorkspaceRouteUnavailable />;
+  }
+
+  // Agents are metadata, not workspace records, so no object metadata backs this route
+  if (objectNamePlural === CoreObjectNamePlural.Agent) {
+    return (
+      <Suspense fallback={<RecordIndexSkeletonLoader />}>
+        <AgentCoreIndexPage />
+      </Suspense>
+    );
   }
 
   if (isUndefined(contextStoreCurrentObjectMetadataItemId)) {

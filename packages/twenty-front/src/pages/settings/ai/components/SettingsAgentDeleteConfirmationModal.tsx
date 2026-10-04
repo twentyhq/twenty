@@ -1,14 +1,15 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 
 import { useMutation } from '@apollo/client/react';
-import { SettingsPath } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components';
 import { DeleteOneAgentDocument } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
 
@@ -23,7 +24,7 @@ export const SettingsAgentDeleteConfirmationModal = ({
 }: SettingsAgentDeleteConfirmationModalProps) => {
   const { t } = useLingui();
   const { closeDialog } = useDialog();
-  const navigate = useNavigateSettings();
+  const navigate = useNavigateApp();
   const { enqueueToast } = useToast();
   const [deleteAgent] = useMutation(DeleteOneAgentDocument);
 
@@ -35,7 +36,9 @@ export const SettingsAgentDeleteConfirmationModal = ({
         },
       });
       closeDialog(DELETE_AGENT_MODAL_ID);
-      navigate(SettingsPath.AI);
+      navigate(AppPath.RecordIndexPage, {
+        objectNamePlural: CoreObjectNamePlural.Agent,
+      });
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }

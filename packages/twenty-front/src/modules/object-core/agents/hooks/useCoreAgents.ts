@@ -30,7 +30,7 @@ export const useCoreAgents = ({
 } = {}) => {
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
-  // Settings creates and deletes agents without touching this query's cache
+  // Workflow steps and the agent page create and delete agents without touching this query's cache
   const { data, loading, error } = useQuery(FindManyAgentsDocument, {
     fetchPolicy: 'cache-and-network',
   });

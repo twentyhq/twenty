@@ -2,7 +2,6 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import { useDebouncedCallback } from 'use-debounce';
@@ -10,12 +9,9 @@ import { useDebouncedCallback } from 'use-debounce';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
 import {
-  type CreateAgentInput,
-  CreateOneAgentDocument,
   type FindOneAgentQuery,
   UpdateOneAgentDocument,
 } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -27,20 +23,18 @@ export const useSettingsAgentSave = ({
   isRoleDirty,
   validateForm,
 }: {
-  agent?: FindOneAgentQuery['findOneAgent'];
+  agent: FindOneAgentQuery['findOneAgent'];
   formValues: SettingsAiAgentFormValues;
   initialFormValues: SettingsAiAgentFormValues;
   isReadonlyMode: boolean;
   isRoleDirty: boolean;
   validateForm: () => boolean;
 }) => {
-  const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [originalFormValues, setOriginalFormValues] =
     useState(initialFormValues);
 
-  const [createAgent] = useMutation(CreateOneAgentDocument);
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
 
   const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
@@ -84,12 +78,7 @@ export const useSettingsAgentSave = ({
   });
 
   const autoSave = useDebouncedCallback(async () => {
-    if (
-      !isDefined(agent) ||
-      isReadonlyMode ||
-      !validateForm() ||
-      isSubmitting
-    ) {
+    if (isReadonlyMode || !validateForm() || isSubmitting) {
       return;
     }
 
@@ -136,55 +125,5 @@ export const useSettingsAgentSave = ({
     };
   }, [autoSave]);
 
-  const handleSave = async () => {
-    if (isReadonlyMode || !validateForm()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      if (isRoleDirty && isDefined(formValues.role)) {
-        const isRoleSaved = await saveDraftRole();
-
-        if (!isRoleSaved) {
-          setIsSubmitting(false);
-          return;
-        }
-      }
-
-      if (!isDefined(agent)) {
-        const input: CreateAgentInput = {
-          name: formValues.name,
-          label: formValues.label,
-          description: formValues.description,
-          icon: formValues.icon,
-          modelId: formValues.modelId,
-          roleId: formValues.role,
-          prompt: formValues.prompt,
-          modelConfiguration: formValues.modelConfiguration,
-          responseFormat: formValues.responseFormat,
-          evaluationInputs: formValues.evaluationInputs,
-        };
-
-        await createAgent({
-          variables: { input },
-        });
-        navigate(SettingsPath.AI);
-        return;
-      }
-
-      await updateAgent({
-        variables: { input: buildUpdateInput(agent.id) },
-      });
-
-      navigate(SettingsPath.AI);
-    } catch (error) {
-      enqueueToast(getToastOptionsFromError({ error }));
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return { handleSave, isSubmitting, scheduleAutoSave: autoSave };
+  return { scheduleAutoSave: autoSave };
 };

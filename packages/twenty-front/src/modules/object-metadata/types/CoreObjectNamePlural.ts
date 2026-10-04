@@ -1,4 +1,5 @@
 export enum CoreObjectNamePlural {
+  Agent = 'agents',
   ApiKey = 'apiKeys',
   Attachment = 'attachments',
   Blocklist = 'blocklists',

@@ -12,6 +12,14 @@ export const CORE_OBJECT_SHOW_PAGES: ReadonlyMap<
   CoreObjectShowPageComponent
 > = new Map<CoreObjectNameSingular, CoreObjectShowPageComponent>([
   [
+    CoreObjectNameSingular.Agent,
+    lazy(() =>
+      import('~/pages/object-core/AgentCoreObjectShowPage').then((module) => ({
+        default: module.AgentCoreObjectShowPage,
+      })),
+    ),
+  ],
+  [
     CoreObjectNameSingular.Workflow,
     lazy(() =>
       import('~/pages/object-core/WorkflowCoreObjectShowPage').then(

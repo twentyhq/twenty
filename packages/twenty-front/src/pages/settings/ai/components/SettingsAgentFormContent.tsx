@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import {
@@ -13,10 +12,10 @@ import {
 } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
@@ -25,9 +24,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { type FindOneAgentQuery } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsAgentEvalsTab } from '~/pages/settings/ai/components/SettingsAgentEvalsTab';
 import { SettingsAgentLogsTab } from '~/pages/settings/ai/components/SettingsAgentLogsTab';
 import { SettingsAgentRoleTab } from '~/pages/settings/ai/components/SettingsAgentRoleTab';
@@ -37,7 +34,6 @@ import { useSettingsAgentFormState } from '~/pages/settings/ai/hooks/useSettings
 import { useSettingsAgentSave } from '~/pages/settings/ai/hooks/useSettingsAgentSave';
 import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
 import { getSettingsAgentInitialFormValues } from '~/pages/settings/ai/utils/getSettingsAgentInitialFormValues';
-import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 import { isOwnedByInstalledApplication } from '~/pages/settings/ai/utils/isOwnedByInstalledApplication';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -50,7 +46,7 @@ const StyledContentContainer = styled.div`
 `;
 
 type SettingsAgentFormContentProps = {
-  agent?: FindOneAgentQuery['findOneAgent'];
+  agent: FindOneAgentQuery['findOneAgent'];
 };
 
 export const SettingsAgentFormContent = ({
@@ -58,16 +54,14 @@ export const SettingsAgentFormContent = ({
 }: SettingsAgentFormContentProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const navigate = useNavigateSettings();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const isCreateMode = !isDefined(agent);
   const isReadonlyMode = isOwnedByInstalledApplication({
-    applicationId: agent?.applicationId,
+    applicationId: agent.applicationId,
     workspaceCustomApplicationId:
       currentWorkspace?.workspaceCustomApplication?.id,
   });
-  const agentId = agent?.id ?? '';
+  const agentId = agent.id;
 
   const [initialFormValues] = useState(() =>
     getSettingsAgentInitialFormValues(agent),
@@ -86,10 +80,6 @@ export const SettingsAgentFormContent = ({
     settingsDraftRoleFamilyState,
     formValues.role || '',
   );
-  const setSettingsDraftRole = useSetAtomFamilyState(
-    settingsDraftRoleFamilyState,
-    formValues.role || '',
-  );
   const settingsPersistedRole = useAtomFamilyStateValue(
     settingsPersistedRoleFamilyState,
     formValues.role || '',
@@ -99,7 +89,7 @@ export const SettingsAgentFormContent = ({
     isDefined(formValues.role) &&
     !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
 
-  const { handleSave, isSubmitting, scheduleAutoSave } = useSettingsAgentSave({
+  const { scheduleAutoSave } = useSettingsAgentSave({
     agent,
     formValues,
     initialFormValues,
@@ -113,13 +103,8 @@ export const SettingsAgentFormContent = ({
     value: SettingsAiAgentFormValues[keyof SettingsAiAgentFormValues],
   ) => {
     setFieldValue(field, value);
-
-    if (isDefined(agent)) {
-      scheduleAutoSave();
-    }
+    scheduleAutoSave();
   };
-
-  const canSave = !isReadonlyMode && validateForm() && !isSubmitting;
 
   const tabs = [
     {
@@ -144,15 +129,7 @@ export const SettingsAgentFormContent = ({
     },
   ];
 
-  const handleCancel = () => {
-    if (isRoleDirty && isDefined(settingsPersistedRole)) {
-      setSettingsDraftRole(settingsPersistedRole);
-    }
-
-    navigate(SettingsPath.AI);
-  };
-
-  const title = isDefined(agent) ? agent.label : t`New Agent`;
+  const title = agent.label;
   const AgentIcon = getIcon(formValues.icon || 'IconLego');
 
   const isRoleTab = activeTabId === SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.ROLE;
@@ -161,8 +138,7 @@ export const SettingsAgentFormContent = ({
   const isEvalsTab = activeTabId === SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.EVALS;
   const isLogsTab = activeTabId === SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.LOGS;
 
-  const isFormDisabled =
-    isReadonlyMode || (isDefined(agent) ? !agent.isCustom : false);
+  const isFormDisabled = isReadonlyMode || !agent.isCustom;
   const isEvalsDisabled =
     process.env.NODE_ENV === 'development' ? isReadonlyMode : isFormDisabled;
 
@@ -174,18 +150,7 @@ export const SettingsAgentFormContent = ({
         icon={
           <AgentIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         }
-        actionButton={
-          isCreateMode ? (
-            <SaveAndCancelButtons
-              onSave={handleSave}
-              onCancel={handleCancel}
-              isSaveDisabled={!canSave}
-              isLoading={isSubmitting}
-              isCancelDisabled={isSubmitting}
-            />
-          ) : undefined
-        }
-        links={getSettingsAiBreadcrumbLinks(title)}
+        links={getCoreAgentBreadcrumbLinks([{ children: title }])}
         secondaryBar={
           <SettingsTabBar
             aria-label={t`Agent settings`}

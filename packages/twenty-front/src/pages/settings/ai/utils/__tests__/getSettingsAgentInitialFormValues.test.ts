@@ -1,4 +1,3 @@
-import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { getSettingsAgentInitialFormValues } from '~/pages/settings/ai/utils/getSettingsAgentInitialFormValues';
 
 const agent = {
@@ -22,22 +21,6 @@ const agent = {
 };
 
 describe('getSettingsAgentInitialFormValues', () => {
-  it('starts a new agent on the workspace default model with an empty form', () => {
-    expect(getSettingsAgentInitialFormValues()).toEqual({
-      name: '',
-      label: '',
-      description: '',
-      icon: 'IconLego',
-      modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
-      role: null,
-      prompt: '',
-      isCustom: true,
-      modelConfiguration: {},
-      responseFormat: { type: 'text' },
-      evaluationInputs: [],
-    });
-  });
-
   it('maps a loaded agent onto the form fields', () => {
     expect(getSettingsAgentInitialFormValues(agent)).toEqual({
       name: 'salesAssistant',
