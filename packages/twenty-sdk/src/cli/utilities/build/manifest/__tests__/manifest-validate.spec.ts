@@ -9,7 +9,10 @@ import {
   AggregateOperations,
   FieldMetadataType,
   PageLayoutTabLayoutMode,
+  PageLayoutType,
+  PageLayoutWidgetVerticalListHeightBehavior,
   RelationType,
+  WidgetType,
 } from 'twenty-shared/types';
 import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
 
@@ -574,7 +577,7 @@ describe('manifestValidate', () => {
         {
           universalIdentifier: 'b0a5f0f2-6c2e-4d1c-9d0b-2f8a4c3e1a02',
           title: 'Total opportunities',
-          type: 'GRAPH',
+          type: WidgetType.GRAPH,
           configuration,
         },
       ],
@@ -677,7 +680,7 @@ describe('manifestValidate', () => {
                   {
                     universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000010',
                     name: 'Record page',
-                    type: 'RECORD_PAGE',
+                    type: PageLayoutType.RECORD_PAGE,
                     tabs: [legacyTab],
                   },
                 ]
@@ -716,7 +719,7 @@ describe('manifestValidate', () => {
                 {
                   universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000013',
                   title: 'Timeline',
-                  type: 'TIMELINE',
+                  type: WidgetType.TIMELINE,
                   configuration: { configurationType: 'TIMELINE' },
                   [positionKey]:
                     positionKey === 'position'
@@ -748,7 +751,7 @@ describe('manifestValidate', () => {
     ): Manifest['pageLayouts'][number] => ({
       universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000010',
       name: 'Record page',
-      type: 'RECORD_PAGE',
+      type: PageLayoutType.RECORD_PAGE,
       objectUniversalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000011',
       tabs: [
         {
@@ -760,8 +763,8 @@ describe('manifestValidate', () => {
             {
               universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000013',
               title: 'App',
-              type: 'FRONT_COMPONENT',
-              heightBehavior: 'TAB_VIEWPORT',
+              type: WidgetType.FRONT_COMPONENT,
+              heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
               configuration: {
                 configurationType: 'FRONT_COMPONENT',
                 frontComponentUniversalIdentifier:
