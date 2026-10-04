@@ -4,6 +4,12 @@ import { parsePendingToolCall } from '@/ai/utils/parsePendingToolCall';
 
 const QUESTIONS = [{ header: 'Plan', question: 'Which plan?', options: [] }];
 
+const QUESTION = {
+  header: 'Plan',
+  question: 'Which plan?',
+  options: [{ label: 'Pro' }, { label: 'Team' }],
+};
+
 const FIELDS = [{ name: 'closeDate', label: 'Close date', type: 'DATE' }];
 
 const toolPart = ({
@@ -26,7 +32,12 @@ const toolPart = ({
 describe('parsePendingToolCall', () => {
   it.each([
     [
-      'questions',
+      'a question',
+      toolPart({ toolName: 'ask_question', input: QUESTION }),
+      { toolCallId: 'call-1', kind: 'question', question: QUESTION },
+    ],
+    [
+      'questions asked before ask_question',
       toolPart({ toolName: 'ask_questions', input: { questions: QUESTIONS } }),
       { toolCallId: 'call-1', kind: 'questions', questions: QUESTIONS },
     ],
@@ -52,6 +63,13 @@ describe('parsePendingToolCall', () => {
     [
       'a tool that does not pause',
       toolPart({ toolName: 'search_help_center', input: {} }),
+    ],
+    [
+      'a question without options',
+      toolPart({
+        toolName: 'ask_question',
+        input: { ...QUESTION, options: [] },
+      }),
     ],
     [
       'questions without any question',

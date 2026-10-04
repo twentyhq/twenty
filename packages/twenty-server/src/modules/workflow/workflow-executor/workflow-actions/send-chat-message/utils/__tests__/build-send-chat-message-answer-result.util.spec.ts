@@ -14,7 +14,7 @@ const buildResult = (result: Record<string, unknown>) =>
 
 describe('buildSendChatMessageAnswerResult', () => {
   it.each(['send_email', 'draft_email'])(
-    'tells later steps the member approved %s',
+    'reports %s as executed once approved',
     (toolName) => {
       expect(
         buildResult({
@@ -24,9 +24,8 @@ describe('buildSendChatMessageAnswerResult', () => {
         }),
       ).toEqual({
         threadId: 'thread-id',
-        isApproved: true,
-        approvedToolName: toolName,
-        status: 'approved',
+        outcome: 'executed',
+        toolName,
         arguments: EMAIL_ARGUMENTS,
         output: { messageId: 'message-id' },
         feedback: null,
@@ -35,7 +34,7 @@ describe('buildSendChatMessageAnswerResult', () => {
     },
   );
 
-  it('counts an approved call that failed as approved', () => {
+  it('keeps the error of an approved call that failed', () => {
     expect(
       buildResult({
         status: 'failed',
@@ -43,14 +42,27 @@ describe('buildSendChatMessageAnswerResult', () => {
         error: 'No connected account',
       }),
     ).toMatchObject({
-      isApproved: true,
-      approvedToolName: 'send_email',
-      status: 'failed',
+      outcome: 'failed',
+      toolName: 'send_email',
+      output: null,
       error: 'No connected account',
     });
   });
 
-  it('names no action when the member rejects the call', () => {
+  it('keeps the latest values of a record that changed before approval', () => {
+    expect(
+      buildResult({
+        status: 'conflict',
+        proposal: { toolName: 'update_one_company', arguments: {} },
+        output: { latestValues: { employees: 12 } },
+      }),
+    ).toMatchObject({
+      outcome: 'conflict',
+      output: { latestValues: { employees: 12 } },
+    });
+  });
+
+  it('keeps the feedback of a rejected call', () => {
     expect(
       buildResult({
         status: 'rejected',
@@ -58,9 +70,21 @@ describe('buildSendChatMessageAnswerResult', () => {
         feedback: 'Not yet',
       }),
     ).toMatchObject({
-      isApproved: false,
-      approvedToolName: null,
+      outcome: 'rejected',
+      toolName: 'send_email',
       feedback: 'Not yet',
     });
   });
+
+  it.each(['pending', 'running', 'skipped', undefined])(
+    'refuses to report a %s call',
+    (status) => {
+      expect(() =>
+        buildResult({
+          status,
+          proposal: { toolName: 'send_email', arguments: EMAIL_ARGUMENTS },
+        }),
+      ).toThrow('The answer to the action could not be read');
+    },
+  );
 });

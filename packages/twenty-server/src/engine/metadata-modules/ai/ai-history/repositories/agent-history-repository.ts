@@ -7,7 +7,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
-import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
+import { type FindOptionsWhere } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -195,35 +195,6 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
         generatedMaps: result.raw,
         raw: result.raw,
       };
-    });
-  }
-
-  upsert(
-    workspaceId: string,
-    values: QueryDeepPartialEntity<TRecord>,
-    conflictPaths: string[],
-  ) {
-    return this.run(workspaceId, async (repository, context) => {
-      // workspace upsert selects before inserting, so serialize concurrent checkpoints per identity
-      const valuesByField: ObjectLiteral = values;
-      const identity = [...conflictPaths]
-        .sort()
-        .map((field) => [field, valuesByField[field]]);
-      await context.manager.query(
-        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-        [
-          `agent-history-upsert:${workspaceId}:${this.name}:${JSON.stringify(identity)}`,
-        ],
-      );
-      return repository.upsert(
-        (await addAgentMessageSenderWorkspaceMember({
-          name: this.name,
-          values,
-          workspaceId,
-          context,
-        })) as QueryDeepPartialEntity<TRecord>,
-        conflictPaths,
-      );
     });
   }
 

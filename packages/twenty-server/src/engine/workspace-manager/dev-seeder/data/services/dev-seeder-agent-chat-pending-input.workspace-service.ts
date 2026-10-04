@@ -26,7 +26,7 @@ import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { OPPORTUNITY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { askQuestionsCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/ask-questions-call.util';
+import { askQuestionCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/ask-question-call.util';
 import { buildSendEmailArguments } from 'src/engine/workspace-manager/dev-seeder/data/utils/build-send-email-arguments.util';
 import { proposeEmailCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/propose-email-call.util';
 import { proposeRecordCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/propose-record-call.util';
@@ -219,7 +219,7 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
     askedBy: 'TIM',
     prompt: 'Help me plan the Q3 customer webinar and draft the invitation.',
     intro: 'Two choices before I draft the invitation:',
-    calls: [askQuestionsCall(WEBINAR_QUESTIONS)],
+    calls: WEBINAR_QUESTIONS.map(askQuestionCall),
   },
   {
     threadId:
@@ -261,11 +261,9 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
     askedBy: 'TIM',
     prompt: 'Linear signed. Set up their onboarding.',
     intro: 'One question before I create the onboarding tasks:',
-    calls: [askQuestionsCall(ONBOARDING_OWNER_QUESTIONS)],
+    calls: ONBOARDING_OWNER_QUESTIONS.map(askQuestionCall),
     answer: {
-      response: {
-        answers: [{ questionIndex: 0, selectedOptionIndices: [1] }],
-      },
+      response: { selectedOptionIndices: [1] },
       reply:
         'Phil owns the Linear onboarding. I will create the kickoff, the SSO setup and the data import tasks for him.',
     },

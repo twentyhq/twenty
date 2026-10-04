@@ -8,7 +8,6 @@ import { Injectable } from '@nestjs/common';
 import { ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type FindOptionsWhere, In } from 'typeorm';
-import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
@@ -18,7 +17,7 @@ import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-h
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-db-parts.util';
 import { findAwaitingPausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool.util';
-import { skipAwaitingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/skip-awaiting-tool-parts.util';
+import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -140,28 +139,30 @@ export class AgentChatService {
     parts: ExtendedUIMessage['parts'];
     workspaceId: string;
   }): Promise<void> {
-    await this.messageRepository.upsert(
-      workspaceId,
-      {
-        id,
-        threadId,
-        turnId,
-        role: AgentMessageRole.ASSISTANT,
-        processedAt: new Date().toISOString(),
-      },
-      ['id'],
-    );
-
-    await this.messagePartRepository.delete(workspaceId, { messageId: id });
-
     const dbParts = mapUIMessagePartsToDBParts(parts, id);
 
-    if (dbParts.length > 0) {
-      await this.messagePartRepository.insert(
-        workspaceId,
-        dbParts as QueryDeepPartialEntity<AgentMessagePartWorkspaceEntity>[],
-      );
-    }
+    // the message is replaced whole, so no reader or crash ever finds it without its parts
+    await this.conversationWriterService.runInTransaction(
+      workspaceId,
+      async (scope) => {
+        await scope.upsert(
+          'agentMessage',
+          {
+            id,
+            threadId,
+            turnId,
+            role: AgentMessageRole.ASSISTANT,
+            processedAt: new Date().toISOString(),
+          },
+          ['id'],
+        );
+        await scope.delete('agentMessagePart', { messageId: id });
+
+        if (dbParts.length > 0) {
+          await scope.insert('agentMessagePart', dbParts);
+        }
+      },
+    );
   }
 
   async findLatestSentUserMessage({
@@ -523,6 +524,30 @@ export class AgentChatService {
     return parts.filter((part) => isDefined(findAwaitingPausingTool(part)));
   }
 
+  // only a call still pending is claimed, so two answers can never both run it; the rest of the
+  // pending output, such as the workflow step waiting on it, is kept
+  async claimToolCallAnswer({
+    partId,
+    toolOutput,
+    workspaceId,
+  }: {
+    partId: string;
+    toolOutput: Record<string, unknown>;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const claimedParts = await this.messagePartRepository.query(
+      workspaceId,
+      ({ manager, table }) =>
+        manager.query<{ id: string }[]>(
+          `WITH claimed_part AS (UPDATE ${table('agentMessagePart')} SET "toolOutput" = "toolOutput" || $2::jsonb, "updatedAt" = now()
+           WHERE id = $1 AND "toolOutput"->'result'->>'status' = 'pending' RETURNING id) SELECT id FROM claimed_part`,
+          [partId, JSON.stringify(toolOutput)],
+        ),
+    );
+
+    return claimedParts.length === 1;
+  }
+
   // written together so an answer never strands a conversation waiting on answered calls
   async recordToolCallAnswer({
     threadId,
@@ -557,7 +582,7 @@ export class AgentChatService {
     );
   }
 
-  // clearing the marker is the claim, so only one caller closes the calls as skipped
+  // clearing the marker is the claim, so only one caller closes the calls
   async closePendingToolCalls({
     threadId,
     messageId,
@@ -579,7 +604,7 @@ export class AgentChatService {
       return;
     }
 
-    await skipAwaitingToolParts({
+    await closeOpenToolParts({
       messagePartRepository: this.messagePartRepository,
       messageId,
       workspaceId,

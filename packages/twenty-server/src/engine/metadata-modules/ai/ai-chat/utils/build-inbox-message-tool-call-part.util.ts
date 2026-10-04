@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  ASK_QUESTIONS_TOOL_NAME,
+  ASK_QUESTION_TOOL_NAME,
   type ExtendedUIMessagePart,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
@@ -12,9 +12,9 @@ import { buildToolPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/buil
 import { buildLogicFunctionToolName } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-name.util';
 import { type ResolveInboxProposal } from 'src/engine/metadata-modules/ai/ai-chat/types/resolve-inbox-proposal.type';
 import {
-  askQuestionsInputSchema,
-  buildAskQuestionsPendingOutput,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-questions.pausing-tool';
+  askQuestionInputSchema,
+  buildAskQuestionPendingOutput,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-question.pausing-tool';
 import {
   buildProposeToolCallPendingOutput,
   proposeToolCallInputSchema,
@@ -74,14 +74,14 @@ const buildPausingToolPart = async ({
   resolveProposal: ResolveInboxProposal;
 }): Promise<ExtendedUIMessagePart> => {
   switch (toolName) {
-    case ASK_QUESTIONS_TOOL_NAME: {
-      const questionsInput = parseInput(askQuestionsInputSchema, input);
+    case ASK_QUESTION_TOOL_NAME: {
+      const question = parseInput(askQuestionInputSchema, input);
 
       return buildToolPart({
         toolName,
         toolCallId,
-        input: questionsInput,
-        output: buildAskQuestionsPendingOutput(questionsInput),
+        input: question,
+        output: buildAskQuestionPendingOutput(question),
       });
     }
     case REQUEST_FORM_TOOL_NAME:
@@ -111,7 +111,7 @@ const buildPausingToolPart = async ({
     }
     default:
       return throwInvalidToolCall(
-        `toolName must be ${ASK_QUESTIONS_TOOL_NAME}, ${REQUEST_FORM_TOOL_NAME} or ${PROPOSE_TOOL_CALL_TOOL_NAME}`,
+        `toolName must be ${ASK_QUESTION_TOOL_NAME}, ${REQUEST_FORM_TOOL_NAME} or ${PROPOSE_TOOL_CALL_TOOL_NAME}`,
       );
   }
 };
