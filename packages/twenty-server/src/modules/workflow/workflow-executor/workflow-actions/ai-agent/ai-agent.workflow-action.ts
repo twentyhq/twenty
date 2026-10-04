@@ -215,7 +215,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     }
 
     if (executionResult.isPaused) {
-      if (recordedConversation?.isAwaitingAnswer === true) {
+      if (recordedConversation?.isAwaitingAnswer) {
         return { wait: { type: 'ANSWER' } };
       }
 

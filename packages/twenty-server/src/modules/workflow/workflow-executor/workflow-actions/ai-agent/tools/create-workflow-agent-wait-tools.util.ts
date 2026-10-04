@@ -9,11 +9,11 @@ import { createWaitForEventTool } from 'src/modules/workflow/workflow-executor/w
 import { type WorkflowAgentWaitSlot } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/workflow-agent-wait-slot.type';
 
 // a step resumes on one wait, so a second wait call of the same execution is refused instead of left pending
-export const createWorkflowAgentWaitTools = (): ToolSet => {
+export const createWorkflowAgentWaitTools = () => {
   const waitSlot: WorkflowAgentWaitSlot = { isTaken: false };
 
   return {
     [WAIT_FOR_EVENT_TOOL_NAME]: createWaitForEventTool(waitSlot),
     [WAIT_FOR_DURATION_TOOL_NAME]: createWaitForDurationTool(waitSlot),
-  };
+  } satisfies ToolSet;
 };
