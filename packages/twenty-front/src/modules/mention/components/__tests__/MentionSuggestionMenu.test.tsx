@@ -75,4 +75,26 @@ describe('MentionSuggestionMenu', () => {
       'Ada Lovelace',
     ]);
   });
+
+  it('keeps objects sharing a plural label in separate sections', () => {
+    const Wrapper = getJestMetadataAndApolloMocksWrapper({});
+
+    render(
+      <Wrapper>
+        <I18nProvider i18n={i18n}>
+          <MentionSuggestionMenu
+            items={[
+              buildResult('Acme', CoreObjectNameSingular.Company, 'Accounts'),
+              buildResult('Globex', 'account', 'Accounts'),
+            ]}
+            onSelect={jest.fn()}
+            editor={editor}
+            range={{ from: 0, to: 1 }}
+          />
+        </I18nProvider>
+      </Wrapper>,
+    );
+
+    expect(screen.getAllByText('Accounts')).toHaveLength(2);
+  });
 });

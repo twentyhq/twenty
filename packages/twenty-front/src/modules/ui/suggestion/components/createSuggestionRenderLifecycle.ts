@@ -50,9 +50,12 @@ export const createSuggestionRenderLifecycle = <
     ...props.items,
   ];
 
-  const buildMenuProps = (props: SuggestionCallbackProps<TItem>) =>
+  const buildMenuProps = (
+    props: SuggestionCallbackProps<TItem>,
+    items: TItem[],
+  ) =>
     config.getMenuProps({
-      items: getItems(props),
+      items,
       onSelect: (item: TItem) => {
         props.command(item);
         closeMenu();
@@ -62,38 +65,49 @@ export const createSuggestionRenderLifecycle = <
       query: props.query,
     });
 
-  const createRenderer = (props: SuggestionCallbackProps<TItem>) => {
+  const createRenderer = (
+    props: SuggestionCallbackProps<TItem>,
+    items: TItem[],
+  ) => {
     renderer = new ReactRenderer(config.component, {
       editor,
-      props: buildMenuProps(props),
+      props: buildMenuProps(props, items),
     });
     document.body.appendChild(renderer.element);
   };
 
   return {
     onStart: (props: SuggestionCallbackProps<TItem>) => {
-      if (!props.clientRect || getItems(props).length === 0) {
+      if (!props.clientRect) {
         return;
       }
 
-      createRenderer(props);
+      const items = getItems(props);
+
+      if (items.length === 0) {
+        return;
+      }
+
+      createRenderer(props, items);
     },
     onUpdate: (props: SuggestionCallbackProps<TItem>) => {
       if (!props.clientRect) {
         return;
       }
 
-      if (getItems(props).length === 0) {
+      const items = getItems(props);
+
+      if (items.length === 0) {
         closeMenu();
         return;
       }
 
       if (renderer === null) {
-        createRenderer(props);
+        createRenderer(props, items);
         return;
       }
 
-      renderer.updateProps(buildMenuProps(props));
+      renderer.updateProps(buildMenuProps(props, items));
     },
     onKeyDown: (props: { event: KeyboardEvent }) => {
       if (props.event.key === 'Escape') {

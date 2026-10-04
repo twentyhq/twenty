@@ -40,7 +40,7 @@ const SuggestionMenuInner = <TItem,>(
     getItemKey,
     renderItem,
     selectedItemPreview,
-    getItemSectionLabel,
+    getItemSection,
     onKeyDown,
   } = props;
 
@@ -207,11 +207,11 @@ const SuggestionMenuInner = <TItem,>(
         <OverlayMenuList ref={listContainerRef}>
           {items.map((item, index) => {
             const isSelected = index === clampedSelectedIndex;
-            const sectionLabel = getItemSectionLabel?.(item);
+            const section = getItemSection?.(item);
             const isFirstOfSection =
-              isDefined(sectionLabel) &&
+              isDefined(section) &&
               (index === 0 ||
-                getItemSectionLabel?.(items[index - 1]) !== sectionLabel);
+                getItemSection?.(items[index - 1])?.key !== section.key);
 
             return (
               <div
@@ -223,7 +223,7 @@ const SuggestionMenuInner = <TItem,>(
                 }}
               >
                 {isFirstOfSection && (
-                  <DropdownMenuSectionLabel label={sectionLabel} />
+                  <DropdownMenuSectionLabel label={section.label} />
                 )}
                 {renderItem(item, isSelected)}
               </div>

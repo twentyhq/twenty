@@ -6,6 +6,11 @@ export type SuggestionMenuSelectedItemPreview<TItem> = {
   width: number;
 };
 
+export type SuggestionMenuSection = {
+  key: string;
+  label: string;
+};
+
 export type SuggestionMenuProps<TItem> = {
   items: TItem[];
   onSelect: (item: TItem) => void;
@@ -14,7 +19,7 @@ export type SuggestionMenuProps<TItem> = {
   getItemKey: (item: TItem) => string;
   renderItem: (item: TItem, isSelected: boolean) => ReactNode;
   selectedItemPreview?: SuggestionMenuSelectedItemPreview<TItem>;
-  getItemSectionLabel?: (item: TItem) => string;
+  getItemSection?: (item: TItem) => SuggestionMenuSection;
   onKeyDown?: (
     event: KeyboardEvent,
     selectedIndex: number,

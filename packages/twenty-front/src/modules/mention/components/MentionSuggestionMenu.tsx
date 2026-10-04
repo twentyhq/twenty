@@ -11,8 +11,10 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 const getItemKey = (item: MentionSearchResult) =>
   `${item.objectNameSingular}-${item.recordId}`;
 
-const getItemSectionLabel = (item: MentionSearchResult) =>
-  item.objectLabelPlural;
+const getItemSection = (item: MentionSearchResult) => ({
+  key: item.objectNameSingular,
+  label: item.objectLabelPlural,
+});
 
 const renderItem = (
   item: MentionSearchResult,
@@ -51,7 +53,7 @@ export const MentionSuggestionMenu = forwardRef<
       editor={editor}
       range={range}
       getItemKey={getItemKey}
-      getItemSectionLabel={getItemSectionLabel}
+      getItemSection={getItemSection}
       renderItem={(item, isSelected) => renderItem(item, isSelected, onSelect)}
     />
   );
