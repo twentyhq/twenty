@@ -4,8 +4,6 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { useToast } from 'twenty-ui/components';
 
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { filterNewParticipantMentions } from '@/ai/utils/filterNewParticipantMentions';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -24,15 +22,17 @@ export const useAddAgentChatThreadParticipants = () => {
       threadId: string;
       serializedMessage: string;
     }) => {
-      const participantMentions = filterNewParticipantMentions({
-        participantMentions:
-          getParticipantMentionsFromSerializedDocument(serializedMessage),
-        thread: store.get(
-          agentChatThreadRecordFamilySelector.selectorFamily(threadId),
-        ),
-        currentWorkspaceMemberId: store.get(currentWorkspaceMemberState.atom)
-          ?.id,
-      });
+      const currentWorkspaceMemberId = store.get(
+        currentWorkspaceMemberState.atom,
+      )?.id;
+      // Members already following are sent too, so the mention brings the
+      // chat back to their inbox
+      const participantMentions = getParticipantMentionsFromSerializedDocument(
+        serializedMessage,
+      ).filter(
+        ({ workspaceMemberId }) =>
+          workspaceMemberId !== currentWorkspaceMemberId,
+      );
 
       if (participantMentions.length === 0) {
         return;
@@ -62,7 +62,7 @@ export const useAddAgentChatThreadParticipants = () => {
         if (notAddedLabels !== '') {
           enqueueToast({
             variant: 'warning',
-            children: t`${notAddedLabels} could not be added to this chat because they don't have access to it.`,
+            children: t`${notAddedLabels} could not be added to this chat because they can't reply in it.`,
           });
         }
       } catch (error) {

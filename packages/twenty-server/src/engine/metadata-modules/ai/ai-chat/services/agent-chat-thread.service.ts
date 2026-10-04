@@ -93,7 +93,7 @@ export class AgentChatThreadService {
   }
 
   // A mentioned member follows the chat like one who wrote in it, and finds
-  // it unread in their inbox even if they had archived it
+  // it unread in their inbox even if they had read or archived it
   async addParticipants({
     participantWorkspaceMemberIds,
     ...args
@@ -103,11 +103,7 @@ export class AgentChatThreadService {
     const thread = await this.getWritableThread(args);
     const candidateMemberIds = [
       ...new Set(participantWorkspaceMemberIds),
-    ].filter(
-      (memberId) =>
-        memberId !== args.workspaceMemberId &&
-        memberId !== thread.workspaceMemberId,
-    );
+    ].filter((memberId) => memberId !== args.workspaceMemberId);
 
     if (candidateMemberIds.length === 0) {
       return [];
@@ -134,6 +130,7 @@ export class AgentChatThreadService {
              "writerWorkspaceMemberIds" = COALESCE("writerWorkspaceMemberIds", '{}') || ARRAY(
                SELECT member_id FROM unnest($2::text[]) AS member_id
                WHERE NOT member_id = ANY(COALESCE("writerWorkspaceMemberIds", '{}'))
+                 AND member_id <> "workspaceMemberId"::text
              )
            WHERE id = $1
            RETURNING id
@@ -141,6 +138,7 @@ export class AgentChatThreadService {
          INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} AS participant ("threadId", "workspaceMemberId")
          SELECT thread.id, member_id::uuid FROM thread, unnest($2::text[]) AS member_id
          ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+           "lastReadAt" = NULL,
            "archivedAt" = NULL,
            "snoozedUntil" = NULL,
            "updatedAt" = now()`,

@@ -116,7 +116,17 @@ const createThread = async (): Promise<string> => {
   return threadId;
 };
 
-const setShareWithJony = async (threadId: string, enabled: boolean) => {
+const setShareWithMember = async ({
+  threadId,
+  workspaceMemberId,
+  accessLevel,
+  enabled,
+}: {
+  threadId: string;
+  workspaceMemberId: string;
+  accessLevel: RecordShareAccessLevel;
+  enabled: boolean;
+}) => {
   const { flatObjectMetadataMaps } =
     await getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
@@ -130,14 +140,22 @@ const setShareWithJony = async (threadId: string, enabled: boolean) => {
           STANDARD_OBJECTS.agentChatThread.universalIdentifier
         ]!.id,
       recordId: threadId,
-      principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      principalId: workspaceMemberId,
       principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-      accessLevel: RecordShareAccessLevel.READ,
+      accessLevel,
       sourceId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
     },
     enabled,
   });
 };
+
+const setShareWithJony = (threadId: string, enabled: boolean) =>
+  setShareWithMember({
+    threadId,
+    workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    accessLevel: RecordShareAccessLevel.READ,
+    enabled,
+  });
 
 describe('Chat thread participant state through the authenticated API', () => {
   const createdThreadIds: string[] = [];
@@ -433,7 +451,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds,
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
 
-    // Editors can bring others in too, which a viewer cannot
+    // Editors can mention others too; the owner keeps following as owner
     const addedByJony = await addParticipants(
       threadId,
       [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
@@ -441,13 +459,26 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
 
     expect(addedByJony.body.errors).toBeUndefined();
-    expect(addedByJony.body.data.addAgentChatThreadParticipants).toEqual([]);
+    expect(addedByJony.body.data.addAgentChatThreadParticipants).toEqual([
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    ]);
+    expect(await findMyParticipant(threadId)).toMatchObject({
+      lastReadAt: null,
+    });
+    expect(
+      (await readThreadActivity(threadId)).writerWorkspaceMemberIds,
+    ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
   });
 
-  it('brings the thread back for a participant who had archived it', async () => {
+  it('brings the thread back unread for a participant who had read and archived it', async () => {
     const threadId = await createTestThread();
 
     await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await runThreadMutation(
+      'markAgentChatThreadAsRead',
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
     await runThreadMutation(
       'archiveAgentChatThread',
       threadId,
@@ -457,7 +488,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toMatchObject({ archivedAt: null, snoozedUntil: null });
+    ).toMatchObject({ lastReadAt: null, archivedAt: null, snoozedUntil: null });
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds,
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
@@ -475,6 +506,35 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
 
     expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
+    expect(
+      (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
+    ).toEqual([]);
+  });
+
+  it('leaves out a member who could only read the thread when the sender cannot share it', async () => {
+    const threadId = await createTestThread();
+
+    await setShareWithMember({
+      threadId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      accessLevel: RecordShareAccessLevel.READ_WRITE,
+      enabled: true,
+    });
+    await setShareWithMember({
+      threadId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      accessLevel: RecordShareAccessLevel.READ,
+      enabled: true,
+    });
+
+    const response = await addParticipants(
+      threadId,
+      [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.addAgentChatThreadParticipants).toEqual([]);
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
     ).toEqual([]);
