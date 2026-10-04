@@ -1,9 +1,11 @@
+import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RecordListBody } from '@/object-record/record-list/components/RecordListBody';
 import { RecordListDragDropProvider } from '@/object-record/record-list/components/RecordListDragDropProvider';
 import { RecordListFieldTooltip } from '@/object-record/record-list/components/RecordListFieldTooltip';
 import { RecordListRecordGroupsBody } from '@/object-record/record-list/components/RecordListRecordGroupsBody';
 import { RecordListResponsiveFieldsEffect } from '@/object-record/record-list/components/RecordListResponsiveFieldsEffect';
+import { RecordListSSESubscribeEffect } from '@/object-record/record-list/components/RecordListSSESubscribeEffect';
 import { RecordListComponentInstanceContext } from '@/object-record/record-list/states/contexts/RecordListComponentInstanceContext';
 import { RecordSelectionEscapeHotkeyEffect } from '@/object-record/record-selection/components/RecordSelectionEscapeHotkeyEffect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -38,6 +40,8 @@ export const RecordList = () => {
     <StyledContainer ref={setContainerElement}>
       <RecordListResponsiveFieldsEffect containerElement={containerElement} />
       <RecordSelectionEscapeHotkeyEffect />
+      <RecordListSSESubscribeEffect />
+      <RecordIndexRemoveSortingModal />
       <RecordListFieldTooltip>
         <ScrollWrapper
           componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}

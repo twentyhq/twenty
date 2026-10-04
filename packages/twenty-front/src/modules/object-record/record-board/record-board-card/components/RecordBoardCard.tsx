@@ -16,11 +16,9 @@ import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { RecordDragMultiDragStack } from '@/object-record/record-drag/components/RecordDragMultiDragStack';
-import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
-import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
@@ -53,19 +51,16 @@ export const RecordBoardCard = () => {
     RecordBoardComponentInstanceContext,
   );
 
-  const isRecordIdPrimaryDragMultiple = useAtomComponentFamilyStateValue(
-    isRecordIdPrimaryDragMultipleComponentFamilyState,
-    { recordId },
-  );
-
   const isRecordIdSecondaryDragMultiple = useAtomComponentFamilyStateValue(
     isRecordIdSecondaryDragMultipleComponentFamilyState,
     { recordId },
   );
 
-  const primaryDraggedRecordId = useAtomComponentStateValue(
-    primaryDraggedRecordIdComponentState,
+  const draggedRecordIds = useAtomComponentStateValue(
+    draggedRecordIdsComponentState,
   );
+
+  const isMultiDragOverlay = isDragOverlay && draggedRecordIds.length > 1;
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -104,16 +99,6 @@ export const RecordBoardCard = () => {
   const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const {
-    onPointerCancel: handlePointerCancel,
-    onPointerDown: handlePointerDown,
-    onPointerUp: handlePointerUp,
-  } = useDisableDragSelectOnPointerDown();
-
-  const handleContextMenuOpen = (event: React.MouseEvent) => {
-    openRecordContextMenu({ event, recordId });
-  };
-
   const handleCardClick = () => {
     activateBoardCard({ rowIndex, columnIndex });
     unfocusBoardCard();
@@ -126,12 +111,6 @@ export const RecordBoardCard = () => {
     }
   }, 800);
 
-  const isDraggingThisCard =
-    !isDragOverlay &&
-    (isRecordIdPrimaryDragMultiple ||
-      isRecordIdSecondaryDragMultiple ||
-      primaryDraggedRecordId === recordId);
-
   return (
     <RecordBoardCardComponentInstanceContext.Provider
       value={{
@@ -140,24 +119,17 @@ export const RecordBoardCard = () => {
     >
       <StyledBoardCardWrapper
         data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
-        onContextMenu={handleContextMenuOpen}
-        onPointerCancel={handlePointerCancel}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
+        onContextMenu={(event) => openRecordContextMenu({ event, recordId })}
       >
-        <StyledCardContainer
-          isPrimaryMultiDrag={isDragOverlay && isRecordIdPrimaryDragMultiple}
-        >
-          {isDragOverlay && isRecordIdPrimaryDragMultiple && (
-            <RecordDragMultiDragStack />
-          )}
+        <StyledCardContainer isPrimaryMultiDrag={isMultiDragOverlay}>
+          {isMultiDragOverlay && <RecordDragMultiDragStack />}
           <RecordCard
             data-selected={isRecordSelected}
             data-focused={isRecordBoardCardFocused}
             data-active={isRecordBoardCardActive}
             onMouseLeave={onMouseLeaveBoard}
             onClick={handleCardClick}
-            isDragging={isDraggingThisCard}
+            isDragging={!isDragOverlay && isRecordIdSecondaryDragMultiple}
           >
             <RecordBoardCardHeader />
             <Collapsible

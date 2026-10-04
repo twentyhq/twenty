@@ -5,9 +5,13 @@ import { getMcpToolCatalog } from 'test/integration/graphql/suites/application-r
 import { findApplicationRegistrationByUniversalIdentifier } from 'test/integration/metadata/suites/application-registration/utils/find-application-registration-by-universal-identifier.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { completeAppTarballUpload } from 'test/integration/metadata/suites/application/utils/complete-app-tarball-upload.util';
+import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
+import { createAppTarballUpload } from 'test/integration/metadata/suites/application/utils/create-app-tarball-upload.util';
 import { createApplicationFileUploads } from 'test/integration/metadata/suites/application/utils/create-application-file-uploads.util';
 import { exportApplication } from 'test/integration/metadata/suites/application/utils/export-application.util';
 import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
+import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites/application/utils/put-application-file-upload-target.util';
 import {
   type ApplicationWithResources,
   setupApplicationWithResources,
@@ -208,6 +212,40 @@ describe('OAuth-only client access to installed applications should succeed', ()
     });
 
     expect(data.installApplication.id).toBe(installedApplication.id);
+  });
+
+  it('should deploy a tarball for the application it develops', async () => {
+    const tarball = await createAppTarball({
+      'manifest.json': JSON.stringify(
+        buildBaseManifest({
+          appId: installedApplication.universalIdentifier,
+          roleId: crypto.randomUUID(),
+        }),
+      ),
+      'package.json': JSON.stringify({
+        name: 'oauth-only-client-deploy',
+        version: '1.0.0',
+      }),
+    });
+
+    const { data: uploadData } = await createAppTarballUpload({
+      size: tarball.length,
+      token: cliToken,
+      expectToFail: false,
+    });
+    const uploadTarget = uploadData!.createFileUpload;
+
+    await putApplicationFileUploadTarget({ uploadTarget, body: tarball });
+
+    const { data } = await completeAppTarballUpload({
+      fileId: uploadTarget.fileId,
+      token: cliToken,
+      expectToFail: false,
+    });
+
+    expect(data.completeAppTarballUpload.universalIdentifier).toBe(
+      installedApplication.universalIdentifier,
+    );
   });
 
   it('should see the tools of installed applications over MCP', async () => {

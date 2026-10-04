@@ -42,15 +42,11 @@ describe('sendInboxMessage', () => {
       title: 'Your first recording is ready',
       text: 'Your call was recorded.',
       toolCall: {
-        toolName: 'ask_questions' as const,
+        toolName: 'ask_question' as const,
         input: {
-          questions: [
-            {
-              header: 'Share',
-              question: 'Share the recording with the attendees?',
-              options: [{ label: 'Draft an email' }, { label: 'Not now' }],
-            },
-          ],
+          header: 'Share',
+          question: 'Share the recording with the attendees?',
+          options: [{ label: 'Draft an email' }, { label: 'Not now' }],
         },
       },
     };

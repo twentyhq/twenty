@@ -8,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { WORKSPACE_SETUP_CHAT_ENRICHMENT_MAX_WAIT_MS } from '@/onboarding/constants/WorkspaceSetupChatEnrichmentMaxWaitMs';
@@ -96,14 +95,6 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           deletedAt: null,
         });
         void refreshAgentChatThreadPermissions([thread.id]);
-
-        store.set(
-          currentAiChatThreadTitleComponentFamilyState.atomFamily({
-            instanceId: AGENT_CHAT_INSTANCE_ID,
-            familyKey: { threadId: thread.id },
-          }),
-          thread.title ?? null,
-        );
 
         if (result.outcome === WorkspaceSetupChatOutcome.STARTED) {
           store.set(

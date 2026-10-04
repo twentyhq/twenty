@@ -1,4 +1,4 @@
-import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
+import { type OutputSchemaField } from '@/ai/types/OutputSchemaField';
 import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';

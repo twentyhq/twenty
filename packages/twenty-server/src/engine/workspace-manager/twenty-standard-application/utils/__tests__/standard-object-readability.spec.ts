@@ -104,7 +104,7 @@ describe('Standard object readability', () => {
     });
   });
 
-  it.each(['recordShare', 'shortLink', 'agentChatThreadParticipant'] as const)(
+  it.each(['recordShare', 'shortLink'] as const)(
     'declares %s SYSTEM for readability and writability',
     (objectName) => {
       expect(findStandardFlatObjectMetadata(objectName)).toMatchObject({
@@ -113,6 +113,15 @@ describe('Standard object readability', () => {
       });
     },
   );
+
+  it('declares agentChatThreadParticipant PRIVATE, written only by the chat resolvers', () => {
+    expect(
+      findStandardFlatObjectMetadata('agentChatThreadParticipant'),
+    ).toMatchObject({
+      readability: MetadataReadability.PRIVATE,
+      writability: MetadataWritability.SYSTEM,
+    });
+  });
 
   // Inheriting from the record would reveal which private conversations are filed under it
   it('resolves its thread as the only parent of an agentChatThreadTarget', () => {

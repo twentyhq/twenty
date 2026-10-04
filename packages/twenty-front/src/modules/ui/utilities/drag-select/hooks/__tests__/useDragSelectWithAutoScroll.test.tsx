@@ -45,33 +45,7 @@ describe('useDragSelectWithAutoScroll', () => {
   });
 
   describe('instance ID resolution', () => {
-    it('should prioritize explicit scrollWrapperComponentInstanceId over context', () => {
-      mockUseComponentInstanceStateContext.mockReturnValue({
-        instanceId: 'context-instance',
-      });
-
-      const mockElement = createMockScrollElement();
-      document.getElementById = jest
-        .fn()
-        .mockImplementation((id) =>
-          id === 'scroll-wrapper-explicit-instance' ? mockElement : null,
-        );
-
-      const { result } = renderHook(() =>
-        useDragSelectWithAutoScroll({
-          scrollWrapperComponentInstanceId: 'explicit-instance',
-        }),
-      );
-
-      result.current.handleAutoScroll(105, 250);
-
-      expect(document.getElementById).toHaveBeenCalledWith(
-        'scroll-wrapper-explicit-instance',
-      );
-      expect(mockElement.scrollTo).toHaveBeenCalled();
-    });
-
-    it('should use context instance ID when no explicit ID provided', () => {
+    it('should scroll the ScrollWrapper from context', () => {
       mockUseComponentInstanceStateContext.mockReturnValue({
         instanceId: 'context-instance',
       });
@@ -83,7 +57,7 @@ describe('useDragSelectWithAutoScroll', () => {
           id === 'scroll-wrapper-context-instance' ? mockElement : null,
         );
 
-      const { result } = renderHook(() => useDragSelectWithAutoScroll({}));
+      const { result } = renderHook(() => useDragSelectWithAutoScroll());
 
       result.current.handleAutoScroll(105, 250);
 
@@ -97,7 +71,7 @@ describe('useDragSelectWithAutoScroll', () => {
       mockUseComponentInstanceStateContext.mockReturnValue(null);
       document.getElementById = jest.fn();
 
-      const { result } = renderHook(() => useDragSelectWithAutoScroll({}));
+      const { result } = renderHook(() => useDragSelectWithAutoScroll());
 
       result.current.handleAutoScroll(105, 105);
 
@@ -124,7 +98,7 @@ describe('useDragSelectWithAutoScroll', () => {
     });
 
     it('should calculate correct scroll amounts for vertical scrolling', () => {
-      const { result } = renderHook(() => useDragSelectWithAutoScroll({}));
+      const { result } = renderHook(() => useDragSelectWithAutoScroll());
 
       result.current.handleAutoScroll(300, 105);
 
@@ -142,7 +116,7 @@ describe('useDragSelectWithAutoScroll', () => {
     });
 
     it('should calculate correct scroll amounts for horizontal scrolling', () => {
-      const { result } = renderHook(() => useDragSelectWithAutoScroll({}));
+      const { result } = renderHook(() => useDragSelectWithAutoScroll());
 
       result.current.handleAutoScroll(105, 250);
 
@@ -165,7 +139,7 @@ describe('useDragSelectWithAutoScroll', () => {
       mockElement.scrollTop = 5;
       mockElement.scrollLeft = 3;
 
-      const { result } = renderHook(() => useDragSelectWithAutoScroll({}));
+      const { result } = renderHook(() => useDragSelectWithAutoScroll());
 
       result.current.handleAutoScroll(105, 105);
 
@@ -180,7 +154,7 @@ describe('useDragSelectWithAutoScroll', () => {
     });
 
     it('should not scroll when mouse is in safe zone', () => {
-      const { result } = renderHook(() => useDragSelectWithAutoScroll({}));
+      const { result } = renderHook(() => useDragSelectWithAutoScroll());
 
       result.current.handleAutoScroll(350, 250);
 
@@ -195,7 +169,7 @@ describe('useDragSelectWithAutoScroll', () => {
     });
 
     it('should handle exact edge threshold boundaries', () => {
-      const { result } = renderHook(() => useDragSelectWithAutoScroll({}));
+      const { result } = renderHook(() => useDragSelectWithAutoScroll());
 
       result.current.handleAutoScroll(119, 250);
 
@@ -222,7 +196,7 @@ describe('useDragSelectWithAutoScroll', () => {
     it('should handle missing DOM element gracefully', () => {
       document.getElementById = jest.fn().mockReturnValue(null);
 
-      const { result } = renderHook(() => useDragSelectWithAutoScroll({}));
+      const { result } = renderHook(() => useDragSelectWithAutoScroll());
 
       expect(() => {
         result.current.handleAutoScroll(105, 105);
@@ -233,7 +207,7 @@ describe('useDragSelectWithAutoScroll', () => {
       const brokenElement = { scrollTo: jest.fn() };
       document.getElementById = jest.fn().mockReturnValue(brokenElement);
 
-      const { result } = renderHook(() => useDragSelectWithAutoScroll({}));
+      const { result } = renderHook(() => useDragSelectWithAutoScroll());
 
       expect(() => {
         result.current.handleAutoScroll(105, 105);

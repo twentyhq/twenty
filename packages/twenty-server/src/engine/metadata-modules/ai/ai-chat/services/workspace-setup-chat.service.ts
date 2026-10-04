@@ -16,6 +16,8 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
@@ -53,6 +55,8 @@ export class WorkspaceSetupChatService {
     private readonly i18nService: I18nService,
     private readonly agentChatService: AgentChatService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
+    private readonly streamRecoveryService: AgentChatStreamRecoveryService,
+    private readonly threadService: AgentChatThreadService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -104,7 +108,7 @@ export class WorkspaceSetupChatService {
       userWorkspaceId,
     });
 
-    let thread = await this.agentChatService.findWritableThread({
+    let thread = await this.threadService.findWritableThread({
       threadId,
       workspaceMemberId,
       workspaceId: workspace.id,
@@ -121,7 +125,7 @@ export class WorkspaceSetupChatService {
 
       if (isNonEmptyString(thread.activeStreamId)) {
         const interruptedError =
-          await this.agentChatStreamingService.reapDeadStream({
+          await this.streamRecoveryService.reapDeadStream({
             thread,
             workspaceId: workspace.id,
           });
@@ -211,7 +215,7 @@ export class WorkspaceSetupChatService {
       ._(WORKSPACE_SETUP_CHAT_THREAD_TITLE);
 
     try {
-      return await this.agentChatService.createThread({
+      return await this.threadService.createThread({
         workspaceMemberId,
         workspaceId,
         id: threadId,
@@ -220,7 +224,7 @@ export class WorkspaceSetupChatService {
     } catch (error) {
       if (isUniqueViolationError(error)) {
         const concurrentlyCreatedThread =
-          await this.agentChatService.findWritableThread({
+          await this.threadService.findWritableThread({
             threadId,
             workspaceMemberId,
             workspaceId,

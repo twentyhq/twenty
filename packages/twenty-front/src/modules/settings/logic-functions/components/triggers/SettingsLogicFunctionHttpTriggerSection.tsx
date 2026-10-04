@@ -102,7 +102,7 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
             label={t`Method`}
             fullWidth
             disabled={readonly}
-            value={value.httpMethod as HTTPMethod}
+            value={value.httpMethod}
             options={HTTP_METHOD_OPTIONS}
             onChange={(newMethod) => updateField('httpMethod', newMethod)}
             dropdownSideOffset={4}

@@ -12,4 +12,10 @@ export type AgentHistoryTransactionScope = {
     where: ObjectLiteral,
     values: ObjectLiteral,
   ) => Promise<number>;
+  upsert: (
+    name: AgentHistoryObjectName,
+    values: ObjectLiteral,
+    conflictPaths: string[],
+  ) => Promise<void>;
+  delete: (name: AgentHistoryObjectName, where: ObjectLiteral) => Promise<void>;
 };

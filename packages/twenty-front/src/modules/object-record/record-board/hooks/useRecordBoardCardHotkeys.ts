@@ -6,9 +6,7 @@ import { useRecordBoardSelectAllHotkeys } from '@/object-record/record-board/hoo
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
-import { isAtLeastOneRecordSelectedComponentSelector } from '@/object-record/record-selection/states/selectors/isAtLeastOneRecordSelectedComponentSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 
@@ -24,11 +22,6 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
 
   const { resetRecordSelection } = useResetRecordSelection();
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
-
-  const isAtLeastOneRecordSelected = useAtomComponentSelectorValue(
-    isAtLeastOneRecordSelectedComponentSelector,
-    recordBoardId,
-  );
 
   const handleSelectCard = () => {
     toggleRecordSelection({ recordId });
@@ -54,9 +47,7 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
   const handleEscape = () => {
     unfocusBoardCard();
 
-    if (isAtLeastOneRecordSelected) {
-      resetRecordSelection();
-    }
+    resetRecordSelection();
   };
 
   useHotkeysOnFocusedElement({

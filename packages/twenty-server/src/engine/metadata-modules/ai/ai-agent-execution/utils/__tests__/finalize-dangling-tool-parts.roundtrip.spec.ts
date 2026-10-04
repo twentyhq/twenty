@@ -3,8 +3,8 @@ import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
-import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartToUIMessagePart';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
+import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-db-parts-to-ui-message-parts.util';
+import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-db-parts.util';
 
 const toolPart = (
   state: string,
@@ -20,7 +20,7 @@ const toolPart = (
 const persistAndReload = (
   parts: ExtendedUIMessagePart[],
 ): ExtendedUIMessagePart[] =>
-  mapUIMessagePartsToDBParts(parts, 'message-1', 'workspace-1')
+  mapUIMessagePartsToDBParts(parts, 'message-1')
     .map((dbPart) =>
       mapDBPartToUIMessagePart(dbPart as AgentMessagePartWorkspaceEntity),
     )
@@ -182,7 +182,6 @@ describe('finalizeDanglingToolParts round-trip', () => {
     const [dbPart] = mapUIMessagePartsToDBParts(
       finalizeDanglingToolParts([validationErroredPart]),
       'message-1',
-      'workspace-1',
     );
 
     expect(dbPart.toolInput).toEqual({});

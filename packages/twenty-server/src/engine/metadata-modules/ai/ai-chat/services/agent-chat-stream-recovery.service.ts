@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -7,10 +7,18 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+
+export type AgentChatStreamClaim = {
+  threadId: string;
+  workspaceId: string;
+  streamId: string;
+};
 
 @Injectable()
 export class AgentChatStreamRecoveryService {
@@ -23,6 +31,75 @@ export class AgentChatStreamRecoveryService {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly metricsService: MetricsService,
   ) {}
+
+  async releaseStreamClaim({
+    threadId,
+    workspaceId,
+    streamId,
+    lastStreamError,
+  }: AgentChatStreamClaim & {
+    lastStreamError?: AgentChatThreadLastStreamError;
+  }): Promise<boolean> {
+    const isReleased = await this.clearStreamClaim({
+      threadId,
+      workspaceId,
+      streamId,
+      lastStreamError,
+    }).catch((error: unknown) => {
+      this.logger.error(
+        `Failed to release stream claim for thread ${threadId}: ${formatErrorWithCause(error)}`,
+      );
+
+      return false;
+    });
+
+    await this.streamHeartbeatService.clear(streamId);
+
+    return isReleased;
+  }
+
+  private async clearStreamClaim({
+    threadId,
+    workspaceId,
+    streamId,
+    lastStreamError,
+  }: AgentChatStreamClaim & {
+    lastStreamError?: AgentChatThreadLastStreamError;
+  }): Promise<boolean> {
+    const result = await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, activeStreamId: streamId },
+      {
+        activeStreamId: null,
+        ...(isDefined(lastStreamError) ? { lastStreamError } : {}),
+      },
+    );
+
+    return Boolean(result.affected);
+  }
+
+  async failStream({
+    threadId,
+    workspaceId,
+    streamId,
+    error,
+  }: AgentChatStreamClaim & { error: unknown }): Promise<void> {
+    const lastStreamError: AgentChatThreadLastStreamError = {
+      ...mapErrorToStreamError(error),
+      failedAt: new Date().toISOString(),
+    };
+
+    const isReleased = await this.releaseStreamClaim({
+      threadId,
+      workspaceId,
+      streamId,
+      lastStreamError,
+    });
+
+    if (isReleased) {
+      await this.publishStreamError({ threadId, workspaceId, lastStreamError });
+    }
+  }
 
   async reapDeadStream({
     thread,
@@ -45,13 +122,14 @@ export class AgentChatStreamRecoveryService {
       failedAt: new Date().toISOString(),
     };
 
-    const reap = await this.threadRepository.update(
+    const hasReaped = await this.clearStreamClaim({
+      threadId: thread.id,
       workspaceId,
-      { id: thread.id, activeStreamId: thread.activeStreamId },
-      { activeStreamId: null, lastStreamError: interruptedError },
-    );
+      streamId: thread.activeStreamId,
+      lastStreamError: interruptedError,
+    });
 
-    if (!reap.affected) {
+    if (!hasReaped) {
       return null;
     }
 
@@ -69,18 +147,34 @@ export class AgentChatStreamRecoveryService {
     );
 
     await this.eventPublisherService.resetStreamState(thread.id);
+    await this.publishStreamError({
+      threadId: thread.id,
+      workspaceId,
+      lastStreamError: interruptedError,
+    });
+
+    return interruptedError;
+  }
+
+  private async publishStreamError({
+    threadId,
+    workspaceId,
+    lastStreamError,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    lastStreamError: AgentChatThreadLastStreamError;
+  }): Promise<void> {
     await this.eventPublisherService
       .publish({
-        threadId: thread.id,
+        threadId,
         workspaceId,
         event: {
           type: 'stream-error',
-          code: interruptedError.code,
-          message: interruptedError.message,
+          code: lastStreamError.code,
+          message: lastStreamError.message,
         },
       })
       .catch(() => {});
-
-    return interruptedError;
   }
 }
