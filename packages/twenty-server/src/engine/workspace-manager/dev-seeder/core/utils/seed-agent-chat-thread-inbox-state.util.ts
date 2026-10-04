@@ -66,19 +66,20 @@ export const seedAgentChatThreadInboxState = async ({
   );
 
   await manager.query(
-    `WITH participant AS (
-       INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt")
-       SELECT thread.id, thread."workspaceMemberId", thread."lastActivityAt"
-       FROM ${table('agentChatThread')} thread
-       WHERE thread."workspaceMemberId" IS NOT NULL
-       ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
-       RETURNING id, "workspaceMemberId"
-     )
-     ${buildAgentChatThreadParticipantOwnerShareInsert({
-       workspaceId,
-       participantSource: 'participant',
-       objectMetadataIdParameter: `(SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "universalIdentifier" = $2)`,
-     })}`,
+    `INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt")
+     SELECT thread.id, thread."workspaceMemberId", thread."lastActivityAt"
+     FROM ${table('agentChatThread')} thread
+     WHERE thread."workspaceMemberId" IS NOT NULL
+     ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING`,
+  );
+
+  // Every row, so ones seeded by an earlier run are granted too
+  await manager.query(
+    buildAgentChatThreadParticipantOwnerShareInsert({
+      workspaceId,
+      participantSource: getAgentChatThreadParticipantTable(workspaceId),
+      objectMetadataIdParameter: `(SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "universalIdentifier" = $2)`,
+    }),
     [
       workspaceId,
       STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,

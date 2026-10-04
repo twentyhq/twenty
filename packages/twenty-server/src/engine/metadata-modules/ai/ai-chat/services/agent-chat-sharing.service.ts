@@ -49,7 +49,7 @@ export class AgentChatSharingService {
     return isDefined(await this.findParticipantObjectMetadataId(workspaceId));
   }
 
-  private async findParticipantObjectMetadataId(
+  async findParticipantObjectMetadataId(
     workspaceId: string,
   ): Promise<string | undefined> {
     const { flatObjectMetadataMaps } =
