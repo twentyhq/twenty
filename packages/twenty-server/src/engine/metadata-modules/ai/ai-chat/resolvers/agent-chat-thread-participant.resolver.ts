@@ -117,7 +117,7 @@ export class AgentChatThreadParticipantResolver {
     });
   }
 
-  // Returns the members who were added, leaving out those who cannot read the chat
+  // Returns the members who were added, leaving out those who cannot reply in the chat
   @Mutation(() => [UUIDScalarType])
   async addAgentChatThreadParticipants(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
