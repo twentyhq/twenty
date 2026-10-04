@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { WorkspaceDerivedCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-derived-cache-provider.service';
 
-import { computeApiKeyRoleMap } from 'src/engine/metadata-modules/role-target/utils/compute-api-key-role-map.util';
 import { WorkspaceDerivedCache } from 'src/engine/workspace-cache/decorators/workspace-derived-cache.decorator';
 import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
@@ -20,6 +21,16 @@ export class WorkspaceApiKeyRoleMapCacheService extends WorkspaceDerivedCachePro
     string,
     string
   > {
-    return computeApiKeyRoleMap({ flatRoleTargetMaps });
+    const apiKeyRoleMap: Record<string, string> = {};
+
+    for (const flatRoleTarget of Object.values(
+      flatRoleTargetMaps.byUniversalIdentifier,
+    )) {
+      if (isDefined(flatRoleTarget?.apiKeyId)) {
+        apiKeyRoleMap[flatRoleTarget.apiKeyId] = flatRoleTarget.roleId;
+      }
+    }
+
+    return apiKeyRoleMap;
   }
 }

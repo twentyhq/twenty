@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { WorkspaceDerivedCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-derived-cache-provider.service';
 
-import { computeRoleIdsWithAllRecordsAccess } from 'src/engine/metadata-modules/role/utils/compute-role-ids-with-all-records-access.util';
 import { WorkspaceDerivedCache } from 'src/engine/workspace-cache/decorators/workspace-derived-cache.decorator';
 import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
@@ -19,6 +20,9 @@ export class WorkspaceRoleIdsWithAllRecordsAccessCacheService extends WorkspaceD
   computeFromSources({
     flatRoleMaps,
   }: Pick<WorkspaceCacheDataMap, 'flatRoleMaps'>): string[] {
-    return computeRoleIdsWithAllRecordsAccess({ flatRoleMaps });
+    return Object.values(flatRoleMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter((flatRole) => flatRole.canUpdateAllSettings)
+      .map((flatRole) => flatRole.id);
   }
 }
