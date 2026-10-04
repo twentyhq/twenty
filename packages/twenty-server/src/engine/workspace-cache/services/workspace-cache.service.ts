@@ -32,7 +32,6 @@ import {
   WORKSPACE_DERIVED_CACHE_OPTIONS,
   type WorkspaceDerivedCacheOptions,
 } from 'src/engine/workspace-cache/decorators/workspace-derived-cache.decorator';
-import { type LegacyStoredWorkspaceCacheKeyName } from 'src/engine/workspace-cache/constants/legacy-stored-workspace-cache-key-names.constant';
 import {
   WorkspaceCacheException,
   WorkspaceCacheExceptionCode,
@@ -61,8 +60,6 @@ import {
   getOrComputeMemoizedBySourceHash,
 } from 'src/engine/workspace-cache/utils/get-or-compute-memoized-by-source-hash.util';
 import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/get-key-name-from-local-cache-key.util';
-import { getLegacyStoredWorkspaceCacheKeyNamesToFlush } from 'src/engine/workspace-cache/utils/get-legacy-stored-workspace-cache-key-names-to-flush.util';
-import { isLegacyStoredWorkspaceCacheKeyName } from 'src/engine/workspace-cache/utils/is-legacy-stored-workspace-cache-key-name.util';
 import { packIdleVersions } from 'src/engine/workspace-cache/utils/pack-idle-versions.util';
 import { partitionWorkspaceCacheKeyNames } from 'src/engine/workspace-cache/utils/partition-workspace-cache-key-names.util';
 import {
@@ -102,10 +99,6 @@ type ReadableCacheEntriesResult = {
   data: Partial<WorkspaceCacheReadableDataMap>;
   hashes: Partial<Record<WorkspaceCacheReadableKeyName, string>>;
 };
-
-type StoredCacheKeyName =
-  | WorkspaceCacheKeyName
-  | LegacyStoredWorkspaceCacheKeyName;
 
 type DerivedCacheData =
   WorkspaceDerivedCacheDataMap[WorkspaceDerivedCacheKeyName];
@@ -542,25 +535,20 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   public async flush(
     workspaceId: string,
-    cacheKeyNames: StoredCacheKeyName[],
+    cacheKeyNames: WorkspaceCacheReadableKeyName[],
   ): Promise<void> {
-    const providerKeyNames = cacheKeyNames.filter(
-      (cacheKeyName): cacheKeyName is WorkspaceCacheKeyName =>
-        !isLegacyStoredWorkspaceCacheKeyName(cacheKeyName),
-    );
-    const legacyStoredKeyNames = [
-      ...new Set([
-        ...cacheKeyNames.filter(isLegacyStoredWorkspaceCacheKeyName),
-        ...getLegacyStoredWorkspaceCacheKeyNamesToFlush(providerKeyNames),
-      ]),
-    ];
+    const { providerKeyNames, derivedKeyNames } =
+      this.partitionCacheKeyNames(cacheKeyNames);
 
-    await this.deleteFromRedis(workspaceId, [
-      ...providerKeyNames,
-      ...legacyStoredKeyNames,
-    ]);
+    await this.deleteFromRedis(workspaceId, providerKeyNames);
 
     this.deleteFromLocalCache(workspaceId, providerKeyNames);
+
+    for (const derivedKeyName of derivedKeyNames) {
+      this.getDerivedCacheRegistrationOrThrow(
+        derivedKeyName,
+      ).memoByWorkspaceId.delete(workspaceId);
+    }
   }
 
   public async evictWorkspaceFromLocalCache(
@@ -938,7 +926,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   private async deleteFromRedis(
     workspaceId: string,
-    cacheKeyNames: StoredCacheKeyName[],
+    cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
     const keysToDelete = cacheKeyNames.flatMap((keyName) => {
       const baseKey = this.buildCacheKey(workspaceId, keyName);
@@ -1113,7 +1101,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   private buildCacheKey(
     workspaceId: string,
-    keyName: StoredCacheKeyName,
+    keyName: WorkspaceCacheKeyName,
   ): string {
     return `${keyName}:${workspaceId}`;
   }
