@@ -17,6 +17,18 @@ const WorkflowCoreShowPage = lazy(() =>
   })),
 );
 
+const AgentCoreIndexPage = lazy(() =>
+  import('~/pages/object-core/AgentCoreIndexPage').then((module) => ({
+    default: module.AgentCoreIndexPage,
+  })),
+);
+
+const AgentCoreShowPage = lazy(() =>
+  import('~/pages/object-core/AgentCoreShowPage').then((module) => ({
+    default: module.AgentCoreShowPage,
+  })),
+);
+
 const RecordIndexPage = lazy(() =>
   import('~/pages/object-record/RecordIndexPage').then((module) => ({
     default: module.RecordIndexPage,
@@ -110,6 +122,22 @@ export const createWorkspaceRouteObjects = ({
         </LazyRoute>
       ),
       handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
+    },
+    {
+      path: AppPath.AgentIndexPage,
+      element: (
+        <LazyRoute fallback={<RecordIndexSkeletonLoader />}>
+          <AgentCoreIndexPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.AgentShowPage,
+      element: (
+        <LazyRoute>
+          <AgentCoreShowPage />
+        </LazyRoute>
+      ),
     },
     {
       path: AppPath.PageLayoutPage,
