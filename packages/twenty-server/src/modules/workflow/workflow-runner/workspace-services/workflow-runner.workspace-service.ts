@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { isString } from '@sniptt/guards';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { msg } from '@lingui/core/macro';
 
@@ -193,6 +194,28 @@ export class WorkflowRunnerWorkspaceService {
     if (Object.keys(response).some((key) => !fieldNames.has(key))) {
       throw new WorkflowVersionStepException(
         'Form response holds values for fields the form does not have',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+      );
+    }
+
+    // a pick that is not a record id would skip the permission check when the response is enriched
+    const hasMalformedRecordPick = step.settings.input.some((field) => {
+      const value = response[field.name];
+
+      return (
+        field.type === 'RECORD' &&
+        isDefined(value) &&
+        !(
+          isPlainObject(value) &&
+          (!isDefined(value.id) ||
+            (isString(value.id) && isValidUuid(value.id)))
+        )
+      );
+    });
+
+    if (hasMalformedRecordPick) {
+      throw new WorkflowVersionStepException(
+        'A record field of the form holds no valid record id',
         WorkflowVersionStepExceptionCode.INVALID_REQUEST,
       );
     }

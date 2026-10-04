@@ -641,6 +641,14 @@ describe('application workflow execution permissions', () => {
         .status,
     ).toBe('PENDING');
 
+    const malformedSelection = await submitFormStep({
+      workflowRunId: formRunId,
+      stepId: formStep.universalIdentifier,
+      response: { company: { id: 'not-a-record-id' } },
+    });
+
+    expect(malformedSelection.body.errors).toBeDefined();
+
     const readableSelection = await submitFormStep({
       workflowRunId: formRunId,
       stepId: formStep.universalIdentifier,
@@ -655,6 +663,9 @@ describe('application workflow execution permissions', () => {
     expect(
       workflowRun.state.stepInfos[formStep.universalIdentifier].result,
     ).toMatchObject({ company: { id: company.id } });
+    expect(
+      workflowRun.state.stepInfos[formStep.universalIdentifier].result,
+    ).not.toHaveProperty('opportunity');
   }, 120000);
 
   it('checks the current application permissions again when a delayed run resumes', async () => {
