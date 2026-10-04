@@ -34,6 +34,9 @@ export class CoreWorkflowDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   workspaceWorkflowId: string | null;
 
+  @Field(() => Boolean, { nullable: false })
+  isSystem: boolean;
+
   @Field(() => WorkflowVisibility, { nullable: false })
   visibility: WorkflowVisibility;
 
