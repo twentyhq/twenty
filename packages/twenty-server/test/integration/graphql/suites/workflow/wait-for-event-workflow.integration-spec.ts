@@ -429,18 +429,20 @@ describe('Wait for event workflow (e2e)', () => {
         [workflowRunId],
       );
 
-    await arm();
-    const [firstWait] = await findWaits();
+    try {
+      await arm();
+      const [firstWait] = await findWaits();
 
-    await arm();
-    const waits = await findWaits();
+      await arm();
+      const waits = await findWaits();
 
-    expect(waits).toHaveLength(1);
-    expect(waits[0].id).not.toBe(firstWait.id);
-
-    await workflowStepWaitWorkspaceService.cancelRunWaits({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workflowRunId,
-    });
+      expect(waits).toHaveLength(1);
+      expect(waits[0].id).not.toBe(firstWait.id);
+    } finally {
+      await workflowStepWaitWorkspaceService.cancelRunWaits({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workflowRunId,
+      });
+    }
   });
 });

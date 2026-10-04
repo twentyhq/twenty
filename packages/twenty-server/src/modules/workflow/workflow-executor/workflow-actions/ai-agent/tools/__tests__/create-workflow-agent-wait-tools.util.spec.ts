@@ -21,25 +21,34 @@ describe('createWorkflowAgentWaitTools', () => {
   });
 
   it('only keeps a field filter on updates, where events report changed fields', async () => {
-    const tools = createWorkflowAgentWaitTools();
-    const waitForEvent = tools.wait_for_event as unknown as ExecutableTool;
+    const createdEventWait = await (
+      createWorkflowAgentWaitTools().wait_for_event as unknown as ExecutableTool
+    ).execute({
+      objectName: 'company',
+      action: 'created',
+      updatedFields: ['name'],
+    });
+    const updatedEventWait = await (
+      createWorkflowAgentWaitTools().wait_for_event as unknown as ExecutableTool
+    ).execute({
+      objectName: 'company',
+      action: 'updated',
+      updatedFields: ['name'],
+    });
 
-    await expect(
-      waitForEvent.execute({
-        objectName: 'company',
-        action: 'created',
-        updatedFields: ['name'],
-      }),
-    ).resolves.toMatchObject({
+    expect(createdEventWait).toMatchObject({
       result: { wait: { type: 'EVENT', eventName: 'company.created' } },
     });
-    await expect(
-      waitForEvent.execute({
-        objectName: 'company',
-        action: 'created',
-        updatedFields: ['name'],
-      }),
-    ).resolves.not.toHaveProperty('result.wait.updatedFields');
+    expect(createdEventWait).not.toHaveProperty('result.wait.updatedFields');
+    expect(updatedEventWait).toMatchObject({
+      result: {
+        wait: {
+          type: 'EVENT',
+          eventName: 'company.updated',
+          updatedFields: ['name'],
+        },
+      },
+    });
   });
 
   it('gives each execution its own wait', async () => {
