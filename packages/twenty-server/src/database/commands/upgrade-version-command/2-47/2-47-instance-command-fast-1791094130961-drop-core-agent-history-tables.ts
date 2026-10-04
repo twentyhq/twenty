@@ -12,11 +12,15 @@ export class DropCoreAgentHistoryTablesFastInstanceCommand implements FastInstan
       `DROP TABLE IF EXISTS "core"."agentTurnEvaluation", "core"."agentMessagePart", "core"."agentMessage", "core"."agentTurn", "core"."agentChatThread"`,
     );
     await queryRunner.query(
-      `DROP TYPE IF EXISTS "core"."agentMessage_role_enum", "core"."agentMessage_status_enum"`,
+      `DROP TYPE IF EXISTS "core"."agentMessage_role_enum", "core"."agentMessage_status_enum", "core"."agentChatMessage_role_enum"`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    // Left behind when agentChatMessage became agentMessage
+    await queryRunner.query(
+      `DO $$ BEGIN CREATE TYPE "core"."agentChatMessage_role_enum" AS ENUM ('user', 'assistant'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
+    );
     await queryRunner.query(
       `DO $$ BEGIN CREATE TYPE "core"."agentMessage_role_enum" AS ENUM ('user', 'assistant', 'system'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );

@@ -136,9 +136,12 @@ describe('versioned agent history upgrade (integration)', () => {
     // Recreate the pre-2.47 state this upgrade rolls back from: the core
     // tables, and the route 2.42 recorded on every workspace it moved
     const runner = dataSource.createQueryRunner();
-    await new DropCoreAgentHistoryTablesFastInstanceCommand().down(runner);
-    await storage.writeState(runner, WORKSPACE_ID, { storage: 'workspace' });
-    await runner.release();
+    try {
+      await new DropCoreAgentHistoryTablesFastInstanceCommand().down(runner);
+      await storage.writeState(runner, WORKSPACE_ID, { storage: 'workspace' });
+    } finally {
+      await runner.release();
+    }
 
     // Run-owned threads arrived with 2.44 and have no member owner in the core tables 2.42 restores.
     await dataSource.query(
@@ -286,6 +289,12 @@ describe('versioned agent history upgrade (integration)', () => {
     expect(await describeAgentChatThreadTarget(dataSource)).toEqual(
       seededAgentChatThreadTarget,
     );
+    const runner = dataSource.createQueryRunner();
+    try {
+      await new DropCoreAgentHistoryTablesFastInstanceCommand().up(runner);
+    } finally {
+      await runner.release();
+    }
   });
 
   it('skips absent schemas only when no history or migration state exists', async () => {

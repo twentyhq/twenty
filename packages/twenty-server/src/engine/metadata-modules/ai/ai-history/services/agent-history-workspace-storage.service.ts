@@ -54,7 +54,8 @@ export class AgentHistoryWorkspaceStorageService {
       }[];
     }) => Promise<TResult>,
   ): Promise<TResult> {
-    return this.dataSource.transaction(async (manager) => {
+    // One snapshot keeps a paginated report's rows and counts consistent
+    return this.dataSource.transaction('REPEATABLE READ', async (manager) => {
       await manager.query('SET TRANSACTION READ ONLY');
 
       // Older installations can keep workspace records without a schema

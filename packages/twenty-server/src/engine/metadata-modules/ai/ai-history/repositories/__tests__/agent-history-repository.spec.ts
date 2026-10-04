@@ -38,4 +38,5 @@ it('reads native workspace fields and precision from workspace storage', async (
     }),
   );
   expect(storage.getContext).toHaveBeenCalledWith('workspace');
+  expect(storage.getContext).toHaveBeenCalledTimes(2);
 });
