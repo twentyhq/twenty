@@ -82,8 +82,8 @@ export default {
         275,
         278,
         287,
-        318,
-        325,
+        320,
+        327,
         333,
         334,
         335,
@@ -5772,69 +5772,6 @@ export default {
                 1
             ]
         },
-        "ApplicationExportApplication": {
-            "universalIdentifier": [
-                1
-            ],
-            "displayName": [
-                1
-            ],
-            "sourceType": [
-                6
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApplicationExportCoverageEntry": {
-            "metadataName": [
-                1
-            ],
-            "universalIdentifier": [
-                1
-            ],
-            "status": [
-                318
-            ],
-            "reason": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApplicationExportCoverageStatus": {},
-        "ApplicationExportFile": {
-            "folder": [
-                1
-            ],
-            "path": [
-                1
-            ],
-            "content": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApplicationExport": {
-            "application": [
-                316
-            ],
-            "manifest": [
-                9
-            ],
-            "coverage": [
-                317
-            ],
-            "files": [
-                319
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "File": {
             "id": [
                 3
@@ -5865,10 +5802,10 @@ export default {
         },
         "CompleteApplicationFileUploadsResult": {
             "files": [
-                321
+                316
             ],
             "errors": [
-                322
+                317
             ],
             "__typename": [
                 1
@@ -5879,7 +5816,7 @@ export default {
                 3
             ],
             "fileFolder": [
-                325
+                320
             ],
             "filePath": [
                 1
@@ -5900,7 +5837,7 @@ export default {
         "FileFolder": {},
         "ApplicationFileUploadError": {
             "fileFolder": [
-                325
+                320
             ],
             "filePath": [
                 1
@@ -5914,10 +5851,10 @@ export default {
         },
         "CreateApplicationFileUploadsResult": {
             "targets": [
-                324
+                319
             ],
             "errors": [
-                326
+                321
             ],
             "__typename": [
                 1
@@ -5940,6 +5877,69 @@ export default {
             ],
             "actions": [
                 9
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ApplicationExportApplication": {
+            "universalIdentifier": [
+                1
+            ],
+            "displayName": [
+                1
+            ],
+            "sourceType": [
+                6
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ApplicationExportCoverageEntry": {
+            "metadataName": [
+                1
+            ],
+            "universalIdentifier": [
+                1
+            ],
+            "status": [
+                327
+            ],
+            "reason": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ApplicationExportCoverageStatus": {},
+        "ApplicationExportFile": {
+            "folder": [
+                1
+            ],
+            "path": [
+                1
+            ],
+            "content": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ApplicationExport": {
+            "application": [
+                325
+            ],
+            "manifest": [
+                9
+            ],
+            "coverage": [
+                326
+            ],
+            "files": [
+                328
             ],
             "__typename": [
                 1
@@ -6389,6 +6389,70 @@ export default {
                 1
             ]
         },
+        "Webhook": {
+            "id": [
+                3
+            ],
+            "targetUrl": [
+                1
+            ],
+            "operations": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "secret": [
+                1
+            ],
+            "applicationId": [
+                3
+            ],
+            "createdAt": [
+                4
+            ],
+            "updatedAt": [
+                4
+            ],
+            "deletedAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ToolIndexEntry": {
+            "name": [
+                1
+            ],
+            "label": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "category": [
+                1
+            ],
+            "objectName": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "widgetName": [
+                1
+            ],
+            "frontComponentId": [
+                1
+            ],
+            "inputSchema": [
+                9
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "AgentMessagePart": {
             "id": [
                 3
@@ -6428,9 +6492,6 @@ export default {
             ],
             "errorMessage": [
                 1
-            ],
-            "errorDetails": [
-                9
             ],
             "sourceUrlSourceId": [
                 1
@@ -6498,77 +6559,13 @@ export default {
                 1
             ],
             "parts": [
-                365
+                367
             ],
             "processedAt": [
                 4
             ],
             "createdAt": [
                 4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "Webhook": {
-            "id": [
-                3
-            ],
-            "targetUrl": [
-                1
-            ],
-            "operations": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "secret": [
-                1
-            ],
-            "applicationId": [
-                3
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
-            ],
-            "deletedAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ToolIndexEntry": {
-            "name": [
-                1
-            ],
-            "label": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "category": [
-                1
-            ],
-            "objectName": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "widgetName": [
-                1
-            ],
-            "frontComponentId": [
-                1
-            ],
-            "inputSchema": [
-                9
             ],
             "__typename": [
                 1
@@ -6943,6 +6940,9 @@ export default {
             ]
         },
         "AgentChatThreadParticipant": {
+            "id": [
+                3
+            ],
             "threadId": [
                 3
             ],
@@ -6953,6 +6953,9 @@ export default {
                 4
             ],
             "snoozedUntil": [
+                4
+            ],
+            "updatedAt": [
                 4
             ],
             "__typename": [
@@ -7117,7 +7120,7 @@ export default {
                 399
             ],
             "messages": [
-                366
+                368
             ],
             "createdAt": [
                 4
@@ -8206,7 +8209,7 @@ export default {
                 332
             ],
             "getToolIndex": [
-                368
+                366
             ],
             "getToolInputSchema": [
                 9,
@@ -8218,10 +8221,10 @@ export default {
                 }
             ],
             "webhooks": [
-                367
+                365
             ],
             "webhook": [
-                367,
+                365,
                 {
                     "id": [
                         3,
@@ -8305,7 +8308,7 @@ export default {
                 }
             ],
             "chatMessages": [
-                366,
+                368,
                 {
                     "threadId": [
                         3,
@@ -8324,9 +8327,6 @@ export default {
             ],
             "getAiSystemPromptPreview": [
                 384
-            ],
-            "myAgentChatThreadParticipants": [
-                388
             ],
             "skills": [
                 381
@@ -8517,7 +8517,7 @@ export default {
                 330
             ],
             "exportApplication": [
-                320,
+                329,
                 {
                     "universalIdentifier": [
                         3,
@@ -8949,7 +8949,7 @@ export default {
                         "Float!"
                     ],
                     "fileFolder": [
-                        325,
+                        320,
                         "FileFolder!"
                     ],
                     "fieldMetadataId": [
@@ -10479,7 +10479,7 @@ export default {
                 }
             ],
             "createWebhook": [
-                367,
+                365,
                 {
                     "input": [
                         576,
@@ -10488,7 +10488,7 @@ export default {
                 }
             ],
             "updateWebhook": [
-                367,
+                365,
                 {
                     "input": [
                         577,
@@ -10497,7 +10497,7 @@ export default {
                 }
             ],
             "deleteWebhook": [
-                367,
+                365,
                 {
                     "id": [
                         3,
@@ -10695,6 +10695,19 @@ export default {
                     "threadId": [
                         3,
                         "UUID!"
+                    ]
+                }
+            ],
+            "addAgentChatThreadParticipants": [
+                3,
+                {
+                    "threadId": [
+                        3,
+                        "UUID!"
+                    ],
+                    "workspaceMemberIds": [
+                        3,
+                        "[UUID!]!"
                     ]
                 }
             ],
@@ -11421,7 +11434,7 @@ export default {
                 }
             ],
             "createDevelopmentApplication": [
-                328,
+                323,
                 {
                     "universalIdentifier": [
                         1,
@@ -11434,7 +11447,7 @@ export default {
                 }
             ],
             "syncApplication": [
-                329,
+                324,
                 {
                     "manifest": [
                         9,
@@ -11449,7 +11462,7 @@ export default {
                 }
             ],
             "uploadApplicationFile": [
-                321,
+                316,
                 {
                     "file": [
                         454,
@@ -11460,7 +11473,7 @@ export default {
                         "String!"
                     ],
                     "fileFolder": [
-                        325,
+                        320,
                         "FileFolder!"
                     ],
                     "filePath": [
@@ -11470,7 +11483,7 @@ export default {
                 }
             ],
             "createApplicationFileUploads": [
-                327,
+                322,
                 {
                     "applicationUniversalIdentifier": [
                         1,
@@ -11483,7 +11496,7 @@ export default {
                 }
             ],
             "completeApplicationFileUploads": [
-                323,
+                318,
                 {
                     "applicationUniversalIdentifier": [
                         1,
@@ -14623,7 +14636,7 @@ export default {
         },
         "ApplicationFileUploadRequestInput": {
             "fileFolder": [
-                325
+                320
             ],
             "filePath": [
                 1

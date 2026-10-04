@@ -2,7 +2,7 @@ import { type StepResult, type ToolSet } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-export const mapAiStepsToUiMessageParts = (
+export const mapAiStepsToUIMessageParts = (
   steps: Pick<StepResult<ToolSet>, 'content'>[],
 ): ExtendedUIMessagePart[] => {
   const parts: ExtendedUIMessagePart[] = [];

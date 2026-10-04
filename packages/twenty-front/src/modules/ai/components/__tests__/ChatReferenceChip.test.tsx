@@ -275,13 +275,16 @@ describe('ChatReferenceChip', () => {
     },
   );
 
-  it('should open a record in the record side panel from the chat page', () => {
+  it('should open a record only when its reference is clicked', async () => {
     renderWithReferences(
       <ChatReferenceChip reference={findCase('record').reference} />,
       { initialPath: '/chat' },
     );
 
-    clickChip('Acme');
+    expect(openRecordInSidePanelMock).not.toHaveBeenCalled();
+    expect(openRoutedPageInSidePanelMock).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getByRole('link', { name: 'Acme' }));
 
     expect(openRecordInSidePanelMock).toHaveBeenCalledWith({
       recordId: RECORD_ID,

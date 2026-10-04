@@ -1,9 +1,7 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -26,11 +24,10 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
     const requiredScope =
       INBOX_SCOPE_BY_FILTER_STATUS[get(agentChatThreadFilterStatusState)];
 
-    return get(agentChatThreadsSelector).filter(
+    return get(agentChatRecentThreadsSelector).filter(
       (thread) =>
-        !isDefined(thread.deletedAt) &&
         get(agentChatThreadInboxStatusFamilySelector, thread.id).scope ===
-          requiredScope,
+        requiredScope,
     );
   },
 });

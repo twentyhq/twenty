@@ -26,7 +26,7 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
     },
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
-    application: { withUser: true, withoutUser: false },
+    application: false,
   }),
   NoPermissionGuard,
 )

@@ -30,7 +30,6 @@ import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/sen
 import { CompleteFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/complete-file-upload-tool';
 import { CreateFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/create-file-upload-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
-import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
@@ -56,7 +55,6 @@ export class ActionToolProvider implements ToolProvider {
     private readonly createFileUploadTool: CreateFileUploadTool,
     private readonly completeFileUploadTool: CompleteFileUploadTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
-    private readonly navigateAppTool: NavigateAppTool,
     private readonly extractJsonPathsTool: ExtractJsonPathsTool,
     private readonly searchOutputTool: SearchOutputTool,
     private readonly saveCampaignTool: SaveCampaignTool,
@@ -75,7 +73,6 @@ export class ActionToolProvider implements ToolProvider {
       ['create_file_upload', this.createFileUploadTool],
       ['complete_file_upload', this.completeFileUploadTool],
       ['code_interpreter', this.codeInterpreterTool],
-      ['navigate_app', this.navigateAppTool],
       ['extract_json_paths', this.extractJsonPathsTool],
       ['search_output', this.searchOutputTool],
       ['save_campaign', this.saveCampaignTool],
@@ -196,15 +193,6 @@ export class ActionToolProvider implements ToolProvider {
       this.buildDescriptor(
         'search_help_center',
         this.searchHelpCenterTool,
-        includeSchemas,
-        context.locale,
-      ),
-    );
-
-    descriptors.push(
-      this.buildDescriptor(
-        'navigate_app',
-        this.navigateAppTool,
         includeSchemas,
         context.locale,
       ),

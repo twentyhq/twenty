@@ -2,7 +2,6 @@ import { type PausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-ex
 
 // type-erased so tools with different inputs can share one map
 export type PausingTool = {
-  isAwaitingOutput: (toolOutput: unknown) => boolean;
   // the pending output carries what the server resolved when the call was made
   parseCall: (
     toolInput: unknown,

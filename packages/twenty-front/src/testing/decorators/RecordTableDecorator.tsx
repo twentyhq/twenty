@@ -16,7 +16,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
-import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { RecordTableBodyContextValueProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import {
   RecordTableContextProvider,
   useRecordTableContextOrThrow,
@@ -190,17 +190,17 @@ const InternalTableContextProviders = ({
           triggerEvent,
         }}
       >
-        <RecordTableBodyContextProvider
+        <RecordTableBodyContextValueProvider
           value={{
             onCloseTableCell: () => {},
             onOpenTableCell: () => {},
-            onCommandMenuDropdownOpened: () => {},
+            openRecordContextMenu: () => {},
             onMoveFocus: () => {},
             onMoveHoverToCurrentCell: () => {},
           }}
         >
           {children}
-        </RecordTableBodyContextProvider>
+        </RecordTableBodyContextValueProvider>
       </RecordTableContextProvider>
     </RecordIndexContextProvider>
   );

@@ -8,8 +8,7 @@ import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecord
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
 import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
 import { type RecordDragDropResult } from '@/object-record/record-drag/types/RecordDragDropResult';
-import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
@@ -21,6 +20,7 @@ import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-dro
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
 import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 type RecordDragDropContextProviderProps = {
   getDroppableItemCount: (droppableId: string) => number;
@@ -35,16 +35,18 @@ export const RecordDragDropContextProvider = ({
   renderDragOverlay,
   children,
 }: RecordDragDropContextProviderProps) => {
-  const { recordIndexId } = useRecordIndexContextOrThrow();
-
   const selectedRecordIds = useAtomComponentSelectorCallbackState(
     selectedRecordIdsComponentSelector,
   );
 
+  const draggedRecordIdsCallbackState = useAtomComponentStateCallbackState(
+    draggedRecordIdsComponentState,
+  );
+
   const store = useStore();
 
-  const { startRecordDrag } = useStartRecordDrag(recordIndexId);
-  const { endRecordDrag } = useEndRecordDrag(recordIndexId);
+  const { startRecordDrag } = useStartRecordDrag();
+  const { endRecordDrag } = useEndRecordDrag();
 
   const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
     number | null
@@ -123,11 +125,8 @@ export const RecordDragDropContextProvider = ({
 
     const isSameDroppable = sourceData.droppableId === resolvedDrop.droppableId;
 
-    const isMultiDrag =
-      getDragOperationType({
-        draggedRecordId: sourceData.recordId,
-        selectedRecordIds: store.get(selectedRecordIds),
-      }) === 'multi';
+    // A multi-drag dropped in place still gathers the other dragged records
+    const isMultiDrag = store.get(draggedRecordIdsCallbackState).length > 1;
 
     if (
       isSameDroppable &&
@@ -140,15 +139,10 @@ export const RecordDragDropContextProvider = ({
 
     try {
       onRecordDrop({
-        draggableId: sourceData.recordId,
-        source: {
-          droppableId: sourceData.droppableId,
-          index: sourceData.index,
-        },
-        destination: {
-          droppableId: resolvedDrop.droppableId,
-          index: destinationIndex,
-        },
+        draggedRecordId: sourceData.recordId,
+        sourceDroppableId: sourceData.droppableId,
+        destinationDroppableId: resolvedDrop.droppableId,
+        destinationIndex,
       });
     } finally {
       clearDragState();

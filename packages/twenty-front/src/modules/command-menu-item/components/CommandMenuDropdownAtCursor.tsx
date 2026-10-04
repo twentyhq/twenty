@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { Dropdown } from 'twenty-ui/components';
 
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
-import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
+import { commandMenuDropdownPositionComponentState } from '@/command-menu-item/states/commandMenuDropdownPositionComponentState';
 import { createVirtualElementFromPosition } from '@/command-menu-item/utils/createVirtualElementFromPosition';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
@@ -27,17 +27,14 @@ export const CommandMenuDropdownAtCursor = ({
 
   const dropdownId = getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
 
-  const recordIndexCommandMenuDropdownPosition = useAtomComponentStateValue(
-    recordIndexCommandMenuDropdownPositionComponentState,
-    dropdownId,
+  const commandMenuDropdownPosition = useAtomComponentStateValue(
+    commandMenuDropdownPositionComponentState,
   );
 
   return (
     <DropdownRoot dropdownId={dropdownId} type="menu">
       <DropdownContent
-        anchor={createVirtualElementFromPosition(
-          recordIndexCommandMenuDropdownPosition,
-        )}
+        anchor={createVirtualElementFromPosition(commandMenuDropdownPosition)}
         aria-label={t`Actions`}
       >
         <Dropdown.Section

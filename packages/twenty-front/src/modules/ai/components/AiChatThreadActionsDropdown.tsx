@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { type ReactElement, type MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
@@ -9,11 +9,9 @@ import { AiChatThreadCommandMenuItems } from '@/ai/components/AiChatThreadComman
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { useTargetAiChatThreadsInContextStore } from '@/ai/hooks/useTargetAiChatThreadsInContextStore';
 import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
-import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
-import { getAiChatThreadActionsInstanceId } from '@/ai/utils/getAiChatThreadActionsInstanceId';
-import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -29,18 +27,16 @@ type AiChatThreadActionsDropdownProps = {
     deletedAt?: string | null;
     lastActivityAt?: string | null;
   };
-  surface: AiChatThreadActionsSurface;
+  instanceId: string;
   onRenameRequested: () => void;
   onDetach?: () => void;
-  trigger?: ReactElement;
 };
 
 export const AiChatThreadActionsDropdown = ({
   thread,
-  surface,
+  instanceId,
   onRenameRequested,
   onDetach,
-  trigger,
 }: AiChatThreadActionsDropdownProps) => {
   const { t } = useLingui();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -59,11 +55,6 @@ export const AiChatThreadActionsDropdown = ({
     agentChatThreadPermissionsFamilySelector,
     thread.id,
   );
-  const instanceId = getAiChatThreadActionsInstanceId({
-    threadId: thread.id,
-    surface,
-  });
-
   if (!isDefined(chatObjectMetadataItem)) {
     return null;
   }
@@ -85,10 +76,7 @@ export const AiChatThreadActionsDropdown = ({
     <ContextStoreComponentInstanceContext.Provider value={{ instanceId }}>
       <CommandMenuComponentInstanceContext.Provider value={{ instanceId }}>
         <DropdownRoot
-          dropdownId={getAiChatThreadItemMenuDropdownId({
-            threadId: thread.id,
-            surface,
-          })}
+          dropdownId={getCommandMenuDropdownIdFromCommandMenuId(instanceId)}
           type="menu"
           onOpenChange={(isOpen) => {
             if (isOpen) {
@@ -115,11 +103,9 @@ export const AiChatThreadActionsDropdown = ({
         >
           <Dropdown.Trigger
             render={
-              trigger ?? (
-                <LightIconButton aria-label={t`Chat actions`} emphasis="subtle">
-                  <IconDotsVertical />
-                </LightIconButton>
-              )
+              <LightIconButton aria-label={t`Chat actions`} emphasis="subtle">
+                <IconDotsVertical />
+              </LightIconButton>
             }
           />
           <DropdownContent align="end" aria-label={t`Chat actions`}>
