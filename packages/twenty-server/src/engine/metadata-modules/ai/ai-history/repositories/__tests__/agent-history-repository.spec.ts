@@ -1,7 +1,7 @@
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 
-it('reads native workspace fields and precision behind the upgrade readiness fence', async () => {
+it('reads native workspace fields and precision from workspace storage', async () => {
   const record = {
     id: 'thread',
     archivedAt: '2026-01-01T00:00:00.000Z',
@@ -10,7 +10,7 @@ it('reads native workspace fields and precision behind the upgrade readiness fen
   };
   const storage = {
     run: jest.fn(),
-    getContext: jest.fn().mockResolvedValue({}),
+    getContext: jest.fn().mockReturnValue({}),
   };
   const find = jest.fn().mockResolvedValue([record]);
   const count = jest.fn().mockResolvedValue(1);
@@ -37,5 +37,6 @@ it('reads native workspace fields and precision behind the upgrade readiness fen
       order: { archivedAt: { order: 'DESC', nulls: 'NULLS LAST' } },
     }),
   );
+  expect(storage.getContext).toHaveBeenCalledWith('workspace');
   expect(storage.getContext).toHaveBeenCalledTimes(2);
 });

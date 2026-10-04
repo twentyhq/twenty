@@ -34,6 +34,7 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
     lastMessageSenderWorkspaceMemberId: true,
     writerWorkspaceMemberIds: true,
     workspaceMemberId: true,
+    pendingQuestionMessageId: true,
   },
 };
 

@@ -6,7 +6,7 @@ import {
 
 // aliases, not copies: an SDK spec change breaks the build here; they keep the experimental prefix out of engine code
 
-export type AiEvaluationModel = Experimental_EvaluationModel;
+export type AiEvaluationModel = Exclude<Experimental_EvaluationModel, string>;
 
 export type AiEvaluationModelQuestion = Experimental_EvaluationQuestion;
 

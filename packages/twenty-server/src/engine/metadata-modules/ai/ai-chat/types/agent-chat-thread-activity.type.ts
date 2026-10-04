@@ -9,5 +9,6 @@ export type AgentChatThreadActivity = {
     | 'lastMessageText'
     | 'lastMessageSenderWorkspaceMemberId'
     | 'writerWorkspaceMemberIds'
+    | 'pendingQuestionMessageId'
   >
 >;
