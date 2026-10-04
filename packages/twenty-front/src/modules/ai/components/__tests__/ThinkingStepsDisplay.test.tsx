@@ -48,6 +48,12 @@ jest.mock('@/ui/layout/tab-list/components/TabList', () => ({
   ),
 }));
 
+jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
+  LazyMarkdownRenderer: ({ text }: { text: string }) => (
+    <div data-testid="markdown-renderer">{text}</div>
+  ),
+}));
+
 jest.mock('@/ai/components/ToolRecordsWidget', () => ({
   ToolRecordsWidget: ({
     recordReferences,
@@ -134,7 +140,9 @@ describe('ThinkingStepsDisplay', () => {
 
     expect(screen.queryByRole('button', { name: /steps/i })).toBeNull();
     expect(screen.getByText('Thinking')).toBeInTheDocument();
-    expect(screen.getByText('Active reasoning content')).toBeInTheDocument();
+    expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
+      'Active reasoning content',
+    );
     expect(
       screen.getByText('Searched the web for crm software'),
     ).toBeInTheDocument();

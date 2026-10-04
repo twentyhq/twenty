@@ -83,8 +83,8 @@ export default {
         278,
         287,
         289,
-        320,
-        327,
+        322,
+        329,
         335,
         336,
         337,
@@ -5794,69 +5794,6 @@ export default {
                 1
             ]
         },
-        "ApplicationExportApplication": {
-            "universalIdentifier": [
-                1
-            ],
-            "displayName": [
-                1
-            ],
-            "sourceType": [
-                6
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApplicationExportCoverageEntry": {
-            "metadataName": [
-                1
-            ],
-            "universalIdentifier": [
-                1
-            ],
-            "status": [
-                320
-            ],
-            "reason": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApplicationExportCoverageStatus": {},
-        "ApplicationExportFile": {
-            "folder": [
-                1
-            ],
-            "path": [
-                1
-            ],
-            "content": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApplicationExport": {
-            "application": [
-                318
-            ],
-            "manifest": [
-                9
-            ],
-            "coverage": [
-                319
-            ],
-            "files": [
-                321
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "File": {
             "id": [
                 3
@@ -5887,10 +5824,10 @@ export default {
         },
         "CompleteApplicationFileUploadsResult": {
             "files": [
-                323
+                318
             ],
             "errors": [
-                324
+                319
             ],
             "__typename": [
                 1
@@ -5901,7 +5838,7 @@ export default {
                 3
             ],
             "fileFolder": [
-                327
+                322
             ],
             "filePath": [
                 1
@@ -5922,7 +5859,7 @@ export default {
         "FileFolder": {},
         "ApplicationFileUploadError": {
             "fileFolder": [
-                327
+                322
             ],
             "filePath": [
                 1
@@ -5936,10 +5873,10 @@ export default {
         },
         "CreateApplicationFileUploadsResult": {
             "targets": [
-                326
+                321
             ],
             "errors": [
-                328
+                323
             ],
             "__typename": [
                 1
@@ -5962,6 +5899,69 @@ export default {
             ],
             "actions": [
                 9
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ApplicationExportApplication": {
+            "universalIdentifier": [
+                1
+            ],
+            "displayName": [
+                1
+            ],
+            "sourceType": [
+                6
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ApplicationExportCoverageEntry": {
+            "metadataName": [
+                1
+            ],
+            "universalIdentifier": [
+                1
+            ],
+            "status": [
+                329
+            ],
+            "reason": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ApplicationExportCoverageStatus": {},
+        "ApplicationExportFile": {
+            "folder": [
+                1
+            ],
+            "path": [
+                1
+            ],
+            "content": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ApplicationExport": {
+            "application": [
+                327
+            ],
+            "manifest": [
+                9
+            ],
+            "coverage": [
+                328
+            ],
+            "files": [
+                330
             ],
             "__typename": [
                 1
@@ -6515,9 +6515,6 @@ export default {
             "errorMessage": [
                 1
             ],
-            "errorDetails": [
-                9
-            ],
             "sourceUrlSourceId": [
                 1
             ],
@@ -6965,6 +6962,9 @@ export default {
             ]
         },
         "AgentChatThreadParticipant": {
+            "id": [
+                3
+            ],
             "threadId": [
                 3
             ],
@@ -6975,6 +6975,9 @@ export default {
                 4
             ],
             "snoozedUntil": [
+                4
+            ],
+            "updatedAt": [
                 4
             ],
             "__typename": [
@@ -8548,7 +8551,7 @@ export default {
                 332
             ],
             "exportApplication": [
-                322,
+                331,
                 {
                     "universalIdentifier": [
                         3,
@@ -8980,7 +8983,7 @@ export default {
                         "Float!"
                     ],
                     "fileFolder": [
-                        327,
+                        322,
                         "FileFolder!"
                     ],
                     "fieldMetadataId": [
@@ -10732,6 +10735,19 @@ export default {
                     ]
                 }
             ],
+            "addAgentChatThreadParticipants": [
+                3,
+                {
+                    "threadId": [
+                        3,
+                        "UUID!"
+                    ],
+                    "workspaceMemberIds": [
+                        3,
+                        "[UUID!]!"
+                    ]
+                }
+            ],
             "startWorkspaceSetupChat": [
                 393,
                 {
@@ -11455,7 +11471,7 @@ export default {
                 }
             ],
             "createDevelopmentApplication": [
-                330,
+                325,
                 {
                     "universalIdentifier": [
                         1,
@@ -11468,7 +11484,7 @@ export default {
                 }
             ],
             "syncApplication": [
-                331,
+                326,
                 {
                     "manifest": [
                         9,
@@ -11483,7 +11499,7 @@ export default {
                 }
             ],
             "uploadApplicationFile": [
-                323,
+                318,
                 {
                     "file": [
                         456,
@@ -11494,7 +11510,7 @@ export default {
                         "String!"
                     ],
                     "fileFolder": [
-                        327,
+                        322,
                         "FileFolder!"
                     ],
                     "filePath": [
@@ -11504,7 +11520,7 @@ export default {
                 }
             ],
             "createApplicationFileUploads": [
-                329,
+                324,
                 {
                     "applicationUniversalIdentifier": [
                         1,
@@ -11517,7 +11533,7 @@ export default {
                 }
             ],
             "completeApplicationFileUploads": [
-                325,
+                320,
                 {
                     "applicationUniversalIdentifier": [
                         1,
@@ -14657,7 +14673,7 @@ export default {
         },
         "ApplicationFileUploadRequestInput": {
             "fileFolder": [
-                327
+                322
             ],
             "filePath": [
                 1

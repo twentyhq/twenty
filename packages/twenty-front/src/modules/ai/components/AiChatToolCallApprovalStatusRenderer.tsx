@@ -10,6 +10,7 @@ import { IconMail, IconTool } from 'twenty-ui/icon';
 
 import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
 import { StyledAiChatAskStatusDetail } from '@/ai/components/AiChatAskStyledComponents';
+import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 
 export const AiChatToolCallApprovalStatusRenderer = ({
   toolPart,
@@ -37,6 +38,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     pending: isDefined(result)
       ? t`Waiting for your approval`
       : t`Preparing an action to approve...`,
+    running: t`Running...`,
     approved: t`Approved`,
     rejected: t`Rejected`,
     failed: t`Approved but it failed`,
@@ -51,6 +53,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
   const detailByStatus: Record<ProposeToolCallToolStatus, string | undefined> =
     {
       pending: summary,
+      running: summary,
       approved: summary,
       rejected: result?.feedback,
       failed: result?.error,
@@ -63,10 +66,15 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     <AiChatAskStatusRow
       Icon={result?.proposal.template === 'email' ? IconMail : IconTool}
       message={message}
-      isShimmering={isStreaming && status === 'pending' && !hasFailedToPropose}
+      isShimmering={
+        ((isStreaming && status === 'pending') || status === 'running') &&
+        !hasFailedToPropose
+      }
     >
       {isNonEmptyString(detail) && (
-        <StyledAiChatAskStatusDetail>{detail}</StyledAiChatAskStatusDetail>
+        <StyledAiChatAskStatusDetail>
+          <TextWithChatReferences text={detail} />
+        </StyledAiChatAskStatusDetail>
       )}
     </AiChatAskStatusRow>
   );

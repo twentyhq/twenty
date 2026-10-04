@@ -1,4 +1,6 @@
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
+import { findAwaitingCallText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-awaiting-call-text.util';
+import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -702,14 +704,10 @@ export class StreamAgentChatJob {
     turnModelId: string;
     turnId: string;
   }): Promise<AgentChatTurnOutcome | null> {
+    // A turn that only waits on the member still needs a preview in chat lists
     const replyText =
-      responseMessage.parts
-        .flatMap((part) =>
-          part.type === 'text' && isNonEmptyString(part.text.trim())
-            ? [part.text]
-            : [],
-        )
-        .pop() ?? null;
+      findLastMessageText(responseMessage.parts) ??
+      findAwaitingCallText(responseMessage.parts);
     const hasText = responseMessage.parts.some(
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );

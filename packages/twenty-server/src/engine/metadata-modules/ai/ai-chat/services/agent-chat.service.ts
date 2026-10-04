@@ -3,12 +3,11 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type FindOptionsWhere, In } from 'typeorm';
-import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
@@ -18,7 +17,7 @@ import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-h
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-db-parts.util';
 import { findAwaitingPausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool.util';
-import { skipAwaitingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/skip-awaiting-tool-parts.util';
+import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -28,9 +27,12 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 
 @Injectable()
 export class AgentChatService {
+  private readonly logger = new Logger(AgentChatService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -140,28 +142,30 @@ export class AgentChatService {
     parts: ExtendedUIMessage['parts'];
     workspaceId: string;
   }): Promise<void> {
-    await this.messageRepository.upsert(
-      workspaceId,
-      {
-        id,
-        threadId,
-        turnId,
-        role: AgentMessageRole.ASSISTANT,
-        processedAt: new Date().toISOString(),
-      },
-      ['id'],
-    );
-
-    await this.messagePartRepository.delete(workspaceId, { messageId: id });
-
     const dbParts = mapUIMessagePartsToDBParts(parts, id);
 
-    if (dbParts.length > 0) {
-      await this.messagePartRepository.insert(
-        workspaceId,
-        dbParts as QueryDeepPartialEntity<AgentMessagePartWorkspaceEntity>[],
-      );
-    }
+    // the message is replaced whole, so no reader or crash ever finds it without its parts
+    await this.conversationWriterService.runInTransaction(
+      workspaceId,
+      async (scope) => {
+        await scope.upsert(
+          'agentMessage',
+          {
+            id,
+            threadId,
+            turnId,
+            role: AgentMessageRole.ASSISTANT,
+            processedAt: new Date().toISOString(),
+          },
+          ['id'],
+        );
+        await scope.delete('agentMessagePart', { messageId: id });
+
+        if (dbParts.length > 0) {
+          await scope.insert('agentMessagePart', dbParts);
+        }
+      },
+    );
   }
 
   async findLatestSentUserMessage({
@@ -523,6 +527,30 @@ export class AgentChatService {
     return parts.filter((part) => isDefined(findAwaitingPausingTool(part)));
   }
 
+  // only a call still pending is claimed, so two answers can never both run it; the rest of the
+  // pending output, such as the workflow step waiting on it, is kept
+  async claimToolCallAnswer({
+    partId,
+    toolOutput,
+    workspaceId,
+  }: {
+    partId: string;
+    toolOutput: Record<string, unknown>;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const claimedParts = await this.messagePartRepository.query(
+      workspaceId,
+      ({ manager, table }) =>
+        manager.query<{ id: string }[]>(
+          `WITH claimed_part AS (UPDATE ${table('agentMessagePart')} SET "toolOutput" = "toolOutput" || $2::jsonb, "updatedAt" = now()
+           WHERE id = $1 AND "toolOutput"->'result'->>'status' = 'pending' RETURNING id) SELECT id FROM claimed_part`,
+          [partId, JSON.stringify(toolOutput)],
+        ),
+    );
+
+    return claimedParts.length === 1;
+  }
+
   // written together so an answer never strands a conversation waiting on answered calls
   async recordToolCallAnswer({
     threadId,
@@ -539,7 +567,7 @@ export class AgentChatService {
     isLastAnswer: boolean;
     workspaceId: string;
   }): Promise<void> {
-    await this.messagePartRepository.query(
+    const isPendingQuestionCleared = await this.messagePartRepository.query(
       workspaceId,
       async ({ manager, table }) => {
         await manager.query(
@@ -547,17 +575,33 @@ export class AgentChatService {
           [partId, JSON.stringify(toolOutput)],
         );
 
-        if (isLastAnswer) {
-          await manager.query(
-            `UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = NULL, "updatedAt" = now() WHERE id = $1 AND "pendingQuestionMessageId" = $2`,
-            [threadId, messageId],
-          );
+        if (!isLastAnswer) {
+          return false;
         }
+
+        const clearedThreads = await manager.query<{ id: string }[]>(
+          `WITH cleared AS (
+             UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = NULL, "updatedAt" = now()
+             WHERE id = $1 AND "pendingQuestionMessageId" = $2
+             RETURNING id
+           ) SELECT id FROM cleared`,
+          [threadId, messageId],
+        );
+
+        return clearedThreads.length > 0;
       },
     );
+
+    if (isPendingQuestionCleared) {
+      await this.emitPendingQuestionCleared({
+        workspaceId,
+        threadId,
+        messageId,
+      });
+    }
   }
 
-  // clearing the marker is the claim, so only one caller closes the calls as skipped
+  // clearing the marker is the claim, so only one caller closes the calls
   async closePendingToolCalls({
     threadId,
     messageId,
@@ -579,11 +623,45 @@ export class AgentChatService {
       return;
     }
 
-    await skipAwaitingToolParts({
+    await closeOpenToolParts({
       messagePartRepository: this.messagePartRepository,
       messageId,
       workspaceId,
     });
+
+    await this.emitPendingQuestionCleared({ workspaceId, threadId, messageId });
+  }
+
+  // Chat lists show which chats wait on an answer. The marker is already
+  // cleared, so a lost event must not fail the caller
+  private async emitPendingQuestionCleared({
+    workspaceId,
+    threadId,
+    messageId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    messageId: string;
+  }): Promise<void> {
+    try {
+      const thread = await this.threadRepository.findOne(workspaceId, {
+        where: { id: threadId },
+      });
+
+      if (!isDefined(thread)) {
+        return;
+      }
+
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore: { ...thread, pendingQuestionMessageId: messageId },
+        threadAfter: thread,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Could not emit the cleared question on thread ${threadId}: ${formatErrorWithCause(error)}`,
+      );
+    }
   }
 
   async restoreThread({

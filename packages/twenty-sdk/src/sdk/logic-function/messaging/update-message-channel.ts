@@ -1,5 +1,4 @@
-import { type MessageChannelVisibility } from 'twenty-shared/types';
-
+import { type MessageChannelVisibility } from '@/sdk/define/common/types/loose-shared-types.type';
 import { APP_MESSAGE_CHANNEL_SELECTION } from '@/sdk/logic-function/messaging/message-channel-fields.constant';
 import { type AppMessageChannel } from '@/sdk/logic-function/messaging/types/app-message-channel.type';
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
