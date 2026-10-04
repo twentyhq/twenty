@@ -21,8 +21,6 @@ import {
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-// The upload flow runs cache-lock retries with real delays, so fake timers
-// would hang it.
 jest.setTimeout(120000);
 
 type GlobalTestContext = {
@@ -95,6 +93,7 @@ const findRegistration = async (
 
 describe('Application token tarball upload should fail', () => {
   let globalTestContext: GlobalTestContext;
+  const stagedFileIds: string[] = [];
 
   beforeAll(async () => {
     jest.useRealTimers();
@@ -130,6 +129,13 @@ describe('Application token tarball upload should fail', () => {
   }, 120000);
 
   afterAll(async () => {
+    for (const fileId of stagedFileIds) {
+      await globalThis.testDataSource.query(
+        'DELETE FROM core."file" WHERE id = $1',
+        [fileId],
+      );
+    }
+
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier:
         globalTestContext.callingApplication.universalIdentifier,
@@ -184,6 +190,8 @@ describe('Application token tarball upload should fail', () => {
               size: tarball.length,
             });
             const uploadTarget = data!.createFileUpload;
+
+            stagedFileIds.push(uploadTarget.fileId);
 
             await putApplicationFileUploadTarget({
               uploadTarget,

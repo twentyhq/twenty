@@ -9,11 +9,6 @@ export type CallingApplication = {
   applicationRegistrationId: string;
 };
 
-// One type-valid request per operation an installed application is refused on.
-// The values only have to pass GraphQL validation: the refusal happens before
-// any of them is read. Operations that name a target application name the
-// calling one, so ApplicationTargetGuard lets the request through to the
-// principal check.
 export const ADMINISTRATION_OPERATION_QUERY_FACTORIES = {
   createDevelopmentApplication: () => ({
     query: gql`

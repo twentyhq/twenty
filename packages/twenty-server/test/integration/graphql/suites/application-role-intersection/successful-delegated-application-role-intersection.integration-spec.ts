@@ -23,6 +23,8 @@ import { createOneView } from 'test/integration/metadata/suites/view/utils/creat
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -93,14 +95,18 @@ describe('A delegated application holding the flag acts like the session', () =>
       const { data, errors } = await createWorkspaceBlocklistEntry({
         token: token(),
       });
+      const blocklistEntryId = data?.createBlocklist.id;
 
-      expect(errors).toBeUndefined();
-
-      const blocklistEntryId = data?.createBlocklist.id as string;
-
-      expect(await workspaceBlocklistEntryExists(blocklistEntryId)).toBe(true);
-
-      await destroyWorkspaceBlocklistEntry(blocklistEntryId);
+      try {
+        expect(errors).toBeUndefined();
+        expect(
+          await workspaceBlocklistEntryExists(blocklistEntryId as string),
+        ).toBe(true);
+      } finally {
+        if (isDefined(blocklistEntryId)) {
+          await destroyWorkspaceBlocklistEntry(blocklistEntryId);
+        }
+      }
     });
 
     it('should update a view', async () => {

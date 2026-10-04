@@ -166,8 +166,6 @@ describe('A delegated application without the flag is refused', () => {
     },
   );
 
-  // An installed application never reaches the role mutations, whatever the
-  // member's role and the ROLES flag say, so its own declared role stays.
   it('should refuse a delegated application deleting its own declared role', async () => {
     const { flaggedApplication, flaggedApplicationToken } =
       delegatedApplications;

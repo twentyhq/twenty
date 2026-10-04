@@ -38,8 +38,6 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
     const request = gqlContext.getContext().req;
     const { fileFolder } = gqlContext.getArgs<{ fileFolder: FileFolder }>();
 
-    // The folder is an argument, so AuthPrincipalGuard cannot refuse it: an
-    // installed application never publishes an application, not even its own.
     if (
       fileFolder === FileFolder.AppTarball &&
       isDefined(getScopedCallingApplication(request.application))

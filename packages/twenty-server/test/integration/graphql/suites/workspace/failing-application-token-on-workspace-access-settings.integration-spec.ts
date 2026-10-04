@@ -56,8 +56,6 @@ type FieldTestContext = {
   }) => UpdateWorkspaceInput;
 };
 
-// Every flag these settings gate on, so a missing permission is never what
-// refuses the application.
 const ACCESS_SETTINGS_PERMISSION_FLAGS = [
   SystemPermissionFlag.WORKSPACE,
   SystemPermissionFlag.WORKSPACE_MEMBERS,
@@ -76,8 +74,6 @@ const tokenTestCases: EachTestingContext<TokenTestContext>[] = [
   },
 ];
 
-// Each update moves the setting away from its current value, so an accepted
-// update would show in the workspace row.
 const fieldTestCases: EachTestingContext<FieldTestContext>[] = [
   {
     title: 'defaultRoleId',

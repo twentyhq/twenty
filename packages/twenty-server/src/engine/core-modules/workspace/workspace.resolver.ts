@@ -272,8 +272,6 @@ export class WorkspaceResolver {
     }
   }
 
-  // The invite link lets anyone holding it join the workspace, so an installed
-  // application never reads it.
   @ResolveField(() => String, { nullable: true })
   inviteHash(
     @Parent() workspace: WorkspaceEntity,

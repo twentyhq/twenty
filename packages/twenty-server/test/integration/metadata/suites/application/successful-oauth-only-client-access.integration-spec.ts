@@ -5,17 +5,19 @@ import { getMcpToolCatalog } from 'test/integration/graphql/suites/application-r
 import { findApplicationRegistrationByUniversalIdentifier } from 'test/integration/metadata/suites/application-registration/utils/find-application-registration-by-universal-identifier.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { completeAppTarballUpload } from 'test/integration/metadata/suites/application/utils/complete-app-tarball-upload.util';
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
+import { createAppTarballUpload } from 'test/integration/metadata/suites/application/utils/create-app-tarball-upload.util';
 import { createApplicationFileUploads } from 'test/integration/metadata/suites/application/utils/create-application-file-uploads.util';
 import { exportApplication } from 'test/integration/metadata/suites/application/utils/export-application.util';
 import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
+import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites/application/utils/put-application-file-upload-target.util';
 import {
   type ApplicationWithResources,
   setupApplicationWithResources,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
-import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
 import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
 import { findManyLogicFunctions } from 'test/integration/metadata/suites/logic-function/utils/find-many-logic-functions.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -213,24 +215,35 @@ describe('OAuth-only client access to installed applications should succeed', ()
   });
 
   it('should deploy a tarball for the application it develops', async () => {
-    const { data } = await uploadAppTarball({
-      tarballBuffer: await createAppTarball({
-        'manifest.json': JSON.stringify(
-          buildBaseManifest({
-            appId: installedApplication.universalIdentifier,
-            roleId: crypto.randomUUID(),
-          }),
-        ),
-        'package.json': JSON.stringify({
-          name: 'oauth-only-client-deploy',
-          version: '1.0.0',
+    const tarball = await createAppTarball({
+      'manifest.json': JSON.stringify(
+        buildBaseManifest({
+          appId: installedApplication.universalIdentifier,
+          roleId: crypto.randomUUID(),
         }),
+      ),
+      'package.json': JSON.stringify({
+        name: 'oauth-only-client-deploy',
+        version: '1.0.0',
       }),
+    });
+
+    const { data: uploadData } = await createAppTarballUpload({
+      size: tarball.length,
+      token: cliToken,
+      expectToFail: false,
+    });
+    const uploadTarget = uploadData!.createFileUpload;
+
+    await putApplicationFileUploadTarget({ uploadTarget, body: tarball });
+
+    const { data } = await completeAppTarballUpload({
+      fileId: uploadTarget.fileId,
       token: cliToken,
       expectToFail: false,
     });
 
-    expect(data.uploadAppTarball.universalIdentifier).toBe(
+    expect(data.completeAppTarballUpload.universalIdentifier).toBe(
       installedApplication.universalIdentifier,
     );
   });

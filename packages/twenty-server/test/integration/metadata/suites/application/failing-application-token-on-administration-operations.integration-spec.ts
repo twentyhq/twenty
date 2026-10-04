@@ -34,8 +34,6 @@ type TokenTestContext = {
   token: (globalContext: GlobalTestContext) => string;
 };
 
-// Every flag the operations under test gate on, so the permission guards let
-// the application through and the refusal is the principal check's.
 const ADMINISTRATION_PERMISSION_FLAGS = [
   SystemPermissionFlag.APPLICATIONS,
   SystemPermissionFlag.MARKETPLACE_APPS,
