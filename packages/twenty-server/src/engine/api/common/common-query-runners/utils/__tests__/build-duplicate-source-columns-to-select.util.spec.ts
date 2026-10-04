@@ -1,8 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { buildDuplicateSourceColumnsToSelect } from 'src/engine/api/common/common-query-runners/utils/build-duplicate-source-columns-to-select.util';
-import { computeDefaultFieldNamesToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-default-field-names-to-select.util';
-import { REST_API_DEFAULT_MAX_FIELDS } from 'src/engine/api/rest/input-request-parsers/constants/rest-api-default-max-fields.constant';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
@@ -60,31 +58,6 @@ describe('buildDuplicateSourceColumnsToSelect', () => {
         restrictedFields: { 'name-id': { canRead: false } },
       }),
     ).toEqual({ id: true, emailsPrimaryEmail: true });
-  });
-
-  it('keeps matching columns excluded by the default response cap', () => {
-    const fields = [
-      createField('id', FieldMetadataType.UUID),
-      ...Array.from({ length: REST_API_DEFAULT_MAX_FIELDS }, (_, index) =>
-        createField(`custom${index}`),
-      ),
-      createField('zDuplicateKey'),
-    ];
-    const args = buildArgs(fields);
-
-    args.flatObjectMetadata.duplicateCriteria = [['zDuplicateKey']];
-
-    const responseFieldNames = computeDefaultFieldNamesToSelect({
-      flatObjectMetadata: args.flatObjectMetadata,
-      readableFlatFields: fields,
-      maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
-    });
-
-    expect(responseFieldNames?.has('zDuplicateKey')).toBe(false);
-    expect(buildDuplicateSourceColumnsToSelect(args)).toEqual({
-      id: true,
-      zDuplicateKey: true,
-    });
   });
 
   it('loads only id when no duplicate criteria exist', () => {

@@ -10,21 +10,11 @@ describe('parseFieldsRestRequest', () => {
     expect(parseFieldsRestRequest(buildArgs({}))).toBeUndefined();
   });
 
-  it('should parse a comma-separated list of field names', () => {
+  it('should parse comma-separated names, trim whitespace, ignore empty entries and deduplicate', () => {
     expect(
-      parseFieldsRestRequest(buildArgs({ fields: 'id,name,emails,company' })),
-    ).toEqual(new Set(['id', 'name', 'emails', 'company']));
-  });
-
-  it('should trim whitespace and ignore empty entries', () => {
-    expect(
-      parseFieldsRestRequest(buildArgs({ fields: ' name , emails ,, ' })),
-    ).toEqual(new Set(['name', 'emails']));
-  });
-
-  it('should remove duplicates', () => {
-    expect(
-      parseFieldsRestRequest(buildArgs({ fields: 'name,emails,name' })),
+      parseFieldsRestRequest(
+        buildArgs({ fields: ' name , emails , name ,, ' }),
+      ),
     ).toEqual(new Set(['name', 'emails']));
   });
 

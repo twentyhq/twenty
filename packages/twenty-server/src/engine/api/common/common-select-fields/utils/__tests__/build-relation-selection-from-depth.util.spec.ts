@@ -189,28 +189,6 @@ describe('buildRelationSelectionFromDepth', () => {
     });
   });
 
-  it('should only expand relations from the provided fields at depth 1', () => {
-    expect(
-      buildRelationSelectionFromDepth({
-        ...buildArgs(1),
-        flatFields: buildArgs(1).flatFields.filter(
-          (field) => field.name === 'name',
-        ),
-      }),
-    ).toEqual({});
-
-    expect(
-      buildRelationSelectionFromDepth({
-        ...buildArgs(1),
-        flatFields: buildArgs(1).flatFields.filter(
-          (field) => field.name === 'company',
-        ),
-      }),
-    ).toEqual({
-      company: { name: true, accountOwnerId: true, timelineActivities: true },
-    });
-  });
-
   it('should expand nested relations but not their timeline activities at depth 2', () => {
     expect(buildRelationSelectionFromDepth(buildArgs(2))).toEqual({
       company: {

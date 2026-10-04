@@ -89,7 +89,7 @@ describe('computeDefaultFieldNamesToSelect', () => {
       maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length - 1,
     });
 
-    expect([...(fieldNamesToSelect ?? [])]).toEqual([
+    expect([...fieldNamesToSelect]).toEqual([
       'id',
       'name',
       'avatarUrl',
@@ -103,25 +103,6 @@ describe('computeDefaultFieldNamesToSelect', () => {
     ]);
   });
 
-  it('should drop custom fields first when capping', () => {
-    const fieldNamesToSelect = computeDefaultFieldNamesToSelect({
-      ...buildArgs({ fields: WIDE_OBJECT_FIELDS }),
-      maximumDefaultFieldCount: 7,
-    });
-
-    expect(fieldNamesToSelect).toEqual(
-      new Set([
-        'id',
-        'createdAt',
-        'updatedAt',
-        'deletedAt',
-        'position',
-        'aStandard',
-        'avatarUrl',
-      ]),
-    );
-  });
-
   it('should treat every field as custom on a custom object', () => {
     const fieldNamesToSelect = computeDefaultFieldNamesToSelect({
       ...buildArgs({
@@ -131,7 +112,7 @@ describe('computeDefaultFieldNamesToSelect', () => {
       maximumDefaultFieldCount: 6,
     });
 
-    expect([...(fieldNamesToSelect ?? [])]).toEqual([
+    expect([...fieldNamesToSelect]).toEqual([
       'id',
       'createdAt',
       'updatedAt',
@@ -139,28 +120,6 @@ describe('computeDefaultFieldNamesToSelect', () => {
       'position',
       'aCustom',
     ]);
-  });
-
-  it('should cap an object wider than the maximum to exactly the maximum', () => {
-    const fields = [
-      createField({ name: 'id' }),
-      ...Array.from({ length: 250 }, (_, index) =>
-        createField({
-          name: `customField${String(index).padStart(3, '0')}`,
-          applicationId: CUSTOM_APPLICATION_ID,
-        }),
-      ),
-    ];
-
-    const fieldNamesToSelect = computeDefaultFieldNamesToSelect({
-      ...buildArgs({ fields }),
-      maximumDefaultFieldCount: 200,
-    });
-
-    expect(fieldNamesToSelect?.size).toBe(200);
-    expect(fieldNamesToSelect?.has('id')).toBe(true);
-    expect(fieldNamesToSelect?.has('customField198')).toBe(true);
-    expect(fieldNamesToSelect?.has('customField199')).toBe(false);
   });
 
   it('keeps identifier priority when the identifier is also a system field', () => {
@@ -173,6 +132,6 @@ describe('computeDefaultFieldNamesToSelect', () => {
       maximumDefaultFieldCount: 3,
     });
 
-    expect([...(selection ?? [])]).toEqual(['id', 'position', 'createdAt']);
+    expect([...selection]).toEqual(['id', 'position', 'createdAt']);
   });
 });

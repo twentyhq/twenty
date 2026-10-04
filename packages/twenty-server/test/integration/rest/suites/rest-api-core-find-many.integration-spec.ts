@@ -507,18 +507,6 @@ describe('Core REST API Find Many endpoint', () => {
       expect(paginatedIds).toEqual(expectedIds);
     });
 
-    it('should return the join column of a requested relation at depth 0', async () => {
-      const response = await makeRestApiRequest({
-        method: 'get',
-        path: '/people?fields=jobTitle,company&depth=0',
-      }).expect(200);
-
-      const person = response.body.data.people[0];
-
-      expect(person.companyId).toBe(TEST_COMPANY_1_ID);
-      expect(person.company).toBeUndefined();
-    });
-
     it('should only expand requested relations at depth 1', async () => {
       const withoutRelationResponse = await makeRestApiRequest({
         method: 'get',

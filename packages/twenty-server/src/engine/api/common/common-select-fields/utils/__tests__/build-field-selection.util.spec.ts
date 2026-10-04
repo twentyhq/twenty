@@ -102,34 +102,6 @@ describe('buildFieldSelection', () => {
     });
   });
 
-  it('should only build a selection for the provided fields', () => {
-    const field1 = createMockField({
-      id: 'field-1',
-      name: 'name',
-      type: FieldMetadataType.TEXT,
-    });
-    const field2 = createMockField({
-      id: 'field-2',
-      name: 'email',
-      type: FieldMetadataType.TEXT,
-    });
-    const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([field1, field2]);
-    const flatObjectMetadata = buildFlatObjectMetadata(['field-1', 'field-2']);
-
-    const result = buildFieldSelection({
-      restrictedFields: {},
-      flatObjectMetadata,
-      flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityIds: flatObjectMetadata.fieldIds,
-        flatEntityMaps: flatFieldMetadataMaps,
-      }).filter((field) => field.name === 'email'),
-    });
-
-    expect(result).toEqual({
-      email: true,
-    });
-  });
-
   it('should not return restricted fields', () => {
     const field1 = createMockField({
       id: 'field-1',

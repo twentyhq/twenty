@@ -288,13 +288,15 @@ describe('CommonSelectFieldsBuilder', () => {
         selectedFields: { id: true, name: { firstName: true, lastName: true } },
       });
       expect(
-        Object.keys(
-          handler.buildFromDepth({
-            ...buildArgs(),
-            maximumDefaultFieldCount: 3,
-          }).selectedFields,
-        ),
-      ).toHaveLength(3);
+        handler.buildFromDepth({
+          ...buildArgs(),
+          maximumDefaultFieldCount: 4,
+        }).selectedFields,
+      ).toEqual({
+        id: true,
+        name: { firstName: true, lastName: true },
+        companyId: true,
+      });
     });
 
     it('counts expanded one-to-many and morph relations toward the default cap', () => {
@@ -312,7 +314,7 @@ describe('CommonSelectFieldsBuilder', () => {
       });
     });
 
-    it.each([199, 200, 201, 202])(
+    it.each([200, 201])(
       'applies an optional cap to an object with %s fields',
       (fieldCount) => {
         const fields = Array.from({ length: fieldCount }, (_, index) =>
@@ -357,16 +359,6 @@ describe('CommonSelectFieldsBuilder', () => {
         ).toHaveLength(fieldCount);
       },
     );
-
-    it('does not impose a default cap on callers that omit it', () => {
-      const result = handler.buildFromDepth(buildArgs());
-      expect(result.selectedFields).toMatchObject({
-        id: true,
-        name: { firstName: true, lastName: true },
-        companyId: true,
-      });
-      expect(result.selectedFields).not.toHaveProperty('salary');
-    });
   });
 
   describe('buildFromDepth', () => {

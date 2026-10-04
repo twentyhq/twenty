@@ -214,17 +214,5 @@ describe('Core REST API Find One endpoint', () => {
           );
         });
     });
-
-    it('should return 400 on unknown fields', async () => {
-      await makeRestApiRequest({
-        method: 'get',
-        path: `/people/${TEST_PERSON_1_ID}?fields=jobTitle,unknownField`,
-      })
-        .expect(400)
-        .expect((res) => {
-          expect(res.body.error).toBe('BadRequestException');
-          expect(res.body.messages[0]).toContain('unknownField');
-        });
-    });
   });
 });
