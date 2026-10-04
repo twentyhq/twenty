@@ -7,6 +7,7 @@ import { BackfillAgentChatThreadInboxStateCommand } from 'src/database/commands/
 import { AddAiChatInboxCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019633-add-ai-chat-inbox-command-menu-items.command';
 import { AllowAiChatInboxCommandsOnSeveralChatsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791009973891-allow-ai-chat-inbox-commands-on-several-chats.command';
 import { MakeAgentChatThreadParticipantsPrivateCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791056679663-make-agent-chat-thread-participants-private.command';
+import { BackfillAgentAndWorkflowIsSystemCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791130332894-backfill-agent-and-workflow-is-system.command';
 import { ScheduleAgentChatThreadSnoozeEndsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791093059050-schedule-agent-chat-thread-snooze-ends.command';
 import { UnpinNewAiChatCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019634-unpin-new-ai-chat-command-menu-item.command';
 import { ShareEmailAndCalendarThroughRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791124585682-share-email-and-calendar-through-record-shares.command';
@@ -30,6 +31,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AllowAiChatInboxCommandsOnSeveralChatsCommand,
     MakeAgentChatThreadParticipantsPrivateCommand,
     ScheduleAgentChatThreadSnoozeEndsCommand,
+    BackfillAgentAndWorkflowIsSystemCommand,
     ShareEmailAndCalendarThroughRecordSharesCommand,
   ],
 })
