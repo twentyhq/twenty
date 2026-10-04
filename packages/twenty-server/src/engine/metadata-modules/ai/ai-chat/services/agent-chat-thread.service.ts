@@ -104,14 +104,20 @@ export class AgentChatThreadService {
     workspaceId,
     threadId,
     text,
+    threadBefore,
   }: {
     workspaceId: string;
     threadId: string;
     text: string | null;
+    // Read before the message was written, so the event carries what the
+    // message changed, such as a question now waiting on the member
+    threadBefore?: AgentChatThreadWorkspaceEntity;
   }): Promise<void> {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
+    const thread =
+      threadBefore ??
+      (await this.threadRepository.findOne(workspaceId, {
+        where: { id: threadId },
+      }));
 
     if (!isDefined(thread)) {
       return;
@@ -164,7 +170,7 @@ export class AgentChatThreadService {
   private async emitThreadActivityUpdated({
     workspaceId,
     thread,
-    activity: { lastActivityAt, updatedAt, ...lastMessage },
+    activity: { lastActivityAt, updatedAt, ...recordedColumns },
   }: {
     workspaceId: string;
     thread: AgentChatThreadWorkspaceEntity;
@@ -175,7 +181,7 @@ export class AgentChatThreadService {
       threadBefore: thread,
       threadAfter: {
         ...thread,
-        ...lastMessage,
+        ...recordedColumns,
         lastActivityAt: lastActivityAt?.toISOString() ?? thread.lastActivityAt,
         updatedAt: updatedAt.toISOString(),
       },
