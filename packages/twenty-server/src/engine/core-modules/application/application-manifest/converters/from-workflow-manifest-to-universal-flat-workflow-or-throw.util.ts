@@ -82,6 +82,7 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
     universalIdentifier: definition.universalIdentifier,
     applicationUniversalIdentifier,
     name: definition.name,
+    isSystem: true,
     visibility: WorkflowVisibility.WORKSPACE,
     createdByUserWorkspaceId: null,
     workspaceWorkflowId: null,

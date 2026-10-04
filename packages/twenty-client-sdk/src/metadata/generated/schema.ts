@@ -62,6 +62,7 @@ export interface Agent {
     responseFormat?: Scalars['JSON']
     roleId?: Scalars['UUID']
     isCustom: Scalars['Boolean']
+    isSystem: Scalars['Boolean']
     applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -3878,6 +3879,7 @@ export interface AgentGenqlSelection{
     responseFormat?: boolean | number
     roleId?: boolean | number
     isCustom?: boolean | number
+    isSystem?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number

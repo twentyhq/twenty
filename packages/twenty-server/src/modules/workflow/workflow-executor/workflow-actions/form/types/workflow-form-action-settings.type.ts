@@ -15,4 +15,5 @@ export type FormFieldMetadata = {
 
 export type WorkflowFormActionSettings = BaseWorkflowActionSettings & {
   input: FormFieldMetadata[];
+  instructions?: string;
 };
