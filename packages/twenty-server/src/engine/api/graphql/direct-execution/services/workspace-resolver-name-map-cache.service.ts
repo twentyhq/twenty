@@ -12,19 +12,16 @@ import { WorkspaceDerivedCache } from 'src/engine/workspace-cache/decorators/wor
 import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 @Injectable()
-@WorkspaceDerivedCache('graphQLResolverNameMap', { maxMemoizedWorkspaces: 256 })
+@WorkspaceDerivedCache('graphQLResolverNameMap')
 export class WorkspaceResolverNameMapCacheService extends WorkspaceDerivedCacheProvider<
   'graphQLResolverNameMap',
   'flatObjectMetadataMaps'
 > {
-  readonly sourceKeyNames = ['flatObjectMetadataMaps'] as const;
+  readonly sourceKeyName = 'flatObjectMetadataMaps';
 
-  computeFromSources({
-    flatObjectMetadataMaps,
-  }: Pick<WorkspaceCacheDataMap, 'flatObjectMetadataMaps'>): Record<
-    string,
-    ResolverNameMapEntry
-  > {
+  protected computeFromSource(
+    flatObjectMetadataMaps: WorkspaceCacheDataMap['flatObjectMetadataMaps'],
+  ): Record<string, ResolverNameMapEntry> {
     return buildResolverNameMap(
       Object.values(flatObjectMetadataMaps.byUniversalIdentifier).filter(
         isDefined,

@@ -8,18 +8,16 @@ import { WorkspaceDerivedCache } from 'src/engine/workspace-cache/decorators/wor
 import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 @Injectable()
-@WorkspaceDerivedCache('roleIdsWithAllRecordsAccess', {
-  maxMemoizedWorkspaces: 1_000,
-})
+@WorkspaceDerivedCache('roleIdsWithAllRecordsAccess')
 export class WorkspaceRoleIdsWithAllRecordsAccessCacheService extends WorkspaceDerivedCacheProvider<
   'roleIdsWithAllRecordsAccess',
   'flatRoleMaps'
 > {
-  readonly sourceKeyNames = ['flatRoleMaps'] as const;
+  readonly sourceKeyName = 'flatRoleMaps';
 
-  computeFromSources({
-    flatRoleMaps,
-  }: Pick<WorkspaceCacheDataMap, 'flatRoleMaps'>): string[] {
+  protected computeFromSource(
+    flatRoleMaps: WorkspaceCacheDataMap['flatRoleMaps'],
+  ): string[] {
     return Object.values(flatRoleMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((flatRole) => flatRole.canUpdateAllSettings)

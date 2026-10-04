@@ -9,21 +9,16 @@ import { WorkspaceDerivedCache } from 'src/engine/workspace-cache/decorators/wor
 import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 @Injectable()
-@WorkspaceDerivedCache('flatRoleTargetByAgentIdMaps', {
-  maxMemoizedWorkspaces: 1_000,
-})
+@WorkspaceDerivedCache('flatRoleTargetByAgentIdMaps')
 export class WorkspaceFlatRoleTargetByAgentIdService extends WorkspaceDerivedCacheProvider<
   'flatRoleTargetByAgentIdMaps',
   'flatRoleTargetMaps'
 > {
-  readonly sourceKeyNames = ['flatRoleTargetMaps'] as const;
+  readonly sourceKeyName = 'flatRoleTargetMaps';
 
-  computeFromSources({
-    flatRoleTargetMaps,
-  }: Pick<
-    WorkspaceCacheDataMap,
-    'flatRoleTargetMaps'
-  >): FlatRoleTargetByAgentIdMaps {
+  protected computeFromSource(
+    flatRoleTargetMaps: WorkspaceCacheDataMap['flatRoleTargetMaps'],
+  ): FlatRoleTargetByAgentIdMaps {
     const flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps = {};
 
     for (const flatRoleTarget of Object.values(
