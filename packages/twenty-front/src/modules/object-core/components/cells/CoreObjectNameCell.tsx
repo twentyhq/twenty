@@ -42,7 +42,9 @@ export const CoreObjectNameCell = ({
     <StyledContainer>
       <StyledAvatarContainer>
         {isDefined(Icon) ? (
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <span aria-hidden>
+            <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          </span>
         ) : (
           <Avatar
             name={name ?? undefined}

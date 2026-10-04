@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useIcons } from 'twenty-ui/icon';
 
 import { CoreObjectNameCell } from '@/object-core/components/cells/CoreObjectNameCell';
@@ -15,7 +16,7 @@ export const CoreAgentNameCell = ({ agent }: CoreAgentNameCellProps) => {
       name={agent.label}
       avatarColorSeed={agent.id}
       avatarShape="square"
-      Icon={getIcon(agent.icon ?? 'IconLego')}
+      Icon={getIcon(isNonEmptyString(agent.icon) ? agent.icon : 'IconLego')}
     />
   );
 };

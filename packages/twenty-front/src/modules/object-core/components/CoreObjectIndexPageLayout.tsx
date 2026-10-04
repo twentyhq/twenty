@@ -82,9 +82,7 @@ export const CoreObjectIndexPageLayout = ({
           {isEmpty && (
             <RecordIndexEmptyStateDisplay
               animatedPlaceholderType={
-                emptyState.hasAppliedFilters === true
-                  ? 'noMatchRecord'
-                  : 'noRecord'
+                emptyState.hasAppliedFilters ? 'noMatchRecord' : 'noRecord'
               }
               title={emptyState.title}
               subTitle={emptyState.subTitle}
