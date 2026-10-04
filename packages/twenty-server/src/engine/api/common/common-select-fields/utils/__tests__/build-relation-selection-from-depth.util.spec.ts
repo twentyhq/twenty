@@ -1,12 +1,12 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { getRelationsSelectFields } from 'src/engine/api/common/common-select-fields/utils/get-relations-select-fields.util';
+import { buildRelationSelectionFromDepth } from 'src/engine/api/common/common-select-fields/utils/build-relation-selection-from-depth.util';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 
 type GetRelationsSelectFieldsArgs = Parameters<
-  typeof getRelationsSelectFields
+  typeof buildRelationSelectionFromDepth
 >[0];
 
 type TestFlatObjectMetadata =
@@ -168,6 +168,9 @@ const buildArgs = (
     flatObjectMetadataMaps: buildFlatEntityMaps(objects),
     flatFieldMetadataMaps: buildFlatEntityMaps(fields),
     flatObjectMetadata: opportunity,
+    flatFields: fields.filter((field) =>
+      opportunity.fieldIds.includes(field.id),
+    ),
     objectsPermissions: Object.fromEntries(
       objects.map((object) => [
         object.id,
@@ -179,25 +182,29 @@ const buildArgs = (
 };
 
 // A relation selected as `true` is not loaded: only object selections are expanded into nested queries
-describe('getRelationsSelectFields', () => {
+describe('buildRelationSelectionFromDepth', () => {
   it('should expand relations but not timeline activities at depth 1', () => {
-    expect(getRelationsSelectFields(buildArgs(1))).toEqual({
+    expect(buildRelationSelectionFromDepth(buildArgs(1))).toEqual({
       company: { name: true, accountOwnerId: true, timelineActivities: true },
     });
   });
 
-  it('should only expand relations listed in fieldNamesToSelect at depth 1', () => {
+  it('should only expand relations from the provided fields at depth 1', () => {
     expect(
-      getRelationsSelectFields({
+      buildRelationSelectionFromDepth({
         ...buildArgs(1),
-        fieldNamesToSelect: new Set(['name']),
+        flatFields: buildArgs(1).flatFields.filter(
+          (field) => field.name === 'name',
+        ),
       }),
     ).toEqual({});
 
     expect(
-      getRelationsSelectFields({
+      buildRelationSelectionFromDepth({
         ...buildArgs(1),
-        fieldNamesToSelect: new Set(['company']),
+        flatFields: buildArgs(1).flatFields.filter(
+          (field) => field.name === 'company',
+        ),
       }),
     ).toEqual({
       company: { name: true, accountOwnerId: true, timelineActivities: true },
@@ -205,7 +212,7 @@ describe('getRelationsSelectFields', () => {
   });
 
   it('should expand nested relations but not their timeline activities at depth 2', () => {
-    expect(getRelationsSelectFields(buildArgs(2))).toEqual({
+    expect(buildRelationSelectionFromDepth(buildArgs(2))).toEqual({
       company: {
         name: true,
         accountOwnerId: true,

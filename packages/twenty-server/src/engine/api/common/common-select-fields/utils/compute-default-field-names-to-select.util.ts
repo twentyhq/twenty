@@ -24,8 +24,12 @@ export const computeDefaultFieldNamesToSelect = ({
     'id' | 'applicationId' | 'name' | 'type' | 'settings'
   >[];
   depth: SelectionDepth | undefined;
-  maximumDefaultFieldCount: number;
+  maximumDefaultFieldCount?: number;
 }): ReadonlySet<string> | undefined => {
+  if (!isDefined(maximumDefaultFieldCount)) {
+    return undefined;
+  }
+
   const outputtingFlatFields =
     !isDefined(depth) || depth === 0
       ? readableFlatFields.filter(

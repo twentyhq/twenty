@@ -8,12 +8,9 @@ import {
   type RestrictedFieldsPermissions,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -23,12 +20,11 @@ type SelectableFieldsStructured = Record<
   boolean | Record<string, boolean>
 >;
 
-export const getAllSelectableFields = ({
+export const buildFieldSelection = ({
   restrictedFields,
   flatObjectMetadata,
-  flatFieldMetadataMaps,
+  flatFields,
   onlyUseLabelIdentifierFieldsInRelations = false,
-  fieldNamesToSelect,
 }: {
   restrictedFields: RestrictedFieldsPermissions;
   flatObjectMetadata: Pick<
@@ -38,7 +34,7 @@ export const getAllSelectableFields = ({
     | 'labelIdentifierFieldMetadataId'
     | 'imageIdentifierFieldMetadataId'
   >;
-  flatFieldMetadataMaps: FlatEntityMaps<
+  flatFields: ReadonlyArray<
     Pick<
       OrmFlatFieldMetadata,
       | 'id'
@@ -51,23 +47,10 @@ export const getAllSelectableFields = ({
     >
   >;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
-  fieldNamesToSelect?: ReadonlySet<string>;
 }): SelectableFieldsStructured => {
   const result: SelectableFieldsStructured = {};
 
-  for (const fieldId of flatObjectMetadata.fieldIds) {
-    const flatField = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: fieldId,
-    });
-
-    if (
-      isDefined(fieldNamesToSelect) &&
-      !fieldNamesToSelect.has(flatField.name)
-    ) {
-      continue;
-    }
-
+  for (const flatField of flatFields) {
     if (restrictedFields[flatField.id]?.canRead === false) continue;
 
     if (onlyUseLabelIdentifierFieldsInRelations) {

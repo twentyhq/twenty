@@ -1,7 +1,8 @@
 import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getAllSelectableFields } from 'src/engine/api/common/common-select-fields/utils/get-all-selectable-fields.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { buildFieldSelection } from 'src/engine/api/common/common-select-fields/utils/build-field-selection.util';
 import { getIsFlatFieldAJoinColumn } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-join-column.util';
 import { getIsFlatFieldAJunctionRelationField } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-junction-relation-field';
 import { isRelationTargetExcludedFromSelection } from 'src/engine/api/common/common-select-fields/utils/is-relation-target-excluded-from-selection.util';
@@ -43,44 +44,32 @@ type RelationsSelectObjectsPermissions = Record<
   Pick<ObjectPermissions, 'canReadObjectRecords' | 'restrictedFields'>
 >;
 
-export const getRelationsSelectFields = ({
+export const buildRelationSelectionFromDepth = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatObjectMetadata,
+  flatFields,
   objectsPermissions,
   depth,
   onlyUseLabelIdentifierFieldsInRelations = false,
   currentDepthLevelIsAJunctionTable = false,
   recurseIntoJunctionTableRelations = false,
-  fieldNamesToSelect,
 }: {
   flatObjectMetadataMaps: FlatEntityMaps<RelationsSelectFlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<RelationsSelectFlatFieldMetadata>;
   flatObjectMetadata: RelationsSelectFlatObjectMetadata;
+  flatFields: readonly RelationsSelectFlatFieldMetadata[];
   objectsPermissions: RelationsSelectObjectsPermissions;
   depth: SelectionDepth | undefined;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
   currentDepthLevelIsAJunctionTable?: boolean;
   recurseIntoJunctionTableRelations?: boolean;
-  fieldNamesToSelect?: ReadonlySet<string>;
 }): CommonSelectedFields => {
   if (!isDefined(depth) || depth === 0) return {};
 
   const relationsSelectFields: CommonSelectedFields = {};
 
-  for (const fieldId of flatObjectMetadata.fieldIds) {
-    const flatField = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: fieldId,
-    });
-
-    if (
-      isDefined(fieldNamesToSelect) &&
-      !fieldNamesToSelect.has(flatField.name)
-    ) {
-      continue;
-    }
-
+  for (const flatField of flatFields) {
     if (
       !isFlatFieldMetadataOfType(flatField, FieldMetadataType.RELATION) &&
       !isFlatFieldMetadataOfType(flatField, FieldMetadataType.MORPH_RELATION)
@@ -121,11 +110,16 @@ export const getRelationsSelectFields = ({
       continue;
     }
 
-    const relationFieldSelectFields = getAllSelectableFields({
+    const relationFlatFields = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityIds: relationTargetObjectMetadata.fieldIds,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    const relationFieldSelectFields = buildFieldSelection({
       restrictedFields:
         objectsPermissions[relationTargetObjectMetadata.id].restrictedFields,
       flatObjectMetadata: relationTargetObjectMetadata,
-      flatFieldMetadataMaps,
+      flatFields: relationFlatFields,
       onlyUseLabelIdentifierFieldsInRelations,
     });
 
@@ -144,10 +138,11 @@ export const getRelationsSelectFields = ({
     const nextLevelIsAJunctionTable = flatFieldIsJoinColumn;
 
     if (shouldRecurseIntoRelation) {
-      const nestedRelationFieldSelectFields = getRelationsSelectFields({
+      const nestedRelationFieldSelectFields = buildRelationSelectionFromDepth({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: relationTargetObjectMetadata,
+        flatFields: relationFlatFields,
         objectsPermissions,
         depth: 1,
         onlyUseLabelIdentifierFieldsInRelations,
