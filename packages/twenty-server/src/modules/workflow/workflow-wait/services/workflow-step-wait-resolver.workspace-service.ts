@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
@@ -23,12 +23,26 @@ import { type ResumeWaitingWorkflowStepJobData } from 'src/modules/workflow/work
 import { type WorkflowWaitEvent } from 'src/modules/workflow/workflow-wait/types/workflow-wait-event.type';
 import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils/build-default-wait-result.util';
 import { buildWaitOutcome } from 'src/modules/workflow/workflow-wait/utils/build-wait-outcome.util';
+import { restrictWaitEventToReadableRecord } from 'src/modules/workflow/workflow-wait/utils/restrict-wait-event-to-readable-record.util';
 
-const PAUSING_STEP_RETRY_DELAY_MS = 2_000;
-const PAUSING_STEP_MAX_RETRY_DELAY_MS = 60_000;
+const RETRY_BASE_DELAY_MS = 2_000;
+const RETRY_MAX_DELAY_MS = 60_000;
+const RECORD_READ_MAX_ATTEMPTS = 8;
+
+const computeRetryDelayMs = (attempt: number) =>
+  Math.min(RETRY_BASE_DELAY_MS * 2 ** attempt, RETRY_MAX_DELAY_MS);
+
+type RunRecordRead =
+  | { status: 'READABLE'; record: Record<string, unknown> }
+  | { status: 'UNREADABLE' }
+  | { status: 'FAILED'; error?: string };
 
 @Injectable()
 export class WorkflowStepWaitResolverWorkspaceService {
+  private readonly logger = new Logger(
+    WorkflowStepWaitResolverWorkspaceService.name,
+  );
+
   constructor(
     private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
@@ -44,6 +58,7 @@ export class WorkflowStepWaitResolverWorkspaceService {
     waitId,
     event,
     attempt = 0,
+    recordReadAttempt = 0,
   }: ResumeWaitingWorkflowStepJobData): Promise<void> {
     const pendingWait = await this.workflowStepWaitWorkspaceService.findWait({
       workspaceId,
@@ -71,10 +86,7 @@ export class WorkflowStepWaitResolverWorkspaceService {
         waitId,
         event,
         attempt: attempt + 1,
-        delayMs: Math.min(
-          PAUSING_STEP_RETRY_DELAY_MS * 2 ** attempt,
-          PAUSING_STEP_MAX_RETRY_DELAY_MS,
-        ),
+        delayMs: computeRetryDelayMs(attempt),
       });
 
       return;
@@ -84,17 +96,40 @@ export class WorkflowStepWaitResolverWorkspaceService {
 
     // a record the run cannot read must not resume it, so the wait goes on for another event
     if (isRunRunning && stepStatus === StepStatus.PENDING && isDefined(event)) {
-      const readableRecord = await this.findRecordReadableByRun({
+      const recordRead = await this.readRecordAsRun({
         workspaceId,
         workflowRunId,
         event,
       });
 
-      if (!isDefined(readableRecord)) {
+      // a failed read cannot tell a transient error from an object the run cannot read, so it is retried a few times
+      if (recordRead.status === 'FAILED') {
+        if (recordReadAttempt < RECORD_READ_MAX_ATTEMPTS) {
+          await this.workflowStepWaitWorkspaceService.scheduleResolution({
+            workspaceId,
+            workflowRunId,
+            waitId,
+            event,
+            recordReadAttempt: recordReadAttempt + 1,
+            delayMs: computeRetryDelayMs(recordReadAttempt),
+          });
+        } else {
+          this.logger.warn(
+            `Wait ${waitId} of workflow run ${workflowRunId} kept waiting after its ${event.eventName} record could not be read: ${recordRead.error}`,
+          );
+        }
+
         return;
       }
 
-      readableEvent = { ...event, record: readableRecord };
+      if (recordRead.status === 'UNREADABLE') {
+        return;
+      }
+
+      readableEvent = restrictWaitEventToReadableRecord({
+        event,
+        readableRecord: recordRead.record,
+      });
     }
 
     const claimedWait = await this.workflowStepWaitWorkspaceService.claim({
@@ -192,7 +227,7 @@ export class WorkflowStepWaitResolverWorkspaceService {
     }
   }
 
-  private async findRecordReadableByRun({
+  private async readRecordAsRun({
     workspaceId,
     workflowRunId,
     event,
@@ -200,7 +235,7 @@ export class WorkflowStepWaitResolverWorkspaceService {
     workspaceId: string;
     workflowRunId: string;
     event: WorkflowWaitEvent;
-  }): Promise<Record<string, unknown> | undefined> {
+  }): Promise<RunRecordRead> {
     const [objectName, action] = event.eventName.split('.');
 
     const { authContext, rolePermissionConfig } =
@@ -209,7 +244,7 @@ export class WorkflowStepWaitResolverWorkspaceService {
         workspaceId,
       });
 
-    const { success, result } = await this.findRecordsService.execute({
+    const { success, result, error } = await this.findRecordsService.execute({
       objectName,
       // a deleted record only reads when the filter asks for deleted records
       filter:
@@ -222,9 +257,15 @@ export class WorkflowStepWaitResolverWorkspaceService {
       shouldBuildEffectiveSelectFields: false,
     });
 
-    const record = success ? result?.records[0] : undefined;
+    if (!success) {
+      return { status: 'FAILED', error };
+    }
 
-    return isPlainObject(record) ? record : undefined;
+    const record = result?.records[0];
+
+    return isPlainObject(record)
+      ? { status: 'READABLE', record }
+      : { status: 'UNREADABLE' };
   }
 
   private async enqueueRunWorkflowJob(

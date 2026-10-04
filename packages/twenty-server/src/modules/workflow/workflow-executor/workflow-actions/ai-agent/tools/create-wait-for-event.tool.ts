@@ -2,10 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import {
-  buildSecondWaitRefusalOutput,
-  buildWaitPendingOutput,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/build-wait-pending-output.util';
+import { buildSecondWaitRefusalOutput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/build-second-wait-refusal-output.util';
+import { buildWaitPendingOutput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/build-wait-pending-output.util';
 import { type WorkflowAgentWaitSlot } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/workflow-agent-wait-slot.type';
 
 const MAX_TIMEOUT_IN_MINUTES = 60 * 24 * 365;

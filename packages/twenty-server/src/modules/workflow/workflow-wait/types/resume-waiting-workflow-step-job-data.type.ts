@@ -7,4 +7,6 @@ export type ResumeWaitingWorkflowStepJobData = {
   event?: WorkflowWaitEvent;
   // How many times the resolution was put off because the step was still pausing
   attempt?: number;
+  // How many times reading the event's record as the run failed
+  recordReadAttempt?: number;
 };

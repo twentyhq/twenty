@@ -30,6 +30,7 @@ const buildService = ({
   stepStatus = StepStatus.PENDING,
   stepType = 'WAIT_FOR_EVENT',
   readableRecords = [READABLE_RECORD],
+  isRecordReadFailing = false,
   resolveWait,
 }: {
   storedWait?: object | null;
@@ -37,6 +38,7 @@ const buildService = ({
   stepStatus?: StepStatus;
   stepType?: string;
   readableRecords?: object[];
+  isRecordReadFailing?: boolean;
   resolveWait?: jest.Mock;
 } = {}) => {
   const workflowStepWaitWorkspaceService = {
@@ -65,10 +67,13 @@ const buildService = ({
     }),
   };
   const findRecordsService = {
-    execute: jest.fn().mockResolvedValue({
-      success: true,
-      result: { records: readableRecords },
-    }),
+    execute: jest
+      .fn()
+      .mockResolvedValue(
+        isRecordReadFailing
+          ? { success: false, error: 'Connection terminated unexpectedly' }
+          : { success: true, result: { records: readableRecords } },
+      ),
   };
   const messageQueueService = { add: jest.fn() };
 
@@ -150,6 +155,66 @@ describe('WorkflowStepWaitResolverWorkspaceService', () => {
     expect(
       workflowRunWorkspaceService.updateStepInfoIfPending,
     ).not.toHaveBeenCalled();
+  });
+
+  it('keeps the event and tries again when reading its record fails', async () => {
+    const { service, workflowStepWaitWorkspaceService } = buildService({
+      isRecordReadFailing: true,
+    });
+
+    await service.resolve({
+      workspaceId: WORKSPACE_ID,
+      waitId: WAIT_ID,
+      event: EVENT,
+    });
+
+    expect(workflowStepWaitWorkspaceService.claim).not.toHaveBeenCalled();
+    expect(
+      workflowStepWaitWorkspaceService.scheduleResolution,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({ event: EVENT, recordReadAttempt: 1 }),
+    );
+  });
+
+  it('keeps waiting for another event once reading the record kept failing', async () => {
+    const {
+      service,
+      workflowStepWaitWorkspaceService,
+      workflowRunWorkspaceService,
+    } = buildService({ isRecordReadFailing: true });
+
+    await service.resolve({
+      workspaceId: WORKSPACE_ID,
+      waitId: WAIT_ID,
+      event: EVENT,
+      recordReadAttempt: 8,
+    });
+
+    expect(workflowStepWaitWorkspaceService.claim).not.toHaveBeenCalled();
+    expect(
+      workflowStepWaitWorkspaceService.scheduleResolution,
+    ).not.toHaveBeenCalled();
+    expect(workflowRunWorkspaceService.endWorkflowRun).not.toHaveBeenCalled();
+  });
+
+  it('keeps fields the run cannot read out of the previous snapshot', async () => {
+    const { service, workflowRunWorkspaceService } = buildService();
+
+    await service.resolve({
+      workspaceId: WORKSPACE_ID,
+      waitId: WAIT_ID,
+      event: {
+        ...EVENT,
+        before: { id: 'company-id', name: 'Old', secret: 'old secret' },
+        updatedFields: ['name', 'secret'],
+      },
+    });
+
+    const [{ stepInfo }] =
+      workflowRunWorkspaceService.updateStepInfoIfPending.mock.calls[0];
+
+    expect(stepInfo.result.before).toEqual({ id: 'company-id', name: 'Old' });
+    expect(stepInfo.result.updatedFields).toEqual(['name']);
   });
 
   it('reads deleted records when the event is a deletion', async () => {

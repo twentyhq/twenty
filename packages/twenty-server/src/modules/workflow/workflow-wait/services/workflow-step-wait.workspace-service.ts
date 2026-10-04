@@ -81,6 +81,7 @@ export class WorkflowStepWaitWorkspaceService {
     waitId,
     event,
     attempt,
+    recordReadAttempt,
     delayMs = 0,
   }: Omit<ResumeWaitingWorkflowStepJobData, 'workspaceId' | 'waitId'> & {
     workspaceId: string;
@@ -90,7 +91,7 @@ export class WorkflowStepWaitWorkspaceService {
   }): Promise<void> {
     await this.messageQueueService.add<ResumeWaitingWorkflowStepJobData>(
       RESUME_WAITING_WORKFLOW_STEP_JOB_NAME,
-      { workspaceId, waitId, event, attempt },
+      { workspaceId, waitId, event, attempt, recordReadAttempt },
       {
         ...buildRunWorkflowJobOptions(workflowRunId),
         delay: Math.max(delayMs, 0),
