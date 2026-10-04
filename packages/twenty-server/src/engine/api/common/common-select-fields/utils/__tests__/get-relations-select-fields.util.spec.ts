@@ -186,18 +186,18 @@ describe('getRelationsSelectFields', () => {
     });
   });
 
-  it('should only expand relations listed in fieldIdsToSelect at depth 1', () => {
+  it('should only expand relations listed in fieldNamesToSelect at depth 1', () => {
     expect(
       getRelationsSelectFields({
         ...buildArgs(1),
-        fieldIdsToSelect: new Set(['opportunity-name']),
+        fieldNamesToSelect: new Set(['name']),
       }),
     ).toEqual({});
 
     expect(
       getRelationsSelectFields({
         ...buildArgs(1),
-        fieldIdsToSelect: new Set(['opportunity-company']),
+        fieldNamesToSelect: new Set(['company']),
       }),
     ).toEqual({
       company: { name: true, accountOwnerId: true, timelineActivities: true },

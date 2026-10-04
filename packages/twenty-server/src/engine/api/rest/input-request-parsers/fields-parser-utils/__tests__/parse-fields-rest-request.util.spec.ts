@@ -61,25 +61,25 @@ describe('parseFieldsRestRequest', () => {
   it('should parse a comma-separated list of field names', () => {
     expect(
       parseFieldsRestRequest(buildArgs({ fields: 'id,name,emails,company' })),
-    ).toEqual(['id', 'name', 'emails', 'company']);
+    ).toEqual(new Set(['id', 'name', 'emails', 'company']));
   });
 
   it('should trim whitespace and ignore empty entries', () => {
     expect(
       parseFieldsRestRequest(buildArgs({ fields: ' name , emails ,, ' })),
-    ).toEqual(['name', 'emails']);
+    ).toEqual(new Set(['id', 'name', 'emails']));
   });
 
   it('should remove duplicates', () => {
     expect(
       parseFieldsRestRequest(buildArgs({ fields: 'name,emails,name' })),
-    ).toEqual(['name', 'emails']);
+    ).toEqual(new Set(['id', 'name', 'emails']));
   });
 
   it('should merge repeated fields parameters', () => {
     expect(
       parseFieldsRestRequest(buildArgs({ fields: ['name', 'emails,company'] })),
-    ).toEqual(['name', 'emails', 'company']);
+    ).toEqual(new Set(['id', 'name', 'emails', 'company']));
   });
 
   it('should throw when fields parameter is empty', () => {
@@ -118,6 +118,6 @@ describe('parseFieldsRestRequest', () => {
   it('should accept one-to-many relation fields at depth 1', () => {
     expect(
       parseFieldsRestRequest(buildArgs({ fields: 'name,activities' }, 1)),
-    ).toEqual(['name', 'activities']);
+    ).toEqual(new Set(['id', 'name', 'activities']));
   });
 });

@@ -98,7 +98,7 @@ describe('getAllSelectableFields', () => {
     });
   });
 
-  it('should only return fields listed in fieldIdsToSelect', () => {
+  it('should only return fields listed in fieldNamesToSelect', () => {
     const field1 = createMockField({
       id: 'field-1',
       name: 'name',
@@ -116,7 +116,7 @@ describe('getAllSelectableFields', () => {
       restrictedFields: {},
       flatObjectMetadata,
       flatFieldMetadataMaps,
-      fieldIdsToSelect: new Set(['field-2']),
+      fieldNamesToSelect: new Set(['email']),
     });
 
     expect(result).toEqual({

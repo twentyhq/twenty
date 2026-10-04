@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { buildDuplicateSourceColumnsToSelect } from 'src/engine/api/common/common-query-runners/utils/build-duplicate-source-columns-to-select.util';
-import { computeFieldIdsToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-field-ids-to-select.util';
+import { computeDefaultFieldNamesToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-default-field-names-to-select.util';
 import { REST_API_DEFAULT_MAX_FIELDS } from 'src/engine/api/rest/input-request-parsers/constants/rest-api-default-max-fields.constant';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -74,14 +74,14 @@ describe('buildDuplicateSourceColumnsToSelect', () => {
 
     args.flatObjectMetadata.duplicateCriteria = [['zDuplicateKey']];
 
-    const responseFieldIds = computeFieldIdsToSelect({
+    const responseFieldNames = computeDefaultFieldNamesToSelect({
       flatObjectMetadata: args.flatObjectMetadata,
       readableFlatFields: fields,
       depth: 0,
       maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
     });
 
-    expect(responseFieldIds?.has('zDuplicateKey-id')).toBe(false);
+    expect(responseFieldNames?.has('zDuplicateKey')).toBe(false);
     expect(buildDuplicateSourceColumnsToSelect(args)).toEqual({
       id: true,
       zDuplicateKey: true,

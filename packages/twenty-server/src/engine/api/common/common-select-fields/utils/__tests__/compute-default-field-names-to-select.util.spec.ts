@@ -1,16 +1,17 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { computeFieldIdsToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-field-ids-to-select.util';
+import { computeDefaultFieldNamesToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-default-field-names-to-select.util';
 
-type ComputeFieldIdsToSelectArgs = Parameters<
-  typeof computeFieldIdsToSelect
+type ComputeDefaultFieldNamesToSelectArgs = Parameters<
+  typeof computeDefaultFieldNamesToSelect
 >[0];
 
-type TestFlatObjectMetadata = ComputeFieldIdsToSelectArgs['flatObjectMetadata'];
+type TestFlatObjectMetadata =
+  ComputeDefaultFieldNamesToSelectArgs['flatObjectMetadata'];
 
 type TestFlatFieldMetadata =
-  ComputeFieldIdsToSelectArgs['readableFlatFields'][number];
+  ComputeDefaultFieldNamesToSelectArgs['readableFlatFields'][number];
 
 const STANDARD_APPLICATION_ID = 'standard-application-id';
 const CUSTOM_APPLICATION_ID = 'custom-application-id';
@@ -44,9 +45,9 @@ const buildArgs = ({
   labelIdentifierFieldName?: string;
   imageIdentifierFieldName?: string;
   applicationUniversalIdentifier?: string;
-  depth?: ComputeFieldIdsToSelectArgs['depth'];
+  depth?: ComputeDefaultFieldNamesToSelectArgs['depth'];
 }): Pick<
-  ComputeFieldIdsToSelectArgs,
+  ComputeDefaultFieldNamesToSelectArgs,
   'flatObjectMetadata' | 'readableFlatFields' | 'depth'
 > => {
   const flatObjectMetadata: TestFlatObjectMetadata = {
@@ -90,24 +91,18 @@ const ONE_TO_MANY_RELATION_FIELDS = [
   }),
 ];
 
-describe('computeFieldIdsToSelect', () => {
+describe('computeDefaultFieldNamesToSelect', () => {
   it('should not restrict the selection when the object has at most the maximum number of fields', () => {
     expect(
-      computeFieldIdsToSelect({
+      computeDefaultFieldNamesToSelect({
         ...buildArgs({ fields: WIDE_OBJECT_FIELDS }),
         maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length,
       }),
     ).toBeUndefined();
   });
 
-  it('should not restrict the selection when no maximum is given', () => {
-    expect(
-      computeFieldIdsToSelect(buildArgs({ fields: WIDE_OBJECT_FIELDS })),
-    ).toBeUndefined();
-  });
-
   it('should order the capped field set by priority then standard before custom fields', () => {
-    const fieldIdsToSelect = computeFieldIdsToSelect({
+    const fieldNamesToSelect = computeDefaultFieldNamesToSelect({
       ...buildArgs({
         fields: WIDE_OBJECT_FIELDS,
         labelIdentifierFieldName: 'name',
@@ -116,41 +111,41 @@ describe('computeFieldIdsToSelect', () => {
       maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length - 1,
     });
 
-    expect([...(fieldIdsToSelect ?? [])]).toEqual([
-      'id-id',
-      'name-id',
-      'avatarUrl-id',
-      'createdAt-id',
-      'updatedAt-id',
-      'deletedAt-id',
-      'position-id',
-      'aStandard-id',
-      'zStandard-id',
-      'aCustom-id',
+    expect([...(fieldNamesToSelect ?? [])]).toEqual([
+      'id',
+      'name',
+      'avatarUrl',
+      'createdAt',
+      'updatedAt',
+      'deletedAt',
+      'position',
+      'aStandard',
+      'zStandard',
+      'aCustom',
     ]);
   });
 
   it('should drop custom fields first when capping', () => {
-    const fieldIdsToSelect = computeFieldIdsToSelect({
+    const fieldNamesToSelect = computeDefaultFieldNamesToSelect({
       ...buildArgs({ fields: WIDE_OBJECT_FIELDS }),
       maximumDefaultFieldCount: 7,
     });
 
-    expect(fieldIdsToSelect).toEqual(
+    expect(fieldNamesToSelect).toEqual(
       new Set([
-        'id-id',
-        'createdAt-id',
-        'updatedAt-id',
-        'deletedAt-id',
-        'position-id',
-        'aStandard-id',
-        'avatarUrl-id',
+        'id',
+        'createdAt',
+        'updatedAt',
+        'deletedAt',
+        'position',
+        'aStandard',
+        'avatarUrl',
       ]),
     );
   });
 
   it('should treat every field as custom on a custom object', () => {
-    const fieldIdsToSelect = computeFieldIdsToSelect({
+    const fieldNamesToSelect = computeDefaultFieldNamesToSelect({
       ...buildArgs({
         fields: WIDE_OBJECT_FIELDS,
         applicationUniversalIdentifier: 'custom-application-universal-id',
@@ -158,13 +153,13 @@ describe('computeFieldIdsToSelect', () => {
       maximumDefaultFieldCount: 6,
     });
 
-    expect([...(fieldIdsToSelect ?? [])]).toEqual([
-      'id-id',
-      'createdAt-id',
-      'updatedAt-id',
-      'deletedAt-id',
-      'position-id',
-      'aCustom-id',
+    expect([...(fieldNamesToSelect ?? [])]).toEqual([
+      'id',
+      'createdAt',
+      'updatedAt',
+      'deletedAt',
+      'position',
+      'aCustom',
     ]);
   });
 
@@ -172,32 +167,32 @@ describe('computeFieldIdsToSelect', () => {
     const fields = [...WIDE_OBJECT_FIELDS, ...ONE_TO_MANY_RELATION_FIELDS];
 
     expect(
-      computeFieldIdsToSelect({
+      computeDefaultFieldNamesToSelect({
         ...buildArgs({ fields, depth: 0 }),
         maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length,
       }),
     ).toBeUndefined();
 
-    const fieldIdsToSelect = computeFieldIdsToSelect({
+    const fieldNamesToSelect = computeDefaultFieldNamesToSelect({
       ...buildArgs({ fields, depth: 0 }),
       maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length - 1,
     });
 
-    expect(fieldIdsToSelect?.size).toBe(WIDE_OBJECT_FIELDS.length - 1);
-    expect(fieldIdsToSelect?.has('activities-id')).toBe(false);
-    expect(fieldIdsToSelect?.has('attachments-id')).toBe(false);
+    expect(fieldNamesToSelect?.size).toBe(WIDE_OBJECT_FIELDS.length - 1);
+    expect(fieldNamesToSelect?.has('activities')).toBe(false);
+    expect(fieldNamesToSelect?.has('attachments')).toBe(false);
   });
 
   it('should count and select one-to-many relations at depth 1', () => {
     const fields = [...WIDE_OBJECT_FIELDS, ...ONE_TO_MANY_RELATION_FIELDS];
 
-    const fieldIdsToSelect = computeFieldIdsToSelect({
+    const fieldNamesToSelect = computeDefaultFieldNamesToSelect({
       ...buildArgs({ fields, depth: 1 }),
       maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length,
     });
 
-    expect(fieldIdsToSelect?.has('activities-id')).toBe(true);
-    expect(fieldIdsToSelect?.has('attachments-id')).toBe(true);
+    expect(fieldNamesToSelect?.has('activities')).toBe(true);
+    expect(fieldNamesToSelect?.has('attachments')).toBe(true);
   });
 
   it('should cap an object wider than the maximum to exactly the maximum', () => {
@@ -211,35 +206,27 @@ describe('computeFieldIdsToSelect', () => {
       ),
     ];
 
-    const fieldIdsToSelect = computeFieldIdsToSelect({
+    const fieldNamesToSelect = computeDefaultFieldNamesToSelect({
       ...buildArgs({ fields }),
       maximumDefaultFieldCount: 200,
     });
 
-    expect(fieldIdsToSelect?.size).toBe(200);
-    expect(fieldIdsToSelect?.has('id-id')).toBe(true);
-    expect(fieldIdsToSelect?.has('customField198-id')).toBe(true);
-    expect(fieldIdsToSelect?.has('customField199-id')).toBe(false);
+    expect(fieldNamesToSelect?.size).toBe(200);
+    expect(fieldNamesToSelect?.has('id')).toBe(true);
+    expect(fieldNamesToSelect?.has('customField198')).toBe(true);
+    expect(fieldNamesToSelect?.has('customField199')).toBe(false);
   });
 
-  it('should select requested fields plus id and bypass the cap', () => {
-    expect(
-      computeFieldIdsToSelect({
-        ...buildArgs({ fields: WIDE_OBJECT_FIELDS }),
-        requestedFieldNames: ['zCustom', 'name'],
-        maximumDefaultFieldCount: 1,
+  it('keeps identifier priority when the identifier is also a system field', () => {
+    const selection = computeDefaultFieldNamesToSelect({
+      ...buildArgs({
+        fields: WIDE_OBJECT_FIELDS,
+        labelIdentifierFieldName: 'position',
+        imageIdentifierFieldName: 'position',
       }),
-    ).toEqual(new Set(['id-id', 'zCustom-id', 'name-id']));
-  });
+      maximumDefaultFieldCount: 3,
+    });
 
-  it('should not select requested fields that are not readable', () => {
-    expect(
-      computeFieldIdsToSelect({
-        ...buildArgs({
-          fields: WIDE_OBJECT_FIELDS.filter((field) => field.name !== 'name'),
-        }),
-        requestedFieldNames: ['name', 'position'],
-      }),
-    ).toEqual(new Set(['id-id', 'position-id']));
+    expect([...(selection ?? [])]).toEqual(['id', 'position', 'createdAt']);
   });
 });

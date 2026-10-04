@@ -8,7 +8,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
-import { computeFieldIdsToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-field-ids-to-select.util';
+import { computeDefaultFieldNamesToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-default-field-names-to-select.util';
 import { getReadableFlatFields } from 'src/engine/api/common/common-select-fields/utils/get-readable-flat-fields.util';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
@@ -193,13 +193,14 @@ export abstract class RestApiBaseHandler {
       depth,
     });
 
-    const fieldIdsToSelect = computeFieldIdsToSelect({
-      flatObjectMetadata,
-      readableFlatFields,
-      depth,
-      requestedFieldNames,
-      maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
-    });
+    const fieldNamesToSelect =
+      requestedFieldNames ??
+      computeDefaultFieldNamesToSelect({
+        flatObjectMetadata,
+        readableFlatFields,
+        depth,
+        maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
+      });
 
     const selectedFields = this.commonSelectFieldsHelper.computeFromDepth({
       objectsPermissions,
@@ -207,12 +208,12 @@ export abstract class RestApiBaseHandler {
       flatFieldMetadataMaps,
       flatObjectMetadata,
       depth,
-      fieldIdsToSelect,
+      fieldNamesToSelect,
     });
 
     return {
       selectedFields,
-      isFieldSetRestricted: isDefined(fieldIdsToSelect),
+      isFieldSetRestricted: isDefined(fieldNamesToSelect),
     };
   }
 

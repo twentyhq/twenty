@@ -23,7 +23,7 @@ export const parseFieldsRestRequest = ({
     'name' | 'type' | 'settings'
   >[];
   depth: Depth | undefined;
-}): string[] | undefined => {
+}): ReadonlySet<string> | undefined => {
   const rawFields = request.query.fields;
 
   if (!isDefined(rawFields)) {
@@ -87,5 +87,5 @@ export const parseFieldsRestRequest = ({
     );
   }
 
-  return fieldNames;
+  return new Set(['id', ...fieldNames]);
 };

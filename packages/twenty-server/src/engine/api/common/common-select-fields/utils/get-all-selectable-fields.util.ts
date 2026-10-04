@@ -28,7 +28,7 @@ export const getAllSelectableFields = ({
   flatObjectMetadata,
   flatFieldMetadataMaps,
   onlyUseLabelIdentifierFieldsInRelations = false,
-  fieldIdsToSelect,
+  fieldNamesToSelect,
 }: {
   restrictedFields: RestrictedFieldsPermissions;
   flatObjectMetadata: Pick<
@@ -51,19 +51,22 @@ export const getAllSelectableFields = ({
     >
   >;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
-  fieldIdsToSelect?: ReadonlySet<string>;
+  fieldNamesToSelect?: ReadonlySet<string>;
 }): SelectableFieldsStructured => {
   const result: SelectableFieldsStructured = {};
 
   for (const fieldId of flatObjectMetadata.fieldIds) {
-    if (isDefined(fieldIdsToSelect) && !fieldIdsToSelect.has(fieldId)) {
-      continue;
-    }
-
     const flatField = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
       flatEntityId: fieldId,
     });
+
+    if (
+      isDefined(fieldNamesToSelect) &&
+      !fieldNamesToSelect.has(flatField.name)
+    ) {
+      continue;
+    }
 
     if (restrictedFields[flatField.id]?.canRead === false) continue;
 
