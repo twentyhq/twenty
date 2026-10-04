@@ -23,6 +23,8 @@ const getWorkspaceAgentHistoryTable =
 
 @Injectable()
 export class AgentHistoryWorkspaceStorageService {
+  private readonly readyWorkspaceIds = new Set<string>();
+
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async initializeWorkspace(workspaceId: string): Promise<void> {
@@ -58,6 +60,24 @@ export class AgentHistoryWorkspaceStorageService {
     workspaceId: string,
     work: (context: AgentHistoryStorageContext) => Promise<TResult>,
   ): Promise<TResult> {
+    await this.assertReady(workspaceId);
+
+    return this.dataSource.transaction((manager) =>
+      work({ manager, table: getWorkspaceAgentHistoryTable(workspaceId) }),
+    );
+  }
+
+  async getContext(workspaceId: string): Promise<AgentHistoryStorageContext> {
+    await this.assertReady(workspaceId);
+
+    return {
+      manager: this.dataSource.manager,
+      table: getWorkspaceAgentHistoryTable(workspaceId),
+    };
+  }
+
+  // Once moved to workspace storage, history only leaves it if the 2.42 move is rolled back
+  private async assertReady(workspaceId: string): Promise<void> {
     if (!isNonEmptyString(workspaceId)) {
       throw new AgentHistoryStorageException(
         'INVALID_WORKSPACE',
@@ -65,28 +85,24 @@ export class AgentHistoryWorkspaceStorageService {
       );
     }
 
-    return this.runInTransaction(async (runner) => {
-      // A retried upgrade clears its destination; no live write may race that copy.
-      await runner.query(
-        'SELECT pg_advisory_xact_lock_shared(hashtextextended($1, 0))',
-        [`${HISTORY_READINESS_KEY}:${workspaceId}`],
+    if (this.readyWorkspaceIds.has(workspaceId)) {
+      return;
+    }
+
+    const ready = await this.dataSource.query(
+      `SELECT 1 FROM core."keyValuePair" WHERE "key" = $1 AND "workspaceId" = $2
+       AND "userId" IS NULL AND "applicationId" IS NULL AND type = 'CONFIG_VARIABLE'
+       AND value->>'storage' = 'workspace' AND NOT (value ? 'migration')`,
+      [HISTORY_READINESS_KEY, workspaceId],
+    );
+
+    if (ready.length === 0) {
+      throw new ServiceUnavailableException(
+        'AI history is unavailable until this workspace finishes upgrading.',
       );
-      const ready = await runner.query(
-        `SELECT 1 FROM core."keyValuePair" WHERE "key" = $1 AND "workspaceId" = $2
-         AND "userId" IS NULL AND "applicationId" IS NULL AND type = 'CONFIG_VARIABLE'
-         AND value->>'storage' = 'workspace' AND NOT (value ? 'migration')`,
-        [HISTORY_READINESS_KEY, workspaceId],
-      );
-      if (ready.length === 0) {
-        throw new ServiceUnavailableException(
-          'AI history is unavailable until this workspace finishes upgrading.',
-        );
-      }
-      return work({
-        manager: runner.manager,
-        table: getWorkspaceAgentHistoryTable(workspaceId),
-      });
-    });
+    }
+
+    this.readyWorkspaceIds.add(workspaceId);
   }
 
   async runReadOnlyReport<TResult>(
