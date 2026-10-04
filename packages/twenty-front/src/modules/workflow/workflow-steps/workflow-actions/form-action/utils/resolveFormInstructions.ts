@@ -1,6 +1,9 @@
-import { isNonEmptyString, isString } from '@sniptt/guards';
-import { isDefined, resolveInput } from 'twenty-shared/utils';
+import { isNonEmptyString, isString, isUndefined } from '@sniptt/guards';
+import { resolveInput } from 'twenty-shared/utils';
 
+const VARIABLE_PATTERN = /\{\{[^{}]+\}\}/g;
+
+// each variable is resolved on its own, so one the run cannot resolve keeps its text instead of reading "undefined"
 export const resolveFormInstructions = ({
   instructions,
   context,
@@ -12,14 +15,13 @@ export const resolveFormInstructions = ({
     return undefined;
   }
 
-  const resolvedInstructions = resolveInput(instructions, context);
+  return instructions.replace(VARIABLE_PATTERN, (variable) => {
+    const value = resolveInput(variable, context);
 
-  if (!isDefined(resolvedInstructions)) {
-    return instructions;
-  }
+    if (isUndefined(value)) {
+      return variable;
+    }
 
-  // a lone variable resolves to the value itself, which may not be text
-  return isString(resolvedInstructions)
-    ? resolvedInstructions
-    : JSON.stringify(resolvedInstructions);
+    return isString(value) ? value : JSON.stringify(value);
+  });
 };

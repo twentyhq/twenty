@@ -34,6 +34,24 @@ describe('resolveFormInstructions', () => {
     ).toBe('{{missing-step.value}}');
   });
 
+  it('keeps a variable that does not resolve inside text', () => {
+    expect(
+      resolveFormInstructions({
+        instructions: 'Read {{missing-step.name}} and confirm.',
+        context: CONTEXT,
+      }),
+    ).toBe('Read {{missing-step.name}} and confirm.');
+  });
+
+  it('shows a variable holding null', () => {
+    expect(
+      resolveFormInstructions({
+        instructions: 'Owner: {{trigger.owner}}',
+        context: { trigger: { owner: null } },
+      }),
+    ).toBe('Owner: null');
+  });
+
   it('shows nothing without instructions', () => {
     expect(
       resolveFormInstructions({ instructions: '  ', context: CONTEXT }),

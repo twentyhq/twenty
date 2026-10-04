@@ -9,11 +9,10 @@ import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowRunSSESubscribeEffect } from '@/workflow/workflow-diagram/components/WorkflowRunSSESubscribeEffect';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowRunStep';
-import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
-import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepContext';
 import { WorkflowFormFields } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFields';
 import { WorkflowFormStepSubmitButton } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormStepSubmitButton';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import { getFormInstructionsContext } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getFormInstructionsContext';
 import { resolveFormInstructions } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/resolveFormInstructions';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -45,22 +44,15 @@ export const WorkflowEditActionFormFiller = ({
   const iterationIndex = useAtomComponentStateValue(
     workflowRunIteratorSubStepIterationIndexComponentState,
   );
-  const instructions = isDefined(workflowRun?.state)
+  const instructionsContext = getFormInstructionsContext({
+    stepId: action.id,
+    workflowRun,
+    iterationIndex,
+  });
+  const instructions = isDefined(instructionsContext)
     ? resolveFormInstructions({
         instructions: action.settings.instructions,
-        context: Object.fromEntries(
-          getWorkflowRunStepContext({
-            stepId: action.id,
-            stepInfos: workflowRun.state.stepInfos,
-            flow: workflowRun.state.flow,
-            currentLoopIterationIndex: getIsDescendantOfIterator({
-              stepId: action.id,
-              steps: workflowRun.state.flow.steps,
-            })
-              ? iterationIndex
-              : undefined,
-          }).map(({ id, context }) => [id, context]),
-        ),
+        context: instructionsContext,
       })
     : undefined;
   const { goBackFromSidePanel } = useSidePanelHistory();
