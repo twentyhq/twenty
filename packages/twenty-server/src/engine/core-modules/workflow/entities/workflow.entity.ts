@@ -74,7 +74,6 @@ export class WorkflowEntity extends SyncableEntity {
   })
   visibility: WorkflowVisibility;
 
-  // Hides workflows managed elsewhere (applications) from workflow lists outside developer mode
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME,

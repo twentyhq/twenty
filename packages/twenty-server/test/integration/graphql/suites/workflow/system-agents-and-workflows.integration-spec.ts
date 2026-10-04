@@ -146,6 +146,7 @@ describe('system agents and workflows (e2e)', () => {
 
     const { data } = await findAgents({
       expectToFail: false,
+      input: undefined,
       gqlFields: 'id isSystem',
     });
 

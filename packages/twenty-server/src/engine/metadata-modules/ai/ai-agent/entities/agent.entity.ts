@@ -59,7 +59,6 @@ export class AgentEntity
   @Column({ default: false })
   isCustom: boolean;
 
-  // Hides agents managed elsewhere (workflow steps, applications) from agent lists outside developer mode
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME,
