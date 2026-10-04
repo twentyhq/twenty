@@ -28,6 +28,7 @@ describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsC
   let workflowRun: Pick<WorkflowRunWorkspaceEntity, 'id' | 'state'>;
   let formStepId: string;
   let originalState: WorkflowRunWorkspaceEntity['state'];
+  let seededThreadId: string;
 
   const inWorkspace = <TResult>(work: () => Promise<TResult>) =>
     workspaceOrmManager.executeInWorkspaceContext(
@@ -92,6 +93,7 @@ describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsC
 
     originalState = runningWorkflowRun.state;
     formStepId = randomUUID();
+    seededThreadId = randomUUID();
 
     // a form step waiting since before 2.44, with the conversation 2.44 recorded for it
     workflowRun = {
@@ -128,29 +130,41 @@ describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsC
         },
         stepInfos: {
           ...originalState.stepInfos,
-          [formStepId]: { status: StepStatus.PENDING, threadId: randomUUID() },
+          [formStepId]: {
+            status: StepStatus.PENDING,
+            threadId: seededThreadId,
+          },
         },
       },
     };
 
-    await inWorkspace(() =>
-      repository('workflowRun').update(workflowRun.id, {
+    await inWorkspace(async () => {
+      await repository('workflowRun').update(workflowRun.id, {
         state: workflowRun.state,
-      }),
-    );
+      });
+      await repository('agentChatThread').insert({
+        id: seededThreadId,
+        title: 'Approve the discount',
+        workflowRunId: workflowRun.id,
+      });
+    });
   });
 
   afterAll(async () => {
-    await inWorkspace(() =>
-      repository('workflowRun').update(workflowRun.id, {
+    if (!isDefined(workflowRun) || !isDefined(originalState)) {
+      return;
+    }
+
+    await inWorkspace(async () => {
+      await repository('agentChatThread').delete({ id: seededThreadId });
+      await repository('workflowRun').update(workflowRun.id, {
         state: originalState,
-      }),
-    );
+      });
+    });
   });
 
   afterEach(async () => {
     const threadId = await findFormThreadId();
-    const seededThreadId = workflowRun.state?.stepInfos[formStepId]?.threadId;
 
     await inWorkspace(async () => {
       if (threadId !== undefined && threadId !== seededThreadId) {
@@ -218,11 +232,8 @@ describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsC
   });
 
   it('leaves a form whose conversation is recorded alone', async () => {
-    const seededThreadId = workflowRun.state?.stepInfos[formStepId]?.threadId;
-
     await runCommand();
 
-    expect(seededThreadId).toBeDefined();
     expect(await findFormThreadId()).toBe(seededThreadId);
   });
 });
