@@ -206,7 +206,20 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => LogicFunctionDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+  )
   async deleteOneLogicFunction(
     @Args('input') { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -226,7 +239,20 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => LogicFunctionDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+  )
   async createOneLogicFunction(
     @Args('input') input: CreateLogicFunctionFromSourceInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

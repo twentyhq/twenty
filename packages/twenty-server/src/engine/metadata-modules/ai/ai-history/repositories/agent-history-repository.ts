@@ -43,7 +43,7 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
       context: AgentHistoryStorageContext,
     ) => Promise<TResult>,
   ): Promise<TResult> {
-    const context = await this.storageService.getContext(workspaceId);
+    const context = this.storageService.getContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
