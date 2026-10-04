@@ -3096,10 +3096,12 @@ export interface SendChatMessageResult {
 }
 
 export interface AgentChatThreadParticipant {
+    id: Scalars['UUID']
     threadId: Scalars['UUID']
     lastReadAt?: Scalars['DateTime']
     archivedAt?: Scalars['DateTime']
     snoozedUntil?: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
     __typename: 'AgentChatThreadParticipant'
 }
 
@@ -7043,10 +7045,12 @@ export interface SendChatMessageResultGenqlSelection{
 }
 
 export interface AgentChatThreadParticipantGenqlSelection{
+    id?: boolean | number
     threadId?: boolean | number
     lastReadAt?: boolean | number
     archivedAt?: boolean | number
     snoozedUntil?: boolean | number
+    updatedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

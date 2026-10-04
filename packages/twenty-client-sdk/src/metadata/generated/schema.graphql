@@ -3535,10 +3535,12 @@ type SendChatMessageResult {
 }
 
 type AgentChatThreadParticipant {
+  id: UUID!
   threadId: UUID!
   lastReadAt: DateTime
   archivedAt: DateTime
   snoozedUntil: DateTime
+  updatedAt: DateTime!
 }
 
 type AgentChatEvent {

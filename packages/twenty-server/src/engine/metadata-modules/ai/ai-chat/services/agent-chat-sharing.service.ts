@@ -1,5 +1,6 @@
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
+import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { Injectable } from '@nestjs/common';
@@ -45,17 +46,21 @@ export class AgentChatSharingService {
   // workspace, it has neither the participant table nor the thread's
   // lastActivityAt column. Remove once 2.46 leaves the window.
   async hasInboxState(workspaceId: string): Promise<boolean> {
+    return isDefined(await this.findParticipantObjectMetadataId(workspaceId));
+  }
+
+  async findParticipantObjectMetadataId(
+    workspaceId: string,
+  ): Promise<string | undefined> {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
       ]);
 
-    return isDefined(
-      findAgentChatFlatObjectMetadata(
-        flatObjectMetadataMaps,
-        'agentChatThreadParticipant',
-      ),
-    );
+    return findAgentChatFlatObjectMetadata(
+      flatObjectMetadataMaps,
+      'agentChatThreadParticipant',
+    )?.id;
   }
 
   getReadableThread(args: AgentChatThreadAccessArgs) {
@@ -129,7 +134,9 @@ export class AgentChatSharingService {
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    const hasInboxState = await this.hasInboxState(args.workspaceId);
+    const participantObjectMetadataId =
+      await this.findParticipantObjectMetadataId(args.workspaceId);
+    const hasInboxState = isDefined(participantObjectMetadataId);
 
     // workflowRunId is set by the server for a run conversation, never written by the member
     await this.workspaceOrmManager.executeInWorkspaceContext(
@@ -179,9 +186,22 @@ export class AgentChatSharingService {
         }
         if (hasInboxState) {
           await manager.query(
-            `INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt")
-             VALUES ($1, $2, $3)`,
-            [record.id, authContext.workspaceMemberId, record.lastActivityAt],
+            `WITH participant AS (
+               INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt")
+               VALUES ($1, $2, $3)
+               RETURNING id, "workspaceMemberId"
+             )
+             ${buildAgentChatThreadParticipantOwnerShareInsert({
+               workspaceId: args.workspaceId,
+               participantSource: 'participant',
+               objectMetadataIdParameter: '$4',
+             })}`,
+            [
+              record.id,
+              authContext.workspaceMemberId,
+              record.lastActivityAt,
+              participantObjectMetadataId,
+            ],
           );
         }
         return record;

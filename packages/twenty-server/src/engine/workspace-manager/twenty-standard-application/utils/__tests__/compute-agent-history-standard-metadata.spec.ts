@@ -104,6 +104,10 @@ describe('agent history workspace metadata', () => {
       readability: MetadataReadability.INHERITED,
       writability: MetadataWritability.OPEN,
     },
+    agentChatThreadParticipant: {
+      readability: MetadataReadability.PRIVATE,
+      writability: MetadataWritability.SYSTEM,
+    },
   };
 
   it.each(OBJECT_NAMES)('keeps %s protected by metadata policy', (name) => {
