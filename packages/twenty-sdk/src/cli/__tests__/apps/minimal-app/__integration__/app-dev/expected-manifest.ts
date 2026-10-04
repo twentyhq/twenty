@@ -1,6 +1,6 @@
 import { FieldType } from '@/sdk/define';
 import type { Manifest } from 'twenty-shared/application';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, HTTPMethod } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
   commandMenuItems: [],
@@ -60,7 +60,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
         path: '/my-function',
-        httpMethod: 'GET',
+        httpMethod: HTTPMethod.GET,
         isAuthRequired: false,
       },
       handlerName: 'default.config.handler',

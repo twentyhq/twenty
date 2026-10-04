@@ -4,6 +4,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
@@ -73,8 +74,12 @@ export const AgentChatThreadRecordOperationsEffect = () => {
           const createdThread =
             operation.createdRecord as AgentChatThreadRecord;
 
-          // Workflow run conversations are listed with the run, not in the chat list.
-          if (!isDefined(createdThread.workflowRunId)) {
+          // a workflow run's conversation is listed only for the member it is routed to
+          if (
+            !isDefined(createdThread.workflowRunId) ||
+            createdThread.workspaceMemberId ===
+              store.get(currentWorkspaceMemberState.atom)?.id
+          ) {
             addAgentChatThread(createdThread);
           }
           return;

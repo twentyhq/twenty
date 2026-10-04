@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
-import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
+import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
 
 jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({
@@ -45,6 +45,12 @@ jest.mock('@/ui/layout/tab-list/components/TabList', () => ({
         </button>
       ))}
     </div>
+  ),
+}));
+
+jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
+  LazyMarkdownRenderer: ({ text }: { text: string }) => (
+    <div data-testid="markdown-renderer">{text}</div>
   ),
 }));
 
@@ -134,7 +140,9 @@ describe('ThinkingStepsDisplay', () => {
 
     expect(screen.queryByRole('button', { name: /steps/i })).toBeNull();
     expect(screen.getByText('Thinking')).toBeInTheDocument();
-    expect(screen.getByText('Active reasoning content')).toBeInTheDocument();
+    expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
+      'Active reasoning content',
+    );
     expect(
       screen.getByText('Searched the web for crm software'),
     ).toBeInTheDocument();

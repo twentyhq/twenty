@@ -7,7 +7,6 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadList } from '@/ai/components/AiChatThreadList';
-import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
@@ -100,7 +99,6 @@ export const ChatThreadsCardContent = ({
     <StyledThreadsContainer>
       <AiChatThreadList
         threads={threads}
-        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.RECORD_PAGE}
         selectedThreadIds={
           isDefined(sidePanelThreadId) ? [sidePanelThreadId] : []
         }

@@ -20,21 +20,9 @@ jest.mock('@/ai/components/ThinkingStepsDisplay', () => ({
   ),
 }));
 
-jest.mock('@/ai/components/ToolStepRenderer', () => ({
-  ToolStepRenderer: ({ toolPart }: { toolPart: { type: string } }) => (
-    <div data-testid="tool-step-renderer">{toolPart.type}</div>
-  ),
-}));
-
 jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
   LazyMarkdownContent: ({ text }: { text: string }) => (
     <div data-testid="markdown-renderer">{text}</div>
-  ),
-}));
-
-jest.mock('@/ai/components/RoutingStatusDisplay', () => ({
-  RoutingStatusDisplay: ({ data }: { data: { text: string } }) => (
-    <div data-testid="routing-status-display">{data.text}</div>
   ),
 }));
 
@@ -48,15 +36,14 @@ jest.mock('@/ai/components/AiChatToolWidget', () => ({
   ),
 }));
 
-const APP_WIDGET = {
-  kind: 'front-component',
-  frontComponentId: '20202020-0000-4000-8000-000000000001',
-};
+const APP_FRONT_COMPONENT_ID = '20202020-0000-4000-8000-000000000001';
 
-const mockUseToolWidgetByName = jest.fn(() => new Map());
+const mockUseFrontComponentIdByToolName = jest.fn(
+  () => new Map<string, string>(),
+);
 
-jest.mock('@/ai/hooks/useToolWidgetByName', () => ({
-  useToolWidgetByName: () => mockUseToolWidgetByName(),
+jest.mock('@/ai/hooks/useFrontComponentIdByToolName', () => ({
+  useFrontComponentIdByToolName: () => mockUseFrontComponentIdByToolName(),
 }));
 
 const renderAssistantRenderer = (
@@ -75,7 +62,7 @@ const renderAssistantRenderer = (
 
 describe('AiChatAssistantMessageRenderer', () => {
   beforeEach(() => {
-    mockUseToolWidgetByName.mockReturnValue(new Map());
+    mockUseFrontComponentIdByToolName.mockReturnValue(new Map());
   });
 
   it('should group reasoning and tool steps into ThinkingStepsDisplay', () => {
@@ -161,7 +148,6 @@ describe('AiChatAssistantMessageRenderer', () => {
     renderAssistantRenderer(messageParts);
 
     expect(screen.queryByTestId('thinking-steps-display')).toBeNull();
-    expect(screen.queryByTestId('tool-step-renderer')).toBeNull();
     expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
   });
 
@@ -186,7 +172,6 @@ describe('AiChatAssistantMessageRenderer', () => {
     expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
       'thinking-1-answer-pending',
     );
-    expect(screen.queryByTestId('tool-step-renderer')).toBeNull();
   });
 
   it('should hide execute_tool wrapping code_interpreter when data-code-execution parts exist', () => {
@@ -217,7 +202,7 @@ describe('AiChatAssistantMessageRenderer', () => {
 
     renderAssistantRenderer(messageParts);
 
-    expect(screen.queryByTestId('tool-step-renderer')).toBeNull();
+    expect(screen.queryByTestId('thinking-steps-display')).toBeNull();
     expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
   });
 
@@ -226,13 +211,6 @@ describe('AiChatAssistantMessageRenderer', () => {
       {
         type: 'text',
         text: 'Simple answer',
-      },
-      {
-        type: 'data-routing-status',
-        data: {
-          text: 'Routing complete',
-          state: 'routed',
-        },
       },
       {
         type: 'data-code-execution',
@@ -253,9 +231,6 @@ describe('AiChatAssistantMessageRenderer', () => {
     expect(screen.queryByTestId('thinking-steps-display')).toBeNull();
     expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
       'Simple answer',
-    );
-    expect(screen.getByTestId('routing-status-display')).toHaveTextContent(
-      'Routing complete',
     );
     expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
   });
@@ -291,7 +266,6 @@ describe('AiChatAssistantMessageRenderer', () => {
 
     renderAssistantRenderer(messageParts);
 
-    expect(screen.queryByTestId('tool-step-renderer')).toBeNull();
     expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
       'thinking-2-answer-started',
     );
@@ -336,7 +310,6 @@ describe('AiChatAssistantMessageRenderer', () => {
     const { container } = renderAssistantRenderer(messageParts);
 
     expect(container).not.toBeEmptyDOMElement();
-    expect(screen.queryByTestId('tool-step-renderer')).toBeNull();
   });
 
   it('should show a failed workspace setup completion instead of hiding it', () => {
@@ -445,43 +418,10 @@ describe('AiChatAssistantMessageRenderer', () => {
       'thinking-1-answer-started',
     );
   });
-  it('should keep a records widget call in the step group so it does not split the steps', () => {
-    mockUseToolWidgetByName.mockReturnValue(
-      new Map([['find_many_companies', { kind: 'builtin', name: 'records' }]]),
-    );
-
-    renderAssistantRenderer([
-      {
-        type: 'reasoning',
-        text: 'Reasoning content',
-        state: 'done',
-      },
-      {
-        type: 'tool-find_many_companies',
-        toolCallId: 'call_1',
-        state: 'output-available',
-        input: {},
-        output: { recordReferences: [] },
-      },
-      {
-        type: 'tool-web_search',
-        toolCallId: 'call_2',
-        input: { query: 'crm software' },
-        output: { result: { ok: true } },
-        state: 'output-available',
-      },
-    ] as unknown as ExtendedUIMessagePart[]);
-
-    expect(screen.getAllByTestId('thinking-steps-display')).toHaveLength(1);
-    expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
-      'thinking-3',
-    );
-    expect(screen.queryByTestId('tool-widget')).toBeNull();
-  });
 
   it('should render a call that has an app widget on its own, not folded into the step group', () => {
-    mockUseToolWidgetByName.mockReturnValue(
-      new Map([['app_show_chart', APP_WIDGET]]),
+    mockUseFrontComponentIdByToolName.mockReturnValue(
+      new Map([['app_show_chart', APP_FRONT_COMPONENT_ID]]),
     );
 
     renderAssistantRenderer([
@@ -501,8 +441,8 @@ describe('AiChatAssistantMessageRenderer', () => {
   });
 
   it('should resolve the widget of a call dispatched through execute_tool', () => {
-    mockUseToolWidgetByName.mockReturnValue(
-      new Map([['app_show_chart', APP_WIDGET]]),
+    mockUseFrontComponentIdByToolName.mockReturnValue(
+      new Map([['app_show_chart', APP_FRONT_COMPONENT_ID]]),
     );
 
     renderAssistantRenderer([
@@ -519,8 +459,8 @@ describe('AiChatAssistantMessageRenderer', () => {
   });
 
   it('should keep a call that has an app widget but is still streaming its input in the step group', () => {
-    mockUseToolWidgetByName.mockReturnValue(
-      new Map([['app_show_chart', APP_WIDGET]]),
+    mockUseFrontComponentIdByToolName.mockReturnValue(
+      new Map([['app_show_chart', APP_FRONT_COMPONENT_ID]]),
     );
 
     renderAssistantRenderer([

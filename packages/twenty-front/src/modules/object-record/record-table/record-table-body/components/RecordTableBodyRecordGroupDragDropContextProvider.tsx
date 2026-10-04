@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { RecordDragDropContextProvider } from '@/object-record/record-drag/components/RecordDragDropContextProvider';
 import { useProcessRecordGroupDrop } from '@/object-record/record-drag/hooks/useProcessRecordGroupDrop';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { RecordTableRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableRecordGroupBodyContextProvider';
+import { RecordTableBodyContextProvider } from '@/object-record/record-table/components/RecordTableBodyContextProvider';
 import { RecordTableRowDragOverlayContent } from '@/object-record/record-table/record-table-row/components/RecordTableRowDragOverlayContent';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 
@@ -31,9 +31,9 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
       }
       onRecordDrop={processRecordGroupDrop}
       renderDragOverlay={(source) => (
-        <RecordTableRecordGroupBodyContextProvider>
+        <RecordTableBodyContextProvider>
           <RecordTableRowDragOverlayContent source={source} />
-        </RecordTableRecordGroupBodyContextProvider>
+        </RecordTableBodyContextProvider>
       )}
     >
       {children}

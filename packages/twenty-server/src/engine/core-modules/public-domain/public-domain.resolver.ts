@@ -68,7 +68,20 @@ export class PublicDomainResolver {
   }
 
   @Mutation(() => PublicDomainDTO)
-  @UseGuards(ApplicationTargetGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    ApplicationTargetGuard,
+  )
   async createPublicDomain(
     @ApplicationTargetArgs<CreatePublicDomainInput>({
       kind: 'applicationId',
@@ -86,6 +99,19 @@ export class PublicDomainResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async deletePublicDomain(
     @Args() { domain }: PublicDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
