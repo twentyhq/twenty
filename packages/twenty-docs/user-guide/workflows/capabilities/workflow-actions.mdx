@@ -220,9 +220,9 @@ Creates an event on a connected calendar.
 **Output**: The created event data is available for use in subsequent steps.
 
 ### Form
-Prompts a form during workflow execution to collect user input. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+Opens a form for the person who launches the workflow, to collect input on the spot. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
 <Warning>
-**Forms are designed for manual triggers only**. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface, which is not the expected user experience. A notification center will be released in 2026 to properly support forms in automated workflows.
+**Forms are designed for manual triggers only**. A form is filled in right away by the person running the workflow and does not reach anyone's inbox. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface. To ask someone for an answer or an approval in their inbox, use the Send to Inbox step instead.
 </Warning>
 **Configuration**:
 - Configure the fields that users will be asked to fill. For each field, choose
