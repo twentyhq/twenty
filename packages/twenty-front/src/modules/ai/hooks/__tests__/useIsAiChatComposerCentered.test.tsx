@@ -5,7 +5,6 @@ import { type ReactNode } from 'react';
 
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
-import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -13,6 +12,7 @@ import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMess
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { type AiChatSurface } from '@/ai/types/AiChatSurface';
 import {
   jotaiStore,
@@ -24,10 +24,8 @@ const THREAD_ID = AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
 
 const renderForSurface = ({
   surface = AI_CHAT_SURFACE.PAGE,
-  preamble = null,
 }: {
   surface?: AiChatSurface;
-  preamble?: ReactNode;
 } = {}) => {
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <JotaiProvider store={jotaiStore}>
@@ -35,9 +33,7 @@ const renderForSurface = ({
         value={{ instanceId: INSTANCE_ID }}
       >
         <AiChatSurfaceContext.Provider value={surface}>
-          <AiChatMessageListPreambleContext.Provider value={preamble}>
-            {children}
-          </AiChatMessageListPreambleContext.Provider>
+          {children}
         </AiChatSurfaceContext.Provider>
       </AgentChatComponentInstanceContext.Provider>
     </JotaiProvider>
@@ -127,8 +123,9 @@ describe('useIsAiChatComposerCentered', () => {
     expect(result.current).toBe(false);
   });
 
-  it('should not center the composer while a preamble owns the intro', () => {
-    const { result } = renderForSurface({ preamble: <div /> });
+  it('should not center the composer while the workspace setup preamble owns the intro', () => {
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    const { result } = renderForSurface();
 
     expect(result.current).toBe(false);
   });

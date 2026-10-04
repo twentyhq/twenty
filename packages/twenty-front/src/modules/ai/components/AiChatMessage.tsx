@@ -2,12 +2,11 @@ import { useLingui } from '@lingui/react/macro';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAiChatSentMessageHandOff } from '@/ai/hooks/useAiChatSentMessageHandOff';
-import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
-import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
+import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
@@ -173,17 +172,14 @@ const AiChatUserMessageText = ({
 type AiChatMessageProps = {
   messageId: string;
   isLastMessageStreaming?: boolean;
-  error?: AiChatError | undefined;
-  onRetry?: () => void;
+  error?: AiChatError;
 };
 
 export const AiChatMessage = ({
   messageId,
   isLastMessageStreaming = false,
   error,
-  onRetry,
 }: AiChatMessageProps) => {
-  const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
@@ -212,10 +208,9 @@ export const AiChatMessage = ({
     isCurrentWorkspaceMember:
       senderId === currentWorkspaceMember?.userWorkspaceId,
   });
-  const isUser = agentChatMessage.role === AgentMessageRole.USER;
-  const isLastAssistantMessage =
-    agentChatMessage.role === AgentMessageRole.ASSISTANT;
-  const shouldShowError = isDefined(error) && isLastAssistantMessage;
+  const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
+  const shouldShowError =
+    isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
   const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
   const messageContent = (
@@ -255,12 +250,7 @@ export const AiChatMessage = ({
               ))}
             </StyledFilesContainer>
           )}
-          {shouldShowError && isDefined(error) && (
-            <AiChatErrorRenderer
-              error={error}
-              onRetry={isReadOnly ? undefined : onRetry}
-            />
-          )}
+          {shouldShowError && <AiChatErrorRenderer error={error} />}
         </StyledMessageContainer>
         {agentChatMessage.parts.length > 0 && (
           <StyledMessageFooter className="message-footer">

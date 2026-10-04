@@ -1,7 +1,9 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { REQUEST_FORM_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/request-form.pausing-tool';
-import { requestFormInputSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
+import {
+  REQUEST_FORM_PAUSING_TOOL,
+  requestFormInputSchema,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/request-form.pausing-tool';
 
 const FIELDS = [
   { name: 'company', label: 'Company', type: 'RECORD' as const },

@@ -1,8 +1,6 @@
-import {
-  type SendInboxMessageInput,
-  type SendInboxMessageResult,
-} from 'twenty-shared/application';
+import { type SendInboxMessageResult } from 'twenty-shared/application';
 
+import { type SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
 
 const SEND_INBOX_MESSAGE_MUTATION = `

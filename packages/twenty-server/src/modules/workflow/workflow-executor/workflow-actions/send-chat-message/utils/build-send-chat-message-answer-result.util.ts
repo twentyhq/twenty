@@ -1,12 +1,21 @@
 import { isString } from '@sniptt/guards';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { type SendChatMessageAnswerOutcome } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/types/send-chat-message-answer-outcome.type';
 import { type SendChatMessageAnswerResult } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/types/send-chat-message-answer-result.type';
 
-// the member approved whenever the call was attempted, whatever its outcome, which status carries
-const APPROVED_STATUSES = new Set(['approved', 'failed', 'conflict']);
+const OUTCOME_BY_STATUS: ReadonlyMap<string, SendChatMessageAnswerOutcome> =
+  new Map([
+    ['approved', 'executed'],
+    ['rejected', 'rejected'],
+    ['failed', 'failed'],
+    ['conflict', 'conflict'],
+  ]);
 
-// flattens the answered call so later steps can branch on the decision and use the result
 export const buildSendChatMessageAnswerResult = ({
   threadId,
   toolResult,
@@ -16,18 +25,24 @@ export const buildSendChatMessageAnswerResult = ({
 }): SendChatMessageAnswerResult => {
   const result = isPlainObject(toolResult.result) ? toolResult.result : {};
   const proposal = isPlainObject(result.proposal) ? result.proposal : {};
+  const outcome = isString(result.status)
+    ? OUTCOME_BY_STATUS.get(result.status)
+    : undefined;
 
-  const isApproved =
-    isString(result.status) && APPROVED_STATUSES.has(result.status);
+  if (!isDefined(outcome) || !isString(proposal.toolName)) {
+    throw new WorkflowStepExecutorException(
+      'The answer to the action could not be read',
+      WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
+    );
+  }
 
   return {
     threadId,
-    isApproved,
+    outcome,
     // the member may approve an alternative, such as saving an email as a draft instead of sending it
-    approvedToolName:
-      isApproved && isString(proposal.toolName) ? proposal.toolName : null,
-    status: isString(result.status) ? result.status : null,
-    arguments: isPlainObject(proposal.arguments) ? proposal.arguments : null,
+    toolName: proposal.toolName,
+    arguments: isPlainObject(proposal.arguments) ? proposal.arguments : {},
+    // a conflict carries the record's latest values
     output: result.output ?? null,
     feedback: isString(result.feedback) ? result.feedback : null,
     error: isString(result.error) ? result.error : null,

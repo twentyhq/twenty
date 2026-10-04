@@ -29,7 +29,7 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
       Suggestion<MentionSearchResult>({
         pluginKey: MENTION_SUGGESTION_PLUGIN_KEY,
         editor: this.editor,
-        char: '@',
+        char: '#',
         items: async ({ query }) => {
           try {
             return await this.storage.searchMentionRecords(query);

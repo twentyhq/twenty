@@ -14,15 +14,16 @@ const READ_PARTICIPANT = {
   lastReadAt: LAST_ACTIVITY_AT,
   archivedAt: null,
   snoozedUntil: null,
+  id: 'participant-id',
+  updatedAt: '2026-10-01T10:00:00.000Z',
 };
 
-const query = jest.fn();
 const mutate = jest.fn();
 const enqueueToast = jest.fn();
 
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
-  useApolloClient: () => ({ query, mutate }),
+  useApolloClient: () => ({ mutate }),
 }));
 
 jest.mock('twenty-ui/components', () => ({
@@ -54,23 +55,6 @@ describe('useAgentChatThreadParticipants', () => {
     jest.clearAllMocks();
   });
 
-  it('loads the member state of every thread', async () => {
-    query.mockResolvedValue({
-      data: {
-        myAgentChatThreadParticipants: [READ_PARTICIPANT],
-      },
-    });
-    const { result, store } = renderParticipants();
-
-    await act(async () => {
-      await result.current.refreshAgentChatThreadParticipants();
-    });
-
-    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
-      [THREAD_ID]: READ_PARTICIPANT,
-    });
-  });
-
   it('reads a thread up to its last activity before the server answers', async () => {
     mutate.mockReturnValue(new Promise(() => undefined));
     const { result, store } = renderParticipants();
@@ -97,14 +81,13 @@ describe('useAgentChatThreadParticipants', () => {
     ).toEqual(expect.any(String));
   });
 
-  it('reloads the server state and reports a refused snooze', async () => {
+  it('puts the member state back and reports a refused snooze', async () => {
     mutate.mockRejectedValue(new Error('Snooze time must be in the future'));
-    query.mockResolvedValue({
-      data: {
-        myAgentChatThreadParticipants: [READ_PARTICIPANT],
-      },
-    });
     const { result, store } = renderParticipants();
+
+    store.set(agentChatThreadParticipantsState.atom, {
+      [THREAD_ID]: READ_PARTICIPANT,
+    });
 
     await act(async () => {
       await result.current.snoozeAgentChatThreads({
@@ -117,6 +100,45 @@ describe('useAgentChatThreadParticipants', () => {
       store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
     ).toEqual(READ_PARTICIPANT);
     expect(enqueueToast).toHaveBeenCalled();
+  });
+
+  it('keeps a row the server sent while a refused change was on its way', async () => {
+    const { result, store } = renderParticipants();
+    const archivedParticipant = {
+      ...READ_PARTICIPANT,
+      archivedAt: '2026-10-01T10:05:00.000Z',
+      updatedAt: '2026-10-01T10:05:00.000Z',
+    };
+
+    store.set(agentChatThreadParticipantsState.atom, {
+      [THREAD_ID]: READ_PARTICIPANT,
+    });
+    mutate.mockImplementation(async () => {
+      store.set(agentChatThreadParticipantsState.atom, {
+        [THREAD_ID]: archivedParticipant,
+      });
+
+      throw new Error('Network error');
+    });
+
+    await act(async () => {
+      await result.current.markAgentChatThreadAsUnread(THREAD_ID);
+    });
+
+    expect(
+      store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
+    ).toEqual(archivedParticipant);
+  });
+
+  it('removes the change of a refused update on a thread without a row', async () => {
+    mutate.mockRejectedValue(new Error('Network error'));
+    const { result, store } = renderParticipants();
+
+    await act(async () => {
+      await result.current.archiveAgentChatThread(THREAD_ID);
+    });
+
+    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({});
   });
 
   it('keeps the thread on screen unread when the member marks it unread', async () => {
@@ -144,9 +166,6 @@ describe('useAgentChatThreadParticipants', () => {
 
   it('puts the visit back when the server refuses to mark it unread', async () => {
     mutate.mockRejectedValue(new Error('Network error'));
-    query.mockResolvedValue({
-      data: { myAgentChatThreadParticipants: [READ_PARTICIPANT] },
-    });
     const { result, store } = renderParticipants();
     const visit = {
       threadId: THREAD_ID,

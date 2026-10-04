@@ -51,7 +51,7 @@ const StyledPromptList = styled.div<{ isCentered: boolean }>`
   justify-content: center;
 `;
 
-const pickRandom = <T,>(items: T[]): T =>
+const pickRandom = <TItem,>(items: TItem[]): TItem =>
   items[Math.floor(Math.random() * items.length)];
 
 type AiChatSuggestedPromptsProps = {
@@ -86,15 +86,15 @@ export const AiChatSuggestedPrompts = ({
         {t`What can I help you with?`}
       </StyledTitle>
       <StyledPromptList isCentered={isCentered}>
-        {suggestedPrompts.map((suggestedPrompt) =>
-          isCentered ? (
+        {suggestedPrompts.map((suggestedPrompt) => {
+          const startIcon = isDefined(suggestedPrompt.Icon) ? (
+            <suggestedPrompt.Icon />
+          ) : undefined;
+
+          return isCentered ? (
             <Button
               key={suggestedPrompt.id}
-              startIcon={
-                isDefined(suggestedPrompt.Icon) ? (
-                  <suggestedPrompt.Icon />
-                ) : undefined
-              }
+              startIcon={startIcon}
               onClick={() => handleClick(suggestedPrompt)}
               variant="outline"
             >
@@ -103,17 +103,13 @@ export const AiChatSuggestedPrompts = ({
           ) : (
             <LightButton
               key={suggestedPrompt.id}
-              startIcon={
-                isDefined(suggestedPrompt.Icon) ? (
-                  <suggestedPrompt.Icon />
-                ) : undefined
-              }
+              startIcon={startIcon}
               onClick={() => handleClick(suggestedPrompt)}
             >
               {resolveMessage(suggestedPrompt.label)}
             </LightButton>
-          ),
-        )}
+          );
+        })}
       </StyledPromptList>
     </StyledContainer>
   );

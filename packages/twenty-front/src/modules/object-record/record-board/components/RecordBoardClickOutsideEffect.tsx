@@ -21,7 +21,6 @@ export const RecordBoardClickOutsideEffect = () => {
 
   const isDraggingRecord = useAtomComponentStateValue(
     isDraggingRecordComponentState,
-    recordBoardId,
   );
 
   const { deactivateBoardCard } = useActiveRecordBoardCard(recordBoardId);
