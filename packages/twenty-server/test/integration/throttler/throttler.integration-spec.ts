@@ -105,7 +105,7 @@ describe('ThrottlerService consumeTokens (Redis integration)', () => {
       args: [],
     });
 
-    expect(ttl).toBeGreaterThan(0);
+    expect(ttl).toBeGreaterThan(timeWindow * 1.9);
     expect(ttl).toBeLessThanOrEqual(timeWindow * 2);
   });
 
