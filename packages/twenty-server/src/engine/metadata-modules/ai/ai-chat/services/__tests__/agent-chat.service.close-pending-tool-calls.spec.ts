@@ -106,6 +106,7 @@ describe('AgentChatService closePendingToolCalls', () => {
 
     await service.closePendingToolCalls(closeArguments);
 
+    expect(threadRecordEventService.emitThreadUpdated).toHaveBeenCalledTimes(1);
     expect(threadRecordEventService.emitThreadUpdated).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
       threadBefore: {
