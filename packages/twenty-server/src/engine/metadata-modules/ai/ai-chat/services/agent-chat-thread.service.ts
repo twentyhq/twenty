@@ -98,6 +98,66 @@ export class AgentChatThreadService {
     await this.emitThreadActivityUpdated({ workspaceId, thread, activity });
   }
 
+  // A mentioned member follows the chat like one who wrote in it, and finds
+  // it unread in their inbox even if they had read or archived it
+  async addParticipants({
+    participantWorkspaceMemberIds,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    participantWorkspaceMemberIds: string[];
+  }): Promise<string[]> {
+    const thread = await this.getWritableThread(args);
+    const candidateMemberIds = [
+      ...new Set(participantWorkspaceMemberIds),
+    ].filter((memberId) => memberId !== args.workspaceMemberId);
+
+    if (candidateMemberIds.length === 0) {
+      return [];
+    }
+
+    const participantMemberIds =
+      await this.sharingService.shareThreadWithMembers({
+        ...args,
+        memberIds: candidateMemberIds,
+      });
+
+    if (
+      participantMemberIds.length === 0 ||
+      !(await this.sharingService.hasInboxState(args.workspaceId))
+    ) {
+      return participantMemberIds;
+    }
+
+    await this.threadRepository.query(args.workspaceId, ({ manager, table }) =>
+      manager.query(
+        `UPDATE ${table('agentChatThread')}
+         SET "updatedAt" = now(),
+           "writerWorkspaceMemberIds" = COALESCE("writerWorkspaceMemberIds", '{}') || ARRAY(
+             SELECT member_id FROM unnest($2::text[]) AS member_id
+             WHERE NOT member_id = ANY(COALESCE("writerWorkspaceMemberIds", '{}'))
+               AND member_id IS DISTINCT FROM "workspaceMemberId"::text
+           )
+         WHERE id = $1`,
+        [args.threadId, participantMemberIds],
+      ),
+    );
+
+    for (const participantMemberId of participantMemberIds) {
+      await this.participantService.markAsMentioned({
+        workspaceId: args.workspaceId,
+        threadId: args.threadId,
+        workspaceMemberId: participantMemberId,
+      });
+    }
+
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId: args.workspaceId,
+      threadBefore: thread,
+    });
+
+    return participantMemberIds;
+  }
+
   // Activity no member wrote, such as an agent turn or an application's
   // message, leaves the chat unread for everyone
   async recordThreadActivity({

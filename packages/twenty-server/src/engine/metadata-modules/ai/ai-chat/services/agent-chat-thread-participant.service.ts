@@ -128,6 +128,25 @@ export class AgentChatThreadParticipantService {
     );
   }
 
+  // A mention brings the chat back unread for the mentioned member, who the
+  // caller has already checked can reply in it
+  async markAsMentioned(
+    args: AgentChatThreadAccessArgs,
+  ): Promise<AgentChatThreadParticipantRow | null> {
+    return this.writeOne(
+      args,
+      ({ participantTable }) =>
+        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
+         VALUES ($1, $2)
+         ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+           "lastReadAt" = NULL,
+           "archivedAt" = NULL,
+           "snoozedUntil" = NULL,
+           "updatedAt" = now()
+         RETURNING *`,
+    );
+  }
+
   archive(
     args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadParticipantDTO> {

@@ -10701,6 +10701,19 @@ export default {
                     ]
                 }
             ],
+            "addAgentChatThreadParticipants": [
+                3,
+                {
+                    "threadId": [
+                        3,
+                        "UUID!"
+                    ],
+                    "workspaceMemberIds": [
+                        3,
+                        "[UUID!]!"
+                    ]
+                }
+            ],
             "startWorkspaceSetupChat": [
                 391,
                 {

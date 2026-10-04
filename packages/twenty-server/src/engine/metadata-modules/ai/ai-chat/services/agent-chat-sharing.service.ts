@@ -7,10 +7,13 @@ import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
+import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
@@ -29,6 +32,11 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
 
+const EDIT_ACCESS_LEVELS: (RecordShareAccessLevel | null | undefined)[] = [
+  RecordShareAccessLevel.READ_WRITE,
+  RecordShareAccessLevel.FULL,
+];
+
 @Injectable()
 export class AgentChatSharingService {
   constructor(
@@ -36,6 +44,7 @@ export class AgentChatSharingService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
     private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly recordSharingService: RecordSharingService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
@@ -123,6 +132,70 @@ export class AgentChatSharingService {
 
       return readableThreadIds;
     }, authContext);
+  }
+
+  // Members join as editors so they can reply. Sharing is left to whoever may
+  // manage it, so only the members who can reply afterwards are returned
+  async shareThreadWithMembers({
+    memberIds,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    memberIds: string[];
+  }): Promise<string[]> {
+    const chatMemberIds = await this.filterMemberIds(memberIds, (memberId) =>
+      this.getAuthContext({
+        workspaceId: args.workspaceId,
+        workspaceMemberId: memberId,
+      }).then(() => true),
+    );
+
+    if (chatMemberIds.length === 0) {
+      return [];
+    }
+
+    const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
+    const recordTarget = {
+      objectMetadataId: objectMetadata.id,
+      recordId: args.threadId,
+      authContext: await this.getAuthContext(args),
+    };
+    const sharing = await this.recordSharingService.getSharing(recordTarget);
+
+    if (
+      sharing.canManageSharing &&
+      !EDIT_ACCESS_LEVELS.includes(sharing.generalAccessLevel)
+    ) {
+      for (const memberId of chatMemberIds) {
+        const memberShare = sharing.shares.find(
+          ({ principalId }) => principalId === memberId,
+        );
+
+        if (EDIT_ACCESS_LEVELS.includes(memberShare?.accessLevel)) {
+          continue;
+        }
+
+        // A member whose role cannot reach chats is refused the share
+        await this.recordSharingService
+          .setShare({
+            ...recordTarget,
+            principal: { workspaceMemberId: memberId },
+            accessLevel: RecordShareAccessLevel.READ_WRITE,
+          })
+          .catch((error: unknown) => {
+            if (!(error instanceof RecordShareException)) {
+              throw error;
+            }
+          });
+      }
+    }
+
+    return this.filterMemberIds(chatMemberIds, (memberId) =>
+      this.getThreadWithAccess({
+        ...args,
+        workspaceMemberId: memberId,
+        operationType: 'update',
+      }).then(() => true),
+    );
   }
 
   async createThread(args: {
@@ -294,6 +367,29 @@ export class AgentChatSharingService {
     if (allowedIds.length !== 1) {
       throwAgentChatThreadNotFound();
     }
+  }
+
+  private async filterMemberIds(
+    memberIds: string[],
+    isKept: (memberId: string) => Promise<boolean>,
+  ): Promise<string[]> {
+    const keptMemberIds = await Promise.all(
+      memberIds.map(async (memberId) => {
+        try {
+          return (await isKept(memberId)) ? memberId : null;
+        } catch (error) {
+          if (
+            error instanceof AiException &&
+            error.code === AiExceptionCode.THREAD_NOT_FOUND
+          ) {
+            return null;
+          }
+          throw error;
+        }
+      }),
+    );
+
+    return keptMemberIds.filter(isDefined);
   }
 
   private async getThreadObjectMetadata(workspaceId: string) {
