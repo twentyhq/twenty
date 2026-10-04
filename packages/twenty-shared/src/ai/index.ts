@@ -71,7 +71,6 @@ export type {
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type { ModelConfiguration } from './types/ModelConfiguration';
-export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
 export type { ProposedToolCall } from './types/ProposedToolCall';
 export type { ProposedToolCallTemplate } from './types/ProposedToolCallTemplate';
 export type { ProposeToolCallToolInput } from './types/ProposeToolCallToolInput';

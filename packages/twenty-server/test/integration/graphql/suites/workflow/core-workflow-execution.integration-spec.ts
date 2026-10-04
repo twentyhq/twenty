@@ -27,6 +27,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
+import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -742,8 +743,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       await waitForStep(runId, form.id, 'PENDING');
       await migratePendingRun(fixture, runId);
       await clearDefinitions(fixture);
-      const response = await answerToolCall({
-        toolCall: { workflowRunId: runId, stepId: form.id },
+      const response = await submitFormStep({
+        workflowRunId: runId,
+        stepId: form.id,
         response: { answer: 'From the stored form' },
       });
 
@@ -781,43 +783,21 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     runId: string;
     stepId: string;
     answer: string;
-  }) =>
-    answerToolCall({
-      toolCall: { workflowRunId: runId, stepId },
-      response: { answer },
-    });
+  }) => submitFormStep({ workflowRunId: runId, stepId, response: { answer } });
 
-  describe('the conversation a form step records', () => {
-    const approvalForm = (nextStepIds: string[]): WorkflowAction => ({
-      ...formStep(nextStepIds),
-      name: 'Approve the discount',
-    });
-
-    const getFormConversation = async (runId: string, stepId: string) => {
-      const threadId = (await getRun(runId)).state.stepInfos[stepId].threadId;
-      const [thread] = await global.testDataSource.query(
-        `SELECT title, "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
-        [threadId],
-      );
-      const [part] = await global.testDataSource.query(
-        `SELECT part."toolName", part."toolInput", part."toolOutput" FROM "${schema}"."agentMessagePart" part JOIN "${schema}"."agentMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1 AND part."toolCallId" = $2`,
-        [threadId, stepId],
+  describe('submitting a form step', () => {
+    const countRunConversations = async (runId: string) => {
+      const [{ count }] = await global.testDataSource.query(
+        `SELECT COUNT(*)::int AS count FROM "${schema}"."agentChatThread" WHERE "workflowRunId" = $1`,
+        [runId],
       );
 
-      return {
-        threadId,
-        title: thread?.title,
-        isWaiting: isDefined(thread?.pendingQuestionMessageId),
-        toolName: part?.toolName,
-        toolInput: part?.toolInput,
-        status: part?.toolOutput?.result?.status,
-        values: part?.toolOutput?.result?.values,
-      };
+      return count;
     };
 
-    it('asks for the fields in a request_form call while the form waits, and records the answer on submit', async () => {
+    it('waits without a conversation and completes with the submitted values', async () => {
       const finalStep = emptyStep();
-      const form = approvalForm([finalStep.id]);
+      const form = formStep([finalStep.id]);
       const fixture = await createFixture({
         mirrorless: true,
         steps: [form, finalStep],
@@ -826,13 +806,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       await waitForStep(runId, form.id, 'PENDING');
 
-      expect(await getFormConversation(runId, form.id)).toMatchObject({
-        title: 'Approve the discount',
-        isWaiting: true,
-        toolName: 'request_form',
-        toolInput: { fields: form.settings.input },
-        status: 'pending',
-      });
+      expect((await getRun(runId)).state.stepInfos[form.id].threadId).toBe(
+        undefined,
+      );
+      expect(await countRunConversations(runId)).toBe(0);
 
       const response = await submitForm({
         runId,
@@ -841,18 +818,18 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
 
       expect(response.body.errors).toBeUndefined();
-      await waitForRun(runId, 'COMPLETED');
 
-      expect(await getFormConversation(runId, form.id)).toMatchObject({
-        isWaiting: false,
-        status: 'answered',
-        values: { answer: 'Approved' },
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[form.id].result).toEqual({
+        answer: 'Approved',
       });
+      expect(await countRunConversations(runId)).toBe(0);
     });
 
-    it('refuses a submission whose answer cannot be recorded, leaving the form waiting', async () => {
+    it('refuses values for fields the form does not have', async () => {
       const finalStep = emptyStep();
-      const form = approvalForm([finalStep.id]);
+      const form = formStep([finalStep.id]);
       const fixture = await createFixture({
         mirrorless: true,
         steps: [form, finalStep],
@@ -861,40 +838,21 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       await waitForStep(runId, form.id, 'PENDING');
 
-      const recordToolCallAnswer = jest
-        .spyOn(
-          getAppProviderByClassName<AgentChatService>('AgentChatService'),
-          'recordToolCallAnswer',
-        )
-        .mockRejectedValueOnce(new Error('Answer write failed'));
-
-      const refused = await submitForm({
-        runId,
+      const refused = await submitFormStep({
+        workflowRunId: runId,
         stepId: form.id,
-        answer: 'Approved',
+        response: { unknownField: 'Approved' },
       });
-
-      recordToolCallAnswer.mockRestore();
 
       expect(refused.body.errors).toBeDefined();
       expect((await getRun(runId)).state.stepInfos[form.id].status).toBe(
         'PENDING',
       );
-      expect(await getFormConversation(runId, form.id)).toMatchObject({
-        isWaiting: true,
-        status: 'pending',
-      });
-
-      expect(
-        (await submitForm({ runId, stepId: form.id, answer: 'Approved' })).body
-          .errors,
-      ).toBeUndefined();
-      await waitForRun(runId, 'COMPLETED');
     });
 
     it('refuses a second submission and keeps the first answer', async () => {
       const finalStep = emptyStep();
-      const form = approvalForm([finalStep.id]);
+      const form = formStep([finalStep.id]);
       const fixture = await createFixture({
         mirrorless: true,
         steps: [form, finalStep],
@@ -919,19 +877,16 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
 
       expect(JSON.stringify(second.body.errors)).toContain(
-        'TOOL_CALL_NOT_PENDING',
+        'no longer waiting for an answer',
       );
       expect((await getRun(runId)).state.stepInfos[form.id].result).toEqual({
         answer: 'Approved',
       });
-      expect(await getFormConversation(runId, form.id)).toMatchObject({
-        values: { answer: 'Approved' },
-      });
     });
 
-    it('records a conversation for each iteration of a form inside a loop', async () => {
+    it('takes a submission for each iteration of a form inside a loop', async () => {
       const afterLoop = emptyStep();
-      const form = approvalForm([]);
+      const form = formStep([]);
       const iterator: WorkflowAction = {
         ...emptyStep(),
         type: WorkflowActionType.ITERATOR,
@@ -955,11 +910,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       await waitForStep(runId, form.id, 'PENDING');
 
-      const { threadId: firstThreadId } = await getFormConversation(
-        runId,
-        form.id,
-      );
-
       const first = await submitForm({
         runId,
         stepId: form.id,
@@ -969,14 +919,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(first.body.errors).toBeUndefined();
       await waitForStep(runId, form.id, 'PENDING');
 
-      const secondConversation = await getFormConversation(runId, form.id);
-
-      expect(secondConversation.threadId).not.toBe(firstThreadId);
-      expect(secondConversation).toMatchObject({
-        isWaiting: true,
-        status: 'pending',
-      });
-
       const second = await submitForm({
         runId,
         stepId: form.id,
@@ -984,15 +926,17 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
 
       expect(second.body.errors).toBeUndefined();
-      await waitForRun(runId, 'COMPLETED');
-      expect(await getFormConversation(runId, form.id)).toMatchObject({
-        values: { answer: 'Second item' },
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[form.id].result).toEqual({
+        answer: 'Second item',
       });
     });
 
-    it('closes the call when its run ends before anyone answers', async () => {
+    it('refuses a submission once its run ended', async () => {
       const finalStep = emptyStep();
-      const form = approvalForm([finalStep.id]);
+      const form = formStep([finalStep.id]);
       const fixture = await createFixture({
         mirrorless: true,
         steps: [form, finalStep],
@@ -1008,10 +952,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       expect(response.body.errors).toBeUndefined();
       await waitForRun(runId, 'STOPPED');
-      expect(await getFormConversation(runId, form.id)).toMatchObject({
-        isWaiting: false,
-        status: 'skipped',
-      });
 
       const late = await submitForm({
         runId,
@@ -1020,7 +960,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
 
       expect(JSON.stringify(late.body.errors)).toContain(
-        'TOOL_CALL_NOT_PENDING',
+        'no longer waiting for an answer',
       );
 
       const run = await getRun(runId);
@@ -1054,7 +994,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
 
     expect(JSON.stringify(response.body.errors)).toContain(
-      'TOOL_CALL_NOT_PENDING',
+      'no longer waiting for an answer',
     );
     expect((await getRun(runId)).state.stepInfos[form.id].status).toBe(
       'PENDING',

@@ -30,13 +30,8 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import {
-  WorkflowRunStatus,
-  type WorkflowRunWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
@@ -74,7 +69,6 @@ export class ToolCallAnswerService {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly permissionsService: PermissionsService,
     private readonly turnPreflightService: AgentChatTurnPreflightService,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly toolRegistryService: ToolRegistryService,
   ) {}
@@ -343,7 +337,6 @@ export class ToolCallAnswerService {
             workflowRunId,
             step,
             threadId,
-            response: validation.output,
             toolResult,
           });
         }
@@ -471,24 +464,11 @@ export class ToolCallAnswerService {
       workspaceId,
     });
 
-    let workflowRun: Pick<WorkflowRunWorkspaceEntity, 'id'> | null = null;
-
-    try {
-      workflowRun = await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager
-            .getRepositoryWithContextPermissions<WorkflowRunWorkspaceEntity>(
-              'workflowRun',
-            )
-            .findOne({ where: { id: workflowRunId }, select: { id: true } }),
-      );
-    } catch (error) {
-      if (!(error instanceof PermissionsException)) {
-        throw error;
-      }
-    }
-
-    if (!isDefined(workflowRun)) {
+    if (
+      !(await this.workflowRunWorkspaceService.isWorkflowRunReadableByRequester(
+        workflowRunId,
+      ))
+    ) {
       throw new AiException(
         'The tool call to answer could not be found',
         AiExceptionCode.TOOL_CALL_NOT_FOUND,
