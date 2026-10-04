@@ -5,6 +5,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { AgentChatThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
+import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -154,6 +155,37 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
     expect(
       store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
     ).toEqual({ ...snoozedParticipant, ...change });
+  });
+
+  it('keeps a change for a load already on its way, with its new version', () => {
+    // Archived through an earlier change, so its version is still T0
+    const { store } = renderEffect({
+      [THREAD_ID]: {
+        ...READ_PARTICIPANT,
+        archivedAt: '2026-10-01T10:01:00.000Z',
+      },
+    });
+    const loadedArchivedParticipant = {
+      ...READ_PARTICIPANT,
+      archivedAt: '2026-10-01T10:01:00.000Z',
+      updatedAt: '2026-10-01T10:01:00.000Z',
+    };
+
+    receiveParticipantUpdate(PARTICIPANT_ID, {
+      archivedAt: null,
+      updatedAt: '2026-10-01T10:02:00.000Z',
+    });
+
+    // A load that read the archived row (T1) merges this change (T2) over it
+    expect(
+      mergeAgentChatThreadParticipants(
+        { [THREAD_ID]: loadedArchivedParticipant },
+        Object.values(store.get(agentChatThreadStreamedParticipantsState.atom)),
+      )[THREAD_ID],
+    ).toMatchObject({
+      archivedAt: null,
+      updatedAt: '2026-10-01T10:02:00.000Z',
+    });
   });
 
   it('ignores a change older than the version it has', () => {

@@ -433,21 +433,21 @@ describe('Chat thread participant state through the authenticated API', () => {
 
   it('saves as ended a snooze whose time passed before it was saved', async () => {
     const threadId = await createTestThread();
-    const savedAt = Date.now();
-    const snoozedUntil = new Date(savedAt - 1000);
+    const snoozedUntil = new Date(Date.now() - 1000);
 
-    // The snooze was accepted while its time was still ahead
-    jest.spyOn(Date, 'now').mockReturnValue(savedAt - 30_000);
-
+    // The snooze was accepted while its time was still ahead, and its
+    // queued end already ran and found nothing to end
     const participant =
       await getAppProviderByClassName<AgentChatThreadParticipantService>(
         'AgentChatThreadParticipantService',
-      ).snooze({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-        threadId,
+      )['setArchive'](
+        {
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          threadId,
+        },
         snoozedUntil,
-      });
+      );
 
     expect(participant.archivedAt).toBeNull();
     expect(new Date(participant.snoozedUntil!).getTime()).toBe(
