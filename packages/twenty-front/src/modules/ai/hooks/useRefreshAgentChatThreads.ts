@@ -64,6 +64,12 @@ export const useRefreshAgentChatThreads = () => {
         return undefined;
       }
 
+      const listFilter = buildAgentChatThreadListFilter({
+        chatObjectMetadataItem,
+        currentWorkspaceMemberId: store.get(currentWorkspaceMemberState.atom)
+          ?.id,
+      });
+
       const result = await apolloCoreClient
         .query<RecordGqlOperationFindManyResult>({
           query: generateFindManyRecordsQuery({
@@ -74,13 +80,8 @@ export const useRefreshAgentChatThreads = () => {
           }),
           variables: {
             filter: isDefined(threadIdFilter)
-              ? {
-                  and: [
-                    buildAgentChatThreadListFilter(chatObjectMetadataItem),
-                    threadIdFilter,
-                  ],
-                }
-              : buildAgentChatThreadListFilter(chatObjectMetadataItem),
+              ? { and: [listFilter, threadIdFilter] }
+              : listFilter,
             orderBy: [
               {
                 [getAgentChatThreadLastActivityFieldName(

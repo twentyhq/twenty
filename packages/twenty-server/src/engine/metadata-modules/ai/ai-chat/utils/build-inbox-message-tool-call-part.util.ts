@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  ASK_QUESTIONS_TOOL_NAME,
+  ASK_QUESTION_TOOL_NAME,
   type ExtendedUIMessagePart,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
@@ -10,11 +10,11 @@ import { type z } from 'zod';
 
 import { buildToolPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-tool-part.util';
 import { buildLogicFunctionToolName } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-name.util';
-import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
+import { type ResolveInboxProposal } from 'src/engine/metadata-modules/ai/ai-chat/types/resolve-inbox-proposal.type';
 import {
-  askQuestionsInputSchema,
-  buildAskQuestionsPendingOutput,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-questions.pausing-tool';
+  askQuestionInputSchema,
+  buildAskQuestionPendingOutput,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-question.pausing-tool';
 import {
   buildProposeToolCallPendingOutput,
   proposeToolCallInputSchema,
@@ -62,24 +62,26 @@ const parseOptionalRecord = (
     : throwInvalidToolCall(`${name} must be an object`);
 };
 
-const buildPausingToolPart = ({
+const buildPausingToolPart = async ({
   toolName,
   toolCallId,
   input,
+  resolveProposal,
 }: {
   toolName: unknown;
   toolCallId: string;
   input: unknown;
-}): ExtendedUIMessagePart => {
+  resolveProposal: ResolveInboxProposal;
+}): Promise<ExtendedUIMessagePart> => {
   switch (toolName) {
-    case ASK_QUESTIONS_TOOL_NAME: {
-      const questionsInput = parseInput(askQuestionsInputSchema, input);
+    case ASK_QUESTION_TOOL_NAME: {
+      const question = parseInput(askQuestionInputSchema, input);
 
       return buildToolPart({
         toolName,
         toolCallId,
-        input: questionsInput,
-        output: buildAskQuestionsPendingOutput(questionsInput),
+        input: question,
+        output: buildAskQuestionPendingOutput(question),
       });
     }
     case REQUEST_FORM_TOOL_NAME:
@@ -94,7 +96,7 @@ const buildPausingToolPart = ({
         proposeToolCallInputSchema,
         input,
       );
-      const resolution = resolveEmailToolCallProposal(proposeToolCallInput);
+      const resolution = await resolveProposal(proposeToolCallInput);
 
       if ('error' in resolution) {
         return throwInvalidToolCall(resolution.error);
@@ -109,7 +111,7 @@ const buildPausingToolPart = ({
     }
     default:
       return throwInvalidToolCall(
-        `toolName must be ${ASK_QUESTIONS_TOOL_NAME}, ${REQUEST_FORM_TOOL_NAME} or ${PROPOSE_TOOL_CALL_TOOL_NAME}`,
+        `toolName must be ${ASK_QUESTION_TOOL_NAME}, ${REQUEST_FORM_TOOL_NAME} or ${PROPOSE_TOOL_CALL_TOOL_NAME}`,
       );
   }
 };
@@ -117,17 +119,19 @@ const buildPausingToolPart = ({
 // A tool call is either one the member answers, which pauses the
 // conversation, or one of the application's own tools, rendered by its front
 // component with the input and output the application gives. The caller
-// resolves that tool, scoped to the sending application.
+// resolves that tool, and any proposed call, scoped to the sending application.
 export const buildInboxMessageToolCallPart = async ({
   toolCall,
   toolCallId,
   findApplicationTool,
+  resolveProposal,
 }: {
   toolCall: unknown;
   toolCallId: string;
   findApplicationTool: (
     logicFunctionUniversalIdentifier: string,
   ) => Promise<FlatLogicFunction | undefined>;
+  resolveProposal: ResolveInboxProposal;
 }): Promise<InboxMessageToolCallPart> => {
   if (!isPlainObject(toolCall)) {
     return throwInvalidToolCall('toolCall must be an object');
@@ -135,10 +139,11 @@ export const buildInboxMessageToolCallPart = async ({
 
   if (!isNonEmptyString(toolCall.logicFunctionUniversalIdentifier)) {
     return {
-      part: buildPausingToolPart({
+      part: await buildPausingToolPart({
         toolName: toolCall.toolName,
         toolCallId,
         input: toolCall.input,
+        resolveProposal,
       }),
       isAwaitingAnswer: true,
     };

@@ -166,6 +166,7 @@ export class ToolCallAnswerService {
     }
 
     let step: WorkflowAction | null = null;
+    let isClaimedAsRunning = false;
     let isLastAnswer: boolean;
     let answerText: string;
     let toolResult: Record<string, unknown>;
@@ -191,9 +192,10 @@ export class ToolCallAnswerService {
 
         if (
           !isDefined(step) &&
-          isDefined(inboxWorkflowStep) &&
           (await this.workflowRunWorkspaceService.isStepStillRunning({
-            ...inboxWorkflowStep,
+            stepId: inboxWorkflowStep?.stepId,
+            threadId,
+            workflowRunId,
             workspaceId,
           }))
         ) {
@@ -215,6 +217,24 @@ export class ToolCallAnswerService {
 
           throw this.notPending();
         }
+      }
+
+      const runningToolResult = pausingToolCall.toRunningToolResult?.(
+        validation.output,
+      );
+
+      if (isDefined(runningToolResult)) {
+        if (
+          !(await this.agentChatService.claimToolCallAnswer({
+            partId: toolPart.id,
+            toolOutput: runningToolResult,
+            workspaceId,
+          }))
+        ) {
+          throw this.notPending();
+        }
+
+        isClaimedAsRunning = true;
       }
 
       const completion = await pausingToolCall.complete({
@@ -240,11 +260,38 @@ export class ToolCallAnswerService {
       answerText = completion.answerText;
       toolResult = completion.toolResult;
     } catch (error) {
-      await this.streamRecoveryService.releaseStreamClaim({
-        threadId,
-        workspaceId,
-        streamId,
-      });
+      // a call claimed as running cannot be answered again, so the run or turn fails, which
+      // closes the call as interrupted instead of leaving it waiting on an outcome
+      if (isClaimedAsRunning) {
+        if (!isDefined(workflowRunId)) {
+          await this.agentChatService
+            .closePendingToolCalls({
+              threadId,
+              messageId: toolPart.messageId,
+              workspaceId,
+              where: { activeStreamId: streamId },
+            })
+            .catch((closeError: unknown) =>
+              this.logger.warn(
+                `Could not close the interrupted call on thread ${threadId}: ${closeError instanceof Error ? closeError.message : String(closeError)}`,
+              ),
+            );
+        }
+
+        await this.failAfterAnswer({
+          threadId,
+          workspaceId,
+          streamId,
+          workflowRunId,
+          error,
+        });
+      } else {
+        await this.streamRecoveryService.releaseStreamClaim({
+          threadId,
+          workspaceId,
+          streamId,
+        });
+      }
 
       throw error;
     }
@@ -317,29 +364,53 @@ export class ToolCallAnswerService {
 
       return { streamId, turnId: answerMessage.turnId };
     } catch (error) {
-      if (isDefined(workflowRunId)) {
-        await this.streamRecoveryService.releaseStreamClaim({
-          threadId,
-          workspaceId,
-          streamId,
-        });
-        await this.workflowRunWorkspaceService.endWorkflowRun({
-          workflowRunId,
-          workspaceId,
-          status: WorkflowRunStatus.FAILED,
-          error: 'The run could not resume after its question was answered',
-        });
-      } else {
-        await this.streamRecoveryService.failStream({
-          threadId,
-          workspaceId,
-          streamId,
-          error,
-        });
-      }
+      await this.failAfterAnswer({
+        threadId,
+        workspaceId,
+        streamId,
+        workflowRunId,
+        error,
+      });
 
       throw error;
     }
+  }
+
+  private async failAfterAnswer({
+    threadId,
+    workspaceId,
+    streamId,
+    workflowRunId,
+    error,
+  }: {
+    threadId: string;
+    workspaceId: string;
+    streamId: string;
+    workflowRunId: string | null;
+    error: unknown;
+  }): Promise<void> {
+    if (!isDefined(workflowRunId)) {
+      await this.streamRecoveryService.failStream({
+        threadId,
+        workspaceId,
+        streamId,
+        error,
+      });
+
+      return;
+    }
+
+    await this.streamRecoveryService.releaseStreamClaim({
+      threadId,
+      workspaceId,
+      streamId,
+    });
+    await this.workflowRunWorkspaceService.endWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      status: WorkflowRunStatus.FAILED,
+      error: 'The run could not resume after its question was answered',
+    });
   }
 
   // an answer that resumes a workflow step starts no chat turn, so it skips the model and

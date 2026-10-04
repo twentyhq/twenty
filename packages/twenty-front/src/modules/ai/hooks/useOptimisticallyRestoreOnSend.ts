@@ -1,6 +1,7 @@
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AGENT_CHAT_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT } from '@/ai/constants/AgentChatThreadParticipantUnsavedUpdatedAt';
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
@@ -47,10 +48,14 @@ export const useOptimisticallyRestoreOnSend = () => {
         ? {
             ...participants,
             [threadId]: {
+              ...participants[threadId],
               threadId,
               lastReadAt: optimisticUpdatedAt,
               archivedAt: null,
               snoozedUntil: null,
+              updatedAt:
+                previousParticipant?.updatedAt ??
+                AGENT_CHAT_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT,
             },
           }
         : participants,

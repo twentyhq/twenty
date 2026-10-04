@@ -11,9 +11,6 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
-import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentMessagePartResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message-part.resolver';
 import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message.resolver';
 import { AgentRunResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-run.resolver';
@@ -53,9 +50,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     forwardRef(() => ToolProviderModule),
     TypeOrmModule.forFeature([
       AgentEntity,
-      AgentMessageEntity,
-      AgentMessagePartEntity,
-      AgentTurnEntity,
       FileEntity,
       RoleTargetEntity,
       WorkspaceEntity,
@@ -75,14 +69,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(FileEntity),
   ],
-  exports: [
-    AgentAsyncExecutorService,
-    AgentActorContextService,
-    TypeOrmModule.forFeature([
-      AgentMessageEntity,
-      AgentMessagePartEntity,
-      AgentTurnEntity,
-    ]),
-  ],
+  exports: [AgentAsyncExecutorService, AgentActorContextService],
 })
 export class AiAgentExecutionModule {}

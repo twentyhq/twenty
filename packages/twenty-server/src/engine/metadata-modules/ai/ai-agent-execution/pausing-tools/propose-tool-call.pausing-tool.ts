@@ -250,75 +250,115 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
       toolName: approvedToolName,
       arguments: buildApprovedArguments(proposal, output.arguments),
     };
-    const { currentValues, objectNameSingular, recordId } = approvedProposal;
 
-    if (
-      isDefined(currentValues) &&
-      isDefined(objectNameSingular) &&
-      isDefined(recordId) &&
-      Object.keys(currentValues).length > 0
-    ) {
-      const latestRecord = await readRecordFieldValues({
-        executeTool: context.executeTool,
-        objectNameSingular,
-        recordId,
-        fieldNames: Object.keys(currentValues),
-      });
+    // the call was claimed as running before this, so it must end with an outcome rather than a throw
+    try {
+      const { currentValues, objectNameSingular, recordId } = approvedProposal;
 
-      // an update whose record cannot be read again cannot be shown to be safe, so it does not run
-      if (!latestRecord.isFound) {
-        return buildApprovalCompletion({
-          success: false,
-          message: `The user approved the call, but the record could not be read again, so nothing was run: ${latestRecord.error}`,
-          result: {
-            status: 'failed',
-            proposal: approvedProposal,
-            error: latestRecord.error,
-          },
+      if (
+        isDefined(currentValues) &&
+        isDefined(objectNameSingular) &&
+        isDefined(recordId) &&
+        Object.keys(currentValues).length > 0
+      ) {
+        const latestRecord = await readRecordFieldValues({
+          executeTool: context.executeTool,
+          objectNameSingular,
+          recordId,
+          fieldNames: Object.keys(currentValues),
         });
-      }
 
-      if (!isEqual(latestRecord.values, currentValues)) {
-        return buildApprovalCompletion({
-          success: false,
-          message:
-            'The user approved the call, but the record changed since it was proposed, so nothing was run. Read the record again and propose a new call if it is still needed.',
-          result: {
-            status: 'conflict',
-            proposal: approvedProposal,
-            output: { latestValues: latestRecord.values },
-          },
-        });
-      }
-    }
-
-    const toolOutput = await context.executeTool({
-      toolName: approvedProposal.toolName,
-      args: approvedProposal.arguments,
-    });
-
-    return buildApprovalCompletion(
-      toolOutput.success
-        ? {
-            success: true,
-            message: `The user approved the call. ${toolOutput.message}`,
-            result: {
-              status: 'approved',
-              proposal: approvedProposal,
-              output: toolOutput.result,
-            },
-          }
-        : {
+        // an update whose record cannot be read again cannot be shown to be safe, so it does not run
+        if (!latestRecord.isFound) {
+          return buildApprovalCompletion({
             success: false,
-            message: `The user approved the call, but it failed: ${toolOutput.error ?? toolOutput.message}`,
+            message: `The user approved the call, but the record could not be read again, so nothing was run: ${latestRecord.error}`,
             result: {
               status: 'failed',
               proposal: approvedProposal,
-              error: toolOutput.error ?? toolOutput.message,
+              error: latestRecord.error,
             },
-          },
-    );
+          });
+        }
+
+        if (!isEqual(latestRecord.values, currentValues)) {
+          return buildApprovalCompletion({
+            success: false,
+            message:
+              'The user approved the call, but the record changed since it was proposed, so nothing was run. Read the record again and propose a new call if it is still needed.',
+            result: {
+              status: 'conflict',
+              proposal: approvedProposal,
+              output: { latestValues: latestRecord.values },
+            },
+          });
+        }
+      }
+
+      const toolOutput = await context.executeTool({
+        toolName: approvedProposal.toolName,
+        args: approvedProposal.arguments,
+      });
+
+      return buildApprovalCompletion(
+        toolOutput.success
+          ? {
+              success: true,
+              message: `The user approved the call. ${toolOutput.message}`,
+              result: {
+                status: 'approved',
+                proposal: approvedProposal,
+                output: toolOutput.result,
+              },
+            }
+          : {
+              success: false,
+              message: `The user approved the call, but it failed: ${toolOutput.error ?? toolOutput.message}`,
+              result: {
+                status: 'failed',
+                proposal: approvedProposal,
+                error: toolOutput.error ?? toolOutput.message,
+              },
+            },
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      return buildApprovalCompletion({
+        success: false,
+        message: `The user approved the call, but it failed: ${errorMessage}`,
+        result: {
+          status: 'failed',
+          proposal: approvedProposal,
+          error: errorMessage,
+        },
+      });
+    }
   },
+  // only an approval runs something, so a rejection is never claimed
+  toRunningToolResult: ({ output, input, pendingToolOutput }) =>
+    output.decision === 'approve'
+      ? {
+          success: true,
+          message: 'The user approved the call and it is running.',
+          result: {
+            status: 'running',
+            proposal: readProposal(input, pendingToolOutput).proposal,
+          } satisfies ProposeToolCallToolResult,
+        }
+      : undefined,
+  toInterruptedToolResult: (input, runningToolOutput) => ({
+    success: false,
+    message:
+      'The user approved the call, but it was interrupted before its outcome was recorded, so it may or may not have run. Check before proposing it again.',
+    result: {
+      status: 'failed',
+      proposal: readProposal(input, runningToolOutput).proposal,
+      error:
+        'Interrupted before its outcome was recorded. It may or may not have run.',
+    } satisfies ProposeToolCallToolResult,
+  }),
   toSkippedToolResult: (input, pendingToolOutput) => ({
     success: true,
     message:

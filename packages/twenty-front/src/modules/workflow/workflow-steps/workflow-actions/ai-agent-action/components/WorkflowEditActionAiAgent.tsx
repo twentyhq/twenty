@@ -75,10 +75,13 @@ export const WorkflowEditActionAiAgent = ({
   }, [agentData, setWorkflowAiAgentActionAgent]);
   useResetWorkflowAiAgentPermissionsStateOnSidePanelClose();
 
-  const actionPrompt = action.settings.input.prompt || '';
-  const [prompt, setPrompt] = useState(actionPrompt);
+  const [prompt, setPrompt] = useState(action.settings.input.prompt ?? '');
+  const [humanInputInstructions, setHumanInputInstructions] = useState(
+    action.settings.input.humanInputInstructions ?? '',
+  );
 
-  const savePrompt = useDebouncedCallback((newPrompt: string) => {
+  // saves both texts from the latest render, so editing one does not drop a pending edit of the other
+  const saveTexts = useDebouncedCallback(() => {
     if (actionOptions.readonly === true) {
       return;
     }
@@ -89,7 +92,8 @@ export const WorkflowEditActionAiAgent = ({
         ...action.settings,
         input: {
           ...action.settings.input,
-          prompt: newPrompt,
+          prompt,
+          humanInputInstructions,
         },
       },
     });
@@ -97,7 +101,12 @@ export const WorkflowEditActionAiAgent = ({
 
   const handleAgentPromptChange = (newPrompt: string) => {
     setPrompt(newPrompt);
-    savePrompt(newPrompt);
+    saveTexts();
+  };
+
+  const handleHumanInputInstructionsChange = (newInstructions: string) => {
+    setHumanInputInstructions(newInstructions);
+    saveTexts();
   };
 
   const tabs: SingleTabProps[] = [
@@ -202,6 +211,10 @@ export const WorkflowEditActionAiAgent = ({
               prompt={prompt}
               readonly={actionOptions.readonly === true}
               onPromptChange={handleAgentPromptChange}
+              humanInputInstructions={humanInputInstructions}
+              onHumanInputInstructionsChange={
+                handleHumanInputInstructionsChange
+              }
               onActionUpdate={
                 actionOptions.readonly === true
                   ? undefined

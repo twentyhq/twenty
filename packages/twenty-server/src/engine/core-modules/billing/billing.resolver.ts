@@ -79,7 +79,7 @@ export class BillingResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
@@ -230,7 +230,7 @@ export class BillingResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
@@ -253,7 +253,7 @@ export class BillingResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
@@ -285,7 +285,7 @@ export class BillingResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
@@ -315,7 +315,7 @@ export class BillingResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
@@ -345,7 +345,7 @@ export class BillingResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
@@ -379,7 +379,7 @@ export class BillingResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
@@ -436,7 +436,7 @@ export class BillingResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
@@ -517,7 +517,7 @@ export class BillingResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )

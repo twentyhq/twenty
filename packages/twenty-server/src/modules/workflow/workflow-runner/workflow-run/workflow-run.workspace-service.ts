@@ -18,7 +18,7 @@ import { readToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
-import { skipAwaitingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/skip-awaiting-tool-parts.util';
+import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
 import {
   WorkflowRunStatus,
   type WorkflowRunState,
@@ -287,11 +287,13 @@ export class WorkflowRunWorkspaceService {
   @WithLock('workflowRunId')
   async moveStepToRetry({
     stepId,
+    resumedThreadId,
     error,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
+    resumedThreadId?: string;
     error: string;
     workflowRunId: string;
     workspaceId: string;
@@ -315,7 +317,7 @@ export class WorkflowRunWorkspaceService {
               ...currentStepInfo,
               status: StepStatus.PENDING,
               error,
-              threadId: undefined,
+              threadId: resumedThreadId,
               history: [
                 ...(currentStepInfo?.history ?? []),
                 {
@@ -509,13 +511,16 @@ export class WorkflowRunWorkspaceService {
     );
   }
 
-  // a step posting a call still runs until its executor marks it pending, and an answer may arrive first
+  // a step posting a call still runs until its executor marks it pending, and an answer may arrive first;
+  // a step is named by its id when it posted to an inbox, or by its conversation on its own run
   async isStepStillRunning({
     stepId,
+    threadId,
     workflowRunId,
     workspaceId,
   }: {
-    stepId: string;
+    stepId?: string;
+    threadId: string;
     workflowRunId: string;
     workspaceId: string;
   }): Promise<boolean> {
@@ -524,9 +529,16 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
+    const stepInfos = workflowRun.state?.stepInfos ?? {};
+    const stepInfo = isDefined(stepId)
+      ? stepInfos[stepId]
+      : Object.values(stepInfos).find(
+          (candidateStepInfo) => candidateStepInfo?.threadId === threadId,
+        );
+
     return (
       workflowRun.status === WorkflowRunStatus.RUNNING &&
-      workflowRun.state?.stepInfos?.[stepId]?.status === StepStatus.RUNNING
+      stepInfo?.status === StepStatus.RUNNING
     );
   }
 
@@ -742,7 +754,7 @@ export class WorkflowRunWorkspaceService {
         continue;
       }
 
-      await skipAwaitingToolParts({
+      await closeOpenToolParts({
         messagePartRepository: this.messagePartRepository,
         messageId: pendingQuestionMessageId,
         workspaceId,
