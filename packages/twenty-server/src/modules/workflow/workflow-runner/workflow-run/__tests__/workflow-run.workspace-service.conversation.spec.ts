@@ -63,7 +63,11 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       },
     });
 
-    const step = { id: 'step-id', name: 'Ask', type: WorkflowActionType.AI_AGENT };
+    const step = {
+      id: 'step-id',
+      name: 'Ask',
+      type: WorkflowActionType.AI_AGENT,
+    };
     const workflowRun: {
       id: string;
       status: WorkflowRunStatus;

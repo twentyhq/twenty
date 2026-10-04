@@ -783,8 +783,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     runId: string;
     stepId: string;
     answer: string;
-  }) =>
-    submitFormStep({ workflowRunId: runId, stepId, response: { answer } });
+  }) => submitFormStep({ workflowRunId: runId, stepId, response: { answer } });
 
   describe('submitting a form step', () => {
     const countRunConversations = async (runId: string) => {
