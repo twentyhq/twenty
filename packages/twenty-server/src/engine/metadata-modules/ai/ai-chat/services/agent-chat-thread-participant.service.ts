@@ -145,6 +145,26 @@ export class AgentChatThreadParticipantService {
     snoozedUntil,
     ...args
   }: EndAgentChatThreadSnoozeJobData): Promise<void> {
+    const remainingDelay = await this.findRemainingSnoozeDelay({
+      workspaceId: args.workspaceId,
+      snoozedUntil,
+    });
+
+    // This server's clock ran ahead of the database's, possibly before the
+    // snooze was even saved, since its end is queued first
+    if (remainingDelay > 0) {
+      await this.scheduleSnoozeEnd({
+        ...args,
+        snoozedUntil,
+        delay: Math.max(
+          remainingDelay,
+          AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS,
+        ),
+      });
+
+      return;
+    }
+
     const [readableThreadId] = await this.sharingService.findReadableThreadIds({
       workspaceId: args.workspaceId,
       workspaceMemberId: args.workspaceMemberId,
@@ -155,37 +175,13 @@ export class AgentChatThreadParticipantService {
       return;
     }
 
-    const [snooze] = await this.threadRepository.query(
-      args.workspaceId,
-      ({ manager }) =>
-        manager.query<
-          (AgentChatThreadParticipantDTO & { remainingDelay: number })[]
-        >(
-          `SELECT ${PARTICIPANT_COLUMNS},
-             GREATEST(CEIL(EXTRACT(EPOCH FROM "snoozedUntil" - clock_timestamp()) * 1000), 0)::int AS "remainingDelay"
-           FROM ${getAgentChatThreadParticipantTable(args.workspaceId)}
-           WHERE "threadId" = $1 AND "workspaceMemberId" = $2 AND "snoozedUntil" = $3`,
-          [args.threadId, args.workspaceMemberId, snoozedUntil],
-        ),
-    );
+    const participant = await this.findOne(args);
 
-    if (!isDefined(snooze)) {
-      return;
-    }
-
-    const { remainingDelay, ...participant } = snooze;
-
-    // This server's clock ran ahead of the database's
-    if (!participant.hasSnoozeEnded) {
-      await this.scheduleSnoozeEnd({
-        ...args,
-        snoozedUntil,
-        delay: Math.max(
-          remainingDelay,
-          AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS,
-        ),
-      });
-
+    // A snooze saved only now has ended already, and its save sent that
+    if (
+      !isDefined(participant?.snoozedUntil) ||
+      participant.snoozedUntil.getTime() !== new Date(snoozedUntil).getTime()
+    ) {
       return;
     }
 
@@ -299,6 +295,25 @@ export class AgentChatThreadParticipantService {
       data,
       { delay, ...AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS },
     );
+  }
+
+  private async findRemainingSnoozeDelay({
+    workspaceId,
+    snoozedUntil,
+  }: {
+    workspaceId: string;
+    snoozedUntil: string;
+  }): Promise<number> {
+    const [{ remainingDelay }] = await this.threadRepository.query(
+      workspaceId,
+      ({ manager }) =>
+        manager.query<{ remainingDelay: number }[]>(
+          `SELECT GREATEST(CEIL(EXTRACT(EPOCH FROM $1::timestamptz - clock_timestamp()) * 1000), 0)::int AS "remainingDelay"`,
+          [snoozedUntil],
+        ),
+    );
+
+    return remainingDelay;
   }
 
   private async findOne({
