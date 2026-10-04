@@ -35,17 +35,23 @@ export const useSubmitFormStep = ({
     },
   );
 
+  // the refresh only updates the cache, so its failure must not change the submission's outcome
+  const refetchWorkflowRun = () =>
+    apolloCoreClient
+      .query({
+        query: findOneWorkflowRunQuery,
+        variables: { objectRecordId: workflowRunId },
+        fetchPolicy: 'network-only',
+      })
+      .catch(() => undefined);
+
   const submitFormStep = async (response: Record<string, unknown>) => {
     try {
       await mutate({
         variables: { input: { workflowRunId, stepId, response } },
       });
     } finally {
-      await apolloCoreClient.query({
-        query: findOneWorkflowRunQuery,
-        variables: { objectRecordId: workflowRunId },
-        fetchPolicy: 'network-only',
-      });
+      await refetchWorkflowRun();
     }
   };
 
