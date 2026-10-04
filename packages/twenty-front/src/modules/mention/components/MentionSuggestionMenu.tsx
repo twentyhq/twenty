@@ -1,7 +1,6 @@
 import { forwardRef } from 'react';
 import { MenuItemSuggestion } from 'twenty-ui/components';
 
-import { MENTION_SUGGESTION_TEAMMATE_LIMIT } from '@/mention/constants/MentionSuggestionTeammateLimit';
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import type { MentionSuggestionMenuProps } from '@/mention/types/MentionSuggestionMenuProps';
 import { groupMentionSearchResultsBySection } from '@/mention/utils/groupMentionSearchResultsBySection';
@@ -47,10 +46,7 @@ export const MentionSuggestionMenu = forwardRef<
   return (
     <SuggestionMenu
       ref={ref}
-      items={groupMentionSearchResultsBySection({
-        items,
-        teammateLimit: MENTION_SUGGESTION_TEAMMATE_LIMIT,
-      })}
+      items={groupMentionSearchResultsBySection(items)}
       onSelect={onSelect}
       editor={editor}
       range={range}

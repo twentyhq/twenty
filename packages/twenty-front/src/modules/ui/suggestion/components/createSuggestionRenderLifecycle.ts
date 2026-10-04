@@ -25,6 +25,8 @@ type SuggestionRenderLifecycleConfig<TItem, TMenuProps extends AnyRecord> = {
     range: Range;
     query: string;
   }) => TMenuProps;
+  // Shown at once and kept above the searched items, which arrive later
+  getLocalItems?: (query: string) => TItem[];
 };
 
 export const createSuggestionRenderLifecycle = <
@@ -43,9 +45,14 @@ export const createSuggestionRenderLifecycle = <
     }
   };
 
+  const getItems = (props: SuggestionCallbackProps<TItem>) => [
+    ...(config.getLocalItems?.(props.query) ?? []),
+    ...props.items,
+  ];
+
   const buildMenuProps = (props: SuggestionCallbackProps<TItem>) =>
     config.getMenuProps({
-      items: props.items,
+      items: getItems(props),
       onSelect: (item: TItem) => {
         props.command(item);
         closeMenu();
@@ -65,7 +72,7 @@ export const createSuggestionRenderLifecycle = <
 
   return {
     onStart: (props: SuggestionCallbackProps<TItem>) => {
-      if (!props.clientRect || props.items.length === 0) {
+      if (!props.clientRect || getItems(props).length === 0) {
         return;
       }
 
@@ -76,7 +83,7 @@ export const createSuggestionRenderLifecycle = <
         return;
       }
 
-      if (props.items.length === 0) {
+      if (getItems(props).length === 0) {
         closeMenu();
         return;
       }

@@ -1,17 +1,9 @@
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import { isWorkspaceMemberMentionSearchResult } from '@/mention/utils/isWorkspaceMemberMentionSearchResult';
 
-// Teammates lead, then each object in the order search ranked its first match
-export const groupMentionSearchResultsBySection = ({
-  items,
-  teammateLimit,
-}: {
-  items: MentionSearchResult[];
-  teammateLimit: number;
-}): MentionSearchResult[] => {
-  const teammateItems = items
-    .filter(isWorkspaceMemberMentionSearchResult)
-    .slice(0, teammateLimit);
+export const groupMentionSearchResultsBySection = (
+  items: MentionSearchResult[],
+): MentionSearchResult[] => {
   const recordItems = items.filter(
     (item) => !isWorkspaceMemberMentionSearchResult(item),
   );
@@ -20,7 +12,7 @@ export const groupMentionSearchResultsBySection = ({
   ];
 
   return [
-    ...teammateItems,
+    ...items.filter(isWorkspaceMemberMentionSearchResult),
     ...objectNamesInRankOrder.flatMap((objectNameSingular) =>
       recordItems.filter(
         (item) => item.objectNameSingular === objectNameSingular,

@@ -3,6 +3,7 @@ import Suggestion from '@tiptap/suggestion';
 
 import { MentionSuggestionMenu } from '@/mention/components/MentionSuggestionMenu';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
+import { MENTION_SUGGESTION_TEAMMATE_LIMIT } from '@/mention/constants/MentionSuggestionTeammateLimit';
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 import { isWorkspaceMemberMentionSearchResult } from '@/mention/utils/isWorkspaceMemberMentionSearchResult';
@@ -35,14 +36,11 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
         editor: this.editor,
         char: '@',
         items: async ({ query }) => {
-          const recordResults = await this.storage
-            .searchMentionRecords(query)
-            .catch(() => []);
-
-          return [
-            ...this.storage.searchWorkspaceMembers(query),
-            ...recordResults,
-          ];
+          try {
+            return await this.storage.searchMentionRecords(query);
+          } catch {
+            return [];
+          }
         },
         command: ({ editor, range, props: selectedItem }) => {
           editor
@@ -68,6 +66,19 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
                 editor,
                 range,
               }),
+              // Teammates are searched locally, so they show before records
+              // load; all of them once a name is typed, else only a few
+              getLocalItems: (query) => {
+                const workspaceMemberResults =
+                  this.storage.searchWorkspaceMembers(query);
+
+                return query === ''
+                  ? workspaceMemberResults.slice(
+                      0,
+                      MENTION_SUGGESTION_TEAMMATE_LIMIT,
+                    )
+                  : workspaceMemberResults;
+              },
             },
             this.editor,
           ),

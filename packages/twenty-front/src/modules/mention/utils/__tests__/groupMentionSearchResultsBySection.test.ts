@@ -16,7 +16,7 @@ const buildResult = (
 });
 
 describe('groupMentionSearchResultsBySection', () => {
-  it('keeps a few teammates first and groups records by object in rank order', () => {
+  it('puts teammates first and groups records by object in rank order', () => {
     const items = [
       buildResult('Acme', CoreObjectNameSingular.Company),
       buildResult('Grace', CoreObjectNameSingular.WorkspaceMember),
@@ -27,9 +27,7 @@ describe('groupMentionSearchResultsBySection', () => {
     ];
 
     expect(
-      groupMentionSearchResultsBySection({ items, teammateLimit: 2 }).map(
-        ({ label }) => label,
-      ),
-    ).toEqual(['Grace', 'Phil', 'Acme', 'Globex', 'Ada']);
+      groupMentionSearchResultsBySection(items).map(({ label }) => label),
+    ).toEqual(['Grace', 'Phil', 'Tim', 'Acme', 'Globex', 'Ada']);
   });
 });
