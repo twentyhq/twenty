@@ -13,6 +13,9 @@ const CORE_WORKFLOWS_QUERY = `
           isSystem
         }
       }
+      pageInfo {
+        hasNextPage
+      }
       totalCount
     }
   }
@@ -41,12 +44,17 @@ const listCoreWorkflows = async (includeSystem?: boolean) => {
 
   expect(response.body.errors).toBeUndefined();
 
-  const { edges, totalCount } = response.body.data.coreWorkflows as {
+  const { edges, pageInfo, totalCount } = response.body.data.coreWorkflows as {
     edges: { node: { id: string; isSystem: boolean } }[];
+    pageInfo: { hasNextPage: boolean };
     totalCount: number;
   };
 
-  return { workflows: edges.map((edge) => edge.node), totalCount };
+  if (!pageInfo.hasNextPage) {
+    expect(totalCount).toBe(edges.length);
+  }
+
+  return edges.map((edge) => edge.node);
 };
 
 describe('system agents and workflows (e2e)', () => {
@@ -167,14 +175,9 @@ describe('system agents and workflows (e2e)', () => {
     const withoutSystem = await listCoreWorkflows();
     const withSystem = await listCoreWorkflows(true);
 
-    expect(
-      withoutSystem.workflows.some(({ id }) => id === coreWorkflowId),
-    ).toBe(false);
-    expect(withoutSystem.totalCount).toBe(withoutSystem.workflows.length);
-
-    expect(
-      withSystem.workflows.find(({ id }) => id === coreWorkflowId)?.isSystem,
-    ).toBe(true);
-    expect(withSystem.totalCount).toBe(withSystem.workflows.length);
+    expect(withoutSystem.some(({ id }) => id === coreWorkflowId)).toBe(false);
+    expect(withSystem.find(({ id }) => id === coreWorkflowId)?.isSystem).toBe(
+      true,
+    );
   });
 });

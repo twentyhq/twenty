@@ -1,3 +1,7 @@
+import { randomUUID } from 'node:crypto';
+
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -23,6 +27,7 @@ describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsC
   let workspaceOrmManager: WorkspaceOrmManager;
   let workflowRun: Pick<WorkflowRunWorkspaceEntity, 'id' | 'state'>;
   let formStepId: string;
+  let originalState: WorkflowRunWorkspaceEntity['state'];
 
   const inWorkspace = <TResult>(work: () => Promise<TResult>) =>
     workspaceOrmManager.executeInWorkspaceContext(
@@ -73,27 +78,74 @@ describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsC
       'WorkspaceOrmManager',
     );
 
-    const runningWorkflowRuns = (await inWorkspace(() =>
+    const [runningWorkflowRun] = (await inWorkspace(() =>
       repository('workflowRun').find({
         where: { status: WorkflowRunStatus.RUNNING },
         select: { id: true, state: true },
+        take: 1,
       }),
     )) as Pick<WorkflowRunWorkspaceEntity, 'id' | 'state'>[];
 
-    for (const runningWorkflowRun of runningWorkflowRuns) {
-      const formStep = runningWorkflowRun.state?.flow?.steps.find(
-        (step) =>
-          step.type === WorkflowActionType.FORM &&
-          runningWorkflowRun.state?.stepInfos[step.id]?.status ===
-            StepStatus.PENDING,
-      );
-
-      if (formStep !== undefined) {
-        workflowRun = runningWorkflowRun;
-        formStepId = formStep.id;
-        break;
-      }
+    if (!isDefined(runningWorkflowRun?.state)) {
+      throw new Error('The seed has no running workflow run to add a form to');
     }
+
+    originalState = runningWorkflowRun.state;
+    formStepId = randomUUID();
+
+    // a form step waiting since before 2.44, with the conversation 2.44 recorded for it
+    workflowRun = {
+      id: runningWorkflowRun.id,
+      state: {
+        ...originalState,
+        flow: {
+          ...originalState.flow,
+          steps: [
+            ...originalState.flow.steps,
+            {
+              id: formStepId,
+              name: 'Approve the discount',
+              type: WorkflowActionType.FORM,
+              valid: true,
+              settings: {
+                input: [
+                  {
+                    id: randomUUID(),
+                    name: 'discount',
+                    label: 'Discount',
+                    type: FieldMetadataType.NUMBER,
+                  },
+                ],
+                outputSchema: {},
+                errorHandlingOptions: {
+                  retryOnFailure: { value: 0 },
+                  continueOnFailure: { value: false },
+                },
+              },
+              nextStepIds: [],
+            },
+          ],
+        },
+        stepInfos: {
+          ...originalState.stepInfos,
+          [formStepId]: { status: StepStatus.PENDING, threadId: randomUUID() },
+        },
+      },
+    };
+
+    await inWorkspace(() =>
+      repository('workflowRun').update(workflowRun.id, {
+        state: workflowRun.state,
+      }),
+    );
+  });
+
+  afterAll(async () => {
+    await inWorkspace(() =>
+      repository('workflowRun').update(workflowRun.id, {
+        state: originalState,
+      }),
+    );
   });
 
   afterEach(async () => {
