@@ -3,6 +3,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
 import { getRecordFormFieldInputSettings } from '@/object-record/record-form/utils/getRecordFormFieldInputSettings';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { styled } from '@linaria/react';
@@ -42,7 +43,11 @@ export const RecordFormFieldInputs = ({
             objectMetadataItem,
             showLabel: true,
           })}
-          defaultValue={draftRecord[gqlFieldName]}
+          defaultValue={
+            gqlFieldName in draftRecord
+              ? draftRecord[gqlFieldName]
+              : getRecordFormCurrencyFieldDefaultValue(fieldMetadataItem)
+          }
           onChange={(value) => onFieldValueChange(gqlFieldName, value)}
           onClear={() => onFieldValueClear(gqlFieldName)}
           settings={getRecordFormFieldInputSettings(fieldMetadataItem.type)}
