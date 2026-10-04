@@ -79,9 +79,7 @@ describe('ThrottlerService consumeTokens (Redis integration)', () => {
     );
 
     expect(results.every((result) => result.status === 'fulfilled')).toBe(true);
-    expect(
-      await throttlerService.getAvailableTokensCount(key, 5, timeWindow),
-    ).toBe(-5);
+    expect(await cacheStorage.get(key)).toMatchObject({ tokens: -5 });
   });
 
   it('refills an existing JSON bucket and keeps its doubled-window TTL', async () => {
@@ -123,18 +121,22 @@ describe('ThrottlerService consumeTokens (Redis integration)', () => {
     expect(await cacheStorage.get(key)).toMatchObject({ tokens: 1.25 });
   });
 
-  it('preserves the existing refill calculation for a future timestamp', async () => {
+  it('does not over-debit when a stored refill timestamp is ahead', async () => {
     const key = createTestKey();
+    const futureRefillAt = Date.now() + timeWindow;
 
     await cacheStorage.set(
       key,
-      { tokens: 5, lastRefillAt: Date.now() + timeWindow },
+      { tokens: 5, lastRefillAt: futureRefillAt },
       timeWindow * 2,
     );
 
     await throttlerService.consumeTokens(key, 1, 5, timeWindow);
 
-    expect(await cacheStorage.get(key)).toMatchObject({ tokens: -1 });
+    expect(await cacheStorage.get(key)).toMatchObject({
+      tokens: 4,
+      lastRefillAt: futureRefillAt,
+    });
   });
 
   it('rejects a corrupted bucket without overwriting it', async () => {

@@ -17,7 +17,8 @@ if serializedState then
   lastRefillAt = tonumber(state.lastRefillAt)
 end
 
-local elapsed = now - lastRefillAt
+-- Concurrent clients can reach Redis out of timestamp order.
+local elapsed = math.max(0, now - lastRefillAt)
 local refillAmount = math.floor(elapsed * maxTokens / timeWindow)
 local availableTokens = math.min(tokens + refillAmount, maxTokens)
 
@@ -26,7 +27,7 @@ local remainingTokens = availableTokens - tokensToConsume
 -- Existing buckets must stay readable during rolling deployments.
 redis.call('SET', KEYS[1], cjson.encode({
   tokens = remainingTokens,
-  lastRefillAt = now
+  lastRefillAt = math.max(now, lastRefillAt)
 }), 'PX', timeWindow * 2)
 
 return 1
