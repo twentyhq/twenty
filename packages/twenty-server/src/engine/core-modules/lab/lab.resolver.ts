@@ -35,7 +35,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
     },
     apiKey: true,
     oauthClient: true,
-    application: true,
+    application: false,
   }),
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )

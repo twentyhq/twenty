@@ -109,14 +109,14 @@ export class AgentInboxService {
           })
         : undefined;
 
-    if (!isDefined(existingThread)) {
-      await this.createThread({
+    const thread =
+      existingThread ??
+      (await this.createThread({
         workspaceId,
         threadId,
         workspaceMemberId: input.workspaceMemberId,
         title: input.title,
-      });
-    }
+      }));
 
     await this.ignoreDuplicate(() =>
       this.threadService.openAgentTurn({
@@ -153,6 +153,7 @@ export class AgentInboxService {
         workspaceId,
         threadId,
         text: input.text,
+        threadBefore: thread,
       });
     }
 

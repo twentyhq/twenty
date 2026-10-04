@@ -3,7 +3,8 @@ import { type MouseEvent, useId } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { IconHandClick } from 'twenty-ui/icon';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -81,10 +82,30 @@ const StyledThreadTitle = styled.div<{ $isUnread: boolean }>`
   white-space: nowrap;
 `;
 
-const StyledThreadPreview = styled.div`
+const StyledThreadSubtitle = styled.div`
+  align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
   min-height: ${themeCssVariables.spacing[4]};
+  min-width: 0;
+`;
+
+const StyledNeedsInput = styled.div<{ $isUnread: boolean }>`
+  align-items: center;
+  color: ${({ $isUnread }) =>
+    $isUnread
+      ? themeCssVariables.color.blue
+      : themeCssVariables.font.color.tertiary};
+  display: flex;
+  flex-shrink: 0;
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledThreadPreview = styled.div`
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -139,6 +160,7 @@ export const AiChatThreadListItem = ({
   onDetach,
 }: AiChatThreadListItemProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const {
     isRenaming,
     draftTitle,
@@ -158,6 +180,8 @@ export const AiChatThreadListItem = ({
   );
   const threadMembers = useAgentChatThreadMembers(thread);
   const isShownAsUnread = !isDefined(thread.deletedAt) && isUnread;
+  const isAwaitingAnswer =
+    !isDefined(thread.deletedAt) && isDefined(thread.pendingQuestionMessageId);
   const previewText = getAgentChatThreadPreviewText({
     thread,
     workspaceMembers: currentWorkspaceMembers,
@@ -262,7 +286,18 @@ export const AiChatThreadListItem = ({
             </StyledActivityTime>
           </StyledThreadHeading>
         )}
-        <StyledThreadPreview>{previewText}</StyledThreadPreview>
+        <StyledThreadSubtitle>
+          {isAwaitingAnswer && (
+            <StyledNeedsInput $isUnread={isShownAsUnread}>
+              <IconHandClick size={theme.icon.size.sm} />
+              {t`Needs input`}
+            </StyledNeedsInput>
+          )}
+          {isAwaitingAnswer && isNonEmptyString(previewText) && (
+            <span aria-hidden>·</span>
+          )}
+          <StyledThreadPreview>{previewText}</StyledThreadPreview>
+        </StyledThreadSubtitle>
       </StyledThreadContent>
       <StyledMenuTrigger
         $isDropdownOpen={isDropdownOpen}

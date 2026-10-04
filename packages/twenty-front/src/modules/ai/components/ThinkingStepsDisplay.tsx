@@ -5,6 +5,8 @@ import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
+import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { StyledParagraph } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
 import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
 import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
@@ -98,13 +100,16 @@ const StyledReasoningContainer = styled.div`
   );
 `;
 
-const StyledReasoningText = styled.p`
+const StyledReasoningText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: ${themeCssVariables.text.lineHeight.lg};
-  margin: 0;
-  white-space: pre-wrap;
+
+  // reasoning uses single newlines as line breaks, which markdown would collapse
+  ${StyledParagraph} {
+    white-space: pre-line;
+  }
 `;
 
 const StyledIconContainer = styled.div`
@@ -220,7 +225,9 @@ export const ThinkingStepsDisplay = ({
           </StyledRowsContainer>
           {!!shouldDisplayReasoningContent && (
             <StyledReasoningContainer>
-              <StyledReasoningText>{reasoningContent}</StyledReasoningText>
+              <StyledReasoningText>
+                <LazyMarkdownRenderer text={reasoningContent} />
+              </StyledReasoningText>
             </StyledReasoningContainer>
           )}
         </StyledStepsContentContainer>

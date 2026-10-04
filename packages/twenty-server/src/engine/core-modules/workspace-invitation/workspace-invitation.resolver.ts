@@ -52,6 +52,19 @@ export class WorkspaceInvitationResolver {
   ) {}
 
   @Mutation(() => String)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async deleteWorkspaceInvitation(
     @Args('appTokenId') appTokenId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -73,7 +86,7 @@ export class WorkspaceInvitationResolver {
       },
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+      application: false,
     }),
   )
   async resendWorkspaceInvitation(
@@ -121,7 +134,7 @@ export class WorkspaceInvitationResolver {
       },
       apiKey: false,
       oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
+      application: false,
     }),
   )
   @AllowSuspendedWorkspace()

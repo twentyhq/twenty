@@ -3,7 +3,7 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
 import {
@@ -31,9 +31,12 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 
 @Injectable()
 export class AgentChatService {
+  private readonly logger = new Logger(AgentChatService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -533,7 +536,7 @@ export class AgentChatService {
     isLastAnswer: boolean;
     workspaceId: string;
   }): Promise<void> {
-    await this.messagePartRepository.query(
+    const isPendingQuestionCleared = await this.messagePartRepository.query(
       workspaceId,
       async ({ manager, table }) => {
         await manager.query(
@@ -541,14 +544,30 @@ export class AgentChatService {
           [partId, JSON.stringify(toolOutput)],
         );
 
-        if (isLastAnswer) {
-          await manager.query(
-            `UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = NULL, "updatedAt" = now() WHERE id = $1 AND "pendingQuestionMessageId" = $2`,
-            [threadId, messageId],
-          );
+        if (!isLastAnswer) {
+          return false;
         }
+
+        const clearedThreads = await manager.query<{ id: string }[]>(
+          `WITH cleared AS (
+             UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = NULL, "updatedAt" = now()
+             WHERE id = $1 AND "pendingQuestionMessageId" = $2
+             RETURNING id
+           ) SELECT id FROM cleared`,
+          [threadId, messageId],
+        );
+
+        return clearedThreads.length > 0;
       },
     );
+
+    if (isPendingQuestionCleared) {
+      await this.emitPendingQuestionCleared({
+        workspaceId,
+        threadId,
+        messageId,
+      });
+    }
   }
 
   // clearing the marker is the claim, so only one caller closes the calls
@@ -578,6 +597,40 @@ export class AgentChatService {
       messageId,
       workspaceId,
     });
+
+    await this.emitPendingQuestionCleared({ workspaceId, threadId, messageId });
+  }
+
+  // Chat lists show which chats wait on an answer. The marker is already
+  // cleared, so a lost event must not fail the caller
+  private async emitPendingQuestionCleared({
+    workspaceId,
+    threadId,
+    messageId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    messageId: string;
+  }): Promise<void> {
+    try {
+      const thread = await this.threadRepository.findOne(workspaceId, {
+        where: { id: threadId },
+      });
+
+      if (!isDefined(thread)) {
+        return;
+      }
+
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore: { ...thread, pendingQuestionMessageId: messageId },
+        threadAfter: thread,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Could not emit the cleared question on thread ${threadId}: ${formatErrorWithCause(error)}`,
+      );
+    }
   }
 
   async restoreThread({

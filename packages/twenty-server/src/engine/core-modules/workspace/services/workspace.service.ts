@@ -33,6 +33,7 @@ import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advis
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
@@ -67,6 +68,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { type UpdateWorkspaceAllowedIframeOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-iframe-origins.input';
+import { WORKSPACE_FIELDS_NOT_UPDATABLE_BY_APPLICATIONS } from 'src/engine/core-modules/workspace/constants/workspace-fields-not-updatable-by-applications.constant';
 import { WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION } from 'src/engine/core-modules/workspace/constants/workspace-fields-updatable-before-activation.constant';
 import {
   WorkspaceDeletionApplicationUninstallJob,
@@ -1050,6 +1052,24 @@ export class WorkspaceService {
 
     if (fieldsBeingUpdated.length === 0) {
       return;
+    }
+
+    if (isDefined(getScopedCallingApplication(application))) {
+      const fieldsNotUpdatableByApplications = fieldsBeingUpdated.filter(
+        (field) => field in WORKSPACE_FIELDS_NOT_UPDATABLE_BY_APPLICATIONS,
+      );
+
+      if (fieldsNotUpdatableByApplications.length > 0) {
+        const fieldsList = fieldsNotUpdatableByApplications.join(', ');
+
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage: msg`Applications cannot update these fields: ${fieldsList}.`,
+          },
+        );
+      }
     }
 
     if (

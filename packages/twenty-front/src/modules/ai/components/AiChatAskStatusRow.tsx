@@ -28,7 +28,7 @@ const StyledContent = styled.div`
 
 type AiChatAskStatusRowProps = {
   Icon: IconComponent;
-  message: string;
+  message: ReactNode;
   isShimmering: boolean;
   children?: ReactNode;
 };

@@ -105,7 +105,7 @@ const moveTurnContextToHiddenMessages = async ({
   return hiddenParts.length;
 };
 
-@RegisteredWorkspaceCommand('2.46.0', 1791049424391)
+@RegisteredWorkspaceCommand('2.46.0', 1791119515597)
 @Command({
   name: 'upgrade:2-46:move-hidden-agent-messages-to-turn-context',
   description:

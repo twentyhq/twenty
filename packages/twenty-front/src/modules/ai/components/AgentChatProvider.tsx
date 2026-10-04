@@ -1,8 +1,8 @@
 import { type ReactNode, Suspense } from 'react';
 
 import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
-import { AgentChatThreadInboxClockEffect } from '@/ai/components/AgentChatThreadInboxClockEffect';
 import { AgentChatThreadInitializationEffect } from '@/ai/components/AgentChatThreadInitializationEffect';
+import { AgentChatThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
 import { AgentChatThreadRecordOperationsEffect } from '@/ai/components/AgentChatThreadRecordOperationsEffect';
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
@@ -18,7 +18,7 @@ export const AgentChatProvider = ({ children }: AgentChatProviderProps) => (
     >
       <AgentChatThreadInitializationEffect />
       <AgentChatThreadRecordOperationsEffect />
-      <AgentChatThreadInboxClockEffect />
+      <AgentChatThreadParticipantOperationsEffect />
       <AgentChatRuntimeEffects />
       {children}
     </AgentChatComponentInstanceContext.Provider>
