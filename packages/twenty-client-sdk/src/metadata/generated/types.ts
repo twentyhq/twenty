@@ -8359,9 +8359,6 @@ export default {
             "getAiSystemPromptPreview": [
                 386
             ],
-            "myAgentChatThreadParticipants": [
-                390
-            ],
             "skills": [
                 383
             ],
