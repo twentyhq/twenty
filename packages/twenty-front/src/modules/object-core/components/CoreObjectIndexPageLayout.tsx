@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 import { type ReactNode, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { IconPlus } from 'twenty-ui/icon';
@@ -57,7 +57,6 @@ export const CoreObjectIndexPageLayout = ({
   onFetchNextPage,
   children,
 }: CoreObjectIndexPageLayoutProps) => {
-  const { t } = useLingui();
   const { ref: fetchMoreRef, inView } = useInView();
 
   useEffect(() => {
