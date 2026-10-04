@@ -77,7 +77,6 @@ describe('buildDuplicateSourceColumnsToSelect', () => {
     const responseFieldNames = computeDefaultFieldNamesToSelect({
       flatObjectMetadata: args.flatObjectMetadata,
       readableFlatFields: fields,
-      depth: 0,
       maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
     });
 

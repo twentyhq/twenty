@@ -1,5 +1,4 @@
 import { BadRequestException, Inject } from '@nestjs/common';
-
 import { SettingsPath } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
@@ -12,7 +11,6 @@ import { SelectionDepth } from 'src/engine/api/common/common-select-fields/types
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { REST_API_DEFAULT_MAX_FIELDS } from 'src/engine/api/rest/input-request-parsers/constants/rest-api-default-max-fields.constant';
-import { parseFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/fields-parser-utils/parse-fields-rest-request.util';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
@@ -157,14 +155,14 @@ export abstract class RestApiBaseHandler {
   }
 
   async computeRecordSelectedFields({
-    request,
+    requestedFields,
     authContext,
     depth,
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: {
-    request: AuthenticatedRequest;
+    requestedFields?: ReadonlySet<string>;
     authContext: WorkspaceAuthContext;
     depth?: SelectionDepth | undefined;
     flatObjectMetadata: FlatObjectMetadata;
@@ -172,7 +170,6 @@ export abstract class RestApiBaseHandler {
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<{
     selectedFields: CommonSelectedFields;
-    isFieldSetRestricted: boolean;
   }> {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
@@ -183,7 +180,7 @@ export abstract class RestApiBaseHandler {
       flatFieldMetadataMaps,
       flatObjectMetadata,
       depth,
-      requestedFields: parseFieldsRestRequest(request),
+      requestedFields,
       maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
     });
   }

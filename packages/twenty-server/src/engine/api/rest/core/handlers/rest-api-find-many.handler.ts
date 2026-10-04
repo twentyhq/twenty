@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-
 import { ObjectRecord } from 'twenty-shared/types';
 
+import { parseFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/fields-parser-utils/parse-fields-rest-request.util';
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import {
   PageInfo,
   RestApiBaseHandler,
@@ -27,7 +28,8 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
 
   async handle(request: AuthenticatedRequest) {
     try {
-      const { depth, ...queryArgs } = this.parseRequestArgs(request);
+      const { depth, requestedFields, ...queryArgs } =
+        this.parseRequestArgs(request);
       const {
         authContext,
         flatObjectMetadata,
@@ -36,15 +38,14 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
         objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
-      const { selectedFields, isFieldSetRestricted } =
-        await this.computeRecordSelectedFields({
-          request,
-          depth,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          authContext,
-        });
+      const { selectedFields } = await this.computeRecordSelectedFields({
+        requestedFields,
+        depth,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        authContext,
+      });
 
       const {
         results: { records, aggregatedValues, pageInfo },
@@ -63,14 +64,11 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
       );
 
       return this.formatRestResponse(
-        isFieldSetRestricted
-          ? records.map((record) =>
-              pickRestResponseFields({ record, selectedFields }),
-            )
-          : records,
+        records,
         aggregatedValues,
         flatObjectMetadata.namePlural,
         pageInfo,
+        selectedFields,
       );
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
@@ -82,10 +80,13 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
     aggregatedValues: Record<string, number> | undefined,
     objectNamePlural: string,
     pageInfo: PageInfo,
+    selectedFields: CommonSelectedFields,
   ) {
     return {
       data: {
-        [objectNamePlural]: records,
+        [objectNamePlural]: records.map((record) =>
+          pickRestResponseFields({ record, selectedFields }),
+        ),
       },
       totalCount: Number(aggregatedValues?.totalCount ?? 0),
       pageInfo,
@@ -101,6 +102,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
     const startingAfter = parseStartingAfterRestRequest(request);
 
     return {
+      requestedFields: parseFieldsRestRequest(request),
       filter,
       orderBy,
       first: !endingBefore ? limit : undefined,

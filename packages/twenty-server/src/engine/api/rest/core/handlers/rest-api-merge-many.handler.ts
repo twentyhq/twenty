@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
+import { parseFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/fields-parser-utils/parse-fields-rest-request.util';
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { CommonMergeManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-merge-many-query-runner.service';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { pickRestResponseFields } from 'src/engine/api/rest/core/utils/pick-rest-response-fields.util';
@@ -20,7 +21,8 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
 
   async handle(request: AuthenticatedRequest) {
     try {
-      const { depth, ...restArgs } = await this.parseRequestArgs(request);
+      const { depth, requestedFields, ...restArgs } =
+        await this.parseRequestArgs(request);
       const {
         authContext,
         flatObjectMetadata,
@@ -30,15 +32,14 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
         objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
-      const { selectedFields, isFieldSetRestricted } =
-        await this.computeRecordSelectedFields({
-          request,
-          depth,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          authContext,
-        });
+      const { selectedFields } = await this.computeRecordSelectedFields({
+        requestedFields,
+        depth,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        authContext,
+      });
 
       const { results: record } =
         await this.commonMergeManyQueryRunnerService.execute(
@@ -54,24 +55,35 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
         );
 
       return this.formatRestResponse(
-        isFieldSetRestricted
-          ? pickRestResponseFields({ record, selectedFields })
-          : record,
+        record,
         flatObjectMetadata.nameSingular,
+        selectedFields,
       );
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private formatRestResponse(record: ObjectRecord, objectNamePlural: string) {
-    return { data: { [`merge${capitalize(objectNamePlural)}`]: record } };
+  private formatRestResponse(
+    record: ObjectRecord,
+    objectNamePlural: string,
+    selectedFields: CommonSelectedFields,
+  ) {
+    return {
+      data: {
+        [`merge${capitalize(objectNamePlural)}`]: pickRestResponseFields({
+          record,
+          selectedFields,
+        }),
+      },
+    };
   }
 
   private async parseRequestArgs(request: AuthenticatedRequest) {
     const depth = parseDepthRestRequest(request);
 
     return {
+      requestedFields: parseFieldsRestRequest(request),
       conflictPriorityIndex: request.body.conflictPriorityIndex,
       dryRun: request.body.dryRun,
       ids: request.body.ids,

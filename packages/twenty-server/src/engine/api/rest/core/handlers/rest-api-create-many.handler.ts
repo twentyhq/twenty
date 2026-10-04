@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-
 import { type ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
+import { parseFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/fields-parser-utils/parse-fields-rest-request.util';
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { pickRestResponseFields } from 'src/engine/api/rest/core/utils/pick-rest-response-fields.util';
 import { CommonCreateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
@@ -19,7 +21,8 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
 
   async handle(request: AuthenticatedRequest) {
     try {
-      const { data, depth, upsert } = this.parseRequestArgs(request);
+      const { data, depth, requestedFields, upsert } =
+        this.parseRequestArgs(request);
 
       const {
         authContext,
@@ -31,7 +34,7 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
       } = await this.buildCommonOptions(request);
 
       const { selectedFields } = await this.computeRecordSelectedFields({
-        request,
+        requestedFields,
         depth,
         flatObjectMetadata,
         flatObjectMetadataMaps,
@@ -52,7 +55,11 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
           },
         );
 
-      return this.formatRestResponse(records, flatObjectMetadata.namePlural);
+      return this.formatRestResponse(
+        records,
+        flatObjectMetadata.namePlural,
+        selectedFields,
+      );
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
@@ -61,12 +68,20 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
   private formatRestResponse(
     records: ObjectRecord[],
     objectNamePlural: string,
+    selectedFields: CommonSelectedFields,
   ) {
-    return { data: { [`create${capitalize(objectNamePlural)}`]: records } };
+    return {
+      data: {
+        [`create${capitalize(objectNamePlural)}`]: records.map((record) =>
+          pickRestResponseFields({ record, selectedFields }),
+        ),
+      },
+    };
   }
 
   private parseRequestArgs(request: AuthenticatedRequest) {
     return {
+      requestedFields: parseFieldsRestRequest(request),
       data: request.body,
       depth: parseDepthRestRequest(request),
       upsert: parseUpsertRestRequest(request),

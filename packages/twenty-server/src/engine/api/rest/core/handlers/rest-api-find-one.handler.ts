@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-
 import { ObjectRecord } from 'twenty-shared/types';
 
+import { parseFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/fields-parser-utils/parse-fields-rest-request.util';
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { CommonFindOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-one-query-runner.service';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { pickRestResponseFields } from 'src/engine/api/rest/core/utils/pick-rest-response-fields.util';
@@ -20,7 +21,8 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
 
   async handle(request: AuthenticatedRequest) {
     try {
-      const { filter, depth } = await this.parseRequestArgs(request);
+      const { filter, depth, requestedFields } =
+        await this.parseRequestArgs(request);
       const {
         authContext,
         flatObjectMetadata,
@@ -29,15 +31,14 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
         objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
-      const { selectedFields, isFieldSetRestricted } =
-        await this.computeRecordSelectedFields({
-          request,
-          depth,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          authContext,
-        });
+      const { selectedFields } = await this.computeRecordSelectedFields({
+        requestedFields,
+        depth,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        authContext,
+      });
 
       const { results: record } =
         await this.commonFindOneQueryRunnerService.execute(
@@ -52,18 +53,28 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
         );
 
       return this.formatRestResponse(
-        isFieldSetRestricted
-          ? pickRestResponseFields({ record, selectedFields })
-          : record,
+        record,
         flatObjectMetadata.nameSingular,
+        selectedFields,
       );
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private formatRestResponse(record: ObjectRecord, objectNameSingular: string) {
-    return { data: { [objectNameSingular]: record } };
+  private formatRestResponse(
+    record: ObjectRecord,
+    objectNameSingular: string,
+    selectedFields: CommonSelectedFields,
+  ) {
+    return {
+      data: {
+        [objectNameSingular]: pickRestResponseFields({
+          record,
+          selectedFields,
+        }),
+      },
+    };
   }
 
   private async parseRequestArgs(request: AuthenticatedRequest) {
@@ -72,6 +83,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
     const depth = parseDepthRestRequest(request);
 
     return {
+      requestedFields: parseFieldsRestRequest(request),
       filter,
       depth,
     };

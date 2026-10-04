@@ -1,5 +1,4 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { computeDefaultFieldNamesToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-default-field-names-to-select.util';
 
@@ -19,19 +18,13 @@ const CUSTOM_APPLICATION_ID = 'custom-application-id';
 const createField = ({
   name,
   applicationId = STANDARD_APPLICATION_ID,
-  type = FieldMetadataType.TEXT,
-  relationType,
 }: {
   name: string;
   applicationId?: string;
-  type?: FieldMetadataType;
-  relationType?: RelationType;
 }): TestFlatFieldMetadata => ({
   id: `${name}-id`,
   applicationId,
   name,
-  type,
-  settings: relationType ? { relationType } : null,
 });
 
 const buildArgs = ({
@@ -39,16 +32,14 @@ const buildArgs = ({
   labelIdentifierFieldName,
   imageIdentifierFieldName,
   applicationUniversalIdentifier = TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-  depth = 0,
 }: {
   fields: TestFlatFieldMetadata[];
   labelIdentifierFieldName?: string;
   imageIdentifierFieldName?: string;
   applicationUniversalIdentifier?: string;
-  depth?: ComputeDefaultFieldNamesToSelectArgs['depth'];
 }): Pick<
   ComputeDefaultFieldNamesToSelectArgs,
-  'flatObjectMetadata' | 'readableFlatFields' | 'depth'
+  'flatObjectMetadata' | 'readableFlatFields'
 > => {
   const flatObjectMetadata: TestFlatObjectMetadata = {
     labelIdentifierFieldMetadataId: labelIdentifierFieldName
@@ -61,7 +52,7 @@ const buildArgs = ({
     applicationUniversalIdentifier,
   };
 
-  return { flatObjectMetadata, readableFlatFields: fields, depth };
+  return { flatObjectMetadata, readableFlatFields: fields };
 };
 
 const WIDE_OBJECT_FIELDS = [
@@ -78,19 +69,6 @@ const WIDE_OBJECT_FIELDS = [
   createField({ name: 'id' }),
 ];
 
-const ONE_TO_MANY_RELATION_FIELDS = [
-  createField({
-    name: 'activities',
-    type: FieldMetadataType.RELATION,
-    relationType: RelationType.ONE_TO_MANY,
-  }),
-  createField({
-    name: 'attachments',
-    type: FieldMetadataType.MORPH_RELATION,
-    relationType: RelationType.ONE_TO_MANY,
-  }),
-];
-
 describe('computeDefaultFieldNamesToSelect', () => {
   it('should not restrict the selection when the object has at most the maximum number of fields', () => {
     expect(
@@ -98,7 +76,7 @@ describe('computeDefaultFieldNamesToSelect', () => {
         ...buildArgs({ fields: WIDE_OBJECT_FIELDS }),
         maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length,
       }),
-    ).toBeUndefined();
+    ).toEqual(new Set(WIDE_OBJECT_FIELDS.map((field) => field.name)));
   });
 
   it('should order the capped field set by priority then standard before custom fields', () => {
@@ -161,38 +139,6 @@ describe('computeDefaultFieldNamesToSelect', () => {
       'position',
       'aCustom',
     ]);
-  });
-
-  it('should not let one-to-many relations count or take slots at depth 0', () => {
-    const fields = [...WIDE_OBJECT_FIELDS, ...ONE_TO_MANY_RELATION_FIELDS];
-
-    expect(
-      computeDefaultFieldNamesToSelect({
-        ...buildArgs({ fields, depth: 0 }),
-        maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length,
-      }),
-    ).toBeUndefined();
-
-    const fieldNamesToSelect = computeDefaultFieldNamesToSelect({
-      ...buildArgs({ fields, depth: 0 }),
-      maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length - 1,
-    });
-
-    expect(fieldNamesToSelect?.size).toBe(WIDE_OBJECT_FIELDS.length - 1);
-    expect(fieldNamesToSelect?.has('activities')).toBe(false);
-    expect(fieldNamesToSelect?.has('attachments')).toBe(false);
-  });
-
-  it('should count and select one-to-many relations at depth 1', () => {
-    const fields = [...WIDE_OBJECT_FIELDS, ...ONE_TO_MANY_RELATION_FIELDS];
-
-    const fieldNamesToSelect = computeDefaultFieldNamesToSelect({
-      ...buildArgs({ fields, depth: 1 }),
-      maximumDefaultFieldCount: WIDE_OBJECT_FIELDS.length,
-    });
-
-    expect(fieldNamesToSelect?.has('activities')).toBe(true);
-    expect(fieldNamesToSelect?.has('attachments')).toBe(true);
   });
 
   it('should cap an object wider than the maximum to exactly the maximum', () => {

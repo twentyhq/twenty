@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
-
-import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  FieldMetadataType,
+  RelationType,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
 
 import { CommonSelectFieldsException } from 'src/engine/api/common/common-select-fields/common-select-fields.exception';
 import { type SelectionDepth } from 'src/engine/api/common/common-select-fields/types/selection-depth.type';
 import { computeDefaultFieldNamesToSelect } from 'src/engine/api/common/common-select-fields/utils/compute-default-field-names-to-select.util';
 import { buildFieldSelection } from 'src/engine/api/common/common-select-fields/utils/build-field-selection.util';
 import { buildRelationSelectionFromDepth } from 'src/engine/api/common/common-select-fields/utils/build-relation-selection-from-depth.util';
-import { isOneToManyRelationFlatField } from 'src/engine/api/common/common-select-fields/utils/is-one-to-many-relation-flat-field.util';
+import { isFlatFieldMetadataOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-types.util';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -39,7 +42,6 @@ export class CommonSelectFieldsBuilder {
     maximumDefaultFieldCount?: number;
   }): {
     selectedFields: CommonSelectedFields;
-    isFieldSetRestricted: boolean;
   } => {
     const restrictedFields =
       objectsPermissions[flatObjectMetadata.id].restrictedFields;
@@ -49,25 +51,35 @@ export class CommonSelectFieldsBuilder {
       flatEntityMaps: flatFieldMetadataMaps,
     }).filter((flatField) => restrictedFields[flatField.id]?.canRead !== false);
 
+    const fieldsFromDepth = readableFlatFields.filter(
+      (field) =>
+        depth ||
+        !(
+          isFlatFieldMetadataOfTypes(field, [
+            FieldMetadataType.RELATION,
+            FieldMetadataType.MORPH_RELATION,
+          ]) && field.settings?.relationType === RelationType.ONE_TO_MANY
+        ),
+    );
+
     const fieldNamesToSelect =
       this.validateRequestedFields({
         requestedFields,
         readableFlatFields,
         objectNameSingular: flatObjectMetadata.nameSingular,
-        depth,
+        fieldNamesFromDepth: new Set(
+          fieldsFromDepth.map((field) => field.name),
+        ),
       }) ??
       computeDefaultFieldNamesToSelect({
         flatObjectMetadata,
-        readableFlatFields,
-        depth,
+        readableFlatFields: fieldsFromDepth,
         maximumDefaultFieldCount,
       });
 
-    const flatFields = isDefined(fieldNamesToSelect)
-      ? readableFlatFields.filter((flatField) =>
-          fieldNamesToSelect.has(flatField.name),
-        )
-      : readableFlatFields;
+    const flatFields = readableFlatFields.filter((field) =>
+      fieldNamesToSelect.has(field.name),
+    );
 
     const relationsSelectFields = buildRelationSelectionFromDepth({
       flatObjectMetadataMaps,
@@ -91,7 +103,6 @@ export class CommonSelectFieldsBuilder {
         ...selectableFields,
         ...relationsSelectFields,
       },
-      isFieldSetRestricted: isDefined(fieldNamesToSelect),
     };
   };
 
@@ -99,12 +110,12 @@ export class CommonSelectFieldsBuilder {
     requestedFields,
     readableFlatFields,
     objectNameSingular,
-    depth,
+    fieldNamesFromDepth,
   }: {
     requestedFields: ReadonlySet<string> | undefined;
     readableFlatFields: OrmFlatFieldMetadata[];
     objectNameSingular: string;
-    depth: SelectionDepth | undefined;
+    fieldNamesFromDepth: ReadonlySet<string>;
   }): ReadonlySet<string> | undefined {
     if (!isDefined(requestedFields)) return undefined;
 
@@ -125,7 +136,7 @@ export class CommonSelectFieldsBuilder {
 
       if (!isDefined(field)) {
         invalidFieldNames.push(fieldName);
-      } else if (!depth && isOneToManyRelationFlatField(field)) {
+      } else if (!fieldNamesFromDepth.has(fieldName)) {
         unexpandedRelationNames.push(fieldName);
       }
     }

@@ -1,5 +1,4 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-
 import {
   FieldMetadataType,
   type ObjectsPermissions,
@@ -220,7 +219,6 @@ describe('CommonSelectFieldsBuilder', () => {
         }),
       ).toEqual({
         selectedFields: { id: true, name: { firstName: true, lastName: true } },
-        isFieldSetRestricted: true,
       });
     });
 
@@ -230,7 +228,15 @@ describe('CommonSelectFieldsBuilder', () => {
           ...buildArgs(),
           requestedFields: new Set(['unknown', 'salary']),
         }),
-      ).toThrow("Unknown or unreadable fields on 'person': unknown, salary");
+      ).toThrow(
+        expect.objectContaining({
+          message: "Unknown or unreadable fields on 'person': unknown, salary",
+          code: 'INVALID_FIELD_SELECTION',
+          userFriendlyMessage: expect.objectContaining({
+            id: expect.any(String),
+          }),
+        }),
+      );
     });
 
     it('rejects an explicitly empty selection', () => {
@@ -280,12 +286,30 @@ describe('CommonSelectFieldsBuilder', () => {
         handler.buildFromDepth({ ...buildArgs(), maximumDefaultFieldCount: 2 }),
       ).toEqual({
         selectedFields: { id: true, name: { firstName: true, lastName: true } },
-        isFieldSetRestricted: true,
       });
       expect(
-        handler.buildFromDepth({ ...buildArgs(), maximumDefaultFieldCount: 3 })
-          .isFieldSetRestricted,
-      ).toBe(false);
+        Object.keys(
+          handler.buildFromDepth({
+            ...buildArgs(),
+            maximumDefaultFieldCount: 3,
+          }).selectedFields,
+        ),
+      ).toHaveLength(3);
+    });
+
+    it('counts expanded one-to-many and morph relations toward the default cap', () => {
+      expect(
+        handler.buildFromDepth({
+          ...buildArgs(),
+          depth: 1,
+          maximumDefaultFieldCount: 4,
+        }).selectedFields,
+      ).toEqual({
+        id: true,
+        name: { firstName: true, lastName: true },
+        activities: { id: true, name: true },
+        attachments: { id: true, name: true },
+      });
     });
 
     it.each([199, 200, 201, 202])(
@@ -318,7 +342,6 @@ describe('CommonSelectFieldsBuilder', () => {
         expect(Object.keys(capped.selectedFields)).toHaveLength(
           Math.min(fieldCount, 200),
         );
-        expect(capped.isFieldSetRestricted).toBe(fieldCount > 200);
         expect(capped.selectedFields.id).toBe(true);
         expect(
           Object.keys(handler.buildFromDepth(args).selectedFields),
@@ -337,7 +360,6 @@ describe('CommonSelectFieldsBuilder', () => {
 
     it('does not impose a default cap on callers that omit it', () => {
       const result = handler.buildFromDepth(buildArgs());
-      expect(result.isFieldSetRestricted).toBe(false);
       expect(result.selectedFields).toMatchObject({
         id: true,
         name: { firstName: true, lastName: true },
