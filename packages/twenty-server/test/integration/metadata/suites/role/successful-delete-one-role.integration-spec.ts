@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 
 import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
+import { type WorkspaceUserWorkspaceRoleMapCacheService } from 'src/engine/metadata-modules/role-target/services/workspace-user-workspace-role-map-cache.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -87,120 +88,209 @@ describe('Role deletion should succeed', () => {
     );
   });
 
-  it('should delete a custom role immediately after removing its accepted member', async () => {
-    const { data: workspaceData } = await currentUser({
-      gqlFields: 'currentWorkspace { isPublicInviteLinkEnabled }',
-    });
-    const initialPublicInviteLinkEnabled =
-      workspaceData.currentUser.currentWorkspace?.isPublicInviteLinkEnabled;
-
-    jestExpectToBeDefined(initialPublicInviteLinkEnabled);
-
-    let workspaceMemberId: string | undefined;
-    let roleId: string | undefined;
-
-    try {
-      const token = await signUpInWorkspaceAndGetAccessToken(
-        `role-deletion-${randomUUID()}@example.com`,
-      );
-      const { data: memberData } = await currentUser({
-        token,
-        gqlFields: 'workspaceMember { id } currentUserWorkspace { id }',
+  it.each([false, true])(
+    'should delete a custom role immediately after removing its accepted member (cache compute failure: %s)',
+    async (cacheComputeFails) => {
+      const { data: workspaceData } = await currentUser({
+        gqlFields: 'currentWorkspace { isPublicInviteLinkEnabled }',
       });
+      const initialPublicInviteLinkEnabled =
+        workspaceData.currentUser.currentWorkspace?.isPublicInviteLinkEnabled;
 
-      workspaceMemberId = memberData.currentUser.workspaceMember.id;
+      jestExpectToBeDefined(initialPublicInviteLinkEnabled);
 
-      const roleLabel = `Removed member role ${randomUUID()}`;
-      const { data: createData } = await createOneRole({
-        input: { label: roleLabel, canBeAssignedToUsers: true },
-      });
-
-      roleId = createData.createOneRole.id;
-      await updateWorkspaceMemberRole({
-        input: { workspaceMemberId, roleId },
-      });
-
-      const userWorkspaceId = memberData.currentUser.currentUserWorkspace?.id;
-
-      jestExpectToBeDefined(userWorkspaceId);
-      const { userWorkspaceRoleMap } =
-        await getAppProviderByClassName<WorkspaceCacheService>(
+      let workspaceMemberId: string | undefined;
+      let roleId: string | undefined;
+      let cacheComputeSpy: jest.SpyInstance | undefined;
+      const workspaceCacheService =
+        getAppProviderByClassName<WorkspaceCacheService>(
           'WorkspaceCacheService',
-        ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['userWorkspaceRoleMap']);
+        );
 
-      expect(userWorkspaceRoleMap[userWorkspaceId]).toBe(roleId);
-
-      const { errors: removalErrors } = await deleteUserFromWorkspace({
-        input: { workspaceMemberIdToDelete: workspaceMemberId },
-      });
-
-      expect(removalErrors).toBeUndefined();
-      workspaceMemberId = undefined;
-
-      const { data, errors } = await deleteOneRole({
-        input: { idToDelete: roleId },
-      });
-
-      expect(errors).toBeUndefined();
-      expect(data.deleteOneRole).toBe(roleId);
-      roleId = undefined;
-    } finally {
       try {
-        if (workspaceMemberId) {
-          await deleteUserFromWorkspace({
-            input: { workspaceMemberIdToDelete: workspaceMemberId },
+        const token = await signUpInWorkspaceAndGetAccessToken(
+          `role-deletion-${randomUUID()}@example.com`,
+        );
+        const { data: memberData } = await currentUser({
+          token,
+          gqlFields: 'id workspaceMember { id } currentUserWorkspace { id }',
+        });
+
+        workspaceMemberId = memberData.currentUser.workspaceMember.id;
+
+        const roleLabel = `Removed member role ${randomUUID()}`;
+        const { data: createData } = await createOneRole({
+          input: { label: roleLabel, canBeAssignedToUsers: true },
+        });
+
+        roleId = createData.createOneRole.id;
+        await updateWorkspaceMemberRole({
+          input: { workspaceMemberId, roleId },
+        });
+
+        const userWorkspaceId = memberData.currentUser.currentUserWorkspace?.id;
+
+        jestExpectToBeDefined(userWorkspaceId);
+        const { userWorkspaceRoleMap, flatWorkspaceMemberMaps } =
+          await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+            'userWorkspaceRoleMap',
+            'flatWorkspaceMemberMaps',
+          ]);
+
+        expect(userWorkspaceRoleMap[userWorkspaceId]).toBe(roleId);
+        expect(flatWorkspaceMemberMaps.byId[workspaceMemberId]).toBeDefined();
+
+        if (cacheComputeFails) {
+          cacheComputeSpy = jest
+            .spyOn(
+              getAppProviderByClassName<WorkspaceUserWorkspaceRoleMapCacheService>(
+                'WorkspaceUserWorkspaceRoleMapCacheService',
+              ),
+              'computeForCache',
+            )
+            .mockImplementationOnce(() => {
+              throw new Error('Role cache compute failed after flush');
+            });
+        }
+
+        const removedWorkspaceMemberId = workspaceMemberId;
+        const { errors: removalErrors } = await deleteUserFromWorkspace({
+          input: { workspaceMemberIdToDelete: workspaceMemberId },
+        });
+
+        expect(removalErrors).toBeUndefined();
+        workspaceMemberId = undefined;
+        if (cacheComputeFails) {
+          expect(
+            cacheComputeSpy?.mock.results.filter(
+              ({ type }) => type === 'throw',
+            ),
+          ).toHaveLength(1);
+        }
+
+        const { data, errors } = await deleteOneRole({
+          input: { idToDelete: roleId },
+        });
+
+        expect(errors).toBeUndefined();
+        expect(data.deleteOneRole).toBe(roleId);
+        roleId = undefined;
+
+        const { flatWorkspaceMemberMaps: refreshedWorkspaceMemberMaps } =
+          await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+            'flatWorkspaceMemberMaps',
+          ]);
+
+        expect(
+          refreshedWorkspaceMemberMaps.byId[removedWorkspaceMemberId],
+        ).toBeUndefined();
+        const [deletedUser]: { deletedAt: Date | null }[] =
+          await testDataSource.query(
+            'SELECT "deletedAt" FROM core."user" WHERE id = $1',
+            [memberData.currentUser.id],
+          );
+
+        expect(deletedUser.deletedAt).not.toBeNull();
+      } finally {
+        cacheComputeSpy?.mockRestore();
+        try {
+          if (
+            workspaceMemberId &&
+            (await getAppProviderByClassName<UserWorkspaceService>(
+              'UserWorkspaceService',
+            ).getWorkspaceMember({
+              workspaceMemberId,
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+            }))
+          ) {
+            await deleteUserFromWorkspace({
+              input: { workspaceMemberIdToDelete: workspaceMemberId },
+            });
+          }
+          if (roleId) {
+            await deleteOneRole({ input: { idToDelete: roleId } });
+          }
+        } finally {
+          await updateWorkspace({
+            data: { isPublicInviteLinkEnabled: initialPublicInviteLinkEnabled },
           });
         }
-        if (roleId) {
-          await deleteOneRole({ input: { idToDelete: roleId } });
-        }
-      } finally {
-        await updateWorkspace({
-          data: { isPublicInviteLinkEnabled: initialPublicInviteLinkEnabled },
-        });
       }
-    }
-  });
+    },
+  );
 
-  it('should attempt workflow-run share synchronization even if role cache refresh fails', async () => {
-    const workspaceCacheService =
-      getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
-    const workflowRunRecordShareService =
-      getAppProviderByClassName<WorkflowRunRecordShareService>(
-        'WorkflowRunRecordShareService',
+  it.each([
+    { cacheFails: true, shareFails: false },
+    { cacheFails: false, shareFails: true },
+    { cacheFails: true, shareFails: true },
+  ])(
+    'should preserve workflow-run share errors, not cache errors ($cacheFails, $shareFails)',
+    async ({ cacheFails, shareFails }) => {
+      const workspaceCacheService =
+        getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        );
+      const userWorkspaceService =
+        getAppProviderByClassName<UserWorkspaceService>('UserWorkspaceService');
+      const workflowRunRecordShareService =
+        getAppProviderByClassName<WorkflowRunRecordShareService>(
+          'WorkflowRunRecordShareService',
+        );
+      const cacheError = new Error('Role cache refresh failed');
+      const shareError = new Error('Workflow-run share synchronization failed');
+      const userWorkspaceId = randomUUID();
+      const cacheRefreshSpy = jest
+        .spyOn(workspaceCacheService, 'invalidateAndRecompute')
+        .mockResolvedValueOnce();
+      const shareSyncSpy = jest.spyOn(
+        workflowRunRecordShareService,
+        'syncRunsOfCoreWorkflows',
       );
-    const cacheError = new Error('Role cache refresh failed');
-    const cacheRefreshSpy = jest
-      .spyOn(workspaceCacheService, 'invalidateAndRecompute')
-      .mockRejectedValueOnce(cacheError);
-    const shareSyncSpy = jest.spyOn(
-      workflowRunRecordShareService,
-      'syncRunsOfCoreWorkflows',
-    );
+      const loggerSpy = jest
+        .spyOn(userWorkspaceService['logger'], 'error')
+        .mockImplementation();
 
-    try {
-      await expect(
-        getAppProviderByClassName<UserWorkspaceService>(
-          'UserWorkspaceService',
-        ).deleteUserWorkspace({
-          userWorkspaceId: randomUUID(),
+      if (cacheFails) {
+        cacheRefreshSpy.mockReset().mockRejectedValueOnce(cacheError);
+      }
+      if (shareFails) {
+        shareSyncSpy.mockRejectedValueOnce(shareError);
+      }
+
+      try {
+        const deletion = userWorkspaceService.deleteUserWorkspace({
+          userWorkspaceId,
           workspaceId: SEED_APPLE_WORKSPACE_ID,
-        }),
-      ).rejects.toBe(cacheError);
-      expect(cacheRefreshSpy).toHaveBeenCalledTimes(1);
-      expect(cacheRefreshSpy).toHaveBeenCalledWith(SEED_APPLE_WORKSPACE_ID, [
-        'flatRoleTargetMaps',
-        'flatRoleMaps',
-        'userWorkspaceRoleMap',
-      ]);
-      expect(shareSyncSpy).toHaveBeenCalledTimes(1);
-      expect(shareSyncSpy).toHaveBeenCalledWith({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        coreWorkflowIds: [],
-      });
-    } finally {
-      cacheRefreshSpy.mockRestore();
-      shareSyncSpy.mockRestore();
-    }
-  });
+        });
+
+        if (shareFails) {
+          await expect(deletion).rejects.toBe(shareError);
+        } else {
+          await expect(deletion).resolves.toBeUndefined();
+        }
+        if (cacheFails) {
+          expect(loggerSpy).toHaveBeenCalledWith(
+            `Role cache refresh failed after deleting user workspace ${userWorkspaceId} in workspace ${SEED_APPLE_WORKSPACE_ID}`,
+          );
+        } else {
+          expect(loggerSpy).not.toHaveBeenCalled();
+        }
+        expect(cacheRefreshSpy).toHaveBeenCalledTimes(1);
+        expect(cacheRefreshSpy).toHaveBeenCalledWith(SEED_APPLE_WORKSPACE_ID, [
+          'flatRoleTargetMaps',
+          'flatRoleMaps',
+          'userWorkspaceRoleMap',
+        ]);
+        expect(shareSyncSpy).toHaveBeenCalledTimes(1);
+        expect(shareSyncSpy).toHaveBeenCalledWith({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          coreWorkflowIds: [],
+        });
+      } finally {
+        cacheRefreshSpy.mockRestore();
+        shareSyncSpy.mockRestore();
+        loggerSpy.mockRestore();
+      }
+    },
+  );
 });

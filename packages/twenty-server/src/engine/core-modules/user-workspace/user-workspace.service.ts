@@ -384,13 +384,17 @@ export class UserWorkspaceService {
           'flatRoleMaps',
           'userWorkspaceRoleMap',
         ]);
-      } finally {
-        // Membership deletion cannot be rolled back if refreshing the cache fails.
-        await this.workflowRunRecordShareService.syncRunsOfCoreWorkflows({
-          workspaceId,
-          coreWorkflowIds: createdCoreWorkflowIds,
-        });
+      } catch {
+        // Membership deletion is already committed; cache errors must not abort the caller's remaining cleanup.
+        this.logger.error(
+          `Role cache refresh failed after deleting user workspace ${userWorkspaceId} in workspace ${workspaceId}`,
+        );
       }
+
+      await this.workflowRunRecordShareService.syncRunsOfCoreWorkflows({
+        workspaceId,
+        coreWorkflowIds: createdCoreWorkflowIds,
+      });
     }
   }
 
