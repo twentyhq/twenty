@@ -11,6 +11,7 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
+import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -27,6 +28,8 @@ import {
 import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { getStepRetryAttempt } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-attempt.util';
+import { isWorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/guards/is-workflow-ai-agent-action.guard';
+import { isWorkflowSendChatMessageAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/guards/is-workflow-send-chat-message-action.guard';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import {
@@ -506,9 +509,15 @@ export class WorkflowRunWorkspaceService {
       return null;
     }
 
-    return (
-      workflowRun.state?.flow?.steps?.find((step) => step.id === stepId) ?? null
+    const step = workflowRun.state?.flow?.steps?.find(
+      (candidateStep) => candidateStep.id === stepId,
     );
+
+    // a form step is submitted from its run, even one that older versions gave a conversation
+    return isDefined(step) &&
+      (isWorkflowAiAgentAction(step) || isWorkflowSendChatMessageAction(step))
+      ? step
+      : null;
   }
 
   // a step posting a call still runs until its executor marks it pending, and an answer may arrive first;
@@ -642,6 +651,30 @@ export class WorkflowRunWorkspaceService {
         where: { id: workflowRunId },
       });
     }, authContext);
+  }
+
+  // read with the requester's own permissions, which follow the visibility of the run's workflow
+  async isWorkflowRunReadableByRequester(
+    workflowRunId: string,
+  ): Promise<boolean> {
+    try {
+      const workflowRun =
+        await this.workspaceOrmManager.executeInWorkspaceContext(() =>
+          this.workspaceOrmManager
+            .getRepositoryWithContextPermissions<WorkflowRunWorkspaceEntity>(
+              'workflowRun',
+            )
+            .findOne({ where: { id: workflowRunId }, select: { id: true } }),
+        );
+
+      return isDefined(workflowRun);
+    } catch (error) {
+      if (error instanceof PermissionsException) {
+        return false;
+      }
+
+      throw error;
+    }
   }
 
   async getWorkflowRunOrFail({

@@ -8,7 +8,10 @@ import { msg } from '@lingui/core/macro';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  WorkflowRunStatus,
+  type WorkflowRunWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import {
   WorkflowVersionStepException,
@@ -107,47 +110,91 @@ export class WorkflowRunnerWorkspaceService {
     );
   }
 
-  // A form step completes with its answer; an agent step stays PENDING until the resume job claims it
+  // a Send Message step completes with the answer; an agent step stays PENDING until the resume job claims it
   async resumeAnsweredStep({
     workspaceId,
     workflowRunId,
     step,
     threadId,
-    response,
     toolResult,
   }: {
     workspaceId: string;
     workflowRunId: string;
     step: WorkflowAction;
     threadId: string;
-    response: Record<string, unknown>;
     toolResult: Record<string, unknown>;
   }): Promise<void> {
     // the member's answer already ran the call, so the step only reports it
     if (isWorkflowSendChatMessageAction(step)) {
-      await this.completeAnsweredStep({
-        workspaceId,
-        workflowRunId,
-        stepId: step.id,
-        threadId,
-        result: buildSendChatMessageAnswerResult({ threadId, toolResult }),
-      });
+      const hasCompletedStep =
+        await this.workflowRunWorkspaceService.updateStepInfoIfPending({
+          stepId: step.id,
+          stepInfo: {
+            status: StepStatus.SUCCESS,
+            result: buildSendChatMessageAnswerResult({ threadId, toolResult }),
+          },
+          expectedThreadId: threadId,
+          workspaceId,
+          workflowRunId,
+        });
+
+      if (hasCompletedStep) {
+        await this.resume({
+          workspaceId,
+          workflowRunId,
+          lastExecutedStepId: step.id,
+        });
+      }
 
       return;
     }
 
-    if (!isWorkflowFormAction(step)) {
-      await this.messageQueueService.add<RunWorkflowJobData>(
-        RunWorkflowJob.name,
-        {
-          workspaceId,
-          workflowRunId,
-          stepToResume: { stepId: step.id, threadId },
-        },
-        buildRunWorkflowJobOptions(workflowRunId),
-      );
+    await this.messageQueueService.add<RunWorkflowJobData>(
+      RunWorkflowJob.name,
+      {
+        workspaceId,
+        workflowRunId,
+        stepToResume: { stepId: step.id, threadId },
+      },
+      buildRunWorkflowJobOptions(workflowRunId),
+    );
+  }
 
-      return;
+  async submitFormStep({
+    workspaceId,
+    workflowRunId,
+    stepId,
+    response,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    stepId: string;
+    response: Record<string, unknown>;
+  }): Promise<void> {
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    const step = workflowRun.state?.flow?.steps?.find(
+      (candidateStep) => candidateStep.id === stepId,
+    );
+
+    if (!isDefined(step) || !isWorkflowFormAction(step)) {
+      throw new WorkflowVersionStepException(
+        'Step is not a form step of this run',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    const fieldNames = new Set(step.settings.input.map((field) => field.name));
+
+    if (Object.keys(response).some((key) => !fieldNames.has(key))) {
+      throw new WorkflowVersionStepException(
+        'Form response holds values for fields the form does not have',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+      );
     }
 
     const enrichedResponse =
@@ -158,73 +205,49 @@ export class WorkflowRunnerWorkspaceService {
           response,
           recordReadContext: await this.findFormRecordReadContext({
             workspaceId,
-            workflowRunId,
+            workflowRun,
             step,
           }),
         },
       );
 
-    await this.completeAnsweredStep({
-      workspaceId,
-      workflowRunId,
-      stepId: step.id,
-      threadId,
-      result: enrichedResponse,
-    });
-  }
-
-  private async completeAnsweredStep({
-    workspaceId,
-    workflowRunId,
-    stepId,
-    threadId,
-    result,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-    stepId: string;
-    threadId: string;
-    result: object;
-  }): Promise<void> {
     const hasCompletedStep =
       await this.workflowRunWorkspaceService.updateStepInfoIfPending({
         stepId,
-        stepInfo: {
-          status: StepStatus.SUCCESS,
-          result,
-        },
-        expectedThreadId: threadId,
+        stepInfo: { status: StepStatus.SUCCESS, result: enrichedResponse },
         workspaceId,
         workflowRunId,
       });
 
-    if (hasCompletedStep) {
-      await this.resume({
-        workspaceId,
-        workflowRunId,
-        lastExecutedStepId: stepId,
-      });
+    if (!hasCompletedStep) {
+      throw new WorkflowVersionStepException(
+        'Form step is no longer waiting for an answer',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        {
+          userFriendlyMessage: msg`This form no longer waits for an answer.`,
+        },
+      );
     }
+
+    await this.resume({
+      workspaceId,
+      workflowRunId,
+      lastExecutedStepId: stepId,
+    });
   }
 
   private async findFormRecordReadContext({
     workspaceId,
-    workflowRunId,
+    workflowRun,
     step,
   }: {
     workspaceId: string;
-    workflowRunId: string;
+    workflowRun: WorkflowRunWorkspaceEntity;
     step: WorkflowFormAction;
   }): Promise<WorkflowExecutionContext | undefined> {
     if (!step.settings.input.some((field) => field.type === 'RECORD')) {
       return undefined;
     }
-
-    const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
-        workflowRunId,
-        workspaceId,
-      });
 
     const applicationBoundExecutionContext =
       await this.workflowExecutionContextService

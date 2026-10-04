@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
-import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
+import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
@@ -611,20 +611,8 @@ describe('application workflow execution permissions', () => {
     expect(filledStep.body.errors).toBeUndefined();
   }, 120000);
 
-  it('reads the records picked in a form with the permissions of the run', async () => {
+  it('reads the records picked in a form with the permissions of the run, keeping a refused form open', async () => {
     const [formStep] = FORM_WORKFLOW.steps;
-    const startFormRun = async () => {
-      const workflowRunId = await runWorkflow(FORM_WORKFLOW);
-
-      await waitForRun(
-        workflowRunId,
-        ({ state }) =>
-          state?.stepInfos?.[formStep.universalIdentifier]?.status ===
-          'PENDING',
-      );
-
-      return workflowRunId;
-    };
 
     const [opportunity] = await globalThis.testDataSource.query(
       `SELECT id FROM "${SCHEMA}"."opportunity" WHERE "deletedAt" IS NULL LIMIT 1`,
@@ -633,30 +621,35 @@ describe('application workflow execution permissions', () => {
       `SELECT id FROM "${SCHEMA}"."company" WHERE "deletedAt" IS NULL LIMIT 1`,
     );
 
-    const unreadableRunId = await startFormRun();
-    const unreadableSelection = await answerToolCall({
-      toolCall: {
-        workflowRunId: unreadableRunId,
-        stepId: formStep.universalIdentifier,
-      },
+    const formRunId = await runWorkflow(FORM_WORKFLOW);
+
+    await waitForRun(
+      formRunId,
+      ({ state }) =>
+        state?.stepInfos?.[formStep.universalIdentifier]?.status === 'PENDING',
+    );
+
+    const unreadableSelection = await submitFormStep({
+      workflowRunId: formRunId,
+      stepId: formStep.universalIdentifier,
       response: { opportunity: { id: opportunity.id } },
     });
 
     expect(unreadableSelection.body.errors).toBeDefined();
-    expect((await waitForRunToEnd(unreadableRunId)).status).toBe('FAILED');
+    expect(
+      (await findRun(formRunId)).state.stepInfos[formStep.universalIdentifier]
+        .status,
+    ).toBe('PENDING');
 
-    const readableRunId = await startFormRun();
-    const readableSelection = await answerToolCall({
-      toolCall: {
-        workflowRunId: readableRunId,
-        stepId: formStep.universalIdentifier,
-      },
+    const readableSelection = await submitFormStep({
+      workflowRunId: formRunId,
+      stepId: formStep.universalIdentifier,
       response: { company: { id: company.id } },
     });
 
     expect(readableSelection.body.errors).toBeUndefined();
 
-    const workflowRun = await waitForRunToEnd(readableRunId);
+    const workflowRun = await waitForRunToEnd(formRunId);
 
     expect(workflowRun.status).toBe('COMPLETED');
     expect(
