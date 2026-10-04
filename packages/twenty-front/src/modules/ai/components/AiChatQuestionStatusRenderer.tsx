@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import {
   type AskQuestionToolResult,
@@ -12,6 +12,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { getAskedQuestionEntries } from '@/ai/utils/getAskedQuestionEntries';
+import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import {
   StyledAiChatAskStatusDetail,
   StyledAiChatAskStatusMessage,
@@ -59,13 +60,32 @@ export const AiChatQuestionStatusRenderer = ({
   const entries = getAskedQuestionEntries(result);
 
   if (status === 'pending') {
+    if (entries.length !== 1) {
+      return (
+        <AiChatAskStatusRow
+          Icon={IconHelpCircle}
+          message={t`Asking questions...`}
+          isShimmering={isStreaming}
+        />
+      );
+    }
+
+    const pendingQuestion = entries[0].question.question;
+
+    // the shimmer clips text to a transparent fill, which would hide chip labels
     return (
       <AiChatAskStatusRow
         Icon={IconHelpCircle}
         message={
-          entries.length === 1
-            ? entries[0].question.question
-            : t`Asking questions...`
+          isStreaming ? (
+            getChatReferenceSegments(pendingQuestion)
+              .map((segment) =>
+                isString(segment) ? segment : segment.displayName,
+              )
+              .join('')
+          ) : (
+            <TextWithChatReferences text={pendingQuestion} />
+          )
         }
         isShimmering={isStreaming}
       />
