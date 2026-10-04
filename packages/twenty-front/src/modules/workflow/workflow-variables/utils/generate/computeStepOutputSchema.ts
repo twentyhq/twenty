@@ -365,7 +365,10 @@ export const computeStepOutputSchema = ({
         return {};
       }
 
-      return generateWaitForEventOutputSchema(objectMetadataItem);
+      return generateWaitForEventOutputSchema(
+        objectMetadataItem,
+        parsedEventName.action,
+      );
     }
 
     case 'FILTER':

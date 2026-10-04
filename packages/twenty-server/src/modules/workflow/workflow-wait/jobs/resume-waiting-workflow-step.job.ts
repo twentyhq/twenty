@@ -20,19 +20,10 @@ export class ResumeWaitingWorkflowStepJob {
   ) {}
 
   @Process(RESUME_WAITING_WORKFLOW_STEP_JOB_NAME)
-  async handle({
-    workspaceId,
-    waitId,
-    event,
-  }: ResumeWaitingWorkflowStepJobData): Promise<void> {
+  async handle(jobData: ResumeWaitingWorkflowStepJobData): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workflowStepWaitResolverWorkspaceService.resolve({
-          workspaceId,
-          waitId,
-          event,
-        }),
-      buildSystemAuthContext(workspaceId),
+      () => this.workflowStepWaitResolverWorkspaceService.resolve(jobData),
+      buildSystemAuthContext(jobData.workspaceId),
     );
   }
 }

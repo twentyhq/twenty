@@ -396,7 +396,7 @@ export class WorkflowSchemaWorkspaceService {
     eventName: string;
     workspaceId: string;
   }): Promise<OutputSchema> {
-    const [objectType] = eventName.split('.');
+    const [objectType, action] = eventName.split('.');
 
     const objectMetadataInfo =
       await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
@@ -404,12 +404,23 @@ export class WorkflowSchemaWorkspaceService {
         workspaceId,
       );
 
+    const recordLabel =
+      objectMetadataInfo.flatObjectMetadata.labelSingular ?? 'Record';
+
     const record: Node = {
       isLeaf: false,
-      label: objectMetadataInfo.flatObjectMetadata.labelSingular ?? 'Record',
+      label: recordLabel,
       icon: 'IconAlpha',
       type: 'object',
       value: generateFakeObjectRecord({ objectMetadataInfo }),
+    };
+
+    const recordId: Leaf = {
+      isLeaf: true,
+      label: 'Record ID',
+      icon: 'IconId',
+      type: 'string',
+      value: generateFakeValue('string'),
     };
 
     const hasTimedOut: Leaf = {
@@ -420,7 +431,33 @@ export class WorkflowSchemaWorkspaceService {
       value: false,
     };
 
-    return { record, hasTimedOut } satisfies OutputSchema;
+    if (action !== 'updated' && action !== 'upserted') {
+      return { record, recordId, hasTimedOut } satisfies OutputSchema;
+    }
+
+    const before: Node = {
+      isLeaf: false,
+      label: `${recordLabel} Before Update`,
+      icon: 'IconHistory',
+      type: 'object',
+      value: generateFakeObjectRecord({ objectMetadataInfo }),
+    };
+
+    const updatedFields: Leaf = {
+      isLeaf: true,
+      label: 'Updated Fields',
+      icon: 'IconListDetails',
+      type: 'array',
+      value: ['name'],
+    };
+
+    return {
+      record,
+      recordId,
+      before,
+      updatedFields,
+      hasTimedOut,
+    } satisfies OutputSchema;
   }
 
   private computeSendEmailActionOutputSchema(): OutputSchema {

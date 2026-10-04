@@ -432,8 +432,30 @@ describe('computeStepOutputSchema', () => {
         objectMetadataItems: [mockCompanyObjectMetadataItem],
       });
 
-      expect(Object.keys(result ?? {})).toEqual(['record', 'hasTimedOut']);
+      expect(Object.keys(result ?? {})).toEqual([
+        'record',
+        'recordId',
+        'hasTimedOut',
+        'before',
+        'updatedFields',
+      ]);
       expect((result as any).record.label).toBe('Company');
+    });
+
+    it('should not expose update details for events that are not updates', () => {
+      const result = computeStepOutputSchema({
+        step: {
+          type: 'WAIT_FOR_EVENT',
+          settings: { input: { eventName: 'company.created' } },
+        } as any,
+        objectMetadataItems: [mockCompanyObjectMetadataItem],
+      });
+
+      expect(Object.keys(result ?? {})).toEqual([
+        'record',
+        'recordId',
+        'hasTimedOut',
+      ]);
     });
 
     it('should return empty object when the event cannot be parsed', () => {

@@ -64,14 +64,47 @@ export class WorkflowStepWaitWorkspaceService {
       return;
     }
 
+    await this.scheduleResolution({
+      workspaceId,
+      workflowRunId,
+      waitId,
+      delayMs: resumeAt.getTime() - Date.now(),
+    });
+  }
+
+  async scheduleResolution({
+    workspaceId,
+    workflowRunId,
+    waitId,
+    event,
+    attempt,
+    delayMs = 0,
+  }: Omit<ResumeWaitingWorkflowStepJobData, 'workspaceId' | 'waitId'> & {
+    workspaceId: string;
+    workflowRunId: string;
+    waitId: string;
+    delayMs?: number;
+  }): Promise<void> {
     await this.messageQueueService.add<ResumeWaitingWorkflowStepJobData>(
       RESUME_WAITING_WORKFLOW_STEP_JOB_NAME,
-      { workspaceId, waitId },
+      { workspaceId, waitId, event, attempt },
       {
         ...buildRunWorkflowJobOptions(workflowRunId),
-        delay: Math.max(resumeAt.getTime() - Date.now(), 0),
+        delay: Math.max(delayMs, 0),
       },
     );
+  }
+
+  async findWait({
+    workspaceId,
+    waitId,
+  }: {
+    workspaceId: string;
+    waitId: string;
+  }): Promise<WorkflowStepWaitEntity | null> {
+    return this.workflowStepWaitRepository.findOne(workspaceId, {
+      where: { id: waitId },
+    });
   }
 
   async claim({
@@ -98,6 +131,21 @@ export class WorkflowStepWaitWorkspaceService {
   }): Promise<WorkflowStepWaitEntity[]> {
     return this.workflowStepWaitRepository.find(workspaceId, {
       where: { eventName },
+    });
+  }
+
+  async cancelStepWait({
+    workspaceId,
+    workflowRunId,
+    stepId,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    stepId: string;
+  }): Promise<void> {
+    await this.workflowStepWaitRepository.delete(workspaceId, {
+      workflowRunId,
+      stepId,
     });
   }
 

@@ -12,29 +12,37 @@ const WAIT_ID = 'wait-id';
 const EVENT = {
   eventName: 'company.updated',
   recordId: 'company-id',
-  record: { id: 'company-id' },
+  record: { id: 'company-id', secret: 'hidden from the run' },
+};
+
+const READABLE_RECORD = { id: 'company-id', name: 'Acme' };
+
+const STORED_WAIT = {
+  id: WAIT_ID,
+  workflowRunId: WORKFLOW_RUN_ID,
+  stepId: STEP_ID,
+  wait: { type: 'EVENT', eventName: 'company.updated' },
 };
 
 const buildService = ({
-  claimedWait = {
-    id: WAIT_ID,
-    workflowRunId: WORKFLOW_RUN_ID,
-    stepId: STEP_ID,
-    wait: { type: 'EVENT', eventName: 'company.updated' },
-  },
+  storedWait = STORED_WAIT,
   runStatus = WorkflowRunStatus.RUNNING,
   stepStatus = StepStatus.PENDING,
   stepType = 'WAIT_FOR_EVENT',
+  readableRecords = [READABLE_RECORD],
   resolveWait,
 }: {
-  claimedWait?: object | null;
+  storedWait?: object | null;
   runStatus?: WorkflowRunStatus;
   stepStatus?: StepStatus;
   stepType?: string;
+  readableRecords?: object[];
   resolveWait?: jest.Mock;
 } = {}) => {
   const workflowStepWaitWorkspaceService = {
-    claim: jest.fn().mockResolvedValue(claimedWait),
+    findWait: jest.fn().mockResolvedValue(storedWait),
+    claim: jest.fn().mockResolvedValue(storedWait),
+    scheduleResolution: jest.fn(),
   };
   const workflowRunWorkspaceService = {
     getWorkflowRun: jest.fn().mockResolvedValue({
@@ -50,26 +58,42 @@ const buildService = ({
   const workflowActionFactory = {
     get: jest.fn().mockReturnValue({ execute: jest.fn(), resolveWait }),
   };
+  const workflowExecutionContextService = {
+    getExecutionContext: jest.fn().mockResolvedValue({
+      authContext: { type: 'system' },
+      rolePermissionConfig: { unionOf: ['role-id'] },
+    }),
+  };
+  const findRecordsService = {
+    execute: jest.fn().mockResolvedValue({
+      success: true,
+      result: { records: readableRecords },
+    }),
+  };
   const messageQueueService = { add: jest.fn() };
 
   const service = new WorkflowStepWaitResolverWorkspaceService(
     workflowStepWaitWorkspaceService as never,
     workflowRunWorkspaceService as never,
     workflowActionFactory as never,
+    workflowExecutionContextService as never,
+    findRecordsService as never,
     messageQueueService as never,
   );
 
   return {
     service,
+    workflowStepWaitWorkspaceService,
     workflowRunWorkspaceService,
+    findRecordsService,
     messageQueueService,
   };
 };
 
 describe('WorkflowStepWaitResolverWorkspaceService', () => {
-  it('does nothing when another resolution already claimed the wait', async () => {
+  it('does nothing when the wait was already resolved or cancelled', async () => {
     const { service, workflowRunWorkspaceService, messageQueueService } =
-      buildService({ claimedWait: null });
+      buildService({ storedWait: null });
 
     await service.resolve({ workspaceId: WORKSPACE_ID, waitId: WAIT_ID });
 
@@ -77,7 +101,7 @@ describe('WorkflowStepWaitResolverWorkspaceService', () => {
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
-  it('completes the step with the event and resumes the run', async () => {
+  it('completes the step with the record as the run reads it and resumes the run', async () => {
     const { service, workflowRunWorkspaceService, messageQueueService } =
       buildService();
 
@@ -94,7 +118,7 @@ describe('WorkflowStepWaitResolverWorkspaceService', () => {
         stepId: STEP_ID,
         stepInfo: {
           status: StepStatus.SUCCESS,
-          result: { hasTimedOut: false, ...EVENT },
+          result: { hasTimedOut: false, ...EVENT, record: READABLE_RECORD },
         },
       }),
     );
@@ -107,6 +131,77 @@ describe('WorkflowStepWaitResolverWorkspaceService', () => {
       },
       expect.anything(),
     );
+  });
+
+  it('keeps waiting when the run cannot read the record of the event', async () => {
+    const {
+      service,
+      workflowStepWaitWorkspaceService,
+      workflowRunWorkspaceService,
+    } = buildService({ readableRecords: [] });
+
+    await service.resolve({
+      workspaceId: WORKSPACE_ID,
+      waitId: WAIT_ID,
+      event: EVENT,
+    });
+
+    expect(workflowStepWaitWorkspaceService.claim).not.toHaveBeenCalled();
+    expect(
+      workflowRunWorkspaceService.updateStepInfoIfPending,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('reads deleted records when the event is a deletion', async () => {
+    const { service, findRecordsService } = buildService();
+
+    await service.resolve({
+      workspaceId: WORKSPACE_ID,
+      waitId: WAIT_ID,
+      event: { ...EVENT, eventName: 'company.deleted' },
+    });
+
+    expect(findRecordsService.execute).toHaveBeenCalledWith(
+      expect.objectContaining({
+        objectName: 'company',
+        filter: { id: { eq: 'company-id' }, deletedAt: { is: 'NOT_NULL' } },
+      }),
+    );
+  });
+
+  it('puts the resolution off while the step is still pausing', async () => {
+    const { service, workflowStepWaitWorkspaceService } = buildService({
+      stepStatus: StepStatus.RUNNING,
+    });
+
+    await service.resolve({
+      workspaceId: WORKSPACE_ID,
+      waitId: WAIT_ID,
+      event: EVENT,
+    });
+
+    expect(workflowStepWaitWorkspaceService.claim).not.toHaveBeenCalled();
+    expect(
+      workflowStepWaitWorkspaceService.scheduleResolution,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({ waitId: WAIT_ID, event: EVENT, attempt: 1 }),
+    );
+  });
+
+  it('stops putting the resolution off after its last attempt', async () => {
+    const { service, workflowStepWaitWorkspaceService } = buildService({
+      stepStatus: StepStatus.RUNNING,
+    });
+
+    await service.resolve({
+      workspaceId: WORKSPACE_ID,
+      waitId: WAIT_ID,
+      attempt: 10,
+    });
+
+    expect(
+      workflowStepWaitWorkspaceService.scheduleResolution,
+    ).not.toHaveBeenCalled();
   });
 
   it('reports a timeout when an event wait expires', async () => {
@@ -138,7 +233,10 @@ describe('WorkflowStepWaitResolverWorkspaceService', () => {
 
     expect(resolveWait).toHaveBeenCalledWith(
       expect.objectContaining({
-        outcome: { type: 'EVENT_RECEIVED', event: EVENT },
+        outcome: {
+          type: 'EVENT_RECEIVED',
+          event: { ...EVENT, record: READABLE_RECORD },
+        },
       }),
     );
     expect(
@@ -155,13 +253,13 @@ describe('WorkflowStepWaitResolverWorkspaceService', () => {
     );
   });
 
-  it('leaves a run that is no longer running alone', async () => {
-    const { service, messageQueueService } = buildService({
-      runStatus: WorkflowRunStatus.STOPPED,
-    });
+  it('removes the wait of a run that is no longer running without resuming it', async () => {
+    const { service, workflowStepWaitWorkspaceService, messageQueueService } =
+      buildService({ runStatus: WorkflowRunStatus.STOPPED });
 
     await service.resolve({ workspaceId: WORKSPACE_ID, waitId: WAIT_ID });
 
+    expect(workflowStepWaitWorkspaceService.claim).toHaveBeenCalled();
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 

@@ -533,13 +533,7 @@ export class WorkflowExecutorWorkspaceService {
       };
     }
 
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-      stepId,
-      stepInfo,
-      workflowRunId,
-      workspaceId,
-    });
-
+    // armed before the step reads as pending, so an event in between is put off rather than lost
     if (isDefined(wait)) {
       await this.workflowStepWaitWorkspaceService.arm({
         workspaceId,
@@ -549,10 +543,50 @@ export class WorkflowExecutorWorkspaceService {
       });
     }
 
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+      stepId,
+      stepInfo,
+      workflowRunId,
+      workspaceId,
+    });
+
+    if (isDefined(wait)) {
+      await this.cancelWaitIfRunEnded({ stepId, workflowRunId, workspaceId });
+    }
+
     return {
       shouldProcessNextSteps:
         isSuccess || isStopped || isSkipped || isFailedSafely,
     };
+  }
+
+  // a run that ended while its step was arming cancelled its waits before this one existed
+  private async cancelWaitIfRunEnded({
+    stepId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const { status } =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (
+      status === WorkflowRunStatus.COMPLETED ||
+      status === WorkflowRunStatus.FAILED ||
+      status === WorkflowRunStatus.STOPPED
+    ) {
+      await this.workflowStepWaitWorkspaceService.cancelStepWait({
+        workspaceId,
+        workflowRunId,
+        stepId,
+      });
+    }
   }
 
   private async executeStep({

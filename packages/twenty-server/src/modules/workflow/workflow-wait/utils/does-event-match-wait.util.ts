@@ -18,19 +18,15 @@ export const doesEventMatchWait = ({
     return false;
   }
 
-  const eventUpdatedFields =
-    'updatedFields' in event.properties
-      ? event.properties.updatedFields
-      : undefined;
-
-  if (
-    isNonEmptyArray(wait.updatedFields) &&
-    isNonEmptyArray(eventUpdatedFields)
-  ) {
-    return wait.updatedFields.some((field) =>
-      eventUpdatedFields.includes(field),
-    );
+  if (!isNonEmptyArray(wait.updatedFields)) {
+    return true;
   }
 
-  return true;
+  // like database event triggers, a field filter only matches events that report which fields changed
+  const eventUpdatedFields =
+    'updatedFields' in event.properties
+      ? (event.properties.updatedFields ?? [])
+      : [];
+
+  return wait.updatedFields.some((field) => eventUpdatedFields.includes(field));
 };

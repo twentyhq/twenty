@@ -7,7 +7,6 @@ import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/wo
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { v4 } from 'uuid';
 
-import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -18,7 +17,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowStepWaitDatabaseEventListener } from 'src/modules/workflow/workflow-wait/listeners/workflow-step-wait-database-event.listener';
 import { type WorkflowStepWaitResolverWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait-resolver.workspace-service';
-import { type ResumeWaitingWorkflowStepJobData } from 'src/modules/workflow/workflow-wait/types/resume-waiting-workflow-step-job-data.type';
+import { type WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -324,35 +323,34 @@ describe('Wait for event workflow (e2e)', () => {
       getAppProviderByClassName<WorkflowStepWaitDatabaseEventListener>(
         'WorkflowStepWaitDatabaseEventListener',
       );
-    const listenerQueue = (
-      listener as unknown as { messageQueueService: MessageQueueService }
-    ).messageQueueService;
-    const addSpy = jest
-      .spyOn(listenerQueue, 'add')
+    const scheduleSpy = jest
+      .spyOn(
+        getAppProviderByClassName<WorkflowStepWaitWorkspaceService>(
+          'WorkflowStepWaitWorkspaceService',
+        ),
+        'scheduleResolution',
+      )
       .mockResolvedValue(undefined);
 
     await listener.handleObjectRecordUpdateEvent(
       (await buildCompanyUpdatedBatch(otherCompanyId!)) as never,
     );
 
-    expect(addSpy).not.toHaveBeenCalled();
+    expect(scheduleSpy).not.toHaveBeenCalled();
 
     await listener.handleObjectRecordUpdateEvent(
       (await buildCompanyUpdatedBatch(watchedCompanyId!)) as never,
     );
 
-    expect(addSpy).toHaveBeenCalledTimes(1);
+    expect(scheduleSpy).toHaveBeenCalledTimes(1);
 
-    const [, jobData] = addSpy.mock.calls[0] as [
-      string,
-      ResumeWaitingWorkflowStepJobData,
-    ];
+    const [{ waitId, event }] = scheduleSpy.mock.calls[0];
 
-    addSpy.mockRestore();
+    scheduleSpy.mockRestore();
 
     await getAppProviderByClassName<WorkflowStepWaitResolverWorkspaceService>(
       'WorkflowStepWaitResolverWorkspaceService',
-    ).resolve(jobData);
+    ).resolve({ workspaceId: SEED_APPLE_WORKSPACE_ID, waitId, event });
 
     await (
       await global.workflowTestServices.runJob()
@@ -371,7 +369,7 @@ describe('Wait for event workflow (e2e)', () => {
         hasTimedOut: false,
         eventName: 'company.updated',
         recordId: watchedCompanyId,
-        record: { name: 'After' },
+        record: { id: watchedCompanyId, name: 'Wait For Event Watched Co' },
         updatedFields: ['name'],
       },
     });

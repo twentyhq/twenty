@@ -41,6 +41,17 @@ export class WaitForEventWorkflowAction implements WorkflowAction {
       context,
     ) as WorkflowWaitForEventActionInput;
 
+    // a record set in the step that resolves to nothing would otherwise widen the wait to every record
+    if (
+      isNonEmptyString(step.settings.input.recordId) &&
+      !isNonEmptyString(recordId)
+    ) {
+      throw new WorkflowStepExecutorException(
+        'The record to wait for resolved to no record',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
     if (!WAIT_FOR_EVENT_NAME_PATTERN.test(eventName)) {
       throw new WorkflowStepExecutorException(
         `Invalid event to wait for: "${eventName}"`,

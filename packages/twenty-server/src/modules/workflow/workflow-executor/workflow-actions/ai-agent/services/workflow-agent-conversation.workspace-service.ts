@@ -27,6 +27,8 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
+const RECENT_MESSAGES_TO_SEARCH_FOR_WAIT = 50;
+
 export type RecordedConversation = {
   threadId: string;
   isAwaitingAnswer: boolean;
@@ -156,19 +158,22 @@ export class WorkflowAgentConversationWorkspaceService {
     threadId: string;
     toolOutput: Record<string, unknown>;
   }): Promise<void> {
-    const [lastMessage] = await this.messageRepository.find(workspaceId, {
+    // messages can follow the call while it waits, so the latest one may not carry it
+    const recentMessages = await this.messageRepository.find(workspaceId, {
       where: { threadId },
       order: { createdAt: 'DESC' },
-      take: 1,
+      take: RECENT_MESSAGES_TO_SEARCH_FOR_WAIT,
       relations: ['parts'],
     });
 
-    const waitPart = lastMessage?.parts?.find(
-      (part) =>
-        isDefined(part.toolName) &&
-        WORKFLOW_AGENT_WAIT_TOOL_NAMES.includes(part.toolName) &&
-        isAwaitingPausingToolOutput(part.toolOutput),
-    );
+    const waitPart = recentMessages
+      .flatMap((message) => message.parts ?? [])
+      .find(
+        (part) =>
+          isDefined(part.toolName) &&
+          WORKFLOW_AGENT_WAIT_TOOL_NAMES.includes(part.toolName) &&
+          isAwaitingPausingToolOutput(part.toolOutput),
+      );
 
     if (!isDefined(waitPart)) {
       throw new AiException(

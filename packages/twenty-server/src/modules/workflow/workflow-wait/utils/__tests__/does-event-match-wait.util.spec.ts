@@ -66,6 +66,19 @@ describe('doesEventMatchWait', () => {
     ).toBe(false);
   });
 
+  it('does not match a field-filtered wait on an event that reports no changed fields', () => {
+    expect(
+      doesEventMatchWait({
+        wait: {
+          type: 'EVENT',
+          eventName: 'company.updated',
+          updatedFields: ['stage'],
+        },
+        event: buildUpdateEvent({ recordId: 'a', updatedFields: [] }),
+      }),
+    ).toBe(false);
+  });
+
   it('never matches a wait that is not on an event', () => {
     expect(
       doesEventMatchWait({

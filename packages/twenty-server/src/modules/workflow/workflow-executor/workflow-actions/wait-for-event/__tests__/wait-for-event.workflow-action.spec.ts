@@ -68,6 +68,24 @@ describe('WaitForEventWorkflowAction', () => {
     });
   });
 
+  it('refuses to widen the wait when its record resolves to nothing', async () => {
+    await expect(
+      executeWithInput({
+        eventName: 'company.updated',
+        recordId: '{{trigger.missing.id}}',
+      }),
+    ).rejects.toThrow('The record to wait for resolved to no record');
+  });
+
+  it('refuses a timeout it cannot read instead of dropping the deadline', async () => {
+    await expect(
+      executeWithInput({
+        eventName: 'company.updated',
+        timeout: { hours: 'soon' },
+      }),
+    ).rejects.toThrow('Wait timeout must be made of non-negative numbers');
+  });
+
   it('refuses an event it could never match', async () => {
     await expect(executeWithInput({ eventName: 'company' })).rejects.toThrow(
       'Invalid event to wait for',
