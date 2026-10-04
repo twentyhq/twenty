@@ -209,10 +209,14 @@ export class WorkflowRunWorkspaceService {
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
 
-    await this.workflowStepWaitWorkspaceService.cancelRunWaits({
-      workspaceId,
-      workflowRunId,
-    });
+    // the run is already over and its waits find nothing to resume, so a failure must not stop the cleanup below
+    await this.workflowStepWaitWorkspaceService
+      .cancelRunWaits({ workspaceId, workflowRunId })
+      .catch((error: unknown) => {
+        this.logger.error(
+          `Failed to cancel the waits of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      });
 
     const stepThreadIds = Object.values(
       workflowRunToUpdate.state?.stepInfos ?? {},

@@ -86,6 +86,21 @@ describe('WaitForEventWorkflowAction', () => {
     ).rejects.toThrow('Wait timeout must be made of non-negative numbers');
   });
 
+  it('refuses a timeout too long to schedule', async () => {
+    await expect(
+      executeWithInput({
+        eventName: 'company.updated',
+        timeout: { days: 100000000 },
+      }),
+    ).rejects.toThrow('Wait timeout cannot exceed one year');
+  });
+
+  it('refuses an event on an object name that cannot exist', async () => {
+    await expect(
+      executeWithInput({ eventName: 'my_object.created' }),
+    ).rejects.toThrow('Invalid event to wait for');
+  });
+
   it('refuses an event it could never match', async () => {
     await expect(executeWithInput({ eventName: 'company' })).rejects.toThrow(
       'Invalid event to wait for',

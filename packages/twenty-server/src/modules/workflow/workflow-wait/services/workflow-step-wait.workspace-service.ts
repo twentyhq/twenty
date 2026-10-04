@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowStepWait } from 'twenty-shared/workflow';
+import { v4 } from 'uuid';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -45,20 +46,22 @@ export class WorkflowStepWaitWorkspaceService {
           ? new Date(wait.expiresAt)
           : null;
 
-    // A step waiting again, in a loop or a retry, replaces its previous wait so stale jobs find nothing to claim
-    await this.workflowStepWaitRepository.delete(workspaceId, {
-      workflowRunId,
-      stepId,
-    });
+    // A step waiting again, in a loop or a retry, replaces its previous wait in one statement.
+    // The fresh id leaves stale jobs of the previous wait nothing to claim
+    const waitId = v4();
 
-    const { id: waitId } =
-      await this.workflowStepWaitRepository.insertAndReturnOne(workspaceId, {
+    await this.workflowStepWaitRepository.upsert(
+      workspaceId,
+      {
+        id: waitId,
         workflowRunId,
         stepId,
         wait,
         eventName: wait.type === 'EVENT' ? wait.eventName : null,
         resumeAt,
-      });
+      },
+      ['workflowRunId', 'stepId'],
+    );
 
     if (!isDefined(resumeAt)) {
       return;

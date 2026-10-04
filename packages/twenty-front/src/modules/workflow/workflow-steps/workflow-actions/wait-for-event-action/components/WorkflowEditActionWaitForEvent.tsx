@@ -12,6 +12,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useLingui } from '@lingui/react/macro';
+import { isNumber } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -67,7 +68,7 @@ export const WorkflowEditActionWaitForEvent = ({
   );
 
   const updateInput = (input: Partial<WaitForEventInput>) => {
-    if (actionOptions.readonly === true) {
+    if (actionOptions.readonly) {
       return;
     }
 
@@ -102,19 +103,24 @@ export const WorkflowEditActionWaitForEvent = ({
   const handleUpdatedFieldsChange = (
     fields: FieldMultiSelectValue | string,
   ) => {
-    updateInput({
-      updatedFields: isDefined(fields)
-        ? Array.isArray(fields)
-          ? fields
-          : [fields]
-        : null,
-    });
+    if (!isDefined(fields)) {
+      updateInput({ updatedFields: null });
+
+      return;
+    }
+
+    updateInput({ updatedFields: Array.isArray(fields) ? fields : [fields] });
   };
 
   const handleTimeoutDraftChange = (
     unit: keyof WaitForEventTimeout,
     value: number | string | null,
   ) => {
+    // the step only accepts non-negative durations, so a negative one is not kept
+    if (isNumber(value) && value < 0) {
+      return;
+    }
+
     setTimeoutDraft((previousTimeout) => ({
       ...previousTimeout,
       [unit]: value ?? undefined,
@@ -132,7 +138,7 @@ export const WorkflowEditActionWaitForEvent = ({
           dropdownId="workflow-edit-action-wait-for-event-object"
           label={t`Record Type`}
           fullWidth
-          disabled={actionOptions.readonly === true}
+          disabled={actionOptions.readonly}
           value={objectType}
           emptyOption={{ label: t`Select an option`, value: '' }}
           options={objectOptions}
@@ -145,7 +151,7 @@ export const WorkflowEditActionWaitForEvent = ({
           dropdownId="workflow-edit-action-wait-for-event-event"
           label={t`Event`}
           fullWidth
-          disabled={actionOptions.readonly === true}
+          disabled={actionOptions.readonly}
           value={selectedEvent}
           options={eventOptions}
           onChange={handleEventChange}
@@ -158,12 +164,13 @@ export const WorkflowEditActionWaitForEvent = ({
             onChange={(recordId) => updateInput({ recordId })}
             objectNameSingulars={[selectedObjectMetadataItem.nameSingular]}
             defaultValue={action.settings.input.recordId ?? undefined}
-            disabled={actionOptions.readonly === true}
+            disabled={actionOptions.readonly}
             VariablePicker={WorkflowVariablePicker}
           />
         )}
         {isDefined(selectedObjectMetadataItem) && event === 'updated' && (
           <WorkflowFieldsMultiSelect
+            key={objectType}
             label={t`Fields (Optional)`}
             placeholder={t`Select specific fields to wait for`}
             objectMetadataItem={selectedObjectMetadataItem}

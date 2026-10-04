@@ -254,12 +254,19 @@ describe('WorkflowStepWaitResolverWorkspaceService', () => {
   });
 
   it('removes the wait of a run that is no longer running without resuming it', async () => {
-    const { service, workflowStepWaitWorkspaceService, messageQueueService } =
-      buildService({ runStatus: WorkflowRunStatus.STOPPED });
+    const {
+      service,
+      workflowStepWaitWorkspaceService,
+      workflowRunWorkspaceService,
+      messageQueueService,
+    } = buildService({ runStatus: WorkflowRunStatus.STOPPED });
 
     await service.resolve({ workspaceId: WORKSPACE_ID, waitId: WAIT_ID });
 
     expect(workflowStepWaitWorkspaceService.claim).toHaveBeenCalled();
+    expect(
+      workflowRunWorkspaceService.updateStepInfoIfPending,
+    ).not.toHaveBeenCalled();
     expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 

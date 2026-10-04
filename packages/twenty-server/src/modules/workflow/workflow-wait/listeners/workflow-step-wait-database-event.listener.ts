@@ -75,7 +75,17 @@ export class WorkflowStepWaitDatabaseEventListener {
       recordAccessPolicyService: this.recordAccessPolicyService,
     });
 
+    const now = Date.now();
+
     for (const eventWait of eventWaits) {
+      // an expired wait resolves as a timeout through its own job
+      if (
+        isDefined(eventWait.resumeAt) &&
+        eventWait.resumeAt.getTime() <= now
+      ) {
+        continue;
+      }
+
       const matchingEvent = payload.events.find(
         (event) =>
           admittedRecordIds.has(event.recordId) &&

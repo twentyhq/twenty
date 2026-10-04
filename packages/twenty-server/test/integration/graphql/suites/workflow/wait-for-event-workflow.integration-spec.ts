@@ -23,6 +23,9 @@ const client = request(`http://localhost:${APP_PORT}`);
 
 const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
+const MIRROR_POLL_ATTEMPTS = 20;
+const MIRROR_POLL_INTERVAL_MS = 250;
+
 const graphql = (query: string, variables?: object) =>
   client
     .post('/graphql')
@@ -73,6 +76,38 @@ describe('Wait for event workflow (e2e)', () => {
     expect(response.body.errors).toBeUndefined();
 
     return response.body.data.workflowVersion.steps;
+  };
+
+  // the core mirror of a workflow and its version is linked asynchronously
+  const waitForCoreWorkflowMirror = async (): Promise<{
+    trigger: unknown;
+    coreWorkflowVersionId: string;
+    coreWorkflowId: string;
+  }> => {
+    for (let attempt = 0; attempt < MIRROR_POLL_ATTEMPTS; attempt++) {
+      const [version] = await global.testDataSource.query(
+        `SELECT trigger, "coreWorkflowVersionId" FROM "${schema}"."workflowVersion" WHERE id = $1`,
+        [createdWorkflowVersionId],
+      );
+      const [workflow] = await global.testDataSource.query(
+        `SELECT "coreWorkflowId" FROM "${schema}".workflow WHERE id = $1`,
+        [createdWorkflowId],
+      );
+
+      if (version?.coreWorkflowVersionId && workflow?.coreWorkflowId) {
+        return {
+          trigger: version.trigger,
+          coreWorkflowVersionId: version.coreWorkflowVersionId,
+          coreWorkflowId: workflow.coreWorkflowId,
+        };
+      }
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, MIRROR_POLL_INTERVAL_MS),
+      );
+    }
+
+    throw new Error('The workflow core mirror was never linked');
   };
 
   const createCompany = async (name: string): Promise<string> => {
@@ -249,15 +284,8 @@ describe('Wait for event workflow (e2e)', () => {
 
   it('pauses on the event and resumes with the record once it happens', async () => {
     const steps = await getSteps();
-    const [{ trigger, coreWorkflowVersionId }] =
-      await global.testDataSource.query(
-        `SELECT trigger, "coreWorkflowVersionId" FROM "${schema}"."workflowVersion" WHERE id = $1`,
-        [createdWorkflowVersionId],
-      );
-    const [{ coreWorkflowId }] = await global.testDataSource.query(
-      `SELECT "coreWorkflowId" FROM "${schema}".workflow WHERE id = $1`,
-      [createdWorkflowId],
-    );
+    const { trigger, coreWorkflowVersionId, coreWorkflowId } =
+      await waitForCoreWorkflowMirror();
 
     createdWorkflowRunId = v4();
 
@@ -381,4 +409,38 @@ describe('Wait for event workflow (e2e)', () => {
 
     expect(remainingWaits).toEqual([]);
   }, 60000);
+
+  it('replaces the wait of a step that waits again with one of a new id', async () => {
+    const workflowStepWaitWorkspaceService =
+      getAppProviderByClassName<WorkflowStepWaitWorkspaceService>(
+        'WorkflowStepWaitWorkspaceService',
+      );
+    const workflowRunId = v4();
+    const arm = () =>
+      workflowStepWaitWorkspaceService.arm({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workflowRunId,
+        stepId: 'step-waiting-again',
+        wait: { type: 'EVENT', eventName: 'company.updated' },
+      });
+    const findWaits = (): Promise<{ id: string }[]> =>
+      global.testDataSource.query(
+        `SELECT id FROM core."workflowStepWait" WHERE "workflowRunId" = $1`,
+        [workflowRunId],
+      );
+
+    await arm();
+    const [firstWait] = await findWaits();
+
+    await arm();
+    const waits = await findWaits();
+
+    expect(waits).toHaveLength(1);
+    expect(waits[0].id).not.toBe(firstWait.id);
+
+    await workflowStepWaitWorkspaceService.cancelRunWaits({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workflowRunId,
+    });
+  });
 });

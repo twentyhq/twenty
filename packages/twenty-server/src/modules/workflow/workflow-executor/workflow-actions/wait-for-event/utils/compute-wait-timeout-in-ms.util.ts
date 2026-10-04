@@ -8,6 +8,8 @@ import { type WorkflowWaitForEventActionInput } from 'src/modules/workflow/workf
 
 const MS_PER_MINUTE = 60 * 1000;
 
+const MAX_TIMEOUT_IN_MS = 365 * 24 * 60 * MS_PER_MINUTE;
+
 // Variables resolve timeout parts to strings, and an empty part means none of that unit
 export const computeWaitTimeoutInMs = (
   timeout: WorkflowWaitForEventActionInput['timeout'],
@@ -31,6 +33,13 @@ export const computeWaitTimeoutInMs = (
   }
 
   const timeoutInMs = ((days * 24 + hours) * 60 + minutes) * MS_PER_MINUTE;
+
+  if (timeoutInMs > MAX_TIMEOUT_IN_MS) {
+    throw new WorkflowStepExecutorException(
+      'Wait timeout cannot exceed one year',
+      WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+    );
+  }
 
   return timeoutInMs > 0 ? timeoutInMs : null;
 };

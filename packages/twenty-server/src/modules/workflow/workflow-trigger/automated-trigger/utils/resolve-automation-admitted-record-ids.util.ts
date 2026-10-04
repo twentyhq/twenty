@@ -9,7 +9,6 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
-// The records of an event batch that automations may react to
 export const resolveAutomationAdmittedRecordIds = async ({
   payload,
   workspaceCacheService,

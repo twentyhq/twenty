@@ -1,4 +1,5 @@
 import { computeAiAgentOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-ai-agent-output-schema.util';
+import { WAIT_FOR_EVENT_NAME_PATTERN } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/constants/wait-for-event-name-pattern.constant';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isString } from '@sniptt/guards';
@@ -122,7 +123,7 @@ export class WorkflowSchemaWorkspaceService {
         });
       case WorkflowActionType.WAIT_FOR_EVENT:
         return this.computeWaitForEventOutputSchema({
-          eventName: step.settings.input.eventName,
+          eventName: step.settings.input?.eventName,
           workspaceId,
         });
       case WorkflowActionType.ITERATOR: {
@@ -393,9 +394,14 @@ export class WorkflowSchemaWorkspaceService {
     eventName,
     workspaceId,
   }: {
-    eventName: string;
+    eventName: string | undefined;
     workspaceId: string;
   }): Promise<OutputSchema> {
+    // a step being configured has no output to describe yet, like on the front
+    if (!isDefined(eventName) || !WAIT_FOR_EVENT_NAME_PATTERN.test(eventName)) {
+      return {};
+    }
+
     const [objectType, action] = eventName.split('.');
 
     const objectMetadataInfo =
