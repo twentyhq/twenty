@@ -116,6 +116,16 @@ const createThread = async (): Promise<string> => {
   return threadId;
 };
 
+type ManualShare = {
+  threadId: string;
+  workspaceMemberId: string;
+  accessLevel: RecordShareAccessLevel;
+};
+
+// Destroying a chat keeps its grants, so every grant a test enables is
+// disabled again after it
+const enabledManualShares: ManualShare[] = [];
+
 const setShareWithMember = async ({
   threadId,
   workspaceMemberId,
@@ -127,6 +137,10 @@ const setShareWithMember = async ({
   accessLevel: RecordShareAccessLevel;
   enabled: boolean;
 }) => {
+  if (enabled) {
+    enabledManualShares.push({ threadId, workspaceMemberId, accessLevel });
+  }
+
   const { flatObjectMetadataMaps } =
     await getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
@@ -169,6 +183,10 @@ describe('Chat thread participant state through the authenticated API', () => {
   };
 
   afterEach(async () => {
+    for (const manualShare of enabledManualShares.splice(0)) {
+      await setShareWithMember({ ...manualShare, enabled: false });
+    }
+    // Mentions share chats with Jony from the code under test
     for (const threadId of createdThreadIds.splice(0)) {
       await setShareWithJony(threadId, false);
       await destroyAgentChatThread({ threadId });

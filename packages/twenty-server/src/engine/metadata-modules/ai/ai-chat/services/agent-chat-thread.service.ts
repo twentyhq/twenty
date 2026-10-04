@@ -130,7 +130,7 @@ export class AgentChatThreadService {
              "writerWorkspaceMemberIds" = COALESCE("writerWorkspaceMemberIds", '{}') || ARRAY(
                SELECT member_id FROM unnest($2::text[]) AS member_id
                WHERE NOT member_id = ANY(COALESCE("writerWorkspaceMemberIds", '{}'))
-                 AND member_id <> "workspaceMemberId"::text
+                 AND member_id IS DISTINCT FROM "workspaceMemberId"::text
              )
            WHERE id = $1
            RETURNING id

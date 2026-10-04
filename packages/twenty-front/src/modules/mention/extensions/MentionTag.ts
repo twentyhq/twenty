@@ -44,7 +44,6 @@ export const MentionTag = Node.create({
       default: false,
       rendered: false,
     },
-    // Marks a mentioned member who joins the conversation when the message is sent
     shouldAddAsParticipant: {
       default: false,
       rendered: false,
