@@ -187,11 +187,13 @@ describe('Role deletion should succeed', () => {
           workspaceId: SEED_APPLE_WORKSPACE_ID,
         }),
       ).rejects.toBe(cacheError);
+      expect(cacheRefreshSpy).toHaveBeenCalledTimes(1);
       expect(cacheRefreshSpy).toHaveBeenCalledWith(SEED_APPLE_WORKSPACE_ID, [
         'flatRoleTargetMaps',
         'flatRoleMaps',
         'userWorkspaceRoleMap',
       ]);
+      expect(shareSyncSpy).toHaveBeenCalledTimes(1);
       expect(shareSyncSpy).toHaveBeenCalledWith({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         coreWorkflowIds: [],
