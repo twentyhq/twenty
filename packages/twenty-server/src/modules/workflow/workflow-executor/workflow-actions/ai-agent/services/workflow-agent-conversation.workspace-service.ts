@@ -1,15 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  type ExtendedUIMessagePart,
-  REQUEST_FORM_TOOL_NAME,
-  type RequestFormToolInput,
-} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { buildRequestFormPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/request-form.pausing-tool';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -92,50 +86,6 @@ export class WorkflowAgentConversationWorkspaceService {
     });
 
     return { threadId, isAwaitingAnswer };
-  }
-
-  // A form step is answered like any call that waits on a person
-  async recordFormRequest({
-    workspaceId,
-    workflowRunId,
-    stepId,
-    title,
-    fields,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-    stepId: string;
-    title: string;
-    fields: RequestFormToolInput['fields'];
-  }): Promise<void> {
-    const { threadId, turnId } = await this.openConversation({
-      workspaceId,
-      workflowRunId,
-      stepId,
-      title,
-      agentId: null,
-    });
-
-    await this.conversationWriterService.insertMessage({
-      workspaceId,
-      threadId,
-      turnId,
-      role: AgentMessageRole.ASSISTANT,
-      agentId: null,
-      senderUserWorkspaceId: null,
-      isAwaitingAnswer: true,
-      parts: [
-        {
-          type: `tool-${REQUEST_FORM_TOOL_NAME}`,
-          toolCallId: stepId,
-          state: 'output-available',
-          input: { fields },
-          output: buildRequestFormPendingOutput(),
-        } as ExtendedUIMessagePart,
-      ],
-    });
-
-    await this.recordWaitingActivity({ workspaceId, threadId, text: title });
   }
 
   // The answer is already the last message, so only the agent's reply is added

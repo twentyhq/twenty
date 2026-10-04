@@ -190,3 +190,24 @@ export const EmptyForm: Story = {
     expect(addFieldButton).toBeVisible();
   },
 };
+
+export const WithInstructions: Story = {
+  args: {
+    action: {
+      ...DEFAULT_ACTION,
+      settings: {
+        ...DEFAULT_ACTION.settings,
+        instructions:
+          'Review the deal with {{trigger.properties.after.name}} before the renewal call.',
+      },
+    },
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Instructions')).toBeVisible();
+  },
+};

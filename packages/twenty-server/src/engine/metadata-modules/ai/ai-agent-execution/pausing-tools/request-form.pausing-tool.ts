@@ -17,7 +17,7 @@ const requestFormFieldSchema = workflowFormFieldSchema.pick({
   settings: true,
 });
 
-// form steps issue this call with every field, so recorded calls skip the agent's limits
+// form steps used to issue this call with every field, so recorded calls skip the agent's limits
 const requestFormCallSchema = z.object({
   fields: z.array(requestFormFieldSchema),
 });
@@ -39,7 +39,6 @@ export const requestFormInputSchema = z.object({
     ),
 });
 
-// A workflow form step writes the same output when it issues this call.
 export const buildRequestFormPendingOutput = (): {
   success: true;
   message: string;
