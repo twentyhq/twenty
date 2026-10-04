@@ -31,10 +31,6 @@ const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const PARTICIPANT_FIELDS =
   'id threadId lastReadAt archivedAt snoozedUntil updatedAt';
 
-const MY_PARTICIPANTS = parse(
-  `query MyParticipants { myAgentChatThreadParticipants { ${PARTICIPANT_FIELDS} } }`,
-);
-
 const buildThreadMutation = (name: string) =>
   parse(
     `mutation Run($threadId: UUID!) { ${name}(threadId: $threadId) { ${PARTICIPANT_FIELDS} } }`,
@@ -80,20 +76,42 @@ const runThreadMutation = (
     token,
   );
 
-const findMyParticipant = async (
+// Read the way the inbox does: rows come with the threads the caller can read
+const findThreadParticipants = async (
   threadId: string,
-  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
-): Promise<Participant | undefined> => {
-  const response = await makeMetadataApiRequest(
-    { query: MY_PARTICIPANTS },
+  token: string,
+): Promise<(Participant & { workspaceMemberId: string })[] | undefined> => {
+  const response = await makeGraphqlApiRequest(
+    findManyOperationFactory({
+      objectMetadataSingularName: 'agentChatThread',
+      objectMetadataPluralName: 'agentChatThreads',
+      gqlFields: `id participants { edges { node { ${PARTICIPANT_FIELDS} workspaceMemberId } } }`,
+      filter: { id: { eq: threadId } },
+    }),
     token,
   );
 
   expect(response.body.errors).toBeUndefined();
 
-  return (
-    response.body.data.myAgentChatThreadParticipants as Participant[]
-  ).find((participant) => participant.threadId === threadId);
+  const [thread] = response.body.data.agentChatThreads.edges;
+
+  return thread?.node.participants.edges.map(
+    ({ node }: { node: Participant & { workspaceMemberId: string } }) => node,
+  );
+};
+
+const findMyParticipant = async (
+  threadId: string,
+  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+): Promise<Participant | undefined> => {
+  const workspaceMemberId =
+    token === APPLE_JONY_MEMBER_ACCESS_TOKEN
+      ? WORKSPACE_MEMBER_DATA_SEED_IDS.JONY
+      : WORKSPACE_MEMBER_DATA_SEED_IDS.JANE;
+
+  return (await findThreadParticipants(threadId, token))?.find(
+    (participant) => participant.workspaceMemberId === workspaceMemberId,
+  );
 };
 
 const readThreadActivity = async (threadId: string) => {
@@ -505,33 +523,6 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
   });
 
-  it('reads a snooze whose time passed as ended before its end has run', async () => {
-    const threadId = await createTestThread();
-
-    await makeMetadataApiRequest({
-      query: SNOOZE,
-      variables: {
-        threadId,
-        snoozedUntil: buildFutureSnoozedUntil(),
-      },
-    });
-
-    await global.testDataSource.query(
-      `UPDATE ${SCHEMA}."agentChatThreadParticipant" SET "snoozedUntil" = $3
-       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
-      [
-        threadId,
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-        new Date(Date.now() - 1000),
-      ],
-    );
-
-    expect(await findMyParticipant(threadId)).toMatchObject({
-      archivedAt: null,
-      snoozedUntil: expect.any(String),
-    });
-  });
-
   it('waits for the database clock before ending a snooze', async () => {
     const threadId = await createTestThread();
     const snoozedUntil = buildFutureSnoozedUntil();
@@ -679,10 +670,6 @@ describe('Chat thread participant state through the authenticated API', () => {
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    const response = await makeMetadataApiRequest(
-      { query: MY_PARTICIPANTS },
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
     const rows: { workspaceMemberId: string }[] =
       await global.testDataSource.query(
         `SELECT "workspaceMemberId" FROM ${SCHEMA}."agentChatThreadParticipant" WHERE "threadId" = $1`,
@@ -691,10 +678,12 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(rows).toHaveLength(2);
     expect(
-      (
-        response.body.data.myAgentChatThreadParticipants as Participant[]
-      ).filter((participant) => participant.threadId === threadId),
-    ).toHaveLength(1);
+      await findThreadParticipants(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toEqual([
+      expect.objectContaining({
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
+    ]);
   });
 
   it('stops listing a thread once the member loses access to it', async () => {
