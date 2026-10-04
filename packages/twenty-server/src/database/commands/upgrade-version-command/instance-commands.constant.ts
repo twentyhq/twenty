@@ -220,6 +220,7 @@ import { AddChatWidgetTypeFastInstanceCommand } from 'src/database/commands/upgr
 import { DropLegacyCampaignSendingCoreTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790842027068-drop-legacy-campaign-sending-core-tables';
 import { AddSharingReachToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790876699146-add-sharing-reach-to-object-metadata';
 import { AddDiscoverableReadabilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791034488868-add-discoverable-readability';
+import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791094130961-drop-core-agent-history-tables';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -442,4 +443,5 @@ export const INSTANCE_COMMANDS = [
   AddApplicationWorkflowSideEffectsFastInstanceCommand,
   AddSharingReachToObjectMetadataFastInstanceCommand,
   AddDiscoverableReadabilityFastInstanceCommand,
+  DropCoreAgentHistoryTablesFastInstanceCommand,
 ];

@@ -15,7 +15,7 @@ export const useOpenRecordContextMenu = () => {
     isRecordSelectedComponentFamilyState,
   );
 
-  const { isCommandMenuAvailable, openCommandMenuDropdownAtCursor } =
+  const { openCommandMenuDropdownAtCursor } =
     useOpenCommandMenuDropdownAtCursor();
 
   const openRecordContextMenu = useCallback(
@@ -26,22 +26,15 @@ export const useOpenRecordContextMenu = () => {
       event: CommandMenuDropdownTriggerEvent;
       recordId: string;
     }) => {
-      if (!isCommandMenuAvailable) {
+      // Opening the menu can close the side panel, which resets the selection
+      // in layout customization mode
+      if (!openCommandMenuDropdownAtCursor(event)) {
         return;
       }
 
-      // Opening the menu can close the side panel, which resets the selection
-      // in layout customization mode
-      openCommandMenuDropdownAtCursor(event);
-
       store.set(isRecordSelectedFamilyState(recordId), true);
     },
-    [
-      isCommandMenuAvailable,
-      isRecordSelectedFamilyState,
-      openCommandMenuDropdownAtCursor,
-      store,
-    ],
+    [isRecordSelectedFamilyState, openCommandMenuDropdownAtCursor, store],
   );
 
   return { openRecordContextMenu };

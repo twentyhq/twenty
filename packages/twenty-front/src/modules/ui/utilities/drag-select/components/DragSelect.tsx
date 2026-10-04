@@ -14,7 +14,6 @@ type DragSelectProps = {
   onDragSelectionChange: (id: string, selected: boolean) => void;
   onDragSelectionStart?: (event: MouseEvent | TouchEvent) => void;
   onDragSelectionEnd?: (event: MouseEvent | TouchEvent) => void;
-  scrollWrapperComponentInstanceId?: string;
   selectionBoundaryClass?: string;
 };
 
@@ -42,7 +41,6 @@ export const DragSelect = ({
   onDragSelectionChange,
   onDragSelectionStart,
   onDragSelectionEnd,
-  scrollWrapperComponentInstanceId,
   selectionBoundaryClass,
 }: DragSelectProps) => {
   const { isDragSelectionStartEnabled } = useDragSelect();
@@ -59,9 +57,7 @@ export const DragSelect = ({
     [],
   );
 
-  const { handleAutoScroll } = useDragSelectWithAutoScroll({
-    scrollWrapperComponentInstanceId,
-  });
+  const { handleAutoScroll } = useDragSelectWithAutoScroll();
 
   const [startPoint, setStartPoint] = useState<Position | null>(null);
   const [endPoint, setEndPoint] = useState<Position | null>(null);

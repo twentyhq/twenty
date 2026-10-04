@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
@@ -8,26 +7,10 @@ import {
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMail, IconTool } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import {
-  StyledAiChatAskStatusContainer,
-  StyledAiChatAskStatusMessage,
-} from '@/ai/components/AiChatAskStyledComponents';
-import { ShimmeringText } from '@/ai/components/ShimmeringText';
-
-const StyledContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
-  min-width: 0;
-`;
-
-const StyledDetail = styled.span`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  overflow-wrap: anywhere;
-`;
+import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
+import { StyledAiChatAskStatusDetail } from '@/ai/components/AiChatAskStyledComponents';
+import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 
 export const AiChatToolCallApprovalStatusRenderer = ({
   toolPart,
@@ -37,7 +20,6 @@ export const AiChatToolCallApprovalStatusRenderer = ({
   isStreaming: boolean;
 }) => {
   const { t } = useLingui();
-  const theme = useTheme();
 
   const output = toolPart.output as
     | { result?: ProposeToolCallToolResult; error?: string }
@@ -56,6 +38,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
     pending: isDefined(result)
       ? t`Waiting for your approval`
       : t`Preparing an action to approve...`,
+    running: t`Running...`,
     approved: t`Approved`,
     rejected: t`Rejected`,
     failed: t`Approved but it failed`,
@@ -70,6 +53,7 @@ export const AiChatToolCallApprovalStatusRenderer = ({
   const detailByStatus: Record<ProposeToolCallToolStatus, string | undefined> =
     {
       pending: summary,
+      running: summary,
       approved: summary,
       rejected: result?.feedback,
       failed: result?.error,
@@ -79,24 +63,19 @@ export const AiChatToolCallApprovalStatusRenderer = ({
   const detail = hasFailedToPropose ? proposeErrorText : detailByStatus[status];
 
   return (
-    <StyledAiChatAskStatusContainer>
-      {result?.proposal.template === 'email' ? (
-        <IconMail size={theme.icon.size.sm} />
-      ) : (
-        <IconTool size={theme.icon.size.sm} />
+    <AiChatAskStatusRow
+      Icon={result?.proposal.template === 'email' ? IconMail : IconTool}
+      message={message}
+      isShimmering={
+        ((isStreaming && status === 'pending') || status === 'running') &&
+        !hasFailedToPropose
+      }
+    >
+      {isNonEmptyString(detail) && (
+        <StyledAiChatAskStatusDetail>
+          <TextWithChatReferences text={detail} />
+        </StyledAiChatAskStatusDetail>
       )}
-      <StyledContent>
-        {isStreaming && status === 'pending' && !hasFailedToPropose ? (
-          <ShimmeringText>
-            <StyledAiChatAskStatusMessage>
-              {message}
-            </StyledAiChatAskStatusMessage>
-          </ShimmeringText>
-        ) : (
-          <StyledAiChatAskStatusMessage>{message}</StyledAiChatAskStatusMessage>
-        )}
-        {isNonEmptyString(detail) && <StyledDetail>{detail}</StyledDetail>}
-      </StyledContent>
-    </StyledAiChatAskStatusContainer>
+    </AiChatAskStatusRow>
   );
 };

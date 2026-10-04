@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_THREAD_LAST_MESSAGE_TEXT_MAX_LENGTH } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-last-message-text-max-length.constant';
+import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 
@@ -48,9 +48,7 @@ export const updateAgentChatThreadUsage = async ({
         "pendingQuestionMessageId" = $11, "lastStreamError" = NULL,
         ${
           isDefined(recordedActivity)
-            ? `"lastActivityAt" = clock_timestamp(),
-        "lastMessageText" = left(NULLIF(btrim($12), ''), ${AGENT_CHAT_THREAD_LAST_MESSAGE_TEXT_MAX_LENGTH}),
-        "lastMessageSenderWorkspaceMemberId" = NULL,`
+            ? `${buildAgentChatThreadActivitySetClause({ textParameter: '$12' })},`
             : ''
         } "updatedAt" = now()
       WHERE id = $1 AND "activeStreamId" = $2

@@ -1,9 +1,10 @@
 import { type LanguageModelUsage, type TextStreamPart, type ToolSet } from 'ai';
-import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
+import { ASK_QUESTION_TOOL_NAME } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -87,20 +88,20 @@ const PENDING_QUESTION_PARTS: ModelStreamPart[] = [
   {
     type: 'tool-input-start',
     id: 'tool-call-id',
-    toolName: ASK_QUESTIONS_TOOL_NAME,
+    toolName: ASK_QUESTION_TOOL_NAME,
   },
   {
     type: 'tool-call',
     toolCallId: 'tool-call-id',
-    toolName: ASK_QUESTIONS_TOOL_NAME,
-    input: { questions: QUESTIONS },
+    toolName: ASK_QUESTION_TOOL_NAME,
+    input: QUESTIONS[0],
   },
   {
     type: 'tool-result',
     toolCallId: 'tool-call-id',
-    toolName: ASK_QUESTIONS_TOOL_NAME,
-    input: { questions: QUESTIONS },
-    output: { result: { questions: QUESTIONS, status: 'pending' } },
+    toolName: ASK_QUESTION_TOOL_NAME,
+    input: QUESTIONS[0],
+    output: { result: { question: QUESTIONS[0], status: 'pending' } },
   },
   ...FINISH_PARTS,
 ];
@@ -190,6 +191,7 @@ describe('StreamAgentChatJob', () => {
     hasTitle: true,
     conversationSizeTokens: 0,
     existingTurnId: 'turn-id',
+    messageId: 'user-message-id',
   };
 
   const buildJob = ({
@@ -239,12 +241,13 @@ describe('StreamAgentChatJob', () => {
       findOne: jest.fn().mockResolvedValue(workspaceFound ? workspace : null),
     };
     const agentChatService = {
-      addMessage: jest.fn(),
       upsertAssistantMessage: assistantPersistRejection
         ? jest.fn().mockRejectedValue(assistantPersistRejection)
         : jest.fn().mockResolvedValue(undefined),
       generateTitleIfNeeded: jest.fn().mockResolvedValue(null),
       notifyThreadUsageUpdated: jest.fn().mockResolvedValue(undefined),
+    };
+    const threadService = {
       recordThreadActivity: jest.fn().mockResolvedValue(undefined),
     };
     const chatExecutionService = {
@@ -302,9 +305,15 @@ describe('StreamAgentChatJob', () => {
     const sharingService = {
       hasInboxState: jest.fn().mockResolvedValue(true),
     };
+    const sender = {
+      userWorkspaceId: 'user-workspace-id',
+      applicationId: null,
+    };
+    const authorization = { authContext: { workspaceMemberId: 'member' } };
     const actorService = {
       authorizeJob: jest.fn().mockResolvedValue({
-        authorization: { authContext: { workspaceMemberId: 'member' } },
+        sender,
+        authorization,
         message: { id: 'user-message-id', turnId: 'turn-id' },
       }),
     };
@@ -317,6 +326,13 @@ describe('StreamAgentChatJob', () => {
       cancelSubscriberService as never,
       agentChatStreamingService as never,
       streamHeartbeatService as never,
+      new AgentChatStreamRecoveryService(
+        threadRepository as never,
+        streamHeartbeatService as never,
+        eventPublisherService as never,
+        metricsService as never,
+      ),
+      threadService as never,
       metricsService as never,
       aiModelRegistryService as never,
       actorService as never,
@@ -336,6 +352,7 @@ describe('StreamAgentChatJob', () => {
       threadRepository,
       threadUsageQuery,
       agentChatService,
+      threadService,
       eventPublisherService,
       agentChatStreamingService,
       cancelCallbacks,
@@ -345,18 +362,26 @@ describe('StreamAgentChatJob', () => {
     };
   };
 
-  it('uses the persisted turn when a job supplies only its message ID', async () => {
-    const { job, agentChatService, chatExecutionService } = buildJob();
-    await job.handle({
-      ...jobData,
-      messageId: 'user-message-id',
-      existingTurnId: undefined,
-    });
-    expect(agentChatService.addMessage).not.toHaveBeenCalled();
-    expect(chatExecutionService.streamChat).toHaveBeenCalledWith(
+  it('streams the authorized turn without authorizing it again', async () => {
+    const { job, actorService, agentChatService, chatExecutionService } =
+      buildJob();
+    await job.handle(jobData);
+    expect(actorService.authorizeJob).toHaveBeenCalledTimes(1);
+    expect(actorService.authorizeJob).toHaveBeenCalledWith(
       expect.objectContaining({
         messageId: 'user-message-id',
         turnId: 'turn-id',
+      }),
+    );
+    expect(chatExecutionService.streamChat).toHaveBeenCalledWith(
+      expect.objectContaining({
+        turnId: 'turn-id',
+        sender: expect.objectContaining({
+          userWorkspaceId: 'user-workspace-id',
+        }),
+        authorization: expect.objectContaining({
+          authContext: { workspaceMemberId: 'member' },
+        }),
       }),
     );
     expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
@@ -364,17 +389,45 @@ describe('StreamAgentChatJob', () => {
     );
   });
 
-  it('rejects a persisted message without a turn instead of creating another message', async () => {
-    const { job, actorService, agentChatService, chatExecutionService } =
-      buildJob();
+  it('runs a job queued before sender attribution with only its turn', async () => {
+    const { job, actorService, agentChatService } = buildJob();
+    await job.handle({ ...jobData, messageId: undefined });
+    expect(actorService.authorizeJob).toHaveBeenCalledWith(
+      expect.objectContaining({ messageId: undefined, turnId: 'turn-id' }),
+    );
+    expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ turnId: 'turn-id' }),
+    );
+  });
+
+  it('uses the persisted turn when a job supplies only its message ID', async () => {
+    const { job, agentChatService } = buildJob();
+    await job.handle({ ...jobData, existingTurnId: undefined });
+    expect(agentChatService.upsertAssistantMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ turnId: 'turn-id' }),
+    );
+  });
+
+  it('rejects a persisted message without a turn', async () => {
+    const { job, actorService, chatExecutionService } = buildJob();
     actorService.authorizeJob.mockResolvedValue({
       message: { id: 'user-message-id', turnId: null },
     } as never);
     await expect(job.handle(jobData)).rejects.toMatchObject({
       code: 'MESSAGE_NOT_FOUND',
     });
-    expect(agentChatService.addMessage).not.toHaveBeenCalled();
     expect(chatExecutionService.streamChat).not.toHaveBeenCalled();
+  });
+
+  it('generates a title as the turn sender when the thread has none', async () => {
+    const { job, agentChatService } = buildJob();
+    await job.handle({ ...jobData, hasTitle: false });
+    expect(agentChatService.generateTitleIfNeeded).toHaveBeenCalledWith({
+      userWorkspaceId: 'user-workspace-id',
+      threadId: 'thread-id',
+      messageContent: 'hello',
+      workspaceId: 'workspace-id',
+    });
   });
 
   it('does not invoke the model when the saved sender lost access before execution', async () => {
@@ -566,6 +619,7 @@ describe('StreamAgentChatJob', () => {
       'workspace-id',
       { id: 'thread-id', activeStreamId: 'stream-id' },
       {
+        activeStreamId: null,
         lastStreamError: expect.objectContaining({
           code: 'STREAM_EXECUTION_FAILED',
           message: 'provider exploded',
@@ -645,6 +699,7 @@ describe('StreamAgentChatJob', () => {
       'workspace-id',
       { id: 'thread-id', activeStreamId: 'stream-id' },
       {
+        activeStreamId: null,
         lastStreamError: expect.objectContaining({
           code: AiExceptionCode.WORKSPACE_NOT_FOUND,
         }),
@@ -731,6 +786,7 @@ describe('StreamAgentChatJob', () => {
       'workspace-id',
       { id: 'thread-id', activeStreamId: 'stream-id' },
       {
+        activeStreamId: null,
         lastStreamError: expect.objectContaining({
           code: AiExceptionCode.STREAM_INTERRUPTED,
         }),
@@ -970,13 +1026,13 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('counts a turn whose claim moved on as superseded', async () => {
-    const { job, turnCounts, agentChatService } = buildJob({
+    const { job, turnCounts, threadService } = buildJob({
       totalsUpdateAffected: 0,
     });
 
     await job.handle(jobData);
 
-    expect(agentChatService.recordThreadActivity).toHaveBeenCalledWith({
+    expect(threadService.recordThreadActivity).toHaveBeenCalledWith({
       workspaceId: jobData.workspaceId,
       threadId: jobData.threadId,
       text: 'Hello',
@@ -990,17 +1046,17 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('keeps a superseded reply when recording its activity fails', async () => {
-    const { job, turnCounts, agentChatService } = buildJob({
+    const { job, turnCounts, threadService } = buildJob({
       totalsUpdateAffected: 0,
     });
 
-    agentChatService.recordThreadActivity.mockRejectedValue(
+    threadService.recordThreadActivity.mockRejectedValue(
       new Error('database unavailable'),
     );
 
     await job.handle(jobData);
 
-    expect(agentChatService.recordThreadActivity).toHaveBeenCalledWith({
+    expect(threadService.recordThreadActivity).toHaveBeenCalledWith({
       workspaceId: jobData.workspaceId,
       threadId: jobData.threadId,
       text: 'Hello',

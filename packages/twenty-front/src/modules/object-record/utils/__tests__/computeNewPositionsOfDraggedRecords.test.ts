@@ -18,7 +18,7 @@ describe('computeNewPositionsOfDraggedRecords', () => {
     });
 
     const positionById = new Map(
-      result?.map(({ id, position }) => [id, position]),
+      result.map(({ id, position }) => [id, position]),
     );
 
     expect(positionById.get('a')).toBeGreaterThan(2);
@@ -36,10 +36,27 @@ describe('computeNewPositionsOfDraggedRecords', () => {
     });
 
     const positionById = new Map(
-      result?.map(({ id, position }) => [id, position]),
+      result.map(({ id, position }) => [id, position]),
     );
 
     expect(positionById.get('a')).toBeGreaterThan(3);
     expect(positionById.get('d')).toBeGreaterThan(positionById.get('a') ?? 0);
+  });
+
+  it('should place the selection after the last record when moving down onto it', () => {
+    const result = computeNewPositionsOfDraggedRecords({
+      arrayOfRecordsWithPosition: records,
+      draggedRecordId: 'a',
+      targetRecordId: 'd',
+      sourceRecordIds: ['a', 'b'],
+      isDroppedAfterList: false,
+    });
+
+    const positionById = new Map(
+      result.map(({ id, position }) => [id, position]),
+    );
+
+    expect(positionById.get('a')).toBeGreaterThan(4);
+    expect(positionById.get('b')).toBeGreaterThan(positionById.get('a') ?? 0);
   });
 });

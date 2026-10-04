@@ -195,6 +195,7 @@ export class WorkflowExecutorWorkspaceService {
         if (canRetryStep) {
           await this.scheduleStepRetry({
             stepId,
+            resumedThreadId,
             error: actionOutput.error,
             retryDelayMs: getStepRetryDelayMs({ stepInfo: stepInfos[stepId] }),
             workflowRunId,
@@ -729,14 +730,18 @@ export class WorkflowExecutorWorkspaceService {
     }
   }
 
+  // a step that failed after resuming on an answer retries from that conversation, so the
+  // person is not asked again and an approved call does not run a second time
   private async scheduleStepRetry({
     stepId,
+    resumedThreadId,
     error,
     retryDelayMs,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
+    resumedThreadId: string | undefined;
     error: string;
     retryDelayMs: number;
     workflowRunId: string;
@@ -744,6 +749,7 @@ export class WorkflowExecutorWorkspaceService {
   }) {
     await this.workflowRunWorkspaceService.moveStepToRetry({
       stepId,
+      resumedThreadId,
       error,
       workflowRunId,
       workspaceId,

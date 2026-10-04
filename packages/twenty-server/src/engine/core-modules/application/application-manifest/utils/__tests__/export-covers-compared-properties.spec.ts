@@ -21,8 +21,9 @@ import {
 import {
   AggregateOperations,
   FieldMetadataType,
-  PageLayoutTabLayoutMode,
   NavigationMenuItemType,
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
   ViewCalendarLayout,
@@ -32,6 +33,7 @@ import {
   ViewSortDirection,
   ViewType,
   ViewVisibility,
+  WidgetType,
 } from 'twenty-shared/types';
 
 import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
@@ -179,7 +181,7 @@ const PAGE_LAYOUT_WIDGET_UID = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
 const PAGE_LAYOUT_WIDGET_MANIFEST: NormalizedPageLayoutWidgetManifest = {
   universalIdentifier: PAGE_LAYOUT_WIDGET_UID,
   title: 'Fields',
-  type: 'FIELDS',
+  type: WidgetType.FIELDS,
   objectUniversalIdentifier: OBJECT_UID,
   conditionalDisplay: { device: 'DESKTOP' },
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
@@ -202,7 +204,7 @@ const PAGE_LAYOUT_TAB_MANIFEST: NormalizedPageLayoutTabManifest = {
 const PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {
   universalIdentifier: PAGE_LAYOUT_UID,
   name: 'Pet page',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: OBJECT_UID,
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: PAGE_LAYOUT_TAB_UID,
   tabs: [PAGE_LAYOUT_TAB_MANIFEST],

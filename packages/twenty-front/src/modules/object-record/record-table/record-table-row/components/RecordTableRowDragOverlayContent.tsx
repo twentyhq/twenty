@@ -29,7 +29,7 @@ import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
-import { RecordDragMultiDragPreview } from '@/object-record/record-drag/components/RecordDragMultiDragPreview';
+import { RecordDragMultiDragCounterChip } from '@/object-record/record-drag/components/RecordDragMultiDragCounterChip';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
@@ -202,7 +202,7 @@ export const RecordTableRowDragOverlayContent = ({
           </RecordTableRowDraggableContextProvider>
         </RecordTableTr>
       </StyledRowClipContainer>
-      <RecordDragMultiDragPreview recordId={recordId} />
+      <RecordDragMultiDragCounterChip />
     </StyledRowDragOverlayCSSBridge>
   );
 };
