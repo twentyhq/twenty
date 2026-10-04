@@ -147,7 +147,7 @@ msgstr "[空の文字列]"
 #. placeholder {2}: formatNumber(counts.duplicateEmails)
 #: src/modules/activities/emails/utils/buildExcludedRecipientReasons.ts
 msgid "{0, plural, one {{1} duplicate} other {{2} duplicates}}"
-msgstr ""
+msgstr "{0, plural, other {{2} 件の重複}}"
 
 #. js-lingui-id: 5pucMh
 #. placeholder {0}: audiencePreview.sendable
@@ -435,7 +435,7 @@ msgstr "{count, plural, other {{formattedCount} ページビュー}}"
 #. js-lingui-id: JBM5me
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} usage event} other {{formattedCount} usage events}}"
-msgstr ""
+msgstr "{count, plural, other {{formattedCount} 件の使用イベント}}"
 
 #. js-lingui-id: M9lDqR
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
