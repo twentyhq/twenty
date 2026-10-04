@@ -374,11 +374,13 @@ export class AgentChatThreadParticipantService {
     args: AgentChatThreadAccessArgs,
     snoozedUntil: Date | null,
   ): Promise<AgentChatThreadParticipantDTO> {
+    // A snooze whose end is already due, which its queued end may have
+    // checked before this write, is saved as ended
     return this.upsertOne(
       args,
       ({ participantTable }) =>
         `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "archivedAt", "snoozedUntil")
-         VALUES ($1, $2, clock_timestamp(), $3)
+         VALUES ($1, $2, CASE WHEN $3::timestamptz <= clock_timestamp() THEN NULL ELSE clock_timestamp() END, $3)
          ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
            "archivedAt" = EXCLUDED."archivedAt",
            "snoozedUntil" = EXCLUDED."snoozedUntil",

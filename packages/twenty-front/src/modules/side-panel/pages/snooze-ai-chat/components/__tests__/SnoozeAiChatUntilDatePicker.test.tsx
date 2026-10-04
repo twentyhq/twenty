@@ -105,7 +105,7 @@ describe('SnoozeAiChatUntilDatePicker', () => {
     expect(onSnoozed).not.toHaveBeenCalled();
   });
 
-  it('does not snooze once the picked time has passed', () => {
+  it('does not snooze once the picked time has passed, and says so', () => {
     render(
       <SnoozeAiChatUntilDatePicker
         threadIds={['thread-1']}
@@ -120,5 +120,8 @@ describe('SnoozeAiChatUntilDatePicker', () => {
 
     expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
     expect(onSnoozed).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole('button', { name: 'Pick a time in the future' }),
+    ).toBeDisabled();
   });
 });

@@ -338,8 +338,8 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(findParticipantEvents(eventSpy, threadId)).toEqual([
       { action: 'created', updatedFields: [] },
-      { action: 'updated', updatedFields: ['lastReadAt'] },
-      { action: 'updated', updatedFields: ['archivedAt'] },
+      { action: 'updated', updatedFields: ['lastReadAt', 'updatedAt'] },
+      { action: 'updated', updatedFields: ['archivedAt', 'updatedAt'] },
     ]);
   });
 
@@ -427,8 +427,32 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(row.archivedAt).toBeNull();
     expect(row.snoozedUntil?.getTime()).toBe(snoozedUntil.getTime());
     expect(findParticipantEvents(eventSpy, threadId)).toEqual([
-      { action: 'updated', updatedFields: ['archivedAt'] },
+      { action: 'updated', updatedFields: ['archivedAt', 'updatedAt'] },
     ]);
+  });
+
+  it('saves as ended a snooze whose time passed before it was saved', async () => {
+    const threadId = await createTestThread();
+    const savedAt = Date.now();
+    const snoozedUntil = new Date(savedAt - 1000);
+
+    // The snooze was accepted while its time was still ahead
+    jest.spyOn(Date, 'now').mockReturnValue(savedAt - 30_000);
+
+    const participant =
+      await getAppProviderByClassName<AgentChatThreadParticipantService>(
+        'AgentChatThreadParticipantService',
+      ).snooze({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        threadId,
+        snoozedUntil,
+      });
+
+    expect(participant.archivedAt).toBeNull();
+    expect(new Date(participant.snoozedUntil!).getTime()).toBe(
+      snoozedUntil.getTime(),
+    );
   });
 
   it('reads a snooze whose time passed as ended before its end has run', async () => {

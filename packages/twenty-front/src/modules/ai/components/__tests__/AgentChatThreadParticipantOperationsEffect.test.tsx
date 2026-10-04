@@ -124,10 +124,15 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
   it('applies a change the member made elsewhere', () => {
     const { store } = renderEffect({ [THREAD_ID]: READ_PARTICIPANT });
 
-    receiveParticipantUpdate(PARTICIPANT_ID, { lastReadAt: null });
+    const change = {
+      lastReadAt: null,
+      updatedAt: '2026-10-01T10:05:00.000Z',
+    };
+
+    receiveParticipantUpdate(PARTICIPANT_ID, change);
 
     expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
-      [THREAD_ID]: { ...READ_PARTICIPANT, lastReadAt: null },
+      [THREAD_ID]: { ...READ_PARTICIPANT, ...change },
     });
   });
 
@@ -139,11 +144,29 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
     };
     const { store } = renderEffect({ [THREAD_ID]: snoozedParticipant });
 
-    receiveParticipantUpdate(PARTICIPANT_ID, { archivedAt: null });
+    const change = {
+      archivedAt: null,
+      updatedAt: '2026-10-02T09:00:00.000Z',
+    };
+
+    receiveParticipantUpdate(PARTICIPANT_ID, change);
 
     expect(
       store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
-    ).toEqual({ ...snoozedParticipant, archivedAt: null });
+    ).toEqual({ ...snoozedParticipant, ...change });
+  });
+
+  it('ignores a change older than the version it has', () => {
+    const { store } = renderEffect({ [THREAD_ID]: READ_PARTICIPANT });
+
+    receiveParticipantUpdate(PARTICIPANT_ID, {
+      archivedAt: '2026-10-01T09:58:00.000Z',
+      updatedAt: '2026-10-01T09:59:00.000Z',
+    });
+
+    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
+      [THREAD_ID]: READ_PARTICIPANT,
+    });
   });
 
   it('reloads the rows when a change is for a row it does not have', () => {

@@ -99,6 +99,40 @@ describe('useAgentChatThreadParticipants', () => {
     });
   });
 
+  it('keeps the latest load when an earlier one answers after it', async () => {
+    const { result, store } = renderParticipants();
+    const unreadParticipant = {
+      ...READ_PARTICIPANT,
+      lastReadAt: null,
+      updatedAt: '2026-10-01T10:05:00.000Z',
+    };
+    let answerFirstLoad: (value: unknown) => void = () => undefined;
+
+    query
+      .mockReturnValueOnce(
+        new Promise((resolve) => {
+          answerFirstLoad = resolve;
+        }),
+      )
+      .mockResolvedValueOnce({
+        data: { myAgentChatThreadParticipants: [unreadParticipant] },
+      });
+
+    await act(async () => {
+      const firstLoad = result.current.refreshAgentChatThreadParticipants();
+
+      await result.current.refreshAgentChatThreadParticipants();
+      answerFirstLoad({
+        data: { myAgentChatThreadParticipants: [READ_PARTICIPANT] },
+      });
+      await firstLoad;
+    });
+
+    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
+      [THREAD_ID]: unreadParticipant,
+    });
+  });
+
   it('reads a thread up to its last activity before the server answers', async () => {
     mutate.mockReturnValue(new Promise(() => undefined));
     const { result, store } = renderParticipants();

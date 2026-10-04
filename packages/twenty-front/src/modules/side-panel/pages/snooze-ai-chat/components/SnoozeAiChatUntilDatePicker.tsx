@@ -43,18 +43,26 @@ export const SnoozeAiChatUntilDatePicker = ({
       }),
   );
 
+  // Read on each interaction rather than on a clock, so a picked time that
+  // passes while the picker is open shows as past once it is used
+  const [checkedAt, setCheckedAt] = useState(() => Date.now());
+
   const snoozedUntilDate = new Date(snoozedUntil.epochMilliseconds);
-  const isInFuture = snoozedUntil.epochMilliseconds > Date.now();
+  const isInFuture = snoozedUntil.epochMilliseconds > checkedAt;
   const snoozedUntilLabel = formatAgentChatThreadDateTime(snoozedUntilDate);
 
   const handleChange = (date: Temporal.ZonedDateTime | null) => {
     if (isDefined(date)) {
       setSnoozedUntil(date);
+      setCheckedAt(Date.now());
     }
   };
 
   const handleSnooze = () => {
-    if (snoozedUntilDate <= new Date()) {
+    const now = Date.now();
+
+    if (snoozedUntil.epochMilliseconds <= now) {
+      setCheckedAt(now);
       return;
     }
 

@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 
+import { agentChatThreadParticipantsLoadCountState } from '@/ai/states/agentChatThreadParticipantsLoadCountState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
 import {
@@ -30,6 +31,10 @@ export const useAgentChatThreadParticipants = () => {
   const { enqueueToast } = useToast();
 
   const refreshAgentChatThreadParticipants = useCallback(async () => {
+    const loadCount =
+      store.get(agentChatThreadParticipantsLoadCountState.atom) + 1;
+
+    store.set(agentChatThreadParticipantsLoadCountState.atom, loadCount);
     store.set(agentChatThreadStreamedParticipantsState.atom, {});
 
     const result = await client
@@ -39,7 +44,10 @@ export const useAgentChatThreadParticipants = () => {
       })
       .catch(() => undefined);
 
-    if (!isDefined(result?.data)) {
+    if (
+      !isDefined(result?.data) ||
+      store.get(agentChatThreadParticipantsLoadCountState.atom) !== loadCount
+    ) {
       return;
     }
 

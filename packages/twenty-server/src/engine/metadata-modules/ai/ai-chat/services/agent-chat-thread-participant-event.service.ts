@@ -51,8 +51,28 @@ export class AgentChatThreadParticipantEventService {
       recordsAfter: [after],
     });
 
-    if (isDefined(event)) {
-      this.workspaceEventEmitter.emitDatabaseBatchEvent(event);
+    if (!isDefined(event)) {
+      return;
     }
+
+    // Changes can be delivered out of order, and apps keep only the most
+    // recent version of a row, so each change carries its version
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      ...event,
+      events: event.events.map((recordEvent) =>
+        'updatedFields' in recordEvent.properties
+          ? {
+              ...recordEvent,
+              properties: {
+                ...recordEvent.properties,
+                updatedFields: [
+                  ...(recordEvent.properties.updatedFields ?? []),
+                  'updatedAt',
+                ],
+              },
+            }
+          : recordEvent,
+      ),
+    });
   }
 }
