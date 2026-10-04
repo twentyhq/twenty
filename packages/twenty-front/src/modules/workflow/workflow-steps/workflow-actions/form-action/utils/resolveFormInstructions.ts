@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 export const resolveFormInstructions = ({
@@ -8,7 +8,7 @@ export const resolveFormInstructions = ({
   instructions: string | undefined;
   context: Record<string, unknown>;
 }): string | undefined => {
-  if (!isDefined(instructions) || instructions.trim() === '') {
+  if (!isNonEmptyString(instructions?.trim())) {
     return undefined;
   }
 
