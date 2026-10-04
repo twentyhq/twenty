@@ -1,4 +1,4 @@
-import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
+import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
 
 export const isThinkingStepPartActive = (
   part: ThinkingStepPart,

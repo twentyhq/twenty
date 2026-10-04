@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -51,24 +52,44 @@ const isLoopbackOrigin = (origin: string): boolean => {
   }
 };
 
-export const resolveAllowedCredentialedOrigins = (
-  twentyConfigService: TwentyConfigService,
-): Set<string> => {
+type AllowedOriginsSettings = {
+  serverUrl: string;
+  frontendUrl: string;
+  authCookieAllowedOrigins: string;
+  nodeEnvironment: NodeEnvironment;
+};
+
+let cachedAllowedOriginsSettings: AllowedOriginsSettings | undefined;
+let cachedComputedAllowedOrigins: ReadonlySet<string> | undefined;
+
+const isSameAllowedOriginsSettings = (
+  allowedOriginsSettings: AllowedOriginsSettings,
+  otherAllowedOriginsSettings: AllowedOriginsSettings,
+): boolean =>
+  allowedOriginsSettings.serverUrl === otherAllowedOriginsSettings.serverUrl &&
+  allowedOriginsSettings.frontendUrl ===
+    otherAllowedOriginsSettings.frontendUrl &&
+  allowedOriginsSettings.authCookieAllowedOrigins ===
+    otherAllowedOriginsSettings.authCookieAllowedOrigins &&
+  allowedOriginsSettings.nodeEnvironment ===
+    otherAllowedOriginsSettings.nodeEnvironment;
+
+const computeAllowedCredentialedOrigins = ({
+  serverUrl,
+  frontendUrl,
+  authCookieAllowedOrigins,
+  nodeEnvironment,
+}: AllowedOriginsSettings): ReadonlySet<string> => {
   const allowedOrigins = new Set<string>();
 
-  const derivedUrls = [
-    twentyConfigService.get('SERVER_URL'),
-    twentyConfigService.get('FRONTEND_URL'),
-  ];
+  const derivedUrls = [serverUrl, frontendUrl];
 
-  const explicitUrls = twentyConfigService
-    .get('AUTH_COOKIE_ALLOWED_ORIGINS')
+  const explicitUrls = authCookieAllowedOrigins
     .split(',')
     .map((allowedOrigin) => allowedOrigin.trim());
 
   // SERVER_URL defaults to http://localhost:3000, which would hand any local page on that port a credentialed origin.
-  const isProduction =
-    twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION;
+  const isProduction = nodeEnvironment === NodeEnvironment.PRODUCTION;
 
   for (const candidateUrl of [...derivedUrls, ...explicitUrls]) {
     if (!isNonEmptyString(candidateUrl)) {
@@ -91,6 +112,39 @@ export const resolveAllowedCredentialedOrigins = (
 
     allowedOrigins.add(origin);
   }
+
+  return allowedOrigins;
+};
+
+export const resolveAllowedCredentialedOrigins = (
+  twentyConfigService: Pick<TwentyConfigService, 'get'>,
+): ReadonlySet<string> => {
+  const allowedOriginsSettings: AllowedOriginsSettings = {
+    serverUrl: twentyConfigService.get('SERVER_URL'),
+    frontendUrl: twentyConfigService.get('FRONTEND_URL'),
+    authCookieAllowedOrigins: twentyConfigService.get(
+      'AUTH_COOKIE_ALLOWED_ORIGINS',
+    ),
+    nodeEnvironment: twentyConfigService.get('NODE_ENV'),
+  };
+
+  if (
+    isDefined(cachedAllowedOriginsSettings) &&
+    isDefined(cachedComputedAllowedOrigins) &&
+    isSameAllowedOriginsSettings(
+      cachedAllowedOriginsSettings,
+      allowedOriginsSettings,
+    )
+  ) {
+    return cachedComputedAllowedOrigins;
+  }
+
+  const allowedOrigins = computeAllowedCredentialedOrigins(
+    allowedOriginsSettings,
+  );
+
+  cachedAllowedOriginsSettings = allowedOriginsSettings;
+  cachedComputedAllowedOrigins = allowedOrigins;
 
   return allowedOrigins;
 };

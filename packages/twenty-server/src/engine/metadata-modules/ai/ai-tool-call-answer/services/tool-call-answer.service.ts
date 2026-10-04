@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { generateId } from 'ai';
@@ -10,16 +10,19 @@ import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storag
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
 import { parsePausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/parse-pausing-tool-call.util';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
+import { readToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/utils/read-tool-call-workflow-step.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -29,9 +32,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   WorkflowRunStatus,
   type WorkflowRunWorkspaceEntity,
@@ -52,17 +53,21 @@ type AnswerToolCallArgs = {
 
 type AnswerToolCallOutcome = {
   streamId: string | null;
-  turnId: string | null;
+  turnId: string;
 };
 
 // an answer takes the stream claim only while the conversation still waits, so each call is answered once
 @Injectable()
 export class ToolCallAnswerService {
+  private readonly logger = new Logger(ToolCallAnswerService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
+    private readonly streamRecoveryService: AgentChatStreamRecoveryService,
+    private readonly threadService: AgentChatThreadService,
     private readonly actorService: AgentChatActorService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
@@ -70,7 +75,6 @@ export class ToolCallAnswerService {
     private readonly permissionsService: PermissionsService,
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly toolRegistryService: ToolRegistryService,
   ) {}
@@ -104,18 +108,24 @@ export class ToolCallAnswerService {
       );
     }
 
-    const { workflowRunId } = thread;
+    // a run's own conversation, or a member's inbox where a step posted a call it waits on
+    const inboxWorkflowStep = isDefined(thread.workflowRunId)
+      ? null
+      : readToolCallWorkflowStep(toolPart.toolOutput);
+    const workflowRunId =
+      thread.workflowRunId ?? inboxWorkflowStep?.workflowRunId ?? null;
 
-    if (isDefined(workflowRunId)) {
+    if (isDefined(thread.workflowRunId)) {
       await this.assertCanAnswerForWorkflowRun({
         userWorkspaceId,
         workspaceId,
-        workflowRunId,
+        workflowRunId: thread.workflowRunId,
       });
     } else {
       await this.assertCanAnswerInChat({
         ...args,
         messageId: toolPart.messageId,
+        isStartingChatTurn: !isDefined(inboxWorkflowStep),
       });
     }
 
@@ -132,7 +142,7 @@ export class ToolCallAnswerService {
       );
     }
 
-    await this.agentChatStreamingService.reapDeadStream({
+    await this.streamRecoveryService.reapDeadStream({
       thread,
       workspaceId,
     });
@@ -156,8 +166,10 @@ export class ToolCallAnswerService {
     }
 
     let step: WorkflowAction | null = null;
+    let isClaimedAsRunning = false;
     let isLastAnswer: boolean;
     let answerText: string;
+    let toolResult: Record<string, unknown>;
 
     try {
       const awaitingToolParts =
@@ -175,7 +187,26 @@ export class ToolCallAnswerService {
           threadId,
           workflowRunId,
           workspaceId,
+          expectedStepId: inboxWorkflowStep?.stepId,
         });
+
+        if (
+          !isDefined(step) &&
+          (await this.workflowRunWorkspaceService.isStepStillRunning({
+            stepId: inboxWorkflowStep?.stepId,
+            threadId,
+            workflowRunId,
+            workspaceId,
+          }))
+        ) {
+          throw new AiException(
+            'The workflow step is not ready for an answer yet',
+            AiExceptionCode.TOOL_CALL_NOT_PENDING,
+            {
+              userFriendlyMessage: msg`This workflow is still getting ready. Try again in a moment.`,
+            },
+          );
+        }
 
         if (!isDefined(step)) {
           await this.agentChatService.closePendingToolCalls({
@@ -186,6 +217,24 @@ export class ToolCallAnswerService {
 
           throw this.notPending();
         }
+      }
+
+      const runningToolResult = pausingToolCall.toRunningToolResult?.(
+        validation.output,
+      );
+
+      if (isDefined(runningToolResult)) {
+        if (
+          !(await this.agentChatService.claimToolCallAnswer({
+            partId: toolPart.id,
+            toolOutput: runningToolResult,
+            workspaceId,
+          }))
+        ) {
+          throw this.notPending();
+        }
+
+        isClaimedAsRunning = true;
       }
 
       const completion = await pausingToolCall.complete({
@@ -209,12 +258,40 @@ export class ToolCallAnswerService {
       });
 
       answerText = completion.answerText;
+      toolResult = completion.toolResult;
     } catch (error) {
-      await this.agentChatStreamingService.releaseStreamClaim(
-        threadId,
-        workspaceId,
-        streamId,
-      );
+      // a call claimed as running cannot be answered again, so the run or turn fails, which
+      // closes the call as interrupted instead of leaving it waiting on an outcome
+      if (isClaimedAsRunning) {
+        if (!isDefined(workflowRunId)) {
+          await this.agentChatService
+            .closePendingToolCalls({
+              threadId,
+              messageId: toolPart.messageId,
+              workspaceId,
+              where: { activeStreamId: streamId },
+            })
+            .catch((closeError: unknown) =>
+              this.logger.warn(
+                `Could not close the interrupted call on thread ${threadId}: ${closeError instanceof Error ? closeError.message : String(closeError)}`,
+              ),
+            );
+        }
+
+        await this.failAfterAnswer({
+          threadId,
+          workspaceId,
+          streamId,
+          workflowRunId,
+          error,
+        });
+      } else {
+        await this.streamRecoveryService.releaseStreamClaim({
+          threadId,
+          workspaceId,
+          streamId,
+        });
+      }
 
       throw error;
     }
@@ -233,13 +310,32 @@ export class ToolCallAnswerService {
 
       await this.publishToolCallResolved({ threadId, toolCallId, workspaceId });
 
+      // An answer is a message the member sent, so the chat moves up and
+      // comes back to their inbox. A run's conversation is not in chat lists.
+      // The answer is already recorded and cannot be given again, so a
+      // failure here must not fail the turn
+      if (!isDefined(workflowRunId)) {
+        await this.threadService
+          .notifyThreadActivityUpdated({
+            threadId,
+            workspaceMemberId: args.workspaceMemberId,
+            workspaceId,
+            text: answerText,
+          })
+          .catch((error: unknown) =>
+            this.logger.warn(
+              `Could not record answer activity on thread ${threadId}: ${formatErrorWithCause(error)}`,
+            ),
+          );
+      }
+
       // runs resume in their own executor, and only the last answer resumes a chat
       if (isDefined(step) || !isLastAnswer) {
-        await this.agentChatStreamingService.releaseStreamClaim(
+        await this.streamRecoveryService.releaseStreamClaim({
           threadId,
           workspaceId,
           streamId,
-        );
+        });
 
         if (isLastAnswer && isDefined(workflowRunId) && isDefined(step)) {
           await this.workflowRunnerWorkspaceService.resumeAnsweredStep({
@@ -248,6 +344,7 @@ export class ToolCallAnswerService {
             step,
             threadId,
             response: validation.output,
+            toolResult,
           });
         }
 
@@ -292,50 +389,32 @@ export class ToolCallAnswerService {
     workflowRunId: string | null;
     error: unknown;
   }): Promise<void> {
-    if (isDefined(workflowRunId)) {
-      await this.agentChatStreamingService.releaseStreamClaim(
+    if (!isDefined(workflowRunId)) {
+      await this.streamRecoveryService.failStream({
         threadId,
         workspaceId,
         streamId,
-      );
-
-      await this.workflowRunWorkspaceService.endWorkflowRun({
-        workflowRunId,
-        workspaceId,
-        status: WorkflowRunStatus.FAILED,
-        error: 'The run could not resume after its question was answered',
+        error,
       });
 
       return;
     }
 
-    const streamError = mapErrorToStreamError(error);
-
-    await this.agentChatStreamingService.releaseStreamClaim(
+    await this.streamRecoveryService.releaseStreamClaim({
       threadId,
       workspaceId,
       streamId,
-      {
-        lastStreamError: {
-          ...streamError,
-          failedAt: new Date().toISOString(),
-        },
-      },
-    );
-
-    await this.eventPublisherService
-      .publish({
-        threadId,
-        workspaceId,
-        event: {
-          type: 'stream-error',
-          code: streamError.code,
-          message: streamError.message,
-        },
-      })
-      .catch(() => {});
+    });
+    await this.workflowRunWorkspaceService.endWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      status: WorkflowRunStatus.FAILED,
+      error: 'The run could not resume after its question was answered',
+    });
   }
 
+  // an answer that resumes a workflow step starts no chat turn, so it skips the model and
+  // billing checks but still needs a thread the member can write to
   private async assertCanAnswerInChat({
     threadId,
     messageId,
@@ -343,20 +422,32 @@ export class ToolCallAnswerService {
     userWorkspaceId,
     workspaceMemberId,
     workspace,
-  }: AnswerToolCallArgs & { messageId: string }): Promise<void> {
+    isStartingChatTurn,
+  }: AnswerToolCallArgs & {
+    messageId: string;
+    isStartingChatTurn: boolean;
+  }): Promise<void> {
     await this.assertHasSettingPermission({
       setting: PermissionFlagType.AI,
       userWorkspaceId,
       workspaceId: workspace.id,
     });
 
-    await this.turnPreflightService.assertCanStartChatTurn({
-      threadId,
-      modelId,
-      userWorkspaceId,
-      workspaceMemberId,
-      workspace,
-    });
+    if (isStartingChatTurn) {
+      await this.turnPreflightService.assertCanStartChatTurn({
+        threadId,
+        modelId,
+        userWorkspaceId,
+        workspaceMemberId,
+        workspace,
+      });
+    } else {
+      await this.threadService.getWritableThread({
+        threadId,
+        workspaceMemberId,
+        workspaceId: workspace.id,
+      });
+    }
 
     await this.actorService.authorizeToolCallResolution({
       workspaceId: workspace.id,
@@ -414,44 +505,72 @@ export class ToolCallAnswerService {
     userWorkspaceId: string;
     threadId: string;
   }): PausingToolCompletionContext {
+    let toolContext: Promise<ToolContext> | undefined;
+
     return {
       executeTool: async ({ toolName, args }) => {
-        const authContext = workspaceAuthContextStorage.getStore();
-
-        if (!isDefined(authContext) || !isUserAuthContext(authContext)) {
-          throw new AiException(
-            'Answering requires a signed-in person',
-            AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
-          );
-        }
-
-        const { userWorkspaceRoleMap } =
-          await this.workspaceCacheService.getOrRecompute(workspaceId, [
-            'userWorkspaceRoleMap',
-          ]);
-        const { actorContext, roleId, userId, userContext } =
-          await this.agentActorContextService.buildUserAndAgentActorContext(
-            userWorkspaceId,
-            workspaceId,
-          );
-
-        return this.toolRegistryService.resolveAndExecute(toolName, args, {
+        // an approved record call reads the record again before running, so both calls share one context
+        toolContext ??= this.buildAnswerToolContext({
           workspaceId,
-          roleId,
-          rolePermissionConfig:
-            resolveRolePermissionConfig({
-              authContext,
-              userWorkspaceRoleMap,
-              apiKeyRoleMap: {},
-            }) ?? undefined,
-          authContext,
-          actorContext,
-          userId,
           userWorkspaceId,
           threadId,
-          locale: userContext.locale as ToolContext['locale'],
         });
+
+        return this.toolRegistryService.resolveAndExecute(
+          toolName,
+          args,
+          await toolContext,
+        );
       },
+    };
+  }
+
+  private async buildAnswerToolContext({
+    workspaceId,
+    userWorkspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    threadId: string;
+  }): Promise<ToolContext> {
+    const authContext = workspaceAuthContextStorage.getStore();
+
+    if (!isDefined(authContext) || !isUserAuthContext(authContext)) {
+      throw new AiException(
+        'Answering requires a signed-in person',
+        AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
+      );
+    }
+
+    const rolePermissions = await this.actorService.resolveRolePermissions({
+      workspaceId,
+      userWorkspaceId,
+      authContext,
+    });
+
+    if (!isDefined(rolePermissions)) {
+      throw new AiException(
+        'Answering requires a role in the workspace',
+        AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
+      );
+    }
+
+    const { actorContext, userId, userContext } =
+      await this.agentActorContextService.buildUserAndAgentActorContext(
+        userWorkspaceId,
+        workspaceId,
+      );
+
+    return {
+      workspaceId,
+      ...rolePermissions,
+      authContext,
+      actorContext,
+      userId,
+      userWorkspaceId,
+      threadId,
+      locale: userContext.locale as ToolContext['locale'],
     };
   }
 

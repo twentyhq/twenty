@@ -17,17 +17,12 @@ import { buildWorkspaceInstructionsSection } from 'src/engine/metadata-modules/a
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 
-export const buildFullSystemPrompt = ({
-  toolCatalog,
-  skillCatalog,
-  referencedSkills = [],
-  preloadedTools,
-  uploadedFilesContext,
-  workspaceInstructions,
-  userContext,
-  isWorkspaceSetupThread,
-  canAttachConversationToRecords,
-}: {
+export type SystemPromptSection = {
+  title: string;
+  content: string;
+};
+
+type BuildSystemPromptArgs = {
   toolCatalog: ToolIndexEntry[];
   skillCatalog: FlatSkill[];
   referencedSkills?: ReferencedSkill[];
@@ -38,55 +33,88 @@ export const buildFullSystemPrompt = ({
   };
   workspaceInstructions?: string;
   userContext?: UserContext;
+  userWorkspaceId: string;
   isWorkspaceSetupThread?: boolean;
   canAttachConversationToRecords?: boolean;
-}): string => {
-  const parts: string[] = isWorkspaceSetupThread
-    ? [WORKSPACE_SETUP_SYSTEM_PROMPT, CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT]
-    : [
-        CHAT_SYSTEM_PROMPTS.BASE,
-        CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
-        ...(canAttachConversationToRecords
-          ? [CHAT_SYSTEM_PROMPTS.CONVERSATION_ATTACHMENT]
-          : []),
-        CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
-      ];
+};
 
-  if (!isWorkspaceSetupThread) {
-    const workspaceInstructionsSection = buildWorkspaceInstructionsSection(
-      workspaceInstructions ?? '',
-    );
-
-    if (isNonEmptyString(workspaceInstructionsSection)) {
-      parts.push(workspaceInstructionsSection);
-    }
-  }
-
-  if (userContext) {
-    parts.push(buildUserContextSection(userContext));
-  }
-
-  parts.push(buildToolCatalogSection(toolCatalog, preloadedTools));
-
-  const skillSection = buildSkillCatalogSection(skillCatalog);
-
-  if (skillSection) {
-    parts.push(skillSection);
-  }
-
+export const buildSystemPromptSections = ({
+  toolCatalog,
+  skillCatalog,
+  referencedSkills = [],
+  preloadedTools,
+  uploadedFilesContext,
+  workspaceInstructions,
+  userContext,
+  userWorkspaceId,
+  isWorkspaceSetupThread,
+  canAttachConversationToRecords,
+}: BuildSystemPromptArgs): SystemPromptSection[] => {
+  const workspaceInstructionsSection = isWorkspaceSetupThread
+    ? ''
+    : buildWorkspaceInstructionsSection(workspaceInstructions ?? '');
+  const skillCatalogSection = buildSkillCatalogSection(skillCatalog);
   const referencedSkillsSection =
     buildReferencedSkillsSection(referencedSkills);
 
-  if (isNonEmptyString(referencedSkillsSection)) {
-    parts.push(referencedSkillsSection);
-  }
-
-  if (
+  const sections: (SystemPromptSection | false)[] = [
+    ...(isWorkspaceSetupThread
+      ? [
+          {
+            title: 'Workspace Setup Instructions',
+            content: WORKSPACE_SETUP_SYSTEM_PROMPT,
+          },
+        ]
+      : [
+          { title: 'Base Instructions', content: CHAT_SYSTEM_PROMPTS.BASE },
+          {
+            title: 'Browsing Context',
+            content: CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
+          },
+          canAttachConversationToRecords === true && {
+            title: 'Conversation Attachment',
+            content: CHAT_SYSTEM_PROMPTS.CONVERSATION_ATTACHMENT,
+          },
+        ]),
+    {
+      title: 'Response Format',
+      content: CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
+    },
+    isNonEmptyString(workspaceInstructionsSection) && {
+      title: 'Workspace Instructions',
+      content: workspaceInstructionsSection,
+    },
+    isDefined(userContext) && {
+      title: 'User Context',
+      content: buildUserContextSection(userContext),
+    },
+    {
+      title: 'Tool Catalog',
+      content: buildToolCatalogSection(toolCatalog, preloadedTools),
+    },
+    isNonEmptyString(skillCatalogSection) && {
+      title: 'Skill Catalog',
+      content: skillCatalogSection,
+    },
+    isNonEmptyString(referencedSkillsSection) && {
+      title: 'Referenced Skills',
+      content: referencedSkillsSection,
+    },
     isDefined(uploadedFilesContext) &&
-    isNonEmptyArray(uploadedFilesContext.uploadedFiles)
-  ) {
-    parts.push(buildUploadedFilesSection(uploadedFilesContext));
-  }
+      isNonEmptyArray(uploadedFilesContext.uploadedFiles) && {
+        title: 'Uploaded Files',
+        content: buildUploadedFilesSection(uploadedFilesContext),
+      },
+    {
+      title: 'Participants',
+      content: CHAT_SYSTEM_PROMPTS.MULTIPLE_PARTICIPANTS(userWorkspaceId),
+    },
+  ];
 
-  return parts.join('\n');
+  return sections.filter((section) => section !== false);
 };
+
+export const buildFullSystemPrompt = (args: BuildSystemPromptArgs): string =>
+  buildSystemPromptSections(args)
+    .map((section) => section.content)
+    .join('\n');

@@ -1,3 +1,5 @@
+import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
+import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
 import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
@@ -10,6 +12,7 @@ import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions'
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
+import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
 import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
@@ -64,6 +67,14 @@ import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'CurrencyPicker',
+    source: 'components/input/CurrencyPicker/CurrencyPicker.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/currency-picker',
+    parts: ['Trigger', 'Options'],
+    partPropDescriptions: CURRENCY_PICKER_PART_PROP_DESCRIPTIONS,
+  },
   {
     name: 'ProgressRing',
     source: 'primitives/feedback/ProgressRing/ProgressRing.tsx',
@@ -453,6 +464,14 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: SETTINGS_ROW_PROP_DESCRIPTIONS,
   },
   {
+    name: 'PhoneCountryPicker',
+    source: 'components/input/PhoneCountryPicker/PhoneCountryPicker.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/phone-country-picker',
+    parts: ['Trigger', 'Options'],
+    partPropDescriptions: PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS,
+  },
+  {
     name: 'Dropdown',
     source: 'components/navigation/Dropdown/Dropdown.tsx',
     entryPoint: 'twenty-ui/components',
@@ -491,6 +510,13 @@ export const DOCUMENTED_COMPONENTS = [
         nativeButton: 'true when render is omitted; false otherwise',
       },
     },
+  },
+  {
+    name: 'OverflowingList',
+    source: 'components/layout/OverflowingList/OverflowingList.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/overflowing-list',
+    propDescriptions: OVERFLOWING_LIST_PROP_DESCRIPTIONS,
   },
   {
     name: 'Section',

@@ -89,13 +89,6 @@ export class AgentActorContextService {
       workspaceId,
     });
 
-    if (!roleId) {
-      throw new AiException(
-        'User role not found',
-        AiExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
-
     const actorContext = buildCreatedByFromFullNameMetadata({
       fullNameMetadata: workspaceMember.name,
       workspaceMemberId: workspaceMember.id,

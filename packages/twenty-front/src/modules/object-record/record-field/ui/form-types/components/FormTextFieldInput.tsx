@@ -59,7 +59,7 @@ export const FormTextFieldInput = ({
       );
     }
 
-    editor.commands.insertVariableTag(variableName);
+    editor.chain().focus().insertVariableTag(variableName).run();
   };
 
   if (!isDefined(editor)) {

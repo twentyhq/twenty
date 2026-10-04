@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  type AskQuestionItem,
-  type ProposedEmail,
-  REQUEST_FORM_TOOL_NAME,
-} from 'twenty-shared/ai';
+import { type AskQuestionItem, REQUEST_FORM_TOOL_NAME } from 'twenty-shared/ai';
 import {
   type ActorMetadata,
   FieldActorSource,
@@ -29,11 +25,10 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import {
-  askQuestionsCall,
-  proposeEmailCall,
-  type SeededToolCall,
-} from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-pending-input.workspace-service';
+import { askQuestionCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/ask-question-call.util';
+import { proposeEmailCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/propose-email-call.util';
+import { type SeededEmail } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-email.type';
+import { type SeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-call.type';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
@@ -111,10 +106,10 @@ const QUALIFICATION_QUESTIONS: AskQuestionItem[] = [
   },
 ];
 
-const RENEWAL_REMINDER_EMAIL: ProposedEmail = {
-  recipients: { to: 'procurement@stripe.com', cc: '', bcc: '' },
+const RENEWAL_REMINDER_EMAIL: SeededEmail = {
+  to: 'procurement@stripe.com',
   subject: 'Your Twenty renewal on October 31',
-  body: 'Hi Stripe team,\n\nYour Twenty subscription renews on October 31 for another year at the same price. If you want to add seats or change plans before then, just reply to this email.\n\nBest,\nPhil',
+  body: '<p>Hi Stripe team,</p><p>Your Twenty subscription renews on October 31 for another year at the same price. If you want to add seats or change plans before then, just reply to this email.</p><p>Best,<br>Phil</p>',
 };
 
 type AgentWorkflowToSeed = {
@@ -125,10 +120,11 @@ type AgentWorkflowToSeed = {
   stepKey: string;
   stepName: string;
   stepPrompt: string;
+  humanInputInstructions: string;
   runKey: string;
   initiator: Initiator;
   runPrompt: string;
-  call: SeededToolCall;
+  calls: SeededToolCall[];
 };
 
 const AGENT_WORKFLOWS_TO_SEED: AgentWorkflowToSeed[] = [
@@ -140,11 +136,13 @@ const AGENT_WORKFLOWS_TO_SEED: AgentWorkflowToSeed[] = [
     stepKey: 'agentStep',
     stepName: 'Qualify the lead',
     stepPrompt: 'Qualify the inbound lead and draft the first reply.',
+    humanInputInstructions:
+      'Ask me who should follow up when the lead could go to more than one owner.',
     runKey: 'qualification',
     initiator: 'TIM',
     runPrompt:
       'Qualify the inbound lead from Figma and decide who should follow up.',
-    call: askQuestionsCall(QUALIFICATION_QUESTIONS),
+    calls: QUALIFICATION_QUESTIONS.map(askQuestionCall),
   },
   {
     key: 'draftRenewalReminder',
@@ -155,11 +153,12 @@ const AGENT_WORKFLOWS_TO_SEED: AgentWorkflowToSeed[] = [
     stepName: 'Draft the reminder',
     stepPrompt:
       'Draft a renewal reminder for the account and have it reviewed before it goes out.',
+    humanInputInstructions: 'Have every email reviewed before it goes out.',
     runKey: 'renewalReminder',
     initiator: 'PHIL',
     runPrompt:
       'Stripe renews on October 31. Draft the renewal reminder for their procurement team.',
-    call: proposeEmailCall(RENEWAL_REMINDER_EMAIL),
+    calls: [proposeEmailCall(RENEWAL_REMINDER_EMAIL)],
   },
 ];
 
@@ -238,7 +237,10 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
           type: WorkflowActionType.AI_AGENT,
           valid: true,
           settings: {
-            input: { prompt: agentWorkflow.stepPrompt, canAskQuestions: true },
+            input: {
+              prompt: agentWorkflow.stepPrompt,
+              humanInputInstructions: agentWorkflow.humanInputInstructions,
+            },
             outputSchema: {},
             errorHandlingOptions: ERROR_HANDLING_OPTIONS,
           },
@@ -249,12 +251,31 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         `workflowRun:${agentWorkflow.runKey}`,
         workspaceId,
       );
-      const toolCallId = seedId(
-        `toolCall:${agentWorkflow.runKey}`,
-        workspaceId,
-      );
-      const { toolName, input } = agentWorkflow.call;
-      const output = await agentWorkflow.call.buildPendingOutput();
+      const content = (
+        await Promise.all(
+          agentWorkflow.calls.map(async (call, callIndex) => {
+            const toolCallId = seedId(
+              callIndex === 0
+                ? `toolCall:${agentWorkflow.runKey}`
+                : `toolCall:${agentWorkflow.runKey}:${callIndex}`,
+              workspaceId,
+            );
+            const { toolName, input } = call;
+            const output = await call.buildPendingOutput();
+
+            return [
+              { type: 'tool-call' as const, toolCallId, toolName, input },
+              {
+                type: 'tool-result' as const,
+                toolCallId,
+                toolName,
+                input,
+                output,
+              },
+            ];
+          }),
+        )
+      ).flat();
 
       await this.seedPausedRun({
         workspaceId,
@@ -272,20 +293,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             initiatorUserWorkspaceId: null,
             executionResult: {
               isPaused: true,
-              steps: [
-                {
-                  content: [
-                    { type: 'tool-call', toolCallId, toolName, input },
-                    {
-                      type: 'tool-result',
-                      toolCallId,
-                      toolName,
-                      input,
-                      output,
-                    },
-                  ],
-                },
-              ],
+              steps: [{ content }],
             },
           }),
       });

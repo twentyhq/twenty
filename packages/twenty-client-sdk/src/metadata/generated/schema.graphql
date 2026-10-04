@@ -180,6 +180,11 @@ enum EngineComponentKey {
   VIEW_PREVIOUS_AI_CHATS
   NEW_AI_CHAT
   SHARE_RECORD
+  MARK_AI_CHAT_AS_READ
+  MARK_AI_CHAT_AS_UNREAD
+  MARK_AI_CHAT_AS_DONE
+  REOPEN_AI_CHAT
+  SNOOZE_AI_CHAT
   NAVIGATION
   TRIGGER_WORKFLOW_VERSION
   FRONT_COMPONENT_RENDERER
@@ -1116,6 +1121,22 @@ type BillingCustomer {
   hasPaymentMethod: Boolean
 }
 
+type EnterpriseLicenseInfoDTO {
+  isValid: Boolean!
+  licensee: String
+  expiresAt: DateTime
+  subscriptionId: String
+}
+
+type EnterpriseSubscriptionStatusDTO {
+  status: String!
+  licensee: String
+  expiresAt: DateTime
+  cancelAt: DateTime
+  currentPeriodEnd: DateTime
+  isCancellationScheduled: Boolean!
+}
+
 type SdkClientChecksums {
   core: String
   metadata: String!
@@ -1612,22 +1633,6 @@ enum LogicFunctionExecutionStatus {
   ERROR
 }
 
-type EnterpriseLicenseInfoDTO {
-  isValid: Boolean!
-  licensee: String
-  expiresAt: DateTime
-  subscriptionId: String
-}
-
-type EnterpriseSubscriptionStatusDTO {
-  status: String!
-  licensee: String
-  expiresAt: DateTime
-  cancelAt: DateTime
-  currentPeriodEnd: DateTime
-  isCancellationScheduled: Boolean!
-}
-
 type UsageQuotaDefinition {
   resourceType: UsageResourceType!
   limitKind: String!
@@ -1774,12 +1779,17 @@ type RecordPermissionsDTO {
 
 type RecordSharingGrantDTO {
   id: ID!
-  principalType: String!
+  principalType: RecordSharePrincipalType!
   principalId: UUID!
+  principalRoleId: UUID
   accessLevel: RecordShareAccessLevel!
-  rowCause: String!
-  canRoleRead: Boolean
-  canRoleUpdate: Boolean
+  rowCause: RecordShareRowCause!
+}
+
+enum RecordSharePrincipalType {
+  EVERYONE
+  WORKSPACE_MEMBER
+  ROLE
 }
 
 enum RecordShareAccessLevel {
@@ -1789,22 +1799,45 @@ enum RecordShareAccessLevel {
   FULL
 }
 
+enum RecordShareRowCause {
+  OWNER
+  MANUAL
+  RULE
+  APPLICATION
+}
+
 type RecordSharingRoleDTO {
   id: UUID!
   label: String!
+  canRead: Boolean
+  canUpdate: Boolean
 }
 
 type RecordSharingDTO {
-  viewerAccessLevel: RecordShareAccessLevel
+  sharingMode: RecordSharingMode!
+  canManageSharing: Boolean!
   permissions: RecordPermissionsDTO!
-  isEnabled: Boolean!
-  hasInheritedAccess: Boolean!
-  isOpenByDefault: Boolean!
   generalAccessLevel: RecordShareAccessLevel
-  isGeneralAccessDefault: Boolean!
-  sharingReach: ObjectSharingReach!
+  defaultGeneralAccessLevel: RecordShareAccessLevel
+  hasManagedGeneralAccess: Boolean!
   roles: [RecordSharingRoleDTO!]!
   shares: [RecordSharingGrantDTO!]!
+}
+
+"""
+How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions
+"""
+enum RecordSharingMode {
+  ROLE_ONLY
+  PRIVATE
+  INHERITED
+  OPEN_BY_DEFAULT
+}
+
+type RecordPermissionsResult {
+  objectMetadataId: UUID!
+  recordId: UUID!
+  permissions: RecordPermissionsDTO!
 }
 
 type JobStatus {
@@ -2101,6 +2134,7 @@ enum FeatureFlagKey {
   IS_VALIDATION_RULES_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED
+  IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2929,40 +2963,6 @@ type ApplicationAuthorization {
   createdAt: DateTime!
 }
 
-type ApplicationExportApplication {
-  universalIdentifier: String!
-  displayName: String!
-  sourceType: ApplicationRegistrationSourceType!
-}
-
-type ApplicationExportCoverageEntry {
-  metadataName: String!
-  universalIdentifier: String!
-  status: ApplicationExportCoverageStatus!
-  reason: String
-}
-
-enum ApplicationExportCoverageStatus {
-  EXPORTED
-  ENGINE_DERIVED
-  EXCLUDED
-  UNSUPPORTED
-  FOREIGN_OWNED
-}
-
-type ApplicationExportFile {
-  folder: String!
-  path: String!
-  content: String!
-}
-
-type ApplicationExport {
-  application: ApplicationExportApplication!
-  manifest: JSON!
-  coverage: [ApplicationExportCoverageEntry!]!
-  files: [ApplicationExportFile!]!
-}
-
 type File {
   id: UUID!
   path: String!
@@ -3026,6 +3026,40 @@ type DevelopmentApplication {
 type WorkspaceMigration {
   applicationUniversalIdentifier: String!
   actions: JSON!
+}
+
+type ApplicationExportApplication {
+  universalIdentifier: String!
+  displayName: String!
+  sourceType: ApplicationRegistrationSourceType!
+}
+
+type ApplicationExportCoverageEntry {
+  metadataName: String!
+  universalIdentifier: String!
+  status: ApplicationExportCoverageStatus!
+  reason: String
+}
+
+enum ApplicationExportCoverageStatus {
+  EXPORTED
+  ENGINE_DERIVED
+  EXCLUDED
+  UNSUPPORTED
+  FOREIGN_OWNED
+}
+
+type ApplicationExportFile {
+  folder: String!
+  path: String!
+  content: String!
+}
+
+type ApplicationExport {
+  application: ApplicationExportApplication!
+  manifest: JSON!
+  coverage: [ApplicationExportCoverageEntry!]!
+  files: [ApplicationExportFile!]!
 }
 
 type PublicDomain {
@@ -3286,6 +3320,30 @@ type ImapSmtpCaldavConnectionSuccess {
   connectedAccountId: String!
 }
 
+type Webhook {
+  id: UUID!
+  targetUrl: String!
+  operations: [String!]!
+  description: String
+  secret: String!
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+}
+
+type ToolIndexEntry {
+  name: String!
+  label: String!
+  description: String!
+  category: String!
+  objectName: String
+  icon: String
+  widgetName: String
+  frontComponentId: String
+  inputSchema: JSON
+}
+
 type AgentMessagePart {
   id: UUID!
   messageId: UUID!
@@ -3300,7 +3358,6 @@ type AgentMessagePart {
   state: String
   providerExecuted: Boolean
   errorMessage: String
-  errorDetails: JSON
   sourceUrlSourceId: String
   sourceUrlUrl: String
   sourceUrlTitle: String
@@ -3329,34 +3386,11 @@ type AgentMessage {
   createdAt: DateTime!
 }
 
-type Webhook {
-  id: UUID!
-  targetUrl: String!
-  operations: [String!]!
-  description: String
-  secret: String!
-  applicationId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  deletedAt: DateTime
-}
-
-type ToolIndexEntry {
-  name: String!
-  label: String!
-  description: String!
-  category: String!
-  objectName: String
-  icon: String
-  widgetName: String
-  frontComponentId: String
-  inputSchema: JSON
-}
-
 type RunAgentResult {
   result: JSON
   error: String
   success: Boolean!
+  threadId: UUID
 }
 
 type ChannelSyncSuccess {
@@ -3500,6 +3534,15 @@ type SendChatMessageResult {
   streamId: String
 }
 
+type AgentChatThreadParticipant {
+  id: UUID!
+  threadId: UUID!
+  lastReadAt: DateTime
+  archivedAt: DateTime
+  snoozedUntil: DateTime
+  updatedAt: DateTime!
+}
+
 type AgentChatEvent {
   threadId: String!
   event: JSON!
@@ -3558,12 +3601,6 @@ type RecordExport {
   progress: Int!
   errorMessage: String
   downloadPath: String
-}
-
-type RecordPermissionsResult {
-  objectMetadataId: UUID!
-  recordId: UUID!
-  permissions: RecordPermissionsDTO!
 }
 
 type AgentTurnEvaluation {
@@ -3829,7 +3866,8 @@ type MinimalMetadata {
 }
 
 type Query {
-  recordSharing(target: RecordSharingTargetInput!): RecordSharingDTO!
+  recordSharing(target: RecordTargetInput!): RecordSharingDTO!
+  recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
   enterprisePortalSession(returnUrlPath: String): String
@@ -3890,6 +3928,7 @@ type Query {
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   getApprovedAccessDomains: [ApprovedAccessDomain!]!
   getRoles: [Role!]!
+  getRole(id: UUID!): Role!
   apiKeys: [ApiKey!]!
   getApiKeyRoles: [Role!]!
   apiKey(input: GetApiKeyInput!): ApiKey
@@ -3954,13 +3993,13 @@ type Query {
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAiSystemPromptPreview: AiSystemPromptPreview!
+  myAgentChatThreadParticipants: [AgentChatThreadParticipant!]!
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!
   validationRules(objectMetadataId: UUID!): [ValidationRule!]!
   timelineActivityTypes: [TimelineActivityType!]!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
-  recordPermissions(targets: [RecordPermissionsTargetInput!]!): [RecordPermissionsResult!]!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
@@ -3983,7 +4022,7 @@ type Query {
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
 }
 
-input RecordSharingTargetInput {
+input RecordTargetInput {
   objectMetadataId: UUID!
   recordId: UUID!
 }
@@ -4061,11 +4100,6 @@ input MetadataTranslationsInput {
   locale: String
 }
 
-input RecordPermissionsTargetInput {
-  objectMetadataId: UUID!
-  recordId: UUID!
-}
-
 input EventLogQueryInput {
   table: EventLogTable!
   filters: EventLogFiltersInput
@@ -4124,7 +4158,9 @@ input BarChartDataInput {
 type Mutation {
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
-  setRecordShare(target: RecordSharingTargetInput!, principal: RecordSharePrincipalInput!, enabled: Boolean!, accessLevel: RecordShareAccessLevel = READ): RecordSharingDTO!
+  setRecordGeneralAccess(target: RecordTargetInput!, accessLevel: RecordShareAccessLevel!): RecordSharingDTO!
+  setRecordShare(target: RecordTargetInput!, principal: RecordSharePrincipalInput!, accessLevel: RecordShareAccessLevel!): RecordSharingDTO!
+  removeRecordShare(target: RecordTargetInput!, principal: RecordSharePrincipalInput!): RecordSharingDTO!
   createManyNavigationMenuItems(inputs: [CreateNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
@@ -4299,10 +4335,10 @@ type Mutation {
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
-  runAgent(input: RunAgentInput!): RunAgentResult!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
+  runAgent(input: RunAgentInput!): RunAgentResult!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
@@ -4316,6 +4352,12 @@ type Mutation {
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
+  markAgentChatThreadAsRead(threadId: UUID!): AgentChatThreadParticipant!
+  markAgentChatThreadAsUnread(threadId: UUID!): AgentChatThreadParticipant!
+  archiveAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
+  snoozeAgentChatThread(threadId: UUID!, snoozedUntil: DateTime!): AgentChatThreadParticipant!
+  moveAgentChatThreadToInbox(threadId: UUID!): AgentChatThreadParticipant!
+  addAgentChatThreadParticipants(threadId: UUID!, workspaceMemberIds: [UUID!]!): [UUID!]!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   createSkill(input: CreateSkillInput!): Skill!
@@ -4401,7 +4443,6 @@ input RemoveQueryFromEventStreamInput {
 input RecordSharePrincipalInput {
   workspaceMemberId: UUID
   roleId: UUID
-  everyone: Boolean
 }
 
 input CreateNavigationMenuItemInput {
@@ -5488,29 +5529,6 @@ input CreateEmailingDomainInput {
   domain: String!
 }
 
-input RunAgentInput {
-  agentUniversalIdentifier: String!
-  prompt: String
-  runAsWorkspaceMemberId: UUID
-  messages: [RunAgentMessageInput!]
-}
-
-input RunAgentMessageInput {
-  role: RunAgentMessageRole!
-  content: String!
-  attachments: [RunAgentMessageAttachmentInput!]
-}
-
-enum RunAgentMessageRole {
-  user
-  assistant
-}
-
-input RunAgentMessageAttachmentInput {
-  fileId: UUID!
-  filename: String
-}
-
 input CreateWebhookInput {
   id: UUID
   targetUrl: String!
@@ -5532,6 +5550,37 @@ input UpdateWebhookInputUpdates {
   operations: [String!]
   description: String
   secret: String
+}
+
+input RunAgentInput {
+  agentUniversalIdentifier: String!
+  prompt: String @deprecated(reason: "Use input instead.")
+  runAsWorkspaceMemberId: UUID
+  messages: [RunAgentMessageInput!] @deprecated(reason: "Use input instead.")
+  input: [RunAgentMessageInput!]
+  additionalInstructions: String
+  thread: RunAgentThreadInput
+}
+
+input RunAgentMessageInput {
+  role: RunAgentMessageRole!
+  content: String!
+  attachments: [RunAgentMessageAttachmentInput!]
+}
+
+enum RunAgentMessageRole {
+  user
+  assistant
+}
+
+input RunAgentMessageAttachmentInput {
+  fileId: UUID!
+  filename: String
+}
+
+input RunAgentThreadInput {
+  key: String!
+  title: String
 }
 
 input UpdateMessageFolderInput {

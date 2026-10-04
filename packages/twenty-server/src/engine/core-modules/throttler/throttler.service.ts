@@ -8,6 +8,7 @@ import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
+import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import {
   TOKEN_BUCKETS_DENY_PARTIAL_ARG,
   TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
@@ -25,39 +26,12 @@ export class ThrottlerService {
     tokensToConsume: number,
     maxTokens: number,
     timeWindow: number,
-  ): Promise<number> {
-    const [isAccepted, remainingTokens] = await this.consumeTokenBucket(
-      key,
-      tokensToConsume,
-      maxTokens,
-      timeWindow,
-      false,
-    );
-
-    if (isAccepted === 0) {
-      throw new ThrottlerException(
-        `Limit reached (${maxTokens} tokens per ${timeWindow} ms)`,
-        ThrottlerExceptionCode.LIMIT_REACHED,
-      );
-    }
-
-    return Number(remainingTokens);
-  }
-
-  async atomicTokenBucketThrottleOrThrow({
-    key,
-    maxTokens,
-    timeWindow,
-  }: {
-    key: string;
-    maxTokens: number;
-    timeWindow: number;
-  }): Promise<void> {
+  ): Promise<void> {
     const [admittedCount] = await this.cacheStorage.runScript<number[]>({
       script: TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
-      keys: [key],
+      keys: [`${TOKEN_BUCKET_THROTTLE_KEY_PREFIX}:${key}`],
       args: [
-        '1',
+        String(tokensToConsume),
         JSON.stringify([
           { burst: maxTokens, refill: maxTokens, windowMs: timeWindow },
         ]),
@@ -65,7 +39,7 @@ export class ThrottlerService {
       ],
     });
 
-    if (admittedCount !== 1) {
+    if (admittedCount !== tokensToConsume) {
       throw new ThrottlerException(
         `Limit reached (${maxTokens} tokens per ${timeWindow} ms)`,
         ThrottlerExceptionCode.LIMIT_REACHED,
@@ -79,23 +53,7 @@ export class ThrottlerService {
     maxTokens: number,
     timeWindow: number,
   ) {
-    await this.consumeTokenBucket(
-      key,
-      tokensToConsume,
-      maxTokens,
-      timeWindow,
-      true,
-    );
-  }
-
-  private async consumeTokenBucket(
-    key: string,
-    tokensToConsume: number,
-    maxTokens: number,
-    timeWindow: number,
-    allowOverdraft: boolean,
-  ): Promise<[number, string]> {
-    return this.cacheStorage.runScript<[number, string]>({
+    await this.cacheStorage.runScript<number>({
       script: CONSUME_TOKEN_BUCKET_SCRIPT,
       keys: [key],
       args: [
@@ -103,7 +61,6 @@ export class ThrottlerService {
         String(maxTokens),
         String(timeWindow),
         String(Date.now()),
-        allowOverdraft ? '1' : '0',
       ],
     });
   }

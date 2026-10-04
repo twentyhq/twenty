@@ -1,3 +1,4 @@
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { randomUUID } from 'node:crypto';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
@@ -29,6 +30,7 @@ import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/a
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 
 import { type AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
@@ -1060,13 +1062,11 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   });
 
   describe('an agent step that asks a question', () => {
-    const QUESTIONS = [
-      {
-        header: 'Quote',
-        question: 'Send the quote to the customer?',
-        options: [{ label: 'Send it' }, { label: 'Hold it' }],
-      },
-    ];
+    const QUESTION = {
+      header: 'Quote',
+      question: 'Send the quote to the customer?',
+      options: [{ label: 'Send it' }, { label: 'Hold it' }],
+    };
 
     const agentStep = (nextStepIds: string[]): WorkflowAction =>
       ({
@@ -1076,7 +1076,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         nextStepIds,
         settings: {
           ...settings,
-          input: { prompt: 'Draft the quote', canAskQuestions: true },
+          input: {
+            prompt: 'Draft the quote',
+            humanInputInstructions: 'Ask before choosing a plan.',
+          },
         },
       }) as WorkflowAction;
 
@@ -1101,19 +1104,19 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
             {
               type: 'tool-call',
               toolCallId: 'ask-1',
-              toolName: 'ask_questions',
-              input: { questions: QUESTIONS },
+              toolName: 'ask_question',
+              input: QUESTION,
             },
             {
               type: 'tool-result',
               toolCallId: 'ask-1',
-              toolName: 'ask_questions',
-              input: { questions: QUESTIONS },
+              toolName: 'ask_question',
+              input: QUESTION,
               output: {
                 success: true,
                 message:
-                  'Questions presented to the user; awaiting their answer.',
-                result: { questions: QUESTIONS, status: 'pending' },
+                  'Question presented to the user; awaiting their answer.',
+                result: { question: QUESTION, status: 'pending' },
               },
             },
           ],
@@ -1145,7 +1148,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         [threadId],
       );
       const parts = await global.testDataSource.query(
-        `SELECT part."toolCallId", part."toolOutput" FROM "${schema}"."agentMessagePart" part JOIN "${schema}"."agentMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1 AND part."toolName" = 'ask_questions' ORDER BY part."toolCallId"`,
+        `SELECT part."toolCallId", part."toolOutput" FROM "${schema}"."agentMessagePart" part JOIN "${schema}"."agentMessage" message ON message.id = part."messageId" WHERE message."threadId" = $1 AND part."toolName" = 'ask_question' ORDER BY part."toolCallId"`,
         [threadId],
       );
 
@@ -1158,7 +1161,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           }) => ({
             toolCallId: part.toolCallId,
             status: part.toolOutput.result.status,
-            answers: part.toolOutput.result.answers,
+            answer: part.toolOutput.result.answer,
           }),
         ),
       };
@@ -1198,9 +1201,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }) =>
       answerToolCall({
         toolCall: { threadId, toolCallId },
-        response: {
-          answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
-        },
+        response: { selectedOptionIndices: [0] },
       });
 
     it('records no conversation for an agent that answers without asking', async () => {
@@ -1233,6 +1234,165 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(threads).toEqual([]);
     });
 
+    it("routes the waiting conversation to the workflow creator's inbox", async () => {
+      mockAgent();
+      const [creator] = await global.testDataSource.query(
+        `SELECT membership.id AS "userWorkspaceId", member.id AS "workspaceMemberId"
+         FROM core."userWorkspace" membership
+         JOIN "${schema}"."workspaceMember" member ON member."userId" = membership."userId"
+         WHERE membership."workspaceId" = $1 AND membership."deletedAt" IS NULL AND member.id = $2`,
+        [workspaceId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      );
+      const agent = agentStep([]);
+      const fixture = await createFixture({ steps: [agent] });
+
+      await global.testDataSource.query(
+        `UPDATE core.workflow SET "createdByUserWorkspaceId" = $1 WHERE id = $2`,
+        [creator.userWorkspaceId, fixture.coreWorkflowId],
+      );
+
+      const runId = await runFixture(fixture);
+      const run = await waitForStep(runId, agent.id, 'PENDING');
+      const [conversation] = await global.testDataSource.query(
+        `SELECT "workspaceMemberId", "workflowRunId", "lastActivityAt", "lastMessageText" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+        [run.state.stepInfos[agent.id].threadId],
+      );
+
+      expect(conversation).toMatchObject({
+        workspaceMemberId: creator.workspaceMemberId,
+        workflowRunId: runId,
+        lastMessageText: agent.name,
+      });
+      expect(conversation.lastActivityAt).not.toBeNull();
+
+      const readByAnotherMember = await request(`http://localhost:${APP_PORT}`)
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send({
+          query: `query ReadRunConversation($threadId: UUID!) { chatMessages(threadId: $threadId) { role } }`,
+          variables: { threadId: run.state.stepInfos[agent.id].threadId },
+        });
+
+      expect(readByAnotherMember.body.errors).toBeUndefined();
+      expect(readByAnotherMember.body.data.chatMessages.length).toBeGreaterThan(
+        0,
+      );
+    });
+
+    it('keeps the conversation of a workflow without a member creator off every inbox', async () => {
+      mockAgent();
+      const agent = agentStep([]);
+      const fixture = await createFixture({ steps: [agent] });
+
+      await global.testDataSource.query(
+        `UPDATE core.workflow SET "createdByUserWorkspaceId" = NULL WHERE id = $1`,
+        [fixture.coreWorkflowId],
+      );
+
+      const runId = await runFixture(fixture);
+      const run = await waitForStep(runId, agent.id, 'PENDING');
+      const threadId: string = run.state.stepInfos[agent.id].threadId;
+      const [conversation] = await global.testDataSource.query(
+        `SELECT "workspaceMemberId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+        [threadId],
+      );
+
+      expect(conversation.workspaceMemberId).toBeNull();
+    });
+
+    it('keeps a question waiting when it is answered before its step is marked as waiting', async () => {
+      mockAgent();
+      const { runId, agent, threadId } = await startAskingRun();
+      const setStepStatus = (status: string) =>
+        global.testDataSource.query(
+          `UPDATE "${schema}"."workflowRun" SET state = jsonb_set(state, ARRAY['stepInfos', $2::text, 'status'], to_jsonb($3::text)) WHERE id = $1`,
+          [runId, agent.id, status],
+        );
+
+      await setStepStatus('RUNNING');
+
+      const earlyAnswer = await answer({ threadId });
+
+      expect(JSON.stringify(earlyAnswer.body.errors)).toContain(
+        'TOOL_CALL_NOT_PENDING',
+      );
+      expect(await getToolCalls(threadId)).toEqual({
+        isWaiting: true,
+        calls: [{ toolCallId: 'ask-1', status: 'pending' }],
+      });
+
+      await setStepStatus('PENDING');
+
+      expect((await answer({ threadId })).body.errors).toBeUndefined();
+      await waitForRun(runId, 'COMPLETED');
+    });
+
+    it('retries a step that failed after its answer from the same conversation, without asking again', async () => {
+      const executeAgent = jest
+        .spyOn(
+          getAppProviderByClassName<AgentAsyncExecutorService>(
+            'AgentAsyncExecutorService',
+          ),
+          'executeAgent',
+        )
+        .mockResolvedValueOnce(askingResult)
+        .mockRejectedValueOnce(new Error('The model is overloaded'))
+        .mockResolvedValueOnce(replyingResult);
+      const agent = {
+        ...agentStep([]),
+        settings: {
+          ...agentStep([]).settings,
+          errorHandlingOptions: {
+            retryOnFailure: { value: 1 },
+            continueOnFailure: { value: false },
+          },
+        },
+      } as WorkflowAction;
+      const fixture = await createFixture({ steps: [agent] });
+      const runId = await runFixture(fixture);
+      const pausedRun = await waitForStep(runId, agent.id, 'PENDING');
+      const threadId: string = pausedRun.state.stepInfos[agent.id].threadId;
+
+      expect((await answer({ threadId })).body.errors).toBeUndefined();
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        threadId,
+      });
+      expect(executeAgent).toHaveBeenCalledTimes(3);
+      expect(executeAgent.mock.calls[2][0].messages).toEqual([]);
+      expect(await getToolCalls(threadId)).toMatchObject({
+        isWaiting: false,
+        calls: [{ toolCallId: 'ask-1', status: 'answered' }],
+      });
+    });
+
+    it('still waits on the question when its conversation cannot be surfaced in the inbox', async () => {
+      mockAgent();
+      const recordThreadActivity = jest
+        .spyOn(
+          getAppProviderByClassName<AgentChatThreadService>(
+            'AgentChatThreadService',
+          ),
+          'recordThreadActivity',
+        )
+        .mockRejectedValueOnce(new Error('Database unavailable'));
+
+      try {
+        const { runId, threadId } = await startAskingRun();
+
+        expect(await getToolCalls(threadId)).toMatchObject({
+          isWaiting: true,
+        });
+        expect((await answer({ threadId })).body.errors).toBeUndefined();
+        await waitForRun(runId, 'COMPLETED');
+      } finally {
+        recordThreadActivity.mockRestore();
+      }
+    });
+
     it('pauses the run on the question and resumes the same conversation with the answer', async () => {
       const executeAgent = mockAgent();
       const { runId, agent, finalStep, threadId } = await startAskingRun();
@@ -1262,9 +1422,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const resumedWith = executeAgent.mock.calls[1][0];
 
       expect(resumedWith.messages).toEqual([]);
-      expect(JSON.stringify(resumedWith.priorModelMessages)).toContain(
-        'Send it',
-      );
+      expect(JSON.stringify(resumedWith.priorMessages)).toContain('Send it');
 
       const { messages, questionPart } = await getConversation(threadId);
 
@@ -1275,7 +1433,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           {
             toolCallId: 'ask-1',
             status: 'answered',
-            answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+            answer: { selectedOptionIndices: [0] },
           },
         ],
       });
@@ -1309,18 +1467,18 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         {
           type: 'tool-call',
           toolCallId,
-          toolName: 'ask_questions',
-          input: { questions: QUESTIONS },
+          toolName: 'ask_question',
+          input: QUESTION,
         },
         {
           type: 'tool-result',
           toolCallId,
-          toolName: 'ask_questions',
-          input: { questions: QUESTIONS },
+          toolName: 'ask_question',
+          input: QUESTION,
           output: {
             success: true,
-            message: 'Questions presented to the user; awaiting their answer.',
-            result: { questions: QUESTIONS, status: 'pending' },
+            message: 'Question presented to the user; awaiting their answer.',
+            result: { question: QUESTION, status: 'pending' },
           },
         },
       ];
@@ -1371,7 +1529,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
       expect(executeAgent).toHaveBeenCalledTimes(2);
       expect(
-        JSON.stringify(executeAgent.mock.calls[1][0].priorModelMessages),
+        JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
       ).not.toContain('"pending"');
     });
 

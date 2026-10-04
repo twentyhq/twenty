@@ -1,53 +1,74 @@
-import { useProcessStreamingMessageUpdate } from '@/ai/hooks/useProcessStreamingMessageUpdate';
-import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
-import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useCallback } from 'react';
+import { useProcessUIToolCallMessage } from '@/ai/hooks/useProcessUIToolCallMessage';
+import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
+import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
+import { Temporal } from 'temporal-polyfill';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useUpdateStreamingPartsWithDiff = () => {
-  const agentChatMessageFamilyCallbackState =
-    useAtomComponentFamilyStateCallbackState(
-      agentChatMessageComponentFamilyState,
+  const agentChatUISessionStartTime = useAtomStateValue(
+    agentChatUISessionStartTimeState,
+  );
+
+  const { processUIToolCallMessage } = useProcessUIToolCallMessage();
+  const { processWorkspaceSetupCompletion } =
+    useProcessWorkspaceSetupCompletion();
+
+  // messages are replaced, never mutated, so the last one seen can be kept by reference
+  const [lastSeenMessageById] = useState(
+    () => new Map<string, ExtendedUIMessage>(),
+  );
+
+  const isMessageFromCurrentSession = (message: ExtendedUIMessage) => {
+    if (agentChatUISessionStartTime === null) {
+      return false;
+    }
+
+    const messageCreatedAt = message.metadata?.createdAt;
+
+    return (
+      !isNonEmptyString(messageCreatedAt) ||
+      Temporal.Instant.from(messageCreatedAt).epochNanoseconds >=
+        agentChatUISessionStartTime.epochNanoseconds
+    );
+  };
+
+  const updateStreamingPartsWithDiff = (
+    incomingMessages: ExtendedUIMessage[],
+  ) => {
+    const lastSeenMessages = incomingMessages.map((message) =>
+      lastSeenMessageById.get(message.id),
     );
 
-  const { processStreamingMessageUpdate } = useProcessStreamingMessageUpdate();
+    // only the messages on screen are kept, so other threads' messages are released
+    lastSeenMessageById.clear();
 
-  const updateStreamingPartsWithDiff = useCallback(
-    (incomingMessages: ExtendedUIMessage[]) => {
-      for (const incomingMessage of incomingMessages) {
-        const alreadyExistingMessage = jotaiStore.get(
-          agentChatMessageFamilyCallbackState(incomingMessage.id),
-        );
+    for (const message of incomingMessages) {
+      lastSeenMessageById.set(message.id, message);
+    }
 
-        const messageContentHasChanged = !isDeeplyEqual(
-          alreadyExistingMessage,
-          incomingMessage,
-        );
+    for (const [index, incomingMessage] of incomingMessages.entries()) {
+      const lastSeenMessage = lastSeenMessages[index];
 
-        const messageAlreadyExists = isDefined(alreadyExistingMessage);
-
-        const shouldProcessMessage =
-          !messageAlreadyExists || messageContentHasChanged;
-
-        if (!shouldProcessMessage) {
-          continue;
-        }
-
-        const clonedMessage = structuredClone(incomingMessage);
-
-        jotaiStore.set(
-          agentChatMessageFamilyCallbackState(incomingMessage.id),
-          clonedMessage,
-        );
-
-        processStreamingMessageUpdate(incomingMessage);
+      // a stream flush keeps the unchanged messages, a refetch rebuilds them all
+      if (
+        lastSeenMessage === incomingMessage ||
+        isDeeplyEqual(lastSeenMessage, incomingMessage)
+      ) {
+        continue;
       }
-    },
-    [agentChatMessageFamilyCallbackState, processStreamingMessageUpdate],
-  );
+
+      if (!isMessageFromCurrentSession(incomingMessage)) {
+        continue;
+      }
+
+      processUIToolCallMessage(incomingMessage);
+      processWorkspaceSetupCompletion(incomingMessage);
+    }
+  };
 
   return {
     updateStreamingPartsWithDiff,
