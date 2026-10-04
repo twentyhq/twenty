@@ -162,11 +162,14 @@ export class AgentConversationWriterService {
     agentId: string | null;
     execution: RecordableAgentExecution;
     scope?: AgentHistoryTransactionScope;
-  }): Promise<{ isAwaitingAnswer: boolean }> {
+  }): Promise<{
+    isAwaitingAnswer: boolean;
+    replyParts: ExtendedUIMessagePart[];
+  }> {
     const replyParts = mapAiStepsToUIMessageParts(execution.steps ?? []);
 
     if (replyParts.length === 0) {
-      return { isAwaitingAnswer: false };
+      return { isAwaitingAnswer: false, replyParts };
     }
 
     const awaitingParts = findAwaitingPausingToolParts(replyParts);
@@ -187,6 +190,6 @@ export class AgentConversationWriterService {
       scope,
     });
 
-    return { isAwaitingAnswer };
+    return { isAwaitingAnswer, replyParts };
   }
 }
