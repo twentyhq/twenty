@@ -1,5 +1,7 @@
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { styled } from '@linaria/react';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
+import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowRunSSESubscribeEffect } from '@/workflow/workflow-diagram/components/WorkflowRunSSESubscribeEffect';
@@ -8,8 +10,10 @@ import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpd
 import { WorkflowFormFields } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFields';
 import { WorkflowFormStepSubmitButton } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormStepSubmitButton';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import { resolveFormInstructions } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/resolveFormInstructions';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 
 export type WorkflowEditActionFormFillerProps = {
@@ -21,12 +25,23 @@ export type WorkflowEditActionFormFillerProps = {
 
 type FormData = WorkflowFormActionField[];
 
+const StyledInstructions = styled.div`
+  color: ${themeCssVariables.font.color.secondary};
+  white-space: pre-wrap;
+  word-break: break-word;
+`;
+
 export const WorkflowEditActionFormFiller = ({
   action,
   actionOptions,
 }: WorkflowEditActionFormFillerProps) => {
   const [formData, setFormData] = useState<FormData>(action.settings.input);
   const workflowRunId = useWorkflowRunIdOrThrow();
+  const workflowRun = useWorkflowRun({ workflowRunId });
+  const instructions = resolveFormInstructions({
+    instructions: action.settings.instructions,
+    stepInfos: workflowRun?.state?.stepInfos,
+  });
   const { goBackFromSidePanel } = useSidePanelHistory();
   const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
   const [error, setError] = useState<string | undefined>(undefined);
@@ -79,6 +94,9 @@ export const WorkflowEditActionFormFiller = ({
     <>
       <WorkflowRunSSESubscribeEffect workflowRunId={workflowRunId} />
       <WorkflowStepBody>
+        {isDefined(instructions) && (
+          <StyledInstructions>{instructions}</StyledInstructions>
+        )}
         <WorkflowFormFields
           fields={formData}
           readonly={actionOptions.readonly}
