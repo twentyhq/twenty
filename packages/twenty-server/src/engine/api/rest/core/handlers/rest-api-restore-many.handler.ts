@@ -57,21 +57,25 @@ export class RestApiRestoreManyHandler extends RestApiBaseHandler {
           },
         );
 
-      return this.formatRestResponse(
+      return this.formatRestResponse({
         records,
-        flatObjectMetadata.namePlural,
+        objectNamePlural: flatObjectMetadata.namePlural,
         selectedFields,
-      );
+      });
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private formatRestResponse(
-    records: ObjectRecord[],
-    objectNamePlural: string,
-    selectedFields: CommonSelectedFields,
-  ) {
+  private formatRestResponse({
+    records,
+    objectNamePlural,
+    selectedFields,
+  }: {
+    records: ObjectRecord[];
+    objectNamePlural: string;
+    selectedFields: CommonSelectedFields;
+  }) {
     return {
       data: {
         [`restore${capitalize(objectNamePlural)}`]: records.map((record) =>

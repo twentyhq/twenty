@@ -63,25 +63,31 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
         },
       );
 
-      return this.formatRestResponse(
+      return this.formatRestResponse({
         records,
         aggregatedValues,
-        flatObjectMetadata.namePlural,
+        objectNamePlural: flatObjectMetadata.namePlural,
         pageInfo,
         selectedFields,
-      );
+      });
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private formatRestResponse(
-    records: ObjectRecord[],
-    aggregatedValues: Record<string, number> | undefined,
-    objectNamePlural: string,
-    pageInfo: PageInfo,
-    selectedFields: CommonSelectedFields,
-  ) {
+  private formatRestResponse({
+    records,
+    aggregatedValues,
+    objectNamePlural,
+    pageInfo,
+    selectedFields,
+  }: {
+    records: ObjectRecord[];
+    aggregatedValues: Record<string, number> | undefined;
+    objectNamePlural: string;
+    pageInfo: PageInfo;
+    selectedFields: CommonSelectedFields;
+  }) {
     return {
       data: {
         [objectNamePlural]: records.map((record) =>

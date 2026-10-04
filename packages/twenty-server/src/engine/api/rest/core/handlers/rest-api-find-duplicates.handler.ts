@@ -52,17 +52,21 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
           },
         );
 
-      return this.formatRestResponse(
+      return this.formatRestResponse({
         duplicateConnections,
-        flatObjectMetadata.nameSingular,
+        objectNameSingular: flatObjectMetadata.nameSingular,
         selectedFields,
-      );
+      });
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private formatRestResponse(
+  private formatRestResponse({
+    duplicateConnections,
+    objectNameSingular,
+    selectedFields,
+  }: {
     duplicateConnections: Array<{
       records: ObjectRecord[];
       totalCount: number;
@@ -70,10 +74,10 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
       hasPreviousPage: boolean;
       startCursor: string | null;
       endCursor: string | null;
-    }>,
-    objectNameSingular: string,
-    selectedFields: CommonSelectedFields,
-  ) {
+    }>;
+    objectNameSingular: string;
+    selectedFields: CommonSelectedFields;
+  }) {
     return {
       data: duplicateConnections.map((connection) => ({
         [`${objectNameSingular}Duplicates`]: connection.records.map((record) =>

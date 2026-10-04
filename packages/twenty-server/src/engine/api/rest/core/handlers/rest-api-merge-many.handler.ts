@@ -54,24 +54,28 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
           },
         );
 
-      return this.formatRestResponse(
+      return this.formatRestResponse({
         record,
-        flatObjectMetadata.nameSingular,
+        objectNameSingular: flatObjectMetadata.nameSingular,
         selectedFields,
-      );
+      });
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private formatRestResponse(
-    record: ObjectRecord,
-    objectNamePlural: string,
-    selectedFields: CommonSelectedFields,
-  ) {
+  private formatRestResponse({
+    record,
+    objectNameSingular,
+    selectedFields,
+  }: {
+    record: ObjectRecord;
+    objectNameSingular: string;
+    selectedFields: CommonSelectedFields;
+  }) {
     return {
       data: {
-        [`merge${capitalize(objectNamePlural)}`]: pickRestResponseFields({
+        [`merge${capitalize(objectNameSingular)}`]: pickRestResponseFields({
           record,
           selectedFields,
         }),
