@@ -3,7 +3,7 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -27,9 +27,12 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 
 @Injectable()
 export class AgentChatService {
+  private readonly logger = new Logger(AgentChatService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -564,6 +567,12 @@ export class AgentChatService {
     isLastAnswer: boolean;
     workspaceId: string;
   }): Promise<void> {
+    const threadBefore = isLastAnswer
+      ? await this.threadRepository.findOne(workspaceId, {
+          where: { id: threadId },
+        })
+      : null;
+
     await this.messagePartRepository.query(
       workspaceId,
       async ({ manager, table }) => {
@@ -580,6 +589,10 @@ export class AgentChatService {
         }
       },
     );
+
+    if (isDefined(threadBefore)) {
+      await this.emitPendingQuestionCleared({ workspaceId, threadBefore });
+    }
   }
 
   // clearing the marker is the claim, so only one caller closes the calls
@@ -594,6 +607,9 @@ export class AgentChatService {
     workspaceId: string;
     where?: FindOptionsWhere<AgentChatThreadWorkspaceEntity>;
   }): Promise<void> {
+    const threadBefore = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
     const claim = await this.threadRepository.update(
       workspaceId,
       { id: threadId, pendingQuestionMessageId: messageId, ...where },
@@ -609,6 +625,28 @@ export class AgentChatService {
       messageId,
       workspaceId,
     });
+
+    if (isDefined(threadBefore)) {
+      await this.emitPendingQuestionCleared({ workspaceId, threadBefore });
+    }
+  }
+
+  // Chat lists show which chats wait on an answer. The calls are already
+  // closed, so a lost event must not fail the caller
+  private async emitPendingQuestionCleared({
+    workspaceId,
+    threadBefore,
+  }: {
+    workspaceId: string;
+    threadBefore: AgentChatThreadWorkspaceEntity;
+  }): Promise<void> {
+    await this.threadRecordEventService
+      .emitThreadUpdated({ workspaceId, threadBefore })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not emit the cleared question on thread ${threadBefore.id}: ${formatErrorWithCause(error)}`,
+        ),
+      );
   }
 
   async restoreThread({
