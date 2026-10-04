@@ -6,6 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { StyledParagraph } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
 import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
 import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
@@ -104,6 +105,11 @@ const StyledReasoningText = styled.div`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: ${themeCssVariables.text.lineHeight.lg};
+
+  // reasoning uses single newlines as line breaks, which markdown would collapse
+  ${StyledParagraph} {
+    white-space: pre-line;
+  }
 `;
 
 const StyledIconContainer = styled.div`

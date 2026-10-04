@@ -140,7 +140,9 @@ describe('ThinkingStepsDisplay', () => {
 
     expect(screen.queryByRole('button', { name: /steps/i })).toBeNull();
     expect(screen.getByText('Thinking')).toBeInTheDocument();
-    expect(screen.getByText('Active reasoning content')).toBeInTheDocument();
+    expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
+      'Active reasoning content',
+    );
     expect(
       screen.getByText('Searched the web for crm software'),
     ).toBeInTheDocument();
