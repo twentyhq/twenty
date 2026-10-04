@@ -17,7 +17,7 @@ if serializedState then
   lastRefillAt = tonumber(state.lastRefillAt)
 end
 
-local elapsed = math.max(0, now - lastRefillAt)
+local elapsed = now - lastRefillAt
 local refillAmount = math.floor(elapsed * maxTokens / timeWindow)
 local availableTokens = math.min(tokens + refillAmount, maxTokens)
 

@@ -123,6 +123,20 @@ describe('ThrottlerService consumeTokens (Redis integration)', () => {
     expect(await cacheStorage.get(key)).toMatchObject({ tokens: 1.25 });
   });
 
+  it('preserves the existing refill calculation for a future timestamp', async () => {
+    const key = createTestKey();
+
+    await cacheStorage.set(
+      key,
+      { tokens: 5, lastRefillAt: Date.now() + timeWindow },
+      timeWindow * 2,
+    );
+
+    await throttlerService.consumeTokens(key, 1, 5, timeWindow);
+
+    expect(await cacheStorage.get(key)).toMatchObject({ tokens: -1 });
+  });
+
   it('rejects a corrupted bucket without overwriting it', async () => {
     const key = createTestKey();
     const corruptedState = { tokens: 'invalid', lastRefillAt: Date.now() };
