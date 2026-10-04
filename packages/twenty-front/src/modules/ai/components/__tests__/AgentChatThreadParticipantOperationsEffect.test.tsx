@@ -4,6 +4,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { AgentChatThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
 import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -18,14 +19,6 @@ const PARTICIPANT_OBJECT_METADATA_ITEM = {
 
 jest.mock('@/sse-db-event/hooks/useListenToEventsForQuery', () => ({
   useListenToEventsForQuery: jest.fn(),
-}));
-
-const mockRefreshAgentChatThreadParticipants = jest.fn();
-
-jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
-  useAgentChatThreadParticipants: () => ({
-    refreshAgentChatThreadParticipants: mockRefreshAgentChatThreadParticipants,
-  }),
 }));
 
 jest.mock(
@@ -108,10 +101,6 @@ const receiveParticipantUpdate = (
   );
 
 describe('AgentChatThreadParticipantOperationsEffect', () => {
-  beforeEach(() => {
-    mockRefreshAgentChatThreadParticipants.mockClear();
-  });
-
   it('adds a row the member created elsewhere', () => {
     const { store } = renderEffect({});
 
@@ -157,7 +146,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
     ).toEqual({ ...snoozedParticipant, ...change });
   });
 
-  it('keeps a change for a load already on its way, with its new version', () => {
+  it('keeps a change for a page already on its way, with its new version', () => {
     // Archived through an earlier change, so its version is still T0
     const { store } = renderEffect({
       [THREAD_ID]: {
@@ -176,7 +165,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-01T10:02:00.000Z',
     });
 
-    // A load that read the archived row (T1) merges this change (T2) over it
+    // A page that read the archived row (T1) merges this change (T2) over it
     expect(
       mergeAgentChatThreadParticipants(
         { [THREAD_ID]: loadedArchivedParticipant },
@@ -202,15 +191,34 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
     });
   });
 
-  it('reloads the rows when a change is for a row it does not have', () => {
+  it('leaves a change for a row it does not have to the page of its thread', () => {
     const { store } = renderEffect({ [THREAD_ID]: READ_PARTICIPANT });
 
     receiveParticipantUpdate('another-participant-id', { lastReadAt: null });
 
-    expect(mockRefreshAgentChatThreadParticipants).toHaveBeenCalledTimes(1);
     expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
     });
+    expect(store.get(agentChatThreadRecordUpdateCountState.atom)).toBe(1);
+  });
+
+  it('applies a change to a row that arrived before the first page', () => {
+    const { store } = renderEffect(null);
+
+    receiveCreatedParticipant(READ_PARTICIPANT);
+    receiveParticipantUpdate(PARTICIPANT_ID, {
+      lastReadAt: null,
+      updatedAt: '2026-10-01T10:05:00.000Z',
+    });
+
+    expect(store.get(agentChatThreadStreamedParticipantsState.atom)).toEqual({
+      [THREAD_ID]: {
+        ...READ_PARTICIPANT,
+        lastReadAt: null,
+        updatedAt: '2026-10-01T10:05:00.000Z',
+      },
+    });
+    expect(store.get(agentChatThreadRecordUpdateCountState.atom)).toBe(0);
   });
 
   it('ignores a copy older than the one it has', () => {
@@ -227,7 +235,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
     });
   });
 
-  it('keeps a row that arrives before the first load for that load', () => {
+  it('keeps a row that arrives before the first page for that page', () => {
     const { store } = renderEffect(null);
 
     receiveCreatedParticipant(READ_PARTICIPANT);

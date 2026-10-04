@@ -3,8 +3,8 @@ import { useCallback, useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
 import { getAgentChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
 import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
@@ -31,8 +31,6 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
   const currentWorkspaceMemberId = useAtomStateValue(
     currentWorkspaceMemberState,
   )?.id;
-  const { refreshAgentChatThreadParticipants } =
-    useAgentChatThreadParticipants();
   const isEnabled =
     isDefined(participantObjectMetadataItem) &&
     isDefined(currentWorkspaceMemberId);
@@ -57,7 +55,7 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
 
   const handleRecordOperation = useCallback(
     ({ operation }: ObjectRecordOperationBrowserEventDetail) => {
-      // Also kept aside, so a load already on its way cannot undo them
+      // Also kept aside, for when the member's rows have not loaded yet
       const applyParticipants = (
         participants: AgentChatThreadParticipantFieldsFragment[],
       ) => {
@@ -89,12 +87,15 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
             operation.type === 'update-one'
               ? [operation.result.updateInput]
               : operation.result.updateInputs;
-          const participants = store.get(agentChatThreadParticipantsState.atom);
           const participantsById = new Map(
-            Object.values(participants ?? {}).map((participant) => [
-              participant.id,
-              participant,
-            ]),
+            [
+              ...Object.values(
+                store.get(agentChatThreadStreamedParticipantsState.atom),
+              ),
+              ...Object.values(
+                store.get(agentChatThreadParticipantsState.atom) ?? {},
+              ),
+            ].map((participant) => [participant.id, participant]),
           );
           const updatedParticipants = updateInputs.map(
             ({ recordId, updatedFields }) => {
@@ -106,24 +107,22 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
             },
           );
 
-          // Updates only carry what changed, so a row not loaded yet is
-          // read again whole
-          if (
-            !isDefined(participants) ||
-            !updatedParticipants.every(isDefined)
-          ) {
-            void refreshAgentChatThreadParticipants();
-            return;
+          // Updates only carry what changed, so a row not loaded yet comes
+          // whole with its thread, and a page on its way is read again in
+          // case it holds an older copy
+          if (!updatedParticipants.every(isDefined)) {
+            store.set(
+              agentChatThreadRecordUpdateCountState.atom,
+              (updateCount) => updateCount + 1,
+            );
           }
 
-          applyParticipants(updatedParticipants);
+          applyParticipants(updatedParticipants.filter(isDefined));
           return;
         }
-        default:
-          void refreshAgentChatThreadParticipants();
       }
     },
-    [refreshAgentChatThreadParticipants, store],
+    [store],
   );
 
   useListenToObjectRecordOperationBrowserEvent({
