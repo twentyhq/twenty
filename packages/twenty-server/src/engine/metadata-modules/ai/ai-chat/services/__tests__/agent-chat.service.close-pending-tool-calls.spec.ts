@@ -10,14 +10,14 @@ const QUESTIONS = [
   },
 ];
 
-const THREAD_BEFORE = {
+const CLEARED_THREAD = {
   id: 'thread-id',
-  pendingQuestionMessageId: 'question-message-id',
+  pendingQuestionMessageId: null,
 };
 
 const buildService = ({ claimAffected = 1 } = {}) => {
   const threadRepository = {
-    findOne: jest.fn().mockResolvedValue(THREAD_BEFORE),
+    findOne: jest.fn().mockResolvedValue(CLEARED_THREAD),
     update: jest.fn().mockResolvedValue({ affected: claimAffected }),
   };
   const threadRecordEventService = {
@@ -108,7 +108,11 @@ describe('AgentChatService closePendingToolCalls', () => {
 
     expect(threadRecordEventService.emitThreadUpdated).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
-      threadBefore: THREAD_BEFORE,
+      threadBefore: {
+        ...CLEARED_THREAD,
+        pendingQuestionMessageId: 'question-message-id',
+      },
+      threadAfter: CLEARED_THREAD,
     });
   });
 
@@ -121,6 +125,59 @@ describe('AgentChatService closePendingToolCalls', () => {
     await service.closePendingToolCalls(closeArguments);
 
     expect(messagePartRepository.writePart).not.toHaveBeenCalled();
+    expect(threadRecordEventService.emitThreadUpdated).not.toHaveBeenCalled();
+  });
+});
+
+describe('AgentChatService recordToolCallAnswer', () => {
+  const answerArguments = {
+    threadId: 'thread-id',
+    messageId: 'question-message-id',
+    partId: 'part-id',
+    toolOutput: { result: { status: 'answered' } },
+    workspaceId: 'workspace-id',
+  };
+
+  it('tells open chat lists once the last answer stops the wait', async () => {
+    const { service, messagePartRepository, threadRecordEventService } =
+      buildService();
+
+    messagePartRepository.writePart
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce([{ id: 'thread-id' }]);
+
+    await service.recordToolCallAnswer({
+      ...answerArguments,
+      isLastAnswer: true,
+    });
+
+    expect(threadRecordEventService.emitThreadUpdated).toHaveBeenCalledTimes(1);
+  });
+
+  it('stays quiet when another caller already stopped the wait', async () => {
+    const { service, messagePartRepository, threadRecordEventService } =
+      buildService();
+
+    messagePartRepository.writePart
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce([]);
+
+    await service.recordToolCallAnswer({
+      ...answerArguments,
+      isLastAnswer: true,
+    });
+
+    expect(threadRecordEventService.emitThreadUpdated).not.toHaveBeenCalled();
+  });
+
+  it('stays quiet while other calls still wait on an answer', async () => {
+    const { service, threadRecordEventService } = buildService();
+
+    await service.recordToolCallAnswer({
+      ...answerArguments,
+      isLastAnswer: false,
+    });
+
     expect(threadRecordEventService.emitThreadUpdated).not.toHaveBeenCalled();
   });
 });

@@ -567,13 +567,7 @@ export class AgentChatService {
     isLastAnswer: boolean;
     workspaceId: string;
   }): Promise<void> {
-    const threadBefore = isLastAnswer
-      ? await this.threadRepository.findOne(workspaceId, {
-          where: { id: threadId },
-        })
-      : null;
-
-    await this.messagePartRepository.query(
+    const isPendingQuestionCleared = await this.messagePartRepository.query(
       workspaceId,
       async ({ manager, table }) => {
         await manager.query(
@@ -581,17 +575,29 @@ export class AgentChatService {
           [partId, JSON.stringify(toolOutput)],
         );
 
-        if (isLastAnswer) {
-          await manager.query(
-            `UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = NULL, "updatedAt" = now() WHERE id = $1 AND "pendingQuestionMessageId" = $2`,
-            [threadId, messageId],
-          );
+        if (!isLastAnswer) {
+          return false;
         }
+
+        const clearedThreads = await manager.query<{ id: string }[]>(
+          `WITH cleared AS (
+             UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = NULL, "updatedAt" = now()
+             WHERE id = $1 AND "pendingQuestionMessageId" = $2
+             RETURNING id
+           ) SELECT id FROM cleared`,
+          [threadId, messageId],
+        );
+
+        return clearedThreads.length > 0;
       },
     );
 
-    if (isDefined(threadBefore)) {
-      await this.emitPendingQuestionCleared({ workspaceId, threadBefore });
+    if (isPendingQuestionCleared) {
+      await this.emitPendingQuestionCleared({
+        workspaceId,
+        threadId,
+        messageId,
+      });
     }
   }
 
@@ -607,9 +613,6 @@ export class AgentChatService {
     workspaceId: string;
     where?: FindOptionsWhere<AgentChatThreadWorkspaceEntity>;
   }): Promise<void> {
-    const threadBefore = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
     const claim = await this.threadRepository.update(
       workspaceId,
       { id: threadId, pendingQuestionMessageId: messageId, ...where },
@@ -626,27 +629,39 @@ export class AgentChatService {
       workspaceId,
     });
 
-    if (isDefined(threadBefore)) {
-      await this.emitPendingQuestionCleared({ workspaceId, threadBefore });
-    }
+    await this.emitPendingQuestionCleared({ workspaceId, threadId, messageId });
   }
 
-  // Chat lists show which chats wait on an answer. The calls are already
-  // closed, so a lost event must not fail the caller
+  // Chat lists show which chats wait on an answer. The marker is already
+  // cleared, so a lost event must not fail the caller
   private async emitPendingQuestionCleared({
     workspaceId,
-    threadBefore,
+    threadId,
+    messageId,
   }: {
     workspaceId: string;
-    threadBefore: AgentChatThreadWorkspaceEntity;
+    threadId: string;
+    messageId: string;
   }): Promise<void> {
-    await this.threadRecordEventService
-      .emitThreadUpdated({ workspaceId, threadBefore })
-      .catch((error: unknown) =>
-        this.logger.warn(
-          `Could not emit the cleared question on thread ${threadBefore.id}: ${formatErrorWithCause(error)}`,
-        ),
+    try {
+      const thread = await this.threadRepository.findOne(workspaceId, {
+        where: { id: threadId },
+      });
+
+      if (!isDefined(thread)) {
+        return;
+      }
+
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore: { ...thread, pendingQuestionMessageId: messageId },
+        threadAfter: thread,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Could not emit the cleared question on thread ${threadId}: ${formatErrorWithCause(error)}`,
       );
+    }
   }
 
   async restoreThread({
