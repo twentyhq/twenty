@@ -1,9 +1,9 @@
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const processedToolExecutionPartIdsComponentState =
+export const processedWorkspaceSetupCompletionIdsComponentState =
   createAtomComponentState<string[]>({
-    key: 'processedToolExecutionPartIdsComponentState',
+    key: 'processedWorkspaceSetupCompletionIdsComponentState',
     defaultValue: [],
     componentInstanceContext: AgentChatComponentInstanceContext,
   });

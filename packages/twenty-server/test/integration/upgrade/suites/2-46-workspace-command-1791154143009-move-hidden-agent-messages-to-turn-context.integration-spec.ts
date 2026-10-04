@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type MoveHiddenAgentMessagesToTurnContextCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791119515597-move-hidden-agent-messages-to-turn-context.command';
+import { type MoveHiddenAgentMessagesToTurnContextCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791154143009-move-hidden-agent-messages-to-turn-context.command';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';

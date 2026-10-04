@@ -63,40 +63,6 @@ export class AgentChatThreadParticipantService {
     private readonly delayedJobsQueueService: MessageQueueService,
   ) {}
 
-  // A member keeps their row after losing access to a thread, so rows are
-  // only returned for threads they can still read
-  async findForWorkspaceMember({
-    workspaceId,
-    workspaceMemberId,
-  }: Omit<AgentChatThreadAccessArgs, 'threadId'>): Promise<
-    AgentChatThreadParticipantDTO[]
-  > {
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      return [];
-    }
-
-    // A snooze is ended by a queued job, which may not have run yet
-    const rows = await this.threadRepository.query(workspaceId, ({ manager }) =>
-      manager.query<AgentChatThreadParticipantDTO[]>(
-        `SELECT id, "threadId", "lastReadAt", "snoozedUntil", "updatedAt",
-           CASE WHEN "snoozedUntil" <= clock_timestamp() THEN NULL ELSE "archivedAt" END AS "archivedAt"
-         FROM ${getAgentChatThreadParticipantTable(workspaceId)}
-         WHERE "workspaceMemberId" = $1`,
-        [workspaceMemberId],
-      ),
-    );
-
-    const readableThreadIds = new Set(
-      await this.sharingService.findReadableThreadIds({
-        workspaceId,
-        workspaceMemberId,
-        threadIds: rows.map(({ threadId }) => threadId),
-      }),
-    );
-
-    return rows.filter(({ threadId }) => readableThreadIds.has(threadId));
-  }
-
   async markAsRead(
     args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadParticipantDTO> {

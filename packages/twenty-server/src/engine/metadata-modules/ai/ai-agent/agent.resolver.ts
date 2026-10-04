@@ -104,7 +104,7 @@ export class AgentResolver {
     }
 
     const createdAgent = await this.agentService.createOneAgent(
-      { ...input, isCustom: true },
+      input,
       workspace.id,
     );
 

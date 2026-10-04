@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -38,17 +38,6 @@ export class AgentChatThreadParticipantResolver {
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly threadService: AgentChatThreadService,
   ) {}
-
-  @Query(() => [AgentChatThreadParticipantDTO])
-  async myAgentChatThreadParticipants(
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatThreadParticipantDTO[]> {
-    return this.participantService.findForWorkspaceMember({
-      workspaceId,
-      workspaceMemberId,
-    });
-  }
 
   @Mutation(() => AgentChatThreadParticipantDTO)
   async markAgentChatThreadAsRead(

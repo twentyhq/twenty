@@ -252,6 +252,9 @@ export default {
             "isCustom": [
                 8
             ],
+            "isSystem": [
+                8
+            ],
             "applicationId": [
                 3
             ],
@@ -8327,9 +8330,6 @@ export default {
             ],
             "getAiSystemPromptPreview": [
                 384
-            ],
-            "myAgentChatThreadParticipants": [
-                388
             ],
             "skills": [
                 381
