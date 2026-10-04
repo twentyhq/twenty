@@ -41,13 +41,13 @@ export const WorkflowEditActionFormFiller = ({
   const [formData, setFormData] = useState<FormData>(action.settings.input);
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
-  const iterationIndex = useAtomComponentStateValue(
+  const workflowRunIteratorSubStepIterationIndex = useAtomComponentStateValue(
     workflowRunIteratorSubStepIterationIndexComponentState,
   );
   const instructionsContext = getFormInstructionsContext({
     stepId: action.id,
     workflowRun,
-    iterationIndex,
+    iterationIndex: workflowRunIteratorSubStepIterationIndex,
   });
   const instructions = isDefined(instructionsContext)
     ? resolveFormInstructions({
