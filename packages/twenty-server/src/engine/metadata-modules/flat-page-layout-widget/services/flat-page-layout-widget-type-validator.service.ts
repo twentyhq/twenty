@@ -198,7 +198,6 @@ export class FlatPageLayoutWidgetTypeValidatorService {
     const { flatEntityToValidate } = args;
     const widgetType = flatEntityToValidate.type;
 
-    // Unknown types are reported by the centralized enum validation
     if (!isEnumValue(WidgetType, widgetType)) {
       return [];
     }
@@ -215,7 +214,6 @@ export class FlatPageLayoutWidgetTypeValidatorService {
     const { flatEntityToValidate } = args;
     const widgetType = flatEntityToValidate.type;
 
-    // Unknown types are reported by the centralized enum validation
     if (!isEnumValue(WidgetType, widgetType)) {
       return [];
     }

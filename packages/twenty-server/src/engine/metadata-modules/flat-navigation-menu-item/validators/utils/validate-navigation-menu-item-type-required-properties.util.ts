@@ -119,7 +119,6 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
       // oxlint-disable-next-line unused-imports/no-unused-vars
       type UnhandledNavigationMenuItemType = AssertUnreachable<typeof type>;
 
-      // Unknown types are reported by the centralized enum validation
       return [];
     }
   }

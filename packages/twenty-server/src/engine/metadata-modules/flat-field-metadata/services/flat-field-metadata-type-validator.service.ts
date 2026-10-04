@@ -93,7 +93,6 @@ export class FlatFieldMetadataTypeValidatorService {
     const { flatEntityToValidate } = args;
     const fieldType = flatEntityToValidate.type;
 
-    // Unknown types are reported by the centralized enum validation
     if (!isEnumValue(FieldMetadataType, fieldType)) {
       return [];
     }
