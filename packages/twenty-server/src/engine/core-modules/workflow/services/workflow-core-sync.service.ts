@@ -215,6 +215,7 @@ export class WorkflowCoreSyncService {
         lastPublishedVersionId: coreRow.lastPublishedVersionId,
         lastPublishedCoreWorkflowVersionId:
           coreRow.lastPublishedCoreWorkflowVersionId,
+        isSystem: false,
         visibility: WorkflowVisibility.WORKSPACE,
         createdByUserWorkspaceId: null,
         applicationUniversalIdentifier:
@@ -229,6 +230,7 @@ export class WorkflowCoreSyncService {
           ...flatWorkflow,
           universalIdentifier: existingFlatWorkflow.universalIdentifier,
           createdAt: existingFlatWorkflow.createdAt,
+          isSystem: existingFlatWorkflow.isSystem,
           visibility: existingFlatWorkflow.visibility,
           createdByUserWorkspaceId:
             existingFlatWorkflow.createdByUserWorkspaceId,
