@@ -229,11 +229,23 @@ export class WorkflowRunnerWorkspaceService {
       );
     }
 
-    await this.resume({
-      workspaceId,
-      workflowRunId,
-      lastExecutedStepId: stepId,
-    });
+    // the step is no longer pending, so a submission cannot be retried and the run must not stay running
+    try {
+      await this.resume({
+        workspaceId,
+        workflowRunId,
+        lastExecutedStepId: stepId,
+      });
+    } catch (error) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        status: WorkflowRunStatus.FAILED,
+        error: 'The run could not resume after its form was submitted',
+      });
+
+      throw error;
+    }
   }
 
   private async findFormRecordReadContext({
