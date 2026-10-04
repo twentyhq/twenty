@@ -1,4 +1,6 @@
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { workflowRunIteratorSubStepIterationIndexComponentState } from '@/side-panel/pages/workflow/step/view-run/states/workflowRunIteratorSubStepIterationIndexComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
@@ -7,6 +9,8 @@ import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowRunSSESubscribeEffect } from '@/workflow/workflow-diagram/components/WorkflowRunSSESubscribeEffect';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowRunStep';
+import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
+import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepContext';
 import { WorkflowFormFields } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFields';
 import { WorkflowFormStepSubmitButton } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormStepSubmitButton';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
@@ -38,10 +42,27 @@ export const WorkflowEditActionFormFiller = ({
   const [formData, setFormData] = useState<FormData>(action.settings.input);
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
-  const instructions = resolveFormInstructions({
-    instructions: action.settings.instructions,
-    stepInfos: workflowRun?.state?.stepInfos,
-  });
+  const iterationIndex = useAtomComponentStateValue(
+    workflowRunIteratorSubStepIterationIndexComponentState,
+  );
+  const instructions = isDefined(workflowRun?.state)
+    ? resolveFormInstructions({
+        instructions: action.settings.instructions,
+        context: Object.fromEntries(
+          getWorkflowRunStepContext({
+            stepId: action.id,
+            stepInfos: workflowRun.state.stepInfos,
+            flow: workflowRun.state.flow,
+            currentLoopIterationIndex: getIsDescendantOfIterator({
+              stepId: action.id,
+              steps: workflowRun.state.flow.steps,
+            })
+              ? iterationIndex
+              : undefined,
+          }).map(({ id, context }) => [id, context]),
+        ),
+      })
+    : undefined;
   const { goBackFromSidePanel } = useSidePanelHistory();
   const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
   const [error, setError] = useState<string | undefined>(undefined);

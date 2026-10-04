@@ -201,7 +201,7 @@ export const WorkflowEditActionFormBuilder = ({
 
     setFormData(updatedFormData);
 
-    saveAction();
+    saveAction({ input: updatedFormData, instructions });
   };
 
   const handleDragEnd = ({ source, destination }: DraggableListDropResult) => {
@@ -222,23 +222,22 @@ export const WorkflowEditActionFormBuilder = ({
 
     setFormData(copiedFormData);
 
-    saveAction();
+    saveAction({ input: copiedFormData, instructions });
   };
 
-  const saveAction = useDebouncedCallback(() => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
+  const saveAction = useDebouncedCallback(
+    (settings: { input: FormData; instructions: string | undefined }) => {
+      if (actionOptions.readonly === true) {
+        return;
+      }
 
-    actionOptions.onActionUpdate({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: formData,
-        instructions,
-      },
-    });
-  }, 1_000);
+      actionOptions.onActionUpdate({
+        ...action,
+        settings: { ...action.settings, ...settings },
+      });
+    },
+    1_000,
+  );
 
   const handleInstructionsChange = (updatedInstructions: string) => {
     if (actionOptions.readonly === true) {
@@ -247,7 +246,7 @@ export const WorkflowEditActionFormBuilder = ({
 
     setInstructions(updatedInstructions);
 
-    saveAction();
+    saveAction({ input: formData, instructions: updatedInstructions });
   };
 
   useEffect(() => {
@@ -391,13 +390,11 @@ export const WorkflowEditActionFormBuilder = ({
 
                                 setFormData(updatedFormData);
 
-                                actionOptions.onActionUpdate({
-                                  ...action,
-                                  settings: {
-                                    ...action.settings,
-                                    input: updatedFormData,
-                                  },
+                                saveAction({
+                                  input: updatedFormData,
+                                  instructions,
                                 });
+                                saveAction.flush();
                               }}
                             >
                               <IconTrash />
@@ -444,15 +441,12 @@ export const WorkflowEditActionFormBuilder = ({
                       label,
                     };
 
-                    setFormData([...formData, newField]);
+                    const updatedFormData = [...formData, newField];
 
-                    actionOptions.onActionUpdate({
-                      ...action,
-                      settings: {
-                        ...action.settings,
-                        input: [...action.settings.input, newField],
-                      },
-                    });
+                    setFormData(updatedFormData);
+
+                    saveAction({ input: updatedFormData, instructions });
+                    saveAction.flush();
 
                     setSelectedField(newField.id);
                   }}

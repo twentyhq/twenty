@@ -1,25 +1,22 @@
 import { isString } from '@sniptt/guards';
 import { isDefined, resolveInput } from 'twenty-shared/utils';
-import {
-  getWorkflowRunContext,
-  type WorkflowRunStepInfos,
-} from 'twenty-shared/workflow';
 
 export const resolveFormInstructions = ({
   instructions,
-  stepInfos,
+  context,
 }: {
   instructions: string | undefined;
-  stepInfos: WorkflowRunStepInfos | undefined;
+  context: Record<string, unknown>;
 }): string | undefined => {
   if (!isDefined(instructions) || instructions.trim() === '') {
     return undefined;
   }
 
-  const resolvedInstructions = resolveInput(
-    instructions,
-    getWorkflowRunContext(stepInfos ?? {}),
-  );
+  const resolvedInstructions = resolveInput(instructions, context);
+
+  if (!isDefined(resolvedInstructions)) {
+    return instructions;
+  }
 
   // a lone variable resolves to the value itself, which may not be text
   return isString(resolvedInstructions)

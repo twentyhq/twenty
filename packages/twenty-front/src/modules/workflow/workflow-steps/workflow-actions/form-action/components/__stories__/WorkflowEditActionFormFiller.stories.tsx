@@ -1,3 +1,4 @@
+import { SidePanelWorkflowRunStepContentComponentInstanceContext } from '@/side-panel/pages/workflow/step/view-run/states/contexts/SidePanelWorkflowRunStepContentComponentInstanceContext';
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowEditActionFormFiller } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFiller';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -19,6 +20,13 @@ const meta: Meta<typeof WorkflowEditActionFormFiller> = {
     msw: graphqlMocks,
   },
   decorators: [
+    (Story) => (
+      <SidePanelWorkflowRunStepContentComponentInstanceContext.Provider
+        value={{ instanceId: 'workflow-run-step-content' }}
+      >
+        <Story />
+      </SidePanelWorkflowRunStepContentComponentInstanceContext.Provider>
+    ),
     WorkflowStepActionDrawerDecorator,
     ComponentDecorator,
     WorkflowStepDecorator,
