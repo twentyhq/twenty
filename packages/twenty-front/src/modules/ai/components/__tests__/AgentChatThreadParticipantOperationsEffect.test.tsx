@@ -182,7 +182,8 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
         { [THREAD_ID]: loadedArchivedParticipant },
         Object.values(store.get(agentChatThreadStreamedParticipantsState.atom)),
       )[THREAD_ID],
-    ).toMatchObject({
+    ).toEqual({
+      ...READ_PARTICIPANT,
       archivedAt: null,
       updatedAt: '2026-10-01T10:02:00.000Z',
     });

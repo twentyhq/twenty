@@ -15,7 +15,7 @@ const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 describe('2-46 workspace command - schedule agent chat thread snooze ends (integration)', () => {
   const pendingThreadId = randomUUID();
   const endedThreadId = randomUUID();
-  const pendingSnoozedUntil = new Date(Date.now() + 30_000);
+  let pendingSnoozedUntil: Date;
 
   beforeAll(async () => {
     for (const threadId of [pendingThreadId, endedThreadId]) {
@@ -25,6 +25,8 @@ describe('2-46 workspace command - schedule agent chat thread snooze ends (integ
         [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
       );
     }
+
+    pendingSnoozedUntil = new Date(Date.now() + 30_000);
 
     await global.testDataSource.query(
       `INSERT INTO ${SCHEMA}."agentChatThreadParticipant" ("threadId", "workspaceMemberId", "archivedAt", "snoozedUntil")

@@ -157,7 +157,7 @@ export class AgentChatThreadParticipantService {
       delay: Math.max(snoozedUntil.getTime() - Date.now(), 0),
     });
 
-    return this.writeOneOrThrow(args, buildArchiveQuery, [snoozedUntil]);
+    return this.setArchive(args, snoozedUntil);
   }
 
   // A snooze ends by moving the chat back to the inbox. The snooze stays

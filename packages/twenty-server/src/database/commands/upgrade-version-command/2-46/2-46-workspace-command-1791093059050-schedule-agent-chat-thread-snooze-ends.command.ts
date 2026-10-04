@@ -55,7 +55,7 @@ export class ScheduleAgentChatThreadSnoozeEndsCommand extends ProvisionedWorkspa
     const pendingSnoozes = await this.storage.run(workspaceId, ({ manager }) =>
       manager.query<PendingSnooze[]>(
         `SELECT "threadId", "workspaceMemberId", "snoozedUntil",
-           CEIL(EXTRACT(EPOCH FROM "snoozedUntil" - clock_timestamp()) * 1000)::int AS "remainingDelay"
+           CEIL(EXTRACT(EPOCH FROM "snoozedUntil" - clock_timestamp()) * 1000)::float8 AS "remainingDelay"
          FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."agentChatThreadParticipant"
          WHERE "archivedAt" IS NOT NULL AND "snoozedUntil" > clock_timestamp()`,
       ),
