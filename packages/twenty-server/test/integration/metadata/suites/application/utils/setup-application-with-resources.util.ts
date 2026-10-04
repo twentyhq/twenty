@@ -1,3 +1,4 @@
+import { HTTPMethod } from 'twenty-shared/types';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { seedBuiltFrontComponentSharedDependenciesFile } from 'test/integration/metadata/suites/application/utils/seed-built-front-component-shared-dependencies-file.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -135,7 +136,7 @@ export const setupApplicationWithResources = async ({
             builtHandlerChecksum: 'handler-checksum',
             httpRouteTriggerSettings: {
               path: `/${slug}`,
-              httpMethod: 'POST',
+              httpMethod: HTTPMethod.POST,
               isAuthRequired: true,
             },
             toolTriggerSettings: {},
