@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 
-import { CoreObjectTableFetchMoreEffect } from '@/object-core/components/CoreObjectTableFetchMoreEffect';
+import { CoreObjectTableFetchMoreTrigger } from '@/object-core/components/CoreObjectTableFetchMoreTrigger';
 import { RecordIndexEmptyStateDisplay } from '@/object-record/record-index/components/RecordIndexEmptyStateDisplay';
 import { RecordIndexPageHeaderTitle } from '@/object-record/record-index/components/RecordIndexPageHeaderTitle';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -97,7 +97,7 @@ export const CoreObjectIndexPageLayout = ({
             <>
               {children}
               {hasNextPage && isDefined(onFetchNextPage) && (
-                <CoreObjectTableFetchMoreEffect
+                <CoreObjectTableFetchMoreTrigger
                   isFetchingNextPage={isFetchingNextPage}
                   onFetchNextPage={onFetchNextPage}
                 />
