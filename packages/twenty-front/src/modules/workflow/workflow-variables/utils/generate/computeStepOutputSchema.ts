@@ -10,6 +10,7 @@ import { generateFindRecordsOutputSchema } from '@/workflow/workflow-variables/u
 import { generateFormOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateFormOutputSchema';
 import { generateRecordEventOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateRecordEventOutputSchema';
 import { generateRecordOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateRecordOutputSchema';
+import { generateWaitForEventOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -344,6 +345,27 @@ export const computeStepOutputSchema = ({
 
     case 'CLASSIFY': {
       return generateClassifyOutputSchema(step.settings.input.questions);
+    }
+
+    case 'WAIT_FOR_EVENT': {
+      const parsedEventName = parseEventName(
+        step.settings?.input?.eventName ?? '',
+      );
+
+      if (!isDefined(parsedEventName)) {
+        return {};
+      }
+
+      const objectMetadataItem = findObjectMetadataItemByName(
+        objectMetadataItems,
+        parsedEventName.objectName,
+      );
+
+      if (!isDefined(objectMetadataItem)) {
+        return {};
+      }
+
+      return generateWaitForEventOutputSchema(objectMetadataItem);
     }
 
     case 'FILTER':

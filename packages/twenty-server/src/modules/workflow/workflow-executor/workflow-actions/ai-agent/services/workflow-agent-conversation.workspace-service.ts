@@ -14,6 +14,10 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type RecordableAgentExecution } from 'src/engine/metadata-modules/ai/ai-history/types/recordable-agent-execution.type';
+import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
+import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/is-awaiting-pausing-tool-output.util';
+import { WORKFLOW_AGENT_WAIT_TOOL_NAMES } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-wait-tool-names.constant';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
@@ -39,6 +43,10 @@ export class WorkflowAgentConversationWorkspaceService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessage')
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessagePart')
+    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
@@ -136,6 +144,44 @@ export class WorkflowAgentConversationWorkspaceService {
     });
 
     await this.recordWaitingActivity({ workspaceId, threadId, text: title });
+  }
+
+  // The wait call stays pending in the conversation until its wait resolves, then carries the outcome
+  async recordWaitOutcome({
+    workspaceId,
+    threadId,
+    toolOutput,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    toolOutput: Record<string, unknown>;
+  }): Promise<void> {
+    const [lastMessage] = await this.messageRepository.find(workspaceId, {
+      where: { threadId },
+      order: { createdAt: 'DESC' },
+      take: 1,
+      relations: ['parts'],
+    });
+
+    const waitPart = lastMessage?.parts?.find(
+      (part) =>
+        isDefined(part.toolName) &&
+        WORKFLOW_AGENT_WAIT_TOOL_NAMES.includes(part.toolName) &&
+        isAwaitingPausingToolOutput(part.toolOutput),
+    );
+
+    if (!isDefined(waitPart)) {
+      throw new AiException(
+        'The waiting call could not be found in the conversation',
+        AiExceptionCode.TOOL_CALL_NOT_FOUND,
+      );
+    }
+
+    await this.messagePartRepository.update(
+      workspaceId,
+      { id: waitPart.id },
+      { toolOutput },
+    );
   }
 
   // The answer is already the last message, so only the agent's reply is added

@@ -29,6 +29,7 @@ import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common
 import { getStepRetryAttempt } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-attempt.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
@@ -47,6 +48,7 @@ export class WorkflowRunWorkspaceService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
+    private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
   ) {}
 
   async createCoreWorkflowRun({
@@ -207,6 +209,11 @@ export class WorkflowRunWorkspaceService {
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
 
+    await this.workflowStepWaitWorkspaceService.cancelRunWaits({
+      workspaceId,
+      workflowRunId,
+    });
+
     const stepThreadIds = Object.values(
       workflowRunToUpdate.state?.stepInfos ?? {},
     )
@@ -275,6 +282,7 @@ export class WorkflowRunWorkspaceService {
             result: stepInfo?.result,
             error: stepInfo?.error,
             status: stepInfo.status,
+            wait: stepInfo?.wait,
           },
         },
       },
@@ -461,7 +469,8 @@ export class WorkflowRunWorkspaceService {
           ...workflowRunToUpdate.state,
           stepInfos: {
             ...workflowRunToUpdate.state?.stepInfos,
-            [stepId]: { ...currentStepInfo, ...stepInfo },
+            // the step leaves PENDING, so it no longer waits
+            [stepId]: { ...currentStepInfo, wait: undefined, ...stepInfo },
           },
         },
       },

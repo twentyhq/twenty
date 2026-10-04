@@ -59,6 +59,7 @@ import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/cons
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
 
@@ -79,6 +80,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
+    private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -486,7 +488,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }): Promise<{ shouldProcessNextSteps: boolean }> {
-    const isPendingEvent = actionOutput.pendingEvent;
+    const wait = actionOutput.wait;
     const isSuccess = isDefined(actionOutput.result);
     const isStopped = actionOutput.shouldEndWorkflowRun ?? false;
     const isNotFinished = actionOutput.shouldRemainRunning ?? false;
@@ -495,9 +497,10 @@ export class WorkflowExecutorWorkspaceService {
 
     let stepInfo: WorkflowRunStepInfo;
 
-    if (isPendingEvent) {
+    if (isDefined(wait)) {
       stepInfo = {
         status: StepStatus.PENDING,
+        wait,
       };
     } else if (isStopped) {
       stepInfo = {
@@ -536,6 +539,15 @@ export class WorkflowExecutorWorkspaceService {
       workflowRunId,
       workspaceId,
     });
+
+    if (isDefined(wait)) {
+      await this.workflowStepWaitWorkspaceService.arm({
+        workspaceId,
+        workflowRunId,
+        stepId,
+        wait,
+      });
+    }
 
     return {
       shouldProcessNextSteps:

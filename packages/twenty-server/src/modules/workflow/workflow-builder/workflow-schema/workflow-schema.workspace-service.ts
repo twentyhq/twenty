@@ -120,6 +120,11 @@ export class WorkflowSchemaWorkspaceService {
           formFieldMetadataItems: step.settings.input,
           workspaceId,
         });
+      case WorkflowActionType.WAIT_FOR_EVENT:
+        return this.computeWaitForEventOutputSchema({
+          eventName: step.settings.input.eventName,
+          workspaceId,
+        });
       case WorkflowActionType.ITERATOR: {
         const items = step.settings.input.items;
 
@@ -382,6 +387,40 @@ export class WorkflowSchemaWorkspaceService {
       );
 
     return generateFakeObjectRecord({ objectMetadataInfo });
+  }
+
+  private async computeWaitForEventOutputSchema({
+    eventName,
+    workspaceId,
+  }: {
+    eventName: string;
+    workspaceId: string;
+  }): Promise<OutputSchema> {
+    const [objectType] = eventName.split('.');
+
+    const objectMetadataInfo =
+      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+        objectType,
+        workspaceId,
+      );
+
+    const record: Node = {
+      isLeaf: false,
+      label: objectMetadataInfo.flatObjectMetadata.labelSingular ?? 'Record',
+      icon: 'IconAlpha',
+      type: 'object',
+      value: generateFakeObjectRecord({ objectMetadataInfo }),
+    };
+
+    const hasTimedOut: Leaf = {
+      isLeaf: true,
+      label: 'Has Timed Out',
+      icon: 'IconClockX',
+      type: 'boolean',
+      value: false,
+    };
+
+    return { record, hasTimedOut } satisfies OutputSchema;
   }
 
   private computeSendEmailActionOutputSchema(): OutputSchema {

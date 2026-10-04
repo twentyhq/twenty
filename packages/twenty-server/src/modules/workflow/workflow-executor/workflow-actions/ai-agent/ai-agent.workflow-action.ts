@@ -28,6 +28,17 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
+import {
+  WAIT_FOR_DURATION_TOOL_NAME,
+  WAIT_FOR_EVENT_TOOL_NAME,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-wait-tool-names.constant';
+import { WORKFLOW_AGENT_WAIT_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-wait-prompt.constant';
+import { createWaitForDurationTool } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/create-wait-for-duration.tool';
+import { createWaitForEventTool } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/tools/create-wait-for-event.tool';
+import { buildWaitOutcomeToolOutput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-wait-outcome-tool-output.util';
+import { findAgentStepWait } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/find-agent-step-wait.util';
+import { type WorkflowWaitResolution } from 'src/modules/workflow/workflow-wait/types/workflow-wait-resolution.type';
+import { type WorkflowWaitResolutionInput } from 'src/modules/workflow/workflow-wait/types/workflow-wait-resolution-input.type';
 import { WORKFLOW_AGENT_HUMAN_INPUT_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-human-input-prompt.constant';
 import {
   type RecordedConversation,
@@ -163,16 +174,20 @@ export class AiAgentWorkflowAction implements WorkflowAction {
           }
         : { messages: [{ role: 'user', content: resolvedPrompt }] }),
       baseSystemPrompt: canAskForHumanInput
-        ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_HUMAN_INPUT_PROMPT}\n\n${trimmedHumanInputInstructions}`
-        : WORKFLOW_BASE_SYSTEM_PROMPT,
-      pausingTools: canAskForHumanInput
-        ? {
-            [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
-              isWorkspaceSetupThread: false,
-            }),
-            [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
-          }
-        : {},
+        ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}\n\n${WORKFLOW_AGENT_HUMAN_INPUT_PROMPT}\n\n${trimmedHumanInputInstructions}`
+        : `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}`,
+      pausingTools: {
+        [WAIT_FOR_EVENT_TOOL_NAME]: createWaitForEventTool(),
+        [WAIT_FOR_DURATION_TOOL_NAME]: createWaitForDurationTool(),
+        ...(canAskForHumanInput
+          ? {
+              [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
+                isWorkspaceSetupThread: false,
+              }),
+              [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
+            }
+          : {}),
+      },
       canProposeToolCalls: canAskForHumanInput,
       actorContext: executionContext.isActingOnBehalfOfUser
         ? executionContext.initiator
@@ -206,19 +221,50 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     }
 
     if (executionResult.isPaused) {
-      // Without the conversation nobody could answer, so the run would wait forever
-      if (recordedConversation?.isAwaitingAnswer !== true) {
-        return {
-          error: 'Agent asked a question that could not be recorded.',
-        };
+      if (recordedConversation?.isAwaitingAnswer === true) {
+        return { wait: { type: 'ANSWER' } };
       }
 
-      return { pendingEvent: true };
+      const wait = findAgentStepWait(executionResult.steps);
+
+      // Resuming continues the conversation, so without it the run would wait forever
+      if (isDefined(wait) && isDefined(recordedConversation)) {
+        return { wait };
+      }
+
+      return {
+        error: isDefined(wait)
+          ? 'Agent paused to wait but its conversation could not be recorded.'
+          : 'Agent asked a question that could not be recorded.',
+      };
     }
 
     return {
       result: executionResult.result,
     };
+  }
+
+  async resolveWait({
+    stepInfo,
+    outcome,
+    runInfo,
+  }: WorkflowWaitResolutionInput): Promise<WorkflowWaitResolution> {
+    const threadId = stepInfo.threadId;
+
+    if (!isDefined(threadId)) {
+      throw new WorkflowStepExecutorException(
+        'A waiting agent step has no conversation to continue',
+        WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
+      );
+    }
+
+    await this.workflowAgentConversationService.recordWaitOutcome({
+      workspaceId: runInfo.workspaceId,
+      threadId,
+      toolOutput: buildWaitOutcomeToolOutput(outcome),
+    });
+
+    return { resumedThreadId: threadId };
   }
 
   private async persistStepLog({

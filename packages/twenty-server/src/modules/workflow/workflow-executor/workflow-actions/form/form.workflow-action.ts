@@ -43,6 +43,6 @@ export class FormWorkflowAction implements WorkflowAction {
       fields: step.settings.input,
     });
 
-    return { pendingEvent: true };
+    return { wait: { type: 'ANSWER' } };
   }
 }

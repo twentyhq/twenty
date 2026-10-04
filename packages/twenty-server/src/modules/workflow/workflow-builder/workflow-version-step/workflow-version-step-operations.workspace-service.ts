@@ -713,6 +713,26 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.WAIT_FOR_EVENT: {
+        const activeObjectMetadataItem =
+          await this.findFirstActiveObjectMetadata(workspaceId);
+
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Wait for Event',
+            type: WorkflowActionType.WAIT_FOR_EVENT,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                eventName: `${activeObjectMetadataItem?.nameSingular ?? 'company'}.updated`,
+                recordId: null,
+                timeout: null,
+              },
+            },
+          },
+        };
+      }
       case WorkflowActionType.EMPTY: {
         return {
           builtStep: {

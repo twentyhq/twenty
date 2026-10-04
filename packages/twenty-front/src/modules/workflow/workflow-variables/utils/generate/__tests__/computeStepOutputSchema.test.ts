@@ -422,6 +422,33 @@ describe('computeStepOutputSchema', () => {
     });
   });
 
+  describe('WAIT_FOR_EVENT step', () => {
+    it('should expose the record of the event and whether the wait timed out', () => {
+      const result = computeStepOutputSchema({
+        step: {
+          type: 'WAIT_FOR_EVENT',
+          settings: { input: { eventName: 'company.updated' } },
+        } as any,
+        objectMetadataItems: [mockCompanyObjectMetadataItem],
+      });
+
+      expect(Object.keys(result ?? {})).toEqual(['record', 'hasTimedOut']);
+      expect((result as any).record.label).toBe('Company');
+    });
+
+    it('should return empty object when the event cannot be parsed', () => {
+      const result = computeStepOutputSchema({
+        step: {
+          type: 'WAIT_FOR_EVENT',
+          settings: { input: { eventName: 'company' } },
+        } as any,
+        objectMetadataItems: [mockCompanyObjectMetadataItem],
+      });
+
+      expect(result).toEqual({});
+    });
+  });
+
   describe('FORM step', () => {
     it('should return empty object when form fields are not defined', () => {
       const result = computeStepOutputSchema({
