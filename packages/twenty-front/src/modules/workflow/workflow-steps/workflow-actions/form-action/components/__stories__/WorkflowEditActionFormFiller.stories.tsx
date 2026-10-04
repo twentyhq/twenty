@@ -139,6 +139,7 @@ export const ReadonlyMode: Story = {
 
 const actionWithInstructions: WorkflowFormAction = {
   ...mockAction,
+  id: '6d9ac9a1-b5f9-4f63-9ab6-3d4b2f0f2a71',
   settings: {
     ...mockAction.settings,
     input: mockAction.settings.input.slice(0, 2),
