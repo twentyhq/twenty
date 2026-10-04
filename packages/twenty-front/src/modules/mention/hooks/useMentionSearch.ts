@@ -51,11 +51,16 @@ export const useMentionSearch = () => {
         recordId: searchRecord.recordId,
         objectNameSingular: searchRecord.objectNameSingular,
         objectLabelSingular: searchRecord.objectLabelSingular,
+        objectLabelPlural:
+          searchableObjectMetadataItems.find(
+            ({ nameSingular }) =>
+              nameSingular === searchRecord.objectNameSingular,
+          )?.labelPlural ?? searchRecord.objectLabelSingular,
         label: searchRecord.label,
         imageUrl: searchRecord.imageUrl ?? '',
       }));
     },
-    [apolloCoreClient, objectsToSearch],
+    [apolloCoreClient, objectsToSearch, searchableObjectMetadataItems],
   );
 
   return { searchMentionRecords, searchableObjectMetadataItems };

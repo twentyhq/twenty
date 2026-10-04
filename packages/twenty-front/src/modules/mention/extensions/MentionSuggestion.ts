@@ -5,10 +5,12 @@ import { MentionSuggestionMenu } from '@/mention/components/MentionSuggestionMen
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
+import { isWorkspaceMemberMentionSearchResult } from '@/mention/utils/isWorkspaceMemberMentionSearchResult';
 import { createSuggestionRenderLifecycle } from '@/ui/suggestion/components/createSuggestionRenderLifecycle';
 
 type MentionSuggestionOptions = {
   searchMentionRecords: (query: string) => Promise<MentionSearchResult[]>;
+  searchWorkspaceMembers: (query: string) => MentionSearchResult[];
 };
 
 export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
@@ -16,11 +18,13 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
 
   addOptions: () => ({
     searchMentionRecords: async () => [],
+    searchWorkspaceMembers: () => [],
   }),
 
   addStorage() {
     return {
       searchMentionRecords: this.options.searchMentionRecords,
+      searchWorkspaceMembers: this.options.searchWorkspaceMembers,
     };
   },
 
@@ -29,20 +33,29 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
       Suggestion<MentionSearchResult>({
         pluginKey: MENTION_SUGGESTION_PLUGIN_KEY,
         editor: this.editor,
-        char: '#',
+        char: '@',
         items: async ({ query }) => {
-          try {
-            return await this.storage.searchMentionRecords(query);
-          } catch {
-            return [];
-          }
+          const recordResults = await this.storage
+            .searchMentionRecords(query)
+            .catch(() => []);
+
+          return [
+            ...this.storage.searchWorkspaceMembers(query),
+            ...recordResults,
+          ];
         },
         command: ({ editor, range, props: selectedItem }) => {
           editor
             .chain()
             .focus()
             .deleteRange(range)
-            .insertContent(getMentionTagContent(selectedItem))
+            .insertContent(
+              getMentionTagContent({
+                ...selectedItem,
+                shouldAddAsParticipant:
+                  isWorkspaceMemberMentionSearchResult(selectedItem),
+              }),
+            )
             .run();
         },
         render: () =>

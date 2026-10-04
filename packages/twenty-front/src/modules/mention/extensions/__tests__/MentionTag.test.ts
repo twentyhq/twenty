@@ -183,7 +183,7 @@ describe('MentionTag', () => {
       expect(html).toContain('class="mention-tag"');
     });
 
-    it('should prefix records with # and workspace members with @', () => {
+    it('should keep the participant flag out of the copied HTML', () => {
       editor.commands.setContent({
         type: 'doc',
         content: [
@@ -219,7 +219,7 @@ describe('MentionTag', () => {
           .querySelectorAll('.mention-tag'),
       ).map((mention) => mention.textContent);
 
-      expect(renderedMentionTexts).toEqual(['#Linus', '@Grace']);
+      expect(renderedMentionTexts).toEqual(['@Linus', '@Grace']);
       expect(html).not.toContain('shouldAddAsParticipant');
     });
   });

@@ -14,6 +14,7 @@ export type SuggestionMenuProps<TItem> = {
   getItemKey: (item: TItem) => string;
   renderItem: (item: TItem, isSelected: boolean) => ReactNode;
   selectedItemPreview?: SuggestionMenuSelectedItemPreview<TItem>;
+  getItemSectionLabel?: (item: TItem) => string;
   onKeyDown?: (
     event: KeyboardEvent,
     selectedIndex: number,
