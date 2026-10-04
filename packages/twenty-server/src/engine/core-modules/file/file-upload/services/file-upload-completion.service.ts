@@ -26,6 +26,10 @@ import {
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
+import {
+  isMetadataStrippableImageMimeType,
+  stripImageMetadata,
+} from 'src/engine/core-modules/file/utils/strip-image-metadata.utils';
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -237,9 +241,27 @@ export class FileUploadCompletionService {
   }): Promise<FileStorageMetadata> {
     const { size } = metadata;
 
-    if (mimeType !== 'image/svg+xml') {
-      return metadata;
+    if (mimeType === 'image/svg+xml') {
+      return this.sanitizeSvg({ storageLocation, mimeType, metadata });
     }
+
+    if (isMetadataStrippableImageMimeType(mimeType)) {
+      return this.stripImageMetadata({ storageLocation, mimeType, metadata });
+    }
+
+    return metadata;
+  }
+
+  private async sanitizeSvg({
+    storageLocation,
+    mimeType,
+    metadata,
+  }: {
+    storageLocation: FileUploadStorageLocation;
+    mimeType: string;
+    metadata: FileStorageMetadata;
+  }): Promise<FileStorageMetadata> {
+    const { size } = metadata;
 
     if (size > MAX_SANITIZABLE_SVG_BYTES) {
       throw buildSvgTooLargeException(
@@ -274,13 +296,84 @@ export class FileUploadCompletionService {
       ? sanitizedFile
       : Buffer.from(sanitizedFile);
 
+    return this.rewriteSanitizedFile({
+      storageLocation,
+      mimeType,
+      metadata,
+      sanitizedBuffer,
+    });
+  }
+
+  /**
+   * Removes EXIF / GPS / XMP metadata from raster images.
+   *
+   * Uploaded photos routinely carry the device's GPS coordinates and capture
+   * details. Leaving them in place leaks the uploader's location to anyone who
+   * can download the file, so the metadata is stripped before the object is
+   * promoted out of quarantine.
+   */
+  private async stripImageMetadata({
+    storageLocation,
+    mimeType,
+    metadata,
+  }: {
+    storageLocation: FileUploadStorageLocation;
+    mimeType: string;
+    metadata: FileStorageMetadata;
+  }): Promise<FileStorageMetadata> {
+    const stream = await this.fileStorageService.readFile(storageLocation);
+
+    let file: Buffer;
+
+    try {
+      file = await streamToBuffer(stream, metadata.size);
+    } catch (error) {
+      if (error instanceof StreamSizeExceededError) {
+        throw new FileUploadException(
+          `Image at "${storageLocation.resourcePath}" exceeds its declared size of ${metadata.size} bytes`,
+          FileUploadExceptionCode.FILE_SIZE_MISMATCH,
+          {
+            userFriendlyMessage: msg`The uploaded file does not match the declared size. Please retry the upload.`,
+          },
+        );
+      }
+
+      throw error;
+    }
+
+    const strippedBuffer = stripImageMetadata(file);
+
+    // Nothing to rewrite: the image carried no metadata we remove.
+    if (strippedBuffer.length === file.length) {
+      return metadata;
+    }
+
+    return this.rewriteSanitizedFile({
+      storageLocation,
+      mimeType,
+      metadata,
+      sanitizedBuffer: strippedBuffer,
+    });
+  }
+
+  private async rewriteSanitizedFile({
+    storageLocation,
+    mimeType,
+    metadata,
+    sanitizedBuffer,
+  }: {
+    storageLocation: FileUploadStorageLocation;
+    mimeType: string;
+    metadata: FileStorageMetadata;
+    sanitizedBuffer: Buffer;
+  }): Promise<FileStorageMetadata> {
     await this.fileStorageService.writeFileStream({
       ...storageLocation,
       stream: Readable.from(sanitizedBuffer),
       mimeType,
     });
 
-    // Sanitizing rewrites the object, so the checksum read before no longer matches.
+    // Rewriting the object invalidates the checksum read before it.
     const sanitizedMetadata =
       await this.fileStorageService.getFileMetadata(storageLocation);
 
@@ -290,7 +383,7 @@ export class FileUploadCompletionService {
       (isDefined(metadata.checksum) && !isDefined(sanitizedMetadata.checksum))
     ) {
       throw new FileUploadException(
-        `Could not read back the sanitized SVG at "${storageLocation.resourcePath}"`,
+        `Could not read back the sanitized file at "${storageLocation.resourcePath}"`,
         FileUploadExceptionCode.STORAGE_INCONSISTENT,
         {
           userFriendlyMessage: msg`File storage did not confirm the processed file. Please retry.`,
