@@ -1,38 +1,47 @@
 import {
   AggregateOperations,
+  FieldMetadataType,
   MetadataWritability,
   ViewOpenRecordIn,
   ViewType,
 } from 'twenty-shared/types';
 
-import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
-import {
-  type FlatEntityEnumPropertyRules,
-  validateFlatEntityEnumProperties,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
+import { ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
+import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { validateFlatEntityEnumProperties } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
 
-const ENUM_PROPERTY_RULES = {
-  type: { enumObject: ViewType },
-  openRecordIn: { enumObject: ViewOpenRecordIn },
-  kanbanAggregateOperation: {
-    enumObject: AggregateOperations,
-    isNullable: true,
-  },
-} satisfies FlatEntityEnumPropertyRules<UniversalFlatView>;
+const CONFIGURED_ENUM_VALUES = Object.entries(
+  ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME,
+).flatMap(([metadataName, propertiesConfiguration]) =>
+  (
+    Object.entries(propertiesConfiguration) as [
+      string,
+      { enum?: { values: object } },
+    ][]
+  ).flatMap(([property, configuration]) =>
+    configuration.enum === undefined
+      ? []
+      : [[`${metadataName}.${property}`, configuration.enum.values] as const],
+  ),
+);
 
-const validate = (
-  flatView: Partial<Record<keyof UniversalFlatView, unknown>>,
-) =>
+const validateView = (flatView: Record<string, unknown>) =>
   validateFlatEntityEnumProperties({
-    flatEntity: flatView as Partial<UniversalFlatView>,
-    enumPropertyRules: ENUM_PROPERTY_RULES,
-    code: 'INVALID_VIEW_DATA',
+    metadataName: 'view',
+    flatEntity: flatView,
   });
 
 describe('validateFlatEntityEnumProperties', () => {
+  it.each(CONFIGURED_ENUM_VALUES)(
+    'should load the values of %s',
+    (_, values) => {
+      expect(Object.values(values).length).toBeGreaterThan(0);
+    },
+  );
+
   it('should accept enum members', () => {
     expect(
-      validate({
+      validateView({
         type: ViewType.KANBAN,
         openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
         kanbanAggregateOperation: AggregateOperations.SUM,
@@ -41,15 +50,15 @@ describe('validateFlatEntityEnumProperties', () => {
   });
 
   it('should skip undefined properties', () => {
-    expect(validate({})).toEqual([]);
+    expect(validateView({})).toEqual([]);
   });
 
   it('should accept null only for nullable properties', () => {
-    expect(validate({ kanbanAggregateOperation: null })).toEqual([]);
+    expect(validateView({ kanbanAggregateOperation: null })).toEqual([]);
 
-    expect(validate({ openRecordIn: null })).toMatchObject([
+    expect(validateView({ openRecordIn: null })).toMatchObject([
       {
-        code: 'INVALID_VIEW_DATA',
+        code: FlatEntityMapsExceptionCode.INVALID_ENUM_VALUE,
         message:
           'Invalid value null for openRecordIn, expected one of: SIDE_PANEL, RECORD_PAGE',
         value: null,
@@ -64,9 +73,9 @@ describe('validateFlatEntityEnumProperties', () => {
     ['a name inherited from Object.prototype', 'constructor'],
     ['a non string value', 42],
   ])('should reject %s', (_, value) => {
-    expect(validate({ type: value })).toMatchObject([
+    expect(validateView({ type: value })).toMatchObject([
       {
-        code: 'INVALID_VIEW_DATA',
+        code: FlatEntityMapsExceptionCode.INVALID_ENUM_VALUE,
         message: expect.stringContaining(
           `Invalid value ${JSON.stringify(value)} for type, expected one of: TABLE,`,
         ),
@@ -76,7 +85,7 @@ describe('validateFlatEntityEnumProperties', () => {
   });
 
   it('should return one error per invalid property', () => {
-    const errors = validate({
+    const errors = validateView({
       type: 'toString',
       openRecordIn: 'side_panel',
       kanbanAggregateOperation: 'SUMM',
@@ -89,5 +98,18 @@ describe('validateFlatEntityEnumProperties', () => {
         'Invalid value "SUMM" for kanbanAggregateOperation',
       ),
     ]);
+  });
+
+  it('should validate properties restricted to a subset of an enum', () => {
+    const validateApplicationVariableType = (type: string) =>
+      validateFlatEntityEnumProperties({
+        metadataName: 'applicationVariable',
+        flatEntity: { type },
+      });
+
+    expect(validateApplicationVariableType(FieldMetadataType.TEXT)).toEqual([]);
+    expect(
+      validateApplicationVariableType(FieldMetadataType.RELATION),
+    ).toHaveLength(1);
   });
 });

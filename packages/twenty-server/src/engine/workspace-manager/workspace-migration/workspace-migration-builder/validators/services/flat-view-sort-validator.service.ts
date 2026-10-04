@@ -9,7 +9,6 @@ import { ViewSortExceptionCode } from 'src/engine/metadata-modules/view-sort/exc
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
-import { ViewSortDirection } from 'twenty-shared/types';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 
@@ -102,12 +101,7 @@ export class FlatViewSortValidatorService {
       });
     }
 
-    if (
-      !isDefined(flatViewSortToValidate.direction) ||
-      !Object.values(ViewSortDirection).includes(
-        flatViewSortToValidate.direction,
-      )
-    ) {
+    if (!isDefined(flatViewSortToValidate.direction)) {
       validationResult.errors.push({
         code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
         message: t`View sort with invalid direction`,
@@ -156,13 +150,7 @@ export class FlatViewSortValidatorService {
       ...flatEntityUpdate,
     };
 
-    if (
-      !isDefined(updatedFlatViewSort?.direction) ||
-      !(
-        updatedFlatViewSort.direction === ViewSortDirection.DESC ||
-        updatedFlatViewSort.direction === ViewSortDirection.ASC
-      )
-    ) {
+    if (!isDefined(updatedFlatViewSort?.direction)) {
       validationResult.errors.push({
         code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
         message: t`Correct direction is required`,

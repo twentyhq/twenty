@@ -2,12 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import {
-  MetadataReadability,
-  MetadataWritability,
-  ObjectOpenRecordIn,
-  ObjectSharingReach,
-} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -15,22 +9,10 @@ import { validateFlatObjectMetadataNameAndLabels } from 'src/engine/metadata-mod
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { isCallerTwentyStandardApp } from 'src/engine/metadata-modules/utils/is-caller-twenty-standard-app.util';
-import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import {
-  type FlatEntityEnumPropertyRules,
-  validateFlatEntityEnumProperties,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
-
-const FLAT_OBJECT_METADATA_ENUM_PROPERTY_RULES = {
-  openRecordIn: { enumObject: ObjectOpenRecordIn },
-  writability: { enumObject: MetadataWritability },
-  readability: { enumObject: MetadataReadability },
-  sharingReach: { enumObject: ObjectSharingReach },
-} satisfies FlatEntityEnumPropertyRules<UniversalFlatObjectMetadata>;
 
 @Injectable()
 export class FlatObjectMetadataValidatorService {
@@ -94,11 +76,6 @@ export class FlatObjectMetadataValidatorService {
     }
 
     validationResult.errors.push(
-      ...validateFlatEntityEnumProperties({
-        flatEntity: flatEntityUpdate,
-        enumPropertyRules: FLAT_OBJECT_METADATA_ENUM_PROPERTY_RULES,
-        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      }),
       ...validateFlatObjectMetadataNameAndLabels({
         optimisticUniversalFlatObjectMetadataMaps:
           optimisticFlatObjectMetadataMaps,
@@ -235,11 +212,6 @@ export class FlatObjectMetadataValidatorService {
     }
 
     objectValidationResult.errors.push(
-      ...validateFlatEntityEnumProperties({
-        flatEntity: flatObjectMetadataToValidate,
-        enumPropertyRules: FLAT_OBJECT_METADATA_ENUM_PROPERTY_RULES,
-        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      }),
       ...validateFlatObjectMetadataNameAndLabels({
         optimisticUniversalFlatObjectMetadataMaps,
         universalFlatObjectMetadataToValidate: flatObjectMetadataToValidate,

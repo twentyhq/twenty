@@ -15,6 +15,7 @@ import {
   getFilterTypeFromFieldType,
   getFilterValueValidationIssue,
   isDefined,
+  isEnumValue,
   isRecordFilterOperandExpectingValue,
   isRecordFilterValueValid,
   jsonRelationFilterValueSchema,
@@ -26,19 +27,15 @@ import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import {
-  type FlatEntityEnumPropertyRules,
-  validateFlatEntityEnumProperties,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
 
-const FLAT_ROW_LEVEL_PERMISSION_PREDICATE_ENUM_PROPERTY_RULES = {
-  operand: { enumObject: RowLevelPermissionPredicateOperand },
-} satisfies FlatEntityEnumPropertyRules<UniversalFlatRowLevelPermissionPredicate>;
+// Operand-dependent checks would only add noise to the centralized enum error
+const hasInvalidOperand = (operand: unknown) =>
+  isDefined(operand) &&
+  !isEnumValue(RowLevelPermissionPredicateOperand, operand);
 
 @Injectable()
 export class FlatRowLevelPermissionPredicateValidatorService {
@@ -63,15 +60,6 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       metadataName: 'rowLevelPermissionPredicate',
       type: 'create',
     });
-
-    const enumPropertyErrors = validateFlatEntityEnumProperties({
-      flatEntity: flatPredicateToValidate,
-      enumPropertyRules:
-        FLAT_ROW_LEVEL_PERMISSION_PREDICATE_ENUM_PROPERTY_RULES,
-      code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-    });
-
-    validationResult.errors.push(...enumPropertyErrors);
 
     const existingPredicate = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatPredicateToValidate.universalIdentifier,
@@ -100,7 +88,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         message: t`Field metadata not found`,
         userFriendlyMessage: msg`Field metadata not found`,
       });
-    } else if (enumPropertyErrors.length === 0) {
+    } else if (!hasInvalidOperand(flatPredicateToValidate.operand)) {
       const invalidValueError = this.getInvalidValueError({
         fieldType: fieldMetadata.type,
         operand: flatPredicateToValidate.operand,
@@ -261,15 +249,6 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       ...flatEntityUpdate,
     };
 
-    const enumPropertyErrors = validateFlatEntityEnumProperties({
-      flatEntity: flatEntityUpdate,
-      enumPropertyRules:
-        FLAT_ROW_LEVEL_PERMISSION_PREDICATE_ENUM_PROPERTY_RULES,
-      code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-    });
-
-    validationResult.errors.push(...enumPropertyErrors);
-
     if (
       updatedPredicate.roleUniversalIdentifier !==
       existingPredicate.roleUniversalIdentifier
@@ -315,7 +294,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         userFriendlyMessage: msg`Field metadata not found`,
       });
     } else if (
-      enumPropertyErrors.length === 0 &&
+      !hasInvalidOperand(updatedPredicate.operand) &&
       ('value' in flatEntityUpdate ||
         'operand' in flatEntityUpdate ||
         'fieldMetadataUniversalIdentifier' in flatEntityUpdate ||

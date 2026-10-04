@@ -14,6 +14,7 @@ export const FlatEntityMapsExceptionCode = appendCommonExceptionCode({
   ENTITY_ALREADY_EXISTS: 'ENTITY_ALREADY_EXISTS',
   ENTITY_NOT_FOUND: 'ENTITY_NOT_FOUND',
   ENTITY_MALFORMED: 'ENTITY_MALFORMED',
+  INVALID_ENUM_VALUE: 'INVALID_ENUM_VALUE',
 } as const);
 
 export const flatEntityMapsExceptionContextSchema = z.strictObject({
@@ -37,6 +38,7 @@ const getFlatEntityMapsExceptionUserFriendlyMessage = (
     case FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS:
     case FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND:
     case FlatEntityMapsExceptionCode.ENTITY_MALFORMED:
+    case FlatEntityMapsExceptionCode.INVALID_ENUM_VALUE:
     case FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:

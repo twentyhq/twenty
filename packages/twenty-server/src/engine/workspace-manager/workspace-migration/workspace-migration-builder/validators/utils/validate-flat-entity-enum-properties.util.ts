@@ -1,56 +1,75 @@
 import { msg, t } from '@lingui/core/macro';
+import {
+  ALL_METADATA_NAME,
+  type AllMetadataName,
+} from 'twenty-shared/metadata';
 import { isDefined, isEnumValue } from 'twenty-shared/utils';
 
+import { ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
+import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
-type FlatEntityEnumPropertyRule<TEnumValue extends string = string> = {
-  enumObject: Record<string, TEnumValue>;
+type FlatEntityEnumPropertyConfiguration = {
+  values: Readonly<Record<string, string>> | readonly string[];
   isNullable?: boolean;
 };
 
-export type FlatEntityEnumPropertyRules<TFlatEntity> = {
-  [TProperty in keyof TFlatEntity]?: FlatEntityEnumPropertyRule<
-    Extract<TFlatEntity[TProperty], string>
-  >;
+type FlatEntityEnumProperty = FlatEntityEnumPropertyConfiguration & {
+  property: string;
 };
+
+const computeEnumProperties = (
+  metadataName: AllMetadataName,
+): FlatEntityEnumProperty[] =>
+  (
+    Object.entries(
+      ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME[metadataName],
+    ) as [string, { enum?: FlatEntityEnumPropertyConfiguration }][]
+  ).flatMap(([property, { enum: enumConfiguration }]) =>
+    isDefined(enumConfiguration) ? [{ property, ...enumConfiguration }] : [],
+  );
+
+const ALL_ENUM_PROPERTIES_BY_METADATA_NAME = Object.values(
+  ALL_METADATA_NAME,
+).reduce(
+  (acc, metadataName) => ({
+    ...acc,
+    [metadataName]: computeEnumProperties(metadataName),
+  }),
+  {} as Record<AllMetadataName, FlatEntityEnumProperty[]>,
+);
 
 // Undefined properties are skipped: they are either absent from an update or
 // left to the column default on creation
-export const validateFlatEntityEnumProperties = <TFlatEntity extends object>({
+export const validateFlatEntityEnumProperties = ({
+  metadataName,
   flatEntity,
-  enumPropertyRules,
-  code,
 }: {
-  flatEntity: TFlatEntity;
-  enumPropertyRules: NoInfer<FlatEntityEnumPropertyRules<TFlatEntity>>;
-  code: string;
+  metadataName: AllMetadataName;
+  flatEntity: Partial<Record<string, unknown>>;
 }): FlatEntityValidationError[] =>
-  Object.entries<FlatEntityEnumPropertyRule | undefined>(
-    enumPropertyRules,
-  ).flatMap(([property, rule]) => {
-    if (!isDefined(rule)) {
-      return [];
-    }
+  ALL_ENUM_PROPERTIES_BY_METADATA_NAME[metadataName].flatMap(
+    ({ property, values, isNullable }) => {
+      const value = flatEntity[property];
 
-    const value: unknown = flatEntity[property as keyof TFlatEntity];
+      if (
+        value === undefined ||
+        (value === null && isNullable === true) ||
+        isEnumValue(values, value)
+      ) {
+        return [];
+      }
 
-    if (
-      value === undefined ||
-      (value === null && rule.isNullable === true) ||
-      isEnumValue(rule.enumObject, value)
-    ) {
-      return [];
-    }
+      const stringifiedValue = JSON.stringify(value);
+      const expectedValues = Object.values(values).join(', ');
 
-    const stringifiedValue = JSON.stringify(value);
-    const expectedValues = Object.values(rule.enumObject).join(', ');
-
-    return [
-      {
-        code,
-        message: t`Invalid value ${stringifiedValue} for ${property}, expected one of: ${expectedValues}`,
-        userFriendlyMessage: msg`Invalid value ${stringifiedValue} for ${property}`,
-        value,
-      },
-    ];
-  });
+      return [
+        {
+          code: FlatEntityMapsExceptionCode.INVALID_ENUM_VALUE,
+          message: t`Invalid value ${stringifiedValue} for ${property}, expected one of: ${expectedValues}`,
+          userFriendlyMessage: msg`Invalid value ${stringifiedValue} for ${property}`,
+          value,
+        },
+      ];
+    },
+  );

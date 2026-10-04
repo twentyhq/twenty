@@ -4,14 +4,12 @@ import { ViewType } from 'twenty-shared/types';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { FLAT_VIEW_ENUM_PROPERTY_RULES } from 'src/engine/metadata-modules/flat-view/constants/flat-view-enum-property-rules.constant';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateFlatViewCalendarFields } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util';
 import { isAllowedFlatViewKanbanMainGroupByField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-allowed-flat-view-kanban-main-group-by-field.util';
-import { validateFlatEntityEnumProperties } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
 
 export const validateFlatViewCreation = ({
   flatEntityToValidate: flatViewToValidate,
@@ -30,14 +28,6 @@ export const validateFlatViewCreation = ({
     metadataName: 'view',
     type: 'create',
   });
-
-  validationResult.errors.push(
-    ...validateFlatEntityEnumProperties({
-      flatEntity: flatViewToValidate,
-      enumPropertyRules: FLAT_VIEW_ENUM_PROPERTY_RULES,
-      code: ViewExceptionCode.INVALID_VIEW_DATA,
-    }),
-  );
 
   const optimisticFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
     universalIdentifier: flatViewToValidate.objectMetadataUniversalIdentifier,

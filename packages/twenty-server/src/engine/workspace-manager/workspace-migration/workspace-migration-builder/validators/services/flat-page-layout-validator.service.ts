@@ -2,28 +2,18 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { PageLayoutType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import {
-  type FlatEntityEnumPropertyRules,
-  validateFlatEntityEnumProperties,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
 
 const PAGE_LAYOUT_EXCEPTION_CODE = {
   PAGE_LAYOUT_NOT_FOUND: 'PAGE_LAYOUT_NOT_FOUND',
   INVALID_PAGE_LAYOUT_DATA: 'INVALID_PAGE_LAYOUT_DATA',
 } as const;
-
-const FLAT_PAGE_LAYOUT_ENUM_PROPERTY_RULES = {
-  type: { enumObject: PageLayoutType },
-} satisfies FlatEntityEnumPropertyRules<UniversalFlatPageLayout>;
 
 @Injectable()
 export class FlatPageLayoutValidatorService {
@@ -43,14 +33,6 @@ export class FlatPageLayoutValidatorService {
       metadataName: 'pageLayout',
       type: 'create',
     });
-
-    validationResult.errors.push(
-      ...validateFlatEntityEnumProperties({
-        flatEntity: flatPageLayout,
-        enumPropertyRules: FLAT_PAGE_LAYOUT_ENUM_PROPERTY_RULES,
-        code: PAGE_LAYOUT_EXCEPTION_CODE.INVALID_PAGE_LAYOUT_DATA,
-      }),
-    );
 
     // Workspace-level layouts are not attached to any object
     if (isDefined(flatPageLayout.objectMetadataUniversalIdentifier)) {
@@ -108,7 +90,6 @@ export class FlatPageLayoutValidatorService {
 
   public validateFlatPageLayoutUpdate({
     universalIdentifier,
-    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPageLayoutMaps: optimisticFlatPageLayoutMaps,
     },
@@ -137,14 +118,6 @@ export class FlatPageLayoutValidatorService {
 
       return validationResult;
     }
-
-    validationResult.errors.push(
-      ...validateFlatEntityEnumProperties({
-        flatEntity: flatEntityUpdate,
-        enumPropertyRules: FLAT_PAGE_LAYOUT_ENUM_PROPERTY_RULES,
-        code: PAGE_LAYOUT_EXCEPTION_CODE.INVALID_PAGE_LAYOUT_DATA,
-      }),
-    );
 
     return validationResult;
   }

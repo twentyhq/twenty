@@ -128,19 +128,14 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     },
   );
 
-  it('should return an error when type is unknown', () => {
+  it('should leave unknown types to the centralized enum validation', () => {
     const errors = validateNavigationMenuItemTypeRequiredProperties({
       flatNavigationMenuItem: buildFlatNavigationMenuItem({
         type: 'UNKNOWN_NAVIGATION_MENU_ITEM_TYPE' as NavigationMenuItemType,
       }),
     });
 
-    expect(errors).toHaveLength(1);
-    expect(errors[0]).toMatchObject({
-      code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-      message:
-        'Unknown navigation menu item type UNKNOWN_NAVIGATION_MENU_ITEM_TYPE',
-    });
+    expect(errors).toEqual([]);
   });
 
   it('should treat blank folder names as missing', () => {

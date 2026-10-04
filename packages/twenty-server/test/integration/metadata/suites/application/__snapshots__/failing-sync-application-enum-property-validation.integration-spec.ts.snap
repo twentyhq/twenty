@@ -9,7 +9,7 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_COMMAND_MENU_ITEM_INPUT",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "global" for availabilityType, expected one of: GLOBAL, GLOBAL_OBJECT_CONTEXT, RECORD_SELECTION, FALLBACK",
               "userFriendlyMessage": "Invalid value "global" for availabilityType",
               "value": "global",
@@ -45,15 +45,13 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "UNCOVERED_FIELD_METADATA_TYPE_VALIDATION",
-              "message": "Unsupported field metadata type TEXTT",
-              "userFriendlyMessage": "Unsupported field metadata type TEXTT",
+              "code": "INVALID_ENUM_VALUE",
+              "message": "Invalid value "TEXTT" for type, expected one of: ACTOR, ADDRESS, ARRAY, BOOLEAN, CURRENCY, DATE, DATE_TIME, EMAILS, FILES, FULL_NAME, LINKS, MORPH_RELATION, MULTI_SELECT, NUMBER, NUMERIC, PHONES, POSITION, RATING, RAW_JSON, RELATION, RICH_TEXT, SELECT, TEXT, TS_VECTOR, UUID",
+              "userFriendlyMessage": "Invalid value "TEXTT" for type",
               "value": "TEXTT",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "invalidEnumField",
-            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -120,15 +118,13 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "UNCOVERED_FIELD_METADATA_TYPE_VALIDATION",
-              "message": "Unsupported field metadata type constructor",
-              "userFriendlyMessage": "Unsupported field metadata type constructor",
+              "code": "INVALID_ENUM_VALUE",
+              "message": "Invalid value "constructor" for type, expected one of: ACTOR, ADDRESS, ARRAY, BOOLEAN, CURRENCY, DATE, DATE_TIME, EMAILS, FILES, FULL_NAME, LINKS, MORPH_RELATION, MULTI_SELECT, NUMBER, NUMERIC, PHONES, POSITION, RATING, RAW_JSON, RELATION, RICH_TEXT, SELECT, TEXT, TS_VECTOR, UUID",
+              "userFriendlyMessage": "Invalid value "constructor" for type",
               "value": "constructor",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "invalidEnumField",
-            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -195,15 +191,13 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "UNCOVERED_FIELD_METADATA_TYPE_VALIDATION",
-              "message": "Unsupported field metadata type toString",
-              "userFriendlyMessage": "Unsupported field metadata type toString",
+              "code": "INVALID_ENUM_VALUE",
+              "message": "Invalid value "toString" for type, expected one of: ACTOR, ADDRESS, ARRAY, BOOLEAN, CURRENCY, DATE, DATE_TIME, EMAILS, FILES, FULL_NAME, LINKS, MORPH_RELATION, MULTI_SELECT, NUMBER, NUMERIC, PHONES, POSITION, RATING, RAW_JSON, RELATION, RICH_TEXT, SELECT, TEXT, TS_VECTOR, UUID",
+              "userFriendlyMessage": "Invalid value "toString" for type",
               "value": "toString",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "invalidEnumField",
-            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -270,15 +264,13 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_FIELD_INPUT",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "READ_ONLY" for writability, expected one of: OPEN, APPLICATION, SYSTEM",
               "userFriendlyMessage": "Invalid value "READ_ONLY" for writability",
               "value": "READ_ONLY",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "invalidEnumField",
-            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -345,14 +337,13 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "RECORD_PAGES" for type, expected one of: RECORD_INDEX, RECORD_PAGE, DASHBOARD, STANDALONE_PAGE, RECORD_FORM",
               "userFriendlyMessage": "Invalid value "RECORD_PAGES" for type",
               "value": "RECORD_PAGES",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "Enum Subject Record Page",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "pageLayout",
@@ -382,14 +373,13 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
-              "message": "Unsupported page layout widget type constructor",
-              "userFriendlyMessage": "Unsupported page layout widget type constructor",
+              "code": "INVALID_ENUM_VALUE",
+              "message": "Invalid value "constructor" for type, expected one of: VIEW, IFRAME, FIELD, FIELDS, GRAPH, STANDALONE_RICH_TEXT, TIMELINE, TASKS, NOTES, FILES, EMAILS, CALENDAR, FIELD_RICH_TEXT, WORKFLOW, WORKFLOW_VERSION, WORKFLOW_RUN, FRONT_COMPONENT, RECORD_TABLE, EMAIL_THREAD, CALL_RECORDING_SUMMARY, CALL_RECORDING_TRANSCRIPT, MESSAGE_CAMPAIGN_BODY, MESSAGE_CAMPAIGN_DETAILS, FORM_FIELD, CHAT_THREADS, CHAT",
+              "userFriendlyMessage": "Invalid value "constructor" for type",
               "value": "constructor",
             },
           ],
           "flatEntityMinimalInformation": {
-            "pageLayoutTabUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "pageLayoutWidget",
@@ -403,7 +393,7 @@ exports[`Sync application should fail on invalid enum values at creation when a 
       "pageLayoutWidget": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Unsupported page layout widget type constructor",
+    "userFriendlyMessage": "Invalid value "constructor" for type",
   },
   "message": "Validation errors occurred while syncing application manifest metadata",
   "name": "GraphQLError",
@@ -436,7 +426,7 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "NOT" for logicalOperator, expected one of: AND, OR",
               "userFriendlyMessage": "Invalid value "NOT" for logicalOperator",
               "value": "NOT",
@@ -473,7 +463,7 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "EQUALS" for operand, expected one of: IS, IS_NOT_NULL, IS_NOT, LESS_THAN_OR_EQUAL, GREATER_THAN_OR_EQUAL, IS_BEFORE, IS_AFTER, CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY, IS_RELATIVE, IS_IN_PAST, IS_IN_FUTURE, IS_TODAY, VECTOR_SEARCH",
               "userFriendlyMessage": "Invalid value "EQUALS" for operand",
               "value": "EQUALS",
@@ -509,7 +499,7 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_VIEW_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "YEAR" for calendarLayout, expected one of: DAY, WEEK, MONTH",
               "userFriendlyMessage": "Invalid value "YEAR" for calendarLayout",
               "value": "YEAR",
@@ -583,16 +573,14 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_VIEW_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "sum" for aggregateOperation, expected one of: MIN, MAX, AVG, SUM, COUNT, COUNT_UNIQUE_VALUES, COUNT_EMPTY, COUNT_NOT_EMPTY, COUNT_TRUE, COUNT_FALSE, PERCENTAGE_EMPTY, PERCENTAGE_NOT_EMPTY",
               "userFriendlyMessage": "Invalid value "sum" for aggregateOperation",
               "value": "sum",
             },
           ],
           "flatEntityMinimalInformation": {
-            "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
-            "viewUniversalIdentifier": Any<String>,
           },
           "metadataName": "viewField",
           "status": "fail",
@@ -621,7 +609,7 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_VIEW_FILTER_GROUP_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "XOR" for logicalOperator, expected one of: AND, OR, NOT",
               "userFriendlyMessage": "Invalid value "XOR" for logicalOperator",
               "value": "XOR",
@@ -657,7 +645,7 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_VIEW_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "TOTAL" for kanbanAggregateOperation, expected one of: MIN, MAX, AVG, SUM, COUNT, COUNT_UNIQUE_VALUES, COUNT_EMPTY, COUNT_NOT_EMPTY, COUNT_TRUE, COUNT_FALSE, PERCENTAGE_EMPTY, PERCENTAGE_NOT_EMPTY",
               "userFriendlyMessage": "Invalid value "TOTAL" for kanbanAggregateOperation",
               "value": "TOTAL",
@@ -731,7 +719,7 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_VIEW_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "USER_CHOICE" for openRecordIn, expected one of: SIDE_PANEL, RECORD_PAGE",
               "userFriendlyMessage": "Invalid value "USER_CHOICE" for openRecordIn",
               "value": "USER_CHOICE",
@@ -805,7 +793,7 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_VIEW_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "GRID" for type, expected one of: TABLE, KANBAN, CALENDAR, LIST, FIELDS_WIDGET, TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET",
               "userFriendlyMessage": "Invalid value "GRID" for type",
               "value": "GRID",
@@ -879,7 +867,7 @@ exports[`Sync application should fail on invalid enum values at creation when a 
         {
           "errors": [
             {
-              "code": "INVALID_VIEW_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "PUBLIC" for visibility, expected one of: WORKSPACE, UNLISTED",
               "userFriendlyMessage": "Invalid value "PUBLIC" for visibility",
               "value": "PUBLIC",
@@ -953,14 +941,13 @@ exports[`Sync application should fail on invalid enum values at creation when an
         {
           "errors": [
             {
-              "code": "INDEX_INVALID_TYPE",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "HASH" for indexType, expected one of: BTREE, GIN",
               "userFriendlyMessage": "Invalid value "HASH" for indexType",
               "value": "HASH",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "IDX_df9ff7e48b349d836d0d36105d9",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "index",
@@ -1435,33 +1422,31 @@ exports[`Sync application should fail on invalid enum values at creation when ev
         {
           "errors": [
             {
-              "code": "INVALID_OBJECT_INPUT",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "side_panel" for openRecordIn, expected one of: SIDE_PANEL, RECORD_PAGE, USER_CHOICE",
               "userFriendlyMessage": "Invalid value "side_panel" for openRecordIn",
               "value": "side_panel",
             },
             {
-              "code": "INVALID_OBJECT_INPUT",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "open" for writability, expected one of: OPEN, APPLICATION, SYSTEM",
               "userFriendlyMessage": "Invalid value "open" for writability",
               "value": "open",
             },
             {
-              "code": "INVALID_OBJECT_INPUT",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "PUBLIC" for readability, expected one of: OPEN, PRIVATE, INHERITED, APPLICATION, SYSTEM",
               "userFriendlyMessage": "Invalid value "PUBLIC" for readability",
               "value": "PUBLIC",
             },
             {
-              "code": "INVALID_OBJECT_INPUT",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "WORKSPACES" for sharingReach, expected one of: ROLE_ACCESS, WORKSPACE",
               "userFriendlyMessage": "Invalid value "WORKSPACES" for sharingReach",
               "value": "WORKSPACES",
             },
           ],
           "flatEntityMinimalInformation": {
-            "namePlural": "enumSubjects",
-            "nameSingular": "enumSubject",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "objectMetadata",
@@ -2049,15 +2034,13 @@ exports[`Sync application should fail on invalid enum values at update when a fi
         {
           "errors": [
             {
-              "code": "INVALID_FIELD_INPUT",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "LOCKED" for writability, expected one of: OPEN, APPLICATION, SYSTEM",
               "userFriendlyMessage": "Invalid value "LOCKED" for writability",
               "value": "LOCKED",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "code",
-            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -2087,7 +2070,7 @@ exports[`Sync application should fail on invalid enum values at update when a pa
         {
           "errors": [
             {
-              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "HOME_PAGE" for type, expected one of: RECORD_INDEX, RECORD_PAGE, DASHBOARD, STANDALONE_PAGE, RECORD_FORM",
               "userFriendlyMessage": "Invalid value "HOME_PAGE" for type",
               "value": "HOME_PAGE",
@@ -2123,7 +2106,7 @@ exports[`Sync application should fail on invalid enum values at update when a ro
         {
           "errors": [
             {
-              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "XOR" for logicalOperator, expected one of: AND, OR",
               "userFriendlyMessage": "Invalid value "XOR" for logicalOperator",
               "value": "XOR",
@@ -2159,7 +2142,7 @@ exports[`Sync application should fail on invalid enum values at update when a ro
         {
           "errors": [
             {
-              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "is" for operand, expected one of: IS, IS_NOT_NULL, IS_NOT, LESS_THAN_OR_EQUAL, GREATER_THAN_OR_EQUAL, IS_BEFORE, IS_AFTER, CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY, IS_RELATIVE, IS_IN_PAST, IS_IN_FUTURE, IS_TODAY, VECTOR_SEARCH",
               "userFriendlyMessage": "Invalid value "is" for operand",
               "value": "is",
@@ -2195,16 +2178,14 @@ exports[`Sync application should fail on invalid enum values at update when a vi
         {
           "errors": [
             {
-              "code": "INVALID_VIEW_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "AVERAGE" for aggregateOperation, expected one of: MIN, MAX, AVG, SUM, COUNT, COUNT_UNIQUE_VALUES, COUNT_EMPTY, COUNT_NOT_EMPTY, COUNT_TRUE, COUNT_FALSE, PERCENTAGE_EMPTY, PERCENTAGE_NOT_EMPTY",
               "userFriendlyMessage": "Invalid value "AVERAGE" for aggregateOperation",
               "value": "AVERAGE",
             },
           ],
           "flatEntityMinimalInformation": {
-            "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
-            "viewUniversalIdentifier": Any<String>,
           },
           "metadataName": "viewField",
           "status": "fail",
@@ -2233,7 +2214,7 @@ exports[`Sync application should fail on invalid enum values at update when a vi
         {
           "errors": [
             {
-              "code": "INVALID_VIEW_FILTER_GROUP_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "or" for logicalOperator, expected one of: AND, OR, NOT",
               "userFriendlyMessage": "Invalid value "or" for logicalOperator",
               "value": "or",
@@ -2269,7 +2250,7 @@ exports[`Sync application should fail on invalid enum values at update when a vi
         {
           "errors": [
             {
-              "code": "INVALID_VIEW_DATA",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "BOARD" for type, expected one of: TABLE, KANBAN, CALENDAR, LIST, FIELDS_WIDGET, TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET",
               "userFriendlyMessage": "Invalid value "BOARD" for type",
               "value": "BOARD",
@@ -2305,14 +2286,13 @@ exports[`Sync application should fail on invalid enum values at update when an i
         {
           "errors": [
             {
-              "code": "INDEX_INVALID_TYPE",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "gin" for indexType, expected one of: BTREE, GIN",
               "userFriendlyMessage": "Invalid value "gin" for indexType",
               "value": "gin",
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "IDX_df9ff7e48b349d836d0d36105d9",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "index",
@@ -2342,15 +2322,13 @@ exports[`Sync application should fail on invalid enum values at update when an o
         {
           "errors": [
             {
-              "code": "INVALID_OBJECT_INPUT",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "record_page" for openRecordIn, expected one of: SIDE_PANEL, RECORD_PAGE, USER_CHOICE",
               "userFriendlyMessage": "Invalid value "record_page" for openRecordIn",
               "value": "record_page",
             },
           ],
           "flatEntityMinimalInformation": {
-            "namePlural": "enumSubjects",
-            "nameSingular": "enumSubject",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "objectMetadata",
@@ -2380,15 +2358,13 @@ exports[`Sync application should fail on invalid enum values at update when an o
         {
           "errors": [
             {
-              "code": "INVALID_OBJECT_INPUT",
+              "code": "INVALID_ENUM_VALUE",
               "message": "Invalid value "EVERYONE" for sharingReach, expected one of: ROLE_ACCESS, WORKSPACE",
               "userFriendlyMessage": "Invalid value "EVERYONE" for sharingReach",
               "value": "EVERYONE",
             },
           ],
           "flatEntityMinimalInformation": {
-            "namePlural": "enumSubjects",
-            "nameSingular": "enumSubject",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "objectMetadata",

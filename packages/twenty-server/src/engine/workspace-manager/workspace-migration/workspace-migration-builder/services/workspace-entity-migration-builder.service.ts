@@ -46,6 +46,7 @@ import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/
 import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
+import { validateFlatEntityEnumProperties } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
 
 export type ValidateAndBuildArgs<T extends AllMetadataName> = {
   buildOptions: WorkspaceMigrationBuilderOptions;
@@ -332,7 +333,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         );
       }
 
-      const validationResult = await this.validateFlatEntityUpdate({
+      const validationResult = await this.innerValidateFlatEntityUpdate({
         finalFlatEntityMaps,
         flatEntityUpdate: flatEntityUpdate.update,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
@@ -544,6 +545,10 @@ export abstract class WorkspaceEntityMigrationBuilderService<
     const centralizedErrors = [
       ...uuidValidationResult,
       ...perTypeExistenceResult,
+      ...validateFlatEntityEnumProperties({
+        metadataName: this.metadataName,
+        flatEntity: args.flatEntityToValidate,
+      }),
     ];
 
     const result = await this.validateFlatEntityCreation(args);
@@ -564,6 +569,38 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         errors: centralizedErrors,
         metadataName: this.metadataName,
         type: 'create',
+      };
+    }
+
+    return result;
+  }
+
+  private async innerValidateFlatEntityUpdate(
+    args: FlatEntityUpdateValidationArgs<T>,
+  ): Promise<UniversalFlatEntityValidationReturnType<T, 'update'>> {
+    const centralizedErrors = validateFlatEntityEnumProperties({
+      metadataName: this.metadataName,
+      flatEntity: args.flatEntityUpdate,
+    });
+
+    const result = await this.validateFlatEntityUpdate(args);
+
+    if (result.status === 'fail') {
+      return {
+        ...result,
+        errors: [...result.errors, ...centralizedErrors],
+      };
+    }
+
+    if (centralizedErrors.length > 0) {
+      return {
+        status: 'fail',
+        flatEntityMinimalInformation: {
+          universalIdentifier: args.universalIdentifier,
+        } as Partial<MetadataFlatEntity<T>>,
+        errors: centralizedErrors,
+        metadataName: this.metadataName,
+        type: 'update',
       };
     }
 

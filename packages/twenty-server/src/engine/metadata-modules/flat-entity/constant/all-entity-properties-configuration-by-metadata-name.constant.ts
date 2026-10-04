@@ -2,9 +2,43 @@ import {
   type TranslatableMetadataName,
   type TranslatablePropertyName,
 } from 'twenty-shared/i18n';
+import { APPLICATION_VARIABLE_FIELD_METADATA_TYPES } from 'twenty-shared/application';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import {
+  AggregateOperations,
+  CommandMenuItemAvailabilityType,
+  FieldMetadataType,
+  IndexType,
+  MetadataReadability,
+  MetadataWritability,
+  NavigationMenuItemType,
+  ObjectOpenRecordIn,
+  ObjectSharingReach,
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+  ViewCalendarLayout,
+  ViewFilterGroupLogicalOperator,
+  ViewFilterOperand,
+  ViewKey,
+  ViewOpenRecordIn,
+  ViewSortDirection,
+  ViewType,
+  ViewVisibility,
+  WidgetType,
+  WorkflowVisibility,
+} from 'twenty-shared/types';
 
 import { type UnwrapWasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { type IsStringEnum } from 'src/engine/metadata-modules/flat-entity/types/is-string-enum.type';
+import {
+  LogicFunctionExecutionMode,
+  LogicFunctionRuntime,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type ScalarFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/scalar-flat-entity.type';
@@ -17,6 +51,19 @@ type HasObjectInUnion<T> = T extends unknown
     ? true
     : false
   : never;
+
+type MetadataEntityEnumPropertyConfiguration<TValue> =
+  IsStringEnum<Extract<TValue, string>> extends true
+    ? {
+        enum: {
+          values:
+            | Readonly<Record<string, Extract<TValue, string>>>
+            | readonly Extract<TValue, string>[];
+        } & (null extends TValue
+          ? { isNullable: true }
+          : { isNullable?: never });
+      }
+    : { enum?: never };
 
 type MetadataEntityPropertyConfiguration<
   TMetadataName extends AllMetadataName,
@@ -44,7 +91,11 @@ type MetadataEntityPropertyConfiguration<
         : boolean;
     toCompare: boolean;
     isOverridable?: boolean;
-  };
+  } & MetadataEntityEnumPropertyConfiguration<
+    K extends keyof MetadataEntity<TMetadataName>
+      ? UnwrapWasRemovedInUpgrade<MetadataEntity<TMetadataName>[K]>
+      : never
+  >;
 };
 
 export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
@@ -130,6 +181,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: FieldMetadataType },
     },
     isSystem: {
       toCompare: false,
@@ -145,6 +197,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: MetadataWritability },
     },
     isNullable: {
       toCompare: true,
@@ -188,6 +241,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
       isOverridable: true,
+      enum: { values: ObjectOpenRecordIn },
     },
     color: {
       toCompare: true,
@@ -270,11 +324,13 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: MetadataWritability },
     },
     readability: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: MetadataReadability },
     },
     readabilityParentFieldUniversalIdentifiers: {
       toCompare: true,
@@ -285,6 +341,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: ObjectSharingReach },
     },
     isUICreatable: {
       toCompare: true,
@@ -340,7 +397,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    key: { toCompare: false, toStringify: false, universalProperty: undefined },
+    key: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+      enum: { values: ViewKey, isNullable: true },
+    },
     deletedAt: {
       toCompare: true,
       toStringify: false,
@@ -362,6 +424,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
       isOverridable: true,
+      enum: { values: ViewType },
     },
     icon: {
       toCompare: true,
@@ -386,12 +449,14 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
       isOverridable: true,
+      enum: { values: ViewOpenRecordIn },
     },
     kanbanAggregateOperation: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
       isOverridable: true,
+      enum: { values: AggregateOperations, isNullable: true },
     },
     kanbanAggregateOperationFieldMetadataId: {
       toCompare: true,
@@ -411,6 +476,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
       isOverridable: true,
+      enum: { values: ViewCalendarLayout, isNullable: true },
     },
     calendarFieldMetadataId: {
       toCompare: true,
@@ -429,6 +495,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
       isOverridable: true,
+      enum: { values: ViewVisibility },
     },
     mainGroupByFieldMetadataId: {
       toCompare: true,
@@ -571,6 +638,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
       isOverridable: true,
+      enum: { values: AggregateOperations, isNullable: true },
     },
     viewFieldGroupId: {
       toStringify: false,
@@ -662,6 +730,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: IndexType },
     },
     indexWhereClause: {
       toCompare: true,
@@ -731,6 +800,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: LogicFunctionExecutionMode },
     },
     deletedAt: {
       toCompare: true,
@@ -786,6 +856,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: LogicFunctionRuntime },
     },
   },
   viewFilter: {
@@ -808,6 +879,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: ViewFilterOperand },
     },
     value: { toCompare: true, toStringify: true, universalProperty: undefined },
     viewFilterGroupId: {
@@ -1012,7 +1084,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
-    type: { toCompare: true, toStringify: false, universalProperty: undefined },
+    type: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      enum: { values: PageLayoutType },
+    },
     objectMetadataId: {
       toCompare: true,
       toStringify: false,
@@ -1057,7 +1134,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
-    type: { toCompare: true, toStringify: false, universalProperty: undefined },
+    type: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      enum: { values: WidgetType },
+    },
     objectMetadataId: {
       toCompare: true,
       toStringify: false,
@@ -1172,6 +1254,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: PageLayoutTabLayoutMode },
     },
     isActive: {
       isOverridable: true,
@@ -1270,6 +1353,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
       isOverridable: true,
+      enum: { values: CommandMenuItemAvailabilityType },
     },
     conditionalAvailabilityExpression: {
       toCompare: true,
@@ -1312,6 +1396,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
       isOverridable: true,
+      enum: { values: EngineComponentKey },
     },
     payload: {
       toCompare: true,
@@ -1357,6 +1442,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: NavigationMenuItemType },
     },
     position: {
       toCompare: true,
@@ -1431,6 +1517,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: PermissionFlagType },
     },
     createdAt: {
       toCompare: false,
@@ -1569,6 +1656,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: RowLevelPermissionPredicateOperand },
     },
     value: { toCompare: true, toStringify: true, universalProperty: undefined },
     rowLevelPermissionPredicateGroupId: {
@@ -1627,6 +1715,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: RowLevelPermissionPredicateGroupLogicalOperator },
     },
     positionInRowLevelPermissionPredicateGroup: {
       toCompare: true,
@@ -1670,6 +1759,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: ViewSortDirection },
     },
     subFieldName: {
       toCompare: true,
@@ -1722,6 +1812,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: ViewFilterGroupLogicalOperator },
     },
     positionInViewFilterGroup: {
       toCompare: true,
@@ -1864,6 +1955,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: APPLICATION_VARIABLE_FIELD_METADATA_TYPES },
     },
     options: {
       toCompare: true,
@@ -2129,6 +2221,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: WorkflowVisibility },
     },
     createdByUserWorkspaceId: {
       toCompare: false,
@@ -2171,6 +2264,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      enum: { values: WorkflowVersionStatus },
     },
     triggers: {
       toCompare: true,

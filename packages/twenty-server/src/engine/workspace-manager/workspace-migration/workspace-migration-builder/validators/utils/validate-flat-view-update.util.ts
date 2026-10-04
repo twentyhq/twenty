@@ -4,7 +4,6 @@ import { ViewType } from 'twenty-shared/types';
 import { getViewLayoutFromViewType, isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { FLAT_VIEW_ENUM_PROPERTY_RULES } from 'src/engine/metadata-modules/flat-view/constants/flat-view-enum-property-rules.constant';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -12,7 +11,6 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { validateFlatViewCalendarFields } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util';
 import { isAllowedFlatViewKanbanMainGroupByField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-allowed-flat-view-kanban-main-group-by-field.util';
-import { validateFlatEntityEnumProperties } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
 
 export const validateFlatViewUpdate = ({
   universalIdentifier,
@@ -51,14 +49,6 @@ export const validateFlatViewUpdate = ({
     ...existingFlatView,
     ...flatEntityUpdate,
   };
-
-  validationResult.errors.push(
-    ...validateFlatEntityEnumProperties({
-      flatEntity: flatEntityUpdate,
-      enumPropertyRules: FLAT_VIEW_ENUM_PROPERTY_RULES,
-      code: ViewExceptionCode.INVALID_VIEW_DATA,
-    }),
-  );
 
   const kanbanAggregateOperationFieldMetadataUniversalIdentifierUpdate =
     flatEntityUpdate.kanbanAggregateOperationFieldMetadataUniversalIdentifier;

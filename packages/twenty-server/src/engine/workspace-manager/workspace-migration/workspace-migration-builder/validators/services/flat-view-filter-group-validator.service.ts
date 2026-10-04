@@ -2,13 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ViewFilterGroupExceptionCode } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
-import { type UniversalFlatViewFilterGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter-group.type';
 import { validateFlatEntityCircularDependency } from 'src/engine/workspace-manager/workspace-migration/utils/validate-flat-entity-circular-dependency.util';
 import {
   type FailedFlatEntityValidation,
@@ -17,17 +15,9 @@ import {
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import {
-  type FlatEntityEnumPropertyRules,
-  validateFlatEntityEnumProperties,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-entity-enum-properties.util';
 
 // View filter groups can have at most 2 levels of nesting (root and one child level)
 const VIEW_FILTER_GROUP_MAX_DEPTH = 2;
-
-const FLAT_VIEW_FILTER_GROUP_ENUM_PROPERTY_RULES = {
-  logicalOperator: { enumObject: ViewFilterGroupLogicalOperator },
-} satisfies FlatEntityEnumPropertyRules<UniversalFlatViewFilterGroup>;
 
 @Injectable()
 export class FlatViewFilterGroupValidatorService {
@@ -100,14 +90,6 @@ export class FlatViewFilterGroupValidatorService {
       metadataName: 'viewFilterGroup',
       type: 'create',
     });
-
-    validationResult.errors.push(
-      ...validateFlatEntityEnumProperties({
-        flatEntity: flatViewFilterGroupToValidate,
-        enumPropertyRules: FLAT_VIEW_FILTER_GROUP_ENUM_PROPERTY_RULES,
-        code: ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
-      }),
-    );
 
     const existingViewFilterGroup = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatViewFilterGroupToValidate.universalIdentifier,
@@ -244,14 +226,6 @@ export class FlatViewFilterGroupValidatorService {
 
       return validationResult;
     }
-
-    validationResult.errors.push(
-      ...validateFlatEntityEnumProperties({
-        flatEntity: flatEntityUpdate,
-        enumPropertyRules: FLAT_VIEW_FILTER_GROUP_ENUM_PROPERTY_RULES,
-        code: ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
-      }),
-    );
 
     const parentViewFilterGroupUniversalIdentifierUpdate =
       flatEntityUpdate.parentViewFilterGroupUniversalIdentifier;

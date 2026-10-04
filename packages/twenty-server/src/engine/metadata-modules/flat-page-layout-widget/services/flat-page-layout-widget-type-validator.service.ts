@@ -22,7 +22,6 @@ import { validateStandaloneRichTextFlatPageLayoutWidgetForCreation } from 'src/e
 import { validateStandaloneRichTextFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-update.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'twenty-shared/types';
-import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
@@ -199,15 +198,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
     const { flatEntityToValidate } = args;
     const widgetType = flatEntityToValidate.type;
 
+    // Unknown types are reported by the centralized enum validation
     if (!isEnumValue(WidgetType, widgetType)) {
-      return [
-        {
-          code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-          message: `Unsupported page layout widget type ${widgetType}`,
-          value: widgetType,
-          userFriendlyMessage: msg`Unsupported page layout widget type ${widgetType}`,
-        },
-      ];
+      return [];
     }
 
     const pageLayoutWidgetTypeValidator =
@@ -222,15 +215,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
     const { flatEntityToValidate } = args;
     const widgetType = flatEntityToValidate.type;
 
+    // Unknown types are reported by the centralized enum validation
     if (!isEnumValue(WidgetType, widgetType)) {
-      return [
-        {
-          code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-          message: `Unsupported page layout widget type ${widgetType}`,
-          value: widgetType,
-          userFriendlyMessage: msg`Unsupported page layout widget type ${widgetType}`,
-        },
-      ];
+      return [];
     }
 
     const pageLayoutWidgetTypeValidator =

@@ -26,6 +26,14 @@ describe('isEnumValue', () => {
     expect(isEnumValue(TestEnum, 'hasOwnProperty')).toBe(false);
   });
 
+  it('should accept a readonly array of values', () => {
+    const values = [TestEnum.FIRST] as const;
+
+    expect(isEnumValue(values, 'FIRST')).toBe(true);
+    expect(isEnumValue(values, 'second_value')).toBe(false);
+    expect(isEnumValue(values, 'length')).toBe(false);
+  });
+
   it('should return false for non string values', () => {
     expect(isEnumValue(TestEnum, undefined)).toBe(false);
     expect(isEnumValue(TestEnum, null)).toBe(false);

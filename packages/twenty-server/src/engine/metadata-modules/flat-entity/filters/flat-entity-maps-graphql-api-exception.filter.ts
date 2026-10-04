@@ -19,6 +19,7 @@ export class FlatEntityMapsGraphqlApiExceptionFilter implements ExceptionFilter 
       case FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND:
       case FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS:
       case FlatEntityMapsExceptionCode.ENTITY_MALFORMED:
+      case FlatEntityMapsExceptionCode.INVALID_ENUM_VALUE:
       case FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR:
         throw new InternalServerError(exception);
     }

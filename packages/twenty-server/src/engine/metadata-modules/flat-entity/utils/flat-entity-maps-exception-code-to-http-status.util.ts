@@ -12,6 +12,7 @@ export const flatEntityMapsExceptionCodeToHttpStatus = (
       return 409;
     case FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND:
     case FlatEntityMapsExceptionCode.ENTITY_MALFORMED:
+    case FlatEntityMapsExceptionCode.INVALID_ENUM_VALUE:
     case FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR:
       return 500;
     default:
