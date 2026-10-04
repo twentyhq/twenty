@@ -6952,6 +6952,12 @@ export default {
             "snoozedUntil": [
                 4
             ],
+            "hasSnoozeEnded": [
+                8
+            ],
+            "updatedAt": [
+                4
+            ],
             "__typename": [
                 1
             ]

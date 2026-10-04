@@ -3100,6 +3100,8 @@ export interface AgentChatThreadParticipant {
     lastReadAt?: Scalars['DateTime']
     archivedAt?: Scalars['DateTime']
     snoozedUntil?: Scalars['DateTime']
+    hasSnoozeEnded: Scalars['Boolean']
+    updatedAt: Scalars['DateTime']
     __typename: 'AgentChatThreadParticipant'
 }
 
@@ -7047,6 +7049,8 @@ export interface AgentChatThreadParticipantGenqlSelection{
     lastReadAt?: boolean | number
     archivedAt?: boolean | number
     snoozedUntil?: boolean | number
+    hasSnoozeEnded?: boolean | number
+    updatedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

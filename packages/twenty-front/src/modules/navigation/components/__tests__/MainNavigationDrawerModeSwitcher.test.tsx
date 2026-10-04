@@ -5,6 +5,8 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
+import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
@@ -24,6 +26,33 @@ jest.mock('twenty-ui/utilities', () => ({
 }));
 
 const mockSwitchNavigationDrawerMode = jest.fn();
+
+const THREAD_ID = 'thread-1';
+const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
+
+const receiveOpenChat = (
+  store: ReturnType<typeof createStore>,
+  lastReadAt: string | null,
+) => {
+  setAgentChatThreadList(store, [
+    {
+      __typename: 'AgentChatThread',
+      id: THREAD_ID,
+      deletedAt: null,
+      lastActivityAt: LAST_ACTIVITY_AT,
+    } as never,
+  ]);
+  store.set(agentChatThreadParticipantsState.atom, {
+    [THREAD_ID]: {
+      threadId: THREAD_ID,
+      lastReadAt,
+      archivedAt: null,
+      snoozedUntil: null,
+      hasSnoozeEnded: false,
+      updatedAt: LAST_ACTIVITY_AT,
+    },
+  });
+};
 
 const renderModeSwitcher = (isLayoutCustomizationModeEnabled = false) => {
   const store = createStore();
@@ -136,6 +165,31 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(mode);
     },
   );
+
+  it('marks the inbox while one of its open chats is unread', () => {
+    const { store } = renderModeSwitcher();
+
+    act(() => receiveOpenChat(store, null));
+
+    expect(
+      screen.getByRole('button', { name: 'AI, unread' }),
+    ).toBeInTheDocument();
+
+    act(() => receiveOpenChat(store, LAST_ACTIVITY_AT));
+
+    expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
+  });
+
+  it('does not mark the inbox while it is open', () => {
+    jest
+      .mocked(useActiveNavigationDrawerMode)
+      .mockReturnValue(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+    const { store } = renderModeSwitcher();
+
+    act(() => receiveOpenChat(store, null));
+
+    expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();
+  });
 
   it('renders nothing when no mode is available', () => {
     jest.mocked(useNavigationDrawerModes).mockReturnValue([]);

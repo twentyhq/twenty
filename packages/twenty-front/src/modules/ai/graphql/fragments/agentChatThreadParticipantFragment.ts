@@ -6,5 +6,7 @@ export const AGENT_CHAT_THREAD_PARTICIPANT_FRAGMENT = gql`
     lastReadAt
     archivedAt
     snoozedUntil
+    hasSnoozeEnded
+    updatedAt
   }
 `;
