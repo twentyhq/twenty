@@ -1,6 +1,8 @@
 import { type WorkflowWaitOutcome } from 'src/modules/workflow/workflow-wait/types/workflow-wait-outcome.type';
 
-export const buildDefaultWaitResult = (outcome: WorkflowWaitOutcome): object => {
+export const buildDefaultWaitResult = (
+  outcome: WorkflowWaitOutcome,
+): object => {
   switch (outcome.type) {
     case 'TIME_ELAPSED':
       return { success: true };

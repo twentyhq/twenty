@@ -28,7 +28,9 @@ const waitForEventInputSchema = z.object({
     .positive()
     .max(MAX_TIMEOUT_IN_MINUTES)
     .optional()
-    .describe('Stop waiting after this many minutes. Omit to wait without limit.'),
+    .describe(
+      'Stop waiting after this many minutes. Omit to wait without limit.',
+    ),
 });
 
 export const createWaitForEventTool = () => ({

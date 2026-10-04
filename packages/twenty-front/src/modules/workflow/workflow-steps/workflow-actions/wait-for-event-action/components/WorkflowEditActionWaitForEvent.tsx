@@ -99,7 +99,9 @@ export const WorkflowEditActionWaitForEvent = ({
     });
   };
 
-  const handleUpdatedFieldsChange = (fields: FieldMultiSelectValue | string) => {
+  const handleUpdatedFieldsChange = (
+    fields: FieldMultiSelectValue | string,
+  ) => {
     updateInput({
       updatedFields: isDefined(fields)
         ? Array.isArray(fields)

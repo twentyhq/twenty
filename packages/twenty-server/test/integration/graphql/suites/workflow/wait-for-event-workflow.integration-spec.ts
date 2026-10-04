@@ -144,7 +144,9 @@ describe('Wait for event workflow (e2e)', () => {
 
     const createStepResponse = await graphql(
       `
-        mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
+        mutation CreateWorkflowVersionStep(
+          $input: CreateWorkflowVersionStepInput!
+        ) {
           createWorkflowVersionStep(input: $input) {
             stepsDiff
           }
@@ -172,7 +174,9 @@ describe('Wait for event workflow (e2e)', () => {
 
     const updateStepResponse = await graphql(
       `
-        mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
+        mutation UpdateWorkflowVersionStep(
+          $input: UpdateWorkflowVersionStepInput!
+        ) {
           updateWorkflowVersionStep(input: $input) {
             id
           }
@@ -323,7 +327,9 @@ describe('Wait for event workflow (e2e)', () => {
     const listenerQueue = (
       listener as unknown as { messageQueueService: MessageQueueService }
     ).messageQueueService;
-    const addSpy = jest.spyOn(listenerQueue, 'add').mockResolvedValue();
+    const addSpy = jest
+      .spyOn(listenerQueue, 'add')
+      .mockResolvedValue(undefined);
 
     await listener.handleObjectRecordUpdateEvent(
       (await buildCompanyUpdatedBatch(otherCompanyId!)) as never,

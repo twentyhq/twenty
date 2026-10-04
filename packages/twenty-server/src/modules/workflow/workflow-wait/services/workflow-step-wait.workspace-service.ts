@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowStepWait } from 'twenty-shared/workflow';
-import { Repository } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkflowStepWaitEntity } from 'src/engine/core-modules/workflow/entities/workflow-step-wait.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { RESUME_WAITING_WORKFLOW_STEP_JOB_NAME } from 'src/modules/workflow/workflow-wait/constants/resume-waiting-workflow-step-job-name.constant';
 import { type ResumeWaitingWorkflowStepJobData } from 'src/modules/workflow/workflow-wait/types/resume-waiting-workflow-step-job-data.type';
@@ -16,8 +16,8 @@ import { type ResumeWaitingWorkflowStepJobData } from 'src/modules/workflow/work
 @Injectable()
 export class WorkflowStepWaitWorkspaceService {
   constructor(
-    @InjectRepository(WorkflowStepWaitEntity)
-    private readonly workflowStepWaitRepository: Repository<WorkflowStepWaitEntity>,
+    @InjectWorkspaceScopedRepository(WorkflowStepWaitEntity)
+    private readonly workflowStepWaitRepository: WorkspaceScopedRepository<WorkflowStepWaitEntity>,
     @InjectMessageQueue(MessageQueue.delayedJobsQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -46,16 +46,19 @@ export class WorkflowStepWaitWorkspaceService {
           : null;
 
     // A step waiting again, in a loop or a retry, replaces its previous wait so stale jobs find nothing to claim
-    await this.workflowStepWaitRepository.delete({ workflowRunId, stepId });
-
-    const { id: waitId } = await this.workflowStepWaitRepository.save({
-      workspaceId,
+    await this.workflowStepWaitRepository.delete(workspaceId, {
       workflowRunId,
       stepId,
-      wait,
-      eventName: wait.type === 'EVENT' ? wait.eventName : null,
-      resumeAt,
     });
+
+    const { id: waitId } =
+      await this.workflowStepWaitRepository.insertAndReturnOne(workspaceId, {
+        workflowRunId,
+        stepId,
+        wait,
+        eventName: wait.type === 'EVENT' ? wait.eventName : null,
+        resumeAt,
+      });
 
     if (!isDefined(resumeAt)) {
       return;
@@ -78,17 +81,10 @@ export class WorkflowStepWaitWorkspaceService {
     workspaceId: string;
     waitId: string;
   }): Promise<WorkflowStepWaitEntity | null> {
-    const { raw } = await this.workflowStepWaitRepository
-      .createQueryBuilder()
-      .delete()
-      .where('id = :waitId AND "workspaceId" = :workspaceId', {
-        waitId,
-        workspaceId,
-      })
-      .returning('*')
-      .execute();
-
-    const [claimedWait] = raw as WorkflowStepWaitEntity[];
+    const [claimedWait] = await this.workflowStepWaitRepository.deleteAndReturn(
+      workspaceId,
+      { id: waitId },
+    );
 
     return claimedWait ?? null;
   }
@@ -100,8 +96,8 @@ export class WorkflowStepWaitWorkspaceService {
     workspaceId: string;
     eventName: string;
   }): Promise<WorkflowStepWaitEntity[]> {
-    return this.workflowStepWaitRepository.find({
-      where: { workspaceId, eventName },
+    return this.workflowStepWaitRepository.find(workspaceId, {
+      where: { eventName },
     });
   }
 
@@ -112,6 +108,8 @@ export class WorkflowStepWaitWorkspaceService {
     workspaceId: string;
     workflowRunId: string;
   }): Promise<void> {
-    await this.workflowStepWaitRepository.delete({ workspaceId, workflowRunId });
+    await this.workflowStepWaitRepository.delete(workspaceId, {
+      workflowRunId,
+    });
   }
 }

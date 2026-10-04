@@ -16,7 +16,9 @@ export const computeWaitTimeoutInMs = (
   const hours = Number(timeout.hours || 0);
   const minutes = Number(timeout.minutes || 0);
 
-  if ([days, hours, minutes].some((value) => !Number.isFinite(value) || value < 0)) {
+  if (
+    [days, hours, minutes].some((value) => !Number.isFinite(value) || value < 0)
+  ) {
     return null;
   }
 

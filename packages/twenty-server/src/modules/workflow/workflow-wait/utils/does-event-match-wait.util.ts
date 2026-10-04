@@ -23,7 +23,10 @@ export const doesEventMatchWait = ({
       ? event.properties.updatedFields
       : undefined;
 
-  if (isNonEmptyArray(wait.updatedFields) && isNonEmptyArray(eventUpdatedFields)) {
+  if (
+    isNonEmptyArray(wait.updatedFields) &&
+    isNonEmptyArray(eventUpdatedFields)
+  ) {
     return wait.updatedFields.some((field) =>
       eventUpdatedFields.includes(field),
     );

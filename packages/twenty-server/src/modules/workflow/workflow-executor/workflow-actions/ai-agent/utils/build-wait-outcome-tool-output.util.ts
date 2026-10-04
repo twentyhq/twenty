@@ -26,7 +26,8 @@ export const buildWaitOutcomeToolOutput = (
     case 'EXPIRED':
       return {
         success: true,
-        message: 'Stopped waiting: the event did not happen before the timeout.',
+        message:
+          'Stopped waiting: the event did not happen before the timeout.',
         result: { status: 'expired' },
       };
   }
