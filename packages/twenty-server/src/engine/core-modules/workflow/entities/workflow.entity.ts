@@ -13,6 +13,7 @@ import {
 
 import { WorkflowVisibility } from 'twenty-shared/types';
 
+import { ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-is-system-to-agent-and-workflow-upgrade-command-name.constant';
 import { CREATE_WORKFLOW_CORE_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/create-workflow-core-table-upgrade-command-name.constant';
 import { ADD_WORKSPACE_WORKFLOW_ID_TO_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-workspace-workflow-id-to-workflow-upgrade-command-name.constant';
 import { ADD_CORE_VERSION_POINTERS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-core-version-pointers-upgrade-command-name.constant';
@@ -72,6 +73,14 @@ export class WorkflowEntity extends SyncableEntity {
     default: WorkflowVisibility.WORKSPACE,
   })
   visibility: WorkflowVisibility;
+
+  // Hides workflows managed elsewhere (applications) from workflow lists outside developer mode
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'boolean', nullable: false, default: false })
+  isSystem: boolean;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME,
