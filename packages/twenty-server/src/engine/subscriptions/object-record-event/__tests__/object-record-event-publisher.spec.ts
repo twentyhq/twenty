@@ -15,7 +15,7 @@ import {
 
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
-import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
+import { MetadataSelectionBuilder } from 'src/engine/api/common/metadata-selection/metadata-selection-builder';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -348,8 +348,8 @@ describe('ObjectRecordEventPublisher', () => {
           useValue: mockWorkspaceManyOrAllFlatEntityMapsCacheService,
         },
         {
-          provide: CommonSelectFieldsHelper,
-          useValue: new CommonSelectFieldsHelper(),
+          provide: MetadataSelectionBuilder,
+          useValue: new MetadataSelectionBuilder(),
         },
         {
           provide: RecordShareStorageService,

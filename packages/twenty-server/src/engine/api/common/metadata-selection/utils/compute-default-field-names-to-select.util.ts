@@ -1,8 +1,8 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isOneToManyRelationFlatField } from 'src/engine/api/common/common-select-fields/utils/is-one-to-many-relation-flat-field.util';
-import { type Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
+import { isOneToManyRelationFlatField } from 'src/engine/api/common/metadata-selection/utils/is-one-to-many-relation-flat-field.util';
+import { type SelectionDepth } from 'src/engine/api/common/metadata-selection/types/selection-depth.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -23,7 +23,7 @@ export const computeDefaultFieldNamesToSelect = ({
     OrmFlatFieldMetadata,
     'id' | 'applicationId' | 'name' | 'type' | 'settings'
   >[];
-  depth: Depth | undefined;
+  depth: SelectionDepth | undefined;
   maximumDefaultFieldCount: number;
 }): ReadonlySet<string> | undefined => {
   const outputtingFlatFields =

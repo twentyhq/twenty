@@ -2,7 +2,7 @@ import { type ObjectRecord } from 'twenty-shared/types';
 
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 
-export const pickSelectedFieldsFromRecord = ({
+export const pickRestResponseFields = ({
   record,
   selectedFields,
 }: {

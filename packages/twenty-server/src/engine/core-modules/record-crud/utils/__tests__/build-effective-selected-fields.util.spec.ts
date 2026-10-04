@@ -4,7 +4,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
-import { getRelationsSelectFields } from 'src/engine/api/common/common-select-fields/utils/get-relations-select-fields.util';
+import { getRelationsSelectFields } from 'src/engine/api/common/metadata-selection/utils/get-relations-select-fields.util';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { buildEffectiveSelectedFields } from 'src/engine/core-modules/record-crud/utils/build-effective-selected-fields.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';

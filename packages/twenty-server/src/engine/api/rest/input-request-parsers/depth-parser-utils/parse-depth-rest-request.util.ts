@@ -3,17 +3,19 @@ import {
   RestInputRequestParserException,
   RestInputRequestParserExceptionCode,
 } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
-import { type Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
+import { type SelectionDepth } from 'src/engine/api/common/metadata-selection/types/selection-depth.type';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 
-export const parseDepthRestRequest = (request: AuthenticatedRequest): Depth => {
+export const parseDepthRestRequest = (
+  request: AuthenticatedRequest,
+): SelectionDepth => {
   if (!request.query.depth) {
     return 0;
   }
 
-  const depth = +request.query.depth as Depth;
+  const depth = +request.query.depth as SelectionDepth;
 
-  const ALLOWED_DEPTH_VALUES: Depth[] = [0, 1];
+  const ALLOWED_DEPTH_VALUES: SelectionDepth[] = [0, 1];
 
   if (isNaN(depth) || !ALLOWED_DEPTH_VALUES.includes(depth)) {
     throw new RestInputRequestParserException(

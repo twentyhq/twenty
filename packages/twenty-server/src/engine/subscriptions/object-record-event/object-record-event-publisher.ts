@@ -20,7 +20,7 @@ import {
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
-import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
+import { MetadataSelectionBuilder } from 'src/engine/api/common/metadata-selection/metadata-selection-builder';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
@@ -78,7 +78,7 @@ export class ObjectRecordEventPublisher {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly processNestedRelationsHelper: ProcessNestedRelationsHelper,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly commonSelectFieldsHelper: CommonSelectFieldsHelper,
+    private readonly metadataSelectionBuilder: MetadataSelectionBuilder,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
 
@@ -355,7 +355,7 @@ export class ObjectRecordEventPublisher {
       intersectionOf: roleIds,
     };
 
-    const selectedFields = this.commonSelectFieldsHelper.computeFromDepth({
+    const { selectedFields } = this.metadataSelectionBuilder.buildFromDepth({
       depth: 1,
       flatObjectMetadata: objectMetadata,
       flatObjectMetadataMaps,

@@ -1,9 +1,9 @@
-import { pickSelectedFieldsFromRecord } from 'src/engine/api/rest/core/utils/pick-selected-fields-from-record.util';
+import { pickRestResponseFields } from 'src/engine/api/rest/core/utils/pick-rest-response-fields.util';
 
-describe('pickSelectedFieldsFromRecord', () => {
+describe('pickRestResponseFields', () => {
   it('should keep id and selected fields and drop columns only fetched for ordering', () => {
     expect(
-      pickSelectedFieldsFromRecord({
+      pickRestResponseFields({
         record: {
           id: 'record-id',
           jobTitle: 'Engineer',
@@ -28,7 +28,7 @@ describe('pickSelectedFieldsFromRecord', () => {
 
   it('should restrict a merge dry-run preview built from every field to the selected fields', () => {
     expect(
-      pickSelectedFieldsFromRecord({
+      pickRestResponseFields({
         record: {
           id: 'preview-id',
           name: { firstName: 'Ada', lastName: 'Lovelace' },

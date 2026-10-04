@@ -1,13 +1,13 @@
 import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getAllSelectableFields } from 'src/engine/api/common/common-select-fields/utils/get-all-selectable-fields.util';
-import { getIsFlatFieldAJoinColumn } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-join-column.util';
-import { getIsFlatFieldAJunctionRelationField } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-junction-relation-field';
-import { isRelationTargetExcludedFromSelection } from 'src/engine/api/common/common-select-fields/utils/is-relation-target-excluded-from-selection.util';
+import { getAllSelectableFields } from 'src/engine/api/common/metadata-selection/utils/get-all-selectable-fields.util';
+import { getIsFlatFieldAJoinColumn } from 'src/engine/api/common/metadata-selection/utils/get-is-flat-field-a-join-column.util';
+import { getIsFlatFieldAJunctionRelationField } from 'src/engine/api/common/metadata-selection/utils/get-is-flat-field-a-junction-relation-field';
+import { isRelationTargetExcludedFromSelection } from 'src/engine/api/common/metadata-selection/utils/is-relation-target-excluded-from-selection.util';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { MAX_DEPTH } from 'src/engine/api/rest/input-request-parsers/constants/max-depth.constant';
-import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
+import { MAX_SELECTION_DEPTH } from 'src/engine/api/common/metadata-selection/constants/max-selection-depth.constant';
+import { SelectionDepth } from 'src/engine/api/common/metadata-selection/types/selection-depth.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -58,7 +58,7 @@ export const getRelationsSelectFields = ({
   flatFieldMetadataMaps: FlatEntityMaps<RelationsSelectFlatFieldMetadata>;
   flatObjectMetadata: RelationsSelectFlatObjectMetadata;
   objectsPermissions: RelationsSelectObjectsPermissions;
-  depth: Depth | undefined;
+  depth: SelectionDepth | undefined;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
   currentDepthLevelIsAJunctionTable?: boolean;
   recurseIntoJunctionTableRelations?: boolean;
@@ -134,7 +134,7 @@ export const getRelationsSelectFields = ({
     const flatFieldIsJoinColumn = getIsFlatFieldAJoinColumn({ flatField });
 
     const isFirstDepthLevel =
-      depth === MAX_DEPTH &&
+      depth === MAX_SELECTION_DEPTH &&
       isDefined(flatField.relationTargetObjectMetadataId);
 
     const shouldRecurseIntoRelation =

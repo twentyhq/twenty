@@ -5,7 +5,7 @@ import { capitalize } from 'twenty-shared/utils';
 
 import { CommonUpdateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-one-query-runner.service';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
-import { pickSelectedFieldsFromRecord } from 'src/engine/api/rest/core/utils/pick-selected-fields-from-record.util';
+import { pickRestResponseFields } from 'src/engine/api/rest/core/utils/pick-rest-response-fields.util';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
@@ -55,7 +55,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
 
       return this.formatRestResponse(
         isFieldSetRestricted
-          ? pickSelectedFieldsFromRecord({ record, selectedFields })
+          ? pickRestResponseFields({ record, selectedFields })
           : record,
         flatObjectMetadata.nameSingular,
       );

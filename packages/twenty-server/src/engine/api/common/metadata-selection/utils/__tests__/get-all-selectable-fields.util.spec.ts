@@ -1,6 +1,6 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { getAllSelectableFields } from 'src/engine/api/common/common-select-fields/utils/get-all-selectable-fields.util';
+import { getAllSelectableFields } from 'src/engine/api/common/metadata-selection/utils/get-all-selectable-fields.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
