@@ -64,16 +64,17 @@ export class AgentChatActorService {
       order: { createdAt: 'ASC', id: 'ASC' },
     });
     if (
-      !isDefined(message) ||
-      (isDefined(turnId) && message.turnId !== turnId)
+      isDefined(messageId) &&
+      (!isDefined(message) || (isDefined(turnId) && message.turnId !== turnId))
     ) {
       throw new AiException(
         'Message not found',
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
-    // only pre-attribution messages inherit the thread's member; never the worker's caller or the participant whose turn drained the queue
-    let userWorkspaceId = message.senderUserWorkspaceId;
+    // a turn the agent opens has no user message, and pre-attribution messages have no sender: both run as the
+    // thread's member, never as the worker's caller or the participant whose turn drained the queue
+    let userWorkspaceId = message?.senderUserWorkspaceId;
     if (!isDefined(userWorkspaceId)) {
       const thread = await this.threads.findOneOrFail(workspaceId, {
         where: { id: threadId },
@@ -93,7 +94,7 @@ export class AgentChatActorService {
     }
     const sender: AgentChatSender = {
       userWorkspaceId,
-      applicationId: message.senderApplicationId ?? null,
+      applicationId: message?.senderApplicationId ?? null,
     };
     return { message, sender };
   }
@@ -221,7 +222,7 @@ export class AgentChatActorService {
   async authorizeRetry(args: {
     workspaceId: string;
     threadId: string;
-    messageId: string;
+    turnId: string;
     userWorkspaceId: string;
   }) {
     const execution = await this.authorizeJob(args);
@@ -262,7 +263,7 @@ export class AgentChatActorService {
     });
     if (
       sender.userWorkspaceId !== userWorkspaceId ||
-      message.status !== AgentMessageStatus.SENT
+      (isDefined(message) && message.status !== AgentMessageStatus.SENT)
     ) {
       throw new AiException(
         'Message sender does not match execution',

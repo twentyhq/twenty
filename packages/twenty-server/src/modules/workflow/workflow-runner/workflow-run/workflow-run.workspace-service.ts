@@ -754,36 +754,21 @@ export class WorkflowRunWorkspaceService {
     workspaceId: string;
     stepThreadIds: string[];
   }): Promise<void> {
-    // An answer holding a conversation's claim closes its calls itself once it finds the run over.
-    // A step can also wait in a member's inbox, whose conversation is theirs, not the run's
-    const [runThreads, inboxThreads] = await Promise.all([
-      this.threadRepository.find(workspaceId, {
-        where: {
-          workflowRunId,
-          pendingQuestionMessageId: Not(IsNull()),
-          activeStreamId: IsNull(),
-        },
-        select: ['id', 'pendingQuestionMessageId'],
-      }),
-      this.threadRepository.find(workspaceId, {
-        where: {
-          id: In(stepThreadIds),
-          workflowRunId: IsNull(),
-          pendingQuestionMessageId: Not(IsNull()),
-          activeStreamId: IsNull(),
-        },
-        select: ['id', 'pendingQuestionMessageId'],
-      }),
-    ]);
+    // An answer holding a conversation's claim closes its calls itself once it finds the run over
+    const stepThreads = await this.threadRepository.find(workspaceId, {
+      where: {
+        id: In(stepThreadIds),
+        pendingQuestionMessageId: Not(IsNull()),
+        activeStreamId: IsNull(),
+      },
+      select: ['id', 'pendingQuestionMessageId'],
+    });
 
-    const waitingThreads = [
-      ...runThreads,
-      ...(await this.filterThreadsWaitingOnRun({
-        threads: inboxThreads,
-        workflowRunId,
-        workspaceId,
-      })),
-    ];
+    const waitingThreads = await this.filterThreadsWaitingOnRun({
+      threads: stepThreads,
+      workflowRunId,
+      workspaceId,
+    });
 
     for (const { id, pendingQuestionMessageId } of waitingThreads) {
       if (!isDefined(pendingQuestionMessageId)) {

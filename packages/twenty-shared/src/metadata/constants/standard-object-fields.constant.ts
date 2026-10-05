@@ -47,9 +47,6 @@ export const STANDARD_OBJECT_FIELDS = {
     activeStreamId: {
       universalIdentifier: 'bcead20f-75b3-45be-92b9-ea7ec4bddfcd',
     },
-    workflowRun: {
-      universalIdentifier: '2187f4c6-bff3-4b80-8585-c82965faf79b',
-    },
     pendingQuestionMessageId: {
       universalIdentifier: '51a9b421-7d90-4a59-9712-036ea9721e65',
     },
@@ -1501,9 +1498,6 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     coreWorkflowVersionId: {
       universalIdentifier: '58e3f476-425d-4c66-b391-779d0412e107',
-    },
-    agentChatThreads: {
-      universalIdentifier: 'c664a2e7-ef64-4597-9cdf-ded3eae85ae4',
     },
     timelineActivities: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({
