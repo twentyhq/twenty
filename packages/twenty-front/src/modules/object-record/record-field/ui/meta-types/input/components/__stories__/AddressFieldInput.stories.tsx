@@ -5,19 +5,28 @@ import {
 } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useAddressField } from '@/object-record/record-field/ui/meta-types/hooks/useAddressField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { AddressFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/AddressFieldInput';
 import {
-  AddressInput,
-  type AddressInputProps,
-} from '@/ui/field/input/components/AddressInput';
+  FieldInputEventContext,
+  type FieldInputEventContextType,
+} from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import {
+  WorkspaceSurfaceContext,
+  type WorkspaceSurfaceContextValue,
+} from '@/ui/layout/contexts/WorkspaceSurfaceContext';
+import { Button } from 'twenty-ui/primitives/input';
+import { graphql, HttpResponse } from 'msw';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const AddressValueSetterEffect = ({
@@ -25,18 +34,30 @@ const AddressValueSetterEffect = ({
 }: {
   value: FieldAddressDraftValue;
 }) => {
-  const { setFieldValue } = useAddressField();
+  const { setFieldValue, setDraftValue } = useAddressField();
 
   useEffect(() => {
     setFieldValue(value);
-  }, [setFieldValue, value]);
+    setDraftValue(value);
+  }, [setDraftValue, setFieldValue, value]);
 
   return <></>;
 };
 
-type AddressInputWithContextProps = AddressInputProps & {
-  value: string;
+const InitializedAddressFieldInput = () => {
+  const { draftValue } = useAddressField();
+
+  if (!isDefined(draftValue)) {
+    return null;
+  }
+
+  return <AddressFieldInput />;
+};
+
+type AddressInputWithContextProps = FieldInputEventContextType & {
+  value: FieldAddressDraftValue;
   recordId?: string;
+  surface?: WorkspaceSurfaceContextValue;
 };
 
 const AddressInputWithContext = ({
@@ -47,6 +68,11 @@ const AddressInputWithContext = ({
   onClickOutside,
   onTab,
   onShiftTab,
+  surface = {
+    type: 'main',
+    instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+    ownsRouteLocation: true,
+  },
 }: AddressInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
@@ -67,7 +93,7 @@ const AddressInputWithContext = ({
   }, [instanceId, pushFocusItemToFocusStack]);
 
   return (
-    <div>
+    <WorkspaceSurfaceContext.Provider value={surface}>
       <RecordFieldComponentInstanceContext.Provider
         value={{
           instanceId: instanceId,
@@ -92,19 +118,15 @@ const AddressInputWithContext = ({
           }}
         >
           <AddressValueSetterEffect value={value} />
-          <AddressInput
-            instanceId={instanceId}
-            onEnter={onEnter}
-            onEscape={onEscape}
-            onClickOutside={onClickOutside}
-            value={value}
-            onTab={onTab}
-            onShiftTab={onShiftTab}
-          />
+          <FieldInputEventContext.Provider
+            value={{ onEnter, onEscape, onClickOutside, onTab, onShiftTab }}
+          >
+            <InitializedAddressFieldInput />
+          </FieldInputEventContext.Provider>
         </FieldContext.Provider>
-        <div data-testid="data-field-input-click-outside-div" />
+        <Button onClick={outsideButtonClickJestFn}>Outside</Button>
       </RecordFieldComponentInstanceContext.Provider>
-    </div>
+    </WorkspaceSurfaceContext.Provider>
   );
 };
 
@@ -113,6 +135,8 @@ const escapeJestfn = fn();
 const clickOutsideJestFn = fn();
 const tabJestFn = fn();
 const shiftTabJestFn = fn();
+const autocompleteResponseJestFn = fn();
+const outsideButtonClickJestFn = fn();
 
 const clearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks === true) {
@@ -121,6 +145,8 @@ const clearMocksDecorator: Decorator = (Story, context) => {
     clickOutsideJestFn.mockClear();
     tabJestFn.mockClear();
     shiftTabJestFn.mockClear();
+    autocompleteResponseJestFn.mockClear();
+    outsideButtonClickJestFn.mockClear();
   }
   return <Story />;
 };
@@ -155,6 +181,46 @@ const meta: Meta = {
   decorators: [clearMocksDecorator],
   parameters: {
     clearMocks: true,
+    mockingDate: null,
+    msw: {
+      handlers: [
+        graphql.query('GetAutoCompleteAddress', ({ variables }) => {
+          autocompleteResponseJestFn(variables.address);
+
+          if (variables.address.includes('Nowhere')) {
+            return HttpResponse.json({ data: { getAutoCompleteAddress: [] } });
+          }
+
+          return HttpResponse.json({
+            data: {
+              getAutoCompleteAddress: [
+                {
+                  text: variables.isFieldCity
+                    ? 'Paris, France'
+                    : '10 Rue de Rivoli, Paris',
+                  placeId: variables.isFieldCity ? 'paris' : 'rivoli',
+                },
+              ],
+            },
+          });
+        }),
+        graphql.query('GetAddressDetails', ({ variables }) =>
+          HttpResponse.json({
+            data: {
+              getAddressDetails: {
+                street:
+                  variables.placeId === 'paris' ? null : '10 Rue de Rivoli',
+                state: 'Île-de-France',
+                postcode: '75001',
+                city: 'Paris',
+                country: 'FR',
+                location: { lat: 48.8566, lng: 2.3522 },
+              },
+            },
+          }),
+        ),
+      ],
+    },
   },
 };
 
@@ -170,7 +236,9 @@ export const Enter: Story = {
 
     expect(enterJestFn).toHaveBeenCalledTimes(0);
 
-    const addressInput = await canvas.findByDisplayValue('Address 1');
+    const addressInput = await canvas.findByRole('combobox', {
+      name: 'Address 1',
+    });
 
     await userEvent.click(addressInput);
 
@@ -178,6 +246,192 @@ export const Enter: Story = {
 
     await waitFor(() => {
       expect(enterJestFn).toHaveBeenCalledTimes(1);
+    });
+  },
+};
+
+export const AutofillsAndPersistsAddress: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+    const input = canvas.getByRole('combobox', { name: 'Address 1' });
+
+    await userEvent.clear(input);
+    await userEvent.type(input, '10 Rue');
+    await screen.findByRole('option', { name: '10 Rue de Rivoli, Paris' });
+    expect(input).toHaveFocus();
+    await userEvent.click(input);
+    expect(screen.getByRole('listbox')).toBeVisible();
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(input).toHaveValue('10 Rue de Rivoli');
+      expect(canvas.getByRole('combobox', { name: 'City' })).toHaveValue(
+        'Paris',
+      );
+      expect(canvas.getByRole('textbox', { name: 'State' })).toHaveValue(
+        'Île-de-France',
+      );
+      expect(canvas.getByRole('textbox', { name: 'Post Code' })).toHaveValue(
+        '75001',
+      );
+      expect(input).toHaveFocus();
+      expect(enterJestFn).not.toHaveBeenCalled();
+    });
+
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(enterJestFn).toHaveBeenCalledWith({
+        newValue: {
+          addressStreet1: '10 Rue de Rivoli',
+          addressStreet2: null,
+          addressCity: 'Paris',
+          addressState: 'Île-de-France',
+          addressPostcode: '75001',
+          addressCountry: 'France',
+          addressLat: 48.8566,
+          addressLng: 2.3522,
+        },
+      });
+    });
+  },
+};
+
+export const SelectsCityWithoutReplacingStreet: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+    const cityInput = canvas.getByRole('combobox', { name: 'City' });
+
+    await userEvent.type(cityInput, 'Par');
+    await userEvent.click(
+      await screen.findByRole('option', { name: 'Paris, France' }),
+    );
+
+    await waitFor(() => {
+      expect(cityInput).toHaveValue('Paris');
+      expect(cityInput).toHaveFocus();
+      expect(canvas.getByRole('combobox', { name: 'Address 1' })).toHaveValue(
+        'Address 1',
+      );
+      expect(clickOutsideJestFn).not.toHaveBeenCalled();
+    });
+  },
+};
+
+export const CancelsSuggestionsBeforePersisting: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+    const input = canvas.getByRole('combobox', { name: 'Address 1' });
+    const outsideButton = canvas.getByRole('button', { name: 'Outside' });
+
+    await userEvent.type(input, ' Rue');
+    await screen.findByRole('option', { name: '10 Rue de Rivoli, Paris' });
+    await userEvent.click(outsideButton);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+      expect(input).toHaveValue('Address 1 Rue');
+      expect(clickOutsideJestFn).not.toHaveBeenCalled();
+      expect(outsideButtonClickJestFn).not.toHaveBeenCalled();
+    });
+
+    await userEvent.click(outsideButton);
+
+    await waitFor(() => {
+      expect(clickOutsideJestFn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          newValue: expect.objectContaining({
+            addressStreet1: 'Address 1 Rue',
+          }),
+        }),
+      );
+    });
+  },
+};
+
+export const IgnoresArrowKeysWithoutSuggestions: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+    const input = canvas.getByRole('combobox', { name: 'Address 1' });
+
+    await userEvent.type(input, ' Nowhere');
+    await waitFor(() =>
+      expect(autocompleteResponseJestFn).toHaveBeenCalledWith(
+        'Address 1 Nowhere',
+      ),
+    );
+    await userEvent.keyboard('{ArrowDown}');
+
+    expect(input).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() =>
+      expect(escapeJestfn).toHaveBeenCalledWith({
+        newValue: expect.objectContaining({
+          addressStreet1: 'Address 1 Nowhere',
+        }),
+      }),
+    );
+  },
+};
+
+export const CountryOnMainSurface: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(canvas.getByText('No country'));
+    await userEvent.type(screen.getByPlaceholderText('Search'), 'France');
+    await userEvent.click(await screen.findByText('France'));
+
+    await waitFor(() => {
+      expect(canvas.getByText('France')).toBeVisible();
+      expect(clickOutsideJestFn).not.toHaveBeenCalled();
+    });
+  },
+};
+
+export const CountryOnSidePanelSurface: Story = {
+  args: {
+    surface: {
+      type: 'side-panel',
+      instanceId: 'side-panel-page',
+      ownsRouteLocation: true,
+    },
+  },
+  play: CountryOnMainSurface.play,
+};
+
+export const CountryOpensWithEnter: Story = {
+  args: CountryOnSidePanelSurface.args,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Country' });
+
+    trigger.focus();
+    await userEvent.keyboard('{Enter}');
+
+    expect(enterJestFn).not.toHaveBeenCalled();
+
+    const countryDialog = await screen.findByRole('dialog', {
+      name: 'Country',
+    });
+
+    await waitFor(() => expect(countryDialog).toBeVisible());
+    await userEvent.type(screen.getByPlaceholderText('Search'), 'France');
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(canvas.getByText('France')).toBeVisible();
+      expect(enterJestFn).not.toHaveBeenCalled();
+      expect(clickOutsideJestFn).not.toHaveBeenCalled();
     });
   },
 };
