@@ -26,6 +26,7 @@ import { uninstallApplication } from 'test/integration/metadata/suites/applicati
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -481,7 +482,7 @@ describe('workflow deletion cleanup', () => {
           workflow,
         });
 
-        if (versionId === undefined) {
+        if (!isDefined(versionId)) {
           throw new Error(`${workflow.name} was not installed`);
         }
 
