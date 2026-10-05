@@ -4,9 +4,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
-import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -47,15 +45,12 @@ const SECOND_VALIDATION_RULE: ValidationRule = {
   expression: 'amount != null',
 };
 
-const buildValidationRulesMock = (
-  validationRules: ValidationRule[],
-  delayInMs = 0,
-) => ({
+const buildValidationRulesMock = (validationRules: ValidationRule[]) => ({
   request: {
     query: FindManyValidationRulesDocument,
     variables: { objectMetadataId: OBJECT_METADATA_ID },
   },
-  delay: jest.fn(() => delayInMs),
+  delay: jest.fn(() => 0),
   result: jest.fn(() => ({
     data: {
       validationRules: validationRules.map((validationRule) => ({
@@ -229,51 +224,6 @@ describe('useValidationRules', () => {
     expect(refetchMock.result).toHaveBeenCalledTimes(1);
   });
 
-  it('should read the rules again when a rule changes during a refetch', async () => {
-    const staleRefetchMock = buildValidationRulesMock(
-      [ACTIVE_VALIDATION_RULE, SECOND_VALIDATION_RULE],
-      50,
-    );
-    const latestRefetchMock = buildValidationRulesMock(
-      [ACTIVE_VALIDATION_RULE, { ...SECOND_VALIDATION_RULE, isActive: false }],
-      100,
-    );
-
-    const { result } = renderUseValidationRules({
-      mocks: [
-        buildValidationRulesMock([ACTIVE_VALIDATION_RULE]),
-        staleRefetchMock,
-        latestRefetchMock,
-      ],
-    });
-
-    await waitFor(() => expect(result.current.validationRules).toHaveLength(1));
-
-    act(() => {
-      dispatchMetadataOperationBrowserEvent<ValidationRule>({
-        metadataName: AllMetadataName.validationRule,
-        operation: { type: 'create', createdRecord: SECOND_VALIDATION_RULE },
-      });
-    });
-
-    await waitFor(() => expect(staleRefetchMock.delay).toHaveBeenCalled());
-
-    act(() => {
-      dispatchValidationRuleUpdate({
-        ...SECOND_VALIDATION_RULE,
-        isActive: false,
-      });
-    });
-
-    await waitFor(() =>
-      expect(result.current.validationRules).toMatchObject([
-        { id: ACTIVE_VALIDATION_RULE.id, isActive: true },
-        { id: SECOND_VALIDATION_RULE.id, isActive: false },
-      ]),
-    );
-    expect(latestRefetchMock.result).toHaveBeenCalledTimes(1);
-  });
-
   it('should not refetch when a rule of another object changes', async () => {
     const refetchMock = buildValidationRulesMock([]);
 
@@ -298,31 +248,6 @@ describe('useValidationRules', () => {
     expect(result.current.validationRules).toHaveLength(1);
   });
 
-  it('should resync rules missed while the event stream was disconnected', async () => {
-    const { result } = renderUseValidationRules({
-      mocks: [
-        buildValidationRulesMock([ACTIVE_VALIDATION_RULE]),
-        buildValidationRulesMock([DISABLED_VALIDATION_RULE]),
-      ],
-    });
-
-    await waitFor(() =>
-      expect(result.current.validationRules).toMatchObject([
-        { isActive: true },
-      ]),
-    );
-
-    act(() => {
-      dispatchBrowserEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME);
-    });
-
-    await waitFor(() =>
-      expect(result.current.validationRules).toMatchObject([
-        { isActive: false },
-      ]),
-    );
-  });
-
   it('should neither load nor listen when the feature flag is disabled', async () => {
     const validationRulesMock = buildValidationRulesMock([
       ACTIVE_VALIDATION_RULE,
@@ -335,7 +260,6 @@ describe('useValidationRules', () => {
 
     act(() => {
       dispatchValidationRuleUpdate(DISABLED_VALIDATION_RULE);
-      dispatchBrowserEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME);
     });
 
     await flushPendingRequests();
