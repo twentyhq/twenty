@@ -287,8 +287,14 @@ describe('FILES server variable', () => {
       expectToFail: false,
     });
 
-    applicationRegistrationId =
+    const syncedRegistrationId: string | undefined =
       data.findOneApplication.applicationRegistrationId;
+
+    if (!isDefined(syncedRegistrationId)) {
+      throw new Error('The synced application has no registration');
+    }
+
+    applicationRegistrationId = syncedRegistrationId;
 
     // The upload PUT and storage completion need real timers
     jest.useRealTimers();
