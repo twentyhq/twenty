@@ -2,7 +2,7 @@ import {
   type ObjectRecord,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
-import { createValidationRuleEvaluator, isDefined } from 'twenty-shared/utils';
+import { createValidationRuleEvaluator } from 'twenty-shared/utils';
 
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
@@ -23,11 +23,7 @@ export const computeRecordValidationRuleViolations = ({
   records: ObjectRecord[];
   validationRules: Pick<
     FlatValidationRule,
-    | 'id'
-    | 'expression'
-    | 'message'
-    | 'errorFieldMetadataId'
-    | 'errorFieldMetadataUniversalIdentifier'
+    'id' | 'expression' | 'message' | 'errorFieldMetadataId'
   >[];
   fields: ValidationRuleFieldDescriptor[];
   now: string;
@@ -37,19 +33,8 @@ export const computeRecordValidationRuleViolations = ({
   const violations: RecordValidationRuleViolation[] = [];
   const evaluationErrors: RecordValidationRuleViolation[] = [];
 
-  const activeFieldUniversalIdentifiers = new Set(
-    fields.map((field) => field.universalIdentifier),
-  );
-
   const ruleEvaluators = validationRules.map((validationRule) => ({
     validationRule,
-    errorFieldMetadataId:
-      isDefined(validationRule.errorFieldMetadataUniversalIdentifier) &&
-      activeFieldUniversalIdentifiers.has(
-        validationRule.errorFieldMetadataUniversalIdentifier,
-      )
-        ? validationRule.errorFieldMetadataId
-        : null,
     evaluate: createValidationRuleEvaluator({
       expression: validationRule.expression,
       fields,
@@ -57,11 +42,7 @@ export const computeRecordValidationRuleViolations = ({
   }));
 
   for (const record of records) {
-    for (const {
-      validationRule,
-      errorFieldMetadataId,
-      evaluate,
-    } of ruleEvaluators) {
+    for (const { validationRule, evaluate } of ruleEvaluators) {
       if (violations.length + evaluationErrors.length >= maxViolations) {
         return { violations, evaluationErrors };
       }
@@ -75,7 +56,7 @@ export const computeRecordValidationRuleViolations = ({
       const violation: RecordValidationRuleViolation = {
         ruleId: validationRule.id,
         message: validationRule.message,
-        fieldMetadataId: errorFieldMetadataId,
+        fieldMetadataId: validationRule.errorFieldMetadataId,
         recordId: String(record.id),
         inputIndex: inputIndexByRecordId.get(String(record.id)) ?? null,
       };
