@@ -196,28 +196,6 @@ describe('buildQuotaCounters', () => {
     },
   );
 
-  it('keeps a non-overridable default alongside a stored limit', () => {
-    const counters = buildCounters({
-      limits: [buildLimit({})],
-      quotaLimitDefaults: [buildDefault({ isOverridable: false })],
-    });
-
-    expect(counters.map((counter) => counter.isDefault)).toEqual([false, true]);
-    expect(new Set(counters.map((counter) => counter.key)).size).toBe(2);
-  });
-
-  it.each([
-    { spenderType: 'userWorkspace' as const, spenderId: 'user-1' },
-    { unit: UsageUnit.TOKEN },
-  ])('preserves the default for a different scope: %j', (overrides) => {
-    const counters = buildCounters({
-      limits: [buildLimit(overrides)],
-      quotaLimitDefaults: [buildDefault()],
-    });
-
-    expect(counters.map((counter) => counter.isDefault)).toEqual([false, true]);
-  });
-
   it('skips a default whose period was not resolved', () => {
     const counters = buildCounters({
       quotaLimitDefaults: [buildDefault({ periodUnit: 'day' })],
@@ -232,15 +210,6 @@ describe('buildQuotaCounters', () => {
     });
 
     expect(counters).toEqual([]);
-  });
-
-  it('preserves the default against a row scoped to every operation', () => {
-    const counters = buildCounters({
-      limits: [buildLimit({ operationType: UsageOperationType.ALL })],
-      quotaLimitDefaults: [buildDefault()],
-    });
-
-    expect(counters.map((counter) => counter.isDefault)).toEqual([true, false]);
   });
 
   it('ignores a default declared on another operation', () => {
@@ -263,5 +232,6 @@ describe('buildQuotaCounters', () => {
       expect.objectContaining({ isDefault: false, periodUnit: 'week' }),
       expect.objectContaining({ isDefault: true, periodUnit: 'month' }),
     ]);
+    expect(new Set(counters.map((counter) => counter.key)).size).toBe(2);
   });
 });

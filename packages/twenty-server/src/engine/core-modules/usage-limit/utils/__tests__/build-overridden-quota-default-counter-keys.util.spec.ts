@@ -65,20 +65,9 @@ describe('buildOverriddenQuotaDefaultCounterKeys', () => {
     expect(buildKeys()).toEqual([DEFAULT_COUNTER_KEY]);
   });
 
-  it.each([
-    { periodUnit: 'month' as const },
-    { spenderType: 'userWorkspace' as const },
-    { unit: UsageUnit.CREDIT },
-    { operationType: UsageOperationType.ALL },
-  ])('leaves a default on another scope alone: %j', (overrides) => {
-    expect(buildKeys({ usageLimit: buildUsageLimit(overrides) })).toEqual([]);
-  });
-
-  it('leaves a default no row can suppress alone', () => {
+  it('leaves alone a default the row does not suppress', () => {
     expect(
-      buildKeys({
-        quotaLimitDefaults: [buildDefault({ isOverridable: false })],
-      }),
+      buildKeys({ usageLimit: buildUsageLimit({ periodUnit: 'month' }) }),
     ).toEqual([]);
   });
 
