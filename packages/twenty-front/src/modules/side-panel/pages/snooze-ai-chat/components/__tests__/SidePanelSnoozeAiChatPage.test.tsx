@@ -6,7 +6,6 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
@@ -46,7 +45,6 @@ describe('SidePanelSnoozeAiChatPage', () => {
     jest.setSystemTime(new Date(2026, 9, 1, 17, 59));
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(agentChatThreadInboxNowState.atom, Date.now());
     jotaiStore.set(
       snoozeAiChatThreadIdsComponentState.atomFamily({ instanceId: PAGE_ID }),
       ['thread-1', 'thread-2'],

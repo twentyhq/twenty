@@ -16,6 +16,7 @@ import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils
 import {
   computeAggregateParameters,
   computeDepthParameters,
+  computeFieldsParameters,
   computeEndingBeforeParameters,
   computeFilterParameters,
   computeGroupByParameters,
@@ -305,6 +306,7 @@ export const computeParameterComponents = (): Record<
     endingBefore: computeEndingBeforeParameters(),
     filter: computeFilterParameters(),
     depth: computeDepthParameters(),
+    fields: computeFieldsParameters(),
     upsert: computeUpsertParameters(),
     softDelete: computeSoftDeleteParameters(),
     orderBy: computeOrderByParameters(),

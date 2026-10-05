@@ -301,7 +301,7 @@ export class UsageLimitService {
         operationType: usageLimit.operationType,
         spenderType: usageLimit.spenderType,
         spenderId: usageLimit.spenderId,
-        meter: usageLimit.meter,
+        unit: usageLimit.unit,
         limitValue: usageLimit.limitValue,
       });
     }

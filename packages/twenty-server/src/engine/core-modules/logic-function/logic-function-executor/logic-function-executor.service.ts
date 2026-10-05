@@ -29,7 +29,7 @@ import { isBillingExemptApplication } from 'src/engine/core-modules/application/
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
-import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
+import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -42,7 +42,7 @@ import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { computeLogicFunctionExecutionCreditsMicro } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/compute-logic-function-execution-credits-micro.util';
+import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -55,7 +55,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -147,7 +146,7 @@ export class LogicFunctionExecutorService {
     retry?: LogicFunctionRetryContext;
     shouldEnforceUsageLimits?: boolean;
   }): Promise<LogicFunctionExecuteResult> {
-    const { flatApplication, flatLogicFunction, applicationVariableMaps } =
+    const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
         workspaceId,
         logicFunctionId,
@@ -169,7 +168,7 @@ export class LogicFunctionExecutorService {
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
       flatApplication,
-      applicationVariableMaps,
+      flatApplicationVariableMaps,
       userId,
       userWorkspaceId,
       workspaceDeletionRequestTimestamp,
@@ -297,16 +296,6 @@ export class LogicFunctionExecutorService {
       return;
     }
 
-    const isExecutionQuotaEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
-        workspaceId,
-      );
-
-    if (!isExecutionQuotaEnabled) {
-      return;
-    }
-
     await this.billingUsageService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.LOGIC_FUNCTION,
@@ -355,11 +344,11 @@ export class LogicFunctionExecutorService {
     const {
       flatLogicFunctionMaps,
       flatApplicationMaps,
-      applicationVariableMaps,
+      flatApplicationVariableMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatLogicFunctionMaps',
       'flatApplicationMaps',
-      'applicationVariableMaps',
+      'flatApplicationVariableMaps',
     ]);
 
     const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
@@ -388,7 +377,7 @@ export class LogicFunctionExecutorService {
       );
     }
 
-    return { flatApplication, flatLogicFunction, applicationVariableMaps };
+    return { flatApplication, flatLogicFunction, flatApplicationVariableMaps };
   }
 
   private async buildExecutionContext({
@@ -430,14 +419,14 @@ export class LogicFunctionExecutorService {
   private async getExecutionEnvVariables({
     workspaceId,
     flatApplication,
-    applicationVariableMaps,
+    flatApplicationVariableMaps,
     userId,
     userWorkspaceId,
     workspaceDeletionRequestTimestamp,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
-    applicationVariableMaps: ApplicationVariableCacheMaps;
+    flatApplicationVariableMaps: FlatApplicationVariableMaps;
     userId?: string;
     userWorkspaceId?: string;
     workspaceDeletionRequestTimestamp?: string;
@@ -481,7 +470,7 @@ export class LogicFunctionExecutorService {
       await this.applicationVariableService.getServerEnvVariables({
         workspaceId,
         applicationId: flatApplication.id,
-        applicationVariableMaps,
+        flatApplicationVariableMaps,
       });
 
     return {
@@ -648,51 +637,29 @@ export class LogicFunctionExecutorService {
         functionName: flatLogicFunction.name,
       });
 
-    // Billing-exempt apps skip the invocation charge; their explicit chargeCredits and AI usage are still billed.
-    const { invocationCreditsMicro, durationCreditsMicro, billedDurationMs } =
-      computeLogicFunctionExecutionCreditsMicro({
-        durationMs: result.billedDurationMs,
-        isBillingExempt: isBillingExemptApplication(
-          flatApplication.universalIdentifier,
-        ),
-      });
-
-    const totalCreditsMicro = invocationCreditsMicro + durationCreditsMicro;
-
     const spenders = {
       logicFunctionId: flatLogicFunction.id,
       applicationId: flatApplication.id,
     };
 
-    if (totalCreditsMicro > 0) {
-      await this.usageLimitQuotaService.consumeQuota({
-        workspaceId,
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        operationType: UsageOperationType.CODE_EXECUTION,
-        spenders,
-        cost: { creditsUsedMicro: totalCreditsMicro, quantity: 1 },
-      });
-    }
+    // Billing-exempt apps skip the invocation charge; their explicit chargeCredits and AI usage are still billed.
+    const { usageEvents, cost } = buildLogicFunctionExecutionUsage({
+      durationMs: result.billedDurationMs,
+      isBillingExempt: isBillingExemptApplication(
+        flatApplication.universalIdentifier,
+      ),
+      resourceId: flatLogicFunction.id,
+      spenders,
+    });
 
-    await this.usageRecorderService.record(workspaceId, [
-      {
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        operationType: UsageOperationType.CODE_EXECUTION,
-        creditsUsedMicro: invocationCreditsMicro,
-        quantity: 1,
-        unit: UsageUnit.INVOCATION,
-        resourceId: flatLogicFunction.id,
-        spenders,
-      },
-      {
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        operationType: UsageOperationType.CODE_EXECUTION,
-        creditsUsedMicro: durationCreditsMicro,
-        quantity: billedDurationMs,
-        unit: UsageUnit.MILLISECOND,
-        resourceId: flatLogicFunction.id,
-        spenders,
-      },
-    ]);
+    await this.usageLimitQuotaService.consumeQuota({
+      workspaceId,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      operationType: UsageOperationType.CODE_EXECUTION,
+      spenders,
+      cost,
+    });
+
+    await this.usageRecorderService.record(workspaceId, usageEvents);
   }
 }

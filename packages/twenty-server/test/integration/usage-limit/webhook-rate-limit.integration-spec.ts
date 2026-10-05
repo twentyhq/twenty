@@ -10,14 +10,13 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 
 import { gql } from 'graphql-tag';
 import { createClient } from 'redis';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const WEBHOOK_RECEIVER_PORT = 4318;
@@ -55,7 +54,6 @@ const DESTROY_PERSON_MUTATION = gql`
 
 describe('Webhook rate limiting', () => {
   let usageLimitRepository: Repository<UsageLimitEntity>;
-  let featureFlagRepository: Repository<FeatureFlagEntity>;
   let redis: Awaited<ReturnType<typeof createClient>>;
   let usageLimitId: string;
   let webhookId: string;
@@ -64,10 +62,7 @@ describe('Webhook rate limiting', () => {
   const createdPersonIds: string[] = [];
 
   const invalidateWorkspaceCaches = async () => {
-    const keys = [
-      ...(await redis.keys(`*featureFlagsMap:${SEED_APPLE_WORKSPACE_ID}*`)),
-      ...(await redis.keys(`*usageLimits:${SEED_APPLE_WORKSPACE_ID}*`)),
-    ];
+    const keys = await redis.keys(`*usageLimits:${SEED_APPLE_WORKSPACE_ID}*`);
 
     if (keys.length > 0) {
       await redis.del(keys);
@@ -91,23 +86,11 @@ describe('Webhook rate limiting', () => {
 
     usageLimitRepository =
       getCoreRepository<UsageLimitEntity>(UsageLimitEntity);
-    featureFlagRepository =
-      getCoreRepository<FeatureFlagEntity>(FeatureFlagEntity);
     redis = await createClient({ url: process.env.REDIS_URL }).connect();
 
     await makeAdminPanelApiRequest({
       query: CREATE_CONFIG_VARIABLE_MUTATION,
       variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: ['*'] },
-    });
-
-    await featureFlagRepository.delete({
-      key: FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
-    await featureFlagRepository.save({
-      key: FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED,
-      value: true,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
     });
 
     const [usageLimit] = await usageLimitRepository.save([
@@ -120,7 +103,7 @@ describe('Webhook rate limiting', () => {
         limitKind: 'speed',
         periodCount: WINDOW_SECONDS,
         periodUnit: 'second',
-        meter: 'quantity',
+        unit: UsageUnit.REQUEST,
         limitValue: LIMIT_VALUE,
         burstValue: LIMIT_VALUE,
       },
@@ -155,10 +138,6 @@ describe('Webhook rate limiting', () => {
     }
 
     await usageLimitRepository.delete({ id: usageLimitId });
-    await featureFlagRepository.delete({
-      key: FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
     await makeAdminPanelApiRequest({
       query: DELETE_CONFIG_VARIABLE_MUTATION,
       variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS' },

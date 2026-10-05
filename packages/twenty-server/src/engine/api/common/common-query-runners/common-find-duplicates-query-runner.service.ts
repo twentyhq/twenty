@@ -27,6 +27,7 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildDuplicateSourceColumnsToSelect } from 'src/engine/api/common/common-query-runners/utils/build-duplicate-source-columns-to-select.util';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -70,10 +71,19 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     });
 
     if (isDefined(args.ids) && args.ids.length > 0) {
+      // Matching must not depend on the response projection or its default cap.
+      const sourceColumnsToSelect = buildDuplicateSourceColumnsToSelect({
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        restrictedFields:
+          readRepository.objectRecordsPermissions?.[flatObjectMetadata.id]
+            ?.restrictedFields ?? {},
+      });
+
       const fetchedRecords = (await existingRecordsQueryBuilder
         .where({ id: In(args.ids) })
         .setFindOptions({
-          select: columnsToSelect,
+          select: sourceColumnsToSelect,
         })
         .getMany()) as ObjectRecord[];
 

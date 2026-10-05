@@ -1,5 +1,6 @@
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
+import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791094130961-drop-core-agent-history-tables';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
@@ -198,6 +199,7 @@ describe('Persisted chat senders', () => {
     await runner.connect();
     await runner.startTransaction();
     try {
+      await new DropCoreAgentHistoryTablesFastInstanceCommand().down(runner);
       const legacyThreadId = randomUUID();
       const legacyMessageId = randomUUID();
       const applicationId = randomUUID();

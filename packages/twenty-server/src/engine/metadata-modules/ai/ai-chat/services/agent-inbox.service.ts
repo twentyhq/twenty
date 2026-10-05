@@ -154,6 +154,7 @@ export class AgentInboxService {
         workspaceId,
         threadId,
         text: input.text,
+        threadBefore: thread,
       });
     }
 

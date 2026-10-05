@@ -17,6 +17,7 @@ import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChat
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
+import { useAddAgentChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useGetBrowsingContext } from '@/ai/hooks/useGetBrowsingContext';
@@ -58,6 +59,8 @@ export const useAgentChat = (
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
+  const { addParticipantsMentionedInMessage } =
+    useAddAgentChatThreadParticipants();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
@@ -207,6 +210,10 @@ export const useAgentChat = (
       ).forEach((conversationTarget) => {
         void attachChatThreadToRecord({ threadId, ...conversationTarget });
       });
+      void addParticipantsMentionedInMessage({
+        threadId,
+        serializedMessage: serializedContentToSend,
+      });
 
       if (data?.sendChatMessage.queued === true) {
         removeOptimisticUserMessage();
@@ -256,6 +263,7 @@ export const useAgentChat = (
     apolloClient,
     applyOptimisticRestore,
     attachChatThreadToRecord,
+    addParticipantsMentionedInMessage,
   ]);
 
   useListenToBrowserEvent({

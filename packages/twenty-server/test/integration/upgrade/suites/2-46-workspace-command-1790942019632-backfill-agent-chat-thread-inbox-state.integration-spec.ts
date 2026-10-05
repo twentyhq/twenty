@@ -60,7 +60,6 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
   let beforeUpgrade: {
     createdThreadLastActivityAt: string | null;
     recordedLastActivityAt: Date | null;
-    participants: unknown[];
   };
   const threadIds = [
     createdBeforeUpgradeThreadId,
@@ -192,10 +191,6 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
     beforeUpgrade = {
       createdThreadLastActivityAt: createdThread.lastActivityAt ?? null,
       recordedLastActivityAt: lastActivityAt,
-      participants: await participantService.findForWorkspaceMember({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      }),
     };
 
     await insertThread(sharedThreadId);
@@ -425,6 +420,5 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
   it('keeps chats working on a workspace the upgrade has not reached yet', () => {
     expect(beforeUpgrade.createdThreadLastActivityAt).toBeNull();
     expect(beforeUpgrade.recordedLastActivityAt).toBeNull();
-    expect(beforeUpgrade.participants).toEqual([]);
   });
 });

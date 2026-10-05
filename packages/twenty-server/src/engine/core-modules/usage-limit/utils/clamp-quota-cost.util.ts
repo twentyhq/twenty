@@ -1,9 +1,20 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { isValidCreditAmountMicro } from 'src/engine/core-modules/usage/utils/is-valid-credit-amount-micro.util';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 
-export const clampQuotaCost = (cost: QuotaCost): QuotaCost => ({
-  creditsUsedMicro: isValidCreditAmountMicro(cost.creditsUsedMicro)
-    ? cost.creditsUsedMicro
-    : 0,
-  quantity: isValidCreditAmountMicro(cost.quantity) ? cost.quantity : 0,
-});
+const clampAmount = (amount: number): number =>
+  isValidCreditAmountMicro(amount) ? amount : 0;
+
+export const clampQuotaCost = (cost: QuotaCost): QuotaCost =>
+  Object.values(UsageUnit).reduce<QuotaCost>(
+    (clampedCost, unit) => {
+      const amount = cost[unit];
+
+      return isDefined(amount)
+        ? { ...clampedCost, [unit]: clampAmount(amount) }
+        : clampedCost;
+    },
+    { [UsageUnit.CREDIT]: clampAmount(cost[UsageUnit.CREDIT]) },
+  );

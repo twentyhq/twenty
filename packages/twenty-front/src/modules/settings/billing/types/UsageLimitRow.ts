@@ -1,6 +1,9 @@
 import { type IconComponent } from 'twenty-ui/icon';
 
-import { type UsageResourceType } from '~/generated-metadata/graphql';
+import {
+  type UsageResourceType,
+  type UsageUnit,
+} from '~/generated-metadata/graphql';
 
 export type UsageLimitRow = {
   id: string;
@@ -14,7 +17,7 @@ export type UsageLimitRow = {
   consumedPercentage: number | null;
   consumedText: string | null;
   limitText: string;
-  isCreditsMeter: boolean;
+  unit: UsageUnit;
   isExhausted: boolean;
   periodName: string;
 };

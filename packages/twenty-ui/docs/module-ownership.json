@@ -50,6 +50,7 @@
     "CodeEditor",
     "CodeEditorHeader",
     "CommandBlock",
+    "CountrySelect",
     "CurrencyPicker",
     "Dropdown",
     "IconButton",

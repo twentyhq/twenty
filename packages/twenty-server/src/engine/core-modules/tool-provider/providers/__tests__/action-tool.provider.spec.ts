@@ -11,7 +11,6 @@ import { type SendEmailTool } from 'src/engine/core-modules/tool/tools/email-too
 import { type CompleteFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/complete-file-upload-tool';
 import { type CreateFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/create-file-upload-tool';
 import { type HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
-import { type NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { type ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { type SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
 import { type SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
@@ -62,7 +61,6 @@ const buildProvider = ({
     buildTool<CreateFileUploadTool>(),
     buildTool<CompleteFileUploadTool>(),
     buildTool<CodeInterpreterTool>(),
-    buildTool<NavigateAppTool>(),
     buildTool<ExtractJsonPathsTool>(),
     buildTool<SearchOutputTool>(),
     buildTool<SaveCampaignTool>(),
@@ -85,6 +83,15 @@ const getToolNames = async (provider: ActionToolProvider) =>
   );
 
 describe('ActionToolProvider', () => {
+  it('does not offer or execute the retired navigation tool', async () => {
+    const { provider } = buildProvider({ isRecordSharingEnabled: true });
+
+    expect(await getToolNames(provider)).not.toContain('navigate_app');
+    await expect(
+      provider.executeStaticTool('navigate_app', {}, CONTEXT),
+    ).rejects.toThrow('Unknown action tool "navigate_app"');
+  });
+
   it('lists share_record when record sharing is enabled', async () => {
     const { provider, shareRecordTool } = buildProvider({
       isRecordSharingEnabled: true,
