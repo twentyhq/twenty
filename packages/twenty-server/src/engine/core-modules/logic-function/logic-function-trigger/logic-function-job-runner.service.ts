@@ -3,7 +3,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import {
+  LogicFunctionExecutionException,
+  LogicFunctionExecutionExceptionCode,
+  LogicFunctionExecutorService,
+} from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-application-retry-limit.constant';
 import { isRetryableLogicFunctionExecutionError } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/is-retryable-logic-function-execution-error.util';
 import {
@@ -74,6 +78,20 @@ export class LogicFunctionJobRunnerService {
         error instanceof LogicFunctionException &&
         error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED
       ) {
+        return;
+      }
+
+      // Delayed or retried jobs can outlive their application: once it is
+      // uninstalled the job has nothing left to run, so retrying is pointless
+      if (
+        error instanceof LogicFunctionExecutionException &&
+        error.code ===
+          LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+      ) {
+        this.logger.log(
+          `Skipping function ${logicFunctionPayload.logicFunctionId} (workspace ${logicFunctionPayload.workspaceId}): ${error.message}`,
+        );
+
         return;
       }
 
