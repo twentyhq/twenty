@@ -61,7 +61,7 @@ runs:
 
         ADDED_FILES=$(echo "$DIFF" | awk '$1 == "A" { print $2 } $1 ~ /^[RC]/ { print $3 }')
         MODIFIED_FILES=$(echo "$DIFF" | awk '$1 == "M" { print $2 }')
-        RENAMED_FROM_FILES=$(echo "$DIFF" | awk '$1 ~ /^R/ { print $2 }')
+        REMOVED_FILES=$(echo "$DIFF" | awk '$1 == "D" { print $2 } $1 ~ /^R/ { print $2 }')
 
         # Between the tag push and the version bump PR, TWENTY_CURRENT_VERSION
         # still names the released version. Once its tag exists, its directory
@@ -70,7 +70,7 @@ runs:
         # lookup that cannot answer fails the check instead of passing it.
         IS_CURRENT_VERSION_RELEASED=false
 
-        if echo "$ADDED_FILES $MODIFIED_FILES $RENAMED_FROM_FILES" | grep -qF "upgrade-version-command/${CURRENT_DIR}/"; then
+        if echo "$ADDED_FILES $MODIFIED_FILES $REMOVED_FILES" | grep -qF "upgrade-version-command/${CURRENT_DIR}/"; then
           LS_REMOTE_STATUS=0
           git ls-remote --exit-code --tags origin "refs/tags/twenty/v${CURRENT_VERSION}" >/dev/null || LS_REMOTE_STATUS=$?
 
@@ -116,7 +116,7 @@ runs:
 
         check_files "added" $ADDED_FILES
         check_files "modified" $MODIFIED_FILES
-        check_files "renamed away" $RENAMED_FROM_FILES
+        check_files "removed" $REMOVED_FILES
 
         FAILED=false
 
@@ -150,7 +150,7 @@ runs:
         fi
 
         if [ "$FAILED" = "true" ]; then
-          echo "::error::Upgrade commands were added or modified outside the current version directory."
+          echo "::error::Upgrade commands were added, modified or removed outside the current version directory."
           exit 1
         fi
 
