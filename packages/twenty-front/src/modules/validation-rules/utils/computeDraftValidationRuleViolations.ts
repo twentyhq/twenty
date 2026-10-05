@@ -1,11 +1,58 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
-import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
+import { isUndefined } from '@sniptt/guards';
+import {
+  fieldMetadataDefaultValueFunctionName,
+  type ValidationRuleFieldDescriptor,
+} from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   evaluateValidationRuleExpression,
   isDefined,
 } from 'twenty-shared/utils';
+import { stripSimpleQuotesFromStringRecursive } from '~/utils/string/stripSimpleQuotesFromString';
+
+type DraftFieldMetadataItem = Pick<
+  FieldMetadataItem,
+  'name' | 'isSystem' | 'defaultValue'
+>;
+
+const FUNCTION_DEFAULT_VALUES = Object.values(
+  fieldMetadataDefaultValueFunctionName,
+);
+
+const isServerFilledField = (
+  fieldMetadataItem: DraftFieldMetadataItem,
+): boolean =>
+  fieldMetadataItem.isSystem ||
+  FUNCTION_DEFAULT_VALUES.includes(fieldMetadataItem.defaultValue);
+
+const withStaticDefaultValues = ({
+  draftRecord,
+  fieldMetadataItems,
+}: {
+  draftRecord: Record<string, unknown>;
+  fieldMetadataItems: DraftFieldMetadataItem[];
+}): Record<string, unknown> => ({
+  ...Object.fromEntries(
+    fieldMetadataItems
+      .filter(
+        (fieldMetadataItem) =>
+          isDefined(fieldMetadataItem.defaultValue) &&
+          !isServerFilledField(fieldMetadataItem),
+      )
+      .map((fieldMetadataItem) => [
+        fieldMetadataItem.name,
+        stripSimpleQuotesFromStringRecursive(fieldMetadataItem.defaultValue),
+      ]),
+  ),
+  ...Object.fromEntries(
+    Object.entries(draftRecord).filter(
+      ([, draftValue]) => !isUndefined(draftValue),
+    ),
+  ),
+});
 
 const canEvaluateOnDraft = ({
   expression,
@@ -75,22 +122,31 @@ export const computeDraftValidationRuleViolations = ({
   validationRules,
   draftRecord,
   fields,
-  serverFilledFieldNames,
+  fieldMetadataItems,
   now,
 }: {
   validationRules: ValidationRule[];
   draftRecord: Record<string, unknown>;
   fields: ValidationRuleFieldDescriptor[];
-  serverFilledFieldNames: string[];
+  fieldMetadataItems: DraftFieldMetadataItem[];
   now: string;
-}): DraftValidationRuleViolation[] =>
-  validationRules
+}): DraftValidationRuleViolation[] => {
+  const draftRecordWithDefaultValues = withStaticDefaultValues({
+    draftRecord,
+    fieldMetadataItems,
+  });
+
+  const serverFilledFieldNames = fieldMetadataItems
+    .filter(isServerFilledField)
+    .map((fieldMetadataItem) => fieldMetadataItem.name);
+
+  return validationRules
     .filter((validationRule) => validationRule.isActive)
     .filter((validationRule) =>
       canEvaluateOnDraft({
         expression: validationRule.expression,
         fields,
-        draftRecord,
+        draftRecord: draftRecordWithDefaultValues,
         serverFilledFieldNames,
       }),
     )
@@ -98,7 +154,10 @@ export const computeDraftValidationRuleViolations = ({
       (validationRule) =>
         evaluateValidationRuleExpression({
           expression: validationRule.expression,
-          record: withRelationPresenceFromJoinColumns({ draftRecord, fields }),
+          record: withRelationPresenceFromJoinColumns({
+            draftRecord: draftRecordWithDefaultValues,
+            fields,
+          }),
           fields,
           now,
         }).status === 'failed',
@@ -107,3 +166,4 @@ export const computeDraftValidationRuleViolations = ({
       ruleId: validationRule.id,
       message: validationRule.message,
     }));
+};
