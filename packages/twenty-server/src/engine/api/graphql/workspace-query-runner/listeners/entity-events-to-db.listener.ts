@@ -8,6 +8,7 @@ import {
   type ObjectRecordNonDestructiveEvent,
   type ObjectRecordRestoreEvent,
   type ObjectRecordUpdateEvent,
+  type ObjectRecordUpsertEvent,
 } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -76,6 +77,13 @@ export class EntityEventsToDbListener {
     batchEvent: WorkspaceEventBatch<ObjectRecordDestroyEvent>,
   ) {
     return this.handleEvent(batchEvent, DatabaseEventAction.DESTROYED);
+  }
+
+  // Upserts are emitted next to the matching created or updated event, so only
+  // agent triggers, which can watch `upserted` on its own, consume them here
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.UPSERTED)
+  async handleUpsert(batchEvent: WorkspaceEventBatch<ObjectRecordUpsertEvent>) {
+    await this.enqueueAgentDatabaseEventTriggerJobIfAnyAgentMatches(batchEvent);
   }
 
   private async handleEvent<T extends ObjectRecordEvent>(
