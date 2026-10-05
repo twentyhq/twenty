@@ -59,6 +59,7 @@ import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usa
 import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
+import { fromRecordUsageInputToUsageConsumptionRow } from 'src/engine/core-modules/usage/utils/from-record-usage-input-to-usage-consumption-row.util';
 import { WorkspaceCacheException } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -501,7 +502,13 @@ export class UsageLimitQuotaService implements OnModuleInit {
           resourceType,
           creditsUsedMicro: events
             .filter((event) => event.resourceType === resourceType)
-            .reduce((total, event) => total + (event.creditsUsedMicro ?? 0), 0),
+            .reduce(
+              (total, event) =>
+                total +
+                fromRecordUsageInputToUsageConsumptionRow(event)
+                  .creditsUsedMicro,
+              0,
+            ),
         });
       }
 
