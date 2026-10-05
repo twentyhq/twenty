@@ -121,32 +121,36 @@ describe('computeDraftValidationRuleViolations', () => {
   });
 
   it('should leave a rule to the server when it reads an absent field the server fills', () => {
-    const draftWithoutStage = {
+    const draftWithoutCloseDate = {
       amount: { amountMicros: null, currencyCode: 'USD' },
+    };
+    const closeDateRule = {
+      ...AMOUNT_RULE,
+      expression: 'isDefined(closeDate) or not isEmpty(amount)',
+    };
+    const closeDateFieldMetadataItem = {
+      name: 'closeDate',
+      isSystem: false,
+      defaultValue: 'now',
     };
 
     expect(
-      compute(draftWithoutStage, [
-        { ...AMOUNT_RULE, expression: 'stage == "WON" or not isEmpty(amount)' },
-      ]).map((violation) => violation.ruleId),
+      compute(draftWithoutCloseDate, [closeDateRule]).map(
+        (violation) => violation.ruleId,
+      ),
     ).toEqual(['amount-rule']);
     expect(
       compute(
-        draftWithoutStage,
-        [
-          {
-            ...AMOUNT_RULE,
-            expression: 'stage == "WON" or not isEmpty(amount)',
-          },
-        ],
-        [{ name: 'stage', isSystem: true, defaultValue: null }],
+        draftWithoutCloseDate,
+        [closeDateRule],
+        [closeDateFieldMetadataItem],
       ),
     ).toEqual([]);
     expect(
       compute(
-        { ...draftWithoutStage, stage: 'CUSTOMER' },
-        [AMOUNT_RULE],
-        [{ name: 'stage', isSystem: true, defaultValue: null }],
+        { ...draftWithoutCloseDate, closeDate: null },
+        [closeDateRule],
+        [closeDateFieldMetadataItem],
       ).map((violation) => violation.ruleId),
     ).toEqual(['amount-rule']);
   });
@@ -185,14 +189,7 @@ describe('computeDraftValidationRuleViolations', () => {
     ).toEqual([]);
   });
 
-  it('should leave rules on dynamic defaults and system fields to the server', () => {
-    expect(
-      compute(
-        {},
-        [{ ...AMOUNT_RULE, expression: 'not isDefined(closeDate)' }],
-        [{ name: 'closeDate', isSystem: false, defaultValue: 'now' }],
-      ),
-    ).toEqual([]);
+  it('should leave a rule on an absent system field to the server', () => {
     expect(
       compute(
         {},

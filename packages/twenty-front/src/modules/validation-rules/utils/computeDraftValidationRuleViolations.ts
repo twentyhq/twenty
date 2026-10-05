@@ -17,7 +17,7 @@ type DraftFieldMetadataItem = Pick<
   'name' | 'isSystem' | 'defaultValue'
 >;
 
-const isServerGeneratedField = (
+const isServerFilledField = (
   fieldMetadataItem: DraftFieldMetadataItem,
 ): boolean =>
   fieldMetadataItem.isSystem === true ||
@@ -37,7 +37,7 @@ const withStaticDefaultValues = ({
       .filter(
         (fieldMetadataItem) =>
           isDefined(fieldMetadataItem.defaultValue) &&
-          !isServerGeneratedField(fieldMetadataItem),
+          !isServerFilledField(fieldMetadataItem),
       )
       .map((fieldMetadataItem) => [
         fieldMetadataItem.name,
@@ -130,7 +130,7 @@ export const computeDraftValidationRuleViolations = ({
   });
 
   const serverFilledFieldNames = fieldMetadataItems
-    .filter(isServerGeneratedField)
+    .filter(isServerFilledField)
     .map((fieldMetadataItem) => fieldMetadataItem.name);
 
   return validationRules
