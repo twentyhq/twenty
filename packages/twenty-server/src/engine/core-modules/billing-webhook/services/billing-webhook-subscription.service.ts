@@ -286,8 +286,6 @@ export class BillingWebhookSubscriptionService {
       return true;
     }
 
-    // Paying customers keep a grace period while Stripe retries a failed
-    // renewal, but a trial whose first invoice is overdue was never paid for
     if (
       status === SubscriptionStatus.PastDue &&
       isSubscriptionInFirstPeriodAfterTrial(subscription)

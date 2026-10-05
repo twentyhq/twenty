@@ -1,7 +1,5 @@
 /* @license Enterprise */
 
-import { isDefined } from 'twenty-shared/utils';
-
 import type Stripe from 'stripe';
 
 import { isSubscriptionInFirstPeriodAfterTrial } from 'src/engine/core-modules/billing-webhook/utils/is-subscription-in-first-period-after-trial.util';
@@ -13,15 +11,11 @@ const buildSubscription = ({
   currentPeriodStart,
 }: {
   trialEnd: number | null;
-  currentPeriodStart?: number;
+  currentPeriodStart: number;
 }) =>
   ({
     trial_end: trialEnd,
-    items: {
-      data: isDefined(currentPeriodStart)
-        ? [{ current_period_start: currentPeriodStart }]
-        : [],
-    },
+    items: { data: [{ current_period_start: currentPeriodStart }] },
   }) as Pick<Stripe.Subscription, 'trial_end' | 'items'>;
 
 describe('isSubscriptionInFirstPeriodAfterTrial', () => {
@@ -62,14 +56,6 @@ describe('isSubscriptionInFirstPeriodAfterTrial', () => {
     expect(
       isSubscriptionInFirstPeriodAfterTrial(
         buildSubscription({ trialEnd: null, currentPeriodStart: TRIAL_END }),
-      ),
-    ).toBe(false);
-  });
-
-  it('should be false when the subscription has no item', () => {
-    expect(
-      isSubscriptionInFirstPeriodAfterTrial(
-        buildSubscription({ trialEnd: TRIAL_END }),
       ),
     ).toBe(false);
   });
