@@ -6,7 +6,7 @@ describe('computeJobQueueWaitMs', () => {
   it('measures the time since creation for a job enqueued without delay', () => {
     expect(
       computeJobQueueWaitMs({
-        job: { timestamp: NOW - 1_500, opts: {}, attemptsMade: 0 },
+        job: { timestamp: NOW - 1_500, opts: {}, attemptsStarted: 1 },
         now: NOW,
       }),
     ).toBe(1_500);
@@ -18,7 +18,7 @@ describe('computeJobQueueWaitMs', () => {
         job: {
           timestamp: NOW - 60_000,
           opts: { delay: 60_000 },
-          attemptsMade: 0,
+          attemptsStarted: 1,
         },
         now: NOW,
       }),
@@ -31,7 +31,7 @@ describe('computeJobQueueWaitMs', () => {
         job: {
           timestamp: NOW - 62_000,
           opts: { delay: 60_000 },
-          attemptsMade: 0,
+          attemptsStarted: 1,
         },
         now: NOW,
       }),
@@ -41,16 +41,16 @@ describe('computeJobQueueWaitMs', () => {
   it('never goes negative when the worker runs ahead of the clock', () => {
     expect(
       computeJobQueueWaitMs({
-        job: { timestamp: NOW + 10, opts: {}, attemptsMade: 0 },
+        job: { timestamp: NOW + 10, opts: {}, attemptsStarted: 1 },
         now: NOW,
       }),
     ).toBe(0);
   });
 
-  it('does not measure a retry, whose creation timestamp predates its previous attempts', () => {
+  it('does not measure a re-run, whose creation timestamp predates its previous start', () => {
     expect(
       computeJobQueueWaitMs({
-        job: { timestamp: NOW - 120_000, opts: {}, attemptsMade: 1 },
+        job: { timestamp: NOW - 120_000, opts: {}, attemptsStarted: 2 },
         now: NOW,
       }),
     ).toBeUndefined();

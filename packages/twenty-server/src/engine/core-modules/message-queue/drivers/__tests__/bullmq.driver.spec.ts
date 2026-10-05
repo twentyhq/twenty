@@ -208,7 +208,7 @@ describe('BullMQDriver queue wait metric', () => {
   driver.register(MessageQueue.workflowQueue);
 
   const processJob = async (
-    job: Pick<Job, 'opts' | 'timestamp' | 'attemptsMade'>,
+    job: Pick<Job, 'opts' | 'timestamp' | 'attemptsStarted'>,
   ) => {
     jest.clearAllMocks();
     driver.work(MessageQueue.workflowQueue, jest.fn());
@@ -237,7 +237,7 @@ describe('BullMQDriver queue wait metric', () => {
     await processJob({
       opts: { delay: 60_000 },
       timestamp: Date.now() - 62_000,
-      attemptsMade: 0,
+      attemptsStarted: 1,
     });
 
     expect(recordHistogram).toHaveBeenCalledWith(
@@ -248,11 +248,11 @@ describe('BullMQDriver queue wait metric', () => {
     );
   });
 
-  it('does not sample the wait of a retry', async () => {
+  it('does not sample the wait of a re-run after a retry or a stall', async () => {
     await processJob({
       opts: {},
       timestamp: Date.now() - 120_000,
-      attemptsMade: 1,
+      attemptsStarted: 2,
     });
 
     expect(recordHistogram).not.toHaveBeenCalled();

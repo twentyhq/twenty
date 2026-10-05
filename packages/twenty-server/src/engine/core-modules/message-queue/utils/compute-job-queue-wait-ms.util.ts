@@ -4,10 +4,10 @@ export const computeJobQueueWaitMs = ({
   job,
   now,
 }: {
-  job: Pick<Job, 'timestamp' | 'opts' | 'attemptsMade'>;
+  job: Pick<Job, 'timestamp' | 'opts' | 'attemptsStarted'>;
   now: number;
 }): number | undefined => {
-  if (job.attemptsMade > 0) {
+  if (job.attemptsStarted > 1) {
     return undefined;
   }
 
