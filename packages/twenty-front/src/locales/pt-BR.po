@@ -4266,7 +4266,7 @@ msgstr "Não é possível fazer upload de mais de {maxNumberOfValues} arquivos"
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Caps on what your workspace can spend and who they apply to"
-msgstr "Limites do que seu espaço de trabalho pode gastar e a quem se aplicam"
+msgstr "Limites de gastos do workspace e a quem se aplicam"
 
 #. js-lingui-id: Po5MgW
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
@@ -4376,7 +4376,7 @@ msgstr "Alterar tema para claro"
 #. js-lingui-id: WAvMry
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
 msgid "Change theme to system"
-msgstr "Alterar tema para o sistema"
+msgstr "Usar tema do sistema"
 
 #. js-lingui-id: a5zD9f
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -5564,7 +5564,7 @@ msgstr "Continuar com a Microsoft"
 #. js-lingui-id: Rdhzdv
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Control what the workspace imports from connected mailboxes and calendars"
-msgstr "Controle o que o espaço de trabalho importa de caixas de entrada e calendários conectados"
+msgstr "Controle o que o workspace importa das caixas de e-mail e dos calendários conectados"
 
 #. js-lingui-id: XBRyA1
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -5575,7 +5575,7 @@ msgstr "Controlar se os destinatários podem encontrar e gerenciar este tópico.
 #. js-lingui-id: +iFqZW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Control which types of entities this role can be assigned to"
-msgstr "Controlar a quais tipos de entidades este papel pode ser atribuído"
+msgstr "Controle a quais tipos de entidade esta função pode ser atribuída"
 
 #. js-lingui-id: YyNOE7
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
@@ -5910,7 +5910,7 @@ msgstr "Não foi possível copiar para a área de transferência"
 #. js-lingui-id: TU+LOV
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Couldn't load installed workspaces"
-msgstr "Não foi possível carregar os espaços de trabalho instalados"
+msgstr "Não foi possível carregar os workspaces instalados"
 
 #. js-lingui-id: zaNpE4
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -6017,7 +6017,7 @@ msgstr "Criar {objectLabelSingular}"
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Create a {0} to automate your work."
-msgstr "Crie um(a) {0} para automatizar seu trabalho."
+msgstr "Crie {0} para automatizar seu trabalho."
 
 #. js-lingui-id: fQFALn
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -6038,7 +6038,7 @@ msgstr "Criar um registro"
 #. js-lingui-id: ZITKtg
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 msgid "Create a role to define permissions for this agent."
-msgstr "Crie um papel para definir permissões para este agente."
+msgstr "Crie uma função para definir as permissões deste agente."
 
 #. js-lingui-id: OW4ZDC
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -6151,13 +6151,13 @@ msgstr "Criar registro"
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
 #: src/modules/side-panel/hooks/useOpenCreateRelatedRecordInSidePanel.ts
 msgid "Create related"
-msgstr "Criar relacionado"
+msgstr "Criar registro relacionado"
 
 #. js-lingui-id: RoyYUE
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 msgid "Create Role"
-msgstr "Criar papel"
+msgstr "Criar função"
 
 #. js-lingui-id: 6MP9lc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
@@ -6205,12 +6205,12 @@ msgstr "Criar Espaço de Trabalho"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Create your workspace"
-msgstr "Criar seu espaço de trabalho"
+msgstr "Crie seu workspace"
 
 #. js-lingui-id: OHF273
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Create, edit, and delete workspace views"
-msgstr "Criar, editar e excluir visualizações de espaço de trabalho"
+msgstr "Criar, editar e excluir visualizações do workspace"
 
 #. js-lingui-id: d+F6q9
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
@@ -6454,7 +6454,7 @@ msgstr "Período atual"
 #. js-lingui-id: C6vAhD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Current subscription state and line items"
-msgstr "Status atual da assinatura e itens de linha"
+msgstr "Status atual da assinatura e itens de cobrança"
 
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -6469,7 +6469,7 @@ msgstr "Versão atual"
 #. js-lingui-id: 0b3reS
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Current workspace member not found."
-msgstr "Membro atual do espaço de trabalho não encontrado."
+msgstr "Membro atual do workspace não encontrado."
 
 #. js-lingui-id: mO0Peh
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -6681,7 +6681,7 @@ msgstr "Personalizar a página do registro"
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize the workspace record page"
-msgstr "Personalize a página de registro do espaço de trabalho"
+msgstr "Personalize a página de registro do workspace"
 
 #. js-lingui-id: ZBgSzH
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -7062,7 +7062,7 @@ msgstr "Visualização Padrão"
 #. js-lingui-id: 6b8WDd
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Deferred workspace migration actions"
-msgstr "Ações adiadas de migração do espaço de trabalho"
+msgstr "Ações adiadas de migração do workspace"
 
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -7077,7 +7077,7 @@ msgstr "Defina o nome e as instruções para esta habilidade"
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
-msgstr "Definir papéis de usuário e níveis de acesso"
+msgstr "Definir funções de usuário e níveis de acesso"
 
 #. js-lingui-id: ErLA3E
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -7196,7 +7196,7 @@ msgstr "Excluir a conta e todos os dados associados"
 #. js-lingui-id: kvHBHg
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Delete account and all the associated data or leave workspace"
-msgstr "Excluir conta e todos os dados associados ou sair do espaço de trabalho"
+msgstr "Excluir a conta e todos os dados associados ou sair do workspace"
 
 #. js-lingui-id: 452Oso
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -7555,7 +7555,7 @@ msgstr "Desvincular"
 #. js-lingui-id: crxufE
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 msgid "Detail per workspace"
-msgstr "Detalhes por Espaço de Trabalho"
+msgstr "Detalhes por workspace"
 
 #. js-lingui-id: URmyfc
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -7686,7 +7686,7 @@ msgstr "Desconectar a conexão?"
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Discoverable"
-msgstr "Detectável"
+msgstr "Visível"
 
 #. js-lingui-id: fAlSRz
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -7926,7 +7926,7 @@ msgstr "Redigir um e-mail para esta empresa sobre "
 #. js-lingui-id: DbAw4C
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
-msgstr "Rascunho de email"
+msgstr "Redigir e-mail"
 
 #. js-lingui-id: fdUFex
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -9826,7 +9826,7 @@ msgstr "Falha ao salvar a personalização do layout"
 #. js-lingui-id: y3HIOa
 #: src/pages/settings/ai/hooks/useSettingsAgentSave.ts
 msgid "Failed to save role permissions: {errorMessage}"
-msgstr "Falha ao salvar as permissões do papel: {errorMessage}"
+msgstr "Falha ao salvar as permissões da função: {errorMessage}"
 
 #. js-lingui-id: bH624/
 #: src/pages/settings/applications/hooks/useApplicationVariablesDraft.ts
@@ -10439,7 +10439,7 @@ msgstr "Siga-nos no X"
 #. js-lingui-id: M0vOQ6
 #: src/modules/ai/components/AiModelPicker.tsx
 msgid "Follows the workspace default for agents"
-msgstr "Segue o padrão do espaço de trabalho para agentes"
+msgstr "Segue o padrão do workspace para agentes"
 
 #. js-lingui-id: q3il6U
 #: src/modules/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings.ts
