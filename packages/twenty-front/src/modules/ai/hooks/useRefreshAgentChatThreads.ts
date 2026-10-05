@@ -68,6 +68,10 @@ export const useRefreshAgentChatThreads = () => {
         return undefined;
       }
 
+      const currentWorkspaceMemberId = store.get(
+        currentWorkspaceMemberState.atom,
+      )?.id;
+
       const result = await apolloCoreClient
         .query<RecordGqlOperationFindManyResult>({
           query: generateFindManyRecordsQuery({
