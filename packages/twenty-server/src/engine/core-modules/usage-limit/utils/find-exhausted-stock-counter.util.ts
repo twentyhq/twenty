@@ -15,7 +15,7 @@ export const findExhaustedStockCounter = ({
   for (const [index, counter] of counters.entries()) {
     const remaining = remainings[index];
 
-    if (isDefined(remaining) && remaining < (cost[counter.meter] ?? 0)) {
+    if (isDefined(remaining) && remaining < (cost[counter.unit] ?? 0)) {
       return { counter, remaining };
     }
   }

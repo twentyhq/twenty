@@ -291,7 +291,7 @@
 </ParamField>
 
 <ParamField body="OptionItem.selected" type="boolean">
-  Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types. Omit it for options that navigate or apply without a selection state.
+  Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types, or as `aria-current` when `render` is not a button, such as a link. Omit it for options that navigate or apply without a selection state.
 </ParamField>
 
 <ParamField body="OptionItem.shortcut" type="ShortcutDefinition">
@@ -564,6 +564,10 @@
 </ParamField>
 
 ### Dropdown.Section
+
+<ParamField body="Section.columns" type="number">
+  Number of grid columns. Sets the grid layout and enables horizontal arrow navigation and vertical movement by row.
+</ParamField>
 
 <ParamField body="Section.label" type="ReactNode">
   Heading displayed above the rows. It also names the group for assistive technologies.

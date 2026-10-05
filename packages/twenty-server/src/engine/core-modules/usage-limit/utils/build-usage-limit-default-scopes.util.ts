@@ -32,7 +32,7 @@ export const buildUsageLimitDefaultScopes = ({
       spenderType: usageLimitDefault.spenderType,
       spenderId: usageLimitDefault.spenderId,
       limitKind: usageLimitDefault.limitKind,
-      meter: usageLimitDefault.meter,
+      unit: usageLimitDefault.unit,
       periodUnit: usageLimitDefault.periodUnit,
       periodCount: buildPeriodCount({ usageLimitDefault, getConfigValue }),
       limitValue: getConfigValue(usageLimitDefault.limitValueConfigVariable),
