@@ -103,7 +103,7 @@ When adding permissions:
 - Keep sensitive objects and fields out of broad roles.
 - Check whether the app introduces side effects through logic functions before granting write access.
 - For sensitive objects, set `sharingReach: ObjectSharingReach.ROLE_ACCESS` on `defineObject()` (imported from `twenty-sdk/define`) so records can only be shared with people whose role already reaches them. The default, `ObjectSharingReach.WORKSPACE`, lets a record be shared with anyone in the workspace. It only matters while record sharing is enabled, and objects with `APPLICATION` or `SYSTEM` readability are never shared.
-- To hide the content of sensitive records while still letting anyone whose role can read the object see that they exist, set `readability: MetadataReadability.DISCOVERABLE` and list in `discoverableFieldUniversalIdentifiers` the fields an existence read may return besides `id`, `createdAt` and `createdBy`. Keep that list to fields that say a record exists, never its content. Everything else needs a share, as with `PRIVATE`.
+- To hide the content of sensitive records while letting readers whose role can read the object find them through an explicit existence read (row-level filters still apply), set `readability: MetadataReadability.DISCOVERABLE` and list in `discoverableFieldUniversalIdentifiers` the fields an existence read may return besides `id`, `createdAt` and `createdBy`. Keep that list to fields that say a record exists, never its content. Everything else needs a share, as with `PRIVATE`.
 
 ## Verification
 
