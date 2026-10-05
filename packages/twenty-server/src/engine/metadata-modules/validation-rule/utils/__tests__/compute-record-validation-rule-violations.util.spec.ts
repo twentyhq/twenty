@@ -97,18 +97,9 @@ describe('computeRecordValidationRuleViolations', () => {
   it('should report the violation on the whole record while its error field is inactive', () => {
     expect(
       computeRecordValidationRuleViolations({
-        records: [
-          {
-            id: 'record-invalid',
-            stage: 'WON',
-            amount: { amountMicros: null, currencyCode: 'USD' },
-          },
-        ],
+        records: [{ id: 'record-invalid', stage: 'WON' }],
         validationRules: [
-          {
-            ...WON_WITHOUT_AMOUNT_RULE,
-            expression: 'stage != "WON"',
-          },
+          { ...WON_WITHOUT_AMOUNT_RULE, expression: 'stage != "WON"' },
         ],
         fields: FIELDS.filter((field) => field.name !== 'amount'),
         now: '2026-09-23T10:00:00.000Z',
