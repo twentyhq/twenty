@@ -1,6 +1,9 @@
+import { isString } from '@sniptt/guards';
 import { Parser } from 'expr-eval-fork';
 
 import { VALIDATION_RULE_FUNCTIONS } from '@/constants/ValidationRuleFunctions';
+import { isDateWithoutTime } from '@/utils/date/isDateWithoutTime';
+import { parseToPlainDateOrThrow } from '@/utils/date/parseToPlainDateOrThrow';
 import { isValidationRuleValueDefined } from '@/utils/validation-rule/isValidationRuleValueDefined';
 
 export const validationRuleParser = new Parser({
@@ -57,6 +60,25 @@ export const validationRuleParser = new Parser({
 
 validationRuleParser.consts = { true: true, false: false };
 
+const toUtcPlainDateStringOrSelf = (value: string): string => {
+  try {
+    return parseToPlainDateOrThrow(value).toString();
+  } catch {
+    return value;
+  }
+};
+
+const alignWithDateOnlyOperand = (
+  value: NonNullable<unknown>,
+  otherValue: NonNullable<unknown>,
+): NonNullable<unknown> =>
+  isString(value) &&
+  isString(otherValue) &&
+  isDateWithoutTime(otherValue) &&
+  !isDateWithoutTime(value)
+    ? toUtcPlainDateStringOrSelf(value)
+    : value;
+
 const compareDefinedValues =
   (
     compare: (
@@ -67,7 +89,10 @@ const compareDefinedValues =
   (left: unknown, right: unknown) =>
     isValidationRuleValueDefined(left) &&
     isValidationRuleValueDefined(right) &&
-    compare(left, right);
+    compare(
+      alignWithDateOnlyOperand(left, right),
+      alignWithDateOnlyOperand(right, left),
+    );
 
 validationRuleParser.binaryOps['<'] = compareDefinedValues(
   (left, right) => left < right,
