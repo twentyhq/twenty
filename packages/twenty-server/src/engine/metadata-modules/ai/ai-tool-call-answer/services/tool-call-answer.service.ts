@@ -12,6 +12,7 @@ import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/to
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
+import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/is-awaiting-pausing-tool-output.util';
 import { parsePausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/parse-pausing-tool-call.util';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
@@ -101,16 +102,17 @@ export class ToolCallAnswerService {
     // replaces that output, so a call no longer pending starts nothing and is refused below
     const workflowStep = readToolCallWorkflowStep(toolPart.toolOutput);
     const workflowRunId = workflowStep?.workflowRunId ?? null;
+    const isToolCallPending =
+      thread.pendingQuestionMessageId === toolPart.messageId &&
+      isAwaitingPausingToolOutput(toolPart.toolOutput);
 
     await this.assertCanAnswerInChat({
       ...args,
       messageId: toolPart.messageId,
-      isStartingChatTurn:
-        !isDefined(workflowStep) &&
-        thread.pendingQuestionMessageId === toolPart.messageId,
+      isStartingChatTurn: !isDefined(workflowStep) && isToolCallPending,
     });
 
-    if (thread.pendingQuestionMessageId !== toolPart.messageId) {
+    if (!isToolCallPending) {
       throw this.notPending();
     }
 

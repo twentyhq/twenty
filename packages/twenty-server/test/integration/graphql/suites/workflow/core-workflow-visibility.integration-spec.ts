@@ -771,7 +771,7 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
-  // An agent step's conversation has no grants of its own: it is read through its run, so follows the workflow's visibility.
+  // An agent step's conversation belongs to its recipient, or else the workflow's creator, whatever the workflow's visibility.
   describe('the conversation an agent step records on a run', () => {
     let conversationCoreWorkflowId: string;
     let conversationWorkspaceWorkflowId: string;
