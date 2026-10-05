@@ -80,7 +80,7 @@ describe('validateWorkflowStepParams', () => {
       for (const [body, type] of [
         ['<p>Hi</p>', 'SEND_EMAIL'],
         ['Hi {{trigger.name}},\n\nThanks', 'DRAFT_EMAIL'],
-      ]) {
+      ] as const) {
         expect(bodyIssues(body, type)).toEqual([
           expect.objectContaining({
             code: 'INVALID_STEP_PARAMS',
