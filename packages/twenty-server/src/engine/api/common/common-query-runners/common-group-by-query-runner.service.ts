@@ -476,7 +476,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   ): number {
     const groupCount = getGroupLimit(args.limit);
 
-    return (args.includeRecords ?? false)
+    return args.includeRecords
       ? groupCount * RECORDS_PER_GROUP_LIMIT
       : groupCount;
   }

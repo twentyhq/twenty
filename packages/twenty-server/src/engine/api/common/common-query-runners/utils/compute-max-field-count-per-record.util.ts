@@ -1,9 +1,8 @@
 import { RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -33,29 +32,17 @@ export const computeMaxFieldCountPerRecord = ({
         return fieldCount + 1;
       }
 
-      const relationField = findFlatEntityByIdInFlatEntityMaps({
+      const relationField = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: fieldIdByName[fieldName],
         flatEntityMaps: flatFieldMetadataMaps,
       });
 
-      if (
-        !isDefined(relationField) ||
-        !isMorphOrRelationFlatFieldMetadata(relationField)
-      ) {
-        return fieldCount;
-      }
-
-      const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: relationField.relationTargetObjectMetadataId,
-        flatEntityMaps: flatObjectMetadataMaps,
-      });
-
-      if (!isDefined(targetObjectMetadata)) {
+      if (!isMorphOrRelationFlatFieldMetadata(relationField)) {
         return fieldCount;
       }
 
       const relatedRecordCountPerRecord =
-        relationField.settings?.relationType === RelationType.ONE_TO_MANY
+        relationField.settings.relationType === RelationType.ONE_TO_MANY
           ? recordLimitPerOneToManyRelation
           : 1;
 
@@ -64,7 +51,10 @@ export const computeMaxFieldCountPerRecord = ({
         relatedRecordCountPerRecord *
           computeMaxFieldCountPerRecord({
             select: selectedValue,
-            flatObjectMetadata: targetObjectMetadata,
+            flatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
+              flatEntityId: relationField.relationTargetObjectMetadataId,
+              flatEntityMaps: flatObjectMetadataMaps,
+            }),
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
             recordLimitPerOneToManyRelation,

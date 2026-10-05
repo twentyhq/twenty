@@ -508,7 +508,7 @@ export abstract class CommonBaseQueryRunnerService<
 
   private recordApiComplexityUsage(
     authContext: WorkspaceAuthContext,
-    maxFieldCount: number,
+    queryComplexity: number,
   ) {
     const apiType = getApiType();
 
@@ -519,7 +519,7 @@ export abstract class CommonBaseQueryRunnerService<
     this.usageRecorderService.accumulate(authContext.workspace.id, {
       resourceType: UsageResourceType.API,
       operationType: UsageOperationType.API_REQUEST,
-      quantity: maxFieldCount,
+      quantity: queryComplexity,
       unit: UsageUnit.COMPLEXITY,
       resourceContext: apiType,
       spenders: buildUsageSpendersFromAuthContext(authContext),
