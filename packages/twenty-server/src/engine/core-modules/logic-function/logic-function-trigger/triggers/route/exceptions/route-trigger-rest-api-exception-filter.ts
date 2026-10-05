@@ -15,7 +15,6 @@ import {
 import type { CustomException } from 'src/utils/custom-exception';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 
-// AuthException comes from the token check on auth-required routes
 @Catch(RouteTriggerException, AuthException)
 export class RouteTriggerRestApiExceptionFilter implements ExceptionFilter {
   constructor(
