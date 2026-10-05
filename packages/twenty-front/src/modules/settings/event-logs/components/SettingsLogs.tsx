@@ -15,6 +15,7 @@ import { useEventLogsLiveStream } from '@/settings/event-logs/hooks/useEventLogs
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
 import { type EventLogFiltersState } from '@/settings/event-logs/types/EventLogFiltersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -99,12 +100,10 @@ export const SettingsLogs = () => {
   const navigateSettings = useNavigateSettings();
 
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const hasAuditLogsEntitlement =
-    currentWorkspace?.billingEntitlements?.some(
-      (entitlement) =>
-        entitlement.key === BillingEntitlementKey.AUDIT_LOGS &&
-        entitlement.value,
-    ) === true;
+  const hasAuditLogsEntitlement = checkIfBillingEntitlementIsEnabledOnWorkspace(
+    BillingEntitlementKey.AUDIT_LOGS,
+    currentWorkspace,
+  );
 
   const [selectedTable, setSelectedTable] = useState<EventLogTable>(
     EventLogTable.PAGEVIEW,
@@ -145,7 +144,7 @@ export const SettingsLogs = () => {
     isDefined(filters.dateRange?.start) ||
     isDefined(filters.dateRange?.end);
 
-  const liveRecords = useEventLogsLiveStream({
+  const { liveRecords } = useEventLogsLiveStream({
     table: selectedTable,
     enabled: !isPaused && !hasActiveFilters && canQuery,
   });
@@ -165,7 +164,7 @@ export const SettingsLogs = () => {
   };
 
   const renderUpgradeCard = () => (
-    <Card rounded backgroundColor={themeCssVariables.background.secondary}>
+    <Card.Root rounded backgroundColor={themeCssVariables.background.secondary}>
       <SettingsOptionCardContentButton
         Icon={IconLock}
         title={t`Upgrade to access audit logs`}
@@ -186,7 +185,7 @@ export const SettingsLogs = () => {
           >{t`Upgrade`}</Button>
         }
       />
-    </Card>
+    </Card.Root>
   );
 
   const renderResults = () => {
@@ -232,7 +231,7 @@ export const SettingsLogs = () => {
 
   return (
     <StyledRoot>
-      <Card
+      <Card.Root
         rounded
         fullWidth
         backgroundColor={themeCssVariables.background.secondary}
@@ -262,7 +261,7 @@ export const SettingsLogs = () => {
             onChange={handleFiltersChange}
           />
         </StyledCardContent>
-      </Card>
+      </Card.Root>
 
       {renderResults()}
     </StyledRoot>

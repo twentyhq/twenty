@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
+import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
@@ -12,14 +13,22 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-version/workspace-version.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
+import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 
 @Module({
   imports: [
+    ApplicationLookupModule,
+    ApplicationRegistrationLookupModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([
       ApplicationEntity,
       ApplicationRegistrationEntity,
     ]),
     ApplicationInstallModule,
+    ApplicationPackageModule,
     // Nothing here injects from these two modules any more, but the generated
     // metadata GraphQL schema follows Nest's module registration order, so
     // dropping them reorders the checked-in client schema.
@@ -33,6 +42,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     ApplicationUpgradeService,
     ApplicationUpgradeResolver,
     UpgradeApplicationCommand,
+    provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [ApplicationUpgradeService],
 })

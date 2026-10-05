@@ -11,6 +11,10 @@
  *   npx nx generate:ui twenty-docs
  */}
 
+<ParamField body="children" type="ReactNode">
+  Option content. Card options wrap it in a padded full-width content area.
+</ParamField>
+
 <ParamField body="className" type="string | ((state: RadioRootState) =&gt; string | undefined)">
   CSS class applied to the element, or a function that
   returns a class based on the component's state.
@@ -56,4 +60,8 @@
 
 <ParamField body="value" type="TValue" required>
   The unique identifying value of the radio in a group.
+</ParamField>
+
+<ParamField body="variant" type="&quot;card&quot; | &quot;default&quot;" default="default">
+  Presentation of the option: a standard radio or a full-width card. Defaults to default.
 </ParamField>

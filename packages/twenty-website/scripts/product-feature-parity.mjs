@@ -235,7 +235,6 @@ const pages = [
   ['new', newPage],
 ];
 
-// --- Section anatomy + lattice + entrance + tile styles ---------------
 const anatomies = {};
 for (const [name, page] of pages) {
   // eslint-disable-next-line no-await-in-loop
@@ -293,7 +292,6 @@ if (!anatomies.old || !anatomies.new) {
   );
 }
 
-// --- Donut sweep (spotlight active state) ------------------------------
 const donuts = {};
 for (const [name, page] of pages) {
   // eslint-disable-next-line no-await-in-loop
@@ -325,7 +323,6 @@ if (!donuts.old || !donuts.new) {
   }
 }
 
-// --- Contacts: checkbox + drag-scroll ----------------------------------
 const checkboxes = {};
 for (const [name, page] of pages) {
   // eslint-disable-next-line no-await-in-loop
@@ -397,7 +394,6 @@ if (scrolls.old && scrolls.new) {
   }
 }
 
-// --- Pipeline: drag-drop-reorder + FLIP --------------------------------
 for (const [name, page] of pages) {
   // eslint-disable-next-line no-await-in-loop
   await scrollToText(page, 'All opportunities', 1400);

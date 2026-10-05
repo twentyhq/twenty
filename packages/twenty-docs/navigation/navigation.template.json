@@ -50,6 +50,14 @@
             }
           }
         },
+        "emailCampaigns": {
+          "label": "Email Campaigns",
+          "groups": {
+            "emailCampaignsHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
         "workflows": {
           "label": "Workflows",
           "groups": {
@@ -206,11 +214,20 @@
             "uiPrimitives": {
               "label": "Primitives",
               "groups": {
+                "uiAccessibility": {
+                  "label": "Accessibility"
+                },
                 "uiDataDisplay": {
                   "label": "Data display"
                 },
+                "uiFeedback": {
+                  "label": "Feedback"
+                },
                 "uiForms": {
                   "label": "Forms"
+                },
+                "uiLayout": {
+                  "label": "Layout"
                 },
                 "uiNavigation": {
                   "label": "Navigation"

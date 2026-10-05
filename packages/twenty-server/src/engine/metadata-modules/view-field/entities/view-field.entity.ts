@@ -32,6 +32,7 @@ export type ViewFieldOverrides = {
 };
 
 @Entity({ name: 'viewField', schema: 'core' })
+@Index('IDX_VIEW_FIELD_APPLICATION_ID', ['applicationId'])
 @Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_FIELD_VIEW_ID', ['viewId'])
 @Index('IDX_VIEW_FIELD_FIELD_METADATA_ID', ['fieldMetadataId'])

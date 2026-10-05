@@ -28,6 +28,7 @@ import { buildUsageRefusalException } from 'src/engine/core-modules/billing/util
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
@@ -43,6 +44,7 @@ type UsageQuotaScope = {
   resourceType: UsageResourceType;
   operationType: UsageOperationType;
   spenders: UsageSpenders;
+  cost?: QuotaCost;
 };
 
 @Injectable()
@@ -75,6 +77,7 @@ export class BillingUsageService {
     resourceType,
     operationType,
     spenders,
+    cost,
   }: UsageQuotaScope): Promise<UsageRefusal | null> {
     const subscriptionInactiveReason =
       await this.getSubscriptionInactiveReason(workspaceId);
@@ -87,7 +90,7 @@ export class BillingUsageService {
     }
 
     const exhaustedScope = await this.usageLimitQuotaService.findExhaustedScope(
-      { workspaceId, resourceType, operationType, spenders },
+      { workspaceId, resourceType, operationType, spenders, cost },
     );
 
     return isDefined(exhaustedScope)
@@ -254,11 +257,7 @@ export class BillingUsageService {
     return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);
   }
 
-  // Returns null when usage could not be read. ClickHouseService.select
-  // swallows query errors and returns [], but a bare sum() aggregate always
-  // yields exactly one row, so an empty result means the read failed rather
-  // than "nothing was used". Callers that hand out credits must not confuse
-  // the two.
+  // Null on a failed read: select swallows errors into [], while sum() always yields one row
   private async sumCreditsUsedMicroOrNull(
     condition: string,
     params: Record<string, unknown>,
@@ -281,10 +280,7 @@ export class BillingUsageService {
     return Number.isFinite(total) ? total : 0;
   }
 
-  // Sums by event timestamp rather than by the stamped periodStart dimension.
-  // At a period transition the subscription's currentPeriodStart has already
-  // moved on, so an equality match on periodStart would read the new period
-  // and report a period that has barely started as unused.
+  // By event timestamp: at a transition currentPeriodStart has moved on, so periodStart would read the new period
   async getCreditsUsedBetweenOrNull({
     workspaceId,
     from,

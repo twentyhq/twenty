@@ -102,8 +102,6 @@ export const useOpenRoutedPageInSidePanel = () => {
         resetNavigationStack,
       });
 
-      // The caller keys its own per-visit state off this, the way the morph
-      // navigation stack does for a record.
       return pageComponentInstanceId;
     },
     [navigateSidePanel, routeObjects, store],

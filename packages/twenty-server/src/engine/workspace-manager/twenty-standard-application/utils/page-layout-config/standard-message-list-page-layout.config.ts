@@ -30,8 +30,6 @@ const MEMBERS_WIDGET_PROPS = {
       .universalIdentifier,
 } as const;
 
-// Like the note and task pages, the members table sits under the fields in
-// the side panel and on mobile, and gets a tab of its own in full screen.
 const MESSAGE_LIST_PAGE_TABS = {
   home: {
     universalIdentifier:

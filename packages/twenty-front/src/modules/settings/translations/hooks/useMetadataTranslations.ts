@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client/react';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
+import { type MetadataTranslationRowValue } from '@/settings/translations/types/MetadataTranslationRowValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type MetadataTranslationsInput,
@@ -22,15 +23,22 @@ export const useMetadataTranslations = (
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
 
-  // A null value removes the stored translation, reverting the locale to
-  // shipped-or-canonical.
-  const saveTranslationRow = async (
-    row: MetadataTranslationRow,
-    value: string | null,
+  // null removes the stored translation, reverting the locale to the shipped or canonical label
+  const saveTranslationRows = async (
+    rowValues: MetadataTranslationRowValue[],
   ) => {
-    const translations = [
-      { locale: row.locale, property: row.property, value },
-    ];
+    const [firstRowValue] = rowValues;
+
+    if (!isDefined(firstRowValue)) {
+      return;
+    }
+
+    const { row } = firstRowValue;
+    const translations = rowValues.map(({ row, value }) => ({
+      locale: row.locale,
+      property: row.property,
+      value,
+    }));
 
     if (row.metadataName === 'objectMetadata') {
       await updateOneObjectMetadataItem({
@@ -58,6 +66,6 @@ export const useMetadataTranslations = (
     metadataTranslations: data?.metadataTranslations ?? [],
     loading,
     refetch,
-    saveTranslationRow,
+    saveTranslationRows,
   };
 };

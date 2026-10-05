@@ -10,7 +10,7 @@ export const createWorkflow = async ({
   workflowId: string;
   workflowName: string;
 }) => {
-  return postBackendGraphQL({
+  return postBackendGraphQL<{ createWorkflow: { id: string } }>({
     page,
     data: {
       operationName: 'CreateOneWorkflow',

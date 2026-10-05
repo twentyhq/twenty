@@ -1,3 +1,4 @@
+import { ADD_APPLICATION_WORKFLOW_SIDE_EFFECTS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-45/add-application-workflow-side-effects-upgrade-command-name.constant';
 import {
   Column,
   CreateDateColumn,
@@ -29,7 +30,7 @@ export enum WorkflowVersionStatus {
 @Index('IDX_WORKFLOW_VERSION_WORKSPACE_ID', ['workspaceId'])
 @Index(
   'IDX_WORKFLOW_VERSION_ONE_ACTIVE_PER_WORKFLOW',
-  ['workspaceId', 'workflowId'],
+  ['workspaceId', 'coreWorkflowId'],
   {
     unique: true,
     where: `"status" = 'ACTIVE'`,
@@ -47,6 +48,13 @@ export enum WorkflowVersionStatus {
 export class WorkflowVersionEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_APPLICATION_WORKFLOW_SIDE_EFFECTS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'boolean', default: false })
+  isSystemSideEffect: boolean;
 
   @Column({ type: 'jsonb', nullable: true })
   triggers: WorkflowTrigger[] | null;
@@ -69,7 +77,7 @@ export class WorkflowVersionEntity extends SyncableEntity {
     upgradeCommandName:
       ADD_CORE_WORKFLOW_ID_TO_WORKFLOW_VERSION_UPGRADE_COMMAND_NAME,
   })
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ type: 'uuid', nullable: false })
   coreWorkflowId: string | null;
 
   @WasIntroducedInUpgrade({

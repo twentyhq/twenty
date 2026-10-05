@@ -16,7 +16,8 @@ export const DropdownActionItem = ({
   endIcon,
   description,
   descriptionPlacement,
-  hotkeys,
+  shortcut,
+  shortcutJoinLabel,
   hasSubmenu,
   children,
   render,
@@ -92,7 +93,8 @@ export const DropdownActionItem = ({
           endIcon={endIcon}
           description={description}
           descriptionPlacement={descriptionPlacement}
-          hotkeys={hotkeys}
+          shortcut={shortcut}
+          shortcutJoinLabel={shortcutJoinLabel}
           hasSubmenu={hasSubmenu ?? isDefined(page)}
         >
           {children}

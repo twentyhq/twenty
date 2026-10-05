@@ -4,11 +4,16 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -21,14 +26,28 @@ import { CreateAgentInput } from './dtos/create-agent.input';
 import { UpdateAgentInput } from './dtos/update-agent.input';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
-@UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  SettingsPermissionGuard(PermissionFlagType.AI),
+)
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   AiGraphqlApiExceptionInterceptor,
 )
 @MetadataResolver()
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 export class AgentResolver {
   constructor(
     private readonly agentService: AgentService,
@@ -38,16 +57,32 @@ export class AgentResolver {
   @Query(() => [AgentDTO])
   async findManyAgents(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<AgentDTO[]> {
     const flatAgentsWithRoleId =
       await this.agentService.findManyAgents(workspaceId);
 
-    return flatAgentsWithRoleId.map(fromFlatAgentWithRoleIdToAgentDto);
+    return flatAgentsWithRoleId
+      .filter((flatAgent) =>
+        canCallerReachApplication({
+          callingApplication,
+          applicationId: flatAgent.applicationId,
+        }),
+      )
+      .map(fromFlatAgentWithRoleIdToAgentDto);
   }
 
   @Query(() => AgentDTO)
+  @UseGuards(ApplicationTargetGuard)
   async findOneAgent(
-    @Args('input') { id }: AgentIdInput,
+    @ApplicationTargetArg<AgentIdInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'agent',
+      idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
+    })
+    { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentDTO> {
     const fatAgentWithRoleId = await this.agentService.findOneAgentById({
@@ -69,7 +104,7 @@ export class AgentResolver {
     }
 
     const createdAgent = await this.agentService.createOneAgent(
-      { ...input, isCustom: true },
+      input,
       workspace.id,
     );
 

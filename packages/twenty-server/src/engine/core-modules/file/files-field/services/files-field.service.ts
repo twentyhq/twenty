@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { extname } from 'path';
 
@@ -7,7 +6,7 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -30,8 +29,8 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 export class FilesFieldService {
   constructor(
     private readonly fileStorageService: FileStorageService,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     @InjectWorkspaceScopedRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: WorkspaceScopedRepository<FieldMetadataEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
@@ -83,12 +82,14 @@ export class FilesFieldService {
       },
     );
 
-    const application = await this.applicationRepository.findOneOrFail({
-      where: {
-        id: fieldMetadata.applicationId,
-        workspaceId,
+    const application = await this.applicationRepository.findOneOrFail(
+      workspaceId,
+      {
+        where: {
+          id: fieldMetadata.applicationId,
+        },
       },
-    });
+    );
 
     const savedFile = await this.fileStorageService.writeFile({
       sourceFile: file,
@@ -153,13 +154,13 @@ export class FilesFieldService {
     );
 
     const [sourceApplication, destinationApplication] = await Promise.all([
-      this.applicationRepository.findOneOrFail({
+      this.applicationRepository.findOneOrFail(workspaceId, {
         select: ['universalIdentifier'],
-        where: { id: sourceFile.applicationId, workspaceId },
+        where: { id: sourceFile.applicationId },
       }),
-      this.applicationRepository.findOneOrFail({
+      this.applicationRepository.findOneOrFail(workspaceId, {
         select: ['universalIdentifier'],
-        where: { id: fieldMetadata.applicationId, workspaceId },
+        where: { id: fieldMetadata.applicationId },
       }),
     ]);
 

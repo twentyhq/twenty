@@ -66,10 +66,6 @@ jest.mock('@/ui/input/components/SelectControl', () => ({
     selectedOption: { label: string };
   }) => <span data-testid="selected-date">{selectedOption.label}</span>,
 }));
-jest.mock('@/ui/layout/dropdown/components/Dropdown', () => ({
-  Dropdown: ({ clickableComponent }: { clickableComponent: React.ReactNode }) =>
-    clickableComponent,
-}));
 jest.mock('@/ui/layout/dropdown/hooks/useCloseDropdown', () => ({
   useCloseDropdown: jest.fn(() => ({ closeDropdown: jest.fn() })),
 }));

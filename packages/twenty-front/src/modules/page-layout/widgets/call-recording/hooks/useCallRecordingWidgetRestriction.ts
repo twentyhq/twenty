@@ -1,4 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -23,8 +24,10 @@ export const useCallRecordingWidgetRestriction = ({
   );
 
   const isFieldMetadataItemRestricted = (fieldMetadataItem: { id: string }) =>
-    callRecordingObjectPermissions.restrictedFields[fieldMetadataItem.id]
-      ?.canRead === false;
+    !getFieldPermissions({
+      objectPermissions: callRecordingObjectPermissions,
+      fieldMetadataId: fieldMetadataItem.id,
+    }).canReadField;
 
   const isFieldRestricted = (fieldName: string) => {
     const fieldMetadataItem = callRecordingObjectMetadataItem.fields.find(

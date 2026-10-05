@@ -210,10 +210,7 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
             indexUniversalIdentifier
           ];
 
-        if (
-          !isDefined(flatIndexMetadata) ||
-          flatIndexMetadata.isSystemSideEffect !== true
-        ) {
+        if (!isDefined(flatIndexMetadata)) {
           continue;
         }
 
@@ -228,7 +225,11 @@ export class ObjectSystemSideEffectsOnDeleteSideEffectHandlerService extends Met
               ),
           );
 
-        if (!belongsToObject && !referencesDeletedField) {
+        // dropping a column drops its physical indexes, so delete their metadata whatever the flags or owner
+        const isEngineOwnedIndexOfObject =
+          belongsToObject && flatIndexMetadata.isSystemSideEffect;
+
+        if (!referencesDeletedField && !isEngineOwnedIndexOfObject) {
           continue;
         }
 

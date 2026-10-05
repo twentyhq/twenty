@@ -33,6 +33,7 @@ import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advis
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
@@ -67,6 +68,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { type UpdateWorkspaceAllowedIframeOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-iframe-origins.input';
+import { WORKSPACE_FIELDS_NOT_UPDATABLE_BY_APPLICATIONS } from 'src/engine/core-modules/workspace/constants/workspace-fields-not-updatable-by-applications.constant';
 import { WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION } from 'src/engine/core-modules/workspace/constants/workspace-fields-updatable-before-activation.constant';
 import {
   WorkspaceDeletionApplicationUninstallJob,
@@ -111,10 +113,7 @@ import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// A workspace stuck in ONGOING_CREATION for longer than this is treated as a
-// crashed activation (the process died before the catch block could reset it to
-// PENDING_CREATION) and may be retried. It is far longer than a real activation
-// takes, so a genuinely in-progress activation is never reclaimed.
+// far longer than a real activation, so an older ONGOING_CREATION is a crashed attempt that may be reclaimed
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
 const WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT = 3;
 
@@ -150,6 +149,7 @@ export class WorkspaceService {
     aiEvaluationModelId: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
+    isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
   };
 
   constructor(
@@ -194,9 +194,7 @@ export class WorkspaceService {
     private readonly applicationUninstallService: ApplicationUninstallService,
   ) {}
 
-  // Pins are stored as given, so a stale or mistyped id must be refused here
-  // rather than silently falling back to the tier default at run time. A pin
-  // that is already stored is left alone so the others stay editable.
+  // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
   private validateAiModelIdByTier({
     aiModelIdByTier,
     storedAiModelIdByTier,
@@ -246,10 +244,7 @@ export class WorkspaceService {
     }
   }
 
-  // Same contract as a tier pin: stored as given, so an id that names nothing
-  // this instance can run must be refused here rather than stored and silently
-  // ignored at run time. A pin already stored is left alone so the rest of the
-  // form stays editable after an administrator withdraws the model.
+  // same contract as validateAiModelIdByTier
   private validateAiEvaluationModelId({
     aiEvaluationModelId,
     storedAiEvaluationModelId,
@@ -483,13 +478,8 @@ export class WorkspaceService {
   }
 
   async activateWorkspace(user: AuthContextUser, workspace: WorkspaceEntity) {
-    // Acquire the activation lock by atomically moving the workspace to
-    // ONGOING_CREATION. First try the normal case (PENDING_CREATION). If nothing
-    // matches, the workspace may be stuck in ONGOING_CREATION from a prior
-    // attempt that was killed before the catch block could reset it — reclaim it,
-    // but only once the lock is stale, so a genuinely concurrent activation is
-    // never interrupted. Postgres row locking serializes concurrent reclaims, and
-    // repository.update bumps updatedAt, so a reclaimed lock is immediately fresh.
+    // a workspace stuck in ONGOING_CREATION is reclaimed only once its lock is stale, so a live activation is never interrupted;
+    // row locking serializes reclaims and update bumps updatedAt, so a reclaimed lock is immediately fresh again
     let activationLockResult = await this.workspaceRepository.update(
       {
         id: workspace.id,
@@ -512,10 +502,7 @@ export class WorkspaceService {
     }
 
     if ((activationLockResult.affected ?? 0) === 0) {
-      // Activation is idempotent for the terminal state: if a prior attempt
-      // already completed (e.g. the client lost the response and retried),
-      // return the active workspace instead of failing. Otherwise another
-      // activation is genuinely in progress and must not be interrupted.
+      // a client retrying after a lost response gets the already-active workspace
       const existingWorkspace = await this.workspaceRepository.findOneBy({
         id: workspace.id,
       });
@@ -918,8 +905,7 @@ export class WorkspaceService {
     }
   }
 
-  // FieldMetadataEntity has a self-referencing FK (relationTargetFieldMetadataId)
-  // Related fields must be deleted together to avoid constraint violations
+  // relationTargetFieldMetadataId is a self-referencing FK, so related fields must share a chunk
   private async getFieldMetadataIdChunks(
     workspaceId: string,
   ): Promise<string[][]> {
@@ -1066,6 +1052,24 @@ export class WorkspaceService {
 
     if (fieldsBeingUpdated.length === 0) {
       return;
+    }
+
+    if (isDefined(getScopedCallingApplication(application))) {
+      const fieldsNotUpdatableByApplications = fieldsBeingUpdated.filter(
+        (field) => field in WORKSPACE_FIELDS_NOT_UPDATABLE_BY_APPLICATIONS,
+      );
+
+      if (fieldsNotUpdatableByApplications.length > 0) {
+        const fieldsList = fieldsNotUpdatableByApplications.join(', ');
+
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage: msg`Applications cannot update these fields: ${fieldsList}.`,
+          },
+        );
+      }
     }
 
     if (

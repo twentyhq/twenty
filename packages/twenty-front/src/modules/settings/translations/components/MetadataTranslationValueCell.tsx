@@ -10,7 +10,7 @@ const StyledValue = styled.div<{ isInherited: boolean }>`
   color: ${({ isInherited }) =>
     isInherited
       ? themeCssVariables.font.color.light
-      : themeCssVariables.font.color.primary};
+      : themeCssVariables.font.color.secondary};
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;

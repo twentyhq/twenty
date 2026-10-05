@@ -1,1 +1,1 @@
-export type DialogSize = 'sm' | 'md' | 'lg' | 'xl' | 'fullscreen';
+export type DialogSize = 'sm' | 'compact' | 'md' | 'lg' | 'xl' | 'fullscreen';

@@ -97,16 +97,16 @@ export class WorkflowVisualizerPage {
   async createOneWorkflow() {
     const id = randomUUID();
 
+    await this.#page.goto('/');
+
     const response = await createWorkflow({
       page: this.#page,
       workflowId: id,
       workflowName: this.workflowName,
     });
 
-    expect(response.status()).toBe(200);
-
-    const responseBody = await response.json();
-    expect(responseBody.data.createWorkflow.id).toBe(id);
+    expect(response.status).toBe(200);
+    expect(response.body.data?.createWorkflow.id).toBe(id);
 
     this.workflowId = id;
   }
@@ -287,7 +287,6 @@ export class WorkflowVisualizerPage {
       await openInRecordPageOption.click();
     }
 
-    // Close the dropdown
     await recordTableOptionsButton.click();
   }
 }

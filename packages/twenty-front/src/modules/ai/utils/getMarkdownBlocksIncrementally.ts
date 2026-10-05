@@ -1,25 +1,17 @@
 import { type MarkdownBlockSplitCache } from '@/ai/types/MarkdownBlockSplitCache';
 import { Lexer } from 'marked';
 
-// Appended text can reopen the last block, and a list followed by a blank-line
-// token merges with a later item ("- a\n\n" + "- b" is one loose list), so the
-// two trailing blocks must be re-tokenized on every flush. Anything before them
-// was terminated by content that is still present, so it can never change.
+// Appended text can reopen the last block or merge a list across a blank line, so the last two re-tokenize.
 const UNSTABLE_TRAILING_BLOCK_COUNT = 2;
 
-// marked.lexer normalizes line endings before tokenizing; blockTokens does not,
-// so normalize here to keep raw offsets aligned with the sliced text.
+// marked.lexer normalizes line endings but blockTokens doesn't, which would misalign raw offsets.
 const normalizeLineEndings = (text: string): string =>
   text.replace(/\r\n|\r/g, '\n');
 
 const splitIntoBlocks = (text: string): string[] =>
   new Lexer().blockTokens(text, []).map((token) => token.raw);
 
-// A streamed message only grows, so instead of re-tokenizing the whole message
-// on every flush, reuse the blocks that can no longer change and re-tokenize
-// only the unstable tail, keeping each flush O(appended text) instead of
-// O(whole message). Any non-append change misses the stablePrefix guard and
-// falls back to a full split.
+// A streamed message only grows: settled blocks are reused, and any non-append change fully re-splits.
 export const getMarkdownBlocksIncrementally = ({
   text,
   cache,
@@ -47,9 +39,7 @@ export const getMarkdownBlocksIncrementally = ({
     0,
     Math.max(0, blocks.length - UNSTABLE_TRAILING_BLOCK_COUNT),
   );
-  // Append newly stabilized raws instead of re-joining the whole prefix on
-  // every flush. The stable set shrinks when the tail collapses into fewer
-  // than two blocks; then trim the raws that fell out of it.
+  // The stable set shrinks when the tail collapses into fewer than two blocks.
   const nextStablePrefix =
     nextStableBlocks.length >= stableBlocks.length
       ? stablePrefix + nextStableBlocks.slice(stableBlocks.length).join('')

@@ -47,6 +47,19 @@ describe('lazyWithPreload', () => {
     consoleErrorSpy.mockRestore();
   });
 
+  it('should render the loaded component with its props once preloaded', async () => {
+    const Greeting = ({ name }: { name: string }) => <div>Hello {name}</div>;
+    const PreloadableGreeting = lazyWithPreload(async () => ({
+      default: Greeting,
+    }));
+
+    PreloadableGreeting.preload();
+    await flushPendingPromises();
+    render(<PreloadableGreeting name="Ada" />);
+
+    expect(screen.getByText('Hello Ada')).toBeInTheDocument();
+  });
+
   it('should not produce an unhandled rejection when the preload fails', async () => {
     const onUnhandledRejection = jest.fn();
     process.on('unhandledRejection', onUnhandledRejection);

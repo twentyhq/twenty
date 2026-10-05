@@ -31,4 +31,5 @@ export default defineField({
     joinColumnName: 'lastEmailId',
   },
   isUIEditable: false,
+  isAuditLogged: false,
 });

@@ -6,9 +6,12 @@ import { Button } from '@ui/primitives/input/Button/Button';
 import { ComponentDecorator } from '@ui/testing';
 
 import { Dropdown } from '../Dropdown';
+import { DropdownContextMenuExample } from './DropdownContextMenuExample';
+import { DropdownNestedExample } from './DropdownNestedExample';
 import { DropdownPagesExample } from './DropdownPagesExample';
 import { DropdownPanelExample } from './DropdownPanelExample';
 import { DropdownPickerExample } from './DropdownPickerExample';
+import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 
 const DropdownMenuExample = () => (
   <Dropdown.Root type="menu">
@@ -61,18 +64,7 @@ type Story = StoryObj<typeof DropdownMenuExample>;
 export const Documentation: Story = {};
 
 export const Menu: Story = {
-  parameters: {
-    a11y: {
-      config: {
-        rules: [
-          {
-            id: 'aria-hidden-focus',
-            selector: '[aria-hidden="true"]:not([data-base-ui-focus-guard])',
-          },
-        ],
-      },
-    },
-  },
+  parameters: { a11y: DROPDOWN_STORY_A11Y_PARAMETERS },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
@@ -155,6 +147,10 @@ export const Picker: Story = {
   },
 };
 
+export const PickerDocumentation: Story = {
+  render: Picker.render,
+};
+
 export const MultipleSelection: Story = {
   render: () => <DropdownPickerExample multiple />,
   play: async ({ canvasElement }) => {
@@ -170,6 +166,10 @@ export const MultipleSelection: Story = {
     await expect(ada).toHaveAttribute('aria-pressed', 'true');
     await expect(body.getByRole('dialog')).toBeVisible();
   },
+};
+
+export const MultipleSelectionDocumentation: Story = {
+  render: MultipleSelection.render,
 };
 
 export const MultipleSelectionDark: Story = {
@@ -220,6 +220,10 @@ export const Pages: Story = {
   },
 };
 
+export const PagesDocumentation: Story = {
+  render: Pages.render,
+};
+
 export const PagesDark: Story = {
   ...Pages,
   globals: { colorScheme: 'dark' },
@@ -242,5 +246,145 @@ export const Panel: Story = {
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const PanelDocumentation: Story = {
+  render: Panel.render,
+};
+
+export const Nested: Story = {
+  render: () => <DropdownNestedExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(canvas.getByRole('button', { name: 'Sort' }));
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Ascending' }),
+    );
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Descending' }),
+    );
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Sort direction' }),
+      ).not.toBeInTheDocument(),
+    );
+    await expect(body.getByRole('dialog', { name: 'Sort' })).toBeVisible();
+    const direction = body.getByRole('button', { name: 'Descending' });
+    await expect(direction).toHaveFocus();
+    await userEvent.click(direction);
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(direction).toHaveFocus());
+    await waitFor(() => expect(body.getAllByRole('dialog')).toHaveLength(1));
+    await userEvent.click(direction);
+    await waitFor(() => expect(body.getAllByRole('dialog')).toHaveLength(2));
+    await userEvent.click(canvasElement);
+    await waitFor(() => expect(body.getAllByRole('dialog')).toHaveLength(1));
+    const search = body.getByRole('searchbox', { name: 'Search fields' });
+    await userEvent.type(search, 'Company');
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Sort' }));
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Close sort' }),
+    );
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const NestedDocumentation: Story = {
+  render: Nested.render,
+};
+
+export const ContextMenu: Story = {
+  render: () => <DropdownContextMenuExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const firstRecord = canvas.getByText('Ada Lovelace');
+    const secondRecord = canvas.getByText('Grace Hopper');
+
+    await userEvent.pointer({
+      keys: '[MouseRight]',
+      target: firstRecord,
+      coords: { clientX: 40, clientY: 30 },
+    });
+    const menu = await body.findByRole('menu', { name: 'Record actions' });
+
+    await waitFor(() =>
+      expect(body.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus(),
+    );
+    await waitFor(() =>
+      expect(menu.getBoundingClientRect()).toMatchObject({ left: 40, top: 30 }),
+    );
+
+    await userEvent.pointer({
+      keys: '[MouseRight]',
+      target: secondRecord,
+      coords: { clientX: 120, clientY: 60 },
+    });
+    await waitFor(() =>
+      expect(menu.getBoundingClientRect()).toMatchObject({
+        left: 120,
+        top: 60,
+      }),
+    );
+    await expect(body.getAllByRole('menu')).toHaveLength(1);
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    await expect(canvasElement.ownerDocument.body).toHaveFocus();
+
+    await userEvent.pointer({ keys: '[MouseRight]', target: firstRecord });
+    await waitFor(() => expect(body.getByRole('menu')).toBeVisible());
+    await userEvent.click(canvasElement);
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const ContextMenuDocumentation: Story = {
+  render: ContextMenu.render,
+};
+
+export const CollisionPadding: Story = {
+  render: () => (
+    <div style={{ position: 'fixed', insetInlineEnd: 8, insetBlockStart: 16 }}>
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger render={<Button>Record actions</Button>} />
+        <Dropdown.Content collisionPadding={16}>
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const viewportWidth =
+      canvasElement.ownerDocument.documentElement.clientWidth;
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Record actions' }),
+    );
+    const menu = await within(canvasElement.ownerDocument.body).findByRole(
+      'menu',
+      { name: 'Record actions' },
+    );
+
+    await waitFor(() =>
+      expect(menu.getBoundingClientRect().right).toBeCloseTo(
+        viewportWidth - 16,
+        0,
+      ),
+    );
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(menu).not.toBeInTheDocument());
   },
 };

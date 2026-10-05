@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Pill } from 'twenty-ui/primitives/data-display';
-import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsCardProps = {
@@ -115,9 +115,13 @@ export const SettingsCard = ({
       clickable={!!onClick}
       className={className}
     >
-      <Card onClick={disabled ? undefined : onClick} rounded={true} fullWidth>
+      <Card.Root
+        onClick={disabled ? undefined : onClick}
+        rounded={true}
+        fullWidth
+      >
         <StyledCardContentContainer>
-          <CardContent>
+          <Card.Content>
             <StyledHeader>
               <StyledIconContainer disabled={disabled} iconColor={iconColor}>
                 {Icon}
@@ -134,9 +138,9 @@ export const SettingsCard = ({
             {description && (
               <StyledDescription>{description}</StyledDescription>
             )}
-          </CardContent>
+          </Card.Content>
         </StyledCardContentContainer>
-      </Card>
+      </Card.Root>
     </StyledCardWrapper>
   );
 };

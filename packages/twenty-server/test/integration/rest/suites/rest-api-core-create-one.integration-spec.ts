@@ -32,6 +32,24 @@ describe('Core REST API Create One endpoint', () => {
     await deleteAllRecords('company');
   });
 
+  it('should return only selected fields while storing all submitted fields', async () => {
+    const person = { id: TEST_PERSON_1_ID, jobTitle: 'Selected fields test' };
+    const response = await makeRestApiRequest({
+      method: 'post',
+      path: '/people?fields=id',
+      body: person,
+    }).expect(201);
+
+    expect(response.body.data.createPerson).toEqual({ id: TEST_PERSON_1_ID });
+
+    const fetched = await makeRestApiRequest({
+      method: 'get',
+      path: `/people/${TEST_PERSON_1_ID}`,
+    }).expect(200);
+
+    expect(fetched.body.data.person).toMatchObject(person);
+  });
+
   it('should create a new person', async () => {
     const personJobTitle = generateRecordName(TEST_PERSON_1_ID);
     const requestBody = {

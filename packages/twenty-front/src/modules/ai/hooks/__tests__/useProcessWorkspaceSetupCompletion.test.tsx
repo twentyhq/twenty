@@ -8,7 +8,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
-import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
+import { processedWorkspaceSetupCompletionIdsComponentState } from '@/ai/states/processedWorkspaceSetupCompletionIdsComponentState';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import {
   jotaiStore,
@@ -71,7 +71,7 @@ const buildCompletionMessage = (toolCallId: string) =>
 
 const getProcessedToolCallIds = () =>
   jotaiStore.get(
-    processedToolExecutionPartIdsComponentState.atomFamily({
+    processedWorkspaceSetupCompletionIdsComponentState.atomFamily({
       instanceId: INSTANCE_ID,
     }),
   );

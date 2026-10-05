@@ -161,9 +161,7 @@ export const useSaveDraftRoleToDB = ({
     await upsertRolePermissions(createdRoleId);
     await assignEntitiesToRole(createdRoleId);
 
-    if (isDefined(onSuccess)) {
-      await onSuccess(createdRoleId);
-    }
+    return createdRoleId;
   };
 
   const updateExistingRole = async () => {
@@ -256,6 +254,8 @@ export const useSaveDraftRoleToDB = ({
     ) {
       await upsertRowLevelPermissionPredicatesForRole(roleId);
     }
+
+    return roleId;
   };
 
   const upsertRowLevelPermissionPredicatesForRole = async (
@@ -458,19 +458,17 @@ export const useSaveDraftRoleToDB = ({
         apiKeyIds: settingsDraftRole.apiKeys.map((apiKey) => apiKey.id),
       });
     }
-
-    if (isDefined(onSuccess)) {
-      await onSuccess(roleId);
-    }
   };
 
   const saveDraftRoleToDB = async () => {
     removeUselessFieldPermissions();
 
-    if (isCreateMode) {
-      await createNewRole();
-    } else {
-      await updateExistingRole();
+    const savedRoleId = isCreateMode
+      ? await createNewRole()
+      : await updateExistingRole();
+
+    if (isDefined(savedRoleId) && isDefined(onSuccess)) {
+      await onSuccess(savedRoleId);
     }
   };
 

@@ -13,7 +13,6 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
   PageLayoutWidgetVerticalListHeightBehavior,
-  WidgetType,
 } from '@/types';
 import { assertUnreachable } from '@/utils/assertUnreachable';
 import { getPageLayoutWidgetHeightBehavior } from '@/utils/pageLayout/getPageLayoutWidgetHeightBehavior';
@@ -104,13 +103,7 @@ export const normalizePageLayoutTabManifest = ({
             position:
               position.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
               isDefined(heightBehavior)
-                ? {
-                    ...position,
-                    heightBehavior:
-                      PageLayoutWidgetVerticalListHeightBehavior[
-                        heightBehavior
-                      ],
-                  }
+                ? { ...position, heightBehavior }
                 : position,
           };
         }
@@ -143,14 +136,7 @@ export const normalizePageLayoutTabManifest = ({
               position: {
                 layoutMode,
                 index,
-                ...(isDefined(heightBehavior)
-                  ? {
-                      heightBehavior:
-                        PageLayoutWidgetVerticalListHeightBehavior[
-                          heightBehavior
-                        ],
-                    }
-                  : {}),
+                ...(isDefined(heightBehavior) ? { heightBehavior } : {}),
               },
             };
           case PageLayoutTabLayoutMode.CANVAS:
@@ -178,7 +164,7 @@ export const normalizePageLayoutTabManifest = ({
       ({ type, position }) =>
         position.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
         getPageLayoutWidgetHeightBehavior({
-          widgetType: WidgetType[type],
+          widgetType: type,
           heightBehavior: position.heightBehavior,
         }) === PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
     );
@@ -189,16 +175,19 @@ export const normalizePageLayoutTabManifest = ({
       );
     }
 
+    const singleViewportWidget =
+      viewportWidgets.length === 1 ? viewportWidgets[0] : undefined;
+
     if (
-      viewportWidgets.length === 1 &&
+      isDefined(singleViewportWidget) &&
       pageLayoutTab.widgets.some(
         (widget) =>
-          widget !== viewportWidgets[0] &&
+          widget !== singleViewportWidget &&
           widget.position.layoutMode ===
             PageLayoutTabLayoutMode.VERTICAL_LIST &&
-          viewportWidgets[0].position.layoutMode ===
+          singleViewportWidget.position.layoutMode ===
             PageLayoutTabLayoutMode.VERTICAL_LIST &&
-          widget.position.index >= viewportWidgets[0].position.index,
+          widget.position.index >= singleViewportWidget.position.index,
       )
     ) {
       errors.push(

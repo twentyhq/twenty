@@ -49,8 +49,7 @@ export const createMediaStreamClass = () => {
       if (streamOrTracks instanceof MediaStreamImplementation) {
         this.#tracks = [...streamOrTracks.getTracks()];
 
-        // A clone of a captured stream stays recordable, like the native
-        // constructor which keeps the same source tracks.
+        // Like the native constructor, a clone keeps the source tracks and stays recordable.
         const sourceCapturedStreamId = capturedStreamIds.get(streamOrTracks);
 
         if (isDefined(sourceCapturedStreamId)) {
@@ -104,8 +103,7 @@ export const createMediaStreamClass = () => {
     }
   }
 
-  // Captured streams keep their host streamId out of band: the public id
-  // stays a local value while the recorder resolves the host session id.
+  // The public id stays local; the host streamId is kept out of band for the recorder.
   const instantiateCapturedMediaStream = ({
     streamId,
     tracks,

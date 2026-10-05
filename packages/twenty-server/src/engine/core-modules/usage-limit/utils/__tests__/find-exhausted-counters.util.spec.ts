@@ -1,19 +1,48 @@
 import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
+import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
-const buildCounter = (key: string): AllowanceQuotaCounter => ({
+const PERIOD_START = new Date('2026-08-01T00:00:00.000Z');
+const PERIOD_END = new Date('2026-09-01T00:00:00.000Z');
+
+const buildAllowanceCounter = (key: string): AllowanceQuotaCounter => ({
   kind: 'allowance',
   key,
-  meter: 'creditsUsedMicro',
-  periodStart: new Date('2026-08-01T00:00:00.000Z'),
-  periodEnd: new Date('2026-09-01T00:00:00.000Z'),
+  unit: UsageUnit.CREDIT,
+  periodStart: PERIOD_START,
+  periodEnd: PERIOD_END,
+});
+
+const buildLimitCounter = (
+  key: string,
+  overrides: Partial<LimitQuotaCounter> = {},
+): LimitQuotaCounter => ({
+  kind: 'limit',
+  isDefault: false,
+  key,
+  limitValue: 1_000,
+  unit: UsageUnit.CREDIT,
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  periodUnit: 'month',
+  periodStart: PERIOD_START,
+  periodEnd: PERIOD_END,
+  spenderType: 'workspace',
+  spenderId: null,
+  ...overrides,
 });
 
 describe('findExhaustedCounters', () => {
   it('answers empty when every counter has budget left', () => {
     expect(
       findExhaustedCounters({
-        counters: [buildCounter('first'), buildCounter('second')],
+        counters: [
+          buildAllowanceCounter('first'),
+          buildAllowanceCounter('second'),
+        ],
         remainings: [250, 1],
       }),
     ).toEqual([]);
@@ -23,9 +52,9 @@ describe('findExhaustedCounters', () => {
     expect(
       findExhaustedCounters({
         counters: [
-          buildCounter('first'),
-          buildCounter('second'),
-          buildCounter('third'),
+          buildAllowanceCounter('first'),
+          buildAllowanceCounter('second'),
+          buildAllowanceCounter('third'),
         ],
         remainings: [0, 100, 0],
       }),
@@ -35,7 +64,7 @@ describe('findExhaustedCounters', () => {
   it('counts an overdrawn counter as exhausted', () => {
     expect(
       findExhaustedCounters({
-        counters: [buildCounter('first')],
+        counters: [buildAllowanceCounter('first')],
         remainings: [-10],
       }),
     ).toMatchObject([{ key: 'first' }]);
@@ -44,7 +73,10 @@ describe('findExhaustedCounters', () => {
   it('skips cold counters', () => {
     expect(
       findExhaustedCounters({
-        counters: [buildCounter('first'), buildCounter('second')],
+        counters: [
+          buildAllowanceCounter('first'),
+          buildAllowanceCounter('second'),
+        ],
         remainings: [null, 0],
       }),
     ).toMatchObject([{ key: 'second' }]);
@@ -53,9 +85,89 @@ describe('findExhaustedCounters', () => {
   it('answers empty when every counter is cold', () => {
     expect(
       findExhaustedCounters({
-        counters: [buildCounter('first')],
+        counters: [buildAllowanceCounter('first')],
         remainings: [null],
       }),
     ).toEqual([]);
+  });
+
+  it('refuses a limit that cannot cover the named cost', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildLimitCounter('first')],
+        remainings: [100],
+        cost: { [UsageUnit.CREDIT]: 101, [UsageUnit.TOKEN]: 0 },
+      }),
+    ).toMatchObject([{ key: 'first' }]);
+  });
+
+  it('admits a cost that fits the remaining exactly', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildLimitCounter('first')],
+        remainings: [100],
+        cost: { [UsageUnit.CREDIT]: 100, [UsageUnit.TOKEN]: 0 },
+      }),
+    ).toEqual([]);
+  });
+
+  it('charges a limit only for the unit it counts', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildLimitCounter('first')],
+        remainings: [10],
+        cost: { [UsageUnit.CREDIT]: 0, [UsageUnit.TOKEN]: 500 },
+      }),
+    ).toEqual([]);
+  });
+
+  it('counts a unit missing from the cost as zero', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildLimitCounter('first', { unit: UsageUnit.TOKEN })],
+        remainings: [10],
+        cost: { [UsageUnit.CREDIT]: 5_000 },
+      }),
+    ).toEqual([]);
+  });
+
+  it('still refuses an emptied limit whatever the cost', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildLimitCounter('first')],
+        remainings: [0],
+        cost: { [UsageUnit.CREDIT]: 0, [UsageUnit.TOKEN]: 0 },
+      }),
+    ).toMatchObject([{ key: 'first' }]);
+  });
+
+  it('refuses a credit allowance that cannot cover the whole cost', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildAllowanceCounter('allowance')],
+        remainings: [10],
+        cost: { [UsageUnit.CREDIT]: 5_000, [UsageUnit.TOKEN]: 100 },
+      }),
+    ).toMatchObject([{ key: 'allowance' }]);
+  });
+
+  it('admits a credit allowance holding exactly the whole cost', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildAllowanceCounter('allowance')],
+        remainings: [5_000],
+        cost: { [UsageUnit.CREDIT]: 5_000, [UsageUnit.TOKEN]: 100 },
+      }),
+    ).toEqual([]);
+  });
+
+  it('still refuses an emptied credit allowance under a named cost', () => {
+    expect(
+      findExhaustedCounters({
+        counters: [buildAllowanceCounter('allowance')],
+        remainings: [0],
+        cost: { [UsageUnit.CREDIT]: 5_000, [UsageUnit.TOKEN]: 100 },
+      }),
+    ).toMatchObject([{ key: 'allowance' }]);
   });
 });

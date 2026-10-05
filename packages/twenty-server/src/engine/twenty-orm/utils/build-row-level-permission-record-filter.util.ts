@@ -143,10 +143,7 @@ const buildRecordFilterForRole = ({
           workspaceMember,
         });
 
-      // A predicate bound to a workspace member value the acting principal does
-      // not carry (no member, unset field, incompatible value) cannot be
-      // satisfied. Dropping it would lift the restriction instead of applying
-      // it, so it is kept as a branch that never matches.
+      // Dropping an unsatisfiable predicate would lift the restriction, so it becomes a never-matching branch
       if (!isDefined(workspaceMemberBoundValue)) {
         unsatisfiableRecordFilterIds.add(predicate.id);
       }
@@ -260,8 +257,7 @@ const buildRecordFilterForRole = ({
     return false;
   };
 
-  // The role filter ANDs the branches that sit outside any group, so one of
-  // them being unsatisfiable leaves the role with nothing to match.
+  // Ungrouped branches are ANDed, so one unsatisfiable branch leaves the role nothing to match
   const isRoleFilterUnsatisfiable =
     recordFilters.some(
       (recordFilter) =>
@@ -303,9 +299,7 @@ type BuildRowLevelPermissionRecordFilterArgs = Omit<
   roleIds: string[];
 };
 
-// Each role compiles on its own and the results are ANDed. Merging the raw
-// predicates first would be wrong: compilation honours only the first
-// parentless group, so one role's restrictions would vanish and widen access.
+// Roles compile separately, then AND: compilation honours only the first parentless group, so merging would widen access
 export const buildRowLevelPermissionRecordFilter = ({
   roleIds,
   ...buildRecordFilterForRoleArgs

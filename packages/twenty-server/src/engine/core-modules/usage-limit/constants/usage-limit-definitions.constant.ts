@@ -1,11 +1,17 @@
 import { type UsageLimitDefinitionsByResourceType } from 'src/engine/core-modules/usage-limit/types/usage-limit-definition.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 export const USAGE_LIMIT_DEFINITIONS = {
   [UsageResourceType.API]: {
     speed: {
-      allowedOperationTypes: [UsageOperationType.API_REQUEST],
+      allowedOperations: [
+        {
+          operationType: UsageOperationType.API_REQUEST,
+          allowedUnits: [UsageUnit.REQUEST],
+        },
+      ],
       allowedSpenderTypes: ['apiKey', 'application'],
       defaults: [
         {
@@ -14,7 +20,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           limitKind: 'speed',
           spenderType: 'apiKey',
           spenderId: '',
-          meter: 'quantity',
+          unit: UsageUnit.REQUEST,
           periodUnit: 'second',
           windowMsConfigVariable: 'API_RATE_LIMITING_SHORT_TTL_IN_MS',
           limitValueConfigVariable: 'API_RATE_LIMITING_SHORT_LIMIT',
@@ -27,7 +33,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           limitKind: 'speed',
           spenderType: 'apiKey',
           spenderId: '',
-          meter: 'quantity',
+          unit: UsageUnit.REQUEST,
           periodUnit: 'second',
           windowMsConfigVariable: 'API_RATE_LIMITING_LONG_TTL_IN_MS',
           limitValueConfigVariable: 'API_RATE_LIMITING_LONG_LIMIT',
@@ -40,7 +46,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           limitKind: 'speed',
           spenderType: 'application',
           spenderId: '',
-          meter: 'quantity',
+          unit: UsageUnit.REQUEST,
           periodUnit: 'second',
           windowMsConfigVariable: 'APPLICATION_API_RATE_LIMITING_TTL_IN_MS',
           limitValueConfigVariable: 'APPLICATION_API_RATE_LIMITING_LIMIT',
@@ -52,10 +58,19 @@ export const USAGE_LIMIT_DEFINITIONS = {
   },
   [UsageResourceType.AI]: {
     quota: {
-      allowedOperationTypes: [
-        UsageOperationType.AI_CHAT_TOKEN,
-        UsageOperationType.AI_WORKFLOW_TOKEN,
-        UsageOperationType.WEB_SEARCH,
+      allowedOperations: [
+        {
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.TOKEN],
+        },
+        {
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.TOKEN],
+        },
+        {
+          operationType: UsageOperationType.WEB_SEARCH,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
       ],
       allowedSpenderTypes: [
         'workspace',
@@ -63,22 +78,31 @@ export const USAGE_LIMIT_DEFINITIONS = {
         'apiKey',
         'application',
       ],
-      allowedMeters: ['creditsUsedMicro', 'quantity'],
+      defaults: [],
     },
   },
   [UsageResourceType.WORKFLOW]: {
     quota: {
-      allowedOperationTypes: [UsageOperationType.WORKFLOW_EXECUTION],
+      allowedOperations: [
+        {
+          operationType: UsageOperationType.WORKFLOW_EXECUTION,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
+      ],
       allowedSpenderTypes: ['workspace', 'application'],
-      allowedMeters: ['creditsUsedMicro', 'quantity'],
+      defaults: [],
     },
   },
   [UsageResourceType.APP]: {},
   [UsageResourceType.STORAGE]: {
     stock: {
-      allowedOperationTypes: [UsageOperationType.STORAGE_FILE],
+      allowedOperations: [
+        {
+          operationType: UsageOperationType.STORAGE_FILE,
+          allowedUnits: [UsageUnit.BYTE, UsageUnit.FILE],
+        },
+      ],
       allowedSpenderTypes: ['workspace', 'application'],
-      allowedMeters: ['bytes', 'quantity'],
       defaults: [
         {
           resourceType: UsageResourceType.STORAGE,
@@ -86,7 +110,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           limitKind: 'stock',
           spenderType: 'workspace',
           spenderId: '',
-          meter: 'bytes',
+          unit: UsageUnit.BYTE,
           periodUnit: 'lifetime',
           periodCount: 1,
           limitValueConfigVariable: 'WORKSPACE_STORAGE_LIMIT_BYTES',
@@ -97,16 +121,27 @@ export const USAGE_LIMIT_DEFINITIONS = {
   },
   [UsageResourceType.LOGIC_FUNCTION]: {
     quota: {
-      allowedOperationTypes: [UsageOperationType.CODE_EXECUTION],
+      allowedOperations: [
+        {
+          operationType: UsageOperationType.CODE_EXECUTION,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
+      ],
       allowedSpenderTypes: ['workspace', 'application', 'logicFunction'],
-      allowedMeters: ['creditsUsedMicro', 'quantity'],
+      defaults: [],
     },
   },
   [UsageResourceType.EMAIL]: {
     speed: {
-      allowedOperationTypes: [
-        UsageOperationType.EMAIL_SEND,
-        UsageOperationType.MESSAGE_CAMPAIGN_SEND,
+      allowedOperations: [
+        {
+          operationType: UsageOperationType.EMAIL_SEND,
+          allowedUnits: [UsageUnit.INVOCATION],
+        },
+        {
+          operationType: UsageOperationType.MESSAGE_CAMPAIGN_SEND,
+          allowedUnits: [UsageUnit.INVOCATION],
+        },
       ],
       allowedSpenderTypes: ['workspace'],
       // Two buckets, and a send has to fit both. The workspace one keeps a
@@ -121,7 +156,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           limitKind: 'speed',
           spenderType: 'workspace',
           spenderId: '',
-          meter: 'quantity',
+          unit: UsageUnit.INVOCATION,
           periodUnit: 'second',
           windowMsConfigVariable:
             'EMAIL_SEND_WORKSPACE_RATE_LIMITING_TTL_IN_MS',
@@ -135,7 +170,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           limitKind: 'speed',
           spenderType: 'workspace',
           spenderId: '',
-          meter: 'quantity',
+          unit: UsageUnit.INVOCATION,
           periodUnit: 'second',
           windowMsConfigVariable: 'EMAIL_SEND_RATE_LIMITING_TTL_IN_MS',
           limitValueConfigVariable: 'EMAIL_SEND_RATE_LIMITING_LIMIT',
@@ -148,7 +183,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           limitKind: 'speed',
           spenderType: 'workspace',
           spenderId: '',
-          meter: 'quantity',
+          unit: UsageUnit.INVOCATION,
           periodUnit: 'second',
           windowMsConfigVariable:
             'EMAIL_SEND_WORKSPACE_RATE_LIMITING_TTL_IN_MS',
@@ -162,7 +197,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           limitKind: 'speed',
           spenderType: 'workspace',
           spenderId: '',
-          meter: 'quantity',
+          unit: UsageUnit.INVOCATION,
           periodUnit: 'second',
           windowMsConfigVariable: 'EMAIL_SEND_RATE_LIMITING_TTL_IN_MS',
           limitValueConfigVariable: 'EMAIL_SEND_RATE_LIMITING_LIMIT',
@@ -172,14 +207,37 @@ export const USAGE_LIMIT_DEFINITIONS = {
       ],
     },
     quota: {
-      allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
+      allowedOperations: [
+        {
+          operationType: UsageOperationType.EMAIL_SEND,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
+      ],
       allowedSpenderTypes: ['workspace', 'userWorkspace'],
-      allowedMeters: ['creditsUsedMicro', 'quantity'],
+      defaults: [
+        {
+          resourceType: UsageResourceType.EMAIL,
+          operationType: UsageOperationType.EMAIL_SEND,
+          limitKind: 'quota',
+          spenderType: 'workspace',
+          spenderId: '',
+          unit: UsageUnit.INVOCATION,
+          periodUnit: 'day',
+          periodCount: 1,
+          limitValueConfigVariable: 'EMAIL_SEND_WORKSPACE_DAILY_LIMIT',
+          isOverridable: true,
+        },
+      ],
     },
   },
   [UsageResourceType.WEBHOOK]: {
     speed: {
-      allowedOperationTypes: [UsageOperationType.WEBHOOK_CALL],
+      allowedOperations: [
+        {
+          operationType: UsageOperationType.WEBHOOK_CALL,
+          allowedUnits: [UsageUnit.REQUEST],
+        },
+      ],
       allowedSpenderTypes: ['workspace'],
       defaults: [
         {
@@ -188,7 +246,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           limitKind: 'speed',
           spenderType: 'workspace',
           spenderId: '',
-          meter: 'quantity',
+          unit: UsageUnit.REQUEST,
           periodUnit: 'second',
           windowMsConfigVariable: 'WEBHOOK_CALL_RATE_LIMITING_TTL_IN_MS',
           limitValueConfigVariable: 'WEBHOOK_CALL_RATE_LIMITING_LIMIT',
@@ -200,9 +258,13 @@ export const USAGE_LIMIT_DEFINITIONS = {
   },
   [UsageResourceType.RECORD]: {
     stock: {
-      allowedOperationTypes: [UsageOperationType.RECORD_WRITE],
+      allowedOperations: [
+        {
+          operationType: UsageOperationType.RECORD_WRITE,
+          allowedUnits: [UsageUnit.RECORD],
+        },
+      ],
       allowedSpenderTypes: ['workspace'],
-      allowedMeters: ['quantity'],
       defaults: [
         {
           resourceType: UsageResourceType.RECORD,
@@ -210,7 +272,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           limitKind: 'stock',
           spenderType: 'workspace',
           spenderId: '',
-          meter: 'quantity',
+          unit: UsageUnit.RECORD,
           periodUnit: 'lifetime',
           periodCount: 1,
           limitValueConfigVariable: 'WORKSPACE_RECORD_LIMIT',

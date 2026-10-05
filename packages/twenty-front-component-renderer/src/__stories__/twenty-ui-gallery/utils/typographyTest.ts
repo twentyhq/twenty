@@ -17,6 +17,14 @@ export const typographyTest: TwentyUiGalleryPlayFunction = async (context) => {
     canvas.getByRole('heading', { level: 2, name: 'Workspace preferences' }),
   ).toHaveAccessibleDescription('Manage the settings for your workspace.');
 
+  await expect(
+    canvas.getByRole('img', { name: 'Command + K' }),
+  ).toHaveTextContent('⌘K');
+  await expect(canvas.getByRole('img', { name: 'G next P' })).toHaveTextContent(
+    'G next P',
+  );
+  await expect(canvas.getByText('Ctrl K')).toBeVisible();
+
   const button = canvas.getByRole('button', { name: 'Edit workspace' });
   await userEvent.click(button);
   await waitFor(() =>

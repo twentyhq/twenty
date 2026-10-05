@@ -23,11 +23,13 @@ export const buildQuotaExhaustedScope = ({
       spenderType: counter.spenderType,
       spenderId: counter.spenderId,
       operationType: counter.operationType,
+      unit: counter.unit,
       limitValue: counter.limitValue,
       remaining: 0,
       periodCount: 1,
       periodUnit: counter.periodUnit,
       retryAfterMs,
+      isDefault: counter.isDefault,
     };
   }
 
@@ -38,6 +40,7 @@ export const buildQuotaExhaustedScope = ({
     spenderType: 'workspace',
     spenderId: null,
     operationType: UsageOperationType.ALL,
+    unit: counter.unit,
     limitValue: allowance?.allowanceMicro ?? 0,
     remaining: 0,
     periodCount: null,

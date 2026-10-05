@@ -10,11 +10,12 @@ import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workf
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { Dropdown } from 'twenty-ui/components';
-import { SettingsPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { IconLego, IconSettings, IconTrash, IconUsers } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const WorkflowStepFooter = ({
@@ -34,6 +35,7 @@ export const WorkflowStepFooter = ({
     openWorkflowTriggerTypeInSidePanel,
   } = useSidePanelWorkflowNavigation();
   const { deleteStep } = useDeleteStep();
+  const navigateApp = useNavigateApp();
   const navigateSettings = useNavigateSettings();
   const workflowAiAgentActionAgent = useAtomStateValue(
     workflowAiAgentActionAgentState,
@@ -68,7 +70,7 @@ export const WorkflowStepFooter = ({
 
   const handleViewAgent = () => {
     if (isDefined(agentId)) {
-      navigateSettings(SettingsPath.AiAgentDetail, { agentId });
+      navigateApp(AppPath.AgentShowPage, { agentId });
     }
   };
 

@@ -98,7 +98,7 @@ export const SettingsApplicationsAvailableTab = () => {
         <SearchInput
           placeholder={t`Search an application`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
           filterDropdown={(filterButton) => (
             <DropdownRoot dropdownId="marketplace-filter-dropdown" type="panel">
               <Dropdown.Trigger render={filterButton} />

@@ -1,7 +1,7 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables/types/WorkflowVariableSearchResult';
 import { useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Dropdown } from 'twenty-ui/components';
 
 type WorkflowVariableSearchResultItemsProps = {
   searchResults: WorkflowVariableSearchResult[];
@@ -15,20 +15,16 @@ export const WorkflowVariableSearchResultItems = ({
   const { getIcon } = useIcons();
 
   return searchResults.map((result) => (
-    <ListItem
+    <Dropdown.OptionItem
       key={JSON.stringify([
         result.stepId,
         result.path,
         result.isLeaf,
         result.isFullRecord,
       ])}
-      focused={false}
-      onClick={() => onSelect(result)}
-      role="option"
-      aria-selected={false}
-      selected={false}
-      indicator="check"
+      onSelect={() => onSelect(result)}
       hasSubmenu={!result.isLeaf}
+      closeOnSelect={result.isLeaf}
       description={result.breadcrumb}
       startIcon={
         <SelectOptionIcon
@@ -38,6 +34,6 @@ export const WorkflowVariableSearchResultItems = ({
       }
     >
       {result.label}
-    </ListItem>
+    </Dropdown.OptionItem>
   ));
 };

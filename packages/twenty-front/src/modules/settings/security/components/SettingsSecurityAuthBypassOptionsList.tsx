@@ -82,7 +82,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
 
   return (
     <StyledSettingsSecurityOptionsList>
-      <Card rounded>
+      <Card.Root rounded>
         {authProviders.google === true && (
           <SettingsOptionCardContentSwitch
             Icon={IconGoogle}
@@ -115,7 +115,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
             onChange={() => toggleAuthBypassMethod('password')}
           />
         )}
-      </Card>
+      </Card.Root>
     </StyledSettingsSecurityOptionsList>
   );
 };
