@@ -745,7 +745,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         return {
           keyName,
           data,
-          hash: expectedHashes[keyName] ?? crypto.randomUUID(),
+          hashToPublish: expectedHashes[keyName] ?? crypto.randomUUID(),
         };
       } finally {
         this.cacheMetricsService.recordRecompute(
@@ -788,12 +788,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           ),
           args: [
             String(this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000),
-            ...computed.flatMap(({ keyName, data, hash }) => {
+            ...computed.flatMap(({ keyName, data, hashToPublish }) => {
               const expectedHash = expectedHashes[keyName];
 
               return [
                 isDefined(expectedHash) ? JSON.stringify(expectedHash) : '',
-                JSON.stringify(hash),
+                JSON.stringify(hashToPublish),
                 this.localDataOnlyKeys.has(keyName)
                   ? ''
                   : JSON.stringify(
@@ -809,12 +809,15 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         );
       }
 
-      for (const [index, { keyName, data, hash }] of computed.entries()) {
+      for (const [
+        index,
+        { keyName, data, hashToPublish },
+      ] of computed.entries()) {
         Object.assign(result.data, { [keyName]: data });
-        result.hashes[keyName] = hash;
+        result.hashes[keyName] = hashToPublish;
 
         if (published[index] === 1) {
-          this.setInLocalCache(workspaceId, keyName, data, hash);
+          this.setInLocalCache(workspaceId, keyName, data, hashToPublish);
         } else {
           result.hasUnpublishedEntries = true;
         }

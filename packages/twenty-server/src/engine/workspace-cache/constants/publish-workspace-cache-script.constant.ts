@@ -1,6 +1,6 @@
 import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
 
-// ARGV: ttl, then per key: hash read before loading rows ('' if absent), hash to write, data ('' for local-only keys)
+// ARGV: ttl, then per key: hash read before loading rows ('' if absent), hash to publish, data ('' for local-only keys)
 export const PUBLISH_WORKSPACE_CACHE_SCRIPT: CacheScript = {
   name: 'workspace-cache:publish',
   source: `
@@ -16,11 +16,11 @@ local published = {}
 local argumentIndex = 2
 for index = 1, #KEYS, 2 do
   local expectedHash = ARGV[argumentIndex]
-  local hash = ARGV[argumentIndex + 1]
+  local hashToPublish = ARGV[argumentIndex + 1]
   local data = ARGV[argumentIndex + 2]
   local currentHash = redis.call('GET', KEYS[index]) or ''
   if currentHash == expectedHash then
-    set(KEYS[index], hash)
+    set(KEYS[index], hashToPublish)
     if data ~= '' then
       set(KEYS[index + 1], data)
     end
