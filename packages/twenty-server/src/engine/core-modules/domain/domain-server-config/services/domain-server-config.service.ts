@@ -65,21 +65,21 @@ export class DomainServerConfigService {
 
     const frontDomain = this.getFrontUrl().hostname;
 
-    if (originHostname === frontDomain) {
-      return {
-        subdomain: undefined,
-        domain: originHostname,
-        isPublicDomainOrigin: false,
-      };
-    }
-
-    const isFrontdomain = originHostname.endsWith(`.${frontDomain}`);
+    const isFrontdomain =
+      originHostname === frontDomain ||
+      originHostname.endsWith(`.${frontDomain}`);
 
     if (isFrontdomain) {
-      const subdomain = originHostname.replace(`.${frontDomain}`, '');
+      const subdomain =
+        originHostname === frontDomain
+          ? undefined
+          : originHostname.replace(`.${frontDomain}`, '');
 
       return {
-        subdomain: this.isDefaultSubdomain(subdomain) ? undefined : subdomain,
+        subdomain:
+          isDefined(subdomain) && !this.isDefaultSubdomain(subdomain)
+            ? subdomain
+            : undefined,
         domain: null,
         isPublicDomainOrigin: false,
       };

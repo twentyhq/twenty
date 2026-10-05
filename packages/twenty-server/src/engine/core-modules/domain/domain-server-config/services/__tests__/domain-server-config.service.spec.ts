@@ -19,7 +19,7 @@ describe('DomainServerConfigService', () => {
         service.getSubdomainAndDomainFromUrl('https://twenty.example.com'),
       ).toEqual({
         subdomain: undefined,
-        domain: 'twenty.example.com',
+        domain: null,
         isPublicDomainOrigin: false,
       });
     });
