@@ -12,5 +12,7 @@ declare const classNames: {
   readonly title: 'title';
   readonly itemWithActions: 'itemWithActions';
   readonly itemWithActionsPrimary: 'itemWithActionsPrimary';
+  readonly itemActions: 'itemActions';
+  readonly itemDecoration: 'itemDecoration';
 };
 export default classNames;

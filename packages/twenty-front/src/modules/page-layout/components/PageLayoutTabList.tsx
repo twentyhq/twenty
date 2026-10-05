@@ -2,7 +2,7 @@ import { useDragDropMonitor } from '@dnd-kit/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
 import { Dropdown, TabButton } from 'twenty-ui/components/navigation';
@@ -171,6 +171,7 @@ export const PageLayoutTabList = ({
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
   const addTabDropdownId = `tab-add-${componentInstanceId}`;
+  const tabListContainerRef = useRef<HTMLDivElement>(null);
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
 
@@ -410,8 +411,8 @@ export const PageLayoutTabList = ({
         onDimensionChange={handleContainerWidthChange}
       >
         <StyledContainer
+          ref={tabListContainerRef}
           className={className}
-          data-tab-list-instance-id={componentInstanceId}
           isInIdentifierBar={isInIdentifierBar}
           centerTabs={centerTabs}
         >
@@ -449,6 +450,7 @@ export const PageLayoutTabList = ({
                 onSelect={handleSelectTabFromDropdown}
                 visibleTabCount={visibleTabCount}
                 pageLayoutType={pageLayoutType}
+                tabListContainerRef={tabListContainerRef}
               />
             </StyledDropdownContainer>
           )}

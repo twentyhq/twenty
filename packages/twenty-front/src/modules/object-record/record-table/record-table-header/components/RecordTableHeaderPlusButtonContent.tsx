@@ -5,7 +5,6 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
@@ -23,8 +22,6 @@ export const RecordTableHeaderPlusButtonContent = () => {
   const { objectMetadataItem, recordTableId, visibleRecordFields } =
     useRecordTableContextOrThrow();
 
-  const { closeDropdown } = useCloseDropdown();
-
   const { getIcon } = useIcons();
 
   const { changeRecordFieldVisibility } =
@@ -34,10 +31,9 @@ export const RecordTableHeaderPlusButtonContent = () => {
     async (
       column: Pick<ColumnDefinition<FieldMetadata>, 'fieldMetadataId'>,
     ) => {
-      closeDropdown();
       await changeRecordFieldVisibility({ ...column, isVisible: true });
     },
-    [changeRecordFieldVisibility, closeDropdown],
+    [changeRecordFieldVisibility],
   );
 
   const location = useLocation();
@@ -113,7 +109,6 @@ export const RecordTableHeaderPlusButtonContent = () => {
       <Dropdown.Separator />
       <Dropdown.Section scrollable={false}>
         <Dropdown.ActionItem
-          role="link"
           render={
             <Link
               to={getSettingsPath(SettingsPath.ObjectDetail, {
@@ -122,7 +117,6 @@ export const RecordTableHeaderPlusButtonContent = () => {
             />
           }
           onClick={() => {
-            closeDropdown();
             setNavigationMemorizedUrl(location.pathname + location.search);
           }}
           startIcon={<IconSettings />}

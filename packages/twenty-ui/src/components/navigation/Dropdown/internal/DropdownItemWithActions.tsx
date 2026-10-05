@@ -1,6 +1,7 @@
 import { clsx } from 'clsx';
 import { type ReactNode } from 'react';
 
+import { IconCheck, IconChevronRight } from '@ui/icon';
 import listItemStyles from '@ui/primitives/navigation/ListItem/ListItem.module.scss';
 import { type ListItemProps } from '@ui/primitives/navigation/ListItem/types/ListItemProps';
 
@@ -17,6 +18,7 @@ type DropdownItemWithActionsProps = Pick<
   | 'focused'
   | 'indicator'
   | 'disabled'
+  | 'hasSubmenu'
 > & {
   children: ReactNode;
 };
@@ -29,6 +31,7 @@ export const DropdownItemWithActions = ({
   focused = false,
   indicator = 'none',
   disabled = false,
+  hasSubmenu = false,
   children,
 }: DropdownItemWithActionsProps) => (
   <div
@@ -51,6 +54,20 @@ export const DropdownItemWithActions = ({
     }}
   >
     {children}
-    <span className={listItemStyles.actions}>{actions}</span>
+    <span className={clsx(listItemStyles.actions, styles.itemActions)}>
+      {actions}
+    </span>
+    {indicator === 'check' && selected && (
+      <IconCheck
+        className={clsx(listItemStyles.checkIndicator, styles.itemDecoration)}
+        aria-hidden
+      />
+    )}
+    {hasSubmenu && (
+      <IconChevronRight
+        className={clsx(listItemStyles.submenuIcon, styles.itemDecoration)}
+        aria-hidden
+      />
+    )}
   </div>
 );

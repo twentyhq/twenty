@@ -1,7 +1,6 @@
 import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
-import { type ComponentProps, createElement } from 'react';
 
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PAGE_LAYOUT_TAB_DND_TYPE } from '@/page-layout/constants/PageLayoutTabDndType';
@@ -9,10 +8,7 @@ import { type PageLayoutTabMoreButtonDropData } from '@/page-layout/types/PageLa
 import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-type PageLayoutTabListDroppableMoreButtonProps = Omit<
-  ComponentProps<typeof TabMoreButton>,
-  'active'
-> & {
+type PageLayoutTabListDroppableMoreButtonProps = {
   hiddenTabsCount: number;
   isActiveTabHidden: boolean;
 };
@@ -30,8 +26,6 @@ const StyledTabMoreButtonWrapper = styled.div<{ isDraggingOver: boolean }>`
 export const PageLayoutTabListDroppableMoreButton = ({
   hiddenTabsCount,
   isActiveTabHidden,
-  ref: triggerRef,
-  ...props
 }: PageLayoutTabListDroppableMoreButtonProps) => {
   const moreButtonDropData: PageLayoutTabMoreButtonDropData = {
     type: 'tab-more-button',
@@ -47,12 +41,11 @@ export const PageLayoutTabListDroppableMoreButton = ({
   return (
     <div ref={ref}>
       <StyledTabMoreButtonWrapper isDraggingOver={isDropTarget}>
-        {createElement(TabMoreButton, {
-          ...props,
-          ref: triggerRef,
-          hiddenTabsCount,
-          active: isActiveTabHidden,
-        })}
+        <TabMoreButton
+          hiddenTabsCount={hiddenTabsCount}
+          active={isActiveTabHidden}
+          isDropdownTrigger
+        />
       </StyledTabMoreButtonWrapper>
     </div>
   );

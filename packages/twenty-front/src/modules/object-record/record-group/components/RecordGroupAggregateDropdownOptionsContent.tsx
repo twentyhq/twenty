@@ -1,6 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { RecordGroupAggregateDropdownMenuItem } from '@/object-record/record-group/components/RecordGroupAggregateDropdownMenuItem';
+import { RECORD_GROUP_AGGREGATE_FIELDS_PAGE_ID } from '@/object-record/record-group/constants/RecordGroupAggregateFieldsPageId';
 import { aggregateOperationComponentState } from '@/object-record/record-group/states/aggregateOperationComponentState';
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-group/states/availableFieldIdsForAggregateOperationComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
@@ -72,7 +73,11 @@ export const RecordGroupAggregateDropdownOptionsContent = ({
                     );
                   }}
                   text={getAggregateOperationLabel(aggregateOperation)}
-                  page={isCountOperation ? undefined : 'aggregateFields'}
+                  page={
+                    isCountOperation
+                      ? undefined
+                      : RECORD_GROUP_AGGREGATE_FIELDS_PAGE_ID
+                  }
                   RightIcon={
                     isCountOperation &&
                     recordIndexGroupAggregateOperation ===

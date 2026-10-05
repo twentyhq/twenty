@@ -3,7 +3,6 @@ import { styled } from '@linaria/react';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListDroppableMoreButton } from '@/page-layout/components/PageLayoutTabListDroppableMoreButton';
 import { PageLayoutTabMenuItemSelectAvatar } from '@/page-layout/components/PageLayoutTabMenuItemSelectAvatar';
-import { PAGE_LAYOUT_TAB_LIST_DROPDOWN_SENSORS } from '@/page-layout/constants/PageLayoutTabListDropdownSensors';
 import { PAGE_LAYOUT_TAB_DND_TYPE } from '@/page-layout/constants/PageLayoutTabDndType';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -24,12 +23,11 @@ import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/component
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { Fragment, useContext } from 'react';
+import { Fragment, type RefObject, useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
 
 const SORTABLE_HANDLE_SELECTOR = '[data-dnd-sortable-handle]';
-const TAB_LIST_INSTANCE_ATTRIBUTE = 'data-tab-list-instance-id';
 
 const StyledOverflowMenuItemWrapper = styled.div`
   cursor: grab;
@@ -51,6 +49,7 @@ type PageLayoutTabListReorderableOverflowDropdownProps = {
   onSelect: (tabId: string) => void;
   visibleTabCount: number;
   pageLayoutType: PageLayoutType;
+  tabListContainerRef: RefObject<HTMLDivElement | null>;
 };
 
 export const PageLayoutTabListReorderableOverflowDropdown = ({
@@ -63,6 +62,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   onSelect,
   visibleTabCount,
   pageLayoutType,
+  tabListContainerRef,
 }: PageLayoutTabListReorderableOverflowDropdownProps) => {
   const context = useContext(TabListComponentInstanceContext);
   const instanceId = context?.instanceId;
@@ -111,16 +111,9 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
       dropdownId={dropdownId}
       type="picker"
       onInteractOutside={(event) => {
-        const target = event.target;
-        const tabList =
-          target instanceof Element
-            ? target
-                .closest(SORTABLE_HANDLE_SELECTOR)
-                ?.closest(`[${TAB_LIST_INSTANCE_ATTRIBUTE}]`)
-            : null;
         const isVisibleTabPress =
-          isDefined(instanceId) &&
-          tabList?.getAttribute(TAB_LIST_INSTANCE_ATTRIBUTE) === instanceId;
+          isDefined(event.target?.closest(SORTABLE_HANDLE_SELECTOR)) &&
+          (tabListContainerRef.current?.contains(event.target) ?? false);
 
         if (isPageLayoutTabDragging || isVisibleTabPress) {
           event.preventDefault();
@@ -132,14 +125,9 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
         }
       }}
     >
-      <Dropdown.Trigger
-        render={
-          <PageLayoutTabListDroppableMoreButton
-            hiddenTabsCount={hiddenTabsCount}
-            isActiveTabHidden={isActiveTabHidden}
-            data-dropdown-id={dropdownId}
-          />
-        }
+      <PageLayoutTabListDroppableMoreButton
+        hiddenTabsCount={hiddenTabsCount}
+        isActiveTabHidden={isActiveTabHidden}
       />
       <DropdownContent align="end" sideOffset={8} width={200}>
         <Dropdown.Section>
@@ -168,7 +156,6 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                   accept={PAGE_LAYOUT_TAB_DND_TYPE}
                   disabled={disabled}
                   hasTransition={false}
-                  sensors={PAGE_LAYOUT_TAB_LIST_DROPDOWN_SENSORS}
                   orientation="horizontal"
                 >
                   <StyledOverflowMenuItemWrapper>

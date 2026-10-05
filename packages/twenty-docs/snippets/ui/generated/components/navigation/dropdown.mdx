@@ -174,7 +174,7 @@
 ### Dropdown.ActionItem
 
 <ParamField body="ActionItem.actions" type="ReactNode">
-  Trailing controls rendered beside the primary row control. Secondary actions activate independently of the row.
+  Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row.
 </ParamField>
 
 <ParamField body="ActionItem.actionsVisibility" type="&quot;always&quot; | &quot;hover&quot;">
@@ -248,7 +248,7 @@
 ### Dropdown.OptionItem
 
 <ParamField body="OptionItem.actions" type="ReactNode">
-  Trailing controls rendered beside the primary row control. Secondary actions activate independently of the row.
+  Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row.
 </ParamField>
 
 <ParamField body="OptionItem.actionsVisibility" type="&quot;always&quot; | &quot;hover&quot;">
@@ -426,14 +426,6 @@
 </ParamField>
 
 ### Dropdown.Back
-
-<ParamField body="Back.actions" type="ReactNode">
-  Trailing controls rendered beside the primary row control. Secondary actions activate independently of the row.
-</ParamField>
-
-<ParamField body="Back.actionsVisibility" type="&quot;always&quot; | &quot;hover&quot;">
-  Whether trailing actions appear on hover or remain visible. Defaults to `hover`.
-</ParamField>
 
 <ParamField body="Back.className" type="string">
   CSS class applied to the row.

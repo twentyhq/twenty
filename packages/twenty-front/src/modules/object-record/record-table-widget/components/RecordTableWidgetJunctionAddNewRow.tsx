@@ -7,7 +7,6 @@ import { useCreateJunctionRecordFromTableWidget } from '@/object-record/record-t
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -26,7 +25,6 @@ export const RecordTableWidgetJunctionAddNewRow = ({
   junctionCreateThrough,
   targetRecordsFilter = junctionCreateThrough.targetRecordsFilter,
 }: RecordTableWidgetJunctionAddNewRowProps) => {
-  const { closeDropdown } = useCloseDropdown();
   const { enqueueToast } = useToast();
 
   const { objectMetadataItem: junctionObjectMetadataItem } =
@@ -53,7 +51,6 @@ export const RecordTableWidgetJunctionAddNewRow = ({
   }
 
   const handleTargetRecordSelected = (targetRecordId: string) => {
-    closeDropdown(dropdownId);
     createJunctionRecord(targetRecordId).catch((error) => {
       logError(error);
       enqueueToast({ variant: 'error', children: t`Failed to add record` });
@@ -66,11 +63,6 @@ export const RecordTableWidgetJunctionAddNewRow = ({
         render={<div />}
         nativeButton={false}
         style={{ width: '100%' }}
-        onKeyDown={(event) => {
-          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-            event.stopPropagation();
-          }
-        }}
       >
         <RecordTableActionRow LeftIcon={IconPlus} text={t`Add New`} />
       </Dropdown.Trigger>

@@ -26,13 +26,10 @@ export const TabListDropdown = ({
   loading,
 }: TabListDropdownProps) => (
   <DropdownRoot dropdownId={dropdownId} type="picker">
-    <Dropdown.Trigger
-      render={
-        <TabMoreButton
-          hiddenTabsCount={overflow.hiddenTabsCount}
-          active={overflow.isActiveTabHidden}
-        />
-      }
+    <TabMoreButton
+      hiddenTabsCount={overflow.hiddenTabsCount}
+      active={overflow.isActiveTabHidden}
+      isDropdownTrigger
     />
     <DropdownContent align="end" sideOffset={8}>
       <Dropdown.Section>

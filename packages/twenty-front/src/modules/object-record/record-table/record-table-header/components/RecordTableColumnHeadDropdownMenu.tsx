@@ -8,7 +8,6 @@ import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/us
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import {
@@ -59,10 +58,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const { changeRecordFieldVisibility } =
     useChangeRecordFieldVisibility(recordTableId);
 
-  const dropdownId = recordField.fieldMetadataItemId + '-header';
-
-  const { closeDropdown } = useCloseDropdown();
-
   const handleColumnMoveLeft = () => {
     if (!canMoveLeft) return;
 
@@ -76,7 +71,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
   };
 
   const handleColumnVisibility = async () => {
-    closeDropdown(dropdownId);
     await changeRecordFieldVisibility({
       fieldMetadataId: recordField.fieldMetadataItemId,
       isVisible: false,
@@ -88,8 +82,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
   });
 
   const handleSortClick = () => {
-    closeDropdown(dropdownId);
-
     handleToggleColumnSort(recordField.fieldMetadataItemId);
   };
 
@@ -97,8 +89,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
     useOpenRecordFilterChipFromTableHeader();
 
   const handleFilterClick = () => {
-    closeDropdown(dropdownId);
-
     openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
   };
 

@@ -120,11 +120,6 @@ export const RecordTableHeaderAddColumnButton = () => {
             render={<StyledPlusIconContainer />}
             nativeButton={false}
             aria-label={t`Add column`}
-            onKeyDown={(event) => {
-              if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                event.stopPropagation();
-              }
-            }}
           >
             <IconPlus size={theme.icon.size.md} />
           </Dropdown.Trigger>

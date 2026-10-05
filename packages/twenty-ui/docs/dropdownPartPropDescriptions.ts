@@ -28,7 +28,7 @@ const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
 
 const DROPDOWN_ITEM_PROP_DESCRIPTIONS = {
   actions:
-    'Trailing controls rendered beside the primary row control. Secondary actions activate independently of the row.',
+    'Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row.',
   actionsVisibility:
     'Whether trailing actions appear on hover or remain visible. Defaults to `hover`.',
   shortcutJoinLabel:

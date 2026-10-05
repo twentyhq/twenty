@@ -18,7 +18,6 @@ import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDi
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -124,7 +123,6 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const dropdownInstanceId = `record-field-card-menu:${scopeInstanceId}:${relationFieldMetadataId}:${relationRecord.id}`;
 
-  const { closeDropdown } = useCloseDropdown();
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownInstanceId,
@@ -167,8 +165,6 @@ export const RecordDetailRelationRecordsListItem = ({
       };
 
   const handleDetach = () => {
-    closeDropdown(dropdownInstanceId);
-
     if (!relationFieldMetadataItem?.name) return;
 
     if (isToOneObject) {
@@ -184,8 +180,7 @@ export const RecordDetailRelationRecordsListItem = ({
     setSingleRecordPickerSelectedId(undefined);
   };
 
-  const handleDelete = async () => {
-    closeDropdown(dropdownInstanceId);
+  const handleDelete = () => {
     openDialog(getDeleteRelationModalId(relationRecord.id));
   };
 

@@ -636,7 +636,7 @@ export const OptionWithTrailingAction: Story = {
 
 export const CommandWithTrailingAction: Story = {
   render: () => (
-    <Dropdown.Root type="menu">
+    <Dropdown.Root type="picker">
       <Dropdown.Trigger>Views</Dropdown.Trigger>
       <Dropdown.Content>
         <Dropdown.ActionItem
@@ -666,7 +666,7 @@ export const CommandWithTrailingAction: Story = {
     await userEvent.click(
       within(canvasElement).getByRole('button', { name: 'Views' }),
     );
-    const item = await body.findByRole('menuitem', { name: 'Open overview' });
+    const item = await body.findByRole('button', { name: 'Open overview' });
 
     const action = body.getByRole('button', { name: 'Edit view' });
 
@@ -676,12 +676,12 @@ export const CommandWithTrailingAction: Story = {
     await userEvent.click(action);
     expect(onEditItem).toHaveBeenCalledOnce();
     expect(onSelectOption).not.toHaveBeenCalled();
-    expect(body.getByRole('menu')).toBeVisible();
+    expect(body.getByRole('dialog')).toBeVisible();
     item.focus();
     await userEvent.keyboard(' ');
     expect(onSelectOption).toHaveBeenCalledOnce();
     await waitFor(() =>
-      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
   },
 };

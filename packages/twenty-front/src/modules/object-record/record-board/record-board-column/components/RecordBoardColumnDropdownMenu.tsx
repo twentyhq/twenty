@@ -14,7 +14,7 @@ export const RecordBoardColumnDropdownMenu = () => {
         <Dropdown.ActionItem
           key={action.id}
           onClick={action.callback}
-          closeOnClick={action.id !== 'moveLeft' && action.id !== 'moveRight'}
+          closeOnClick={action.closeOnClick}
           startIcon={<SelectOptionIcon Icon={action.icon} />}
         >
           {action.label}

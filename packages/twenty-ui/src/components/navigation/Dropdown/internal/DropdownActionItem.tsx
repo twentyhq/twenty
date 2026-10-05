@@ -42,6 +42,7 @@ export const DropdownActionItem = ({
   const itemFocus = useDropdownItemFocus({ id: itemId });
 
   const hasActions = isRenderableSlot(actions);
+  const resolvedHasSubmenu = hasSubmenu ?? isDefined(page);
 
   const item = (
     <ButtonPrimitive
@@ -49,10 +50,7 @@ export const DropdownActionItem = ({
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}
-      role={
-        props.role ??
-        (type === 'menu' ? 'menuitem' : nativeButton ? undefined : 'button')
-      }
+      role={props.role ?? (type === 'menu' ? 'menuitem' : undefined)}
       tabIndex={itemFocus.tabIndex}
       onFocus={(event) => {
         itemFocus.activate();
@@ -111,7 +109,7 @@ export const DropdownActionItem = ({
           descriptionPlacement={descriptionPlacement}
           shortcut={shortcut}
           shortcutJoinLabel={shortcutJoinLabel}
-          hasSubmenu={hasSubmenu ?? isDefined(page)}
+          hasSubmenu={!hasActions && resolvedHasSubmenu}
         >
           {children}
         </ListItem>
@@ -125,6 +123,7 @@ export const DropdownActionItem = ({
       actionsVisibility={actionsVisibility}
       color={color}
       disabled={disabled}
+      hasSubmenu={resolvedHasSubmenu}
     >
       {item}
     </DropdownItemWithActions>

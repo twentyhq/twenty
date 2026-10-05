@@ -114,15 +114,36 @@
 .itemWithActions {
   gap: var(--t-spacing-2);
 
-  &:focus-within {
+  &:has(:focus-visible) {
     background: var(--t-background-transparent-light);
+  }
+
+  &:has(> .itemWithActionsPrimary:focus-visible) {
+    outline: 2px solid var(--t-color-blue);
+    outline-offset: 1px;
   }
 }
 
-.itemWithActions .itemWithActionsPrimary[data-dropdown-item] {
+.content[data-dropdown-content]
+  .itemWithActions
+  .itemWithActionsPrimary[data-dropdown-item] {
   background: transparent;
   color: inherit;
   flex: 1;
   min-inline-size: 0;
+  outline: none;
   padding-inline: 0;
+}
+
+@include hover-capable {
+  .itemWithActions[data-actions-visibility='hover']:not(:hover):not(
+      :has(:focus-visible)
+    )
+    .itemActions {
+    opacity: 0;
+  }
+}
+
+.itemDecoration {
+  pointer-events: none;
 }

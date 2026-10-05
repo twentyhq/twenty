@@ -89,6 +89,7 @@ const TabSettingsControls = () => {
         onSelect={mockSelectTab}
         visibleTabCount={1}
         pageLayoutType={PageLayoutType.RECORD_PAGE}
+        tabListContainerRef={{ current: null }}
       />
     </>
   );

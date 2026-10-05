@@ -73,7 +73,6 @@ type DragDropItemSortableCellProps = {
   restrictMovementTo?: 'x' | 'y' | 'none';
   // Lets a pointer resolver pick the drop boundary per item across lists of mixed orientations
   orientation?: DragDropItemDropTargetOrientation;
-  sensors?: UseSortableInput['sensors'];
   type?: string;
 };
 
@@ -93,7 +92,6 @@ export const DragDropItemSortableCell = ({
   index,
   restrictMovementTo = 'none',
   orientation,
-  sensors,
   type,
 }: DragDropItemSortableCellProps) => {
   const { handleRef, ref, isDragging, isDragSource } = useSortable({
@@ -112,7 +110,6 @@ export const DragDropItemSortableCell = ({
       ...(isDefined(orientation) ? { orientation } : {}),
     },
     disabled,
-    sensors,
     transition: hasTransition ? SORTABLE_TRANSITION : null,
     plugins: DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC,
     modifiers: [
