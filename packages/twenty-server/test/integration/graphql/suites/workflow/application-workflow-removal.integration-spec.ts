@@ -23,6 +23,7 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -141,7 +142,7 @@ describe('removing workflows from an application manifest', () => {
         workflow,
       });
 
-      if (versionId === undefined) {
+      if (!isDefined(versionId)) {
         throw new Error(`${workflow.name} was not installed`);
       }
 
