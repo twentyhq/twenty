@@ -10,7 +10,7 @@ export const WORKSPACE_USAGE_LIMITS = gql`
         limitKind
         periodCount
         periodUnit
-        meter
+        unit
         limitValue
         isOverridable
         overriddenByUsageLimitId
