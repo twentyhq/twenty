@@ -77,7 +77,14 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   let methodRepository: { exists: jest.Mock };
   let transactionalRepositories: {
     method: { delete: jest.Mock; insert: jest.Mock };
-    appToken: { update: jest.Mock };
+    appToken: { update: jest.Mock; createQueryBuilder: jest.Mock };
+  };
+  let refreshTokenRevocationQueryBuilder: {
+    update: jest.Mock;
+    set: jest.Mock;
+    where: jest.Mock;
+    setParameters: jest.Mock;
+    execute: jest.Mock;
   };
   let twoFactorAuthenticationService: {
     assertFreshStepUpAuthenticationOrThrow: jest.Mock;
@@ -90,9 +97,19 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   let emailService: { send: jest.Mock };
 
   beforeEach(async () => {
+    refreshTokenRevocationQueryBuilder = {
+      update: jest.fn(() => refreshTokenRevocationQueryBuilder),
+      set: jest.fn(() => refreshTokenRevocationQueryBuilder),
+      where: jest.fn(() => refreshTokenRevocationQueryBuilder),
+      setParameters: jest.fn(() => refreshTokenRevocationQueryBuilder),
+      execute: jest.fn(),
+    };
     transactionalRepositories = {
       method: { delete: jest.fn(), insert: jest.fn() },
-      appToken: { update: jest.fn().mockResolvedValue({ affected: 1 }) },
+      appToken: {
+        update: jest.fn().mockResolvedValue({ affected: 1 }),
+        createQueryBuilder: jest.fn(() => refreshTokenRevocationQueryBuilder),
+      },
     };
 
     const entityManager = {
@@ -379,22 +396,25 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: TARGET_USER_WORKSPACE_ID,
       });
-      expect(transactionalRepositories.appToken.update).toHaveBeenNthCalledWith(
-        2,
-        {
-          userId: TARGET_USER_ID,
-          workspaceId: WORKSPACE_ID,
-          type: AppTokenType.RefreshToken,
-          revokedAt: IsNull(),
-        },
-        {
-          revokedAt: expect.any(Date),
-          context: {
-            revokedReason:
-              UserSessionRevokedReason.TwoFactorAuthenticationReset,
-          },
-        },
-      );
+      expect(refreshTokenRevocationQueryBuilder.where).toHaveBeenCalledWith({
+        userId: TARGET_USER_ID,
+        workspaceId: WORKSPACE_ID,
+        type: AppTokenType.RefreshToken,
+        revokedAt: IsNull(),
+      });
+      expect(refreshTokenRevocationQueryBuilder.set).toHaveBeenCalledWith({
+        revokedAt: expect.any(Date),
+        context: expect.any(Function),
+      });
+      expect(
+        refreshTokenRevocationQueryBuilder.set.mock.calls[0][0].context(),
+      ).toContain(`COALESCE("context", '{}'::jsonb) ||`);
+      expect(
+        refreshTokenRevocationQueryBuilder.setParameters,
+      ).toHaveBeenCalledWith({
+        revokedReason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
+      });
+      expect(refreshTokenRevocationQueryBuilder.execute).toHaveBeenCalled();
       expect(transactionalRepositories.method.insert).not.toHaveBeenCalled();
       expect(userSessionService.revokeAllSessionsForUser).toHaveBeenCalledWith({
         userId: TARGET_USER_ID,

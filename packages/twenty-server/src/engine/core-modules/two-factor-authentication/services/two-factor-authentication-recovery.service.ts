@@ -333,21 +333,25 @@ export class TwoFactorAuthenticationRecoveryService {
           userWorkspaceId: userWorkspace.id,
         });
 
-        await appTokenRepository.update(
-          {
+        await appTokenRepository
+          .createQueryBuilder()
+          .update()
+          .set({
+            revokedAt: new Date(),
+            context: () =>
+              `COALESCE("context", '{}'::jsonb) || jsonb_build_object('revokedReason', :revokedReason::text)`,
+          })
+          .where({
             userId,
             workspaceId: workspace.id,
             type: AppTokenType.RefreshToken,
             revokedAt: IsNull(),
-          },
-          {
-            revokedAt: new Date(),
-            context: {
-              revokedReason:
-                UserSessionRevokedReason.TwoFactorAuthenticationReset,
-            },
-          },
-        );
+          })
+          .setParameters({
+            revokedReason:
+              UserSessionRevokedReason.TwoFactorAuthenticationReset,
+          })
+          .execute();
 
         if (!workspace.isTwoFactorAuthenticationEnforced) {
           return { provisioningUri: null };
