@@ -28,7 +28,7 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
+import { CORE_AGENT_DETAIL_TABS } from '@/object-core/agents/constants/CoreAgentDetailTabs';
 import { getOperationName } from '~/utils/getOperationName';
 
 const DELETE_EVAL_INPUT_MODAL_ID = 'delete-eval-input-modal';
@@ -45,7 +45,7 @@ const StyledEmptyMessage = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
-type SettingsAgentEvalsTabProps = {
+type CoreAgentEvalsTabProps = {
   agentId: string;
   evaluationInputs: string[];
   onEvaluationInputsChange: (inputs: string[]) => void;
@@ -57,19 +57,19 @@ type EvalInput = {
   text: string;
 };
 
-export const SettingsAgentEvalsTab = ({
+export const CoreAgentEvalsTab = ({
   agentId,
   evaluationInputs,
   onEvaluationInputsChange,
   disabled = false,
-}: SettingsAgentEvalsTabProps) => {
+}: CoreAgentEvalsTabProps) => {
   const [newInput, setNewInput] = useState('');
   const [inputToDelete, setInputToDelete] = useState<string | null>(null);
   const { openDialog } = useDialog();
   const { enqueueToast } = useToast();
   const navigate = useNavigate();
 
-  const tabListComponentId = `${SETTINGS_AGENT_DETAIL_TABS.COMPONENT_INSTANCE_ID}-${agentId}`;
+  const tabListComponentId = `${CORE_AGENT_DETAIL_TABS.COMPONENT_INSTANCE_ID}-${agentId}`;
   const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     tabListComponentId,
@@ -77,7 +77,7 @@ export const SettingsAgentEvalsTab = ({
 
   const [runEvaluationInput] = useMutation(RUN_EVALUATION_INPUT, {
     onCompleted: () => {
-      const logsTabId = SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.LOGS;
+      const logsTabId = CORE_AGENT_DETAIL_TABS.TABS_IDS.LOGS;
       setActiveTabId(logsTabId);
       navigate(`#${logsTabId}`);
     },

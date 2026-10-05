@@ -7,7 +7,7 @@ import {
   type RunEvaluationInputMutation,
   type RunEvaluationInputMutationVariables,
 } from '~/generated-metadata/graphql';
-import { SettingsAgentEvalsTab } from '~/pages/settings/ai/components/SettingsAgentEvalsTab';
+import { CoreAgentEvalsTab } from '@/object-core/agents/components/CoreAgentEvalsTab';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
@@ -16,9 +16,9 @@ const evaluationInput = 'Find all customers in Paris';
 let pendingEvaluation = Promise.resolve();
 let completeEvaluation = () => {};
 
-const meta: Meta<typeof SettingsAgentEvalsTab> = {
-  title: 'Pages/Settings/AI/SettingsAgentEvalsTab',
-  component: SettingsAgentEvalsTab,
+const meta: Meta<typeof CoreAgentEvalsTab> = {
+  title: 'Modules/ObjectCore/Agents/CoreAgentEvalsTab',
+  component: CoreAgentEvalsTab,
   decorators: [ComponentDecorator, MemoryRouterDecorator, ToastDecorator],
   args: {
     agentId: 'test-agent',
@@ -59,7 +59,7 @@ const meta: Meta<typeof SettingsAgentEvalsTab> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsAgentEvalsTab>;
+type Story = StoryObj<typeof CoreAgentEvalsTab>;
 
 export const RunWhilePending: Story = {
   play: async ({ canvasElement, args }) => {

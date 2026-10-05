@@ -21,7 +21,7 @@ import {
   AssignRoleToAgentDocument,
   CreateOneRoleDocument,
 } from '~/generated-metadata/graphql';
-import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
+import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 
 const StyledWarningText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -29,24 +29,24 @@ const StyledWarningText = styled.div`
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
-type SettingsAgentRoleTabProps = {
-  formValues: SettingsAiAgentFormValues;
+type CoreAgentRoleTabProps = {
+  formValues: CoreAgentFormValues;
   onFieldChange: (
-    field: keyof SettingsAiAgentFormValues,
-    value: SettingsAiAgentFormValues[keyof SettingsAiAgentFormValues],
+    field: keyof CoreAgentFormValues,
+    value: CoreAgentFormValues[keyof CoreAgentFormValues],
   ) => void;
   disabled: boolean;
   agentId?: string;
   agentLabel: string;
 };
 
-export const SettingsAgentRoleTab = ({
+export const CoreAgentRoleTab = ({
   formValues,
   onFieldChange,
   disabled,
   agentId,
   agentLabel,
-}: SettingsAgentRoleTabProps) => {
+}: CoreAgentRoleTabProps) => {
   const { t } = useLingui();
   const [isCreatingRole, setIsCreatingRole] = useState(false);
 

@@ -1,4 +1,6 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
+import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { mapRLSOperandToRecordFilterOperand } from '@/object-record/record-filter/utils/mapRLSOperandToRecordFilterOperand';
@@ -71,25 +73,10 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 
   const breadcrumbLinks =
     fromAgentId && isDefined(agent)
-      ? [
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.General),
-          },
-          {
-            children: t`AI`,
-            href: getSettingsPath(SettingsPath.AI),
-          },
-          {
-            children: agent.label,
-            href: getSettingsPath(SettingsPath.AiAgentDetail, {
-              agentId: agent.id,
-            }),
-          },
-          {
-            children: t`Permissions · ${objectLabelSingular}`,
-          },
-        ]
+      ? getCoreAgentBreadcrumbLinks([
+          { children: agent.label, href: getCoreAgentLink(agent.id) },
+          { children: t`Permissions · ${objectLabelSingular}` },
+        ])
       : [
           {
             children: t`Workspace`,
@@ -116,7 +103,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 
   const finishButtonPath =
     fromAgentId && isDefined(agent)
-      ? getSettingsPath(SettingsPath.AiAgentDetail, { agentId: agent.id })
+      ? getCoreAgentLink(agent.id)
       : getSettingsPath(SettingsPath.RoleDetail, { roleId });
 
   const previousStepPath = `${getSettingsPath(SettingsPath.RoleAddObjectLevel, {

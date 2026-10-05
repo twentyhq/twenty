@@ -1,3 +1,5 @@
+import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
+import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -11,14 +13,12 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import Skeleton from 'react-loading-skeleton';
 import { Suspense } from 'react';
-import { useParams } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type AgentMessage,
+  type FindOneAgentQuery,
   GetAgentTurnsDocument,
 } from '~/generated-metadata/graphql';
 
@@ -54,16 +54,23 @@ const StyledMessageContent = styled.div`
   max-width: 100%;
 `;
 
-export const SettingsAgentTurnDetail = () => {
-  const { agentId, turnId } = useParams<{
-    agentId: string;
-    turnId: string;
-  }>();
+type CoreAgentTurnDetailProps = {
+  agent: Pick<FindOneAgentQuery['findOneAgent'], 'id' | 'label'>;
+  turnId: string;
+};
 
+export const CoreAgentTurnDetail = ({
+  agent,
+  turnId,
+}: CoreAgentTurnDetailProps) => {
   const { data, loading } = useQuery(GetAgentTurnsDocument, {
-    variables: { agentId: agentId || '' },
-    skip: !agentId,
+    variables: { agentId: agent.id },
   });
+
+  const links = getCoreAgentBreadcrumbLinks([
+    { children: agent.label, href: getCoreAgentLink(agent.id) },
+    { children: t`Turn` },
+  ]);
 
   const turn = data?.agentTurns?.find((t) => t.id === turnId);
 
@@ -75,24 +82,7 @@ export const SettingsAgentTurnDetail = () => {
 
   if (loading) {
     return (
-      <SettingsPageLayout
-        title={t`Turn Details`}
-        links={[
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.General),
-          },
-          { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
-          {
-            children: t`Agent`,
-            href: getSettingsPath(SettingsPath.AiAgentDetail).replace(
-              ':agentId',
-              agentId || '',
-            ),
-          },
-          { children: t`Turn` },
-        ]}
-      >
+      <SettingsPageLayout title={t`Turn Details`} links={links}>
         <SettingsPageContainer>
           <Skeleton height={200} />
         </SettingsPageContainer>
@@ -102,17 +92,7 @@ export const SettingsAgentTurnDetail = () => {
 
   if (!turn) {
     return (
-      <SettingsPageLayout
-        title={t`Turn Not Found`}
-        links={[
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.General),
-          },
-          { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
-          { children: t`Turn` },
-        ]}
-      >
+      <SettingsPageLayout title={t`Turn Not Found`} links={links}>
         <SettingsPageContainer>
           <div>{t`Turn not found`}</div>
         </SettingsPageContainer>
@@ -121,24 +101,7 @@ export const SettingsAgentTurnDetail = () => {
   }
 
   return (
-    <SettingsPageLayout
-      title={t`Turn Details`}
-      links={[
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.General),
-        },
-        { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
-        {
-          children: t`Agent`,
-          href: getSettingsPath(SettingsPath.AiAgentDetail).replace(
-            ':agentId',
-            agentId || '',
-          ),
-        },
-        { children: t`Turn` },
-      ]}
-    >
+    <SettingsPageLayout title={t`Turn Details`} links={links}>
       <SettingsPageContainer>
         <Section.Root>
           <Section.Header

@@ -1,3 +1,4 @@
+import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -9,8 +10,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 
@@ -31,13 +31,11 @@ const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-type SettingsAgentLogsTabProps = {
+type CoreAgentLogsTabProps = {
   agentId: string;
 };
 
-export const SettingsAgentLogsTab = ({
-  agentId,
-}: SettingsAgentLogsTabProps) => {
+export const CoreAgentLogsTab = ({ agentId }: CoreAgentLogsTabProps) => {
   const { enqueueToast } = useToast();
   const [evaluatingTurnIds, setEvaluatingTurnIds] = useState<Set<string>>(
     new Set(),
@@ -231,9 +229,7 @@ export const SettingsAgentLogsTab = ({
               >
                 {latestEvaluation && (
                   <UndecoratedLink
-                    to={getSettingsPath(SettingsPath.AiAgentTurnDetail)
-                      .replace(':agentId', agentId)
-                      .replace(':turnId', turn.id)}
+                    to={getCoreAgentLink(agentId, { turn: turn.id })}
                   >
                     <LightIconButton
                       title={t`View all evaluations`}

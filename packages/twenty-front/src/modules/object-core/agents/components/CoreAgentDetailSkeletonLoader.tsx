@@ -30,7 +30,7 @@ const StyledNameContainer = styled.div`
   flex: 1;
 `;
 
-export const SettingsAgentDetailSkeletonLoader = () => {
+export const CoreAgentDetailSkeletonLoader = () => {
   const theme = useTheme();
   return (
     <SkeletonTheme

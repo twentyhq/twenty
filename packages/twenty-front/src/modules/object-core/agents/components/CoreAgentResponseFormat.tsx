@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-type SettingsAgentResponseFormatProps = {
+type CoreAgentResponseFormatProps = {
   responseFormat?: {
     type: 'text' | 'json';
     schema?: AgentResponseSchema;
@@ -27,11 +27,11 @@ type SettingsAgentResponseFormatProps = {
   disabled?: boolean;
 };
 
-export const SettingsAgentResponseFormat = ({
+export const CoreAgentResponseFormat = ({
   responseFormat,
   onResponseFormatChange,
   disabled,
-}: SettingsAgentResponseFormatProps) => {
+}: CoreAgentResponseFormatProps) => {
   const formatType = responseFormat?.type || 'text';
   const schema: AgentResponseSchema = responseFormat?.schema || {
     type: 'object' as const,
