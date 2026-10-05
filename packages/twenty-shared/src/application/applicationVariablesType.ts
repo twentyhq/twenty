@@ -78,6 +78,8 @@ type FilesApplicationVariable = SyncableEntityOptions & {
   isRequired?: boolean;
   isDeprecated?: boolean;
   isSecret?: never;
+  // Public files get a permanent url, private ones a url that expires (default true)
+  isPublic?: boolean;
 };
 
 export type ApplicationVariable =

@@ -46,6 +46,7 @@ type ApplicationVariable {
   isSecret: Boolean!
   isDeprecated: Boolean!
   isRequired: Boolean!
+  isPublic: Boolean!
   type: String!
   options: JSON
 }

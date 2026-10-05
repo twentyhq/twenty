@@ -47,9 +47,10 @@ export class JwtWrapperService {
     private readonly signingKeyVerifyCounterService: SigningKeyVerifyCounterService,
   ) {}
 
+  // A token signed without expiresIn never expires
   async signAsyncOrThrow(
     payload: JwtPayload,
-    options: { expiresIn: string | number; jwtid?: string },
+    options: { expiresIn?: string | number; jwtid?: string },
   ): Promise<string> {
     const signingKey = await this.jwtKeyManagerService.getCurrentSigningKey();
 
@@ -61,7 +62,9 @@ export class JwtWrapperService {
     }
 
     const signOptions: jwt.SignOptions = {
-      expiresIn: options.expiresIn as jwt.SignOptions['expiresIn'],
+      ...(isDefined(options.expiresIn)
+        ? { expiresIn: options.expiresIn as jwt.SignOptions['expiresIn'] }
+        : {}),
       algorithm: JWT_ASYMMETRIC_ALGORITHM,
       keyid: signingKey.id,
       ...(isDefined(options.jwtid) ? { jwtid: options.jwtid } : {}),

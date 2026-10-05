@@ -167,6 +167,42 @@ describe('defineApplication', () => {
     ]);
   });
 
+  it('should accept a private FILES application variable and refuse isPublic elsewhere', () => {
+    const accepted = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      applicationVariables: {
+        SIGNING_CERTIFICATE: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          type: FieldType.FILES,
+          isPublic: false,
+        },
+      },
+    });
+
+    expect(accepted.success).toBe(true);
+    expect(accepted.errors).toEqual([]);
+
+    const refused = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      applicationVariables: {
+        API_KEY: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          isSecret: true,
+          isPublic: false,
+        } as never,
+      },
+    });
+
+    expect(refused.success).toBe(false);
+    expect(refused.errors).toEqual([
+      expect.stringMatching(/API_KEY.*isPublic.*only applies to FILES/),
+    ]);
+  });
+
   it('should refuse a FILES server variable', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',

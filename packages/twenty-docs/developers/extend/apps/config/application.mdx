@@ -132,6 +132,8 @@ The same applies to front components reading values via `getApplicationVariable(
 
 An application variable of type `FILES` holds files the workspace uploads from the app's settings page, for example a logo to print on generated invoices. It declares no `value` (there is no file to ship in a manifest), cannot be `isSecret`, and is not available to `serverVariables`.
 
+`isPublic` (default `true`) decides how long the file urls stay valid. Public files get a permanent url, safe to embed in a generated document or an outgoing email. Set `isPublic: false` for a confidential file: its url is then signed with an expiry, so read it from the variable on each run rather than storing it.
+
 ```ts src/application-config.ts
 import { defineApplication, FieldType } from 'twenty-sdk/define';
 
@@ -145,18 +147,24 @@ export default defineApplication({
       type: FieldType.FILES,
       isRequired: true,
     },
+    SIGNING_CERTIFICATE: {
+      universalIdentifier: '7a1c4e92-5b3d-4f08-8e6a-2d9b0c3f1e57',
+      label: 'Signing certificate',
+      type: FieldType.FILES,
+      isPublic: false,
+    },
   },
 });
 ```
 
-The value reaches your code as a JSON array, one entry per uploaded file, with a `url` signed for the current run (it expires, so read it from the variable each time rather than storing it):
+The value reaches your code as a JSON array, one entry per uploaded file, with a download `url` (permanent for a public variable, expiring for a private one):
 
 ```ts
 type ApplicationVariableFile = {
   fileId: string;
   label: string; // the uploaded file name, editable in the settings
   extension: string; // e.g. ".png"
-  url: string; // signed download url, valid for a limited time
+  url: string; // download url, signed with an expiry when the variable is not public
 };
 
 const [logo] = JSON.parse(process.env.INVOICE_LOGO ?? '[]') as ApplicationVariableFile[];

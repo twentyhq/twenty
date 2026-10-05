@@ -40,13 +40,16 @@ export class ApplicationVariableFileService {
     private readonly fileUrlService: FileUrlService,
   ) {}
 
-  // Signed urls expire, so they are minted on every read instead of being stored.
+  // Urls are minted on every read instead of being stored: private ones expire,
+  // and even permanent ones depend on the current signing key.
   async signFilesValue({
     plaintextValue,
     workspaceId,
+    isPublic,
   }: {
     plaintextValue: string;
     workspaceId: string;
+    isPublic: boolean;
   }): Promise<string> {
     const files = parseApplicationVariableFilesValue(plaintextValue);
 
@@ -61,6 +64,7 @@ export class ApplicationVariableFileService {
           fileId: file.fileId,
           workspaceId,
           fileFolder: FileFolder.ApplicationVariable,
+          isPermanent: isPublic,
         }),
       })),
     );

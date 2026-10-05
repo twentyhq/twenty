@@ -1865,6 +1865,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    isPublic: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     type: {
       toCompare: true,
       toStringify: false,

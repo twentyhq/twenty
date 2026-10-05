@@ -17,6 +17,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     isSecret,
     isDeprecated,
     isRequired,
+    isPublic,
     type,
     options,
     applicationUniversalIdentifier,
@@ -30,6 +31,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     isSecret?: boolean;
     isDeprecated?: boolean;
     isRequired?: boolean;
+    isPublic?: boolean;
     type?: ApplicationVariableType;
     options?: ApplicationVariableOption[];
     applicationUniversalIdentifier: string;
@@ -45,6 +47,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       isSecret: isSecret ?? false,
       isDeprecated: isDeprecated ?? false,
       isRequired: (isDeprecated ?? false) ? false : (isRequired ?? false),
+      isPublic: isPublic ?? true,
       type: type ?? FieldMetadataType.TEXT,
       options: options ?? null,
       createdAt: now,

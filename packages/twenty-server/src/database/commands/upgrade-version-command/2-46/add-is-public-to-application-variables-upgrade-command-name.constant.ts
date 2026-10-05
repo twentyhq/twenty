@@ -1,0 +1,2 @@
+export const ADD_IS_PUBLIC_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME =
+  '2.46.0_AddIsPublicToApplicationVariablesFastInstanceCommand_1791199458166';

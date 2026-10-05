@@ -39,6 +39,10 @@ export class ApplicationVariableEntityDTO {
   @Field()
   isRequired: boolean;
 
+  @IsBoolean()
+  @Field()
+  isPublic: boolean;
+
   @IsString()
   @Field()
   type: string;

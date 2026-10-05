@@ -57,12 +57,14 @@ export class FileUrlService {
     fileId,
     workspaceId,
     fileFolder,
+    isPermanent = false,
   }: {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
+    isPermanent?: boolean;
   }): Promise<string> {
-    const signingCacheKey = `${workspaceId}:${fileFolder}:${fileId}`;
+    const signingCacheKey = `${workspaceId}:${fileFolder}:${fileId}:${isPermanent}`;
     const inflightSigning = this.inflightFileUrlSignings.get(signingCacheKey);
 
     if (isDefined(inflightSigning)) {
@@ -75,6 +77,7 @@ export class FileUrlService {
           fileId,
           workspaceId,
           fileFolder,
+          isPermanent,
         });
       } finally {
         this.inflightFileUrlSignings.delete(signingCacheKey);
@@ -90,10 +93,12 @@ export class FileUrlService {
     fileId,
     workspaceId,
     fileFolder,
+    isPermanent,
   }: {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
+    isPermanent: boolean;
   }): Promise<string> {
     const payload: FileTokenJwtPayload = {
       workspaceId,
@@ -102,9 +107,13 @@ export class FileUrlService {
       type: JwtTokenTypeEnum.FILE,
     };
 
-    const token = await this.jwtWrapperService.signAsyncOrThrow(payload, {
-      expiresIn: this.twentyConfigService.get('FILE_TOKEN_EXPIRES_IN'),
-    });
+    // A permanent url carries a token without expiry: anyone holding the url keeps access
+    const token = await this.jwtWrapperService.signAsyncOrThrow(
+      payload,
+      isPermanent
+        ? {}
+        : { expiresIn: this.twentyConfigService.get('FILE_TOKEN_EXPIRES_IN') },
+    );
 
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 

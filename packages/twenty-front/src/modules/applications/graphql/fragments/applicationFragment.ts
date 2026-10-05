@@ -36,6 +36,7 @@ export const APPLICATION_FRAGMENT = gql`
       isSecret
       isDeprecated
       isRequired
+      isPublic
       type
       options
     }

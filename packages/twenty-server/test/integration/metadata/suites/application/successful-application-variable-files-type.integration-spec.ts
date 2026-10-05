@@ -15,6 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 const VARIABLE_KEY = 'INVOICE_LOGO';
+const PRIVATE_VARIABLE_KEY = 'SIGNING_CERTIFICATE';
 
 // A PNG signature is enough for the completion step to sniff the mime type
 const PNG_BYTES = Buffer.from([
@@ -27,6 +28,13 @@ type ApplicationVariableFile = {
   label: string;
   extension: string;
   url: string;
+};
+
+const readFileUrlTokenExpiry = (url: string): number | undefined => {
+  const token = new URL(url).searchParams.get('token') ?? '';
+  const [, payload] = token.split('.');
+
+  return JSON.parse(Buffer.from(payload, 'base64url').toString()).exp;
 };
 
 describe('FILES application variable', () => {
@@ -105,9 +113,12 @@ describe('FILES application variable', () => {
     return uploadTarget.fileId;
   };
 
-  const readVariable = async (): Promise<{
+  const readVariable = async (
+    variableKey = VARIABLE_KEY,
+  ): Promise<{
     value: string;
     type: string;
+    isPublic: boolean;
     files: ApplicationVariableFile[];
   }> => {
     const { data } = await findOneApplication({
@@ -117,22 +128,24 @@ describe('FILES application variable', () => {
           key
           value
           type
+          isPublic
         }
       `,
       expectToFail: false,
     });
 
     const variable = data.findOneApplication.applicationVariables?.find(
-      ({ key }: { key: string }) => key === VARIABLE_KEY,
+      ({ key }: { key: string }) => key === variableKey,
     );
 
     if (!isDefined(variable)) {
-      throw new Error(`Variable ${VARIABLE_KEY} was not synced`);
+      throw new Error(`Variable ${variableKey} was not synced`);
     }
 
     return {
       value: variable.value,
       type: variable.type,
+      isPublic: variable.isPublic,
       files: variable.value === '' ? [] : JSON.parse(variable.value),
     };
   };
@@ -148,14 +161,16 @@ describe('FILES application variable', () => {
 
   const saveFiles = ({
     files,
+    variableKey = VARIABLE_KEY,
     expectToFail = false,
   }: {
     files: { fileId: string; label: string }[];
+    variableKey?: string;
     expectToFail?: boolean;
   }) =>
     updateOneApplicationVariable({
       input: {
-        key: VARIABLE_KEY,
+        key: variableKey,
         value: files.length === 0 ? '' : JSON.stringify(files),
         applicationId,
       },
@@ -190,6 +205,12 @@ describe('FILES application variable', () => {
                 label: 'Invoice logo',
                 type: FieldMetadataType.FILES,
                 isRequired: true,
+              },
+              [PRIVATE_VARIABLE_KEY]: {
+                universalIdentifier: randomUUID(),
+                label: 'Signing certificate',
+                type: FieldMetadataType.FILES,
+                isPublic: false,
               },
             },
             packageJsonChecksum: null,
@@ -231,14 +252,19 @@ describe('FILES application variable', () => {
     jest.useFakeTimers();
   });
 
-  it('should sync the variable with no file', async () => {
+  it('should sync the variables with no file, public unless declared otherwise', async () => {
     const variable = await readVariable();
+    const privateVariable = await readVariable(PRIVATE_VARIABLE_KEY);
 
-    expect(variable.type).toBe(FieldMetadataType.FILES);
-    expect(variable.value).toBe('');
+    expect(variable).toMatchObject({
+      type: FieldMetadataType.FILES,
+      value: '',
+      isPublic: true,
+    });
+    expect(privateVariable).toMatchObject({ isPublic: false, value: '' });
   });
 
-  it('should bind an uploaded file and read it back with a signed url', async () => {
+  it('should bind an uploaded file and read it back with a permanent url', async () => {
     const fileId = await uploadLogo('logo.png');
 
     const { data } = await saveFiles({
@@ -259,6 +285,7 @@ describe('FILES application variable', () => {
         ),
       },
     ]);
+    expect(readFileUrlTokenExpiry(files[0].url)).toBeUndefined();
 
     const fileRow = await findFileRow(fileId);
 
@@ -268,6 +295,20 @@ describe('FILES application variable', () => {
       path: `${FileFolder.ApplicationVariable}/${fileId}.png`,
       settings: { isTemporaryFile: false, toDelete: false },
     });
+  });
+
+  it('should sign an expiring url for a private variable', async () => {
+    const fileId = await uploadLogo('certificate.png');
+
+    await saveFiles({
+      variableKey: PRIVATE_VARIABLE_KEY,
+      files: [{ fileId, label: 'certificate.png' }],
+    });
+
+    const { files } = await readVariable(PRIVATE_VARIABLE_KEY);
+
+    expect(files.map((file) => file.fileId)).toEqual([fileId]);
+    expect(readFileUrlTokenExpiry(files[0].url)).toEqual(expect.any(Number));
   });
 
   it('should refuse a file that was not uploaded for the variable', async () => {

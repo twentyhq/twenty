@@ -18,6 +18,7 @@ import { ADD_TYPE_AND_OPTIONS_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } fr
 import { ADD_IS_DEPRECATED_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-31/add-is-deprecated-to-application-variables-upgrade-command-name.constant';
 import { ADD_LABEL_TO_APPLICATION_VARIABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-36/add-label-to-application-variable-upgrade-command-name.constant';
 import { ADD_IS_REQUIRED_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-is-required-to-application-variables-upgrade-command-name.constant';
+import { ADD_IS_PUBLIC_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-is-public-to-application-variables-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -71,6 +72,14 @@ export class ApplicationVariableEntity extends SyncableEntity {
   })
   @Column({ nullable: false, type: 'boolean', default: false })
   isRequired: boolean;
+
+  // Files of a public variable get a permanent url, private ones a url that expires
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_IS_PUBLIC_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, type: 'boolean', default: true })
+  isPublic: boolean;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:

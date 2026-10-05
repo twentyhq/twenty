@@ -210,6 +210,9 @@ export default {
             "isRequired": [
                 8
             ],
+            "isPublic": [
+                8
+            ],
             "type": [
                 1
             ],

@@ -44,12 +44,13 @@ describe('ApplicationVariableFileService', () => {
   });
 
   describe('signFilesValue', () => {
-    it('should add a signed url to every file of the stored value', async () => {
+    it('should add a permanent url to every file of a public variable', async () => {
       const signedValue = await service.signFilesValue({
         plaintextValue: JSON.stringify([
           { fileId: LOGO_FILE_ID, label: 'logo.png', extension: '.png' },
         ]),
         workspaceId: WORKSPACE_ID,
+        isPublic: true,
       });
 
       expect(JSON.parse(signedValue)).toEqual([
@@ -64,7 +65,22 @@ describe('ApplicationVariableFileService', () => {
         fileId: LOGO_FILE_ID,
         workspaceId: WORKSPACE_ID,
         fileFolder: FileFolder.ApplicationVariable,
+        isPermanent: true,
       });
+    });
+
+    it('should sign an expiring url for a private variable', async () => {
+      await service.signFilesValue({
+        plaintextValue: JSON.stringify([
+          { fileId: LOGO_FILE_ID, label: 'contract.pdf', extension: '.pdf' },
+        ]),
+        workspaceId: WORKSPACE_ID,
+        isPublic: false,
+      });
+
+      expect(fileUrlService.signFileByIdUrl).toHaveBeenCalledWith(
+        expect.objectContaining({ fileId: LOGO_FILE_ID, isPermanent: false }),
+      );
     });
 
     it('should read a value without file as empty', async () => {
@@ -72,6 +88,7 @@ describe('ApplicationVariableFileService', () => {
         service.signFilesValue({
           plaintextValue: '',
           workspaceId: WORKSPACE_ID,
+          isPublic: true,
         }),
       ).resolves.toBe('');
     });
