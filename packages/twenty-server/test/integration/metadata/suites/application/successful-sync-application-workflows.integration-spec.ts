@@ -130,8 +130,12 @@ const runVersion = async (coreWorkflowVersionId: string): Promise<string> => {
     { input: { coreWorkflowVersionId } },
   );
   expect(response.body.errors).toBeUndefined();
-  return response.body.data.runCoreWorkflowVersion.workflowRunId;
+  const workflowRunId = response.body.data.runCoreWorkflowVersion.workflowRunId;
+  createdWorkflowRunIds.push(workflowRunId);
+  return workflowRunId;
 };
+
+const createdWorkflowRunIds: string[] = [];
 
 const findRun = async (runId: string): Promise<WorkflowRunWorkspaceEntity> => {
   const [run] = await globalThis.testDataSource.query(
@@ -201,8 +205,8 @@ describe('application-owned core workflows', () => {
 
   afterAll(async () => {
     await globalThis.testDataSource.query(
-      `DELETE FROM "${SCHEMA}"."workflowRun" WHERE "coreWorkflowId" IN (SELECT id FROM core.workflow WHERE "universalIdentifier" = $1 AND "workspaceId" = $2)`,
-      [WORKFLOW_ID, WORKSPACE_ID],
+      `DELETE FROM "${SCHEMA}"."workflowRun" WHERE id = ANY($1)`,
+      [createdWorkflowRunIds],
     );
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: APP_ID,
@@ -218,7 +222,7 @@ describe('application-owned core workflows', () => {
     jest.useFakeTimers();
   });
 
-  it('installs, upgrades through additive pre-install sync, and protects saved runs and app-owned definitions', async () => {
+  it('installs, upgrades through additive pre-install sync, removes omitted workflows, and protects saved runs and app-owned definitions', async () => {
     const initial = await syncApplication({ manifest: MANIFEST });
     expect(initial.errors).toBeUndefined();
     const [referencingVersion] = await globalThis.testDataSource.query(
@@ -338,11 +342,10 @@ describe('application-owned core workflows', () => {
       inferDeletionFromMissingEntities: false,
     });
     expect(additive.errors).toBeUndefined();
-    const removing = await syncApplication({
-      manifest: missingWorkflow,
-      expectToFail: true,
-    });
-    expect(removing.errors).toBeDefined();
     expect(await findDefinitions()).toEqual(updatedDefinitions);
+    const removing = await syncApplication({ manifest: missingWorkflow });
+    expect(removing.errors).toBeUndefined();
+    expect(await findDefinitions()).toEqual([]);
+    expect((await findRun(oldRunId)).state?.flow).toEqual(oldRun.state?.flow);
   }, 90000);
 });
