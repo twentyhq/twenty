@@ -85,6 +85,11 @@ type CacheEntriesResult = {
   hashes: Partial<Record<WorkspaceCacheKeyName, string>>;
 };
 
+type KeyToRecompute = {
+  keyName: WorkspaceCacheKeyName;
+  expectedHash?: string;
+};
+
 type RecomputedCacheEntriesResult = CacheEntriesResult & {
   hasUnpublishedEntries: boolean;
 };
@@ -326,34 +331,18 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           return freshEntries;
         }
 
-        const {
-          validKeys,
-          keysNeedingDataFromRedis,
-          keysNeedingRecompute,
-          expectedHashes: expectedHashesOfKeysNeedingRecompute,
-        } = await this.validateLocalHashAgainstRedisHash(
-          workspaceId,
-          staleKeys,
-        );
+        const { validKeys, keysNeedingDataFromRedis, keysNeedingRecompute } =
+          await this.validateLocalHashAgainstRedisHash(workspaceId, staleKeys);
         const validatedEntries = this.getFromLocalCache(workspaceId, validKeys);
 
-        const {
-          redisEntries,
-          missingInRedis,
-          expectedHashes: expectedHashesOfMissingInRedis,
-        } = await this.fetchDataFromRedis(
+        const { redisEntries, missingInRedis } = await this.fetchDataFromRedis(
           workspaceId,
           keysNeedingDataFromRedis,
         );
 
-        const keysToRecompute = [...keysNeedingRecompute, ...missingInRedis];
         const recomputedEntries = await this.recomputeDataFromProvider({
           workspaceId,
-          cacheKeyNames: keysToRecompute,
-          expectedHashes: {
-            ...expectedHashesOfKeysNeedingRecompute,
-            ...expectedHashesOfMissingInRedis,
-          },
+          keysToRecompute: [...keysNeedingRecompute, ...missingInRedis],
         });
 
         if (recomputedEntries.hasUnpublishedEntries) {
@@ -441,13 +430,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         attributes: { 'cache.key_count': cacheKeyNames.length },
       },
       async () => {
-        const freshHashes = await this.invalidate(workspaceId, cacheKeyNames);
-
-        await this.recomputeDataFromProvider({
+        const keysToRecompute = await this.invalidate(
           workspaceId,
           cacheKeyNames,
-          expectedHashes: freshHashes,
-        });
+        );
+
+        await this.recomputeDataFromProvider({ workspaceId, keysToRecompute });
       },
     );
   }
@@ -496,22 +484,21 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private async invalidate(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
-  ): Promise<Partial<Record<WorkspaceCacheKeyName, string>>> {
-    const freshHashes: Partial<Record<WorkspaceCacheKeyName, string>> = {};
-
+  ): Promise<KeyToRecompute[]> {
     if (cacheKeyNames.length === 0) {
-      return freshHashes;
+      return [];
     }
 
-    for (const keyName of cacheKeyNames) {
-      freshHashes[keyName] = crypto.randomUUID();
-    }
+    const invalidatedKeys = cacheKeyNames.map((keyName) => ({
+      keyName,
+      expectedHash: crypto.randomUUID(),
+    }));
 
     // Replacing rather than deleting the hash makes in-flight recomputes skip publishing
     await this.cacheStorage.msetAndMdel({
-      entries: cacheKeyNames.map((keyName) => ({
+      entries: invalidatedKeys.map(({ keyName, expectedHash }) => ({
         key: `${this.buildCacheKey(workspaceId, keyName)}:hash`,
-        value: freshHashes[keyName],
+        value: expectedHash,
         ttl: this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000,
       })),
       keysToDelete: cacheKeyNames.map(
@@ -521,7 +508,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
     await this.memoizer.clearKeys(`${workspaceId}-`);
 
-    return freshHashes;
+    return invalidatedKeys;
   }
 
   public async evictWorkspaceFromLocalCache(
@@ -580,20 +567,17 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   ): Promise<{
     validKeys: WorkspaceCacheKeyName[];
     keysNeedingDataFromRedis: WorkspaceCacheKeyName[];
-    keysNeedingRecompute: WorkspaceCacheKeyName[];
-    expectedHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+    keysNeedingRecompute: KeyToRecompute[];
   }> {
     const validKeys: WorkspaceCacheKeyName[] = [];
     const keysNeedingDataFromRedis: WorkspaceCacheKeyName[] = [];
-    const keysNeedingRecompute: WorkspaceCacheKeyName[] = [];
-    const expectedHashes: Partial<Record<WorkspaceCacheKeyName, string>> = {};
+    const keysNeedingRecompute: KeyToRecompute[] = [];
 
     if (cacheKeyNames.length === 0) {
       return {
         validKeys,
         keysNeedingDataFromRedis,
         keysNeedingRecompute,
-        expectedHashes,
       };
     }
 
@@ -616,11 +600,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         localEntry.lastHashCheckedAt = Date.now();
         validKeys.push(keyName);
       } else if (this.localDataOnlyKeys.has(keyName)) {
-        keysNeedingRecompute.push(keyName);
-
-        if (isDefined(redisHash)) {
-          expectedHashes[keyName] = redisHash;
-        }
+        keysNeedingRecompute.push({ keyName, expectedHash: redisHash });
       } else {
         keysNeedingDataFromRedis.push(keyName);
       }
@@ -630,7 +610,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       validKeys,
       keysNeedingDataFromRedis,
       keysNeedingRecompute,
-      expectedHashes,
     };
   }
 
@@ -639,15 +618,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<{
     redisEntries: CacheEntriesResult;
-    missingInRedis: WorkspaceCacheKeyName[];
-    expectedHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+    missingInRedis: KeyToRecompute[];
   }> {
     const redisEntries: CacheEntriesResult = { data: {}, hashes: {} };
-    const missingInRedis: WorkspaceCacheKeyName[] = [];
-    const expectedHashes: Partial<Record<WorkspaceCacheKeyName, string>> = {};
+    const missingInRedis: KeyToRecompute[] = [];
 
     if (cacheKeyNames.length === 0) {
-      return { redisEntries, missingInRedis, expectedHashes };
+      return { redisEntries, missingInRedis };
     }
 
     const allKeys = cacheKeyNames.flatMap((keyName) => {
@@ -664,10 +641,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const rawData = allValues[index * 2] as CacheDataType | undefined;
       const hash = allValues[index * 2 + 1] as string | undefined;
 
-      if (isDefined(hash)) {
-        expectedHashes[keyName] = hash;
-      }
-
       if (isDefined(rawData) && isDefined(hash)) {
         let data: CacheDataType;
 
@@ -678,7 +651,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             `Failed to expand cached ${keyName} for workspace ${workspaceId}, recomputing`,
             error,
           );
-          missingInRedis.push(keyName);
+          missingInRedis.push({ keyName, expectedHash: hash });
           continue;
         }
 
@@ -686,21 +659,19 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         redisEntries.hashes[keyName] = hash;
         this.setInLocalCache(workspaceId, keyName, data, hash);
       } else {
-        missingInRedis.push(keyName);
+        missingInRedis.push({ keyName, expectedHash: hash });
       }
     }
 
-    return { redisEntries, missingInRedis, expectedHashes };
+    return { redisEntries, missingInRedis };
   }
 
   private async recomputeDataFromProvider({
     workspaceId,
-    cacheKeyNames,
-    expectedHashes,
+    keysToRecompute,
   }: {
     workspaceId: string;
-    cacheKeyNames: WorkspaceCacheKeyName[];
-    expectedHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+    keysToRecompute: KeyToRecompute[];
   }): Promise<RecomputedCacheEntriesResult> {
     const result: RecomputedCacheEntriesResult = {
       data: {},
@@ -708,7 +679,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       hasUnpublishedEntries: false,
     };
 
-    if (cacheKeyNames.length === 0) {
+    if (keysToRecompute.length === 0) {
       return result;
     }
 
@@ -717,9 +688,14 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       workspaceId,
     );
 
-    await rowsBatchLoader.loadRows(this.collectRowsRequirements(cacheKeyNames));
+    await rowsBatchLoader.loadRows(
+      this.collectRowsRequirements(
+        keysToRecompute.map(({ keyName }) => keyName),
+      ),
+    );
 
-    const computePromises = cacheKeyNames.map(async (keyName) => {
+    const computePromises = keysToRecompute.map(async (keyToRecompute) => {
+      const { keyName, expectedHash } = keyToRecompute;
       const provider = this.getProviderOrThrow(keyName);
       const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
       const computeStartedAt = performance.now();
@@ -745,7 +721,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         return {
           keyName,
           data,
-          hashToPublish: expectedHashes[keyName] ?? crypto.randomUUID(),
+          expectedHash,
+          hashToPublish: expectedHash ?? crypto.randomUUID(),
         };
       } finally {
         this.cacheMetricsService.recordRecompute(
@@ -765,7 +742,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           acc.computed.push(settled.value);
         } else {
           acc.computeFailures.push({
-            keyName: cacheKeyNames[index],
+            keyName: keysToRecompute[index].keyName,
             reason: settled.reason,
           });
         }
@@ -788,10 +765,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           ),
           args: [
             String(this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000),
-            ...computed.flatMap(({ keyName, data, hashToPublish }) => {
-              const expectedHash = expectedHashes[keyName];
-
-              return [
+            ...computed.flatMap(
+              ({ keyName, data, expectedHash, hashToPublish }) => [
                 isDefined(expectedHash) ? JSON.stringify(expectedHash) : '',
                 JSON.stringify(hashToPublish),
                 this.localDataOnlyKeys.has(keyName)
@@ -799,8 +774,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
                   : JSON.stringify(
                       this.getProviderOrThrow(keyName).compactForStorage(data),
                     ),
-              ];
-            }),
+              ],
+            ),
           ],
         });
       } finally {
