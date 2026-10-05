@@ -2,12 +2,11 @@ import { z } from 'zod';
 
 import { isDefined } from '@/utils/validation/isDefined';
 
-import { workflowSendEmailActionSettingsSchema } from '@/workflow/schemas/send-email-action-settings-schema';
-import { workflowCreateCalendarEventActionSettingsSchema } from '@/workflow/schemas/create-calendar-event-action-settings-schema';
 import { workflowHttpRequestActionSettingsSchema } from '@/workflow/schemas/http-request-action-settings-schema';
 import { workflowClassifyActionSettingsSchema } from '@/workflow/schemas/classify-action-settings-schema';
 import { workflowIteratorActionSettingsSchema } from '@/workflow/schemas/iterator-action-settings-schema';
 import { workflowDelayActionSettingsSchema } from '@/workflow/schemas/workflow-delay-action-settings-schema';
+import { workflowWaitForEventActionSettingsSchema } from '@/workflow/schemas/wait-for-event-action-settings-schema';
 import { workflowEmptyActionSettingsSchema } from '@/workflow/schemas/empty-action-settings-schema';
 import { baseWorkflowActionSettingsSchema } from '@/workflow/schemas/base-workflow-action-settings-schema';
 import { workflowCreateRecordActionSettingsSchema } from '@/workflow/schemas/create-record-action-settings-schema';
@@ -56,11 +55,6 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
     logicFunctionUniversalIdentifier: z.uuid(),
     input: z.record(z.string(), z.unknown()),
   }),
-  stepSchema('SEND_EMAIL', workflowSendEmailActionSettingsSchema.shape.input),
-  stepSchema(
-    'CREATE_CALENDAR_EVENT',
-    workflowCreateCalendarEventActionSettingsSchema.shape.input,
-  ),
   stepSchema(
     'HTTP_REQUEST',
     workflowHttpRequestActionSettingsSchema.shape.input,
@@ -68,8 +62,11 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
   stepSchema('CLASSIFY', workflowClassifyActionSettingsSchema.shape.input),
   stepSchema('ITERATOR', workflowIteratorActionSettingsSchema.shape.input),
   stepSchema('DELAY', workflowDelayActionSettingsSchema.shape.input),
+  stepSchema(
+    'WAIT_FOR_EVENT',
+    workflowWaitForEventActionSettingsSchema.shape.input,
+  ),
   stepSchema('EMPTY', workflowEmptyActionSettingsSchema.shape.input),
-  stepSchema('DRAFT_EMAIL', workflowSendEmailActionSettingsSchema.shape.input),
   stepSchema(
     'CREATE_RECORD',
     workflowCreateRecordActionSettingsSchema.shape.input

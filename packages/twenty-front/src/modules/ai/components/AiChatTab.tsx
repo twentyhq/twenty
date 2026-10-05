@@ -1,6 +1,4 @@
-import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { styled } from '@linaria/react';
 import { type DragEvent, useState } from 'react';
@@ -8,6 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AgentChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOpenedEffect';
+import { AgentChatThreadMarkAsReadEffect } from '@/ai/components/AgentChatThreadMarkAsReadEffect';
 import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
@@ -66,6 +65,7 @@ export const AiChatTab = () => {
     >
       {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
       <AgentChatHasBeenOpenedEffect />
+      <AgentChatThreadMarkAsReadEffect />
       <AgentChatStreamingPartsDiffSyncEffect />
       {isDraggingFile && (
         <DropZone
@@ -74,13 +74,11 @@ export const AiChatTab = () => {
         />
       )}
       {!isDraggingFile && (
-        <AiChatMessageListPreambleContext.Provider
-          value={isWorkspaceSetupChat ? <WorkspaceSetupChatPreamble /> : null}
-        >
+        <>
           <AiChatTabMessageList />
           <AiChatQueuedMessages />
           <AiChatEditorSection key={editorSectionKey} />
-        </AiChatMessageListPreambleContext.Provider>
+        </>
       )}
     </StyledContainer>
   );

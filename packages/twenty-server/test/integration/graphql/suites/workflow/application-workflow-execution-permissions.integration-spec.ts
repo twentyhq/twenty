@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
-import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
+import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
@@ -552,6 +552,23 @@ describe('application workflow execution permissions', () => {
     ).toBe(0);
   }, 120000);
 
+  it('refuses email steps when an application token starts a workspace workflow', async () => {
+    const { status, stepStatus, stepError } = await runWorkflowActionStep({
+      name: `${RUN_PREFIX} workspace email workflow started by the application`,
+      stepType: 'SEND_EMAIL',
+      input: {
+        recipients: { to: 'recipient@example.com' },
+        subject: 'Application workflow permissions',
+        body: 'Should never be sent',
+      },
+      runToken: await buildJaneTokenThroughApplication(APP_ID),
+    });
+
+    expect(status).toBe('FAILED');
+    expect(stepStatus).toBe('FAILED');
+    expect(stepError).toContain('Applications cannot use SEND_EMAIL steps');
+  }, 120000);
+
   it('only lets the values of a form step change on an application workflow run', async () => {
     const workflowRunId = await runWorkflow(FORM_WORKFLOW);
     const [formStep] = FORM_WORKFLOW.steps;
@@ -594,20 +611,8 @@ describe('application workflow execution permissions', () => {
     expect(filledStep.body.errors).toBeUndefined();
   }, 120000);
 
-  it('reads the records picked in a form with the permissions of the run', async () => {
+  it('reads the records picked in a form with the permissions of the run, keeping a refused form open', async () => {
     const [formStep] = FORM_WORKFLOW.steps;
-    const startFormRun = async () => {
-      const workflowRunId = await runWorkflow(FORM_WORKFLOW);
-
-      await waitForRun(
-        workflowRunId,
-        ({ state }) =>
-          state?.stepInfos?.[formStep.universalIdentifier]?.status ===
-          'PENDING',
-      );
-
-      return workflowRunId;
-    };
 
     const [opportunity] = await globalThis.testDataSource.query(
       `SELECT id FROM "${SCHEMA}"."opportunity" WHERE "deletedAt" IS NULL LIMIT 1`,
@@ -616,35 +621,51 @@ describe('application workflow execution permissions', () => {
       `SELECT id FROM "${SCHEMA}"."company" WHERE "deletedAt" IS NULL LIMIT 1`,
     );
 
-    const unreadableRunId = await startFormRun();
-    const unreadableSelection = await answerToolCall({
-      toolCall: {
-        workflowRunId: unreadableRunId,
-        stepId: formStep.universalIdentifier,
-      },
+    const formRunId = await runWorkflow(FORM_WORKFLOW);
+
+    await waitForRun(
+      formRunId,
+      ({ state }) =>
+        state?.stepInfos?.[formStep.universalIdentifier]?.status === 'PENDING',
+    );
+
+    const unreadableSelection = await submitFormStep({
+      workflowRunId: formRunId,
+      stepId: formStep.universalIdentifier,
       response: { opportunity: { id: opportunity.id } },
     });
 
     expect(unreadableSelection.body.errors).toBeDefined();
-    expect((await waitForRunToEnd(unreadableRunId)).status).toBe('FAILED');
+    expect(
+      (await findRun(formRunId)).state.stepInfos[formStep.universalIdentifier]
+        .status,
+    ).toBe('PENDING');
 
-    const readableRunId = await startFormRun();
-    const readableSelection = await answerToolCall({
-      toolCall: {
-        workflowRunId: readableRunId,
-        stepId: formStep.universalIdentifier,
-      },
+    const malformedSelection = await submitFormStep({
+      workflowRunId: formRunId,
+      stepId: formStep.universalIdentifier,
+      response: { company: { id: 'not-a-record-id' } },
+    });
+
+    expect(malformedSelection.body.errors).toBeDefined();
+
+    const readableSelection = await submitFormStep({
+      workflowRunId: formRunId,
+      stepId: formStep.universalIdentifier,
       response: { company: { id: company.id } },
     });
 
     expect(readableSelection.body.errors).toBeUndefined();
 
-    const workflowRun = await waitForRunToEnd(readableRunId);
+    const workflowRun = await waitForRunToEnd(formRunId);
 
     expect(workflowRun.status).toBe('COMPLETED');
     expect(
       workflowRun.state.stepInfos[formStep.universalIdentifier].result,
     ).toMatchObject({ company: { id: company.id } });
+    expect(
+      workflowRun.state.stepInfos[formStep.universalIdentifier].result,
+    ).not.toHaveProperty('opportunity');
   }, 120000);
 
   it('checks the current application permissions again when a delayed run resumes', async () => {

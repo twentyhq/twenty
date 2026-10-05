@@ -168,7 +168,7 @@ describe('Admin panel global chat threads (integration)', () => {
     createdAt,
   }: {
     threadId: string;
-    role: 'user' | 'assistant';
+    role: 'system' | 'user' | 'assistant';
     isHidden?: boolean;
     createdAt: string;
   }): Promise<string> => {
@@ -284,15 +284,14 @@ describe('Admin panel global chat threads (integration)', () => {
       id: randomUUID(),
       title: 'integration-onboarding-kickoff-thread',
     });
-    const hiddenKickoffMessageId = await insertMessage({
+    const kickoffContextMessageId = await insertMessage({
       threadId: kickoffThreadId,
-      role: 'user',
-      isHidden: true,
+      role: 'system',
       createdAt: '2026-01-01T00:00:00Z',
     });
 
     await insertPart({
-      messageId: hiddenKickoffMessageId,
+      messageId: kickoffContextMessageId,
       orderIndex: 0,
       type: 'text',
       textContent: 'kickoff prompt with company context',
@@ -380,17 +379,17 @@ describe('Admin panel global chat threads (integration)', () => {
     await insertPart({
       messageId: answeredQuestionMessageId,
       orderIndex: 0,
-      type: 'tool-ask_questions',
-      toolName: 'ask_questions',
-      toolCallId: 'call-answered-questions',
-      toolInput: { questions: questionItems },
+      type: 'tool-ask_question',
+      toolName: 'ask_question',
+      toolCallId: 'call-answered-question',
+      toolInput: questionItems[0],
       toolOutput: {
         success: true,
-        message: 'User answered the questions.',
+        message: 'User answered the question.',
         result: {
-          questions: questionItems,
+          question: questionItems[0],
           status: 'answered',
-          answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
+          answer: { selectedOptionIndices: [0] },
         },
       },
       state: 'output-available',
@@ -703,7 +702,7 @@ describe('Admin panel global chat threads (integration)', () => {
   });
 
   describe('getAdminChatThreadMessages', () => {
-    it('returns the hidden kickoff first with enriched ordered parts', async () => {
+    it('returns the kickoff context first with enriched ordered parts', async () => {
       const response = await makeAdminPanelApiRequest({
         query: GET_ADMIN_CHAT_THREAD_MESSAGES,
         variables: { threadId: kickoffThreadId },
@@ -716,8 +715,8 @@ describe('Admin panel global chat threads (integration)', () => {
       expect(result.thread.messageCount).toBe(2);
       expect(result.messages).toHaveLength(3);
       expect(result.messages[0]).toMatchObject({
-        role: 'USER',
-        isHidden: true,
+        role: 'SYSTEM',
+        isHidden: false,
       });
       expect(result.messages[0].parts[0].textContent).toBe(
         'kickoff prompt with company context',

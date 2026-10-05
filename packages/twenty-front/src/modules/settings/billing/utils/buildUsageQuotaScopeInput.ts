@@ -9,14 +9,14 @@ export const buildUsageQuotaScopeInput = ({
   operationType,
   spenderType,
   spenderId,
-  meter,
+  unit,
   periodUnit,
 }: Omit<UsageLimitFormValues, 'limitValue'>): UsageQuotaScopeInput | null => {
   if (
     !isDefined(resourceType) ||
     !isDefined(operationType) ||
     !isDefined(spenderType) ||
-    !isDefined(meter) ||
+    !isDefined(unit) ||
     !isDefined(periodUnit)
   ) {
     return null;
@@ -30,7 +30,7 @@ export const buildUsageQuotaScopeInput = ({
       spenderType !== 'workspace' && isNonEmptyString(spenderId.trim())
         ? spenderId.trim()
         : null,
-    meter,
+    unit,
     periodUnit,
   };
 };

@@ -56,8 +56,15 @@ export const computeWhereConditionParts = ({
 
   switch (operator) {
     case 'isEmptyArray':
+      if (value === true) {
+        return {
+          sql: `(${fieldReference} = '{}' OR ${fieldReference} IS NULL)`,
+          params: {},
+        };
+      }
+
       return {
-        sql: `${fieldReference} = '{}'${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
+        sql: `(${fieldReference} IS NOT NULL AND ${fieldReference} != '{}')`,
         params: {},
       };
     case 'eq':

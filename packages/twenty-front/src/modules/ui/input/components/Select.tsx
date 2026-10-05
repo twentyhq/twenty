@@ -160,7 +160,15 @@ export const Select = <TValue extends SelectValue>({
           variant={variant}
         />
       ) : (
-        <DropdownRoot dropdownId={dropdownId} type="picker">
+        <DropdownRoot
+          dropdownId={dropdownId}
+          type="picker"
+          onOpenChange={(open) => {
+            if (open) {
+              setSearchInputValue('');
+            }
+          }}
+        >
           <Dropdown.Trigger render={<div />} nativeButton={false}>
             <SelectControl
               renderAsTag={renderAsTag}

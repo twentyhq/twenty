@@ -454,4 +454,97 @@ describe('Core REST API Find Many endpoint', () => {
       expect(new Set(ids).size).toBe(opportunityCount);
     });
   });
+
+  describe('fields parameter', () => {
+    it('should only return the requested fields and id', async () => {
+      const response = await makeRestApiRequest({
+        method: 'get',
+        path: '/people?fields=jobTitle,emails',
+      }).expect(200);
+
+      const people = response.body.data.people;
+
+      expect(people.length).toBe(testPersonIds.length);
+
+      for (const person of people) {
+        expect(Object.keys(person).sort()).toEqual(
+          ['emails', 'id', 'jobTitle'].sort(),
+        );
+        expect(person.emails).toHaveProperty('primaryEmail');
+      }
+    });
+
+    it('should paginate on a field that is not requested', async () => {
+      const fullOrderResponse = await makeRestApiRequest({
+        method: 'get',
+        path: '/people?order_by=position[AscNullsFirst]&limit=4',
+      }).expect(200);
+
+      const expectedIds = fullOrderResponse.body.data.people.map(
+        (person: { id: string }) => person.id,
+      );
+
+      const firstPageResponse = await makeRestApiRequest({
+        method: 'get',
+        path: '/people?fields=jobTitle&order_by=position[AscNullsFirst]&limit=2',
+      }).expect(200);
+
+      const firstPage = firstPageResponse.body.data.people;
+
+      expect(firstPage[0].position).toBeUndefined();
+      expect(firstPageResponse.body.pageInfo.hasNextPage).toBe(true);
+
+      const secondPageResponse = await makeRestApiRequest({
+        method: 'get',
+        path: `/people?fields=jobTitle&order_by=position[AscNullsFirst]&limit=2&starting_after=${firstPageResponse.body.pageInfo.endCursor}`,
+      }).expect(200);
+
+      const paginatedIds = [
+        ...firstPage,
+        ...secondPageResponse.body.data.people,
+      ].map((person: { id: string }) => person.id);
+
+      expect(paginatedIds).toEqual(expectedIds);
+    });
+
+    it('should only expand requested relations at depth 1', async () => {
+      const withoutRelationResponse = await makeRestApiRequest({
+        method: 'get',
+        path: '/people?fields=jobTitle&depth=1',
+      }).expect(200);
+
+      expect(
+        withoutRelationResponse.body.data.people[0].company,
+      ).toBeUndefined();
+
+      const withRelationResponse = await makeRestApiRequest({
+        method: 'get',
+        path: '/people?fields=jobTitle,company&depth=1',
+      }).expect(200);
+
+      const person = withRelationResponse.body.data.people[0];
+
+      expect(person.company.id).toBe(TEST_COMPANY_1_ID);
+      expect(person.pointOfContactForOpportunities).toBeUndefined();
+    });
+
+    it('should return 400 on unknown fields', async () => {
+      await makeRestApiRequest({
+        method: 'get',
+        path: '/people?fields=jobTitle,unknownField',
+      })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.error).toBe('BadRequestException');
+          expect(res.body.messages[0]).toContain('unknownField');
+        });
+    });
+
+    it('should return 400 on an empty fields parameter', async () => {
+      await makeRestApiRequest({
+        method: 'get',
+        path: '/people?fields=',
+      }).expect(400);
+    });
+  });
 });

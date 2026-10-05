@@ -1,5 +1,6 @@
 import { mapDBPartToUIMessagePart } from '@/ai/utils/mapDBPartToUIMessagePart';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { type AgentMessage } from '~/generated-metadata/graphql';
 
 export const mapDBMessagesToUIMessages = (
@@ -11,7 +12,8 @@ export const mapDBMessagesToUIMessages = (
     status: dbMessage.status as 'queued' | 'sent',
     parts: [...dbMessage.parts]
       .sort((a, b) => a.orderIndex - b.orderIndex)
-      .map(mapDBPartToUIMessagePart),
+      .map(mapDBPartToUIMessagePart)
+      .filter(isDefined),
     metadata: {
       createdAt: dbMessage.createdAt,
       senderUserWorkspaceId: dbMessage.senderUserWorkspaceId,

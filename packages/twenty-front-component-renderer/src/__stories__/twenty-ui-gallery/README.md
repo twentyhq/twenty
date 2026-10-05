@@ -16,9 +16,15 @@ requiring them to occur.
 | Fixture | Components |
 | --- | --- |
 | `twenty-ui-field-controls` | Field, Input, InputGroup, Textarea |
+| `twenty-ui-number-stepper` | NumberStepper (keyboard bounds, disabled/read-only state, named form values and submission) |
 | `twenty-ui-display-helpers` | Text |
+| `twenty-ui-avatar-controls` | Avatar (fallback, pointer/keyboard activation and disabled state) |
+| `twenty-ui-avatar-image` | Avatar (decoded images, broken-source fallback, replacement and unmount/remount) |
+| `twenty-ui-image-input` | ImageInput |
 | `twenty-ui-list-item` | ListItem |
 | `twenty-ui-tabs` | Tabs |
+| `twenty-ui-overflowing-list` | OverflowingList |
+| `twenty-ui-phone-country-picker` | PhoneCountryPicker |
 | `twenty-ui-popover` | Popover |
 | `twenty-ui-menu` | Menu |
 | `twenty-ui-select` | Select |
@@ -28,6 +34,7 @@ requiring them to occur.
 | `twenty-ui-tooltip` | Tooltip (convenience and compound APIs) |
 | `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, Button hotkeys |
 | `twenty-ui-reading-directions` | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
+| `twenty-ui-country-select` | CountrySelect (`TwentyUiCountrySelect.stories.tsx`) |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
@@ -37,6 +44,15 @@ not fit the card's width.
 The story builder resolves that stylesheet to the individual build's CSS so
 class names match the JavaScript used by the sandbox. Importing CSS through the
 shared card also exercises the SDK's CSS injection and the renderer's style bridge.
+
+The Avatar image browser tests also hold real SVG responses until after source
+replacement or unmount. A test-only observer waits for the native image's load
+event before checking that the replaced source's response cannot replace the
+fallback, and that a response arriving after unmount does not break the
+remounted Avatar. The Storybook Vite fixture middleware owns these pending
+responses and closes them on teardown or timeout. These delayed-response steps
+run only in test mode; the regular and static stories use data images and
+retain working source controls, fallback, replacement and unmount/remount checks.
 
 ## Known sandbox limitations
 
@@ -51,10 +67,15 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | Component | Current limitation |
 | --- | --- |
 | Field controls | Forwarded events lack the `nativeEvent` Base UI reads for `composedPath`. Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
+| NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Text editing fails because forwarded events lack the `nativeEvent.defaultPrevented` Base UI reads. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree and stops Preact rendering. Separate React and Preact stories assert the pointer and typing gaps and successful keyboard bounds, disabled/read-only state, named form values and submission. |
+| ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/image-input.mdx). |
 | Tabs | Activation fails on the missing `nativeEvent` for `composedPath` in both runtimes. |
 | Popover, Dialog, AlertDialog | Opening fails while reading pointer contact data from the missing `nativeEvent`. |
+| OverflowingList | Both runtimes measure, resize, and unmount the inline list, and keep rendering afterwards. A scoped light provider keeps popup portals inside the connected remote root and matches the gallery theme. Popup lifecycle checks verify selection, dismissal, focus restoration, and independent lists while requiring the missing native pointer width error; missing native `defaultPrevented` data and event constructor errors are optional. Focus restoration can also call a stale host listener, which is checked with the existing exact host-error assertion. Separate event isolation failure stories verify that opening the trigger activates the surrounding host, then check that popup selection adds no host activation. Full popup compatibility remains blocked on the event bridge work in [#26356](https://github.com/twentyhq/twenty/pull/26356). |
+| PhoneCountryPicker | Both runtimes render the triggers, flags, and disabled state. Opening fails while reading pointer contact data from the missing `nativeEvent`. In React the popup still mounts, and the Dropdown search effect then reads `dataset`, which sandbox elements lack; the uncaught error unmounts the React tree, so the React story requires that error and keeps the pointer error optional. See the [PhoneCountryPicker documentation](../../../../twenty-docs/ui/components/phone-country-picker.mdx). |
 | Menu | Opening fails on the missing `nativeEvent.pointerType` and pointer contact data. |
 | Select | Opening fails on missing native event data and focus support. Preact can report only the last of these failures when the host coalesces sandbox errors. |
+| CountrySelect | Opening fails while reading pointer contact data from the missing `nativeEvent`. React still mounts the popup, and the Dropdown search target then reads `dataset`, which worker elements do not provide, so that error is allowed without being required; Preact stops at the opening error. The fixture checks the selected values and decorative flags, then clicks the disabled trigger and, after a settle delay, requires the opening error alone, so a popup mounted by React fails the story. Clicking an enabled trigger then asserts the opening error. |
 | Switch, Checkbox, Radio (standard and card), SegmentedControl | Activation attempts to construct an unavailable `PointerEvent`. `RadioCardReact` never gets that far: React drops the click handler Base UI adds through `React.cloneElement`, so only the group's focus handling fails on the missing `nativeEvent` for `composedPath`. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
 | Tooltip | `TooltipReact` opens on hover but remains open after Escape because React drops the handlers Base UI adds through `React.cloneElement`. |
@@ -89,4 +110,12 @@ Then, from `packages/twenty-front-component-renderer`, run:
 
 ```sh
 npx vitest run --config vitest.storybook.config.ts TwentyUiGallery.stories.tsx
+```
+
+The CountrySelect and reading-directions fixtures live in their own story
+files, so run them separately:
+
+```sh
+npx vitest run --config vitest.storybook.config.ts TwentyUiCountrySelect.stories.tsx
+npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.stories.tsx
 ```

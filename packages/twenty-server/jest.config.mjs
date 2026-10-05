@@ -17,7 +17,7 @@ const jestConfig = {
   setupFilesAfterEnv: ['./setupTests.ts'],
   transformIgnorePatterns: [
     // ESM-only deps jest's CJS runtime cannot load; (.*/node_modules/)? also matches nested copies like sanitize-html's htmlparser2
-    '/node_modules/(?!(.*/node_modules/)?(file-type|@file-type|strtok3|token-types|@borewit|@tokenizer|uint8array-extras|read-next-line|digest-fetch|md5|js-sha256|js-sha512|base-64|charenc|crypt|email-reply-parser|jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|graphql-upload|fs-capacitor|e2b|@e2b|chalk|ai|@ai-sdk|@workflow|htmlparser2|domhandler|domutils|dom-serializer|domelementtype|@faker-js|twenty-oxlint-rules)/)',
+    '/node_modules/(?!(.*/node_modules/)?(file-type|@file-type|strtok3|token-types|@borewit|@tokenizer|uint8array-extras|read-next-line|digest-fetch|md5|js-sha256|js-sha512|base-64|charenc|crypt|email-reply-parser|jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|graphql-upload|fs-capacitor|e2b|@e2b|chalk|ai|@ai-sdk|@workflow|htmlparser2|marked|domhandler|domutils|dom-serializer|domelementtype|@faker-js|twenty-oxlint-rules)/)',
   ],
   testRegex: '.*\\.spec\\.ts$',
   transform: {

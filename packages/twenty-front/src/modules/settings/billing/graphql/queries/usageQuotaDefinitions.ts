@@ -5,9 +5,11 @@ export const USAGE_QUOTA_DEFINITIONS = gql`
     usageQuotaDefinitions {
       definitions {
         resourceType
-        allowedOperationTypes
+        allowedOperations {
+          operationType
+          allowedUnits
+        }
         allowedSpenderTypes
-        allowedMeters
       }
       isIntraWorkspaceLimitEntitled
       hasAllowancePeriod

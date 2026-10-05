@@ -13,11 +13,6 @@ import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/g
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 @Injectable()
 export class AgentChatThreadLifecycleService {
@@ -87,27 +82,7 @@ export class AgentChatThreadLifecycleService {
     }
   }
 
-  // a run's conversation records what its agent step did, so the record API may only read it
-  async assertThreadIsNotWorkflowRunThread({
-    workspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-  }): Promise<void> {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
-
-    if (isDefined(thread?.workflowRunId)) {
-      throw new PermissionsException(
-        `${PermissionsExceptionMessage.PERMISSION_DENIED}: a workflow run conversation is read-only`,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-  }
-
-  // owned and workflow-run threads are skipped so an upsert cannot reassign them
+  // owned threads are skipped so an upsert cannot reassign them
   async assignCreatedThreadsToCreator({
     authContext,
     threadIds,
@@ -120,10 +95,7 @@ export class AgentChatThreadLifecycleService {
     }
 
     const workspaceId = authContext.workspace.id;
-    const unassignedThreadCriteria = {
-      workspaceMemberId: IsNull(),
-      workflowRunId: IsNull(),
-    };
+    const unassignedThreadCriteria = { workspaceMemberId: IsNull() };
 
     const threadsBefore = await this.threadRepository.find(workspaceId, {
       where: { id: In(threadIds), ...unassignedThreadCriteria },

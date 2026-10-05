@@ -12,6 +12,7 @@ import { type DataSource } from 'typeorm';
 
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { type MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
+import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791094130961-drop-core-agent-history-tables';
 import { type ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790317893308-provision-agent-chat-thread-target.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { type WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
@@ -132,9 +133,19 @@ describe('versioned agent history upgrade (integration)', () => {
     dataSource = owners.manager.connection;
     const owner = await owners.findOneByOrFail({ workspaceId: WORKSPACE_ID });
 
-    // Run-owned threads arrived with 2.44 and have no member owner in the core tables 2.42 restores.
+    // Recreate the pre-2.47 state this upgrade rolls back from: the core
+    // tables, and the route 2.42 recorded on every workspace it moved
+    const runner = dataSource.createQueryRunner();
+    try {
+      await new DropCoreAgentHistoryTablesFastInstanceCommand().down(runner);
+      await storage.writeState(runner, WORKSPACE_ID, { storage: 'workspace' });
+    } finally {
+      await runner.release();
+    }
+
+    // Threads no member owns arrived with 2.44 and have no owner in the core tables 2.42 restores.
     await dataSource.query(
-      `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE "workflowRunId" IS NOT NULL`,
+      `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE "workspaceMemberId" IS NULL`,
     );
     await runCommand('down');
     await dataSource.query(
@@ -278,6 +289,12 @@ describe('versioned agent history upgrade (integration)', () => {
     expect(await describeAgentChatThreadTarget(dataSource)).toEqual(
       seededAgentChatThreadTarget,
     );
+    const runner = dataSource.createQueryRunner();
+    try {
+      await new DropCoreAgentHistoryTablesFastInstanceCommand().up(runner);
+    } finally {
+      await runner.release();
+    }
   });
 
   it('skips absent schemas only when no history or migration state exists', async () => {

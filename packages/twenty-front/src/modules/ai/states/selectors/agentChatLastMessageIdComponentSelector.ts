@@ -1,7 +1,6 @@
-import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
+import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatDisplayedThreadMessagesComponentSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesComponentSelector';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 
 export const agentChatLastMessageIdComponentSelector =
@@ -11,16 +10,16 @@ export const agentChatLastMessageIdComponentSelector =
     get:
       ({ instanceId }) =>
       ({ get }) => {
-        const currentThreadId = get(agentChatDisplayedThreadState);
-
-        const messages = get(agentChatMessagesComponentFamilyState, {
-          instanceId,
-          familyKey: { threadId: currentThreadId },
-        });
+        const messages = get(
+          agentChatDisplayedThreadMessagesComponentSelector,
+          {
+            instanceId,
+          },
+        );
 
         const lastMessage = messages.at(-1);
 
-        if (lastMessage?.role === AgentMessageRole.USER) {
+        if (lastMessage?.role === AGENT_MESSAGE_ROLE.USER) {
           return null;
         }
 

@@ -281,6 +281,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
+    sharingReach: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     isUICreatable: {
       toCompare: true,
       toStringify: false,
@@ -977,6 +982,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     evaluationInputs: {
       toCompare: true,
       toStringify: true,
+      universalProperty: undefined,
+    },
+    isSystem: {
+      toCompare: true,
+      toStringify: false,
       universalProperty: undefined,
     },
     isCustom: {
@@ -2120,6 +2130,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    isSystem: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     visibility: {
       toCompare: true,
       toStringify: false,

@@ -1414,8 +1414,18 @@ export const STANDARD_OBJECTS = {
       workspaceMemberIndex: {
         universalIdentifier: '079f2dd7-6c11-4eae-be8a-cce2d1bee0fb',
       },
-      workflowRunIndex: {
-        universalIdentifier: 'cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b',
+    },
+  },
+  agentChatThreadParticipant: {
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadParticipant,
+    fields: STANDARD_OBJECT_FIELDS.agentChatThreadParticipant,
+    indexes: {
+      threadWorkspaceMemberUniqueIndex: {
+        universalIdentifier: 'e5bbe244-cf74-49a3-938a-e6fff7a8710b',
+      },
+      workspaceMemberIndex: {
+        universalIdentifier: '73d8bb5d-18eb-47bb-89e6-12d8f89aecf6',
       },
     },
   },

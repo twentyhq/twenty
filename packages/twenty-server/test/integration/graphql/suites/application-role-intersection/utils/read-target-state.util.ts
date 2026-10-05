@@ -1,7 +1,5 @@
-import gql from 'graphql-tag';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -44,22 +42,6 @@ export const workspaceMemberExists = async (
   const workspaceMembers = await findWorkspaceMembers(workspaceMemberId, 'id');
 
   return workspaceMembers.length === 1;
-};
-
-export const readWorkspaceDisplayName = async (): Promise<string> => {
-  const response = await makeMetadataApiRequest({
-    query: gql`
-      query CurrentWorkspace {
-        currentWorkspace {
-          displayName
-        }
-      }
-    `,
-  });
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.currentWorkspace.displayName;
 };
 
 // A refused workspace-scoped blocklist entry must leave the count untouched.

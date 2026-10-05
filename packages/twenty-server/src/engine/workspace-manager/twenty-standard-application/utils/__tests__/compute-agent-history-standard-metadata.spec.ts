@@ -14,6 +14,7 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 const OBJECT_NAMES = [
   'agentChatThread',
   'agentChatThreadTarget',
+  'agentChatThreadParticipant',
   'agentMessage',
   'agentMessagePart',
   'agentTurn',
@@ -96,12 +97,16 @@ describe('agent history workspace metadata', () => {
     >
   > = {
     agentChatThread: {
-      readability: MetadataReadability.INHERITED,
+      readability: MetadataReadability.PRIVATE,
       writability: MetadataWritability.OPEN,
     },
     agentChatThreadTarget: {
       readability: MetadataReadability.INHERITED,
       writability: MetadataWritability.OPEN,
+    },
+    agentChatThreadParticipant: {
+      readability: MetadataReadability.PRIVATE,
+      writability: MetadataWritability.SYSTEM,
     },
   };
 
