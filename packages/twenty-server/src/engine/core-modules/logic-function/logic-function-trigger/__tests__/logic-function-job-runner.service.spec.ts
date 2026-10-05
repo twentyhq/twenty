@@ -32,6 +32,18 @@ describe('LogicFunctionJobRunnerService', () => {
       persistRetryCount,
     });
 
+  const expectExecutedOnce = () => {
+    expect(execute).toHaveBeenCalledTimes(1);
+    expect(execute).toHaveBeenCalledWith({
+      logicFunctionId: 'logic-function-id',
+      workspaceId: 'workspace-id',
+      payload: {},
+      userId: undefined,
+      userWorkspaceId: undefined,
+      retry: { retryCount: 0, maxRetries: 3 },
+    });
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -41,6 +53,8 @@ describe('LogicFunctionJobRunnerService', () => {
     existsBy.mockResolvedValue(false);
 
     await expect(run()).resolves.toBeUndefined();
+    expectExecutedOnce();
+    expect(existsBy).toHaveBeenCalledTimes(1);
     expect(existsBy).toHaveBeenCalledWith('workspace-id', {
       id: 'logic-function-id',
     });
@@ -52,6 +66,8 @@ describe('LogicFunctionJobRunnerService', () => {
     existsBy.mockResolvedValue(true);
 
     await expect(run()).rejects.toBe(notFoundError);
+    expectExecutedOnce();
+    expect(existsBy).toHaveBeenCalledTimes(1);
   });
 
   it('fails the job on other execution errors', async () => {
@@ -63,5 +79,7 @@ describe('LogicFunctionJobRunnerService', () => {
     execute.mockRejectedValue(rateLimitError);
 
     await expect(run()).rejects.toBe(rateLimitError);
+    expectExecutedOnce();
+    expect(existsBy).not.toHaveBeenCalled();
   });
 });
