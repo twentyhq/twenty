@@ -10,7 +10,6 @@ import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UnsubscribeTopicEntity } from 'src/engine/core-modules/emailing-domain/unsubscribe-topic.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
@@ -67,7 +66,6 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     PermissionsModule,
     UserRoleModule,
     BillingModule,
-    UsageModule,
     WorkspaceEventEmitterModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
