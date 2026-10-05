@@ -7,7 +7,8 @@ Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
 shared assertions, render checks, interaction checks, and known-failure
 scenarios. Shared types live in `types/` and shared constants in `constants/`;
-each known-failure scenario declares the error pattern it requires.
+known-failure scenarios that assert sandbox errors declare the patterns they
+require.
 `createGalleryRenderTest` checks the exact set of expected failed components.
 `createOverlayOpenTest` checks that a trigger opens its overlay and pins the
 popup content as absent from the page. `createDropdownOpenTest` applies it to
