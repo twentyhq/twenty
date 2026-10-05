@@ -56,19 +56,19 @@ export default {
         136,
         151,
         155,
-        157,
-        158,
-        160,
-        163,
-        170,
-        173,
+        168,
+        169,
+        171,
         174,
-        175,
-        176,
-        179,
-        182,
+        181,
+        184,
         185,
+        186,
         187,
+        190,
+        193,
+        196,
+        198,
         208,
         213,
         220,
@@ -3140,487 +3140,6 @@ export default {
             ]
         },
         "LogicFunctionExecutionStatus": {},
-        "UsageLimitOperationDefinition": {
-            "operationType": [
-                157
-            ],
-            "allowedUnits": [
-                158
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageOperationType": {},
-        "UsageUnit": {},
-        "UsageQuotaDefinition": {
-            "resourceType": [
-                160
-            ],
-            "limitKind": [
-                1
-            ],
-            "allowedOperations": [
-                156
-            ],
-            "allowedSpenderTypes": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageResourceType": {},
-        "UsageQuotaDefinitions": {
-            "definitions": [
-                159
-            ],
-            "isIntraWorkspaceLimitEntitled": [
-                8
-            ],
-            "hasAllowancePeriod": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageQuotaWithConsumption": {
-            "id": [
-                3
-            ],
-            "resourceType": [
-                160
-            ],
-            "operationType": [
-                157
-            ],
-            "spenderType": [
-                1
-            ],
-            "spenderId": [
-                1
-            ],
-            "spenderLabel": [
-                1
-            ],
-            "periodUnit": [
-                1
-            ],
-            "unit": [
-                158
-            ],
-            "limitValue": [
-                163
-            ],
-            "isEnforced": [
-                8
-            ],
-            "consumedValue": [
-                163
-            ],
-            "remainingValue": [
-                163
-            ],
-            "periodStart": [
-                4
-            ],
-            "periodEnd": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BigInt": {},
-        "UsageQuotaScopeConsumption": {
-            "consumedValue": [
-                163
-            ],
-            "periodStart": [
-                4
-            ],
-            "periodEnd": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageLimit": {
-            "id": [
-                3
-            ],
-            "resourceType": [
-                160
-            ],
-            "operationType": [
-                157
-            ],
-            "spenderType": [
-                1
-            ],
-            "spenderId": [
-                1
-            ],
-            "limitKind": [
-                1
-            ],
-            "periodCount": [
-                31
-            ],
-            "periodUnit": [
-                1
-            ],
-            "unit": [
-                158
-            ],
-            "limitValue": [
-                163
-            ],
-            "burstValue": [
-                163
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "FileWithSignedUrl": {
-            "id": [
-                3
-            ],
-            "path": [
-                1
-            ],
-            "size": [
-                15
-            ],
-            "createdAt": [
-                4
-            ],
-            "url": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "FileUploadTarget": {
-            "fileId": [
-                3
-            ],
-            "uploadUrl": [
-                1
-            ],
-            "contentType": [
-                1
-            ],
-            "expiresAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RecordIdentifier": {
-            "id": [
-                3
-            ],
-            "labelIdentifier": [
-                1
-            ],
-            "imageIdentifier": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "NavigationMenuItem": {
-            "id": [
-                3
-            ],
-            "userWorkspaceId": [
-                3
-            ],
-            "targetRecordId": [
-                3
-            ],
-            "targetObjectMetadataId": [
-                3
-            ],
-            "viewId": [
-                3
-            ],
-            "type": [
-                170
-            ],
-            "name": [
-                1
-            ],
-            "link": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "color": [
-                1
-            ],
-            "folderId": [
-                3
-            ],
-            "pageLayoutId": [
-                3
-            ],
-            "position": [
-                15
-            ],
-            "applicationId": [
-                3
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
-            ],
-            "targetRecordIdentifier": [
-                168
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "NavigationMenuItemType": {},
-        "RecordPermissionsDTO": {
-            "canRead": [
-                8
-            ],
-            "canUpdate": [
-                8
-            ],
-            "canDelete": [
-                8
-            ],
-            "canSoftDelete": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RecordSharingGrantDTO": {
-            "id": [
-                173
-            ],
-            "principalType": [
-                174
-            ],
-            "principalId": [
-                3
-            ],
-            "principalRoleId": [
-                3
-            ],
-            "accessLevel": [
-                175
-            ],
-            "rowCause": [
-                176
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ID": {},
-        "RecordSharePrincipalType": {},
-        "RecordShareAccessLevel": {},
-        "RecordShareRowCause": {},
-        "RecordSharingRoleDTO": {
-            "id": [
-                3
-            ],
-            "label": [
-                1
-            ],
-            "canRead": [
-                8
-            ],
-            "canUpdate": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RecordSharingDTO": {
-            "sharingMode": [
-                179
-            ],
-            "canManageSharing": [
-                8
-            ],
-            "permissions": [
-                171
-            ],
-            "generalAccessLevel": [
-                175
-            ],
-            "defaultGeneralAccessLevel": [
-                175
-            ],
-            "hasManagedGeneralAccess": [
-                8
-            ],
-            "roles": [
-                177
-            ],
-            "shares": [
-                172
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RecordSharingMode": {},
-        "RecordPermissionsResult": {
-            "objectMetadataId": [
-                3
-            ],
-            "recordId": [
-                3
-            ],
-            "permissions": [
-                171
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "JobStatus": {
-            "jobId": [
-                1
-            ],
-            "state": [
-                182
-            ],
-            "attemptsMade": [
-                31
-            ],
-            "failedReason": [
-                1
-            ],
-            "enqueuedAt": [
-                15
-            ],
-            "startedAt": [
-                15
-            ],
-            "finishedAt": [
-                15
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "JobState": {},
-        "ObjectRecordEventProperties": {
-            "updatedFields": [
-                1
-            ],
-            "before": [
-                9
-            ],
-            "after": [
-                9
-            ],
-            "diff": [
-                9
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "MetadataEvent": {
-            "type": [
-                185
-            ],
-            "metadataName": [
-                1
-            ],
-            "recordId": [
-                1
-            ],
-            "properties": [
-                183
-            ],
-            "updatedCollectionHash": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "MetadataEventAction": {},
-        "ObjectRecordEvent": {
-            "action": [
-                187
-            ],
-            "objectNameSingular": [
-                1
-            ],
-            "recordId": [
-                1
-            ],
-            "userId": [
-                1
-            ],
-            "workspaceMemberId": [
-                1
-            ],
-            "properties": [
-                183
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DatabaseEventAction": {},
-        "ObjectRecordEventWithQueryIds": {
-            "queryIds": [
-                1
-            ],
-            "objectRecordEvent": [
-                186
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "EventSubscription": {
-            "eventStreamId": [
-                1
-            ],
-            "objectRecordEventsWithQueryIds": [
-                188
-            ],
-            "metadataEvents": [
-                184
-            ],
-            "queueJobEvents": [
-                181
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "UserSession": {
             "id": [
                 3
@@ -3782,7 +3301,7 @@ export default {
                 1
             ],
             "dailyUsage": [
-                198
+                164
             ],
             "__typename": [
                 1
@@ -3790,19 +3309,19 @@ export default {
         },
         "UsageAnalytics": {
             "usageByUser": [
-                197
+                163
             ],
             "usageByOperationType": [
-                197
+                163
             ],
             "usageByApplication": [
-                197
+                163
             ],
             "usageByModel": [
-                197
+                163
             ],
             "timeSeries": [
-                198
+                164
             ],
             "periodStart": [
                 4
@@ -3811,7 +3330,488 @@ export default {
                 4
             ],
             "userDailyUsage": [
+                165
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageLimitOperationDefinition": {
+            "operationType": [
+                168
+            ],
+            "allowedUnits": [
+                169
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageOperationType": {},
+        "UsageUnit": {},
+        "UsageQuotaDefinition": {
+            "resourceType": [
+                171
+            ],
+            "limitKind": [
+                1
+            ],
+            "allowedOperations": [
+                167
+            ],
+            "allowedSpenderTypes": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageResourceType": {},
+        "UsageQuotaDefinitions": {
+            "definitions": [
+                170
+            ],
+            "isIntraWorkspaceLimitEntitled": [
+                8
+            ],
+            "hasAllowancePeriod": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageQuotaWithConsumption": {
+            "id": [
+                3
+            ],
+            "resourceType": [
+                171
+            ],
+            "operationType": [
+                168
+            ],
+            "spenderType": [
+                1
+            ],
+            "spenderId": [
+                1
+            ],
+            "spenderLabel": [
+                1
+            ],
+            "periodUnit": [
+                1
+            ],
+            "unit": [
+                169
+            ],
+            "limitValue": [
+                174
+            ],
+            "isEnforced": [
+                8
+            ],
+            "consumedValue": [
+                174
+            ],
+            "remainingValue": [
+                174
+            ],
+            "periodStart": [
+                4
+            ],
+            "periodEnd": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BigInt": {},
+        "UsageQuotaScopeConsumption": {
+            "consumedValue": [
+                174
+            ],
+            "periodStart": [
+                4
+            ],
+            "periodEnd": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageLimit": {
+            "id": [
+                3
+            ],
+            "resourceType": [
+                171
+            ],
+            "operationType": [
+                168
+            ],
+            "spenderType": [
+                1
+            ],
+            "spenderId": [
+                1
+            ],
+            "limitKind": [
+                1
+            ],
+            "periodCount": [
+                31
+            ],
+            "periodUnit": [
+                1
+            ],
+            "unit": [
+                169
+            ],
+            "limitValue": [
+                174
+            ],
+            "burstValue": [
+                174
+            ],
+            "createdAt": [
+                4
+            ],
+            "updatedAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "FileWithSignedUrl": {
+            "id": [
+                3
+            ],
+            "path": [
+                1
+            ],
+            "size": [
+                15
+            ],
+            "createdAt": [
+                4
+            ],
+            "url": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "FileUploadTarget": {
+            "fileId": [
+                3
+            ],
+            "uploadUrl": [
+                1
+            ],
+            "contentType": [
+                1
+            ],
+            "expiresAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RecordIdentifier": {
+            "id": [
+                3
+            ],
+            "labelIdentifier": [
+                1
+            ],
+            "imageIdentifier": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "NavigationMenuItem": {
+            "id": [
+                3
+            ],
+            "userWorkspaceId": [
+                3
+            ],
+            "targetRecordId": [
+                3
+            ],
+            "targetObjectMetadataId": [
+                3
+            ],
+            "viewId": [
+                3
+            ],
+            "type": [
+                181
+            ],
+            "name": [
+                1
+            ],
+            "link": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "color": [
+                1
+            ],
+            "folderId": [
+                3
+            ],
+            "pageLayoutId": [
+                3
+            ],
+            "position": [
+                15
+            ],
+            "applicationId": [
+                3
+            ],
+            "createdAt": [
+                4
+            ],
+            "updatedAt": [
+                4
+            ],
+            "targetRecordIdentifier": [
+                179
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "NavigationMenuItemType": {},
+        "RecordPermissionsDTO": {
+            "canRead": [
+                8
+            ],
+            "canUpdate": [
+                8
+            ],
+            "canDelete": [
+                8
+            ],
+            "canSoftDelete": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RecordSharingGrantDTO": {
+            "id": [
+                184
+            ],
+            "principalType": [
+                185
+            ],
+            "principalId": [
+                3
+            ],
+            "principalRoleId": [
+                3
+            ],
+            "accessLevel": [
+                186
+            ],
+            "rowCause": [
+                187
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ID": {},
+        "RecordSharePrincipalType": {},
+        "RecordShareAccessLevel": {},
+        "RecordShareRowCause": {},
+        "RecordSharingRoleDTO": {
+            "id": [
+                3
+            ],
+            "label": [
+                1
+            ],
+            "canRead": [
+                8
+            ],
+            "canUpdate": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RecordSharingDTO": {
+            "sharingMode": [
+                190
+            ],
+            "canManageSharing": [
+                8
+            ],
+            "permissions": [
+                182
+            ],
+            "generalAccessLevel": [
+                186
+            ],
+            "defaultGeneralAccessLevel": [
+                186
+            ],
+            "hasManagedGeneralAccess": [
+                8
+            ],
+            "roles": [
+                188
+            ],
+            "shares": [
+                183
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RecordSharingMode": {},
+        "RecordPermissionsResult": {
+            "objectMetadataId": [
+                3
+            ],
+            "recordId": [
+                3
+            ],
+            "permissions": [
+                182
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "JobStatus": {
+            "jobId": [
+                1
+            ],
+            "state": [
+                193
+            ],
+            "attemptsMade": [
+                31
+            ],
+            "failedReason": [
+                1
+            ],
+            "enqueuedAt": [
+                15
+            ],
+            "startedAt": [
+                15
+            ],
+            "finishedAt": [
+                15
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "JobState": {},
+        "ObjectRecordEventProperties": {
+            "updatedFields": [
+                1
+            ],
+            "before": [
+                9
+            ],
+            "after": [
+                9
+            ],
+            "diff": [
+                9
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "MetadataEvent": {
+            "type": [
+                196
+            ],
+            "metadataName": [
+                1
+            ],
+            "recordId": [
+                1
+            ],
+            "properties": [
+                194
+            ],
+            "updatedCollectionHash": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "MetadataEventAction": {},
+        "ObjectRecordEvent": {
+            "action": [
+                198
+            ],
+            "objectNameSingular": [
+                1
+            ],
+            "recordId": [
+                1
+            ],
+            "userId": [
+                1
+            ],
+            "workspaceMemberId": [
+                1
+            ],
+            "properties": [
+                194
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DatabaseEventAction": {},
+        "ObjectRecordEventWithQueryIds": {
+            "queryIds": [
+                1
+            ],
+            "objectRecordEvent": [
+                197
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "EventSubscription": {
+            "eventStreamId": [
+                1
+            ],
+            "objectRecordEventsWithQueryIds": [
                 199
+            ],
+            "metadataEvents": [
+                195
+            ],
+            "queueJobEvents": [
+                192
             ],
             "__typename": [
                 1
@@ -4670,7 +4670,7 @@ export default {
         },
         "AppConnection": {
             "id": [
-                173
+                184
             ],
             "providerName": [
                 1
@@ -6810,10 +6810,10 @@ export default {
         },
         "AiChatUsage": {
             "limitValue": [
-                163
+                174
             ],
             "consumedValue": [
-                163
+                174
             ],
             "periodEnd": [
                 4
@@ -6868,7 +6868,7 @@ export default {
         },
         "AgentChatThread": {
             "id": [
-                173
+                184
             ],
             "title": [
                 1
@@ -7520,7 +7520,7 @@ export default {
         },
         "Query": {
             "recordSharing": [
-                178,
+                189,
                 {
                     "target": [
                         428,
@@ -7529,7 +7529,7 @@ export default {
                 }
             ],
             "recordPermissions": [
-                180,
+                191,
                 {
                     "targets": [
                         428,
@@ -7538,10 +7538,10 @@ export default {
                 }
             ],
             "navigationMenuItems": [
-                169
+                180
             ],
             "navigationMenuItem": [
-                169,
+                180,
                 {
                     "id": [
                         3,
@@ -7587,20 +7587,28 @@ export default {
                 }
             ],
             "usageLimits": [
-                165
+                176
             ],
             "usageQuotasWithConsumption": [
-                162
+                173
             ],
             "usageQuotaDefinitions": [
-                161
+                172
             ],
             "usageQuotaScopeConsumption": [
-                164,
+                175,
                 {
                     "input": [
                         429,
                         "UsageQuotaScopeInput!"
+                    ]
+                }
+            ],
+            "getUsageAnalytics": [
+                166,
+                {
+                    "input": [
+                        430
                     ]
                 }
             ],
@@ -7758,7 +7766,7 @@ export default {
                 10,
                 {
                     "input": [
-                        430,
+                        431,
                         "AgentIdInput!"
                     ]
                 }
@@ -7771,7 +7779,7 @@ export default {
                         "CursorPaging!"
                     ],
                     "filter": [
-                        431,
+                        432,
                         "ObjectFilter!"
                     ]
                 }
@@ -7798,13 +7806,13 @@ export default {
                 }
             ],
             "currentUserSessions": [
-                190
+                156
             ],
             "findOneLogicFunction": [
                 23,
                 {
                     "input": [
-                        432,
+                        433,
                         "LogicFunctionIdInput!"
                     ]
                 }
@@ -7816,7 +7824,7 @@ export default {
                 9,
                 {
                     "input": [
-                        432,
+                        433,
                         "LogicFunctionIdInput!"
                     ]
                 }
@@ -7825,7 +7833,7 @@ export default {
                 1,
                 {
                     "input": [
-                        432,
+                        433,
                         "LogicFunctionIdInput!"
                     ]
                 }
@@ -7866,16 +7874,8 @@ export default {
                     ]
                 }
             ],
-            "getUsageAnalytics": [
-                200,
-                {
-                    "input": [
-                        433
-                    ]
-                }
-            ],
             "billingPortalSession": [
-                195,
+                161,
                 {
                     "returnUrlPath": [
                         1
@@ -7886,10 +7886,10 @@ export default {
                 }
             ],
             "listPlans": [
-                193
+                159
             ],
             "getResourceCreditUsage": [
-                192
+                158
             ],
             "findWorkspaceInvitations": [
                 205
@@ -8074,7 +8074,7 @@ export default {
                 }
             ],
             "findInstallApplicationJobStatus": [
-                181,
+                192,
                 {
                     "universalIdentifier": [
                         1,
@@ -8083,7 +8083,7 @@ export default {
                 }
             ],
             "findUninstallApplicationJobStatus": [
-                181,
+                192,
                 {
                     "universalIdentifier": [
                         1,
@@ -8265,7 +8265,7 @@ export default {
                 }
             ],
             "getJobs": [
-                181,
+                192,
                 {
                     "jobIds": [
                         1,
@@ -8285,7 +8285,7 @@ export default {
                 246,
                 {
                     "id": [
-                        173,
+                        184,
                         "ID!"
                     ]
                 }
@@ -8543,10 +8543,10 @@ export default {
         },
         "UsageQuotaScopeInput": {
             "resourceType": [
-                160
+                171
             ],
             "operationType": [
-                157
+                168
             ],
             "spenderType": [
                 1
@@ -8558,7 +8558,24 @@ export default {
                 1
             ],
             "unit": [
-                158
+                169
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageAnalyticsInput": {
+            "periodStart": [
+                4
+            ],
+            "periodEnd": [
+                4
+            ],
+            "userWorkspaceId": [
+                1
+            ],
+            "operationTypes": [
+                168
             ],
             "__typename": [
                 1
@@ -8574,10 +8591,10 @@ export default {
         },
         "ObjectFilter": {
             "and": [
-                431
+                432
             ],
             "or": [
-                431
+                432
             ],
             "id": [
                 34
@@ -8612,24 +8629,7 @@ export default {
         },
         "LogicFunctionIdInput": {
             "id": [
-                173
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageAnalyticsInput": {
-            "periodStart": [
-                4
-            ],
-            "periodEnd": [
-                4
-            ],
-            "userWorkspaceId": [
-                1
-            ],
-            "operationTypes": [
-                157
+                184
             ],
             "__typename": [
                 1
@@ -8830,20 +8830,20 @@ export default {
                 }
             ],
             "setRecordGeneralAccess": [
-                178,
+                189,
                 {
                     "target": [
                         428,
                         "RecordTargetInput!"
                     ],
                     "accessLevel": [
-                        175,
+                        186,
                         "RecordShareAccessLevel!"
                     ]
                 }
             ],
             "setRecordShare": [
-                178,
+                189,
                 {
                     "target": [
                         428,
@@ -8854,13 +8854,13 @@ export default {
                         "RecordSharePrincipalInput!"
                     ],
                     "accessLevel": [
-                        175,
+                        186,
                         "RecordShareAccessLevel!"
                     ]
                 }
             ],
             "removeRecordShare": [
-                178,
+                189,
                 {
                     "target": [
                         428,
@@ -8873,7 +8873,7 @@ export default {
                 }
             ],
             "createManyNavigationMenuItems": [
-                169,
+                180,
                 {
                     "inputs": [
                         453,
@@ -8882,7 +8882,7 @@ export default {
                 }
             ],
             "createNavigationMenuItem": [
-                169,
+                180,
                 {
                     "input": [
                         453,
@@ -8891,7 +8891,7 @@ export default {
                 }
             ],
             "updateManyNavigationMenuItems": [
-                169,
+                180,
                 {
                     "inputs": [
                         454,
@@ -8900,7 +8900,7 @@ export default {
                 }
             ],
             "updateNavigationMenuItem": [
-                169,
+                180,
                 {
                     "input": [
                         454,
@@ -8909,7 +8909,7 @@ export default {
                 }
             ],
             "deleteManyNavigationMenuItems": [
-                169,
+                180,
                 {
                     "ids": [
                         3,
@@ -8918,7 +8918,7 @@ export default {
                 }
             ],
             "deleteNavigationMenuItem": [
-                169,
+                180,
                 {
                     "id": [
                         3,
@@ -8927,7 +8927,7 @@ export default {
                 }
             ],
             "createFileUpload": [
-                167,
+                178,
                 {
                     "filename": [
                         1,
@@ -8950,7 +8950,7 @@ export default {
                 }
             ],
             "completeFileUpload": [
-                166,
+                177,
                 {
                     "fileId": [
                         1,
@@ -8974,7 +8974,7 @@ export default {
                 }
             ],
             "uploadWorkspaceLogo": [
-                166,
+                177,
                 {
                     "file": [
                         456,
@@ -8983,7 +8983,7 @@ export default {
                 }
             ],
             "uploadWorkspaceMemberProfilePicture": [
-                166,
+                177,
                 {
                     "file": [
                         456,
@@ -8992,7 +8992,7 @@ export default {
                 }
             ],
             "completeWorkspaceLogoUpload": [
-                166,
+                177,
                 {
                     "fileId": [
                         1,
@@ -9001,7 +9001,7 @@ export default {
                 }
             ],
             "completeWorkspaceMemberProfilePictureUpload": [
-                166,
+                177,
                 {
                     "fileId": [
                         1,
@@ -9010,7 +9010,7 @@ export default {
                 }
             ],
             "uploadFilesFieldFileByUniversalIdentifier": [
-                166,
+                177,
                 {
                     "file": [
                         456,
@@ -9023,7 +9023,7 @@ export default {
                 }
             ],
             "createUsageLimit": [
-                165,
+                176,
                 {
                     "input": [
                         457,
@@ -9032,7 +9032,7 @@ export default {
                 }
             ],
             "updateUsageLimit": [
-                165,
+                176,
                 {
                     "input": [
                         458,
@@ -9424,7 +9424,7 @@ export default {
                 10,
                 {
                     "input": [
-                        430,
+                        431,
                         "AgentIdInput!"
                     ]
                 }
@@ -9499,7 +9499,7 @@ export default {
                 23,
                 {
                     "input": [
-                        432,
+                        433,
                         "LogicFunctionIdInput!"
                     ]
                 }
@@ -9658,7 +9658,7 @@ export default {
                 203
             ],
             "checkoutSession": [
-                195,
+                161,
                 {
                     "recurringInterval": [
                         87,
@@ -9678,7 +9678,7 @@ export default {
                 }
             ],
             "createSubscriptionPaymentIntent": [
-                194,
+                160,
                 {
                     "recurringInterval": [
                         87,
@@ -9702,22 +9702,22 @@ export default {
                 }
             ],
             "createBillingPaymentMethodSetupIntent": [
-                194
+                160
             ],
             "switchSubscriptionInterval": [
-                196
+                162
             ],
             "switchBillingPlan": [
-                196
+                162
             ],
             "cancelSwitchBillingPlan": [
-                196
+                162
             ],
             "cancelSwitchBillingInterval": [
-                196
+                162
             ],
             "setResourceCreditSubscriptionPrice": [
-                196,
+                162,
                 {
                     "priceId": [
                         1,
@@ -9726,10 +9726,10 @@ export default {
                 }
             ],
             "endSubscriptionTrialPeriod": [
-                191
+                157
             ],
             "cancelSwitchResourceCreditPrice": [
-                196
+                162
             ],
             "deleteWorkspaceInvitation": [
                 1,
@@ -10988,7 +10988,7 @@ export default {
                 }
             ],
             "uploadNewWorkspaceLogo": [
-                166,
+                177,
                 {
                     "workspaceId": [
                         1,
@@ -11001,7 +11001,7 @@ export default {
                 }
             ],
             "createNewWorkspaceLogoUpload": [
-                167,
+                178,
                 {
                     "workspaceId": [
                         1,
@@ -11018,7 +11018,7 @@ export default {
                 }
             ],
             "completeNewWorkspaceLogoUpload": [
-                166,
+                177,
                 {
                     "workspaceId": [
                         1,
@@ -11553,7 +11553,7 @@ export default {
                 3
             ],
             "type": [
-                170
+                181
             ],
             "name": [
                 1
@@ -11620,10 +11620,10 @@ export default {
         "Upload": {},
         "CreateUsageLimitInput": {
             "resourceType": [
-                160
+                171
             ],
             "operationType": [
-                157
+                168
             ],
             "spenderType": [
                 1
@@ -11641,13 +11641,13 @@ export default {
                 1
             ],
             "unit": [
-                158
+                169
             ],
             "limitValue": [
-                163
+                174
             ],
             "burstValue": [
-                163
+                174
             ],
             "__typename": [
                 1
@@ -14195,7 +14195,7 @@ export default {
         },
         "ReportAppConnectionAuthFailureInput": {
             "id": [
-                173
+                184
             ],
             "reason": [
                 1
@@ -14614,7 +14614,7 @@ export default {
         },
         "Subscription": {
             "onEventSubscription": [
-                189,
+                200,
                 {
                     "eventStreamId": [
                         1,
