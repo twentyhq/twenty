@@ -3,7 +3,6 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
-import { buildRecordValidationRuleViolationMessage } from 'src/engine/metadata-modules/validation-rule/utils/build-record-validation-rule-violation-message.util';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum RecordValidationRuleExceptionCode {
@@ -13,19 +12,17 @@ export enum RecordValidationRuleExceptionCode {
 
 const getRecordValidationRuleUserFriendlyMessage = ({
   code,
-  violations,
+  message,
 }: {
   code: RecordValidationRuleExceptionCode;
-  violations: RecordValidationRuleViolation[];
+  message: string;
 }): MessageDescriptor => {
   switch (code) {
     case RecordValidationRuleExceptionCode.VALIDATION_RULE_VIOLATION: {
       return {
         id: 'validation-rule-violation',
         message: '{ruleMessage}',
-        values: {
-          ruleMessage: buildRecordValidationRuleViolationMessage(violations),
-        },
+        values: { ruleMessage: message },
       };
     }
     case RecordValidationRuleExceptionCode.VALIDATION_RULE_EVALUATION_FAILED:
@@ -46,7 +43,7 @@ export class RecordValidationRuleException extends CustomException<RecordValidat
     super(message, code, {
       userFriendlyMessage: getRecordValidationRuleUserFriendlyMessage({
         code,
-        violations,
+        message,
       }),
     });
 

@@ -1,9 +1,9 @@
-import { buildRecordValidationRuleViolationMessage } from 'src/engine/metadata-modules/validation-rule/utils/build-record-validation-rule-violation-message.util';
+import { buildRecordValidationRuleViolationsMessage } from 'src/engine/metadata-modules/validation-rule/utils/build-record-validation-rule-violations-message.util';
 
-describe('buildRecordValidationRuleViolationMessage', () => {
+describe('buildRecordValidationRuleViolationsMessage', () => {
   it('should return the message of a single violation', () => {
     expect(
-      buildRecordValidationRuleViolationMessage([
+      buildRecordValidationRuleViolationsMessage([
         { message: 'Comments are required' },
       ]),
     ).toBe('Comments are required');
@@ -11,7 +11,7 @@ describe('buildRecordValidationRuleViolationMessage', () => {
 
   it('should include every violated rule message in order', () => {
     expect(
-      buildRecordValidationRuleViolationMessage([
+      buildRecordValidationRuleViolationsMessage([
         { message: 'Comments are required' },
         { message: 'A won opportunity needs an amount' },
       ]),
@@ -20,7 +20,7 @@ describe('buildRecordValidationRuleViolationMessage', () => {
 
   it('should not repeat a message violated by several records', () => {
     expect(
-      buildRecordValidationRuleViolationMessage([
+      buildRecordValidationRuleViolationsMessage([
         { message: 'Comments are required' },
         { message: 'A won opportunity needs an amount' },
         { message: 'Comments are required' },
@@ -30,6 +30,6 @@ describe('buildRecordValidationRuleViolationMessage', () => {
   });
 
   it('should return an empty message when there is no violation', () => {
-    expect(buildRecordValidationRuleViolationMessage([])).toBe('');
+    expect(buildRecordValidationRuleViolationsMessage([])).toBe('');
   });
 });
