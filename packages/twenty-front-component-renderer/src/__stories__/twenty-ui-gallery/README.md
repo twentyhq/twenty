@@ -47,10 +47,11 @@ shared card also exercises the SDK's CSS injection and the renderer's style brid
 
 The Avatar image browser tests also hold real SVG responses until after source
 replacement or unmount. A test-only observer waits for the native image's load
-event before checking that the old response cannot replace the fallback or
-restore the removed Avatar. The Storybook Vite fixture middleware owns these
-pending responses and closes them on teardown or timeout. These delayed-response
-steps run only in test mode; the regular and static stories use data images and
+event before checking that the replaced source's response cannot replace the
+fallback, and that a response arriving after unmount does not break the
+remounted Avatar. The Storybook Vite fixture middleware owns these pending
+responses and closes them on teardown or timeout. These delayed-response steps
+run only in test mode; the regular and static stories use data images and
 retain working source controls, fallback, replacement and unmount/remount checks.
 
 ## Known sandbox limitations
