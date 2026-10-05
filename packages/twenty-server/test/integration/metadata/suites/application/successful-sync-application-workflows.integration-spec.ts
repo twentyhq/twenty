@@ -346,6 +346,5 @@ describe('application-owned core workflows', () => {
     const removing = await syncApplication({ manifest: missingWorkflow });
     expect(removing.errors).toBeUndefined();
     expect(await findDefinitions()).toEqual([]);
-    expect((await findRun(oldRunId)).state?.flow).toEqual(oldRun.state?.flow);
   }, 90000);
 });

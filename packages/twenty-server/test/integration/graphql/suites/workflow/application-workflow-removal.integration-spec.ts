@@ -5,6 +5,7 @@ import {
   buildTestApplicationWorkflow,
   countCoreWorkflows,
   countTestCompanies,
+  countTestWorkflowRuns,
   createCompanyStep,
   findTestWorkflowRun,
   findTestWorkflowVersionId,
@@ -12,7 +13,7 @@ import {
   runCoreWorkflowVersion,
   type TestApplicationWorkflow,
   waitForTestWorkflowRun,
-  waitForTestWorkflowRunToEnd,
+  waitForTestWorkflowRunsToBeDeleted,
 } from 'test/integration/graphql/suites/workflow/utils/application-workflow-test.util';
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -88,9 +89,9 @@ const expectWaiting = async (
 ) => {
   const workflowRun = await findTestWorkflowRun(workflowRunId);
 
-  expect(workflowRun.status).toBe(WorkflowRunStatus.RUNNING);
+  expect(workflowRun?.status).toBe(WorkflowRunStatus.RUNNING);
   expect(
-    workflowRun.state.stepInfos[workflow.steps[0].universalIdentifier].status,
+    workflowRun?.state.stepInfos[workflow.steps[0].universalIdentifier]?.status,
   ).toBe('PENDING');
 };
 
@@ -215,7 +216,7 @@ describe('removing workflows from an application manifest', () => {
     await expectWaiting(secondFormRunId, SECOND_FORM_WORKFLOW);
   }, 120000);
 
-  it('deletes the omitted workflows with their version and stops their runs', async () => {
+  it('deletes the omitted workflows with their version and runs', async () => {
     const removal = await syncApplication({
       manifest: buildManifest([KEPT_WORKFLOW]),
     });
@@ -232,11 +233,9 @@ describe('removing workflows from an application manifest', () => {
       ).toBeUndefined();
     }
 
-    for (const workflowRunId of [formRunId, secondFormRunId]) {
-      expect((await waitForTestWorkflowRunToEnd(workflowRunId)).status).toBe(
-        WorkflowRunStatus.STOPPED,
-      );
-    }
+    await waitForTestWorkflowRunsToBeDeleted([formRunId, secondFormRunId]);
+
+    expect(await countTestWorkflowRuns([keptRunId])).toBe(1);
   }, 120000);
 
   it('keeps the remaining workflow runnable', async () => {
@@ -249,9 +248,12 @@ describe('removing workflows from an application manifest', () => {
     });
 
     expect(submission.body.errors).toBeUndefined();
-    expect((await waitForTestWorkflowRunToEnd(keptRunId)).status).toBe(
-      WorkflowRunStatus.COMPLETED,
+
+    await waitForTestWorkflowRun(
+      keptRunId,
+      ({ status }) => status === WorkflowRunStatus.COMPLETED,
     );
+
     expect(await countTestCompanies(KEPT_COMPANY)).toBe(1);
   }, 120000);
 
