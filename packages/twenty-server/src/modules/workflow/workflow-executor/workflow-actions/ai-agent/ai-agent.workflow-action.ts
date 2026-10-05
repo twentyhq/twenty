@@ -18,6 +18,7 @@ import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/to
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/workflow-base-system-prompt.const';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -28,6 +29,7 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
+import { APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/application-bound-agent-excluded-tool-names.constant';
 import { WORKFLOW_AGENT_HUMAN_INPUT_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-human-input-prompt.constant';
 import {
   type RecordedConversation,
@@ -180,6 +182,15 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       authContext: executionContext.authContext,
       workspaceId,
       userWorkspaceId,
+      ...(isDefined(application)
+        ? {
+            additionalRoleRestrictionIds: getRoleIdsFromRolePermissionConfig(
+              executionContext.rolePermissionConfig,
+            ),
+            additionalExcludedToolNames:
+              APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES,
+          }
+        : {}),
     });
 
     const durationMs = Date.now() - startedAtMs;

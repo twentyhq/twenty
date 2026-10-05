@@ -1,11 +1,12 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { getAllSelectableFields } from 'src/engine/api/common/common-select-fields/utils/get-all-selectable-fields.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { buildFieldSelection } from 'src/engine/api/common/common-select-fields/utils/build-field-selection.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-describe('getAllSelectableFields', () => {
+describe('buildFieldSelection', () => {
   const createMockField = (
     overrides: Partial<FlatFieldMetadata> & {
       id: string;
@@ -86,10 +87,13 @@ describe('getAllSelectableFields', () => {
     const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([field1, field2]);
     const flatObjectMetadata = buildFlatObjectMetadata(['field-1', 'field-2']);
 
-    const result = getAllSelectableFields({
+    const result = buildFieldSelection({
       restrictedFields: {},
       flatObjectMetadata,
-      flatFieldMetadataMaps,
+      flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityIds: flatObjectMetadata.fieldIds,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
     });
 
     expect(result).toEqual({
@@ -112,12 +116,15 @@ describe('getAllSelectableFields', () => {
     const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([field1, field2]);
     const flatObjectMetadata = buildFlatObjectMetadata(['field-1', 'field-2']);
 
-    const result = getAllSelectableFields({
+    const result = buildFieldSelection({
       restrictedFields: {
         'field-2': { canRead: false },
       },
       flatObjectMetadata,
-      flatFieldMetadataMaps,
+      flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityIds: flatObjectMetadata.fieldIds,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
     });
 
     expect(result).toEqual({
@@ -152,10 +159,13 @@ describe('getAllSelectableFields', () => {
       'field-3',
     ]);
 
-    const result = getAllSelectableFields({
+    const result = buildFieldSelection({
       restrictedFields: {},
       flatObjectMetadata,
-      flatFieldMetadataMaps,
+      flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityIds: flatObjectMetadata.fieldIds,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
     });
 
     expect(result).toEqual({
@@ -186,12 +196,15 @@ describe('getAllSelectableFields', () => {
     const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([field1, field2]);
     const flatObjectMetadata = buildFlatObjectMetadata(['field-1', 'field-2']);
 
-    const result = getAllSelectableFields({
+    const result = buildFieldSelection({
       restrictedFields: {
         'field-2': { canRead: false },
       },
       flatObjectMetadata,
-      flatFieldMetadataMaps,
+      flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityIds: flatObjectMetadata.fieldIds,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
     });
 
     expect(result).toEqual({
@@ -233,13 +246,16 @@ describe('getAllSelectableFields', () => {
       'field-4',
     ]);
 
-    const result = getAllSelectableFields({
+    const result = buildFieldSelection({
       restrictedFields: {
         'field-2': { canRead: false },
         'field-4': { canRead: false },
       },
       flatObjectMetadata,
-      flatFieldMetadataMaps,
+      flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityIds: flatObjectMetadata.fieldIds,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
     });
 
     expect(result).toEqual({
@@ -291,10 +307,13 @@ describe('getAllSelectableFields', () => {
         imageIdentifierFieldMetadataId: 'field-3',
       };
 
-      const result = getAllSelectableFields({
+      const result = buildFieldSelection({
         restrictedFields: {},
         flatObjectMetadata,
-        flatFieldMetadataMaps,
+        flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityIds: flatObjectMetadata.fieldIds,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
         onlyUseLabelIdentifierFieldsInRelations: true,
       });
 
@@ -348,10 +367,13 @@ describe('getAllSelectableFields', () => {
         labelIdentifierFieldMetadataId: 'field-1',
       };
 
-      const result = getAllSelectableFields({
+      const result = buildFieldSelection({
         restrictedFields: {},
         flatObjectMetadata,
-        flatFieldMetadataMaps,
+        flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityIds: flatObjectMetadata.fieldIds,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
         onlyUseLabelIdentifierFieldsInRelations: true,
       });
 
@@ -393,12 +415,15 @@ describe('getAllSelectableFields', () => {
         labelIdentifierFieldMetadataId: 'field-1',
       };
 
-      const result = getAllSelectableFields({
+      const result = buildFieldSelection({
         restrictedFields: {
           'field-1': { canRead: false },
         },
         flatObjectMetadata,
-        flatFieldMetadataMaps,
+        flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityIds: flatObjectMetadata.fieldIds,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
         onlyUseLabelIdentifierFieldsInRelations: true,
       });
 
@@ -436,10 +461,13 @@ describe('getAllSelectableFields', () => {
         'field-2',
       ]);
 
-      const result = getAllSelectableFields({
+      const result = buildFieldSelection({
         restrictedFields: {},
         flatObjectMetadata,
-        flatFieldMetadataMaps,
+        flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityIds: flatObjectMetadata.fieldIds,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
       });
 
       expect(result).toEqual({
@@ -473,12 +501,15 @@ describe('getAllSelectableFields', () => {
         'field-2',
       ]);
 
-      const result = getAllSelectableFields({
+      const result = buildFieldSelection({
         restrictedFields: {
           'field-2': { canRead: false },
         },
         flatObjectMetadata,
-        flatFieldMetadataMaps,
+        flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityIds: flatObjectMetadata.fieldIds,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
       });
 
       expect(result).toEqual({
@@ -510,10 +541,13 @@ describe('getAllSelectableFields', () => {
         'field-2',
       ]);
 
-      const result = getAllSelectableFields({
+      const result = buildFieldSelection({
         restrictedFields: {},
         flatObjectMetadata,
-        flatFieldMetadataMaps,
+        flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityIds: flatObjectMetadata.fieldIds,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
       });
 
       expect(result).toEqual({
@@ -546,10 +580,13 @@ describe('getAllSelectableFields', () => {
         'field-2',
       ]);
 
-      const result = getAllSelectableFields({
+      const result = buildFieldSelection({
         restrictedFields: {},
         flatObjectMetadata,
-        flatFieldMetadataMaps,
+        flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityIds: flatObjectMetadata.fieldIds,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
       });
 
       expect(result).toEqual({
@@ -564,10 +601,13 @@ describe('getAllSelectableFields', () => {
       const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([]);
       const flatObjectMetadata = buildFlatObjectMetadata([]);
 
-      const result = getAllSelectableFields({
+      const result = buildFieldSelection({
         restrictedFields: {},
         flatObjectMetadata,
-        flatFieldMetadataMaps,
+        flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityIds: flatObjectMetadata.fieldIds,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
       });
 
       expect(result).toEqual({});
@@ -594,13 +634,16 @@ describe('getAllSelectableFields', () => {
         'field-2',
       ]);
 
-      const result = getAllSelectableFields({
+      const result = buildFieldSelection({
         restrictedFields: {
           'field-1': { canRead: false },
           'field-2': { canRead: false },
         },
         flatObjectMetadata,
-        flatFieldMetadataMaps,
+        flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityIds: flatObjectMetadata.fieldIds,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
       });
 
       expect(result).toEqual({});
@@ -627,13 +670,16 @@ describe('getAllSelectableFields', () => {
         'field-2',
       ]);
 
-      const result = getAllSelectableFields({
+      const result = buildFieldSelection({
         restrictedFields: {
           'field-1': { canRead: true, canUpdate: false },
           'field-2': { canRead: false, canUpdate: false },
         },
         flatObjectMetadata,
-        flatFieldMetadataMaps,
+        flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityIds: flatObjectMetadata.fieldIds,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
       });
 
       expect(result).toEqual({

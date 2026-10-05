@@ -47,6 +47,21 @@ For OAuth-based access (external apps acting on behalf of users), see [OAuth](/d
 
 Both REST and GraphQL support batching up to 60 records per request — create, update, or delete. GraphQL also supports batch upsert (create-or-update in one call) using plural names like `CreateCompanies`.
 
+## Selecting fields (REST)
+
+REST record endpoints accept a `fields` query parameter to return only the fields you need:
+
+```
+GET /rest/people?fields=id,name,emails,company
+```
+
+- `id` is always returned.
+- Composite fields (like `emails` or `name`) are selected as a whole by their field name.
+- A many-to-one relation field returns its join column (e.g. `companyId`) with `depth=0`. One-to-many relation fields are only returned with `depth=1`. With `depth=1`, only the relation fields listed in `fields` are expanded.
+- Unknown fields, or fields your role cannot read, return a `400` error.
+
+When `fields` is omitted on an object with more than 200 readable fields, each record returns a default set of 200 fields: `id`, the label and image identifier fields, `createdAt`, `updatedAt`, `deletedAt`, `position`, then standard fields before custom fields, ordered by name. Pass `fields` explicitly to read any field beyond that default set.
+
 ## Rate limits
 
 | Limit | Value |

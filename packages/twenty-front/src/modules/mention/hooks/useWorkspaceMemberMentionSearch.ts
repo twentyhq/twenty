@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
@@ -8,6 +9,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 const WORKSPACE_MEMBER_MENTION_SEARCH_LIMIT = 50;
 
 export const useWorkspaceMemberMentionSearch = () => {
+  const { t } = useLingui();
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
@@ -32,11 +34,12 @@ export const useWorkspaceMemberMentionSearch = () => {
           recordId: workspaceMember.id,
           objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
           objectLabelSingular: workspaceMember.userEmail,
+          objectLabelPlural: t`Teammates`,
           label: fullName || workspaceMember.userEmail,
           imageUrl: workspaceMember.avatarUrl ?? '',
         }));
     },
-    [currentWorkspaceMembers],
+    [currentWorkspaceMembers, t],
   );
 
   return { searchWorkspaceMembers };
