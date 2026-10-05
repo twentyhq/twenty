@@ -10,6 +10,10 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -252,7 +256,16 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
           // an initiator who cannot hold a chat in this workspace leaves the question with no recipient
           const { threadId } = await openConversation(
             INITIATORS[agentWorkflow.initiator].workspaceMemberId,
-          ).catch(() => openConversation(null));
+          ).catch((error) => {
+            if (
+              error instanceof AiException &&
+              error.code === AiExceptionCode.THREAD_NOT_FOUND
+            ) {
+              return openConversation(null);
+            }
+
+            throw error;
+          });
 
           await this.workflowAgentConversationService.recordExecution({
             workspaceId,

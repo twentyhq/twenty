@@ -261,6 +261,14 @@ describe('WorkflowAgentConversationWorkspaceService', () => {
         },
         {
           parts: [
+            waitPart('other-step-part', {
+              workflowRunId: 'run-id',
+              stepId: 'other-step-id',
+            }),
+          ],
+        },
+        {
+          parts: [
             waitPart('own-part', {
               workflowRunId: 'run-id',
               stepId: 'step-id',
