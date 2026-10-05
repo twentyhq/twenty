@@ -1,15 +1,15 @@
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
-import { type QuotaMeter } from 'src/engine/core-modules/usage-limit/types/quota-meter.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 export type LimitQuotaCounter = {
   kind: 'limit';
   isDefault: boolean;
   key: string;
   limitValue: number;
-  meter: QuotaMeter;
+  unit: UsageUnit;
   resourceType: UsageResourceType;
   periodUnit: PeriodUnit;
   periodStart: Date;

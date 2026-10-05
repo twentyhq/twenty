@@ -6,6 +6,7 @@ import {
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const buildSpeedScope = (
   overrides: Partial<UsageLimitScope> = {},
@@ -18,7 +19,7 @@ const buildSpeedScope = (
     limitKind: 'speed',
     periodCount: 10,
     periodUnit: 'second',
-    meter: 'quantity',
+    unit: UsageUnit.INVOCATION,
     ...overrides,
   });
 
@@ -33,7 +34,7 @@ const buildStockScope = (
     limitKind: 'stock',
     periodCount: 1,
     periodUnit: 'lifetime',
-    meter: 'bytes',
+    unit: UsageUnit.BYTE,
     ...overrides,
   });
 
@@ -48,7 +49,7 @@ const buildQuotaScope = (
     limitKind: 'quota',
     periodCount: 1,
     periodUnit: 'day',
-    meter: 'quantity',
+    unit: UsageUnit.INVOCATION,
     ...overrides,
   });
 
@@ -84,6 +85,7 @@ describe('findSuppressedUsageLimitDefaults', () => {
         operationType: UsageOperationType.API_REQUEST,
         spenderType: 'apiKey',
         periodCount: 1,
+        unit: UsageUnit.REQUEST,
       }),
     );
 
@@ -99,14 +101,17 @@ describe('findSuppressedUsageLimitDefaults', () => {
           resourceType: UsageResourceType.API,
           operationType: UsageOperationType.API_REQUEST,
           spenderType: 'application',
+          unit: UsageUnit.REQUEST,
         }),
       ),
     ).toEqual([]);
   });
 
-  it('returns nothing for a meter no default is declared on', () => {
+  it('returns nothing for a unit no default is declared on', () => {
     expect(
-      findSuppressedUsageLimitDefaults(buildStockScope({ meter: 'quantity' })),
+      findSuppressedUsageLimitDefaults(
+        buildStockScope({ unit: UsageUnit.FILE }),
+      ),
     ).toEqual([]);
   });
 
@@ -124,7 +129,7 @@ describe('findSuppressedUsageLimitDefaults', () => {
       .filter((usageLimitDefault) => usageLimitDefault.isOverridable)
       .map(
         (usageLimitDefault) =>
-          `${usageLimitDefault.resourceType}:${usageLimitDefault.operationType}:${usageLimitDefault.spenderType}:${usageLimitDefault.limitKind}:${usageLimitDefault.meter}`,
+          `${usageLimitDefault.resourceType}:${usageLimitDefault.operationType}:${usageLimitDefault.spenderType}:${usageLimitDefault.limitKind}:${usageLimitDefault.unit}`,
       )
       .filter(
         (suppressionKey, _index, suppressionKeys) =>
@@ -168,7 +173,7 @@ describe('findSuppressedUsageLimitDefaults', () => {
           operationType: UsageOperationType.AI_CHAT_TOKEN,
           limitKind: 'quota',
           periodUnit: 'month',
-          meter: 'creditsUsedMicro',
+          unit: UsageUnit.CREDIT,
         }),
       ),
     ).toEqual([]);

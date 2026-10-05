@@ -28,6 +28,7 @@ export const getActionIconColorOrThrow = (
     case 'FILTER':
     case 'IF_ELSE':
     case 'DELAY':
+    case 'WAIT_FOR_EVENT':
       return themeCssVariables.color.green9;
     case 'AI_AGENT':
     case 'CLASSIFY':

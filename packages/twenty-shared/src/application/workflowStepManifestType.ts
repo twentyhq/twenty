@@ -6,6 +6,7 @@ import { workflowHttpRequestActionSettingsSchema } from '@/workflow/schemas/http
 import { workflowClassifyActionSettingsSchema } from '@/workflow/schemas/classify-action-settings-schema';
 import { workflowIteratorActionSettingsSchema } from '@/workflow/schemas/iterator-action-settings-schema';
 import { workflowDelayActionSettingsSchema } from '@/workflow/schemas/workflow-delay-action-settings-schema';
+import { workflowWaitForEventActionSettingsSchema } from '@/workflow/schemas/wait-for-event-action-settings-schema';
 import { workflowEmptyActionSettingsSchema } from '@/workflow/schemas/empty-action-settings-schema';
 import { baseWorkflowActionSettingsSchema } from '@/workflow/schemas/base-workflow-action-settings-schema';
 import { workflowCreateRecordActionSettingsSchema } from '@/workflow/schemas/create-record-action-settings-schema';
@@ -61,6 +62,10 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
   stepSchema('CLASSIFY', workflowClassifyActionSettingsSchema.shape.input),
   stepSchema('ITERATOR', workflowIteratorActionSettingsSchema.shape.input),
   stepSchema('DELAY', workflowDelayActionSettingsSchema.shape.input),
+  stepSchema(
+    'WAIT_FOR_EVENT',
+    workflowWaitForEventActionSettingsSchema.shape.input,
+  ),
   stepSchema('EMPTY', workflowEmptyActionSettingsSchema.shape.input),
   stepSchema(
     'CREATE_RECORD',
