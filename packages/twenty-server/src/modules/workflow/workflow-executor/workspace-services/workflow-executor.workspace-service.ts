@@ -1,7 +1,6 @@
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowRunContext,
@@ -420,16 +419,6 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
   }): Promise<WorkflowActionOutput | undefined> {
-    const isExecutionQuotaEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
-        workspaceId,
-      );
-
-    if (!isExecutionQuotaEnabled) {
-      return undefined;
-    }
-
     try {
       await this.billingUsageService.assertUsageAllowed({
         workspaceId,
