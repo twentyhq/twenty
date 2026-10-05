@@ -158,7 +158,7 @@ export default defineApplication({
 });
 ```
 
-The value reaches your code as a JSON array, one entry per uploaded file, with a download `url`:
+The value reaches your code as a JSON array, one entry per uploaded file, with a download `url`. A variable without any file is an empty string, so fall back to an empty list before parsing:
 
 ```ts
 type ApplicationVariableFile = {
@@ -168,7 +168,7 @@ type ApplicationVariableFile = {
   url?: string; // download url, set on every read, signed with an expiry when the variable sets signUrl
 };
 
-const [logo] = JSON.parse(process.env.INVOICE_LOGO ?? '[]') as ApplicationVariableFile[];
+const [logo] = JSON.parse(process.env.INVOICE_LOGO || '[]') as ApplicationVariableFile[];
 
 if (logo) {
   const logoBytes = await fetch(logo.url).then((response) => response.arrayBuffer());
