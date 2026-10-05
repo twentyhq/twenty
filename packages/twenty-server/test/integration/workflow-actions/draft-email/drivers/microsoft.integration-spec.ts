@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { convertPlainTextToEmailDocument } from 'twenty-shared/utils';
 
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
@@ -69,7 +70,9 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
           bcc: '{{trigger.bcc}}',
         },
         subject: '{{trigger.subject}}',
-        body: '<p>Microsoft workflow draft body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('Microsoft workflow draft body'),
+        ),
       },
       payload: { ...RECIPIENTS, subject },
     });
@@ -117,7 +120,11 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
         fromHandle: ALIAS,
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject,
-        body: '<p>Microsoft workflow alias draft body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument(
+            'Microsoft workflow alias draft body',
+          ),
+        ),
       },
     });
 
@@ -147,7 +154,9 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
         connectedAccountId: channel.connectedAccountId,
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject,
-        body: '<p>Microsoft workflow draft body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('Microsoft workflow draft body'),
+        ),
         files: [file],
       },
     });
@@ -182,7 +191,11 @@ describe('DRAFT_EMAIL workflow action on Microsoft (integration)', () => {
         connectedAccountId: channel.connectedAccountId,
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject,
-        body: '<p>Microsoft workflow reply draft body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument(
+            'Microsoft workflow reply draft body',
+          ),
+        ),
         files: [file],
         inReplyTo: PARENT_INTERNET_MESSAGE_ID,
       },

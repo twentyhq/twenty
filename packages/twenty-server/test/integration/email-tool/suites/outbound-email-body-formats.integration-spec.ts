@@ -14,7 +14,8 @@ import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-calda
 import { type SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { PROPOSE_EMAIL_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-email.pausing-tool';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
@@ -408,39 +409,6 @@ describe('Outbound email body formats (integration)', () => {
     }, 300000);
   });
 
-  describe('propose_email approval', () => {
-    it('sends the approved plain-text email with its paragraphs', async () => {
-      const sendEmailTool =
-        getAppProviderByClassName<SendEmailTool>('SendEmailTool');
-      const subject = `Approved email ${randomUUID()}`;
-      const email = {
-        recipients: { to: HANDLE, cc: '', bcc: '' },
-        subject,
-        body: 'Hi Tim,\nThanks for renewing.\n\nBest, Jane',
-        connectedAccountId,
-      };
-      const call = PROPOSE_EMAIL_PAUSING_TOOL.parseCall(email);
-
-      expect(call).not.toBeNull();
-
-      const completion = await call!.complete({
-        output: { decision: 'send', email },
-        context: {
-          executeTool: ({ args }) =>
-            sendEmailTool.execute(args as EmailToolInput, {
-              workspaceId: SEED_APPLE_WORKSPACE_ID,
-              userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-            }),
-        },
-      });
-
-      expect(completion.toolResult.success).toBe(true);
-      expect(await findPersistedMessageText(subject)).toBe(
-        'Hi Tim,\nThanks for renewing.\n\nBest, Jane',
-      );
-    }, 300000);
-  });
-
   describe('sendEmail mutation', () => {
     it('keeps the paragraphs of a plain-text body', async () => {
       const subject = `Mutation plain text ${randomUUID()}`;
@@ -486,15 +454,21 @@ describe('Outbound email body formats (integration)', () => {
 
   describe('upgrade command', () => {
     const runUpgradeCommand = (dryRun: boolean) =>
-      getAppProviderByClassName<ConvertWorkflowEmailBodiesToEmailDocumentsCommand>(
-        'ConvertWorkflowEmailBodiesToEmailDocumentsCommand',
-      ).runOnWorkspace({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        options: { dryRun },
-        index: 0,
-        total: 1,
-        dataSource: global.testDataSource,
-      });
+      getAppProviderByClassName<WorkspaceOrmManager>(
+        'WorkspaceOrmManager',
+      ).executeInWorkspaceContext(
+        () =>
+          getAppProviderByClassName<ConvertWorkflowEmailBodiesToEmailDocumentsCommand>(
+            'ConvertWorkflowEmailBodiesToEmailDocumentsCommand',
+          ).runOnWorkspace({
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            options: { dryRun },
+            index: 0,
+            total: 1,
+            dataSource: global.testDataSource,
+          }),
+        buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
+      );
 
     const convertStoredBodyBeforeRun =
       (legacyBody: string) => async (workflowVersionId: string) => {

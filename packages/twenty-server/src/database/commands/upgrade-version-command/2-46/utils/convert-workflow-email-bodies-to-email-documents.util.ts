@@ -31,7 +31,7 @@ const convertEmailStepBody = (step: WorkflowAction): WorkflowAction => {
   }
 
   const convertedBody = convertBodyToEmailDocumentJson(
-    step.settings.input.body,
+    step.settings?.input?.body,
   );
 
   if (convertedBody === undefined) {

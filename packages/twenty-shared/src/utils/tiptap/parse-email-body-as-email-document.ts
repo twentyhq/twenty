@@ -10,15 +10,34 @@ import { isEmailDocumentShape } from './is-email-document-shape';
 import { parseEmailDocument } from './parse-email-document';
 import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
 
-const HTML_TAG_PATTERN = /<\/?([a-z][a-z0-9]*)(?:\s[^<>]*)?\/?>/gi;
+const HTML_TAG_PATTERN = /<\/?([a-z][a-z0-9-]*)(?:\s[^<>]*)?(\/?)>/gi;
 
 const HTML_COMMENT_DOCTYPE_OR_ENTITY_PATTERN =
   /<!--|<!doctype\s|&(?:[a-z][a-z0-9]*|#\d+|#x[0-9a-f]+);/i;
 
+const isMarkupTag = ({
+  body,
+  tagName,
+  isSelfClosing,
+}: {
+  body: string;
+  tagName: string;
+  isSelfClosing: boolean;
+}): boolean =>
+  HTML_ELEMENT_NAMES.has(tagName) ||
+  tagName.includes('-') ||
+  isSelfClosing ||
+  body.toLowerCase().includes(`</${tagName}>`);
+
 const containsHtmlMarkup = (body: string): boolean =>
   HTML_COMMENT_DOCTYPE_OR_ENTITY_PATTERN.test(body) ||
-  Array.from(body.matchAll(HTML_TAG_PATTERN)).some(([, tagName]) =>
-    HTML_ELEMENT_NAMES.has(tagName?.toLowerCase() ?? ''),
+  Array.from(body.matchAll(HTML_TAG_PATTERN)).some(
+    ([, tagName, selfClosingSlash]) =>
+      isMarkupTag({
+        body,
+        tagName: tagName?.toLowerCase() ?? '',
+        isSelfClosing: selfClosingSlash === '/',
+      }),
   );
 
 const convertStringToEmailDocument = (body: string): EmailDocument => {

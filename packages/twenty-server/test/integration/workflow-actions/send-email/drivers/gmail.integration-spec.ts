@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { convertPlainTextToEmailDocument } from 'twenty-shared/utils';
 
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
@@ -50,7 +51,9 @@ describe('SEND_EMAIL workflow action on Gmail (integration)', () => {
           bcc: '{{trigger.bcc}}',
         },
         subject: '{{trigger.subject}}',
-        body: '<p>Gmail workflow body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('Gmail workflow body'),
+        ),
       },
       payload: { ...RECIPIENTS, subject },
     });
@@ -126,7 +129,9 @@ describe('SEND_EMAIL workflow action on Gmail (integration)', () => {
         fromHandle: ALIAS,
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject,
-        body: '<p>Gmail workflow alias body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('Gmail workflow alias body'),
+        ),
       },
     });
 
@@ -151,7 +156,9 @@ describe('SEND_EMAIL workflow action on Gmail (integration)', () => {
         fromHandle: 'not-my-alias@apple.dev',
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject: `Gmail workflow rejected sender ${randomUUID()}`,
-        body: '<p>Gmail workflow rejected body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('Gmail workflow rejected body'),
+        ),
       },
     });
 

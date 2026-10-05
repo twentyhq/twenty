@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { ImapFlow } from 'imapflow';
+import { convertPlainTextToEmailDocument } from 'twenty-shared/utils';
 
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -136,7 +137,9 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
         connectedAccountId,
         recipients: { to: '{{trigger.to}}' },
         subject: '{{trigger.subject}}',
-        body: '<p>SMTP workflow draft body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('SMTP workflow draft body'),
+        ),
       },
       payload: { to: HANDLE, subject },
     });
@@ -173,7 +176,11 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
         connectedAccountId,
         recipients: { to: '{{trigger.to}}' },
         subject: '{{trigger.subject}}',
-        body: '<p>First paragraph</p><p>Second paragraph</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument(
+            'First paragraph\n\nSecond paragraph',
+          ),
+        ),
       },
       payload: { to: HANDLE, subject },
     });

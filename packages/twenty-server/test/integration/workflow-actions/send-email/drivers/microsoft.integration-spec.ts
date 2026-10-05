@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { convertPlainTextToEmailDocument } from 'twenty-shared/utils';
 
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
@@ -50,7 +51,9 @@ describe('SEND_EMAIL workflow action on Microsoft (integration)', () => {
           bcc: '{{trigger.bcc}}',
         },
         subject: '{{trigger.subject}}',
-        body: '<p>Microsoft workflow body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('Microsoft workflow body'),
+        ),
       },
       payload: { ...RECIPIENTS, subject },
     });
@@ -133,7 +136,9 @@ describe('SEND_EMAIL workflow action on Microsoft (integration)', () => {
         fromHandle: ALIAS,
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject,
-        body: '<p>Microsoft workflow alias body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('Microsoft workflow alias body'),
+        ),
       },
     });
 
@@ -160,7 +165,9 @@ describe('SEND_EMAIL workflow action on Microsoft (integration)', () => {
         fromHandle: 'not-my-alias@apple.dev',
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject: `Microsoft workflow rejected sender ${randomUUID()}`,
-        body: '<p>Microsoft workflow rejected body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('Microsoft workflow rejected body'),
+        ),
       },
     });
 

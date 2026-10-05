@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { convertPlainTextToEmailDocument } from 'twenty-shared/utils';
 
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
@@ -50,7 +51,9 @@ describe('DRAFT_EMAIL workflow action on Gmail (integration)', () => {
           bcc: '{{trigger.bcc}}',
         },
         subject: '{{trigger.subject}}',
-        body: '<p>Gmail workflow draft body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('Gmail workflow draft body'),
+        ),
       },
       payload: { ...RECIPIENTS, subject },
     });
@@ -98,7 +101,9 @@ describe('DRAFT_EMAIL workflow action on Gmail (integration)', () => {
         fromHandle: ALIAS,
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject,
-        body: '<p>Gmail workflow alias draft body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('Gmail workflow alias draft body'),
+        ),
       },
     });
 

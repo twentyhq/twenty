@@ -77,6 +77,18 @@ describe('convertWorkflowEmailBodiesToEmailDocuments', () => {
     });
   });
 
+  it('should skip a stored email step that has no input instead of failing', () => {
+    const stepWithoutInput: WorkflowAction = JSON.parse(
+      '{"id":"step-2","name":"Send","type":"SEND_EMAIL","valid":false,"settings":{}}',
+    );
+    const steps = [stepWithoutInput, emailStep('<b>Hi</b>')];
+
+    const { value } = convertWorkflowEmailBodiesToEmailDocuments(steps);
+
+    expect(value?.[0]).toBe(stepWithoutInput);
+    expect(value?.[1]).not.toBe(steps[1]);
+  });
+
   it('should change nothing when run a second time', () => {
     const { value } = convertWorkflowEmailBodiesToEmailDocuments([
       emailStep('Hello\nWorld'),

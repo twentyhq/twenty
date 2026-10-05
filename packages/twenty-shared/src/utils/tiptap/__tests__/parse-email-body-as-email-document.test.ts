@@ -42,6 +42,9 @@ describe('parseEmailBodyAsEmailDocument', () => {
       '<!DOCTYPE html><html><head><style>p{color:red}</style></head><body>Hi</body></html>',
       'Tom &amp; Jerry',
       '<!-- tracking --> Hello',
+      '<my-widget>Hi</my-widget>',
+      'Hi <x-tag>Ada</x-tag>',
+      'Total: <price>12</price>',
     ];
 
     for (const body of bodies) {

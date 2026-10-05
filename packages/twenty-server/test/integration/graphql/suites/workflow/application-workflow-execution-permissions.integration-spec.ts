@@ -18,6 +18,7 @@ import {
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { convertPlainTextToEmailDocument } from 'twenty-shared/utils';
 
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -559,7 +560,9 @@ describe('application workflow execution permissions', () => {
       input: {
         recipients: { to: 'recipient@example.com' },
         subject: 'Application workflow permissions',
-        body: 'Should never be sent',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('Should never be sent'),
+        ),
       },
       runToken: await buildJaneTokenThroughApplication(APP_ID),
     });

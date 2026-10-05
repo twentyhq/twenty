@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { convertPlainTextToEmailDocument } from 'twenty-shared/utils';
 
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -97,7 +98,9 @@ describe('SEND_EMAIL workflow action on SMTP (integration)', () => {
           bcc: '{{trigger.bcc}}',
         },
         subject: '{{trigger.subject}}',
-        body: '<p>SMTP workflow body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('SMTP workflow body'),
+        ),
       },
       payload: { to: HANDLE, cc: HANDLE, bcc: HANDLE, subject },
     });
@@ -163,7 +166,9 @@ describe('SEND_EMAIL workflow action on SMTP (integration)', () => {
         fromHandle: 'not-my-alias@acme.test',
         recipients: { to: HANDLE, cc: '', bcc: '' },
         subject,
-        body: '<p>SMTP workflow rejected body</p>',
+        body: JSON.stringify(
+          convertPlainTextToEmailDocument('SMTP workflow rejected body'),
+        ),
       },
     });
 
