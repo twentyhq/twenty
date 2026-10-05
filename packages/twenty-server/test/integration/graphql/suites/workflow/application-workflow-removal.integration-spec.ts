@@ -10,6 +10,7 @@ import {
   findTestWorkflowRun,
   findTestWorkflowVersionId,
   formStep,
+  logicFunctionStep,
   runCoreWorkflowVersion,
   type TestApplicationWorkflow,
   waitForTestWorkflowRun,
@@ -20,10 +21,12 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { type DeleteWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/delete-workflow-action-handler.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -41,7 +44,11 @@ const FORM_WORKFLOW = buildTestApplicationWorkflow(`${PREFIX} form`, [
 ]);
 const SECOND_FORM_WORKFLOW = buildTestApplicationWorkflow(
   `${PREFIX} second form`,
-  [formStep(), createCompanyStep(`${PREFIX} second form company`)],
+  [
+    formStep(),
+    logicFunctionStep(FUNCTION_ID),
+    createCompanyStep(`${PREFIX} second form company`),
+  ],
 );
 const KEPT_WORKFLOW = buildTestApplicationWorkflow(`${PREFIX} kept`, [
   formStep(),
@@ -185,28 +192,32 @@ describe('removing workflows from an application manifest', () => {
     await expectWaiting(keptRunId, KEPT_WORKFLOW);
   }, 120000);
 
-  it('keeps workflows and runs when the removal fails', async () => {
-    const invalidKeptWorkflow: TestApplicationWorkflow = {
-      ...KEPT_WORKFLOW,
-      steps: KEPT_WORKFLOW.steps.map((step) =>
-        step.type === 'CREATE_RECORD'
-          ? {
-              ...step,
-              input: {
-                ...step.input,
-                objectRecord: { notACompanyField: 'invalid' },
-              },
-            }
-          : step,
-      ),
-    };
+  it('keeps workflows and runs when the removal fails after deleting a workflow', async () => {
+    const deleteWorkflowActionHandler =
+      getAppProviderByClassName<DeleteWorkflowActionHandlerService>(
+        'DeleteWorkflowActionHandlerService',
+      );
+    const deleteWorkflow = deleteWorkflowActionHandler.executeForMetadata.bind(
+      deleteWorkflowActionHandler,
+    );
+    const deleteSpy = jest
+      .spyOn(deleteWorkflowActionHandler, 'executeForMetadata')
+      .mockImplementationOnce(async (context) => {
+        await deleteWorkflow(context);
+        throw new Error('Simulated sync failure after a workflow delete');
+      });
 
-    const failedRemoval = await syncApplication({
-      manifest: buildManifest([invalidKeptWorkflow]),
-      expectToFail: true,
-    });
+    try {
+      const failedRemoval = await syncApplication({
+        manifest: buildManifest([KEPT_WORKFLOW]),
+        expectToFail: true,
+      });
 
-    expect(failedRemoval.errors).toBeDefined();
+      expect(failedRemoval.errors).toBeDefined();
+    } finally {
+      deleteSpy.mockRestore();
+    }
+
     expect(await countCoreWorkflows(FORM_WORKFLOW)).toBe(1);
     expect(await countCoreWorkflows(SECOND_FORM_WORKFLOW)).toBe(1);
 
@@ -216,7 +227,7 @@ describe('removing workflows from an application manifest', () => {
     await expectWaiting(secondFormRunId, SECOND_FORM_WORKFLOW);
   }, 120000);
 
-  it('deletes the omitted workflows with their version and runs', async () => {
+  it('deletes the omitted workflows with their version and runs, and keeps the application function', async () => {
     const removal = await syncApplication({
       manifest: buildManifest([KEPT_WORKFLOW]),
     });
@@ -236,6 +247,15 @@ describe('removing workflows from an application manifest', () => {
     await waitForTestWorkflowRunsToBeDeleted([formRunId, secondFormRunId]);
 
     expect(await countTestWorkflowRuns([keptRunId])).toBe(1);
+
+    const [{ count: applicationFunctionCount }] =
+      await globalThis.testDataSource.query(
+        `SELECT COUNT(*)::int AS count FROM core."logicFunction"
+         WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+        [FUNCTION_ID, SEED_APPLE_WORKSPACE_ID],
+      );
+
+    expect(applicationFunctionCount).toBe(1);
   }, 120000);
 
   it('keeps the remaining workflow runnable', async () => {

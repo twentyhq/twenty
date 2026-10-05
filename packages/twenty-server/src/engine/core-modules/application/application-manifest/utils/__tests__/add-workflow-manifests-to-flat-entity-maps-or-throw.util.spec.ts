@@ -130,7 +130,7 @@ describe('application workflow manifest updates', () => {
     );
   });
 
-  it('leaves an omitted workflow out of the target maps so the sync deletes it', () => {
+  it('leaves an omitted workflow out of the target maps', () => {
     const before = compute();
     const after = compute({ workflows: [], fromAllFlatEntityMaps: before });
 

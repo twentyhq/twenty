@@ -124,6 +124,8 @@ const findDefinitions = () =>
     [WORKSPACE_ID, WORKFLOW_ID, FUNCTION_ID],
   );
 
+const createdWorkflowRunIds: string[] = [];
+
 const runVersion = async (coreWorkflowVersionId: string): Promise<string> => {
   const response = await workflowGraphqlRequest(
     'mutation Run($input: RunCoreWorkflowVersionInput!) { runCoreWorkflowVersion(input: $input) { workflowRunId } }',
@@ -134,8 +136,6 @@ const runVersion = async (coreWorkflowVersionId: string): Promise<string> => {
   createdWorkflowRunIds.push(workflowRunId);
   return workflowRunId;
 };
-
-const createdWorkflowRunIds: string[] = [];
 
 const findRun = async (runId: string): Promise<WorkflowRunWorkspaceEntity> => {
   const [run] = await globalThis.testDataSource.query(
@@ -222,7 +222,7 @@ describe('application-owned core workflows', () => {
     jest.useFakeTimers();
   });
 
-  it('installs, upgrades through additive pre-install sync, removes omitted workflows, and protects saved runs and app-owned definitions', async () => {
+  it('installs, upgrades through additive pre-install sync, protects saved runs and app-owned definitions, then removes omitted workflows', async () => {
     const initial = await syncApplication({ manifest: MANIFEST });
     expect(initial.errors).toBeUndefined();
     const [referencingVersion] = await globalThis.testDataSource.query(
