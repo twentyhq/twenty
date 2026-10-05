@@ -435,6 +435,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         );
 
         await this.recomputeDataFromProvider({ workspaceId, keysToRecompute });
+        await this.memoizer.clearKeys(`${workspaceId}-`);
       },
     );
   }
