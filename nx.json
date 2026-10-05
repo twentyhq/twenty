@@ -102,7 +102,7 @@
     "knip": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": ["twenty-shared:build"],
+      "dependsOn": ["^build", "twenty-shared:build"],
       "inputs": ["default", "{workspaceRoot}/knip.json"],
       "options": {
         "command": "knip --workspace {projectRoot}"
