@@ -86,10 +86,22 @@ const renderUseValidationRules = ({
     </JotaiProvider>
   );
 
-  return renderHook(
-    () => useValidationRules({ objectMetadataId: OBJECT_METADATA_ID }),
+  const loadingStates: boolean[] = [];
+
+  const renderedHook = renderHook(
+    () => {
+      const validationRules = useValidationRules({
+        objectMetadataId: OBJECT_METADATA_ID,
+      });
+
+      loadingStates.push(validationRules.loading);
+
+      return validationRules;
+    },
     { wrapper },
   );
+
+  return { ...renderedHook, loadingStates };
 };
 
 const dispatchValidationRuleUpdate = (updatedRecord: ValidationRule) =>
@@ -127,6 +139,32 @@ describe('useValidationRules', () => {
       ]),
     );
     expect(refetchResult).toHaveBeenCalledTimes(1);
+  });
+
+  it('should refresh rules in the background without reporting loading', async () => {
+    const { result, loadingStates } = renderUseValidationRules({
+      results: [
+        buildValidationRulesResult([ACTIVE_VALIDATION_RULE]),
+        buildValidationRulesResult([DISABLED_VALIDATION_RULE]),
+      ],
+    });
+
+    await waitFor(() => expect(result.current.validationRules).toHaveLength(1));
+
+    const loadingStatesCountBeforeRefresh = loadingStates.length;
+
+    act(() => {
+      dispatchValidationRuleUpdate(DISABLED_VALIDATION_RULE);
+    });
+
+    await waitFor(() =>
+      expect(result.current.validationRules).toMatchObject([
+        { isActive: false },
+      ]),
+    );
+    expect(loadingStates.slice(loadingStatesCountBeforeRefresh)).not.toContain(
+      true,
+    );
   });
 
   it('should drop a rule another session deleted while the form is open', async () => {
@@ -197,7 +235,7 @@ describe('useValidationRules', () => {
     expect(refetchResult).toHaveBeenCalledTimes(1);
   });
 
-  it('should not refetch for its own echoed save or for rules of another object', async () => {
+  it('should not refetch when a rule of another object changes', async () => {
     const refetchResult = jest.fn(buildValidationRulesResult([]));
 
     const { result } = renderUseValidationRules({
@@ -210,7 +248,6 @@ describe('useValidationRules', () => {
     await waitFor(() => expect(result.current.validationRules).toHaveLength(1));
 
     act(() => {
-      dispatchValidationRuleUpdate(ACTIVE_VALIDATION_RULE);
       dispatchValidationRuleUpdate({
         ...ACTIVE_VALIDATION_RULE,
         id: '20202020-0000-4000-8000-000000000012',

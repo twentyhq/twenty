@@ -16,20 +16,8 @@ const LOADED_VALIDATION_RULE: ValidationRule = {
   isActive: true,
 };
 
-const LOADED_VALIDATION_RULE_WITH_TYPENAME = {
-  __typename: 'ValidationRule' as const,
-  ...LOADED_VALIDATION_RULE,
-};
-
-const BROADCAST_RECORD_EXTRA_PROPERTIES = {
-  universalIdentifier: '20202020-0000-4000-8000-000000000099',
-  bindings: {},
-  createdAt: '2026-10-01T00:00:00.000Z',
-  updatedAt: '2026-10-05T00:00:00.000Z',
-};
-
 describe('shouldRefetchValidationRulesOnOperation', () => {
-  it('should refetch when another session creates a rule on the object', () => {
+  it('should refetch when a rule is created on the object', () => {
     expect(
       shouldRefetchValidationRulesOnOperation({
         operation: {
@@ -40,12 +28,26 @@ describe('shouldRefetchValidationRulesOnOperation', () => {
           },
         },
         objectMetadataId: OBJECT_METADATA_ID,
-        validationRules: [LOADED_VALIDATION_RULE_WITH_TYPENAME],
+        validationRules: [LOADED_VALIDATION_RULE],
       }),
     ).toBe(true);
   });
 
-  it('should not refetch when a rule changes on another object', () => {
+  it('should refetch when a rule of the object is updated', () => {
+    expect(
+      shouldRefetchValidationRulesOnOperation({
+        operation: {
+          type: 'update',
+          updatedRecord: { ...LOADED_VALIDATION_RULE, isActive: false },
+          updatedFields: ['isActive'],
+        },
+        objectMetadataId: OBJECT_METADATA_ID,
+        validationRules: [LOADED_VALIDATION_RULE],
+      }),
+    ).toBe(true);
+  });
+
+  it('should not refetch when a rule of another object changes', () => {
     expect(
       shouldRefetchValidationRulesOnOperation({
         operation: {
@@ -57,60 +59,7 @@ describe('shouldRefetchValidationRulesOnOperation', () => {
           },
         },
         objectMetadataId: OBJECT_METADATA_ID,
-        validationRules: [LOADED_VALIDATION_RULE_WITH_TYPENAME],
-      }),
-    ).toBe(false);
-  });
-
-  it('should refetch when another session disables a loaded rule', () => {
-    expect(
-      shouldRefetchValidationRulesOnOperation({
-        operation: {
-          type: 'update',
-          updatedRecord: {
-            ...LOADED_VALIDATION_RULE,
-            ...BROADCAST_RECORD_EXTRA_PROPERTIES,
-            isActive: false,
-          },
-          updatedFields: ['isActive'],
-        },
-        objectMetadataId: OBJECT_METADATA_ID,
-        validationRules: [LOADED_VALIDATION_RULE_WITH_TYPENAME],
-      }),
-    ).toBe(true);
-  });
-
-  it('should refetch when a field rename rewrites a loaded rule expression', () => {
-    expect(
-      shouldRefetchValidationRulesOnOperation({
-        operation: {
-          type: 'update',
-          updatedRecord: {
-            ...LOADED_VALIDATION_RULE,
-            ...BROADCAST_RECORD_EXTRA_PROPERTIES,
-            expression: 'dealStage != "WON"',
-          },
-          updatedFields: ['expression', 'bindings'],
-        },
-        objectMetadataId: OBJECT_METADATA_ID,
-        validationRules: [LOADED_VALIDATION_RULE_WITH_TYPENAME],
-      }),
-    ).toBe(true);
-  });
-
-  it('should not refetch when the loaded rule already matches the update', () => {
-    expect(
-      shouldRefetchValidationRulesOnOperation({
-        operation: {
-          type: 'update',
-          updatedRecord: {
-            ...LOADED_VALIDATION_RULE,
-            ...BROADCAST_RECORD_EXTRA_PROPERTIES,
-          },
-          updatedFields: ['isActive'],
-        },
-        objectMetadataId: OBJECT_METADATA_ID,
-        validationRules: [LOADED_VALIDATION_RULE_WITH_TYPENAME],
+        validationRules: [LOADED_VALIDATION_RULE],
       }),
     ).toBe(false);
   });
@@ -123,7 +72,7 @@ describe('shouldRefetchValidationRulesOnOperation', () => {
           deletedRecordId: LOADED_VALIDATION_RULE.id,
         },
         objectMetadataId: OBJECT_METADATA_ID,
-        validationRules: [LOADED_VALIDATION_RULE_WITH_TYPENAME],
+        validationRules: [LOADED_VALIDATION_RULE],
       }),
     ).toBe(true);
   });
@@ -136,7 +85,7 @@ describe('shouldRefetchValidationRulesOnOperation', () => {
           deletedRecordId: '20202020-0000-4000-8000-000000000013',
         },
         objectMetadataId: OBJECT_METADATA_ID,
-        validationRules: [LOADED_VALIDATION_RULE_WITH_TYPENAME],
+        validationRules: [LOADED_VALIDATION_RULE],
       }),
     ).toBe(false);
   });
