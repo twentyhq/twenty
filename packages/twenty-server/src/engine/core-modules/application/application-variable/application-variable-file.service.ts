@@ -1,13 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import path from 'path';
-
 import { msg } from '@lingui/core/macro';
-import {
-  type ApplicationVariableFileValue,
-  isApplicationVariableFileValue,
-  parseApplicationVariableFilesValue,
-} from 'twenty-shared/application';
+import { parseApplicationVariableFilesValue } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
@@ -16,18 +10,18 @@ import {
   ApplicationVariableEntityException,
   ApplicationVariableEntityExceptionCode,
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
+import {
+  type ApplicationVariableFilesValueUpdate,
+  diffApplicationVariableFilesValue,
+  serializeApplicationVariableFilesValueToStore,
+  validateApplicationVariableFilesValueInput,
+} from 'src/engine/core-modules/application/utils/application-variable-files-value.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
-export type ApplicationVariableFilesValueUpdate = {
-  plaintextValueToStore: string;
-  fileIdsToBind: string[];
-  fileIdsToDelete: string[];
-};
 
 @Injectable()
 export class ApplicationVariableFileService {
@@ -40,16 +34,16 @@ export class ApplicationVariableFileService {
     private readonly fileUrlService: FileUrlService,
   ) {}
 
-  // Urls are minted on every read instead of being stored: private ones expire,
+  // Urls are minted on every read instead of being stored: signed ones expire,
   // and even permanent ones depend on the current signing key.
   async signFilesValue({
     plaintextValue,
     workspaceId,
-    isPublic,
+    signUrl,
   }: {
     plaintextValue: string;
     workspaceId: string;
-    isPublic: boolean;
+    signUrl: boolean;
   }): Promise<string> {
     const files = parseApplicationVariableFilesValue(plaintextValue);
 
@@ -64,7 +58,7 @@ export class ApplicationVariableFileService {
           fileId: file.fileId,
           workspaceId,
           fileFolder: FileFolder.ApplicationVariable,
-          isPermanent: isPublic,
+          isPermanent: !signUrl,
         }),
       })),
     );
@@ -83,21 +77,20 @@ export class ApplicationVariableFileService {
     previousPlaintextValue: string;
     nextPlaintextValue: string;
   }): Promise<ApplicationVariableFilesValueUpdate> {
-    const nextFiles = this.parseSubmittedFilesValueOrThrow(nextPlaintextValue);
-    const previousFileById = new Map(
-      parseApplicationVariableFilesValue(previousPlaintextValue).map((file) => [
-        file.fileId,
-        file,
-      ]),
-    );
-    const nextFileIds = new Set(nextFiles.map(({ fileId }) => fileId));
+    const validation =
+      validateApplicationVariableFilesValueInput(nextPlaintextValue);
 
-    const fileIdsToBind = nextFiles
-      .filter(({ fileId }) => !previousFileById.has(fileId))
-      .map(({ fileId }) => fileId);
-    const fileIdsToDelete = [...previousFileById.keys()].filter(
-      (fileId) => !nextFileIds.has(fileId),
-    );
+    if (!validation.isValid) {
+      throw this.buildInvalidFilesValueException(
+        `Application variable ${validation.error}`,
+      );
+    }
+
+    const { previousFileById, fileIdsToBind, fileIdsToDelete } =
+      diffApplicationVariableFilesValue({
+        previousPlaintextValue,
+        nextFiles: validation.files,
+      });
 
     const uploadedFileById = await this.findUploadedFilesToBindOrThrow({
       fileIds: fileIdsToBind,
@@ -105,21 +98,12 @@ export class ApplicationVariableFileService {
       workspaceId,
     });
 
-    const filesToStore = nextFiles.map(({ fileId, label }) => {
-      const uploadedFile = uploadedFileById.get(fileId);
-
-      return {
-        fileId,
-        label,
-        extension: isDefined(uploadedFile)
-          ? path.extname(uploadedFile.path)
-          : previousFileById.get(fileId)?.extension,
-      };
-    });
-
     return {
-      plaintextValueToStore:
-        filesToStore.length === 0 ? '' : JSON.stringify(filesToStore),
+      plaintextValueToStore: serializeApplicationVariableFilesValueToStore({
+        nextFiles: validation.files,
+        previousFileById,
+        uploadedFileById,
+      }),
       fileIdsToBind,
       fileIdsToDelete,
     };
@@ -156,43 +140,6 @@ export class ApplicationVariableFileService {
         );
       }
     }
-  }
-
-  private parseSubmittedFilesValueOrThrow(
-    plaintextValue: string,
-  ): ApplicationVariableFileValue[] {
-    if (plaintextValue === '') {
-      return [];
-    }
-
-    let parsedValue: unknown;
-
-    try {
-      parsedValue = JSON.parse(plaintextValue);
-    } catch {
-      throw this.buildInvalidFilesValueException(
-        'Application variable files value is not valid JSON',
-      );
-    }
-
-    if (
-      !Array.isArray(parsedValue) ||
-      !parsedValue.every(isApplicationVariableFileValue)
-    ) {
-      throw this.buildInvalidFilesValueException(
-        'Application variable files value must be a list of files',
-      );
-    }
-
-    const fileIds = parsedValue.map(({ fileId }) => fileId);
-
-    if (new Set(fileIds).size !== fileIds.length) {
-      throw this.buildInvalidFilesValueException(
-        'Application variable files value lists the same file twice',
-      );
-    }
-
-    return parsedValue;
   }
 
   private async findUploadedFilesToBindOrThrow({

@@ -6,7 +6,7 @@ import { type Readable } from 'stream';
 
 import { type ServerFileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { In, IsNull, Like, Repository } from 'typeorm';
 
 import { SERVER_FILE_STORAGE_PREFIX } from 'src/engine/core-modules/file-storage/constants/server-file-storage-prefix.constant';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
@@ -17,11 +17,18 @@ import {
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { validateStoragePathIsWithinServerScopeOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-server-scope-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { type FileSettings } from 'src/engine/core-modules/file/types/file-settings.type';
 
 export type ServerResourceIdentifier = {
   fileFolder: ServerFileFolder;
   applicationRegistrationId: string;
   resourcePath: string;
+};
+
+export type ServerFileIdentifier = {
+  fileFolder: ServerFileFolder;
+  applicationRegistrationId: string;
+  fileId: string;
 };
 
 @Injectable()
@@ -77,9 +84,13 @@ export class ServerFileStorageService {
     resourcePath,
     contents,
     mimeType,
+    fileId,
+    settings,
   }: ServerResourceIdentifier & {
     contents: Buffer | string;
     mimeType: string;
+    fileId?: string;
+    settings?: FileSettings;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
@@ -98,6 +109,7 @@ export class ServerFileStorageService {
 
     await this.serverFileRepository.upsert(
       {
+        ...(isDefined(fileId) ? { id: fileId } : {}),
         path: filePath,
         workspaceId: null,
         size:
@@ -106,6 +118,7 @@ export class ServerFileStorageService {
             : contents.length,
         mimeType,
         applicationRegistrationId,
+        ...(isDefined(settings) ? { settings } : {}),
       },
       {
         conflictPaths: ['applicationRegistrationId', 'path'],
@@ -170,6 +183,103 @@ export class ServerFileStorageService {
       path: filePath,
       workspaceId: IsNull(),
     });
+  }
+
+  async findServerFilesByIds({
+    fileFolder,
+    applicationRegistrationId,
+    fileIds,
+  }: Omit<ServerFileIdentifier, 'fileId'> & {
+    fileIds: string[];
+  }): Promise<FileEntity[]> {
+    if (fileIds.length === 0) {
+      return [];
+    }
+
+    return this.serverFileRepository.find({
+      where: {
+        id: In(fileIds),
+        applicationRegistrationId,
+        workspaceId: IsNull(),
+        path: Like(`${fileFolder}/${applicationRegistrationId}/%`),
+      },
+    });
+  }
+
+  async readServerFileById(
+    serverFileIdentifier: ServerFileIdentifier,
+  ): Promise<{ stream: Readable; mimeType: string }> {
+    const serverFile = await this.findServerFileById(serverFileIdentifier);
+
+    if (!isDefined(serverFile)) {
+      throw new FileStorageException(
+        `Server file ${serverFileIdentifier.fileId} of registration ${serverFileIdentifier.applicationRegistrationId} not found`,
+        FileStorageExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const stream = await driver.readFile({
+      filePath: this.buildServerOnStorageFilePath(serverFile),
+    });
+
+    return { stream, mimeType: serverFile.mimeType };
+  }
+
+  async updateServerFilesSettings({
+    fileFolder,
+    applicationRegistrationId,
+    fileIds,
+    settings,
+  }: Omit<ServerFileIdentifier, 'fileId'> & {
+    fileIds: string[];
+    settings: FileSettings;
+  }): Promise<void> {
+    if (fileIds.length === 0) {
+      return;
+    }
+
+    await this.serverFileRepository.update(
+      {
+        id: In(fileIds),
+        applicationRegistrationId,
+        workspaceId: IsNull(),
+        path: Like(`${fileFolder}/${applicationRegistrationId}/%`),
+      },
+      { settings },
+    );
+  }
+
+  async deleteServerFileById(
+    serverFileIdentifier: ServerFileIdentifier,
+  ): Promise<void> {
+    const serverFile = await this.findServerFileById(serverFileIdentifier);
+
+    if (!isDefined(serverFile)) {
+      return;
+    }
+
+    await this.deleteServerFileBytesBestEffort(
+      this.buildServerOnStorageFilePath(serverFile),
+    );
+
+    await this.serverFileRepository.delete({
+      id: serverFile.id,
+      workspaceId: IsNull(),
+    });
+  }
+
+  private async findServerFileById({
+    fileId,
+    ...scope
+  }: ServerFileIdentifier): Promise<FileEntity | null> {
+    const [serverFile] = await this.findServerFilesByIds({
+      ...scope,
+      fileIds: [fileId],
+    });
+
+    return serverFile ?? null;
   }
 
   async deleteByApplicationRegistrationId(

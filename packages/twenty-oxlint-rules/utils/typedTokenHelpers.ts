@@ -3,6 +3,7 @@ const AUTH_GUARD_NAMES = [
   'PublicEndpointGuard',
   'FilePathGuard',
   'FileByIdGuard',
+  'ServerFileByIdGuard',
   'FileUploadTokenGuard',
 ];
 

@@ -15,7 +15,7 @@ export const rule = createGuardedEndpointRule({
   ],
   messageId: 'restApiMethodsShouldBeGuarded',
   description:
-    'REST API endpoints should declare the principals they accept with AuthPrincipalGuard({ ... }), authenticate with a file token guard (FilePathGuard, FileByIdGuard, FileUploadTokenGuard) or be explicitly marked as public (PublicEndpointGuard), and have permission guards (SettingsPermissionGuard or CustomPermissionGuard) to maintain our security model.',
+    'REST API endpoints should declare the principals they accept with AuthPrincipalGuard({ ... }), authenticate with a file token guard (FilePathGuard, FileByIdGuard, ServerFileByIdGuard, FileUploadTokenGuard) or be explicitly marked as public (PublicEndpointGuard), and have permission guards (SettingsPermissionGuard or CustomPermissionGuard) to maintain our security model.',
   message:
     'All REST API controller endpoints must have an authentication guard (@UseGuards(AuthPrincipalGuard({ ... })), a file token guard, or PublicEndpointGuard) and permission guards (@UseGuards(..., SettingsPermissionGuard(...)), CustomPermissionGuard, or NoPermissionGuard).',
 });

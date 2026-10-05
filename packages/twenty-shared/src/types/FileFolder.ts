@@ -15,4 +15,5 @@ export enum FileFolder {
   GeneratedSdkClient = 'generated-sdk-client',
   Dpa = 'dpa',
   ApplicationVariable = 'application-variable',
+  ApplicationRegistrationVariableUpload = 'application-registration-variable-upload',
 }

@@ -52,7 +52,7 @@ export class ApplicationVariableEntityService {
 
     return this.toReadableValue({
       type: applicationVariable.type,
-      isPublic: applicationVariable.isPublic,
+      signUrl: applicationVariable.signUrl,
       plaintextValue,
       workspaceId: applicationVariable.workspaceId,
     });
@@ -116,7 +116,7 @@ export class ApplicationVariableEntityService {
             flatApplicationVariable.key,
             await this.toReadableValue({
               type: flatApplicationVariable.type,
-              isPublic: flatApplicationVariable.isPublic,
+              signUrl: flatApplicationVariable.signUrl,
               plaintextValue: this.decryptValue(flatApplicationVariable),
               workspaceId: flatApplicationVariable.workspaceId,
             }),
@@ -129,10 +129,10 @@ export class ApplicationVariableEntityService {
 
   private async toReadableValue({
     type,
-    isPublic,
+    signUrl,
     plaintextValue,
     workspaceId,
-  }: Pick<FlatApplicationVariable, 'type' | 'isPublic' | 'workspaceId'> & {
+  }: Pick<FlatApplicationVariable, 'type' | 'signUrl' | 'workspaceId'> & {
     plaintextValue: string;
   }): Promise<string> {
     if (type !== FieldMetadataType.FILES) {
@@ -142,7 +142,7 @@ export class ApplicationVariableEntityService {
     return this.applicationVariableFileService.signFilesValue({
       plaintextValue,
       workspaceId,
-      isPublic,
+      signUrl,
     });
   }
 

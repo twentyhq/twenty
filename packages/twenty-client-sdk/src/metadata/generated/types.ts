@@ -210,7 +210,7 @@ export default {
             "isRequired": [
                 8
             ],
-            "isPublic": [
+            "signUrl": [
                 8
             ],
             "type": [
@@ -4103,6 +4103,9 @@ export default {
             ],
             "type": [
                 1
+            ],
+            "signUrl": [
+                8
             ],
             "options": [
                 9
@@ -10105,6 +10108,19 @@ export default {
                     "input": [
                         545,
                         "UpdateApplicationRegistrationVariableInput!"
+                    ]
+                }
+            ],
+            "completeApplicationRegistrationVariableFileUpload": [
+                166,
+                {
+                    "applicationRegistrationId": [
+                        1,
+                        "String!"
+                    ],
+                    "fileId": [
+                        3,
+                        "UUID!"
                     ]
                 }
             ],

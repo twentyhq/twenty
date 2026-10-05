@@ -57,7 +57,9 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
     const acceptedPermissionFlags =
       fileFolder === FileFolder.CorePicture
         ? CORE_PICTURE_UPLOAD_PERMISSION_FLAGS
-        : [PermissionFlagType.UPLOAD_FILE];
+        : fileFolder === FileFolder.ApplicationRegistrationVariableUpload
+          ? [PermissionFlagType.API_KEYS_AND_WEBHOOKS]
+          : [PermissionFlagType.UPLOAD_FILE];
 
     for (const permissionFlag of acceptedPermissionFlags) {
       const hasPermission =

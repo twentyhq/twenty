@@ -38,7 +38,7 @@ const buildApplicationVariable = (value: string): ApplicationVariable => ({
   isSecret: false,
   isDeprecated: false,
   isRequired: false,
-  isPublic: true,
+  signUrl: false,
   type: 'TEXT',
 });
 

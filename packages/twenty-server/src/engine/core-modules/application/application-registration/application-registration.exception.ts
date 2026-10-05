@@ -26,6 +26,7 @@ export enum ApplicationRegistrationExceptionCode {
   CLAIM_STATE_MISMATCH = 'CLAIM_STATE_MISMATCH',
   TARBALL_UPLOAD_NOT_FOUND = 'TARBALL_UPLOAD_NOT_FOUND',
   TARBALL_UPLOAD_COMPLETION_IN_PROGRESS = 'TARBALL_UPLOAD_COMPLETION_IN_PROGRESS',
+  VARIABLE_FILE_UPLOAD_NOT_FOUND = 'VARIABLE_FILE_UPLOAD_NOT_FOUND',
 }
 
 const getExceptionUserFriendlyMessage = (
@@ -74,6 +75,8 @@ const getExceptionUserFriendlyMessage = (
       return msg`Tarball upload not found.`;
     case ApplicationRegistrationExceptionCode.TARBALL_UPLOAD_COMPLETION_IN_PROGRESS:
       return msg`This upload is already being completed. Please wait for it to finish.`;
+    case ApplicationRegistrationExceptionCode.VARIABLE_FILE_UPLOAD_NOT_FOUND:
+      return msg`Variable file upload not found. Please upload the file again.`;
     default:
       assertUnreachable(code);
   }

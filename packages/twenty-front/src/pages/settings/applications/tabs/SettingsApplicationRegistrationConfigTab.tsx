@@ -13,10 +13,14 @@ import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { type ApplicationVariableOption } from 'twenty-shared/application';
+import {
+  type ApplicationVariableFileValue,
+  type ApplicationVariableOption,
+} from 'twenty-shared/application';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
 import { SettingsApplicationVariableLabelRow } from '~/pages/settings/applications/components/SettingsApplicationVariableLabelRow';
+import { useUploadApplicationRegistrationVariableFile } from '~/pages/settings/applications/hooks/useUploadApplicationRegistrationVariableFile';
 import { shouldDisplayVariable } from '~/pages/settings/applications/utils/shouldDisplayVariable';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 
@@ -33,9 +37,11 @@ type ConfigVariable = {
 const ConfigVariableInput = ({
   variable,
   onUpdate,
+  uploadFile,
 }: {
   variable: ConfigVariable;
   onUpdate: (id: string, value: string) => void;
+  uploadFile: (file: File) => Promise<ApplicationVariableFileValue>;
 }) => {
   const { t } = useLingui();
 
@@ -60,6 +66,7 @@ const ConfigVariableInput = ({
         onUpdateDebounced(newValue);
       }}
       placeholder={isSecretFilled ? (variable.value ?? undefined) : t`Value`}
+      uploadFile={uploadFile}
     />
   );
 };
@@ -81,6 +88,12 @@ export const SettingsApplicationRegistrationConfigTab = ({
   const apolloAdminClient = useApolloAdminClient();
 
   const applicationRegistrationId = registration.id;
+
+  const { uploadApplicationRegistrationVariableFile } =
+    useUploadApplicationRegistrationVariableFile({
+      applicationRegistrationId,
+      fromAdmin,
+    });
 
   const { data: workspaceVariablesData } = useQuery(
     FindApplicationRegistrationVariablesDocument,
@@ -157,6 +170,7 @@ export const SettingsApplicationRegistrationConfigTab = ({
                 <ConfigVariableInput
                   variable={variable as ConfigVariable}
                   onUpdate={handleUpdate}
+                  uploadFile={uploadApplicationRegistrationVariableFile}
                 />
               </div>
             );

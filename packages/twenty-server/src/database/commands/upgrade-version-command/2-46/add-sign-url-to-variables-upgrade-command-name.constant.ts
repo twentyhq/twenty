@@ -1,0 +1,2 @@
+export const ADD_SIGN_URL_TO_VARIABLES_UPGRADE_COMMAND_NAME =
+  '2.46.0_AddSignUrlToVariablesFastInstanceCommand_1791206020497';

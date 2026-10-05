@@ -46,7 +46,7 @@ export interface ApplicationVariable {
     isSecret: Scalars['Boolean']
     isDeprecated: Scalars['Boolean']
     isRequired: Scalars['Boolean']
-    isPublic: Scalars['Boolean']
+    signUrl: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
     __typename: 'ApplicationVariable'
@@ -1733,6 +1733,7 @@ export interface ApplicationRegistrationVariable {
     isDeprecated: Scalars['Boolean']
     isFilled: Scalars['Boolean']
     type: Scalars['String']
+    signUrl: Scalars['Boolean']
     options?: Scalars['JSON']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -2587,7 +2588,7 @@ export interface ApplicationFileUploadTarget {
     __typename: 'ApplicationFileUploadTarget'
 }
 
-export type FileFolder = 'RecordExport' | 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa' | 'ApplicationVariable'
+export type FileFolder = 'RecordExport' | 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa' | 'ApplicationVariable' | 'ApplicationRegistrationVariableUpload'
 
 export interface ApplicationFileUploadError {
     fileFolder: FileFolder
@@ -3672,6 +3673,7 @@ export interface Mutation {
     deleteApplicationRegistration: Scalars['Boolean']
     rotateApplicationRegistrationClientSecret: RotateClientSecret
     updateApplicationRegistrationVariable: ApplicationRegistrationVariable
+    completeApplicationRegistrationVariableFileUpload: FileWithSignedUrl
     completeAppTarballUpload: ApplicationRegistration
     /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
     uploadAppTarball: ApplicationRegistration
@@ -3870,7 +3872,7 @@ export interface ApplicationVariableGenqlSelection{
     isSecret?: boolean | number
     isDeprecated?: boolean | number
     isRequired?: boolean | number
-    isPublic?: boolean | number
+    signUrl?: boolean | number
     type?: boolean | number
     options?: boolean | number
     __typename?: boolean | number
@@ -5602,6 +5604,7 @@ export interface ApplicationRegistrationVariableGenqlSelection{
     isDeprecated?: boolean | number
     isFilled?: boolean | number
     type?: boolean | number
+    signUrl?: boolean | number
     options?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -7686,6 +7689,7 @@ export interface MutationGenqlSelection{
     deleteApplicationRegistration?: { __args: {id: Scalars['String']} }
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
     updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
+    completeApplicationRegistrationVariableFileUpload?: (FileWithSignedUrlGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], fileId: Scalars['UUID']} })
     completeAppTarballUpload?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['UUID']} })
     /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
     uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
@@ -11574,7 +11578,8 @@ export const enumFileFolder = {
    AppTarball: 'AppTarball' as const,
    GeneratedSdkClient: 'GeneratedSdkClient' as const,
    Dpa: 'Dpa' as const,
-   ApplicationVariable: 'ApplicationVariable' as const
+   ApplicationVariable: 'ApplicationVariable' as const,
+   ApplicationRegistrationVariableUpload: 'ApplicationRegistrationVariableUpload' as const
 }
 
 export const enumApplicationExportCoverageStatus = {

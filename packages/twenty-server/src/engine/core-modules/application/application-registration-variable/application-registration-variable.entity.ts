@@ -19,6 +19,7 @@ import {
 } from 'twenty-shared/application';
 
 import { ADD_IS_DEPRECATED_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-31/add-is-deprecated-to-application-variables-upgrade-command-name.constant';
+import { ADD_SIGN_URL_TO_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-sign-url-to-variables-upgrade-command-name.constant';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -68,6 +69,13 @@ export class ApplicationRegistrationVariableEntity {
 
   @Column({ nullable: false, type: 'text', default: FieldMetadataType.TEXT })
   type: ApplicationVariableType;
+
+  // File urls never expire unless they are signed
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_SIGN_URL_TO_VARIABLES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, type: 'boolean', default: false })
+  signUrl: boolean;
 
   @Column({ nullable: true, type: 'jsonb', default: null })
   options: ApplicationVariableOption[] | null;

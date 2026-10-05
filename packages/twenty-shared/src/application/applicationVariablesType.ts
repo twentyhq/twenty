@@ -19,8 +19,7 @@ export const APPLICATION_VARIABLE_FIELD_METADATA_TYPES = [
 export type ApplicationVariableType =
   (typeof APPLICATION_VARIABLE_FIELD_METADATA_TYPES)[number];
 
-// Files are uploaded from the workspace settings, so a manifest cannot
-// carry a value for them and a server variable cannot be one.
+// Files are uploaded from the settings, so a manifest cannot carry a value for them
 export type ApplicationVariableValueType = Exclude<
   ApplicationVariableType,
   typeof FieldMetadataType.FILES
@@ -78,8 +77,8 @@ type FilesApplicationVariable = SyncableEntityOptions & {
   isRequired?: boolean;
   isDeprecated?: boolean;
   isSecret?: never;
-  // Public files get a permanent url, private ones a url that expires (default true)
-  isPublic?: boolean;
+  // File urls never expire unless the urls are signed (default false)
+  signUrl?: boolean;
 };
 
 export type ApplicationVariable =

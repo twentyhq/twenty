@@ -12,11 +12,6 @@ import { SettingsApplicationVariableFilesInput } from '~/pages/settings/applicat
 
 const mockUploadFile = jest.fn();
 
-jest.mock('@/file/hooks/useDirectFileUpload', () => ({
-  useDirectFileUpload: () => ({ uploadFile: mockUploadFile }),
-}));
-
-const APPLICATION_ID = '20202020-0000-4000-8000-000000000001';
 const LOGO_FILE = {
   fileId: '20202020-0000-4000-8000-000000000002',
   label: 'logo.png',
@@ -50,7 +45,7 @@ const renderInput = ({
           }}
         >
           <SettingsApplicationVariableFilesInput
-            applicationId={APPLICATION_ID}
+            uploadFile={mockUploadFile}
             value={value}
             onChange={onChange}
           />
@@ -100,11 +95,7 @@ describe('SettingsApplicationVariableFilesInput', () => {
   });
 
   it('should append the files picked for upload to the value', async () => {
-    mockUploadFile.mockResolvedValue({
-      id: TERMS_FILE.fileId,
-      path: `application-variable/${TERMS_FILE.fileId}.pdf`,
-      url: TERMS_FILE.url,
-    });
+    mockUploadFile.mockResolvedValue(TERMS_FILE);
     const { onChange, selectFiles } = renderInput({
       value: JSON.stringify([LOGO_FILE]),
     });
@@ -112,10 +103,7 @@ describe('SettingsApplicationVariableFilesInput', () => {
     await userEvent.click(screen.getByRole('button', { name: /Upload file/ }));
     await selectFiles([new File(['%PDF'], 'terms.pdf')]);
 
-    expect(mockUploadFile).toHaveBeenCalledWith(expect.any(File), {
-      fileFolder: 'ApplicationVariable',
-      applicationId: APPLICATION_ID,
-    });
+    expect(mockUploadFile).toHaveBeenCalledWith(expect.any(File));
     await waitFor(() =>
       expect(onChange).toHaveBeenCalledWith(
         JSON.stringify([LOGO_FILE, TERMS_FILE]),

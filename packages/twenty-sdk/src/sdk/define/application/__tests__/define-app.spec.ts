@@ -167,7 +167,7 @@ describe('defineApplication', () => {
     ]);
   });
 
-  it('should accept a private FILES application variable and refuse isPublic elsewhere', () => {
+  it('should accept a FILES application variable signing its urls and refuse signUrl elsewhere', () => {
     const accepted = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
@@ -176,7 +176,7 @@ describe('defineApplication', () => {
         SIGNING_CERTIFICATE: {
           universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
           type: FieldType.FILES,
-          isPublic: false,
+          signUrl: true,
         },
       },
     });
@@ -192,30 +192,47 @@ describe('defineApplication', () => {
         API_KEY: {
           universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
           isSecret: true,
-          isPublic: false,
+          signUrl: true,
         } as never,
       },
     });
 
     expect(refused.success).toBe(false);
     expect(refused.errors).toEqual([
-      expect.stringMatching(/API_KEY.*isPublic.*only applies to FILES/),
+      expect.stringMatching(/API_KEY.*signUrl.*only applies to FILES/),
     ]);
   });
 
-  it('should refuse a FILES server variable', () => {
+  it('should accept FILES server variables', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
       description: 'My app description',
       serverVariables: {
-        LOGO: { type: FieldType.FILES as never },
+        LOGO: { type: FieldType.FILES, isSecret: false },
+        CERTIFICATE: { type: FieldType.FILES, signUrl: true },
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should refuse a secret FILES server variable and signUrl on another type', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      serverVariables: {
+        LOGO: { type: FieldType.FILES, isSecret: true },
+        API_KEY: { isSecret: true, signUrl: true },
       },
     });
 
     expect(result.success).toBe(false);
     expect(result.errors).toEqual([
-      expect.stringMatching(/LOGO.*only application variables accept files/),
+      expect.stringMatching(/LOGO.*FILES cannot be secret/),
+      expect.stringMatching(/API_KEY.*signUrl.*only applies to FILES/),
     ]);
   });
 

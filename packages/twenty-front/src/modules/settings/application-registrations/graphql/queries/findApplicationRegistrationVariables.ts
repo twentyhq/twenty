@@ -17,6 +17,7 @@ export const FIND_APPLICATION_REGISTRATION_VARIABLES = gql`
       isFilled
       type
       options
+      signUrl
       createdAt
       updatedAt
     }

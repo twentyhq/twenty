@@ -41,7 +41,7 @@ export class ApplicationVariableEntityDTO {
 
   @IsBoolean()
   @Field()
-  isPublic: boolean;
+  signUrl: boolean;
 
   @IsString()
   @Field()

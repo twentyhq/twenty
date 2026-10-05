@@ -6,6 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { type ApplicationVariable } from '~/generated-metadata/graphql';
 import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
 import { SettingsApplicationVariableLabelRow } from '~/pages/settings/applications/components/SettingsApplicationVariableLabelRow';
+import { useUploadApplicationVariableFile } from '~/pages/settings/applications/hooks/useUploadApplicationVariableFile';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -24,6 +25,10 @@ export const SettingsApplicationDetailVariablesTab = ({
   applicationVariables,
   onVariableChange,
 }: SettingsApplicationDetailVariablesTabProps) => {
+  const { uploadApplicationVariableFile } = useUploadApplicationVariableFile({
+    applicationId,
+  });
+
   const sectionDescription =
     applicationVariables.length > 0
       ? t`Set your application configuration variables`
@@ -55,7 +60,7 @@ export const SettingsApplicationDetailVariablesTab = ({
                 onVariableChange(applicationVariable.key, newValue)
               }
               placeholder={t`Value`}
-              applicationId={applicationId}
+              uploadFile={uploadApplicationVariableFile}
             />
           </div>
         ))}

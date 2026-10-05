@@ -106,4 +106,10 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
     allowedMimeTypes: ANY_MIME_TYPE,
   },
+  // Only holds pending uploads: a completed file moves to instance-level server storage
+  [FileFolder.ApplicationRegistrationVariableUpload]: {
+    ignoreExpirationToken: false,
+    cacheControl: PRESIGNED_URL_NO_STORE_CACHE_CONTROL,
+    allowedMimeTypes: ANY_MIME_TYPE,
+  },
 };

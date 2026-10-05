@@ -61,9 +61,9 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
           `Application variable "${variableName}" of type ${FieldMetadataType.FILES} cannot be secret`,
         );
       }
-    } else if ('isPublic' in variable) {
+    } else if ('signUrl' in variable) {
       errors.push(
-        `Application variable "${variableName}" declares isPublic, which only applies to ${FieldMetadataType.FILES} variables`,
+        `Application variable "${variableName}" declares signUrl, which only applies to ${FieldMetadataType.FILES} variables`,
       );
     }
   }
@@ -158,10 +158,15 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
       );
     }
 
-    // Server variables are instance-wide, with no workspace to upload a file from
-    if ((variable.type as string) === FieldMetadataType.FILES) {
+    if (variable.type === FieldMetadataType.FILES) {
+      if (variable.isSecret) {
+        errors.push(
+          `Server variable "${variableName}" of type ${FieldMetadataType.FILES} cannot be secret`,
+        );
+      }
+    } else if (isDefined(variable.signUrl)) {
       errors.push(
-        `Server variable "${variableName}" cannot be of type ${FieldMetadataType.FILES}: only application variables accept files`,
+        `Server variable "${variableName}" declares signUrl, which only applies to ${FieldMetadataType.FILES} variables`,
       );
     }
   }

@@ -1,6 +1,6 @@
 import {
   type ApplicationVariableOption,
-  type ApplicationVariableValueType,
+  type ApplicationVariableType,
 } from '@/application/applicationVariablesType';
 
 type ServerVariableSchema = {
@@ -8,8 +8,10 @@ type ServerVariableSchema = {
   isSecret?: boolean;
   isRequired?: boolean;
   isDeprecated?: boolean;
-  type?: ApplicationVariableValueType;
+  type?: ApplicationVariableType;
   options?: ApplicationVariableOption[];
+  // FILES only: file urls never expire unless the urls are signed (default false)
+  signUrl?: boolean;
 };
 
 export type ServerVariables = Record<string, ServerVariableSchema>;

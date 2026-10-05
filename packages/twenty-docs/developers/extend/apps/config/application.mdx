@@ -77,7 +77,7 @@ See [Media capture](/developers/extend/apps/layout/front-components#media-captur
 
 ## Variable types
 
-Both `applicationVariables` and `serverVariables` accept an optional `type` (and, for `SELECT` / `MULTI_SELECT`, an `options` list). Supported types: `TEXT` (default), `BOOLEAN`, `NUMBER`, `NUMERIC`, `DATE`, `DATE_TIME`, `SELECT`, `MULTI_SELECT`, `ARRAY`, `RAW_JSON`, `RICH_TEXT`. `applicationVariables` also accept `FILES` (see [File variables](#file-variables)).
+Both `applicationVariables` and `serverVariables` accept an optional `type` (and, for `SELECT` / `MULTI_SELECT`, an `options` list). Supported types: `TEXT` (default), `BOOLEAN`, `NUMBER`, `NUMERIC`, `DATE`, `DATE_TIME`, `SELECT`, `MULTI_SELECT`, `ARRAY`, `RAW_JSON`, `RICH_TEXT` and `FILES` (see [File variables](#file-variables)).
 
 ```ts src/application-config.ts
 import { defineApplication, FieldType } from 'twenty-sdk/define';
@@ -130,9 +130,9 @@ The same applies to front components reading values via `getApplicationVariable(
 
 ### File variables
 
-An application variable of type `FILES` holds files the workspace uploads from the app's settings page, for example a logo to print on generated invoices. It declares no `value` (there is no file to ship in a manifest), cannot be `isSecret`, and is not available to `serverVariables`.
+A variable of type `FILES` holds uploaded files, for example a logo to print on generated invoices. An application variable receives its files from the app's settings page in each workspace; a server variable receives them once, from the **Server variables** section of the app registration, and serves them to every installation. A `FILES` variable declares no `value` (there is no file to ship in a manifest) and cannot be `isSecret`.
 
-`isPublic` (default `true`) decides how long the file urls stay valid. Public files get a permanent url, safe to embed in a generated document or an outgoing email. Set `isPublic: false` for a confidential file: its url is then signed with an expiry, so read it from the variable on each run rather than storing it.
+`signUrl` (default `false`) decides how long the file urls stay valid. By default a url stays valid for as long as the file exists, so it is safe to embed in a generated document or an outgoing email. Set `signUrl: true` for a confidential file: its url is then signed with an expiry, so read it from the variable on each run rather than storing it.
 
 ```ts src/application-config.ts
 import { defineApplication, FieldType } from 'twenty-sdk/define';
@@ -147,24 +147,25 @@ export default defineApplication({
       type: FieldType.FILES,
       isRequired: true,
     },
+  },
+  serverVariables: {
     SIGNING_CERTIFICATE: {
-      universalIdentifier: '7a1c4e92-5b3d-4f08-8e6a-2d9b0c3f1e57',
-      label: 'Signing certificate',
+      description: 'Signs every generated invoice, whichever workspace it comes from',
       type: FieldType.FILES,
-      isPublic: false,
+      signUrl: true,
     },
   },
 });
 ```
 
-The value reaches your code as a JSON array, one entry per uploaded file, with a download `url` (permanent for a public variable, expiring for a private one):
+The value reaches your code as a JSON array, one entry per uploaded file, with a download `url`:
 
 ```ts
 type ApplicationVariableFile = {
   fileId: string;
   label: string; // the uploaded file name, editable in the settings
   extension: string; // e.g. ".png"
-  url: string; // download url, signed with an expiry when the variable is not public
+  url: string; // download url, signed with an expiry when the variable sets signUrl
 };
 
 const [logo] = JSON.parse(process.env.INVOICE_LOGO ?? '[]') as ApplicationVariableFile[];
@@ -174,7 +175,7 @@ if (logo) {
 }
 ```
 
-An app saving such a variable itself (from a custom settings component) uploads the file with `createFileUpload` using the `ApplicationVariable` folder and its own `applicationId`, completes it with `completeFileUpload`, then writes `updateOneApplicationVariable` with the `[{ fileId, label }]` list. Files dropped from the list are deleted on save.
+An app saving an application variable itself (from a custom settings component) uploads the file with `createFileUpload` using the `ApplicationVariable` folder and its own `applicationId`, completes it with `completeFileUpload`, then writes `updateOneApplicationVariable` with the `[{ fileId, label }]` list. A server variable file is uploaded with the `ApplicationRegistrationVariableUpload` folder, completed with `completeApplicationRegistrationVariableFileUpload`, and saved with `updateApplicationRegistrationVariable`. Files dropped from the list are deleted on save.
 
 ## Default function role
 

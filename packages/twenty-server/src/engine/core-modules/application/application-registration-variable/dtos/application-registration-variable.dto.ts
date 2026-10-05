@@ -41,6 +41,10 @@ export class ApplicationRegistrationVariableDTO {
   @Field()
   type: string;
 
+  @IsBoolean()
+  @Field()
+  signUrl: boolean;
+
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   options?: ApplicationVariableOption[] | null;

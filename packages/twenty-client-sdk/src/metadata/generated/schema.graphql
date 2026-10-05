@@ -46,7 +46,7 @@ type ApplicationVariable {
   isSecret: Boolean!
   isDeprecated: Boolean!
   isRequired: Boolean!
-  isPublic: Boolean!
+  signUrl: Boolean!
   type: String!
   options: JSON
 }
@@ -2173,6 +2173,7 @@ type ApplicationRegistrationVariable {
   isDeprecated: Boolean!
   isFilled: Boolean!
   type: String!
+  signUrl: Boolean!
   options: JSON
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3027,6 +3028,7 @@ enum FileFolder {
   GeneratedSdkClient
   Dpa
   ApplicationVariable
+  ApplicationRegistrationVariableUpload
 }
 
 type ApplicationFileUploadError {
@@ -4314,6 +4316,7 @@ type Mutation {
   deleteApplicationRegistration(id: String!): Boolean!
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
   updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
+  completeApplicationRegistrationVariableFileUpload(applicationRegistrationId: String!, fileId: UUID!): FileWithSignedUrl!
   completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
   uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration! @deprecated(reason: "Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage.")
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!

@@ -50,12 +50,14 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.AppTarball,
   FileFolder.CorePicture,
   FileFolder.ApplicationVariable,
+  FileFolder.ApplicationRegistrationVariableUpload,
 ] as const;
 
 // These folders leave quarantine only through their dedicated, permission-gated completions, never the generic one.
 export const DEDICATED_COMPLETION_FILE_FOLDERS = [
   FileFolder.AppTarball,
   FileFolder.CorePicture,
+  FileFolder.ApplicationRegistrationVariableUpload,
 ] as const;
 
 @Injectable()

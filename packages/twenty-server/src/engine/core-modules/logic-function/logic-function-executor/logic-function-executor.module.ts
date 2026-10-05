@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationRegistrationVariableModule } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.module';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
@@ -11,7 +11,6 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
@@ -26,7 +25,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     EventLogEmitterModule,
     EventLogLiveModule,
     TokenModule,
-    SecretEncryptionModule,
     SubscriptionsModule,
     WorkspaceCacheModule,
     LogicFunctionPrebuiltWarmUpModule,
@@ -34,13 +32,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     FeatureFlagModule,
     WorkspaceDomainsModule,
     ApplicationModule,
+    ApplicationRegistrationVariableModule,
     ApplicationVariableEntityModule,
     UsageLimitModule,
     UsageModule,
-    TypeOrmModule.forFeature([
-      ApplicationRegistrationVariableEntity,
-      WorkspaceEntity,
-    ]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
   ],
   providers: [LogicFunctionExecutorService],
   exports: [LogicFunctionExecutorService],

@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { FileFolder } from 'twenty-shared/types';
+import { FileFolder, type ServerFileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import { FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { type ServerFileTokenJwtPayload } from 'src/engine/core-modules/auth/types/server-file-token-jwt-payload.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -64,7 +65,59 @@ export class FileUrlService {
     fileFolder: FileFolder;
     isPermanent?: boolean;
   }): Promise<string> {
-    const signingCacheKey = `${workspaceId}:${fileFolder}:${fileId}:${isPermanent}`;
+    const payload: FileTokenJwtPayload = {
+      workspaceId,
+      fileId,
+      sub: workspaceId,
+      type: JwtTokenTypeEnum.FILE,
+    };
+
+    return this.signOnce({
+      signingCacheKey: `${workspaceId}:${fileFolder}:${fileId}:${isPermanent}`,
+      payload,
+      fileFolder,
+      fileId,
+      isPermanent,
+    });
+  }
+
+  async signServerFileByIdUrl({
+    fileId,
+    applicationRegistrationId,
+    fileFolder,
+    isPermanent = false,
+  }: {
+    fileId: string;
+    applicationRegistrationId: string;
+    fileFolder: ServerFileFolder;
+    isPermanent?: boolean;
+  }): Promise<string> {
+    const payload: ServerFileTokenJwtPayload = {
+      applicationRegistrationId,
+      fileId,
+      sub: applicationRegistrationId,
+      type: JwtTokenTypeEnum.FILE,
+    };
+
+    return this.signOnce({
+      signingCacheKey: `server:${applicationRegistrationId}:${fileFolder}:${fileId}:${isPermanent}`,
+      payload,
+      fileFolder,
+      fileId,
+      isPermanent,
+    });
+  }
+
+  private signOnce({
+    signingCacheKey,
+    ...signedUrlParams
+  }: {
+    signingCacheKey: string;
+    payload: FileTokenJwtPayload | ServerFileTokenJwtPayload;
+    fileFolder: FileFolder | ServerFileFolder;
+    fileId: string;
+    isPermanent: boolean;
+  }): Promise<string> {
     const inflightSigning = this.inflightFileUrlSignings.get(signingCacheKey);
 
     if (isDefined(inflightSigning)) {
@@ -73,12 +126,7 @@ export class FileUrlService {
 
     const signing = (async () => {
       try {
-        return await this.buildSignedFileUrl({
-          fileId,
-          workspaceId,
-          fileFolder,
-          isPermanent,
-        });
+        return await this.buildSignedFileUrl(signedUrlParams);
       } finally {
         this.inflightFileUrlSignings.delete(signingCacheKey);
       }
@@ -90,23 +138,16 @@ export class FileUrlService {
   }
 
   private async buildSignedFileUrl({
-    fileId,
-    workspaceId,
+    payload,
     fileFolder,
+    fileId,
     isPermanent,
   }: {
+    payload: FileTokenJwtPayload | ServerFileTokenJwtPayload;
+    fileFolder: FileFolder | ServerFileFolder;
     fileId: string;
-    workspaceId: string;
-    fileFolder: FileFolder;
     isPermanent: boolean;
   }): Promise<string> {
-    const payload: FileTokenJwtPayload = {
-      workspaceId,
-      fileId,
-      sub: workspaceId,
-      type: JwtTokenTypeEnum.FILE,
-    };
-
     // A permanent url carries a token without expiry: anyone holding the url keeps access
     const token = await this.jwtWrapperService.signAsyncOrThrow(
       payload,

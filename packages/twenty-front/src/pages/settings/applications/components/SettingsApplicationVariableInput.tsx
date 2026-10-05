@@ -11,6 +11,7 @@ import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/F
 import { TextInput } from '@/ui/input/components/TextInput';
 import { t } from '@lingui/core/macro';
 import {
+  type ApplicationVariableFileValue,
   type ApplicationVariableOption,
   deserializeApplicationVariableValue,
 } from 'twenty-shared/application';
@@ -26,8 +27,8 @@ type SettingsApplicationVariableInputProps = {
   onChange: (serializedValue: string) => void;
   placeholder?: string;
   disabled?: boolean;
-  // Files are stored under the application owning the variable
-  applicationId?: string;
+  // FILES variables render their input only when the caller knows where to upload to
+  uploadFile?: (file: File) => Promise<ApplicationVariableFileValue>;
 };
 
 const toSelectOptions = (
@@ -73,14 +74,14 @@ export const SettingsApplicationVariableInput = ({
   onChange,
   placeholder,
   disabled,
-  applicationId,
+  uploadFile,
 }: SettingsApplicationVariableInputProps) => {
   const fieldType = (type as FieldMetadataType) ?? FieldMetadataType.TEXT;
 
-  if (fieldType === FieldMetadataType.FILES && isDefined(applicationId)) {
+  if (fieldType === FieldMetadataType.FILES && isDefined(uploadFile)) {
     return (
       <SettingsApplicationVariableFilesInput
-        applicationId={applicationId}
+        uploadFile={uploadFile}
         value={value}
         onChange={onChange}
         disabled={disabled}

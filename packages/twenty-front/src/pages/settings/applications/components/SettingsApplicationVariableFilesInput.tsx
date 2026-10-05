@@ -12,10 +12,8 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { downloadFile } from '@/activities/files/utils/downloadFile';
-import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { FileChip } from '@/ui/field/display/components/FileChip';
-import { FileFolder } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   align-items: flex-start;
@@ -30,28 +28,21 @@ const StyledFileRow = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const getFileExtension = (path: string): string | undefined => {
-  const extensionStart = path.lastIndexOf('.');
-
-  return extensionStart === -1 ? undefined : path.slice(extensionStart);
-};
-
 type SettingsApplicationVariableFilesInputProps = {
-  applicationId: string;
+  uploadFile: (file: File) => Promise<ApplicationVariableFileValue>;
   value: string;
   onChange: (serializedValue: string) => void;
   disabled?: boolean;
 };
 
 export const SettingsApplicationVariableFilesInput = ({
-  applicationId,
+  uploadFile,
   value,
   onChange,
   disabled,
 }: SettingsApplicationVariableFilesInputProps) => {
   const { t } = useLingui();
   const { openFileUpload } = useFileUpload();
-  const { uploadFile } = useDirectFileUpload();
   const { enqueueToast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
 
@@ -85,17 +76,7 @@ export const SettingsApplicationVariableFilesInput = ({
 
         try {
           for (const selectedFile of selectedFiles) {
-            const uploadedFile = await uploadFile(selectedFile, {
-              fileFolder: FileFolder.ApplicationVariable,
-              applicationId,
-            });
-
-            uploadedFiles.push({
-              fileId: uploadedFile.id,
-              label: selectedFile.name,
-              extension: getFileExtension(uploadedFile.path),
-              url: uploadedFile.url,
-            });
+            uploadedFiles.push(await uploadFile(selectedFile));
           }
         } catch {
           enqueueToast({

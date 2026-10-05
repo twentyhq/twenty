@@ -163,6 +163,16 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         class TestController {
+          @Get()
+          @UseGuards(ServerFileByIdGuard, NoPermissionGuard)
+          testMethod() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestController {
           @Post()
           @UseGuards(FileUploadTokenGuard, NoPermissionGuard)
           testMethod() {}

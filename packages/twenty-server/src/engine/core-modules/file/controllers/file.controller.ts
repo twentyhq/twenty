@@ -32,7 +32,11 @@ import {
   FileByIdGuard,
   SupportedFileFolder,
 } from 'src/engine/core-modules/file/guards/file-by-id.guard';
-import { PUBLIC_ASSET_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { ServerFileByIdGuard } from 'src/engine/core-modules/file/guards/server-file-by-id.guard';
+import {
+  IMMUTABLE_FILE_CACHE_CONTROL,
+  PUBLIC_ASSET_CACHE_CONTROL,
+} from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
@@ -45,6 +49,9 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
 
 // workspaceId is bound onto the request by FileByIdGuard.
 type FileByIdRequest = Request & { workspaceId: string };
+
+// applicationRegistrationId is bound onto the request by ServerFileByIdGuard.
+type ServerFileByIdRequest = Request & { applicationRegistrationId: string };
 
 @Controller()
 @UseFilters(FileApiExceptionFilter)
@@ -234,6 +241,65 @@ export class FileController {
     } finally {
       stream.destroy();
       await cleanup();
+    }
+  }
+
+  @Get(
+    `${ApiPath.File}/${ServerFileFolder.ApplicationRegistrationVariable}/:id`,
+  )
+  @UseGuards(ServerFileByIdGuard, NoPermissionGuard)
+  async getApplicationRegistrationVariableFile(
+    @Res() res: Response,
+    @Req() req: ServerFileByIdRequest,
+    @Param('id') fileId: string,
+  ) {
+    let fileResponse: { stream: Readable; mimeType: string };
+
+    try {
+      fileResponse = await this.serverFileStorageService.readServerFileById({
+        fileFolder: ServerFileFolder.ApplicationRegistrationVariable,
+        applicationRegistrationId: req.applicationRegistrationId,
+        fileId,
+      });
+    } catch (error) {
+      if (
+        error instanceof FileStorageException &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        throw new FileException(
+          'File not found',
+          FileExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      this.logger.error('readServerFileById failed unexpectedly', { error });
+
+      throw new FileException(
+        'Error retrieving file',
+        FileExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    setFileResponseHeaders(res, fileResponse.mimeType);
+    res.setHeader('Cache-Control', IMMUTABLE_FILE_CACHE_CONTROL);
+
+    try {
+      await pipeline(fileResponse.stream, res);
+    } catch (error) {
+      fileResponse.stream.destroy();
+      this.logger.error(
+        'Application registration variable file stream failed mid-transfer',
+        { error },
+      );
+
+      if (!res.headersSent) {
+        throw new FileException(
+          'Error streaming file from storage',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      res.destroy();
     }
   }
 

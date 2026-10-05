@@ -5,7 +5,9 @@ import { type ServerVariables } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, type EntityManager, type Repository } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { ApplicationRegistrationVariableFileService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable-file.service';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -14,7 +16,10 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
+import {
+  type UpdateApplicationRegistrationVariableInput,
+  type UpdateApplicationRegistrationVariablePayload,
+} from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplicationRegistrationOrThrow } from 'src/engine/core-modules/application/utils/can-caller-reach-application-registration-or-throw.util';
 import { findEngineInjectedEnvVariableNames } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/find-engine-injected-env-variable-names.util';
@@ -36,6 +41,7 @@ export class ApplicationRegistrationVariableService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly encryptionService: SecretEncryptionService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
+    private readonly applicationRegistrationVariableFileService: ApplicationRegistrationVariableFileService,
   ) {}
 
   async findVariablesWithObfuscatedValues({
@@ -63,7 +69,32 @@ export class ApplicationRegistrationVariableService {
       order: { key: 'ASC' },
     });
 
-    return variables.map((variable) => this.toObfuscatedDTO(variable));
+    return Promise.all(variables.map((variable) => this.toDTO(variable)));
+  }
+
+  async getEnvVariables(
+    applicationRegistrationId: string,
+  ): Promise<Record<string, string>> {
+    const variables = await this.variableRepository.find({
+      where: { applicationRegistrationId },
+    });
+
+    const envVariableEntries = await Promise.all(
+      variables.map(async (variable) => {
+        const plaintextValue = this.decryptValue(variable);
+
+        return [
+          variable.key,
+          plaintextValue === ''
+            ? ''
+            : await this.toReadableValue(variable, plaintextValue),
+        ] as const;
+      }),
+    );
+
+    return Object.fromEntries(
+      envVariableEntries.filter(([, value]) => value !== ''),
+    );
   }
 
   async updateVariable({
@@ -87,17 +118,15 @@ export class ApplicationRegistrationVariableService {
       applicationRegistrationId: variable.applicationRegistrationId,
     });
 
-    return this.toObfuscatedDTO(await this.applyVariableUpdate(input));
+    return this.toDTO(await this.applyVariableUpdate(variable, input.update));
   }
 
   async updateVariableGlobal(
     input: UpdateApplicationRegistrationVariableInput,
   ): Promise<ApplicationRegistrationVariableDTO> {
-    await this.findVariableOrThrow(input.id);
+    const variable = await this.findVariableOrThrow(input.id);
 
-    const entity = await this.applyVariableUpdate(input);
-
-    return this.toObfuscatedDTO(entity);
+    return this.toDTO(await this.applyVariableUpdate(variable, input.update));
   }
 
   async syncVariableSchemas(
@@ -132,16 +161,22 @@ export class ApplicationRegistrationVariableService {
       const existing = existingByKey.get(key);
       const isDeprecated = schema.isDeprecated ?? false;
       const isRequired = isDeprecated ? false : (schema.isRequired ?? false);
+      const type = schema.type ?? FieldMetadataType.TEXT;
+      // The file list is shown in the settings, so a FILES variable is never masked
+      const isSecret =
+        type === FieldMetadataType.FILES ? false : (schema.isSecret ?? true);
+      const schemaColumns = {
+        description: schema.description ?? '',
+        isSecret,
+        isRequired,
+        isDeprecated,
+        type,
+        options: schema.options ?? null,
+        signUrl: schema.signUrl ?? false,
+      };
 
       if (existing) {
-        await variableRepository.update(existing.id, {
-          description: schema.description ?? '',
-          isSecret: schema.isSecret ?? true,
-          isRequired,
-          isDeprecated,
-          type: schema.type ?? FieldMetadataType.TEXT,
-          options: schema.options ?? null,
-        });
+        await variableRepository.update(existing.id, schemaColumns);
       } else {
         await variableRepository.save(
           variableRepository.create({
@@ -150,12 +185,7 @@ export class ApplicationRegistrationVariableService {
             encryptedValue: this.encryptionService.encryptVersioned(
               '' as PlaintextString,
             ),
-            description: schema.description ?? '',
-            isSecret: schema.isSecret ?? true,
-            isRequired,
-            isDeprecated,
-            type: schema.type ?? FieldMetadataType.TEXT,
-            options: schema.options ?? null,
+            ...schemaColumns,
           }),
         );
       }
@@ -257,21 +287,30 @@ export class ApplicationRegistrationVariableService {
   }
 
   private async applyVariableUpdate(
-    input: UpdateApplicationRegistrationVariableInput,
+    variable: ApplicationRegistrationVariableEntity,
+    update: UpdateApplicationRegistrationVariablePayload,
   ): Promise<ApplicationRegistrationVariableEntity> {
-    const { id, update } = input;
+    const nextPlaintextValue =
+      update.resetValue === true ? ('' as PlaintextString) : update.value;
 
-    const updateData: Record<string, unknown> = {};
+    const filesValueUpdate =
+      variable.type === FieldMetadataType.FILES && isDefined(nextPlaintextValue)
+        ? await this.applicationRegistrationVariableFileService.prepareFilesValueUpdate(
+            {
+              applicationRegistrationId: variable.applicationRegistrationId,
+              previousPlaintextValue: this.decryptValue(variable),
+              nextPlaintextValue,
+            },
+          )
+        : undefined;
 
-    if (isDefined(update.value)) {
+    const updateData: QueryDeepPartialEntity<ApplicationRegistrationVariableEntity> =
+      {};
+
+    if (isDefined(nextPlaintextValue)) {
       updateData.encryptedValue = this.encryptionService.encryptVersioned(
-        update.value,
-      );
-    }
-
-    if (isDefined(update.resetValue) && update.resetValue) {
-      updateData.encryptedValue = this.encryptionService.encryptVersioned(
-        '' as PlaintextString,
+        (filesValueUpdate?.plaintextValueToStore ??
+          nextPlaintextValue) as PlaintextString,
       );
     }
 
@@ -280,10 +319,21 @@ export class ApplicationRegistrationVariableService {
     }
 
     if (Object.keys(updateData).length > 0) {
-      await this.variableRepository.update(id, updateData);
+      await this.variableRepository.update(variable.id, updateData);
     }
 
-    return this.variableRepository.findOneOrFail({ where: { id } });
+    if (isDefined(filesValueUpdate)) {
+      await this.applicationRegistrationVariableFileService.applyFilesValueUpdate(
+        {
+          ...filesValueUpdate,
+          applicationRegistrationId: variable.applicationRegistrationId,
+        },
+      );
+    }
+
+    return this.variableRepository.findOneOrFail({
+      where: { id: variable.id },
+    });
   }
 
   private decryptValue(
@@ -300,9 +350,9 @@ export class ApplicationRegistrationVariableService {
     return this.decryptValue(variable) !== '';
   }
 
-  private toObfuscatedDTO(
+  private async toDTO(
     variable: ApplicationRegistrationVariableEntity,
-  ): ApplicationRegistrationVariableDTO {
+  ): Promise<ApplicationRegistrationVariableDTO> {
     const plaintextValue = this.decryptValue(variable);
     const isFilled = plaintextValue !== '';
 
@@ -313,7 +363,25 @@ export class ApplicationRegistrationVariableService {
         ? null
         : variable.isSecret
           ? '•••••••••••••'
-          : plaintextValue,
+          : await this.toReadableValue(variable, plaintextValue),
     };
+  }
+
+  private async toReadableValue(
+    variable: Pick<
+      ApplicationRegistrationVariableEntity,
+      'type' | 'signUrl' | 'applicationRegistrationId'
+    >,
+    plaintextValue: string,
+  ): Promise<string> {
+    if (variable.type !== FieldMetadataType.FILES) {
+      return plaintextValue;
+    }
+
+    return this.applicationRegistrationVariableFileService.signFilesValue({
+      plaintextValue,
+      applicationRegistrationId: variable.applicationRegistrationId,
+      signUrl: variable.signUrl,
+    });
   }
 }
