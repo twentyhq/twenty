@@ -48,28 +48,17 @@ export class WorkflowDeletionCleanupWorkspaceService {
     coreWorkflowIds: string[];
   }): Promise<void> {
     const schemaName = getWorkspaceSchemaName(workspaceId);
-    let deletedRunCount: number;
+    let batchRuns: { id: string; status: WorkflowRunStatus }[];
 
     do {
-      const [deletedRuns] = await this.dataSource.query<
-        [
-          { id: string; status: WorkflowRunStatus; deletedAt: Date | null }[],
-          number,
-        ]
-      >(
-        `
-          DELETE FROM ${schemaName}."workflowRun"
-          WHERE id IN (
-            SELECT id FROM ${schemaName}."workflowRun"
-            WHERE "coreWorkflowId" = ANY($1)
-            LIMIT $2
-          )
-          RETURNING id, status, "deletedAt";
-        `,
+      batchRuns = await this.dataSource.query(
+        `SELECT id, status FROM ${schemaName}."workflowRun"
+         WHERE "coreWorkflowId" = ANY($1)
+         LIMIT $2`,
         [coreWorkflowIds, WORKFLOW_RUN_DELETION_BATCH_SIZE],
       );
 
-      for (const { id, status } of deletedRuns) {
+      for (const { id, status } of batchRuns) {
         if (WAITING_WORKFLOW_RUN_STATUSES.includes(status)) {
           await this.workflowStepWaitWorkspaceService.cancelRunWaits({
             workspaceId,
@@ -77,6 +66,15 @@ export class WorkflowDeletionCleanupWorkspaceService {
           });
         }
       }
+
+      const [deletedRuns] = await this.dataSource.query<
+        [{ status: WorkflowRunStatus; deletedAt: Date | null }[], number]
+      >(
+        `DELETE FROM ${schemaName}."workflowRun"
+         WHERE id = ANY($1)
+         RETURNING status, "deletedAt"`,
+        [batchRuns.map(({ id }) => id)],
+      );
 
       const removedNotStartedRunCount = deletedRuns.filter(
         ({ status, deletedAt }) =>
@@ -89,8 +87,6 @@ export class WorkflowDeletionCleanupWorkspaceService {
           removedNotStartedRunCount,
         );
       }
-
-      deletedRunCount = deletedRuns.length;
-    } while (deletedRunCount > 0);
+    } while (batchRuns.length > 0);
   }
 }
