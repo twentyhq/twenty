@@ -40,31 +40,37 @@ const DISABLED_VALIDATION_RULE: ValidationRule = {
   isActive: false,
 };
 
-const buildValidationRulesResult =
-  (validationRules: ValidationRule[]) => () => ({
+const SECOND_VALIDATION_RULE: ValidationRule = {
+  ...ACTIVE_VALIDATION_RULE,
+  id: '20202020-0000-4000-8000-000000000011',
+  name: 'Amount is set',
+  expression: 'amount != null',
+};
+
+const buildValidationRulesMock = (
+  validationRules: ValidationRule[],
+  delayInMs = 0,
+) => ({
+  request: {
+    query: FindManyValidationRulesDocument,
+    variables: { objectMetadataId: OBJECT_METADATA_ID },
+  },
+  delay: jest.fn(() => delayInMs),
+  result: jest.fn(() => ({
     data: {
       validationRules: validationRules.map((validationRule) => ({
         __typename: 'ValidationRule' as const,
         ...validationRule,
       })),
     },
-  });
-
-const buildValidationRulesMock = (
-  result: ReturnType<typeof buildValidationRulesResult>,
-) => ({
-  request: {
-    query: FindManyValidationRulesDocument,
-    variables: { objectMetadataId: OBJECT_METADATA_ID },
-  },
-  result,
+  })),
 });
 
 const renderUseValidationRules = ({
-  results,
+  mocks,
   isValidationRulesEnabled = true,
 }: {
-  results: ReturnType<typeof buildValidationRulesResult>[];
+  mocks: ReturnType<typeof buildValidationRulesMock>[];
   isValidationRulesEnabled?: boolean;
 }) => {
   resetJotaiStore();
@@ -80,9 +86,7 @@ const renderUseValidationRules = ({
 
   const wrapper = ({ children }: { children: ReactNode }) => (
     <JotaiProvider store={jotaiStore}>
-      <MockedProvider mocks={results.map(buildValidationRulesMock)}>
-        {children}
-      </MockedProvider>
+      <MockedProvider mocks={mocks}>{children}</MockedProvider>
     </JotaiProvider>
   );
 
@@ -110,17 +114,17 @@ const dispatchValidationRuleUpdate = (updatedRecord: ValidationRule) =>
     operation: { type: 'update', updatedRecord, updatedFields: ['isActive'] },
   });
 
+const flushPendingRequests = () =>
+  act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+
 describe('useValidationRules', () => {
   it('should stop enforcing a rule another session disabled while the form is open', async () => {
-    const refetchResult = jest.fn(
-      buildValidationRulesResult([DISABLED_VALIDATION_RULE]),
-    );
+    const refetchMock = buildValidationRulesMock([DISABLED_VALIDATION_RULE]);
 
     const { result } = renderUseValidationRules({
-      results: [
-        buildValidationRulesResult([ACTIVE_VALIDATION_RULE]),
-        refetchResult,
-      ],
+      mocks: [buildValidationRulesMock([ACTIVE_VALIDATION_RULE]), refetchMock],
     });
 
     await waitFor(() =>
@@ -138,14 +142,14 @@ describe('useValidationRules', () => {
         { id: ACTIVE_VALIDATION_RULE.id, isActive: false },
       ]),
     );
-    expect(refetchResult).toHaveBeenCalledTimes(1);
+    expect(refetchMock.result).toHaveBeenCalledTimes(1);
   });
 
   it('should refresh rules in the background without reporting loading', async () => {
     const { result, loadingStates } = renderUseValidationRules({
-      results: [
-        buildValidationRulesResult([ACTIVE_VALIDATION_RULE]),
-        buildValidationRulesResult([DISABLED_VALIDATION_RULE]),
+      mocks: [
+        buildValidationRulesMock([ACTIVE_VALIDATION_RULE]),
+        buildValidationRulesMock([DISABLED_VALIDATION_RULE]),
       ],
     });
 
@@ -169,9 +173,9 @@ describe('useValidationRules', () => {
 
   it('should drop a rule another session deleted while the form is open', async () => {
     const { result } = renderUseValidationRules({
-      results: [
-        buildValidationRulesResult([ACTIVE_VALIDATION_RULE]),
-        buildValidationRulesResult([]),
+      mocks: [
+        buildValidationRulesMock([ACTIVE_VALIDATION_RULE]),
+        buildValidationRulesMock([]),
       ],
     });
 
@@ -191,27 +195,18 @@ describe('useValidationRules', () => {
   });
 
   it('should refetch once when a field migration updates several rules at once', async () => {
-    const SECOND_VALIDATION_RULE: ValidationRule = {
-      ...ACTIVE_VALIDATION_RULE,
-      id: '20202020-0000-4000-8000-000000000011',
-      name: 'Amount is set',
-      expression: 'amount != null',
-    };
-
-    const refetchResult = jest.fn(
-      buildValidationRulesResult([
-        DISABLED_VALIDATION_RULE,
-        { ...SECOND_VALIDATION_RULE, isActive: false },
-      ]),
-    );
+    const refetchMock = buildValidationRulesMock([
+      DISABLED_VALIDATION_RULE,
+      { ...SECOND_VALIDATION_RULE, isActive: false },
+    ]);
 
     const { result } = renderUseValidationRules({
-      results: [
-        buildValidationRulesResult([
+      mocks: [
+        buildValidationRulesMock([
           ACTIVE_VALIDATION_RULE,
           SECOND_VALIDATION_RULE,
         ]),
-        refetchResult,
+        refetchMock,
       ],
     });
 
@@ -226,23 +221,64 @@ describe('useValidationRules', () => {
     });
 
     await waitFor(() =>
-      expect(
-        result.current.validationRules.every(
-          (validationRule) => !validationRule.isActive,
-        ),
-      ).toBe(true),
+      expect(result.current.validationRules).toMatchObject([
+        { id: ACTIVE_VALIDATION_RULE.id, isActive: false },
+        { id: SECOND_VALIDATION_RULE.id, isActive: false },
+      ]),
     );
-    expect(refetchResult).toHaveBeenCalledTimes(1);
+    expect(refetchMock.result).toHaveBeenCalledTimes(1);
+  });
+
+  it('should read the rules again when a rule changes during a refetch', async () => {
+    const staleRefetchMock = buildValidationRulesMock(
+      [ACTIVE_VALIDATION_RULE, SECOND_VALIDATION_RULE],
+      50,
+    );
+    const latestRefetchMock = buildValidationRulesMock(
+      [ACTIVE_VALIDATION_RULE, { ...SECOND_VALIDATION_RULE, isActive: false }],
+      100,
+    );
+
+    const { result } = renderUseValidationRules({
+      mocks: [
+        buildValidationRulesMock([ACTIVE_VALIDATION_RULE]),
+        staleRefetchMock,
+        latestRefetchMock,
+      ],
+    });
+
+    await waitFor(() => expect(result.current.validationRules).toHaveLength(1));
+
+    act(() => {
+      dispatchMetadataOperationBrowserEvent<ValidationRule>({
+        metadataName: AllMetadataName.validationRule,
+        operation: { type: 'create', createdRecord: SECOND_VALIDATION_RULE },
+      });
+    });
+
+    await waitFor(() => expect(staleRefetchMock.delay).toHaveBeenCalled());
+
+    act(() => {
+      dispatchValidationRuleUpdate({
+        ...SECOND_VALIDATION_RULE,
+        isActive: false,
+      });
+    });
+
+    await waitFor(() =>
+      expect(result.current.validationRules).toMatchObject([
+        { id: ACTIVE_VALIDATION_RULE.id, isActive: true },
+        { id: SECOND_VALIDATION_RULE.id, isActive: false },
+      ]),
+    );
+    expect(latestRefetchMock.result).toHaveBeenCalledTimes(1);
   });
 
   it('should not refetch when a rule of another object changes', async () => {
-    const refetchResult = jest.fn(buildValidationRulesResult([]));
+    const refetchMock = buildValidationRulesMock([]);
 
     const { result } = renderUseValidationRules({
-      results: [
-        buildValidationRulesResult([ACTIVE_VALIDATION_RULE]),
-        refetchResult,
-      ],
+      mocks: [buildValidationRulesMock([ACTIVE_VALIDATION_RULE]), refetchMock],
     });
 
     await waitFor(() => expect(result.current.validationRules).toHaveLength(1));
@@ -256,19 +292,17 @@ describe('useValidationRules', () => {
       });
     });
 
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 0));
-    });
+    await flushPendingRequests();
 
-    expect(refetchResult).not.toHaveBeenCalled();
+    expect(refetchMock.result).not.toHaveBeenCalled();
     expect(result.current.validationRules).toHaveLength(1);
   });
 
   it('should resync rules missed while the event stream was disconnected', async () => {
     const { result } = renderUseValidationRules({
-      results: [
-        buildValidationRulesResult([ACTIVE_VALIDATION_RULE]),
-        buildValidationRulesResult([DISABLED_VALIDATION_RULE]),
+      mocks: [
+        buildValidationRulesMock([ACTIVE_VALIDATION_RULE]),
+        buildValidationRulesMock([DISABLED_VALIDATION_RULE]),
       ],
     });
 
@@ -290,12 +324,12 @@ describe('useValidationRules', () => {
   });
 
   it('should neither load nor listen when the feature flag is disabled', async () => {
-    const validationRulesResult = jest.fn(
-      buildValidationRulesResult([ACTIVE_VALIDATION_RULE]),
-    );
+    const validationRulesMock = buildValidationRulesMock([
+      ACTIVE_VALIDATION_RULE,
+    ]);
 
     const { result } = renderUseValidationRules({
-      results: [validationRulesResult],
+      mocks: [validationRulesMock],
       isValidationRulesEnabled: false,
     });
 
@@ -304,11 +338,9 @@ describe('useValidationRules', () => {
       dispatchBrowserEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME);
     });
 
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 0));
-    });
+    await flushPendingRequests();
 
-    expect(validationRulesResult).not.toHaveBeenCalled();
+    expect(validationRulesMock.result).not.toHaveBeenCalled();
     expect(result.current.validationRules).toEqual([]);
   });
 });

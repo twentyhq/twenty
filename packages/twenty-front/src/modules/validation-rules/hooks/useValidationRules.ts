@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isNonEmptyString } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
@@ -30,7 +31,12 @@ export const useValidationRules = ({
     variables: { objectMetadataId },
     skip,
     notifyOnNetworkStatusChange: false,
+    context: { queryDeduplication: false },
   });
+
+  const refetchLatestValidationRules = useDebouncedCallback(() => {
+    void refetch();
+  }, 0);
 
   const refetchOnValidationRuleOperation = useCallback(
     ({ operation }: MetadataOperationBrowserEventDetail<ValidationRule>) => {
@@ -41,10 +47,10 @@ export const useValidationRules = ({
           validationRules: data?.validationRules ?? [],
         })
       ) {
-        void refetch();
+        refetchLatestValidationRules();
       }
     },
-    [data, objectMetadataId, refetch],
+    [data, objectMetadataId, refetchLatestValidationRules],
   );
 
   useListenToMetadataOperationBrowserEvent<ValidationRule>({
@@ -55,9 +61,9 @@ export const useValidationRules = ({
 
   const refetchOnSseReconnected = useCallback(() => {
     if (!skip) {
-      void refetch();
+      refetchLatestValidationRules();
     }
-  }, [refetch, skip]);
+  }, [refetchLatestValidationRules, skip]);
 
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
