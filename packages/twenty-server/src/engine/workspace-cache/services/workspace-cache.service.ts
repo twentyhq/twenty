@@ -346,7 +346,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         });
 
         if (recomputedEntries.hasUnpublishedEntries) {
-          // A superseded result still answers this call but must not be served to later ones
           await this.memoizer.clearKey(memoKey);
         }
 
@@ -494,7 +493,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       expectedHash: crypto.randomUUID(),
     }));
 
-    // Replacing rather than deleting the hash makes in-flight recomputes skip publishing
     await this.cacheStorage.msetAndMdel({
       entries: invalidatedKeys.map(({ keyName, expectedHash }) => ({
         key: `${this.buildCacheKey(workspaceId, keyName)}:hash`,
