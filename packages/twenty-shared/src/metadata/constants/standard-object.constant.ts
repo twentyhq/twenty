@@ -1503,16 +1503,6 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  agentTurnEvaluation: {
-    universalIdentifier:
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentTurnEvaluation,
-    fields: STANDARD_OBJECT_FIELDS.agentTurnEvaluation,
-    indexes: {
-      turnIndex: {
-        universalIdentifier: 'f85d8283-84ae-4343-8328-8c4e21c5b984',
-      },
-    },
-  },
   campaignDelivery: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.campaignDelivery,
     fields: STANDARD_OBJECT_FIELDS.campaignDelivery,
