@@ -294,7 +294,7 @@ describe('useValidationRules', () => {
 
     await flushPendingRequests();
 
-    expect(refetchMock.result).not.toHaveBeenCalled();
+    expect(refetchMock.delay).not.toHaveBeenCalled();
     expect(result.current.validationRules).toHaveLength(1);
   });
 
@@ -340,7 +340,7 @@ describe('useValidationRules', () => {
 
     await flushPendingRequests();
 
-    expect(validationRulesMock.result).not.toHaveBeenCalled();
+    expect(validationRulesMock.delay).not.toHaveBeenCalled();
     expect(result.current.validationRules).toEqual([]);
   });
 });
