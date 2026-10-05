@@ -11,6 +11,7 @@ import { updateOneApplicationVariable } from 'test/integration/metadata/suites/a
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 const VARIABLE_KEY = 'INVOICE_LOGO';
@@ -121,9 +122,13 @@ describe('FILES application variable', () => {
       expectToFail: false,
     });
 
-    const variable = data.findOneApplication.applicationVariables.find(
+    const variable = data.findOneApplication.applicationVariables?.find(
       ({ key }: { key: string }) => key === VARIABLE_KEY,
     );
+
+    if (!isDefined(variable)) {
+      throw new Error(`Variable ${VARIABLE_KEY} was not synced`);
+    }
 
     return {
       value: variable.value,
