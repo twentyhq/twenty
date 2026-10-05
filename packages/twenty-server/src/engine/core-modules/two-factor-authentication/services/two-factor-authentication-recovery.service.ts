@@ -142,11 +142,7 @@ export class TwoFactorAuthenticationRecoveryService {
     const hasRecoverableTwoFactorAuthentication =
       (await this.hasVerifiedTwoFactorAuthenticationMethod(
         targetUserWorkspace,
-      )) ||
-      (await this.isAwaitingRecoveryEnrollment({
-        userId: targetUserId,
-        workspaceId: targetWorkspaceId,
-      }));
+      )) || (await this.isAwaitingRecoveryEnrollment(targetUserWorkspace));
 
     if (!hasRecoverableTwoFactorAuthentication) {
       throw new TwoFactorAuthenticationException(
@@ -256,10 +252,7 @@ export class TwoFactorAuthenticationRecoveryService {
 
     const isAwaitingRecoveryEnrollment =
       !hasVerifiedTwoFactorAuthenticationMethod &&
-      (await this.isAwaitingRecoveryEnrollment({
-        userId: targetUserId,
-        workspaceId: targetWorkspaceId,
-      }));
+      (await this.isAwaitingRecoveryEnrollment(targetUserWorkspace));
 
     const pendingRecoveryCode = await this.appTokenRepository.findOne({
       where: {
@@ -420,7 +413,7 @@ export class TwoFactorAuthenticationRecoveryService {
       return;
     }
 
-    if (await this.isAwaitingRecoveryEnrollment({ userId, workspaceId })) {
+    if (await this.isAwaitingRecoveryEnrollment(userWorkspace)) {
       throw new TwoFactorAuthenticationException(
         'Enrollment after a recovery must use the authenticator issued with the recovery code',
         TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
@@ -428,20 +421,20 @@ export class TwoFactorAuthenticationRecoveryService {
     }
   }
 
-  private isAwaitingRecoveryEnrollment({
-    userId,
-    workspaceId,
-  }: {
-    userId: UserEntity['id'];
-    workspaceId: WorkspaceEntity['id'];
-  }): Promise<boolean> {
+  private isAwaitingRecoveryEnrollment(
+    userWorkspace: Pick<
+      UserWorkspaceEntity,
+      'userId' | 'workspaceId' | 'createdAt'
+    >,
+  ): Promise<boolean> {
     return this.appTokenRepository.exists({
       where: {
-        userId,
-        workspaceId,
+        userId: userWorkspace.userId,
+        workspaceId: userWorkspace.workspaceId,
         type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
         deletedAt: Not(IsNull()),
         revokedAt: IsNull(),
+        createdAt: MoreThanOrEqual(userWorkspace.createdAt),
       },
     });
   }

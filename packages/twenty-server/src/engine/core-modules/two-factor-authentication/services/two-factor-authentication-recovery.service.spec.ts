@@ -477,6 +477,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
           type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
           deletedAt: Not(IsNull()),
           revokedAt: IsNull(),
+          createdAt: MoreThanOrEqual(MEMBERSHIP_CREATED_AT),
         },
       });
     });
