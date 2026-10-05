@@ -18,6 +18,10 @@ import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { type EstimatedRowsUsage } from 'src/engine/api/common/common-query-runners/types/estimated-rows-usage.type';
+import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
+import { estimateChildRowCount } from 'src/engine/api/common/common-query-runners/utils/estimate-child-row-count.util';
+import { estimateRelationRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-relation-rows-read.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -639,5 +643,29 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
+  }
+
+  protected computeEstimatedRowsUsage(
+    args: CommonExtendedInput<MergeManyQueryArgs>,
+    rowsEstimationContext: RowsEstimationContext,
+  ): EstimatedRowsUsage {
+    const movedChildRowCount = args.dryRun
+      ? 0
+      : estimateChildRowCount({
+          parentRowCount: args.ids.length,
+          context: rowsEstimationContext,
+        });
+
+    return {
+      rowsRead:
+        args.ids.length +
+        movedChildRowCount +
+        estimateRelationRowsRead({
+          select: args.selectedFieldsResult.select,
+          parentRowCount: 1,
+          context: rowsEstimationContext,
+        }),
+      rowsWritten: args.dryRun ? 0 : movedChildRowCount + args.ids.length,
+    };
   }
 }

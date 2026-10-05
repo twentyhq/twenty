@@ -10,6 +10,10 @@ import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-build
 
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { type EstimatedRowsUsage } from 'src/engine/api/common/common-query-runners/types/estimated-rows-usage.type';
+import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
+import { estimateRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-rows-read.util';
+import { estimateRelationRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-relation-rows-read.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -160,5 +164,25 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
+  }
+
+  protected computeEstimatedRowsUsage(
+    args: CommonExtendedInput<FindOneQueryArgs>,
+    rowsEstimationContext: RowsEstimationContext,
+  ): EstimatedRowsUsage {
+    return {
+      rowsRead:
+        estimateRowsRead({
+          filter: args.filter ?? {},
+          limit: 1,
+          context: rowsEstimationContext,
+        }) +
+        estimateRelationRowsRead({
+          select: args.selectedFieldsResult.select,
+          parentRowCount: 1,
+          context: rowsEstimationContext,
+        }),
+      rowsWritten: 0,
+    };
   }
 }

@@ -6,6 +6,9 @@ import { ObjectRecord } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { type EstimatedRowsUsage } from 'src/engine/api/common/common-query-runners/types/estimated-rows-usage.type';
+import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
+import { estimateFilteredMutationRowsUsage } from 'src/engine/api/common/common-query-runners/utils/estimate-filtered-mutation-rows-usage.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -147,5 +150,16 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       authContext.workspace.id,
     );
+  }
+
+  protected computeEstimatedRowsUsage(
+    args: CommonExtendedInput<UpdateManyQueryArgs>,
+    rowsEstimationContext: RowsEstimationContext,
+  ): EstimatedRowsUsage {
+    return estimateFilteredMutationRowsUsage({
+      filter: args.filter,
+      select: args.selectedFieldsResult.select,
+      context: rowsEstimationContext,
+    });
   }
 }

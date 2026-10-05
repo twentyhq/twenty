@@ -18,6 +18,14 @@ import {
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { type EstimatedRowsUsage } from 'src/engine/api/common/common-query-runners/types/estimated-rows-usage.type';
+import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
+import { estimateRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-rows-read.util';
+import { estimateRelationRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-relation-rows-read.util';
+import {
+  RECORDS_PER_GROUP_LIMIT,
+  RELATIONS_PER_RECORD_LIMIT,
+} from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -462,5 +470,34 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       ? groupByQueryComplexity +
           selectedFieldsComplexity * getGroupLimit(args.limit)
       : groupByQueryComplexity;
+  }
+
+  protected computeEstimatedRowsUsage(
+    args: CommonExtendedInput<GroupByQueryArgs>,
+    rowsEstimationContext: RowsEstimationContext,
+  ): EstimatedRowsUsage {
+    const matchingRowCount = estimateRowsRead({
+      filter: args.filter ?? {},
+      context: rowsEstimationContext,
+    });
+
+    if (!(args.includeRecords ?? false)) {
+      return { rowsRead: matchingRowCount, rowsWritten: 0 };
+    }
+
+    return {
+      rowsRead:
+        2 * matchingRowCount +
+        estimateRelationRowsRead({
+          select: args.selectedFieldsResult.select,
+          parentRowCount: Math.min(
+            getGroupLimit(args.limit) * RECORDS_PER_GROUP_LIMIT,
+            matchingRowCount,
+          ),
+          context: rowsEstimationContext,
+          recordLimitPerParent: RELATIONS_PER_RECORD_LIMIT,
+        }),
+      rowsWritten: 0,
+    };
   }
 }

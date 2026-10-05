@@ -11,6 +11,10 @@ import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { type EstimatedRowsUsage } from 'src/engine/api/common/common-query-runners/types/estimated-rows-usage.type';
+import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
+import { estimateDuplicateCriteriaRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-duplicate-criteria-rows-read.util';
+import { estimateRelationRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-relation-rows-read.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -277,5 +281,28 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
+  }
+
+  protected computeEstimatedRowsUsage(
+    args: CommonExtendedInput<FindDuplicatesQueryArgs>,
+    rowsEstimationContext: RowsEstimationContext,
+  ): EstimatedRowsUsage {
+    const sourceRecordCount = args.ids?.length || args.data?.length || 0;
+    const duplicateRowsRead = estimateDuplicateCriteriaRowsRead(
+      rowsEstimationContext,
+    );
+
+    return {
+      rowsRead:
+        (args.ids?.length ?? 0) +
+        2 * sourceRecordCount * duplicateRowsRead +
+        estimateRelationRowsRead({
+          select: args.selectedFieldsResult.select,
+          parentRowCount:
+            sourceRecordCount * Math.min(QUERY_MAX_RECORDS, duplicateRowsRead),
+          context: rowsEstimationContext,
+        }),
+      rowsWritten: 0,
+    };
   }
 }

@@ -19,7 +19,10 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { type EstimatedRowsUsage } from 'src/engine/api/common/common-query-runners/types/estimated-rows-usage.type';
+import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
+import { buildRowsEstimationContext } from 'src/engine/api/common/common-query-runners/utils/build-rows-estimation-context.util';
 import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -64,6 +67,7 @@ import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutatio
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -101,6 +105,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly twentyConfigService: TwentyConfigService;
   @Inject()
   protected readonly metricsService: MetricsService;
+  @Inject()
+  protected readonly objectRecordCountService: ObjectRecordCountService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -153,6 +159,8 @@ export abstract class CommonBaseQueryRunnerService<
         quantity: queryComplexity,
         unit: UsageUnit.COMPLEXITY,
       });
+
+      await this.recordApiEstimatedRowsUsage(processedArgs, queryRunnerContext);
     }
 
     const results = await this.workspaceOrmManager.executeInWorkspaceContext(
@@ -185,6 +193,11 @@ export abstract class CommonBaseQueryRunnerService<
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<Args>>;
+
+  protected abstract computeEstimatedRowsUsage(
+    args: CommonExtendedInput<Args>,
+    rowsEstimationContext: RowsEstimationContext,
+  ): EstimatedRowsUsage;
 
   protected abstract processQueryResult(
     queryResult: Output,
@@ -513,6 +526,55 @@ export abstract class CommonBaseQueryRunnerService<
       resourceContext: apiType,
       spenders: buildUsageSpendersFromAuthContext(authContext),
     });
+  }
+
+  private async recordApiEstimatedRowsUsage(
+    args: CommonExtendedInput<Args>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ) {
+    const {
+      authContext,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
+    } = queryRunnerContext;
+
+    if (!isDefined(getApiType()) || !isDefined(flatIndexMaps)) {
+      return;
+    }
+
+    const approximateRecordCountByTableName =
+      await this.objectRecordCountService.getCachedApproximateRecordCountByTableName(
+        authContext.workspace.id,
+      );
+
+    const { rowsRead, rowsWritten } = this.computeEstimatedRowsUsage(
+      args,
+      buildRowsEstimationContext({
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatIndexMaps,
+        approximateRecordCountByTableName,
+      }),
+    );
+
+    if (rowsRead > 0) {
+      this.recordApiUsage({
+        authContext,
+        quantity: rowsRead,
+        unit: UsageUnit.ESTIMATED_ROWS_READ,
+      });
+    }
+
+    if (rowsWritten > 0) {
+      this.recordApiUsage({
+        authContext,
+        quantity: rowsWritten,
+        unit: UsageUnit.ESTIMATED_ROWS_WRITTEN,
+      });
+    }
   }
 
   private async consumeApiSpeedLimit(authContext: WorkspaceAuthContext) {

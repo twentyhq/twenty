@@ -17,6 +17,9 @@ import {
 } from 'typeorm';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { type EstimatedRowsUsage } from 'src/engine/api/common/common-query-runners/types/estimated-rows-usage.type';
+import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
+import { estimateCreatedRecordsRowsUsage } from 'src/engine/api/common/common-query-runners/utils/estimate-created-records-rows-usage.util';
 import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
@@ -828,5 +831,17 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     }
 
     return recordWithoutCreatedByUpdate;
+  }
+
+  protected computeEstimatedRowsUsage(
+    args: CommonExtendedInput<CreateManyQueryArgs>,
+    rowsEstimationContext: RowsEstimationContext,
+  ): EstimatedRowsUsage {
+    return estimateCreatedRecordsRowsUsage({
+      createdRecordCount: args.data.length,
+      isUpsert: args.upsert ?? false,
+      select: args.selectedFieldsResult.select,
+      context: rowsEstimationContext,
+    });
   }
 }

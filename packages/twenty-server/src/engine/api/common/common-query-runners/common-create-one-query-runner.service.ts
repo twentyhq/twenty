@@ -3,6 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { type ObjectRecord } from 'twenty-shared/types';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { type EstimatedRowsUsage } from 'src/engine/api/common/common-query-runners/types/estimated-rows-usage.type';
+import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
+import { estimateCreatedRecordsRowsUsage } from 'src/engine/api/common/common-query-runners/utils/estimate-created-records-rows-usage.util';
 import { CommonCreateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -101,5 +104,17 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     if (args.data?.id) {
       assertIsValidUuid(args.data.id);
     }
+  }
+
+  protected computeEstimatedRowsUsage(
+    args: CommonExtendedInput<CreateOneQueryArgs>,
+    rowsEstimationContext: RowsEstimationContext,
+  ): EstimatedRowsUsage {
+    return estimateCreatedRecordsRowsUsage({
+      createdRecordCount: 1,
+      isUpsert: args.upsert ?? false,
+      select: args.selectedFieldsResult.select,
+      context: rowsEstimationContext,
+    });
   }
 }

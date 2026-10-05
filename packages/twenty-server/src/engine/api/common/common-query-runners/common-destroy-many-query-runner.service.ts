@@ -7,6 +7,9 @@ import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { type EstimatedRowsUsage } from 'src/engine/api/common/common-query-runners/types/estimated-rows-usage.type';
+import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
+import { estimateFilteredMutationRowsUsage } from 'src/engine/api/common/common-query-runners/utils/estimate-filtered-mutation-rows-usage.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -136,5 +139,16 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
     }
 
     args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
+  }
+
+  protected computeEstimatedRowsUsage(
+    args: CommonExtendedInput<DestroyManyQueryArgs>,
+    rowsEstimationContext: RowsEstimationContext,
+  ): EstimatedRowsUsage {
+    return estimateFilteredMutationRowsUsage({
+      filter: args.filter,
+      select: args.selectedFieldsResult.select,
+      context: rowsEstimationContext,
+    });
   }
 }
