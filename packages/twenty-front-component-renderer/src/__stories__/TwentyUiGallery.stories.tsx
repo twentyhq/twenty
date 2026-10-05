@@ -1,6 +1,5 @@
-import { createCurrencyPickerTest } from '@/__stories__/twenty-ui-gallery/utils/createCurrencyPickerTest';
-import { createDropdownTest } from '@/__stories__/twenty-ui-gallery/utils/createDropdownTest';
-import { createPhoneCountryPickerTest } from '@/__stories__/twenty-ui-gallery/utils/createPhoneCountryPickerTest';
+import { currencyPickerTest } from '@/__stories__/twenty-ui-gallery/utils/currencyPickerTest';
+import { phoneCountryPickerOpenTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerOpenTest';
 import { phoneCountryPickerTriggerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTriggerTest';
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
 import { imageInputTest } from '@/__stories__/twenty-ui-gallery/utils/imageInputTest';
@@ -16,7 +15,7 @@ import { numberStepperTest } from '@/__stories__/twenty-ui-gallery/utils/numberS
 import { numberStepperSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSandboxFailureTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { resizeHandleTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandleTest';
-import { createListItemSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createListItemSandboxFailureTest';
+import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
@@ -24,6 +23,7 @@ import { responsiveHooksTest } from '@/__stories__/twenty-ui-gallery/utils/respo
 import { RESPONSIVE_HOOKS_WIDGET_SIZING } from '@/__stories__/twenty-ui-gallery/constants/RESPONSIVE_HOOKS_WIDGET_SIZING';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { toastCountdownTest } from '@/__stories__/twenty-ui-gallery/utils/toastCountdownTest';
+import { dropdownTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownTest';
 import { type Meta } from '@storybook/react-vite';
 
 import {
@@ -278,12 +278,12 @@ export const BreadcrumbPreact: Story = createGalleryStory({
 export const ListItemReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-list-item',
   runtime: 'react',
-  play: createListItemSandboxFailureTest('react'),
+  play: listItemTest,
 });
 export const ListItemPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-list-item',
   runtime: 'preact',
-  play: createListItemSandboxFailureTest('preact'),
+  play: listItemTest,
 });
 
 export const PickerListItemsReact: Story = createGalleryStory({
@@ -358,13 +358,13 @@ export const MenuPreact: Story = createGalleryStory({
 export const DropdownReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-dropdown',
   runtime: 'react',
-  play: createDropdownTest('react'),
+  play: dropdownTest,
 });
 
 export const DropdownPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-dropdown',
   runtime: 'preact',
-  play: createDropdownTest('preact'),
+  play: dropdownTest,
 });
 
 export const PhoneCountryPickerTriggersReact: Story = createGalleryStory({
@@ -382,13 +382,13 @@ export const PhoneCountryPickerTriggersPreact: Story = createGalleryStory({
 export const PhoneCountryPickerReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-phone-country-picker',
   runtime: 'react',
-  play: createPhoneCountryPickerTest('react'),
+  play: phoneCountryPickerOpenTest,
 });
 
 export const PhoneCountryPickerPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-phone-country-picker',
   runtime: 'preact',
-  play: createPhoneCountryPickerTest('preact'),
+  play: phoneCountryPickerOpenTest,
 });
 
 export const SelectReact: Story = createGalleryStory({
@@ -674,11 +674,11 @@ export const ImageInputPreact: Story = createGalleryStory({
 export const CurrencyPickerReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-currency-picker',
   runtime: 'react',
-  play: createCurrencyPickerTest('react'),
+  play: currencyPickerTest,
 });
 
 export const CurrencyPickerPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-currency-picker',
   runtime: 'preact',
-  play: createCurrencyPickerTest('preact'),
+  play: currencyPickerTest,
 });

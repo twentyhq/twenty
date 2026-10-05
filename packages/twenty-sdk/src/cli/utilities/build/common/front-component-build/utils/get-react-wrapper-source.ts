@@ -6,6 +6,7 @@ export const getReactWrapperSource = ({
   `
 export * from '__real_react__';
 import React from '__real_react__';
+${readsElementRefFromVnode ? "import { normalizeClonedFunctionRef } from '__preact_ref_compat__';" : ''}
 
 import {
   customElementMap,
@@ -72,7 +73,14 @@ function cloneElement(element) {
   const cloneElementArguments = arguments;
   const isCustomElement = !!element && isCustomElementTag(element.type);
   if (!isCustomElement) {
-    return originalCloneElement.apply(null, cloneElementArguments);
+    ${
+      readsElementRefFromVnode
+        ? `return normalizeClonedFunctionRef({
+      vnode: originalCloneElement.apply(null, cloneElementArguments),
+      config: getPropsArgument(cloneElementArguments),
+    });`
+        : 'return originalCloneElement.apply(null, cloneElementArguments);'
+    }
   }
 
   const propsWithCloneEventRef = withCloneEventRef(
