@@ -105,13 +105,15 @@ export class WorkspaceDomainsService {
     publicDomain: PublicDomainEntity | null;
     isIsolatedOrigin: boolean;
   }> {
-    const { subdomain, domain, isPublicDomainOrigin } =
-      this.domainServerConfigService.getSubdomainAndDomainFromUrl(origin);
+    const { subdomain, customDomain, isPublicDomainOrigin } =
+      this.domainServerConfigService.getSubdomainAndCustomDomainFromUrl(origin);
 
     if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       // Still resolve the public domain so route triggers can scope by application.
-      const publicDomain = isDefined(domain)
-        ? await this.publicDomainRepository.findOne({ where: { domain } })
+      const publicDomain = isDefined(customDomain)
+        ? await this.publicDomainRepository.findOne({
+            where: { domain: customDomain },
+          })
         : null;
 
       return {
@@ -151,7 +153,7 @@ export class WorkspaceDomainsService {
       };
     }
 
-    if (!domain && !subdomain) {
+    if (!customDomain && !subdomain) {
       return {
         workspace: undefined,
         publicDomain: null,
@@ -159,7 +161,7 @@ export class WorkspaceDomainsService {
       };
     }
 
-    const where = isDefined(domain) ? { customDomain: domain } : { subdomain };
+    const where = isDefined(customDomain) ? { customDomain } : { subdomain };
 
     const workspaceFromCustomDomainOrSubdomain =
       (await this.workspaceRepository.findOne({
@@ -167,7 +169,10 @@ export class WorkspaceDomainsService {
         relations: ['workspaceSsoIdentityProviders'],
       })) ?? undefined;
 
-    if (isDefined(workspaceFromCustomDomainOrSubdomain) || !isDefined(domain)) {
+    if (
+      isDefined(workspaceFromCustomDomainOrSubdomain) ||
+      !isDefined(customDomain)
+    ) {
       return {
         workspace: workspaceFromCustomDomainOrSubdomain,
         publicDomain: null,
@@ -176,7 +181,7 @@ export class WorkspaceDomainsService {
     }
 
     const publicDomain = await this.publicDomainRepository.findOne({
-      where: { domain },
+      where: { domain: customDomain },
       relations: ['workspace', 'workspace.workspaceSsoIdentityProviders'],
     });
 

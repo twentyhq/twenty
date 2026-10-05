@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
-import { getSubdomainAndDomainFromHostname } from 'src/engine/core-modules/domain/domain-server-config/utils/get-subdomain-and-domain-from-hostname.util';
+import { getSubdomainAndCustomDomainFromHostname } from 'src/engine/core-modules/domain/domain-server-config/utils/get-subdomain-and-custom-domain-from-hostname.util';
 import { getHostnameFromUrlOrUndefined } from 'src/engine/core-modules/domain/domain-server-config/utils/public-function-domain.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -56,8 +56,8 @@ export class DomainServerConfigService {
     });
   }
 
-  getSubdomainAndDomainFromUrl = (url: string) =>
-    getSubdomainAndDomainFromHostname({
+  getSubdomainAndCustomDomainFromUrl = (url: string) =>
+    getSubdomainAndCustomDomainFromHostname({
       hostname: new URL(url).hostname,
       frontDomain: this.getFrontUrl().hostname,
       publicBaseDomain: this.getPublicBaseHostnameOrUndefined(),

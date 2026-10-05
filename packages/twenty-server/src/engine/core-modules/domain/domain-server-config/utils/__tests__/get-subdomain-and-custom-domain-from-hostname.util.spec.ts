@@ -1,6 +1,6 @@
-import { getSubdomainAndDomainFromHostname } from 'src/engine/core-modules/domain/domain-server-config/utils/get-subdomain-and-domain-from-hostname.util';
+import { getSubdomainAndCustomDomainFromHostname } from 'src/engine/core-modules/domain/domain-server-config/utils/get-subdomain-and-custom-domain-from-hostname.util';
 
-describe('getSubdomainAndDomainFromHostname', () => {
+describe('getSubdomainAndCustomDomainFromHostname', () => {
   const config = {
     frontDomain: 'twenty.com',
     publicBaseDomain: 'withtwenty.com',
@@ -13,7 +13,7 @@ describe('getSubdomainAndDomainFromHostname', () => {
       hostname: 'twenty.com',
       expected: {
         subdomain: undefined,
-        domain: null,
+        customDomain: null,
         isPublicDomainOrigin: false,
       },
     },
@@ -22,7 +22,7 @@ describe('getSubdomainAndDomainFromHostname', () => {
       hostname: 'acme.twenty.com',
       expected: {
         subdomain: 'acme',
-        domain: null,
+        customDomain: null,
         isPublicDomainOrigin: false,
       },
     },
@@ -31,33 +31,37 @@ describe('getSubdomainAndDomainFromHostname', () => {
       hostname: 'app.twenty.com',
       expected: {
         subdomain: undefined,
-        domain: null,
+        customDomain: null,
         isPublicDomainOrigin: false,
       },
     },
     {
       case: 'a public domain host',
       hostname: 'acme.withtwenty.com',
-      expected: { subdomain: 'acme', domain: null, isPublicDomainOrigin: true },
+      expected: {
+        subdomain: 'acme',
+        customDomain: null,
+        isPublicDomainOrigin: true,
+      },
     },
     {
       case: 'a custom domain',
       hostname: 'crm.acme.com',
       expected: {
         subdomain: undefined,
-        domain: 'crm.acme.com',
+        customDomain: 'crm.acme.com',
         isPublicDomainOrigin: false,
       },
     },
   ])('should resolve $case', ({ hostname, expected }) => {
-    expect(getSubdomainAndDomainFromHostname({ ...config, hostname })).toEqual(
-      expected,
-    );
+    expect(
+      getSubdomainAndCustomDomainFromHostname({ ...config, hostname }),
+    ).toEqual(expected);
   });
 
   it('should resolve the front host as the front domain when it sits under the public domain', () => {
     expect(
-      getSubdomainAndDomainFromHostname({
+      getSubdomainAndCustomDomainFromHostname({
         hostname: 'twenty.example.com',
         frontDomain: 'twenty.example.com',
         publicBaseDomain: 'example.com',
@@ -65,32 +69,36 @@ describe('getSubdomainAndDomainFromHostname', () => {
       }),
     ).toEqual({
       subdomain: undefined,
-      domain: null,
+      customDomain: null,
       isPublicDomainOrigin: false,
     });
   });
 
   it('should resolve workspace subdomains of a front host under the public domain', () => {
     expect(
-      getSubdomainAndDomainFromHostname({
+      getSubdomainAndCustomDomainFromHostname({
         hostname: 'acme.twenty.example.com',
         frontDomain: 'twenty.example.com',
         publicBaseDomain: 'example.com',
         defaultSubdomain: 'app',
       }),
-    ).toEqual({ subdomain: 'acme', domain: null, isPublicDomainOrigin: false });
+    ).toEqual({
+      subdomain: 'acme',
+      customDomain: null,
+      isPublicDomainOrigin: false,
+    });
   });
 
   it('should not treat hosts as public domains when no public domain is configured', () => {
     expect(
-      getSubdomainAndDomainFromHostname({
+      getSubdomainAndCustomDomainFromHostname({
         hostname: 'acme.withtwenty.com',
         frontDomain: 'twenty.com',
         defaultSubdomain: 'app',
       }),
     ).toEqual({
       subdomain: undefined,
-      domain: 'acme.withtwenty.com',
+      customDomain: 'acme.withtwenty.com',
       isPublicDomainOrigin: false,
     });
   });

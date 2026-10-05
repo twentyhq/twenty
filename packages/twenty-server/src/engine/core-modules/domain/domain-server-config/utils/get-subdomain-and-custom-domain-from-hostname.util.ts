@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isHostUnderPublicFunctionDomain } from 'src/engine/core-modules/domain/domain-server-config/utils/public-function-domain.util';
 
-export const getSubdomainAndDomainFromHostname = ({
+export const getSubdomainAndCustomDomainFromHostname = ({
   hostname,
   frontDomain,
   publicBaseDomain,
@@ -14,7 +14,7 @@ export const getSubdomainAndDomainFromHostname = ({
   defaultSubdomain?: string;
 }): {
   subdomain: string | undefined;
-  domain: string | null;
+  customDomain: string | null;
   isPublicDomainOrigin: boolean;
 } => {
   const isFrontDomain =
@@ -28,7 +28,7 @@ export const getSubdomainAndDomainFromHostname = ({
 
     return {
       subdomain: subdomain === defaultSubdomain ? undefined : subdomain,
-      domain: null,
+      customDomain: null,
       isPublicDomainOrigin: false,
     };
   }
@@ -44,14 +44,14 @@ export const getSubdomainAndDomainFromHostname = ({
 
     return {
       subdomain: subdomain === defaultSubdomain ? undefined : subdomain,
-      domain: null,
+      customDomain: null,
       isPublicDomainOrigin: true,
     };
   }
 
   return {
     subdomain: undefined,
-    domain: hostname,
+    customDomain: hostname,
     isPublicDomainOrigin: false,
   };
 };
