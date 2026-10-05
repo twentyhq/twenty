@@ -8,8 +8,7 @@ import { AVATAR_IMAGE_FIXTURE } from '@/__stories__/twenty-ui-gallery/constants/
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { observeAvatarImageLoads } from '@/__stories__/twenty-ui-gallery/utils/observeAvatarImageLoads';
 
-const IS_BROWSER_TEST =
-  (import.meta as ImportMeta & { env: { MODE: string } }).env.MODE === 'test';
+const IS_BROWSER_TEST = import.meta.env.MODE === 'test';
 
 const expectLoadedAvatar = async ({
   avatar,
