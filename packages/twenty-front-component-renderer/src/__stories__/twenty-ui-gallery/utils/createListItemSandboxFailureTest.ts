@@ -2,9 +2,11 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
+
+const MISSING_CONTAINS_ERROR =
+  /^(?:Uncaught TypeError: )?\w+\.contains is not a function$/;
 
 export const createListItemSandboxFailureTest =
   (runtime: 'react' | 'preact'): TwentyUiGalleryPlayFunction =>
@@ -33,7 +35,7 @@ export const createListItemSandboxFailureTest =
 
     if (runtime === 'preact') {
       await expectSandboxErrors({
-        requiredErrors: [SANDBOX_ERROR_PATTERNS.ELEMENT_CONTAINS],
+        requiredErrors: [MISSING_CONTAINS_ERROR],
       });
 
       return;

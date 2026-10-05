@@ -2,6 +2,5 @@ import { createOverlayOpenTest } from '@/__stories__/twenty-ui-gallery/utils/cre
 
 export const selectTest = createOverlayOpenTest({
   trigger: { role: 'combobox', name: 'Account stage' },
-  expectedOpenStatus: null,
   popupText: 'Qualified',
 });

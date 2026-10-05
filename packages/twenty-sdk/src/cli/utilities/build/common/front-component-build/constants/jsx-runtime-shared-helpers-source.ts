@@ -41,26 +41,18 @@ function _isEventProp(name) {
   );
 }
 
-export function splitEventProps(props) {
-  if (!props) return { cleanProps: props, events: null };
+function _splitEventProps(props) {
   var events = null;
-  var cleanProps = null;
-  for (var k in props) {
-    if (_isEventProp(k) && typeof props[k] === 'function') {
-      if (!events) {
-        events = {};
-        cleanProps = {};
-        for (var j in props) {
-          if (j === k) break;
-          cleanProps[j] = props[j];
-        }
-      }
-      events[k] = props[k];
-    } else if (events) {
-      cleanProps[k] = props[k];
+  var cleanProps = {};
+  for (var name in props) {
+    if (_isEventProp(name) && typeof props[name] === 'function') {
+      events = events || {};
+      events[name] = props[name];
+    } else {
+      cleanProps[name] = props[name];
     }
   }
-  return { cleanProps: cleanProps || props, events: events };
+  return { cleanProps: cleanProps, events: events };
 }
 
 var _customElementTags = {};
@@ -219,15 +211,15 @@ export function makeEventRef(events, userRef, source) {
 }
 
 export function withJsxEventRef(props) {
-  var split = splitEventProps(props);
-  var cleanProps = split.events ? split.cleanProps : Object.assign({}, props);
+  var split = _splitEventProps(props);
+  var cleanProps = split.cleanProps;
   cleanProps.ref = makeEventRef(split.events, cleanProps.ref, 'jsx');
   return cleanProps;
 }
 
 export function withCloneEventRef(element, config, readsElementRefFromVnode) {
-  var split = splitEventProps(config);
-  var cleanConfig = split.events ? split.cleanProps : Object.assign({}, config);
+  var split = _splitEventProps(config);
+  var cleanConfig = split.cleanProps;
   var configOverridesRef =
     config != null &&
     (readsElementRefFromVnode ? !!config.ref : config.ref !== undefined);

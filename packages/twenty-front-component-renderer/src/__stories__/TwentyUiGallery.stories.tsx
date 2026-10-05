@@ -1,5 +1,5 @@
 import { createCurrencyPickerTest } from '@/__stories__/twenty-ui-gallery/utils/createCurrencyPickerTest';
-import { createPhoneCountryPickerOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createPhoneCountryPickerOpenTest';
+import { createDropdownOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createDropdownOpenTest';
 import { phoneCountryPickerTriggerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTriggerTest';
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
 import { imageInputTest } from '@/__stories__/twenty-ui-gallery/utils/imageInputTest';
@@ -23,8 +23,6 @@ import { responsiveHooksTest } from '@/__stories__/twenty-ui-gallery/utils/respo
 import { RESPONSIVE_HOOKS_WIDGET_SIZING } from '@/__stories__/twenty-ui-gallery/constants/RESPONSIVE_HOOKS_WIDGET_SIZING';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { toastCountdownTest } from '@/__stories__/twenty-ui-gallery/utils/toastCountdownTest';
-import { dropdownPreactSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownPreactSandboxFailureTest';
-import { dropdownTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownTest';
 import { type Meta } from '@storybook/react-vite';
 
 import {
@@ -358,13 +356,21 @@ export const MenuPreact: Story = createGalleryStory({
 export const DropdownReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-dropdown',
   runtime: 'react',
-  play: dropdownTest,
+  play: createDropdownOpenTest({
+    runtime: 'react',
+    triggerName: 'Choose assignee',
+    popupText: 'Assign person',
+  }),
 });
 
 export const DropdownPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-dropdown',
   runtime: 'preact',
-  play: dropdownPreactSandboxFailureTest,
+  play: createDropdownOpenTest({
+    runtime: 'preact',
+    triggerName: 'Choose assignee',
+    popupText: 'Assign person',
+  }),
 });
 
 export const PhoneCountryPickerTriggersReact: Story = createGalleryStory({
@@ -382,13 +388,21 @@ export const PhoneCountryPickerTriggersPreact: Story = createGalleryStory({
 export const PhoneCountryPickerReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-phone-country-picker',
   runtime: 'react',
-  play: createPhoneCountryPickerOpenTest('react'),
+  play: createDropdownOpenTest({
+    runtime: 'react',
+    triggerName: 'Primary phone country',
+    popupText: 'United Kingdom',
+  }),
 });
 
 export const PhoneCountryPickerPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-phone-country-picker',
   runtime: 'preact',
-  play: createPhoneCountryPickerOpenTest('preact'),
+  play: createDropdownOpenTest({
+    runtime: 'preact',
+    triggerName: 'Primary phone country',
+    popupText: 'United Kingdom',
+  }),
 });
 
 export const SelectReact: Story = createGalleryStory({

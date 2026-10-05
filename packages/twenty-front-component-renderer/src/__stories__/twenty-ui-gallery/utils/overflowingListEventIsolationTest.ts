@@ -2,13 +2,8 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { SANDBOX_ROUND_TRIP_SETTLE_DELAY } from '@/__stories__/shared/test-utils/timeouts';
+import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-
-const waitForSandboxRoundTrip = () =>
-  new Promise((resolve) =>
-    setTimeout(resolve, SANDBOX_ROUND_TRIP_SETTLE_DELAY),
-  );
 
 export const overflowingListEventIsolationTest: TwentyUiGalleryPlayFunction =
   async ({ canvasElement }) => {

@@ -1,6 +1,5 @@
 export type WorkerEventClassName =
   | 'ClipboardEvent'
-  | 'Event'
   | 'FocusEvent'
   | 'InputEvent'
   | 'KeyboardEvent'

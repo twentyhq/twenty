@@ -2,26 +2,20 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { SANDBOX_ROUND_TRIP_SETTLE_DELAY } from '@/__stories__/shared/test-utils/timeouts';
+import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { createDropdownPreactSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createDropdownPreactSandboxFailureTest';
-import { createOverlayOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createOverlayOpenTest';
+import { createDropdownOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createDropdownOpenTest';
 
 const BILLING_COUNTRY_TRIGGER_NAME = 'Billing country';
 
 export const createCountrySelectTest = (
   runtime: 'react' | 'preact',
 ): TwentyUiGalleryPlayFunction => {
-  const billingCountrySelectOpenTest =
-    runtime === 'react'
-      ? createOverlayOpenTest({
-          trigger: { role: 'button', name: BILLING_COUNTRY_TRIGGER_NAME },
-          expectedOpenStatus: null,
-          popupText: 'Brésil',
-        })
-      : createDropdownPreactSandboxFailureTest({
-          triggerName: BILLING_COUNTRY_TRIGGER_NAME,
-        });
+  const billingCountrySelectOpenTest = createDropdownOpenTest({
+    runtime,
+    triggerName: BILLING_COUNTRY_TRIGGER_NAME,
+    popupText: 'Brésil',
+  });
 
   return async (context) => {
     const canvas = within(context.canvasElement);
@@ -48,9 +42,7 @@ export const createCountrySelectTest = (
     expect(disabled).toHaveTextContent('France');
 
     await userEvent.click(disabled);
-    await new Promise((resolve) =>
-      setTimeout(resolve, SANDBOX_ROUND_TRIP_SETTLE_DELAY),
-    );
+    await waitForSandboxRoundTrip();
     expect(disabled).toHaveAttribute('aria-expanded', 'false');
     expect(
       canvas.getByRole('status', { name: 'Saved countries' }),

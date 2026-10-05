@@ -1,6 +1,6 @@
 import { type CodeBlockWriter } from 'ts-morph';
 import { type PropertySchema } from '../schemas';
-import { schemaTypeToConstructor } from '../utils';
+import { schemaTypeToConstructor } from './schema-type-to-constructor';
 
 export const writePropertyEntries = ({
   writer,

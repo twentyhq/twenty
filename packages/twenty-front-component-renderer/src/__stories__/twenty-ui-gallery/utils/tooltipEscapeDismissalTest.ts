@@ -6,7 +6,9 @@ import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-galler
 
 const TOOLTIP_CONTENT = 'Download visible records as a CSV file';
 
-const openTooltipThenPressEscape = async (canvasElement: HTMLElement) => {
+export const tooltipEscapeDismissalTest: TwentyUiGalleryPlayFunction = async ({
+  canvasElement,
+}) => {
   const user = userEvent.setup();
   const canvas = within(canvasElement);
   const page = within(canvasElement.ownerDocument.body);
@@ -27,14 +29,6 @@ const openTooltipThenPressEscape = async (canvasElement: HTMLElement) => {
   await user.tab();
   expect(exportButton).toHaveFocus();
   await user.keyboard('{Escape}');
-
-  return { canvas, page };
-};
-
-export const tooltipEscapeDismissalTest: TwentyUiGalleryPlayFunction = async ({
-  canvasElement,
-}) => {
-  const { canvas, page } = await openTooltipThenPressEscape(canvasElement);
 
   await waitFor(() =>
     expect(canvas.getByRole('status')).toHaveTextContent('Export help: closed'),

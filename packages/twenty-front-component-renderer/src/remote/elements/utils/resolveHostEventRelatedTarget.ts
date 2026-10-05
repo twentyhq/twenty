@@ -15,7 +15,7 @@ export const resolveHostEventRelatedTarget = ({
   }
 
   const relatedTargetElement = findElementByRemoteId({
-    rootNode: listeningElement.ownerDocument,
+    rootNode: listeningElement.ownerDocument.body,
     remoteElementId: relatedTargetRemoteElementId,
   });
 

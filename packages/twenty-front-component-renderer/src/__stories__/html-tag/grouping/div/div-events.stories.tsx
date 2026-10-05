@@ -10,7 +10,7 @@ import { expectEventLogged } from '@/__stories__/shared/test-utils/matchers/expe
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { expectFrontComponentValue } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentValue';
 import { runFrontComponentStory } from '@/__stories__/shared/test-utils/runFrontComponentStory';
-import { SANDBOX_ROUND_TRIP_SETTLE_DELAY } from '@/__stories__/shared/test-utils/timeouts';
+import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/HtmlTag/Grouping/Div/Events',
@@ -147,9 +147,7 @@ const playPropagation: NonNullable<Story['play']> = async ({
   await waitFor(() =>
     expect(canvas.getByTestId('isolated-click-count')).toHaveTextContent('1'),
   );
-  await new Promise((resolve) =>
-    setTimeout(resolve, SANDBOX_ROUND_TRIP_SETTLE_DELAY),
-  );
+  await waitForSandboxRoundTrip();
   expect(canvas.getByTestId('container-click-count')).toHaveTextContent('1');
   expect(canvas.getByTestId('document-click')).toHaveTextContent(
     'propagation-label',
@@ -200,9 +198,7 @@ const playCloneHandlers: NonNullable<Story['play']> = async ({
     expect(canvas.getByTestId('save-count')).toHaveTextContent('1'),
   );
   await userEvent.click(saveOnce);
-  await new Promise((resolve) =>
-    setTimeout(resolve, SANDBOX_ROUND_TRIP_SETTLE_DELAY),
-  );
+  await waitForSandboxRoundTrip();
   expect(canvas.getByTestId('save-count')).toHaveTextContent('1');
 
   await userEvent.click(canvas.getByTestId('stop-cloning'));

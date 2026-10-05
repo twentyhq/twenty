@@ -14,21 +14,15 @@ import { type SerializedEventData } from '@/types/SerializedEventData';
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components', 'ref']);
 
 // Both spellings are indexed: dblclick arrives as ondblclick or onDoubleClick.
-const LOWERCASE_EVENT_PROP_TO_REACT_PROP: Record<string, string> =
+const LOWERCASE_EVENT_PROP_TO_DOM_EVENT_TYPE: Record<string, string> =
   Object.fromEntries(
     Object.entries(DOM_EVENT_TYPE_TO_REACT_PROP).flatMap(
       ([domEventType, reactProp]) => [
-        [`on${domEventType}`, reactProp],
-        [reactProp.toLowerCase(), reactProp],
+        [`on${domEventType}`, domEventType],
+        [reactProp.toLowerCase(), domEventType],
       ],
     ),
   );
-
-const REACT_PROP_TO_DOM_EVENT_TYPE: Record<string, string> = Object.fromEntries(
-  Object.entries(DOM_EVENT_TYPE_TO_REACT_PROP).map(
-    ([domEventType, reactProp]) => [reactProp, domEventType],
-  ),
-);
 
 export const buildHostReactPropsFromRemoteProps = ({
   remoteProps,
@@ -56,23 +50,21 @@ export const buildHostReactPropsFromRemoteProps = ({
     // A guest can put any property name on the wire, and React binds every on*
     // prop it recognizes, so unmapped handler names are dropped.
     if (isEventHandlerKey(remotePropName)) {
-      const reactPropName =
-        LOWERCASE_EVENT_PROP_TO_REACT_PROP[remotePropName.toLowerCase()];
+      const domEventType =
+        LOWERCASE_EVENT_PROP_TO_DOM_EVENT_TYPE[remotePropName.toLowerCase()];
 
       if (
-        isDefined(reactPropName) &&
+        isDefined(domEventType) &&
         isFunction(remotePropValue) &&
-        isRemoteEventListenerActive({
-          remoteProps,
-          domEventType: REACT_PROP_TO_DOM_EVENT_TYPE[reactPropName],
-        })
+        isRemoteEventListenerActive({ remoteProps, domEventType })
       ) {
-        hostReactProps[reactPropName] = wrapEventHandler({
-          remoteListener: remotePropValue as (
-            detail: SerializedEventData,
-          ) => void,
-          findRemoteElementIdContainingNode,
-        });
+        hostReactProps[DOM_EVENT_TYPE_TO_REACT_PROP[domEventType]] =
+          wrapEventHandler({
+            remoteListener: remotePropValue as (
+              detail: SerializedEventData,
+            ) => void,
+            findRemoteElementIdContainingNode,
+          });
       }
       continue;
     }

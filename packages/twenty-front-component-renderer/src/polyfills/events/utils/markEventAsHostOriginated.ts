@@ -1,8 +1,5 @@
-import { HOST_ORIGINATED_EVENT_MARKER } from '@/polyfills/events/constants/HostOriginatedEventMarker';
+import { HOST_ORIGINATED_EVENTS } from '@/polyfills/events/constants/HostOriginatedEvents';
 
 export const markEventAsHostOriginated = (event: object): void => {
-  Object.defineProperty(event, HOST_ORIGINATED_EVENT_MARKER, {
-    value: true,
-    configurable: true,
-  });
+  HOST_ORIGINATED_EVENTS.add(event);
 };

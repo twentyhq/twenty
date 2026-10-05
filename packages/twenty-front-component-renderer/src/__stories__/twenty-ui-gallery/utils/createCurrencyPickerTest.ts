@@ -2,24 +2,18 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { createDropdownPreactSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createDropdownPreactSandboxFailureTest';
-import { createOverlayOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createOverlayOpenTest';
+import { createDropdownOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createDropdownOpenTest';
 
 const PRIMARY_CURRENCY_TRIGGER_NAME = 'Primary currency';
 
 export const createCurrencyPickerTest = (
   runtime: 'react' | 'preact',
 ): TwentyUiGalleryPlayFunction => {
-  const primaryCurrencyPickerOpenTest =
-    runtime === 'react'
-      ? createOverlayOpenTest({
-          trigger: { role: 'button', name: PRIMARY_CURRENCY_TRIGGER_NAME },
-          expectedOpenStatus: null,
-          popupText: 'Canadian Dollar',
-        })
-      : createDropdownPreactSandboxFailureTest({
-          triggerName: PRIMARY_CURRENCY_TRIGGER_NAME,
-        });
+  const primaryCurrencyPickerOpenTest = createDropdownOpenTest({
+    runtime,
+    triggerName: PRIMARY_CURRENCY_TRIGGER_NAME,
+    popupText: 'Canadian Dollar',
+  });
 
   return async (context) => {
     const canvas = within(context.canvasElement);

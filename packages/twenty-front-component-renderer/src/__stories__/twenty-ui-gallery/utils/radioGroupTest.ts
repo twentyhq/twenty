@@ -2,4 +2,6 @@ import { createRadioGroupTest } from '@/__stories__/twenty-ui-gallery/utils/crea
 
 export const radioGroupTest = createRadioGroupTest({
   optionName: 'Daily',
+  initiallyCheckedOptionName: 'Weekly',
+  activatedStatus: 'Frequency: daily',
 });

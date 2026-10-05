@@ -1,4 +1,4 @@
-import { HOST_EVENT_DISPATCH_TARGET } from '@/polyfills/events/constants/HostEventDispatchTarget';
+import { HOST_EVENT_DISPATCH_TARGET_BY_EVENT } from '@/polyfills/events/constants/HostEventDispatchTargetByEvent';
 
 export const setHostEventDispatchTarget = ({
   event,
@@ -7,8 +7,5 @@ export const setHostEventDispatchTarget = ({
   event: Event;
   dispatchTarget: EventTarget;
 }): void => {
-  Object.defineProperty(event, HOST_EVENT_DISPATCH_TARGET, {
-    value: dispatchTarget,
-    configurable: true,
-  });
+  HOST_EVENT_DISPATCH_TARGET_BY_EVENT.set(event, dispatchTarget);
 };
