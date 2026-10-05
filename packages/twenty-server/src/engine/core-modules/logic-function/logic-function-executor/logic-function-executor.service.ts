@@ -14,7 +14,6 @@ import {
   type LogicFunctionExecutionContext,
   type LogicFunctionRetryContext,
 } from 'twenty-shared/logic-function';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -40,7 +39,6 @@ import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-log
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
@@ -115,7 +113,6 @@ export class LogicFunctionExecutorService {
     private readonly usageRecorderService: UsageRecorderService,
     private readonly billingUsageService: BillingUsageService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
     private readonly applicationStopService: ApplicationStopService,
@@ -183,11 +180,8 @@ export class LogicFunctionExecutorService {
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
-    const effectiveExecutionMode = await this.resolveEffectiveExecutionMode({
-      workspaceId,
-      flatLogicFunction,
-      callerOverride: executionMode,
-    });
+    const effectiveExecutionMode =
+      executionMode ?? flatLogicFunction.executionMode;
 
     if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
       await this.logicFunctionPrebuiltWarmUpService.ensurePrebuiltBundleInstalled(
@@ -234,32 +228,6 @@ export class LogicFunctionExecutorService {
     return resultLogicFunction;
   }
 
-  private async resolveEffectiveExecutionMode({
-    workspaceId,
-    flatLogicFunction,
-    callerOverride,
-  }: {
-    workspaceId: string;
-    flatLogicFunction: FlatLogicFunction;
-    callerOverride?: LogicFunctionExecutionMode;
-  }): Promise<LogicFunctionExecutionMode> {
-    if (isDefined(callerOverride)) {
-      return callerOverride;
-    }
-
-    const isPrebuiltModeEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
-        workspaceId,
-      );
-
-    if (!isPrebuiltModeEnabled) {
-      return LogicFunctionExecutionMode.LIVE;
-    }
-
-    return flatLogicFunction.executionMode ?? LogicFunctionExecutionMode.LIVE;
-  }
-
   async transpile(
     params: LogicFunctionTranspileParams,
   ): Promise<LogicFunctionTranspileResult> {
@@ -293,16 +261,6 @@ export class LogicFunctionExecutorService {
     flatLogicFunction: FlatLogicFunction;
   }): Promise<void> {
     if (isBillingExemptApplication(flatApplication.universalIdentifier)) {
-      return;
-    }
-
-    const isExecutionQuotaEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
-        workspaceId,
-      );
-
-    if (!isExecutionQuotaEnabled) {
       return;
     }
 

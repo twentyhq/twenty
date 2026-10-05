@@ -9,6 +9,8 @@ import { IsNull } from 'typeorm';
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-db-parts.util';
+import { type ToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/types/tool-call-workflow-step.type';
+import { stampPendingToolPartsWithWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/utils/stamp-pending-tool-parts-with-workflow-step.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -66,6 +68,46 @@ export class AgentConversationWriterService {
     return (id ?? turnInsertResult.identifiers[0].id) as string;
   }
 
+  // A turn the agent opens has no user message: a system message gives the
+  // model its context, and is written with the turn so neither exists alone
+  async insertAgentOpenedTurn({
+    workspaceId,
+    threadId,
+    turnId,
+    contextMessageId,
+    context,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId?: string;
+    contextMessageId?: string;
+    context: string;
+  }): Promise<string> {
+    return this.transactionService.run(workspaceId, async (scope) => {
+      const insertedTurnId = await this.insertTurn({
+        workspaceId,
+        threadId,
+        id: turnId,
+        agentId: null,
+        scope,
+      });
+
+      await this.insertMessage({
+        workspaceId,
+        id: contextMessageId,
+        threadId,
+        turnId: insertedTurnId,
+        role: AgentMessageRole.SYSTEM,
+        agentId: null,
+        senderUserWorkspaceId: null,
+        parts: [{ type: 'text', text: context }],
+        scope,
+      });
+
+      return insertedTurnId;
+    });
+  }
+
   // The message and its parts are written together, so a message that
   // exists is complete. A message that awaits an answer also takes the
   // thread's single pending slot in the same write, and fails if another
@@ -79,7 +121,6 @@ export class AgentConversationWriterService {
     agentId,
     senderUserWorkspaceId,
     senderApplicationId,
-    isHidden,
     isAwaitingAnswer,
     processedAt,
     parts,
@@ -93,7 +134,6 @@ export class AgentConversationWriterService {
     agentId: string | null;
     senderUserWorkspaceId: string | null;
     senderApplicationId?: string | null;
-    isHidden?: boolean;
     isAwaitingAnswer?: boolean;
     processedAt?: Date;
     parts: ExtendedUIMessagePart[];
@@ -111,7 +151,6 @@ export class AgentConversationWriterService {
         processedAt: (processedAt ?? new Date()).toISOString(),
         ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
         ...(isDefined(senderApplicationId) ? { senderApplicationId } : {}),
-        ...(isDefined(isHidden) ? { isHidden } : {}),
       });
 
       const dbParts = mapUIMessagePartsToDBParts(parts, messageId);
@@ -154,6 +193,7 @@ export class AgentConversationWriterService {
     turnId,
     agentId,
     execution,
+    workflowStep,
     scope,
   }: {
     workspaceId: string;
@@ -161,12 +201,19 @@ export class AgentConversationWriterService {
     turnId: string;
     agentId: string | null;
     execution: RecordableAgentExecution;
+    workflowStep?: ToolCallWorkflowStep;
     scope?: AgentHistoryTransactionScope;
   }): Promise<{
     isAwaitingAnswer: boolean;
     replyParts: ExtendedUIMessagePart[];
   }> {
-    const replyParts = mapAiStepsToUIMessageParts(execution.steps ?? []);
+    const mappedReplyParts = mapAiStepsToUIMessageParts(execution.steps ?? []);
+    const replyParts = isDefined(workflowStep)
+      ? stampPendingToolPartsWithWorkflowStep({
+          parts: mappedReplyParts,
+          workflowStep,
+        })
+      : mappedReplyParts;
 
     if (replyParts.length === 0) {
       return { isAwaitingAnswer: false, replyParts };

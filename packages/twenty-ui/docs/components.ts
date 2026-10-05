@@ -299,6 +299,27 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'input/radio-group',
   },
   {
+    name: 'Autocomplete',
+    source: 'primitives/input/Autocomplete/Autocomplete.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/autocomplete',
+    partPropDescriptions: {
+      Root: {
+        items:
+          'Items to display in the list. Nullish entries are not supported.',
+      },
+      Input: {
+        size: 'Visual size of the input. Inside an InputGroup, the group size applies.',
+      },
+      Popup: {
+        width:
+          'Width of the popup. Overrides its default minimum anchor width.',
+        container:
+          'Element the popup is portaled into. Defaults to the theme portal container.',
+      },
+    },
+  },
+  {
     name: 'Select',
     source: 'primitives/input/Select/Select.tsx',
     entryPoint: 'twenty-ui/primitives/input',

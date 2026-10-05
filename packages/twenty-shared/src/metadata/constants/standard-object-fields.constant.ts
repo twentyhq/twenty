@@ -47,9 +47,6 @@ export const STANDARD_OBJECT_FIELDS = {
     activeStreamId: {
       universalIdentifier: 'bcead20f-75b3-45be-92b9-ea7ec4bddfcd',
     },
-    workflowRun: {
-      universalIdentifier: '2187f4c6-bff3-4b80-8585-c82965faf79b',
-    },
     pendingQuestionMessageId: {
       universalIdentifier: '51a9b421-7d90-4a59-9712-036ea9721e65',
     },
@@ -144,9 +141,6 @@ export const STANDARD_OBJECT_FIELDS = {
     agentId: { universalIdentifier: '4ac55a9a-95e8-4fd9-8c03-47ee3b618ae7' },
     thread: { universalIdentifier: '4e9b4f1f-c1bb-42d0-bb38-eb2b2f830e64' },
     messages: { universalIdentifier: '737c3559-ea1a-4269-aea4-e672b17afbb1' },
-    evaluations: {
-      universalIdentifier: '282b4815-9c5e-4897-8f9a-a4587af6b0e2',
-    },
   },
   agentMessage: {
     ...buildStandardObjectBaseFields(
@@ -227,14 +221,6 @@ export const STANDARD_OBJECT_FIELDS = {
       universalIdentifier: '689d988e-3883-4ab6-9cf3-c36a3002f865',
     },
     message: { universalIdentifier: 'efd41407-a49d-4a3a-97b4-94fd180e7652' },
-  },
-  agentTurnEvaluation: {
-    ...buildStandardObjectBaseFields(
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentTurnEvaluation,
-    ),
-    score: { universalIdentifier: 'a4313259-d43b-4d10-abf5-2426e152c10b' },
-    comment: { universalIdentifier: 'f5531d3b-c8f5-4d92-bf72-d5fd8e2697b0' },
-    turn: { universalIdentifier: 'c67ddcf0-2812-476a-87dc-cf8a683805aa' },
   },
   campaignDelivery: {
     ...buildStandardObjectBaseFields(
@@ -1501,9 +1487,6 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     coreWorkflowVersionId: {
       universalIdentifier: '58e3f476-425d-4c66-b391-779d0412e107',
-    },
-    agentChatThreads: {
-      universalIdentifier: 'c664a2e7-ef64-4597-9cdf-ded3eae85ae4',
     },
     timelineActivities: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({

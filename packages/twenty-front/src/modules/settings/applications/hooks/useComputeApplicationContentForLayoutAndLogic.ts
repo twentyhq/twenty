@@ -1,3 +1,4 @@
+import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getViewTypeLabel } from '@/views/types/ViewType';
@@ -146,9 +147,7 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
         name: agent.label,
         icon: agent.icon ?? undefined,
         secondary: agent.description ?? undefined,
-        link: getSettingsPath(SettingsPath.AiAgentDetail, {
-          agentId: agent.id,
-        }),
+        link: getCoreAgentLink(agent.id),
       }))
     : (manifestContent?.agents ?? []).map((agent) => ({
         key: agent.universalIdentifier,

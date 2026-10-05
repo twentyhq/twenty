@@ -2,7 +2,6 @@ import { RecordPermissionsModule } from 'src/engine/metadata-modules/record-perm
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 
-import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { AiGenerateTextModule } from 'src/engine/metadata-modules/ai/ai-generate-text/ai-generate-text.module';
@@ -56,7 +55,6 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     TimelineActivityTypeModule,
     ValidationRuleModule,
     AiAgentModule,
-    AiAgentMonitorModule,
     AiChatModule,
     AiGenerateTextModule,
     AiWorkspaceStatsModule,
