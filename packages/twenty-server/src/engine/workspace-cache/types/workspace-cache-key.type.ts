@@ -41,6 +41,7 @@ export type WorkspaceCacheDataMap = AllFlatEntityMaps<true> &
 
 export type WorkspaceCacheKeyName = keyof WorkspaceCacheDataMap;
 
+// TODO: remove once the 2.8 upgrade command that flushes this key is removed
 export type RemovedWorkspaceCacheKeyName = 'ORMEntityMetadatas';
 
 export type WorkspaceDerivedCacheDataMap = {
