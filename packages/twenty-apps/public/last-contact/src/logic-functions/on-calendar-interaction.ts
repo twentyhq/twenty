@@ -11,6 +11,7 @@ import {
   applyMeetingInteractions,
   type CalendarEventParticipantLink,
 } from 'src/utils/apply-meeting-interactions';
+import { scheduleMeetingSlotJobs } from 'src/utils/schedule-meeting-slot-jobs';
 
 type CalendarEventParticipantUpdate = {
   personId?: string | null;
@@ -40,14 +41,19 @@ const handler = async (
     return;
   }
 
-  await applyMeetingInteractions(new CoreApiClient(), [...linkByKey.values()]);
+  const upcomingMeetingStartsAts = await applyMeetingInteractions(
+    new CoreApiClient(),
+    [...linkByKey.values()],
+  );
+
+  await scheduleMeetingSlotJobs(upcomingMeetingStartsAts);
 };
 
 export default defineLogicFunction({
   universalIdentifier: CALENDAR_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-calendar-interaction',
   description:
-    "Updates a person's last-contacted fields, and the last contact on their company and opportunities, when a new calendar event participant is created (past events only).",
+    "Updates a person's last-contacted fields, and the last contact on their company and opportunities, when a new calendar event participant is created. Meetings that have not started yet are scheduled for when they do.",
   timeoutSeconds: BATCH_HANDLER_TIMEOUT_SECONDS,
   databaseEventTriggerSettings: {
     eventName: 'calendarEventParticipant.updated',

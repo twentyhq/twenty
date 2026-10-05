@@ -2,8 +2,10 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { compare } from 'semver'
 
+import { MEETING_SWEEP_INSTALL_DISTRIBUTION_WINDOW_MS } from 'src/constants/meeting-schedule';
 import { BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { getBackfillBatchSize } from 'src/utils/backfill-settings';
+import { enqueueMeetingSweepJob } from 'src/utils/enqueue-meeting-sweep-job';
 import { runLastContactBackfill } from 'src/utils/run-last-contact-backfill';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -26,6 +28,12 @@ const handler = async ({
    previousVersion,
    newVersion
 }: InstallPayload): Promise<object> => {
+  // Meetings scheduled before this version have no slot job, and the daily
+  // sweep may be up to a day away.
+  await enqueueMeetingSweepJob(
+    Math.random() * MEETING_SWEEP_INSTALL_DISTRIBUTION_WINDOW_MS,
+  );
+
   if(!shouldRunPostInstall({
     previousVersion,
     newVersion
@@ -49,7 +57,7 @@ export default definePostInstallLogicFunction({
   universalIdentifier: BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-last-contact',
   description:
-    'Backfills last-contact fields on people, then opportunities, then companies after installation, one batch of records at a time within this run.',
+    'Schedules a meeting sweep, then backfills last-contact fields on people, then opportunities, then companies after installation, one batch of records at a time within this run.',
   timeoutSeconds: 900,
   shouldRunOnVersionUpgrade: true,
   handler,

@@ -2,11 +2,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const {
   queryMock,
+  enqueueMeetingSweepJobMock,
   backfillPeopleMock,
   backfillOpportunitiesMock,
   backfillCompaniesMock,
 } = vi.hoisted(() => ({
   queryMock: vi.fn(),
+  enqueueMeetingSweepJobMock: vi.fn(),
   backfillPeopleMock: vi.fn(),
   backfillOpportunitiesMock: vi.fn(),
   backfillCompaniesMock: vi.fn(),
@@ -16,6 +18,10 @@ vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: vi.fn(function () {
     return { query: queryMock };
   }),
+}));
+
+vi.mock('src/utils/enqueue-meeting-sweep-job', () => ({
+  enqueueMeetingSweepJob: enqueueMeetingSweepJobMock,
 }));
 
 vi.mock('src/utils/backfill-settings', () => ({
@@ -66,6 +72,9 @@ const recordBatch =
 
 beforeEach(() => {
   events = [];
+
+  enqueueMeetingSweepJobMock.mockReset();
+  enqueueMeetingSweepJobMock.mockResolvedValue(undefined);
 
   queryMock.mockReset();
   queryMock.mockImplementation(async (query: ConnectionQuery) => {
@@ -139,5 +148,14 @@ describe('backfill-last-contact', () => {
     ).resolves.toEqual({});
 
     expect(queryMock).not.toHaveBeenCalled();
+  });
+
+  it('should enqueue a meeting sweep within the next hour on every upgrade', async () => {
+    await handler({ previousVersion: '1.7.0', newVersion: '1.8.0' });
+
+    expect(enqueueMeetingSweepJobMock).toHaveBeenCalledTimes(1);
+    const [delayMs] = enqueueMeetingSweepJobMock.mock.calls[0];
+    expect(delayMs).toBeGreaterThanOrEqual(0);
+    expect(delayMs).toBeLessThan(60 * 60 * 1000);
   });
 });

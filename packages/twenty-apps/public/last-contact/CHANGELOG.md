@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.8.0
+
+- Replace the 5-minute calendar cron with delayed jobs. The cron ran in every workspace in the same minute and made at least one API call each time, even with nothing to do. With about 1500 installs, that alone took more than the application rate limit, which is 500 calls per minute shared by every workspace. Meetings are now scheduled instead:
+  - When a participant is linked to a meeting that has not started yet, or when a meeting's start time changes, the app enqueues one delayed job for the meeting's 15-minute slot. The job runs just after the slot ends and updates last contact for that slot's meetings. Enqueuing a job costs no API call, and all meetings in a slot share one job.
+  - A daily sweep applies meetings that started in the last 25 hours and schedules the next 48 hours. That covers meetings beyond the 7-day job delay cap and any slot job that did not run. Each workspace's sweep runs at a stable offset spread across the day, not all at midnight.
+  - Every install and upgrade enqueues one sweep within the hour, so meetings scheduled before this version are not missed.
+- A meeting's last contact now updates within about 16 minutes of its start, instead of 5.
+
 ## 1.7.0
 
 - Keep the app's fields off the record timeline. The app's fields are frequently rewritten during email and meeting syncs, and each write used to add an `updated Last contact` entry to the person, company or opportunity timeline, burying everything else. All 23 fields now declare `isAuditLogged: false`, so their values still update but no timeline activity is recorded for them. Entries written before this version stay on the timeline.

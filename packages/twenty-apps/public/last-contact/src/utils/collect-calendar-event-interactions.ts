@@ -22,10 +22,15 @@ type CalendarEventParticipantNode = Participant & {
   } | null;
 };
 
+export type CalendarEventInteractions = {
+  interactionByCalendarEventId: Map<string, CalendarEventInteraction>;
+  upcomingMeetingStartsAts: string[];
+};
+
 export const collectCalendarEventInteractions = async (
   client: CoreApiClient,
   calendarEventIds: string[],
-): Promise<Map<string, CalendarEventInteraction>> => {
+): Promise<CalendarEventInteractions> => {
   const participantsByCalendarEventId = new Map<
     string,
     CalendarEventParticipantNode[]
@@ -85,12 +90,18 @@ export const collectCalendarEventInteractions = async (
     string,
     CalendarEventInteraction
   >();
+  const upcomingMeetingStartsAts: string[] = [];
 
   for (const [calendarEventId, participants] of participantsByCalendarEventId) {
     const calendarEvent = participants[0]?.calendarEvent;
     const startsAt = calendarEvent?.startsAt ?? null;
 
-    if (!startsAt || calendarEvent?.isCanceled || startsAt > now) {
+    if (!startsAt || calendarEvent?.isCanceled) {
+      continue;
+    }
+
+    if (startsAt > now) {
+      upcomingMeetingStartsAts.push(startsAt);
       continue;
     }
 
@@ -102,5 +113,5 @@ export const collectCalendarEventInteractions = async (
     });
   }
 
-  return interactionByCalendarEventId;
+  return { interactionByCalendarEventId, upcomingMeetingStartsAts };
 };
