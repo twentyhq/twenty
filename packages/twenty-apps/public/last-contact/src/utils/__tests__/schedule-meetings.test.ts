@@ -16,7 +16,6 @@ import {
   scheduleUpcomingPersonMeetings,
 } from 'src/utils/schedule-meetings';
 
-// 3-day periods count from the epoch: the one holding NOW starts on 2026-06-12.
 const NOW = '2026-06-12T12:00:00.000Z';
 const NEXT_PERIOD_START = '2026-06-15T00:00:00.000Z';
 const MINUTE_MS = 60 * 1000;

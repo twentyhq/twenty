@@ -10,9 +10,6 @@ export type PersonMeetingParticipant = {
   startsAt: string;
 };
 
-// Reads the participants linked to a person of the non-canceled meetings
-// starting in a window, earliest first. Filtering through the calendar event
-// relation keeps it to one call per page and skips internal-only meetings.
 export const collectPersonMeetingParticipants = async (
   client: CoreApiClient,
   {

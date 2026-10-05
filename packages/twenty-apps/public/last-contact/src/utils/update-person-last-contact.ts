@@ -80,8 +80,6 @@ export const collectPersonLastContactState = async (
                 lastInboundAt: true,
                 lastEmail: { receivedAt: true },
                 lastMeeting: { startsAt: true },
-                // Nested relations are read in the same call, without spending
-                // another rate-limit token.
                 company: { id: true, lastContactAt: true },
                 pointOfContactForOpportunities: {
                   totalCount: true,

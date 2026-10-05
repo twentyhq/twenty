@@ -7,8 +7,6 @@ import { applyMeetingInteractions } from 'src/utils/apply-meeting-interactions';
 import { collectPersonMeetingParticipants } from 'src/utils/collect-person-meeting-participants';
 import { type MeetingSlotPayload } from 'src/utils/schedule-meetings';
 
-// Meetings are re-read rather than carried in the payload: one moved or
-// canceled after scheduling no longer matches the slot.
 const handler = async ({
   slotStart,
   slotEnd,

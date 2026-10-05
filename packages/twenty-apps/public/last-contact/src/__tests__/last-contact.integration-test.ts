@@ -2,8 +2,6 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// enqueueJobs only accepts an application token, and the test runs with an API
-// key; capturing it also keeps scheduled jobs from running inside the test.
 const { enqueueJobsMock } = vi.hoisted(() => ({ enqueueJobsMock: vi.fn() }));
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<object>()),

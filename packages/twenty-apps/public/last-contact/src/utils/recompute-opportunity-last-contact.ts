@@ -40,10 +40,7 @@ const buildLastContactData = (
 
 // An opportunity's last contact mirrors its point of contact, so it must be
 // recomputed whenever the opportunity is created or its point of contact changes,
-// not only when an interaction happens. The point of contact is read nested in
-// the opportunity query, which costs no extra API call; its last contact item
-// is read through the join columns because relations two levels deep come back
-// empty.
+// not only when an interaction happens.
 export const recomputeOpportunitiesLastContact = async (
   client: CoreApiClient,
   opportunityIds: string[],

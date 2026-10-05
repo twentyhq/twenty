@@ -65,7 +65,6 @@ describe('executeWithRetry', () => {
 
     await assertion;
     await expect(promise).rejects.toThrow('Gateway time-out');
-    // Waits of 2, 4, 8, 16, 30, 30 and 30 seconds use the 120 second budget.
     expect(execute).toHaveBeenCalledTimes(8);
   });
 

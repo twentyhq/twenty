@@ -5,13 +5,12 @@ const INITIAL_RETRY_DELAY_MS = 2_000;
 const MAX_RETRY_DELAY_MS = 30_000;
 const MAX_RETRY_AFTER_MS = 60_000;
 const MAX_JITTER_MS = 1_000;
-// Rejected calls spend no rate-limit token, but every function sleeping here
-// holds a worker slot; past this budget the job is handed back to the queue.
 const MAX_TOTAL_WAIT_MS = 120_000;
 
-// Cloudflare and gateway failures only surface as message text, so they are
-// matched on it: rate limiting (429, Cloudflare 1015), transient gateway errors
-// (502/503/504) and network-level failures.
+// The client SDK surfaces HTTP failures as plain Error messages built from the
+// status text and raw response body, so retryability has to be detected from
+// the message text. Covers rate limiting (429, Cloudflare 1015), transient
+// gateway errors (502/503/504) and network-level failures.
 const RETRYABLE_ERROR_PATTERN =
   /\b(429|1015|too many requests|rate ?limit\w*|502|503|504|bad gateway|gateway time-?out|service unavailable|timed? ?out|fetch failed|econnreset|econnrefused|socket hang up)\b/i;
 

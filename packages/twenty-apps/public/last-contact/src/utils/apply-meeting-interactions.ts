@@ -9,8 +9,6 @@ export type CalendarEventParticipantLink = {
   calendarEventId: string;
 };
 
-// Meetings that have not started yet are left untouched; their start times are
-// returned so the caller can schedule them.
 export const applyMeetingInteractions = async (
   client: CoreApiClient,
   links: CalendarEventParticipantLink[],

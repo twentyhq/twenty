@@ -38,8 +38,6 @@ const enqueueDelayedJob = async ({
   );
 };
 
-// Job ids are derived from the slot or the period, so every meeting starting
-// in the same slot shares one job and the horizon chain runs once per period.
 export const scheduleMeetings = async (
   meetingStartsAts: string[],
 ): Promise<void> => {
@@ -94,8 +92,6 @@ export const scheduleMeetings = async (
   }
 };
 
-// Schedules the upcoming meetings within the horizon, and the next horizon job
-// when at least one meeting lies beyond it.
 export const scheduleUpcomingPersonMeetings = async (
   client: CoreApiClient,
 ): Promise<void> => {

@@ -35,8 +35,6 @@ const buildData = ({
   lastContactItemCalendarEventId: kind === 'meeting' ? itemId : null,
 });
 
-// A nested relation returns at most 60 records, so the opportunities of a
-// person past that cap are read with their own query.
 const collectOpportunitiesByPointOfContactId = async (
   client: CoreApiClient,
   personIds: string[],
@@ -129,8 +127,7 @@ const resolveOpportunitiesByPersonId = async (
 
 // Companies and opportunities surface emails and meetings from their related
 // people, so their last contact mirrors the most recent contact of any person
-// connected to them. The company and opportunities come from the person read
-// that precedes this, so only the writes cost API calls.
+// connected to them.
 export const updateRelatedLastContactForPeople = async (
   client: CoreApiClient,
   contactByPersonId: Map<string, RelatedInteraction>,

@@ -32,7 +32,6 @@ const handler = async ({
 }: InstallPayload): Promise<object> => {
   const client = new CoreApiClient();
 
-  // Meetings linked before this version have no slot job yet.
   await scheduleUpcomingPersonMeetings(client);
 
   const recentlyStartedParticipants = await collectPersonMeetingParticipants(
