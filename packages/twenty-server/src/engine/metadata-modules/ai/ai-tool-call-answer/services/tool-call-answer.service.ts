@@ -80,12 +80,7 @@ export class ToolCallAnswerService {
     const [thread, toolPart] = await Promise.all([
       this.threadRepository.findOne(workspaceId, {
         where: { id: threadId },
-        select: [
-          'id',
-          'workflowRunId',
-          'activeStreamId',
-          'pendingQuestionMessageId',
-        ],
+        select: ['id', 'activeStreamId', 'pendingQuestionMessageId'],
       }),
       this.agentChatService.findToolPart({ threadId, toolCallId, workspaceId }),
     ]);
@@ -102,26 +97,15 @@ export class ToolCallAnswerService {
       );
     }
 
-    // a run's own conversation, or a member's inbox where a step posted a call it waits on
-    const inboxWorkflowStep = isDefined(thread.workflowRunId)
-      ? null
-      : readToolCallWorkflowStep(toolPart.toolOutput);
-    const workflowRunId =
-      thread.workflowRunId ?? inboxWorkflowStep?.workflowRunId ?? null;
+    // a workflow step that posted the call waits on it, and the answer resumes that step
+    const workflowStep = readToolCallWorkflowStep(toolPart.toolOutput);
+    const workflowRunId = workflowStep?.workflowRunId ?? null;
 
-    if (isDefined(thread.workflowRunId)) {
-      await this.assertCanAnswerForWorkflowRun({
-        userWorkspaceId,
-        workspaceId,
-        workflowRunId: thread.workflowRunId,
-      });
-    } else {
-      await this.assertCanAnswerInChat({
-        ...args,
-        messageId: toolPart.messageId,
-        isStartingChatTurn: !isDefined(inboxWorkflowStep),
-      });
-    }
+    await this.assertCanAnswerInChat({
+      ...args,
+      messageId: toolPart.messageId,
+      isStartingChatTurn: !isDefined(workflowStep),
+    });
 
     if (thread.pendingQuestionMessageId !== toolPart.messageId) {
       throw this.notPending();
@@ -181,13 +165,13 @@ export class ToolCallAnswerService {
           threadId,
           workflowRunId,
           workspaceId,
-          expectedStepId: inboxWorkflowStep?.stepId,
+          expectedStepId: workflowStep?.stepId,
         });
 
         if (
           !isDefined(step) &&
           (await this.workflowRunWorkspaceService.isStepStillRunning({
-            stepId: inboxWorkflowStep?.stepId,
+            stepId: workflowStep?.stepId,
             threadId,
             workflowRunId,
             workspaceId,
@@ -305,23 +289,20 @@ export class ToolCallAnswerService {
       await this.publishToolCallResolved({ threadId, toolCallId, workspaceId });
 
       // An answer is a message the member sent, so the chat moves up and
-      // comes back to their inbox. A run's conversation is not in chat lists.
-      // The answer is already recorded and cannot be given again, so a
-      // failure here must not fail the turn
-      if (!isDefined(workflowRunId)) {
-        await this.threadService
-          .notifyThreadActivityUpdated({
-            threadId,
-            workspaceMemberId: args.workspaceMemberId,
-            workspaceId,
-            text: answerText,
-          })
-          .catch((error: unknown) =>
-            this.logger.warn(
-              `Could not record answer activity on thread ${threadId}: ${formatErrorWithCause(error)}`,
-            ),
-          );
-      }
+      // comes back to their inbox. The answer is already recorded and cannot
+      // be given again, so a failure here must not fail the turn
+      await this.threadService
+        .notifyThreadActivityUpdated({
+          threadId,
+          workspaceMemberId: args.workspaceMemberId,
+          workspaceId,
+          text: answerText,
+        })
+        .catch((error: unknown) =>
+          this.logger.warn(
+            `Could not record answer activity on thread ${threadId}: ${formatErrorWithCause(error)}`,
+          ),
+        );
 
       // runs resume in their own executor, and only the last answer resumes a chat
       if (isDefined(step) || !isLastAnswer) {
@@ -447,33 +428,6 @@ export class ToolCallAnswerService {
       threadId,
       messageId,
     });
-  }
-
-  private async assertCanAnswerForWorkflowRun({
-    userWorkspaceId,
-    workspaceId,
-    workflowRunId,
-  }: {
-    userWorkspaceId: string;
-    workspaceId: string;
-    workflowRunId: string;
-  }): Promise<void> {
-    await this.assertHasSettingPermission({
-      setting: PermissionFlagType.WORKFLOWS,
-      userWorkspaceId,
-      workspaceId,
-    });
-
-    if (
-      !(await this.workflowRunWorkspaceService.isWorkflowRunReadableByRequester(
-        workflowRunId,
-      ))
-    ) {
-      throw new AiException(
-        'The tool call to answer could not be found',
-        AiExceptionCode.TOOL_CALL_NOT_FOUND,
-      );
-    }
   }
 
   private buildCompletionContext({

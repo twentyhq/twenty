@@ -7,6 +7,11 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { LEGACY_CHAT_THREAD_OWNER_FIELD_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-44/constants/legacy-chat-thread-owner-field-universal-identifier.constant';
+import {
+  LEGACY_CHAT_THREAD_WORKFLOW_RUN_FIELD_UNIVERSAL_IDENTIFIER,
+  LEGACY_CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER,
+  LEGACY_WORKFLOW_RUN_AGENT_CHAT_THREADS_FIELD_UNIVERSAL_IDENTIFIER,
+} from 'src/database/commands/upgrade-version-command/2-44/constants/legacy-chat-thread-workflow-run-universal-identifiers.constant';
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -18,12 +23,12 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKFLOW_RUN_THREAD_FIELD_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.agentChatThread.fields.workflowRun.universalIdentifier,
-  STANDARD_OBJECTS.workflowRun.fields.agentChatThreads.universalIdentifier,
+  LEGACY_CHAT_THREAD_WORKFLOW_RUN_FIELD_UNIVERSAL_IDENTIFIER,
+  LEGACY_WORKFLOW_RUN_AGENT_CHAT_THREADS_FIELD_UNIVERSAL_IDENTIFIER,
 ];
 
 const WORKFLOW_RUN_THREAD_INDEX_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.agentChatThread.indexes.workflowRunIndex.universalIdentifier,
+  LEGACY_CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER,
 ];
 
 // A workflow agent step now records each execution as a chat thread owned by
@@ -86,18 +91,30 @@ export class AddWorkflowRunToChatThreadsCommand extends ProvisionedWorkspaceComm
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const fieldsToCreate =
-      getStandardFlatEntitiesToCreateOrThrow<FlatFieldMetadata>({
-        standardFlatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
-        existingFlatEntityMaps: flatFieldMetadataMaps,
-        universalIdentifiers: WORKFLOW_RUN_THREAD_FIELD_UNIVERSAL_IDENTIFIERS,
-      });
-    const indexesToCreate =
-      getStandardFlatEntitiesToCreateOrThrow<FlatIndexMetadata>({
-        standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
-        existingFlatEntityMaps: flatIndexMaps,
-        universalIdentifiers: WORKFLOW_RUN_THREAD_INDEX_UNIVERSAL_IDENTIFIERS,
-      });
+    // Preserves the shipped 2.44 upgrade path after 2.46 dropped the run link
+    // from the standard objects: a workspace jumping past 2.44 skips linking
+    // threads to runs, and 2.46 leaves every workspace without the link.
+    const isRunLinkStandard = isDefined(
+      standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        LEGACY_CHAT_THREAD_WORKFLOW_RUN_FIELD_UNIVERSAL_IDENTIFIER
+      ],
+    );
+
+    const fieldsToCreate = isRunLinkStandard
+      ? getStandardFlatEntitiesToCreateOrThrow<FlatFieldMetadata>({
+          standardFlatEntityMaps:
+            standardAllFlatEntityMaps.flatFieldMetadataMaps,
+          existingFlatEntityMaps: flatFieldMetadataMaps,
+          universalIdentifiers: WORKFLOW_RUN_THREAD_FIELD_UNIVERSAL_IDENTIFIERS,
+        })
+      : [];
+    const indexesToCreate = isRunLinkStandard
+      ? getStandardFlatEntitiesToCreateOrThrow<FlatIndexMetadata>({
+          standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
+          existingFlatEntityMaps: flatIndexMaps,
+          universalIdentifiers: WORKFLOW_RUN_THREAD_INDEX_UNIVERSAL_IDENTIFIERS,
+        })
+      : [];
 
     const ownerField =
       flatFieldMetadataMaps.byUniversalIdentifier[
@@ -139,6 +156,10 @@ export class AddWorkflowRunToChatThreadsCommand extends ProvisionedWorkspaceComm
       });
     }
 
+    if (!isRunLinkStandard) {
+      return;
+    }
+
     // verify-common-record-sharing has already refused SYSTEM threads, so
     // anything but PRIVATE here is a re-run
     if (threadObject.readability !== MetadataReadability.PRIVATE) {
@@ -156,8 +177,7 @@ export class AddWorkflowRunToChatThreadsCommand extends ProvisionedWorkspaceComm
         ...threadObject,
         readability: MetadataReadability.INHERITED,
         readabilityParentFieldUniversalIdentifiers: [
-          STANDARD_OBJECTS.agentChatThread.fields.workflowRun
-            .universalIdentifier,
+          LEGACY_CHAT_THREAD_WORKFLOW_RUN_FIELD_UNIVERSAL_IDENTIFIER,
         ],
       },
     ];

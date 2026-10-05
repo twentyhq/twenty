@@ -638,14 +638,14 @@ export class AgentChatStreamingService {
   }
 
   // a message sent while the agent waits on a person closes its pending calls as skipped, so the model sees why
-  // an answer holding the stream keeps them, and workflow-run calls gate the run, so a chat message never closes them
+  // an answer holding the stream keeps them, and workflow-step calls gate the run, so a chat message never closes them
   private async settlePendingToolCallsBeforeSending({
     thread,
     workspaceId,
   }: {
     thread: Pick<
       AgentChatThreadWorkspaceEntity,
-      'id' | 'workflowRunId' | 'pendingQuestionMessageId'
+      'id' | 'pendingQuestionMessageId'
     >;
     workspaceId: string;
   }): Promise<void> {
@@ -655,10 +655,7 @@ export class AgentChatStreamingService {
       return;
     }
 
-    if (
-      isDefined(thread.workflowRunId) ||
-      (await this.isAwaitingWorkflowStep({ messageId, workspaceId }))
-    ) {
+    if (await this.isAwaitingWorkflowStep({ messageId, workspaceId })) {
       throw new AiException(
         'This conversation is waiting on an answer to its workflow run',
         AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT,
@@ -673,7 +670,7 @@ export class AgentChatStreamingService {
     });
   }
 
-  // a call a workflow step posted to the inbox gates that step like a run's own call
+  // a call a workflow step posted gates that step until it is answered
   private async isAwaitingWorkflowStep({
     messageId,
     workspaceId,

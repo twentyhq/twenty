@@ -238,11 +238,20 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         workflowRunId,
         workflow,
         initiator: agentWorkflow.initiator,
-        recordConversation: () =>
-          this.workflowAgentConversationService.recordExecution({
+        recordConversation: async () => {
+          const { threadId } =
+            await this.workflowAgentConversationService.openConversation({
+              runInfo: { workspaceId, workflowRunId },
+              stepId: workflow.step.id,
+              title: workflow.step.name,
+              recipientWorkspaceMemberId: null,
+              threadKey: `${workflowRunId}:${workflow.step.id}`,
+            });
+
+          await this.workflowAgentConversationService.recordExecution({
             workspaceId,
-            workflowRunId,
-            stepId: workflow.step.id,
+            threadId,
+            workflowStep: { workflowRunId, stepId: workflow.step.id },
             title: workflow.step.name,
             agentId: null,
             prompt: agentWorkflow.runPrompt,
@@ -251,7 +260,8 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
               isPaused: true,
               steps: [{ content }],
             },
-          }),
+          });
+        },
       });
     }
   }
