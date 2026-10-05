@@ -90,7 +90,8 @@ export class AddAgentChatThreadParticipantObjectCommand extends ProvisionedWorks
 
     const objectsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatObjectMetadata>({
-        standardFlatEntityMaps: standardAllFlatEntityMaps.flatObjectMetadataMaps,
+        standardFlatEntityMaps:
+          standardAllFlatEntityMaps.flatObjectMetadataMaps,
         existingFlatEntityMaps: flatObjectMetadataMaps,
         universalIdentifiers: [PARTICIPANT_OBJECT_UNIVERSAL_IDENTIFIER],
       });

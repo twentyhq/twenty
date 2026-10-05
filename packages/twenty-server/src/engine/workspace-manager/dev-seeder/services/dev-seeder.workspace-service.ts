@@ -139,8 +139,6 @@ export class DevSeederWorkspaceService {
       },
     );
 
-    await this.agentHistoryStorageService.initializeWorkspace(workspaceId);
-
     await this.sdkClientGenerationService.generateSdkClientForApplication({
       workspaceId,
       applicationId: twentyStandardFlatApplication.id,

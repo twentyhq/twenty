@@ -1,24 +1,17 @@
-import { millisecondsInDay } from 'date-fns/constants';
-import { isDefined } from 'twenty-shared/utils';
-
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
-import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_DAYS } from '@/ai/constants/AgentChatThreadLastActivityFilterDays';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
-import { agentChatThreadLastActivityFilterState } from '@/ai/states/agentChatThreadLastActivityFilterState';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-const INBOX_SCOPE_BY_FILTER_STATUS: Partial<
-  Record<AgentChatThreadFilterStatus, AgentChatThreadInboxStatus['scope']>
+const INBOX_SCOPE_BY_FILTER_STATUS: Record<
+  AgentChatThreadFilterStatus,
+  AgentChatThreadInboxStatus['scope']
 > = {
   [AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE]: 'INBOX',
-  [AGENT_CHAT_THREAD_FILTER_STATUS.UNREAD]: 'INBOX',
   [AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED]: 'SNOOZED',
   [AGENT_CHAT_THREAD_FILTER_STATUS.DONE]: 'ARCHIVED',
 };
@@ -28,46 +21,13 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
 >({
   key: 'agentChatVisibleThreadsSelector',
   get: ({ get }) => {
-    const filterStatus = get(agentChatThreadFilterStatusState);
-    const lastActivityDays =
-      AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_DAYS[
-        get(agentChatThreadLastActivityFilterState)
-      ];
-    const cutoffMs = isDefined(lastActivityDays)
-      ? get(agentChatThreadInboxNowState) - lastActivityDays * millisecondsInDay
-      : null;
-    const requiredScope = INBOX_SCOPE_BY_FILTER_STATUS[filterStatus];
+    const requiredScope =
+      INBOX_SCOPE_BY_FILTER_STATUS[get(agentChatThreadFilterStatusState)];
 
-    const isInFilterStatus = (thread: AgentChatThreadRecord) => {
-      if (filterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.ALL) {
-        return true;
-      }
-
-      if (filterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.DELETED) {
-        return isDefined(thread.deletedAt);
-      }
-
-      if (isDefined(thread.deletedAt)) {
-        return false;
-      }
-
-      const { scope, isUnread } = get(
-        agentChatThreadInboxStatusFamilySelector,
-        thread.id,
-      );
-
-      return (
-        scope === requiredScope &&
-        (filterStatus !== AGENT_CHAT_THREAD_FILTER_STATUS.UNREAD || isUnread)
-      );
-    };
-
-    return get(agentChatThreadsSelector).filter(
+    return get(agentChatRecentThreadsSelector).filter(
       (thread) =>
-        isInFilterStatus(thread) &&
-        (!isDefined(cutoffMs) ||
-          new Date(getAgentChatThreadLastActivityAt(thread)).getTime() >=
-            cutoffMs),
+        get(agentChatThreadInboxStatusFamilySelector, thread.id).scope ===
+        requiredScope,
     );
   },
 });

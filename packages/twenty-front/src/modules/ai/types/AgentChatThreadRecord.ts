@@ -10,6 +10,7 @@ export type AgentChatThreadRecord = ObjectRecord & {
   lastMessageSenderWorkspaceMemberId?: string | null;
   writerWorkspaceMemberIds?: string[] | null;
   workspaceMemberId?: string | null;
+  pendingQuestionMessageId?: string | null;
   totalInputTokens?: number;
   totalOutputTokens?: number;
   totalCacheReadTokens?: number;

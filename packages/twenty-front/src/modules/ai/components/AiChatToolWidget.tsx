@@ -4,9 +4,10 @@ import { Suspense, lazy } from 'react';
 import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
+import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
 import { type ToolInput } from '@/ai/types/ToolInput';
-import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
+import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
+import { unwrapToolInput } from '@/ai/utils/tool-display/unwrapToolInput';
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
 
 const FrontComponentRenderer = lazy(() =>
@@ -60,7 +61,10 @@ export const AiChatToolWidget = ({
           toolCall={toolCall}
           loadingFallback={<FrontComponentSkeletonLoader />}
           unavailableFallback={
-            <ToolStepRenderer toolPart={toolPart} isStreaming={isStreaming} />
+            <ThinkingToolStepRow
+              part={toolPart}
+              isActive={isThinkingStepPartActive(toolPart, isStreaming)}
+            />
           }
         />
       </Suspense>
