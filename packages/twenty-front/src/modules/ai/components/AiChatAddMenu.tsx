@@ -72,7 +72,7 @@ export const AiChatAddMenu = ({ editor }: AiChatAddMenuProps) => {
               </Dropdown.ActionItem>
               <Dropdown.ActionItem
                 startIcon={<IconAddressBook />}
-                shortcut={['#']}
+                shortcut={['@']}
                 page={AI_CHAT_ADD_MENU_PAGE.RECORDS}
               >
                 {t`Records`}

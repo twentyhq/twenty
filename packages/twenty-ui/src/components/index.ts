@@ -39,6 +39,9 @@ export type { ToastProviderProps } from './feedback/Toast/types/ToastProviderPro
 export type { ToastVariant } from './feedback/Toast/types/ToastVariant';
 export { Toaster } from './feedback/Toaster/Toaster';
 export type { ToasterProps } from './feedback/Toaster/types/ToasterProps';
+export { CountrySelect } from './input/CountrySelect/CountrySelect';
+export type { CountryChoice } from './input/CountrySelect/types/CountryChoice';
+export type { CountrySelectProps } from './input/CountrySelect/types/CountrySelectProps';
 export { CurrencyPicker } from './input/CurrencyPicker/CurrencyPicker';
 export type { CurrencyPickerOption } from './input/CurrencyPicker/types/CurrencyPickerOption';
 export type { CurrencyPickerOptionsProps } from './input/CurrencyPicker/types/CurrencyPickerOptionsProps';

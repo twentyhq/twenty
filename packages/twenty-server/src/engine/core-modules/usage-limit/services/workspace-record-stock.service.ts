@@ -5,9 +5,11 @@ import { DataSource } from 'typeorm';
 
 import { COUNT_LIVE_RECORDS_QUERY } from 'src/engine/core-modules/usage-limit/constants/count-live-records-query.constant';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
+import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
 import { buildRecordStockTableNames } from 'src/engine/core-modules/usage-limit/utils/build-record-stock-table-names.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -42,7 +44,7 @@ export class WorkspaceRecordStockService {
     await this.usageLimitStockService.assertStockAvailable({
       ...RECORD_STOCK_SCOPE,
       workspaceId,
-      cost: { quantity },
+      cost: { [UsageUnit.RECORD]: quantity },
       computeUsedStock: () =>
         this.computeRecordUsedStock({ workspaceId, flatObjectMetadataMaps }),
     });
@@ -62,7 +64,7 @@ export class WorkspaceRecordStockService {
     await this.usageLimitStockService.acquireStock({
       ...RECORD_STOCK_SCOPE,
       workspaceId,
-      cost: { quantity },
+      cost: { [UsageUnit.RECORD]: quantity },
     });
   }
 
@@ -80,7 +82,7 @@ export class WorkspaceRecordStockService {
     await this.usageLimitStockService.releaseStock({
       ...RECORD_STOCK_SCOPE,
       workspaceId,
-      cost: { quantity },
+      cost: { [UsageUnit.RECORD]: quantity },
     });
   }
 
@@ -90,7 +92,7 @@ export class WorkspaceRecordStockService {
   }: {
     workspaceId: string;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  }): Promise<{ quantity: number; bytes: number }> {
+  }): Promise<StockCost> {
     const [used] = await this.coreDataSource.query<{ quantity: string }[]>(
       COUNT_LIVE_RECORDS_QUERY,
       [
@@ -99,6 +101,6 @@ export class WorkspaceRecordStockService {
       ],
     );
 
-    return { quantity: Number(used?.quantity ?? 0), bytes: 0 };
+    return { [UsageUnit.RECORD]: Number(used?.quantity ?? 0) };
   }
 }
