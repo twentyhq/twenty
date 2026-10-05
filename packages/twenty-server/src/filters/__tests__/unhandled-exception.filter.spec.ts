@@ -1,8 +1,10 @@
 // oxlint-disable twenty/graphql-resolvers-should-be-guarded
 import {
+  type ArgumentsHost,
   type CanActivate,
   Injectable,
   Module,
+  NotFoundException,
   UseGuards,
 } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
@@ -20,6 +22,7 @@ import { YogaDriver, type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { msg } from '@lingui/core/macro';
 import { type GraphQLSchema, graphql } from 'graphql';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   PermissionsException,
@@ -72,7 +75,13 @@ class FeatureModule {}
     }),
     FeatureModule,
   ],
-  providers: [{ provide: APP_FILTER, useClass: UnhandledExceptionFilter }],
+  providers: [
+    { provide: APP_FILTER, useClass: UnhandledExceptionFilter },
+    {
+      provide: ExceptionHandlerService,
+      useValue: { captureExceptions: jest.fn() },
+    },
+  ],
 })
 class RootModuleWithAppFilter {}
 
@@ -99,7 +108,11 @@ const buildSchema = async (
   const app = moduleRef.createNestApplication();
 
   if (registerFilterAtBootstrap) {
-    app.useGlobalFilters(new UnhandledExceptionFilter());
+    app.useGlobalFilters(
+      new UnhandledExceptionFilter({
+        captureExceptions: jest.fn(),
+      } as unknown as ExceptionHandlerService),
+    );
   }
 
   await app.init();
@@ -140,5 +153,58 @@ describe('UnhandledExceptionFilter global registration', () => {
     );
 
     await app.close();
+  });
+});
+
+describe('UnhandledExceptionFilter Sentry capture', () => {
+  const captureExceptions = jest.fn();
+
+  const filter = new UnhandledExceptionFilter({
+    captureExceptions,
+  } as unknown as ExceptionHandlerService);
+
+  const buildResponse = () => {
+    const response = {
+      headersSent: false,
+      header: jest.fn(),
+      getHeader: jest.fn(),
+      status: jest.fn(),
+      json: jest.fn(),
+    };
+
+    response.status.mockReturnValue(response);
+
+    return response;
+  };
+
+  const buildHost = (response: ReturnType<typeof buildResponse>) =>
+    ({
+      switchToHttp: () => ({ getResponse: () => response }),
+    }) as unknown as ArgumentsHost;
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('reports an unexpected error answered with 500', () => {
+    const exception = new Error('Unexpected failure');
+    const response = buildResponse();
+
+    filter.catch(exception, buildHost(response));
+
+    expect(response.status).toHaveBeenCalledWith(500);
+    expect(captureExceptions).toHaveBeenCalledWith([exception], {
+      user: undefined,
+      workspace: undefined,
+    });
+  });
+
+  it('does not report a 4xx HttpException', () => {
+    const response = buildResponse();
+
+    filter.catch(new NotFoundException(), buildHost(response));
+
+    expect(response.status).toHaveBeenCalledWith(404);
+    expect(captureExceptions).not.toHaveBeenCalled();
   });
 });
