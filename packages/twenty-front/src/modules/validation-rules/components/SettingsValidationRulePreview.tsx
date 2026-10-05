@@ -161,7 +161,9 @@ export const SettingsValidationRulePreview = ({
         <StyledFieldValues>
           {referencedPaths.length === 0 ? (
             <StyledMuted>
-              {t`Fields used in the condition show their values here.`}
+              {compilationResult.isValid
+                ? t`This condition doesn't read any field.`
+                : t`Fields used in the condition show their values here.`}
             </StyledMuted>
           ) : (
             referencedPaths.map((path) => {
