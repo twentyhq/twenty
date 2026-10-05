@@ -1,13 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { enqueueJobsMock, queryMock, mutationMock } = vi.hoisted(() => ({
-  enqueueJobsMock: vi.fn(),
-  queryMock: vi.fn(),
-  mutationMock: vi.fn(),
-}));
+const { enqueueJobsMock, queryMock, mutationMock, applyMeetingInteractionsMock } =
+  vi.hoisted(() => ({
+    enqueueJobsMock: vi.fn(),
+    queryMock: vi.fn(),
+    mutationMock: vi.fn(),
+    applyMeetingInteractionsMock: vi.fn(),
+  }));
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<object>()),
   enqueueJobs: enqueueJobsMock,
+}));
+vi.mock('src/utils/apply-meeting-interactions', () => ({
+  applyMeetingInteractions: applyMeetingInteractionsMock,
 }));
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: vi.fn(function () {
@@ -46,6 +51,8 @@ beforeEach(() => {
   queryMock.mockReset();
   queryMock.mockResolvedValue({ calendarEventParticipants: emptyPage });
   mutationMock.mockReset();
+  applyMeetingInteractionsMock.mockReset();
+  applyMeetingInteractionsMock.mockResolvedValue([]);
 });
 
 afterEach(() => {
@@ -83,6 +90,21 @@ describe('on-calendar-event-rescheduled', () => {
   });
 
   it('should apply a meeting moved into the past right away', async () => {
+    queryMock.mockResolvedValue({
+      calendarEventParticipants: {
+        edges: [
+          {
+            node: {
+              personId: 'person-1',
+              calendarEventId: 'event-0',
+              calendarEvent: { startsAt: '2026-06-12T10:00:00.000Z' },
+            },
+          },
+        ],
+        pageInfo: { hasNextPage: false, endCursor: null },
+      },
+    });
+
     await handler(
       buildBatch([
         { startsAt: '2026-06-12T10:00:00.000Z', isCanceled: false },
@@ -101,6 +123,16 @@ describe('on-calendar-event-rescheduled', () => {
         { calendarEvent: { isCanceled: { eq: false } } },
       ],
     });
+    expect(applyMeetingInteractionsMock).toHaveBeenCalledWith(
+      expect.anything(),
+      [
+        {
+          personId: 'person-1',
+          calendarEventId: 'event-0',
+          startsAt: '2026-06-12T10:00:00.000Z',
+        },
+      ],
+    );
     expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 });
