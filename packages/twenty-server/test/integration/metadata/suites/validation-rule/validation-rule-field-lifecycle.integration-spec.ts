@@ -134,7 +134,7 @@ describe('Validation rules should follow the fields they read', () => {
     );
   });
 
-  it('should disable the rule and move its error to the record when the field is deactivated', async () => {
+  it('should disable the rule and keep its error field when the field is deactivated', async () => {
     await updateOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -146,7 +146,7 @@ describe('Validation rules should follow the fields they read', () => {
 
     expect(await findValidationRule()).toMatchObject({
       isActive: false,
-      errorFieldMetadataId: null,
+      errorFieldMetadataId: scoreFieldMetadataId,
     });
 
     const enableResponse = await updateValidationRule(validationRuleId, {
@@ -158,13 +158,16 @@ describe('Validation rules should follow the fields they read', () => {
     );
   });
 
-  it('should keep the rule disabled when the field is deleted', async () => {
+  it('should keep the rule disabled and move its error to the record when the field is deleted', async () => {
     await deleteOneFieldMetadata({
       expectToFail: false,
       input: { idToDelete: scoreFieldMetadataId },
     });
 
-    expect(await findValidationRule()).toMatchObject({ isActive: false });
+    expect(await findValidationRule()).toMatchObject({
+      isActive: false,
+      errorFieldMetadataId: null,
+    });
   });
 
   it('should delete the rules of an object when the object is deleted', async () => {

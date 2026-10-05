@@ -43,8 +43,16 @@ export const SettingsValidationRuleForm = ({
   const errorFieldOptions = [
     { label: t`Whole record`, value: RECORD_LEVEL_OPTION_VALUE },
     ...objectMetadataItem.fields
-      .filter((field) => field.isActive && !field.isSystem)
-      .map((field) => ({ label: field.label, value: field.id })),
+      .filter(
+        (field) =>
+          !field.isSystem &&
+          (field.isActive || field.id === values.errorFieldMetadataId),
+      )
+      .map((field) => ({
+        label: field.label,
+        value: field.id,
+        contextualText: field.isActive ? undefined : t`Deactivated`,
+      })),
   ];
 
   return (

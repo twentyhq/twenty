@@ -26,7 +26,7 @@ export const computeValidationRuleAfterFieldChanges = <
   );
   const shouldDetachErrorField = fieldChanges.some(
     (fieldChange) =>
-      fieldChange.shouldDetachErrorField &&
+      fieldChange.isDeleted &&
       validationRule.errorFieldMetadataUniversalIdentifier ===
         fieldChange.fieldUniversalIdentifier,
   );

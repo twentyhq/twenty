@@ -7,6 +7,7 @@ import {
 import { type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { VALIDATION_RULE_MAX_REPORTED_VIOLATIONS } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-max-reported-violations.constant';
 import { VALIDATION_RULE_RECORD_CHUNK_SIZE } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-record-chunk-size.constant';
@@ -177,6 +178,16 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
     (readFieldPath) => !readFieldPath.includes('.'),
   );
   const now = new Date().toISOString();
+  const validationRulesWithActiveErrorField = validationRules.map(
+    (validationRule) =>
+      isDefined(validationRule.errorFieldMetadataId) &&
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: validationRule.errorFieldMetadataId,
+        flatEntityMaps: repository.internalContext.flatFieldMetadataMaps,
+      })?.isActive !== true
+        ? { ...validationRule, errorFieldMetadataId: null }
+        : validationRule,
+  );
 
   const violations: RecordValidationRuleViolation[] = [];
   const evaluationErrors: RecordValidationRuleViolation[] = [];
@@ -204,7 +215,7 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
         readFieldPaths,
         rawWrittenRecords,
       }),
-      validationRules,
+      validationRules: validationRulesWithActiveErrorField,
       fields,
       now,
       inputIndexByRecordId,

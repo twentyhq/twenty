@@ -33,16 +33,16 @@ describe('computeValidationRuleFieldChanges', () => {
     ).toEqual([
       {
         fieldUniversalIdentifier: STAGE.universalIdentifier,
-        shouldDetachErrorField: true,
+        isDeleted: false,
       },
       {
         fieldUniversalIdentifier: 'score-universal-identifier',
-        shouldDetachErrorField: true,
+        isDeleted: true,
       },
     ]);
   });
 
-  it('should list a type change without detaching the error field', () => {
+  it('should list a type change', () => {
     expect(
       computeValidationRuleFieldChanges({
         updatedFields: [{ ...STAGE, type: FieldMetadataType.MULTI_SELECT }],
@@ -53,7 +53,7 @@ describe('computeValidationRuleFieldChanges', () => {
     ).toEqual([
       {
         fieldUniversalIdentifier: STAGE.universalIdentifier,
-        shouldDetachErrorField: false,
+        isDeleted: false,
       },
     ]);
   });

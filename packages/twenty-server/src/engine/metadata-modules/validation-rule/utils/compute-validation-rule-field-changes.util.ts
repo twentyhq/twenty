@@ -38,12 +38,12 @@ export const computeValidationRuleFieldChanges = ({
     return [
       {
         fieldUniversalIdentifier: updatedField.universalIdentifier,
-        shouldDetachErrorField: isDeactivated,
+        isDeleted: false,
       },
     ];
   }),
   ...deletedFields.map((deletedField) => ({
     fieldUniversalIdentifier: deletedField.universalIdentifier,
-    shouldDetachErrorField: true,
+    isDeleted: true,
   })),
 ];

@@ -30,14 +30,14 @@ const retype = (
   fieldUniversalIdentifier: string,
 ): ValidationRuleFieldChange => ({
   fieldUniversalIdentifier,
-  shouldDetachErrorField: false,
+  isDeleted: false,
 });
 
 const deletion = (
   fieldUniversalIdentifier: string,
 ): ValidationRuleFieldChange => ({
   fieldUniversalIdentifier,
-  shouldDetachErrorField: true,
+  isDeleted: true,
 });
 
 describe('computeValidationRuleAfterFieldChanges', () => {
