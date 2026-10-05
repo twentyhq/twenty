@@ -282,10 +282,7 @@ export const SettingsValidationRulePreview = ({
                         stroke={theme.icon.stroke.sm}
                       />
                     )}
-                    <OverflowingTextWithTooltip
-                      text={t`${fieldLabel}:`}
-                      isFocusable
-                    />
+                    <OverflowingTextWithTooltip text={t`${fieldLabel}:`} />
                   </StyledFieldLabel>
                   <StyledValue isEmpty={formattedValue.length === 0}>
                     {formattedValue.length > 0 ? formattedValue : t`Empty`}
