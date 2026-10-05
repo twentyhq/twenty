@@ -11,6 +11,7 @@ import { In, Repository } from 'typeorm';
 import type Stripe from 'stripe';
 
 import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from 'src/engine/core-modules/billing-webhook/utils/get-deleted-stripe-subscription-item-ids-from-stripe-subscription-event.util';
+import { isSubscriptionInFirstPeriodAfterTrial } from 'src/engine/core-modules/billing-webhook/utils/is-subscription-in-first-period-after-trial.util';
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
@@ -285,6 +286,15 @@ export class BillingWebhookSubscriptionService {
       return true;
     }
 
+    // Paying customers keep a grace period while Stripe retries a failed
+    // renewal, but a trial whose first invoice is overdue was never paid for
+    if (
+      status === SubscriptionStatus.PastDue &&
+      isSubscriptionInFirstPeriodAfterTrial(subscription)
+    ) {
+      return true;
+    }
+
     const timeSinceTrialEnd = Date.now() / 1000 - (subscription.trial_end || 0);
     const hasTrialJustEnded =
       timeSinceTrialEnd > 0 && timeSinceTrialEnd < 60 * 60 * 24;
@@ -295,10 +305,7 @@ export class BillingWebhookSubscriptionService {
       isDefined(subscription.trial_end) &&
       subscription.canceled_at <= subscription.trial_end;
 
-    return (
-      hasTrialJustEnded &&
-      (status === SubscriptionStatus.PastDue || canceledDuringTrial)
-    );
+    return hasTrialJustEnded && canceledDuringTrial;
   }
 
   shouldReactivateWorkspace(subscription: SubscriptionWithSchedule): boolean {
