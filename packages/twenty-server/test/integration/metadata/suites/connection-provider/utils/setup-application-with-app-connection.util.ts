@@ -21,6 +21,7 @@ export type ApplicationWithAppConnection = {
   connectedAccountId: string;
   connectedAccountHandle: string;
   connectedAccountAccessToken: string;
+  logicFunctionUniversalIdentifier: string;
 };
 
 const CONNECTION_PROVIDER_NAME = 'slack';
@@ -32,6 +33,7 @@ export const setupApplicationWithAppConnection = async ({
 }): Promise<ApplicationWithAppConnection> => {
   const applicationUniversalIdentifier = uuidv4();
   const roleUniversalIdentifier = uuidv4();
+  const logicFunctionUniversalIdentifier = uuidv4();
   const sourcePath = `test-${name.toLowerCase().replace(/\s+/g, '-')}`;
 
   await setupApplicationForSync({
@@ -51,6 +53,16 @@ export const setupApplicationWithAppConnection = async ({
             universalIdentifier: roleUniversalIdentifier,
             label: `Test Role ${sourcePath}`,
             description: 'A test role',
+          },
+        ],
+        logicFunctions: [
+          {
+            universalIdentifier: logicFunctionUniversalIdentifier,
+            name: `${sourcePath}-handler`,
+            handlerName: 'handler',
+            sourceHandlerPath: 'src/handler.ts',
+            builtHandlerPath: 'dist/handler.mjs',
+            builtHandlerChecksum: 'handler-checksum',
           },
         ],
         connectionProviders: [
@@ -121,6 +133,7 @@ export const setupApplicationWithAppConnection = async ({
     connectedAccountId,
     connectedAccountHandle,
     connectedAccountAccessToken,
+    logicFunctionUniversalIdentifier,
   };
 };
 

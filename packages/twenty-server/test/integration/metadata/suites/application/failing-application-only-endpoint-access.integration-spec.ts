@@ -47,6 +47,8 @@ type StateReader = (globalContext: GlobalTestContext) => Promise<unknown>;
 
 const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
+const KEY_VALUE_KEY = `application-only-probe-${uuidv4()}`;
+
 const callerTestCases: EachTestingContext<CallerTestContext>[] = [
   {
     title: 'with a member session',
@@ -132,16 +134,19 @@ const restRequestNames = Object.keys(
 
 describe('Application-only endpoints with a non-application caller should fail', () => {
   let globalTestContext: GlobalTestContext;
+  let applicationToCleanUp: ApplicationWithAppConnection | undefined;
+  let isTwentyCliInstalled = false;
 
   beforeAll(async () => {
     const application = await setupApplicationWithAppConnection({
       name: 'Application Only Probe',
     });
-    const keyValueKey = `application-only-probe-${uuidv4()}`;
+
+    applicationToCleanUp = application;
 
     const setKeyValueResponse = await makeMetadataApiRequest(
       APPLICATION_ONLY_GRAPHQL_OPERATION_FACTORIES.setAppKeyValue({
-        keyValueKey,
+        keyValueKey: KEY_VALUE_KEY,
       }),
       application.applicationToken,
     );
@@ -157,17 +162,23 @@ describe('Application-only endpoints with a non-application caller should fail',
 
     expect(createMessageChannelResponse.body.errors).toBeUndefined();
 
+    const oauthClientToken = await loginAsTwentyCli();
+
+    isTwentyCliInstalled = true;
+
     globalTestContext = {
       application,
       target: {
         connectedAccountId: application.connectedAccountId,
         messageChannelId:
           createMessageChannelResponse.body.data.createAppMessageChannel.id,
-        keyValueKey,
-        logicFunctionUniversalIdentifier: uuidv4(),
-        jobId: `application-only-probe.${uuidv4()}`,
+        keyValueKey: KEY_VALUE_KEY,
+        logicFunctionUniversalIdentifier:
+          application.logicFunctionUniversalIdentifier,
+        singleJobId: `application-only-probe.${uuidv4()}`,
+        batchJobId: `application-only-probe.${uuidv4()}`,
       },
-      oauthClientToken: await loginAsTwentyCli(),
+      oauthClientToken,
       emitChargeEventSpy: jest.spyOn(
         getAppProviderByClassName<AppBillingService>('AppBillingService'),
         'emitChargeEvent',
@@ -176,22 +187,26 @@ describe('Application-only endpoints with a non-application caller should fail',
   }, 120000);
 
   afterAll(async () => {
-    if (!isDefined(globalTestContext)) {
-      return;
+    if (isDefined(globalTestContext)) {
+      globalTestContext.emitChargeEventSpy.mockRestore();
     }
-
-    globalTestContext.emitChargeEventSpy.mockRestore();
 
     await globalThis.testDataSource.query(
       `DELETE FROM core."keyValuePair" WHERE key = $1`,
-      [globalTestContext.target.keyValueKey],
+      [KEY_VALUE_KEY],
     );
-    await cleanupApplicationWithAppConnection(globalTestContext.application);
-    await uninstallApplication({
-      universalIdentifier:
-        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-      expectToFail: false,
-    });
+
+    if (isDefined(applicationToCleanUp)) {
+      await cleanupApplicationWithAppConnection(applicationToCleanUp);
+    }
+
+    if (isTwentyCliInstalled) {
+      await uninstallApplication({
+        universalIdentifier:
+          TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+        expectToFail: false,
+      });
+    }
   });
 
   describe.each(eachTestingContextFilter(callerTestCases))(

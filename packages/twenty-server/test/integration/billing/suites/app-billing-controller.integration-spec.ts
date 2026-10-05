@@ -45,10 +45,13 @@ describe('AppBillingController (integration)', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(
-      response.body.hasAvailableCredits === true ||
-        CREDIT_UNAVAILABLE_REASONS.includes(response.body.reason),
-    ).toBe(true);
+    expect([
+      { hasAvailableCredits: true },
+      ...CREDIT_UNAVAILABLE_REASONS.map((reason) => ({
+        hasAvailableCredits: false,
+        reason,
+      })),
+    ]).toContainEqual(response.body);
   });
 
   it('records a charge for the calling application', async () => {
@@ -64,6 +67,7 @@ describe('AppBillingController (integration)', () => {
       );
 
       expect(response.status).toBe(204);
+      expect(emitChargeEventSpy).toHaveBeenCalledTimes(1);
       expect(emitChargeEventSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           workspaceId: SEED_APPLE_WORKSPACE_ID,

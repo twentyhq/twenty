@@ -10,7 +10,8 @@ export type ApplicationOnlyEndpointTarget = {
   messageChannelId: string;
   keyValueKey: string;
   logicFunctionUniversalIdentifier: string;
-  jobId: string;
+  singleJobId: string;
+  batchJobId: string;
 };
 
 export const APPLICATION_ONLY_GRAPHQL_OPERATION_FACTORIES = {
@@ -87,10 +88,10 @@ export const APPLICATION_ONLY_GRAPHQL_OPERATION_FACTORIES = {
   }),
   enqueueJob: ({
     logicFunctionUniversalIdentifier,
-    jobId,
+    singleJobId,
   }: Pick<
     ApplicationOnlyEndpointTarget,
-    'logicFunctionUniversalIdentifier' | 'jobId'
+    'logicFunctionUniversalIdentifier' | 'singleJobId'
   >) => ({
     query: gql`
       mutation EnqueueJob($input: EnqueueJobInput!) {
@@ -99,14 +100,16 @@ export const APPLICATION_ONLY_GRAPHQL_OPERATION_FACTORIES = {
         }
       }
     `,
-    variables: { input: { logicFunctionUniversalIdentifier, jobId } },
+    variables: {
+      input: { logicFunctionUniversalIdentifier, jobId: singleJobId },
+    },
   }),
   enqueueJobs: ({
     logicFunctionUniversalIdentifier,
-    jobId,
+    batchJobId,
   }: Pick<
     ApplicationOnlyEndpointTarget,
-    'logicFunctionUniversalIdentifier' | 'jobId'
+    'logicFunctionUniversalIdentifier' | 'batchJobId'
   >) => ({
     query: gql`
       mutation EnqueueJobs($input: EnqueueJobsInput!) {
@@ -118,11 +121,14 @@ export const APPLICATION_ONLY_GRAPHQL_OPERATION_FACTORIES = {
     variables: {
       input: {
         logicFunctionUniversalIdentifier,
-        jobs: [{ jobId, payload: {} }],
+        jobs: [{ jobId: batchJobId, payload: {} }],
       },
     },
   }),
-  getJobs: ({ jobId }: Pick<ApplicationOnlyEndpointTarget, 'jobId'>) => ({
+  getJobs: ({
+    singleJobId,
+    batchJobId,
+  }: Pick<ApplicationOnlyEndpointTarget, 'singleJobId' | 'batchJobId'>) => ({
     query: gql`
       query GetJobs($jobIds: [String!]!) {
         getJobs(jobIds: $jobIds) {
@@ -130,7 +136,7 @@ export const APPLICATION_ONLY_GRAPHQL_OPERATION_FACTORIES = {
         }
       }
     `,
-    variables: { jobIds: [jobId] },
+    variables: { jobIds: [singleJobId, batchJobId] },
   }),
   appMessageChannels: () => ({
     query: gql`
