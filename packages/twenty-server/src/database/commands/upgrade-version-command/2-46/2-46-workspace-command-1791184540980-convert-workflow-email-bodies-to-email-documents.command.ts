@@ -65,11 +65,17 @@ export class ConvertWorkflowEmailBodiesToEmailDocumentsCommand extends Provision
           [workspaceId],
         ),
       );
-      const convertedWorkspaceVersions = convertEmailBodiesInRows(
-        await queryRunner.query(
-          `SELECT id, steps FROM ${workspaceVersionTable}`,
-        ),
+      const [{ hasWorkspaceVersionTable }] = await queryRunner.query(
+        `SELECT to_regclass($1) IS NOT NULL AS "hasWorkspaceVersionTable"`,
+        [workspaceVersionTable],
       );
+      const convertedWorkspaceVersions = hasWorkspaceVersionTable
+        ? convertEmailBodiesInRows(
+            await queryRunner.query(
+              `SELECT id, steps FROM ${workspaceVersionTable}`,
+            ),
+          )
+        : [];
 
       if (
         convertedCoreVersions.length === 0 &&
