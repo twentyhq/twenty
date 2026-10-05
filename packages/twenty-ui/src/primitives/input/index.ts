@@ -7,6 +7,14 @@
  *                              |___/
  */
 
+export { Autocomplete } from './Autocomplete/Autocomplete';
+export type { AutocompleteEmptyProps } from './Autocomplete/types/AutocompleteEmptyProps';
+export type { AutocompleteInputGroupProps } from './Autocomplete/types/AutocompleteInputGroupProps';
+export type { AutocompleteInputProps } from './Autocomplete/types/AutocompleteInputProps';
+export type { AutocompleteItemProps } from './Autocomplete/types/AutocompleteItemProps';
+export type { AutocompleteListProps } from './Autocomplete/types/AutocompleteListProps';
+export type { AutocompletePopupProps } from './Autocomplete/types/AutocompletePopupProps';
+export type { AutocompleteRootProps } from './Autocomplete/types/AutocompleteRootProps';
 export { Button } from './Button/Button';
 export type { ButtonColor } from './Button/types/ButtonColor';
 export type { ButtonProps } from './Button/types/ButtonProps';
