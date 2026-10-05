@@ -59,6 +59,7 @@ export const fromCreateAgentInputToFlatAgent = ({
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     modelConfiguration: createAgentInput.modelConfiguration ?? null,
     evaluationInputs: createAgentInput.evaluationInputs ?? [],
+    triggers: createAgentInput.triggers ?? [],
     createdAt,
     updatedAt: createdAt,
     deletedAt: null,

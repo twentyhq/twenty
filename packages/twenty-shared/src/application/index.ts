@@ -8,6 +8,14 @@
  */
 
 export type { AgentManifest } from './agentManifestType';
+export type {
+  AgentTriggerType,
+  AgentDatabaseEventTrigger,
+  AgentCronTrigger,
+  AgentTrigger,
+  AgentTriggerManifest,
+} from './agentTriggerType';
+export { AGENT_TRIGGER_TYPES } from './agentTriggerType';
 export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';

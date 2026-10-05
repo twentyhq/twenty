@@ -72,6 +72,7 @@ type Agent {
   updatedAt: DateTime!
   modelConfiguration: JSON
   evaluationInputs: [String!]!
+  triggers: [JSON!]!
 }
 
 type AuthToken {
@@ -4911,6 +4912,7 @@ input CreateAgentInput {
   responseFormat: JSON
   modelConfiguration: JSON
   evaluationInputs: [String!]
+  triggers: [JSON!]
 }
 
 input UpdateAgentInput {
@@ -4925,6 +4927,7 @@ input UpdateAgentInput {
   responseFormat: JSON
   modelConfiguration: JSON
   evaluationInputs: [String!]
+  triggers: [JSON!]
 }
 
 input CreateOneObjectInput {

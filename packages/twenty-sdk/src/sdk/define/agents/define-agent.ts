@@ -1,5 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type AgentManifest } from 'twenty-shared/application';
+import {
+  AGENT_TRIGGER_TYPES,
+  type AgentManifest,
+} from 'twenty-shared/application';
 import { validate as uuidValidate } from 'uuid';
 
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
@@ -38,6 +41,20 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
     errors.push(
       `Agent '${config.name}' roleUniversalIdentifier must be a valid UUID`,
     );
+  }
+
+  for (const trigger of config.triggers ?? []) {
+    if (!uuidValidate(trigger.universalIdentifier)) {
+      errors.push(
+        `Agent '${config.name}' trigger universalIdentifier must be a valid UUID`,
+      );
+    }
+
+    if (!AGENT_TRIGGER_TYPES.includes(trigger.type)) {
+      errors.push(
+        `Agent '${config.name}' trigger type must be one of: ${AGENT_TRIGGER_TYPES.join(', ')}`,
+      );
+    }
   }
 
   return createValidationResult({ config, errors, warnings });

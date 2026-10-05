@@ -42,6 +42,46 @@ describe('defineAgent', () => {
     );
   });
 
+  it('should accept triggers', () => {
+    const result = defineAgent({
+      ...VALID_AGENT_CONFIG,
+      triggers: [
+        {
+          universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
+          type: 'DATABASE_EVENT',
+          settings: { eventName: 'company.created' },
+          instructions: 'Qualify the new company',
+        },
+        {
+          universalIdentifier: 'd2e1b8c3-6e4f-4a7b-9c0d-1e2f3a4b5c6d',
+          type: 'CRON',
+          settings: { pattern: '0 9 * * 1' },
+        },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should error when a trigger universalIdentifier is not a valid UUID', () => {
+    const result = defineAgent({
+      ...VALID_AGENT_CONFIG,
+      triggers: [
+        {
+          universalIdentifier: 'weekly-digest',
+          type: 'CRON',
+          settings: { pattern: '0 9 * * 1' },
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      `Agent 'sales-assistant' trigger universalIdentifier must be a valid UUID`,
+    );
+  });
+
   it('should warn when responseFormat is missing', () => {
     const { responseFormat: _responseFormat, ...configWithoutFormat } =
       VALID_AGENT_CONFIG;

@@ -16,6 +16,7 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 import { validateAgentNameUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util';
 import { validateAgentRequiredProperties } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util';
 import { validateAgentResponseFormat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util';
+import { validateAgentTriggers } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util';
 
 @Injectable()
 export class FlatAgentValidatorService {
@@ -60,6 +61,10 @@ export class FlatAgentValidatorService {
         }),
       );
     }
+
+    validationResult.errors.push(
+      ...validateAgentTriggers({ triggers: flatAgent.triggers }),
+    );
 
     return validationResult;
   }
@@ -195,6 +200,12 @@ export class FlatAgentValidatorService {
         ...validateAgentResponseFormat({
           responseFormat: flatEntityUpdate.responseFormat,
         }),
+      );
+    }
+
+    if (isDefined(flatEntityUpdate.triggers)) {
+      validationResult.errors.push(
+        ...validateAgentTriggers({ triggers: flatEntityUpdate.triggers }),
       );
     }
 
