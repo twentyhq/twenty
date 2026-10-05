@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MAX_PENDING_IMAGE_LOADS } from '@/host/image-loading/constants/MaxPendingImageLoads';
-import { resolveImageLoadReferrerPolicy } from '@/host/image-loading/utils/resolveImageLoadReferrerPolicy';
+import { sanitizeImageLoadRequest } from '@/host/image-loading/utils/sanitizeImageLoadRequest';
 import { type ImageLoadingHost } from '@/types/image/ImageLoadingHost';
 import { type ImageLoadResult } from '@/types/image/ImageLoadResult';
 
@@ -32,17 +32,19 @@ export const createImageLoadingHost = ({
     pendingRequests.get(requestId)?.('cancelled');
   };
 
-  const loadImage: ImageLoadingHost['loadImage'] = ({
-    requestId,
-    src,
-    srcset,
-    sizes,
-    crossOrigin,
-    referrerPolicy,
-  }) => {
+  const loadImage: ImageLoadingHost['loadImage'] = (request) => {
     if (isDisposed) {
       return Promise.resolve(createUnloadedImageResult('cancelled'));
     }
+
+    const sanitizedRequest = sanitizeImageLoadRequest(request);
+
+    if (!isDefined(sanitizedRequest)) {
+      return Promise.resolve(createUnloadedImageResult('error'));
+    }
+
+    const { requestId, src, srcset, sizes, crossOrigin, referrerPolicy } =
+      sanitizedRequest;
 
     pendingRequests.get(requestId)?.('cancelled');
 
@@ -77,7 +79,7 @@ export const createImageLoadingHost = ({
       image.onload = () => finishRequest('loaded');
       image.onerror = () => finishRequest('error');
       image.crossOrigin = crossOrigin;
-      image.referrerPolicy = resolveImageLoadReferrerPolicy(referrerPolicy);
+      image.referrerPolicy = referrerPolicy;
 
       if (isNonEmptyString(sizes)) {
         image.sizes = sizes;

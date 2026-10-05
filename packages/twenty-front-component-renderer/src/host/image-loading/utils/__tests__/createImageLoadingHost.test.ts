@@ -168,6 +168,15 @@ describe('createImageLoadingHost', () => {
     ]);
   });
 
+  it('reports requests without a source as errors without creating an image', async () => {
+    const { host, createImage } = createImageHost();
+
+    await expect(
+      host.loadImage({ ...IMAGE_LOAD_REQUEST, src: null, srcset: null }),
+    ).resolves.toMatchObject({ status: 'error' });
+    expect(createImage).not.toHaveBeenCalled();
+  });
+
   it('reports an error without creating an image once the pending load limit is reached', async () => {
     const { host, createImage } = createImageHost();
 
