@@ -347,6 +347,17 @@ describe('Usage limit mutations', () => {
         ...overrides,
       });
 
+    const emailQuotaPayload = (
+      overrides: Partial<CreateUsageLimitInput> = {},
+    ) =>
+      buildPayload({
+        resourceType: UsageResourceType.EMAIL,
+        operationType: UsageOperationType.EMAIL_SEND,
+        unit: UsageUnit.INVOCATION,
+        limitValue: 5_000,
+        ...overrides,
+      });
+
     const seedOperatorOverride = async () => {
       await usageLimitRepository.insert({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -379,6 +390,24 @@ describe('Usage limit mutations', () => {
           workspaceId: SEED_APPLE_WORKSPACE_ID,
         }),
       ).toBe(0);
+    });
+
+    it('refuses a workspace email quota on the daily default period', async () => {
+      const response = await createUsageLimitRequest(
+        emailQuotaPayload({ periodUnit: 'day' }),
+      );
+
+      expect(response.body.errors?.[0]?.message).toEqual(
+        expect.stringContaining(OPERATOR_ONLY_MESSAGE),
+      );
+    });
+
+    it('allows a workspace email quota on another period, stacked on the daily default', async () => {
+      const response = await createUsageLimitRequest(
+        emailQuotaPayload({ periodUnit: 'month' }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
     });
 
     it('allows a workspace write on a unit no default covers', async () => {
