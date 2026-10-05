@@ -80,9 +80,6 @@ export class AgentEntity
   @Column({ nullable: true, type: 'jsonb' })
   modelConfiguration: JsonbProperty<ModelConfiguration> | null;
 
-  @Column({ type: 'text', array: true, default: '{}' })
-  evaluationInputs: string[];
-
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_TRIGGERS_TO_AGENT_UPGRADE_COMMAND_NAME,
   })

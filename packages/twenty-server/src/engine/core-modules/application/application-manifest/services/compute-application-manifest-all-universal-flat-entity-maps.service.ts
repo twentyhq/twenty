@@ -65,14 +65,12 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     manifest,
     ownerFlatApplication,
     fromAllFlatEntityMaps,
-    isLogicFunctionPrebuiltModeEnabled,
     now,
     workspaceId,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
     fromAllFlatEntityMaps: AllFlatEntityMaps;
-    isLogicFunctionPrebuiltModeEnabled: boolean;
     now: string;
     workspaceId: string;
   }): AllFlatEntityMaps {
@@ -223,7 +221,6 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             applicationSourceType,
             existingFlatLogicFunctionMaps:
               fromAllFlatEntityMaps.flatLogicFunctionMaps,
-            isPrebuiltModeEnabled: isLogicFunctionPrebuiltModeEnabled,
             now,
           }),
         universalFlatEntityMapsToMutate:

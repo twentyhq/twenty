@@ -35,7 +35,6 @@ export const coreAgentFormSchema = z.object({
       schema: z.custom<AgentResponseSchema>().optional(),
     })
     .optional(),
-  evaluationInputs: z.array(z.string()).default([]),
   triggers: z
     .array(coreAgentTriggerSchema)
     .max(AGENT_TRIGGER_LIMITS.MAX_TRIGGERS_PER_AGENT)

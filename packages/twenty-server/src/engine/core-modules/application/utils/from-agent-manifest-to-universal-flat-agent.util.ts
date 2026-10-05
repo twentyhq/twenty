@@ -27,7 +27,6 @@ export const fromAgentManifestToUniversalFlatAgent = ({
       AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
     responseFormat: agentManifest.responseFormat ?? { type: 'text' },
     modelConfiguration: null,
-    evaluationInputs: [],
     triggers: (agentManifest.triggers ?? []).map(
       ({ universalIdentifier, isActive, instructions, ...trigger }) => ({
         ...trigger,

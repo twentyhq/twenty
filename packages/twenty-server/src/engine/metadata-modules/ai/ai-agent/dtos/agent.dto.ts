@@ -76,9 +76,6 @@ export class AgentDTO {
   @Field(() => GraphQLJSON, { nullable: true })
   modelConfiguration?: ModelConfiguration;
 
-  @Field(() => [String])
-  evaluationInputs: string[];
-
   @Field(() => [GraphQLJSON])
   triggers: AgentTrigger[];
 }

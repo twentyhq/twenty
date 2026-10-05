@@ -78,12 +78,6 @@ export class CreateAgentInput {
   modelConfiguration?: ModelConfiguration;
 
   @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
-  @Field(() => [String], { nullable: true })
-  evaluationInputs?: string[];
-
-  @IsArray()
   @IsObject({ each: true })
   @IsOptional()
   @Field(() => [GraphQLJSON], { nullable: true })

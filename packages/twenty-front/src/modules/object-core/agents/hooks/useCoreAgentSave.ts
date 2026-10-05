@@ -74,7 +74,6 @@ export const useCoreAgentSave = ({
     prompt: formValues.prompt,
     modelConfiguration: formValues.modelConfiguration,
     responseFormat: formValues.responseFormat,
-    evaluationInputs: formValues.evaluationInputs,
     // Stored triggers the form could not parse are left out of formValues, so
     // only send triggers when the user edited them to avoid deleting those
     ...(!isDeeplyEqual(formValues.triggers, originalFormValues.triggers) && {

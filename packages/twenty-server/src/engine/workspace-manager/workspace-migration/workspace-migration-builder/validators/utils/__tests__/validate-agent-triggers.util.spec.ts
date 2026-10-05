@@ -128,6 +128,20 @@ describe('validateAgentTriggers', () => {
     expect(errors[0].message).toContain('unique');
   });
 
+  it('should not report missing ids as duplicated', () => {
+    const errors = validateAgentTriggers({
+      triggers: [
+        { ...CRON_TRIGGER, id: undefined },
+        { ...CRON_TRIGGER, id: undefined },
+      ],
+    });
+
+    expect(errors).toHaveLength(2);
+    expect(errors.some((error) => error.message.includes('unique'))).toBe(
+      false,
+    );
+  });
+
   it('should reject a missing isActive flag', () => {
     const errors = validateAgentTriggers({
       triggers: [{ ...CRON_TRIGGER, isActive: undefined }],
