@@ -178,34 +178,42 @@ export class UpgradeStatusService {
   }
 
   async getInstanceAndWorkspaceCountsStatus(): Promise<InstanceAndWorkspaceCountsUpgradeStatus | null> {
-    const cachedStatus = await this.getCachedInstanceAndWorkspaceStatus();
+    const freshStatus = await this.getCachedInstanceAndWorkspaceStatus({
+      useCachedInstanceStatus: true,
+    });
 
-    if (isDefined(cachedStatus)) {
-      return {
-        instanceUpgradeStatus: cachedStatus.instanceUpgradeStatus,
-        behindWorkspaceCount: cachedStatus.behindWorkspaceIds.length,
-        failedWorkspaceCount: cachedStatus.failedWorkspaceIds.length,
-        upToDateWorkspaceCount: cachedStatus.upToDateWorkspaceCount,
-        computedAt: cachedStatus.computedAt,
-      };
+    if (isDefined(freshStatus)) {
+      return this.toCountsStatus(freshStatus);
     }
 
     const hasRefreshLock =
       await this.upgradeStatusCacheService.tryAcquireRefreshLock();
 
-    if (!hasRefreshLock) {
-      return null;
+    if (hasRefreshLock) {
+      try {
+        const refreshedStatus =
+          await this.refreshInstanceAndAllWorkspacesStatus();
+
+        return {
+          instanceUpgradeStatus: refreshedStatus.instanceUpgradeStatus,
+          behindWorkspaceCount: refreshedStatus.workspacesBehind.length,
+          failedWorkspaceCount: refreshedStatus.workspacesFailed.length,
+          upToDateWorkspaceCount: refreshedStatus.upToDateWorkspaceCount,
+          computedAt: refreshedStatus.computedAt,
+        };
+      } catch (error) {
+        this.logger.error('Failed to refresh upgrade status', error);
+      }
     }
 
-    const refreshedStatus = await this.refreshInstanceAndAllWorkspacesStatus();
+    const previousStatus = await this.getCachedInstanceAndWorkspaceStatus({
+      allowStale: true,
+      useCachedInstanceStatus: true,
+    });
 
-    return {
-      instanceUpgradeStatus: refreshedStatus.instanceUpgradeStatus,
-      behindWorkspaceCount: refreshedStatus.workspacesBehind.length,
-      failedWorkspaceCount: refreshedStatus.workspacesFailed.length,
-      upToDateWorkspaceCount: refreshedStatus.upToDateWorkspaceCount,
-      computedAt: refreshedStatus.computedAt,
-    };
+    return isDefined(previousStatus)
+      ? this.toCountsStatus(previousStatus)
+      : null;
   }
 
   async getInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {
@@ -265,6 +273,7 @@ export class UpgradeStatusService {
     const computedAt = new Date();
 
     await this.upgradeStatusCacheService.write({
+      instanceUpgradeStatus,
       behindWorkspaceIds: workspacesBehind.map((workspace) => workspace.id),
       failedWorkspaceIds: workspacesFailed.map((workspace) => workspace.id),
       upToDateWorkspaceCount,
@@ -284,24 +293,50 @@ export class UpgradeStatusService {
     await this.upgradeStatusCacheService.invalidate();
   }
 
-  private async getCachedInstanceAndWorkspaceStatus(): Promise<CachedInstanceAndWorkspaceUpgradeStatus | null> {
-    const computedAt = await this.upgradeStatusCacheService.getComputedAt();
+  private toCountsStatus(
+    cachedStatus: CachedInstanceAndWorkspaceUpgradeStatus,
+  ): InstanceAndWorkspaceCountsUpgradeStatus {
+    return {
+      instanceUpgradeStatus: cachedStatus.instanceUpgradeStatus,
+      behindWorkspaceCount: cachedStatus.behindWorkspaceIds.length,
+      failedWorkspaceCount: cachedStatus.failedWorkspaceIds.length,
+      upToDateWorkspaceCount: cachedStatus.upToDateWorkspaceCount,
+      computedAt: cachedStatus.computedAt,
+    };
+  }
 
-    if (!isDefined(computedAt)) {
+  private async getCachedInstanceAndWorkspaceStatus({
+    allowStale = false,
+    useCachedInstanceStatus = false,
+  }: {
+    allowStale?: boolean;
+    useCachedInstanceStatus?: boolean;
+  } = {}): Promise<CachedInstanceAndWorkspaceUpgradeStatus | null> {
+    const [computedAt, isFresh] = await Promise.all([
+      this.upgradeStatusCacheService.getComputedAt(),
+      this.upgradeStatusCacheService.isFresh(),
+    ]);
+
+    if (!isDefined(computedAt) || (!isFresh && !allowStale)) {
       return null;
     }
 
     const [
-      instanceUpgradeStatus,
+      cachedInstanceUpgradeStatus,
       behindWorkspaceIds,
       failedWorkspaceIds,
       upToDateWorkspaceCount,
     ] = await Promise.all([
-      this.getInstanceStatus(),
+      useCachedInstanceStatus
+        ? this.upgradeStatusCacheService.getInstanceUpgradeStatus()
+        : null,
       this.upgradeStatusCacheService.getBehindWorkspaceIds(),
       this.upgradeStatusCacheService.getFailedWorkspaceIds(),
       this.upgradeStatusCacheService.getUpToDateWorkspaceCount(),
     ]);
+
+    const instanceUpgradeStatus =
+      cachedInstanceUpgradeStatus ?? (await this.getInstanceStatus());
 
     return {
       instanceUpgradeStatus,
