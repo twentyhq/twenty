@@ -1719,7 +1719,14 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
 
       expect(deleteResponse.body.errors).toBeUndefined();
-      expect(deletionListenerSpy).toHaveBeenCalled();
+      expect(deletionListenerSpy).toHaveBeenCalledTimes(1);
+      expect(deletionListenerSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          events: [
+            expect.objectContaining({ recordId: originalCoreWorkflowId }),
+          ],
+        }),
+      );
     } finally {
       deletionListenerSpy.mockRestore();
     }
