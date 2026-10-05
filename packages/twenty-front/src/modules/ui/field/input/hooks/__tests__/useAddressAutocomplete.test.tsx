@@ -133,6 +133,44 @@ describe('useAddressAutocomplete', () => {
     );
   });
 
+  it('should keep a city edited while place details are loading', async () => {
+    const mockOnChange = jest.fn();
+    let internalValue = {
+      addressStreet1: '10 Rue',
+      addressStreet2: null,
+      addressCity: null as string | null,
+      addressState: null,
+      addressCountry: null,
+      addressPostcode: null,
+      addressLat: null,
+      addressLng: null,
+    };
+
+    mockGetPlaceDetailsData.mockImplementation(async () => {
+      internalValue = { ...internalValue, addressCity: 'Lyon' };
+
+      return { street: '10 Rue de Rivoli', city: 'Paris', postcode: '75001' };
+    });
+
+    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+
+    await act(async () => {
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'rivoli',
+        token: 'token123',
+        getInternalValue: () => internalValue,
+      });
+    });
+
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        addressStreet1: '10 Rue de Rivoli',
+        addressCity: 'Lyon',
+        addressPostcode: '75001',
+      }),
+    );
+  });
+
   it('should autofill inputs from place details', async () => {
     const mockOnChange = jest.fn();
     const mockPlaceData = {

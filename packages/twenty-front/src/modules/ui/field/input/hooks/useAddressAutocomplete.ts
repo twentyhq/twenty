@@ -4,6 +4,7 @@ import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/Select
 import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
 import { usePlaceAutocomplete } from '@/geo-map/hooks/usePlaceAutocomplete';
 import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
+import { keepAddressFieldsEditedDuringAutofill } from '@/ui/field/input/utils/keepAddressFieldsEditedDuringAutofill';
 
 import { useCountryUtils } from './useCountryUtils';
 
@@ -41,11 +42,12 @@ export const useAddressAutocomplete = (
       addressStreet1?: string;
       getInternalValue?: () => FieldAddressDraftValue;
     }) => {
+      const internalValueAtSelection = getInternalValue?.();
       const placeData = await getPlaceDetailsData(placeId, token);
       const countryName = findCountryNameByCountryCode(placeData?.country);
       const internalValue = getInternalValue?.();
 
-      const updatedAddress = {
+      const autofilledAddress = {
         addressStreet1:
           placeData?.street ||
           addressStreet1 ||
@@ -61,6 +63,12 @@ export const useAddressAutocomplete = (
         addressLng:
           placeData?.location?.lng ?? internalValue?.addressLng ?? null,
       };
+
+      const updatedAddress = keepAddressFieldsEditedDuringAutofill({
+        autofilledAddress,
+        addressAtSelection: internalValueAtSelection,
+        currentAddress: internalValue,
+      });
 
       resetPlaceAutocomplete();
       setTypeOfAddressForAutocomplete(null);
