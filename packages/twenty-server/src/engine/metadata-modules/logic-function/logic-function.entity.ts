@@ -82,7 +82,9 @@ export class LogicFunctionEntity
   cronTriggerSettings: JsonbProperty<CronTriggerSettings> | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  databaseEventTriggerSettings: JsonbProperty<DatabaseEventTriggerSettings> | null;
+  databaseEventTriggerSettings: JsonbProperty<
+    DatabaseEventTriggerSettings[]
+  > | null;
 
   @Column({ nullable: true, type: 'jsonb' })
   httpRouteTriggerSettings: JsonbProperty<HttpRouteTriggerSettings> | null;

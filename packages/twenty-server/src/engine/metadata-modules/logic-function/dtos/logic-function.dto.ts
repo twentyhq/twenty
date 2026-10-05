@@ -6,6 +6,7 @@ import {
 } from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsDateString,
   IsEnum,
   IsNotEmpty,
@@ -72,10 +73,11 @@ export class LogicFunctionDTO {
   @Field(() => graphqlTypeJson, { nullable: true })
   cronTriggerSettings?: CronTriggerSettings;
 
-  @IsObject()
+  @IsArray()
+  @IsObject({ each: true })
   @IsOptional()
   @Field(() => graphqlTypeJson, { nullable: true })
-  databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
+  databaseEventTriggerSettings?: DatabaseEventTriggerSettings[];
 
   @IsObject()
   @IsOptional()

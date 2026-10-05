@@ -992,9 +992,11 @@ export const EXPECTED_MANIFEST: Manifest = {
     {
       builtHandlerChecksum: '[checksum]',
       builtHandlerPath: 'src/logic-functions/on-post-card-created.function.mjs',
-      databaseEventTriggerSettings: {
-        eventName: 'postCard.created',
-      },
+      databaseEventTriggerSettings: [
+        {
+          eventName: 'postCard.created',
+        },
+      ],
       description: 'Triggered when a new post card is created',
       handlerName: 'default.config.handler',
       name: 'on-post-card-created',

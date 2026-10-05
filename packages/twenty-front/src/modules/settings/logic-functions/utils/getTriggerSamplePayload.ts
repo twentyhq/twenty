@@ -5,8 +5,6 @@ import {
   type HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
 
-export type TriggerKind = 'http' | 'cron' | 'databaseEvent' | 'tool';
-
 type ToolInputSchemaShape = {
   properties?: Record<string, { type?: string; default?: unknown }>;
 };

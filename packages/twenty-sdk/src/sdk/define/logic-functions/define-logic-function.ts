@@ -48,7 +48,11 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
   }
 
   if (config.databaseEventTriggerSettings) {
-    if (!config.databaseEventTriggerSettings.eventName) {
+    if (!Array.isArray(config.databaseEventTriggerSettings)) {
+      errors.push('databaseEventTriggerSettings must be an array of triggers');
+    } else if (
+      config.databaseEventTriggerSettings.some((trigger) => !trigger.eventName)
+    ) {
       errors.push('Database event trigger must have an eventName');
     }
   }

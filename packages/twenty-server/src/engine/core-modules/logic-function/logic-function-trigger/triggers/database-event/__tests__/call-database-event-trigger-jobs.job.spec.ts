@@ -157,7 +157,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
           universalIdentifier: LOGIC_FUNCTION_ID,
           workspaceId: WORKSPACE_ID,
           applicationId: APPLICATION_ID,
-          databaseEventTriggerSettings: { eventName: 'company.updated' },
+          databaseEventTriggerSettings: [{ eventName: 'company.updated' }],
           deletedAt: null,
         },
       ]),

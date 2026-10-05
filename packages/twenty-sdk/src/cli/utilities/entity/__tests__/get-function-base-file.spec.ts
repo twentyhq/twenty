@@ -53,7 +53,7 @@ describe('getFunctionBaseFile', () => {
 
     expect(result).toContain('// httpRouteTriggerSettings: {');
     expect(result).toContain('// cronTriggerSettings: {');
-    expect(result).toContain('// databaseEventTriggerSettings: {');
+    expect(result).toContain('// databaseEventTriggerSettings: [');
     expect(result).toContain("httpMethod: 'POST'");
     expect(result).toContain("pattern: '0 0 * * *'");
     expect(result).toContain("eventName: 'objectName.created'");

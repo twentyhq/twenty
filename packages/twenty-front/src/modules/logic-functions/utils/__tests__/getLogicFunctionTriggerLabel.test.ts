@@ -63,14 +63,25 @@ describe('getLogicFunctionTriggerLabel', () => {
   it('returns the database event name when it exists', () => {
     expect(
       getLogicFunctionTriggerLabel({
-        databaseEventTriggerSettings: { eventName: 'person.created' },
+        databaseEventTriggerSettings: [{ eventName: 'person.created' }],
       }),
     ).toBe('person.created');
   });
 
+  it('lists every database event name when the function has several triggers', () => {
+    expect(
+      getLogicFunctionTriggerLabel({
+        databaseEventTriggerSettings: [
+          { eventName: 'person.created' },
+          { eventName: 'person.updated' },
+        ],
+      }),
+    ).toBe('person.created, person.updated');
+  });
+
   it('falls back to a generic label when the database event name is missing', () => {
     expect(
-      getLogicFunctionTriggerLabel({ databaseEventTriggerSettings: {} }),
+      getLogicFunctionTriggerLabel({ databaseEventTriggerSettings: [{}] }),
     ).toBe('Database event');
   });
 });

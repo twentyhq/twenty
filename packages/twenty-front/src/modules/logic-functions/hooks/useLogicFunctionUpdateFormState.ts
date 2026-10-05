@@ -17,7 +17,7 @@ export type LogicFunctionFormValues = {
   timeoutSeconds: number;
   sourceHandlerCode: string;
   cronTriggerSettings: CronTriggerSettings | null;
-  databaseEventTriggerSettings: DatabaseEventTriggerSettings | null;
+  databaseEventTriggerSettings: DatabaseEventTriggerSettings[] | null;
   httpRouteTriggerSettings: HttpRouteTriggerSettings | null;
   toolTriggerSettings: ToolTriggerSettings | null;
   workflowActionTriggerSettings: WorkflowActionTriggerSettings | null;

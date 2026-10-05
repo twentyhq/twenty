@@ -1,5 +1,6 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { findDatabaseEventTriggersMatchingEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-database-event-triggers-matching-event-name';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function-maps.type';
 
@@ -10,23 +11,17 @@ export const findLogicFunctionsTriggeredByEventName = ({
   flatLogicFunctionMaps: FlatLogicFunctionMaps;
   eventName: string;
 }): FlatLogicFunction[] => {
-  const [nameSingular, operation] = eventName.split('.');
-
-  const matchingTriggerEventNames = [
-    `${nameSingular}.${operation}`,
-    `*.${operation}`,
-    `${nameSingular}.*`,
-    '*.*',
-  ];
-
   return Object.values(flatLogicFunctionMaps.byUniversalIdentifier)
     .filter(isDefined)
     .filter(
       (logicFunction) =>
         !isDefined(logicFunction.deletedAt) &&
-        isDefined(logicFunction.databaseEventTriggerSettings) &&
-        matchingTriggerEventNames.includes(
-          logicFunction.databaseEventTriggerSettings.eventName,
+        isNonEmptyArray(
+          findDatabaseEventTriggersMatchingEventName({
+            databaseEventTriggerSettings:
+              logicFunction.databaseEventTriggerSettings,
+            eventName,
+          }),
         ),
     );
 };

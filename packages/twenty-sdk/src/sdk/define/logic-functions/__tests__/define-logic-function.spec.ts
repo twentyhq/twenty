@@ -43,14 +43,18 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Contact Created',
       handler: mockHandler,
-      databaseEventTriggerSettings: {
-        eventName: 'contact.created',
-      },
+      databaseEventTriggerSettings: [
+        {
+          eventName: 'contact.created',
+        },
+      ],
     };
 
     const result = defineLogicFunction(config as any);
 
-    expect(result.config.databaseEventTriggerSettings?.eventName).toBeDefined();
+    expect(
+      result.config.databaseEventTriggerSettings?.[0]?.eventName,
+    ).toBeDefined();
   });
 
   it('should accept databaseEventTriggerSettings with batchMode enabled', () => {
@@ -58,16 +62,37 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Contact Created',
       handler: mockHandler,
-      databaseEventTriggerSettings: {
-        eventName: 'contact.created',
-        batchMode: true,
-      },
+      databaseEventTriggerSettings: [
+        {
+          eventName: 'contact.created',
+          batchMode: true,
+        },
+      ],
     };
 
     const result = defineLogicFunction(config);
 
     expect(result.errors).toEqual([]);
-    expect(result.config.databaseEventTriggerSettings?.batchMode).toBe(true);
+    expect(result.config.databaseEventTriggerSettings?.[0]?.batchMode).toBe(
+      true,
+    );
+  });
+
+  it('should accept several databaseEventTriggerSettings on one function', () => {
+    const config: LogicFunctionConfig = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Contact Change',
+      handler: mockHandler,
+      databaseEventTriggerSettings: [
+        { eventName: 'contact.created' },
+        { eventName: 'contact.updated', updatedFields: ['email'] },
+      ],
+    };
+
+    const result = defineLogicFunction(config);
+
+    expect(result.errors).toEqual([]);
+    expect(result.config.databaseEventTriggerSettings).toHaveLength(2);
   });
 
   it('should pass through optional fields', () => {
@@ -206,7 +231,7 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Contact Created',
       handler: mockHandler,
-      databaseEventTriggerSettings: {},
+      databaseEventTriggerSettings: [{ eventName: 'contact.created' }, {}],
     };
 
     const result = defineLogicFunction(config as any);
@@ -214,6 +239,22 @@ describe('defineLogicFunction', () => {
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
       'Database event trigger must have an eventName',
+    );
+  });
+
+  it('should reject a single databaseEventTriggerSettings object', () => {
+    const config = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Contact Created',
+      handler: mockHandler,
+      databaseEventTriggerSettings: { eventName: 'contact.created' },
+    };
+
+    const result = defineLogicFunction(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'databaseEventTriggerSettings must be an array of triggers',
     );
   });
 

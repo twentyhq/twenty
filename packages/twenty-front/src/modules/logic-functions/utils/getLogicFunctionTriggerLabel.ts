@@ -1,11 +1,12 @@
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type LogicFunctionLike = {
   universalIdentifier?: string | null;
   cronTriggerSettings?: unknown;
   httpRouteTriggerSettings?: unknown;
-  databaseEventTriggerSettings?: { eventName?: string } | null;
+  databaseEventTriggerSettings?: { eventName?: string }[] | null;
   toolTriggerSettings?: unknown;
   workflowActionTriggerSettings?: unknown;
 };
@@ -40,8 +41,14 @@ export const getLogicFunctionTriggerLabel = (
   if (isDefined(lf.workflowActionTriggerSettings)) return t`Workflow action`;
   if (lf.cronTriggerSettings) return t`Cron`;
   if (lf.httpRouteTriggerSettings) return t`HTTP`;
-  if (lf.databaseEventTriggerSettings) {
-    return lf.databaseEventTriggerSettings.eventName ?? t`Database event`;
+  if (isDefined(lf.databaseEventTriggerSettings)) {
+    const eventNames = lf.databaseEventTriggerSettings
+      .map((trigger) => trigger.eventName)
+      .filter(isNonEmptyString);
+
+    return isNonEmptyArray(eventNames)
+      ? eventNames.join(', ')
+      : t`Database event`;
   }
   return '';
 };

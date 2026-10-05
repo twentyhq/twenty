@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -68,10 +69,11 @@ class UpdateLogicFunctionFromSourceInputUpdates {
   @IsOptional()
   cronTriggerSettings?: JsonbProperty<CronTriggerSettings>;
 
-  @IsObject()
+  @IsArray()
+  @IsObject({ each: true })
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()
-  databaseEventTriggerSettings?: JsonbProperty<DatabaseEventTriggerSettings>;
+  databaseEventTriggerSettings?: JsonbProperty<DatabaseEventTriggerSettings[]>;
 
   @IsObject()
   @Field(() => graphqlTypeJson, { nullable: true })

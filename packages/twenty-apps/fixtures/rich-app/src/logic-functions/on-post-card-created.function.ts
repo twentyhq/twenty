@@ -26,7 +26,9 @@ export default defineLogicFunction({
   description: 'Triggered when a new post card is created',
   timeoutSeconds: 5,
   handler,
-  databaseEventTriggerSettings: {
-    eventName: 'postCard.created',
-  },
+  databaseEventTriggerSettings: [
+    {
+      eventName: 'postCard.created',
+    },
+  ],
 });

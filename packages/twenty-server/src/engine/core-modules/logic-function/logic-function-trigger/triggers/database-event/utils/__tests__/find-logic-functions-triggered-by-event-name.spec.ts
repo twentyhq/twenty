@@ -4,19 +4,18 @@ import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-fu
 
 const buildLogicFunction = ({
   id,
-  triggerEventName,
+  triggerEventNames,
   deletedAt = null,
 }: {
   id: string;
-  triggerEventName?: string;
+  triggerEventNames?: string[];
   deletedAt?: string | null;
 }) =>
   ({
     id,
     deletedAt,
-    databaseEventTriggerSettings: triggerEventName
-      ? { eventName: triggerEventName }
-      : null,
+    databaseEventTriggerSettings:
+      triggerEventNames?.map((eventName) => ({ eventName })) ?? null,
   }) as unknown as FlatLogicFunction;
 
 const findTriggeredLogicFunctionIds = (
@@ -44,25 +43,47 @@ describe('findLogicFunctionsTriggeredByEventName', () => {
         [
           buildLogicFunction({
             id: 'exact',
-            triggerEventName: 'person.created',
+            triggerEventNames: ['person.created'],
           }),
           buildLogicFunction({
             id: 'anyObject',
-            triggerEventName: '*.created',
+            triggerEventNames: ['*.created'],
           }),
           buildLogicFunction({
             id: 'anyOperation',
-            triggerEventName: 'person.*',
+            triggerEventNames: ['person.*'],
           }),
-          buildLogicFunction({ id: 'everything', triggerEventName: '*.*' }),
+          buildLogicFunction({ id: 'everything', triggerEventNames: ['*.*'] }),
           buildLogicFunction({
             id: 'otherObject',
-            triggerEventName: 'company.created',
+            triggerEventNames: ['company.created'],
           }),
         ],
         'person.created',
       ),
     ).toEqual(['exact', 'anyObject', 'anyOperation', 'everything']);
+  });
+
+  it('matches a logic function once when any of its triggers listens on the event', () => {
+    expect(
+      findTriggeredLogicFunctionIds(
+        [
+          buildLogicFunction({
+            id: 'createdOrUpdated',
+            triggerEventNames: ['person.created', 'person.updated'],
+          }),
+          buildLogicFunction({
+            id: 'twiceMatching',
+            triggerEventNames: ['person.updated', '*.updated'],
+          }),
+          buildLogicFunction({
+            id: 'otherEvents',
+            triggerEventNames: ['person.deleted', 'company.updated'],
+          }),
+        ],
+        'person.updated',
+      ),
+    ).toEqual(['createdOrUpdated', 'twiceMatching']);
   });
 
   it('ignores deleted logic functions and those without a database event trigger', () => {
@@ -71,10 +92,11 @@ describe('findLogicFunctionsTriggeredByEventName', () => {
         [
           buildLogicFunction({
             id: 'deleted',
-            triggerEventName: 'person.created',
+            triggerEventNames: ['person.created'],
             deletedAt: '2026-09-01T00:00:00.000Z',
           }),
           buildLogicFunction({ id: 'httpRoute' }),
+          buildLogicFunction({ id: 'emptyTriggerList', triggerEventNames: [] }),
         ],
         'person.created',
       ),

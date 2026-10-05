@@ -15,9 +15,11 @@ const createMockLogicFunction = (
   ({
     id: 'function-1',
     workspaceId: 'workspace-1',
-    databaseEventTriggerSettings: {
-      eventName: 'company.updated',
-    },
+    databaseEventTriggerSettings: [
+      {
+        eventName: 'company.updated',
+      },
+    ],
     ...overrides,
   }) as LogicFunctionEntity;
 
@@ -163,7 +165,7 @@ describe('transformEventBatchToEventPayloads', () => {
       });
       const logicFunctions = [
         createMockLogicFunction({
-          databaseEventTriggerSettings: { eventName: 'company.updated' },
+          databaseEventTriggerSettings: [{ eventName: 'company.updated' }],
         }),
       ];
 
@@ -191,10 +193,12 @@ describe('transformEventBatchToEventPayloads', () => {
       });
       const logicFunctions = [
         createMockLogicFunction({
-          databaseEventTriggerSettings: {
-            eventName: 'company.updated',
-            updatedFields: [],
-          },
+          databaseEventTriggerSettings: [
+            {
+              eventName: 'company.updated',
+              updatedFields: [],
+            },
+          ],
         }),
       ];
 
@@ -226,10 +230,12 @@ describe('transformEventBatchToEventPayloads', () => {
       });
       const logicFunctions = [
         createMockLogicFunction({
-          databaseEventTriggerSettings: {
-            eventName: 'company.updated',
-            updatedFields: ['name'],
-          },
+          databaseEventTriggerSettings: [
+            {
+              eventName: 'company.updated',
+              updatedFields: ['name'],
+            },
+          ],
         }),
       ];
 
@@ -264,10 +270,12 @@ describe('transformEventBatchToEventPayloads', () => {
       });
       const logicFunctions = [
         createMockLogicFunction({
-          databaseEventTriggerSettings: {
-            eventName: 'company.updated',
-            updatedFields: ['name', 'address'],
-          },
+          databaseEventTriggerSettings: [
+            {
+              eventName: 'company.updated',
+              updatedFields: ['name', 'address'],
+            },
+          ],
         }),
       ];
 
@@ -298,10 +306,12 @@ describe('transformEventBatchToEventPayloads', () => {
       });
       const logicFunctions = [
         createMockLogicFunction({
-          databaseEventTriggerSettings: {
-            eventName: 'company.updated',
-            updatedFields: ['phone'],
-          },
+          databaseEventTriggerSettings: [
+            {
+              eventName: 'company.updated',
+              updatedFields: ['phone'],
+            },
+          ],
         }),
       ];
 
@@ -330,17 +340,21 @@ describe('transformEventBatchToEventPayloads', () => {
       const logicFunctions = [
         createMockLogicFunction({
           id: 'function-1',
-          databaseEventTriggerSettings: {
-            eventName: 'company.updated',
-            updatedFields: ['name'],
-          },
+          databaseEventTriggerSettings: [
+            {
+              eventName: 'company.updated',
+              updatedFields: ['name'],
+            },
+          ],
         }),
         createMockLogicFunction({
           id: 'function-2',
-          databaseEventTriggerSettings: {
-            eventName: 'company.updated',
-            updatedFields: ['address'],
-          },
+          databaseEventTriggerSettings: [
+            {
+              eventName: 'company.updated',
+              updatedFields: ['address'],
+            },
+          ],
         }),
       ];
 
@@ -387,7 +401,7 @@ describe('transformEventBatchToEventPayloads', () => {
       });
       const logicFunctions = [
         createMockLogicFunction({
-          databaseEventTriggerSettings: { eventName: 'company.updated' },
+          databaseEventTriggerSettings: [{ eventName: 'company.updated' }],
         }),
       ];
 
@@ -414,7 +428,7 @@ describe('transformEventBatchToEventPayloads', () => {
       });
       const logicFunctions = [
         createMockLogicFunction({
-          databaseEventTriggerSettings: { eventName: 'company.updated' },
+          databaseEventTriggerSettings: [{ eventName: 'company.updated' }],
         }),
       ];
 
@@ -442,10 +456,12 @@ describe('transformEventBatchToEventPayloads', () => {
       });
       const logicFunctions = [
         createMockLogicFunction({
-          databaseEventTriggerSettings: {
-            eventName: 'company.updated',
-            updatedFields: ['name'],
-          },
+          databaseEventTriggerSettings: [
+            {
+              eventName: 'company.updated',
+              updatedFields: ['name'],
+            },
+          ],
         }),
       ];
 
@@ -509,10 +525,12 @@ describe('transformEventBatchToEventPayloads', () => {
         workspaceEventBatch,
         logicFunctions: [
           createMockLogicFunction({
-            databaseEventTriggerSettings: {
-              eventName: 'company.updated',
-              batchMode: false,
-            },
+            databaseEventTriggerSettings: [
+              {
+                eventName: 'company.updated',
+                batchMode: false,
+              },
+            ],
           }),
         ],
       });
@@ -532,10 +550,12 @@ describe('transformEventBatchToEventPayloads', () => {
         workspaceEventBatch,
         logicFunctions: [
           createMockLogicFunction({
-            databaseEventTriggerSettings: {
-              eventName: 'company.updated',
-              batchMode: true,
-            },
+            databaseEventTriggerSettings: [
+              {
+                eventName: 'company.updated',
+                batchMode: true,
+              },
+            ],
           }),
         ],
       });
@@ -566,10 +586,12 @@ describe('transformEventBatchToEventPayloads', () => {
         workspaceEventBatch,
         logicFunctions: [
           createMockLogicFunction({
-            databaseEventTriggerSettings: {
-              eventName: 'company.updated',
-              batchMode: true,
-            },
+            databaseEventTriggerSettings: [
+              {
+                eventName: 'company.updated',
+                batchMode: true,
+              },
+            ],
           }),
         ],
       });
@@ -589,10 +611,12 @@ describe('transformEventBatchToEventPayloads', () => {
         workspaceEventBatch,
         logicFunctions: [
           createMockLogicFunction({
-            databaseEventTriggerSettings: {
-              eventName: 'company.updated',
-              batchMode: true,
-            },
+            databaseEventTriggerSettings: [
+              {
+                eventName: 'company.updated',
+                batchMode: true,
+              },
+            ],
           }),
         ],
       });
@@ -635,10 +659,12 @@ describe('transformEventBatchToEventPayloads', () => {
         workspaceEventBatch,
         logicFunctions: [
           createMockLogicFunction({
-            databaseEventTriggerSettings: {
-              eventName: 'company.updated',
-              batchMode: true,
-            },
+            databaseEventTriggerSettings: [
+              {
+                eventName: 'company.updated',
+                batchMode: true,
+              },
+            ],
           }),
         ],
       });
@@ -697,11 +723,13 @@ describe('transformEventBatchToEventPayloads', () => {
         workspaceEventBatch,
         logicFunctions: [
           createMockLogicFunction({
-            databaseEventTriggerSettings: {
-              eventName: 'company.updated',
-              updatedFields: ['name'],
-              batchMode: true,
-            },
+            databaseEventTriggerSettings: [
+              {
+                eventName: 'company.updated',
+                updatedFields: ['name'],
+                batchMode: true,
+              },
+            ],
           }),
         ],
       });
@@ -722,10 +750,12 @@ describe('transformEventBatchToEventPayloads', () => {
         workspaceEventBatch,
         logicFunctions: [
           createMockLogicFunction({
-            databaseEventTriggerSettings: {
-              eventName: 'company.created',
-              batchMode: true,
-            },
+            databaseEventTriggerSettings: [
+              {
+                eventName: 'company.created',
+                batchMode: true,
+              },
+            ],
           }),
         ],
       });
@@ -745,10 +775,12 @@ describe('transformEventBatchToEventPayloads', () => {
           createMockLogicFunction({ id: 'function-1' }),
           createMockLogicFunction({
             id: 'function-2',
-            databaseEventTriggerSettings: {
-              eventName: 'company.updated',
-              batchMode: true,
-            },
+            databaseEventTriggerSettings: [
+              {
+                eventName: 'company.updated',
+                batchMode: true,
+              },
+            ],
           }),
         ],
       });
@@ -779,11 +811,13 @@ describe('transformEventBatchToEventPayloads', () => {
         workspaceEventBatch,
         logicFunctions: [
           createMockLogicFunction({
-            databaseEventTriggerSettings: {
-              eventName: 'company.updated',
-              updatedFields: ['name'],
-              batchMode: true,
-            },
+            databaseEventTriggerSettings: [
+              {
+                eventName: 'company.updated',
+                updatedFields: ['name'],
+                batchMode: true,
+              },
+            ],
           }),
         ],
       });
@@ -839,7 +873,7 @@ describe('transformEventBatchToEventPayloads with a deletion capture', () => {
       }),
       logicFunctions: [
         createMockLogicFunction({
-          databaseEventTriggerSettings: { eventName: 'company.deleted' },
+          databaseEventTriggerSettings: [{ eventName: 'company.deleted' }],
         }),
       ],
     });
@@ -847,5 +881,103 @@ describe('transformEventBatchToEventPayloads with a deletion capture', () => {
     expect(
       (jobData.payload as { properties: object }).properties,
     ).not.toHaveProperty('inheritedReadabilityChildRecords');
+  });
+});
+
+describe('transformEventBatchToEventPayloads with several triggers on one function', () => {
+  const createEventsWithUpdatedFields = (
+    updatedFieldsByRecordId: Record<string, string[]>,
+  ) =>
+    Object.entries(updatedFieldsByRecordId).map(([recordId, updatedFields]) =>
+      createMockEvent({
+        recordId,
+        properties: { after: {}, updatedFields },
+      }),
+    );
+
+  it('should only use the triggers listening on the batch event', () => {
+    const result = transformEventBatchToEventPayloads({
+      workspaceEventBatch: createMockWorkspaceEventBatch({
+        name: 'company.updated',
+      }),
+      logicFunctions: [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: [
+            { eventName: 'company.created' },
+            { eventName: 'company.updated' },
+            { eventName: 'person.*' },
+          ],
+        }),
+      ],
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0].payload).toMatchObject({ name: 'company.updated' });
+  });
+
+  it('should emit no job when no trigger listens on the batch event', () => {
+    const result = transformEventBatchToEventPayloads({
+      workspaceEventBatch: createMockWorkspaceEventBatch({
+        name: 'company.deleted',
+      }),
+      logicFunctions: [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: [
+            { eventName: 'company.created' },
+            { eventName: 'company.updated' },
+          ],
+        }),
+      ],
+    });
+
+    expect(result).toHaveLength(0);
+  });
+
+  it('should apply each trigger with its own updatedFields filter', () => {
+    const result = transformEventBatchToEventPayloads({
+      workspaceEventBatch: createMockWorkspaceEventBatch({
+        name: 'company.updated',
+        events: createEventsWithUpdatedFields({
+          'record-1': ['name'],
+          'record-2': ['address'],
+          'record-3': ['phone'],
+        }),
+      }),
+      logicFunctions: [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: [
+            { eventName: 'company.updated', updatedFields: ['name'] },
+            { eventName: '*.updated', updatedFields: ['address'] },
+          ],
+        }),
+      ],
+    });
+
+    expect(
+      result.map((jobData) => (jobData.payload as ObjectRecordEvent).recordId),
+    ).toEqual(['record-1', 'record-2']);
+  });
+
+  it('should call the function once per trigger when several triggers match the same event', () => {
+    const result = transformEventBatchToEventPayloads({
+      workspaceEventBatch: createMockWorkspaceEventBatch({
+        name: 'company.updated',
+      }),
+      logicFunctions: [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: [
+            { eventName: 'company.updated' },
+            { eventName: '*.updated', batchMode: true },
+          ],
+        }),
+      ],
+    });
+
+    expect(result).toHaveLength(2);
+    expect(result[0].payload).toMatchObject({ recordId: 'record-1' });
+    expect(result[0].payload).not.toHaveProperty('events');
+    expect(result[1].payload).toMatchObject({
+      events: [expect.objectContaining({ recordId: 'record-1' })],
+    });
   });
 });

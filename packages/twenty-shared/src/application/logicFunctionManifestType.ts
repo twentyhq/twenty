@@ -9,7 +9,7 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   description?: string;
   timeoutSeconds?: number;
   cronTriggerSettings?: CronTriggerSettings;
-  databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
+  databaseEventTriggerSettings?: DatabaseEventTriggerSettings[];
   httpRouteTriggerSettings?: HttpRouteTriggerSettings;
   serverRouteTriggerSettings?: ServerRouteTriggerSettings;
   toolTriggerSettings?: ToolTriggerSettings;
