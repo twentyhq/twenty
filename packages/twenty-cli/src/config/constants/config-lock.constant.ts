@@ -1,0 +1,4 @@
+export const CONFIG_LOCK = {
+  TIMEOUT_MILLISECONDS: 5_000,
+  RETRY_MILLISECONDS: 50,
+} as const;

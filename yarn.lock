@@ -51035,6 +51035,24 @@ __metadata:
 "twenty@workspace:packages/twenty-cli":
   version: 0.0.0-use.local
   resolution: "twenty@workspace:packages/twenty-cli"
+  dependencies:
+    "@sniptt/guards": "npm:^0.2.0"
+    "@types/node": "npm:^24.0.0"
+    "@types/semver": "npm:^7.5.8"
+    chokidar: "npm:^3.6.0"
+    commander: "npm:^14.0.3"
+    esbuild: "npm:^0.28.1"
+    semver: "npm:7.6.3"
+    tinyglobby: "npm:^0.2.15"
+    twenty-client-sdk: "workspace:*"
+    twenty-shared: "workspace:*"
+    typescript: "npm:^5.9.3"
+    undici: "npm:^7.29.0"
+    uuid: "npm:^13.0.2"
+    vite: "npm:^8.0.0"
+    vitest: "npm:^4.1.0"
+  bin:
+    twenty: dist/cli.cjs
   languageName: unknown
   linkType: soft
 

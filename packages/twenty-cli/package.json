@@ -1,7 +1,7 @@
 {
   "name": "twenty",
   "version": "0.3.0",
-  "description": "The new command-line interface for Twenty is coming soon.",
+  "description": "The Twenty command line.",
   "homepage": "https://twenty.com",
   "repository": {
     "type": "git",
@@ -11,5 +11,37 @@
   "bugs": {
     "url": "https://github.com/twentyhq/twenty/issues"
   },
-  "license": "AGPL-3.0"
+  "license": "AGPL-3.0",
+  "bin": "dist/cli.cjs",
+  "files": [
+    "dist",
+    "docs/commands.md",
+    "CONTRIBUTING.md",
+    "src/app/**/README.md"
+  ],
+  "scripts": {
+    "build": "npx rimraf dist && npx vite build"
+  },
+  "engines": {
+    "node": "^24.5.0"
+  },
+  "devDependencies": {
+    "@sniptt/guards": "^0.2.0",
+    "@types/node": "^24.0.0",
+    "@types/semver": "^7.5.8",
+    "commander": "^14.0.3",
+    "semver": "7.6.3",
+    "twenty-client-sdk": "workspace:*",
+    "twenty-shared": "workspace:*",
+    "undici": "^7.29.0",
+    "uuid": "^13.0.2",
+    "vite": "^8.0.0",
+    "vitest": "^4.1.0"
+  },
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "esbuild": "^0.28.1",
+    "tinyglobby": "^0.2.15",
+    "typescript": "^5.9.3"
+  }
 }

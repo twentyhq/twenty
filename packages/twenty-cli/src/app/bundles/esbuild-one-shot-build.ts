@@ -1,0 +1,47 @@
+import { getWatchInputPlugins } from '@/app/dev/collect-watch-inputs';
+import { processEsbuildResult } from '@/app/bundles/esbuild-result-processor';
+import { type OnFileBuiltCallback } from '@/app/bundles/types/on-file-built-callback.type';
+import * as esbuild from 'esbuild';
+import path from 'path';
+import { type FileFolder } from 'twenty-shared/types';
+
+export type EsbuildOneShotBuildOptions = {
+  appPath: string;
+  sourcePaths: string[];
+  fileFolder: FileFolder;
+  buildOptions: esbuild.BuildOptions;
+  onFileBuilt: OnFileBuiltCallback;
+};
+
+export const esbuildOneShotBuild = async ({
+  appPath,
+  sourcePaths,
+  fileFolder,
+  buildOptions,
+  onFileBuilt,
+}: EsbuildOneShotBuildOptions): Promise<void> => {
+  if (sourcePaths.length === 0) {
+    return;
+  }
+
+  const entryPoints: Record<string, string> = {};
+
+  for (const sourcePath of sourcePaths) {
+    const entryName = sourcePath.replace(/\.tsx?$/, '');
+    entryPoints[entryName] = path.join(appPath, sourcePath);
+  }
+
+  const result = await esbuild.build({
+    ...buildOptions,
+    entryPoints,
+    plugins: [...getWatchInputPlugins(), ...(buildOptions.plugins ?? [])],
+  });
+
+  await processEsbuildResult({
+    result,
+    appPath,
+    fileFolder,
+    lastChecksums: new Map(),
+    onFileBuilt,
+  });
+};
