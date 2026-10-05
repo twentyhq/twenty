@@ -23,6 +23,7 @@ import {
   type SystemRelationFlatFieldMetadataBundle,
 } from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
@@ -30,7 +31,7 @@ import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-mana
 @Command({
   name: 'upgrade:2-38:provision-missing-object-system-relations',
   description:
-    'Provision the default system-relation pairs (forward relation field on the object, target* morph leg on timelineActivity/attachment/noteTarget/taskTarget, join-column index) for non-standard objects that lost them, typically to pre-2.20 application syncs. The 2-35 restore command only recreated the pairs twenty-standard authors for its own objects; pairs of custom or app-installed objects were never restored, so runtime writes deriving the join column from the object name throw UNKNOWN_COLUMN on every event (Sentry TWENTY-SERVER-JRV). Mints exactly what the objectSystemRelationsOnCreate handler mints at object creation, only for pairs where both legs are absent, and reports pairs it cannot complete safely (partial pair, taken field name, surviving physical column) instead of guessing.',
+    'Provision the default system-relation pairs (forward relation field on the object, target* morph leg on timelineActivity/attachment/noteTarget/taskTarget, join-column index) for non-standard objects that lost them, typically to pre-2.20 application syncs. The 2-35 restore command only recreated the pairs twenty-standard authors for its own objects; pairs of custom or app-installed objects were never restored, so runtime writes deriving the join column from the object name throw UNKNOWN_COLUMN on every event (Sentry TWENTY-SERVER-JRV). Mints exactly what the objectSystemRelationsOnCreate handler mints at object creation, only for pairs where both legs are absent, and reports pairs it cannot complete safely (partial pair, taken field name, surviving physical column, missing source table) instead of guessing.',
 })
 export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -96,6 +97,11 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
         holderFlatObjectMetadataByNameSingular,
       });
 
+    const existingTableNames = await this.readExistingTableNames({
+      dataSource,
+      workspaceId,
+    });
+
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -107,6 +113,7 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
         flatFieldMetadataMaps,
         holderFlatObjectMetadataByNameSingular,
         existingColumnNamesByHolderNameSingular,
+        existingTableNames,
         twentyStandardApplicationUniversalIdentifier:
           twentyStandardFlatApplication.universalIdentifier,
       });
@@ -299,5 +306,20 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
     }
 
     return existingColumnNamesByHolderNameSingular;
+  }
+
+  private async readExistingTableNames({
+    dataSource,
+    workspaceId,
+  }: {
+    dataSource: DataSource;
+    workspaceId: string;
+  }): Promise<Set<string>> {
+    const rows = await dataSource.query<{ table_name: string }[]>(
+      `SELECT table_name FROM information_schema.tables WHERE table_schema = $1`,
+      [getWorkspaceSchemaName(workspaceId)],
+    );
+
+    return new Set(rows.map(({ table_name }) => table_name));
   }
 }
