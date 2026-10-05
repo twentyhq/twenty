@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import {
   type RequestFormToolInput,
   type RequestFormToolResult,
@@ -18,11 +18,11 @@ const requestFormFieldSchema = workflowFormFieldSchema.pick({
 });
 
 // form steps used to issue this call with every field, so recorded calls skip the agent's limits
-const requestFormCallSchema = z.object({
+const recordedRequestFormInputSchema = z.object({
   fields: z.array(requestFormFieldSchema),
 });
 
-export const requestFormInputSchema = z.object({
+const requestFormInputSchema = z.object({
   fields: z
     .array(requestFormFieldSchema)
     .min(1)
@@ -37,16 +37,6 @@ export const requestFormInputSchema = z.object({
         'A RECORD field needs settings.objectName, the singular name of the object to pick from (e.g. "company"). ' +
         'A SELECT or MULTI_SELECT field needs settings.selectedFieldId, the id of an existing select field whose options it offers.',
     ),
-});
-
-export const buildRequestFormPendingOutput = (): {
-  success: true;
-  message: string;
-  result: RequestFormToolResult;
-} => ({
-  success: true,
-  message: 'Form presented to the user; awaiting their answer.',
-  result: { status: 'pending' },
 });
 
 type RequestFormToolOutput = Record<string, unknown>;
@@ -85,7 +75,19 @@ export const REQUEST_FORM_PAUSING_TOOL = definePausingTool<
   RequestFormToolInput,
   RequestFormToolOutput
 >({
-  inputSchema: requestFormCallSchema,
+  description:
+    'Ask the user to fill in a form when you need typed values from them: text, numbers, dates, ' +
+    'options of an existing select field, or records picked from the workspace. The conversation ' +
+    'pauses until they submit it, then continues with the values keyed by field name. Prefer ' +
+    'ask_question for a choice between a few options you can list yourself.',
+  inputSchema: requestFormInputSchema,
+  recordedInputSchema: recordedRequestFormInputSchema,
+  prepare: async () => ({ pendingResult: {} }),
+  preview: ({ fields }) =>
+    fields
+      .map((field) => field.label.trim())
+      .filter(isNonEmptyString)
+      .join(', ') || null,
   outputSchema: buildRequestFormOutputSchema,
   complete: async ({ output, input: { fields } }) => ({
     toolResult: {

@@ -1,4 +1,6 @@
-export type RequestFormToolStatus = 'pending' | 'answered' | 'skipped';
+import { type AskQuestionToolStatus } from '@/ai/types/AskQuestionToolStatus';
+
+export type RequestFormToolStatus = AskQuestionToolStatus;
 
 // Values are keyed by field name.
 export type RequestFormToolResult = {

@@ -6,6 +6,7 @@ export type PausingToolValidation =
   | { isValid: false; errorMessage: string };
 
 export type PausingToolCall = {
+  preview: () => string | null;
   validate: (output: unknown) => PausingToolValidation;
   // Takes an output validate accepted.
   complete: (args: {

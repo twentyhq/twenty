@@ -53,7 +53,7 @@ import { WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
-import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
+import { PROPOSE_TOOL_CALL_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
@@ -76,7 +76,6 @@ import {
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
-import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -312,11 +311,8 @@ export class AgentAsyncExecutorService {
   private buildProposeToolCallTool(
     proposableTools: ProposableTools | undefined,
   ) {
-    // an email runs only once approved, with the approver's own permissions
     if (!isDefined(proposableTools)) {
-      return createProposeToolCallTool({
-        resolveProposal: async (input) => resolveEmailToolCallProposal(input),
-      });
+      return PROPOSE_TOOL_CALL_PAUSING_TOOL.buildTool();
     }
 
     const { isToolAllowed, findTool, toolContext } = proposableTools;
@@ -328,7 +324,7 @@ export class AgentAsyncExecutorService {
         ? this.toolRegistry.resolveAndExecute(toolName, args, toolContext)
         : Promise.resolve(buildUnavailableToolOutput(toolName));
 
-    return createProposeToolCallTool({
+    return PROPOSE_TOOL_CALL_PAUSING_TOOL.buildTool({
       resolveProposal: (input) =>
         resolveProposedToolCall({ input, findTool, executeTool }),
     });

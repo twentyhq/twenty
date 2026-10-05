@@ -16,6 +16,7 @@ export const hostApiMocks = {
   requestAccessTokenRefresh: fn().mockResolvedValue('refreshed-token'),
   openCommandConfirmationModal: fn().mockResolvedValue(undefined),
   copyToClipboard: fn().mockResolvedValue(undefined),
+  respondToToolCall: fn().mockResolvedValue(undefined),
   uploadFile: fn().mockResolvedValue({
     status: 'failed',
     reason: 'upload-failed',
@@ -56,6 +57,7 @@ export const resetFrontComponentStoryMocks = () => {
   hostApiMocks.requestAccessTokenRefresh.mockClear();
   hostApiMocks.openCommandConfirmationModal.mockClear();
   hostApiMocks.copyToClipboard.mockClear();
+  hostApiMocks.respondToToolCall.mockClear();
   hostApiMocks.uploadFile.mockClear();
   hostApiMocks.storageSet.mockClear();
   hostApiMocks.storageDelete.mockClear();

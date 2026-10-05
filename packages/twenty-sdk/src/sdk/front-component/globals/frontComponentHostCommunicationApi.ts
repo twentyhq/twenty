@@ -1,3 +1,4 @@
+import { type ToolCallApprovalResponse } from 'twenty-shared/ai';
 import {
   type AppPath,
   type SidePanelPages,
@@ -120,6 +121,11 @@ export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type CopyToClipboardFunction = (text: string) => Promise<void>;
 
+// Decides the proposed call the component renders, as the built-in approval cards do.
+export type RespondToToolCallFunction = (
+  response: ToolCallApprovalResponse,
+) => Promise<void>;
+
 export type UploadedFrontComponentFile = {
   fileId: string;
   path: string;
@@ -174,6 +180,7 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
+  respondToToolCall?: RespondToToolCallFunction;
   uploadFile?: UploadFileFunction;
   storageSet?: StorageSetFunction;
   storageDelete?: StorageDeleteFunction;

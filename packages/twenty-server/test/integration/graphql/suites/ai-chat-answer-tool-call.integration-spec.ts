@@ -9,10 +9,10 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { ASK_QUESTION_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-question.pausing-tool';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -51,9 +51,13 @@ describe('Answering a chat tool call', () => {
     });
 
     const assistantMessageId = randomUUID();
-    const pendingOutput = await createAskQuestionTool({
-      isWorkspaceSetupThread: false,
-    }).execute(QUESTION);
+    const preparedCall = await ASK_QUESTION_PAUSING_TOOL.prepareCall(QUESTION);
+
+    if ('error' in preparedCall) {
+      throw new Error(preparedCall.error);
+    }
+
+    const { pendingOutput } = preparedCall;
 
     await chat.upsertAssistantMessage({
       id: assistantMessageId,

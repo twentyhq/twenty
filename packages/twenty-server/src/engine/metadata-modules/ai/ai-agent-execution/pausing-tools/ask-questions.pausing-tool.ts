@@ -153,13 +153,16 @@ const buildAnswerText = ({
     })
     .join('\n\n');
 
-// the multi-question tool ask_question replaced, kept so calls stored before can still be
-// answered and read
+// the multi-question tool ask_question replaced, no longer offered to agents but kept so calls
+// stored before can still be answered and read
 export const ASK_QUESTIONS_PAUSING_TOOL = definePausingTool<
   AskQuestionsToolInput,
   AskQuestionsToolOutput
 >({
+  description: 'Ask the user one to four multiple-choice questions at once.',
   inputSchema: askQuestionsInputSchema,
+  prepare: async ({ questions }) => ({ pendingResult: { questions } }),
+  preview: ({ questions }) => questions[0]?.question ?? null,
   outputSchema: buildAskQuestionsOutputSchema,
   complete: async ({ output: { answers }, input: { questions } }) => ({
     toolResult: {

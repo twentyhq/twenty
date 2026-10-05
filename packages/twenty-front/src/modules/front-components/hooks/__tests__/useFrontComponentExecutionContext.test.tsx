@@ -53,9 +53,16 @@ const mockSetRecordPageActiveTabId = jest.fn();
 const mockStorageSet = jest.fn();
 const mockStorageDelete = jest.fn();
 const mockStorageClear = jest.fn();
+const mockAnswerAgentChatToolCall = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 let mockIsMobile = false;
+
+jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
+  useAnswerAgentChatToolCall: () => ({
+    answerAgentChatToolCall: mockAnswerAgentChatToolCall,
+  }),
+}));
 
 jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => mockNavigateApp,
@@ -1221,6 +1228,44 @@ describe('useFrontComponentExecutionContext', () => {
         status: 'failed',
         reason: 'upload-failed',
       });
+    });
+  });
+
+  describe('respondToToolCall', () => {
+    it('answers the tool call the component renders', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        toolCall: {
+          toolCallId: 'call-1',
+          toolName: 'app_book_meeting',
+          status: 'approval-requested',
+          input: { slot: '10:00' },
+        },
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.respondToToolCall(
+          { decision: 'approve', arguments: { slot: '11:00' } },
+        );
+      });
+
+      expect(mockAnswerAgentChatToolCall).toHaveBeenCalledWith({
+        toolCallId: 'call-1',
+        response: { decision: 'approve', arguments: { slot: '11:00' } },
+      });
+    });
+
+    it('refuses to respond outside a tool call', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.respondToToolCall({
+          decision: 'reject',
+        }),
+      ).rejects.toThrow('Only a component rendering a tool call');
+      expect(mockAnswerAgentChatToolCall).not.toHaveBeenCalled();
     });
   });
 

@@ -13,8 +13,8 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
-import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
-import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
+import { ASK_QUESTION_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-question.pausing-tool';
+import { REQUEST_FORM_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/request-form.pausing-tool';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/workflow-base-system-prompt.const';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -240,10 +240,8 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         ...createWorkflowAgentWaitTools(),
         ...(canAskForHumanInput
           ? {
-              [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
-                isWorkspaceSetupThread: false,
-              }),
-              [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
+              [ASK_QUESTION_TOOL_NAME]: ASK_QUESTION_PAUSING_TOOL.buildTool(),
+              [REQUEST_FORM_TOOL_NAME]: REQUEST_FORM_PAUSING_TOOL.buildTool(),
             }
           : {}),
       },

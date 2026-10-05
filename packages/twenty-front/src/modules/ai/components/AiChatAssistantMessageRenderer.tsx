@@ -3,13 +3,14 @@ import { AiChatInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoad
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 
-import { AiChatFormStatusRenderer } from '@/ai/components/AiChatFormStatusRenderer';
-import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStatusRenderer';
-import { AiChatToolCallApprovalStatusRenderer } from '@/ai/components/AiChatToolCallApprovalStatusRenderer';
 import { AiChatToolWidget } from '@/ai/components/AiChatToolWidget';
+import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
+import { PAUSING_TOOL_STATUS_RENDERERS } from '@/ai/constants/PausingToolStatusRenderers';
 import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
 import { useFrontComponentIdByToolName } from '@/ai/hooks/useFrontComponentIdByToolName';
+import { buildFrontComponentToolCall } from '@/ai/utils/buildFrontComponentToolCall';
 import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
+import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
 import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isEmptyReasoningPart } from '@/ai/utils/isEmptyReasoningPart';
@@ -17,12 +18,8 @@ import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai/utils/isHiddenCompl
 import { styled } from '@linaria/react';
 import { getToolName, isToolUIPart } from 'ai';
 import {
-  ASK_QUESTION_TOOL_NAME,
-  ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
   isSucceededCompleteWorkspaceSetupToolPart,
-  PROPOSE_TOOL_CALL_TOOL_NAME,
-  REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -62,30 +59,12 @@ const MessagePartRenderer = ({
       );
     default:
       if (isToolUIPart(part)) {
-        if (
-          getToolName(part) === ASK_QUESTION_TOOL_NAME ||
-          getToolName(part) === ASK_QUESTIONS_TOOL_NAME
-        ) {
-          return (
-            <AiChatQuestionStatusRenderer
-              toolPart={part}
-              isStreaming={isStreaming}
-            />
-          );
-        }
+        const PausingToolStatusRenderer =
+          PAUSING_TOOL_STATUS_RENDERERS[getToolName(part)];
 
-        if (getToolName(part) === PROPOSE_TOOL_CALL_TOOL_NAME) {
+        if (isDefined(PausingToolStatusRenderer)) {
           return (
-            <AiChatToolCallApprovalStatusRenderer
-              toolPart={part}
-              isStreaming={isStreaming}
-            />
-          );
-        }
-
-        if (getToolName(part) === REQUEST_FORM_TOOL_NAME) {
-          return (
-            <AiChatFormStatusRenderer
+            <PausingToolStatusRenderer
               toolPart={part}
               isStreaming={isStreaming}
             />
@@ -98,9 +77,14 @@ const MessagePartRenderer = ({
 
         return isDefined(frontComponentId) ? (
           <AiChatToolWidget
-            toolPart={part}
+            toolCall={buildFrontComponentToolCall(part)}
             frontComponentId={frontComponentId}
-            isStreaming={isStreaming}
+            unavailableFallback={
+              <ThinkingToolStepRow
+                part={part}
+                isActive={isThinkingStepPartActive(part, isStreaming)}
+              />
+            }
           />
         ) : null;
       }

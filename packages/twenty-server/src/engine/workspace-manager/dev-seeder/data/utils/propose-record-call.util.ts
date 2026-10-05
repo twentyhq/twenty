@@ -3,7 +3,6 @@ import {
   type ProposedToolCall,
 } from 'twenty-shared/ai';
 
-import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import { type SeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-call.type';
 
 // mirrors what resolveProposedToolCall builds, so the cards render as they would for a live agent
@@ -16,5 +15,5 @@ export const proposeRecordCall = (
     arguments: proposal.arguments,
     summary: proposal.summary,
   },
-  buildPendingOutput: async () => buildProposeToolCallPendingOutput(proposal),
+  context: { resolveProposal: async () => ({ proposal }) },
 });

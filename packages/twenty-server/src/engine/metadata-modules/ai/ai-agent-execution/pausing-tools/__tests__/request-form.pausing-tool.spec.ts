@@ -1,9 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import {
-  REQUEST_FORM_PAUSING_TOOL,
-  requestFormInputSchema,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/request-form.pausing-tool';
+import { REQUEST_FORM_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/request-form.pausing-tool';
 
 const FIELDS = [
   { name: 'company', label: 'Company', type: 'RECORD' as const },
@@ -40,16 +37,29 @@ describe('REQUEST_FORM_PAUSING_TOOL', () => {
     ).not.toBeNull();
   });
 
-  it('holds an agent to a few uniquely named fields', () => {
-    const { success: acceptsNoField } = requestFormInputSchema.safeParse({
-      fields: [],
-    });
-    const { success: acceptsSameName } = requestFormInputSchema.safeParse({
-      fields: [FIELDS[0], FIELDS[0]],
-    });
+  it('holds a new call to a few uniquely named fields', async () => {
+    expect(
+      await REQUEST_FORM_PAUSING_TOOL.prepareCall({ fields: [] }),
+    ).toHaveProperty('error');
+    expect(
+      await REQUEST_FORM_PAUSING_TOOL.prepareCall({
+        fields: [FIELDS[0], FIELDS[0]],
+      }),
+    ).toHaveProperty('error');
+  });
 
-    expect(acceptsNoField).toBe(false);
-    expect(acceptsSameName).toBe(false);
+  it('makes a pending call previewed by its field labels', async () => {
+    expect(
+      await REQUEST_FORM_PAUSING_TOOL.prepareCall({ fields: FIELDS }),
+    ).toEqual({
+      input: { fields: FIELDS },
+      pendingOutput: {
+        success: true,
+        message: expect.any(String),
+        result: { status: 'pending' },
+      },
+    });
+    expect(parseCall().preview()).toBe('Company, Close date');
   });
 
   it('refuses a value for a field the form does not have', () => {

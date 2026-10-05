@@ -20,6 +20,48 @@ const parseCall = (question: Record<string, unknown> = QUESTION) => {
 };
 
 describe('ASK_QUESTION_PAUSING_TOOL', () => {
+  it('tells the model to ask several questions as several calls', () => {
+    expect(ASK_QUESTION_PAUSING_TOOL.buildTool().description).toContain(
+      'call it once per question',
+    );
+  });
+
+  it('pauses on the question, which chat lists preview', async () => {
+    const pendingOutput = await ASK_QUESTION_PAUSING_TOOL.buildTool().execute?.(
+      QUESTION,
+      { toolCallId: 'call-1', messages: [] },
+    );
+
+    expect(pendingOutput).toEqual({
+      success: true,
+      message: expect.any(String),
+      result: { question: QUESTION, status: 'pending' },
+    });
+    expect(parseCall().preview()).toBe('Which add-ons?');
+  });
+
+  it.each([
+    ['fewer than two options', { options: [{ label: 'only one' }] }],
+    ['a blank option label', { options: [{ label: '  ' }, { label: 'b' }] }],
+    [
+      'more than four options',
+      { options: ['a', 'b', 'c', 'd', 'e'].map((label) => ({ label })) },
+    ],
+    [
+      'more than one recommended option',
+      {
+        options: [
+          { label: 'a', isRecommended: true },
+          { label: 'b', isRecommended: true },
+        ],
+      },
+    ],
+  ])('refuses to ask %s', async (_case, override) => {
+    expect(
+      await ASK_QUESTION_PAUSING_TOOL.prepareCall({ ...QUESTION, ...override }),
+    ).toHaveProperty('error');
+  });
+
   it('cannot read a call without options', () => {
     expect(
       ASK_QUESTION_PAUSING_TOOL.parseCall({ ...QUESTION, options: [] }),

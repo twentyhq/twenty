@@ -1,7 +1,7 @@
+import { readPausingToolCallStatus } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
-import { readToolCallStatus } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-tool-call-status.util';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 
@@ -29,7 +29,7 @@ export const closeOpenToolParts = async ({
       continue;
     }
 
-    const status = readToolCallStatus(part.toolOutput);
+    const status = readPausingToolCallStatus(part.toolOutput);
     const isAwaiting = status === 'pending';
     const pausingToolCall =
       isAwaiting || status === 'running'

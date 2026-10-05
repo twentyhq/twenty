@@ -1,10 +1,22 @@
 import { type z } from 'zod';
 
+import { type PausingToolCallContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-call-context.type';
 import { type PausingToolCompletion } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion.type';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
 
 export type PausingToolDefinition<TInput, TOutput> = {
+  description: string;
   inputSchema: z.ZodType<TInput>;
+  // calls already recorded are read with this, when they may break limits new calls are held to
+  recordedInputSchema?: z.ZodType<TInput>;
+  // what the person is shown, resolved when the call is made; an error goes back to the model,
+  // which carries on instead of pausing
+  prepare: (
+    input: TInput,
+    context: PausingToolCallContext,
+  ) => Promise<{ pendingResult: Record<string, unknown> } | { error: string }>;
+  // what chat lists show while the call waits
+  preview: (input: TInput, pendingToolOutput: unknown) => string | null;
   outputSchema: (
     input: TInput,
     pendingToolOutput: unknown,

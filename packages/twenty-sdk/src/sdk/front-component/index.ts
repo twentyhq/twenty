@@ -7,6 +7,7 @@ export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
 export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';
 export { openSidePanelPage } from './functions/openSidePanelPage';
+export { respondToToolCall } from './functions/respondToToolCall';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
 export { uploadFile } from './functions/uploadFile';
@@ -46,6 +47,7 @@ export type {
   OpenSidePanelPageFunction,
   OpenSidePanelPageParams,
   RequestAccessTokenRefreshFunction,
+  RespondToToolCallFunction,
   StorageClearFunction,
   StorageDeleteFunction,
   StorageSetFunction,

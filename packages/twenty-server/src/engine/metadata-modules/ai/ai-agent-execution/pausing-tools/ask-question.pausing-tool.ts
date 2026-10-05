@@ -9,7 +9,7 @@ import { z } from 'zod';
 
 import { definePausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/define-pausing-tool.util';
 
-export const askQuestionInputSchema = z.object({
+const askQuestionInputSchema = z.object({
   header: z
     .string()
     .describe(
@@ -52,18 +52,16 @@ export const askQuestionInputSchema = z.object({
     .describe('Allow the user to select more than one option.'),
 });
 
-// An application that asks through the inbox writes the same output.
-export const buildAskQuestionPendingOutput = (
-  question: AskQuestionToolInput,
-): {
-  success: true;
-  message: string;
-  result: AskQuestionToolResult;
-} => ({
-  success: true,
-  message: 'Question presented to the user; awaiting their answer.',
-  result: { question, status: 'pending' },
-});
+const SEVERAL_QUESTIONS_GUIDANCE =
+  'To ask several questions, call it once per question in the same step: the user goes ' +
+  'through them one by one and the conversation continues once all are answered.';
+
+// a workspace setup conversation is the user's to steer, so any decision of theirs is worth asking
+export const WORKSPACE_SETUP_ASK_QUESTION_DESCRIPTION =
+  'Ask the user a multiple-choice question when a decision is theirs to make. The ' +
+  'conversation pauses until the user answers, then continues with their choice in mind. ' +
+  'Do NOT use it for information you could look up with another tool. The user can always ' +
+  `type a free-form answer instead of picking an option. ${SEVERAL_QUESTIONS_GUIDANCE}`;
 
 const buildAskQuestionOutputSchema = (
   question: AskQuestionToolInput,
@@ -130,7 +128,17 @@ export const ASK_QUESTION_PAUSING_TOOL = definePausingTool<
   AskQuestionToolInput,
   AskQuestionResponse
 >({
+  description:
+    'Ask the user a multiple-choice question when you need a decision you cannot infer ' +
+    'from the request or context and that has no obvious default. The conversation pauses ' +
+    'until the user answers, then continues with their choice in mind. Prefer this over ' +
+    'guessing on consequential or ambiguous decisions. Do NOT use it for information you ' +
+    'could look up with another tool, or for trivial choices with an obvious default. The ' +
+    `user can always type a free-form answer instead of picking an option. ${SEVERAL_QUESTIONS_GUIDANCE}`,
   inputSchema: askQuestionInputSchema,
+  prepare: async (question) => ({ pendingResult: { question } }),
+  preview: (question) =>
+    isNonEmptyString(question.question.trim()) ? question.question : null,
   outputSchema: buildAskQuestionOutputSchema,
   complete: async ({ output: answer, input: question }) => ({
     toolResult: {

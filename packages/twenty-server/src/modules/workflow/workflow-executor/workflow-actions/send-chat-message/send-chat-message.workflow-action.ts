@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { PROPOSE_TOOL_CALL_TOOL_NAME } from 'twenty-shared/ai';
+import {
+  PROPOSE_TOOL_CALL_TOOL_NAME,
+  readPausingToolCallStatus,
+} from 'twenty-shared/ai';
 import {
   isDefined,
   isPlainObject,
@@ -13,10 +16,9 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
-import { readToolCallStatus } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-tool-call-status.util';
+import { PROPOSE_TOOL_CALL_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
-import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import {
   WorkflowStepExecutorException,
@@ -147,7 +149,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
         );
       }
 
-      const status = readToolCallStatus(awaitedToolOutput);
+      const status = readPausingToolCallStatus(awaitedToolOutput);
 
       if (status === 'skipped') {
         continue;
@@ -226,17 +228,27 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       summary,
     };
 
-    const resolution = await resolveProposedToolCall({
+    const preparedCall = await PROPOSE_TOOL_CALL_PAUSING_TOOL.prepareCall(
       input,
-      findTool: async (toolName) =>
-        catalog.find((catalogEntry) => catalogEntry.name === toolName),
-      executeTool: ({ toolName, args }) =>
-        this.toolRegistryService.resolveAndExecute(toolName, args, toolContext),
-    });
+      {
+        resolveProposal: (proposeToolCallInput) =>
+          resolveProposedToolCall({
+            input: proposeToolCallInput,
+            findTool: async (toolName) =>
+              catalog.find((catalogEntry) => catalogEntry.name === toolName),
+            executeTool: ({ toolName, args }) =>
+              this.toolRegistryService.resolveAndExecute(
+                toolName,
+                args,
+                toolContext,
+              ),
+          }),
+      },
+    );
 
-    if ('error' in resolution) {
+    if ('error' in preparedCall) {
       throw new WorkflowStepExecutorException(
-        `The tool call cannot be proposed: ${resolution.error}`,
+        `The tool call cannot be proposed: ${preparedCall.error}`,
         WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
@@ -245,7 +257,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       toolName: PROPOSE_TOOL_CALL_TOOL_NAME,
       input,
       output: {
-        ...buildProposeToolCallPendingOutput(resolution.proposal),
+        ...preparedCall.pendingOutput,
         workflowStep: { workflowRunId: runInfo.workflowRunId, stepId },
       },
     };

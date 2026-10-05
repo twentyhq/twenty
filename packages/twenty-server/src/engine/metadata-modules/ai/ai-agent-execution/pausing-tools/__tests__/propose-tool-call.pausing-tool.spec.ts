@@ -42,6 +42,40 @@ const buildFoundRecordOutput = (record: Record<string, unknown>) => ({
 });
 
 describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
+  it('pauses on the proposal the caller resolves, which chat lists preview', async () => {
+    const resolveProposal = jest.fn().mockResolvedValue({ proposal: PROPOSAL });
+
+    expect(
+      await PROPOSE_TOOL_CALL_PAUSING_TOOL.prepareCall(INPUT, {
+        resolveProposal,
+      }),
+    ).toEqual({
+      input: INPUT,
+      pendingOutput: {
+        success: true,
+        message: expect.any(String),
+        result: { status: 'pending', proposal: PROPOSAL },
+      },
+    });
+    expect(resolveProposal).toHaveBeenCalledWith(INPUT);
+    expect(parseCall().preview()).toBe('Move the Acme renewal to won');
+  });
+
+  it('proposes only emails when the caller lends no resolver', async () => {
+    expect(await PROPOSE_TOOL_CALL_PAUSING_TOOL.prepareCall(INPUT)).toEqual({
+      error: expect.stringContaining('Only send_email and draft_email'),
+    });
+  });
+
+  it('hands the model the reason a call could not be proposed', async () => {
+    expect(
+      await PROPOSE_TOOL_CALL_PAUSING_TOOL.buildTool().execute?.(INPUT, {
+        toolCallId: 'call-1',
+        messages: [],
+      }),
+    ).toMatchObject({ success: false, error: expect.any(String) });
+  });
+
   it.each([
     ['an unknown decision', { decision: 'maybe' }],
     [

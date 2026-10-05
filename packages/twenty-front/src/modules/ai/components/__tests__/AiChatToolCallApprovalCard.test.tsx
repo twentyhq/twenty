@@ -18,6 +18,25 @@ jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
   useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),
 }));
 
+const mockFrontComponentIdByToolName = new Map<string, string>();
+jest.mock('@/ai/hooks/useFrontComponentIdByToolName', () => ({
+  useFrontComponentIdByToolName: () => mockFrontComponentIdByToolName,
+}));
+
+jest.mock('@/ai/components/AiChatToolWidget', () => ({
+  AiChatToolWidget: ({
+    toolCall,
+    frontComponentId,
+  }: {
+    toolCall: { toolCallId: string; toolName: string; status: string };
+    frontComponentId: string;
+  }) => (
+    <div data-testid="tool-widget">
+      {`${frontComponentId}:${toolCall.toolCallId}:${toolCall.toolName}:${toolCall.status}`}
+    </div>
+  ),
+}));
+
 // record fields need workspace metadata, so a stub stands in for them
 const mockRecordFields = jest.fn(
   (_props: RecordFieldsStubProps): ReactNode => null,
@@ -56,6 +75,18 @@ const renderCard = (proposal: ProposedToolCall = PROPOSAL) =>
 describe('AiChatToolCallApprovalCard', () => {
   beforeEach(() => {
     answerAgentChatToolCall.mockReset();
+    mockFrontComponentIdByToolName.clear();
+  });
+
+  it("reviews a call with the proposed tool's own front component", () => {
+    mockFrontComponentIdByToolName.set('http_request', 'front-component-1');
+
+    renderCard();
+
+    expect(screen.getByTestId('tool-widget')).toHaveTextContent(
+      'front-component-1:call-1:http_request:approval-requested',
+    );
+    expect(screen.queryByRole('button', { name: 'Approve' })).toBeNull();
   });
 
   it('shows what the call does and which tool it runs', () => {

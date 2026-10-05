@@ -1,13 +1,8 @@
 import { styled } from '@linaria/react';
-import { Suspense, lazy } from 'react';
-
-import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
+import { type ReactNode, Suspense, lazy } from 'react';
+import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
-import { type ToolInput } from '@/ai/types/ToolInput';
-import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
-import { unwrapToolInput } from '@/ai/utils/tool-display/unwrapToolInput';
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
 
 const FrontComponentRenderer = lazy(() =>
@@ -24,50 +19,24 @@ const StyledContainer = styled.div`
 `;
 
 type AiChatToolWidgetProps = {
-  toolPart: ToolUIPart | DynamicToolUIPart;
+  toolCall: FrontComponentToolCall;
   frontComponentId: string;
-  isStreaming: boolean;
+  unavailableFallback: ReactNode;
 };
 
 export const AiChatToolWidget = ({
-  toolPart,
+  toolCall,
   frontComponentId,
-  isStreaming,
-}: AiChatToolWidgetProps) => {
-  // execute_tool wraps the real tool, and the widget belongs to the dispatched one.
-  const { toolName, toolInput } = unwrapToolInput({
-    input: toolPart.input as ToolInput,
-    toolName: getToolName(toolPart),
-  });
-
-  const toolCall = {
-    toolCallId: toolPart.toolCallId,
-    toolName,
-    status: toolPart.state,
-    input: toolInput as Record<string, unknown> | undefined,
-    output:
-      toolPart.state === 'output-available'
-        ? (toolPart.output as Record<string, unknown> | undefined)
-        : undefined,
-    errorText:
-      toolPart.state === 'output-error' ? toolPart.errorText : undefined,
-  };
-
-  return (
-    <StyledContainer>
-      <Suspense fallback={<FrontComponentSkeletonLoader />}>
-        <FrontComponentRenderer
-          frontComponentId={frontComponentId}
-          toolCall={toolCall}
-          loadingFallback={<FrontComponentSkeletonLoader />}
-          unavailableFallback={
-            <ThinkingToolStepRow
-              part={toolPart}
-              isActive={isThinkingStepPartActive(toolPart, isStreaming)}
-            />
-          }
-        />
-      </Suspense>
-    </StyledContainer>
-  );
-};
+  unavailableFallback,
+}: AiChatToolWidgetProps) => (
+  <StyledContainer>
+    <Suspense fallback={<FrontComponentSkeletonLoader />}>
+      <FrontComponentRenderer
+        frontComponentId={frontComponentId}
+        toolCall={toolCall}
+        loadingFallback={<FrontComponentSkeletonLoader />}
+        unavailableFallback={unavailableFallback}
+      />
+    </Suspense>
+  </StyledContainer>
+);

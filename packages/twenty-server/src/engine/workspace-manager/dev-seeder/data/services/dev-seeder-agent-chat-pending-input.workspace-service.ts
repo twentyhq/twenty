@@ -384,8 +384,18 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
     const askedBy = MEMBERS[conversation.askedBy];
     const calls = await Promise.all(
       conversation.calls.map(async (call, callIndex) => {
-        const pendingOutput = await call.buildPendingOutput();
-        const pausingToolCall = PAUSING_TOOLS.get(call.toolName)?.parseCall(
+        const pausingTool = PAUSING_TOOLS.get(call.toolName);
+        const preparedCall = await pausingTool?.prepareCall(
+          call.input,
+          call.context,
+        );
+
+        if (!isDefined(preparedCall) || 'error' in preparedCall) {
+          throw new Error(`Seeded ${call.toolName} call cannot be made`);
+        }
+
+        const { pendingOutput } = preparedCall;
+        const pausingToolCall = pausingTool?.parseCall(
           call.input,
           pendingOutput,
         );

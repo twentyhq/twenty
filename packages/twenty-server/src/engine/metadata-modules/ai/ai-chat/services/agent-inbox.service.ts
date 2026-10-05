@@ -8,12 +8,11 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enum
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-delivery.type';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
-import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
+import { type PausingToolCallContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-call-context.type';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
 import { buildToolPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-tool-part.util';
-import { type ResolveInboxProposal } from 'src/engine/metadata-modules/ai/ai-chat/types/resolve-inbox-proposal.type';
 import { getAgentInboxSenderDetails } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-sender-details.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -48,14 +47,12 @@ export class AgentInboxService {
     sender,
     input,
     buildAwaitingToolCall,
-    resolveProposal = async (proposeToolCallInput) =>
-      resolveEmailToolCallProposal(proposeToolCallInput),
+    context = {},
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
     input: Omit<SendInboxMessageInput, 'toolCall'> & { toolCall?: unknown };
-    // without a resolver, only emails can be proposed: they need no tool of the sender's
-    resolveProposal?: ResolveInboxProposal;
+    context?: PausingToolCallContext;
     // a pausing call the server resolves, with its pending output, only when the message is written,
     // so a message delivered earlier is found even once the call could no longer be resolved
     buildAwaitingToolCall?: () => Promise<{
@@ -101,7 +98,7 @@ export class AgentInboxService {
         ? await buildInboxMessageToolCallPart({
             toolCall: input.toolCall,
             toolCallId,
-            resolveProposal,
+            context,
             findApplicationTool: (logicFunctionUniversalIdentifier) =>
               this.findApplicationTool({
                 workspaceId,

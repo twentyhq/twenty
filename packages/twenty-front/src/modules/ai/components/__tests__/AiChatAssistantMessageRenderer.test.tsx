@@ -31,8 +31,8 @@ jest.mock('@/ai/components/CodeExecutionDisplay', () => ({
 }));
 
 jest.mock('@/ai/components/AiChatToolWidget', () => ({
-  AiChatToolWidget: ({ toolPart }: { toolPart: { type: string } }) => (
-    <div data-testid="tool-widget">{toolPart.type}</div>
+  AiChatToolWidget: ({ toolCall }: { toolCall: { toolName: string } }) => (
+    <div data-testid="tool-widget">{toolCall.toolName}</div>
   ),
 }));
 
@@ -435,7 +435,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     ] as unknown as ExtendedUIMessagePart[]);
 
     expect(screen.getByTestId('tool-widget')).toHaveTextContent(
-      'tool-app_show_chart',
+      'app_show_chart',
     );
     expect(screen.queryByTestId('thinking-steps-display')).toBeNull();
   });

@@ -1,4 +1,4 @@
-import { readToolCallStatus } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-tool-call-status.util';
+import { readPausingToolCallStatus } from 'twenty-shared/ai';
 
 export const isAwaitingPausingToolOutput = (toolOutput: unknown): boolean =>
-  readToolCallStatus(toolOutput) === 'pending';
+  readPausingToolCallStatus(toolOutput) === 'pending';

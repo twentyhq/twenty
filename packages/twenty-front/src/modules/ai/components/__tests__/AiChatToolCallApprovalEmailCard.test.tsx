@@ -12,6 +12,10 @@ jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
   useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),
 }));
 
+jest.mock('@/ai/hooks/useFrontComponentIdByToolName', () => ({
+  useFrontComponentIdByToolName: () => new Map(),
+}));
+
 jest.mock(
   '@/ai/components/internal/AiChatToolCallApprovalArgumentsCard',
   () => ({ AiChatToolCallApprovalArgumentsCard: () => null }),

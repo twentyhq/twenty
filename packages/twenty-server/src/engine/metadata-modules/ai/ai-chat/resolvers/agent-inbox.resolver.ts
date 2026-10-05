@@ -52,12 +52,14 @@ export class AgentInboxResolver {
       workspaceId: workspace.id,
       sender: { type: 'application', application },
       input,
-      resolveProposal: (proposeToolCallInput) =>
-        this.agentInboxProposalService.resolveApplicationProposal({
-          workspaceId: workspace.id,
-          application,
-          input: proposeToolCallInput,
-        }),
+      context: {
+        resolveProposal: (proposeToolCallInput) =>
+          this.agentInboxProposalService.resolveApplicationProposal({
+            workspaceId: workspace.id,
+            application,
+            input: proposeToolCallInput,
+          }),
+      },
     });
   }
 }

@@ -3,7 +3,6 @@ import {
   type RequestFormField,
 } from 'twenty-shared/ai';
 
-import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { type SeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-call.type';
 
 export const requestFormCall = (
@@ -11,5 +10,4 @@ export const requestFormCall = (
 ): SeededToolCall => ({
   toolName: REQUEST_FORM_TOOL_NAME,
   input: { fields },
-  buildPendingOutput: () => createRequestFormTool().execute({ fields }),
 });

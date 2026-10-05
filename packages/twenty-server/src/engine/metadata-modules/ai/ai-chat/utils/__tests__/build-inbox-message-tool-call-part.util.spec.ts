@@ -1,4 +1,3 @@
-import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
@@ -20,7 +19,7 @@ const build = (toolCall: unknown) =>
       SHARE_RECORDING_TOOL.universalIdentifier
         ? SHARE_RECORDING_TOOL
         : undefined,
-    resolveProposal: async (input) => resolveEmailToolCallProposal(input),
+    context: {},
   });
 
 describe('buildInboxMessageToolCallPart', () => {
@@ -115,7 +114,7 @@ describe('buildInboxMessageToolCallPart', () => {
         toolCall: { toolName: 'propose_tool_call', input: updateCall },
         toolCallId: TOOL_CALL_ID,
         findApplicationTool: async () => undefined,
-        resolveProposal: async () => ({ proposal }),
+        context: { resolveProposal: async () => ({ proposal }) },
       }),
     ).resolves.toEqual({
       isAwaitingAnswer: true,

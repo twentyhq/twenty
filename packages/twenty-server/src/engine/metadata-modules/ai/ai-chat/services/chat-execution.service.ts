@@ -54,6 +54,12 @@ import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/ut
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import {
+  ASK_QUESTION_PAUSING_TOOL,
+  WORKSPACE_SETUP_ASK_QUESTION_DESCRIPTION,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/ask-question.pausing-tool';
+import { PROPOSE_TOOL_CALL_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
+import { REQUEST_FORM_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/request-form.pausing-tool';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
@@ -74,10 +80,7 @@ import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
-import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
-import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
-import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
@@ -293,11 +296,14 @@ export class ChatExecutionService {
     const preloadedToolSet: ToolSet = {
       ...preloadedTools,
       ...nativeTools,
-      [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
-        isWorkspaceSetupThread,
-      }),
-      [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
-      [PROPOSE_TOOL_CALL_TOOL_NAME]: createProposeToolCallTool({
+      [ASK_QUESTION_TOOL_NAME]: {
+        ...ASK_QUESTION_PAUSING_TOOL.buildTool(),
+        ...(isWorkspaceSetupThread
+          ? { description: WORKSPACE_SETUP_ASK_QUESTION_DESCRIPTION }
+          : {}),
+      },
+      [REQUEST_FORM_TOOL_NAME]: REQUEST_FORM_PAUSING_TOOL.buildTool(),
+      [PROPOSE_TOOL_CALL_TOOL_NAME]: PROPOSE_TOOL_CALL_PAUSING_TOOL.buildTool({
         resolveProposal: (input) =>
           resolveProposedToolCall({
             input,

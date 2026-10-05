@@ -70,9 +70,19 @@ describe('findAwaitingCallText', () => {
       findAwaitingCallText([
         toolPart({
           toolName: 'propose_tool_call',
-          input: { toolName: 'update_company', summary: 'Agent summary' },
+          input: {
+            toolName: 'update_company',
+            arguments: { id: 'company-1', arr: 120000 },
+            summary: 'Agent summary',
+          },
           result: {
-            proposal: { summary: 'Raise the Acme renewal to 120k' },
+            proposal: {
+              toolName: 'update_company',
+              toolLabel: 'Update Company',
+              summary: 'Raise the Acme renewal to 120k',
+              arguments: { id: 'company-1', arr: 120000 },
+              template: 'generic',
+            },
           },
         }),
       ]),
