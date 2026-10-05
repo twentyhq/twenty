@@ -1,8 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { enqueueJobsMock } = vi.hoisted(() => ({ enqueueJobsMock: vi.fn() }));
-vi.mock('twenty-sdk/logic-function', () => ({
+const { enqueueJobsMock, queryMock, mutationMock } = vi.hoisted(() => ({
+  enqueueJobsMock: vi.fn(),
+  queryMock: vi.fn(),
+  mutationMock: vi.fn(),
+}));
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
   enqueueJobs: enqueueJobsMock,
+}));
+vi.mock('twenty-client-sdk/core', () => ({
+  CoreApiClient: vi.fn(function () {
+    return { query: queryMock, mutation: mutationMock };
+  }),
 }));
 
 import onCalendarEventRescheduled from '../on-calendar-event-rescheduled';
@@ -23,11 +33,19 @@ const buildBatch = (
   })),
 });
 
+const emptyPage = {
+  edges: [],
+  pageInfo: { hasNextPage: false, endCursor: null },
+};
+
 beforeEach(() => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date(NOW));
   enqueueJobsMock.mockReset();
   enqueueJobsMock.mockResolvedValue({ enqueued: true });
+  queryMock.mockReset();
+  queryMock.mockResolvedValue({ calendarEventParticipants: emptyPage });
+  mutationMock.mockReset();
 });
 
 afterEach(() => {
@@ -46,21 +64,43 @@ describe('on-calendar-event-rescheduled', () => {
     });
   });
 
-  it('should schedule the new slot of upcoming meetings only', async () => {
+  it('should schedule the new slot of upcoming meetings without calling the core API', async () => {
     await handler(
       buildBatch([
         { startsAt: '2026-06-12T14:20:00.000Z', isCanceled: false },
         { startsAt: '2026-06-12T14:24:00.000Z', isCanceled: false },
         { startsAt: '2026-06-12T16:00:00.000Z', isCanceled: true },
-        { startsAt: '2026-06-12T10:00:00.000Z', isCanceled: false },
         { startsAt: null, isCanceled: false },
       ]),
     );
 
+    expect(queryMock).not.toHaveBeenCalled();
     expect(enqueueJobsMock).toHaveBeenCalledTimes(1);
     expect(enqueueJobsMock.mock.calls[0][0].jobs[0].payload).toEqual({
       slotStart: '2026-06-12T14:20:00.000Z',
       slotEnd: '2026-06-12T14:25:00.000Z',
     });
+  });
+
+  it('should apply a meeting moved into the past right away', async () => {
+    await handler(
+      buildBatch([
+        { startsAt: '2026-06-12T10:00:00.000Z', isCanceled: false },
+        { startsAt: '2026-06-12T09:00:00.000Z', isCanceled: true },
+      ]),
+    );
+
+    expect(queryMock).toHaveBeenCalledTimes(1);
+    expect(
+      queryMock.mock.calls[0][0].calendarEventParticipants.__args.filter,
+    ).toEqual({
+      and: [
+        { personId: { is: 'NOT_NULL' } },
+        { calendarEventId: { in: ['event-0'] } },
+        { calendarEvent: { startsAt: { lt: NOW } } },
+        { calendarEvent: { isCanceled: { eq: false } } },
+      ],
+    });
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 });

@@ -40,8 +40,8 @@ const enqueueDelayedJob = async ({
 
 export const scheduleMeetings = async (
   meetingStartsAts: string[],
+  now = Date.now(),
 ): Promise<void> => {
-  const now = Date.now();
   const horizonEnd = now + MEETING_SCHEDULE_HORIZON_MS;
   const slotStartsMs = new Set<number>();
   let hasMeetingBeyondHorizon = false;
@@ -102,5 +102,8 @@ export const scheduleUpcomingPersonMeetings = async (
       Date.parse(startsAt) > now + MEETING_SCHEDULE_HORIZON_MS,
   });
 
-  await scheduleMeetings(participants.map(({ startsAt }) => startsAt));
+  await scheduleMeetings(
+    participants.map(({ startsAt }) => startsAt),
+    now,
+  );
 };

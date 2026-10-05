@@ -10,7 +10,7 @@ All installs of the app share one API rate limit, 500 calls per minute across ev
   - Every install and upgrade schedules the upcoming meetings and applies meetings from the last hour, so meetings linked before this version are not missed.
   - A meeting's last contact still updates within about 6 minutes of its start: the job runs 1 minute after the end of its 5-minute slot.
 - **Fewer calls per email or meeting batch: at most 5 instead of 8.** A person's company and opportunities are read nested in the same query as the person, which costs no extra call. Recomputing an opportunity's last contact also reads its point of contact nested: 2 calls instead of 3.
-- **Retries that respect the rate limit.** A rate-limited call now waits for the server's `retryAfterMs` instead of a fixed backoff. Once a function has waited 2 minutes in total, it hands the job back to the queue to retry later, instead of failing it or holding a worker.
+- **Retries that respect the rate limit.** A rate-limited call now waits for the server's `retryAfterMs`, capped at 60 seconds, when it is longer than the backoff. Once a function has waited 2 minutes in total, it hands the job back to the queue to retry later, instead of failing it or holding a worker.
 
 ## 1.7.0
 

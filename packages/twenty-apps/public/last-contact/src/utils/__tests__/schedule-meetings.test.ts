@@ -100,6 +100,22 @@ describe('scheduleMeetings', () => {
   });
 });
 
+describe('scheduleMeetings time snapshot', () => {
+  it('should judge the horizon against the snapshot it is given, not a later clock', async () => {
+    const snapshot = Date.parse(NOW);
+    vi.setSystemTime(new Date(snapshot + MINUTE_MS));
+
+    await scheduleMeetings(['2026-06-18T12:00:30.000Z'], snapshot);
+
+    expect(
+      enqueuedFor(MEETING_SLOT_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER),
+    ).toHaveLength(0);
+    expect(
+      enqueuedFor(MEETING_HORIZON_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER),
+    ).toHaveLength(1);
+  });
+});
+
 describe('scheduleUpcomingPersonMeetings', () => {
   const buildClient = (startsAts: string[], hasNextPage = false) => {
     const queryMock = vi.fn().mockResolvedValue({
@@ -139,6 +155,17 @@ describe('scheduleUpcomingPersonMeetings', () => {
       },
     );
     expect(enqueueJobsMock).not.toHaveBeenCalled();
+  });
+
+  it('should stop paging when the server repeats the same cursor', async () => {
+    const { client, queryMock } = buildClient(['2026-06-13T09:00:00.000Z'], true);
+
+    await scheduleUpcomingPersonMeetings(client);
+
+    expect(queryMock).toHaveBeenCalledTimes(2);
+    expect(
+      queryMock.mock.calls[1][0].calendarEventParticipants.__args.after,
+    ).toBe('cursor');
   });
 
   it('should stop paging at the first meeting past the horizon and chain the next run', async () => {

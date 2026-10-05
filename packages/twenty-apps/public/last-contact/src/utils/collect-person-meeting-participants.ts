@@ -15,10 +15,12 @@ export const collectPersonMeetingParticipants = async (
   {
     from,
     to,
+    calendarEventIds,
     shouldStop = () => false,
   }: {
-    from: Date;
+    from?: Date;
     to?: Date;
+    calendarEventIds?: string[];
     shouldStop?: (participant: PersonMeetingParticipant) => boolean;
   },
 ): Promise<PersonMeetingParticipant[]> => {
@@ -33,7 +35,12 @@ export const collectPersonMeetingParticipants = async (
             filter: {
               and: [
                 { personId: { is: 'NOT_NULL' } },
-                { calendarEvent: { startsAt: { gte: from.toISOString() } } },
+                ...(calendarEventIds
+                  ? [{ calendarEventId: { in: calendarEventIds } }]
+                  : []),
+                ...(from
+                  ? [{ calendarEvent: { startsAt: { gte: from.toISOString() } } }]
+                  : []),
                 ...(to
                   ? [{ calendarEvent: { startsAt: { lt: to.toISOString() } } }]
                   : []),
@@ -79,10 +86,12 @@ export const collectPersonMeetingParticipants = async (
       }
     }
 
-    after =
+    const nextCursor =
       !hasReachedStop && calendarEventParticipants?.pageInfo.hasNextPage
         ? (calendarEventParticipants.pageInfo.endCursor ?? undefined)
         : undefined;
+
+    after = nextCursor !== after ? nextCursor : undefined;
   } while (after);
 
   return participants;
