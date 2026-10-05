@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
 import { UpgradeHealthEnum } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import {
@@ -24,7 +25,7 @@ export class UpgradeGaugeService implements OnModuleInit {
   private cachedUpgradeStatus: InstanceAndWorkspaceCountsUpgradeStatus | null =
     null;
   private cachedUpgradeStatusExpiresAt = 0;
-  private inflightUpgradeStatusPromise: Promise<InstanceAndWorkspaceCountsUpgradeStatus> | null =
+  private inflightUpgradeStatusPromise: Promise<InstanceAndWorkspaceCountsUpgradeStatus | null> | null =
     null;
 
   constructor(
@@ -126,7 +127,15 @@ export class UpgradeGaugeService implements OnModuleInit {
       this.upgradeStatusService.getInstanceAndWorkspaceCountsStatus();
 
     try {
-      this.cachedUpgradeStatus = await this.inflightUpgradeStatusPromise;
+      const upgradeStatus = await this.inflightUpgradeStatusPromise;
+
+      // Another pod is refreshing the shared cache: keep the last known value
+      // and read the cache again on the next collection
+      if (!isDefined(upgradeStatus)) {
+        return this.cachedUpgradeStatus;
+      }
+
+      this.cachedUpgradeStatus = upgradeStatus;
       this.cachedUpgradeStatusExpiresAt = Date.now() + UPGRADE_STATUS_TTL_MS;
 
       return this.cachedUpgradeStatus;

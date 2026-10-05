@@ -177,10 +177,30 @@ export class UpgradeStatusService {
     });
   }
 
-  async getInstanceAndWorkspaceCountsStatus(): Promise<InstanceAndWorkspaceCountsUpgradeStatus> {
+  // Every pod polls this for its gauges, so on a cache miss only the pod
+  // holding the refresh lock recomputes; the others report null until the
+  // shared cache is written
+  async getInstanceAndWorkspaceCountsStatus(): Promise<InstanceAndWorkspaceCountsUpgradeStatus | null> {
     const cachedStatus = await this.getCachedInstanceAndWorkspaceStatus();
 
-    if (!isDefined(cachedStatus)) {
+    if (isDefined(cachedStatus)) {
+      return {
+        instanceUpgradeStatus: cachedStatus.instanceUpgradeStatus,
+        behindWorkspaceCount: cachedStatus.behindWorkspaceIds.length,
+        failedWorkspaceCount: cachedStatus.failedWorkspaceIds.length,
+        upToDateWorkspaceCount: cachedStatus.upToDateWorkspaceCount,
+        computedAt: cachedStatus.computedAt,
+      };
+    }
+
+    const hasRefreshLock =
+      await this.upgradeStatusCacheService.tryAcquireRefreshLock();
+
+    if (!hasRefreshLock) {
+      return null;
+    }
+
+    try {
       const refreshedStatus =
         await this.refreshInstanceAndAllWorkspacesStatus();
 
@@ -191,15 +211,9 @@ export class UpgradeStatusService {
         upToDateWorkspaceCount: refreshedStatus.upToDateWorkspaceCount,
         computedAt: refreshedStatus.computedAt,
       };
+    } finally {
+      await this.upgradeStatusCacheService.releaseRefreshLock();
     }
-
-    return {
-      instanceUpgradeStatus: cachedStatus.instanceUpgradeStatus,
-      behindWorkspaceCount: cachedStatus.behindWorkspaceIds.length,
-      failedWorkspaceCount: cachedStatus.failedWorkspaceIds.length,
-      upToDateWorkspaceCount: cachedStatus.upToDateWorkspaceCount,
-      computedAt: cachedStatus.computedAt,
-    };
   }
 
   async getInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {
