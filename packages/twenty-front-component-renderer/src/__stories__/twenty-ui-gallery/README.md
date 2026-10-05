@@ -18,7 +18,7 @@ listed known error and rejects any other error.
 | `twenty-ui-number-stepper` | NumberStepper (keyboard bounds, disabled/read-only state, named form values and submission) |
 | `twenty-ui-display-helpers` | Text |
 | `twenty-ui-image-input` | ImageInput |
-| `twenty-ui-list-item` | ListItem |
+| `twenty-ui-list-item` | ListItem (selection, disabled and submenu rows, overflow tooltip with a scoped theme container) |
 | `twenty-ui-settings-row` | SettingsRow |
 | `twenty-ui-tabs` | Tabs |
 | `twenty-ui-overflowing-list` | OverflowingList |
@@ -48,6 +48,15 @@ The story builder resolves that stylesheet to the individual build's CSS so
 class names match the JavaScript used by the sandbox. Importing CSS through the
 shared card also exercises the SDK's CSS injection and the renderer's style bridge.
 
+The Dropdown stories verify that both runtimes open the menu, accept an external
+controlled state update, and reopen after the first popup mount. The popup
+content remains absent because it portals into the sandbox body. ListItem uses
+a scoped theme container for its overflow tooltip, matching the existing Tooltip
+fixture, and verifies Escape dismissal and continued selection updates after hover.
+The first overflow hover enrolls the label for host geometry observation. The
+story waits for that snapshot and re-enters after enabling the tooltip; opening
+on the first hover remains a geometry limitation.
+
 ## Known sandbox limitations
 
 These are compatibility regression stories, not assertions that the components
@@ -62,9 +71,7 @@ expected-to-fail by the runner.
 | --- | --- |
 | NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree and stops Preact rendering. Separate React and Preact stories assert the pointer gap and successful typing, keyboard bounds, disabled/read-only state, named form values and submission. |
 | ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/image-input.mdx). |
-| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet. |
-| Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (Preact) | The Dropdown-based popups never open. `Popover.Popup` is a plain function component, so Preact hands its ref to the component instance instead of the popup element, and the content reads `dataset` from that instance as soon as it mounts. The error is thrown inside Preact's render queue, so it never reaches the host and Preact stops re-rendering. |
-| ListItem | `ListItemPreact` handles selection, the disabled item and the submenu row, but the overflow tooltip's Floating UI `contains(parent, child)` check receives a parent without `contains` and throws. |
+| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
 | Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
 

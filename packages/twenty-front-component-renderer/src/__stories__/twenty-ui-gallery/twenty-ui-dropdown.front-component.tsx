@@ -62,6 +62,14 @@ const DropdownExample = () => {
           </Dropdown.Page>
         </Dropdown.Content>
       </Dropdown.Root>
+      <Button
+        onClick={() => {
+          setSelection('Ada Lovelace');
+          setOpen(false);
+        }}
+      >
+        Assign Ada and close menu
+      </Button>
       <Text role="status">Assignee: {selection}</Text>
     </TwentyUiGalleryCard>
   );

@@ -1,5 +1,8 @@
 import type * as esbuild from 'esbuild';
+import { dirname } from 'node:path';
+import { isDefined } from 'twenty-shared/utils';
 
+import { PREACT_REF_COMPAT_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/preact-ref-compat-source';
 import { JSX_RUNTIME_SHARED_HELPERS_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/jsx-runtime-shared-helpers-source';
 
 const JSX_RUNTIME_WRAPPER = `
@@ -46,9 +49,11 @@ const createReactWrapper = ({
   readsElementRefFromVnode,
 }: {
   readsElementRefFromVnode: boolean;
-}) => `
+}) =>
+  `
 export * from '__real_react__';
 import _React from '__real_react__';
+${readsElementRefFromVnode ? "import { normalizeClonedFunctionRef } from '__preact_ref_compat__';" : ''}
 
 import {
   customElementMap,
@@ -90,7 +95,14 @@ function createElement(type) {
 function cloneElement(element) {
   var args = arguments;
   if (!element || !isCustomElementTag(element.type)) {
-    return _originalCloneElement.apply(null, args);
+    ${
+      readsElementRefFromVnode
+        ? `return normalizeClonedFunctionRef({
+      vnode: _originalCloneElement.apply(null, args),
+      config: args[1],
+    });`
+        : 'return _originalCloneElement.apply(null, args);'
+    }
   }
   var newArgs = [
     element,
@@ -130,6 +142,28 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
     setup: (build) => {
       let realJsxRuntimePath: string | undefined;
       let realReactPath: string | undefined;
+      const refCompatImport = usePreact
+        ? "import '__preact_ref_compat__';\n"
+        : '';
+
+      build.onResolve({ filter: /^__preact_ref_compat__$/ }, () => ({
+        path: '__preact_ref_compat__',
+        namespace: 'preact-ref-compat',
+      }));
+
+      build.onLoad({ filter: /.*/, namespace: 'preact-ref-compat' }, () => {
+        const realRuntimePath = realJsxRuntimePath ?? realReactPath;
+
+        if (!isDefined(realRuntimePath)) {
+          throw new Error('Preact runtime path has not been resolved');
+        }
+
+        return {
+          contents: PREACT_REF_COMPAT_SOURCE,
+          loader: 'js' as const,
+          resolveDir: dirname(realRuntimePath),
+        };
+      });
 
       build.onResolve({ filter: /^__jsx_shared_helpers__$/ }, () => ({
         path: '__jsx_shared_helpers__',
@@ -173,7 +207,7 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
       });
 
       build.onLoad({ filter: /.*/, namespace: 'jsx-runtime-wrapper' }, () => ({
-        contents: JSX_RUNTIME_WRAPPER,
+        contents: refCompatImport + JSX_RUNTIME_WRAPPER,
         loader: 'js' as const,
       }));
 
@@ -209,7 +243,9 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
       });
 
       build.onLoad({ filter: /.*/, namespace: 'react-wrapper' }, () => ({
-        contents: createReactWrapper({ readsElementRefFromVnode: usePreact }),
+        contents:
+          refCompatImport +
+          createReactWrapper({ readsElementRefFromVnode: usePreact }),
         loader: 'js' as const,
       }));
     },
