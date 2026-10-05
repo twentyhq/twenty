@@ -41,11 +41,11 @@
   Whether the component should ignore user interaction.
 </ParamField>
 
-<ParamField body="Root.filter" type="((item: Items[number][&quot;items&quot;][number], query: string, itemToString?: ((item: Items[number][&quot;items&quot;][number]) =&gt; string) | undefined) =&gt; boolean) | null">
+<ParamField body="Root.filter" type="((item: TItem, query: string, itemToString?: ((item: TItem) =&gt; string) | undefined) =&gt; boolean) | null">
   Filter function used to match items against the input query.
 </ParamField>
 
-<ParamField body="Root.filteredItems" type="readonly Items[number][&quot;items&quot;][number][] | readonly Group&lt;Items[number][&quot;items&quot;][number]&gt;[]">
+<ParamField body="Root.filteredItems" type="readonly TItem[] | readonly Group&lt;TItem&gt;[]">
   Filtered items to display in the list.
   When provided, the list uses these items instead of filtering the `items` prop internally.
   When `items` is also provided, this array must preserve its flat or grouped structure.
@@ -83,13 +83,11 @@
   A ref to the hidden input element.
 </ParamField>
 
-<ParamField body="Root.items" type="readonly { items: readonly any[]; }[]" required>
-  The items to be displayed in the list.
-  Can be either a flat array of items or an array of groups with items.
-  Nullish entries are not supported: remove them from the data before passing it.
+<ParamField body="Root.items" type="readonly TItem[]">
+  Items to display in the list. Nullish entries are not supported.
 </ParamField>
 
-<ParamField body="Root.itemToStringValue" type="((itemValue: Items[number][&quot;items&quot;][number]) =&gt; string)">
+<ParamField body="Root.itemToStringValue" type="((itemValue: TItem) =&gt; string)">
   When the item values are objects (`<Autocomplete.Item value={object}>`), this function converts the object value to a string representation for both display in the input and form submission.
   If the shape of the object is `{ value, label }`, the label will be used automatically without needing to specify this prop.
 </ParamField>
@@ -133,7 +131,7 @@
   Identifies the field when a form is submitted.
 </ParamField>
 
-<ParamField body="Root.onItemHighlighted" type="((highlightedValue: Items[number][&quot;items&quot;][number] | undefined, eventDetails: HighlightEventDetails) =&gt; void)">
+<ParamField body="Root.onItemHighlighted" type="((highlightedValue: TItem | undefined, eventDetails: HighlightEventDetails) =&gt; void)">
   Callback fired when an item is highlighted or unhighlighted.
   Receives the highlighted item value (or `undefined` if no item is highlighted) and event details with a `reason` property describing why the highlight changed.
   The `reason` can be:
