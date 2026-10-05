@@ -35,6 +35,7 @@ export enum SidePanelPages {
   SendCampaign = 'send-campaign',
   RecordCreationForm = 'record-creation-form',
   SendCampaignTest = 'send-campaign-test',
+  AddToMessageList = 'add-to-message-list',
   WorkflowVersions = 'workflow-versions',
   WorkflowVersion = 'workflow-version',
   EmailBlockSettings = 'email-block-settings',

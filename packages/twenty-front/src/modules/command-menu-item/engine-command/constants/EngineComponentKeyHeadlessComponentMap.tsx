@@ -14,6 +14,8 @@ import { EditLayoutCommand } from '@/command-menu-item/engine-command/global/com
 import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
 import { DestroyRecordsCommand } from '@/command-menu-item/engine-command/record/components/DestroyRecordsCommand';
 import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
+import { AddRecordsToMessageListCommand } from '@/command-menu-item/engine-command/record/components/AddRecordsToMessageListCommand';
+import { AddViewToMessageListNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/AddViewToMessageListNoSelectionRecordCommand';
 import { RestoreRecordsCommand } from '@/command-menu-item/engine-command/record/components/RestoreRecordsCommand';
 import { TriggerWorkflowVersionEngineCommand } from '@/command-menu-item/engine-command/record/components/TriggerWorkflowVersionEngineCommand';
 import { MergeMultipleRecordsCommand } from '@/command-menu-item/engine-command/record/multiple-records/components/MergeMultipleRecordsCommand';
@@ -78,6 +80,10 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.DUPLICATE_MESSAGE_LIST]: (
     <DuplicateMessageListSingleRecordCommand />
+  ),
+  [EngineComponentKey.ADD_TO_MESSAGE_LIST]: <AddRecordsToMessageListCommand />,
+  [EngineComponentKey.ADD_VIEW_TO_MESSAGE_LIST]: (
+    <AddViewToMessageListNoSelectionRecordCommand />
   ),
   [EngineComponentKey.DUPLICATE_WORKFLOW]: (
     <DuplicateWorkflowSingleRecordCommand />
