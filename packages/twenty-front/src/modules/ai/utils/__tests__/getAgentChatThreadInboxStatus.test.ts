@@ -1,7 +1,6 @@
 import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
 
 const THREAD_ID = 'thread';
-const NOW = new Date('2026-10-01T12:00:00.000Z');
 const ARCHIVED_AT = '2026-10-01T10:00:00.000Z';
 
 const getStatus = ({
@@ -17,8 +16,14 @@ const getStatus = ({
 } = {}) =>
   getAgentChatThreadInboxStatus({
     lastActivityAt,
-    participant: { threadId: THREAD_ID, lastReadAt, archivedAt, snoozedUntil },
-    now: NOW,
+    participant: {
+      id: 'participant',
+      threadId: THREAD_ID,
+      lastReadAt,
+      archivedAt,
+      snoozedUntil,
+      updatedAt: ARCHIVED_AT,
+    },
   });
 
 describe('getAgentChatThreadInboxStatus', () => {
@@ -27,7 +32,6 @@ describe('getAgentChatThreadInboxStatus', () => {
       getAgentChatThreadInboxStatus({
         lastActivityAt: '2026-10-01T09:00:00.000Z',
         participant: undefined,
-        now: NOW,
       }),
     ).toEqual({ scope: 'INBOX', isUnread: true, event: null });
   });
@@ -67,25 +71,26 @@ describe('getAgentChatThreadInboxStatus', () => {
     ).toMatchObject({ scope: 'INBOX', event: null });
   });
 
-  it('snoozes a thread until its snooze time, then shows the snooze ended', () => {
-    expect(
-      getStatus({
-        archivedAt: ARCHIVED_AT,
-        snoozedUntil: '2026-10-02T09:00:00.000Z',
-      }),
-    ).toMatchObject({
+  it('snoozes a thread until the server unarchives it', () => {
+    const snoozedUntil = '2026-10-02T09:00:00.000Z';
+
+    expect(getStatus({ archivedAt: ARCHIVED_AT, snoozedUntil })).toMatchObject({
       scope: 'SNOOZED',
-      event: { type: 'SNOOZED', at: '2026-10-02T09:00:00.000Z' },
+      event: { type: 'SNOOZED', at: snoozedUntil },
     });
+    expect(getStatus({ snoozedUntil })).toMatchObject({
+      scope: 'INBOX',
+      event: { type: 'SNOOZE_ENDED', at: snoozedUntil },
+    });
+  });
+
+  it('stops showing an ended snooze once activity follows it', () => {
     expect(
       getStatus({
-        archivedAt: ARCHIVED_AT,
-        snoozedUntil: NOW.toISOString(),
+        snoozedUntil: '2026-10-02T09:00:00.000Z',
+        lastActivityAt: '2026-10-02T10:00:00.000Z',
       }),
-    ).toMatchObject({
-      scope: 'INBOX',
-      event: { type: 'SNOOZE_ENDED', at: NOW.toISOString() },
-    });
+    ).toMatchObject({ scope: 'INBOX', event: null });
   });
 
   it('brings a snoozed thread back early when activity follows the snooze', () => {

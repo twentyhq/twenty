@@ -9,27 +9,29 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
+const getAgentChatThreadService = () =>
+  getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
+
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schema = getWorkspaceSchemaName(workspaceId);
 const workspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE;
 const userWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JANE;
 
-const QUESTIONS = [
-  {
-    header: 'Plan',
-    question: 'Which plan should I quote?',
-    options: [{ label: 'Pro' }, { label: 'Team' }],
-  },
-];
+const QUESTION = {
+  header: 'Plan',
+  question: 'Which plan should I quote?',
+  options: [{ label: 'Pro' }, { label: 'Team' }],
+};
 
 describe('Answering a chat tool call', () => {
   const threadId = randomUUID();
@@ -49,9 +51,9 @@ describe('Answering a chat tool call', () => {
     });
 
     const assistantMessageId = randomUUID();
-    const pendingOutput = await createAskQuestionsTool({
+    const pendingOutput = await createAskQuestionTool({
       isWorkspaceSetupThread: false,
-    }).execute({ questions: QUESTIONS });
+    }).execute(QUESTION);
 
     await chat.upsertAssistantMessage({
       id: assistantMessageId,
@@ -59,10 +61,10 @@ describe('Answering a chat tool call', () => {
       turnId: userMessage.turnId,
       workspaceId,
       parts: toolCallIds.map((toolCallId) => ({
-        type: 'tool-ask_questions',
+        type: 'tool-ask_question',
         toolCallId,
         state: 'output-available',
-        input: { questions: QUESTIONS },
+        input: QUESTION,
         output: pendingOutput,
       })) as never,
     });
@@ -78,7 +80,7 @@ describe('Answering a chat tool call', () => {
   const answerQuestions = (toolCallId: string) =>
     answerToolCall({
       toolCall: { threadId, toolCallId },
-      response: { answers: [{ questionIndex: 0, selectedOptionIndices: [1] }] },
+      response: { selectedOptionIndices: [1] },
     });
 
   const readPendingQuestionMessageId = async () =>
@@ -131,7 +133,7 @@ describe('Answering a chat tool call', () => {
       .mockResolvedValue(undefined as never);
     spies.push(enqueueStream);
 
-    await chat.createThread({
+    await getAgentChatThreadService().createThread({
       workspaceId,
       workspaceMemberId,
       id: threadId,
@@ -205,6 +207,35 @@ describe('Answering a chat tool call', () => {
         streamId: last.body.data.answerToolCall.streamId,
       }),
     );
+  });
+
+  it('answers the questions of a step in any order', async () => {
+    await pauseOnQuestions(
+      'unordered-first',
+      'unordered-middle',
+      'unordered-last',
+    );
+    enqueueStream.mockClear();
+
+    const middle = await answerQuestions('unordered-middle');
+
+    expect(middle.body.errors).toBeUndefined();
+    expect(middle.body.data.answerToolCall.streamId).toBeNull();
+    expect(await readToolCallStatus('unordered-first')).toBe('pending');
+    expect(await readToolCallStatus('unordered-middle')).toBe('answered');
+
+    const last = await answerQuestions('unordered-last');
+
+    expect(last.body.errors).toBeUndefined();
+    expect(await readToolCallStatus('unordered-last')).toBe('answered');
+    expect(await readToolCallStatus('unordered-first')).toBe('pending');
+
+    const first = await answerQuestions('unordered-first');
+
+    expect(first.body.errors).toBeUndefined();
+    expect(first.body.data.answerToolCall.streamId).toEqual(expect.any(String));
+    expect(await readPendingQuestionMessageId()).toBeNull();
+    expect(enqueueStream).toHaveBeenCalledTimes(1);
   });
 
   it('closes every pending call when a message is sent instead of the answers', async () => {

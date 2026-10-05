@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
+import { parseFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/fields-parser-utils/parse-fields-rest-request.util';
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { pickRestResponseFields } from 'src/engine/api/rest/core/utils/pick-rest-response-fields.util';
 import { CommonRestoreManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-restore-many-query-runner.service';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
@@ -24,7 +26,7 @@ export class RestApiRestoreManyHandler extends RestApiBaseHandler {
     };
   }> {
     try {
-      const { filter, depth } = this.parseRequestArgs(request);
+      const { filter, depth, requestedFields } = this.parseRequestArgs(request);
 
       const {
         authContext,
@@ -34,7 +36,8 @@ export class RestApiRestoreManyHandler extends RestApiBaseHandler {
         objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
-      const selectedFields = await this.computeSelectedFields({
+      const { selectedFields } = await this.computeRecordSelectedFields({
+        requestedFields,
         depth,
         flatObjectMetadata,
         flatObjectMetadataMaps,
@@ -54,19 +57,30 @@ export class RestApiRestoreManyHandler extends RestApiBaseHandler {
           },
         );
 
-      return this.formatRestResponse(records, flatObjectMetadata.namePlural);
+      return this.formatRestResponse({
+        records,
+        objectNamePlural: flatObjectMetadata.namePlural,
+        selectedFields,
+      });
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private formatRestResponse(
-    records: ObjectRecord[],
-    objectNamePlural: string,
-  ) {
+  private formatRestResponse({
+    records,
+    objectNamePlural,
+    selectedFields,
+  }: {
+    records: ObjectRecord[];
+    objectNamePlural: string;
+    selectedFields: CommonSelectedFields;
+  }) {
     return {
       data: {
-        [`restore${capitalize(objectNamePlural)}`]: records,
+        [`restore${capitalize(objectNamePlural)}`]: records.map((record) =>
+          pickRestResponseFields({ record, selectedFields }),
+        ),
       },
     };
   }
@@ -75,6 +89,7 @@ export class RestApiRestoreManyHandler extends RestApiBaseHandler {
     const filter = parseFilterRestRequest(request);
 
     return {
+      requestedFields: parseFieldsRestRequest(request),
       filter,
       depth: parseDepthRestRequest(request),
     };

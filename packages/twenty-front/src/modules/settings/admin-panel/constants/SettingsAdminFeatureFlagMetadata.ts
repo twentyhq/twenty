@@ -79,7 +79,11 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     description: msg`Let admins add conditions a record must meet to be saved, checked on every write.`,
   },
   [FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED]: {
-    label: msg`Workflow chat messages`,
-    description: msg`Add a workflow step that posts a message in a member's AI chat.`,
+    label: msg`Workflow inbox messages`,
+    description: msg`Add a workflow step that sends a message, and optionally an action to approve, to a member's inbox.`,
+  },
+  [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: {
+    label: msg`Skip unchanged calendar records`,
+    description: msg`Only write calendar events and participants that changed since the last sync.`,
   },
 };

@@ -2,18 +2,16 @@ import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { DELETE_QUEUED_CHAT_MESSAGE } from '@/ai/graphql/mutations/deleteQueuedChatMessage';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { DeleteQueuedChatMessageDocument } from '~/generated-metadata/graphql';
 
 export const useDeleteQueuedMessage = () => {
   const apolloClient = useApolloClient();
 
   const deleteQueuedMessage = useCallback(
     async (messageId: string) => {
-      const { data } = await apolloClient.mutate<{
-        deleteQueuedChatMessage: boolean;
-      }>({
-        mutation: DELETE_QUEUED_CHAT_MESSAGE,
+      const { data } = await apolloClient.mutate({
+        mutation: DeleteQueuedChatMessageDocument,
         variables: { messageId },
       });
 

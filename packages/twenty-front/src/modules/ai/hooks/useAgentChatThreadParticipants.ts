@@ -15,7 +15,6 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import {
   type AgentChatThreadParticipantFieldsFragment,
   ArchiveAgentChatThreadDocument,
-  GetMyAgentChatThreadParticipantsDocument,
   MarkAgentChatThreadAsReadDocument,
   MarkAgentChatThreadAsUnreadDocument,
   MoveAgentChatThreadToInboxDocument,
@@ -27,31 +26,7 @@ export const useAgentChatThreadParticipants = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
 
-  const refreshAgentChatThreadParticipants = useCallback(async () => {
-    const result = await client
-      .query({
-        query: GetMyAgentChatThreadParticipantsDocument,
-        fetchPolicy: 'network-only',
-      })
-      .catch(() => undefined);
-
-    if (!isDefined(result?.data)) {
-      return;
-    }
-
-    store.set(
-      agentChatThreadParticipantsState.atom,
-      Object.fromEntries(
-        result.data.myAgentChatThreadParticipants.map((participant) => [
-          participant.threadId,
-          participant,
-        ]),
-      ),
-    );
-  }, [client, store]);
-
-  // The change shows right away; if the server refuses it, the visit is put
-  // back and the member's state is reloaded from the server
+  // The change shows right away, and is put back if the server refuses it
   const updateParticipant = useCallback(
     async <TVariables extends { threadId: string }>({
       mutation,
@@ -66,6 +41,9 @@ export const useAgentChatThreadParticipants = () => {
     }) => {
       const { threadId } = variables;
       const previousVisit = store.get(agentChatThreadVisitState.atom);
+      const previousParticipant = store.get(
+        agentChatThreadParticipantsState.atom,
+      )?.[threadId];
 
       if (isDefined(optimisticVisit)) {
         store.set(agentChatThreadVisitState.atom, (visit) =>
@@ -87,6 +65,9 @@ export const useAgentChatThreadParticipants = () => {
             }
           : participants,
       );
+      const optimisticEntry = store.get(
+        agentChatThreadParticipantsState.atom,
+      )?.[threadId];
 
       try {
         await client.mutate({ mutation, variables });
@@ -99,10 +80,25 @@ export const useAgentChatThreadParticipants = () => {
           );
         }
 
-        await refreshAgentChatThreadParticipants();
+        // A newer row may have arrived since, and is kept
+        store.set(agentChatThreadParticipantsState.atom, (participants) => {
+          if (
+            !isDefined(participants) ||
+            participants[threadId] !== optimisticEntry
+          ) {
+            return participants;
+          }
+
+          const { [threadId]: _optimisticEntry, ...otherParticipants } =
+            participants;
+
+          return isDefined(previousParticipant)
+            ? { ...otherParticipants, [threadId]: previousParticipant }
+            : otherParticipants;
+        });
       }
     },
-    [client, enqueueToast, refreshAgentChatThreadParticipants, store],
+    [client, enqueueToast, store],
   );
 
   const markAgentChatThreadAsRead = useCallback(
@@ -151,16 +147,27 @@ export const useAgentChatThreadParticipants = () => {
     [updateParticipant],
   );
 
-  const snoozeAgentChatThread = useCallback(
-    ({ threadId, snoozedUntil }: { threadId: string; snoozedUntil: Date }) =>
-      updateParticipant({
-        mutation: SnoozeAgentChatThreadDocument,
-        variables: { threadId, snoozedUntil: snoozedUntil.toISOString() },
-        optimisticParticipant: {
-          archivedAt: new Date().toISOString(),
-          snoozedUntil: snoozedUntil.toISOString(),
-        },
-      }),
+  const snoozeAgentChatThreads = useCallback(
+    async ({
+      threadIds,
+      snoozedUntil,
+    }: {
+      threadIds: string[];
+      snoozedUntil: Date;
+    }) => {
+      await Promise.all(
+        threadIds.map((threadId) =>
+          updateParticipant({
+            mutation: SnoozeAgentChatThreadDocument,
+            variables: { threadId, snoozedUntil: snoozedUntil.toISOString() },
+            optimisticParticipant: {
+              archivedAt: new Date().toISOString(),
+              snoozedUntil: snoozedUntil.toISOString(),
+            },
+          }),
+        ),
+      );
+    },
     [updateParticipant],
   );
 
@@ -175,11 +182,10 @@ export const useAgentChatThreadParticipants = () => {
   );
 
   return {
-    refreshAgentChatThreadParticipants,
     markAgentChatThreadAsRead,
     markAgentChatThreadAsUnread,
     archiveAgentChatThread,
-    snoozeAgentChatThread,
+    snoozeAgentChatThreads,
     moveAgentChatThreadToInbox,
   };
 };
