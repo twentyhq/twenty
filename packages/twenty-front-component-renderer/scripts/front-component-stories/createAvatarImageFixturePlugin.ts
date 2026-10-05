@@ -3,15 +3,17 @@ import { type ServerResponse } from 'node:http';
 import { isDefined } from 'twenty-shared/utils';
 import { type Plugin } from 'vite';
 
-import { AVATAR_IMAGE_FIXTURE } from '../../src/__stories__/twenty-ui-gallery/constants/AVATAR_IMAGE_FIXTURE';
+import { AVATAR_IMAGE_FIXTURE } from '../../src/__stories__/twenty-ui-gallery/constants/AvatarImageFixture';
 
 const AVATAR_IMAGE_REQUEST_PATTERN =
   /^\/__twenty-ui-avatar-image__\/([a-z0-9-]+)\.svg(?:\/(status|release))?$/;
 const REQUEST_TIMEOUT_IN_MS = 30000;
 
+type ImageRequestState = 'pending' | 'released' | 'expired';
+
 type ImageRequest = {
+  state: ImageRequestState;
   responses: Set<ServerResponse>;
-  released: boolean;
   timer: ReturnType<typeof setTimeout>;
 };
 
@@ -23,14 +25,17 @@ const sendImage = (response: ServerResponse) => {
   response.end(AVATAR_IMAGE_FIXTURE.pendingImage);
 };
 
-const releaseRequest = (request: ImageRequest | undefined) => {
-  if (!isDefined(request)) {
-    return;
-  }
+const sendGone = (response: ServerResponse) => {
+  response.writeHead(410);
+  response.end();
+};
 
-  request.released = true;
+const flushResponses = (
+  request: ImageRequest,
+  respond: (response: ServerResponse) => void,
+) => {
   for (const response of request.responses) {
-    sendImage(response);
+    respond(response);
   }
   request.responses.clear();
 };
@@ -40,25 +45,39 @@ export const createAvatarImageFixturePlugin = (): Plugin => ({
   configureServer(server) {
     const requests = new Map<string, ImageRequest>();
 
-    const removeRequest = (requestId: string) => {
-      const request = requests.get(requestId);
-
-      if (!isDefined(request)) {
+    const expireRequest = (request: ImageRequest) => {
+      if (request.state !== 'pending') {
         return;
       }
 
-      clearTimeout(request.timer);
-      for (const response of request.responses) {
-        response.writeHead(410);
-        response.end();
+      request.state = 'expired';
+      flushResponses(request, sendGone);
+    };
+
+    const findOrCreateRequest = (requestId: string): ImageRequest => {
+      const existingRequest = requests.get(requestId);
+
+      if (isDefined(existingRequest)) {
+        return existingRequest;
       }
-      requests.delete(requestId);
+
+      const request: ImageRequest = {
+        state: 'pending',
+        responses: new Set(),
+        timer: setTimeout(() => expireRequest(request), REQUEST_TIMEOUT_IN_MS),
+      };
+
+      requests.set(requestId, request);
+
+      return request;
     };
 
     server.httpServer?.once('close', () => {
-      for (const requestId of requests.keys()) {
-        removeRequest(requestId);
+      for (const request of requests.values()) {
+        clearTimeout(request.timer);
+        expireRequest(request);
       }
+      requests.clear();
     });
 
     server.middlewares.use((request, response, next) => {
@@ -70,37 +89,35 @@ export const createAvatarImageFixturePlugin = (): Plugin => ({
       }
 
       const [, requestId, action] = match;
-      let imageRequest = requests.get(requestId);
 
       if (action === 'status') {
         response.setHeader('Content-Type', 'application/json');
         response.end(
-          JSON.stringify({ pending: imageRequest?.responses.size ?? 0 }),
+          JSON.stringify({
+            pending: requests.get(requestId)?.responses.size ?? 0,
+          }),
         );
         return;
       }
 
+      const imageRequest = findOrCreateRequest(requestId);
+
       if (action === 'release') {
-        releaseRequest(imageRequest);
+        clearTimeout(imageRequest.timer);
+        imageRequest.state = 'released';
+        flushResponses(imageRequest, sendImage);
         response.writeHead(204);
         response.end();
         return;
       }
 
-      if (!isDefined(imageRequest)) {
-        imageRequest = {
-          responses: new Set(),
-          released: false,
-          timer: setTimeout(
-            () => removeRequest(requestId),
-            REQUEST_TIMEOUT_IN_MS,
-          ),
-        };
-        requests.set(requestId, imageRequest);
+      if (imageRequest.state === 'released') {
+        sendImage(response);
+        return;
       }
 
-      if (imageRequest.released) {
-        sendImage(response);
+      if (imageRequest.state === 'expired') {
+        sendGone(response);
         return;
       }
 

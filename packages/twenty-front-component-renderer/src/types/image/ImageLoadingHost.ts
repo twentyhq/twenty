@@ -1,8 +1,5 @@
-import { type ImageLoadRequest } from '@/types/image/ImageLoadRequest';
-import { type ImageLoadResult } from '@/types/image/ImageLoadResult';
+import { type ImageLoadingTransport } from '@/types/image/ImageLoadingTransport';
 
-export type ImageLoadingHost = {
-  loadImage: (request: ImageLoadRequest) => Promise<ImageLoadResult>;
-  cancelImage: (requestId: string) => Promise<void>;
+export type ImageLoadingHost = ImageLoadingTransport & {
   dispose: () => void;
 };

@@ -1,9 +1,23 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
+import { MAX_PENDING_IMAGE_LOADS } from '@/host/image-loading/constants/MaxPendingImageLoads';
+import { resolveImageLoadReferrerPolicy } from '@/host/image-loading/utils/resolveImageLoadReferrerPolicy';
 import { type ImageLoadingHost } from '@/types/image/ImageLoadingHost';
 import { type ImageLoadResult } from '@/types/image/ImageLoadResult';
 
 type CreateImageLoadingHostOptions = {
   createImage?: () => HTMLImageElement;
 };
+
+const createUnloadedImageResult = (
+  status: Exclude<ImageLoadResult['status'], 'loaded'>,
+): ImageLoadResult => ({
+  status,
+  naturalWidth: 0,
+  naturalHeight: 0,
+  currentSrc: '',
+});
 
 export const createImageLoadingHost = ({
   createImage = () => new Image(),
@@ -21,18 +35,20 @@ export const createImageLoadingHost = ({
   const loadImage: ImageLoadingHost['loadImage'] = ({
     requestId,
     src,
+    srcset,
+    sizes,
     crossOrigin,
     referrerPolicy,
   }) => {
     if (isDisposed) {
-      return Promise.resolve({
-        status: 'cancelled',
-        naturalWidth: 0,
-        naturalHeight: 0,
-      });
+      return Promise.resolve(createUnloadedImageResult('cancelled'));
     }
 
     pendingRequests.get(requestId)?.('cancelled');
+
+    if (pendingRequests.size >= MAX_PENDING_IMAGE_LOADS) {
+      return Promise.resolve(createUnloadedImageResult('error'));
+    }
 
     return new Promise((resolve) => {
       const image = createImage();
@@ -49,8 +65,10 @@ export const createImageLoadingHost = ({
           status,
           naturalWidth: status === 'loaded' ? image.naturalWidth : 0,
           naturalHeight: status === 'loaded' ? image.naturalHeight : 0,
+          currentSrc: status === 'cancelled' ? '' : image.currentSrc,
         };
 
+        image.removeAttribute('srcset');
         image.removeAttribute('src');
         resolve(result);
       };
@@ -59,11 +77,22 @@ export const createImageLoadingHost = ({
       image.onload = () => finishRequest('loaded');
       image.onerror = () => finishRequest('error');
       image.crossOrigin = crossOrigin;
-      image.referrerPolicy = referrerPolicy;
-      image.src = src;
+      image.referrerPolicy = resolveImageLoadReferrerPolicy(referrerPolicy);
 
-      if (image.complete) {
-        finishRequest(image.naturalWidth > 0 ? 'loaded' : 'error');
+      if (isNonEmptyString(sizes)) {
+        image.sizes = sizes;
+      }
+
+      if (isDefined(srcset)) {
+        image.srcset = srcset;
+      }
+
+      if (isDefined(src)) {
+        image.src = src;
+      }
+
+      if (image.complete && image.naturalWidth > 0) {
+        finishRequest('loaded');
       }
     });
   };

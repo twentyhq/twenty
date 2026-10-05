@@ -35,6 +35,7 @@ import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gall
 import {
   statusControlsTest,
   tagControlsTest,
+  avatarControlsTest,
   chipControlsTest,
 } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
@@ -66,7 +67,6 @@ import { sliderRangeTest } from '@/__stories__/twenty-ui-gallery/utils/sliderRan
 import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
 import { avatarImageTest } from '@/__stories__/twenty-ui-gallery/utils/avatarImageTest';
-import { avatarControlsTest } from '@/__stories__/twenty-ui-gallery/utils/avatarControlsTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',

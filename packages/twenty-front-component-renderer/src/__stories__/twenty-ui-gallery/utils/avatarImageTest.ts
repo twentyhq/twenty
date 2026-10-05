@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { TYPING_DELAY } from '@/__stories__/shared/test-utils/timeouts';
-import { AVATAR_IMAGE_FIXTURE } from '@/__stories__/twenty-ui-gallery/constants/AVATAR_IMAGE_FIXTURE';
+import { AVATAR_IMAGE_FIXTURE } from '@/__stories__/twenty-ui-gallery/constants/AvatarImageFixture';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { observeAvatarImageLoads } from '@/__stories__/twenty-ui-gallery/utils/observeAvatarImageLoads';
 

@@ -4,7 +4,7 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button, Input } from 'twenty-ui/primitives/input';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
-import { AVATAR_IMAGE_FIXTURE } from '@/__stories__/twenty-ui-gallery/constants/AVATAR_IMAGE_FIXTURE';
+import { AVATAR_IMAGE_FIXTURE } from '@/__stories__/twenty-ui-gallery/constants/AvatarImageFixture';
 
 const AvatarImageExample = () => {
   const [source, setSource] = useState<string>(

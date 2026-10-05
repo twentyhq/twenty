@@ -1,13 +1,18 @@
+import { MAX_PENDING_IMAGE_LOADS } from '@/host/image-loading/constants/MaxPendingImageLoads';
+import { type ImageLoadRequest } from '@/types/image/ImageLoadRequest';
+
 import { createImageLoadingHost } from '../createImageLoadingHost';
 
-const IMAGE_LOAD_REQUEST = {
+const IMAGE_LOAD_REQUEST: ImageLoadRequest = {
   requestId: 'image-request',
   src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>',
+  srcset: null,
+  sizes: '',
   crossOrigin: 'anonymous',
   referrerPolicy: 'no-referrer',
 };
 
-const createImageHost = ({ isComplete = false } = {}) => {
+const createImageHost = ({ isComplete = false, naturalWidth = 32 } = {}) => {
   const images: HTMLImageElement[] = [];
   const sourceOptions: {
     crossOrigin: string | null;
@@ -18,8 +23,9 @@ const createImageHost = ({ isComplete = false } = {}) => {
 
     Object.defineProperties(image, {
       complete: { value: isComplete },
-      naturalWidth: { value: 32 },
+      naturalWidth: { value: naturalWidth },
       naturalHeight: { value: 16 },
+      currentSrc: { get: () => image.getAttribute('src') ?? '' },
       src: {
         set: (src: string) => {
           sourceOptions.push({
@@ -57,6 +63,7 @@ describe('createImageLoadingHost', () => {
       status: 'loaded',
       naturalWidth: 32,
       naturalHeight: 16,
+      currentSrc: IMAGE_LOAD_REQUEST.src,
     });
     expect(image.onload).toBeNull();
     expect(image.onerror).toBeNull();
@@ -74,6 +81,7 @@ describe('createImageLoadingHost', () => {
       status: 'error',
       naturalWidth: 0,
       naturalHeight: 0,
+      currentSrc: IMAGE_LOAD_REQUEST.src,
     });
     expect(image.onload).toBeNull();
     expect(image.onerror).toBeNull();
@@ -87,7 +95,100 @@ describe('createImageLoadingHost', () => {
       status: 'loaded',
       naturalWidth: 32,
       naturalHeight: 16,
+      currentSrc: IMAGE_LOAD_REQUEST.src,
     });
+  });
+
+  it('waits for the load event when a complete image has no natural width', async () => {
+    const { host, images } = createImageHost({
+      isComplete: true,
+      naturalWidth: 0,
+    });
+    const result = host.loadImage(IMAGE_LOAD_REQUEST);
+    const onSettled = jest.fn();
+
+    void result.then(onSettled);
+    await Promise.resolve();
+
+    expect(onSettled).not.toHaveBeenCalled();
+
+    images[0].dispatchEvent(new Event('load'));
+
+    await expect(result).resolves.toMatchObject({
+      status: 'loaded',
+      naturalWidth: 0,
+    });
+  });
+
+  it('loads srcset candidates without assigning a src attribute', async () => {
+    const { host, images, sourceOptions } = createImageHost();
+    const result = host.loadImage({
+      ...IMAGE_LOAD_REQUEST,
+      src: null,
+      srcset: '/avatar.png 1x, /avatar@2x.png 2x',
+      sizes: '40px',
+    });
+    const [image] = images;
+
+    expect(image.getAttribute('srcset')).toBe(
+      '/avatar.png 1x, /avatar@2x.png 2x',
+    );
+    expect(image.getAttribute('sizes')).toBe('40px');
+    expect(image.hasAttribute('src')).toBe(false);
+    expect(sourceOptions).toEqual([]);
+
+    image.dispatchEvent(new Event('load'));
+
+    await expect(result).resolves.toMatchObject({ status: 'loaded' });
+    expect(image.hasAttribute('srcset')).toBe(false);
+  });
+
+  it('drops referrer policies that send the full page URL to other origins', () => {
+    const { host, sourceOptions } = createImageHost();
+
+    void host.loadImage({
+      ...IMAGE_LOAD_REQUEST,
+      referrerPolicy: 'unsafe-url',
+    });
+    void host.loadImage({
+      ...IMAGE_LOAD_REQUEST,
+      requestId: 'downgrade-request',
+      referrerPolicy: 'no-referrer-when-downgrade',
+    });
+    void host.loadImage({
+      ...IMAGE_LOAD_REQUEST,
+      requestId: 'origin-request',
+      referrerPolicy: 'ORIGIN',
+    });
+
+    expect(sourceOptions.map(({ referrerPolicy }) => referrerPolicy)).toEqual([
+      '',
+      '',
+      'origin',
+    ]);
+  });
+
+  it('reports an error without creating an image once the pending load limit is reached', async () => {
+    const { host, createImage } = createImageHost();
+
+    for (let index = 0; index < MAX_PENDING_IMAGE_LOADS; index++) {
+      void host.loadImage({ ...IMAGE_LOAD_REQUEST, requestId: String(index) });
+    }
+
+    await expect(
+      host.loadImage({ ...IMAGE_LOAD_REQUEST, requestId: 'over-limit' }),
+    ).resolves.toEqual({
+      status: 'error',
+      naturalWidth: 0,
+      naturalHeight: 0,
+      currentSrc: '',
+    });
+    expect(createImage).toHaveBeenCalledTimes(MAX_PENDING_IMAGE_LOADS);
+
+    await host.cancelImage('0');
+    void host.loadImage({ ...IMAGE_LOAD_REQUEST, requestId: 'after-cancel' });
+
+    expect(createImage).toHaveBeenCalledTimes(MAX_PENDING_IMAGE_LOADS + 1);
   });
 
   it('cancels an individual request and clears its event handlers', async () => {
@@ -101,6 +202,7 @@ describe('createImageLoadingHost', () => {
       status: 'cancelled',
       naturalWidth: 0,
       naturalHeight: 0,
+      currentSrc: '',
     });
     expect(image.onload).toBeNull();
     expect(image.onerror).toBeNull();
@@ -161,6 +263,7 @@ describe('createImageLoadingHost', () => {
       status: 'loaded',
       naturalWidth: 32,
       naturalHeight: 16,
+      currentSrc: IMAGE_LOAD_REQUEST.src,
     });
   });
 

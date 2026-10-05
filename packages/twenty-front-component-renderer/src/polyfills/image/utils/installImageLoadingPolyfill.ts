@@ -2,12 +2,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createImagePreloaderClass } from '@/polyfills/image/utils/createImagePreloaderClass';
 import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
-import { type ImageLoadingHost } from '@/types/image/ImageLoadingHost';
+import { type ImageLoadingTransport } from '@/types/image/ImageLoadingTransport';
 
-type InstallImageLoadingPolyfillInput = Pick<
-  ImageLoadingHost,
-  'loadImage' | 'cancelImage'
-> & {
+type InstallImageLoadingPolyfillInput = ImageLoadingTransport & {
   globalScope: Record<string, unknown>;
 };
 
