@@ -10,11 +10,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
   CoreWorkflowMetadataException,
   CoreWorkflowMetadataExceptionCode,
 } from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
-import { isMigrationEntityNotFoundError } from 'src/engine/core-modules/workflow/utils/is-migration-entity-not-found-error.util';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -31,6 +31,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
+const CORE_WORKFLOW_DELETION_LOCK_TTL_MS = 30_000;
+const CORE_WORKFLOW_DELETION_LOCK_RETRY_INTERVAL_MS = 100;
+
 @Injectable()
 export class WorkflowCoreSyncService {
   private readonly logger = new Logger(WorkflowCoreSyncService.name);
@@ -45,6 +48,7 @@ export class WorkflowCoreSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -491,6 +495,23 @@ export class WorkflowCoreSyncService {
       return;
     }
 
+    await this.cacheLockService.withLock(
+      () => this.deleteFromCoreUnderLock(workspaceId, coreWorkflowIds),
+      `core-workflow-deletion:${workspaceId}`,
+      {
+        ttl: CORE_WORKFLOW_DELETION_LOCK_TTL_MS,
+        maxRetries:
+          CORE_WORKFLOW_DELETION_LOCK_TTL_MS /
+          CORE_WORKFLOW_DELETION_LOCK_RETRY_INTERVAL_MS,
+        ms: CORE_WORKFLOW_DELETION_LOCK_RETRY_INTERVAL_MS,
+      },
+    );
+  }
+
+  private async deleteFromCoreUnderLock(
+    workspaceId: string,
+    coreWorkflowIds: string[],
+  ): Promise<void> {
     const { flatWorkflowMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         { workspaceId, flatMapsKeys: ['flatWorkflowMaps'] },
@@ -528,36 +549,18 @@ export class WorkflowCoreSyncService {
       return;
     }
 
-    try {
-      await this.runCoreWorkflowMigration({
-        workspaceId,
-        failureMessage:
-          'Multiple validation errors occurred while deleting workflows',
-        operations: {
-          workflow: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: flatWorkflowsToDelete,
-            flatEntityToUpdate: [],
-          },
+    await this.runCoreWorkflowMigration({
+      workspaceId,
+      failureMessage:
+        'Multiple validation errors occurred while deleting workflows',
+      operations: {
+        workflow: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: flatWorkflowsToDelete,
+          flatEntityToUpdate: [],
         },
-      });
-    } catch (error) {
-      if (!isMigrationEntityNotFoundError(error)) {
-        throw error;
-      }
-
-      const stillPersisted = await this.coreWorkflowRepository.find(
-        workspaceId,
-        {
-          where: { id: In(flatWorkflowsToDelete.map(({ id }) => id)) },
-          select: { id: true },
-        },
-      );
-
-      if (stillPersisted.length > 0) {
-        throw error;
-      }
-    }
+      },
+    });
   }
 
   async findCoreWorkflowById(
