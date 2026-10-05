@@ -1,6 +1,7 @@
 import { Command } from 'nest-commander';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -11,6 +12,7 @@ import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/up
 import { toPre231RecordPageUniversalIdentifier } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-31.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
@@ -22,6 +24,8 @@ const CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER =
 const CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.callRecording.fields.recordingRequestStatus
     .universalIdentifier;
+const CALL_RECORDING_INDEX_VIEW_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.callRecording.views.allCallRecordings.universalIdentifier;
 const CALL_RECORDING_REQUEST_STATUS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.callRecording.views.allCallRecordings.viewFields
     .recordingRequestStatus.universalIdentifier,
@@ -59,12 +63,17 @@ export class SyncCallRecordingRequestStatusCommand extends ProvisionedWorkspaceC
         { workspaceId },
       );
 
-    const { flatFieldMetadataMaps, flatObjectMetadataMaps, flatViewFieldMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-        'flatObjectMetadataMaps',
-        'flatViewFieldMaps',
-      ]);
+    const {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      flatViewMaps,
+      flatViewFieldMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
+      'flatViewMaps',
+      'flatViewFieldMaps',
+    ]);
 
     const existingCallRecordingObjectMetadata =
       flatObjectMetadataMaps.byUniversalIdentifier[
@@ -115,13 +124,61 @@ export class SyncCallRecordingRequestStatusCommand extends ProvisionedWorkspaceC
           CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
         ],
       });
+
+    // Runs before the 2-26 reconcile moves INDEX views onto the derived
+    // identifier the shared constants resolve to, so it is resolved by key.
+    const callRecordingIndexFlatView = [
+      CALL_RECORDING_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+      ...existingCallRecordingObjectMetadata.viewUniversalIdentifiers,
+    ]
+      .map(
+        (viewUniversalIdentifier) =>
+          flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier],
+      )
+      .filter(isDefined)
+      .find(
+        (flatView) =>
+          flatView.key === ViewKey.INDEX &&
+          !isDefined(flatView.deletedAt) &&
+          flatView.applicationUniversalIdentifier ===
+            existingCallRecordingObjectMetadata.applicationUniversalIdentifier,
+      );
+
     const recordingRequestStatusViewFieldsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
         existingFlatEntityMaps: flatViewFieldMaps,
         universalIdentifiers:
           CALL_RECORDING_REQUEST_STATUS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
-      });
+      })
+        .flatMap((flatViewField) => {
+          if (
+            flatViewField.viewUniversalIdentifier !==
+            CALL_RECORDING_INDEX_VIEW_UNIVERSAL_IDENTIFIER
+          ) {
+            return [flatViewField];
+          }
+
+          if (!isDefined(callRecordingIndexFlatView)) {
+            this.logger.warn(
+              `No INDEX view found for CallRecording in workspace ${workspaceId}, skipping its ${CALL_RECORDING_REQUEST_STATUS_FIELD_NAME} view field`,
+            );
+
+            return [];
+          }
+
+          return [
+            {
+              ...flatViewField,
+              viewUniversalIdentifier:
+                callRecordingIndexFlatView.universalIdentifier,
+            },
+          ];
+        })
+        .filter(
+          (flatViewField) =>
+            !isFieldAlreadyInView({ flatViewField, flatViewFieldMaps }),
+        );
 
     const totalOperationCount =
       recordingRequestStatusFieldsToCreate.length +
@@ -193,4 +250,19 @@ const hasFieldNameConflict = ({
       flatFieldMetadata.objectMetadataUniversalIdentifier ===
         callRecordingObjectMetadata.universalIdentifier &&
       flatFieldMetadata.name === CALL_RECORDING_REQUEST_STATUS_FIELD_NAME,
+  );
+
+const isFieldAlreadyInView = ({
+  flatViewField,
+  flatViewFieldMaps,
+}: {
+  flatViewField: FlatViewField;
+  flatViewFieldMaps: FlatEntityMaps<FlatViewField>;
+}): boolean =>
+  Object.values(flatViewFieldMaps.byUniversalIdentifier).some(
+    (existingFlatViewField) =>
+      existingFlatViewField?.viewUniversalIdentifier ===
+        flatViewField.viewUniversalIdentifier &&
+      existingFlatViewField.fieldMetadataUniversalIdentifier ===
+        flatViewField.fieldMetadataUniversalIdentifier,
   );
