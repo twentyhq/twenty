@@ -438,7 +438,7 @@ describe('apiKeysResolver (e2e)', () => {
         body: { revokedAt: null },
       });
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(403);
       expect(response.body.code).toBe('API_KEY_REVOKED');
       expect(await findApiKeyRevokedAt(apiKeyId)).not.toBeNull();
     });
