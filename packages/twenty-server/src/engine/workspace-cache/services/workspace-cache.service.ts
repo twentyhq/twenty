@@ -752,6 +752,27 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     if (computed.length > 0) {
       const redisWriteStartedAt = performance.now();
+      const cacheTtlMs =
+        this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000;
+      const publishArgumentsByEntry = computed.map(
+        ({ keyName, data, expectedHash, hashToPublish }) => {
+          const serializedExpectedHash = isDefined(expectedHash)
+            ? JSON.stringify(expectedHash)
+            : '';
+          const serializedHashToPublish = JSON.stringify(hashToPublish);
+          const serializedData = this.localDataOnlyKeys.has(keyName)
+            ? ''
+            : JSON.stringify(
+                this.getProviderOrThrow(keyName).compactForStorage(data),
+              );
+
+          return [
+            serializedExpectedHash,
+            serializedHashToPublish,
+            serializedData,
+          ];
+        },
+      );
       let published: number[];
 
       try {
@@ -761,20 +782,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             workspaceId,
             computed.map(({ keyName }) => keyName),
           ),
-          args: [
-            String(this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000),
-            ...computed.flatMap(
-              ({ keyName, data, expectedHash, hashToPublish }) => [
-                isDefined(expectedHash) ? JSON.stringify(expectedHash) : '',
-                JSON.stringify(hashToPublish),
-                this.localDataOnlyKeys.has(keyName)
-                  ? ''
-                  : JSON.stringify(
-                      this.getProviderOrThrow(keyName).compactForStorage(data),
-                    ),
-              ],
-            ),
-          ],
+          args: [String(cacheTtlMs), ...publishArgumentsByEntry.flat()],
         });
       } finally {
         this.cacheMetricsService.recordRedisWrite(
