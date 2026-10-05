@@ -3,13 +3,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
-import {
-  IconListCheck,
-  IconLock,
-  IconSettings,
-  IconTerminal,
-  useIcons,
-} from 'twenty-ui/icon';
+import { IconLock, IconSettings, useIcons } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -25,8 +19,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type FindOneAgentQuery } from '~/generated-metadata/graphql';
-import { CoreAgentEvalsTab } from '@/object-core/agents/components/CoreAgentEvalsTab';
-import { CoreAgentLogsTab } from '@/object-core/agents/components/CoreAgentLogsTab';
 import { CoreAgentRoleTab } from '@/object-core/agents/components/CoreAgentRoleTab';
 import { CoreAgentSettingsTab } from '@/object-core/agents/components/CoreAgentSettingsTab';
 import { CORE_AGENT_DETAIL_TABS } from '@/object-core/agents/constants/CoreAgentDetailTabs';
@@ -115,16 +107,6 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
       title: t`Role`,
       Icon: IconLock,
     },
-    {
-      id: CORE_AGENT_DETAIL_TABS.TABS_IDS.EVALS,
-      title: t`Evals`,
-      Icon: IconListCheck,
-    },
-    {
-      id: CORE_AGENT_DETAIL_TABS.TABS_IDS.LOGS,
-      title: t`Logs`,
-      Icon: IconTerminal,
-    },
   ];
 
   const title = agent.label;
@@ -133,12 +115,8 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const isRoleTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.ROLE;
   const isSettingsTab =
     activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS;
-  const isEvalsTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.EVALS;
-  const isLogsTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.LOGS;
 
   const isFormDisabled = isReadonlyMode || !agent.isCustom;
-  const isEvalsDisabled =
-    process.env.NODE_ENV === 'development' ? isReadonlyMode : isFormDisabled;
 
   return (
     <>
@@ -177,17 +155,6 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
                   agent={agent}
                 />
               )}
-              {isEvalsTab && (
-                <CoreAgentEvalsTab
-                  agentId={agentId}
-                  evaluationInputs={formValues.evaluationInputs}
-                  onEvaluationInputsChange={(inputs) =>
-                    handleFieldChange('evaluationInputs', inputs)
-                  }
-                  disabled={isEvalsDisabled}
-                />
-              )}
-              {isLogsTab && <CoreAgentLogsTab agentId={agentId} />}
             </StyledContentContainer>
           </Section.Root>
         </SettingsPageContainer>

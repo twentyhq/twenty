@@ -183,31 +183,4 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
-  evaluations: {
-    ...createStandardRelationFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'evaluations',
-        type: FieldMetadataType.RELATION,
-        label: i18nLabel(
-          msg({ message: 'Evaluations', context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({ message: 'Evaluations', context: 'fieldMetadata.description' }),
-        ),
-        icon: 'IconRelationOneToMany',
-        isUIEditable: false,
-        isNullable: true,
-        targetObjectName: 'agentTurnEvaluation',
-        targetFieldName: 'turn',
-        morphId: null,
-        settings: {
-          relationType: RelationType.ONE_TO_MANY,
-          joinColumnName: null,
-        },
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
 });

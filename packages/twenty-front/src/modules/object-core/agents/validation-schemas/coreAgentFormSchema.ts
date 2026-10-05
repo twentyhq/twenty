@@ -33,7 +33,6 @@ export const coreAgentFormSchema = z.object({
       schema: z.custom<AgentResponseSchema>().optional(),
     })
     .optional(),
-  evaluationInputs: z.array(z.string()).default([]),
 });
 
 export type CoreAgentFormValues = z.infer<typeof coreAgentFormSchema>;
