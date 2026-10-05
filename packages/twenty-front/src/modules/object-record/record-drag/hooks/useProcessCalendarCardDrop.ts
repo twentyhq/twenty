@@ -17,7 +17,6 @@ import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-recor
 import { Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
 
 export const useProcessCalendarCardDrop = () => {
   const store = useStore();
@@ -40,20 +39,15 @@ export const useProcessCalendarCardDrop = () => {
       sourceDate,
       destinationDate,
       destinationIndex,
-      selectedRecordIds,
+      draggedRecordIds,
     }: {
       recordId: string;
       sourceDate: string;
       destinationDate: string;
       destinationIndex: number;
-      selectedRecordIds: string[];
+      draggedRecordIds: string[];
     }) => {
       if (!recordIndexCalendarFieldMetadataId) return;
-
-      const dragOperationType = getDragOperationType({
-        draggedRecordId: recordId,
-        selectedRecordIds,
-      });
 
       const destinationPlainDate = Temporal.PlainDate.from(destinationDate);
       const sourcePlainDate = Temporal.PlainDate.from(sourceDate);
@@ -127,10 +121,7 @@ export const useProcessCalendarCardDrop = () => {
 
       const dayOffset = sourcePlainDate.until(destinationPlainDate).days;
 
-      const recordIdsToShift =
-        dragOperationType === 'single' ? [recordId] : selectedRecordIds;
-
-      for (const idToUpdate of recordIdsToShift) {
+      for (const idToUpdate of draggedRecordIds) {
         const recordToShift = store.get(
           recordStoreFamilyState.atomFamily(idToUpdate),
         );

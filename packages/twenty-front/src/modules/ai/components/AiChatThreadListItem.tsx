@@ -1,17 +1,18 @@
 import { styled } from '@linaria/react';
+import { type MouseEvent, useId } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { IconHandClick } from 'twenty-ui/icon';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
@@ -81,10 +82,30 @@ const StyledThreadTitle = styled.div<{ $isUnread: boolean }>`
   white-space: nowrap;
 `;
 
-const StyledThreadPreview = styled.div`
+const StyledThreadSubtitle = styled.div`
+  align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
   font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
   min-height: ${themeCssVariables.spacing[4]};
+  min-width: 0;
+`;
+
+const StyledNeedsInput = styled.div<{ $isUnread: boolean }>`
+  align-items: center;
+  color: ${({ $isUnread }) =>
+    $isUnread
+      ? themeCssVariables.color.blue
+      : themeCssVariables.font.color.tertiary};
+  display: flex;
+  flex-shrink: 0;
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledThreadPreview = styled.div`
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -119,21 +140,27 @@ const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
 
 type AiChatThreadListItemProps = {
   thread: AgentChatThreadRecord;
-  surface: AiChatThreadActionsSurface;
   isSelected: boolean;
-  onClick: (thread: AgentChatThreadRecord) => void;
+  onClick: (
+    thread: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) => void;
+  onContextMenu?: (
+    thread: AgentChatThreadRecord,
+    event: MouseEvent<HTMLDivElement>,
+  ) => void;
   onDetach?: () => void;
 };
 
-// Keyed per surface; every record page uses RECORD_PAGE, so two record pages on screen share it.
 export const AiChatThreadListItem = ({
   thread,
-  surface,
   isSelected,
   onClick,
+  onContextMenu,
   onDetach,
 }: AiChatThreadListItemProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const {
     isRenaming,
     draftTitle,
@@ -153,12 +180,16 @@ export const AiChatThreadListItem = ({
   );
   const threadMembers = useAgentChatThreadMembers(thread);
   const isShownAsUnread = !isDefined(thread.deletedAt) && isUnread;
+  const isAwaitingAnswer =
+    !isDefined(thread.deletedAt) && isDefined(thread.pendingQuestionMessageId);
   const previewText = getAgentChatThreadPreviewText({
     thread,
     workspaceMembers: currentWorkspaceMembers,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
   });
-  const displayTitle = thread.title ?? t`Untitled`;
+  const displayTitle = isNonEmptyString(thread.title)
+    ? thread.title
+    : t`Untitled`;
   const { formatAgentChatThreadDay } = useFormatAgentChatThreadDate();
 
   const getActivityTimeLabel = () => {
@@ -181,10 +212,9 @@ export const AiChatThreadListItem = ({
         );
     }
   };
-  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
-    threadId: thread.id,
-    surface,
-  });
+  const actionsInstanceId = useId();
+  const itemMenuDropdownId =
+    getCommandMenuDropdownIdFromCommandMenuId(actionsInstanceId);
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     itemMenuDropdownId,
@@ -192,9 +222,22 @@ export const AiChatThreadListItem = ({
   return (
     <StyledThreadItem
       $isSelected={isSelected}
-      onClick={() => {
+      data-selectable-id={thread.id}
+      data-select-disable={isRenaming || undefined}
+      onMouseDown={(event) => {
+        // Shift+click selects a range of chats, not the text in between
+        if (event.shiftKey && !isRenaming) {
+          event.preventDefault();
+        }
+      }}
+      onClick={(event) => {
         if (!isRenaming) {
-          onClick(thread);
+          onClick(thread, event);
+        }
+      }}
+      onContextMenu={(event) => {
+        if (!isRenaming) {
+          onContextMenu?.(thread, event);
         }
       }}
     >
@@ -243,7 +286,18 @@ export const AiChatThreadListItem = ({
             </StyledActivityTime>
           </StyledThreadHeading>
         )}
-        <StyledThreadPreview>{previewText}</StyledThreadPreview>
+        <StyledThreadSubtitle>
+          {isAwaitingAnswer && (
+            <StyledNeedsInput $isUnread={isShownAsUnread}>
+              <IconHandClick size={theme.icon.size.sm} />
+              {t`Needs input`}
+            </StyledNeedsInput>
+          )}
+          {isAwaitingAnswer && isNonEmptyString(previewText) && (
+            <span aria-hidden>·</span>
+          )}
+          <StyledThreadPreview>{previewText}</StyledThreadPreview>
+        </StyledThreadSubtitle>
       </StyledThreadContent>
       <StyledMenuTrigger
         $isDropdownOpen={isDropdownOpen}
@@ -251,7 +305,7 @@ export const AiChatThreadListItem = ({
       >
         <AiChatThreadActionsDropdown
           thread={thread}
-          surface={surface}
+          instanceId={actionsInstanceId}
           onRenameRequested={startRename}
           onDetach={onDetach}
         />

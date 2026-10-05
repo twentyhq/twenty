@@ -342,7 +342,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           builtStep: {
             ...baseStep,
-            name: 'Send Chat Message',
+            name: 'Send to Inbox',
             type: WorkflowActionType.SEND_CHAT_MESSAGE,
             settings: {
               ...BASE_STEP_DEFINITION,
@@ -579,7 +579,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               'You are a helpful AI assistant. Complete the task based on the workflow context.',
             modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
             responseFormat: { type: 'text' },
-            isCustom: true,
+            isSystem: true,
           },
           workspaceId,
         );
@@ -946,7 +946,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             modelId: existingAgent.modelId,
             responseFormat: existingAgent.responseFormat ?? undefined,
             modelConfiguration: existingAgent.modelConfiguration ?? undefined,
-            isCustom: true,
+            isSystem: true,
           },
           workspaceId,
         );

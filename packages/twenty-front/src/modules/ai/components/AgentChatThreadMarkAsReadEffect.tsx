@@ -76,7 +76,6 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     const { isUnread } = getAgentChatThreadInboxStatus({
       lastActivityAt,
       participant,
-      now: new Date(),
     });
     const visit = store.get(agentChatThreadVisitState.atom);
 

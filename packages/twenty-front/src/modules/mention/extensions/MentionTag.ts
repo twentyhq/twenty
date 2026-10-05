@@ -43,6 +43,10 @@ export const MentionTag = Node.create({
       default: false,
       rendered: false,
     },
+    shouldAddAsParticipant: {
+      default: false,
+      rendered: false,
+    },
   }),
 
   renderHTML: ({ node, HTMLAttributes }) => {

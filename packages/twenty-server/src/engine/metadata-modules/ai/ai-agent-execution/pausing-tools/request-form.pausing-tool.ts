@@ -4,10 +4,50 @@ import {
   type RequestFormToolResult,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { workflowFormFieldSchema } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { definePausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/define-pausing-tool.util';
-import { requestFormCallSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
+
+const requestFormFieldSchema = workflowFormFieldSchema.pick({
+  name: true,
+  label: true,
+  type: true,
+  placeholder: true,
+  settings: true,
+});
+
+// form steps used to issue this call with every field, so recorded calls skip the agent's limits
+const requestFormCallSchema = z.object({
+  fields: z.array(requestFormFieldSchema),
+});
+
+export const requestFormInputSchema = z.object({
+  fields: z
+    .array(requestFormFieldSchema)
+    .min(1)
+    .max(10)
+    .refine(
+      (fields) =>
+        new Set(fields.map((field) => field.name)).size === fields.length,
+      { message: 'Each field needs its own name.' },
+    )
+    .describe(
+      'The fields to fill in, in order. Each name is unique and keys its value in the result. ' +
+        'A RECORD field needs settings.objectName, the singular name of the object to pick from (e.g. "company"). ' +
+        'A SELECT or MULTI_SELECT field needs settings.selectedFieldId, the id of an existing select field whose options it offers.',
+    ),
+});
+
+export const buildRequestFormPendingOutput = (): {
+  success: true;
+  message: string;
+  result: RequestFormToolResult;
+} => ({
+  success: true,
+  message: 'Form presented to the user; awaiting their answer.',
+  result: { status: 'pending' },
+});
 
 type RequestFormToolOutput = Record<string, unknown>;
 

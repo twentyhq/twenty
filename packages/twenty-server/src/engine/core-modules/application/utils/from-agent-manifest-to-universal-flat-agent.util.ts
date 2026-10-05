@@ -28,6 +28,7 @@ export const fromAgentManifestToUniversalFlatAgent = ({
     modelConfiguration: null,
     evaluationInputs: [],
     isCustom: false,
+    isSystem: true,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

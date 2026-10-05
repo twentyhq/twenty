@@ -50,6 +50,7 @@ import {
   FieldMetadataType,
   NavigationMenuItemType,
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   RelationOnDeleteAction,
   RelationType,
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -58,6 +59,7 @@ import {
   ViewFilterOperand,
   ViewSortDirection,
   ViewType,
+  WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { version as getUuidVersion, v4 } from 'uuid';
@@ -625,7 +627,7 @@ const projectIndexViewField: StandaloneViewFieldManifest = {
 const ticketPageLayout: PageLayoutManifest = {
   universalIdentifier: TICKET_PAGE_LAYOUT_ID,
   name: 'Ticket page',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: TICKET_OBJECT_ID,
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier:
     TICKET_PAGE_OVERVIEW_TAB_ID,
@@ -640,7 +642,7 @@ const ticketPageLayout: PageLayoutManifest = {
         {
           universalIdentifier: TICKET_PAGE_FIELDS_WIDGET_ID,
           title: 'Fields',
-          type: 'FIELDS',
+          type: WidgetType.FIELDS,
           objectUniversalIdentifier: TICKET_OBJECT_ID,
           position: {
             layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
@@ -660,7 +662,7 @@ const ticketPageLayout: PageLayoutManifest = {
 const ticketBoardLayout: PageLayoutManifest = {
   universalIdentifier: TICKET_BOARD_LAYOUT_ID,
   name: 'Ticket board',
-  type: 'STANDALONE_PAGE',
+  type: PageLayoutType.STANDALONE_PAGE,
   tabs: [
     {
       universalIdentifier: TICKET_BOARD_TAB_ID,
@@ -671,7 +673,7 @@ const ticketBoardLayout: PageLayoutManifest = {
         {
           universalIdentifier: TICKET_BOARD_DOCS_WIDGET_ID,
           title: 'Docs',
-          type: 'IFRAME',
+          type: WidgetType.IFRAME,
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -705,7 +707,7 @@ const ticketRecordPageExtraTab: PageLayoutTabManifest = {
     {
       universalIdentifier: TICKET_RECORD_PAGE_EXTRA_NOTES_WIDGET_ID,
       title: 'Notes',
-      type: 'NOTES',
+      type: WidgetType.NOTES,
       objectUniversalIdentifier: TICKET_OBJECT_ID,
       position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
       configuration: { configurationType: 'NOTES' },
@@ -733,7 +735,7 @@ const ticketRecordPageHomeDocsWidget: StandalonePageLayoutWidgetManifest = {
     title: 'Home',
   }),
   title: 'Docs',
-  type: 'IFRAME',
+  type: WidgetType.IFRAME,
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1 },
   configuration: {
     configurationType: 'IFRAME',

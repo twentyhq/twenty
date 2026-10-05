@@ -73,6 +73,7 @@ export const RecordBoardCardContextProvider = ({
         group={group}
         type={RECORD_BOARD_CARD_DND_TYPE}
         accept={RECORD_BOARD_CARD_DND_TYPE}
+        data={{ recordId }}
         disabled={isRecordBoardDropProcessing || isRecordBoardCellsNonEditable}
       >
         <StyledDraggableContainer

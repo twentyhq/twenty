@@ -1,3 +1,6 @@
+import { createCurrencyPickerTest } from '@/__stories__/twenty-ui-gallery/utils/createCurrencyPickerTest';
+import { createPhoneCountryPickerOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createPhoneCountryPickerOpenTest';
+import { phoneCountryPickerTriggerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTriggerTest';
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
 import { imageInputTest } from '@/__stories__/twenty-ui-gallery/utils/imageInputTest';
 import { overflowingListEventIsolationTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListEventIsolationTest';
@@ -364,6 +367,30 @@ export const DropdownPreact: Story = createGalleryStory({
   play: dropdownPreactSandboxFailureTest,
 });
 
+export const PhoneCountryPickerTriggersReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-phone-country-picker',
+  runtime: 'react',
+  play: phoneCountryPickerTriggerTest,
+});
+
+export const PhoneCountryPickerTriggersPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-phone-country-picker',
+  runtime: 'preact',
+  play: phoneCountryPickerTriggerTest,
+});
+
+export const PhoneCountryPickerReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-phone-country-picker',
+  runtime: 'react',
+  play: createPhoneCountryPickerOpenTest('react'),
+});
+
+export const PhoneCountryPickerPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-phone-country-picker',
+  runtime: 'preact',
+  play: createPhoneCountryPickerOpenTest('preact'),
+});
+
 export const SelectReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-select',
   runtime: 'react',
@@ -630,4 +657,16 @@ export const ImageInputPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-image-input',
   runtime: 'preact',
   play: imageInputTest,
+});
+
+export const CurrencyPickerReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-currency-picker',
+  runtime: 'react',
+  play: createCurrencyPickerTest('react'),
+});
+
+export const CurrencyPickerPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-currency-picker',
+  runtime: 'preact',
+  play: createCurrencyPickerTest('preact'),
 });

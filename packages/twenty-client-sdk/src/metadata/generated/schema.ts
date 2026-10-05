@@ -62,6 +62,7 @@ export interface Agent {
     responseFormat?: Scalars['JSON']
     roleId?: Scalars['UUID']
     isCustom: Scalars['Boolean']
+    isSystem: Scalars['Boolean']
     applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -818,6 +819,24 @@ export interface BillingCustomer {
     __typename: 'BillingCustomer'
 }
 
+export interface EnterpriseLicenseInfoDTO {
+    isValid: Scalars['Boolean']
+    licensee?: Scalars['String']
+    expiresAt?: Scalars['DateTime']
+    subscriptionId?: Scalars['String']
+    __typename: 'EnterpriseLicenseInfoDTO'
+}
+
+export interface EnterpriseSubscriptionStatusDTO {
+    status: Scalars['String']
+    licensee?: Scalars['String']
+    expiresAt?: Scalars['DateTime']
+    cancelAt?: Scalars['DateTime']
+    currentPeriodEnd?: Scalars['DateTime']
+    isCancellationScheduled: Scalars['Boolean']
+    __typename: 'EnterpriseSubscriptionStatusDTO'
+}
+
 export interface SdkClientChecksums {
     core?: Scalars['String']
     metadata: Scalars['String']
@@ -1248,24 +1267,6 @@ export interface LogicFunctionExecutionResult {
 
 /** Status of the logic function execution */
 export type LogicFunctionExecutionStatus = 'IDLE' | 'SUCCESS' | 'ERROR'
-
-export interface EnterpriseLicenseInfoDTO {
-    isValid: Scalars['Boolean']
-    licensee?: Scalars['String']
-    expiresAt?: Scalars['DateTime']
-    subscriptionId?: Scalars['String']
-    __typename: 'EnterpriseLicenseInfoDTO'
-}
-
-export interface EnterpriseSubscriptionStatusDTO {
-    status: Scalars['String']
-    licensee?: Scalars['String']
-    expiresAt?: Scalars['DateTime']
-    cancelAt?: Scalars['DateTime']
-    currentPeriodEnd?: Scalars['DateTime']
-    isCancellationScheduled: Scalars['Boolean']
-    __typename: 'EnterpriseSubscriptionStatusDTO'
-}
 
 export interface UsageQuotaDefinition {
     resourceType: UsageResourceType
@@ -1706,7 +1707,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
+export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -2548,38 +2549,6 @@ export interface ApplicationAuthorization {
     __typename: 'ApplicationAuthorization'
 }
 
-export interface ApplicationExportApplication {
-    universalIdentifier: Scalars['String']
-    displayName: Scalars['String']
-    sourceType: ApplicationRegistrationSourceType
-    __typename: 'ApplicationExportApplication'
-}
-
-export interface ApplicationExportCoverageEntry {
-    metadataName: Scalars['String']
-    universalIdentifier: Scalars['String']
-    status: ApplicationExportCoverageStatus
-    reason?: Scalars['String']
-    __typename: 'ApplicationExportCoverageEntry'
-}
-
-export type ApplicationExportCoverageStatus = 'EXPORTED' | 'ENGINE_DERIVED' | 'EXCLUDED' | 'UNSUPPORTED' | 'FOREIGN_OWNED'
-
-export interface ApplicationExportFile {
-    folder: Scalars['String']
-    path: Scalars['String']
-    content: Scalars['String']
-    __typename: 'ApplicationExportFile'
-}
-
-export interface ApplicationExport {
-    application: ApplicationExportApplication
-    manifest: Scalars['JSON']
-    coverage: ApplicationExportCoverageEntry[]
-    files: ApplicationExportFile[]
-    __typename: 'ApplicationExport'
-}
-
 export interface File {
     id: Scalars['UUID']
     path: Scalars['String']
@@ -2635,6 +2604,38 @@ export interface WorkspaceMigration {
     applicationUniversalIdentifier: Scalars['String']
     actions: Scalars['JSON']
     __typename: 'WorkspaceMigration'
+}
+
+export interface ApplicationExportApplication {
+    universalIdentifier: Scalars['String']
+    displayName: Scalars['String']
+    sourceType: ApplicationRegistrationSourceType
+    __typename: 'ApplicationExportApplication'
+}
+
+export interface ApplicationExportCoverageEntry {
+    metadataName: Scalars['String']
+    universalIdentifier: Scalars['String']
+    status: ApplicationExportCoverageStatus
+    reason?: Scalars['String']
+    __typename: 'ApplicationExportCoverageEntry'
+}
+
+export type ApplicationExportCoverageStatus = 'EXPORTED' | 'ENGINE_DERIVED' | 'EXCLUDED' | 'UNSUPPORTED' | 'FOREIGN_OWNED'
+
+export interface ApplicationExportFile {
+    folder: Scalars['String']
+    path: Scalars['String']
+    content: Scalars['String']
+    __typename: 'ApplicationExportFile'
+}
+
+export interface ApplicationExport {
+    application: ApplicationExportApplication
+    manifest: Scalars['JSON']
+    coverage: ApplicationExportCoverageEntry[]
+    files: ApplicationExportFile[]
+    __typename: 'ApplicationExport'
 }
 
 export interface PublicDomain {
@@ -2858,6 +2859,32 @@ export interface ImapSmtpCaldavConnectionSuccess {
     __typename: 'ImapSmtpCaldavConnectionSuccess'
 }
 
+export interface Webhook {
+    id: Scalars['UUID']
+    targetUrl: Scalars['String']
+    operations: Scalars['String'][]
+    description?: Scalars['String']
+    secret: Scalars['String']
+    applicationId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    deletedAt?: Scalars['DateTime']
+    __typename: 'Webhook'
+}
+
+export interface ToolIndexEntry {
+    name: Scalars['String']
+    label: Scalars['String']
+    description: Scalars['String']
+    category: Scalars['String']
+    objectName?: Scalars['String']
+    icon?: Scalars['String']
+    widgetName?: Scalars['String']
+    frontComponentId?: Scalars['String']
+    inputSchema?: Scalars['JSON']
+    __typename: 'ToolIndexEntry'
+}
+
 export interface AgentMessagePart {
     id: Scalars['UUID']
     messageId: Scalars['UUID']
@@ -2872,7 +2899,6 @@ export interface AgentMessagePart {
     state?: Scalars['String']
     providerExecuted?: Scalars['Boolean']
     errorMessage?: Scalars['String']
-    errorDetails?: Scalars['JSON']
     sourceUrlSourceId?: Scalars['String']
     sourceUrlUrl?: Scalars['String']
     sourceUrlTitle?: Scalars['String']
@@ -2903,36 +2929,11 @@ export interface AgentMessage {
     __typename: 'AgentMessage'
 }
 
-export interface Webhook {
-    id: Scalars['UUID']
-    targetUrl: Scalars['String']
-    operations: Scalars['String'][]
-    description?: Scalars['String']
-    secret: Scalars['String']
-    applicationId: Scalars['UUID']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
-    __typename: 'Webhook'
-}
-
-export interface ToolIndexEntry {
-    name: Scalars['String']
-    label: Scalars['String']
-    description: Scalars['String']
-    category: Scalars['String']
-    objectName?: Scalars['String']
-    icon?: Scalars['String']
-    widgetName?: Scalars['String']
-    frontComponentId?: Scalars['String']
-    inputSchema?: Scalars['JSON']
-    __typename: 'ToolIndexEntry'
-}
-
 export interface RunAgentResult {
     result?: Scalars['JSON']
     error?: Scalars['String']
     success: Scalars['Boolean']
+    threadId?: Scalars['UUID']
     __typename: 'RunAgentResult'
 }
 
@@ -3096,10 +3097,12 @@ export interface SendChatMessageResult {
 }
 
 export interface AgentChatThreadParticipant {
+    id: Scalars['UUID']
     threadId: Scalars['UUID']
     lastReadAt?: Scalars['DateTime']
     archivedAt?: Scalars['DateTime']
     snoozedUntil?: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
     __typename: 'AgentChatThreadParticipant'
 }
 
@@ -3487,7 +3490,6 @@ export interface Query {
     chatMessages: AgentMessage[]
     chatStreamCatchupChunks: ChatStreamCatchupChunks
     getAiSystemPromptPreview: AiSystemPromptPreview
-    myAgentChatThreadParticipants: AgentChatThreadParticipant[]
     skills: Skill[]
     skill?: Skill
     agentTurns: AgentTurn[]
@@ -3706,10 +3708,10 @@ export interface Mutation {
     createEmailingDomain: EmailingDomain
     deleteEmailingDomain: Scalars['Boolean']
     verifyEmailingDomain: EmailingDomain
-    runAgent: RunAgentResult
     createWebhook: Webhook
     updateWebhook: Webhook
     deleteWebhook: Webhook
+    runAgent: RunAgentResult
     updateMessageFolder: MessageFolder
     updateMessageFolders: MessageFolder[]
     updateCalendarChannel: CalendarChannel
@@ -3729,6 +3731,7 @@ export interface Mutation {
     archiveAgentChatThread: AgentChatThreadParticipant
     snoozeAgentChatThread: AgentChatThreadParticipant
     moveAgentChatThreadToInbox: AgentChatThreadParticipant
+    addAgentChatThreadParticipants: Scalars['UUID'][]
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     sendInboxMessage: SendInboxMessageResult
     createSkill: Skill
@@ -3876,6 +3879,7 @@ export interface AgentGenqlSelection{
     responseFormat?: boolean | number
     roleId?: boolean | number
     isCustom?: boolean | number
+    isSystem?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -4628,6 +4632,26 @@ export interface BillingCustomerGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface EnterpriseLicenseInfoDTOGenqlSelection{
+    isValid?: boolean | number
+    licensee?: boolean | number
+    expiresAt?: boolean | number
+    subscriptionId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
+    status?: boolean | number
+    licensee?: boolean | number
+    expiresAt?: boolean | number
+    cancelAt?: boolean | number
+    currentPeriodEnd?: boolean | number
+    isCancellationScheduled?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface SdkClientChecksumsGenqlSelection{
     core?: boolean | number
     metadata?: boolean | number
@@ -5091,26 +5115,6 @@ export interface LogicFunctionExecutionResultGenqlSelection{
     status?: boolean | number
     /** Execution error in JSON format */
     error?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface EnterpriseLicenseInfoDTOGenqlSelection{
-    isValid?: boolean | number
-    licensee?: boolean | number
-    expiresAt?: boolean | number
-    subscriptionId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
-    status?: boolean | number
-    licensee?: boolean | number
-    expiresAt?: boolean | number
-    cancelAt?: boolean | number
-    currentPeriodEnd?: boolean | number
-    isCancellationScheduled?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6468,40 +6472,6 @@ export interface ApplicationAuthorizationGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ApplicationExportApplicationGenqlSelection{
-    universalIdentifier?: boolean | number
-    displayName?: boolean | number
-    sourceType?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationExportCoverageEntryGenqlSelection{
-    metadataName?: boolean | number
-    universalIdentifier?: boolean | number
-    status?: boolean | number
-    reason?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationExportFileGenqlSelection{
-    folder?: boolean | number
-    path?: boolean | number
-    content?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationExportGenqlSelection{
-    application?: ApplicationExportApplicationGenqlSelection
-    manifest?: boolean | number
-    coverage?: ApplicationExportCoverageEntryGenqlSelection
-    files?: ApplicationExportFileGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface FileGenqlSelection{
     id?: boolean | number
     path?: boolean | number
@@ -6561,6 +6531,40 @@ export interface DevelopmentApplicationGenqlSelection{
 export interface WorkspaceMigrationGenqlSelection{
     applicationUniversalIdentifier?: boolean | number
     actions?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationExportApplicationGenqlSelection{
+    universalIdentifier?: boolean | number
+    displayName?: boolean | number
+    sourceType?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationExportCoverageEntryGenqlSelection{
+    metadataName?: boolean | number
+    universalIdentifier?: boolean | number
+    status?: boolean | number
+    reason?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationExportFileGenqlSelection{
+    folder?: boolean | number
+    path?: boolean | number
+    content?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationExportGenqlSelection{
+    application?: ApplicationExportApplicationGenqlSelection
+    manifest?: boolean | number
+    coverage?: ApplicationExportCoverageEntryGenqlSelection
+    files?: ApplicationExportFileGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6782,6 +6786,34 @@ export interface ImapSmtpCaldavConnectionSuccessGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface WebhookGenqlSelection{
+    id?: boolean | number
+    targetUrl?: boolean | number
+    operations?: boolean | number
+    description?: boolean | number
+    secret?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    deletedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ToolIndexEntryGenqlSelection{
+    name?: boolean | number
+    label?: boolean | number
+    description?: boolean | number
+    category?: boolean | number
+    objectName?: boolean | number
+    icon?: boolean | number
+    widgetName?: boolean | number
+    frontComponentId?: boolean | number
+    inputSchema?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AgentMessagePartGenqlSelection{
     id?: boolean | number
     messageId?: boolean | number
@@ -6796,7 +6828,6 @@ export interface AgentMessagePartGenqlSelection{
     state?: boolean | number
     providerExecuted?: boolean | number
     errorMessage?: boolean | number
-    errorDetails?: boolean | number
     sourceUrlSourceId?: boolean | number
     sourceUrlUrl?: boolean | number
     sourceUrlTitle?: boolean | number
@@ -6829,38 +6860,11 @@ export interface AgentMessageGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface WebhookGenqlSelection{
-    id?: boolean | number
-    targetUrl?: boolean | number
-    operations?: boolean | number
-    description?: boolean | number
-    secret?: boolean | number
-    applicationId?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    deletedAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ToolIndexEntryGenqlSelection{
-    name?: boolean | number
-    label?: boolean | number
-    description?: boolean | number
-    category?: boolean | number
-    objectName?: boolean | number
-    icon?: boolean | number
-    widgetName?: boolean | number
-    frontComponentId?: boolean | number
-    inputSchema?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface RunAgentResultGenqlSelection{
     result?: boolean | number
     error?: boolean | number
     success?: boolean | number
+    threadId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7043,10 +7047,12 @@ export interface SendChatMessageResultGenqlSelection{
 }
 
 export interface AgentChatThreadParticipantGenqlSelection{
+    id?: boolean | number
     threadId?: boolean | number
     lastReadAt?: boolean | number
     archivedAt?: boolean | number
     snoozedUntil?: boolean | number
+    updatedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7452,7 +7458,6 @@ export interface QueryGenqlSelection{
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
-    myAgentChatThreadParticipants?: AgentChatThreadParticipantGenqlSelection
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
@@ -7710,10 +7715,10 @@ export interface MutationGenqlSelection{
     createEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {input: CreateEmailingDomainInput} })
     deleteEmailingDomain?: { __args: {id: Scalars['String']} }
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
-    runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
+    runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
     updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
@@ -7733,6 +7738,7 @@ export interface MutationGenqlSelection{
     archiveAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     snoozeAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID'], snoozedUntil: Scalars['DateTime']} })
     moveAgentChatThreadToInbox?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    addAgentChatThreadParticipants?: { __args: {threadId: Scalars['UUID'], workspaceMemberIds: Scalars['UUID'][]} }
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     sendInboxMessage?: (SendInboxMessageResultGenqlSelection & { __args: {input: SendInboxMessageInput} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
@@ -8172,12 +8178,6 @@ export interface AppMessageParticipantInput {role: MessageParticipantRole,handle
 
 export interface CreateEmailingDomainInput {domain: Scalars['String']}
 
-export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),messages?: (RunAgentMessageInput[] | null)}
-
-export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String'],attachments?: (RunAgentMessageAttachmentInput[] | null)}
-
-export interface RunAgentMessageAttachmentInput {fileId: Scalars['UUID'],filename?: (Scalars['String'] | null)}
-
 export interface CreateWebhookInput {id?: (Scalars['UUID'] | null),targetUrl: Scalars['String'],operations: Scalars['String'][],description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
 
 export interface UpdateWebhookInput {
@@ -8187,6 +8187,14 @@ id: Scalars['UUID'],
 update: UpdateWebhookInputUpdates}
 
 export interface UpdateWebhookInputUpdates {targetUrl?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
+
+export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),messages?: (RunAgentMessageInput[] | null),input?: (RunAgentMessageInput[] | null),additionalInstructions?: (Scalars['String'] | null),thread?: (RunAgentThreadInput | null)}
+
+export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String'],attachments?: (RunAgentMessageAttachmentInput[] | null)}
+
+export interface RunAgentMessageAttachmentInput {fileId: Scalars['UUID'],filename?: (Scalars['String'] | null)}
+
+export interface RunAgentThreadInput {key: Scalars['String'],title?: (Scalars['String'] | null)}
 
 export interface UpdateMessageFolderInput {id: Scalars['UUID'],update: UpdateMessageFolderInputUpdates}
 
@@ -8659,6 +8667,22 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const EnterpriseLicenseInfoDTO_possibleTypes: string[] = ['EnterpriseLicenseInfoDTO']
+    export const isEnterpriseLicenseInfoDTO = (obj?: { __typename?: any } | null): obj is EnterpriseLicenseInfoDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseLicenseInfoDTO"')
+      return EnterpriseLicenseInfoDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EnterpriseSubscriptionStatusDTO_possibleTypes: string[] = ['EnterpriseSubscriptionStatusDTO']
+    export const isEnterpriseSubscriptionStatusDTO = (obj?: { __typename?: any } | null): obj is EnterpriseSubscriptionStatusDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
+      return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const SdkClientChecksums_possibleTypes: string[] = ['SdkClientChecksums']
     export const isSdkClientChecksums = (obj?: { __typename?: any } | null): obj is SdkClientChecksums => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSdkClientChecksums"')
@@ -9007,22 +9031,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isLogicFunctionExecutionResult = (obj?: { __typename?: any } | null): obj is LogicFunctionExecutionResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionExecutionResult"')
       return LogicFunctionExecutionResult_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const EnterpriseLicenseInfoDTO_possibleTypes: string[] = ['EnterpriseLicenseInfoDTO']
-    export const isEnterpriseLicenseInfoDTO = (obj?: { __typename?: any } | null): obj is EnterpriseLicenseInfoDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseLicenseInfoDTO"')
-      return EnterpriseLicenseInfoDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const EnterpriseSubscriptionStatusDTO_possibleTypes: string[] = ['EnterpriseSubscriptionStatusDTO']
-    export const isEnterpriseSubscriptionStatusDTO = (obj?: { __typename?: any } | null): obj is EnterpriseSubscriptionStatusDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
-      return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10099,38 +10107,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
-    const ApplicationExportApplication_possibleTypes: string[] = ['ApplicationExportApplication']
-    export const isApplicationExportApplication = (obj?: { __typename?: any } | null): obj is ApplicationExportApplication => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportApplication"')
-      return ApplicationExportApplication_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationExportCoverageEntry_possibleTypes: string[] = ['ApplicationExportCoverageEntry']
-    export const isApplicationExportCoverageEntry = (obj?: { __typename?: any } | null): obj is ApplicationExportCoverageEntry => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportCoverageEntry"')
-      return ApplicationExportCoverageEntry_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationExportFile_possibleTypes: string[] = ['ApplicationExportFile']
-    export const isApplicationExportFile = (obj?: { __typename?: any } | null): obj is ApplicationExportFile => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportFile"')
-      return ApplicationExportFile_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationExport_possibleTypes: string[] = ['ApplicationExport']
-    export const isApplicationExport = (obj?: { __typename?: any } | null): obj is ApplicationExport => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExport"')
-      return ApplicationExport_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const File_possibleTypes: string[] = ['File']
     export const isFile = (obj?: { __typename?: any } | null): obj is File => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFile"')
@@ -10191,6 +10167,38 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isWorkspaceMigration = (obj?: { __typename?: any } | null): obj is WorkspaceMigration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMigration"')
       return WorkspaceMigration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExportApplication_possibleTypes: string[] = ['ApplicationExportApplication']
+    export const isApplicationExportApplication = (obj?: { __typename?: any } | null): obj is ApplicationExportApplication => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportApplication"')
+      return ApplicationExportApplication_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExportCoverageEntry_possibleTypes: string[] = ['ApplicationExportCoverageEntry']
+    export const isApplicationExportCoverageEntry = (obj?: { __typename?: any } | null): obj is ApplicationExportCoverageEntry => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportCoverageEntry"')
+      return ApplicationExportCoverageEntry_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExportFile_possibleTypes: string[] = ['ApplicationExportFile']
+    export const isApplicationExportFile = (obj?: { __typename?: any } | null): obj is ApplicationExportFile => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExportFile"')
+      return ApplicationExportFile_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationExport_possibleTypes: string[] = ['ApplicationExport']
+    export const isApplicationExport = (obj?: { __typename?: any } | null): obj is ApplicationExport => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationExport"')
+      return ApplicationExport_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10371,22 +10379,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
-    const AgentMessagePart_possibleTypes: string[] = ['AgentMessagePart']
-    export const isAgentMessagePart = (obj?: { __typename?: any } | null): obj is AgentMessagePart => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessagePart"')
-      return AgentMessagePart_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AgentMessage_possibleTypes: string[] = ['AgentMessage']
-    export const isAgentMessage = (obj?: { __typename?: any } | null): obj is AgentMessage => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessage"')
-      return AgentMessage_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const Webhook_possibleTypes: string[] = ['Webhook']
     export const isWebhook = (obj?: { __typename?: any } | null): obj is Webhook => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWebhook"')
@@ -10399,6 +10391,22 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isToolIndexEntry = (obj?: { __typename?: any } | null): obj is ToolIndexEntry => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isToolIndexEntry"')
       return ToolIndexEntry_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentMessagePart_possibleTypes: string[] = ['AgentMessagePart']
+    export const isAgentMessagePart = (obj?: { __typename?: any } | null): obj is AgentMessagePart => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessagePart"')
+      return AgentMessagePart_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentMessage_possibleTypes: string[] = ['AgentMessage']
+    export const isAgentMessage = (obj?: { __typename?: any } | null): obj is AgentMessage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessage"')
+      return AgentMessage_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11410,7 +11418,9 @@ export const enumFeatureFlagKey = {
    IS_CONVERSATIONS_TAB_ENABLED: 'IS_CONVERSATIONS_TAB_ENABLED' as const,
    IS_VALIDATION_RULES_ENABLED: 'IS_VALIDATION_RULES_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
-   IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED: 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' as const
+   IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED: 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' as const,
+   IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED: 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' as const,
+   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED: 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {
@@ -11511,14 +11521,6 @@ export const enumBillingEntitlementKey = {
    USAGE_LIMIT: 'USAGE_LIMIT' as const
 }
 
-export const enumApplicationExportCoverageStatus = {
-   EXPORTED: 'EXPORTED' as const,
-   ENGINE_DERIVED: 'ENGINE_DERIVED' as const,
-   EXCLUDED: 'EXCLUDED' as const,
-   UNSUPPORTED: 'UNSUPPORTED' as const,
-   FOREIGN_OWNED: 'FOREIGN_OWNED' as const
-}
-
 export const enumFileFolder = {
    RecordExport: 'RecordExport' as const,
    CorePicture: 'CorePicture' as const,
@@ -11535,6 +11537,14 @@ export const enumFileFolder = {
    AppTarball: 'AppTarball' as const,
    GeneratedSdkClient: 'GeneratedSdkClient' as const,
    Dpa: 'Dpa' as const
+}
+
+export const enumApplicationExportCoverageStatus = {
+   EXPORTED: 'EXPORTED' as const,
+   ENGINE_DERIVED: 'ENGINE_DERIVED' as const,
+   EXCLUDED: 'EXCLUDED' as const,
+   UNSUPPORTED: 'UNSUPPORTED' as const,
+   FOREIGN_OWNED: 'FOREIGN_OWNED' as const
 }
 
 export const enumEmailingDomainStatus = {
