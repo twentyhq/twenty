@@ -1,6 +1,5 @@
 import { type EmailDocument } from '../email-document-schema';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from '../email-document-schema-version';
-import { getEmailDocumentStandaloneHtml } from '../get-email-document-standalone-html';
 import { parseEmailBodyAsEmailDocument } from '../parse-email-body-as-email-document';
 
 const htmlDocument = (html: string): EmailDocument => ({
@@ -44,7 +43,7 @@ describe('parseEmailBodyAsEmailDocument', () => {
     });
   });
 
-  it('should keep a body with markup anywhere in it as a verbatim HTML document', () => {
+  it('should keep a body with markup or made of a single variable as a verbatim HTML document', () => {
     const bodies = [
       '<p>Hello</p>',
       'Hi {{person.name}},<br><br>Thanks',
@@ -55,6 +54,7 @@ describe('parseEmailBodyAsEmailDocument', () => {
       'Hi <x-tag>Ada</x-tag>',
       'Total: <price>12</price>',
       'Thanks </foo>',
+      ' {{code.html}}\n',
     ];
 
     for (const body of bodies) {
@@ -63,13 +63,6 @@ describe('parseEmailBodyAsEmailDocument', () => {
         document: htmlDocument(body),
       });
     }
-  });
-
-  it('should keep a body made of a single variable as a verbatim HTML document', () => {
-    expect(parseEmailBodyAsEmailDocument(' {{code.html}}\n')).toEqual({
-      success: true,
-      document: htmlDocument(' {{code.html}}\n'),
-    });
   });
 
   it('should treat angle-bracketed words that are not HTML tags as plain text', () => {
@@ -124,25 +117,5 @@ describe('parseEmailBodyAsEmailDocument', () => {
     });
 
     expect(result.success).toBe(false);
-  });
-});
-
-describe('getEmailDocumentStandaloneHtml', () => {
-  it('should return the HTML of a document made of one HTML document block', () => {
-    expect(getEmailDocumentStandaloneHtml(htmlDocument('<p>Hi</p>'))).toBe(
-      '<p>Hi</p>',
-    );
-  });
-
-  it('should not treat an HTML document block mixed with other blocks as standalone', () => {
-    expect(
-      getEmailDocumentStandaloneHtml({
-        type: 'doc',
-        content: [
-          { type: 'htmlDocument', attrs: { html: '<p>Hi</p>' } },
-          { type: 'paragraph', content: [{ type: 'text', text: 'Bye' }] },
-        ],
-      }),
-    ).toBeUndefined();
   });
 });

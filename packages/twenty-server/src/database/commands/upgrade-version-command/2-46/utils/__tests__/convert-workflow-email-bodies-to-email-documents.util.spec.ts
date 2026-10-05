@@ -37,21 +37,6 @@ const canonicalDocument = (content: unknown[]) =>
   });
 
 describe('convertWorkflowEmailBodiesToEmailDocuments', () => {
-  it('should keep a legacy HTML draft body verbatim in an HTML document block', () => {
-    const html = '<p>Hi {{trigger.name}}</p>';
-
-    const { value } = convertWorkflowEmailBodiesToEmailDocuments([
-      emailStep(html, WorkflowActionType.DRAFT_EMAIL),
-    ]);
-
-    expect(value).toEqual([
-      emailStep(
-        canonicalDocument([{ type: 'htmlDocument', attrs: { html } }]),
-        WorkflowActionType.DRAFT_EMAIL,
-      ),
-    ]);
-  });
-
   it('should stamp a versionless document and keep the rest of the step', () => {
     const content = [
       { type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] },
@@ -89,10 +74,10 @@ describe('convertWorkflowEmailBodiesToEmailDocuments', () => {
     expect(value?.[1]).not.toBe(steps[1]);
   });
 
-  it('should change nothing when run a second time', () => {
+  it('should convert send and draft bodies and change nothing when run a second time', () => {
     const { value } = convertWorkflowEmailBodiesToEmailDocuments([
       emailStep('Hello\nWorld'),
-      emailStep('<b>Hi</b>'),
+      emailStep('<b>Hi</b>', WorkflowActionType.DRAFT_EMAIL),
     ]);
 
     expect(value).toEqual([
@@ -112,6 +97,7 @@ describe('convertWorkflowEmailBodiesToEmailDocuments', () => {
         canonicalDocument([
           { type: 'htmlDocument', attrs: { html: '<b>Hi</b>' } },
         ]),
+        WorkflowActionType.DRAFT_EMAIL,
       ),
     ]);
     expect(convertWorkflowEmailBodiesToEmailDocuments(value).hasChanged).toBe(

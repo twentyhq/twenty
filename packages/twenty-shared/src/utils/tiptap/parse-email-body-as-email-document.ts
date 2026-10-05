@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { parseJson } from '@/utils/parseJson';
 import { escapeHtml } from '@/utils/strings/escapeHtml';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+import { isVariableReference } from '@/utils/variable-resolver';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 
 import { convertPlainTextToEmailDocument } from './convert-plain-text-to-email-document';
@@ -61,7 +62,7 @@ const convertStringToEmailDocument = (body: string): EmailDocument => {
     return buildHtmlDocument(body);
   }
 
-  if (VARIABLE_TOKEN_PATTERN.test(body)) {
+  if (isVariableReference(body)) {
     return buildHtmlDocument(convertPlainTextToHtml(body));
   }
 

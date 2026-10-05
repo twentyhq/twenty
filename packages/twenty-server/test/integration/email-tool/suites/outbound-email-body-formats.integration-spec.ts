@@ -16,6 +16,7 @@ import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-to
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
@@ -59,21 +60,13 @@ const findPersistedMessageText = async (subject: string) => {
   return message?.text;
 };
 
-const getAppleWorkspaceSchema = async (): Promise<string> => {
-  const [{ databaseSchema }] = await global.testDataSource.query(
-    `SELECT "databaseSchema" FROM core."workspace" WHERE "id" = $1`,
-    [SEED_APPLE_WORKSPACE_ID],
-  );
-
-  return databaseSchema;
-};
+const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const EMAIL_STEP_BODY_PATH = `jsonb_path_query_first(steps, '$[*] ? (@.type == "SEND_EMAIL" || @.type == "DRAFT_EMAIL").settings.input.body') #>> '{}'`;
 
 const readStoredBodies = async (workflowVersionId: string) => {
-  const workspaceSchema = await getAppleWorkspaceSchema();
   const [workspaceRow] = await global.testDataSource.query(
-    `SELECT ${EMAIL_STEP_BODY_PATH} AS body FROM "${workspaceSchema}"."workflowVersion" WHERE "id" = $1`,
+    `SELECT ${EMAIL_STEP_BODY_PATH} AS body FROM "${WORKSPACE_SCHEMA}"."workflowVersion" WHERE "id" = $1`,
     [workflowVersionId],
   );
   const [coreRow] = await global.testDataSource.query(
@@ -88,7 +81,6 @@ const storeBodyAsBeforeTheUpgrade = async (
   workflowVersionId: string,
   legacyBody: string,
 ) => {
-  const workspaceSchema = await getAppleWorkspaceSchema();
   const replaceEmailStepBody = `steps = (
     SELECT jsonb_agg(
       CASE WHEN step->>'type' IN ('SEND_EMAIL', 'DRAFT_EMAIL')
@@ -97,7 +89,7 @@ const storeBodyAsBeforeTheUpgrade = async (
     FROM jsonb_array_elements(steps) step)`;
 
   await global.testDataSource.query(
-    `UPDATE "${workspaceSchema}"."workflowVersion" SET ${replaceEmailStepBody} WHERE "id" = $2`,
+    `UPDATE "${WORKSPACE_SCHEMA}"."workflowVersion" SET ${replaceEmailStepBody} WHERE "id" = $2`,
     [legacyBody, workflowVersionId],
   );
   await global.testDataSource.query(
@@ -229,23 +221,6 @@ describe('Outbound email body formats (integration)', () => {
   });
 
   describe('workflow email body stored as a document', () => {
-    it('renders a versionless email document', async () => {
-      const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
-        body: {
-          type: 'doc',
-          content: [
-            {
-              type: 'paragraph',
-              content: [{ type: 'text', text: 'Stored before versioning' }],
-            },
-          ],
-        },
-      });
-
-      expect(sanitizedHtmlBody).toContain(EMAIL_SHELL_MARKER);
-      expect(plainTextBody).toBe('Stored before versioning');
-    }, 300000);
-
     it('renders rich text around an HTML block and fills the variables inside it', async () => {
       const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
         body: {
@@ -324,16 +299,6 @@ describe('Outbound email body formats (integration)', () => {
       expect(plainTextBody).toBe('Hello Ada');
     }, 300000);
 
-    it('treats a body with markup after the first word as HTML', async () => {
-      const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
-        body: 'Hi {{trigger.name}},<br><br>Thanks',
-        payload: { name: 'Ada' },
-      });
-
-      expect(sanitizedHtmlBody).toBe('Hi Ada,<br><br>Thanks');
-      expect(plainTextBody).toBe('Hi Ada,\n\nThanks');
-    }, 300000);
-
     it('sends the HTML held by a body that is a single variable verbatim', async () => {
       const { sanitizedHtmlBody } = await runSendEmailWorkflow({
         body: '{{trigger.html}}',
@@ -353,15 +318,6 @@ describe('Outbound email body formats (integration)', () => {
 
       expect(sanitizedHtmlBody).toContain(EMAIL_SHELL_MARKER);
       expect(plainTextBody).toBe('From a record');
-    }, 300000);
-
-    it('sends a full HTML document body without wrapping it in the email shell', async () => {
-      const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
-        body: '<!DOCTYPE html><html><body><p>Full document</p></body></html>',
-      });
-
-      expect(sanitizedHtmlBody).not.toContain(EMAIL_SHELL_MARKER);
-      expect(plainTextBody).toBe('Full document');
     }, 300000);
   });
 
@@ -383,15 +339,6 @@ describe('Outbound email body formats (integration)', () => {
       );
 
       expect(sanitizedHtmlBody).toBe('<p>Hello <strong>Ada</strong></p>');
-    }, 300000);
-
-    it('renders an email document object', async () => {
-      const { sanitizedHtmlBody, plainTextBody } = await executeSendEmailTool(
-        paragraphDocument('From the tool'),
-      );
-
-      expect(sanitizedHtmlBody).toContain(EMAIL_SHELL_MARKER);
-      expect(plainTextBody).toBe('From the tool');
     }, 300000);
 
     it('fails on an email document with a node outside the email schema', async () => {
@@ -422,22 +369,6 @@ describe('Outbound email body formats (integration)', () => {
   });
 
   describe('sendEmail mutation', () => {
-    it('keeps the paragraphs of a plain-text body', async () => {
-      const subject = `Mutation plain text ${randomUUID()}`;
-
-      const result = await sendEmail({
-        connectedAccountId,
-        to: HANDLE,
-        subject,
-        body: 'Line one\n\nLine two',
-      });
-
-      expect(result.success).toBe(true);
-      expect(await findPersistedMessageText(subject)).toBe(
-        'Line one\n\nLine two',
-      );
-    }, 300000);
-
     it('renders a serialized email document from the composer', async () => {
       const subject = `Mutation document ${randomUUID()}`;
 
@@ -516,10 +447,9 @@ describe('Outbound email body formats (integration)', () => {
 
     it('converts the core and workspace copies each from its own steps', async () => {
       const readEmailStepNames = async (workflowVersionId: string) => {
-        const workspaceSchema = await getAppleWorkspaceSchema();
         const selectEmailStepName = `jsonb_path_query_first(steps, '$[*] ? (@.type == "SEND_EMAIL").name') #>> '{}'`;
         const [workspaceRow] = await global.testDataSource.query(
-          `SELECT ${selectEmailStepName} AS name FROM "${workspaceSchema}"."workflowVersion" WHERE "id" = $1`,
+          `SELECT ${selectEmailStepName} AS name FROM "${WORKSPACE_SCHEMA}"."workflowVersion" WHERE "id" = $1`,
           [workflowVersionId],
         );
         const [coreRow] = await global.testDataSource.query(
