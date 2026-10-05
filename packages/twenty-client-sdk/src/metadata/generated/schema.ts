@@ -67,7 +67,6 @@ export interface Agent {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     modelConfiguration?: Scalars['JSON']
-    evaluationInputs: Scalars['String'][]
     __typename: 'Agent'
 }
 
@@ -1714,7 +1713,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED'
+export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -3178,25 +3177,6 @@ export interface RecordExport {
     __typename: 'RecordExport'
 }
 
-export interface AgentTurnEvaluation {
-    id: Scalars['UUID']
-    turnId: Scalars['UUID']
-    score: Scalars['Int']
-    comment?: Scalars['String']
-    createdAt: Scalars['DateTime']
-    __typename: 'AgentTurnEvaluation'
-}
-
-export interface AgentTurn {
-    id: Scalars['UUID']
-    threadId: Scalars['UUID']
-    agentId?: Scalars['UUID']
-    evaluations: AgentTurnEvaluation[]
-    messages: AgentMessage[]
-    createdAt: Scalars['DateTime']
-    __typename: 'AgentTurn'
-}
-
 export interface WorkspaceAiStats {
     conversationsCount: Scalars['Int']
     skillsCount: Scalars['Int']
@@ -3499,7 +3479,6 @@ export interface Query {
     getAiSystemPromptPreview: AiSystemPromptPreview
     skills: Skill[]
     skill?: Skill
-    agentTurns: AgentTurn[]
     validationRules: ValidationRule[]
     timelineActivityTypes: TimelineActivityType[]
     metadataTranslations: MetadataTranslation[]
@@ -3746,8 +3725,6 @@ export interface Mutation {
     deleteSkill: Skill
     activateSkill: Skill
     deactivateSkill: Skill
-    evaluateAgentTurn: AgentTurnEvaluation
-    runEvaluationInput: AgentTurn
     createValidationRule: ValidationRule
     updateValidationRule: ValidationRule
     deleteValidationRule: ValidationRule
@@ -3891,7 +3868,6 @@ export interface AgentGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     modelConfiguration?: boolean | number
-    evaluationInputs?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7142,27 +7118,6 @@ export interface RecordExportGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AgentTurnEvaluationGenqlSelection{
-    id?: boolean | number
-    turnId?: boolean | number
-    score?: boolean | number
-    comment?: boolean | number
-    createdAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AgentTurnGenqlSelection{
-    id?: boolean | number
-    threadId?: boolean | number
-    agentId?: boolean | number
-    evaluations?: AgentTurnEvaluationGenqlSelection
-    messages?: AgentMessageGenqlSelection
-    createdAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface WorkspaceAiStatsGenqlSelection{
     conversationsCount?: boolean | number
     skillsCount?: boolean | number
@@ -7473,7 +7428,6 @@ export interface QueryGenqlSelection{
     getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
-    agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
     validationRules?: (ValidationRuleGenqlSelection & { __args: {objectMetadataId: Scalars['UUID']} })
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
@@ -7759,8 +7713,6 @@ export interface MutationGenqlSelection{
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     activateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     deactivateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
-    evaluateAgentTurn?: (AgentTurnEvaluationGenqlSelection & { __args: {turnId: Scalars['UUID']} })
-    runEvaluationInput?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID'], input: Scalars['String']} })
     createValidationRule?: (ValidationRuleGenqlSelection & { __args: {input: CreateValidationRuleInput} })
     updateValidationRule?: (ValidationRuleGenqlSelection & { __args: {input: UpdateValidationRuleInput} })
     deleteValidationRule?: (ValidationRuleGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -7993,9 +7945,9 @@ viewFieldId?: (Scalars['UUID'] | null),
 /** The id of the field metadata. Used to create a new view field when viewFieldId is not provided. */
 fieldMetadataId?: (Scalars['UUID'] | null),isVisible: Scalars['Boolean'],position: Scalars['Float']}
 
-export interface CreateAgentInput {name?: (Scalars['String'] | null),label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt: Scalars['String'],modelId: Scalars['String'],roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
+export interface CreateAgentInput {name?: (Scalars['String'] | null),label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt: Scalars['String'],modelId: Scalars['String'],roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null)}
 
-export interface UpdateAgentInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
+export interface UpdateAgentInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null)}
 
 export interface CreateOneObjectInput {
 /** The object to create */
@@ -10664,22 +10616,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
-    const AgentTurnEvaluation_possibleTypes: string[] = ['AgentTurnEvaluation']
-    export const isAgentTurnEvaluation = (obj?: { __typename?: any } | null): obj is AgentTurnEvaluation => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentTurnEvaluation"')
-      return AgentTurnEvaluation_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AgentTurn_possibleTypes: string[] = ['AgentTurn']
-    export const isAgentTurn = (obj?: { __typename?: any } | null): obj is AgentTurn => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentTurn"')
-      return AgentTurn_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const WorkspaceAiStats_possibleTypes: string[] = ['WorkspaceAiStats']
     export const isWorkspaceAiStats = (obj?: { __typename?: any } | null): obj is WorkspaceAiStats => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceAiStats"')
@@ -11443,7 +11379,6 @@ export const enumFeatureFlagKey = {
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
    IS_MESSAGE_CAMPAIGN_ENABLED: 'IS_MESSAGE_CAMPAIGN_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
-   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as const,
    IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' as const,
    IS_AI_CHAT_SHARING_DROPDOWN_ENABLED: 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' as const,
    IS_INITIAL_OBJECT_VIEW_ENABLED: 'IS_INITIAL_OBJECT_VIEW_ENABLED' as const,

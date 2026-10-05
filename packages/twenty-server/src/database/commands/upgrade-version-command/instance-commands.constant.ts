@@ -224,6 +224,7 @@ import { CreateWorkflowStepWaitTableFastInstanceCommand } from 'src/database/com
 import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791094130961-drop-core-agent-history-tables';
 import { RenameUsageLimitMeterToUnitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791186790123-rename-usage-limit-meter-to-unit';
 import { AddUpgradeMigrationWorkspaceIdCreatedAtIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791215192958-add-upgrade-migration-workspace-id-created-at-index';
+import { DropAgentEvaluationInputsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791216099453-drop-agent-evaluation-inputs';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -450,4 +451,5 @@ export const INSTANCE_COMMANDS = [
   DropCoreAgentHistoryTablesFastInstanceCommand,
   RenameUsageLimitMeterToUnitFastInstanceCommand,
   AddUpgradeMigrationWorkspaceIdCreatedAtIndexFastInstanceCommand,
+  DropAgentEvaluationInputsFastInstanceCommand,
 ];

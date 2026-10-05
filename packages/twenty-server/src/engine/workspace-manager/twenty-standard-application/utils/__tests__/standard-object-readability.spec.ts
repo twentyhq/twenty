@@ -66,7 +66,6 @@ describe('Standard object readability', () => {
     STANDARD_OBJECTS.agentMessage.universalIdentifier,
     STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
     STANDARD_OBJECTS.agentTurn.universalIdentifier,
-    STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
     STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
 

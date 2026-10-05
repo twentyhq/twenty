@@ -77,3 +77,21 @@ export const AGENT_HISTORY_TABLES = [
     columns: ['id', 'turnId', 'score', 'comment', 'createdAt'],
   },
 ] as const;
+
+type AgentHistoryTable = (typeof AGENT_HISTORY_TABLES)[number];
+
+// Turn evaluations were removed after 2.42 shipped. Their entry keeps the cursor
+// order, but nothing is copied to workspace storage and their core rows go with
+// the core tables.
+export type ActiveAgentHistoryTable = Exclude<
+  AgentHistoryTable,
+  { name: 'agentTurnEvaluation' }
+>;
+
+export const isActiveAgentHistoryTable = (
+  table: AgentHistoryTable,
+): table is ActiveAgentHistoryTable => table.name !== 'agentTurnEvaluation';
+
+export const ACTIVE_AGENT_HISTORY_TABLES = AGENT_HISTORY_TABLES.filter(
+  isActiveAgentHistoryTable,
+);
