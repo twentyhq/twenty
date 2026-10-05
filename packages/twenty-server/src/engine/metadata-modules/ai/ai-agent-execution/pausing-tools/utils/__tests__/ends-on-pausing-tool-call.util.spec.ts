@@ -46,6 +46,15 @@ describe('endsOnPausingToolCall', () => {
     ).toBe(true);
   });
 
+  it('pauses on an offered pausing tool resolved by something other than an answer', () => {
+    expect(
+      endsOnPausingToolCall({
+        steps: [stepWithResults(awaiting('wait_for_event'))],
+        offeredToolNames: ['wait_for_event'],
+      }),
+    ).toBe(true);
+  });
+
   it('does not pause on a pausing call refused when it was made', () => {
     expect(
       endsOnPausingToolCall({

@@ -1,7 +1,6 @@
 import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { Injectable, Logger } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   ObjectRecordEvent,
   type ObjectRecordCreateEvent,
@@ -17,23 +16,19 @@ import { In } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
-import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -44,6 +39,7 @@ import {
   type BaseDatabaseEventTriggerSettings,
   type UpdateEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
+import { resolveAutomationAdmittedRecordIds } from 'src/modules/workflow/workflow-trigger/automated-trigger/utils/resolve-automation-admitted-record-ids.util';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import {
   WorkflowTriggerJob,
@@ -414,47 +410,11 @@ export class WorkflowDatabaseEventTriggerListener {
   private async resolveAdmittedRecordIds(
     payload: WorkspaceEventBatch<ObjectRecordEvent>,
   ): Promise<Set<string>> {
-    const {
-      flatApplicationMaps,
-      flatRoleMaps,
-      rolesPermissions,
-      roleIdsWithAllRecordsAccess,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-      flatFieldMetadataMaps,
-    } = await this.workspaceCacheService.getOrRecompute(payload.workspaceId, [
-      'flatApplicationMaps',
-      'flatRoleMaps',
-      'rolesPermissions',
-      'roleIdsWithAllRecordsAccess',
-      'flatRowLevelPermissionPredicateMaps',
-      'flatRowLevelPermissionPredicateGroupMaps',
-      'flatFieldMetadataMaps',
-    ]);
-
-    const standardApplication = findActiveFlatApplicationByUniversalIdentifier(
-      flatApplicationMaps,
-      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-    );
-
-    return this.recordAccessPolicyService
-      .buildEventRecordAccessGate(payload)
-      .resolveAdmittedRecordIds(
-        buildRoleRowAccessPolicySubject({
-          roleId:
-            standardApplication?.defaultRoleId ??
-            findFlatEntityByUniversalIdentifier({
-              flatEntityMaps: flatRoleMaps,
-              universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-            })?.id,
-          owningApplicationId: standardApplication?.id,
-          rolesPermissions,
-          roleIdsWithAllRecordsAccess,
-          flatRowLevelPermissionPredicateMaps,
-          flatRowLevelPermissionPredicateGroupMaps,
-          flatFieldMetadataMaps,
-        }),
-      );
+    return resolveAutomationAdmittedRecordIds({
+      payload,
+      workspaceCacheService: this.workspaceCacheService,
+      recordAccessPolicyService: this.recordAccessPolicyService,
+    });
   }
 
   private shouldTriggerJob({

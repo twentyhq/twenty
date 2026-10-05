@@ -54,6 +54,7 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       {} as never,
       threadRepository as never,
       messagePartRepository as never,
+      { cancelRunWaits: jest.fn().mockResolvedValue(undefined) } as never,
     );
 
     // The run lock serializes these methods with every other step write.

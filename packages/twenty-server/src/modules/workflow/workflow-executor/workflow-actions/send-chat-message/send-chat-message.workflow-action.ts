@@ -162,7 +162,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
           workspaceId: runInfo.workspaceId,
         });
 
-        return { pendingEvent: true };
+        return { wait: { type: 'ANSWER' } };
       }
 
       return {
