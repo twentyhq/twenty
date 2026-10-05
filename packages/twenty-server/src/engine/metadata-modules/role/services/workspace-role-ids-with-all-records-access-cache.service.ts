@@ -1,30 +1,26 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
-import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
+import { WorkspaceDerivedCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-derived-cache-provider.service';
 
-const ROLE_IDS_WITH_ALL_RECORDS_ACCESS_ROWS_REQUIREMENT = {
-  role: ['id', 'canUpdateAllSettings'],
-} as const satisfies WorkspaceCacheRowsRequirement;
+import { WorkspaceDerivedCache } from 'src/engine/workspace-cache/decorators/workspace-derived-cache.decorator';
+import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 @Injectable()
-@WorkspaceCache('roleIdsWithAllRecordsAccess', { packingPonderation: 1 })
-export class WorkspaceRoleIdsWithAllRecordsAccessCacheService extends WorkspaceCacheProvider<
-  string[]
+@WorkspaceDerivedCache('roleIdsWithAllRecordsAccess')
+export class WorkspaceRoleIdsWithAllRecordsAccessCacheService extends WorkspaceDerivedCacheProvider<
+  'roleIdsWithAllRecordsAccess',
+  'flatRoleMaps'
 > {
-  override readonly rowsRequirement =
-    ROLE_IDS_WITH_ALL_RECORDS_ACCESS_ROWS_REQUIREMENT;
+  readonly sourceKeyName = 'flatRoleMaps';
 
-  computeForCache({
-    rows,
-  }: WorkspaceCacheProviderContext<
-    typeof ROLE_IDS_WITH_ALL_RECORDS_ACCESS_ROWS_REQUIREMENT
-  >): string[] {
-    return rows.role
-      .filter((role) => role.canUpdateAllSettings)
-      .map((role) => role.id);
+  protected computeFromSource(
+    flatRoleMaps: WorkspaceCacheDataMap['flatRoleMaps'],
+  ): string[] {
+    return Object.values(flatRoleMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter((flatRole) => flatRole.canUpdateAllSettings)
+      .map((flatRole) => flatRole.id);
   }
 }

@@ -37,13 +37,15 @@ export const buildRowAccessPolicy = ({
     return { kind: 'denied' };
   }
 
-  const namedRecordGrant = isRecordGrantBeyondRoleAllowed({
-    flatObjectMetadata: target.flatObjectMetadata,
-    operationType: target.operationType,
-    isRecordSharingEnabled: environment.isRecordSharingEnabled,
-  })
-    ? buildNamedRecordGrantExpression(context, target)
-    : undefined;
+  const namedRecordGrant =
+    environment.isRecordShareVisibilityGatingEnabled &&
+    isRecordGrantBeyondRoleAllowed({
+      flatObjectMetadata: target.flatObjectMetadata,
+      operationType: target.operationType,
+      isRecordSharingEnabled: environment.isRecordSharingEnabled,
+    })
+      ? buildNamedRecordGrantExpression(context, target)
+      : undefined;
 
   if (
     isDefined(subject.objectsPermissions) &&

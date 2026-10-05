@@ -1,5 +1,4 @@
 import { BadRequestException, Inject } from '@nestjs/common';
-
 import { SettingsPath } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
@@ -7,13 +6,14 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
+import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
+import { SelectionDepth } from 'src/engine/api/common/common-select-fields/types/selection-depth.type';
 import { type RecordReadScope } from 'src/engine/twenty-orm/types/record-read-scope.type';
 import { restrictObjectsPermissionsToDiscoverableFields } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-discoverable-fields.util';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { REST_API_DEFAULT_MAX_FIELDS } from 'src/engine/api/rest/input-request-parsers/constants/rest-api-default-max-fields.constant';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
-import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
@@ -69,7 +69,7 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
   @Inject()
-  protected readonly commonSelectFieldsHelper: CommonSelectFieldsHelper;
+  protected readonly commonSelectFieldsBuilder: CommonSelectFieldsBuilder;
   @Inject()
   protected readonly userRoleService: UserRoleService;
   @Inject()
@@ -135,19 +135,50 @@ export abstract class RestApiBaseHandler {
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    readScope = 'content',
   }: {
     authContext: WorkspaceAuthContext;
-    depth?: Depth | undefined;
+    depth?: SelectionDepth | undefined;
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-    readScope?: RecordReadScope;
   }): Promise<CommonSelectedFields> {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
 
-    return this.commonSelectFieldsHelper.computeFromDepth({
+    const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
+      objectsPermissions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+      depth,
+    });
+
+    return selectedFields;
+  }
+
+  async computeRecordSelectedFields({
+    requestedFields,
+    authContext,
+    depth,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    readScope = 'content',
+  }: {
+    requestedFields?: ReadonlySet<string>;
+    authContext: WorkspaceAuthContext;
+    depth?: SelectionDepth | undefined;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    readScope?: RecordReadScope;
+  }): Promise<{
+    selectedFields: CommonSelectedFields;
+  }> {
+    const { objectsPermissions } =
+      await this.getObjectsPermissions(authContext);
+
+    return this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions:
         readScope === 'existence'
           ? restrictObjectsPermissionsToDiscoverableFields({
@@ -160,6 +191,8 @@ export abstract class RestApiBaseHandler {
       flatFieldMetadataMaps,
       flatObjectMetadata,
       depth,
+      requestedFields,
+      maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
     });
   }
 
