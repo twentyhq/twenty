@@ -50,14 +50,9 @@ const CREDIT_UNAVAILABLE_REASON_BY_SERVER_REASON: Record<
 @UseGuards(
   JwtAuthGuard,
   AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
+    userSession: false,
+    apiKey: false,
+    oauthClient: false,
     application: true,
   }),
   NoPermissionGuard,

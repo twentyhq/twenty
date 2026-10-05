@@ -6,12 +6,14 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { type WorkflowSendChatMessageAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { WorkflowConversationFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields';
 import { WorkflowSendChatMessageToolArguments } from '@/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkflowConversation } from 'twenty-shared/workflow';
 import { useDebouncedCallback } from 'use-debounce';
 
 type SendChatMessageFormData =
@@ -75,6 +77,10 @@ export const WorkflowEditActionSendChatMessage = ({
     updateFormData({ ...formData, [fieldName]: value });
   };
 
+  const handleConversationChange = (conversation: WorkflowConversation) => {
+    updateFormData({ ...formData, conversation });
+  };
+
   const handleToolCallChange = (toolCall: SendChatMessageToolCall | null) => {
     updateFormData({ ...formData, toolCall: toolCall ?? undefined });
   };
@@ -130,6 +136,13 @@ export const WorkflowEditActionSendChatMessage = ({
           disabled={actionOptions.readonly}
           testId="workflow-edit-action-send-chat-message-recipient"
           VariablePicker={WorkflowVariablePicker}
+        />
+        <WorkflowConversationFields
+          dropdownId={`workflow-send-chat-message-conversation-${action.id}`}
+          conversation={formData.conversation}
+          defaultScope="RUN"
+          readonly={actionOptions.readonly}
+          onChange={handleConversationChange}
         />
         <FormTextFieldInput
           label={t`Conversation title`}

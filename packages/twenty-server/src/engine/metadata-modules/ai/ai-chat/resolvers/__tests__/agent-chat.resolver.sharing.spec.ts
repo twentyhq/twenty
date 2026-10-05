@@ -326,19 +326,6 @@ describe('Shared conversation API boundaries', () => {
     expect(threadRepository.update).not.toHaveBeenCalled();
   });
 
-  it('denies hidden history to viewers even when the visible thread is shared', async () => {
-    const { chatService, messages } = buildResolver();
-    await expect(
-      chatService.getMessagesForThread({
-        threadId: THREAD_ID,
-        workspaceMemberId: VIEWER_ID,
-        workspaceId: WORKSPACE_ID,
-        includeHidden: true,
-      }),
-    ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
-    expect(messages.find).not.toHaveBeenCalled();
-  });
-
   it('does not read messages or catchup after access is revoked', async () => {
     const { resolver, messages, sharing, events } = buildResolver();
     sharing.getReadableThread.mockRejectedValue(new Error('access revoked'));

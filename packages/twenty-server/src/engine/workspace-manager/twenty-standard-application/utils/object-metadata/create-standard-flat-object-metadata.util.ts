@@ -53,9 +53,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: true,
         isUICreatable: false,
-        // Read by whoever reads its workflow run; with no run it reads only through its own grants, like a PRIVATE record
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['workflowRun'],
+        readability: MetadataReadability.PRIVATE,
         writability: MetadataWritability.OPEN,
         labelIdentifierFieldMetadataName: 'title',
       },
