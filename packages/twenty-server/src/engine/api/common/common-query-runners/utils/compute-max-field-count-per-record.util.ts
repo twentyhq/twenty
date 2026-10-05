@@ -32,7 +32,7 @@ export const computeMaxFieldCountPerRecord = ({
   const selectedColumnCount =
     Object.keys(select).length - selectedRelationFields.length;
 
-  const maxFieldCount = selectedRelationFields.reduce(
+  return selectedRelationFields.reduce(
     (fieldCount, relationField) =>
       fieldCount +
       (relationField.settings.relationType === RelationType.ONE_TO_MANY
@@ -50,6 +50,4 @@ export const computeMaxFieldCountPerRecord = ({
         }),
     selectedColumnCount,
   );
-
-  return maxFieldCount || 1;
 };

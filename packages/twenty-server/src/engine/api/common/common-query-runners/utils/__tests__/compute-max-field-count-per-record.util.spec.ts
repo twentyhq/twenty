@@ -72,8 +72,8 @@ describe('computeMaxFieldCountPerRecord', () => {
     expect(computeFor(company, { id: true, name: true })).toBe(2);
   });
 
-  it('should count a record with no selected field as one field', () => {
-    expect(computeFor(company, {})).toBe(1);
+  it('should count nothing when no field is selected', () => {
+    expect(computeFor(company, {})).toBe(0);
   });
 
   it('should add the fields of a to-one relation once', () => {

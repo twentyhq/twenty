@@ -163,7 +163,7 @@ export abstract class CommonBaseQueryRunnerService<
             flatFieldMetadataMaps,
             recordLimitPerOneToManyRelation:
               this.recordLimitPerOneToManyRelation,
-          }),
+          }) || 1,
       );
     }
 
