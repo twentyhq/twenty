@@ -6,8 +6,6 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// The 2.46 instance command rewrote databaseEventTriggerSettings in place, so
-// cached flat logic functions still carry the single-object shape
 @RegisteredWorkspaceCommand('2.46.0', 1791195525510)
 @Command({
   name: 'upgrade:2-46:flush-logic-function-cache-for-database-event-triggers-list',

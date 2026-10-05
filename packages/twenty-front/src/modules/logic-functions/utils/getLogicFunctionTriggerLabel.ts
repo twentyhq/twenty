@@ -47,7 +47,6 @@ export const getLogicFunctionTriggerLabel = (
   if (lf.cronTriggerSettings) return t`Cron`;
   if (lf.httpRouteTriggerSettings) return t`HTTP`;
   if (isDefined(lf.databaseEventTriggerSettings)) {
-    // Manifests built with older SDKs still hold a single trigger object
     const databaseEventTriggers = Array.isArray(lf.databaseEventTriggerSettings)
       ? lf.databaseEventTriggerSettings
       : [lf.databaseEventTriggerSettings];

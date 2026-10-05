@@ -9,7 +9,6 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   description?: string;
   timeoutSeconds?: number;
   cronTriggerSettings?: CronTriggerSettings;
-  // A single trigger is the shape every manifest carried before a function could hold several
   databaseEventTriggerSettings?:
     | DatabaseEventTriggerSettings
     | DatabaseEventTriggerSettings[];

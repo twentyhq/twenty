@@ -32,7 +32,6 @@ export const SettingsLogicFunctionDatabaseEventTriggerSection = ({
   readonly,
 }: SettingsLogicFunctionDatabaseEventTriggerSectionProps) => {
   const { t } = useLingui();
-  // The trailing empty row only becomes a trigger once an object is picked
   const [newTriggerAction, setNewTriggerAction] = useState(
     DEFAULT_NEW_TRIGGER_ACTION,
   );

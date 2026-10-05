@@ -27,8 +27,6 @@ export const transformEventBatchToEventPayloads = ({
   const result: LogicFunctionTriggerJobData[] = [];
 
   for (const logicFunction of logicFunctions) {
-    // Each trigger stands on its own: a function listening on both
-    // person.updated and *.updated receives a person update once per trigger
     const matchingTriggers = findDatabaseEventTriggersMatchingEventName({
       databaseEventTriggerSettings: logicFunction.databaseEventTriggerSettings,
       eventName: workspaceEventBatch.name,
