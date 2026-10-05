@@ -11,7 +11,7 @@ import { In, Repository } from 'typeorm';
 import type Stripe from 'stripe';
 
 import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from 'src/engine/core-modules/billing-webhook/utils/get-deleted-stripe-subscription-item-ids-from-stripe-subscription-event.util';
-import { isSubscriptionInFirstPeriodAfterTrial } from 'src/engine/core-modules/billing-webhook/utils/is-subscription-in-first-period-after-trial.util';
+import { isLatestInvoiceForFirstPeriodAfterTrial } from 'src/engine/core-modules/billing-webhook/utils/is-latest-invoice-for-first-period-after-trial.util';
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
@@ -288,7 +288,7 @@ export class BillingWebhookSubscriptionService {
 
     if (
       status === SubscriptionStatus.PastDue &&
-      isSubscriptionInFirstPeriodAfterTrial(subscription)
+      isLatestInvoiceForFirstPeriodAfterTrial(subscription)
     ) {
       return true;
     }

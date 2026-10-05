@@ -66,7 +66,7 @@ export class StripeSubscriptionScheduleService {
 
   async getSubscriptionWithSchedule(stripeSubscriptionId: string) {
     return (await this.stripe.subscriptions.retrieve(stripeSubscriptionId, {
-      expand: ['schedule'],
+      expand: ['schedule', 'latest_invoice'],
     })) as SubscriptionWithSchedule;
   }
 
@@ -76,7 +76,7 @@ export class StripeSubscriptionScheduleService {
     const subscriptions = await this.stripe.subscriptions
       .list({
         customer: stripeCustomerId,
-        expand: ['data.schedule'],
+        expand: ['data.schedule', 'data.latest_invoice'],
         limit: 100,
       })
       .autoPagingToArray({ limit: 1000 });
