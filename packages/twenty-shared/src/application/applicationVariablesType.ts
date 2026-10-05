@@ -68,13 +68,16 @@ type NonSecretApplicationVariable = SyncableEntityOptions &
     isSecret?: false;
   };
 
+// `isSecret` stays declared so it keeps discriminating the union: a config
+// built outside the call, with `isSecret: boolean`, must still match the
+// secret or non-secret variant and never this one.
 type FilesApplicationVariable = SyncableEntityOptions & {
   label?: string;
   description?: string;
   type: typeof FieldMetadataType.FILES;
   isRequired?: boolean;
   isDeprecated?: boolean;
-  isSecret?: false;
+  isSecret?: never;
 };
 
 export type ApplicationVariable =
