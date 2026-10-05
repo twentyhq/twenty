@@ -149,5 +149,14 @@ describe('convertValidationRuleToFieldSymbols', () => {
       bindings: { $f1: 'company-universal-identifier' },
       hasUnconvertedFields: true,
     });
+    expect(
+      convertValidationRuleToFieldSymbols({
+        expression: 'company.employees > 10 and (company).employees < 100',
+        bindings: {
+          company: 'company-universal-identifier',
+          'company.employees': 'employees-universal-identifier',
+        },
+      })?.hasUnconvertedFields,
+    ).toBe(true);
   });
 });

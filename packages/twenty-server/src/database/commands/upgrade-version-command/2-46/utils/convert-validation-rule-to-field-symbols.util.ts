@@ -36,7 +36,19 @@ export const convertValidationRuleToFieldSymbols = ({
     return symbol;
   };
 
-  const convertedExpression = tokenizeValidationRuleExpression(expression)
+  const tokens = tokenizeValidationRuleExpression(expression);
+  const meaningfulTokens = tokens.filter(
+    (token) => token.type !== 'whitespace',
+  );
+
+  const hasUnconvertedFields = meaningfulTokens.some(
+    (token, index) =>
+      token.type === 'path' &&
+      meaningfulTokens[index - 1]?.type === 'symbol' &&
+      meaningfulTokens[index - 1]?.text === '.',
+  );
+
+  const convertedExpression = tokens
     .map((token) => {
       if (token.type !== 'path') {
         return token.text;
@@ -70,10 +82,7 @@ export const convertValidationRuleToFieldSymbols = ({
 
   return {
     expression: convertedExpression,
-    hasUnconvertedFields: Object.values(bindings).some(
-      (universalIdentifier) =>
-        !symbolByUniversalIdentifier.has(universalIdentifier),
-    ),
+    hasUnconvertedFields,
     bindings: Object.fromEntries(
       [...symbolByUniversalIdentifier].map(([universalIdentifier, symbol]) => [
         symbol,
