@@ -13,7 +13,7 @@ import { BackfillAgentAndWorkflowIsSystemCommand } from 'src/database/commands/u
 import { ScheduleAgentChatThreadSnoozeEndsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791093059050-schedule-agent-chat-thread-snooze-ends.command';
 import { UnpinNewAiChatCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019634-unpin-new-ai-chat-command-menu-item.command';
 import { TurnHiddenAgentMessagesIntoSystemMessagesCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791204952095-turn-hidden-agent-messages-into-system-messages.command';
-import { ShareEmailAndCalendarThroughRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791212882291-share-email-and-calendar-through-record-shares.command';
+import { ShareEmailAndCalendarThroughRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791227818376-share-email-and-calendar-through-record-shares.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
