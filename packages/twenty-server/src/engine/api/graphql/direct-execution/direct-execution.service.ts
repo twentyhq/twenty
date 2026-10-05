@@ -444,7 +444,6 @@ export class DirectExecutionService {
       workspaceQueryRunnerGraphqlApiExceptionHandler(error);
     } catch (graphqlError) {
       if (graphqlError instanceof GraphQLError) {
-        // Answered before the GraphQL error hook runs, so report it here
         if (shouldCaptureException(graphqlError)) {
           this.exceptionHandlerService.captureExceptions([error]);
         }
