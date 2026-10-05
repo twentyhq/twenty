@@ -1,4 +1,5 @@
-import { isObject, isString } from '@sniptt/guards';
+import { isString } from '@sniptt/guards';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
@@ -10,12 +11,11 @@ import { applyMouseEventProperties } from '@/host/events/utils/applyMouseEventPr
 import { applyPointerEventProperties } from '@/host/events/utils/applyPointerEventProperties';
 import { applyWheelEventProperties } from '@/host/events/utils/applyWheelEventProperties';
 
-export const serializeEvent = (event: unknown): SerializedEventData => {
-  if (!isObject(event)) {
+export const serializeEvent = (domEvent: unknown): SerializedEventData => {
+  if (!isPlainObject(domEvent)) {
     return { type: 'unknown' };
   }
 
-  const domEvent = event as Record<string, unknown>;
   const serialized: SerializedEventData = {
     type: isString(domEvent.type) ? domEvent.type : 'unknown',
   };

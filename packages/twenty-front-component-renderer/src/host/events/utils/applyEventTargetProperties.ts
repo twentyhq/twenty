@@ -1,4 +1,5 @@
-import { isBoolean, isNumber, isObject } from '@sniptt/guards';
+import { isBoolean, isNumber } from '@sniptt/guards';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { MUTED_STATE_SETTLED_EVENT_TYPE } from '@/host/events/constants/MutedStateSettledEventType';
 import { applyFormControlTargetProperties } from '@/host/events/utils/applyFormControlTargetProperties';
@@ -11,42 +12,40 @@ export const applyEventTargetProperties = ({
   serialized: SerializedEventData;
   target: unknown;
 }): void => {
-  if (!isObject(target)) {
+  if (!isPlainObject(target)) {
     return;
   }
 
-  const targetRecord = target as Record<string, unknown>;
+  applyFormControlTargetProperties({ serialized, target });
 
-  applyFormControlTargetProperties({ serialized, target: targetRecord });
-
-  if (isNumber(targetRecord.scrollTop)) {
-    serialized.scrollTop = targetRecord.scrollTop;
+  if (isNumber(target.scrollTop)) {
+    serialized.scrollTop = target.scrollTop;
   }
-  if (isNumber(targetRecord.scrollLeft)) {
-    serialized.scrollLeft = targetRecord.scrollLeft;
+  if (isNumber(target.scrollLeft)) {
+    serialized.scrollLeft = target.scrollLeft;
   }
-  if (isNumber(targetRecord.currentTime)) {
-    serialized.currentTime = targetRecord.currentTime;
+  if (isNumber(target.currentTime)) {
+    serialized.currentTime = target.currentTime;
   }
-  if (isNumber(targetRecord.duration)) {
-    serialized.duration = targetRecord.duration;
+  if (isNumber(target.duration)) {
+    serialized.duration = target.duration;
   }
-  if (isBoolean(targetRecord.paused)) {
-    serialized.paused = targetRecord.paused;
+  if (isBoolean(target.paused)) {
+    serialized.paused = target.paused;
   }
-  if (isBoolean(targetRecord.ended)) {
-    serialized.ended = targetRecord.ended;
+  if (isBoolean(target.ended)) {
+    serialized.ended = target.ended;
   }
-  if (isNumber(targetRecord.volume)) {
-    serialized.volume = targetRecord.volume;
+  if (isNumber(target.volume)) {
+    serialized.volume = target.volume;
   }
   if (
     serialized.type === MUTED_STATE_SETTLED_EVENT_TYPE &&
-    isBoolean(targetRecord.muted)
+    isBoolean(target.muted)
   ) {
-    serialized.muted = targetRecord.muted;
+    serialized.muted = target.muted;
   }
-  if (isNumber(targetRecord.playbackRate)) {
-    serialized.playbackRate = targetRecord.playbackRate;
+  if (isNumber(target.playbackRate)) {
+    serialized.playbackRate = target.playbackRate;
   }
 };
