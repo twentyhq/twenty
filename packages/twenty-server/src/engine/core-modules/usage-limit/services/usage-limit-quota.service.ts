@@ -37,6 +37,7 @@ import { buildOverriddenQuotaDefaultCounterKeys } from 'src/engine/core-modules/
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
 import { buildQuotaCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-counter-key.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
+import { buildQuotaDebits } from 'src/engine/core-modules/usage-limit/utils/build-quota-debits.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { clampQuotaCost } from 'src/engine/core-modules/usage-limit/utils/clamp-quota-cost.util';
@@ -50,6 +51,7 @@ import { fromConsumeResultsToRemainings } from 'src/engine/core-modules/usage-li
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
@@ -118,8 +120,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
     const clampedCost = clampQuotaCost(cost);
 
     if (
-      clampedCost.creditsUsedMicro !== cost.creditsUsedMicro ||
-      clampedCost.quantity !== cost.quantity
+      Object.values(UsageUnit).some((unit) => clampedCost[unit] !== cost[unit])
     ) {
       this.logger.error(
         `Refusing to consume invalid quota cost ${JSON.stringify(cost)} for workspace ${args.workspaceId}; treating it as 0`,
@@ -209,9 +210,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
               operationType: usageLimit.operationType,
               spenderType: usageLimit.spenderType,
               spenderId: usageLimit.spenderId,
-              meter: usageLimit.meter,
+              unit: usageLimit.unit,
               periodUnit: usageLimit.periodUnit,
               periodStart: period.periodStart,
+              limitValue: usageLimit.limitValue,
             }),
           ]
         : []),
@@ -434,11 +436,16 @@ export class UsageLimitQuotaService implements OnModuleInit {
     ...args
   }: QuotaConsumeArgs & { cost: QuotaCost }): Promise<ExhaustedScope[]> {
     try {
-      const counters = await this.buildCounters(args);
+      const debits = buildQuotaDebits({
+        counters: await this.buildCounters(args),
+        cost,
+      });
 
-      if (counters.length === 0) {
+      if (debits.length === 0) {
         return [];
       }
+
+      const counters = debits.map((debit) => debit.counter);
 
       // The consume script only debits keys that exist: warm cold counters
       // first so a consume-only caller (workflow, logic function) is metered
@@ -448,7 +455,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
       const consumeResults = await this.cacheStorage.runScript<number[]>({
         script: CONSUME_QUOTA_COUNTERS_SCRIPT,
         keys: counters.map((counter) => counter.key),
-        args: [JSON.stringify(counters.map((counter) => cost[counter.meter]))],
+        args: [JSON.stringify(debits.map((debit) => debit.amount))],
       });
 
       const remainings = fromConsumeResultsToRemainings(consumeResults);
@@ -550,10 +557,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
       attributes,
     });
 
-    if (isDefined(cost) && cost.creditsUsedMicro > 0) {
+    if (isDefined(cost) && cost[UsageUnit.CREDIT] > 0) {
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.UsageLimitQuotaAdmittedOnFailureCreditsMicro,
-        amount: cost.creditsUsedMicro,
+        amount: cost[UsageUnit.CREDIT],
         attributes,
       });
     }
@@ -656,7 +663,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
         workspaceId,
         periodStart: period.periodStart,
       }),
-      meter: 'creditsUsedMicro',
+      unit: UsageUnit.CREDIT,
       periodStart: period.periodStart,
       periodEnd: period.periodEnd,
     };

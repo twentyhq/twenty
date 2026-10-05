@@ -1,4 +1,3 @@
-import { StepStatus } from 'twenty-shared/workflow';
 import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
@@ -231,8 +230,7 @@ const createActiveManualWorkflow = async (name: string) => {
   return { coreWorkflowId, workspaceWorkflowId, workspaceWorkflowVersionId };
 };
 
-// The generic record API, which the run pages read, rather than
-// the core workflow API that #26243 already gates.
+// The record API the run pages read, not the core workflow API #26243 already gates.
 const findRecordIds = async (
   requester: (query: string, variables?: object) => request.Test,
   objectNamePlural: 'workflowRuns',
@@ -268,9 +266,8 @@ describe('core workflow visibility (e2e)', () => {
   let workflowsRoleId: string;
 
   beforeAll(async () => {
-    // The whole workflow API sits behind SettingsPermissionGuard(WORKFLOWS),
-    // which the seeded Member role does not carry, so the second member has to
-    // be someone who could reach the workflow if visibility allowed it.
+    // The workflow API requires the WORKFLOWS settings permission, which the seeded Member role lacks,
+    // so the second member gets it and only visibility can block them.
     const memberRole = await findOneRoleByLabel({ label: 'Member' });
 
     originalMemberRoleId = memberRole.id;
@@ -397,9 +394,8 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
-  // Workflows predating the visibility column have no owner, and so does one
-  // whose creator left the workspace, since the owner FK is ON DELETE SET NULL.
-  // Without a claim they would be unreachable by everyone while still running.
+  // Pre-visibility workflows and those whose creator left (owner FK is ON DELETE SET NULL) have no owner,
+  // and without a claim nobody could reach them while they still run.
   describe('an ownerless workflow', () => {
     let ownerlessWorkspaceWorkflowId: string;
     let ownerlessCoreWorkflowId: string;
@@ -479,8 +475,7 @@ describe('core workflow visibility (e2e)', () => {
       });
     });
 
-    // The claim is the UPDATE's own WHERE rather than a preceding read, so this
-    // is what keeps two simultaneous claims from both passing.
+    // The claim is the UPDATE's own WHERE, which is what stops two simultaneous claims both passing.
     it('refuses a second claim even though the workflow is still workspace-visible', async () => {
       const secondClaim = await workflowGraphqlRequest(
         UPDATE_VISIBILITY_MUTATION,
@@ -548,8 +543,6 @@ describe('core workflow visibility (e2e)', () => {
       );
     });
 
-    // The versions carry the whole definition, so reaching one by id has to
-    // answer to the same rule as reaching the workflow.
     it('refuses its version to another member', async () => {
       const response = await asOtherMember(CORE_WORKFLOW_VERSION_QUERY, {
         workspaceWorkflowVersionId,
@@ -558,9 +551,7 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.data?.coreWorkflowVersion ?? null).toBeNull();
     });
 
-    // The builder resolver reads a version's content straight from its id to
-    // compute a schema, so it hands out the whole definition unless it answers
-    // to the same rule.
+    // This resolver reads version content straight from its id, bypassing the workflow lookup.
     it('refuses to compute a step output schema from its version for another member', async () => {
       const response = await asOtherMember(
         COMPUTE_STEP_OUTPUT_SCHEMA_MUTATION,
@@ -576,9 +567,7 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.data?.computeStepOutputSchema ?? null).toBeNull();
     });
 
-    // The legacy resolver is keyed by the workspace mirror's ids and never
-    // passes through CoreWorkflowIdResolutionService, so it needs the rule
-    // reached from the other side or a held id still launches the workflow.
+    // The legacy resolver uses the mirror's ids and never goes through CoreWorkflowIdResolutionService.
     it('refuses to run it from the legacy API for another member', async () => {
       const response = await asOtherMember(LEGACY_RUN_MUTATION, {
         input: { workflowVersionId: workspaceWorkflowVersionId },
@@ -588,9 +577,7 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.data?.runWorkflowVersion ?? null).toBeNull();
     });
 
-    // WorkflowTriggerResolver carries no class-level UserAuthGuard, so unlike
-    // the core workflow API an API key does reach this mutation, and the rule
-    // has to hold for a caller that is a workspace rather than a person.
+    // Unlike the core workflow API, WorkflowTriggerResolver's AuthPrincipalGuard accepts API keys.
     it('refuses to activate it for an API key', async () => {
       const response = await asApiKey(ACTIVATE_VERSION_MUTATION, {
         workflowVersionId: workspaceWorkflowVersionId,
@@ -621,9 +608,7 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
-  // Activating a manual trigger writes a workspace-wide command menu item
-  // carrying the workflow name, so the command menu is a second way to reach
-  // the workflow and has to answer to the same rule.
+  // Activating a manual trigger writes a workspace-wide command menu item carrying the workflow name.
   describe('a workflow with an active manual trigger', () => {
     let manualWorkspaceWorkflowId: string;
     let manualCoreWorkflowId: string;
@@ -695,8 +680,6 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
-  // A run holds the workflow's inputs and step outputs, so it has to be as
-  // private as the workflow even when read through the generic record API.
   describe('the runs of a workflow', () => {
     let runsCoreWorkflowId: string;
     let runsWorkspaceWorkflowId: string;
@@ -788,8 +771,7 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
-  // An agent step's conversation carries no grants of its own: it is read
-  // through its run, so it follows the workflow's visibility like the run does.
+  // An agent step's conversation belongs to its recipient, or else the workflow's creator, whatever the workflow's visibility.
   describe('the conversation an agent step records on a run', () => {
     let conversationCoreWorkflowId: string;
     let conversationWorkspaceWorkflowId: string;
@@ -834,10 +816,18 @@ describe('core workflow visibility (e2e)', () => {
           'WorkflowAgentConversationWorkspaceService',
         );
 
-      const recordedConversation = await conversationService.recordExecution({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        workflowRunId,
+      ({ threadId } = await conversationService.openConversation({
+        runInfo: { workspaceId: SEED_APPLE_WORKSPACE_ID, workflowRunId },
         stepId: 'trigger',
+        title: 'Summarize the lead',
+        recipientWorkspaceMemberId: null,
+        threadKey: `${workflowRunId}:trigger`,
+      }));
+
+      await conversationService.recordExecution({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        threadId,
+        workflowStep: { workflowRunId, stepId: 'trigger' },
         title: 'Summarize the lead',
         agentId: null,
         prompt: 'Summarize the lead',
@@ -848,9 +838,6 @@ describe('core workflow visibility (e2e)', () => {
           ] as AgentExecutionResult['steps'],
         },
       });
-
-      expect(recordedConversation).not.toBeNull();
-      threadId = recordedConversation!.threadId;
     });
 
     afterAll(async () => {
@@ -893,82 +880,24 @@ describe('core workflow visibility (e2e)', () => {
       ).toEqual(['user', 'assistant']);
     });
 
-    it('keeps it out of the chat list of someone who can read it', async () => {
-      expect(
-        await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN),
-      ).not.toContain(threadId);
-    });
-
-    it('refuses to rename or delete it, even for the workflow creator', async () => {
-      const renameResponse = await graphqlRequestAs(
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        `
-          mutation RenameRunConversation($threadId: UUID!) {
-            updateAgentChatThread(id: $threadId, data: { title: "Renamed" }) {
-              id
-            }
-          }
-        `,
-        { threadId },
+    it("files it under done in the workflow creator's chats", async () => {
+      expect(await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toContain(
+        threadId,
       );
 
-      expect(renameResponse.body.errors?.[0]?.extensions?.code).toBe(
-        'FORBIDDEN',
-      );
-
-      const deleteResponse = await graphqlRequestAs(
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        `
-          mutation DeleteRunConversation($threadId: UUID!) {
-            deleteAgentChatThread(id: $threadId) {
-              id
-            }
-          }
-        `,
-        { threadId },
-      );
-
-      expect(deleteResponse.body.errors?.[0]?.extensions?.code).toBe(
-        'FORBIDDEN',
-      );
-
-      const [storedThread] = await global.testDataSource.query(
-        `SELECT title, "deletedAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThread" WHERE id = $1`,
+      const [{ archivedAt }] = await global.testDataSource.query(
+        `SELECT "archivedAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThreadParticipant" WHERE "threadId" = $1`,
         [threadId],
       );
 
-      expect(storedThread).toEqual({
-        title: 'Summarize the lead',
-        deletedAt: null,
-      });
+      expect(archivedAt).not.toBeNull();
     });
 
-    it('follows the workflow visibility for another member', async () => {
-      const whileVisible = await readConversation(
-        APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      );
+    it('keeps it private to its owner even when the workflow is visible', async () => {
+      const response = await readConversation(APPLE_JONY_MEMBER_ACCESS_TOKEN);
 
-      expect(whileVisible.body.errors).toBeUndefined();
-      expect(whileVisible.body.data.chatThread.id).toBe(threadId);
-
-      const response = await setVisibility(
-        conversationCoreWorkflowId,
-        WorkflowVisibility.PRIVATE,
-      );
-
-      expect(response.body.errors).toBeUndefined();
-
-      const whilePrivate = await readConversation(
-        APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      );
-
-      expect(whilePrivate.body.data?.chatThread ?? null).toBeNull();
-      expect(whilePrivate.body.errors).toBeDefined();
-
-      const asCreator = await readConversation(APPLE_JANE_ADMIN_ACCESS_TOKEN);
-
-      expect(asCreator.body.errors).toBeUndefined();
-      expect(asCreator.body.data.chatThread.id).toBe(threadId);
+      expect(response.body.data?.chatThread ?? null).toBeNull();
+      expect(response.body.errors).toBeDefined();
     });
 
     it('keeps the conversation of an attempt that is retried in the step history', async () => {
@@ -998,156 +927,7 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
-  // An Ask has no grants of its own either: whoever reads the run reads its
-  // questions, and nobody else.
-  describe('the Ask an agent question records on a run', () => {
-    let askCoreWorkflowId: string;
-    let askWorkspaceWorkflowId: string;
-    let threadId: string;
-
-    const QUESTIONS = [
-      {
-        header: 'Quote',
-        question: 'Send the quote to the customer?',
-        options: [{ label: 'Send it' }, { label: 'Hold it' }],
-      },
-    ];
-
-    const readAsks = async (
-      requester: (query: string, variables?: object) => request.Test,
-    ) => {
-      const response = await requester(
-        `
-          query ReadAsks($threadId: UUID!) {
-            inputAsks(filter: { threadId: { eq: $threadId } }) {
-              edges {
-                node {
-                  id
-                  status
-                }
-              }
-            }
-          }
-        `,
-        { threadId },
-      );
-
-      expect(response.body.errors).toBeUndefined();
-
-      return response.body.data.inputAsks.edges;
-    };
-
-    beforeAll(async () => {
-      let workspaceWorkflowVersionId: string;
-
-      ({
-        coreWorkflowId: askCoreWorkflowId,
-        workspaceWorkflowId: askWorkspaceWorkflowId,
-        workspaceWorkflowVersionId,
-      } = await createActiveManualWorkflow('Workflow With A Question'));
-
-      const runResponse = await workflowGraphqlRequest(LEGACY_RUN_MUTATION, {
-        input: { workflowVersionId: workspaceWorkflowVersionId },
-      });
-
-      expect(runResponse.body.errors).toBeUndefined();
-
-      const askRunId: string =
-        runResponse.body.data.runWorkflowVersion.workflowRunId;
-      const [{ state }] = await global.testDataSource.query(
-        `SELECT state FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."workflowRun" WHERE id = $1`,
-        [askRunId],
-      );
-      const askStepId = state.flow.steps[0].id as string;
-
-      const conversationService =
-        getAppProviderByClassName<WorkflowAgentConversationWorkspaceService>(
-          'WorkflowAgentConversationWorkspaceService',
-        );
-
-      const recordedConversation = await conversationService.recordExecution({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        workflowRunId: askRunId,
-        stepId: askStepId,
-        title: 'Draft the quote',
-        agentId: null,
-        prompt: 'Draft the quote',
-        initiatorUserWorkspaceId: null,
-        executionResult: {
-          isPaused: true,
-          steps: [
-            {
-              content: [
-                {
-                  type: 'tool-call',
-                  toolCallId: 'ask-1',
-                  toolName: 'ask_questions',
-                  input: { questions: QUESTIONS },
-                },
-                {
-                  type: 'tool-result',
-                  toolCallId: 'ask-1',
-                  toolName: 'ask_questions',
-                  input: { questions: QUESTIONS },
-                  output: {
-                    success: true,
-                    message: 'Awaiting an answer.',
-                    result: { questions: QUESTIONS, status: 'pending' },
-                  },
-                },
-              ],
-            },
-          ] as AgentExecutionResult['steps'],
-        },
-      });
-
-      expect(recordedConversation?.pendingAsks).toHaveLength(1);
-      threadId = recordedConversation!.threadId;
-
-      // Parked the way the executor parks a step that asked, which is what
-      // opens its Ask.
-      await getAppProviderByClassName<WorkflowRunWorkspaceService>(
-        'WorkflowRunWorkspaceService',
-      ).updateWorkflowRunStepInfo({
-        stepId: askStepId,
-        stepInfo: { status: StepStatus.PENDING },
-        pendingAsks: recordedConversation!.pendingAsks,
-        workflowRunId: askRunId,
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-      });
-    });
-
-    afterAll(async () => {
-      if (isDefined(askWorkspaceWorkflowId)) {
-        await setVisibility(askCoreWorkflowId, WorkflowVisibility.WORKSPACE);
-        await workflowGraphqlRequest(DESTROY_WORKFLOW_MUTATION, {
-          id: askWorkspaceWorkflowId,
-        });
-      }
-    });
-
-    it('is readable by another member while the workflow is visible to the workspace', async () => {
-      expect(
-        (await setVisibility(askCoreWorkflowId, WorkflowVisibility.WORKSPACE))
-          .body.errors,
-      ).toBeUndefined();
-      // Its status depends on whether the run has finished meanwhile, which
-      // has nothing to do with who may read it.
-      expect(await readAsks(asOtherMember)).toHaveLength(1);
-    });
-
-    it('is hidden from another member once the workflow is private, but not from its creator', async () => {
-      expect(
-        (await setVisibility(askCoreWorkflowId, WorkflowVisibility.PRIVATE))
-          .body.errors,
-      ).toBeUndefined();
-      expect(await readAsks(asOtherMember)).toEqual([]);
-      expect(await readAsks(workflowGraphqlRequest)).toHaveLength(1);
-    });
-  });
-
-  // Removing a member deletes their membership, and the database then clears
-  // the creator of every workflow they created.
+  // Removing a member deletes the membership, which nulls the creator of every workflow they created.
   describe('the runs of a private workflow whose creator is removed from the workspace', () => {
     const removedUserId = randomUUID();
     const removedUserWorkspaceId = randomUUID();

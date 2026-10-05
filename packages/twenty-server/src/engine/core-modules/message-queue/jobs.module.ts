@@ -3,6 +3,7 @@ import { ModuleRef } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
@@ -18,6 +19,7 @@ import { ApplicationInstallModule } from 'src/engine/core-modules/application/ap
 import { TriggerInstallApplicationJob } from 'src/engine/core-modules/application/application-install/jobs/trigger-install-application.job';
 import { TriggerUninstallApplicationJob } from 'src/engine/core-modules/application/application-install/jobs/trigger-uninstall-application.job';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
+import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { UpgradeApplicationsJob } from 'src/engine/core-modules/application/jobs/upgrade-applications.job';
@@ -105,6 +107,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     NavigationMenuItemModule,
     SdkClientModule,
     WorkspaceCleanerModule,
+    WorkspaceCacheModule,
     SubscriptionsModule,
     EventLogIngestionModule,
     AiAgentMonitorModule,
@@ -115,6 +118,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     EmailingModule,
     ApplicationInstallModule,
     ApplicationManifestModule,
+    ApplicationRegistrationLookupModule,
     ApplicationRegistrationModule,
     ApplicationUpgradeModule,
     PreInstalledAppsModule,

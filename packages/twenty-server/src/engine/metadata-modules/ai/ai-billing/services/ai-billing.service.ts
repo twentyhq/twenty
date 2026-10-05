@@ -76,9 +76,7 @@ export class AiBillingService {
     };
   }
 
-  // Evaluation models are looked up first: they price like a language model
-  // but live in their own registry, and getEffectiveModelConfig would throw on
-  // an id it has never registered.
+  // evaluation models first: getEffectiveModelConfig throws on ids outside its registry
   private getCostConfig(modelId: ModelId): AiModelCostConfig {
     return (
       this.aiModelRegistryService.getEvaluationModelConfig(modelId) ??
@@ -143,7 +141,10 @@ export class AiBillingService {
       workspaceId,
       operationType,
       spenders: { userWorkspaceId, agentId },
-      cost: { creditsUsedMicro, quantity: totalTokens },
+      cost: {
+        [UsageUnit.CREDIT]: creditsUsedMicro,
+        [UsageUnit.TOKEN]: totalTokens,
+      },
     });
 
     await this.emitAiTokenUsageEvent(
@@ -181,7 +182,10 @@ export class AiBillingService {
       workspaceId,
       operationType,
       spenders,
-      cost: { creditsUsedMicro, quantity: totalTokens },
+      cost: {
+        [UsageUnit.CREDIT]: creditsUsedMicro,
+        [UsageUnit.TOKEN]: totalTokens,
+      },
     });
   }
 
@@ -206,7 +210,10 @@ export class AiBillingService {
       workspaceId,
       operationType: UsageOperationType.WEB_SEARCH,
       spenders: { userWorkspaceId },
-      cost: { creditsUsedMicro, quantity: nativeWebSearchCallCount },
+      cost: {
+        [UsageUnit.CREDIT]: creditsUsedMicro,
+        [UsageUnit.INVOCATION]: nativeWebSearchCallCount,
+      },
     });
 
     await this.usageRecorderService.record(workspaceId, [

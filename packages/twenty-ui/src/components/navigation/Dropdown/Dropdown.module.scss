@@ -18,6 +18,20 @@
 .section {
   padding: var(--t-spacing-1);
 
+  &[data-dropdown-columns] {
+    display: grid;
+    gap: var(--t-spacing-0_5);
+
+    > [data-dropdown-section-label] {
+      grid-column: 1 / -1;
+    }
+
+    > [data-dropdown-item] {
+      max-inline-size: 100%;
+      min-inline-size: 0;
+    }
+  }
+
   &[data-scrollable] {
     max-block-size: 176px;
     overflow-y: auto;

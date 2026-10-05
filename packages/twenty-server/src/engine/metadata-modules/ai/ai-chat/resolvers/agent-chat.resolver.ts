@@ -1,5 +1,5 @@
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
@@ -23,7 +23,6 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
@@ -33,9 +32,11 @@ import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-ch
 import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-chat-message-result.dto';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import {
@@ -48,8 +49,17 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
-  WorkspaceAuthGuard,
-  UserAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false },
+  }),
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
@@ -62,8 +72,10 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 export class AgentChatResolver {
   constructor(
     private readonly agentChatService: AgentChatService,
+    private readonly threadService: AgentChatThreadService,
     private readonly sharingService: AgentChatSharingService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
+    private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
     private readonly turnPreflightService: AgentChatTurnPreflightService,
@@ -111,16 +123,7 @@ export class AgentChatResolver {
       workspaceId,
     });
 
-    const interruptedError =
-      await this.agentChatStreamingService.reapDeadStream({
-        thread,
-        workspaceId,
-      });
-
-    if (interruptedError) {
-      thread.activeStreamId = null;
-      thread.lastStreamError = interruptedError;
-    }
+    await this.reapDeadStream(thread, workspaceId);
 
     const { chunks, maxSeq } =
       await this.eventPublisherService.getAccumulatedChunks(threadId);
@@ -142,7 +145,7 @@ export class AgentChatResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    return this.agentChatService.createThread({
+    return this.threadService.createThread({
       workspaceMemberId,
       workspaceId: workspace.id,
     });
@@ -182,18 +185,7 @@ export class AgentChatResolver {
       });
     }
 
-    if (isNonEmptyString(thread.activeStreamId)) {
-      const interruptedError =
-        await this.agentChatStreamingService.reapDeadStream({
-          thread,
-          workspaceId: workspace.id,
-        });
-
-      if (interruptedError) {
-        thread.activeStreamId = null;
-        thread.lastStreamError = interruptedError;
-      }
-    }
+    await this.reapDeadStream(thread, workspace.id);
 
     if (isNonEmptyString(thread.activeStreamId)) {
       const queuedMessage = await this.agentChatService.queueMessage({
@@ -216,7 +208,7 @@ export class AgentChatResolver {
     }
 
     const result = await this.agentChatStreamingService.streamAgentChat({
-      threadId,
+      thread,
       browsingContext: browsingContext ?? null,
       modelId,
       userWorkspaceId,
@@ -297,7 +289,7 @@ export class AgentChatResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
-    const thread = await this.agentChatService.getWritableThread({
+    const thread = await this.threadService.getWritableThread({
       threadId,
       workspaceMemberId,
       workspaceId,
@@ -327,7 +319,7 @@ export class AgentChatResolver {
       );
     }
 
-    await this.agentChatService.getWritableThread({
+    await this.threadService.getWritableThread({
       threadId: message.threadId,
       workspaceMemberId,
       workspaceId: workspace.id,
@@ -383,5 +375,21 @@ export class AgentChatResolver {
   @ResolveField(() => Float)
   totalOutputCredits(@Parent() thread: AgentChatThreadWorkspaceEntity): number {
     return toDisplayCredits(Number(thread.totalOutputCredits));
+  }
+
+  // the caller reads the thread after this, so it sees the reaped stream as failed
+  private async reapDeadStream(
+    thread: AgentChatThreadWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<void> {
+    const interruptedError = await this.streamRecoveryService.reapDeadStream({
+      thread,
+      workspaceId,
+    });
+
+    if (isDefined(interruptedError)) {
+      thread.activeStreamId = null;
+      thread.lastStreamError = interruptedError;
+    }
   }
 }

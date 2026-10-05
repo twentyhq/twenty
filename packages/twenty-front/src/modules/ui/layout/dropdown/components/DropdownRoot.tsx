@@ -4,8 +4,7 @@ import { Dropdown } from 'twenty-ui/components';
 
 import { DropdownCleanupEffect } from '@/ui/layout/dropdown/components/DropdownCleanupEffect';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { useHandleDropdownOpenChange } from '@/ui/layout/dropdown/hooks/useHandleDropdownOpenChange';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 
@@ -55,20 +54,10 @@ export const DropdownRoot = ({
     getIsDropdownOpen,
     getIsDropdownOpen,
   );
-  const { openDropdown } = useOpenDropdown();
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      closeDropdown(dropdownId);
-      return;
-    }
-
-    openDropdown({
-      dropdownComponentInstanceIdFromProps: dropdownId,
-      globalHotkeysConfig,
-    });
-  };
+  const { handleDropdownOpenChange } = useHandleDropdownOpenChange({
+    dropdownId,
+    globalHotkeysConfig,
+  });
 
   return (
     <DropdownComponentInstanceContext.Provider
@@ -79,7 +68,7 @@ export const DropdownRoot = ({
         multiple={multiple}
         defaultPage={defaultPage}
         open={isDropdownOpen}
-        onOpenChange={handleOpenChange}
+        onOpenChange={handleDropdownOpenChange}
         onEscapeKeyDown={onEscapeKeyDown}
         onInteractOutside={onInteractOutside}
       >

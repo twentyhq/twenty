@@ -1,4 +1,6 @@
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
+import { findAwaitingCallText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-awaiting-call-text.util';
+import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -36,51 +38,57 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import {
-  type AwaitingPausingToolPart,
-  findAwaitingPausingToolParts,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
+import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
+import {
+  type ChatExecutionOptions,
+  ChatExecutionService,
+} from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-outcome.type';
 import {
   classifyAgentChatTurnOutcome,
   resolveSupersededTurnOutcome,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 
-import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constant';
-import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
+import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
+import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
-import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 
-export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
-
-// Derive assistantMessageId deterministically from streamId so assistant-message
-// persistence is idempotent per stream: a retried job for the stream is skipped,
-// while each distinct resume in a turn persists its own message.
+// assistantMessageId derives from streamId, so a retried job skips persistence while each resume persists its own message
 const ASSISTANT_MESSAGE_ID_NAMESPACE = '0b9c2a3d-4e5f-4a1b-8c2d-3e4f5a6b7c8d';
+
+type StreamUsageTotals = {
+  inputTokens: number;
+  outputTokens: number;
+  inputCredits: number;
+  outputCredits: number;
+  cacheReadTokens: number;
+  cacheCreationTokens: number;
+  conversationSize: number;
+};
 
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
   private readonly logger = new Logger(StreamAgentChatJob.name);
 
-  // The processor is REQUEST-scoped, so this is per job. A publish failure
-  // after the stream already classified its outcome reaches the catch in
-  // handle(), which would otherwise count the same turn a second time.
+  // keeps the catch in handle() from counting a turn the stream already classified
   private hasRecordedTurnOutcome = false;
 
-  // Set once the turn has paused on an Ask, which is what the queue waits on:
-  // a queued message drained now would bypass the answer it is waiting for.
+  // set once the turn pauses on a person: a queued message drained then would bypass the pending answer
   private isAwaitingInput = false;
 
   constructor(
@@ -94,10 +102,12 @@ export class StreamAgentChatJob {
     private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
+    private readonly streamRecoveryService: AgentChatStreamRecoveryService,
+    private readonly threadService: AgentChatThreadService,
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
-    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
+    private readonly sharingService: AgentChatSharingService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -171,73 +181,65 @@ export class StreamAgentChatJob {
         );
       }
 
-      const { message, authorization } = await this.actorService.authorizeJob({
-        workspaceId: data.workspaceId,
-        threadId: data.threadId,
-        messageId: data.messageId,
-        turnId: data.existingTurnId,
-        userWorkspaceId: data.userWorkspaceId,
-      });
-      if (!isDefined(message.turnId)) {
+      const { message, sender, authorization } =
+        await this.actorService.authorizeJob({
+          workspaceId: data.workspaceId,
+          threadId: data.threadId,
+          messageId: data.messageId,
+          turnId: data.existingTurnId,
+          userWorkspaceId: data.userWorkspaceId,
+        });
+
+      const turnId = data.existingTurnId ?? message?.turnId;
+
+      if (!isDefined(turnId)) {
         throw new AiException(
           'Message turn not found',
           AiExceptionCode.MESSAGE_NOT_FOUND,
         );
       }
-      await this.executeStream(
-        {
-          ...data,
-          messageId: message.id,
-          existingTurnId: message.turnId,
-          workspaceMemberId: authorization.authContext.workspaceMemberId,
-        },
+
+      const titlePromise = data.hasTitle
+        ? Promise.resolve(null)
+        : this.agentChatService
+            .generateTitleIfNeeded({
+              userWorkspaceId: data.userWorkspaceId,
+              threadId: data.threadId,
+              messageContent: data.lastUserMessageText,
+              workspaceId: data.workspaceId,
+            })
+            .catch(() => null);
+
+      await this.buildAndPublishStream({
         workspace,
-        abortController.signal,
+        data,
+        turnId,
+        sender,
+        authorization,
+        titlePromise,
+        abortSignal: abortController.signal,
         turnModelId,
-      );
+      });
     } catch (error) {
       this.logger.error(
-        `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
+        `[AI_CHAT_TURN_FAILED] failurePhase=execution, model=${turnModelId}, threadId=${data.threadId}, workspaceId=${data.workspaceId}, streamId=${data.streamId}: ${formatErrorWithCause(error)}`,
       );
-      const streamError = mapErrorToStreamError(error);
 
       this.recordTurnOutcome(
         {
           kind: 'failed',
           failurePhase: 'execution',
-          errorCode: streamError.code,
+          errorCode: mapErrorToStreamError(error).code,
         },
         turnModelId,
       );
 
-      await this.threadRepository
-        .update(
-          data.workspaceId,
-          { id: data.threadId, activeStreamId: data.streamId },
-          {
-            lastStreamError: {
-              ...streamError,
-              failedAt: new Date().toISOString(),
-            },
-          },
-        )
-        .catch((persistError) => {
-          this.logger.error(
-            `Failed to persist stream error for thread ${data.threadId}: ${persistError instanceof Error ? persistError.message : String(persistError)}`,
-          );
-        });
-
-      await this.eventPublisherService
-        .publish({
-          threadId: data.threadId,
-          workspaceId: data.workspaceId,
-          event: {
-            type: 'stream-error',
-            code: streamError.code,
-            message: streamError.message,
-          },
-        })
-        .catch(() => {});
+      await this.streamRecoveryService.failStream({
+        threadId: data.threadId,
+        workspaceId: data.workspaceId,
+        streamId: data.streamId,
+        error,
+      });
 
       await this.eventPublisherService
         .publish({
@@ -249,36 +251,29 @@ export class StreamAgentChatJob {
       throw error;
     } finally {
       stopHeartbeat();
-      await this.streamHeartbeatService.clear(data.streamId);
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
-      await this.threadRepository
-        .update(
-          data.workspaceId,
-          { id: data.threadId, activeStreamId: data.streamId },
-          { activeStreamId: null },
-        )
-        .catch(() => {});
+      await this.streamRecoveryService.releaseStreamClaim({
+        threadId: data.threadId,
+        workspaceId: data.workspaceId,
+        streamId: data.streamId,
+      });
 
       if (!abortController.signal.aborted && !this.isAwaitingInput) {
         await this.agentChatStreamingService
           .flushNextQueuedMessage({
             threadId: data.threadId,
             workspaceId: data.workspaceId,
-            hasTitle: data.hasTitle,
           })
           .catch((error) => {
             this.logger.error(
-              `Failed to flush queued message for thread ${data.threadId}: ${error instanceof Error ? error.message : String(error)}`,
+              `Failed to flush queued message for thread ${data.threadId}: ${formatErrorWithCause(error)}`,
             );
           });
       }
     }
   }
 
-  // The turn-started counter fires before the model is resolved downstream, so
-  // resolve it here too: auto-select ids such as `default-fast-model` would
-  // otherwise label the start of a turn differently from its outcome, and every
-  // per-model rate is computed across the two.
+  // resolve auto-select ids here so turn-start and outcome metrics carry the same model label
   private resolveTurnModelId(
     requestedModelId: string | undefined,
     workspace: WorkspaceEntity | null,
@@ -347,47 +342,21 @@ export class StreamAgentChatJob {
     }
   }
 
-  private async executeStream(
-    data: StreamAgentChatJobData & {
-      existingTurnId: string;
-      workspaceMemberId: string;
-    },
-    workspace: WorkspaceEntity,
-    abortSignal: AbortSignal,
-    turnModelId: string,
-  ): Promise<void> {
-    const titlePromise = data.hasTitle
-      ? Promise.resolve(null)
-      : this.agentChatService
-          .generateTitleIfNeeded({
-            workspaceMemberId: data.workspaceMemberId,
-            threadId: data.threadId,
-            messageContent: data.lastUserMessageText,
-            workspaceId: data.workspaceId,
-          })
-          .catch(() => null);
-
-    await this.buildAndPublishStream({
-      workspace,
-      data,
-      turnId: data.existingTurnId,
-      titlePromise,
-      abortSignal,
-      turnModelId,
-    });
-  }
-
   private async buildAndPublishStream({
     workspace,
     data,
     turnId,
+    sender,
+    authorization,
     titlePromise,
     abortSignal,
     turnModelId,
   }: {
     workspace: WorkspaceEntity;
-    data: StreamAgentChatJobData & { workspaceMemberId: string };
+    data: StreamAgentChatJobData;
     turnId: string;
+    sender: ChatExecutionOptions['sender'];
+    authorization: ChatExecutionOptions['authorization'];
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
     turnModelId: string;
@@ -398,15 +367,15 @@ export class StreamAgentChatJob {
     );
 
     return new Promise<void>((resolve, reject) => {
-      let streamUsage = {
+      const usageTotals: StreamUsageTotals = {
         inputTokens: 0,
         outputTokens: 0,
         inputCredits: 0,
         outputCredits: 0,
         cacheReadTokens: 0,
+        cacheCreationTokens: 0,
+        conversationSize: 0,
       };
-      let lastStepConversationSize = 0;
-      let totalCacheCreationTokens = 0;
       let streamError: unknown;
       let streamFinishError: unknown;
       let checkHasNoMoreAvailableCredits: () => boolean = () => false;
@@ -420,16 +389,14 @@ export class StreamAgentChatJob {
       ): Promise<void> => {
         persistChain = persistChain.then(persist).catch((error) => {
           this.logger.warn(
-            `Failed to checkpoint assistant message for stream ${data.streamId}: ${error instanceof Error ? error.message : String(error)}`,
+            `Failed to checkpoint assistant message for stream ${data.streamId}: ${formatErrorWithCause(error)}`,
           );
         });
 
         return persistChain;
       };
 
-      // onEnd fires before the uiStream is fully drained. We use this
-      // promise to coordinate: the IIFE waits for DB persist to complete
-      // before publishing message-persisted (after all chunks).
+      // onEnd fires before the uiStream drains, so message-persisted waits on this
       let resolveStreamFinished: () => void;
       const streamFinishedPromise = new Promise<void>((res) => {
         resolveStreamFinished = res;
@@ -471,22 +438,27 @@ export class StreamAgentChatJob {
             });
           };
 
-          const { stream, modelConfig, hasNoMoreAvailableCredits } =
-            await this.chatExecutionService.streamChat({
-              workspace,
-              userWorkspaceId: data.userWorkspaceId,
-              threadId: data.threadId,
-              streamId: data.streamId,
-              turnId: data.existingTurnId,
-              messageId: data.messageId,
-              messages: data.messages,
-              browsingContext: data.browsingContext,
-              modelId: data.modelId,
-              onCodeExecutionUpdate,
-              onCompaction,
-              abortSignal,
-              conversationSizeTokens: data.conversationSizeTokens,
-            });
+          const {
+            stream,
+            modelConfig,
+            hasNoMoreAvailableCredits,
+            getStreamError,
+          } = await this.chatExecutionService.streamChat({
+            workspace,
+            userWorkspaceId: data.userWorkspaceId,
+            sender,
+            authorization,
+            threadId: data.threadId,
+            streamId: data.streamId,
+            turnId,
+            messages: data.messages,
+            browsingContext: data.browsingContext,
+            modelId: data.modelId,
+            onCodeExecutionUpdate,
+            onCompaction,
+            abortSignal,
+            conversationSizeTokens: data.conversationSizeTokens,
+          });
 
           checkHasNoMoreAvailableCredits = hasNoMoreAvailableCredits;
 
@@ -503,37 +475,18 @@ export class StreamAgentChatJob {
           writer.merge(
             toUIMessageStream({
               stream: stream.stream,
-              onError: (error) => {
-                streamError = error;
-
-                return error instanceof Error ? error.message : String(error);
-              },
+              onError: formatErrorWithCause,
               sendStart: true,
               generateMessageId: () => assistantMessageId,
-              messageMetadata: ({ part }) => {
-                return this.computeMessageMetadata({
-                  part,
-                  modelConfig,
-                  streamUsage,
-                  lastStepConversationSize,
-                  totalCacheCreationTokens,
-                  onUpdateUsage: (usage) => {
-                    streamUsage = usage;
-                  },
-                  onUpdateConversationSize: (size) => {
-                    lastStepConversationSize = size;
-                  },
-                  onUpdateCacheCreationTokens: (tokens) => {
-                    totalCacheCreationTokens = tokens;
-                  },
-                });
-              },
+              messageMetadata: ({ part }) =>
+                this.computeMessageMetadata({ part, modelConfig, usageTotals }),
               onEnd: async ({ responseMessage, isAborted }) => {
                 // Rejecting here would race chunks still draining.
                 try {
+                  streamError ??= getStreamError();
                   isFinalizingPersist = true;
                   await persistChain;
-                  await this.handleStreamFinish({
+                  const outcome = await this.persistStreamFinish({
                     assistantMessageId,
                     streamId: data.streamId,
                     responseMessage,
@@ -542,14 +495,17 @@ export class StreamAgentChatJob {
                     outOfCredits: checkHasNoMoreAvailableCredits(),
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
-                    workspaceMemberId: data.workspaceMemberId,
-                    streamUsage,
-                    lastStepConversationSize,
-                    totalCacheCreationTokens,
+                    workspaceMemberId:
+                      authorization.authContext.workspaceMemberId,
+                    usageTotals,
                     modelConfig,
                     turnModelId,
                     turnId,
                   });
+
+                  if (isDefined(outcome)) {
+                    this.recordTurnOutcome(outcome, turnModelId);
+                  }
                   await titleWritePromise;
                 } catch (error) {
                   streamFinishError = error;
@@ -566,7 +522,7 @@ export class StreamAgentChatJob {
           streamError = error;
           resolveStreamFinished();
 
-          return error instanceof Error ? error.message : String(error);
+          return formatErrorWithCause(error);
         },
       });
 
@@ -606,12 +562,11 @@ export class StreamAgentChatJob {
             });
           }
         } catch {
-          // best-effort; the authoritative persist runs onFinish
+          // best-effort; the authoritative persist runs onEnd
         }
       })();
 
-      // Publish all chunks first, then signal completion. This guarantees
-      // message-persisted arrives after every stream-chunk on the client.
+      // message-persisted must reach the client after every stream-chunk
       void (async () => {
         try {
           for await (const chunk of publishStream) {
@@ -663,12 +618,7 @@ export class StreamAgentChatJob {
   private computeMessageMetadata({
     part,
     modelConfig,
-    streamUsage,
-    lastStepConversationSize,
-    totalCacheCreationTokens,
-    onUpdateUsage,
-    onUpdateConversationSize,
-    onUpdateCacheCreationTokens,
+    usageTotals,
   }: {
     part: {
       type: string;
@@ -681,24 +631,7 @@ export class StreamAgentChatJob {
       providerMetadata?: Record<string, Record<string, unknown> | undefined>;
     };
     modelConfig: AiModelConfig;
-    streamUsage: {
-      inputTokens: number;
-      outputTokens: number;
-      inputCredits: number;
-      outputCredits: number;
-      cacheReadTokens: number;
-    };
-    lastStepConversationSize: number;
-    totalCacheCreationTokens: number;
-    onUpdateUsage: (usage: {
-      inputTokens: number;
-      outputTokens: number;
-      inputCredits: number;
-      outputCredits: number;
-      cacheReadTokens: number;
-    }) => void;
-    onUpdateConversationSize: (size: number) => void;
-    onUpdateCacheCreationTokens: (tokens: number) => void;
+    usageTotals: StreamUsageTotals;
   }) {
     if (part.type === 'finish-step') {
       const stepCacheCreationTokens = extractCacheCreationTokens(
@@ -709,37 +642,30 @@ export class StreamAgentChatJob {
         cacheCreationTokens: stepCacheCreationTokens,
       });
 
-      onUpdateUsage({
-        inputTokens:
-          streamUsage.inputTokens + stepBreakdown.tokenCounts.totalInputTokens,
-        outputTokens:
-          streamUsage.outputTokens + (part.usage?.outputTokens ?? 0),
-        inputCredits:
-          streamUsage.inputCredits +
-          convertDollarsToCreditsMicro(stepBreakdown.inputCostInDollars),
-        outputCredits:
-          streamUsage.outputCredits +
-          convertDollarsToCreditsMicro(stepBreakdown.outputCostInDollars),
-        cacheReadTokens:
-          streamUsage.cacheReadTokens +
-          stepBreakdown.tokenCounts.cachedInputTokens,
-      });
-      onUpdateCacheCreationTokens(
-        totalCacheCreationTokens + stepCacheCreationTokens,
+      usageTotals.inputTokens += stepBreakdown.tokenCounts.totalInputTokens;
+      usageTotals.outputTokens += part.usage?.outputTokens ?? 0;
+      usageTotals.inputCredits += convertDollarsToCreditsMicro(
+        stepBreakdown.inputCostInDollars,
       );
-      onUpdateConversationSize(part.usage?.inputTokens ?? 0);
+      usageTotals.outputCredits += convertDollarsToCreditsMicro(
+        stepBreakdown.outputCostInDollars,
+      );
+      usageTotals.cacheReadTokens +=
+        stepBreakdown.tokenCounts.cachedInputTokens;
+      usageTotals.cacheCreationTokens += stepCacheCreationTokens;
+      usageTotals.conversationSize = part.usage?.inputTokens ?? 0;
     }
 
     if (part.type === 'finish') {
       return {
         createdAt: new Date().toISOString(),
         usage: {
-          inputTokens: streamUsage.inputTokens,
-          outputTokens: streamUsage.outputTokens,
-          cachedInputTokens: streamUsage.cacheReadTokens,
-          inputCredits: toDisplayCredits(streamUsage.inputCredits),
-          outputCredits: toDisplayCredits(streamUsage.outputCredits),
-          conversationSize: lastStepConversationSize,
+          inputTokens: usageTotals.inputTokens,
+          outputTokens: usageTotals.outputTokens,
+          cachedInputTokens: usageTotals.cacheReadTokens,
+          inputCredits: toDisplayCredits(usageTotals.inputCredits),
+          outputCredits: toDisplayCredits(usageTotals.outputCredits),
+          conversationSize: usageTotals.conversationSize,
         },
         model: {
           contextWindowTokens: modelConfig.contextWindowTokens,
@@ -750,38 +676,7 @@ export class StreamAgentChatJob {
     return undefined;
   }
 
-  private async handleStreamFinish(args: {
-    assistantMessageId: string;
-    streamId: string;
-    responseMessage: Omit<ExtendedUIMessage, 'id'>;
-    isAborted: boolean;
-    streamError: unknown;
-    outOfCredits: boolean;
-    threadId: string;
-    workspaceId: string;
-    workspaceMemberId: string;
-    streamUsage: {
-      inputTokens: number;
-      outputTokens: number;
-      inputCredits: number;
-      outputCredits: number;
-      cacheReadTokens: number;
-    };
-    lastStepConversationSize: number;
-    totalCacheCreationTokens: number;
-    modelConfig: AiModelConfig;
-    turnModelId: string;
-    turnId: string;
-  }): Promise<void> {
-    const outcome = await this.persistStreamFinish(args);
-
-    if (isDefined(outcome)) {
-      this.recordTurnOutcome(outcome, args.turnModelId);
-    }
-  }
-
-  // Returns null when the stream errored: that turn is accounted for by the
-  // catch in handle(), and counting it here too would double it.
+  // null on stream error: the catch in handle() already counts that turn
   private async persistStreamFinish({
     assistantMessageId,
     streamId,
@@ -792,9 +687,7 @@ export class StreamAgentChatJob {
     threadId,
     workspaceId,
     workspaceMemberId,
-    streamUsage,
-    lastStepConversationSize,
-    totalCacheCreationTokens,
+    usageTotals,
     modelConfig,
     turnModelId,
     turnId,
@@ -808,24 +701,24 @@ export class StreamAgentChatJob {
     threadId: string;
     workspaceId: string;
     workspaceMemberId: string;
-    streamUsage: {
-      inputTokens: number;
-      outputTokens: number;
-      inputCredits: number;
-      outputCredits: number;
-      cacheReadTokens: number;
-    };
-    lastStepConversationSize: number;
-    totalCacheCreationTokens: number;
+    usageTotals: StreamUsageTotals;
     modelConfig: AiModelConfig;
     turnModelId: string;
     turnId: string;
   }): Promise<AgentChatTurnOutcome | null> {
+    // A turn that only waits on the member still needs a preview in chat lists
+    const replyText =
+      findLastMessageText(responseMessage.parts) ??
+      findAwaitingCallText(responseMessage.parts);
     const hasText = responseMessage.parts.some(
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
 
     const awaitingParts = findAwaitingPausingToolParts(responseMessage.parts);
+    // without an answerable call nothing can resume the turn, so fail rather than wait forever
+    const isAwaitingAnswer =
+      awaitingParts.length > 0 &&
+      awaitingParts.every(({ isAnswerable }) => isAnswerable);
 
     if ((isAborted || !hasText) && awaitingParts.length === 0) {
       this.logAssistantTurnWithoutText({
@@ -836,7 +729,7 @@ export class StreamAgentChatJob {
         hasText,
         threadId,
         workspaceId,
-        streamUsage,
+        inputTokens: usageTotals.inputTokens,
         modelId: turnModelId,
       });
     }
@@ -877,28 +770,44 @@ export class StreamAgentChatJob {
       workspaceId,
       threadId,
       streamId,
+      recordedActivity: (await this.sharingService.hasInboxState(workspaceId))
+        ? { lastMessageText: replyText }
+        : null,
       usage: {
-        totalInputTokens: streamUsage.inputTokens,
-        totalOutputTokens: streamUsage.outputTokens,
-        totalInputCredits: streamUsage.inputCredits,
-        totalOutputCredits: streamUsage.outputCredits,
-        totalCacheReadTokens: streamUsage.cacheReadTokens,
-        totalCacheCreationTokens,
+        totalInputTokens: usageTotals.inputTokens,
+        totalOutputTokens: usageTotals.outputTokens,
+        totalInputCredits: usageTotals.inputCredits,
+        totalOutputCredits: usageTotals.outputCredits,
+        totalCacheReadTokens: usageTotals.cacheReadTokens,
+        totalCacheCreationTokens: usageTotals.cacheCreationTokens,
         contextWindowTokens: modelConfig.contextWindowTokens,
-        conversationSize: lastStepConversationSize,
+        conversationSize: usageTotals.conversationSize,
+        pendingQuestionMessageId: isAwaitingAnswer ? assistantMessageId : null,
       },
     });
 
     if (!totalsUpdate.affected) {
+      // The reply is saved even though a newer stream owns the thread. That
+      // activity is best-effort and must not turn the saved reply into an error
+      await this.threadService
+        .recordThreadActivity({ workspaceId, threadId, text: replyText })
+        .catch((error: unknown) =>
+          this.logger.warn(
+            `Could not record reply activity on thread ${threadId}: ${formatErrorWithCause(error)}`,
+          ),
+        );
+
       return resolveSupersededTurnOutcome(outcome);
     }
 
-    await this.openAsksForAwaitingParts({
-      awaitingParts,
-      threadId,
-      workspaceId,
-      workspaceMemberId,
-    });
+    if (awaitingParts.length > 0 && !isAwaitingAnswer) {
+      throw new AiException(
+        'A call waiting on the user could not be read',
+        AiExceptionCode.INVALID_TOOL_CALL_OUTPUT,
+      );
+    }
+
+    this.isAwaitingInput = isAwaitingAnswer;
 
     await this.agentChatService.notifyThreadUsageUpdated({
       threadBefore: threadBeforeUsage,
@@ -909,56 +818,6 @@ export class StreamAgentChatJob {
     return outcome;
   }
 
-  // Pausing is only complete once every waiting call has its Ask: without
-  // one nothing can answer that call, so failing here fails the turn, which
-  // leaves it retryable rather than silently stuck. Every call is read before
-  // any Ask opens, and the Asks open in the order of the calls.
-  private async openAsksForAwaitingParts({
-    awaitingParts,
-    threadId,
-    workspaceId,
-    workspaceMemberId,
-  }: {
-    awaitingParts: AwaitingPausingToolPart[];
-    threadId: string;
-    workspaceId: string;
-    workspaceMemberId: string;
-  }): Promise<void> {
-    const inputAsks = awaitingParts.map(({ toolName, toolCallId, ask }) => {
-      if (!isDefined(ask)) {
-        throw new AiException(
-          `The ${toolName} call could not be read`,
-          AiExceptionCode.INVALID_TOOL_CALL_OUTPUT,
-        );
-      }
-
-      return { ...ask, threadId, toolCallId, assigneeId: workspaceMemberId };
-    });
-
-    const openedToolCallIds: string[] = [];
-
-    try {
-      for (const inputAsk of inputAsks) {
-        await this.inputAskWorkspaceService.open({ workspaceId, inputAsk });
-        openedToolCallIds.push(inputAsk.toolCallId);
-      }
-    } catch (error) {
-      // A retry replaces this turn's calls, so the Asks already opened for them
-      // would wait on calls that no longer exist.
-      for (const toolCallId of openedToolCallIds) {
-        await this.inputAskWorkspaceService
-          .cancel({ workspaceId, match: { threadId, toolCallId } })
-          .catch(() => false);
-      }
-
-      throw error;
-    }
-
-    if (inputAsks.length > 0) {
-      this.isAwaitingInput = true;
-    }
-  }
-
   private logAssistantTurnWithoutText({
     responseMessage,
     isAborted,
@@ -967,7 +826,7 @@ export class StreamAgentChatJob {
     hasText,
     threadId,
     workspaceId,
-    streamUsage,
+    inputTokens,
     modelId,
   }: {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -977,10 +836,7 @@ export class StreamAgentChatJob {
     hasText: boolean;
     threadId: string;
     workspaceId: string;
-    streamUsage: {
-      inputTokens: number;
-      outputTokens: number;
-    };
+    inputTokens: number;
     modelId: string;
   }): void {
     const reason = isAborted
@@ -991,12 +847,9 @@ export class StreamAgentChatJob {
           ? 'credits-exhausted'
           : 'empty-completion';
 
-    const errorDetail =
-      streamError instanceof Error
-        ? `${streamError.name}: ${streamError.message}`
-        : isDefined(streamError)
-          ? String(streamError)
-          : 'none';
+    const errorDetail = isDefined(streamError)
+      ? formatErrorWithCause(streamError)
+      : 'none';
 
     this.logger.warn(
       `[AI_CHAT_NO_TEXT] Assistant turn ended without a text reply — ` +
@@ -1004,7 +857,7 @@ export class StreamAgentChatJob {
         `threadId=${threadId}, workspaceId=${workspaceId}, ` +
         `isAborted=${isAborted}, outOfCredits=${outOfCredits}, hasText=${hasText}, ` +
         `streamError=${errorDetail}, ` +
-        `inputTokens=${streamUsage.inputTokens},` +
+        `inputTokens=${inputTokens},` +
         `responseMessage.parts=${JSON.stringify(responseMessage.parts)}`,
     );
 

@@ -21,8 +21,7 @@ describe('shiftUtcMonths', () => {
     ).toEqual(new Date('2024-02-29T00:00:00.000Z'));
   });
 
-  // The stored boundary has already been clamped, so the anchor has to be
-  // re-applied rather than read off the date being shifted.
+  // The stored boundary is already clamped, so the anchor must be re-applied
   it('applies an anchor day the date itself no longer carries', () => {
     expect(
       shiftUtcMonths({
@@ -79,8 +78,7 @@ describe('shiftUtcMonths', () => {
     ).toEqual(new Date('2023-02-28T00:00:00.000Z'));
   });
 
-  // Stripe's boundaries are instants, not dates, and a subscription anchored
-  // mid-day hands over at that time of day in every period.
+  // Stripe boundaries are instants: a mid-day anchor hands over at that time every period
   it('carries the time of day through the shift', () => {
     expect(
       shiftUtcMonths({ date: new Date('2026-01-15T09:41:07.123Z'), months: 1 }),

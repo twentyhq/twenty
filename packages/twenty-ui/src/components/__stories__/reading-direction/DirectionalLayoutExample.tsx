@@ -1,16 +1,9 @@
-import { useState } from 'react';
-
-import {
-  AvatarGroup,
-  Callout,
-  CardPicker,
-  ColorSchemePicker,
-  JsonTree,
-} from '@ui/components';
+import { AvatarGroup, Callout, JsonTree } from '@ui/components';
 import { Avatar, Pill } from '@ui/primitives/data-display';
 import {
   Button,
   ButtonGroup,
+  Radio,
   RadioGroup,
   SegmentedControl,
 } from '@ui/primitives/input';
@@ -24,10 +17,6 @@ export const DirectionalLayoutExample = ({
 }: {
   direction: 'ltr' | 'rtl';
 }) => {
-  const [colorScheme, setColorScheme] = useState<'Light' | 'Dark' | 'System'>(
-    'System',
-  );
-
   return (
     <TextDirectionProvider direction={direction}>
       <div
@@ -48,15 +37,17 @@ export const DirectionalLayoutExample = ({
           title="Account details"
           description="Review the information before continuing."
         />
-        <ColorSchemePicker
-          value={colorScheme}
-          onChange={setColorScheme}
-          lightLabel="Light"
-          darkLabel="Dark"
-          systemLabel="System"
-        />
-        <RadioGroup aria-label="Plan" defaultValue="team">
-          <CardPicker value="team">Team plan</CardPicker>
+        <RadioGroup
+          aria-label="Plan"
+          defaultValue="team"
+          style={{ flexDirection: 'row' }}
+        >
+          <Radio variant="card" value="team">
+            Team plan
+          </Radio>
+          <Radio variant="card" value="personal">
+            Personal plan
+          </Radio>
         </RadioGroup>
         <ButtonGroup aria-label="Record actions">
           <Button>First action</Button>

@@ -1,8 +1,8 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
-import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartToUIMessagePart';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
+import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-db-parts-to-ui-message-parts.util';
+import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-db-parts.util';
 
 const dynamicToolPart = (
   overrides: Record<string, unknown> = {},
@@ -32,20 +32,12 @@ const staticToolPart = (
 describe('AgentMessagePart mappers — dynamic-tool support', () => {
   it('persists a dynamic-tool part without throwing', () => {
     expect(() =>
-      mapUIMessagePartsToDBParts(
-        [dynamicToolPart()],
-        'message-1',
-        'workspace-1',
-      ),
+      mapUIMessagePartsToDBParts([dynamicToolPart()], 'message-1'),
     ).not.toThrow();
   });
 
   it('stores the tool name on the row for dynamic-tool parts', () => {
-    const [row] = mapUIMessagePartsToDBParts(
-      [dynamicToolPart()],
-      'message-1',
-      'workspace-1',
-    );
+    const [row] = mapUIMessagePartsToDBParts([dynamicToolPart()], 'message-1');
 
     expect(row).toMatchObject({
       type: 'dynamic-tool',
@@ -57,11 +49,7 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
   });
 
   it('stores the tool name on the row for static tool parts', () => {
-    const [row] = mapUIMessagePartsToDBParts(
-      [staticToolPart()],
-      'message-1',
-      'workspace-1',
-    );
+    const [row] = mapUIMessagePartsToDBParts([staticToolPart()], 'message-1');
 
     expect(row).toMatchObject({
       type: 'tool-execute_tool',
@@ -81,7 +69,6 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
         }),
       ],
       'message-1',
-      'workspace-1',
     );
 
     expect(row.toolInput).toEqual({});
@@ -90,11 +77,7 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
   it('round-trips a dynamic-tool part through DB and back', () => {
     const original = dynamicToolPart();
 
-    const [row] = mapUIMessagePartsToDBParts(
-      [original],
-      'message-1',
-      'workspace-1',
-    );
+    const [row] = mapUIMessagePartsToDBParts([original], 'message-1');
     const reloaded = mapDBPartToUIMessagePart(
       row as AgentMessagePartWorkspaceEntity,
     );
@@ -116,11 +99,7 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
       callProviderMetadata: { anthropic: { encryptedContent: 'abc123' } },
     });
 
-    const [row] = mapUIMessagePartsToDBParts(
-      [original],
-      'message-1',
-      'workspace-1',
-    );
+    const [row] = mapUIMessagePartsToDBParts([original], 'message-1');
 
     expect(row).toMatchObject({
       providerExecuted: true,
@@ -140,11 +119,7 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
   it('round-trips a static tool part through DB and back', () => {
     const original = staticToolPart();
 
-    const [row] = mapUIMessagePartsToDBParts(
-      [original],
-      'message-1',
-      'workspace-1',
-    );
+    const [row] = mapUIMessagePartsToDBParts([original], 'message-1');
     const reloaded = mapDBPartToUIMessagePart(
       row as AgentMessagePartWorkspaceEntity,
     );

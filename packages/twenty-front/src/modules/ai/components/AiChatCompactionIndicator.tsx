@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { IconTransform } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -9,21 +10,14 @@ const StyledIndicatorContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledIconTextContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
 export const AiChatCompactionIndicator = () => {
+  const { t } = useLingui();
   const theme = useTheme();
 
   return (
     <StyledIndicatorContainer>
-      <StyledIconTextContainer>
-        <IconTransform size={theme.icon.size.sm} />
-        <div>The conversation has been compacted</div>
-      </StyledIconTextContainer>
+      <IconTransform size={theme.icon.size.sm} />
+      <div>{t`The conversation has been compacted`}</div>
     </StyledIndicatorContainer>
   );
 };

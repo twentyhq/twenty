@@ -1,44 +1,63 @@
 import { computeNewPositionsOfDraggedRecords } from '@/object-record/utils/computeNewPositionsOfDraggedRecords';
 
 describe('computeNewPositionsOfDraggedRecords', () => {
-  const sourceRecordIds = Array.from(
-    { length: 9 },
-    (_, index) => `source-${index}`,
-  );
+  const records = [
+    { id: 'a', position: 1 },
+    { id: 'b', position: 2 },
+    { id: 'c', position: 3 },
+    { id: 'd', position: 4 },
+  ];
 
-  it('should spread dragged records between neighbors without floating point artifacts', () => {
+  it('should gather the selection around the dragged record when it is dropped where it was', () => {
     const result = computeNewPositionsOfDraggedRecords({
-      arrayOfRecordsWithPosition: [
-        { id: 'first', position: 0 },
-        { id: 'target', position: 1 },
-      ],
-      draggedRecordId: 'source-0',
-      targetRecordId: 'target',
-      sourceRecordIds,
+      arrayOfRecordsWithPosition: records,
+      draggedRecordId: 'c',
+      targetRecordId: 'c',
+      sourceRecordIds: ['a', 'c'],
       isDroppedAfterList: false,
     });
 
-    expect(result?.map(({ position }) => position)).toEqual([
-      0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
-    ]);
-    expect(result?.map(({ id }) => id)).toEqual(sourceRecordIds);
+    const positionById = new Map(
+      result.map(({ id, position }) => [id, position]),
+    );
+
+    expect(positionById.get('a')).toBeGreaterThan(2);
+    expect(positionById.get('a')).toBeLessThan(positionById.get('c') ?? 0);
+    expect(positionById.get('c')).toBeLessThan(4);
   });
 
-  it('should place dragged records before the first record', () => {
+  it('should gather the selection at the end when the dragged record is the last one', () => {
     const result = computeNewPositionsOfDraggedRecords({
-      arrayOfRecordsWithPosition: [
-        { id: 'target', position: 1 },
-        { id: 'other', position: 2 },
-      ],
-      draggedRecordId: 'source-0',
-      targetRecordId: 'target',
-      sourceRecordIds: ['source-0', 'source-1', 'source-2', 'source-3'],
+      arrayOfRecordsWithPosition: records,
+      draggedRecordId: 'd',
+      targetRecordId: 'd',
+      sourceRecordIds: ['a', 'd'],
+      isDroppedAfterList: true,
+    });
+
+    const positionById = new Map(
+      result.map(({ id, position }) => [id, position]),
+    );
+
+    expect(positionById.get('a')).toBeGreaterThan(3);
+    expect(positionById.get('d')).toBeGreaterThan(positionById.get('a') ?? 0);
+  });
+
+  it('should place the selection after the last record when moving down onto it', () => {
+    const result = computeNewPositionsOfDraggedRecords({
+      arrayOfRecordsWithPosition: records,
+      draggedRecordId: 'a',
+      targetRecordId: 'd',
+      sourceRecordIds: ['a', 'b'],
       isDroppedAfterList: false,
     });
 
-    expect(result?.map(({ position }) => position)).toEqual([
-      0.2, 0.4, 0.6, 0.8,
-    ]);
+    const positionById = new Map(
+      result.map(({ id, position }) => [id, position]),
+    );
+
+    expect(positionById.get('a')).toBeGreaterThan(4);
+    expect(positionById.get('b')).toBeGreaterThan(positionById.get('a') ?? 0);
   });
 
   it('should return null when dropping a record on itself', () => {

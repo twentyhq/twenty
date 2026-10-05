@@ -57,6 +57,7 @@ export const createListWorkflowsTool = (
           after: parameters.after,
           orderBy: CoreWorkflowOrderByField.UPDATED_AT,
           orderByDirection: CoreWorkflowOrderByDirection.DESC,
+          includeSystem: true,
           filter: parameters.status
             ? {
                 logicalOperator: CoreWorkflowFilterLogicalOperator.AND,

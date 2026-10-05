@@ -45,8 +45,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
   const store = useStore();
   const isEnabled = isDefined(chatObjectMetadataItem);
 
-  // The removal check looks the current chat up itself, so it runs even when
-  // the reload could not settle
+  // The removal check looks the chat up itself, so it runs even if the reload fails.
   const reloadAgentChatThreads = useCallback(async () => {
     await refreshAgentChatThreads();
     await leaveRemovedAiChatThread();
@@ -74,11 +73,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
           const createdThread =
             operation.createdRecord as AgentChatThreadRecord;
 
-          // A workflow run's conversation is announced to whoever reads the
-          // run, but it is listed with the run, not in the chat list
-          if (!isDefined(createdThread.workflowRunId)) {
-            addAgentChatThread(createdThread);
-          }
+          addAgentChatThread(createdThread);
           return;
         }
         case 'update-one':
@@ -90,8 +85,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
 
           applyUpdates(updateInputs.map(toThreadUpdate));
 
-          // A chat past the loaded pages moves to the top once updated, and
-          // reloading keeps workflow run conversations out of the list
+          // An updated chat past the loaded pages moves to the top
           const listedThreadIds =
             store.get(agentChatThreadListState.atom)?.threadIds ?? [];
 

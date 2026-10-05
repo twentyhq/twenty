@@ -13,7 +13,6 @@ export const useCanPersistViewChanges = () => {
     return { canPersistChanges: false };
   }
 
-  // Users with VIEWS permission can persist all views
   if (hasViewsPermission) {
     return { canPersistChanges: true };
   }

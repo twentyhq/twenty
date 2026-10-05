@@ -3,22 +3,8 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from '@/metadata/constants/stan
 import { buildStandardObjectIndexView } from '@/metadata/utils/internal/build-standard-object-index-view.util';
 import { buildStandardObjectRecordPageFieldsView } from '@/metadata/utils/internal/build-standard-object-record-page-fields-view.util';
 
-// Important notice:
-// - Never ever mutate an existing universal identifier
-// - Deleting an existing universal identifier should be very rare
-// - Field universal identifiers live in STANDARD_OBJECT_FIELDS (see
-//   standard-object-fields.constant.ts), so both an object's `fields` and its
-//   INDEX view can read the same values.
-// - INDEX view universal identifiers (the "All {objectLabelPlural}" table view
-//   keyed on ViewKey.INDEX) and their view-field universal identifiers are
-//   deterministically derived by buildStandardObjectIndexView
-//   (getSystemViewUniversalIdentifier for the view,
-//   getSystemViewFieldUniversalIdentifier for each view field).
-// - FIELDS_WIDGET record-page view universal identifiers (keyed on
-//   SYSTEM_VIEW_KEYS.FIELDS_WIDGET), their view fields and their view field groups are
-//   deterministically derived by buildStandardObjectRecordPageFieldsView; the group
-//   names passed there MUST match the ones the server standard view-field-group
-//   builders assign.
+// Never mutate an existing universal identifier, and delete one only rarely.
+// Group names passed to buildStandardObjectRecordPageFieldsView MUST match the server's standard view-field-group builders.
 export const STANDARD_OBJECTS = {
   attachment: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
@@ -1428,8 +1414,18 @@ export const STANDARD_OBJECTS = {
       workspaceMemberIndex: {
         universalIdentifier: '079f2dd7-6c11-4eae-be8a-cce2d1bee0fb',
       },
-      workflowRunIndex: {
-        universalIdentifier: 'cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b',
+    },
+  },
+  agentChatThreadParticipant: {
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadParticipant,
+    fields: STANDARD_OBJECT_FIELDS.agentChatThreadParticipant,
+    indexes: {
+      threadWorkspaceMemberUniqueIndex: {
+        universalIdentifier: 'e5bbe244-cf74-49a3-938a-e6fff7a8710b',
+      },
+      workspaceMemberIndex: {
+        universalIdentifier: '73d8bb5d-18eb-47bb-89e6-12d8f89aecf6',
       },
     },
   },
@@ -1546,32 +1542,6 @@ export const STANDARD_OBJECTS = {
       emailAddressTopicUniqueIndex: {
         universalIdentifier: 'a6c1f4dc-d925-49f9-8205-3e7f95545966',
       },
-    },
-  },
-  inputAsk: {
-    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
-    fields: STANDARD_OBJECT_FIELDS.inputAsk,
-    indexes: {
-      assigneeStatusIndex: {
-        universalIdentifier: '255cba21-0107-4c31-b497-9c4081114da8',
-      },
-      workflowRunStepUniqueIndex: {
-        universalIdentifier: 'c6c2c67e-2f2e-4a1e-9c0b-1b3d5e7a9f41',
-      },
-      workflowRunStatusIndex: {
-        universalIdentifier: '77615052-0e81-4210-b259-37a9e939bb41',
-      },
-      threadToolCallUniqueIndex: {
-        universalIdentifier: '6a0ac44d-84f3-4bfa-8939-ce3d82f0d043',
-      },
-    },
-    views: {
-      allInputAsks: buildStandardObjectIndexView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
-        fields: STANDARD_OBJECT_FIELDS.inputAsk,
-        viewFieldNames: ['name', 'status', 'assignee', 'createdAt'],
-      }),
     },
   },
 } as const satisfies Record<

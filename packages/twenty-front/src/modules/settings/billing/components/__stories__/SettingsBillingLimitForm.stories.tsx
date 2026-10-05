@@ -1,13 +1,14 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsBillingLimitForm } from '@/settings/billing/components/SettingsBillingLimitForm';
 import { EMPTY_USAGE_LIMIT_FORM_VALUES } from '@/settings/billing/constants/EmptyUsageLimitFormValues';
 import {
   UsageOperationType,
   UsageResourceType,
+  UsageUnit,
 } from '~/generated-metadata/graphql';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const DEFINITIONS = {
   __typename: 'UsageQuotaDefinitions' as const,
@@ -15,13 +16,53 @@ const DEFINITIONS = {
     {
       __typename: 'UsageQuotaDefinition' as const,
       resourceType: UsageResourceType.AI,
-      allowedOperationTypes: [
-        UsageOperationType.AI_CHAT_TOKEN,
-        UsageOperationType.AI_WORKFLOW_TOKEN,
-        UsageOperationType.WEB_SEARCH,
+      allowedOperations: [
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.ALL,
+          allowedUnits: [UsageUnit.CREDIT],
+        },
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.TOKEN],
+        },
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.TOKEN],
+        },
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.WEB_SEARCH,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
       ],
       allowedSpenderTypes: ['workspace', 'userWorkspace', 'apiKey'],
-      allowedMeters: ['creditsUsedMicro', 'quantity'],
+    },
+    {
+      __typename: 'UsageQuotaDefinition' as const,
+      resourceType: UsageResourceType.WORKFLOW,
+      allowedOperations: [
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.WORKFLOW_EXECUTION,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
+      ],
+      allowedSpenderTypes: ['workspace'],
+    },
+    {
+      __typename: 'UsageQuotaDefinition' as const,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      allowedOperations: [
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.CODE_EXECUTION,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
+      ],
+      allowedSpenderTypes: ['workspace'],
     },
   ],
   isIntraWorkspaceLimitEntitled: true,
@@ -33,7 +74,7 @@ const FILLED_VALUES = {
   operationType: UsageOperationType.AI_CHAT_TOKEN,
   spenderType: 'workspace' as const,
   spenderId: '',
-  meter: 'creditsUsedMicro' as const,
+  unit: UsageUnit.CREDIT,
   periodUnit: 'month' as const,
   limitValue: '100',
 };
@@ -41,7 +82,7 @@ const FILLED_VALUES = {
 const meta: Meta<typeof SettingsBillingLimitForm> = {
   title: 'Modules/Settings/Billing/SettingsBillingLimitForm',
   component: SettingsBillingLimitForm,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentWithRouterDecorator],
   args: {
     definitions: DEFINITIONS,
     values: EMPTY_USAGE_LIMIT_FORM_VALUES,

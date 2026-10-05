@@ -37,8 +37,7 @@ describe('aiProviderModelConfigSchema', () => {
   });
 
   it('rejects a reading filed under another effort than it was measured at', () => {
-    // The registry hands a variant the reading under its own key, so this
-    // would give the low-effort variant a high-effort figure.
+    // the registry keys readings by effort, so this would give the low variant a high figure
     expect(
       issuePaths(
         modelWith({
@@ -125,8 +124,7 @@ describe('aiProviderModelConfigSchema', () => {
     ).toEqual(['supportedQuestionTypes']);
   });
 
-  // Free output has to say so with an explicit 0, or the model bills nothing
-  // while the provider still charges.
+  // free output needs an explicit 0: an omitted price bills nothing while the provider still charges
   it('rejects an evaluation model that omits a token cost', () => {
     expect(
       issuePaths({

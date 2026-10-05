@@ -8,8 +8,7 @@ export type LocaleOption = {
   searchKeywords: string;
 };
 
-// Language name in English and in its own language, so it is searchable
-// regardless of the UI language — e.g. typing "chinese" or "中文".
+// English and native names, so a locale is findable from any UI language ("chinese" or "中文").
 const getLocaleSearchKeywords = (
   locale: (typeof APP_LOCALES)[keyof typeof APP_LOCALES],
 ): string => {
@@ -36,9 +35,7 @@ const LOCALE_SEARCH_KEYWORDS: Record<string, string> = Object.fromEntries(
 export const useLocaleOptions = (): LocaleOption[] => {
   const { t } = useLingui();
 
-  // Keyed by locale rather than listed, so a locale added to APP_LOCALES
-  // without a label here fails the typecheck. Listed, it would ship its
-  // translations and simply never appear in the picker, with no error.
+  // A Record, not a list, so a locale added to APP_LOCALES without a label fails the typecheck.
   const labelByLocale: Record<keyof typeof APP_LOCALES, string> = {
     'af-ZA': t`Afrikaans`,
     'ar-SA': t`Arabic`,

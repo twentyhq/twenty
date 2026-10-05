@@ -18,8 +18,8 @@ export const DropdownOptionItem = ({
   endIcon,
   description,
   descriptionPlacement,
-  hotkeys,
-  hotkeysJoinLabel,
+  shortcut,
+  shortcutJoinLabel,
   hasSubmenu,
   children,
   render,
@@ -32,7 +32,17 @@ export const DropdownOptionItem = ({
 }: DropdownOptionItemProps) => {
   const { type, multiple, closeTree, searchTargetId } = useDropdownContext();
   const isMenu = type === 'menu';
-  const menuOptionRole = multiple ? 'menuitemcheckbox' : 'menuitemradio';
+  const hasSelectionState = isDefined(selected);
+  const isPressableOption = !isMenu && nativeButton;
+  const isCurrentOption =
+    !isMenu && !nativeButton && hasSelectionState && selected;
+  const selectableMenuOptionRole = multiple
+    ? 'menuitemcheckbox'
+    : 'menuitemradio';
+  const menuOptionRole = hasSelectionState
+    ? selectableMenuOptionRole
+    : 'menuitem';
+  const selectionIndicator = multiple ? 'checkbox' : 'check';
   const generatedId = useId();
   const itemId = id ?? generatedId;
   const itemFocus = useDropdownItemFocus({ id: itemId });
@@ -44,8 +54,11 @@ export const DropdownOptionItem = ({
       disabled={disabled}
       nativeButton={nativeButton}
       role={isMenu ? menuOptionRole : undefined}
-      aria-checked={isMenu ? selected : undefined}
-      aria-pressed={isMenu ? undefined : selected}
+      aria-checked={isMenu && hasSelectionState ? selected : undefined}
+      aria-pressed={
+        isPressableOption && hasSelectionState ? selected : undefined
+      }
+      aria-current={isCurrentOption ? 'true' : undefined}
       tabIndex={itemFocus.tabIndex}
       onFocus={(event) => {
         itemFocus.activate();
@@ -73,14 +86,16 @@ export const DropdownOptionItem = ({
           disabled={disabled}
           selected={selected}
           focused={searchTargetId === itemId}
-          indicator={indicator ?? (multiple ? 'checkbox' : 'check')}
+          indicator={
+            indicator ?? (hasSelectionState ? selectionIndicator : 'none')
+          }
           color={color}
           startIcon={startIcon}
           endIcon={endIcon}
           description={description}
           descriptionPlacement={descriptionPlacement}
-          hotkeys={hotkeys}
-          hotkeysJoinLabel={hotkeysJoinLabel}
+          shortcut={shortcut}
+          shortcutJoinLabel={shortcutJoinLabel}
           hasSubmenu={hasSubmenu}
         >
           {children}

@@ -72,10 +72,8 @@ export class MetadataEventPublisher {
     });
   }
 
-  // An unowned private workflow stays workspace-wide on purpose: the read path
-  // opens it to everyone once its creator has left the workspace. A version
-  // whose parent is already gone is the opposite case and fails closed, since
-  // the parent is deleted before its versions are published.
+  // Unowned private workflows stay workspace-wide on purpose, as the read path opens them once the creator leaves;
+  // versions whose parent is gone fail closed, since a parent is deleted before its versions are published
   private async resolveRecipientUserWorkspaceIdsByRecordId({
     metadataName,
     workspaceId,

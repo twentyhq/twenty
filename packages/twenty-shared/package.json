@@ -46,7 +46,7 @@
     "@noble/hashes": "^1.8.0",
     "@sniptt/guards": "^0.2.0",
     "addressparser": "1.0.1",
-    "ai": "7.0.103",
+    "ai": "7.0.126",
     "class-validator": "^0.14.0",
     "decimal.js-light": "^2.5.1",
     "expr-eval-fork": "3.0.3",

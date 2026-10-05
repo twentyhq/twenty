@@ -1,7 +1,6 @@
 import { type WorkflowValidationIssueCode } from '@/workflow/validation/types/WorkflowValidation';
 
-// Issues a well-formed draft may carry while being edited, but that keep it
-// from being activated because a run could not proceed through them.
+// Allowed in a draft being edited, but block activation since a run could not proceed through them.
 export const NON_ACTIVABLE_WORKFLOW_VALIDATION_ISSUE_CODES: ReadonlySet<WorkflowValidationIssueCode> =
   new Set([
     'MISSING_TRIGGER',
@@ -12,6 +11,7 @@ export const NON_ACTIVABLE_WORKFLOW_VALIDATION_ISSUE_CODES: ReadonlySet<Workflow
     'ITERATOR_MISSING_LOOP_BODY',
     'INCOMPLETE_PICK_RECORD_CONFIG',
     'AI_AGENT_MISSING_AGENT',
+    'CONVERSATION_MISSING_KEY',
     'CLASSIFY_MISSING_STATE',
     'CLASSIFY_INCOMPLETE_QUESTION',
     'VARIABLE_INVALID_PATH',

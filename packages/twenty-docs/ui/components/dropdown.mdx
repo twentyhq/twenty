@@ -24,7 +24,7 @@ Set `type` on `Dropdown.Root` to match the popup's contents.
 | `picker` | Search, selectable values, and optional commands | A dialog containing a search field and selectable toggle buttons. Arrow keys navigate result rows. |
 | `panel`  | Inputs, forms, and supporting actions            | A dialog with native input behavior and Tab navigation.                                            |
 
-Pickers allow creation actions and selectable values in the same list, in any order. Options expose their selected state with `aria-pressed`; commands keep their button semantics. Give `Search` an accessible name.
+Pickers allow creation actions and selectable values in the same list, in any order. Options expose their selected state with `aria-pressed`; commands keep their button semantics. Omit `selected` on an option that navigates or applies without a selection state, so it exposes no pressed state. Give `Search` an accessible name.
 
 `Content` takes its accessible name from `Trigger`, or from `SubmenuTrigger` in a submenu. Pass `aria-label` on `Content` when the trigger shows a value, such as the selected option, or when the root has no trigger. An explicit `aria-label` or `aria-labelledby`, and a `Title` inside a `Header`, take precedence over the trigger name.
 
@@ -130,11 +130,50 @@ Actions and single selection close by default. Set `multiple` on the root to kee
   height={420}
 />
 
+## Icon grids
+
+Set `columns` on `Section` to lay out items in equal-width grid columns. The same count drives keyboard navigation: Left and Right move within a row, while Up and Down move between rows. Navigation skips disabled options and follows the reading direction. When no enabled option is left in the column, Up and Down move to the nearest enabled option of the next row. Up from the first row returns to the search field when no earlier section exists. A short final row uses its last item when the requested column is missing. Inside a submenu, the backward arrow closes the submenu when no enabled option remains to its left.
+
+Render each icon as an `OptionItem` with an accessible label and an icon button through `render`. Use `indicator="none"` to show selection through the button background.
+
+```tsx
+import { useState } from 'react';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
+import { IconCalendar } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const IconGrid = () => {
+  const [icon, setIcon] = useState('');
+
+  return (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger render={<Button>Choose icon</Button>} />
+      <Dropdown.Content>
+        <Dropdown.Section columns={5}>
+          <Dropdown.OptionItem
+            aria-label="Calendar"
+            selected={icon === 'calendar'}
+            indicator="none"
+            nativeButton
+            render={
+              <LightIconButton size="md" aria-label="Calendar">
+                <IconCalendar />
+              </LightIconButton>
+            }
+            onSelect={() => setIcon('calendar')}
+          />
+        </Dropdown.Section>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  );
+};
+```
+
 ## Pages and submenus
 
 Use `Page` for navigation that replaces the contents of the same popup. Wrap the first page in `Page id="root"`, or choose another initial page with `defaultPage`. Set `page` on an action to navigate without closing. `Back` returns to the previous page and restores focus to its invoking row. Closing the dropdown resets its page history.
 
-A page can override the root's `type`. For example, an action menu can open a searchable picker page or a form panel. Search receives focus when entering a searchable page.
+A page can override the root's `type`. For example, an action menu can open a searchable picker page or a form panel. Search receives focus when entering a searchable page; other pages focus their first row after `Back`.
 
 <StoryEmbed
   storyId="ui-components-dropdown--pages-documentation"
@@ -302,7 +341,7 @@ Right-clicking elsewhere while the menu is open moves it to the new point.
 
 ## Labels
 
-Each part owns its text: supply `Search.placeholder` and native accessible names, `Close` accessible attributes, and children for `Back`, `Loading`, and `Empty`. `Back` defaults to `Back`; loading and empty states have no built-in message. Item parts accept `hotkeysJoinLabel` to replace the default `then` between shortcut keys. Native `aria-labelledby` takes precedence over `aria-label`.
+Each part owns its text: supply `Search.placeholder` and native accessible names, `Close` accessible attributes, and children for `Back`, `Loading`, and `Empty`. `Back` defaults to `Back`; loading and empty states have no built-in message. Item parts accept `shortcutJoinLabel` to replace the default `then` between sequential shortcut steps. Native `aria-labelledby` takes precedence over `aria-label`.
 
 ## Props
 

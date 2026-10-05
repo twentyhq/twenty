@@ -1,24 +1,28 @@
+import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
+import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
+import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
+import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
+import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
 import { COMMAND_BLOCK_PROP_DESCRIPTIONS } from './commandBlockPropDescriptions';
 import { JSON_TREE_PROP_DESCRIPTIONS } from './jsonTreePropDescriptions';
 import { NOTIFICATION_COUNTER_PROP_DESCRIPTIONS } from './notificationCounterPropDescriptions';
 import { TINTED_ICON_TILE_PROP_DESCRIPTIONS } from './tintedIconTilePropDescriptions';
 import { CALLOUT_PROP_DESCRIPTIONS } from './calloutPropDescriptions';
-import { INFO_PROP_DESCRIPTIONS } from './infoPropDescriptions';
 import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions';
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
-import { CARD_PICKER_PROP_DESCRIPTIONS } from './cardPickerPropDescriptions';
-import { COLOR_SCHEME_PICKER_PROP_DESCRIPTIONS } from './colorSchemePickerPropDescriptions';
+import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
+import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
+import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
+import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
 import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
 import { MENU_ITEM_AVATAR_PROP_DESCRIPTIONS } from './menuItemAvatarPropDescriptions';
 import { MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS } from './menuItemDraggablePropDescriptions';
 import { MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS } from './menuItemSuggestionPropDescriptions';
 import { MENU_PICKER_PROP_DESCRIPTIONS } from './menuPickerPropDescriptions';
-import { NAVIGATION_BAR_PROP_DESCRIPTIONS } from './navigationBarPropDescriptions';
-import { ROUNDED_LINK_PROP_DESCRIPTIONS } from './roundedLinkPropDescriptions';
 import { THEME_PROVIDER_PROP_DESCRIPTIONS } from './themeProviderPropDescriptions';
 import { ICON_PROP_DESCRIPTIONS } from './iconPropDescriptions';
 import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescriptions';
@@ -28,6 +32,7 @@ import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybo
 import { COLLAPSIBLE_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
+import { BREADCRUMB_PROP_DESCRIPTIONS } from './breadcrumbPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
 import { CARD_CONTENT_PROP_DESCRIPTIONS } from './cardContentPropDescriptions';
@@ -63,6 +68,53 @@ import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'CountrySelect',
+    source: 'components/input/CountrySelect/CountrySelect.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/country-select',
+    propDescriptions: COUNTRY_SELECT_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'CurrencyPicker',
+    source: 'components/input/CurrencyPicker/CurrencyPicker.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/currency-picker',
+    parts: ['Trigger', 'Options'],
+    partPropDescriptions: CURRENCY_PICKER_PART_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ProgressRing',
+    source: 'primitives/feedback/ProgressRing/ProgressRing.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/progress-ring',
+    propDescriptions: PROGRESS_RING_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'MetricRow',
+    source: 'components/data-display/MetricRow/MetricRow.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/metric-row',
+    propDescriptions: METRIC_ROW_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Shortcut',
+    source: 'primitives/typography/Shortcut/Shortcut.tsx',
+    entryPoint: 'twenty-ui/primitives/typography',
+    slug: 'typography/shortcut',
+    propDescriptions: {
+      shortcut:
+        'Flat key array for a simultaneous combination, or nested key arrays for an ordered sequence of combinations.',
+      platform:
+        'Optional mac or other platform override. Defaults to server-safe device detection.',
+      sequenceJoinLabel: 'Text between sequence steps. Defaults to then.',
+      combinationSeparator:
+        'Optional separator between simultaneous keys. Defaults to no separator on Apple devices and a space elsewhere.',
+      variant: 'Keycaps, inline text, or a separated button hint.',
+      visibility:
+        'Always visible by default. Desktop hints hide on mobile viewports.',
+    },
+  },
   {
     name: 'VisibilityHidden',
     source: 'primitives/accessibility/components/VisibilityHidden.tsx',
@@ -215,6 +267,13 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'input/input-group',
   },
   {
+    name: 'NumberStepper',
+    source: 'primitives/input/NumberStepper/NumberStepper.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/number-stepper',
+    propDescriptions: NUMBER_STEPPER_PROP_DESCRIPTIONS,
+  },
+  {
     name: 'Textarea',
     source: 'primitives/input/Textarea/Textarea.tsx',
     entryPoint: 'twenty-ui/primitives/input',
@@ -231,12 +290,34 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Radio/Radio.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/radio',
+    propDescriptions: RADIO_PROP_DESCRIPTIONS,
   },
   {
     name: 'RadioGroup',
     source: 'primitives/input/RadioGroup/RadioGroup.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/radio-group',
+  },
+  {
+    name: 'Autocomplete',
+    source: 'primitives/input/Autocomplete/Autocomplete.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/autocomplete',
+    partPropDescriptions: {
+      Root: {
+        items:
+          'Items to display in the list. Nullish entries are not supported.',
+      },
+      Input: {
+        size: 'Visual size of the input. Inside an InputGroup, the group size applies.',
+      },
+      Popup: {
+        width:
+          'Width of the popup. Overrides its default minimum anchor width.',
+        container:
+          'Element the popup is portaled into. Defaults to the theme portal container.',
+      },
+    },
   },
   {
     name: 'Select',
@@ -257,13 +338,20 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'input/switch',
   },
   {
+    name: 'Breadcrumb',
+    source: 'primitives/navigation/Breadcrumb/Breadcrumb.tsx',
+    entryPoint: 'twenty-ui/primitives/navigation',
+    slug: 'navigation/breadcrumb',
+    propDescriptions: BREADCRUMB_PROP_DESCRIPTIONS,
+  },
+  {
     name: 'ListItem',
     source: 'primitives/navigation/ListItem/ListItem.tsx',
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',
     propDescriptions: {
-      hotkeysJoinLabel:
-        'Text between shortcut keys. Defaults to `then`; pass an empty string to omit it.',
+      shortcutJoinLabel:
+        'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
       actionsVisibility:
         'When trailing actions are visible: on hover and focus, or always.',
     },
@@ -316,16 +404,20 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'surfaces/menu',
     partPropDescriptions: {
       Item: {
-        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
       },
       CheckboxItem: {
-        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
       },
       RadioItem: {
-        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
       },
       SubmenuTrigger: {
-        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
         onClick: 'The click handler for the submenu trigger.',
       },
     },
@@ -401,6 +493,14 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: SETTINGS_ROW_PROP_DESCRIPTIONS,
   },
   {
+    name: 'PhoneCountryPicker',
+    source: 'components/input/PhoneCountryPicker/PhoneCountryPicker.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/phone-country-picker',
+    parts: ['Trigger', 'Options'],
+    partPropDescriptions: PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS,
+  },
+  {
     name: 'Dropdown',
     source: 'components/navigation/Dropdown/Dropdown.tsx',
     entryPoint: 'twenty-ui/components',
@@ -439,6 +539,13 @@ export const DOCUMENTED_COMPONENTS = [
         nativeButton: 'true when render is omitted; false otherwise',
       },
     },
+  },
+  {
+    name: 'OverflowingList',
+    source: 'components/layout/OverflowingList/OverflowingList.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/overflowing-list',
+    propDescriptions: OVERFLOWING_LIST_PROP_DESCRIPTIONS,
   },
   {
     name: 'Section',
@@ -521,13 +628,6 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: CALLOUT_PROP_DESCRIPTIONS,
   },
   {
-    name: 'Info',
-    source: 'components/feedback/Info/Info.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/info',
-    propDescriptions: INFO_PROP_DESCRIPTIONS,
-  },
-  {
     name: 'InlineBanner',
     source: 'components/feedback/InlineBanner/InlineBanner.tsx',
     entryPoint: 'twenty-ui/components',
@@ -549,18 +649,11 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: TOASTER_PROP_DESCRIPTIONS,
   },
   {
-    name: 'CardPicker',
-    source: 'components/input/CardPicker/CardPicker.tsx',
+    name: 'ImageInput',
+    source: 'components/input/ImageInput/ImageInput.tsx',
     entryPoint: 'twenty-ui/components',
-    slug: 'components/card-picker',
-    propDescriptions: CARD_PICKER_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'ColorSchemePicker',
-    source: 'components/input/ColorSchemePicker/ColorSchemePicker.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/color-scheme-picker',
-    propDescriptions: COLOR_SCHEME_PICKER_PROP_DESCRIPTIONS,
+    slug: 'components/image-input',
+    propDescriptions: IMAGE_INPUT_PROP_DESCRIPTIONS,
   },
   {
     name: 'SearchInput',
@@ -610,20 +703,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/menu-picker',
     propDescriptions: MENU_PICKER_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'NavigationBar',
-    source: 'components/navigation/NavigationBar/NavigationBar.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/navigation-bar',
-    propDescriptions: NAVIGATION_BAR_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'RoundedLink',
-    source: 'components/navigation/RoundedLink/RoundedLink.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/rounded-link',
-    propDescriptions: ROUNDED_LINK_PROP_DESCRIPTIONS,
   },
   {
     name: 'ThemeProvider',

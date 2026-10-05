@@ -30,7 +30,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -127,13 +126,7 @@ const SidePanelRecordCreationForm = ({
         objectMetadataItem,
         objectMetadataItems,
       }),
-      serverFilledFieldNames: objectMetadataItem.fields
-        .filter(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.isSystem ||
-            isDefined(fieldMetadataItem.defaultValue),
-        )
-        .map((fieldMetadataItem) => fieldMetadataItem.name),
+      fieldMetadataItems: objectMetadataItem.fields,
       now: new Date().toISOString(),
     });
 
@@ -237,7 +230,7 @@ const SidePanelRecordCreationForm = ({
             size="sm"
             onClick={handleCreateClick}
             loading={isSubmitting}
-            hotkeys={[getOsControlSymbol(), '⏎']}
+            shortcut={['Mod', 'Enter']}
             data-testid="record-creation-form-create-button"
             variant="solid"
             color="accent"

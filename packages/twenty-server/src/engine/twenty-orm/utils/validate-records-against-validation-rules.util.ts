@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { VALIDATION_RULE_MAX_REPORTED_VIOLATIONS } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-max-reported-violations.constant';
 import { VALIDATION_RULE_RECORD_CHUNK_SIZE } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-record-chunk-size.constant';
@@ -12,8 +13,13 @@ import {
   RecordValidationRuleExceptionCode,
 } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
 import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
+import { buildRecordValidationRuleViolationsMessage } from 'src/engine/metadata-modules/validation-rule/utils/build-record-validation-rule-violations-message.util';
 import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
 import { computeRecordValidationRuleViolations } from 'src/engine/metadata-modules/validation-rule/utils/compute-record-validation-rule-violations.util';
+import {
+  attachToOneRelationToRecords,
+  collectForeignKeys,
+} from 'src/engine/twenty-orm/repository/utils/attach-relations.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
@@ -86,7 +92,7 @@ const attachRelatedRecords = async <TEntity extends ObjectLiteral>({
         isNonEmptyString(relationShape.joinColumnName),
     );
 
-  let records = repository.formatResult<ObjectRecord[]>(rawWrittenRecords);
+  const records = repository.formatResult<ObjectRecord[]>(rawWrittenRecords);
 
   for (const relationShape of referencedRelationShapes) {
     const joinColumnName = relationShape.joinColumnName ?? '';
@@ -94,13 +100,7 @@ const attachRelatedRecords = async <TEntity extends ObjectLiteral>({
     const relatedRecords = await findLiveRelatedRecords({
       repository,
       targetObjectMetadataId: relationShape.targetObjectMetadataId,
-      ids: [
-        ...new Set(
-          rawWrittenRecords
-            .map((rawWrittenRecord) => rawWrittenRecord[joinColumnName])
-            .filter(isNonEmptyString),
-        ),
-      ],
+      ids: collectForeignKeys(records, joinColumnName),
       fieldNames: bindingPaths
         .filter((bindingPath) =>
           bindingPath.startsWith(`${relationShape.fieldName}.`),
@@ -110,20 +110,12 @@ const attachRelatedRecords = async <TEntity extends ObjectLiteral>({
         ),
     });
 
-    const relatedRecordById = new Map(
-      relatedRecords.map((relatedRecord) => [
-        String(relatedRecord.id),
-        relatedRecord,
-      ]),
-    );
-
-    records = records.map((record, recordIndex) => ({
-      ...record,
-      [relationShape.fieldName]:
-        relatedRecordById.get(
-          String(rawWrittenRecords[recordIndex]?.[joinColumnName]),
-        ) ?? null,
-    }));
+    attachToOneRelationToRecords({
+      records,
+      fieldName: relationShape.fieldName,
+      joinColumnName,
+      targets: relatedRecords,
+    });
   }
 
   return records;
@@ -186,6 +178,16 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
     ),
   ];
   const now = new Date().toISOString();
+  const validationRulesWithActiveErrorField = validationRules.map(
+    (validationRule) =>
+      isDefined(validationRule.errorFieldMetadataId) &&
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: validationRule.errorFieldMetadataId,
+        flatEntityMaps: repository.internalContext.flatFieldMetadataMaps,
+      })?.isActive !== true
+        ? { ...validationRule, errorFieldMetadataId: null }
+        : validationRule,
+  );
 
   const violations: RecordValidationRuleViolation[] = [];
   const evaluationErrors: RecordValidationRuleViolation[] = [];
@@ -213,7 +215,7 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
         validationRules,
         rawWrittenRecords,
       }),
-      validationRules,
+      validationRules: validationRulesWithActiveErrorField,
       fields,
       now,
       inputIndexByRecordId,
@@ -237,7 +239,7 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
 
   if (violations.length > 0) {
     throw new RecordValidationRuleException(
-      violations[0].message,
+      buildRecordValidationRuleViolationsMessage(violations),
       RecordValidationRuleExceptionCode.VALIDATION_RULE_VIOLATION,
       violations,
     );

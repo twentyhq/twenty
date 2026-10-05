@@ -1,6 +1,4 @@
-import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
-import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
-import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
+import { useOpenCommandMenuDropdownAtCursor } from '@/command-menu-item/hooks/useOpenCommandMenuDropdownAtCursor';
 import { RecordCalendarCardCellEditModePortal } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellEditModePortal';
 import { RecordCalendarCardCellHoveredPortal } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellHoveredPortal';
 import { RecordCalendarCardBody } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardBody';
@@ -8,22 +6,15 @@ import { RecordCalendarCardHeader } from '@/object-record/record-calendar/record
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
-import { getRecordCalendarCardInstanceIdPrefix } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardInstanceIdPrefix';
-import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { RecordDragMultiDragStack } from '@/object-record/record-drag/components/RecordDragMultiDragStack';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
-import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
-import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
 import { Collapsible } from 'twenty-ui/primitives/layout';
@@ -63,25 +54,16 @@ export const RecordCalendarCard = ({
     isDraggingRecordComponentState,
   );
 
-  const isRecordIdPrimaryDragMultiple = useAtomComponentFamilyStateValue(
-    isRecordIdPrimaryDragMultipleComponentFamilyState,
-    { recordId },
-  );
-
   const isRecordIdSecondaryDragMultiple = useAtomComponentFamilyStateValue(
     isRecordIdSecondaryDragMultipleComponentFamilyState,
     { recordId },
   );
 
-  const primaryDraggedRecordId = useAtomComponentStateValue(
-    primaryDraggedRecordIdComponentState,
+  const draggedRecordIds = useAtomComponentStateValue(
+    draggedRecordIdsComponentState,
   );
 
-  const isDraggingThisCard =
-    !isDragOverlay &&
-    (isRecordIdPrimaryDragMultiple ||
-      isRecordIdSecondaryDragMultiple ||
-      primaryDraggedRecordId === recordId);
+  const isMultiDragOverlay = isDragOverlay && draggedRecordIds.length > 1;
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
@@ -91,21 +73,8 @@ export const RecordCalendarCard = ({
       recordId,
     );
 
-  const recordCalendarId = useAvailableComponentInstanceIdOrThrow(
-    RecordCalendarComponentInstanceContext,
-  );
-
-  const commandMenuId = getCommandMenuIdFromRecordIndexId(recordCalendarId);
-
-  const commandMenuDropdownId =
-    getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
-
-  const setRecordIndexCommandMenuDropdownPosition = useSetAtomComponentState(
-    recordIndexCommandMenuDropdownPositionComponentState,
-    commandMenuDropdownId,
-  );
-
-  const { openDropdown } = useOpenDropdown();
+  const { openCommandMenuDropdownAtCursor } =
+    useOpenCommandMenuDropdownAtCursor();
 
   const handleCardClick = () => {
     if (isDraggingRecord) {
@@ -116,19 +85,9 @@ export const RecordCalendarCard = ({
   };
 
   const handleContextMenuOpen = (event: React.MouseEvent) => {
-    event.preventDefault();
-    setIsRecordCalendarCardSelected(true);
-    setRecordIndexCommandMenuDropdownPosition({
-      x: event.clientX,
-      y: event.clientY,
-    });
-    openDropdown({
-      dropdownComponentInstanceIdFromProps: commandMenuDropdownId,
-      globalHotkeysConfig: {
-        enableGlobalHotkeysWithModifiers: true,
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      },
-    });
+    if (openCommandMenuDropdownAtCursor(event)) {
+      setIsRecordCalendarCardSelected(true);
+    }
   };
 
   return (
@@ -137,52 +96,40 @@ export const RecordCalendarCard = ({
         instanceId: `${recordId}-${calendarDay}`,
       }}
     >
-      <RecordFieldsScopeContextProvider
-        value={{
-          scopeInstanceId: getRecordCalendarCardInstanceIdPrefix(calendarDay),
-        }}
-      >
-        <StyledContainer onContextMenu={handleContextMenuOpen}>
-          <StyledRecordCardContainer>
-            <StyledCardContainer
-              isPrimaryMultiDrag={
-                isDragOverlay && isRecordIdPrimaryDragMultiple
-              }
+      <StyledContainer onContextMenu={handleContextMenuOpen}>
+        <StyledRecordCardContainer>
+          <StyledCardContainer isPrimaryMultiDrag={isMultiDragOverlay}>
+            {isMultiDragOverlay && <RecordDragMultiDragStack />}
+            <RecordCard
+              data-selected={isRecordCalendarCardSelected}
+              data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
+              onClick={isCompactModeActive ? handleCardClick : undefined}
+              isDragging={!isDragOverlay && isRecordIdSecondaryDragMultiple}
             >
-              {isDragOverlay && isRecordIdPrimaryDragMultiple && (
-                <RecordDragMultiDragStack />
-              )}
-              <RecordCard
-                data-selected={isRecordCalendarCardSelected}
-                data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
-                onClick={isCompactModeActive ? handleCardClick : undefined}
-                isDragging={isDraggingThisCard}
-              >
-                <RecordCalendarCardHeader recordId={recordId} />
-                <Collapsible isExpanded={!isCompactModeActive}>
-                  <RecordCalendarCardBody
-                    recordId={recordId}
-                    calendarDay={calendarDay}
-                    isRecordReadOnly={false}
-                  />
-                </Collapsible>
-              </RecordCard>
-            </StyledCardContainer>
-          </StyledRecordCardContainer>
-          {!isDragOverlay && (
-            <>
-              <RecordCalendarCardCellHoveredPortal
-                recordId={recordId}
-                calendarDay={calendarDay}
-              />
-              <RecordCalendarCardCellEditModePortal
-                recordId={recordId}
-                calendarDay={calendarDay}
-              />
-            </>
-          )}
-        </StyledContainer>
-      </RecordFieldsScopeContextProvider>
+              <RecordCalendarCardHeader recordId={recordId} />
+              <Collapsible isExpanded={!isCompactModeActive}>
+                <RecordCalendarCardBody
+                  recordId={recordId}
+                  calendarDay={calendarDay}
+                  isRecordReadOnly={false}
+                />
+              </Collapsible>
+            </RecordCard>
+          </StyledCardContainer>
+        </StyledRecordCardContainer>
+        {!isDragOverlay && (
+          <>
+            <RecordCalendarCardCellHoveredPortal
+              recordId={recordId}
+              calendarDay={calendarDay}
+            />
+            <RecordCalendarCardCellEditModePortal
+              recordId={recordId}
+              calendarDay={calendarDay}
+            />
+          </>
+        )}
+      </StyledContainer>
     </RecordCalendarCardComponentInstanceContext.Provider>
   );
 };

@@ -1,0 +1,86 @@
+---
+title: PhoneCountryPicker
+description: Country flags, calling codes, search, and selection for phone inputs.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import PhoneCountryPickerReference from '/snippets/ui/generated/components/phone-country-picker.mdx';
+
+`PhoneCountryPicker` displays a country flag trigger and searchable calling-code choices. Compose its two parts inside [Dropdown](/ui/components/dropdown). Your application supplies country data, owns the selected value, and handles the phone number.
+
+<StoryEmbed
+  storyId="ui-input-phonecountrypicker--documentation"
+  title="Phone country selection"
+  height={400}
+/>
+
+## Prepared choices
+
+Each `PhoneCountryOption` has a unique `value`, a localized country `label`, a `callingCode` without the leading plus sign, and a `flag` node. Supply the country list in the order you want it displayed. The picker adds the plus sign to calling-code labels and keeps calling codes left to right next to right-to-left country names.
+
+```tsx
+import { useState } from 'react';
+import {
+  Dropdown,
+  PhoneCountryPicker,
+  type PhoneCountryOption,
+} from 'twenty-ui/components';
+
+const COUNTRIES: PhoneCountryOption[] = [
+  { value: 'FR', label: 'France', callingCode: '33', flag: '🇫🇷' },
+  { value: 'GB', label: 'United Kingdom', callingCode: '44', flag: '🇬🇧' },
+  { value: 'US', label: 'United States', callingCode: '1', flag: '🇺🇸' },
+];
+
+export const PhoneCountryExample = () => {
+  const [value, setValue] = useState('FR');
+
+  return (
+    <Dropdown.Root type="picker">
+      <PhoneCountryPicker.Trigger
+        aria-label="Phone country"
+        country={COUNTRIES.find((country) => country.value === value)}
+      />
+      <Dropdown.Content width={280}>
+        <PhoneCountryPicker.Options
+          countries={COUNTRIES}
+          value={value}
+          onValueChange={setValue}
+          searchLabel="Search countries"
+          emptyLabel="No countries found"
+        />
+      </Dropdown.Content>
+    </Dropdown.Root>
+  );
+};
+```
+
+The picker ships without a country catalog, flag asset package, or phone-input runtime. Full phone-number parsing, validation, formatting, drafts, and submission belong to the host application.
+
+## Search and selection
+
+Search matches a substring of the country name, ignoring case and accents. It does not trim whitespace or match country values or calling codes. For example, `united` matches United Kingdom and United States, `reunion` matches Réunion, and `+44` does not match a calling code.
+
+The selected country appears first when it matches the query. Remaining matches retain their supplied order. A query that excludes the current selection also removes its row. Empty results show the supplied status message.
+
+The search field receives focus when the popup opens. Arrow keys and typed letters navigate options. Enter chooses the highlighted matching result after typing, or the focused option. Enter with an empty query does not select a country while focus remains in the search field. Pointer selection calls `onValueChange` with the country value. The dropdown closes after selection and returns focus according to its focus settings. Search clears when the popup content unmounts.
+
+## Trigger and host integration
+
+`Trigger` is a native button with a required accessible name. Its flag and chevron are decorative, and the selected country label becomes its accessible description. Pass the selected `country` to display its flag, or omit it for a world icon. Native attributes, event handlers, `disabled`, and the button ref reach the trigger.
+
+Keep `Dropdown.Root` and `Dropdown.Content` in the host when coordinating controlled open state, popup placement, an explicit return-focus target, or application editing lifecycle. The shared parts use the root's picker behavior. Use one root per selector to keep instances independent.
+
+A phone library adapter maps the library's country value, country-change callback, and disabled or read-only state onto this composition, and supplies its own translated trigger label. The adapter owns the library-specific country values and any subsequent focus on the phone input.
+
+## Labels
+
+Supply localized country labels in `countries` and an accessible name on `Trigger`. The popup takes the trigger name unless a `Dropdown.Title` or an explicit label on `Dropdown.Content` names it. `searchLabel` defaults to `Search` and names both the search field and its placeholder. `emptyLabel` defaults to `No results`.
+
+## Front component renderer
+
+In [front components](/developers/extend/apps/layout/front-components), the React and Preact renderers display the trigger, its flag, and its disabled state. Opening the popup is not supported yet: both renderers lack the native pointer data Dropdown reads, and in React the popup also fails while mounting because sandbox elements have no `dataset`, which stops the front component from rendering. These limitations do not affect normal React rendering.
+
+## Props
+
+<PhoneCountryPickerReference />

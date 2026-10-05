@@ -6,7 +6,6 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -15,6 +14,7 @@ import {
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { serializeMentionTagAsAdvancedTextEditorDocument } from '@/mention/utils/serializeMentionTagAsAdvancedTextEditorDocument';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { SendChatMessageDocument } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const attachChatThreadToRecord = jest.fn();
@@ -44,7 +44,7 @@ const DRAFT_MENTIONING_COMPANY =
 const buildSendChatMessageMock = (
   outcome: 'sent' | 'failed',
 ): MockedResponse => ({
-  request: { query: SEND_CHAT_MESSAGE, variables: () => true },
+  request: { query: SendChatMessageDocument, variables: () => true },
   ...(outcome === 'sent'
     ? {
         result: {
@@ -63,8 +63,6 @@ const buildSendChatMessageMock = (
 const readPersistedDrafts = () =>
   JSON.parse(localStorage.getItem(DRAFTS_STORAGE_KEY) ?? '{}');
 
-// The composer subscribes to the drafts, which reads them back from local
-// storage.
 const renderAgentChat = ({
   persistedDrafts,
   sendChatMessageOutcomes,
@@ -80,7 +78,6 @@ const renderAgentChat = ({
     },
   });
 
-  // Set once the wrapper has reset the session's storage.
   localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(persistedDrafts));
 
   const Wrapper = ({ children }: { children: ReactNode }) => (

@@ -10,42 +10,13 @@ import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRou
 import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPage';
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { RecordShowPageShell } from '@/object-record/record-show/components/RecordShowPageShell';
-import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
-import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-
-type RecordShowPageParameters = {
-  objectNameSingular?: string;
-  objectRecordId?: string;
-};
-
-const WorkspaceRecordShowPageContent = ({
-  parameters,
-}: {
-  parameters: RecordShowPageParameters;
-}) => {
-  const { objectNameSingular, objectRecordId } = useRecordShowPage(
-    parameters.objectNameSingular ?? '',
-    parameters.objectRecordId ?? '',
-  );
-
-  const { error, loading, record } = useRecordShowPageResource({
-    objectNameSingular,
-    recordId: objectRecordId,
-  });
-
-  return (
-    <RecordShowPageShell
-      objectNameSingular={objectNameSingular}
-      objectRecordId={objectRecordId}
-      record={record}
-      loading={loading}
-      error={error}
-    />
-  );
-};
+import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
+import {
+  type RecordShowPageParameters,
+  RecordShowPageContent,
+} from '~/pages/object-record/RecordShowPageContent';
 
 export const RecordShowPage = () => {
   const parameters = useParams<RecordShowPageParameters>();
@@ -67,20 +38,23 @@ export const RecordShowPage = () => {
     return <WorkspaceRouteUnavailable />;
   }
 
-  // A chat's record page is the chat page, on its own route
   if (
-    !isInSidePanel &&
     parameters.objectNameSingular === CoreObjectNameSingular.AgentChatThread &&
     isDefined(parameters.objectRecordId)
   ) {
-    return (
-      <Navigate
-        replace
-        to={getAppPath(AppPath.AiChat, {
-          threadId: parameters.objectRecordId,
-        })}
-      />
-    );
+    // A chat's record page is the chat page, on its own route
+    if (!isInSidePanel) {
+      return (
+        <Navigate
+          replace
+          to={getAppPath(AppPath.AiChat, {
+            threadId: parameters.objectRecordId,
+          })}
+        />
+      );
+    }
+
+    return <AiChatThreadPageContent threadId={parameters.objectRecordId} />;
   }
 
   if (
@@ -100,5 +74,5 @@ export const RecordShowPage = () => {
     return <CoreObjectShowPage objectRecordId={parameters.objectRecordId} />;
   }
 
-  return <WorkspaceRecordShowPageContent parameters={parameters} />;
+  return <RecordShowPageContent parameters={parameters} />;
 };

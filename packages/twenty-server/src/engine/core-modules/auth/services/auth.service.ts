@@ -25,7 +25,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
   PASSWORD_REGEX,
-  compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
@@ -53,6 +52,7 @@ import {
   type SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
+import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -70,7 +70,9 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { INVITATION_APP_TOKEN_TYPES } from 'src/engine/core-modules/workspace-invitation/constants/invitation-app-token-types';
+import { type WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
@@ -109,56 +111,9 @@ export class AuthService {
     private readonly userSessionService: UserSessionService,
   ) {}
 
-  private async checkAccessAndUseInvitationOrThrow(
-    workspace: WorkspaceEntity,
-    user: UserEntity,
-  ) {
-    if (
-      await this.userWorkspaceService.checkUserWorkspaceExists(
-        user.id,
-        workspace.id,
-      )
-    ) {
-      return;
-    }
-
-    const invitation =
-      await this.workspaceInvitationService.getOneWorkspaceInvitation(
-        workspace.id,
-        user.email,
-      );
-
-    if (invitation) {
-      await this.workspaceInvitationService.validatePersonalInvitation({
-        workspacePersonalInviteToken: invitation.value,
-        email: user.email,
-      });
-      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
-        user,
-        workspace,
-        invitation.context?.roleId,
-      );
-
-      return;
-    }
-
-    throw new AuthException(
-      'User is not a member of the workspace.',
-      AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      {
-        userFriendlyMessage: msg`User is not a member of the workspace.`,
-      },
-    );
-  }
-
-  async validateLoginWithPassword(
-    input: UserCredentialsInput,
-    targetWorkspace?: WorkspaceEntity,
-  ) {
+  private async findUserByEmailOrThrow(email: string) {
     const user = await this.userRepository.findOne({
-      where: {
-        email: input.email,
-      },
+      where: { email },
       relations: { userWorkspaces: true },
     });
 
@@ -169,46 +124,110 @@ export class AuthService {
       );
     }
 
-    if (targetWorkspace && !targetWorkspace.isPasswordAuthEnabled) {
-      const canBypass = await this.canUserBypassAuthProvider({
-        user,
-        workspace: targetWorkspace,
-        provider: AuthProviderEnum.Password,
-      });
+    return user;
+  }
 
-      if (!canBypass) {
-        throw new AuthException(
-          'Email/Password auth is not enabled for this workspace',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
+  private async assertPasswordAuthAllowedOnWorkspaceOrThrow(
+    user: UserEntity,
+    workspace: WorkspaceEntity,
+  ) {
+    if (workspace.isPasswordAuthEnabled) {
+      return;
     }
 
-    if (targetWorkspace) {
-      await this.checkAccessAndUseInvitationOrThrow(targetWorkspace, user);
-    }
+    const canBypass = await this.canUserBypassAuthProvider({
+      user,
+      workspace,
+      provider: AuthProviderEnum.Password,
+    });
 
-    if (!user.passwordHash) {
+    if (!canBypass) {
       throw new AuthException(
-        'Incorrect login method',
-        AuthExceptionCode.INVALID_INPUT,
-        {
-          userFriendlyMessage: msg`User was not created with email/password`,
-        },
+        'Email/Password auth is not enabled for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
+  }
 
-    const isValid = await compareHash(input.password, user.passwordHash);
+  private async getValidWorkspaceInvitationOrThrow(
+    workspace: WorkspaceEntity,
+    user: UserEntity,
+  ): Promise<WorkspaceInvitation> {
+    const invitation =
+      await this.workspaceInvitationService.getOneWorkspaceInvitation(
+        workspace.id,
+        user.email,
+      );
 
-    if (!isValid) {
+    if (!isDefined(invitation)) {
       throw new AuthException(
-        'Wrong password',
+        'User is not a member of the workspace.',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: msg`Wrong password.`,
+          userFriendlyMessage: msg`User is not a member of the workspace.`,
         },
       );
     }
+
+    await this.workspaceInvitationService.validatePersonalInvitation({
+      workspacePersonalInviteToken: invitation.value,
+      email: user.email,
+    });
+
+    return castAppTokenToWorkspaceInvitationUtil(invitation);
+  }
+
+  private async validatePasswordCredentialsOrThrow(
+    user: UserEntity,
+    password: string,
+  ) {
+    await assertUserPasswordIsValidOrThrow({ user, password });
+
+    await this.checkIsEmailVerified(user.isEmailVerified);
+  }
+
+  async validateLoginWithPassword(input: UserCredentialsInput) {
+    const user = await this.findUserByEmailOrThrow(input.email);
+
+    await this.validatePasswordCredentialsOrThrow(user, input.password);
+
+    return user;
+  }
+
+  async validateLoginWithPasswordAndJoinWorkspaceIfInvited(
+    input: UserCredentialsInput,
+    workspace: WorkspaceEntity,
+  ): Promise<UserEntity> {
+    const user = await this.findUserByEmailOrThrow(input.email);
+
+    await this.assertPasswordAuthAllowedOnWorkspaceOrThrow(user, workspace);
+
+    // Access is checked before the password so that a non-member cannot tell a right password from a wrong one
+    const isWorkspaceMember =
+      await this.userWorkspaceService.checkUserWorkspaceExists(
+        user.id,
+        workspace.id,
+      );
+
+    if (isWorkspaceMember) {
+      await this.validatePasswordCredentialsOrThrow(user, input.password);
+
+      return user;
+    }
+
+    const workspaceInvitation = await this.getValidWorkspaceInvitationOrThrow(
+      workspace,
+      user,
+    );
+
+    await assertUserPasswordIsValidOrThrow({ user, password: input.password });
+
+    // Joining before the email check lets the user land in this workspace from verifyEmailAndGetLoginToken once their email is verified
+    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+      user,
+      workspace,
+      workspaceInvitation.roleId,
+    );
 
     await this.checkIsEmailVerified(user.isEmailVerified);
 
@@ -241,18 +260,9 @@ export class AuthService {
     }
 
     if (userData.type === 'existingUser') {
-      if (!userData.existingUser.passwordHash) {
-        throw new AuthException(
-          'Incorrect login method',
-          AuthExceptionCode.INVALID_INPUT,
-          {
-            userFriendlyMessage: msg`User was not created with email/password`,
-          },
-        );
-      }
-      await this.signInUpService.validatePassword({
+      await assertUserPasswordIsValidOrThrow({
+        user: userData.existingUser,
         password: authParams.password,
-        passwordHash: userData.existingUser.passwordHash,
       });
     }
   }
@@ -394,7 +404,6 @@ export class AuthService {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
-    // passwordHash is hidden for security reasons
     user.passwordHash = '';
 
     const accessToken = await this.accessTokenService.generateAccessToken({
@@ -537,10 +546,7 @@ export class AuthService {
       );
     }
 
-    // OAuth 2.1 / MCP auth spec: PKCE is mandatory for public clients
-    // (clients registered with token_endpoint_auth_method=none, i.e. no
-    // client secret hash). Confidential clients are authenticated at the
-    // token endpoint instead.
+    // OAuth 2.1 / MCP auth spec: PKCE is mandatory for public clients (no client secret)
     const isPublicClient = !applicationRegistration.oAuthClientSecretHash;
 
     if (isPublicClient && !codeChallenge) {
@@ -550,9 +556,8 @@ export class AuthService {
       );
     }
 
-    // RFC 8252 §7.3: Native apps using loopback redirect URIs may use any port.
-    // When a registration has no explicit redirect URIs (e.g. the seeded CLI registration),
-    // allow any loopback redirect URI.
+    // RFC 8252 §7.3: native apps may use any loopback port, so a registration without redirect URIs
+    // (e.g. the seeded CLI one) accepts any loopback redirect URI
     const hasRegisteredRedirectUris =
       applicationRegistration.oAuthRedirectUris.length > 0;
 
@@ -991,8 +996,6 @@ export class AuthService {
     const existingUser =
       await this.userService.findUserByEmailWithWorkspaces(email);
 
-    // Route SSO sign-ins through the same create-or-select flow as credentials
-    // instead of landing straight on a workspace subdomain.
     if (!workspaceId && !workspaceInviteHash) {
       const user =
         existingUser ??
@@ -1016,8 +1019,7 @@ export class AuthService {
           authProvider,
         });
 
-      // The token rides in the fragment so it never reaches access logs,
-      // proxies or Referer headers: browsers keep it out of the request line.
+      // The fragment keeps the token out of access logs, proxies and Referer headers
       const url = this.domainServerConfigService.buildBaseUrl({
         pathname: AppPath.SignInUp,
         searchParams: {

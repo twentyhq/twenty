@@ -1,0 +1,33 @@
+import { msg } from '@lingui/core/macro';
+
+import { CoreAgentModelCell } from '@/object-core/agents/components/CoreAgentModelCell';
+import { CoreAgentNameCell } from '@/object-core/agents/components/CoreAgentNameCell';
+import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
+import { type CoreObjectTableColumn } from '@/object-core/types/CoreObjectTableColumn';
+import { DateTimeDisplay } from '@/ui/field/display/components/DateTimeDisplay';
+
+export const CORE_AGENT_TABLE_COLUMNS: CoreObjectTableColumn<CoreAgent>[] = [
+  {
+    fieldName: 'label',
+    fieldLabel: msg`Name`,
+    fieldType: 'string',
+    align: 'left',
+    gridTrack: 'minmax(200px, 1fr)',
+    renderCell: (agent) => <CoreAgentNameCell agent={agent} />,
+  },
+  {
+    fieldName: 'modelId',
+    fieldLabel: msg`Model`,
+    align: 'left',
+    gridTrack: '200px',
+    renderCell: (agent) => <CoreAgentModelCell modelId={agent.modelId} />,
+  },
+  {
+    fieldName: 'updatedAt',
+    fieldLabel: msg`Last update`,
+    fieldType: 'string',
+    align: 'left',
+    gridTrack: '150px',
+    renderCell: (agent) => <DateTimeDisplay value={agent.updatedAt} />,
+  },
+];

@@ -7,11 +7,10 @@ const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
 const TWENTY_STANDARD_APPLICATION_ID = '20202020-2222-4222-8222-222222222222';
 const NOW = '2024-01-01T00:00:00.000Z';
 
-// Records of these objects are only ever written by the platform itself:
-// sync bookkeeping rows, campaign sending state and workflow trigger
-// registrations. timelineActivity stays OPEN because merging records
-// reparents its rows under the caller.
+// Only the platform writes these (sync bookkeeping, campaign sending state, trigger registrations).
+// timelineActivity stays OPEN because merging records reparents its rows under the caller
 const SYSTEM_WRITABILITY_STANDARD_OBJECT_NAMES = [
+  'agentChatThreadParticipant',
   'agentMessage',
   'agentMessagePart',
   'agentTurn',
@@ -67,40 +66,5 @@ describe('Standard object writability', () => {
       SYSTEM_WRITABILITY_STANDARD_OBJECT_NAMES.length,
     );
     expect([...otherWritabilities]).toEqual([MetadataWritability.OPEN]);
-  });
-
-  it('lets the API write only the assignee of an Ask', () => {
-    const inputAskObjectMetadata = standardFlatObjectMetadatas.find(
-      (flatObjectMetadata) => flatObjectMetadata.nameSingular === 'inputAsk',
-    );
-
-    const writableFieldNames = Object.values(
-      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (flatFieldMetadata) =>
-          flatFieldMetadata.objectMetadataId === inputAskObjectMetadata?.id &&
-          flatFieldMetadata.writability !== MetadataWritability.SYSTEM,
-      )
-      .map((flatFieldMetadata) => flatFieldMetadata.name);
-
-    const gatedFieldNames = [
-      'status',
-      'response',
-      'answeredAt',
-      'form',
-      'workflowRun',
-      'thread',
-      'stepId',
-      'toolCallId',
-    ];
-
-    expect(writableFieldNames).toContain('assignee');
-    expect(
-      writableFieldNames.filter((fieldName) =>
-        gatedFieldNames.includes(fieldName),
-      ),
-    ).toEqual([]);
   });
 });
