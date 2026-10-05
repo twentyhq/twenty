@@ -11,6 +11,7 @@ export enum WorkflowRunExceptionCode {
   INVALID_INPUT = 'INVALID_INPUT',
   WORKFLOW_RUN_LIMIT_REACHED = 'WORKFLOW_RUN_LIMIT_REACHED',
   WORKFLOW_RUN_INVALID = 'WORKFLOW_RUN_INVALID',
+  WORKFLOW_DELETED = 'WORKFLOW_DELETED',
 }
 
 const getWorkflowRunExceptionUserFriendlyMessage = (
@@ -29,6 +30,8 @@ const getWorkflowRunExceptionUserFriendlyMessage = (
       return msg`Workflow run limit reached.`;
     case WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID:
       return msg`Invalid workflow run.`;
+    case WorkflowRunExceptionCode.WORKFLOW_DELETED:
+      return msg`The workflow of this run was deleted.`;
     default:
       assertUnreachable(code);
   }

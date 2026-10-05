@@ -30,7 +30,10 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
-import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  WorkflowRunStatus,
+  type WorkflowRunWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
@@ -55,6 +58,10 @@ import { findEnclosingIteratorWithContinueOnFailure } from 'src/modules/workflow
 import { getNextStepIdsForIterator } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-next-step-ids-for-iterator.util';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
+import {
+  WorkflowRunException,
+  WorkflowRunExceptionCode,
+} from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -143,24 +150,6 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    const workflow = isDefined(workflowRun.coreWorkflowId)
-      ? await this.workflowCoreSyncService.findCoreWorkflowById(
-          workspaceId,
-          workflowRun.coreWorkflowId,
-        )
-      : null;
-
-    if (!isDefined(workflow)) {
-      throw new Error(
-        `Workflow run ${workflowRun.id} has no core workflow identity for billing`,
-      );
-    }
-
-    const billingSpenders = {
-      workflowId: workflow.workspaceWorkflowId ?? workflow.id,
-      applicationId: workflow.applicationId,
-    };
-
     let actionOutput: WorkflowActionOutput;
 
     // A resumed step was claimed as started, which shouldExecuteStep refuses.
@@ -173,6 +162,11 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunStatus: workflowRun.status,
       })
     ) {
+      const billingSpenders = await this.findBillingSpendersOrThrow({
+        workflowRun,
+        workspaceId,
+      });
+
       actionOutput = await this.executeStep({
         step: stepToExecute,
         steps,
@@ -220,6 +214,16 @@ export class WorkflowExecutorWorkspaceService {
           actionOutput.shouldFailSafely = true;
         }
       }
+
+      // A resumed step's node run was charged when it first ran and paused.
+      if (
+        !isDefined(actionOutput.error) &&
+        !actionOutput.shouldFailSafely &&
+        !actionOutput.shouldSkipStepExecution &&
+        !isDefined(resumedThreadId)
+      ) {
+        await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
+      }
     } else if (
       shouldFailSafely({
         step: stepToExecute,
@@ -242,19 +246,6 @@ export class WorkflowExecutorWorkspaceService {
       };
     } else {
       return;
-    }
-
-    const isError =
-      isDefined(actionOutput.error) && !actionOutput.shouldFailSafely;
-
-    // A resumed step's node run was charged when it first ran and paused.
-    if (
-      !isError &&
-      !actionOutput.shouldFailSafely &&
-      !actionOutput.shouldSkipStepExecution &&
-      !isDefined(resumedThreadId)
-    ) {
-      await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({
@@ -307,6 +298,37 @@ export class WorkflowExecutorWorkspaceService {
         executedStepsCount: (executedStepsCount ?? 0) + 1,
       });
     }
+  }
+
+  private async findBillingSpendersOrThrow({
+    workflowRun,
+    workspaceId,
+  }: {
+    workflowRun: WorkflowRunWorkspaceEntity;
+    workspaceId: string;
+  }): Promise<WorkflowBillingSpenders> {
+    if (!isDefined(workflowRun.coreWorkflowId)) {
+      throw new Error(
+        `Workflow run ${workflowRun.id} has no core workflow identity for billing`,
+      );
+    }
+
+    const workflow = await this.workflowCoreSyncService.findCoreWorkflowById(
+      workspaceId,
+      workflowRun.coreWorkflowId,
+    );
+
+    if (!isDefined(workflow)) {
+      throw new WorkflowRunException(
+        `Workflow run ${workflowRun.id} belongs to a deleted workflow`,
+        WorkflowRunExceptionCode.WORKFLOW_DELETED,
+      );
+    }
+
+    return {
+      workflowId: workflow.workspaceWorkflowId ?? workflow.id,
+      applicationId: workflow.applicationId,
+    };
   }
 
   async getNextStepIdsToExecute({

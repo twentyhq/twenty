@@ -10,8 +10,12 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  WorkflowRunStatus,
+  type WorkflowRunWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { stepIsAwaitingRetry } from 'src/modules/workflow/workflow-executor/utils/step-is-awaiting-retry.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
@@ -31,6 +35,7 @@ export class RunWorkflowJob {
 
   constructor(
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly codeStepBuildService: CodeStepBuildService,
     private readonly workflowExecutorWorkspaceService: WorkflowExecutorWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
@@ -78,6 +83,19 @@ export class RunWorkflowJob {
           });
         }
       } catch (error) {
+        if (
+          error instanceof WorkflowRunException &&
+          error.code === WorkflowRunExceptionCode.WORKFLOW_DELETED
+        ) {
+          await this.workflowRunWorkspaceService.endWorkflowRun({
+            workspaceId,
+            workflowRunId,
+            status: WorkflowRunStatus.STOPPED,
+          });
+
+          return;
+        }
+
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workspaceId,
           workflowRunId,
@@ -123,6 +141,10 @@ export class RunWorkflowJob {
         workspaceId,
         workflowRun.coreWorkflowVersionId,
       );
+
+    if (!isDefined(workflowVersion)) {
+      await this.throwIfCoreWorkflowDeleted({ workflowRun, workspaceId });
+    }
 
     if (
       !isDefined(workflowVersion) ||
@@ -336,6 +358,8 @@ export class RunWorkflowJob {
     }
 
     if (hasNoMoreStepsToRun) {
+      await this.throwIfCoreWorkflowDeleted({ workflowRun, workspaceId });
+
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         workspaceId,
@@ -364,6 +388,31 @@ export class RunWorkflowJob {
         workflowRunId,
         workspaceId,
       });
+    }
+  }
+
+  private async throwIfCoreWorkflowDeleted({
+    workflowRun,
+    workspaceId,
+  }: {
+    workflowRun: WorkflowRunWorkspaceEntity;
+    workspaceId: string;
+  }): Promise<void> {
+    if (!isDefined(workflowRun.coreWorkflowId)) {
+      return;
+    }
+
+    const coreWorkflow =
+      await this.workflowCoreSyncService.findCoreWorkflowById(
+        workspaceId,
+        workflowRun.coreWorkflowId,
+      );
+
+    if (!isDefined(coreWorkflow)) {
+      throw new WorkflowRunException(
+        `Workflow run ${workflowRun.id} belongs to a deleted workflow`,
+        WorkflowRunExceptionCode.WORKFLOW_DELETED,
+      );
     }
   }
 

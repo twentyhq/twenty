@@ -42,6 +42,11 @@ import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflo
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
+import {
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
+} from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
@@ -53,6 +58,7 @@ export class WorkflowRunnerWorkspaceService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
@@ -399,6 +405,23 @@ export class WorkflowRunnerWorkspaceService {
       throw new WorkflowRunException(
         'Cannot retry a workflow run without state',
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
+
+    const coreWorkflow = isDefined(workflowRun.coreWorkflowId)
+      ? await this.workflowCoreSyncService.findCoreWorkflowById(
+          workspaceId,
+          workflowRun.coreWorkflowId,
+        )
+      : null;
+
+    if (!isDefined(coreWorkflow)) {
+      throw new WorkflowTriggerException(
+        `Workflow run ${workflowRunId} cannot be retried because its workflow no longer exists`,
+        WorkflowTriggerExceptionCode.NOT_FOUND,
+        {
+          userFriendlyMessage: msg`This run cannot be retried because its workflow no longer exists.`,
+        },
       );
     }
 
