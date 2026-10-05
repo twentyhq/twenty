@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import chunk from 'lodash.chunk';
 import { Command } from 'nest-commander';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
@@ -57,13 +57,13 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
 
     const isPrebuiltModeEnabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
+        'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as FeatureFlagKey,
         workspaceId,
       );
 
     if (!isPrebuiltModeEnabled && !dryRun) {
       await this.featureFlagService.enableFeatureFlags(
-        [FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED],
+        ['IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as FeatureFlagKey],
         workspaceId,
       );
     }
@@ -87,7 +87,7 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
 
     if (dryRun) {
       this.logger.log(
-        `Would ensure ${FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED} is enabled and convert ${conversionTargets.length} logic function(s) on workspace ${workspaceId}`,
+        `Would ensure IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED is enabled and convert ${conversionTargets.length} logic function(s) on workspace ${workspaceId}`,
       );
 
       return;

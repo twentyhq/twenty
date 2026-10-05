@@ -77,7 +77,4 @@ export class AgentEntity
 
   @Column({ nullable: true, type: 'jsonb' })
   modelConfiguration: JsonbProperty<ModelConfiguration> | null;
-
-  @Column({ type: 'text', array: true, default: '{}' })
-  evaluationInputs: string[];
 }
