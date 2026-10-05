@@ -42,7 +42,7 @@ export default defineLogicFunction({
     // cronTriggerSettings: {
     //   pattern: '0 0 * * *', // Daily at midnight
     // },
-    // Database event trigger example (list as many triggers as needed):
+    // Database event trigger example (a single trigger object works too):
     // databaseEventTriggerSettings: [
     //   {
     //     eventName: 'objectName.created',

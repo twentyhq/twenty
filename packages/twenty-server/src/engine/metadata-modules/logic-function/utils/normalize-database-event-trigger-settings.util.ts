@@ -1,8 +1,8 @@
 import { type DatabaseEventTriggerSettings } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-// Manifests built with twenty-sdk before 2.47 declare a single trigger object
-export const normalizeManifestDatabaseEventTriggerSettings = (
+// Manifests built with older SDKs and older API clients send a single trigger object
+export const normalizeDatabaseEventTriggerSettings = (
   databaseEventTriggerSettings:
     | DatabaseEventTriggerSettings
     | DatabaseEventTriggerSettings[]

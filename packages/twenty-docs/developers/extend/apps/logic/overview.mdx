@@ -56,7 +56,7 @@ A logic function picks one or more triggers — every entry below is a separate 
 |---------|--------------|---------|
 | **HTTP route** | A request hits your `/s/<path>` endpoint | `httpRouteTriggerSettings` |
 | **Cron** | A CRON expression matches | `cronTriggerSettings` |
-| **Database event** | A workspace record is created, updated, or deleted | `databaseEventTriggerSettings` (a list, one entry per event to listen on) |
+| **Database event** | A workspace record is created, updated, or deleted | `databaseEventTriggerSettings` (one trigger, or a list of them) |
 | **AI tool** | A Twenty AI feature decides to call your function | `toolTriggerSettings` |
 | **Workflow action** | A workflow step invokes your function | `workflowActionTriggerSettings` |
 

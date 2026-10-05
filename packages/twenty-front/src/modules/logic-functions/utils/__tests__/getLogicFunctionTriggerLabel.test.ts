@@ -68,6 +68,14 @@ describe('getLogicFunctionTriggerLabel', () => {
     ).toBe('person.created');
   });
 
+  it('returns the database event name of a manifest still holding a single trigger object', () => {
+    expect(
+      getLogicFunctionTriggerLabel({
+        databaseEventTriggerSettings: { eventName: 'person.created' },
+      }),
+    ).toBe('person.created');
+  });
+
   it('lists every database event name when the function has several triggers', () => {
     expect(
       getLogicFunctionTriggerLabel({

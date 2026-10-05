@@ -6,6 +6,7 @@ import {
   LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
+import { normalizeDatabaseEventTriggerSettings } from 'src/engine/metadata-modules/logic-function/utils/normalize-database-event-trigger-settings.util';
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 
 export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate =
@@ -52,8 +53,9 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       builtHandlerPath,
       cronTriggerSettings:
         createLogicFunctionFromSourceInput.cronTriggerSettings ?? null,
-      databaseEventTriggerSettings:
-        createLogicFunctionFromSourceInput.databaseEventTriggerSettings ?? null,
+      databaseEventTriggerSettings: normalizeDatabaseEventTriggerSettings(
+        createLogicFunctionFromSourceInput.databaseEventTriggerSettings,
+      ),
       httpRouteTriggerSettings:
         createLogicFunctionFromSourceInput.httpRouteTriggerSettings ?? null,
       serverRouteTriggerSettings:

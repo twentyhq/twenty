@@ -2,7 +2,6 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
-  IsArray,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -23,6 +22,7 @@ import {
   WorkflowActionTriggerSettings,
 } from 'twenty-shared/application';
 
+import { IsDatabaseEventTriggerSettingsInput } from 'src/engine/metadata-modules/logic-function/decorators/is-database-event-trigger-settings-input.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
@@ -69,11 +69,12 @@ class UpdateLogicFunctionFromSourceInputUpdates {
   @IsOptional()
   cronTriggerSettings?: JsonbProperty<CronTriggerSettings>;
 
-  @IsArray()
-  @IsObject({ each: true })
+  @IsDatabaseEventTriggerSettingsInput()
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()
-  databaseEventTriggerSettings?: JsonbProperty<DatabaseEventTriggerSettings[]>;
+  databaseEventTriggerSettings?: JsonbProperty<
+    DatabaseEventTriggerSettings | DatabaseEventTriggerSettings[]
+  >;
 
   @IsObject()
   @Field(() => graphqlTypeJson, { nullable: true })

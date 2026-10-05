@@ -52,9 +52,9 @@ describe('defineLogicFunction', () => {
 
     const result = defineLogicFunction(config as any);
 
-    expect(
-      result.config.databaseEventTriggerSettings?.[0]?.eventName,
-    ).toBeDefined();
+    expect(result.config.databaseEventTriggerSettings).toEqual([
+      { eventName: 'contact.created' },
+    ]);
   });
 
   it('should accept databaseEventTriggerSettings with batchMode enabled', () => {
@@ -73,9 +73,9 @@ describe('defineLogicFunction', () => {
     const result = defineLogicFunction(config);
 
     expect(result.errors).toEqual([]);
-    expect(result.config.databaseEventTriggerSettings?.[0]?.batchMode).toBe(
-      true,
-    );
+    expect(result.config.databaseEventTriggerSettings).toEqual([
+      { eventName: 'contact.created', batchMode: true },
+    ]);
   });
 
   it('should accept several databaseEventTriggerSettings on one function', () => {
@@ -242,19 +242,35 @@ describe('defineLogicFunction', () => {
     );
   });
 
-  it('should reject a single databaseEventTriggerSettings object', () => {
-    const config = {
+  it('should still accept a single databaseEventTriggerSettings object', () => {
+    const config: LogicFunctionConfig = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'On Contact Created',
       handler: mockHandler,
       databaseEventTriggerSettings: { eventName: 'contact.created' },
     };
 
+    const result = defineLogicFunction(config);
+
+    expect(result.errors).toEqual([]);
+    expect(result.config.databaseEventTriggerSettings).toEqual({
+      eventName: 'contact.created',
+    });
+  });
+
+  it('should reject a single databaseEventTriggerSettings object without eventName', () => {
+    const config = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Contact Created',
+      handler: mockHandler,
+      databaseEventTriggerSettings: {},
+    };
+
     const result = defineLogicFunction(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'databaseEventTriggerSettings must be an array of triggers',
+      'Database event trigger must have an eventName',
     );
   });
 

@@ -58,7 +58,7 @@ Available trigger types:
 To invoke a route-triggered logic function from a (headless) front component, see [Calling a logic function](/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
 - **cron**: Runs your function on a schedule using a CRON expression.
-- **databaseEvent**: Runs on workspace object lifecycle events. `databaseEventTriggerSettings` is a list, so one function can listen on several events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
+- **databaseEvent**: Runs on workspace object lifecycle events. `databaseEventTriggerSettings` takes a single trigger or a list of them, so one function can listen on several events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
 > e.g. `person.updated`, `*.created`, `company.*`
 - **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and either returns a sync `Response` or the target workspace AND logic function to enqueue; on the enqueue path the platform acks with `202` and runs that **target** on the worker queue. See [Server route trigger](#server-route-trigger).
 
@@ -403,7 +403,7 @@ A trigger's `updatedFields` filters which update events trigger the function.
 `event.properties.updatedFields` tells you which fields actually changed on the current event.
 </Note>
 
-`databaseEventTriggerSettings` is a list of triggers. Each trigger accepts:
+`databaseEventTriggerSettings` takes a single trigger or a list of triggers. Each trigger accepts:
 
 | Property | Description |
 |----------|-------------|
@@ -411,7 +411,7 @@ A trigger's `updatedFields` filters which update events trigger the function.
 | `updatedFields` | Optional list of field names. On `.updated` events, only changes touching one of them trigger the function. |
 | `batchMode` | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
 
-A function can list several triggers. Each one is evaluated on its own, with its own `updatedFields` and `batchMode`, so an event matching two triggers (such as `person.updated` and `*.updated`) calls the handler once per trigger. Read `event.name` in the handler to tell them apart:
+A function can list several triggers (a single trigger object still works). Each one is evaluated on its own, with its own `updatedFields` and `batchMode`, so an event matching two triggers (such as `person.updated` and `*.updated`) calls the handler once per trigger. Read `event.name` in the handler to tell them apart:
 
 ```ts
 export default defineLogicFunction({

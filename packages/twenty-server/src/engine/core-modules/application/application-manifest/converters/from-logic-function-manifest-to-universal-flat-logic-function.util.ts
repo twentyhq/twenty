@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { isPackagedApplicationSource } from 'src/engine/core-modules/application/application-registration/utils/is-packaged-application-source.util';
-import { normalizeManifestDatabaseEventTriggerSettings } from 'src/engine/core-modules/application/application-manifest/utils/normalize-manifest-database-event-trigger-settings.util';
+import { normalizeDatabaseEventTriggerSettings } from 'src/engine/metadata-modules/logic-function/utils/normalize-database-event-trigger-settings.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import {
@@ -84,7 +84,7 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     handlerName: logicFunctionManifest.handlerName,
     checksum: logicFunctionManifest.builtHandlerChecksum,
     cronTriggerSettings: logicFunctionManifest.cronTriggerSettings ?? null,
-    databaseEventTriggerSettings: normalizeManifestDatabaseEventTriggerSettings(
+    databaseEventTriggerSettings: normalizeDatabaseEventTriggerSettings(
       logicFunctionManifest.databaseEventTriggerSettings,
     ),
     httpRouteTriggerSettings:
