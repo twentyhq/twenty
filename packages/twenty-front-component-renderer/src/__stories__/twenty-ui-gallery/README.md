@@ -20,7 +20,8 @@ effect within the interaction timeout.
 | Fixture | Components |
 | --- | --- |
 | `twenty-ui-field-controls` | Field, Input, InputGroup, Textarea |
-| `twenty-ui-number-stepper` | NumberStepper (keyboard bounds, disabled/read-only state, named form values and submission) |
+| `twenty-ui-number-stepper` | NumberStepper (pointer stepping, selected-range paste, caret restoration, keyboard bounds, disabled/read-only state and forms) |
+| `twenty-ui-autocomplete` | Autocomplete (inline Home/End, controlled editing, composing confirmation, filtering, disabled state and Empty cleanup; `TwentyUiAutocomplete.stories.tsx`) |
 | `twenty-ui-display-helpers` | Text |
 | `twenty-ui-avatar-controls` | Avatar (fallback, pointer/keyboard activation and disabled state) |
 | `twenty-ui-avatar-image` | Avatar (decoded images, broken-source fallback, replacement and unmount/remount) |
@@ -64,6 +65,20 @@ responses and closes them on teardown or timeout. These delayed-response steps
 run only in test mode; the regular and static stories use data images and
 retain working source controls, fallback, replacement and unmount/remount checks.
 
+Input and textarea selection state comes from host snapshots. Owned selection
+requests commit with controlled values, and detached controls discard their pending
+commands and subscriptions. NumberStepper stories verify exactly-once stepping,
+selected-range replacement and continued mid-string editing in both runtimes.
+
+The Autocomplete fixture uses the public inline list interface to isolate input
+behavior from popup support. Composition events preserve interim text and defer
+filtering. A composing Enter does not activate an item or submit the form; a later
+ordinary Enter activates the highlighted item once. Popup selection filling the
+input remains part of the portal acceptance. Empty uses worker-local text traversal
+in DOM order and restores its temporary announcement marker on its timer or cleanup.
+The narrow TreeWalker supports SHOW_TEXT, nextNode and currentNode without callback
+filters; document Selection and DOM Range are outside this scope.
+
 ## Known sandbox limitations
 
 These are compatibility regression stories, not assertions that the components
@@ -76,9 +91,8 @@ expected-to-fail by the runner.
 
 | Component | Current limitation |
 | --- | --- |
-| NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree and stops Preact rendering. Separate React and Preact stories assert the pointer gap and successful typing, keyboard bounds, disabled/read-only state, named form values and submission. |
 | ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/image-input.mdx). |
-| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet. |
+| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect, Autocomplete (React) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet. |
 | Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (Preact) | The Dropdown-based popups never open. `Popover.Popup` is a plain function component, so Preact hands its ref to the component instance instead of the popup element, and the content reads `dataset` from that instance as soon as it mounts. The error is thrown inside Preact's render queue, so it never reaches the host and Preact stops re-rendering. |
 | ListItem | `ListItemPreact` handles selection, the disabled item and the submenu row, but the overflow tooltip's Floating UI `contains(parent, child)` check receives a parent without `contains` and throws. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
@@ -152,6 +166,7 @@ The CountrySelect and reading-directions fixtures live in their own story
 files, so run them separately:
 
 ```sh
+npx vitest run --config vitest.storybook.config.ts TwentyUiAutocomplete.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiCountrySelect.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.stories.tsx
 ```

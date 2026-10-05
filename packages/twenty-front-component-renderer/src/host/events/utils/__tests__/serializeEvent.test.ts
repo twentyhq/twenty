@@ -138,6 +138,52 @@ describe('serializeEvent', () => {
     expect(result).toEqual({ type: 'compositionupdate', data: 'か' });
   });
 
+  it('should forward composing keyboard state from a React host event', () => {
+    const result = serializeEvent({
+      type: 'keydown',
+      key: 'Enter',
+      keyCode: 229,
+      which: 229,
+      nativeEvent: { isComposing: true },
+    });
+
+    expect(result).toEqual({
+      type: 'keydown',
+      key: 'Enter',
+      keyCode: 229,
+      which: 229,
+      isComposing: true,
+    });
+  });
+
+  it.each([true, false])(
+    'should forward input composition state when isComposing is %s',
+    (isComposing) => {
+      expect(
+        serializeEvent({
+          type: 'input',
+          inputType: 'insertCompositionText',
+          isComposing,
+        }),
+      ).toEqual({
+        type: 'input',
+        inputType: 'insertCompositionText',
+        isComposing,
+      });
+    },
+  );
+
+  it('should ignore invalid composition and keyboard state', () => {
+    expect(
+      serializeEvent({
+        type: 'keydown',
+        which: '229',
+        keyCode: '229',
+        nativeEvent: { isComposing: 'true' },
+      }),
+    ).toEqual({ type: 'keydown' });
+  });
+
   it('should forward the clipboard text of a paste event', () => {
     const result = serializeEvent({
       type: 'paste',

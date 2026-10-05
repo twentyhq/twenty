@@ -1,3 +1,4 @@
+import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { isArray } from '@sniptt/guards';
 import React from 'react';
 
@@ -72,10 +73,12 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
 
     const shouldClearFileInputSelection = isFileInput && value === '';
 
-    const caretPreservingElementRef = useCaretPreservingElementRef(
+    const caretPreservingElementRef = useCaretPreservingElementRef({
       composedElementRef,
-      isFileInput && !shouldClearFileInputSelection ? undefined : value,
-    );
+      value: isFileInput && !shouldClearFileInputSelection ? undefined : value,
+      selectionRequest: props[INPUT_SELECTION_BRIDGE_PROPERTIES.request],
+      onSelectionUpdate: props[INPUT_SELECTION_BRIDGE_PROPERTIES.update],
+    });
 
     if (
       caretPreservingTag === 'textarea' ||

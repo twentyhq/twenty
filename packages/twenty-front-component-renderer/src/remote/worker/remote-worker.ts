@@ -1,7 +1,10 @@
 import '@remote-dom/core/polyfill';
 import '@remote-dom/react/polyfill';
 
-import { HtmlInputElement } from '../generated/remote-elements';
+import {
+  HtmlInputElement,
+  HtmlTextareaElement,
+} from '../generated/remote-elements';
 
 import { ThreadMessagePort } from '@quilted/threads';
 
@@ -12,6 +15,9 @@ import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomEleme
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { installImageLoadingPolyfill } from '@/polyfills/image/utils/installImageLoadingPolyfill';
 import { workerActiveElementStore } from '@/polyfills/dom/states/workerActiveElementStore';
+import { installTextTreeWalkerPolyfill } from '@/polyfills/dom/utils/installTextTreeWalkerPolyfill';
+import { installInputSelectionPolyfill } from '@/polyfills/input-selection/utils/installInputSelectionPolyfill';
+import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
 import { workerFocusTransport } from '@/polyfills/dom/states/workerFocusTransport';
 import { installActiveElementDetachmentHook } from '@/polyfills/dom/utils/installActiveElementDetachmentHook';
 import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
@@ -65,6 +71,14 @@ patchRemoteElementAttributes();
 installAriaBooleanPropertyAccessors();
 installErrorEventBridge();
 
+installTextTreeWalkerPolyfill({ globalScope: toGlobalScopeRecord(globalThis) });
+installInputSelectionPolyfill({
+  elementPrototypes: [
+    HtmlInputElement.prototype,
+    HtmlTextareaElement.prototype,
+  ],
+  selectionStore: workerInputSelectionStore,
+});
 installDocumentGetElementById(document);
 installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
@@ -106,7 +120,10 @@ installActiveElementDetachmentHook({
     resolveGlobalScopeInstallTargets(toGlobalScopeRecord(globalThis)),
   ),
   activeElementStore: workerActiveElementStore,
-  onRemoveSubtree: workerFocusTransport.blurFocusedElementWithinSubtree,
+  onRemoveSubtree: (node) => {
+    workerFocusTransport.blurFocusedElementWithinSubtree(node);
+    workerInputSelectionStore.clearSubtree(node);
+  },
 });
 installHostEventRetargetingPolyfill(HTMLElement.prototype);
 installElementClickMethodPolyfill(HTMLElement.prototype);

@@ -36,11 +36,17 @@ export type SerializedEventData = {
   isPrimary?: boolean;
   key?: string;
   code?: string;
+  which?: number;
+  keyCode?: number;
+  isComposing?: boolean;
   repeat?: boolean;
   inputType?: string;
   data?: string;
   clipboardText?: string;
   value?: string;
+  selectionStart?: number | null;
+  selectionEnd?: number | null;
+  selectionDirection?: 'forward' | 'backward' | 'none' | null;
   checked?: boolean;
   selectedOptionIndexes?: number[];
   scrollTop?: number;

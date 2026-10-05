@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
 import { buildHostReactEventHandlerProp } from '@/host/elements/utils/buildHostReactEventHandlerProp';
 import { hasDangerousUrlScheme } from '@/host/elements/utils/hasDangerousUrlScheme';
 import { isNavigationUrlAttribute } from '@/host/elements/utils/isNavigationUrlAttribute';
@@ -8,7 +9,13 @@ import { parseCssString } from '@/host/elements/utils/parseCssString';
 import { isEventHandlerKey } from '@/host/events/utils/isEventHandlerKey';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 
-const INTERNAL_PROPS = new Set(['element', 'receiver', 'components', 'ref']);
+const INTERNAL_PROPS = new Set([
+  'element',
+  'receiver',
+  'components',
+  'ref',
+  ...Object.values(INPUT_SELECTION_BRIDGE_PROPERTIES),
+]);
 
 export const buildHostReactPropsFromRemoteProps = ({
   remoteProps,

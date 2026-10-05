@@ -9,7 +9,7 @@ describe('syncValuePreservingCaret', () => {
     const input = document.createElement('input');
     input.value = 'old';
 
-    syncValuePreservingCaret(input, 'new');
+    syncValuePreservingCaret({ element: input, nextValue: 'new' });
 
     expect(input.value).toBe('new');
   });
@@ -18,7 +18,7 @@ describe('syncValuePreservingCaret', () => {
     const input = document.createElement('input');
     input.value = 'same';
 
-    syncValuePreservingCaret(input, 'same');
+    syncValuePreservingCaret({ element: input, nextValue: 'same' });
 
     expect(input.value).toBe('same');
   });
@@ -28,12 +28,13 @@ describe('syncValuePreservingCaret', () => {
     document.body.appendChild(input);
     input.value = 'hello world';
     input.focus();
-    input.setSelectionRange(2, 5);
+    input.setSelectionRange(2, 5, 'backward');
 
-    syncValuePreservingCaret(input, 'HELLO world');
+    syncValuePreservingCaret({ element: input, nextValue: 'HELLO world' });
 
     expect(input.value).toBe('HELLO world');
     expect(input.selectionStart).toBe(2);
     expect(input.selectionEnd).toBe(5);
+    expect(input.selectionDirection).toBe('backward');
   });
 });

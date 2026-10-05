@@ -13,7 +13,7 @@ import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeToken
 import { progressTest } from '@/__stories__/twenty-ui-gallery/utils/progressTest';
 import { inputTest } from '@/__stories__/twenty-ui-gallery/utils/inputTest';
 import { numberStepperTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperTest';
-import { numberStepperSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSandboxFailureTest';
+import { numberStepperSelectionTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSelectionTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { resizeHandleTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandleTest';
 import { createListItemSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createListItemSandboxFailureTest';
@@ -141,16 +141,16 @@ export const NumberStepperPreact: Story = createGalleryStory({
   play: numberStepperTest,
 });
 
-export const NumberStepperInteractionGapsReact: Story = createGalleryStory({
+export const NumberStepperSelectionReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-number-stepper',
   runtime: 'react',
-  play: numberStepperSandboxFailureTest,
+  play: numberStepperSelectionTest,
 });
 
-export const NumberStepperInteractionGapsPreact: Story = createGalleryStory({
+export const NumberStepperSelectionPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-number-stepper',
   runtime: 'preact',
-  play: numberStepperSandboxFailureTest,
+  play: numberStepperSelectionTest,
 });
 
 export const JsonVisualizerReact: Story = createGalleryStory({

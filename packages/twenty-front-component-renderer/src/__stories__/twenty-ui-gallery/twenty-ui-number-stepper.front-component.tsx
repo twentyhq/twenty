@@ -9,6 +9,8 @@ const NumberStepperExample = () => {
   const [value, setValue] = useState<number | null>(3);
   const [changes, setChanges] = useState(0);
   const [submissions, setSubmissions] = useState(0);
+  const [editableValue, setEditableValue] = useState<number | null>(1234);
+  const [editChanges, setEditChanges] = useState(0);
 
   return (
     <TwentyUiGalleryCard title="NumberStepper">
@@ -51,11 +53,23 @@ const NumberStepperExample = () => {
           onValueChange={() => setChanges((count) => count + 1)}
         />
         <Button type="submit">Save quantity</Button>
-        <Text role="status">
+        <Text role="status" aria-label="Quantity state">
           Value: {value ?? 'empty'}; Changes: {changes}; Submissions:{' '}
           {submissions}
         </Text>
       </form>
+      <NumberStepper
+        aria-label="Editable amount"
+        value={editableValue}
+        showButtons={false}
+        onValueChange={(nextValue) => {
+          setEditableValue(nextValue);
+          setEditChanges((count) => count + 1);
+        }}
+      />
+      <Text role="status" aria-label="Editing state">
+        Amount: {editableValue}; Changes: {editChanges}
+      </Text>
     </TwentyUiGalleryCard>
   );
 };

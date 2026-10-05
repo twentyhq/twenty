@@ -5,6 +5,7 @@ import { CHECKED_STATE_SETTLED_EVENT_TYPES } from '@/host/events/constants/Check
 import { FORM_CONTROL_VALUE_SETTLED_EVENT_TYPES } from '@/host/events/constants/FormControlValueSettledEventTypes';
 import { serializeFileList } from '@/host/events/utils/serializeFileList';
 import { serializeSelectedOptionIndexes } from '@/host/events/utils/serializeSelectedOptionIndexes';
+import { readInputSelectionState } from '@/utils/readInputSelectionState';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export const applyFormControlTargetProperties = ({
@@ -14,6 +15,8 @@ export const applyFormControlTargetProperties = ({
   serializedEvent: SerializedEventData;
   target: Record<string, unknown>;
 }): void => {
+  Object.assign(serializedEvent, readInputSelectionState(target));
+
   if (
     CHECKED_STATE_SETTLED_EVENT_TYPES.has(serializedEvent.type) &&
     isBoolean(target.checked)
