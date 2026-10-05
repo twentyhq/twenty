@@ -71,7 +71,6 @@ type Agent {
   createdAt: DateTime!
   updatedAt: DateTime!
   modelConfiguration: JSON
-  evaluationInputs: [String!]!
   triggers: [JSON!]!
 }
 
@@ -1635,6 +1634,100 @@ enum LogicFunctionExecutionStatus {
   ERROR
 }
 
+type UserSession {
+  id: UUID!
+  workspaceId: UUID
+  authProvider: String!
+  isImpersonating: Boolean!
+  userAgent: String
+  ipAddress: String
+  createdAt: DateTime!
+  lastActiveAt: DateTime!
+  expiresAt: DateTime!
+  isCurrent: Boolean!
+}
+
+type BillingEndTrialPeriod {
+  """Updated subscription status"""
+  status: SubscriptionStatus
+
+  """Boolean that confirms if a payment method was found"""
+  hasPaymentMethod: Boolean!
+
+  """
+  Billing portal URL for payment method update (returned when no payment method exists)
+  """
+  billingPortalUrl: String
+
+  """Updated current billing subscription"""
+  currentBillingSubscription: BillingSubscription
+
+  """All billing subscriptions"""
+  billingSubscriptions: [BillingSubscription!]
+}
+
+type BillingResourceCreditUsage {
+  productKey: BillingProductKey!
+  periodStart: DateTime!
+  periodEnd: DateTime!
+  usedCredits: Float!
+  grantedCredits: Float!
+  rolloverCredits: Float!
+  totalGrantedCredits: Float!
+  unitPriceCents: Float!
+}
+
+type BillingPlan {
+  planKey: BillingPlanKey!
+  baseProducts: [BillingLicensedProduct!]!
+  resourceCreditProducts: [BillingLicensedProduct!]!
+  meteredProducts: [BillingMeteredProduct!]!
+}
+
+type BillingPaymentIntent {
+  clientSecret: String!
+  paymentIntentType: String!
+}
+
+type BillingSession {
+  url: String
+}
+
+type BillingUpdate {
+  """Current billing subscription"""
+  currentBillingSubscription: BillingSubscription!
+
+  """All billing subscriptions"""
+  billingSubscriptions: [BillingSubscription!]!
+}
+
+type UsageBreakdownItem {
+  key: String!
+  label: String
+  creditsUsed: Float!
+}
+
+type UsageTimeSeries {
+  date: String!
+  creditsUsed: Float!
+}
+
+type UsageUserDaily {
+  userWorkspaceId: String!
+  dailyUsage: [UsageTimeSeries!]!
+}
+
+type UsageAnalytics {
+  usageByUser: [UsageBreakdownItem!]!
+  usageByOperationType: [UsageBreakdownItem!]!
+  usageByApplication: [UsageBreakdownItem!]!
+  usageByModel: [UsageBreakdownItem!]!
+  timeSeries: [UsageTimeSeries!]!
+  periodStart: DateTime!
+  periodEnd: DateTime!
+  userDailyUsage: UsageUserDaily
+}
+
 type UsageLimitOperationDefinition {
   operationType: UsageOperationType!
   allowedUnits: [UsageUnit!]!
@@ -1934,100 +2027,6 @@ type EventSubscription {
   queueJobEvents: [JobStatus!]!
 }
 
-type UserSession {
-  id: UUID!
-  workspaceId: UUID
-  authProvider: String!
-  isImpersonating: Boolean!
-  userAgent: String
-  ipAddress: String
-  createdAt: DateTime!
-  lastActiveAt: DateTime!
-  expiresAt: DateTime!
-  isCurrent: Boolean!
-}
-
-type BillingEndTrialPeriod {
-  """Updated subscription status"""
-  status: SubscriptionStatus
-
-  """Boolean that confirms if a payment method was found"""
-  hasPaymentMethod: Boolean!
-
-  """
-  Billing portal URL for payment method update (returned when no payment method exists)
-  """
-  billingPortalUrl: String
-
-  """Updated current billing subscription"""
-  currentBillingSubscription: BillingSubscription
-
-  """All billing subscriptions"""
-  billingSubscriptions: [BillingSubscription!]
-}
-
-type BillingResourceCreditUsage {
-  productKey: BillingProductKey!
-  periodStart: DateTime!
-  periodEnd: DateTime!
-  usedCredits: Float!
-  grantedCredits: Float!
-  rolloverCredits: Float!
-  totalGrantedCredits: Float!
-  unitPriceCents: Float!
-}
-
-type BillingPlan {
-  planKey: BillingPlanKey!
-  baseProducts: [BillingLicensedProduct!]!
-  resourceCreditProducts: [BillingLicensedProduct!]!
-  meteredProducts: [BillingMeteredProduct!]!
-}
-
-type BillingPaymentIntent {
-  clientSecret: String!
-  paymentIntentType: String!
-}
-
-type BillingSession {
-  url: String
-}
-
-type BillingUpdate {
-  """Current billing subscription"""
-  currentBillingSubscription: BillingSubscription!
-
-  """All billing subscriptions"""
-  billingSubscriptions: [BillingSubscription!]!
-}
-
-type UsageBreakdownItem {
-  key: String!
-  label: String
-  creditsUsed: Float!
-}
-
-type UsageTimeSeries {
-  date: String!
-  creditsUsed: Float!
-}
-
-type UsageUserDaily {
-  userWorkspaceId: String!
-  dailyUsage: [UsageTimeSeries!]!
-}
-
-type UsageAnalytics {
-  usageByUser: [UsageBreakdownItem!]!
-  usageByOperationType: [UsageBreakdownItem!]!
-  usageByApplication: [UsageBreakdownItem!]!
-  usageByModel: [UsageBreakdownItem!]!
-  timeSeries: [UsageTimeSeries!]!
-  periodStart: DateTime!
-  periodEnd: DateTime!
-  userDailyUsage: UsageUserDaily
-}
-
 type ApprovedAccessDomain {
   id: UUID!
   domain: String!
@@ -2141,7 +2140,6 @@ enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED
   IS_MESSAGE_CAMPAIGN_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
-  IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
   IS_AI_CHAT_SHARING_DROPDOWN_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
@@ -3622,23 +3620,6 @@ type RecordExport {
   downloadPath: String
 }
 
-type AgentTurnEvaluation {
-  id: UUID!
-  turnId: UUID!
-  score: Int!
-  comment: String
-  createdAt: DateTime!
-}
-
-type AgentTurn {
-  id: UUID!
-  threadId: UUID!
-  agentId: UUID
-  evaluations: [AgentTurnEvaluation!]!
-  messages: [AgentMessage!]!
-  createdAt: DateTime!
-}
-
 type WorkspaceAiStats {
   conversationsCount: Int!
   skillsCount: Int!
@@ -3898,6 +3879,7 @@ type Query {
   usageQuotasWithConsumption: [UsageQuotaWithConsumption!]!
   usageQuotaDefinitions: UsageQuotaDefinitions!
   usageQuotaScopeConsumption(input: UsageQuotaScopeInput!): UsageQuotaScopeConsumption
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
   getPageLayoutTabs(pageLayoutId: String!): [PageLayoutTab!]!
@@ -3940,7 +3922,6 @@ type Query {
   frontComponent(id: UUID!): FrontComponent
   getInviteSuggestions: [InviteSuggestion!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
-  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
@@ -4014,7 +3995,6 @@ type Query {
   getAiSystemPromptPreview: AiSystemPromptPreview!
   skills: [Skill!]!
   skill(id: UUID!): Skill
-  agentTurns(agentId: UUID!): [AgentTurn!]!
   validationRules(objectMetadataId: UUID!): [ValidationRule!]!
   timelineActivityTypes: [TimelineActivityType!]!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
@@ -4054,6 +4034,13 @@ input UsageQuotaScopeInput {
   unit: UsageUnit!
 }
 
+input UsageAnalyticsInput {
+  periodStart: DateTime
+  periodEnd: DateTime
+  userWorkspaceId: String
+  operationTypes: [UsageOperationType!]
+}
+
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
@@ -4076,13 +4063,6 @@ input ObjectFilter {
 input LogicFunctionIdInput {
   """The id of the function."""
   id: ID!
-}
-
-input UsageAnalyticsInput {
-  periodStart: DateTime
-  periodEnd: DateTime
-  userWorkspaceId: String
-  operationTypes: [UsageOperationType!]
 }
 
 input GetApiKeyInput {
@@ -4383,8 +4363,6 @@ type Mutation {
   deleteSkill(id: UUID!): Skill!
   activateSkill(id: UUID!): Skill!
   deactivateSkill(id: UUID!): Skill!
-  evaluateAgentTurn(turnId: UUID!): AgentTurnEvaluation!
-  runEvaluationInput(agentId: UUID!, input: String!): AgentTurn!
   createValidationRule(input: CreateValidationRuleInput!): ValidationRule!
   updateValidationRule(input: UpdateValidationRuleInput!): ValidationRule!
   deleteValidationRule(id: UUID!): ValidationRule!
@@ -4911,7 +4889,6 @@ input CreateAgentInput {
   roleId: UUID
   responseFormat: JSON
   modelConfiguration: JSON
-  evaluationInputs: [String!]
   triggers: [JSON!]
 }
 
@@ -4926,7 +4903,6 @@ input UpdateAgentInput {
   roleId: UUID
   responseFormat: JSON
   modelConfiguration: JSON
-  evaluationInputs: [String!]
   triggers: [JSON!]
 }
 

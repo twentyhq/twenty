@@ -11,7 +11,6 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
-import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
@@ -24,7 +23,6 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     TwentyConfigModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
     UsageLimitModule,
-    UsageModule,
     WorkspaceCacheModule,
     WorkspaceCacheStorageModule,
     WorkspaceEventEmitterModule,

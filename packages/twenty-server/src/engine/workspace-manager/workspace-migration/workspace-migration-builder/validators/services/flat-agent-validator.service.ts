@@ -16,6 +16,7 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 import { validateAgentNameUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util';
 import { validateAgentRequiredProperties } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util';
 import { validateAgentResponseFormat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util';
+import { validateAgentTriggersCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util';
 import { validateAgentTriggers } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util';
 
 @Injectable()
@@ -206,20 +207,13 @@ export class FlatAgentValidatorService {
     if (flatEntityUpdate.triggers !== undefined) {
       validationResult.errors.push(
         ...validateAgentTriggers({ triggers: flatEntityUpdate.triggers }),
+        ...validateAgentTriggersCallerApplication({
+          callerApplicationUniversalIdentifier:
+            buildOptions.applicationUniversalIdentifier,
+          agentApplicationUniversalIdentifier:
+            fromFlatAgent.applicationUniversalIdentifier,
+        }),
       );
-
-      // Triggers start runs on their own, so only the agent's application may schedule them
-      if (
-        !isCallerTwentyStandardApp(buildOptions) &&
-        buildOptions.applicationUniversalIdentifier !==
-          fromFlatAgent.applicationUniversalIdentifier
-      ) {
-        validationResult.errors.push({
-          code: AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
-          message: t`Only the application that owns this agent can change its triggers`,
-          userFriendlyMessage: msg`Only the application that owns this agent can change its triggers`,
-        });
-      }
     }
 
     return validationResult;

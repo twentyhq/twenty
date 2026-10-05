@@ -186,7 +186,8 @@ export const validateAgentTriggers = ({
 
   const triggerIds = triggers
     .filter(isPlainObject)
-    .map((trigger) => trigger.id);
+    .map((trigger) => trigger.id)
+    .filter(isString);
 
   if (new Set(triggerIds).size !== triggerIds.length) {
     errors.push(buildInvalidTriggerError(t`Agent trigger ids must be unique`));

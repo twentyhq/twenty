@@ -14,7 +14,6 @@ const agent = {
   isCustom: true,
   isSystem: false,
   modelConfiguration: { webSearch: { enabled: true } },
-  evaluationInputs: ['Is Acme a good fit?'],
   triggers: [],
   applicationId: 'application-id',
   createdAt: '2026-01-01T00:00:00.000Z',
@@ -34,7 +33,6 @@ describe('getCoreAgentInitialFormValues', () => {
       isCustom: true,
       modelConfiguration: { webSearch: { enabled: true } },
       responseFormat: { type: 'json', schema: {} },
-      evaluationInputs: ['Is Acme a good fit?'],
     });
   });
 

@@ -103,6 +103,24 @@ describe('defineAgent', () => {
     );
   });
 
+  it('should error instead of throwing when a database event trigger has no settings', () => {
+    const result = defineAgent({
+      ...VALID_AGENT_CONFIG,
+      triggers: [
+        // @ts-expect-error apps written in JavaScript can omit settings
+        {
+          universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
+          type: 'DATABASE_EVENT',
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      `Agent 'sales-assistant' trigger event name 'undefined' must look like 'company.created'`,
+    );
+  });
+
   it('should warn when responseFormat is missing', () => {
     const { responseFormat: _responseFormat, ...configWithoutFormat } =
       VALID_AGENT_CONFIG;

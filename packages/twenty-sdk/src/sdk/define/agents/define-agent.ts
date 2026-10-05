@@ -76,12 +76,16 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
       );
     }
 
+    const eventName =
+      trigger.type === 'DATABASE_EVENT' ? trigger.settings?.eventName : null;
+
     if (
       trigger.type === 'DATABASE_EVENT' &&
-      !AGENT_TRIGGER_EVENT_NAME_PATTERN.test(trigger.settings.eventName)
+      (!isNonEmptyString(eventName) ||
+        !AGENT_TRIGGER_EVENT_NAME_PATTERN.test(eventName))
     ) {
       errors.push(
-        `Agent '${config.name}' trigger event name '${trigger.settings.eventName}' must look like 'company.created'`,
+        `Agent '${config.name}' trigger event name '${eventName}' must look like 'company.created'`,
       );
     }
 
