@@ -180,6 +180,28 @@ describe('WorkflowAgentConversationWorkspaceService', () => {
       );
     });
 
+    it('starts its own conversation while the one its key names waits on another answer', async () => {
+      const { service, agentInboxService } = buildService();
+
+      agentInboxService.openThread.mockResolvedValueOnce({
+        thread: {
+          id: 'waiting-thread-id',
+          pendingQuestionMessageId: 'question-message-id',
+        },
+        isCreated: false,
+      });
+
+      await expect(
+        service.openConversation({
+          ...OPEN_ARGS,
+          recipientWorkspaceMemberId: 'recipient-id',
+        }),
+      ).resolves.toEqual({
+        threadId: 'thread-for-recipient-id',
+        priorMessages: [],
+      });
+    });
+
     it('fails when the recipient also deleted the conversation this execution started', async () => {
       const { service, agentInboxService } = buildService();
 

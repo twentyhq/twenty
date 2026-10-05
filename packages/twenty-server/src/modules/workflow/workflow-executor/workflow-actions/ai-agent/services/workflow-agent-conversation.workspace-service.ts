@@ -105,8 +105,12 @@ export class WorkflowAgentConversationWorkspaceService {
 
     const keyedConversation = await openThreadUnderKey(threadKey);
 
-    // a conversation the recipient deleted is not written to again, so this execution starts its own
-    const { thread, isCreated } = isDefined(keyedConversation.thread.deletedAt)
+    // a conversation the recipient deleted is not written to again, and one already waiting on an answer
+    // has no room for another question, so this execution starts its own
+    const isKeyedConversationUnavailable =
+      isDefined(keyedConversation.thread.deletedAt) ||
+      isDefined(keyedConversation.thread.pendingQuestionMessageId);
+    const { thread, isCreated } = isKeyedConversationUnavailable
       ? await openThreadUnderKey(`${threadKey}:${workflowRunId}:${stepId}`)
       : keyedConversation;
 
