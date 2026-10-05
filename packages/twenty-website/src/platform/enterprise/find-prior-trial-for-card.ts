@@ -20,21 +20,12 @@ export async function findPriorTrialForCard({
     return undefined;
   }
 
-  try {
-    const result = await stripe.subscriptions.search({
-      query: `metadata['${STRIPE_METADATA_KEY.TRIAL_CARD_FINGERPRINT}']:'${cardFingerprint}'`,
-      limit: 2,
-    });
+  const result = await stripe.subscriptions.search({
+    query: `metadata['${STRIPE_METADATA_KEY.TRIAL_CARD_FINGERPRINT}']:'${cardFingerprint}'`,
+    limit: 2,
+  });
 
-    return result.data.find(
-      (subscription) => subscription.id !== excludedSubscriptionId,
-    )?.id;
-  } catch (error: unknown) {
-    console.error(
-      '[enterprise-stripe-webhook] prior-trial lookup failed, recording nothing',
-      error,
-    );
-
-    return undefined;
-  }
+  return result.data.find(
+    (subscription) => subscription.id !== excludedSubscriptionId,
+  )?.id;
 }

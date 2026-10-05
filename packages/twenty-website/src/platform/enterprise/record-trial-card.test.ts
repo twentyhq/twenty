@@ -150,8 +150,7 @@ describe('recordTrialCard', () => {
     expect(update).not.toHaveBeenCalled();
   });
 
-  it('still stamps the card when the prior-trial lookup fails', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+  it('records nothing when the prior-trial lookup fails, so a redelivery looks again', async () => {
     const { stripe, search, update } = stripeWith({
       subscription: trialingSubscription(),
     });
@@ -159,11 +158,9 @@ describe('recordTrialCard', () => {
 
     await expect(
       recordTrialCard({ stripe, subscriptionId: SUBSCRIPTION_ID }),
-    ).resolves.toBe(TRIAL_CARD_RECORD_OUTCOME.FIRST_TRIAL_FOR_CARD);
+    ).rejects.toThrow('stripe is down');
 
     expect(search).toHaveBeenCalledTimes(1);
-    expect(update).toHaveBeenCalledWith(SUBSCRIPTION_ID, {
-      metadata: { trialCardFingerprint: FINGERPRINT },
-    });
+    expect(update).not.toHaveBeenCalled();
   });
 });
