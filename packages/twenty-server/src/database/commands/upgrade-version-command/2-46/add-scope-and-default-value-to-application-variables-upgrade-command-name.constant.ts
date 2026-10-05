@@ -1,2 +1,2 @@
 export const ADD_SCOPE_AND_DEFAULT_VALUE_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME =
-  '2.46.0_AddScopeAndDefaultValueToApplicationVariablesFastInstanceCommand_1791187417950';
+  '2.46.0_AddScopeAndDefaultValueToApplicationVariablesFastInstanceCommand_1791224187465';
