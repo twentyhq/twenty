@@ -9,6 +9,7 @@ const mockAdd = jest.fn();
 const mockAddBulk = jest.fn();
 const mockSetGlobalConcurrency = jest.fn();
 const mockRemoveGlobalConcurrency = jest.fn();
+const mockGetJobCountByTypes = jest.fn();
 
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
@@ -18,6 +19,7 @@ jest.mock('bullmq', () => ({
     addBulk: mockAddBulk,
     setGlobalConcurrency: mockSetGlobalConcurrency,
     removeGlobalConcurrency: mockRemoveGlobalConcurrency,
+    getJobCountByTypes: mockGetJobCountByTypes,
   })),
   Worker: jest.fn().mockImplementation(() => ({ on: jest.fn() })),
   MetricsTime: { ONE_WEEK: 1 },
@@ -248,6 +250,18 @@ describe('BullMQDriver queue wait metric', () => {
     );
   });
 
+  it('records no wait for a job picked up before its scheduled delay elapsed', async () => {
+    await processJob({
+      opts: { delay: 60_000 },
+      timestamp: Date.now() - 30_000,
+      attemptsStarted: 1,
+    });
+
+    expect(recordHistogram).toHaveBeenCalledWith(
+      expect.objectContaining({ value: 0 }),
+    );
+  });
+
   it('does not sample the wait of a re-run after a retry or a stall', async () => {
     await processJob({
       opts: {},
@@ -256,6 +270,63 @@ describe('BullMQDriver queue wait metric', () => {
     });
 
     expect(recordHistogram).not.toHaveBeenCalled();
+  });
+});
+
+describe('BullMQDriver queue job count gauges', () => {
+  const createMultiObservableGauge = jest.fn();
+  const driver = new BullMQDriver(
+    {} as never,
+    { createMultiObservableGauge } as never,
+    {} as never,
+    {} as never,
+  );
+
+  driver.register(MessageQueue.workflowQueue);
+
+  const collectGauge = async (metricName: string) => {
+    const gauge = createMultiObservableGauge.mock.calls
+      .map(([options]) => options)
+      .find((options) => options.metricName === metricName);
+
+    if (!gauge) {
+      throw new Error(`Gauge ${metricName} was not registered`);
+    }
+
+    return gauge.callback();
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetJobCountByTypes.mockImplementation(async (...types: string[]) =>
+      types.includes('delayed') ? 7 : 3,
+    );
+    driver.onModuleInit();
+  });
+
+  it('reports the runnable backlog without the delayed jobs', async () => {
+    await expect(
+      collectGauge('twenty_queue_jobs_waiting_total'),
+    ).resolves.toEqual([
+      { value: 3, attributes: { queue: MessageQueue.workflowQueue } },
+    ]);
+
+    expect(mockGetJobCountByTypes).toHaveBeenCalledWith(
+      'waiting',
+      'prioritized',
+      'paused',
+      'waiting-children',
+    );
+  });
+
+  it('reports the delayed jobs on their own gauge', async () => {
+    await expect(
+      collectGauge('twenty_queue_jobs_delayed_total'),
+    ).resolves.toEqual([
+      { value: 7, attributes: { queue: MessageQueue.workflowQueue } },
+    ]);
+
+    expect(mockGetJobCountByTypes).toHaveBeenCalledWith('delayed');
   });
 });
 
