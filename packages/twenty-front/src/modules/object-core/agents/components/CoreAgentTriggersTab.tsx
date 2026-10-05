@@ -1,6 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type AgentTrigger } from 'twenty-shared/application';
+import {
+  AGENT_TRIGGER_LIMITS,
+  type AgentTrigger,
+} from 'twenty-shared/application';
 import { Section } from 'twenty-ui/components';
 import { IconClock, IconAddressBook } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -45,6 +48,9 @@ export const CoreAgentTriggersTab = ({
     objectOptions[0]?.value ??
     'company';
 
+  const canAddTrigger =
+    !disabled && triggers.length < AGENT_TRIGGER_LIMITS.MAX_TRIGGERS_PER_AGENT;
+
   const addTrigger = (type: AgentTrigger['type']) =>
     onTriggersChange([
       ...triggers,
@@ -86,7 +92,7 @@ export const CoreAgentTriggersTab = ({
           />
         ))}
       </StyledTriggerList>
-      {!disabled && (
+      {canAddTrigger && (
         <StyledActions>
           <Button
             startIcon={<IconAddressBook />}

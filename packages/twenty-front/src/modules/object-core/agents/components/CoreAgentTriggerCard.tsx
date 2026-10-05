@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type AgentTrigger } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components';
@@ -261,7 +262,9 @@ export const CoreAgentTriggerCard = ({
         onChange={(instructions) =>
           onChange({
             ...trigger,
-            instructions: instructions.trim() === '' ? null : instructions,
+            instructions: isNonEmptyString(instructions.trim())
+              ? instructions
+              : null,
           })
         }
         disabled={disabled}

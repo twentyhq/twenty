@@ -1,11 +1,9 @@
 import { CronExpressionParser } from 'cron-parser';
+import {
+  AGENT_TRIGGER_EVENT_NAME_PATTERN,
+  AGENT_TRIGGER_LIMITS,
+} from 'twenty-shared/application';
 import { z } from 'zod';
-
-const AGENT_TRIGGER_EVENT_NAME_PATTERN =
-  /^[a-z][a-zA-Z0-9]*\.(created|updated|deleted|destroyed|restored|upserted)$/;
-
-// Mirrors the server limit so autosave never sends instructions it would reject
-const AGENT_TRIGGER_INSTRUCTIONS_MAX_LENGTH = 10_000;
 
 const isValidCronPattern = (pattern: string): boolean => {
   try {
@@ -22,7 +20,7 @@ const agentTriggerBaseShape = {
   isActive: z.boolean(),
   instructions: z
     .string()
-    .max(AGENT_TRIGGER_INSTRUCTIONS_MAX_LENGTH)
+    .max(AGENT_TRIGGER_LIMITS.MAX_INSTRUCTIONS_LENGTH)
     .nullable(),
 };
 
