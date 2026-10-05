@@ -147,6 +147,57 @@ describe.each([false, true])(
       expect(secondRenderRef).toHaveBeenLastCalledWith(null);
     });
 
+    it('replaces a callback ref when cloning an element before its first render', async () => {
+      const originalRef = vi.fn();
+      const replacementCleanup = vi.fn();
+      const replacementRef = vi.fn(() => replacementCleanup);
+      const reusableElement = fixture.createReusableElement({
+        label: 'Original',
+        ref: originalRef,
+      });
+
+      reusableElement.renderClone({
+        label: 'Cloned',
+        ref: replacementRef,
+      });
+      await vi.waitFor(() => expect(container.textContent).toBe('Cloned'));
+
+      expect(originalRef).not.toHaveBeenCalled();
+      expect(replacementRef.mock.calls.length).toBe(1);
+      expect(replacementRef).toHaveBeenLastCalledWith(
+        container.firstElementChild,
+      );
+
+      fixture.unmount();
+      expect(originalRef).not.toHaveBeenCalled();
+      expect(replacementCleanup).toHaveBeenCalledOnce();
+    });
+
+    it('replaces an object ref on a fresh clone without mutating the source element', async () => {
+      const originalRef = { current: null as HTMLButtonElement | null };
+      const replacementRef = { current: null as HTMLButtonElement | null };
+      const reusableElement = fixture.createReusableElement({
+        label: 'Original',
+        ref: originalRef,
+      });
+
+      reusableElement.renderClone({ label: 'Cloned', ref: replacementRef });
+      await vi.waitFor(() => expect(container.textContent).toBe('Cloned'));
+      const element = container.firstElementChild;
+
+      expect(originalRef.current).toBeNull();
+      expect(replacementRef.current).toBe(element);
+
+      reusableElement.render();
+      await vi.waitFor(() => expect(container.textContent).toBe('Original'));
+      expect(container.firstElementChild).toBe(element);
+      expect(replacementRef.current).toBeNull();
+      expect(originalRef.current).toBe(element);
+
+      fixture.unmount();
+      expect(originalRef.current).toBeNull();
+    });
+
     it('preserves, replaces and clears a mounted element ref when cloning it', async () => {
       const ref = vi.fn();
       const reusableElement = fixture.createReusableElement({
