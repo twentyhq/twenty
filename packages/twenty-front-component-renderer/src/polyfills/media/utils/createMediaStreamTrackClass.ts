@@ -1,3 +1,6 @@
+import { isFunction } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type WorkerMediaBridge } from '@/polyfills/media/types/WorkerMediaBridge';
 import { type MediaSessionMediaType } from '@/types/MediaSession';
 
@@ -37,7 +40,10 @@ export const createMediaStreamTrackClass = ({
     #streamId: string;
     #readyState: 'live' | 'ended' = 'live';
     #enabled = true;
-    #onended: ((event: Event) => void) | null = null;
+    #onendedHandler: ((event: Event) => void) | null = null;
+    #invokeOnendedHandler: EventListener = (event) => {
+      this.#onendedHandler?.call(this, event);
+    };
 
     constructor(key: symbol, init: WorkerMediaStreamTrackInit) {
       super();
@@ -87,19 +93,18 @@ export const createMediaStreamTrackClass = ({
     }
 
     get onended(): ((event: Event) => void) | null {
-      return this.#onended;
+      return this.#onendedHandler;
     }
 
     set onended(handler: ((event: Event) => void) | null) {
-      if (this.#onended !== null) {
-        this.removeEventListener('ended', this.#onended);
+      this.#onendedHandler = isFunction(handler) ? handler : null;
+
+      if (isDefined(this.#onendedHandler)) {
+        this.addEventListener('ended', this.#invokeOnendedHandler);
+        return;
       }
 
-      this.#onended = handler;
-
-      if (handler !== null) {
-        this.addEventListener('ended', handler);
-      }
+      this.removeEventListener('ended', this.#invokeOnendedHandler);
     }
 
     stop(): void {
