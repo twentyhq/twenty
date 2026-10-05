@@ -359,18 +359,6 @@ const SettingsApplicationRegistrationDetails = lazy(() =>
   ),
 );
 
-const SettingsAgentForm = lazy(() =>
-  import('~/pages/settings/ai/SettingsAgentForm').then((module) => ({
-    default: module.SettingsAgentForm,
-  })),
-);
-
-const SettingsAgentTurnDetail = lazy(() =>
-  import('~/pages/settings/ai/SettingsAgentTurnDetail').then((module) => ({
-    default: module.SettingsAgentTurnDetail,
-  })),
-);
-
 const SettingsSkillForm = lazy(() =>
   import('~/pages/settings/ai/SettingsSkillForm').then((module) => ({
     default: module.SettingsSkillForm,
@@ -873,18 +861,6 @@ const createSettingsRouteElements = ({
     >
       <Route path={SettingsPath.AI} element={<SettingsAI />} />
       <Route path={SettingsPath.AiPrompts} element={<SettingsAiPrompts />} />
-      <Route
-        path={SettingsPath.AiNewAgent}
-        element={<SettingsAgentForm mode="create" />}
-      />
-      <Route
-        path={SettingsPath.AiAgentDetail}
-        element={<SettingsAgentForm mode="edit" />}
-      />
-      <Route
-        path={SettingsPath.AiAgentTurnDetail}
-        element={<SettingsAgentTurnDetail />}
-      />
       <Route
         path={SettingsPath.AiNewSkill}
         element={<SettingsSkillForm mode="create" />}
