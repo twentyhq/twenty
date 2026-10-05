@@ -83,7 +83,7 @@ const StyledFieldValue = styled.div`
   white-space: nowrap;
 `;
 
-const StyledFieldLabel = styled.span`
+const StyledFieldLabel = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
@@ -282,7 +282,10 @@ export const SettingsValidationRulePreview = ({
                         stroke={theme.icon.stroke.sm}
                       />
                     )}
-                    <OverflowingTextWithTooltip text={t`${fieldLabel}:`} />
+                    <OverflowingTextWithTooltip
+                      text={t`${fieldLabel}:`}
+                      isFocusable
+                    />
                   </StyledFieldLabel>
                   <StyledValue isEmpty={formattedValue.length === 0}>
                     {formattedValue.length > 0 ? formattedValue : t`Empty`}
