@@ -63,13 +63,19 @@ export const buildDatabaseEventPayload = (
   settings: DatabaseEventTriggerSettings,
 ): object => {
   const [object, action] = settings.eventName.split('.');
-  return {
+  const eventMetadata = {
     name: settings.eventName,
     objectMetadata: { nameSingular: object },
+  };
+  const event = {
     properties: {
       after: {},
       before: action === 'created' ? null : {},
       updatedFields: settings.updatedFields ?? [],
     },
   };
+
+  return settings.batchMode === true
+    ? { ...eventMetadata, events: [event] }
+    : { ...eventMetadata, ...event };
 };

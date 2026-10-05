@@ -54,6 +54,26 @@ describe('validateLogicFunctionDatabaseEventTriggerSettings', () => {
     );
   });
 
+  it('should return an error when updatedFields is not a list of field names', () => {
+    const errors = validateLogicFunctionDatabaseEventTriggerSettings({
+      databaseEventTriggerSettings: asTriggerSettings([
+        { eventName: 'person.updated', updatedFields: 1 },
+      ]),
+    });
+
+    expect(errors).toHaveLength(1);
+  });
+
+  it('should return an error when batchMode is not a boolean', () => {
+    const errors = validateLogicFunctionDatabaseEventTriggerSettings({
+      databaseEventTriggerSettings: asTriggerSettings([
+        { eventName: 'person.updated', batchMode: 'yes' },
+      ]),
+    });
+
+    expect(errors).toHaveLength(1);
+  });
+
   it('should return an error when a trigger is not an object', () => {
     const errors = validateLogicFunctionDatabaseEventTriggerSettings({
       databaseEventTriggerSettings: asTriggerSettings(['person.created']),

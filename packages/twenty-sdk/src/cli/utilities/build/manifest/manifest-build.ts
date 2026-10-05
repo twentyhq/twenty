@@ -319,6 +319,15 @@ export const buildManifest = async (
 
         const config: LogicFunctionManifest = {
           ...rest,
+          ...(rest.databaseEventTriggerSettings
+            ? {
+                databaseEventTriggerSettings: Array.isArray(
+                  rest.databaseEventTriggerSettings,
+                )
+                  ? rest.databaseEventTriggerSettings
+                  : [rest.databaseEventTriggerSettings],
+              }
+            : {}),
           ...(toolTriggerSettings ? { toolTriggerSettings } : {}),
           ...(workflowActionTriggerSettings
             ? { workflowActionTriggerSettings }

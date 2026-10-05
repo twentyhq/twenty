@@ -118,12 +118,22 @@ export const SettingsLogicFunctionDatabaseEventTriggerSection = ({
             removeOperation={removeOperation}
             disabled={readonly}
           />
-          {isNonEmptyArray(value) && (
+          {value.map((trigger, index) => (
             <SettingsLogicFunctionTriggerPayloadFormat
-              payload={buildDatabaseEventPayload(value[0])}
-              hint={t`Your handler receives this event object. "after" holds the new state, "before" the previous one (null for created), and "updatedFields" lists the field names that changed on update.`}
+              key={`${trigger.eventName}-${index}`}
+              label={
+                value.length > 1
+                  ? t`Sample input for ${trigger.eventName}`
+                  : undefined
+              }
+              payload={buildDatabaseEventPayload(trigger)}
+              hint={
+                index === value.length - 1
+                  ? t`Your handler receives this event object. "after" holds the new state, "before" the previous one (null for created), and "updatedFields" lists the field names that changed on update. Batch mode wraps the events in an "events" list.`
+                  : undefined
+              }
             />
-          )}
+          ))}
         </>
       )}
     </SettingsLogicFunctionTriggerSection>

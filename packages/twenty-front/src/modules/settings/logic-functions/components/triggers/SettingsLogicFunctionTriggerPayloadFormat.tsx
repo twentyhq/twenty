@@ -24,15 +24,17 @@ const StyledHint = styled.span`
 export const SettingsLogicFunctionTriggerPayloadFormat = ({
   payload,
   hint,
+  label,
 }: {
   payload: object;
   hint?: string;
+  label?: string;
 }) => {
   const { t } = useLingui();
 
   return (
     <StyledContainer>
-      <StyledLabel>{t`Sample input`}</StyledLabel>
+      <StyledLabel>{label ?? t`Sample input`}</StyledLabel>
       <CodeEditor
         value={JSON.stringify(payload, null, 2)}
         language="json"

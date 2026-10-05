@@ -86,6 +86,19 @@ describe('buildDatabaseEventPayload', () => {
     });
   });
 
+  it('wraps the event in a batch envelope when batchMode is on', () => {
+    expect(
+      buildDatabaseEventPayload({
+        eventName: 'person.updated',
+        batchMode: true,
+      }),
+    ).toEqual({
+      name: 'person.updated',
+      objectMetadata: { nameSingular: 'person' },
+      events: [{ properties: { after: {}, before: {}, updatedFields: [] } }],
+    });
+  });
+
   it('threads updatedFields through', () => {
     expect(
       buildDatabaseEventPayload({
