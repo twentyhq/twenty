@@ -19,7 +19,8 @@ export const usePriceAndBillingUsageByPriceId = () => {
     | {
         price: BillingPriceMetered;
         billingUsage: BillingUsageType.METERED;
-      } => {
+      }
+    | undefined => {
     const licensed = allBillingPrices.find(
       (p) =>
         p.priceUsageType === BillingUsageType.LICENSED &&
@@ -37,7 +38,7 @@ export const usePriceAndBillingUsageByPriceId = () => {
     if (isDefined(metered))
       return { price: metered, billingUsage: BillingUsageType.METERED };
 
-    throw new Error('Price not found');
+    return undefined;
   };
 
   return { getPriceAndBillingUsageByPriceId };

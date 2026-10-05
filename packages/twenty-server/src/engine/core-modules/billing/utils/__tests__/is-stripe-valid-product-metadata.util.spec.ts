@@ -33,6 +33,16 @@ describe('isStripeValidProductMetadata', () => {
     expect(isStripeValidProductMetadata(metadata)).toBe(true);
   });
 
+  it('should return true for an add-on product', () => {
+    const metadata: Stripe.Metadata = {
+      planKey: BillingPlanKey.PRO,
+      priceUsageBased: BillingUsageType.LICENSED,
+      productKey: BillingProductKey.ADD_ON,
+    };
+
+    expect(isStripeValidProductMetadata(metadata)).toBe(true);
+  });
+
   it('should return false if metadata has invalid keys', () => {
     const metadata: Stripe.Metadata = {
       planKey: 'invalid',
