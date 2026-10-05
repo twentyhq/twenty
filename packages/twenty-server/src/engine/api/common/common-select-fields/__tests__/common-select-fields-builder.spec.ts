@@ -1,21 +1,20 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-
 import {
   FieldMetadataType,
   type ObjectsPermissions,
   RelationType,
 } from 'twenty-shared/types';
 
-import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
-import { MAX_DEPTH } from 'src/engine/api/rest/input-request-parsers/constants/max-depth.constant';
+import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
+import { MAX_SELECTION_DEPTH } from 'src/engine/api/common/common-select-fields/constants/max-selection-depth.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-describe('RestToCommonSelectedFieldsHandler', () => {
-  let handler: CommonSelectFieldsHelper;
+describe('CommonSelectFieldsBuilder', () => {
+  let handler: CommonSelectFieldsBuilder;
 
   const createMockField = (
     overrides: Partial<FlatFieldMetadata> & {
@@ -120,13 +119,249 @@ describe('RestToCommonSelectedFieldsHandler', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CommonSelectFieldsHelper],
+      providers: [CommonSelectFieldsBuilder],
     }).compile();
 
-    handler = module.get<CommonSelectFieldsHelper>(CommonSelectFieldsHelper);
+    handler = module.get<CommonSelectFieldsBuilder>(CommonSelectFieldsBuilder);
   });
 
-  describe('computeFromDepth', () => {
+  describe('requested fields and default selection', () => {
+    const buildArgs = () => {
+      const fields = [
+        createMockField({
+          id: 'id-field',
+          name: 'id',
+          type: FieldMetadataType.UUID,
+          objectMetadataId: 'person',
+        }),
+        createMockField({
+          id: 'name-field',
+          name: 'name',
+          type: FieldMetadataType.FULL_NAME,
+          objectMetadataId: 'person',
+        }),
+        createMockField({
+          id: 'salary-field',
+          name: 'salary',
+          type: FieldMetadataType.NUMBER,
+          objectMetadataId: 'person',
+        }),
+        createMockField({
+          id: 'company-field',
+          name: 'company',
+          type: FieldMetadataType.RELATION,
+          objectMetadataId: 'person',
+          settings: { relationType: RelationType.MANY_TO_ONE },
+          relationTargetObjectMetadataId: 'company',
+        }),
+        createMockField({
+          id: 'activities-field',
+          name: 'activities',
+          type: FieldMetadataType.RELATION,
+          objectMetadataId: 'person',
+          settings: { relationType: RelationType.ONE_TO_MANY },
+          relationTargetObjectMetadataId: 'company',
+        }),
+        createMockField({
+          id: 'attachments-field',
+          name: 'attachments',
+          type: FieldMetadataType.MORPH_RELATION,
+          objectMetadataId: 'person',
+          settings: { relationType: RelationType.ONE_TO_MANY },
+          relationTargetObjectMetadataId: 'company',
+        }),
+        createMockField({
+          id: 'company-id-field',
+          name: 'id',
+          type: FieldMetadataType.UUID,
+          objectMetadataId: 'company',
+        }),
+        createMockField({
+          id: 'company-name-field',
+          name: 'name',
+          type: FieldMetadataType.TEXT,
+          objectMetadataId: 'company',
+        }),
+      ];
+      const person = createMockObjectMetadata({
+        id: 'person',
+        nameSingular: 'person',
+        fieldIds: fields
+          .filter((field) => field.objectMetadataId === 'person')
+          .map((field) => field.id),
+        labelIdentifierFieldMetadataId: 'name-field',
+      });
+      const company = createMockObjectMetadata({
+        id: 'company',
+        nameSingular: 'company',
+        fieldIds: ['company-id-field', 'company-name-field'],
+      });
+
+      return {
+        flatObjectMetadata: person,
+        flatObjectMetadataMaps: buildFlatObjectMetadataMaps([person, company]),
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps(fields),
+        objectsPermissions: createObjectsPermissions(['person', 'company'], {
+          restrictedFields: {
+            'salary-field': { canRead: false, canUpdate: false },
+          },
+        }),
+        depth: 0 as const,
+      };
+    };
+
+    it('adds id and expands requested composite fields even when they exceed the default cap', () => {
+      expect(
+        handler.buildFromDepth({
+          ...buildArgs(),
+          requestedFields: new Set(['name']),
+          maximumDefaultFieldCount: 1,
+        }),
+      ).toEqual({
+        selectedFields: { id: true, name: { firstName: true, lastName: true } },
+      });
+    });
+
+    it('rejects unknown and unreadable requested fields', () => {
+      expect(() =>
+        handler.buildFromDepth({
+          ...buildArgs(),
+          requestedFields: new Set(['unknown', 'salary']),
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          message: "Unknown or unreadable fields on 'person': unknown, salary",
+          code: 'INVALID_FIELD_SELECTION',
+          userFriendlyMessage: expect.objectContaining({
+            id: expect.any(String),
+          }),
+        }),
+      );
+    });
+
+    it('rejects an explicitly empty selection', () => {
+      expect(() =>
+        handler.buildFromDepth({ ...buildArgs(), requestedFields: new Set() }),
+      ).toThrow('Requested fields cannot be empty');
+    });
+
+    it.each([undefined, 0] as const)(
+      'rejects one-to-many and morph relations at depth %s',
+      (depth) => {
+        expect(() =>
+          handler.buildFromDepth({
+            ...buildArgs(),
+            depth,
+            requestedFields: new Set(['activities', 'attachments']),
+          }),
+        ).toThrow('require a positive depth: activities, attachments');
+      },
+    );
+
+    it('returns the foreign key of a requested many-to-one relation at depth zero', () => {
+      expect(
+        handler.buildFromDepth({
+          ...buildArgs(),
+          requestedFields: new Set(['company']),
+        }).selectedFields,
+      ).toEqual({ id: true, companyId: true });
+    });
+
+    it('expands only requested root relations without restricting related fields', () => {
+      expect(
+        handler.buildFromDepth({
+          ...buildArgs(),
+          depth: 1,
+          requestedFields: new Set(['activities', 'attachments']),
+        }).selectedFields,
+      ).toEqual({
+        id: true,
+        activities: { id: true, name: true },
+        attachments: { id: true, name: true },
+      });
+    });
+
+    it('caps defaults after permission filtering and excludes depth-zero one-to-many relations', () => {
+      expect(
+        handler.buildFromDepth({ ...buildArgs(), maximumDefaultFieldCount: 2 }),
+      ).toEqual({
+        selectedFields: { id: true, name: { firstName: true, lastName: true } },
+      });
+      expect(
+        handler.buildFromDepth({
+          ...buildArgs(),
+          maximumDefaultFieldCount: 4,
+        }).selectedFields,
+      ).toEqual({
+        id: true,
+        name: { firstName: true, lastName: true },
+        companyId: true,
+      });
+    });
+
+    it('counts expanded one-to-many and morph relations toward the default cap', () => {
+      expect(
+        handler.buildFromDepth({
+          ...buildArgs(),
+          depth: 1,
+          maximumDefaultFieldCount: 4,
+        }).selectedFields,
+      ).toEqual({
+        id: true,
+        name: { firstName: true, lastName: true },
+        activities: { id: true, name: true },
+        attachments: { id: true, name: true },
+      });
+    });
+
+    it.each([200, 201])(
+      'applies an optional cap to an object with %s fields',
+      (fieldCount) => {
+        const fields = Array.from({ length: fieldCount }, (_, index) =>
+          createMockField({
+            id: `field-${index}`,
+            name: index === 0 ? 'id' : `field${index}`,
+            type: index === 0 ? FieldMetadataType.UUID : FieldMetadataType.TEXT,
+            objectMetadataId: 'wide',
+          }),
+        );
+        const object = createMockObjectMetadata({
+          id: 'wide',
+          nameSingular: 'wide',
+          fieldIds: fields.map((field) => field.id),
+        });
+        const args = {
+          flatObjectMetadata: object,
+          flatObjectMetadataMaps: buildFlatObjectMetadataMaps([object]),
+          flatFieldMetadataMaps: buildFlatFieldMetadataMaps(fields),
+          objectsPermissions: createObjectsPermissions(['wide']),
+          depth: 0 as const,
+        };
+        const capped = handler.buildFromDepth({
+          ...args,
+          maximumDefaultFieldCount: 200,
+        });
+        expect(Object.keys(capped.selectedFields)).toHaveLength(
+          Math.min(fieldCount, 200),
+        );
+        expect(capped.selectedFields.id).toBe(true);
+        expect(
+          Object.keys(handler.buildFromDepth(args).selectedFields),
+        ).toHaveLength(fieldCount);
+        expect(
+          Object.keys(
+            handler.buildFromDepth({
+              ...args,
+              maximumDefaultFieldCount: 200,
+              requestedFields: new Set(fields.map((field) => field.name)),
+            }).selectedFields,
+          ),
+        ).toHaveLength(fieldCount);
+      },
+    );
+  });
+
+  describe('buildFromDepth', () => {
     it('should return all selectable fields when depth is undefined', () => {
       const nameField = createMockField({
         id: 'field-1',
@@ -155,7 +390,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         personObject,
       ]);
 
-      const result = handler.computeFromDepth({
+      const { selectedFields: result } = handler.buildFromDepth({
         objectsPermissions: createObjectsPermissions(['person-id']),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -215,7 +450,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         companyObject,
       ]);
 
-      const result = handler.computeFromDepth({
+      const { selectedFields: result } = handler.buildFromDepth({
         objectsPermissions: createObjectsPermissions([
           'person-id',
           'company-id',
@@ -289,7 +524,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         'field-3': { canRead: false, canUpdate: false },
       };
 
-      const result = handler.computeFromDepth({
+      const { selectedFields: result } = handler.buildFromDepth({
         objectsPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -352,7 +587,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         'field-2': { canRead: false, canUpdate: false },
       };
 
-      const result = handler.computeFromDepth({
+      const { selectedFields: result } = handler.buildFromDepth({
         objectsPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -413,7 +648,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         'field-1': { canRead: false, canUpdate: false },
       };
 
-      const result = handler.computeFromDepth({
+      const { selectedFields: result } = handler.buildFromDepth({
         objectsPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -424,7 +659,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
       expect(result).toEqual({});
     });
 
-    it('should handle nested relations up to MAX_DEPTH', () => {
+    it('should handle nested relations up to MAX_SELECTION_DEPTH', () => {
       const personCompanyRelation = createMockField({
         id: 'field-1',
         name: 'company',
@@ -480,7 +715,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         companyObject,
       ]);
 
-      const result = handler.computeFromDepth({
+      const { selectedFields: result } = handler.buildFromDepth({
         objectsPermissions: createObjectsPermissions([
           'person-id',
           'company-id',
@@ -488,7 +723,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: personObject,
-        depth: MAX_DEPTH,
+        depth: MAX_SELECTION_DEPTH,
       });
 
       expect(result).toEqual({
@@ -540,7 +775,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         personObject,
       ]);
 
-      const result = handler.computeFromDepth({
+      const { selectedFields: result } = handler.buildFromDepth({
         objectsPermissions: createObjectsPermissions(['person-id']),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -619,7 +854,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         companyObject,
       ]);
 
-      const result = handler.computeFromDepth({
+      const { selectedFields: result } = handler.buildFromDepth({
         objectsPermissions: createObjectsPermissions([
           'noteTarget-id',
           'note-id',
@@ -719,7 +954,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         personObject,
       ]);
 
-      const result = handler.computeFromDepth({
+      const { selectedFields: result } = handler.buildFromDepth({
         objectsPermissions: createObjectsPermissions([
           'company-id',
           'junction-id',
@@ -728,7 +963,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatObjectMetadata: companyObject,
-        depth: MAX_DEPTH,
+        depth: MAX_SELECTION_DEPTH,
       });
 
       expect(result).toEqual({
