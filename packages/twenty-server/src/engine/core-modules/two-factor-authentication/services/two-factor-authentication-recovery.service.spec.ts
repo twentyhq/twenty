@@ -3,7 +3,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { renderEmail } from 'twenty-emails';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
-import { IsNull, MoreThanOrEqual, Not, QueryFailedError } from 'typeorm';
+import {
+  IsNull,
+  MoreThan,
+  MoreThanOrEqual,
+  Not,
+  QueryFailedError,
+} from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -400,12 +406,15 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         userId: TARGET_USER_ID,
         workspaceId: WORKSPACE_ID,
         type: AppTokenType.RefreshToken,
-        revokedAt: IsNull(),
+        expiresAt: MoreThan(expect.any(Date)),
       });
       expect(refreshTokenRevocationQueryBuilder.set).toHaveBeenCalledWith({
-        revokedAt: expect.any(Date),
+        revokedAt: expect.any(Function),
         context: expect.any(Function),
       });
+      expect(
+        refreshTokenRevocationQueryBuilder.set.mock.calls[0][0].revokedAt(),
+      ).toBe(`COALESCE("revokedAt", now())`);
       expect(
         refreshTokenRevocationQueryBuilder.set.mock.calls[0][0].context(),
       ).toContain(`COALESCE("context", '{}'::jsonb) ||`);

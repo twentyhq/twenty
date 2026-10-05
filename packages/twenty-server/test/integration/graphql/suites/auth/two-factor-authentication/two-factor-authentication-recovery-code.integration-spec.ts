@@ -493,8 +493,15 @@ describe('Two-factor authentication recovery codes (integration)', () => {
 
       expect(otpErrors).toBeUndefined();
 
-      const refreshTokenFromBeforeRecovery =
+      const rotatedRefreshToken =
         otpData.getAuthTokensFromOTP.tokens.refreshToken.token;
+
+      const rotationResponse = await renewToken(rotatedRefreshToken);
+
+      expect(rotationResponse.body.errors).toBeUndefined();
+
+      const refreshTokenFromBeforeRecovery =
+        rotationResponse.body.data.renewToken.tokens.refreshToken.token;
 
       const { recoveryCode } = await generateCodeForJony();
       const loginToken = await getJonyLoginToken();
@@ -541,12 +548,17 @@ describe('Two-factor authentication recovery codes (integration)', () => {
 
       expect(revokedSessions.length).toBeGreaterThan(0);
 
-      const renewResponse = await renewToken(refreshTokenFromBeforeRecovery);
+      for (const refreshToken of [
+        refreshTokenFromBeforeRecovery,
+        rotatedRefreshToken,
+      ]) {
+        const renewResponse = await renewToken(refreshToken);
 
-      expect(renewResponse.body.data).toBeNull();
-      expect(renewResponse.body.errors?.[0]?.extensions?.code).toBe(
-        'FORBIDDEN',
-      );
+        expect(renewResponse.body.data).toBeNull();
+        expect(renewResponse.body.errors?.[0]?.extensions?.code).toBe(
+          'FORBIDDEN',
+        );
+      }
 
       const { errors: replayErrors } =
         await getAuthTokensFromTwoFactorAuthenticationRecoveryCode({
