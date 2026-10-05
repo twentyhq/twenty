@@ -117,7 +117,9 @@ export class CommonSelectFieldsBuilder {
     objectNameSingular: string;
     fieldNamesFromDepth: ReadonlySet<string>;
   }): ReadonlySet<string> | undefined {
-    if (!isDefined(requestedFields)) return undefined;
+    if (!isDefined(requestedFields)) {
+      return undefined;
+    }
 
     if (requestedFields.size === 0) {
       throw new CommonSelectFieldsException(

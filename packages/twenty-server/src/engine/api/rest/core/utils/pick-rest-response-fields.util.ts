@@ -9,11 +9,10 @@ export const pickRestResponseFields = ({
   record: ObjectRecord;
   selectedFields: CommonSelectedFields;
 }): ObjectRecord => {
-  const selectedFieldNames = new Set(Object.keys(selectedFields));
   const pickedRecord: ObjectRecord = { id: record.id };
 
   for (const [fieldName, fieldValue] of Object.entries(record)) {
-    if (selectedFieldNames.has(fieldName)) {
+    if (Object.prototype.hasOwnProperty.call(selectedFields, fieldName)) {
       pickedRecord[fieldName] = fieldValue;
     }
   }
