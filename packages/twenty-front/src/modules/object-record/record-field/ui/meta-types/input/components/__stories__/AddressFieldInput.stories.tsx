@@ -407,3 +407,31 @@ export const CountryOnSidePanelSurface: Story = {
   },
   play: CountryOnMainSurface.play,
 };
+
+export const CountryOpensWithEnter: Story = {
+  args: CountryOnSidePanelSurface.args,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Country' });
+
+    trigger.focus();
+    await userEvent.keyboard('{Enter}');
+
+    expect(enterJestFn).not.toHaveBeenCalled();
+
+    const countryDialog = await screen.findByRole('dialog', {
+      name: 'Country',
+    });
+
+    await waitFor(() => expect(countryDialog).toBeVisible());
+    await userEvent.type(screen.getByPlaceholderText('Search'), 'France');
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(canvas.getByText('France')).toBeVisible();
+      expect(enterJestFn).not.toHaveBeenCalled();
+      expect(clickOutsideJestFn).not.toHaveBeenCalled();
+    });
+  },
+};
