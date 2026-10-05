@@ -1,13 +1,12 @@
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
-import { type CoreObjectShowPageProps } from '@/object-core/types/CoreObjectShowPageProps';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { FindOneAgentDocument } from '~/generated-metadata/graphql';
@@ -16,11 +15,8 @@ import { CoreAgentFormContent } from '@/object-core/agents/components/CoreAgentF
 import { CoreAgentTurnDetail } from '@/object-core/agents/components/CoreAgentTurnDetail';
 import { useNavigateToNotFoundOnLoadFailure } from '~/pages/settings/ai/hooks/useNavigateToNotFoundOnLoadFailure';
 
-type AgentCoreObjectShowPageProps = CoreObjectShowPageProps;
-
-export const AgentCoreObjectShowPage = ({
-  objectRecordId: agentId,
-}: AgentCoreObjectShowPageProps) => {
+export const AgentCoreShowPage = () => {
+  const { agentId = '' } = useParams<{ agentId: string }>();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const [searchParams] = useSearchParams();

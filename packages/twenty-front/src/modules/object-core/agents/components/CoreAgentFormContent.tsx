@@ -34,7 +34,7 @@ import { useCoreAgentFormState } from '@/object-core/agents/hooks/useCoreAgentFo
 import { useCoreAgentSave } from '@/object-core/agents/hooks/useCoreAgentSave';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 import { getCoreAgentInitialFormValues } from '@/object-core/agents/utils/getCoreAgentInitialFormValues';
-import { isOwnedByInstalledApplication } from '~/pages/settings/ai/utils/isOwnedByInstalledApplication';
+import { isOwnedByInstalledApplication } from '@/applications/utils/isOwnedByInstalledApplication';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContentContainer = styled.div`

@@ -10,11 +10,7 @@ import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workf
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { Dropdown } from 'twenty-ui/components';
-import {
-  AppPath,
-  CoreObjectNameSingular,
-  SettingsPath,
-} from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { IconLego, IconSettings, IconTrash, IconUsers } from 'twenty-ui/icon';
@@ -74,10 +70,7 @@ export const WorkflowStepFooter = ({
 
   const handleViewAgent = () => {
     if (isDefined(agentId)) {
-      navigateApp(AppPath.RecordShowPage, {
-        objectNameSingular: CoreObjectNameSingular.Agent,
-        objectRecordId: agentId,
-      });
+      navigateApp(AppPath.AgentShowPage, { agentId });
     }
   };
 

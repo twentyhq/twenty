@@ -1,6 +1,5 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -36,9 +35,7 @@ export const CoreAgentDeleteConfirmationModal = ({
         },
       });
       closeDialog(DELETE_AGENT_MODAL_ID);
-      navigate(AppPath.RecordIndexPage, {
-        objectNamePlural: CoreObjectNamePlural.Agent,
-      });
+      navigate(AppPath.AgentIndexPage);
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }

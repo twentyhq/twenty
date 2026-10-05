@@ -9,7 +9,6 @@ import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCu
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -201,8 +200,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   if (
     isMinimalMetadataReady &&
     isMatchingLocation(location, AppPath.RecordIndexPage) &&
-    !isDefined(objectMetadataItem) &&
-    objectNamePlural !== CoreObjectNamePlural.Agent
+    !isDefined(objectMetadataItem)
   ) {
     return AppPath.NotFound;
   }

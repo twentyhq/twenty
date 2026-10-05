@@ -3,7 +3,7 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import { v4 } from 'uuid';
@@ -72,10 +72,7 @@ export const useCreateCoreAgent = () => {
       return;
     }
 
-    navigate(AppPath.RecordShowPage, {
-      objectNameSingular: CoreObjectNameSingular.Agent,
-      objectRecordId: coreAgentId,
-    });
+    navigate(AppPath.AgentShowPage, { agentId: coreAgentId });
   }, [
     canCreateCoreAgent,
     createOneAgentMutation,

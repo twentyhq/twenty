@@ -1,4 +1,4 @@
-import { isOwnedByInstalledApplication } from '~/pages/settings/ai/utils/isOwnedByInstalledApplication';
+import { isOwnedByInstalledApplication } from '@/applications/utils/isOwnedByInstalledApplication';
 
 describe('isOwnedByInstalledApplication', () => {
   it('is false without an application', () => {

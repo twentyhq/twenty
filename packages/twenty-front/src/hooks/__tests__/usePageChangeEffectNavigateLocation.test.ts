@@ -380,6 +380,26 @@ const testCases: {
   { loc: AppPath.WorkflowCoreShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
   { loc: AppPath.WorkflowCoreShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_CALL, res: AppPath.BookCall },
   { loc: AppPath.WorkflowCoreShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+  { loc: AppPath.AgentIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
+  { loc: AppPath.AgentIndexPage, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
+  { loc: AppPath.AgentIndexPage, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
+  { loc: AppPath.AgentIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.WorkspaceActivation },
+  { loc: AppPath.AgentIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
+  { loc: AppPath.AgentIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
+  { loc: AppPath.AgentIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.APPS_INSTALLATION, res: AppPath.InstallApps },
+  { loc: AppPath.AgentIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
+  { loc: AppPath.AgentIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_CALL, res: AppPath.BookCall },
+  { loc: AppPath.AgentIndexPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+  { loc: AppPath.AgentShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
+  { loc: AppPath.AgentShowPage, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
+  { loc: AppPath.AgentShowPage, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
+  { loc: AppPath.AgentShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.WorkspaceActivation },
+  { loc: AppPath.AgentShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
+  { loc: AppPath.AgentShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
+  { loc: AppPath.AgentShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.APPS_INSTALLATION, res: AppPath.InstallApps },
+  { loc: AppPath.AgentShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
+  { loc: AppPath.AgentShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_CALL, res: AppPath.BookCall },
+  { loc: AppPath.AgentShowPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
   { loc: AppPath.PageLayoutPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.PageLayoutPage, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
   { loc: AppPath.PageLayoutPage, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
@@ -509,27 +529,6 @@ describe('usePageChangeEffectNavigateLocation', () => {
       expect(usePageChangeEffectNavigateLocation()).toEqual(res);
     },
   );
-
-  it('keeps the agents index, which has no object metadata, off the not found page', () => {
-    setupMockIsMatchingLocation(AppPath.RecordIndexPage);
-    setupMockOnboardingStatus(OnboardingStatus.COMPLETED);
-    setupMockIsWorkspaceActivationStatusEqualsTo(false);
-    setupMockIsLogged(true);
-    setupMockIsOnAWorkspace(true);
-    setupMockUseQuery(undefined);
-    setupMockUseLocation(AppPath.RecordIndexPage, 'agents', undefined);
-    setupMockState(
-      'existing-object',
-      undefined,
-      undefined,
-      undefined,
-      true,
-      true,
-      false,
-    );
-
-    expect(usePageChangeEffectNavigateLocation()).toBeUndefined();
-  });
 
   describe('tests should be exhaustive', () => {
     it('all location, onboarding status and suspended/not suspended workspace activation status should be tested', () => {

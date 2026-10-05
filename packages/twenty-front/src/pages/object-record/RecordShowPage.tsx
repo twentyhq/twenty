@@ -66,12 +66,9 @@ export const RecordShowPage = () => {
     return <WorkspaceRouteUnavailable />;
   }
 
-  // Unlike workflows, agents have no workspace object to fall back on
-  const CoreObjectShowPage =
-    isWorkflowCoreIndexPageEnabled ||
-    parameters.objectNameSingular === CoreObjectNameSingular.Agent
-      ? findCoreObjectShowPage(parameters.objectNameSingular)
-      : undefined;
+  const CoreObjectShowPage = isWorkflowCoreIndexPageEnabled
+    ? findCoreObjectShowPage(parameters.objectNameSingular)
+    : undefined;
 
   if (isDefined(CoreObjectShowPage) && isDefined(parameters.objectRecordId)) {
     return <CoreObjectShowPage objectRecordId={parameters.objectRecordId} />;
