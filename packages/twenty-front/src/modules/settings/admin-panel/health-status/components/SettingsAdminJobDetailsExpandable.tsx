@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { JsonTree } from 'twenty-ui/json-visualizer';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { JsonTree } from 'twenty-ui/components';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type QueueJob } from '~/generated-admin/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -73,11 +73,7 @@ export const SettingsAdminJobDetailsExpandable = ({
   const isAnyNode = () => true;
 
   return (
-    <AnimatedExpandableContainer
-      isExpanded={isExpanded}
-      dimension="height"
-      mode="scroll-height"
-    >
+    <Collapsible isExpanded={isExpanded} dimension="height">
       <StyledDetailsContainer>
         {hasFailedReason && (
           <StyledSection>
@@ -136,6 +132,6 @@ export const SettingsAdminJobDetailsExpandable = ({
           </StyledSection>
         )}
       </StyledDetailsContainer>
-    </AnimatedExpandableContainer>
+    </Collapsible>
   );
 };

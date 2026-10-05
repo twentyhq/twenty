@@ -5,10 +5,10 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
-import { lazy, Suspense, useContext } from 'react';
+import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isUndefined } from '@sniptt/guards';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const RichTextFieldEditor = lazy(() =>
   import('@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor').then(
@@ -27,7 +27,9 @@ const StyledContainer = styled.div`
 
 const StyledEditorContainer = styled.div`
   box-sizing: border-box;
-  padding-inline: 44px;
+  margin-top: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[6]};
+  padding-right: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -39,13 +41,13 @@ const StyledSkeletonContainer = styled.div`
 `;
 
 const LoadingSkeleton = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   return (
     <StyledSkeletonContainer>
       <SkeletonTheme
         baseColor={theme.background.tertiary}
         highlightColor={theme.background.transparent.lighter}
-        borderRadius={theme.border.radius.sm}
+        borderRadius={themeCssVariables.border.radius.md}
       >
         <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
       </SkeletonTheme>

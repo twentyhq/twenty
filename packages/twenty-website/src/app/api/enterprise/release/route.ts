@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
     if (!payload) {
       return NextResponse.json(
-        { error: 'Invalid enterprise key' },
+        { error: 'Invalid Organization key' },
         { status: 403 },
       );
     }
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     if (!rateLimit.allowed) {
       return NextResponse.json(
         {
-          error: `The release limit of ${getReleaseLimitPerWindow()} in the last 30 days has been reached for this enterprise key.`,
+          error: `The release limit of ${getReleaseLimitPerWindow()} in the last 30 days has been reached for this Organization key.`,
           code: ENTERPRISE_RATE_LIMIT_CODE.RELEASE,
           retryAfter: rateLimit.retryAfter.toISOString(),
         },

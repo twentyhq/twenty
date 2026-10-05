@@ -17,13 +17,14 @@ import { ADD_STATUS_TO_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/u
 import { ALLOW_SERVER_SCOPED_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/allow-server-scoped-file-upgrade-command-name.constant';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.type';
 import {
   FILE_STATUS,
   FileStatus,
-} from 'src/engine/core-modules/file/types/file-status.types';
+} from 'src/engine/core-modules/file/types/file-status.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { nullableBigintColumnTransformer } from 'src/engine/twenty-orm/utils/nullable-bigint-column-transformer.util';
 
 @Entity('file')
 @Check(
@@ -40,10 +41,9 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 )
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_FILE_STATUS', ['status'])
-@Index('IDX_FILE_APPLICATION_REGISTRATION_ID', ['applicationRegistrationId'])
-@Unique('IDX_APPLICATION_PATH_WORKSPACE_ID_APPLICATION_ID_UNIQUE', [
-  'workspaceId',
+@Unique('IDX_FILE_APPLICATION_ID_WORKSPACE_ID_PATH_UNIQUE', [
   'applicationId',
+  'workspaceId',
   'path',
 ])
 @Unique('IDX_FILE_APPLICATION_REGISTRATION_ID_PATH_UNIQUE', [
@@ -89,7 +89,11 @@ export class FileEntity {
   @Column({ nullable: false })
   path: string;
 
-  @Column({ nullable: false, type: 'bigint' })
+  @Column({
+    nullable: false,
+    type: 'bigint',
+    transformer: nullableBigintColumnTransformer,
+  })
   size: number;
 
   @CreateDateColumn({ type: 'timestamptz' })

@@ -7,5 +7,6 @@ export const BILLING_PRICE_LICENSED_FRAGMENT = gql`
     recurringInterval
     priceUsageType
     creditAmount
+    isSellable
   }
 `;

@@ -17,15 +17,10 @@ export const ComposeCampaignCommand = () => {
 
     await createMessageCampaign({ id: campaignId });
 
-    navigateApp(
-      AppPath.RecordShowPage,
-      {
-        objectNameSingular: CoreObjectNameSingular.MessageCampaign,
-        objectRecordId: campaignId,
-      },
-      undefined,
-      { state: { isNewRecord: true, objectRecordId: campaignId } },
-    );
+    navigateApp(AppPath.RecordShowPage, {
+      objectNameSingular: CoreObjectNameSingular.MessageCampaign,
+      objectRecordId: campaignId,
+    });
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} ready />;

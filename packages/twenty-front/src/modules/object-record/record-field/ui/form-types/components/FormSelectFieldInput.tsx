@@ -1,23 +1,22 @@
-import { t } from '@lingui/core/macro';
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { InputHint } from '@/ui/input/components/InputHint';
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import { type CallToActionButton, Select } from '@/ui/input/components/Select';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { Select } from '@/ui/input/components/Select';
+import { type SelectCallToActionButton } from '@/ui/input/types/SelectCallToActionButton';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { useContext, useId, useState } from 'react';
-import { Key } from 'ts-key-enum';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useId, useState } from 'react';
+import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { IconCircleOff } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { Field, type SelectOption } from 'twenty-ui/primitives/input';
+import { useTheme } from 'twenty-ui/theme';
 
 type FormSelectFieldInputProps = {
   label?: string;
@@ -28,7 +27,7 @@ type FormSelectFieldInputProps = {
   options: SelectOption[];
   readonly?: boolean;
   isNullable?: boolean;
-  callToActionButton?: CallToActionButton;
+  callToActionButton?: SelectCallToActionButton;
 };
 
 export const FormSelectFieldInput = ({
@@ -42,7 +41,7 @@ export const FormSelectFieldInput = ({
   isNullable,
   callToActionButton,
 }: FormSelectFieldInputProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const instanceId = useId();
 
   const { removeFocusItemFromFocusStackById } =
@@ -137,7 +136,7 @@ export const FormSelectFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {label ? <Field.Label>{label}</Field.Label> : null}
 
       <FormFieldInputRowContainer>
         {draftValue.type === 'static' ? (
@@ -148,13 +147,12 @@ export const FormSelectFieldInput = ({
             onChange={onSelect}
             callToActionButton={callToActionButton}
             fullWidth
+            renderAsTag
             hasRightElement={isDefined(VariablePicker) && !readonly}
             withSearchInput
             disabled={readonly}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-            dropdownOffset={{
-              y: parseInt(theme.spacing[1], 10),
-            }}
+            dropdownSideOffset={parseInt(theme.spacing[1], 10)}
           />
         ) : (
           <FormFieldInputInnerContainer
@@ -175,7 +173,7 @@ export const FormSelectFieldInput = ({
           />
         )}
       </FormFieldInputRowContainer>
-      {hint && <InputHint>{hint}</InputHint>}
+      {hint && <Field.Description>{hint}</Field.Description>}
     </FormFieldInputContainer>
   );
 };

@@ -2,7 +2,7 @@ import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get
 
 import { includesExpectedScopes } from './google-apis-scopes.service.util';
 
-describe('GoogleAPIScopesService', () => {
+describe('GoogleApiScopesService', () => {
   describe('includesExpectedScopes', () => {
     it('should return true when all expected scopes are present', () => {
       const scopes = [

@@ -3,6 +3,7 @@ import { StepStatus } from 'twenty-shared/workflow';
 import {
   createMockCodeStep,
   createMockIfElseStep,
+  createMockIteratorStep,
 } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -242,7 +243,6 @@ describe('shouldSkipStepExecution', () => {
       createMockCodeStep('step-4', []),
     ];
 
-    // Test case 1: All skipped - should return true
     expect(
       shouldSkipStepExecution({
         step: steps[3],
@@ -256,7 +256,6 @@ describe('shouldSkipStepExecution', () => {
       }),
     ).toBe(true);
 
-    // Test case 2: Mixed skipped/stopped - should return true
     expect(
       shouldSkipStepExecution({
         step: steps[3],
@@ -270,7 +269,6 @@ describe('shouldSkipStepExecution', () => {
       }),
     ).toBe(true);
 
-    // Test case 3: One success among skipped - should return false
     expect(
       shouldSkipStepExecution({
         step: steps[3],
@@ -284,7 +282,6 @@ describe('shouldSkipStepExecution', () => {
       }),
     ).toBe(false);
 
-    // Test case 4: One failed among skipped - should return false
     expect(
       shouldSkipStepExecution({
         step: steps[3],
@@ -339,5 +336,58 @@ describe('shouldSkipStepExecution', () => {
     });
 
     expect(result).toBe(false);
+  });
+
+  it('should return false when a parent failed and continues on failure', () => {
+    const steps = [
+      createMockCodeStep('step-1', ['step-3'], {
+        continueOnFailure: true,
+      }),
+      createMockCodeStep('step-2', ['step-3']),
+      createMockCodeStep('step-3', []),
+    ];
+    const stepInfos = {
+      'step-1': { status: StepStatus.FAILED_SAFELY, error: 'some error' },
+      'step-2': { status: StepStatus.SKIPPED },
+      'step-3': { status: StepStatus.NOT_STARTED },
+    };
+
+    const result = shouldSkipStepExecution({
+      step: steps[2],
+      steps,
+      stepInfos,
+    });
+
+    expect(result).toBe(false);
+  });
+  it('should return false for a loop body whose iterator is skipped, in both the overlapping and the well-formed graph', () => {
+    const overlappingIterator = createMockIteratorStep(
+      'iterator',
+      ['body'],
+      ['body'],
+    );
+    const wellFormedIterator = createMockIteratorStep('iterator', [], ['body']);
+    const body = createMockCodeStep('body', ['iterator']);
+    const stepInfos = {
+      iterator: { status: StepStatus.SKIPPED },
+      body: { status: StepStatus.NOT_STARTED },
+    };
+
+    const overlappingSteps: WorkflowAction[] = [overlappingIterator, body];
+    const wellFormedSteps: WorkflowAction[] = [wellFormedIterator, body];
+
+    const overlappingResult = shouldSkipStepExecution({
+      step: body,
+      steps: overlappingSteps,
+      stepInfos,
+    });
+    const wellFormedResult = shouldSkipStepExecution({
+      step: body,
+      steps: wellFormedSteps,
+      stepInfos,
+    });
+
+    expect(overlappingResult).toBe(false);
+    expect(wellFormedResult).toBe(false);
   });
 });

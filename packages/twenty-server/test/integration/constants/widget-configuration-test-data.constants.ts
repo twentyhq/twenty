@@ -17,8 +17,6 @@ const UNIT_TEST_FIELD_METADATA_ID_1 = '20202020-1111-4111-a111-111111111111';
 const UNIT_TEST_FIELD_METADATA_ID_2 = '20202020-2222-4222-a222-222222222222';
 const UNIT_TEST_FIELD_METADATA_ID_3 = '20202020-3333-4333-a333-333333333333';
 
-// --- Static configs (no field metadata IDs) ---
-
 export const TEST_IFRAME_CONFIG: IframeConfigurationDTO = {
   configurationType: WidgetConfigurationType.IFRAME,
   url: 'https://example.com/dashboard',
@@ -34,7 +32,7 @@ export const TEST_STANDALONE_RICH_TEXT_CONFIG: StandaloneRichTextConfigurationDT
     configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
     body: {
       blocknote:
-        '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello world"}]}]}',
+        '[{"id":"5f4a1c1e-0000-4000-8000-000000000001","type":"paragraph","props":{},"content":[{"type":"text","text":"Hello world","styles":{}}],"children":[]}]',
       markdown: '# Hello world',
     },
   };
@@ -44,12 +42,20 @@ export const TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL: StandaloneRichTextConfigu
     configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
     body: {
       blocknote:
-        '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Simple text"}]}]}',
+        '[{"id":"5f4a1c1e-0000-4000-8000-000000000002","type":"paragraph","props":{},"content":[{"type":"text","text":"Simple text","styles":{}}],"children":[]}]',
       markdown: null,
     },
   };
 
-// --- Invalid configs (for failure test cases) ---
+export const TEST_STANDALONE_RICH_TEXT_CONFIG_TIPTAP_BODY: StandaloneRichTextConfigurationDTO =
+  {
+    configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
+    body: {
+      blocknote:
+        '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Checklist:"}]},{"type":"bulletList","content":[{"type":"listItem","content":[{"type":"paragraph","content":[{"type":"text","text":"call the client"}]}]}]}]}',
+      markdown: null,
+    },
+  };
 
 export const INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY = {};
 
@@ -95,8 +101,6 @@ export const INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY = {
   aggregateFieldMetadataId: UNIT_TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
 };
-
-// --- Unit-test-only graph configs (with hardcoded UUIDs, for validation tests) ---
 
 export const TEST_NUMBER_CHART_CONFIG: AggregateChartConfigurationDTO = {
   configurationType: WidgetConfigurationType.AGGREGATE_CHART,

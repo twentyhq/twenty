@@ -1,4 +1,7 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type FieldMetadataSettings,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
@@ -6,6 +9,26 @@ import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entit
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
+
+const toRelationUniversalSettings = ({
+  settings,
+  fieldMetadataIdToUniversalIdentifierMap,
+}: {
+  settings: FieldMetadataSettings<
+    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+  >;
+  fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
+}) => {
+  const { junctionTargetFieldId, ...universalSettings } = settings;
+
+  return {
+    ...universalSettings,
+    ...(isDefined(junctionTargetFieldId) && {
+      junctionTargetFieldUniversalIdentifier:
+        fieldMetadataIdToUniversalIdentifierMap.get(junctionTargetFieldId),
+    }),
+  };
+};
 
 export const fromFieldMetadataEntityToFlatFieldMetadata = (
   args: FromEntityToFlatEntityArgs<'fieldMetadata'>,
@@ -32,15 +55,10 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
     isFieldMetadataSettingsOfType(settings, FieldMetadataType.MORPH_RELATION);
 
   const settingsWithUniversalIdentifiers = isRelationSettings
-    ? {
-        ...settings,
-        ...(isDefined(settings.junctionTargetFieldId) && {
-          junctionTargetFieldUniversalIdentifier:
-            fieldMetadataIdToUniversalIdentifierMap.get(
-              settings.junctionTargetFieldId,
-            ),
-        }),
-      }
+    ? toRelationUniversalSettings({
+        settings,
+        fieldMetadataIdToUniversalIdentifierMap,
+      })
     : settings;
 
   return {

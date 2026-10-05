@@ -4,13 +4,13 @@ import { type EmailAttachment } from 'twenty-shared/types';
 import { MAX_ATTACHMENT_SIZE } from '@/advanced-text-editor/utils/maxAttachmentSize';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { formatFileSize } from '@/file/utils/formatFileSize';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useToast } from 'twenty-ui/components';
 import { FileFolder } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
 export const useUploadEmailAttachment = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { t } = useLingui();
 
   const uploadEmailAttachment = async (
@@ -21,8 +21,9 @@ export const useUploadEmailAttachment = () => {
         const fileName = file.name;
         const maxUploadSize = formatFileSize(MAX_ATTACHMENT_SIZE);
 
-        enqueueErrorSnackBar({
-          message: t`File "${fileName}" exceeds ${maxUploadSize}`,
+        enqueueToast({
+          variant: 'error',
+          children: t`File "${fileName}" exceeds ${maxUploadSize}`,
         });
 
         return null;
@@ -39,8 +40,9 @@ export const useUploadEmailAttachment = () => {
 
       const fileName = file.name;
 
-      enqueueSuccessSnackBar({
-        message: t`File "${fileName}" uploaded successfully`,
+      enqueueToast({
+        variant: 'success',
+        children: t`File "${fileName}" uploaded successfully`,
       });
 
       return attachment;
@@ -49,8 +51,9 @@ export const useUploadEmailAttachment = () => {
 
       const fileNameForError = file.name;
 
-      enqueueErrorSnackBar({
-        message: t`Failed to upload "${fileNameForError}"`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to upload "${fileNameForError}"`,
       });
 
       return null;

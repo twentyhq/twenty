@@ -16,7 +16,6 @@ import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { MESSAGE_FOLDER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-folder-seed-ids.constant';
-import { UnsubscribeTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-topic-visibility.type';
 import { getSeededEmailGroupDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 
@@ -33,6 +32,8 @@ const YC_CONNECTED_ACCOUNT_IDS = {
   PHIL: '30303030-cafc-4323-908d-e5b42ad69fdf',
   JANE: '30303030-b5c7-46f0-bf5c-3f4e4b3f7c1a',
   JANE_DELETABLE: '30303030-d1e5-4a8f-9c3b-7f6d5e4c3b2a',
+  JONY_SHARED: '30303030-c7b4-4f1a-8e2d-6b9a0f3c5d18',
+  TIM_SHARED_ARCHIVED: '30303030-e3a9-4d76-b0c1-5f8e2a7d4c93',
   SUPPORT_GROUP: '30303030-5a1e-4b2c-9d3e-100000000001',
   CONTACT_GROUP: '30303030-5a1e-4b2c-9d3e-100000000002',
 };
@@ -65,18 +66,6 @@ const YC_MESSAGE_FOLDER_IDS = {
   JANE_SENT: '30303030-1234-4567-8901-abcdef012348',
 } as const;
 
-const APPLE_UNSUBSCRIBE_TOPIC_IDS = {
-  PRODUCT_UPDATES: '20202020-7b1c-4a2d-8e3f-300000000001',
-  NEWSLETTER: '20202020-7b1c-4a2d-8e3f-300000000002',
-  TRANSACTIONAL: '20202020-7b1c-4a2d-8e3f-300000000003',
-} as const;
-
-const YC_UNSUBSCRIBE_TOPIC_IDS = {
-  PRODUCT_UPDATES: '30303030-7b1c-4a2d-8e3f-300000000001',
-  NEWSLETTER: '30303030-7b1c-4a2d-8e3f-300000000002',
-  TRANSACTIONAL: '30303030-7b1c-4a2d-8e3f-300000000003',
-} as const;
-
 const getSeedIds = (workspaceId: string) => {
   if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
     return {
@@ -90,7 +79,6 @@ const getSeedIds = (workspaceId: string) => {
       messageChannelIds: YC_MESSAGE_CHANNEL_IDS,
       calendarChannelIds: YC_CALENDAR_CHANNEL_IDS,
       messageFolderIds: YC_MESSAGE_FOLDER_IDS,
-      unsubscribeTopicIds: YC_UNSUBSCRIBE_TOPIC_IDS,
     };
   }
 
@@ -105,7 +93,6 @@ const getSeedIds = (workspaceId: string) => {
     messageChannelIds: MESSAGE_CHANNEL_DATA_SEED_IDS,
     calendarChannelIds: CALENDAR_CHANNEL_DATA_SEED_IDS,
     messageFolderIds: MESSAGE_FOLDER_DATA_SEED_IDS,
-    unsubscribeTopicIds: APPLE_UNSUBSCRIBE_TOPIC_IDS,
   };
 };
 
@@ -123,7 +110,6 @@ export const seedMetadataEntities = async ({
 
   await seedConnectedAccounts({ queryRunner, schemaName, workspaceId });
   await seedMessageChannels({ queryRunner, schemaName, workspaceId });
-  await seedUnsubscribeTopics({ queryRunner, schemaName, workspaceId });
   await seedCalendarChannels({ queryRunner, schemaName, workspaceId });
   await seedMessageFolders({ queryRunner, schemaName, workspaceId });
 };
@@ -142,6 +128,8 @@ const seedConnectedAccounts = async ({
       handle: 'tim@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.TIM,
+      visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -149,6 +137,8 @@ const seedConnectedAccounts = async ({
       handle: 'jony.ive@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JONY,
+      visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -156,6 +146,8 @@ const seedConnectedAccounts = async ({
       handle: 'phil.schiler@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.PHIL,
+      visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -163,6 +155,8 @@ const seedConnectedAccounts = async ({
       handle: 'jane.austen@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JANE,
+      visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -170,6 +164,26 @@ const seedConnectedAccounts = async ({
       handle: 'jane-deletable@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JANE,
+      visibility: 'user',
+      archivedAt: null,
+      workspaceId,
+    },
+    {
+      id: ids.connectedAccountIds.JONY_SHARED,
+      handle: 'jony-shared@apple.dev',
+      provider: 'app',
+      userWorkspaceId: ids.userWorkspaceIds.JONY,
+      visibility: 'workspace',
+      archivedAt: null,
+      workspaceId,
+    },
+    {
+      id: ids.connectedAccountIds.TIM_SHARED_ARCHIVED,
+      handle: 'tim-shared-archived@apple.dev',
+      provider: 'app',
+      userWorkspaceId: ids.userWorkspaceIds.TIM,
+      visibility: 'workspace',
+      archivedAt: new Date().toISOString(),
       workspaceId,
     },
     {
@@ -177,6 +191,8 @@ const seedConnectedAccounts = async ({
       handle: `support@${emailGroupDomains.verified}`,
       provider: 'email_group',
       userWorkspaceId: ids.userWorkspaceIds.TIM,
+      visibility: 'workspace',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -184,6 +200,8 @@ const seedConnectedAccounts = async ({
       handle: `contact@${emailGroupDomains.pending}`,
       provider: 'email_group',
       userWorkspaceId: ids.userWorkspaceIds.TIM,
+      visibility: 'workspace',
+      archivedAt: null,
       workspaceId,
     },
   ];
@@ -196,6 +214,8 @@ const seedConnectedAccounts = async ({
       'handle',
       'provider',
       'userWorkspaceId',
+      'visibility',
+      'archivedAt',
       'workspaceId',
     ])
     .orIgnore()
@@ -362,52 +382,6 @@ const seedMessageChannels = async ({
     ])
     .orIgnore()
     .values(messageChannels)
-    .execute();
-};
-
-const seedUnsubscribeTopics = async ({
-  queryRunner,
-  schemaName,
-  workspaceId,
-}: SeedMetadataEntitiesArgs) => {
-  const ids = getSeedIds(workspaceId);
-
-  const unsubscribeTopics = [
-    {
-      id: ids.unsubscribeTopicIds.PRODUCT_UPDATES,
-      name: 'Product updates',
-      description: 'New features and product announcements.',
-      visibility: UnsubscribeTopicVisibility.PUBLIC,
-      workspaceId,
-    },
-    {
-      id: ids.unsubscribeTopicIds.NEWSLETTER,
-      name: 'Newsletter',
-      description: 'Our periodic company newsletter.',
-      visibility: UnsubscribeTopicVisibility.PUBLIC,
-      workspaceId,
-    },
-    {
-      id: ids.unsubscribeTopicIds.TRANSACTIONAL,
-      name: 'Transactional',
-      description: 'Internal-only category, hidden from the preferences page.',
-      visibility: UnsubscribeTopicVisibility.PRIVATE,
-      workspaceId,
-    },
-  ];
-
-  await queryRunner.manager
-    .createQueryBuilder()
-    .insert()
-    .into(`${schemaName}.unsubscribeTopic`, [
-      'id',
-      'name',
-      'description',
-      'visibility',
-      'workspaceId',
-    ])
-    .orIgnore()
-    .values(unsubscribeTopics)
     .execute();
 };
 

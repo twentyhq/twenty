@@ -1,8 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import fs from 'fs';
-import { readdir, readFile } from 'fs/promises';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 
@@ -24,11 +23,25 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  FILE_STORAGE_S3_CONNECTION_TIMEOUT_MS,
+  FILE_STORAGE_S3_MAX_SOCKETS,
+  FILE_STORAGE_S3_METADATA_CONNECTION_TIMEOUT_MS,
+  FILE_STORAGE_S3_METADATA_MAX_ATTEMPTS,
+  FILE_STORAGE_S3_METADATA_MAX_SOCKETS,
+  FILE_STORAGE_S3_METADATA_REQUEST_TIMEOUT_MS,
+  FILE_STORAGE_S3_REQUEST_TIMEOUT_MS,
+  FILE_STORAGE_S3_SLOW_REQUEST_THRESHOLD_MS,
+} from 'src/engine/core-modules/file-storage/constants/s3-client-timeouts.constant';
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
+import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
+import { propagateDestroyToSource } from 'src/utils/propagate-destroy-to-source.util';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;
@@ -40,9 +53,11 @@ export interface S3DriverOptions extends S3ClientConfig {
 
 export class S3Driver implements StorageDriver {
   private s3Client: S3;
+  private metadataClient: S3;
   private presignClient: S3 | undefined;
   private bucketName: string;
   private readonly logger = new Logger(S3Driver.name);
+  private supportsConditionalCopy = true;
 
   constructor(options: S3DriverOptions) {
     const {
@@ -58,12 +73,36 @@ export class S3Driver implements StorageDriver {
       return;
     }
 
-    this.s3Client = new S3({ ...s3Options, region, endpoint });
+    const requestHandler = buildAwsRequestHandlerOptions({
+      requestTimeoutMs: FILE_STORAGE_S3_REQUEST_TIMEOUT_MS,
+      connectionTimeoutMs: FILE_STORAGE_S3_CONNECTION_TIMEOUT_MS,
+      maxSockets: FILE_STORAGE_S3_MAX_SOCKETS,
+    });
+
+    this.s3Client = new S3({ ...s3Options, region, endpoint, requestHandler });
+
+    this.metadataClient = new S3({
+      ...s3Options,
+      region,
+      endpoint,
+      maxAttempts: FILE_STORAGE_S3_METADATA_MAX_ATTEMPTS,
+      responseChecksumValidation: 'WHEN_REQUIRED',
+      requestHandler: buildAwsRequestHandlerOptions({
+        requestTimeoutMs: FILE_STORAGE_S3_METADATA_REQUEST_TIMEOUT_MS,
+        connectionTimeoutMs: FILE_STORAGE_S3_METADATA_CONNECTION_TIMEOUT_MS,
+        maxSockets: FILE_STORAGE_S3_METADATA_MAX_SOCKETS,
+      }),
+    });
     this.bucketName = bucketName;
 
     if (presignEnabled) {
       this.presignClient = presignEndpoint
-        ? new S3({ ...s3Options, region, endpoint: presignEndpoint })
+        ? new S3({
+            ...s3Options,
+            region,
+            endpoint: presignEndpoint,
+            requestHandler,
+          })
         : this.s3Client;
     }
   }
@@ -72,10 +111,16 @@ export class S3Driver implements StorageDriver {
     return this.s3Client;
   }
 
-  async readFile(params: { filePath: string }): Promise<Readable> {
+  async readFile(params: {
+    filePath: string;
+    byteRange?: ByteRange;
+  }): Promise<Readable> {
     const command = new GetObjectCommand({
       Key: params.filePath,
       Bucket: this.bucketName,
+      Range: isDefined(params.byteRange)
+        ? `bytes=${params.byteRange.startByte}-${params.byteRange.endByte}`
+        : undefined,
     });
 
     try {
@@ -85,7 +130,53 @@ export class S3Driver implements StorageDriver {
         throw new Error('Unable to get file stream');
       }
 
-      return Readable.from(file.Body);
+      return propagateDestroyToSource(file.Body);
+    } catch (error) {
+      if (error.name === 'NoSuchKey') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      throw error;
+    }
+  }
+
+  async readFilePrefix(params: {
+    filePath: string;
+    byteCount: number;
+  }): Promise<Buffer> {
+    const command = new GetObjectCommand({
+      Key: params.filePath,
+      Bucket: this.bucketName,
+      Range: `bytes=0-${params.byteCount - 1}`,
+    });
+
+    try {
+      return await this.measureRequest(
+        { operation: 'GetObjectPrefix', key: params.filePath },
+        async () => {
+          try {
+            const file = await this.metadataClient.send(command);
+
+            if (!isDefined(file?.Body)) {
+              throw new FileStorageException(
+                'Unable to get file body',
+                FileStorageExceptionCode.FILE_NOT_FOUND,
+              );
+            }
+
+            return Buffer.from(await file.Body.transformToByteArray());
+          } catch (error) {
+            if (error.name === 'InvalidRange') {
+              return Buffer.alloc(0);
+            }
+
+            throw error;
+          }
+        },
+      );
     } catch (error) {
       if (error.name === 'NoSuchKey') {
         throw new FileStorageException(
@@ -118,8 +209,7 @@ export class S3Driver implements StorageDriver {
     stream: Readable;
     mimeType: string | undefined;
   }): Promise<void> {
-    // Upload streams the body with bounded memory (multipart under the hood),
-    // unlike PutObjectCommand which requires the whole payload upfront.
+    // Upload streams with bounded memory; PutObjectCommand needs the whole payload upfront.
     const upload = new Upload({
       client: this.s3Client,
       params: {
@@ -135,20 +225,54 @@ export class S3Driver implements StorageDriver {
 
   async getFileMetadata(params: {
     filePath: string;
-  }): Promise<{ size: number } | null> {
-    try {
-      const head = await this.s3Client.send(
-        new HeadObjectCommand({
-          Bucket: this.bucketName,
-          Key: params.filePath,
-        }),
-      );
+  }): Promise<FileStorageMetadata | null> {
+    return this.measureRequest(
+      { operation: 'HeadObject', key: params.filePath },
+      async () => {
+        try {
+          const head = await this.metadataClient.send(
+            new HeadObjectCommand({
+              Bucket: this.bucketName,
+              Key: params.filePath,
+            }),
+          );
 
-      return { size: head.ContentLength ?? 0 };
-    } catch (error) {
-      if (error instanceof NotFound) {
-        return null;
+          return { size: head.ContentLength ?? 0, checksum: head.ETag };
+        } catch (error) {
+          if (error instanceof NotFound) {
+            return null;
+          }
+
+          throw error;
+        }
+      },
+    );
+  }
+
+  private async measureRequest<TResult>(
+    { operation, key }: { operation: string; key: string },
+    request: () => Promise<TResult>,
+  ): Promise<TResult> {
+    const startedAt = Date.now();
+
+    try {
+      const result = await request();
+      const durationMs = Date.now() - startedAt;
+      const message = `S3 ${operation} ${key} succeeded in ${durationMs}ms`;
+
+      if (durationMs >= FILE_STORAGE_S3_SLOW_REQUEST_THRESHOLD_MS) {
+        this.logger.warn(message);
+      } else {
+        this.logger.debug(message);
       }
+
+      return result;
+    } catch (error) {
+      const durationMs = Date.now() - startedAt;
+
+      this.logger.warn(
+        `S3 ${operation} ${key} failed after ${durationMs}ms: ${error?.name ?? 'Error'} ${error?.message ?? ''}`,
+      );
 
       throw error;
     }
@@ -169,73 +293,6 @@ export class S3Driver implements StorageDriver {
     });
 
     await pipeline(fileStream, fs.createWriteStream(params.localPath));
-  }
-
-  async downloadFolder(params: {
-    onStoragePath: string;
-    localPath: string;
-  }): Promise<void> {
-    const listedObjects = await this.fetchS3FolderContents(
-      params.onStoragePath,
-    );
-
-    if (!listedObjects.Contents || listedObjects.Contents.length === 0) {
-      return;
-    }
-
-    for (const object of listedObjects.Contents) {
-      const folderAndFilePaths = this.extractFolderAndFilePaths(object.Key);
-
-      if (!isDefined(folderAndFilePaths)) {
-        continue;
-      }
-
-      const { fromFolderPath, filename } = folderAndFilePaths;
-
-      const relativePath = fromFolderPath
-        .replace(params.onStoragePath + '/', '')
-        .replace(params.onStoragePath, '');
-
-      const localFolderPath = relativePath
-        ? join(params.localPath, relativePath)
-        : params.localPath;
-
-      await this.createFolder(localFolderPath);
-
-      const fileStream = await this.readFile({
-        filePath: `${fromFolderPath}/${filename}`,
-      });
-
-      const toPath = join(localFolderPath, filename);
-
-      await pipeline(fileStream, fs.createWriteStream(toPath));
-    }
-  }
-
-  async uploadFolder(params: {
-    localPath: string;
-    onStoragePath: string;
-  }): Promise<void> {
-    const entries = await readdir(params.localPath, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const localEntryPath = join(params.localPath, entry.name);
-
-      if (entry.isDirectory()) {
-        await this.uploadFolder({
-          localPath: localEntryPath,
-          onStoragePath: join(params.onStoragePath, entry.name),
-        });
-      } else {
-        const fileContent = await readFile(localEntryPath);
-
-        await this.writeFile({
-          filePath: `${params.onStoragePath}/${entry.name}`,
-          sourceFile: fileContent,
-          mimeType: undefined,
-        });
-      }
-    }
   }
 
   async delete(params: {
@@ -264,6 +321,7 @@ export class S3Driver implements StorageDriver {
   async move(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
+    ifMatchChecksum?: string;
   }): Promise<void> {
     if (!params.from.filename || !params.to.filename) {
       await this.moveS3Folder(params);
@@ -275,20 +333,29 @@ export class S3Driver implements StorageDriver {
     const toKey = `${params.to.folderPath}/${params.to.filename}`;
 
     try {
-      await this.s3Client.send(
+      const head = await this.s3Client.send(
         new HeadObjectCommand({
           Bucket: this.bucketName,
           Key: fromKey,
         }),
       );
 
-      await this.s3Client.send(
-        new CopyObjectCommand({
-          CopySource: `${this.bucketName}/${fromKey}`,
-          Bucket: this.bucketName,
-          Key: toKey,
-        }),
-      );
+      // Backends without CopySourceIfMatch get an unconditional copy, so this is their only check.
+      if (
+        isDefined(params.ifMatchChecksum) &&
+        head.ETag !== params.ifMatchChecksum
+      ) {
+        throw new FileStorageException(
+          `Object at ${fromKey} changed since it was inspected`,
+          FileStorageExceptionCode.PRECONDITION_FAILED,
+        );
+      }
+
+      await this.copyObjectIfMatch({
+        fromKey,
+        toKey,
+        ifMatchChecksum: params.ifMatchChecksum,
+      });
 
       await this.s3Client.send(
         new DeleteObjectCommand({
@@ -303,8 +370,65 @@ export class S3Driver implements StorageDriver {
           FileStorageExceptionCode.FILE_NOT_FOUND,
         );
       }
+
+      if (error.name === 'PreconditionFailed') {
+        throw new FileStorageException(
+          `Object at ${fromKey} changed since it was inspected`,
+          FileStorageExceptionCode.PRECONDITION_FAILED,
+        );
+      }
+
       throw error;
     }
+  }
+
+  // Some S3-compatible backends (e.g. OVHcloud) reject CopySourceIfMatch with 501.
+  private async copyObjectIfMatch({
+    fromKey,
+    toKey,
+    ifMatchChecksum,
+  }: {
+    fromKey: string;
+    toKey: string;
+    ifMatchChecksum?: string;
+  }): Promise<void> {
+    const copySource = `${this.bucketName}/${fromKey}`;
+
+    if (isDefined(ifMatchChecksum) && this.supportsConditionalCopy) {
+      try {
+        await this.s3Client.send(
+          new CopyObjectCommand({
+            CopySource: copySource,
+            CopySourceIfMatch: ifMatchChecksum,
+            Bucket: this.bucketName,
+            Key: toKey,
+          }),
+        );
+
+        return;
+      } catch (error) {
+        const isNotImplemented =
+          error.name === 'NotImplemented' ||
+          error.$metadata?.httpStatusCode === 501;
+
+        if (!isNotImplemented) {
+          throw error;
+        }
+
+        this.supportsConditionalCopy = false;
+        this.logger.warn(
+          'S3 backend does not support CopySourceIfMatch, falling back to unconditional copies',
+        );
+      }
+    }
+
+    await this.s3Client.send(
+      new CopyObjectCommand({
+        CopySource: copySource,
+        Bucket: this.bucketName,
+        Key: toKey,
+      }),
+    );
   }
 
   async copy(params: {
@@ -463,8 +587,7 @@ export class S3Driver implements StorageDriver {
       ContentLength: params.contentLength,
     });
 
-    // Content-Type and Content-Length are part of the signature so the client
-    // cannot upload a payload of a different type or size than declared.
+    // Signed so the client cannot upload a different type or size than declared.
     return getSignedUrl(this.presignClient, command, {
       expiresIn: params.expiresInSeconds ?? 900,
       signableHeaders: new Set(['content-type', 'content-length']),

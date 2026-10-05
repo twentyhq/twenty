@@ -2,7 +2,8 @@ import { defineConnectionProvider } from 'twenty-sdk/define';
 
 import {
   SLACK_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
-  SLACK_TEAM_CLAIM_UNIVERSAL_IDENTIFIER,
+  SLACK_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER,
+  SLACK_TEAM_RELEASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineConnectionProvider({
@@ -11,7 +12,10 @@ export default defineConnectionProvider({
   displayName: 'Slack',
   type: 'oauth',
   onConnectLogicFunction: {
-    universalIdentifier: SLACK_TEAM_CLAIM_UNIVERSAL_IDENTIFIER,
+    universalIdentifier: SLACK_REGISTER_CONNECTION_UNIVERSAL_IDENTIFIER,
+  },
+  onDisconnectLogicFunction: {
+    universalIdentifier: SLACK_TEAM_RELEASE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   },
   oauth: {
     authorizationEndpoint: 'https://slack.com/oauth/v2/authorize',
@@ -21,13 +25,20 @@ export default defineConnectionProvider({
       'channels:read',
       'chat:write',
       'chat:write.public',
+      'im:write',
       'groups:read',
       'reactions:write',
-      // Inbound scopes, only used by the conversational assistant
       'app_mentions:read',
       'channels:history',
       'groups:history',
       'im:history',
+      'im:read',
+      'users:read',
+      'users:read.email',
+      'assistant:write',
+      'links:read',
+      'links:write',
+      'files:read',
     ],
     clientIdVariable: 'SLACK_CLIENT_ID',
     clientSecretVariable: 'SLACK_CLIENT_SECRET',

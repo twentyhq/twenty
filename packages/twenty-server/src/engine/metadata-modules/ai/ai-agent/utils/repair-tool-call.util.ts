@@ -12,7 +12,7 @@ import { type z } from 'zod';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
-import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
+import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 
 type ToolCall = {
   type: 'tool-call';
@@ -44,7 +44,6 @@ export const repairToolCall = async ({
   model: LanguageModel;
   billingContext?: RepairToolCallBillingContext;
 }): Promise<ToolCall | null> => {
-  // Don't attempt to fix invalid tool names
   if (NoSuchToolError.isInstance(error)) {
     return null;
   }
@@ -83,7 +82,11 @@ export const repairToolCall = async ({
         `- Object structures must match the schema shape`,
         `- Array items must follow the specified format`,
       ].join('\n'),
-      experimental_telemetry: AI_TELEMETRY_CONFIG,
+      ...buildAiTelemetry({
+        functionId: 'repair-tool-call',
+        workspaceId: billingContext?.workspaceId,
+        userWorkspaceId: billingContext?.userWorkspaceId,
+      }),
     });
 
     usage = result.usage;
@@ -102,7 +105,6 @@ export const repairToolCall = async ({
       input: JSON.stringify(repairedInput),
     };
   } catch {
-    // If repair fails, return null to let the error propagate
     return null;
   } finally {
     if (billingContext && usage) {

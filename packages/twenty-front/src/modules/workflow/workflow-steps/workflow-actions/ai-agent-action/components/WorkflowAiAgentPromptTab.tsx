@@ -1,12 +1,11 @@
 import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
-import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
-import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
+import { type OutputSchemaField } from '@/ai/types/OutputSchemaField';
+import { AiModelPicker } from '@/ai/components/AiModelPicker';
 import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchemaToOutputSchema';
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
 import { fieldsToSchema } from '@/ai/utils/fieldsToSchema';
 import { schemaToFields } from '@/ai/utils/schemaToFields';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { Select } from '@/ui/input/components/Select';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowOutputSchemaBuilder } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder';
@@ -30,6 +29,8 @@ type WorkflowAiAgentPromptTabProps = {
   prompt: string;
   readonly: boolean;
   onPromptChange: (value: string) => void;
+  humanInputInstructions: string;
+  onHumanInputInstructionsChange: (value: string) => void;
   onActionUpdate?: (action: WorkflowAiAgentAction) => void;
 };
 
@@ -38,13 +39,12 @@ export const WorkflowAiAgentPromptTab = ({
   prompt,
   readonly,
   onPromptChange,
+  humanInputInstructions,
+  onHumanInputInstructionsChange,
   onActionUpdate,
 }: WorkflowAiAgentPromptTabProps) => {
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
-  const { options: aiModelOptions, pinnedOption } = useAiModelOptions({
-    variant: 'pinned-default',
-  });
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
 
   const [outputSchemaFields, setOutputSchemaFields] = useState<
@@ -136,14 +136,9 @@ export const WorkflowAiAgentPromptTab = ({
 
   return (
     <>
-      <Select
-        label={t`Model`}
-        dropdownId="select-agent-model"
-        options={aiModelOptions}
-        pinnedOption={pinnedOption}
-        value={agent.modelId}
-        onChange={handleModelChange}
-        showContextualTextInControl={false}
+      <AiModelPicker
+        modelId={agent.modelId}
+        onModelIdChange={handleModelChange}
         disabled={readonly}
       />
 
@@ -154,6 +149,15 @@ export const WorkflowAiAgentPromptTab = ({
         placeholder={t`Describe what you want the AI to do...`}
         defaultValue={prompt}
         onChange={onPromptChange}
+        readonly={readonly}
+      />
+
+      <FormTextFieldInput
+        multiline
+        label={t`Ask for human input`}
+        placeholder={t`When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop.`}
+        defaultValue={humanInputInstructions}
+        onChange={onHumanInputInstructionsChange}
         readonly={readonly}
       />
 

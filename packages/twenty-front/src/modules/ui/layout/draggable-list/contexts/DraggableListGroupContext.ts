@@ -2,7 +2,8 @@ import { createContext } from 'react';
 
 export type DraggableListGroupContextValue = {
   group: string;
-  itemIndexByDraggableId: Map<string, number>;
+  registerItem: (draggableId: string, index: number) => void;
+  unregisterItem: (draggableId: string) => void;
 };
 
 export const DraggableListGroupContext =

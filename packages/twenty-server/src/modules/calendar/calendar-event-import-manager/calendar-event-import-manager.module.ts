@@ -9,10 +9,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/calendar-event-cleaner/calendar-event-cleaner.module';
 import { CalendarTriggerEventListFetchCommand } from 'src/modules/calendar/calendar-event-import-manager/commands/calendar-trigger-event-list-fetch.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
@@ -42,10 +40,10 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/se
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
+import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 
 @Module({
   imports: [
-    ObjectMetadataRepositoryModule.forFeature([BlocklistWorkspaceEntity]),
     CalendarEventParticipantManagerModule,
     TypeOrmModule.forFeature([
       FeatureFlagEntity,
@@ -68,6 +66,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     FeatureFlagModule,
   ],
   providers: [
+    BlocklistRepository,
     provideWorkspaceScopedRepository(CalendarChannelEntity),
     CalendarChannelSyncStatusService,
     CalendarEventsImportService,

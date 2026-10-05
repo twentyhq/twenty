@@ -9,7 +9,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Response } from 'express';
-import { SettingsPath } from 'twenty-shared/types';
+import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -20,9 +20,11 @@ import {
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-exchange-code-for-token.guard';
 import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-request-code.guard';
+import { ConnectedAccountOAuthService } from 'src/engine/core-modules/auth/services/connected-account-oauth.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
+import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -31,12 +33,13 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-@Controller('auth/google-apis')
+@Controller(`${ApiPath.Auth}/google-apis`)
 @UseFilters(AuthRestApiExceptionFilter)
 export class GoogleAPIsAuthController {
   constructor(
     private readonly googleAPIsService: GoogleAPIsService,
     private readonly transientTokenService: TransientTokenService,
+    private readonly connectedAccountOAuthService: ConnectedAccountOAuthService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly onboardingService: OnboardingService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
@@ -52,7 +55,6 @@ export class GoogleAPIsAuthController {
     NoPermissionGuard,
   )
   async googleAuth() {
-    // As this method is protected by Google Auth guard, it will trigger Google SSO flow
     return;
   }
 
@@ -96,6 +98,11 @@ export class GoogleAPIsAuthController {
         id: workspaceId,
       });
 
+      await this.connectedAccountOAuthService.verifyUserCanConnectAccount({
+        userId,
+        workspaceId,
+      });
+
       const handle = emails[0].value.toLowerCase();
 
       const connectedAccountId =
@@ -111,12 +118,10 @@ export class GoogleAPIsAuthController {
           skipMessageChannelConfiguration,
         });
 
-      if (userId) {
-        await this.onboardingService.completeOnboardingConnectAccountStep({
-          userId,
-          workspaceId,
-        });
-      }
+      await this.onboardingService.completeOnboardingConnectAccountStep({
+        userId,
+        workspaceId,
+      });
 
       if (!workspace) {
         throw new AuthException(
@@ -125,15 +130,18 @@ export class GoogleAPIsAuthController {
         );
       }
 
-      const pathname =
+      const { pathname, searchParams, hash } = parseRelativeUrl(
         redirectLocation ||
-        getSettingsPath(SettingsPath.AccountsConfiguration, {
-          connectedAccountId,
-        });
+          getSettingsPath(SettingsPath.AccountsConfiguration, {
+            connectedAccountId,
+          }),
+      );
 
       const url = this.workspaceDomainsService.buildWorkspaceURL({
         workspace,
         pathname,
+        searchParams,
+        hash,
       });
 
       return res.redirect(url.toString());

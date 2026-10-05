@@ -1,10 +1,11 @@
 import { AddRecordGroupButton } from '@/object-record/record-group/components/AddRecordGroupButton';
 import { canAddRecordGroupForFieldMetadataItem } from '@/object-record/record-group/utils/canAddRecordGroupForFieldMetadataItem';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const RECORD_TABLE_ADD_GROUP_DROPDOWN_ID = 'record-table-add-group-dropdown';
 
@@ -14,6 +15,7 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordTableRecordGroupAddNewGroup = () => {
+  const { recordIndexId } = useRecordIndexContextOrThrow();
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
@@ -36,7 +38,7 @@ export const RecordTableRecordGroupAddNewGroup = () => {
     <StyledContainer>
       <AddRecordGroupButton
         fieldMetadataItem={recordIndexGroupFieldMetadataItem}
-        dropdownId={RECORD_TABLE_ADD_GROUP_DROPDOWN_ID}
+        dropdownId={`${RECORD_TABLE_ADD_GROUP_DROPDOWN_ID}-${recordIndexId}`}
       />
     </StyledContainer>
   );

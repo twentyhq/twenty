@@ -2,13 +2,12 @@ import { GraphQLPlayground } from '@/settings/mcp-and-apis/components/GraphQLPla
 import { playgroundApiKeyState } from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type Environment } from 'monaco-editor';
 import { useEffect } from 'react';
 import { action } from 'storybook/actions';
-import {
-  ComponentDecorator,
-  ComponentWithRouterDecorator,
-} from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const PlaygroundApiKeySetterEffect = () => {
   const setPlaygroundApiKey = useSetAtomState(playgroundApiKeyState);
@@ -23,10 +22,27 @@ const PlaygroundApiKeySetterEffect = () => {
   return null;
 };
 
+const inertWorkerUrl = URL.createObjectURL(
+  new Blob([], { type: 'text/javascript' }),
+);
+
+const inertMonacoEnvironment: Environment = {
+  getWorker: () => new Worker(inertWorkerUrl),
+};
+
 const meta: Meta<typeof GraphQLPlayground> = {
   title: 'Modules/Settings/Playground/GraphQLPlayground',
   component: GraphQLPlayground,
   decorators: [ComponentDecorator, ComponentWithRouterDecorator],
+  beforeEach: () => {
+    const appMonacoEnvironment = window.MonacoEnvironment;
+
+    window.MonacoEnvironment = inertMonacoEnvironment;
+
+    return () => {
+      window.MonacoEnvironment = appMonacoEnvironment;
+    };
+  },
   parameters: {
     docs: {
       description: {

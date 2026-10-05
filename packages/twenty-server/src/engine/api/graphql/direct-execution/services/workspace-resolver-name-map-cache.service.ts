@@ -1,31 +1,31 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { isDefined } from 'twenty-shared/utils';
+
+import { WorkspaceDerivedCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-derived-cache-provider.service';
 
 import {
   type ResolverNameMapEntry,
   buildResolverNameMap,
 } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
-import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceDerivedCache } from 'src/engine/workspace-cache/decorators/workspace-derived-cache.decorator';
+import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 @Injectable()
-@WorkspaceCache('graphQLResolverNameMap')
-export class WorkspaceResolverNameMapCacheService extends WorkspaceCacheProvider<
-  Record<string, ResolverNameMapEntry>
+@WorkspaceDerivedCache('graphQLResolverNameMap')
+export class WorkspaceResolverNameMapCacheService extends WorkspaceDerivedCacheProvider<
+  'graphQLResolverNameMap',
+  'flatObjectMetadataMaps'
 > {
-  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {
-    super();
-  }
+  readonly sourceKeyName = 'flatObjectMetadataMaps';
 
-  async computeForCache(
-    workspaceId: string,
-  ): Promise<Record<string, ResolverNameMapEntry>> {
-    const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
-
-    return buildResolverNameMap(flatObjectMetadataMaps);
+  protected computeFromSource(
+    flatObjectMetadataMaps: WorkspaceCacheDataMap['flatObjectMetadataMaps'],
+  ): Record<string, ResolverNameMapEntry> {
+    return buildResolverNameMap(
+      Object.values(flatObjectMetadataMaps.byUniversalIdentifier).filter(
+        isDefined,
+      ),
+    );
   }
 }

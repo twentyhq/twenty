@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 
 import { type Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
@@ -37,7 +38,7 @@ export class ConnectedAccountSyncWebhooksController {
     private readonly microsoftCalendarNotificationHandler: MicrosoftCalendarNotificationHandler,
   ) {}
 
-  @Post('webhooks/google/messaging')
+  @Post(`${ApiPath.Webhooks}/google/messaging`)
   @HttpCode(HttpStatus.OK)
   async handleGoogleMessaging(
     @Body() body: GooglePubSubPushMessage,
@@ -49,7 +50,7 @@ export class ConnectedAccountSyncWebhooksController {
     });
   }
 
-  @Post('webhooks/google/calendar')
+  @Post(`${ApiPath.Webhooks}/google/calendar`)
   @HttpCode(HttpStatus.OK)
   async handleGoogleCalendar(
     @Headers('x-goog-channel-id') channelId: string | undefined,
@@ -63,7 +64,7 @@ export class ConnectedAccountSyncWebhooksController {
     });
   }
 
-  @Post('webhooks/microsoft/messaging')
+  @Post(`${ApiPath.Webhooks}/microsoft/messaging`)
   @HttpCode(HttpStatus.OK)
   async handleMicrosoftMessaging(
     @Body() body: MicrosoftGraphNotificationPayload,
@@ -79,7 +80,7 @@ export class ConnectedAccountSyncWebhooksController {
     return '';
   }
 
-  @Post('webhooks/microsoft/calendar')
+  @Post(`${ApiPath.Webhooks}/microsoft/calendar`)
   @HttpCode(HttpStatus.OK)
   async handleMicrosoftCalendar(
     @Body() body: MicrosoftGraphNotificationPayload,

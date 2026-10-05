@@ -1,5 +1,9 @@
-import { defineApplication } from 'twenty-sdk/define';
+import { defineApplication, FieldType } from 'twenty-sdk/define';
 
+import {
+  BACKFILL_BATCH_SIZE_ENV_VAR_NAME,
+  DEFAULT_BACKFILL_BATCH_SIZE,
+} from 'src/constants/backfill';
 import {
   APP_DESCRIPTION,
   APP_DISPLAY_NAME,
@@ -8,10 +12,17 @@ import {
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  logoUrl: 'public/logo.png',
+  logo: 'public/logo.png',
   author: 'Twenty',
   category: 'Productivity',
-  screenshots: ['public/gallery/cover.png'],
+  galleryImages: ['public/gallery/cover.png'],
   displayName: APP_DISPLAY_NAME,
   description: APP_DESCRIPTION,
+  serverVariables: {
+    [BACKFILL_BATCH_SIZE_ENV_VAR_NAME]: {
+      description: `How many records the last-contact backfill reads and writes per batch. Defaults to ${DEFAULT_BACKFILL_BATCH_SIZE} when unset.`,
+      isSecret: false,
+      type: FieldType.NUMBER,
+    },
+  },
 });

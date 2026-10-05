@@ -17,7 +17,11 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       isSystem
       isUIEditable
       isUICreatable
+      writability
       isSearchable
+      openRecordIn
+      sharingReach
+      readability
       shortcut
       duplicateCriteria
       createdAt
@@ -37,8 +41,10 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
         isActive
         isSystem
         isUIEditable
+        writability
         isNullable
         isUnique
+        isSearchable
         createdAt
         updatedAt
         defaultValue
@@ -105,7 +111,9 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       icon
       isActive
       isUnique
+      isSearchable
       isNullable
+      writability
       createdAt
       updatedAt
       settings
@@ -176,7 +184,9 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       icon
       isActive
       isUnique
+      isSearchable
       isNullable
+      writability
       createdAt
       updatedAt
       settings
@@ -205,6 +215,9 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       color
       isActive
       isSearchable
+      openRecordIn
+      sharingReach
+      readability
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
@@ -228,6 +241,9 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       color
       isActive
       isSearchable
+      openRecordIn
+      sharingReach
+      readability
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
@@ -249,7 +265,9 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       icon
       isActive
       isUnique
+      isSearchable
       isNullable
+      writability
       createdAt
       updatedAt
       settings

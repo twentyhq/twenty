@@ -108,42 +108,99 @@ export const main = async (
   const result = await response.json();
   const uploadFileFieldMetadataId = result.data.objects.edges.find(object => object.node.nameSingular === 'attachment').node.fieldsList.find(field => field.name === 'file').id;
 
-  // Step 3: Upload the file via GraphQL multipart upload
-  const uploadMutation = `
-    mutation UploadFilesFieldFile($file: Upload!, $fieldMetadataId: String!) {
-      uploadFilesFieldFile(file: $file, fieldMetadataId: $fieldMetadataId) {
+  // Step 3: Request an upload URL for the file
+  const createFileUploadMutation = `
+    mutation CreateFileUpload($filename: String!, $size: Float!, $fileFolder: FileFolder!, $fieldMetadataId: String) {
+      createFileUpload(filename: $filename, size: $size, fileFolder: $fileFolder, fieldMetadataId: $fieldMetadataId) {
+        fileId
+        uploadUrl
+        contentType
+      }
+    }
+  `;
+
+  const createFileUploadResponse = await fetch(metadataGraphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: createFileUploadMutation,
+      variables: {
+        filename,
+        size: pdfFile.size,
+        fileFolder: 'FilesField',
+        fieldMetadataId: uploadFileFieldMetadataId,
+      },
+    }),
+  });
+
+  if (!createFileUploadResponse.ok) {
+    throw new Error(`Upload failed with status ${createFileUploadResponse.status}`);
+  }
+
+  const createFileUploadResult = await createFileUploadResponse.json();
+
+  if (createFileUploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${createFileUploadResult.errors[0].message}`);
+  }
+
+  const uploadTarget = createFileUploadResult.data?.createFileUpload;
+
+  if (!uploadTarget) {
+    throw new Error('No upload target returned from createFileUpload');
+  }
+
+  const { fileId, uploadUrl, contentType } = uploadTarget;
+
+  // Step 4: Send the file bytes to the upload URL
+  const putResponse = await fetch(uploadUrl, {
+    method: 'PUT',
+    headers: { 'Content-Type': contentType },
+    body: pdfFile,
+  });
+
+  if (!putResponse.ok) {
+    throw new Error(`Upload failed with status ${putResponse.status}`);
+  }
+
+  // Step 5: Confirm the upload so the file becomes usable
+  const completeFileUploadMutation = `
+    mutation CompleteFileUpload($fileId: String!) {
+      completeFileUpload(fileId: $fileId) {
         id
       }
     }
   `;
 
-  const uploadForm = new FormData();
-  uploadForm.append('operations', JSON.stringify({
-    query: uploadMutation,
-    variables: { file: null, fieldMetadataId: uploadFileFieldMetadataId },
-  }));
-  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
-  uploadForm.append('0', pdfFile);
-
-  const uploadResponse = await fetch(metadataGraphqlEndpoint, {
+  const completeFileUploadResponse = await fetch(metadataGraphqlEndpoint, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${authToken}` },
-    body: uploadForm,
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: completeFileUploadMutation,
+      variables: { fileId },
+    }),
   });
 
-  const uploadResult = await uploadResponse.json();
-
-  if (uploadResult.errors?.length) {
-    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  if (!completeFileUploadResponse.ok) {
+    throw new Error(`Upload failed with status ${completeFileUploadResponse.status}`);
   }
 
-  const fileId = uploadResult.data?.uploadFilesFieldFile?.id;
+  const completeFileUploadResult = await completeFileUploadResponse.json();
 
-  if (!fileId) {
-    throw new Error('No file id returned from upload');
+  if (completeFileUploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${completeFileUploadResult.errors[0].message}`);
   }
 
-  // Step 4: Create the attachment linked to the company
+  if (!completeFileUploadResult.data?.completeFileUpload?.id) {
+    throw new Error('No file id returned from completeFileUpload');
+  }
+
+  // Step 6: Create the attachment linked to the company
   const attachmentMutation = `
     mutation CreateOneAttachment($data: AttachmentCreateInput!) {
       createAttachment(data: $data) {

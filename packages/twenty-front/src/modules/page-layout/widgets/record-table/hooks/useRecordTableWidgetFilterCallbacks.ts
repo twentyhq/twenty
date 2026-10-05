@@ -61,6 +61,8 @@ export const useRecordTableWidgetFilterCallbacks = ({
             positionInViewFilterGroup:
               recordFilter.positionInRecordFilterGroup ?? null,
             subFieldName: recordFilter.subFieldName ?? null,
+            relationTargetFieldMetadataId:
+              recordFilter.relationTargetFieldMetadataId ?? null,
           })),
           viewFilterGroups: currentRecordFilterGroups.map((recordFilterGroup) =>
             mapRecordFilterGroupToViewFilterGroup({

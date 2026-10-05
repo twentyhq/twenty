@@ -6,7 +6,7 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 
@@ -35,7 +35,7 @@ describe('taskTargets hooks on task actions', () => {
         filter: { id: { in: taskIds } },
       });
 
-      await makeGraphqlAPIRequest(destroyTasksOperation);
+      await makeGraphqlApiRequest(destroyTasksOperation);
     }
 
     if (taskTargetIds.length > 0) {
@@ -46,7 +46,7 @@ describe('taskTargets hooks on task actions', () => {
         filter: { id: { in: taskTargetIds } },
       });
 
-      await makeGraphqlAPIRequest(destroyTaskTargetsOperation);
+      await makeGraphqlApiRequest(destroyTaskTargetsOperation);
     }
   });
 
@@ -75,7 +75,7 @@ describe('taskTargets hooks on task actions', () => {
       recordId: taskId,
     });
 
-    const deleteResponse = await makeGraphqlAPIRequest(deleteTaskOperation);
+    const deleteResponse = await makeGraphqlApiRequest(deleteTaskOperation);
 
     expect(deleteResponse.body.data.deleteTask).toBeDefined();
     expect(deleteResponse.body.data.deleteTask.deletedAt).not.toBeNull();
@@ -90,7 +90,7 @@ describe('taskTargets hooks on task actions', () => {
       },
     });
 
-    const taskTargetResponse = await makeGraphqlAPIRequest(
+    const taskTargetResponse = await makeGraphqlApiRequest(
       findTaskTargetsOperation,
     );
 
@@ -142,7 +142,7 @@ describe('taskTargets hooks on task actions', () => {
       filter: { id: { in: [taskId1, taskId2] } },
     });
 
-    const deleteResponse = await makeGraphqlAPIRequest(deleteTasksOperation);
+    const deleteResponse = await makeGraphqlApiRequest(deleteTasksOperation);
 
     expect(deleteResponse.body.data.deleteTasks).toHaveLength(2);
 
@@ -156,7 +156,7 @@ describe('taskTargets hooks on task actions', () => {
       },
     });
 
-    const taskTargetResponse = await makeGraphqlAPIRequest(
+    const taskTargetResponse = await makeGraphqlApiRequest(
       findTaskTargetsOperation,
     );
 
@@ -194,7 +194,7 @@ describe('taskTargets hooks on task actions', () => {
       recordId: taskId,
     });
 
-    await makeGraphqlAPIRequest(deleteTaskOperation);
+    await makeGraphqlApiRequest(deleteTaskOperation);
 
     const restoreTaskOperation = restoreOneOperationFactory({
       objectMetadataSingularName: 'task',
@@ -202,7 +202,7 @@ describe('taskTargets hooks on task actions', () => {
       recordId: taskId,
     });
 
-    const restoreResponse = await makeGraphqlAPIRequest(restoreTaskOperation);
+    const restoreResponse = await makeGraphqlApiRequest(restoreTaskOperation);
 
     expect(restoreResponse.body.data.restoreTask).toBeDefined();
     expect(restoreResponse.body.data.restoreTask.deletedAt).toBeNull();
@@ -214,7 +214,7 @@ describe('taskTargets hooks on task actions', () => {
       filter: { id: { eq: taskTargetId } },
     });
 
-    const taskTargetResponse = await makeGraphqlAPIRequest(
+    const taskTargetResponse = await makeGraphqlApiRequest(
       findTaskTargetsOperation,
     );
 
@@ -266,7 +266,7 @@ describe('taskTargets hooks on task actions', () => {
       filter: { id: { in: [taskId1, taskId2] } },
     });
 
-    await makeGraphqlAPIRequest(deleteTasksOperation);
+    await makeGraphqlApiRequest(deleteTasksOperation);
 
     const restoreTasksOperation = restoreManyOperationFactory({
       objectMetadataSingularName: 'task',
@@ -275,7 +275,7 @@ describe('taskTargets hooks on task actions', () => {
       filter: { id: { in: [taskId1, taskId2] } },
     });
 
-    const restoreResponse = await makeGraphqlAPIRequest(restoreTasksOperation);
+    const restoreResponse = await makeGraphqlApiRequest(restoreTasksOperation);
 
     expect(restoreResponse.body.data.restoreTasks).toHaveLength(2);
 
@@ -286,7 +286,7 @@ describe('taskTargets hooks on task actions', () => {
       filter: { id: { in: [taskTargetId1, taskTargetId2] } },
     });
 
-    const taskTargetResponse = await makeGraphqlAPIRequest(
+    const taskTargetResponse = await makeGraphqlApiRequest(
       findTaskTargetsOperation,
     );
 
@@ -323,7 +323,7 @@ describe('taskTargets hooks on task actions', () => {
       recordId: taskId,
     });
 
-    const destroyResponse = await makeGraphqlAPIRequest(destroyTaskOperation);
+    const destroyResponse = await makeGraphqlApiRequest(destroyTaskOperation);
 
     expect(destroyResponse.body.data.destroyTask).toBeDefined();
 
@@ -334,7 +334,7 @@ describe('taskTargets hooks on task actions', () => {
       filter: { id: { eq: taskTargetId } },
     });
 
-    const taskTargetResponse = await makeGraphqlAPIRequest(
+    const taskTargetResponse = await makeGraphqlApiRequest(
       findTaskTargetsOperation,
     );
 
@@ -382,7 +382,7 @@ describe('taskTargets hooks on task actions', () => {
       filter: { id: { in: [taskId1, taskId2] } },
     });
 
-    const destroyResponse = await makeGraphqlAPIRequest(destroyTasksOperation);
+    const destroyResponse = await makeGraphqlApiRequest(destroyTasksOperation);
 
     expect(destroyResponse.body.data.destroyTasks).toHaveLength(2);
 
@@ -393,7 +393,7 @@ describe('taskTargets hooks on task actions', () => {
       filter: { id: { in: [taskTargetId1, taskTargetId2] } },
     });
 
-    const taskTargetResponse = await makeGraphqlAPIRequest(
+    const taskTargetResponse = await makeGraphqlApiRequest(
       findTaskTargetsOperation,
     );
 

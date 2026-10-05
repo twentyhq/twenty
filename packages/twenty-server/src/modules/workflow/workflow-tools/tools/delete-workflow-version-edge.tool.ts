@@ -1,29 +1,21 @@
-import { WorkflowActionType } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
+import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const deleteWorkflowVersionEdgeSchema = z.object({
-  workflowVersionId: z
+  coreWorkflowVersionId: z
     .string()
     .uuid()
-    .describe('The UUID of the workflow version'),
+    .describe('The core workflow version UUID'),
   source: z
     .union([z.literal('trigger'), z.string().uuid()])
     .describe('The source step: "trigger" or a step UUID'),
   target: z.string().uuid().describe('The UUID of the target step'),
-  sourceConnectionOptions: z
-    .object({
-      connectedStepType: z.literal(WorkflowActionType.ITERATOR),
-      settings: z.object({
-        isConnectedToLoop: z.boolean(),
-      }),
-    })
-    .optional()
-    .describe('Optional connection options for iterator steps'),
+  sourceConnectionOptions: workflowStepConnectionOptionsSchema.optional(),
 });
 
 type DeleteWorkflowVersionEdgeInput = z.infer<
@@ -31,7 +23,7 @@ type DeleteWorkflowVersionEdgeInput = z.infer<
 >;
 
 export const createDeleteWorkflowVersionEdgeTool = (
-  deps: Pick<WorkflowToolDependencies, 'workflowVersionEdgeService'>,
+  deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionMutationService'>,
   context: WorkflowToolContext,
 ) => ({
   name: 'delete_workflow_version_edge' as const,
@@ -39,11 +31,12 @@ export const createDeleteWorkflowVersionEdgeTool = (
   inputSchema: deleteWorkflowVersionEdgeSchema,
   execute: async (parameters: DeleteWorkflowVersionEdgeInput) => {
     try {
-      return await deps.workflowVersionEdgeService.deleteWorkflowVersionEdge({
+      return await deps.coreWorkflowVersionMutationService.deleteEdge({
         source: parameters.source,
         target: parameters.target,
-        workflowVersionId: parameters.workflowVersionId,
+        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
         workspaceId: context.workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
         sourceConnectionOptions: parameters.sourceConnectionOptions,
       });
     } catch (error) {

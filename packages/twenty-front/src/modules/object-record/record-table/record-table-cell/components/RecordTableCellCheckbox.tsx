@@ -1,16 +1,16 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
+import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
-import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
-import { isDefined } from 'twenty-shared/utils';
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -26,23 +26,25 @@ const StyledContainer = styled.div`
 export const RecordTableCellCheckbox = () => {
   const { t } = useLingui();
 
-  const { isSelected } = useRecordTableRowContextOrThrow();
+  const { isSelected, recordId } = useRecordTableRowContextOrThrow();
+  const { isDragging } = useRecordTableRowDraggableContextOrThrow();
 
-  const { setCurrentRowSelected } = useSetCurrentRowSelected();
+  const { toggleRecordSelection } = useToggleRecordSelection();
 
   const handleClick = useCallback(
-    (event?: React.MouseEvent<HTMLDivElement>) => {
-      setCurrentRowSelected({
-        newSelectedState: !isSelected,
-        shouldSelectRange: isDefined(event?.shiftKey) && event.shiftKey,
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      toggleRecordSelection({
+        recordId,
+        shouldSelectRange: event.shiftKey,
       });
     },
-    [isSelected, setCurrentRowSelected],
+    [recordId, toggleRecordSelection],
   );
 
   return (
     <RecordTableCellStyleWrapper
       isSelected={isSelected}
+      isDragging={isDragging}
       hasRightBorder={false}
       widthClassName={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME}
     >

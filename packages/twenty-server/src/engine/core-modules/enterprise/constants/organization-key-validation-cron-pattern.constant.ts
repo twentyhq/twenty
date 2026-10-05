@@ -1,0 +1,1 @@
+export const ENTERPRISE_KEY_VALIDATION_CRON_PATTERN = '0 4 * * *';

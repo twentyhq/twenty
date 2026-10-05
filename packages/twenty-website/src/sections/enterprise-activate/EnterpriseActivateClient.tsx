@@ -144,7 +144,7 @@ export function EnterpriseActivateClient() {
         );
       case 'request-failed':
         return i18n._(
-          msg`Failed to activate enterprise key. Please try again.`,
+          msg`Failed to activate Organization key. Please try again.`,
         );
       case 'incomplete-response':
         return i18n._(msg`Activation response was incomplete.`);
@@ -160,7 +160,7 @@ export function EnterpriseActivateClient() {
     <ContentStack>
       {loading ? (
         <Body size="sm">
-          {i18n._(msg`Activating your enterprise license…`)}
+          {i18n._(msg`Activating your Organization license…`)}
         </Body>
       ) : null}
 
@@ -172,7 +172,7 @@ export function EnterpriseActivateClient() {
         <>
           <Body className={successLeadClassName} size="md" weight="medium">
             {i18n._(
-              msg`Your enterprise license has been activated successfully.`,
+              msg`Your Organization license has been activated successfully.`,
             )}
           </Body>
 
@@ -183,7 +183,7 @@ export function EnterpriseActivateClient() {
 
           <KeySection>
             <Heading as="h2" family="sans" size="xs" weight="medium">
-              {i18n._(msg`Your enterprise key`)}
+              {i18n._(msg`Your Organization key`)}
             </Heading>
             <Body size="sm">
               {i18n._(
@@ -217,13 +217,13 @@ export function EnterpriseActivateClient() {
             <NextStepsList>
               <li>
                 <Body size="sm">
-                  {i18n._(msg`Copy the enterprise key above.`)}
+                  {i18n._(msg`Copy the Organization key above.`)}
                 </Body>
               </li>
               <li>
                 <Body size="sm">
                   {i18n._(
-                    msg`Open your Twenty self-hosted instance Settings → Enterprise.`,
+                    msg`Open your Twenty self-hosted instance Settings → Admin Panel → Organization.`,
                   )}
                 </Body>
               </li>

@@ -1,16 +1,13 @@
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
-import { type ReactNode, useContext } from 'react';
+import { type ReactNode } from 'react';
 import {
   type AnimationControls,
   motion,
   type TargetAndTransition,
 } from 'framer-motion';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-
-const COLLAPSED_GROUP_WIDTH = 24;
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledAnimationGroupContainerBase = styled.div<{
   isCollapsedGroup: boolean;
@@ -42,16 +39,12 @@ export const NavigationDrawerItemsCollapsableContainer = ({
   isGroup = false,
   children,
 }: NavigationDrawerItemsCollapsableContainerProps) => {
-  const { theme } = useContext(ThemeContext);
-  const isSettingsPage = useIsSettingsPage();
-  const isNavigationDrawerExpanded = useAtomStateValue(
-    isNavigationDrawerExpandedState,
-  );
-  const isExpanded = isNavigationDrawerExpanded || isSettingsPage;
+  const theme = useTheme();
+  const isExpanded = useIsNavigationDrawerContentExpanded();
 
   const animate: AnimationControls | TargetAndTransition = isExpanded
     ? { width: 'auto' }
-    : { width: COLLAPSED_GROUP_WIDTH };
+    : { width: NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE };
 
   return (
     <StyledAnimationGroupContainer

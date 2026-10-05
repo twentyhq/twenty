@@ -2,6 +2,7 @@ export const BILLING_MODAL_IDS = {
   cancelSwitchBillingInterval: 'cancel-switch-billing-interval-modal',
   cancelSwitchBillingPlan: 'cancel-switch-billing-plan-modal',
   cancelSwitchMeteredPrice: 'cancel-switch-metered-price-modal',
+  confirmSubscriptionChange: 'confirm-subscription-change-modal',
   confirmResourceCreditPriceChange:
     'resource-credit-price-change-confirmation-modal',
   creditPackagePicker: 'resource-credit-package-picker-modal',

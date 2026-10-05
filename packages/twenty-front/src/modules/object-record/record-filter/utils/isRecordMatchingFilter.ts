@@ -51,6 +51,7 @@ import {
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
+import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
@@ -94,14 +95,128 @@ const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
 
+const UUID_FILTER_OPERATOR_KEYS = new Set<string>([
+  'eq',
+  'gt',
+  'gte',
+  'in',
+  'is',
+  'lt',
+  'lte',
+  'neq',
+]);
+
+// Either UUID operators on the related id, or nested field filters from view filters traversing a relation.
+const isNestedRelationFilter = (
+  filterValue: unknown,
+): filterValue is RecordGqlOperationFilter =>
+  isObject(filterValue) &&
+  Object.keys(filterValue).some((key) => !UUID_FILTER_OPERATOR_KEYS.has(key));
+
+// Records fetched through a relation often carry { list: { id } } without listId.
+const getJoinColumnValue = ({
+  record,
+  joinColumnName,
+}: {
+  record: Record<string, any>;
+  joinColumnName: string;
+}) => {
+  if (record[joinColumnName] !== undefined) {
+    return record[joinColumnName];
+  }
+
+  const relationRecord = record[joinColumnName.slice(0, -'Id'.length)];
+
+  return isObject(relationRecord)
+    ? (relationRecord.id ?? null)
+    : relationRecord;
+};
+
+const isRecordMatchingNestedRelationFilter = ({
+  relationRecord,
+  nestedFilter,
+  relationFieldMetadataItem,
+  objectMetadataItems,
+  isWithinNegatedFilter,
+}: {
+  relationRecord: unknown;
+  nestedFilter: RecordGqlOperationFilter;
+  relationFieldMetadataItem: Pick<FieldMetadataItem, 'relation'>;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  isWithinNegatedFilter: boolean;
+}): boolean => {
+  // Null fails the nested predicate (backend NOT EXISTS); unloaded returns the negation parity to stay excluded.
+  if (relationRecord === null) {
+    return false;
+  }
+
+  if (!isObject(relationRecord)) {
+    return isWithinNegatedFilter;
+  }
+
+  const relationTargetObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.id ===
+      relationFieldMetadataItem.relation?.targetObjectMetadata.id,
+  );
+
+  if (!isDefined(relationTargetObjectMetadataItem)) {
+    return isWithinNegatedFilter;
+  }
+
+  const isRecordMatchingNestedFilter = (record: unknown) =>
+    isRecordMatchingFilter({
+      record,
+      filter: nestedFilter,
+      objectMetadataItem: relationTargetObjectMetadataItem,
+      objectMetadataItems,
+      isWithinNegatedFilter,
+    });
+
+  // Matches when any loaded record does, like the backend EXISTS.
+  return getLoadedRelationRecords({
+    relationRecord,
+    relationTargetObjectNameSingular:
+      relationTargetObjectMetadataItem.nameSingular,
+  }).some(
+    (relatedRecord) =>
+      isObject(relatedRecord) && isRecordMatchingNestedFilter(relatedRecord),
+  );
+};
+
+// To-many values are an array (store) or a connection (GraphQL response).
+const getLoadedRelationRecords = ({
+  relationRecord,
+  relationTargetObjectNameSingular,
+}: {
+  relationRecord: object;
+  relationTargetObjectNameSingular: string;
+}): unknown[] => {
+  if (Array.isArray(relationRecord)) {
+    return relationRecord;
+  }
+
+  if (
+    isObjectRecordConnection(relationTargetObjectNameSingular, relationRecord)
+  ) {
+    return relationRecord.edges?.map((edge) => edge.node) ?? [];
+  }
+
+  return [relationRecord];
+};
+
 export const isRecordMatchingFilter = ({
   record,
   filter,
   objectMetadataItem,
+  objectMetadataItems,
+  isWithinNegatedFilter = false,
 }: {
   record: any;
   filter: RecordGqlOperationFilter;
   objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  isWithinNegatedFilter?: boolean;
 }): boolean => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
@@ -113,6 +228,8 @@ export const isRecordMatchingFilter = ({
         record,
         filter: { [filterKey]: value },
         objectMetadataItem,
+        objectMetadataItems,
+        isWithinNegatedFilter,
       }),
     );
   }
@@ -133,6 +250,8 @@ export const isRecordMatchingFilter = ({
           record,
           filter: andFilter,
           objectMetadataItem,
+          objectMetadataItems,
+          isWithinNegatedFilter,
         }),
       )
     );
@@ -149,6 +268,8 @@ export const isRecordMatchingFilter = ({
             record,
             filter: orFilter,
             objectMetadataItem,
+            objectMetadataItems,
+            isWithinNegatedFilter,
           }),
         )
       );
@@ -160,6 +281,8 @@ export const isRecordMatchingFilter = ({
         record,
         filter: filterValue,
         objectMetadataItem,
+        objectMetadataItems,
+        isWithinNegatedFilter,
       });
     }
 
@@ -179,6 +302,8 @@ export const isRecordMatchingFilter = ({
         record,
         filter: filterValue,
         objectMetadataItem,
+        objectMetadataItems,
+        isWithinNegatedFilter: !isWithinNegatedFilter,
       })
     );
   }
@@ -230,6 +355,7 @@ export const isRecordMatchingFilter = ({
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,
           value: record[filterKey],
+          options: objectMetadataField.options,
         });
       case FieldMetadataType.TEXT: {
         return isMatchingStringFilter({
@@ -247,6 +373,7 @@ export const isRecordMatchingFilter = ({
         return isMatchingSelectFilter({
           selectFilter: filterValue as SelectFilter,
           value: record[filterKey],
+          options: objectMetadataField.options,
         });
       case FieldMetadataType.MULTI_SELECT:
         return isMatchingMultiSelectFilter({
@@ -430,7 +557,20 @@ export const isRecordMatchingFilter = ({
         if (isJoinColumn) {
           return isMatchingUUIDFilter({
             uuidFilter: filterValue as UUIDFilter,
-            value: record[filterKey],
+            value: getJoinColumnValue({ record, joinColumnName: filterKey }),
+          });
+        }
+
+        if (
+          objectMetadataField.type === FieldMetadataType.RELATION &&
+          isNestedRelationFilter(filterValue)
+        ) {
+          return isRecordMatchingNestedRelationFilter({
+            relationRecord: record[filterKey],
+            nestedFilter: filterValue,
+            relationFieldMetadataItem: objectMetadataField,
+            objectMetadataItems,
+            isWithinNegatedFilter,
           });
         }
 

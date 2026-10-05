@@ -44,7 +44,9 @@ describe('Gmail folder discovery (integration)', () => {
     const folders = await queryMessageFolders(channel.channelId);
 
     expect(
-      Object.fromEntries(folders.map((folder) => [folder.name, folder.isSynced])),
+      Object.fromEntries(
+        folders.map((folder) => [folder.name, folder.isSynced]),
+      ),
     ).toEqual({
       INBOX: true,
       SENT: true,
@@ -64,7 +66,9 @@ describe('Gmail folder discovery (integration)', () => {
     const folders = await queryMessageFolders(channel.channelId);
 
     expect(
-      Object.fromEntries(folders.map((folder) => [folder.name, folder.isSynced])),
+      Object.fromEntries(
+        folders.map((folder) => [folder.name, folder.isSynced]),
+      ),
     ).toEqual({
       INBOX: true,
       SENT: true,

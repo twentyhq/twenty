@@ -86,25 +86,14 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'monthly',
-    description: msg`Find a certified Twenty partner to migrate, customise, and operate your open source CRM, or join the ecosystem and grow your practice with us.`,
+    description: msg`Tell us what you need and get matched with a certified Twenty partner in 48 hours, or browse the directory of agencies and consultants who migrate, customise, and operate the open source CRM.`,
     id: 'partners',
     indexed: true,
     path: '/partners',
     priority: 0.7,
-    title: msg`Twenty Partners — Certified Open Source CRM Implementers`,
+    title: msg`Find a Twenty Partner — Certified Open Source CRM Experts`,
   },
   {
-    changeFrequency: 'weekly',
-    description: msg`Browse Twenty's certified partners — the agencies and individuals who migrate, customise, host, and support the open source CRM across regions, languages, and deployment models.`,
-    id: 'partnersList',
-    indexed: true,
-    path: '/partners/list',
-    priority: 0.6,
-    title: msg`Find a Twenty Partner — Open Source CRM Marketplace`,
-  },
-  {
-    // The application form: noindex (a utility route, excluded from the
-    // sitemap by getIndexedWebsiteRoutes), reachable from the partner CTAs.
     changeFrequency: 'yearly',
     description: msg`Apply to join the Twenty partner ecosystem and grow your practice with the #1 open source CRM.`,
     id: 'partnersApply',
@@ -112,6 +101,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     path: '/partners/apply',
     priority: 0.3,
     title: msg`Become a Twenty Partner — Apply`,
+  },
+  {
+    changeFrequency: 'monthly',
+    description: msg`Join the Twenty partner ecosystem: implement, migrate, and support the #1 open source CRM, and grow your practice with the teams building it.`,
+    id: 'partnersBecome',
+    indexed: true,
+    path: '/partners/become',
+    priority: 0.6,
+    title: msg`Become a Twenty Partner — Join the Open Source CRM Ecosystem`,
   },
   {
     changeFrequency: 'yearly',
@@ -168,19 +166,17 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     title: msg`Terms of Service | Twenty`,
   },
   {
-    // Post-checkout license activation: noindex (a utility route reached only
-    // with a Stripe ?session_id=, excluded from the sitemap).
+    // Reached only with a Stripe ?session_id=.
     changeFrequency: 'yearly',
-    description: msg`Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance.`,
+    description: msg`Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance.`,
     id: 'enterpriseActivate',
     indexed: false,
-    path: '/enterprise/activate',
+    path: '/organization/activate',
     priority: 0.3,
-    title: msg`Enterprise Activation | Twenty`,
+    title: msg`Organization Activation | Twenty`,
   },
   {
-    // The interactive halftone generator: an internal dev tool, noindex and
-    // excluded from the sitemap (getIndexedWebsiteRoutes). Mounted client-only.
+    // Internal dev tool, mounted client-only.
     changeFrequency: 'monthly',
     description: msg`Interactive halftone generator exported from Twenty.`,
     id: 'halftone',

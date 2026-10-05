@@ -61,30 +61,6 @@ describe('MentionSuggestion', () => {
     expect(hasSuggestionPlugin).toBe(true);
   });
 
-  it('should insert mention content via editor commands', () => {
-    editor.commands.setContent('<p>Hello </p>');
-    editor.commands.focus('end');
-
-    editor
-      .chain()
-      .focus()
-      .insertContent({
-        type: 'mentionTag',
-        attrs: {
-          recordId: 'test-id',
-          objectNameSingular: 'company',
-          label: 'Acme',
-          imageUrl: '',
-        },
-      })
-      .insertContent(' ')
-      .run();
-
-    const text = editor.getText();
-
-    expect(text).toContain('[[record:company:test-id:Acme[[/record]]');
-  });
-
   it('should accept @ character in editor content', () => {
     editor.commands.setContent('<p></p>');
     editor.commands.focus();

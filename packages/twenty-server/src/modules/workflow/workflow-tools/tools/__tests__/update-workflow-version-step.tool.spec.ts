@@ -1,5 +1,7 @@
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
 
+const CORE_WORKFLOW_VERSION_ID = 'b3b8a4f0-0000-4000-8000-000000000000';
+
 const mockStep = {
   id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
   name: 'Send email',
@@ -8,31 +10,24 @@ const mockStep = {
   settings: { input: {} },
 };
 
-const buildTool = ({
-  validationResult = { valid: true, errors: [], warnings: [] },
-}: {
-  validationResult?: object;
-} = {}) => {
-  const workflowVersionStepService = {
-    updateWorkflowVersionStep: jest.fn().mockResolvedValue(mockStep),
-  };
-  const workflowValidationService = {
-    validateWorkflowVersion: jest.fn().mockResolvedValue(validationResult),
+const buildTool = () => {
+  const coreWorkflowVersionMutationService = {
+    updateStep: jest.fn().mockResolvedValue(mockStep),
   };
 
   const tool = createUpdateWorkflowVersionStepTool(
+    { coreWorkflowVersionMutationService } as never,
     {
-      workflowVersionStepService,
-      workflowValidationService,
-    } as never,
-    { workspaceId: 'workspace-id' },
+      workspaceId: 'workspace-id',
+      rolePermissionConfig: { shouldBypassPermissionChecks: true },
+    },
   );
 
-  return { tool, workflowVersionStepService, workflowValidationService };
+  return { tool, coreWorkflowVersionMutationService };
 };
 
 const baseInput = {
-  workflowVersionId: 'b3b8a4f0-0000-4000-8000-000000000000',
+  coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
   step: mockStep,
 } as unknown as Parameters<
   ReturnType<typeof createUpdateWorkflowVersionStepTool>['execute']
@@ -43,63 +38,29 @@ describe('createUpdateWorkflowVersionStepTool', () => {
     jest.clearAllMocks();
   });
 
-  it('should validate by default and return a compact summary', async () => {
-    const { tool, workflowValidationService } = buildTool({
-      validationResult: {
-        valid: false,
-        errors: [
-          {
-            severity: 'error',
-            code: 'DANGLING_REFERENCE',
-            message: 'Unknown variable',
-            availablePaths: ['{{trigger.x}}'],
-          },
-        ],
-        warnings: [{ severity: 'warning', code: 'NO_STEPS', message: 'w' }],
-      },
+  it('updates the step on the core version and returns the result', async () => {
+    const { tool, coreWorkflowVersionMutationService } = buildTool();
+
+    const result = await tool.execute(baseInput);
+
+    expect(coreWorkflowVersionMutationService.updateStep).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
+      step: mockStep,
     });
-
-    const result = (await tool.execute(baseInput)) as Record<string, unknown>;
-
-    expect(
-      workflowValidationService.validateWorkflowVersion,
-    ).toHaveBeenCalled();
-
-    const validation = result.validation as Record<string, unknown>;
-
-    expect(validation.valid).toBe(false);
-    expect(validation.errorCount).toBe(1);
-    expect(validation.warningCount).toBe(1);
-    expect(validation).not.toHaveProperty('warnings');
-    expect((validation.errors as object[])[0]).not.toHaveProperty(
-      'availablePaths',
-    );
+    expect(result).toEqual(mockStep);
   });
 
-  it('should skip validation entirely when validate is false', async () => {
-    const { tool, workflowValidationService } = buildTool();
+  it('returns a failure when the update throws', async () => {
+    const { tool, coreWorkflowVersionMutationService } = buildTool();
 
-    const result = (await tool.execute({
-      ...baseInput,
-      validate: false,
-    })) as Record<string, unknown>;
-
-    expect(
-      workflowValidationService.validateWorkflowVersion,
-    ).not.toHaveBeenCalled();
-    expect(result).not.toHaveProperty('validation');
-  });
-
-  it('should still return the step result when validation throws', async () => {
-    const { tool, workflowValidationService } = buildTool();
-
-    workflowValidationService.validateWorkflowVersion.mockRejectedValue(
+    coreWorkflowVersionMutationService.updateStep.mockRejectedValue(
       new Error('boom'),
     );
 
     const result = (await tool.execute(baseInput)) as Record<string, unknown>;
 
-    expect(result.validationError).toBe('boom');
-    expect(result).not.toHaveProperty('validation');
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('boom');
   });
 });

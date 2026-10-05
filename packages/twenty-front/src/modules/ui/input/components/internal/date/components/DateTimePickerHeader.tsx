@@ -8,32 +8,24 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { Select } from '@/ui/input/components/Select';
 import { DateTimePickerInput } from '@/ui/input/components/internal/date/components/DateTimePickerInput';
 import { useTimeInput } from '@/ui/input/components/internal/date/hooks/useTimeInput';
+import { getDatePickerDropdownIds } from '@/ui/input/components/internal/date/utils/getDatePickerDropdownIds';
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
 import { getTimeBlocks } from '@/ui/input/components/internal/date/utils/getTimeBlocks';
 import { getTimeMask } from '@/ui/input/components/internal/date/utils/getTimeMask';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import {
   IconCalendar,
   IconChevronLeft,
   IconChevronRight,
   IconClock,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-import {
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from './DateTimePicker';
-
-export const DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID =
-  'date-time-picker-month-year-panel';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const YEARS_SELECT_OPTIONS = Array.from(
   { length: 200 },
@@ -129,6 +121,7 @@ const StyledMonthYearSelector = styled.div`
 `;
 
 type DateTimePickerHeaderProps = {
+  instanceId: string;
   date: Temporal.ZonedDateTime | null;
   onChange?: (date: Temporal.ZonedDateTime | null) => void;
   onAddMonth: () => void;
@@ -141,6 +134,7 @@ type DateTimePickerHeaderProps = {
 };
 
 export const DateTimePickerHeader = ({
+  instanceId,
   date,
   onChange,
   onAddMonth,
@@ -157,13 +151,11 @@ export const DateTimePickerHeader = ({
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
-  const { closeDropdown: closeMonthSelect } = useCloseDropdown();
-  const { closeDropdown: closeYearSelect } = useCloseDropdown();
-
-  const closeInnerDropdowns = () => {
-    closeMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-    closeYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-  };
+  const {
+    monthSelectDropdownId,
+    yearSelectDropdownId,
+    monthYearPanelDropdownId,
+  } = getDatePickerDropdownIds(instanceId);
 
   const { ref: iMaskRef, setValue } = useIMask(
     {
@@ -221,70 +213,60 @@ export const DateTimePickerHeader = ({
           </StyledTimeInputContainer>
         </StyledTimeInputWrapper>
         <StyledRightControls>
-          <Dropdown
-            dropdownId={DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID}
-            clickableComponent={
-              <LightIconButton
-                Icon={IconCalendar}
-                size="medium"
-                aria-label={t`Select month and year`}
-              />
-            }
-            dropdownPlacement="bottom-start"
-            dropdownOffset={{ y: 8 }}
-            onClose={closeInnerDropdowns}
-            excludedClickOutsideIds={[
-              MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-              MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-            ]}
-            dropdownComponents={
+          <DropdownRoot dropdownId={monthYearPanelDropdownId} type="panel">
+            <Dropdown.Trigger
+              render={
+                <LightIconButton
+                  size="md"
+                  aria-label={t`Select month and year`}
+                >
+                  <IconCalendar />
+                </LightIconButton>
+              }
+            />
+            <DropdownContent
+              align="start"
+              sideOffset={8}
+              width={170}
+              initialFocus={false}
+            >
               <StyledMonthYearSelector>
-                <ClickOutsideListenerContext.Provider
-                  value={{
-                    excludedClickOutsideId:
-                      MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-                  }}
-                >
-                  <Select
-                    dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
-                    options={getMonthSelectOptions(userLocale)}
-                    onChange={onChangeMonth}
-                    value={date?.month}
-                    fullWidth={false}
-                    dropdownWidth={160}
-                  />
-                </ClickOutsideListenerContext.Provider>
-                <ClickOutsideListenerContext.Provider
-                  value={{
-                    excludedClickOutsideId:
-                      MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-                  }}
-                >
-                  <Select
-                    dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
-                    onChange={onChangeYear}
-                    value={date?.year}
-                    options={YEARS_SELECT_OPTIONS}
-                    fullWidth={false}
-                    dropdownWidth={160}
-                  />
-                </ClickOutsideListenerContext.Provider>
+                <Select
+                  dropdownId={monthSelectDropdownId}
+                  options={getMonthSelectOptions(userLocale)}
+                  onChange={onChangeMonth}
+                  value={date?.month}
+                  fullWidth={false}
+                  dropdownWidth={160}
+                />
+                <Select
+                  dropdownId={yearSelectDropdownId}
+                  onChange={onChangeYear}
+                  value={date?.year}
+                  options={YEARS_SELECT_OPTIONS}
+                  fullWidth={false}
+                  dropdownWidth={160}
+                />
               </StyledMonthYearSelector>
-            }
-          />
+            </DropdownContent>
+          </DropdownRoot>
           <StyledNavigationButtons>
             <LightIconButton
-              Icon={IconChevronLeft}
               onClick={onSubtractMonth}
-              size="medium"
+              size="md"
               disabled={prevMonthButtonDisabled}
-            />
+              aria-label={t`Previous`}
+            >
+              <IconChevronLeft />
+            </LightIconButton>
             <LightIconButton
-              Icon={IconChevronRight}
               onClick={onAddMonth}
-              size="medium"
+              size="md"
               disabled={nextMonthButtonDisabled}
-            />
+              aria-label={t`Next`}
+            >
+              <IconChevronRight />
+            </LightIconButton>
           </StyledNavigationButtons>
         </StyledRightControls>
       </StyledTimeRow>

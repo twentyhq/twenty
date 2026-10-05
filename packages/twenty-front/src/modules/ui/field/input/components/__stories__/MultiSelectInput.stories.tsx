@@ -16,7 +16,7 @@ import {
   IconTag,
   IconTarget,
 } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 type RenderProps = {
@@ -170,9 +170,9 @@ export const WithPreselectedValues: Story = {
     });
 
     await waitFor(() => {
-      const checkboxes = canvas.getAllByRole('checkbox', { checked: true });
+      const selectedOptions = canvas.getAllByRole('option', { selected: true });
 
-      expect(checkboxes).toHaveLength(2);
+      expect(selectedOptions).toHaveLength(2);
     });
 
     for (const option of sampleOptions) {
@@ -194,9 +194,9 @@ export const SingleSelection: Story = {
     });
 
     await waitFor(() => {
-      const checkboxes = canvas.getAllByRole('checkbox', { checked: true });
+      const selectedOptions = canvas.getAllByRole('option', { selected: true });
 
-      expect(checkboxes).toHaveLength(1);
+      expect(selectedOptions).toHaveLength(1);
     });
 
     for (const option of sampleOptions) {
@@ -206,9 +206,11 @@ export const SingleSelection: Story = {
     await userEvent.click(canvas.getByText('Professional Network'));
 
     await waitFor(() => {
-      const checkboxes = canvas.queryAllByRole('checkbox', { checked: true });
+      const selectedOptions = canvas.queryAllByRole('option', {
+        selected: true,
+      });
 
-      expect(checkboxes).toHaveLength(0);
+      expect(selectedOptions).toHaveLength(0);
     });
 
     await userEvent.unhover(canvas.getByText('Professional Network'));
@@ -292,7 +294,7 @@ export const SearchFiltering: Story = {
     });
 
     expect(canvas.queryByText('Social Media')).not.toBeInTheDocument();
-    expect(canvas.getAllByRole('checkbox')).toHaveLength(2);
+    expect(canvas.getAllByRole('option')).toHaveLength(2);
   },
 };
 

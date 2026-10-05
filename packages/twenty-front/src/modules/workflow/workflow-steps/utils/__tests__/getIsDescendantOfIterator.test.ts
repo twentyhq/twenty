@@ -14,7 +14,7 @@ describe('getIsDescendantOfIterator', () => {
       },
       outputSchema: {},
       errorHandlingOptions: {
-        retryOnFailure: { value: true },
+        retryOnFailure: { value: 3 },
         continueOnFailure: { value: true },
       },
     },
@@ -33,7 +33,7 @@ describe('getIsDescendantOfIterator', () => {
       },
       outputSchema: {},
       errorHandlingOptions: {
-        retryOnFailure: { value: true },
+        retryOnFailure: { value: 3 },
         continueOnFailure: { value: true },
       },
     },
@@ -52,7 +52,7 @@ describe('getIsDescendantOfIterator', () => {
       },
       outputSchema: {},
       errorHandlingOptions: {
-        retryOnFailure: { value: true },
+        retryOnFailure: { value: 3 },
         continueOnFailure: { value: true },
       },
     },
@@ -92,7 +92,7 @@ describe('getIsDescendantOfIterator', () => {
         },
         outputSchema: {},
         errorHandlingOptions: {
-          retryOnFailure: { value: true },
+          retryOnFailure: { value: 3 },
           continueOnFailure: { value: true },
         },
       },

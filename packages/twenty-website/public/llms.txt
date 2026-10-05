@@ -6,6 +6,12 @@ Every endpoint is workspace-scoped: replace `{your-workspace-url}` with your wor
 
 Twenty is multi-tenant, so there is no single global API host: each workspace has its own base URL, and the REST OpenAPI is generated per workspace, so it includes any custom objects and fields you have created. Prefer the MCP server for agents — it exposes typed tools with header-based auth and discovers your workspace's tools at runtime, so it does not depend on the per-workspace OpenAPI document.
 
+## Signing up
+
+Agent-driven signup is allowed: an agent acting openly for an identified person or organization may create an account, create a workspace, and complete onboarding for them, per section 10 of the [Terms of Service](https://twenty.com/terms). The account holder stays responsible for what the agent does under the account. Creating accounts in bulk, working around usage limits, and collecting data you are not entitled to are not allowed.
+
+Signup runs through the web app at `https://app.twenty.com`: account creation is CAPTCHA-protected, so a browser-driving agent completes it the way a person would, including email verification. Once the workspace exists, the MCP server is the easier path for most agents, and connecting over OAuth or an API key keeps the account password out of the loop. Continuing to drive the app in a browser is allowed too.
+
 ## Connect an AI assistant
 
 - [MCP server guide](https://docs.twenty.com/user-guide/ai/capabilities/mcp): connect Claude, Cursor, ChatGPT and others.

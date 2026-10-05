@@ -14,7 +14,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useContext, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 
 export const SelectFieldInput = () => {
   const { fieldDefinition, fieldValue } = useSelectField();
@@ -49,7 +49,6 @@ export const SelectFieldInput = () => {
   const selectedOption = selectOptions.find(
     (option) => option.value === fieldValue,
   );
-  // handlers
   const handleClearField = () => {
     clearField();
     onCancel?.();

@@ -4,19 +4,22 @@ import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   type EnumFieldMetadataType,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
   type FieldMetadataOptions,
   type NonNullableRequired,
 } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  isDefined,
+  isFieldMetadataSelectKind,
+} from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
+import { validateMetadataOptionColor } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { IDENTIFIER_MIN_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-min-char-length.constants';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -226,6 +229,18 @@ const validateFieldMetadataInputOptions = (
   return [...optionsValidationErrors, ...duplicatedValidationErrors];
 };
 
+const validateSelectOptionColors = (
+  universalFlatFieldMetadata: UniversalFlatFieldMetadata<EnumFieldMetadataType>,
+): FlatFieldMetadataValidationError[] => {
+  if (!isFieldMetadataSelectKind(universalFlatFieldMetadata.type)) {
+    return [];
+  }
+
+  return (universalFlatFieldMetadata.options ?? []).flatMap((option) =>
+    validateMetadataOptionColor(option),
+  );
+};
+
 const validateSelectDefaultValue = ({
   defaultValue,
   options,
@@ -355,10 +370,18 @@ const validateFieldMetadataDefaultValue = ({
 
 export const validateEnumSelectFlatFieldMetadata = ({
   flatEntityToValidate: universalFlatFieldMetadataToValidate,
+  update,
 }: FlatFieldMetadataTypeValidationArgs<EnumFieldMetadataType>): FlatFieldMetadataValidationError[] => {
   const optionsValidationErrors = validateFieldMetadataInputOptions(
     universalFlatFieldMetadataToValidate,
   );
+
+  const shouldValidateOptionColors =
+    !isDefined(update) || isDefined(update.options);
+
+  const optionColorValidationErrors = shouldValidateOptionColors
+    ? validateSelectOptionColors(universalFlatFieldMetadataToValidate)
+    : [];
 
   const defaultValueValidationErrors = isDefined(
     universalFlatFieldMetadataToValidate.defaultValue,
@@ -369,5 +392,9 @@ export const validateEnumSelectFlatFieldMetadata = ({
       })
     : [];
 
-  return [...optionsValidationErrors, ...defaultValueValidationErrors];
+  return [
+    ...optionsValidationErrors,
+    ...optionColorValidationErrors,
+    ...defaultValueValidationErrors,
+  ];
 };

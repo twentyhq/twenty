@@ -1,9 +1,3 @@
-/**
- * Composite key are structured as follows:
- * COMPOSITE___{parentFieldName}_{childFieldName}
- * This util are here to pre-process and post-process the composite keys before and after querying the database
- */
-
 export const compositeFieldPrefix = 'COMPOSITE___';
 
 export const createCompositeFieldKey = (

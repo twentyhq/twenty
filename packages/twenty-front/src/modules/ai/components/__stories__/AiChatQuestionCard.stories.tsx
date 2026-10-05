@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
 import { type ReactNode, useEffect } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
@@ -10,8 +11,9 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 
 import { styled } from '@linaria/react';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const StyledContainer = styled.div`
   max-width: 400px;
@@ -20,45 +22,42 @@ const StyledContainer = styled.div`
 
 const INSTANCE_ID = 'agentChatQuestionCardStory';
 
-const singleQuestion: AgentChatPendingQuestion = {
-  messageId: 'assistant-1',
-  toolCallId: 'call-1',
-  questions: [
+const EMAIL_TYPE_QUESTION = {
+  header: 'Email type',
+  question: 'What type of emails would you like to send?',
+  options: [
     {
-      header: 'Email type',
-      question: 'What type of emails would you like to send?',
-      options: [
-        {
-          label: 'A welcome email',
-          description: 'A short, friendly note to introduce yourself.',
-          isRecommended: true,
-        },
-        { label: 'A presentation of Twenty' },
-        { label: 'An offer for a potential partnership' },
-      ],
+      label: 'A welcome email',
+      description: 'A short, friendly note to introduce yourself.',
+      isRecommended: true,
     },
+    { label: 'A presentation of Twenty' },
+    { label: 'An offer for a potential partnership' },
   ],
 };
 
+const singleQuestion: AgentChatPendingQuestion = {
+  toolCallId: 'call-1',
+  kind: 'question',
+  question: EMAIL_TYPE_QUESTION,
+};
+
+const TONE_QUESTION = {
+  header: 'Tone',
+  question: 'Which tone should the email use?',
+  options: [{ label: 'Friendly', isRecommended: true }, { label: 'Formal' }],
+};
+
+// calls asked before ask_question took one question at a time
 const multipleQuestions: AgentChatPendingQuestion = {
-  messageId: 'assistant-1',
   toolCallId: 'call-2',
-  questions: [
-    singleQuestion.questions[0],
-    {
-      header: 'Tone',
-      question: 'Which tone should the email use?',
-      options: [
-        { label: 'Friendly', isRecommended: true },
-        { label: 'Formal' },
-      ],
-    },
-  ],
+  kind: 'questions',
+  questions: [EMAIL_TYPE_QUESTION, TONE_QUESTION],
 };
 
 const longQuestion: AgentChatPendingQuestion = {
-  messageId: 'assistant-1',
   toolCallId: 'call-3',
+  kind: 'questions',
   questions: [
     {
       header: 'Improvement',
@@ -71,8 +70,23 @@ const longQuestion: AgentChatPendingQuestion = {
         { label: 'Fewer steps' },
       ],
     },
-    multipleQuestions.questions[1],
+    TONE_QUESTION,
   ],
+};
+
+const multiSelectQuestion: AgentChatPendingQuestion = {
+  toolCallId: 'call-4',
+  kind: 'question',
+  question: {
+    header: 'Channels',
+    question: 'Which channels should the outreach campaign use?',
+    allowMultiSelect: true,
+    options: [
+      { label: 'Email', isRecommended: true },
+      { label: 'LinkedIn' },
+      { label: 'Phone' },
+    ],
+  },
 };
 
 const StoreSeeder = ({ children }: { children: ReactNode }) => {
@@ -101,8 +115,9 @@ const meta: Meta<typeof AiChatQuestionCard> = {
         </StoreSeeder>
       </AgentChatComponentInstanceContext.Provider>
     ),
-    SnackBarDecorator,
+    ToastDecorator,
     ComponentDecorator,
+    MemoryRouterDecorator,
     RootDecorator,
   ],
 };
@@ -121,4 +136,31 @@ export const MultipleQuestions: Story = {
 
 export const LongQuestion: Story = {
   args: { pendingQuestion: longQuestion },
+};
+
+export const MultiSelectQuestion: Story = {
+  args: { pendingQuestion: multiSelectQuestion },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const emailOption = await canvas.findByRole('button', { name: /Email/ });
+    await userEvent.click(emailOption);
+
+    const otherOption = await canvas.findByRole('button', { name: 'Other' });
+    expect(otherOption).toHaveAttribute('aria-pressed', 'false');
+
+    const otherTextArea = canvas.getByPlaceholderText(
+      'Type your own answer here',
+    );
+    otherTextArea.focus();
+    await userEvent.type(otherTextArea, 'Carrier pigeon', { skipClick: true });
+    expect(otherOption).toHaveAttribute('aria-pressed', 'true');
+
+    await userEvent.click(otherOption);
+    expect(otherOption).toHaveAttribute('aria-pressed', 'false');
+    expect(otherTextArea).toHaveValue('Carrier pigeon');
+
+    await userEvent.click(otherOption);
+    expect(otherOption).toHaveAttribute('aria-pressed', 'true');
+  },
 };

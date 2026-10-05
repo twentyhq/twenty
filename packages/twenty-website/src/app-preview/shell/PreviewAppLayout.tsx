@@ -3,7 +3,6 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
-import { mediaUp } from '@/tokens';
 import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { renderPage } from '../pages/RenderPage';
@@ -29,36 +28,14 @@ const AppLayout = styled.div`
   z-index: 1;
 `;
 
-const RightPane = styled.div`
+// The product's page card: flush against the drawer, separated from it by
+// the drawer's rule and the card's leftward shadow only. The morph squeezes
+// the named workflow's canvas into the compact frame.
+const PageCard = styled.div`
+  background: ${THEME_LIGHT.background.primary};
+  box-shadow: ${THEME_LIGHT.boxShadow.sidebar};
   display: flex;
   flex: 1 1 0;
-  flex-direction: column;
-  min-height: 0;
-  min-width: 0;
-  padding-bottom: 12px;
-  padding-left: 0;
-  padding-right: 8px;
-  padding-top: 12px;
-  row-gap: 12px;
-
-  ${mediaUp('md')} {
-    padding-right: 12px;
-  }
-`;
-
-const ContentRow = styled.div`
-  display: flex;
-  flex: 1 1 auto;
-  min-height: 0;
-`;
-
-// The morph squeezes the named workflow's canvas into the compact frame.
-const IndexSurface = styled.div`
-  background: ${THEME_LIGHT.background.primary};
-  border: 1px solid ${THEME_LIGHT.border.color.medium};
-  border-radius: ${THEME_LIGHT.border.radius.md};
-  display: flex;
-  flex: 1 1 auto;
   flex-direction: column;
   min-height: 0;
   min-width: 0;
@@ -71,12 +48,12 @@ const IndexSurface = styled.div`
   }
 `;
 
-// The Ask-AI aside reveals through one CSS custom property the scroll
-// choreography writes (no per-frame React work); static mounts inherit
-// the fully-open default.
+// The Ask-AI aside floats in its own gutter beside the card, and reveals
+// through one CSS custom property the scroll choreography writes (no
+// per-frame React work); static mounts inherit the fully-open default.
 const AsideSlot = styled.div`
   flex: 0 0 auto;
-  margin-left: calc(var(--ai-panel-progress, 1) * 8px);
+  margin: 12px 12px 12px calc(var(--ai-panel-progress, 1) * 8px);
   overflow: hidden;
   width: calc(var(--ai-panel-progress, 1) * 280px);
 `;
@@ -149,33 +126,25 @@ export function PreviewAppLayout({
         selectedItemId={activeItemId}
         workspace={workspaceEntries}
       />
-      <RightPane>
+      <PageCard data-compact-workflow={compactWorkflowPage ? '' : undefined}>
         <PreviewNavbar
           activeItem={activeItem}
           activeItemLabel={navbarLabel}
           navbarActions={navbarActions}
           revealedObjectIds={revealedObjectIds}
         />
-        <ContentRow>
-          <IndexSurface
-            data-compact-workflow={compactWorkflowPage ? '' : undefined}
-          >
-            {showViewbar ? (
-              <PreviewViewbar
-                actions={page.header.actions ?? []}
-                count={page.header.count}
-                pageType={page.type}
-                showListIcon={page.header.showListIcon ?? false}
-                title={page.header.title}
-              />
-            ) : null}
-            {renderPage(page)}
-          </IndexSurface>
-          {rightAside !== undefined ? (
-            <AsideSlot>{rightAside}</AsideSlot>
-          ) : null}
-        </ContentRow>
-      </RightPane>
+        {showViewbar ? (
+          <PreviewViewbar
+            actions={page.header.actions ?? []}
+            count={page.header.count}
+            pageType={page.type}
+            showListIcon={page.header.showListIcon ?? false}
+            title={page.header.title}
+          />
+        ) : null}
+        {renderPage(page)}
+      </PageCard>
+      {rightAside !== undefined ? <AsideSlot>{rightAside}</AsideSlot> : null}
     </AppLayout>
   );
 }

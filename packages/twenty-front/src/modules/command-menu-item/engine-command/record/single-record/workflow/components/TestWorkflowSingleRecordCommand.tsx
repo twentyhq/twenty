@@ -29,11 +29,11 @@ export const TestWorkflowSingleRecordCommand = () => {
 
     const { currentVersion } = workflowWithCurrentVersion;
 
-    if (!isDefined(content?.trigger)) {
+    if (!isDefined(content) || !isDefined(content.trigger)) {
       return;
     }
 
-    runWorkflowVersion({
+    return runWorkflowVersion({
       workflowVersionId: currentVersion.id,
       workflowId: workflowWithCurrentVersion.id,
       payload: getTestPayloadFromTrigger(content.trigger),

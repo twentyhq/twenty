@@ -62,6 +62,9 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "fieldPermission",
   "view",
   "searchFieldMetadata",
+  "pageLayout",
+  "commandMenuItem",
+  "navigationMenuItem",
 ]
 `;
 
@@ -76,6 +79,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 [
   "objectMetadata",
   "pageLayoutTab",
+  "navigationMenuItem",
 ]
 `;
 
@@ -149,7 +153,22 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for settingsMenuItem 1`] = `
+[
+  "frontComponent",
+]
+`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for skill 1`] = `[]`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for timelineActivityType 1`] = `[]`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for validationRule 1`] = `
+[
+  "objectMetadata",
+  "fieldMetadata",
+]
+`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for view 1`] = `
 [
@@ -161,6 +180,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "viewGroup",
   "viewFieldGroup",
   "viewSort",
+  "navigationMenuItem",
 ]
 `;
 
@@ -209,3 +229,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 `;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for webhook 1`] = `[]`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for workflow 1`] = `[]`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for workflowVersion 1`] = `[]`;

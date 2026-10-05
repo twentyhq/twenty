@@ -35,40 +35,6 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
     ]);
   });
 
-  // describe('Gql create input - failure', () => {
-  //   it.each(
-  //     failingTestCases.map((testCase) => ({
-  //       ...testCase,
-  //       stringifiedInput: JSON.stringify(testCase.input),
-  //     })),
-  //   )(
-  //     `${FIELD_METADATA_TYPE} - should fail with : $stringifiedInput`,
-  //     async ({ input }) => {
-  //       await expectGqlCreateInputValidationError(
-  //         objectMetadataSingularName,
-  //         input,
-  //       );
-  //     },
-  //   );
-  // });
-
-  // describe('Rest create input - failure', () => {
-  //   it.each(
-  //     failingTestCases.map((testCase) => ({
-  //       ...testCase,
-  //       stringifiedInput: JSON.stringify(testCase.input),
-  //     })),
-  //   )(
-  //     `${FIELD_METADATA_TYPE} - should fail with : $stringifiedInput`,
-  //     async ({ input }) => {
-  //       await expectRestCreateInputValidationError(
-  //         objectMetadataPluralName,
-  //         input,
-  //       );
-  //     },
-  //   );
-  // });
-
   describe('Gql create input - success', () => {
     it.each(
       successfulTestCases.map((testCase) => ({

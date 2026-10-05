@@ -1,13 +1,13 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { Trans } from '@lingui/react/macro';
-import { ClickToActionLink } from 'twenty-ui/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 
 export const WorkspaceSelectionFooter = () => {
   const { signOut } = useAuth();
 
   return (
-    <ClickToActionLink onClick={signOut}>
+    <Button variant="link" onClick={signOut}>
       <Trans>Log out</Trans>
-    </ClickToActionLink>
+    </Button>
   );
 };

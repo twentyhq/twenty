@@ -67,10 +67,13 @@ const generateCommonPropertiesType = (
   });
 };
 
-const generateCommonEventsType = (
-  sourceFile: SourceFile,
-  events: readonly string[],
-): void => {
+const generateCommonEventsType = ({
+  sourceFile,
+  events,
+}: {
+  sourceFile: SourceFile;
+  events: readonly string[];
+}): void => {
   if (events.length === 0) {
     return;
   }
@@ -122,12 +125,14 @@ const generateCommonEventsType = (
               'dispatchEvent(this: Element, eventData: SerializedEventData) {',
             );
             writer.indent(() => {
-              writer.writeLine('applySerializedEventTargetProperties(');
+              writer.writeLine('applySerializedEventTargetProperties({');
               writer.indent(() => {
-                writer.writeLine('this as unknown as Record<string, unknown>,');
+                writer.writeLine(
+                  'element: this as unknown as Record<string, unknown>,',
+                );
                 writer.writeLine('eventData,');
               });
-              writer.writeLine(');');
+              writer.writeLine('});');
               writer.blankLine();
               writer.writeLine('const event = new CustomEvent(eventType, {');
               writer.indent(() => {
@@ -411,12 +416,13 @@ export const generateRemoteElements = (
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '@/constants/applySerializedEventProperties',
+    moduleSpecifier: '@/remote/elements/utils/applySerializedEventProperties',
     namedImports: ['applySerializedEventProperties'],
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '@/constants/applySerializedEventTargetProperties',
+    moduleSpecifier:
+      '@/remote/elements/utils/applySerializedEventTargetProperties',
     namedImports: ['applySerializedEventTargetProperties'],
   });
 
@@ -430,7 +436,7 @@ export const generateRemoteElements = (
   generateCommonPropertiesType(sourceFile, commonProperties);
 
   if (commonEventNames.size > 0) {
-    generateCommonEventsType(sourceFile, commonEvents);
+    generateCommonEventsType({ sourceFile, events: commonEvents });
   }
 
   if (shouldUseCommonHtmlPropertiesConfig) {

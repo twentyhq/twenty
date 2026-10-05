@@ -15,7 +15,7 @@ describe('getNavigationMenuItemBaseFile', () => {
       "universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4'",
     );
     expect(result).toContain("name: 'my-nav-item'");
-    expect(result).toContain("icon: 'IconList'");
+    expect(result).toContain("icon: 'IconCompass'");
     expect(result).toContain('position: 0');
   });
 

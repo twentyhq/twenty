@@ -1,21 +1,31 @@
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphColorScheme';
 import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
 import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 export const getColorScheme = ({
   registry,
   colorName,
-  fallbackIndex,
-  totalGroups,
+  colorKey,
+  colorMode,
+  alphabeticalRankByKey,
 }: {
   registry: GraphColorRegistry;
   colorName?: GraphColor;
-  fallbackIndex?: number;
-  totalGroups?: number;
+  colorKey: string;
+  colorMode: GraphColorMode;
+  alphabeticalRankByKey: ReadonlyMap<string, number>;
 }): GraphColorScheme => {
+  const alphabeticalRank = alphabeticalRankByKey.get(colorKey);
+
+  assertIsDefinedOrThrow(
+    alphabeticalRank,
+    new Error(`Missing alphabetical rank for color key "${colorKey}"`),
+  );
+
   const normalizedColorName = isDefined(colorName)
     ? (colorName.toLowerCase() as GraphColor)
     : undefined;
@@ -24,10 +34,10 @@ export const getColorScheme = ({
     !isDefined(normalizedColorName) ||
     !isDefined(registry[normalizedColorName])
   ) {
-    return getColorSchemeByIndex(registry, fallbackIndex ?? 0);
+    return getColorSchemeByIndex(registry, alphabeticalRank);
   }
 
-  if (!isDefined(totalGroups)) {
+  if (colorMode !== 'explicitSingleColor') {
     return registry[normalizedColorName];
   }
 
@@ -35,8 +45,8 @@ export const getColorScheme = ({
     ...registry[normalizedColorName],
     solid: generateGroupColor({
       colorScheme: registry[normalizedColorName],
-      groupIndex: fallbackIndex ?? 0,
-      totalGroups,
+      groupIndex: alphabeticalRank,
+      totalGroups: alphabeticalRankByKey.size,
     }),
   };
 };

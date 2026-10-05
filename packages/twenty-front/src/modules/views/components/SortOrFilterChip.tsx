@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { useContext, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
@@ -62,6 +62,7 @@ const StyledDelete = styled.button<{ variant: SortOrFilterChipVariant }>`
   border: none;
   box-sizing: border-box;
   color: inherit;
+  corner-shape: round;
   cursor: pointer;
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
@@ -82,7 +83,7 @@ const StyledDelete = styled.button<{ variant: SortOrFilterChipVariant }>`
           return themeCssVariables.accent.secondary;
       }
     }};
-    border-radius: ${themeCssVariables.border.radius.sm};
+    border-radius: ${themeCssVariables.border.radius.smRound};
   }
 `;
 
@@ -139,7 +140,7 @@ export const SortOrFilterChip = ({
   onClick,
   type,
 }: SortOrFilterChipProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();

@@ -1,3 +1,4 @@
+import { type SearchResultItem } from '@/side-panel/pages/search/types/SearchResultItem';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
@@ -7,21 +8,6 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
-
-export type SearchResultItem = {
-  id: string;
-  label: string;
-  objectNameSingular: string;
-  recordId: string;
-  imageUrl?: string | null;
-  objectLabel: string;
-  avatarType: 'squared' | 'rounded';
-};
-
-export type SearchResultGroup = {
-  heading: string;
-  items: SearchResultItem[];
-};
 
 export const useSidePanelSearchRecords = () => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
@@ -36,9 +22,12 @@ export const useSidePanelSearchRecords = () => {
     selectedObjectNameSingular: sidePanelSearchObjectFilter,
   });
 
-  const { loading, searchRecords } = useObjectRecordSearchRecords({
+  const hasNoSearchableObject = includedObjectNameSingulars.length === 0;
+
+  const { loading, searchRecords, error } = useObjectRecordSearchRecords({
     objectNameSingulars: includedObjectNameSingulars,
     searchInput: deferredSidePanelSearch,
+    skip: hasNoSearchableObject,
   });
 
   const searchResultItems: SearchResultItem[] = useMemo(() => {
@@ -52,14 +41,15 @@ export const useSidePanelSearchRecords = () => {
         readableObjectMetadataItems.find(
           (item) => item.nameSingular === searchRecord.objectNameSingular,
         )?.labelSingular ?? searchRecord.objectNameSingular,
-      avatarType:
+      avatarShape:
         searchRecord.objectNameSingular === CoreObjectNameSingular.Company
-          ? ('squared' as const)
-          : ('rounded' as const),
+          ? ('square' as const)
+          : ('circle' as const),
     }));
   }, [searchRecords, readableObjectMetadataItems]);
 
   return {
+    error,
     loading,
     noResults: !searchResultItems.length,
     searchResultItems,

@@ -42,9 +42,7 @@ export const useFormatPreferences = () => {
         return;
       }
 
-      // Handle system values by detecting the actual format
       let resolvedValue = value;
-      // This is dirty and will need to be unified
       if (
         value === 'SYSTEM' ||
         value === 'system' ||

@@ -1,12 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { findCallRecordingFieldStatesOrThrow } from 'src/logic-functions/data/find-call-recording-field-states-or-throw.util';
 import { type FirefliesWebhookResult } from 'src/logic-functions/types/fireflies-webhook-payload.type';
+import { computeCallRecordingIdForFirefliesMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fireflies-meeting';
 import { getFirefliesApiKey } from 'src/logic-functions/utils/get-fireflies-api-key';
-import {
-  type FirefliesSyncableField,
-  syncFirefliesCallToCallRecording,
-} from 'src/logic-functions/utils/sync-fireflies-call-to-call-recording';
+import { type FirefliesSyncableField } from 'src/logic-functions/types/fireflies-syncable-field.type';
+import { syncFirefliesCallToCallRecording } from 'src/logic-functions/utils/sync-fireflies-call-to-call-recording.util';
 
 const TRANSCRIPT_READY_EVENT = 'meeting.transcribed';
 const SUMMARY_READY_EVENT = 'meeting.summarized';
@@ -47,11 +47,18 @@ export const firefliesWebhookHandler = async ({
     return { error: apiKeyResult.error, meetingId };
   }
 
+  const coreApiClient = new CoreApiClient();
+  const callRecordingId = computeCallRecordingIdForFirefliesMeeting(meetingId);
+  const callRecordingFieldStates = await findCallRecordingFieldStatesOrThrow({
+    coreApiClient,
+    callRecordingIds: [callRecordingId],
+  });
   const syncResult = await syncFirefliesCallToCallRecording({
     apiKey: apiKeyResult.apiKey,
-    client: new CoreApiClient(),
+    coreApiClient,
     transcriptId: meetingId,
     field,
+    callRecordingFieldState: callRecordingFieldStates.get(callRecordingId),
   });
 
   if (syncResult.status === 'error') {

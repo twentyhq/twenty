@@ -1,4 +1,6 @@
 import * as Sentry from '@sentry/node';
+import { isObject } from '@sniptt/guards';
+import { AISDKError } from 'ai';
 import {
   getGenericOperationName,
   getHumanReadableNameFromCode,
@@ -9,6 +11,7 @@ import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-
 
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
+import { getAiSdkErrorFingerprint } from 'src/engine/core-modules/exception-handler/utils/get-ai-sdk-error-fingerprint.util';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -48,7 +51,9 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
-        const errorPath = (exception.path ?? [])
+        const isObjectException = isObject(exception);
+
+        const errorPath = (isObjectException ? (exception.path ?? []) : [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');
 
@@ -60,13 +65,13 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
           });
         }
 
-        if ('context' in exception && exception.context) {
+        if (isObjectException && 'context' in exception && exception.context) {
           Object.entries(exception.context).forEach(([key, value]) => {
             scope.setExtra(key, value);
           });
         }
 
-        if ('cause' in exception && exception.cause) {
+        if (isObjectException && 'cause' in exception && exception.cause) {
           scope.setContext('cause', {
             name: exception.cause.name,
             message: exception.cause.message,
@@ -100,6 +105,10 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
         if (exception instanceof MessageImportDriverException) {
           scope.setTag('messageImportDriverCode', exception.code);
           scope.setFingerprint([exception.code]);
+        }
+
+        if (AISDKError.isInstance(exception)) {
+          scope.setFingerprint(getAiSdkErrorFingerprint(exception));
         }
 
         const eventId = Sentry.captureException(exception, {

@@ -7,38 +7,106 @@ import { ThreadMessagePort } from '@quilted/threads';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
-import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
+import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/states/frontComponentHostCommunicationApi';
+import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
+import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
+import { workerActiveElementStore } from '@/polyfills/dom/states/workerActiveElementStore';
+import { workerFocusTransport } from '@/polyfills/dom/states/workerFocusTransport';
+import { installActiveElementDetachmentHook } from '@/polyfills/dom/utils/installActiveElementDetachmentHook';
+import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
+import { installCompareDocumentPositionPolyfill } from '@/polyfills/dom/utils/installCompareDocumentPositionPolyfill';
+import { installDocumentActiveElementPolyfill } from '@/polyfills/dom/utils/installDocumentActiveElementPolyfill';
+import { findElementByRemoteId } from '@/polyfills/dom/utils/findElementByRemoteId';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
+import { installFocusAndBlurMethodsPolyfill } from '@/polyfills/dom/utils/installFocusAndBlurMethodsPolyfill';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
+import { installGetRootNodePolyfill } from '@/polyfills/dom/utils/installGetRootNodePolyfill';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
-import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
+import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
+import { installNodeContainsPolyfill } from '@/polyfills/dom/utils/installNodeContainsPolyfill';
+import { resolvePolyfillHooks } from '@/polyfills/dom/utils/resolvePolyfillHooks';
+import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
+import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
-import { exposeGlobals } from '@/remote/utils/exposeGlobals';
-import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
-import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
-import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
-import { handleCommandConfirmationModalResult } from '@/remote/worker/utils/createCommandConfirmationModalBridge';
-import { installErrorEventBridge } from '@/remote/worker/utils/installErrorEventBridge';
-import { renderFrontComponent } from '@/remote/worker/utils/renderFrontComponent';
-import { setFrontComponentExecutionContext } from '@/remote/worker/utils/setFrontComponentExecutionContext';
+import { mediaQueryEnvironmentSource } from '@/polyfills/media-query/states/mediaQueryEnvironmentSource';
+import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
+import { installMediaCapturePolyfills } from '@/polyfills/media/utils/installMediaCapturePolyfills';
+import { installMatchMediaPolyfill } from '@/polyfills/media-query/utils/installMatchMediaPolyfill';
+import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
+import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
+import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
+import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
+import { installWindowAliasesPolyfill } from '@/polyfills/window-aliases/utils/installWindowAliasesPolyfill';
+import { exposeGlobals } from '@/utils/exposeGlobals';
+import { installAriaBooleanPropertyAccessors } from '@/remote/elements/utils/installAriaBooleanPropertyAccessors';
+import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
+import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
+import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
+import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/thread/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
+import { handleCommandConfirmationModalResult } from '@/remote/worker/thread/utils/handleCommandConfirmationModalResult';
+import { installErrorEventBridge } from '@/remote/worker/thread/utils/installErrorEventBridge';
+import { renderFrontComponent } from '@/remote/worker/rendering/utils/renderFrontComponent';
+import { setFrontComponentExecutionContext } from '@/remote/worker/environment/utils/setFrontComponentExecutionContext';
 import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { type WorkerExports } from '@/types/WorkerExports';
-import { createClonableErrorThreadSerialization } from '@/utils/createClonableErrorThreadSerialization';
+import { createClonableErrorThreadSerialization } from '@/utils/clonable-error/createClonableErrorThreadSerialization';
 
 installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
+installAriaBooleanPropertyAccessors();
 installErrorEventBridge();
 
 installDocumentGetElementById(document);
 installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
+installClassAttributeAccessors({
+  elementPrototype: Element.prototype,
+  remoteElementPrototypes: resolveRemoteElementPrototypes(),
+});
 installLocalStyleOnBaseElements(Element.prototype);
 
-installGetComputedStyle(globalThis as unknown as Record<string, unknown>);
+installNodeContainsPolyfill(Node.prototype);
+installCompareDocumentPositionPolyfill({
+  nodeConstructor: Node,
+  nodePrototype: Node.prototype,
+});
+installGetRootNodePolyfill(Node.prototype);
+installSelectorMethodsPolyfill({
+  elementPrototype: Element.prototype,
+  querySelectorTargets: [
+    Element.prototype,
+    DocumentFragment.prototype,
+    document,
+  ],
+  resolveActiveElement: () => workerActiveElementStore.getActiveElement(),
+  resolveFocusVisibleElement: () =>
+    workerActiveElementStore.getFocusVisibleElement(),
+});
+installFocusAndBlurMethodsPolyfill({
+  elementPrototype: Element.prototype,
+  activeElementStore: workerActiveElementStore,
+  forwardFocusMethod: workerFocusTransport.forwardFocusMethod,
+});
+installDocumentActiveElementPolyfill({
+  documentTarget: document,
+  activeElementStore: workerActiveElementStore,
+});
+installActiveElementDetachmentHook({
+  hooks: resolvePolyfillHooks(
+    resolveGlobalScopeInstallTargets(toGlobalScopeRecord(globalThis)),
+  ),
+  activeElementStore: workerActiveElementStore,
+  onRemoveSubtree: workerFocusTransport.blurFocusedElementWithinSubtree,
+});
+
+installGetComputedStyle(toGlobalScopeRecord(globalThis));
+
+installMutationObserver({
+  globalScope: toGlobalScopeRecord(globalThis),
+});
 
 installElementGeometryPolyfill({
   elementPrototype: Element.prototype,
@@ -47,8 +115,42 @@ installElementGeometryPolyfill({
 });
 
 installWindowGeometryPolyfill({
-  globalScope: globalThis as unknown as Record<string, unknown>,
+  globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
+});
+
+installWindowAliasesPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+});
+
+installMatchMediaPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  environmentSource: mediaQueryEnvironmentSource,
+});
+
+installStorageBridge({
+  globalScope: toGlobalScopeRecord(globalThis),
+  storageBridges: frontComponentStorageBridges,
+});
+
+installClipboardPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  // Resolved lazily: the host communication api is populated after worker boot.
+  copyToClipboard: (text) => {
+    const copyToClipboardFunction =
+      frontComponentHostCommunicationApi.copyToClipboard;
+
+    if (!isDefined(copyToClipboardFunction)) {
+      return Promise.reject(new Error('copyToClipboardFunction is not set'));
+    }
+
+    return copyToClipboardFunction(text);
+  },
+});
+
+installMediaCapturePolyfills({
+  globalScope: toGlobalScopeRecord(globalThis),
+  bridge: workerMediaBridge,
 });
 
 exposeGlobals({
@@ -76,6 +178,12 @@ const workerExports: WorkerExports = {
         hostThread.imports,
       ),
     );
+
+    for (const storageBridge of Object.values(frontComponentStorageBridges)) {
+      storageBridge.connectHostCommunicationApi(
+        frontComponentHostCommunicationApi,
+      );
+    }
   },
   updateContext: async (context) => {
     setFrontComponentExecutionContext(context);
@@ -85,6 +193,17 @@ const workerExports: WorkerExports = {
   },
   pushGeometryUpdates: async (batch) => {
     workerGeometryStore.applyGeometryBatch(batch);
+  },
+  pushFocusUpdate: async ({ remoteElementId, isFocusVisible }) => {
+    workerActiveElementStore.setActiveElement({
+      element: isDefined(remoteElementId)
+        ? findElementByRemoteId({ rootNode: document.body, remoteElementId })
+        : null,
+      isFocusVisible,
+    });
+  },
+  pushMediaSessionEvents: async (batch) => {
+    workerMediaBridge.dispatchEvents(batch);
   },
 };
 
@@ -105,6 +224,7 @@ self.addEventListener('message', (event) => {
   hostThread = nextHostThread;
 
   workerGeometryStore.connectTransport(nextHostThread.imports);
+  workerMediaBridge.connectTransport(nextHostThread.imports);
 
   transferredPort.start();
 });

@@ -1,27 +1,22 @@
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
+import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
-import { TintedIconTile } from 'twenty-ui/data-display';
+import { Dropdown, SettingsRow, TintedIconTile } from 'twenty-ui/components';
 import { IconCube } from 'twenty-ui/icon';
-import { MenuItemSelectAvatar, MenuItemToggle } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
-import { OBJECT_FILTER_DROPDOWN_ID } from '@/side-panel/components/SidePanelObjectFilterDropdown';
-import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-
-const ALL_OBJECTS_ITEM_ID = 'all-objects';
+const StyledHeader = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  padding: ${themeCssVariables.spacing[2]};
+`;
 
 type SidePanelObjectFilterDropdownContentProps = {
   selectedObjectNameSingular: string | null;
@@ -37,7 +32,6 @@ export const SidePanelObjectFilterDropdownContent = ({
   const [sidePanelShowHiddenObjects, setSidePanelShowHiddenObjects] =
     useAtomState(sidePanelShowHiddenObjectsState);
   const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
-  const { closeDropdown } = useCloseDropdown();
 
   const searchFilter = filterSearch.toLowerCase();
 
@@ -57,86 +51,57 @@ export const SidePanelObjectFilterDropdownContent = ({
     return item.labelPlural.toLowerCase().includes(searchFilter);
   });
 
-  const handleSelect = (objectNameSingular: string | null) => {
-    onSelectObject(objectNameSingular);
-    closeDropdown(OBJECT_FILTER_DROPDOWN_ID);
-  };
+  const allObjectsLabel = t`All objects`;
 
-  const selectableItemIdArray = [
-    ALL_OBJECTS_ITEM_ID,
-    ...displayedObjects.map((item) => item.nameSingular),
-  ];
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    OBJECT_FILTER_DROPDOWN_ID,
-  );
+  const isAllObjectsOptionMatchingSearch = allObjectsLabel
+    .toLowerCase()
+    .includes(searchFilter);
 
   return (
-    <DropdownContent>
-      <DropdownMenuHeader>{t`Object`}</DropdownMenuHeader>
-      <DropdownMenuSearchInput
+    <>
+      <StyledHeader>{t`Object`}</StyledHeader>
+      <Dropdown.Search
         value={filterSearch}
-        onChange={(event) => setFilterSearch(event.target.value)}
-        autoFocus
+        placeholder={t`Search`}
+        aria-label={t`Search`}
+        onValueChange={setFilterSearch}
       />
-      <DropdownMenuSeparator />
-      <SelectableList
-        selectableListInstanceId={OBJECT_FILTER_DROPDOWN_ID}
-        focusId={OBJECT_FILTER_DROPDOWN_ID}
-        selectableItemIdArray={selectableItemIdArray}
-      >
-        <DropdownMenuItemsContainer hasMaxHeight>
-          <SelectableListItem
-            itemId={ALL_OBJECTS_ITEM_ID}
-            onEnter={() => handleSelect(null)}
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable>
+        {isAllObjectsOptionMatchingSearch && (
+          <Dropdown.OptionItem
+            onSelect={() => onSelectObject(null)}
+            selected={selectedObjectNameSingular === null}
+            startIcon={<TintedIconTile Icon={IconCube} />}
           >
-            <MenuItemSelectAvatar
-              avatar={<TintedIconTile Icon={IconCube} />}
-              text={t`All objects`}
-              selected={selectedObjectNameSingular === null}
-              onClick={() => handleSelect(null)}
-              focused={selectedItemId === ALL_OBJECTS_ITEM_ID}
-            />
-          </SelectableListItem>
-          {displayedObjects.map((objectMetadataItem) => {
-            return (
-              <SelectableListItem
-                key={objectMetadataItem.id}
-                itemId={objectMetadataItem.nameSingular}
-                onEnter={() => handleSelect(objectMetadataItem.nameSingular)}
-              >
-                <MenuItemSelectAvatar
-                  avatar={
-                    <ObjectMetadataIcon
-                      objectMetadataItem={objectMetadataItem}
-                    />
-                  }
-                  text={objectMetadataItem.labelPlural}
-                  selected={
-                    selectedObjectNameSingular ===
-                    objectMetadataItem.nameSingular
-                  }
-                  onClick={() => handleSelect(objectMetadataItem.nameSingular)}
-                  focused={selectedItemId === objectMetadataItem.nameSingular}
-                />
-              </SelectableListItem>
-            );
-          })}
-        </DropdownMenuItemsContainer>
-      </SelectableList>
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        <MenuItemToggle
-          LeftIcon={IconCube}
-          onToggleChange={() =>
+            {allObjectsLabel}
+          </Dropdown.OptionItem>
+        )}
+        {displayedObjects.map((objectMetadataItem) => (
+          <Dropdown.OptionItem
+            key={objectMetadataItem.id}
+            onSelect={() => onSelectObject(objectMetadataItem.nameSingular)}
+            selected={
+              selectedObjectNameSingular === objectMetadataItem.nameSingular
+            }
+            startIcon={
+              <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+            }
+          >
+            {objectMetadataItem.labelPlural}
+          </Dropdown.OptionItem>
+        ))}
+      </Dropdown.Section>
+      <Dropdown.Separator />
+      <Dropdown.Section>
+        <SettingsRow
+          startIcon={<IconCube />}
+          onCheckedChange={() =>
             setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
           }
-          toggled={sidePanelShowHiddenObjects}
-          text={t`Show hidden objects`}
-          toggleSize="small"
-        />
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+          checked={sidePanelShowHiddenObjects}
+        >{t`Show hidden objects`}</SettingsRow>
+      </Dropdown.Section>
+    </>
   );
 };

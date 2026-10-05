@@ -1,12 +1,16 @@
+import { msg } from '@lingui/core/macro';
+
 import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
-
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
-  GRID_POSITIONS,
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetType,
+} from 'twenty-shared/types';
+
+import {
   TAB_PROPS,
   VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
@@ -15,6 +19,7 @@ import {
   type StandardPageLayoutConfig,
   type StandardPageLayoutTabConfig,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 const CALENDAR_EVENT_PAGE_TABS = {
   home: {
@@ -35,7 +40,6 @@ const CALENDAR_EVENT_PAGE_TABS = {
             .tabs.home.widgets.participants.universalIdentifier,
         title: 'Participants',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.calendarEvent.fields.calendarEventParticipants
@@ -47,7 +51,6 @@ const CALENDAR_EVENT_PAGE_TABS = {
             .tabs.home.widgets.callRecordings.universalIdentifier,
         title: 'Call Recordings',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.calendarEvent.fields.callRecordings
@@ -66,6 +69,46 @@ const CALENDAR_EVENT_PAGE_TABS = {
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
             .tabs.timeline.widgets.timeline.universalIdentifier,
         ...WIDGET_PROPS.timeline,
+      },
+    },
+  },
+  summary: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .summary.universalIdentifier,
+    title: 'Summary',
+    position: 30,
+    icon: 'IconFileText',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    widgets: {
+      summary: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.summary.widgets.summary.universalIdentifier,
+        title: 'Summary',
+        type: WidgetType.CALL_RECORDING_SUMMARY,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+      },
+    },
+  },
+  callRecording: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .callRecording.universalIdentifier,
+    title: i18nLabel(
+      msg({ message: 'Transcript', context: 'pageLayoutTab.title' }),
+    ),
+    position: 40,
+    icon: 'IconBlockquote',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    widgets: {
+      transcript: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.callRecording.widgets.transcript.universalIdentifier,
+        title: 'Transcript',
+        type: WidgetType.CALL_RECORDING_TRANSCRIPT,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
       },
     },
   },

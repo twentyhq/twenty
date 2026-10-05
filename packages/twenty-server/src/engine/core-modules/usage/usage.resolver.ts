@@ -17,12 +17,14 @@ import {
   UsageAnalyticsService,
   type UsageBreakdownItem,
 } from 'src/engine/core-modules/usage/services/usage-analytics.service';
+import { consolidateUsageByApplication } from 'src/engine/core-modules/usage/utils/consolidate-usage-by-application.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @MetadataResolver()
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
@@ -32,11 +34,22 @@ export class UsageResolver {
     private readonly usageAnalyticsService: UsageAnalyticsService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   @Query(() => UsageAnalyticsDTO)
   @UseGuards(
-    WorkspaceAuthGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async getUsageAnalytics(
@@ -58,21 +71,54 @@ export class UsageResolver {
       operationTypes: input?.operationTypes ?? undefined,
     };
 
-    const [usageByUser, usageByOperationType, usageByModel, timeSeries] =
-      await Promise.all([
-        this.usageAnalyticsService.getUsageByUser(periodParams),
-        this.usageAnalyticsService.getUsageByOperationType({
-          ...periodParams,
-          userWorkspaceId: input?.userWorkspaceId ?? undefined,
-        }),
-        this.usageAnalyticsService.getUsageByModel(periodParams),
-        this.usageAnalyticsService.getUsageTimeSeries(periodParams),
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
       ]);
+
+    // Per application: two apps may declare the same operation name.
+    const declaredOperationsByApplicationId = Object.fromEntries(
+      Object.entries(flatApplicationMaps.byId).map(
+        ([applicationId, application]) => [
+          applicationId,
+          [
+            ...Object.keys(application?.billing?.recurring ?? {}),
+            ...Object.keys(application?.billing?.operations ?? {}),
+          ],
+        ],
+      ),
+    );
+
+    const [
+      usageByUser,
+      usageByOperationType,
+      usageByApplication,
+      usageByModel,
+      timeSeries,
+    ] = await Promise.all([
+      this.usageAnalyticsService.getUsageByUser(periodParams),
+      this.usageAnalyticsService.getUsageByOperationType({
+        ...periodParams,
+        userWorkspaceId: input?.userWorkspaceId ?? undefined,
+      }),
+      this.usageAnalyticsService.getUsageByApplication({
+        ...periodParams,
+        userWorkspaceId: input?.userWorkspaceId ?? undefined,
+        declaredOperationsByApplicationId,
+      }),
+      this.usageAnalyticsService.getUsageByModel(periodParams),
+      this.usageAnalyticsService.getUsageTimeSeries(periodParams),
+    ]);
 
     const resolvedUsageByUser = await this.resolveBreakdownKeys(
       usageByUser,
       (ids) => this.resolveUserNames(ids, workspace.id),
     );
+
+    const resolvedUsageByApplication = consolidateUsageByApplication({
+      items: usageByApplication,
+      flatApplicationMaps,
+    });
 
     const result: UsageAnalyticsDTO = {
       usageByUser: resolvedUsageByUser.map((item) => ({
@@ -80,6 +126,10 @@ export class UsageResolver {
         creditsUsed: toDisplayCredits(item.creditsUsed),
       })),
       usageByOperationType: usageByOperationType.map((item) => ({
+        ...item,
+        creditsUsed: toDisplayCredits(item.creditsUsed),
+      })),
+      usageByApplication: resolvedUsageByApplication.map((item) => ({
         ...item,
         creditsUsed: toDisplayCredits(item.creditsUsed),
       })),

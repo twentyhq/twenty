@@ -1,14 +1,14 @@
-import { Avatar } from 'twenty-ui/data-display';
-import { MenuItemSelectAvatar, UndecoratedLink } from 'twenty-ui/navigation';
-import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { type AvailableWorkspace } from '~/generated-metadata/graphql';
+import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
+import { t } from '@lingui/core/macro';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Dropdown } from 'twenty-ui/components';
+import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
-import { t } from '@lingui/core/macro';
-import React from 'react';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 
 export const AvailableWorkspaceItem = ({
   availableWorkspace,
@@ -33,30 +33,34 @@ export const AvailableWorkspaceItem = ({
   };
 
   return (
-    <UndecoratedLink
-      key={availableWorkspace.id}
-      to={buildWorkspaceUrl(
-        getWorkspaceUrl(availableWorkspace.workspaceUrls),
-        pathname,
-        searchParams,
-      )}
+    <Dropdown.OptionItem
+      render={
+        <a
+          href={buildWorkspaceUrl(
+            getWorkspaceUrl(availableWorkspace.workspaceUrls),
+            pathname,
+            searchParams,
+          )}
+        />
+      }
       onClick={(event) => {
         event.preventDefault();
         handleChange();
       }}
+      selected={isSelected}
+      startIcon={
+        <Avatar
+          name={availableWorkspace.displayName || ''}
+          colorSeed={getWorkspaceAvatarColorSeed(
+            availableWorkspace.displayName,
+          )}
+          src={getAbsoluteImageUrl(
+            availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+          )}
+        />
+      }
     >
-      <MenuItemSelectAvatar
-        text={availableWorkspace.displayName ?? t`(No name)`}
-        avatar={
-          <Avatar
-            placeholder={availableWorkspace.displayName || ''}
-            avatarUrl={getAbsoluteImageUrl(
-              availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-            )}
-          />
-        }
-        selected={isSelected}
-      />
-    </UndecoratedLink>
+      {availableWorkspace.displayName ?? t`(No name)`}
+    </Dropdown.OptionItem>
   );
 };

@@ -2,8 +2,8 @@ import gql from 'graphql-tag';
 import request from 'supertest';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { v4 as uuidv4 } from 'uuid';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -29,7 +29,7 @@ describe('BarChartData with relation-traversal filter (e2e)', () => {
   let companyNameFieldMetadataId: string | null = null;
 
   const lookupMetadataIds = async () => {
-    const objectsResponse = await makeMetadataAPIRequest({
+    const objectsResponse = await makeMetadataApiRequest({
       query: gql`
         query Objects($filter: ObjectFilter!, $paging: CursorPaging!) {
           objects(filter: $filter, paging: $paging) {
@@ -84,7 +84,7 @@ describe('BarChartData with relation-traversal filter (e2e)', () => {
   };
 
   const seedTestRecords = async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
@@ -97,7 +97,7 @@ describe('BarChartData with relation-traversal filter (e2e)', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -189,7 +189,7 @@ describe('BarChartData with relation-traversal filter (e2e)', () => {
   });
 
   afterAll(async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       deleteManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -197,7 +197,7 @@ describe('BarChartData with relation-traversal filter (e2e)', () => {
         filter: { id: { in: ALL_TEST_PERSON_IDS } },
       }),
     );
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       deleteManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',

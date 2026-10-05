@@ -14,6 +14,7 @@ export const LIST_PLANS = gql`
           productKey
           planKey
           priceUsageBased
+          isLegacy
         }
         ... on BillingLicensedProduct {
           prices {
@@ -29,6 +30,7 @@ export const LIST_PLANS = gql`
           productKey
           planKey
           priceUsageBased
+          isLegacy
         }
         ... on BillingLicensedProduct {
           prices {
@@ -44,6 +46,7 @@ export const LIST_PLANS = gql`
           productKey
           planKey
           priceUsageBased
+          isLegacy
         }
         ... on BillingMeteredProduct {
           prices {

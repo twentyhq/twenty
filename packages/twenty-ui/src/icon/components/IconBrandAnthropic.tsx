@@ -1,6 +1,6 @@
 import IconAnthropicRaw from '@assets/icons/anthropic.svg?react';
 import { type IconComponentProps } from '@ui/icon/types/IconComponent';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 type IconBrandAnthropicProps = Pick<IconComponentProps, 'size'>;
 

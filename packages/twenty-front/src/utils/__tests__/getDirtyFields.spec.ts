@@ -55,21 +55,18 @@ describe('getDirtyFields', () => {
     const draft = { a: 1 };
     const persisted = { a: 1, b: 2 };
     // When a field is removed, its value in draft effectively becomes undefined
-    // Cast persisted to any to satisfy TS in this test scenario
     expect(getDirtyFields(draft, persisted as any)).toEqual({ b: undefined });
   });
 
   it('should detect fields set to undefined', () => {
     const draft = { a: 1, b: undefined };
     const persisted = { a: 1, b: 2 };
-    // Cast persisted to any to satisfy TS in this test scenario
     expect(getDirtyFields(draft, persisted as any)).toEqual({ b: undefined });
   });
 
   it('should detect fields set to null', () => {
     const draft = { a: 1, b: null };
     const persisted = { a: 1, b: 2 };
-    // Cast persisted to any to satisfy TS in this test scenario
     expect(getDirtyFields(draft, persisted as any)).toEqual({ b: null });
   });
 
@@ -94,7 +91,6 @@ describe('getDirtyFields', () => {
       },
       archived: true, // removed
     };
-    // Cast persisted to any to satisfy TS in this test scenario
     expect(getDirtyFields(draft, persisted as any)).toEqual({
       name: 'new name',
       details: {

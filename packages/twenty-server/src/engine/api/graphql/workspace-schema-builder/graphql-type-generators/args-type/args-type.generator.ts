@@ -28,7 +28,6 @@ export class ArgsTypeGenerator {
       }
       const arg = args[key];
 
-      // Argument is a scalar type
       if (isDefined(arg.type)) {
         const gqlType = applyTypeOptionsForOutputType(arg.type, {
           defaultValue: arg.defaultValue,
@@ -41,7 +40,6 @@ export class ArgsTypeGenerator {
         };
       }
 
-      // Argument is an input type
       if (isDefined(arg.kind)) {
         const storageKey = computeObjectMetadataInputTypeKey(
           objectMetadataSingularName,

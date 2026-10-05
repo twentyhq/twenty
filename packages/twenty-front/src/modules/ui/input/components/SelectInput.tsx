@@ -1,5 +1,5 @@
 import { AddSelectOptionMenuItem } from '@/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -9,12 +9,12 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { t } from '@lingui/core/macro';
+import { createElement, useEffect, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type TagColor } from 'twenty-ui/data-display';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelectTag } from 'twenty-ui/navigation';
+import { type TagColor, Tag } from 'twenty-ui/primitives/data-display';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 interface SelectInputProps {
@@ -41,7 +41,6 @@ export const SelectInput = ({
 }: SelectInputProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Get the SelectableList instance id from context
   const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
     SelectableListComponentInstanceContext,
   );
@@ -103,7 +102,7 @@ export const SelectInput = ({
   });
 
   return (
-    <DropdownContent ref={containerRef} selectDisabled>
+    <LegacyDropdownContent ref={containerRef} selectDisabled>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(e) => setSearchFilter(e.target.value)}
@@ -116,14 +115,21 @@ export const SelectInput = ({
             itemId={t`No ${clearLabel}`}
             onEnter={handleClearOption}
           >
-            <MenuItemSelectTag
+            <ListItem
               key={t`No ${clearLabel}`}
-              text={t`No ${clearLabel}`}
-              color="transparent"
-              variant="outline"
               onClick={handleClearOption}
-              isKeySelected={selectedItemId === t`No ${clearLabel}`}
-            />
+              focused={selectedItemId === t`No ${clearLabel}`}
+              role="option"
+              aria-selected={false}
+              selected={false}
+              indicator="check"
+            >
+              <Tag
+                color={'transparent'}
+                borderStyle="dashed"
+                variant={'outline'}
+              >{t`No ${clearLabel}`}</Tag>
+            </ListItem>
           </SelectableListItem>
         )}
         {optionsInDropDown.map((option) => {
@@ -133,15 +139,28 @@ export const SelectInput = ({
               itemId={option.value}
               onEnter={() => handleOptionChange(option)}
             >
-              <MenuItemSelectTag
+              <ListItem
                 key={option.value}
-                selected={selectedOption?.value === option.value}
-                text={option.label}
-                color={(option.color as TagColor) ?? 'transparent'}
                 onClick={() => handleOptionChange(option)}
-                LeftIcon={option.Icon}
-                isKeySelected={selectedItemId === option.value}
-              />
+                focused={selectedItemId === option.value}
+                role="option"
+                aria-selected={selectedOption?.value === option.value}
+                selected={selectedOption?.value === option.value}
+                indicator="check"
+              >
+                <Tag
+                  color={(option.color as TagColor) ?? 'transparent'}
+                  borderStyle="dashed"
+                  variant={'soft'}
+                  startIcon={
+                    isDefined(option.Icon)
+                      ? createElement(option.Icon)
+                      : undefined
+                  }
+                >
+                  {option.label}
+                </Tag>
+              </ListItem>
             </SelectableListItem>
           );
         })}
@@ -157,6 +176,6 @@ export const SelectInput = ({
           </DropdownMenuItemsContainer>
         </>
       )}
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

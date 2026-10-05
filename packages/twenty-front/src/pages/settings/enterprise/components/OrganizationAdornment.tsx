@@ -1,12 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { css, cx } from '@linaria/core';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { billingState } from '@/client-config/states/billingState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const pillClassName = css`
@@ -31,31 +34,67 @@ const pillLinkClassName = css`
   }
 `;
 
-const OrganizationAdornmentContent = () => (
-  <>
-    <IconLock size={12} />
-    {t`Organization`}
-  </>
-);
+const iconOnlyPillClassName = css`
+  block-size: 24px;
+  box-sizing: border-box;
+  inline-size: 24px;
+  justify-content: center;
+  padding: 0;
+`;
 
-export const OrganizationAdornment = () => {
+type OrganizationAdornmentProps = {
+  tooltipContent?: string;
+  iconOnly?: boolean;
+};
+
+export const OrganizationAdornment = ({
+  tooltipContent,
+  iconOnly = false,
+}: OrganizationAdornmentProps) => {
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const label = t`Organization`;
+  const className = cx(pillClassName, iconOnly && iconOnlyPillClassName);
+  const content = iconOnly ? (
+    <IconLock size={16} />
+  ) : (
+    <>
+      <IconLock size={12} />
+      {label}
+    </>
+  );
+  const adornment = isBillingEnabled ? (
+    <Link
+      className={cx(className, pillLinkClassName)}
+      to={getSettingsPath(SettingsPath.BillingPlans)}
+      aria-label={iconOnly ? label : undefined}
+    >
+      {content}
+    </Link>
+  ) : (
+    <span
+      className={className}
+      role={iconOnly ? 'img' : undefined}
+      aria-label={iconOnly ? label : undefined}
+    >
+      {content}
+    </span>
+  );
+  const resolvedTooltipContent =
+    tooltipContent ?? (iconOnly ? label : undefined);
 
-  if (isBillingEnabled) {
-    return (
-      <Link
-        className={cx(pillClassName, pillLinkClassName)}
-        to={getSettingsPath(SettingsPath.BillingPlans)}
-      >
-        <OrganizationAdornmentContent />
-      </Link>
-    );
+  if (!isNonEmptyString(resolvedTooltipContent)) {
+    return adornment;
   }
 
   return (
-    <span className={pillClassName}>
-      <OrganizationAdornmentContent />
-    </span>
+    <Tooltip
+      content={resolvedTooltipContent}
+      delay={TooltipDelay.shortDelay}
+      side="top"
+      maxWidth="260px"
+    >
+      {adornment}
+    </Tooltip>
   );
 };

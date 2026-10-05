@@ -26,6 +26,7 @@ export class EnterpriseExceptionFilter implements ExceptionFilter {
       case EnterpriseExceptionCode.ENTERPRISE_DEV_SLOT_IN_USE:
       case EnterpriseExceptionCode.ENTERPRISE_RELEASE_RATE_LIMITED:
       case EnterpriseExceptionCode.ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED:
+      case EnterpriseExceptionCode.ENTERPRISE_SEAT_THRESHOLD_EXCEEDED:
         throw new ForbiddenError(exception);
       default: {
         assertUnreachable(exception.code);

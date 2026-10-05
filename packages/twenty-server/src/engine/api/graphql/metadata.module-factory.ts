@@ -1,6 +1,7 @@
 import { type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import * as Sentry from '@sentry/node';
 import GraphQLJSON from 'graphql-type-json';
+import { ApiPath } from 'twenty-shared/types';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -40,7 +41,7 @@ export const metadataModuleFactory = async (
       orphanedTypes: [ClientConfig],
     },
     renderGraphiQL() {
-      return renderApolloPlayground({ path: 'metadata' });
+      return renderApolloPlayground({ path: ApiPath.Metadata });
     },
     resolvers: { JSON: GraphQLJSON },
     plugins: [
@@ -70,7 +71,7 @@ export const metadataModuleFactory = async (
         checkDuplicateRootResolvers: true,
       }),
     ],
-    path: '/metadata',
+    path: `/${ApiPath.Metadata}`,
     context: () => ({
       loaders: dataloaderService.createLoaders(),
     }),
@@ -78,7 +79,7 @@ export const metadataModuleFactory = async (
 
   if (twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT) {
     config.renderGraphiQL = () => {
-      return renderApolloPlayground({ path: 'metadata' });
+      return renderApolloPlayground({ path: ApiPath.Metadata });
     };
   }
 

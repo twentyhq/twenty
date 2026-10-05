@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 export const findActiveFlatFieldMetadataById = (
   fieldId: string | null | undefined,
@@ -15,7 +16,16 @@ export const findActiveFlatFieldMetadataById = (
     flatEntityMaps: flatFieldMetadataMaps,
   });
 
-  if (!isDefined(field) || !field.isActive) return null;
+  if (
+    !isDefined(field) ||
+    !resolveEffectiveFlatEntityProperty({
+      metadataName: 'fieldMetadata',
+      flatEntity: field,
+      property: 'isActive',
+    })
+  ) {
+    return null;
+  }
 
   return field;
 };

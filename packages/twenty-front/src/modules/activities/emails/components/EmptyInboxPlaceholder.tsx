@@ -1,37 +1,34 @@
 import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useComposeEmailForTargetRecord';
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { IconMail } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
+import { Button } from 'twenty-ui/primitives/input';
 
 export const EmptyInboxPlaceholder = () => {
   const { t } = useLingui();
-  const { openComposer, loading } = useComposeEmailForTargetRecord();
+  const targetRecord = useTargetRecord();
+  const { openComposer, loading } =
+    useComposeEmailForTargetRecord(targetRecord);
 
   return (
-    <AnimatedPlaceholderEmptyContainer>
+    <EmptyState.Root>
       <AnimatedPlaceholder type="emptyInbox" />
-      <AnimatedPlaceholderEmptyTextContainer>
-        <AnimatedPlaceholderEmptyTitle>
+      <EmptyState.Content>
+        <EmptyState.Title>
           <Trans>Empty Inbox</Trans>
-        </AnimatedPlaceholderEmptyTitle>
-        <AnimatedPlaceholderEmptySubTitle>
+        </EmptyState.Title>
+        <EmptyState.Description>
           <Trans>No email exchange has occurred with this record yet.</Trans>
-        </AnimatedPlaceholderEmptySubTitle>
-      </AnimatedPlaceholderEmptyTextContainer>
+        </EmptyState.Description>
+      </EmptyState.Content>
       <Button
-        Icon={IconMail}
-        title={t`Send Email`}
-        variant="secondary"
+        startIcon={<IconMail />}
         onClick={openComposer}
         disabled={loading}
-      />
-    </AnimatedPlaceholderEmptyContainer>
+        variant="outline"
+      >{t`Send Email`}</Button>
+    </EmptyState.Root>
   );
 };

@@ -1,6 +1,5 @@
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
-import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
-import { useRetryChatMessage } from '@/ai/hooks/useRetryChatMessage';
+import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
@@ -11,14 +10,13 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledErrorWrapper = styled.div`
   padding-top: ${themeCssVariables.spacing[3]};
 `;
 
 export const AiChatErrorUnderMessageList = () => {
-  const { retryChatMessage } = useRetryChatMessage();
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
@@ -44,7 +42,7 @@ export const AiChatErrorUnderMessageList = () => {
   const showError =
     agentChatError &&
     !agentChatIsStreaming &&
-    agentChatMessage?.role === AgentMessageRole.USER;
+    agentChatMessage?.role === AGENT_MESSAGE_ROLE.USER;
 
   if (!showError) {
     return null;
@@ -52,7 +50,7 @@ export const AiChatErrorUnderMessageList = () => {
 
   return (
     <StyledErrorWrapper>
-      <AiChatErrorRenderer error={agentChatError} onRetry={retryChatMessage} />
+      <AiChatErrorRenderer error={agentChatError} />
     </StyledErrorWrapper>
   );
 };

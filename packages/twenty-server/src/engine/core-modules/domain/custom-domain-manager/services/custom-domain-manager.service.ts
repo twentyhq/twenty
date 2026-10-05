@@ -110,7 +110,9 @@ export class CustomDomainManagerService {
     if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
       workspace.isCustomDomainEnabled = isCustomDomainWorking;
 
-      await this.workspaceRepository.save(workspace);
+      await this.workspaceRepository.update(workspace.id, {
+        isCustomDomainEnabled: isCustomDomainWorking,
+      });
 
       const eventLogContext = this.eventLogEmitterService.createContext({
         workspaceId: workspace.id,

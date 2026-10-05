@@ -34,13 +34,12 @@ export const useCreateWidgetFromClick = (pageLayoutIdFromProps?: string) => {
       const { col, row } = parseCellIdToCoordinates(cellId);
       const bounds = { x: col, y: row, w: 1, h: 1 };
 
-      store.set(pageLayoutDraggedAreaState, bounds);
-      store.set(pageLayoutEditingWidgetIdState, null);
-
       navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
         resetNavigationStack: true,
       });
+      store.set(pageLayoutDraggedAreaState, bounds);
+      store.set(pageLayoutEditingWidgetIdState, null);
     },
     [
       navigatePageLayoutSidePanel,

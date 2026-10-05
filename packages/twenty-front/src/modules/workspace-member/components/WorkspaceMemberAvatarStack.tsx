@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
-import { Avatar, AvatarGroup } from 'twenty-ui/data-display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AvatarGroup } from 'twenty-ui/components';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const DEFAULT_MAX_VISIBLE_MEMBER_AVATARS = 5;
-const WORKSPACE_MEMBER_AVATAR_CHIP_SIZE = '18px';
 
 type WorkspaceMemberAvatarStackMember = {
   avatarUrl?: string | null;
@@ -35,23 +35,6 @@ const StyledAvatarContainer = styled.div`
   border-radius: 50%;
   corner-shape: round;
   display: flex;
-`;
-
-const StyledMoreAvatar = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.tertiary};
-  border: 1px solid ${themeCssVariables.background.secondary};
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-sizing: border-box;
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  font-size: 12px;
-  font-weight: ${themeCssVariables.font.weight.medium};
-  height: ${WORKSPACE_MEMBER_AVATAR_CHIP_SIZE};
-  justify-content: center;
-  min-width: ${WORKSPACE_MEMBER_AVATAR_CHIP_SIZE};
-  padding: 0 ${themeCssVariables.spacing[1]};
-  width: fit-content;
 `;
 
 const getWorkspaceMemberDisplayName = (
@@ -99,21 +82,18 @@ export const WorkspaceMemberAvatarStack = ({
           return (
             <StyledAvatarContainer key={workspaceMember.id}>
               <Avatar
-                avatarUrl={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
-                placeholder={displayName}
-                placeholderColorSeed={workspaceMember.id}
+                src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+                name={displayName}
+                colorSeed={workspaceMember.id}
                 size="md"
-                type="rounded"
+                shape="circle"
               />
             </StyledAvatarContainer>
           );
         })}
         maxVisible={maxVisible}
-        overflowAvatar={
-          hiddenWorkspaceMembersCount > 0 ? (
-            <StyledMoreAvatar>+{hiddenWorkspaceMembersCount}</StyledMoreAvatar>
-          ) : undefined
-        }
+        overflowCount={hiddenWorkspaceMembersCount}
+        overflowShape="circle"
         overlap="left"
         overlapOffset="4px"
       />

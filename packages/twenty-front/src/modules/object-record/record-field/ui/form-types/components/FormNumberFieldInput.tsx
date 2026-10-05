@@ -1,12 +1,11 @@
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { TextInput } from '@/ui/field/input/components/TextInput';
-import { InputHint } from '@/ui/input/components/InputHint';
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { StyledTextInput } from '@/ui/field/input/components/TextInput';
+import { Field } from 'twenty-ui/primitives/input';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
 import isEmpty from 'lodash.isempty';
 import { useId, useState } from 'react';
@@ -68,6 +67,22 @@ export const FormNumberFieldInput = ({
         value: isDefined(defaultValue) ? String(defaultValue) : '',
       };
 
+  const [inputText, setInputText] = useState(draftValue.value);
+  const [previousDraftText, setPreviousDraftText] = useState(draftValue.value);
+
+  const trimmedInputText = inputText.trim();
+  const isInputTextShowingDraftValue =
+    canBeCastAsNumberOrNull(trimmedInputText) &&
+    String(castAsNumberOrNull(trimmedInputText) ?? '') === draftValue.value;
+
+  if (previousDraftText !== draftValue.value) {
+    setPreviousDraftText(draftValue.value);
+
+    if (!isInputTextShowingDraftValue) {
+      setInputText(draftValue.value);
+    }
+  }
+
   const persistNumber = (newValue: string) => {
     if (!canBeCastAsNumberOrNull(newValue)) {
       setErrorMessage(t`Invalid number`);
@@ -84,6 +99,7 @@ export const FormNumberFieldInput = ({
   };
 
   const handleChange = (newText: string) => {
+    setInputText(newText);
     persistNumber(newText.trim());
   };
 
@@ -99,7 +115,7 @@ export const FormNumberFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel htmlFor={instanceId}>{label}</InputLabel> : null}
+      {label ? <Field.Label htmlFor={instanceId}>{label}</Field.Label> : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
@@ -108,16 +124,16 @@ export const FormNumberFieldInput = ({
           onBlur={onBlur}
         >
           {draftValue.type === 'static' ? (
-            <TextInput
-              instanceId={instanceId}
+            <StyledTextInput
+              id={instanceId}
+              autoComplete="off"
               placeholder={
                 isDefined(placeholder) && !isEmpty(placeholder)
                   ? placeholder
                   : t`Enter a number`
               }
-              value={draftValue.value}
-              copyButton={false}
-              onChange={handleChange}
+              value={inputText}
+              onChange={(event) => handleChange(event.target.value)}
               disabled={readonly}
             />
           ) : (
@@ -136,8 +152,8 @@ export const FormNumberFieldInput = ({
         ) : null}
       </FormFieldInputRowContainer>
 
-      {hint ? <InputHint>{hint}</InputHint> : null}
-      {error && <InputHint danger>{error}</InputHint>}
+      {hint ? <Field.Description>{hint}</Field.Description> : null}
+      {error && <Field.Error match>{error}</Field.Error>}
     </FormFieldInputContainer>
   );
 };

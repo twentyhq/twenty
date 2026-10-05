@@ -14,6 +14,7 @@ export const AuthExceptionCode = appendCommonExceptionCode({
   EMAIL_NOT_VERIFIED: 'EMAIL_NOT_VERIFIED',
   CLIENT_NOT_FOUND: 'CLIENT_NOT_FOUND',
   WORKSPACE_NOT_FOUND: 'WORKSPACE_NOT_FOUND',
+  WORKSPACE_SUSPENDED: 'WORKSPACE_SUSPENDED',
   APPLICATION_NOT_FOUND: 'APPLICATION_NOT_FOUND',
   INVALID_INPUT: 'INVALID_INPUT',
   FORBIDDEN_EXCEPTION: 'FORBIDDEN_EXCEPTION',
@@ -50,6 +51,8 @@ const getAuthExceptionUserFriendlyMessage = (
       return msg`Email is not verified.`;
     case AuthExceptionCode.WORKSPACE_NOT_FOUND:
       return msg`Workspace not found.`;
+    case AuthExceptionCode.WORKSPACE_SUSPENDED:
+      return msg`This workspace is suspended. Choose a plan to reactivate it.`;
     case AuthExceptionCode.APPLICATION_NOT_FOUND:
       return msg`Application not found.`;
     case AuthExceptionCode.INVALID_INPUT:

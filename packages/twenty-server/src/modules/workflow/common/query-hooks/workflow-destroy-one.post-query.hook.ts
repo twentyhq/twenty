@@ -1,3 +1,4 @@
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -15,6 +16,7 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 })
 export class WorkflowDestroyOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
 
@@ -29,6 +31,10 @@ export class WorkflowDestroyOnePostQueryHook implements WorkspacePostQueryHookIn
 
     await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkflowIds(
       workspace.id,
+      payload.map((workflow) => workflow.id),
+    );
+    await this.workflowCoreSyncService.reconcileWorkspaceWorkflows(
+      authContext.workspace.id,
       payload.map((workflow) => workflow.id),
     );
   }

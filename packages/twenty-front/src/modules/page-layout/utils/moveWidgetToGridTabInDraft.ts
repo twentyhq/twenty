@@ -10,8 +10,7 @@ type MoveWidgetToGridTabInDraftParams = {
   destinationTabId: string;
 };
 
-// Moves a widget into a grid tab, placing it full-left below the lowest
-// existing widget so it never overlaps the destination layout.
+// Placed full-left below the lowest widget so it never overlaps.
 export const moveWidgetToGridTabInDraft = (
   draft: DraftPageLayout,
   { widgetId, destinationTabId }: MoveWidgetToGridTabInDraftParams,
@@ -43,11 +42,11 @@ export const moveWidgetToGridTabInDraft = (
 
   const destinationBottomRow = destinationTab.widgets.reduce(
     (bottomRow, destinationWidget) => {
-      const gridPosition = getWidgetGridPosition(destinationWidget);
+      const position = getWidgetGridPosition(destinationWidget);
 
       return Math.max(
         bottomRow,
-        (gridPosition?.row ?? 0) + (gridPosition?.rowSpan ?? 0),
+        (position?.row ?? 0) + (position?.rowSpan ?? 0),
       );
     },
     0,
@@ -60,12 +59,6 @@ export const moveWidgetToGridTabInDraft = (
   const movedWidget: PageLayoutWidget = {
     ...widget,
     pageLayoutTabId: destinationTabId,
-    gridPosition: {
-      row: destinationBottomRow,
-      column: 0,
-      rowSpan,
-      columnSpan,
-    },
     position: {
       __typename: 'PageLayoutWidgetGridPosition' as const,
       layoutMode: PageLayoutTabLayoutMode.GRID,

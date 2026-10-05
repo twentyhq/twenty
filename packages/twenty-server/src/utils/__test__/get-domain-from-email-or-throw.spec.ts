@@ -61,7 +61,6 @@ describe('getDomainFromEmailOrThrow', () => {
     }
   });
 
-  // Edge cases with weird but potentially valid email formats
   it('should handle email with plus addressing', () => {
     expect(getDomainFromEmailOrThrow('user+tag@example.com')).toBe(
       'example.com',

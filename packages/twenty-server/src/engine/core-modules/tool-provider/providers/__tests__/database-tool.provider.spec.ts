@@ -1,6 +1,7 @@
 import { type ObjectPermissions } from 'twenty-shared/types';
 
 import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -45,6 +46,7 @@ type ExplicitPermissionRow = {
 type GenerateDescriptorsTestOptions = {
   requireExplicitObjectGrants?: boolean;
   explicitPermissionRows?: ExplicitPermissionRow[];
+  composedObjectPermissions?: Partial<ObjectPermissions>;
 };
 
 describe('DatabaseToolProvider', () => {
@@ -75,7 +77,13 @@ describe('DatabaseToolProvider', () => {
       getOrRecompute: jest.fn().mockResolvedValue({
         rolesPermissions: {
           [roleId]: Object.fromEntries(
-            objects.map((object) => [object.id, allObjectPermissions]),
+            objects.map((object) => [
+              object.id,
+              {
+                ...allObjectPermissions,
+                ...options?.composedObjectPermissions,
+              },
+            ]),
           ),
         },
         flatObjectPermissionMaps: {
@@ -96,9 +104,7 @@ describe('DatabaseToolProvider', () => {
       }),
     } as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService;
 
-    // Returns the messageId so the label util falls back to the English source,
-    // mirroring the runtime behavior when no translation exists for the locale.
-    // getI18nInstance resolves verb descriptors to their English source message.
+    // Echo the messageId so labels fall back to the English source, as at runtime without a translation.
     const i18nService = {
       translateMessage: jest.fn(
         ({ messageId }: { messageId: string }) => messageId,
@@ -111,10 +117,20 @@ describe('DatabaseToolProvider', () => {
       })),
     } as unknown as I18nService;
 
+    const applicationTranslationCatalogService = {
+      getApplicationAuthorIdentifiers: jest.fn().mockResolvedValue({
+        standardApplicationId: 'standard-application-id',
+        workspaceCustomApplicationUniversalIdentifier:
+          'workspace-custom-application-universal-identifier',
+        universalIdentifierByApplicationId: {},
+      }),
+    } as unknown as ApplicationTranslationCatalogService;
+
     const provider = new DatabaseToolProvider(
       workspaceCacheService,
       flatEntityMapsCacheService,
       i18nService,
+      applicationTranslationCatalogService,
     );
 
     return (await provider.generateDescriptors(
@@ -288,6 +304,26 @@ describe('DatabaseToolProvider', () => {
     }
   });
 
+  it('names the records widget on every record descriptor but group_by', async () => {
+    const descriptors = await generateDescriptors([
+      createFlatObject({
+        nameSingular: 'task',
+        namePlural: 'tasks',
+        labelSingular: 'Task',
+        labelPlural: 'Tasks',
+      }),
+    ]);
+
+    for (const descriptor of descriptors) {
+      if (descriptor.operation === 'group_by') {
+        expect(descriptor.widgetName).toBeUndefined();
+        continue;
+      }
+
+      expect(descriptor.widgetName).toBe('records');
+    }
+  });
+
   describe('requireExplicitObjectGrants', () => {
     const personObject = createFlatObject({
       nameSingular: 'person',
@@ -327,6 +363,20 @@ describe('DatabaseToolProvider', () => {
             canSoftDeleteObjectRecords: false,
           },
         ],
+      });
+
+      expect(descriptorNames).toContain('find_many_people');
+      expect(descriptorNames).not.toContain('create_one_person');
+      expect(descriptorNames).not.toContain('delete_one_person');
+    });
+
+    it('drops the verbs the composed permissions deny even with an explicit row', async () => {
+      const descriptorNames = await generateDescriptorNames([personObject], {
+        requireExplicitObjectGrants: true,
+        composedObjectPermissions: {
+          canUpdateObjectRecords: false,
+          canSoftDeleteObjectRecords: false,
+        },
       });
 
       expect(descriptorNames).toContain('find_many_people');

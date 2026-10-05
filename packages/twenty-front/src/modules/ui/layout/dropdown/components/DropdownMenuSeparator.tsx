@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { forwardRef } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDropdownMenuSeparator = styled.div`
   background-color: ${themeCssVariables.border.color.light};

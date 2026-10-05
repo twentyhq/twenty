@@ -1,20 +1,23 @@
 import gql from 'graphql-tag';
 
-import { type MessageFolderImportPolicy } from 'twenty-shared/types';
+import {
+  type CalendarChannelContactAutoCreationPolicy,
+  type MessageFolderImportPolicy,
+} from 'twenty-shared/types';
 
 import { type CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
 import { type ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { type MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { type MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
-type MetadataAPIResponse = {
+type MetadataApiResponse = {
   body: { data: Record<string, unknown>; errors?: { message: string }[] };
 };
 
-export const getDataOrThrow = (response: MetadataAPIResponse) => {
+export const getDataOrThrow = (response: MetadataApiResponse) => {
   if (response.body.errors?.length) {
     throw new Error(
       `Metadata API request failed: ${response.body.errors
@@ -28,7 +31,7 @@ export const getDataOrThrow = (response: MetadataAPIResponse) => {
 
 export type MessageFolderDto = Pick<
   MessageFolderDTO,
-  'id' | 'name' | 'isSynced'
+  'id' | 'name' | 'isSynced' | 'isSentFolder' | 'pendingSyncAction'
 >;
 
 export type MessageChannelDto = Pick<
@@ -41,6 +44,7 @@ export type MessageChannelDto = Pick<
   | 'syncStageStartedAt'
   | 'throttleFailureCount'
   | 'throttleRetryAfter'
+  | 'visibility'
 >;
 
 export type CalendarChannelDto = Pick<
@@ -52,6 +56,9 @@ export type CalendarChannelDto = Pick<
   | 'syncStage'
   | 'syncStageStartedAt'
   | 'throttleFailureCount'
+  | 'isContactAutoCreationEnabled'
+  | 'contactAutoCreationPolicy'
+  | 'visibility'
 >;
 
 export type ConnectedAccountDto = Pick<
@@ -68,6 +75,7 @@ type MessageChannelUpdate = {
 type CalendarChannelUpdate = {
   isSyncEnabled?: boolean;
   isContactAutoCreationEnabled?: boolean;
+  contactAutoCreationPolicy?: CalendarChannelContactAutoCreationPolicy;
 };
 
 const MESSAGE_CHANNEL_FIELDS = gql`
@@ -80,11 +88,12 @@ const MESSAGE_CHANNEL_FIELDS = gql`
     syncStageStartedAt
     throttleFailureCount
     throttleRetryAfter
+    visibility
   }
 `;
 
 export const queryMessageChannels = async (): Promise<MessageChannelDto[]> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query MessageChannelsForTest {
         myMessageChannels {
@@ -105,7 +114,7 @@ export const queryMessageChannel = async ({
   connectedAccountId: string;
   channelId: string;
 }): Promise<MessageChannelDto> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query MessageChannelForTest($connectedAccountId: UUID) {
         myMessageChannels(connectedAccountId: $connectedAccountId) {
@@ -131,13 +140,15 @@ export const queryMessageChannel = async ({
 export const queryMessageFolders = async (
   messageChannelId: string,
 ): Promise<MessageFolderDto[]> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query MessageFoldersForTest($messageChannelId: UUID) {
         myMessageFolders(messageChannelId: $messageChannelId) {
           id
           name
           isSynced
+          isSentFolder
+          pendingSyncAction
         }
       }
     `,
@@ -150,7 +161,7 @@ export const queryMessageFolders = async (
 export const queryCalendarChannels = async (
   connectedAccountId: string,
 ): Promise<CalendarChannelDto[]> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query CalendarChannelsForTest($connectedAccountId: UUID) {
         myCalendarChannels(connectedAccountId: $connectedAccountId) {
@@ -161,6 +172,9 @@ export const queryCalendarChannels = async (
           syncStage
           syncStageStartedAt
           throttleFailureCount
+          isContactAutoCreationEnabled
+          contactAutoCreationPolicy
+          visibility
         }
       }
     `,
@@ -191,7 +205,7 @@ export const queryCalendarChannel = async ({
 export const queryConnectedAccount = async (
   connectedAccountId: string,
 ): Promise<ConnectedAccountDto> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       query ConnectedAccountsForTest {
         myConnectedAccounts {
@@ -220,7 +234,7 @@ export const updateMessageChannel = async (
   messageChannelId: string,
   update: MessageChannelUpdate,
 ): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       mutation UpdateMessageChannelForTest($input: UpdateMessageChannelInput!) {
         updateMessageChannel(input: $input) {
@@ -243,7 +257,7 @@ export const updateCalendarChannel = async (
   calendarChannelId: string,
   update: CalendarChannelUpdate,
 ): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       mutation UpdateCalendarChannelForTest(
         $input: UpdateCalendarChannelInput!
@@ -267,7 +281,7 @@ export const updateCalendarChannel = async (
 export const startChannelSync = async (
   connectedAccountId: string,
 ): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       mutation StartChannelSyncForTest($connectedAccountId: UUID!) {
         startChannelSync(connectedAccountId: $connectedAccountId) {
@@ -284,7 +298,7 @@ export const startChannelSync = async (
 export const deleteConnectedAccount = async (
   connectedAccountId: string,
 ): Promise<void> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       mutation DeleteConnectedAccountForTest($id: UUID!) {
         deleteConnectedAccount(id: $id) {
@@ -298,4 +312,21 @@ export const deleteConnectedAccount = async (
   getDataOrThrow(response);
 
   await waitForAllJobsToFinish();
+};
+
+export const disconnectConnectedAccount = async (
+  connectedAccountId: string,
+): Promise<void> => {
+  const response = await makeMetadataApiRequest({
+    query: gql`
+      mutation DisconnectConnectedAccountForTest($id: UUID!) {
+        disconnectConnectedAccount(id: $id) {
+          id
+        }
+      }
+    `,
+    variables: { id: connectedAccountId },
+  });
+
+  getDataOrThrow(response);
 };

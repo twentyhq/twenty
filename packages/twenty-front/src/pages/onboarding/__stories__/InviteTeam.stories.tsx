@@ -1,7 +1,7 @@
 import { getOperationName } from '~/utils/getOperationName';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { AppPath } from 'twenty-shared/types';
 
 import { OnboardingStatus } from '~/generated-metadata/graphql';
@@ -31,6 +31,11 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           });
         }),
+        graphql.query('GetInviteSuggestions', () => {
+          return HttpResponse.json({
+            data: { getInviteSuggestions: [] },
+          });
+        }),
         graphqlMocks.handlers,
       ],
     },
@@ -41,9 +46,67 @@ export default meta;
 
 export type Story = StoryObj<typeof InviteTeam>;
 
+const findEmailInputs = (canvas: ReturnType<typeof within>) =>
+  canvas.findAllByPlaceholderText(/@apple\.com$/);
+
+const getRemoveButtons = (canvasElement: HTMLElement) =>
+  canvasElement.ownerDocument.body.querySelectorAll('.tabler-icon-x');
+
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
     await canvas.findByText('Invite your team');
+  },
+};
+
+export const RemovesAllInputsButTheLast: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('Invite your team');
+    await waitFor(async () =>
+      expect(await findEmailInputs(canvas)).toHaveLength(3),
+    );
+
+    expect(getRemoveButtons(canvasElement)).toHaveLength(3);
+
+    await userEvent.click(getRemoveButtons(canvasElement)[2]);
+    await waitFor(async () =>
+      expect(await findEmailInputs(canvas)).toHaveLength(2),
+    );
+    expect(getRemoveButtons(canvasElement)).toHaveLength(2);
+
+    await userEvent.click(getRemoveButtons(canvasElement)[1]);
+    await waitFor(async () =>
+      expect(await findEmailInputs(canvas)).toHaveLength(1),
+    );
+    await waitFor(() =>
+      expect(getRemoveButtons(canvasElement)).toHaveLength(0),
+    );
+  },
+};
+
+export const FocusesTheInvalidEmailAfterAddTeammates: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('Invite your team');
+
+    const [firstEmailInput, secondEmailInput] = await findEmailInputs(canvas);
+
+    await userEvent.type(firstEmailInput, 'grace@example.com');
+    await userEvent.type(secondEmailInput, 'alan@');
+    await userEvent.click(canvas.getByRole('button', { name: 'Skip' }));
+
+    const dialog = await canvas.findByRole('dialog', {
+      name: "Your invite isn't sent yet",
+    });
+
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: /^Add teammates/ }),
+    );
+
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await waitFor(() => expect(secondEmailInput).toHaveFocus());
   },
 };

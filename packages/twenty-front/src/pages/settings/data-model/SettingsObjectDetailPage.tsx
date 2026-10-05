@@ -1,6 +1,8 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -21,18 +23,18 @@ import {
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconArrowUpRight,
-  IconLayout,
+  IconAppWindow,
   IconListDetails,
   IconPlus,
   IconSettings,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
@@ -45,6 +47,7 @@ const StyledContentContainer = styled.div`
 
 export const SettingsObjectDetailPage = () => {
   const navigateApp = useNavigateApp();
+  const workspaceSurface = useWorkspaceSurface();
   const { t } = useLingui();
   const { objectNamePlural = '' } = useParams();
 
@@ -65,10 +68,14 @@ export const SettingsObjectDetailPage = () => {
       objectMetadataItem,
     }) || isDDLLocked;
 
+  const tabsComponentInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+  );
+
   const activeTabId =
     useAtomComponentStateValue(
       activeTabIdComponentState,
-      SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+      tabsComponentInstanceId,
     ) ?? SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS;
 
   const [isDeleting, setIsDeleting] = useState(false);
@@ -76,7 +83,11 @@ export const SettingsObjectDetailPage = () => {
   useEffect(() => {
     if (objectNamePlural === updatedObjectNamePlural)
       setUpdatedObjectNamePlural('');
-    if (!isDeleting && !isDefined(objectMetadataItem))
+    if (
+      workspaceSurface.type === 'main' &&
+      !isDeleting &&
+      !isDefined(objectMetadataItem)
+    )
       navigateApp(AppPath.NotFound);
   }, [
     objectMetadataItem,
@@ -85,10 +96,13 @@ export const SettingsObjectDetailPage = () => {
     updatedObjectNamePlural,
     setUpdatedObjectNamePlural,
     isDeleting,
+    workspaceSurface.type,
   ]);
 
   if (!isDefined(objectMetadataItem)) {
-    return null;
+    return workspaceSurface.type === 'side-panel' ? (
+      <WorkspaceRouteUnavailable />
+    ) : null;
   }
 
   const tabs = [
@@ -107,7 +121,7 @@ export const SettingsObjectDetailPage = () => {
     {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.LAYOUT,
       title: t`Layout`,
-      Icon: IconLayout,
+      Icon: IconAppWindow,
       hide:
         objectMetadataItem.isRemote ||
         objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard,
@@ -152,35 +166,31 @@ export const SettingsObjectDetailPage = () => {
       ]}
       actionButton={
         <>
-          <Button
-            Icon={IconArrowUpRight}
-            title={t`See records`}
-            variant="tertiary"
-            size="small"
+          <NavigationButton
+            startIcon={<IconArrowUpRight />}
+            size="sm"
             to={getAppPath(AppPath.RecordIndexPage, {
               objectNamePlural: objectMetadataItem.namePlural,
             })}
-          />
+            variant="ghost"
+          >{t`See records`}</NavigationButton>
           {!readonly &&
             activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
-              <UndecoratedLink to="./new-field/select">
-                <Button
-                  title={t`New Field`}
-                  variant="primary"
-                  size="small"
-                  accent="blue"
-                  Icon={IconPlus}
-                />
-              </UndecoratedLink>
+              <NavigationButton
+                to="./new-field/select"
+                size="sm"
+                startIcon={<IconPlus />}
+                variant="solid"
+                color="accent"
+              >{t`New Field`}</NavigationButton>
             )}
         </>
       }
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Object settings`}
           tabs={tabs}
-          componentInstanceId={
-            SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
-          }
+          componentInstanceId={tabsComponentInstanceId}
         />
       }
     >

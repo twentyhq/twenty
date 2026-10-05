@@ -52,7 +52,6 @@ export class NewFieldSection {
       "//div[contains(., 'Number of decimals')]/../div[last()]/div/div/button[2]",
     );
     this.decimalsNumberInput = page.locator(
-      // would be better if first div was span tag
       "//div[contains(., 'Number of decimals')]/../div[last()]/div/div/div/div/input[2]",
     );
     this.increaseDecimalsButton = page.locator(
@@ -147,7 +146,6 @@ export class NewFieldSection {
     await this.booleanFieldLink.click();
   }
 
-  // either True of False
   async selectDefaultBooleanValue(value: string) {
     await this.defaultBooleanSelect.click();
     await this.page.getByTestId('tooltip').filter({ hasText: value }).click();
@@ -187,7 +185,7 @@ export class NewFieldSection {
     await this.removeOptionButton.click();
   }
 
-  async changeOptionAPIName() {
+  async changeOptionApiName() {
     // TODO: finish
   }
 
@@ -215,7 +213,6 @@ export class NewFieldSection {
     await this.relationFieldLink.click();
   }
 
-  // either 'Has many' or 'Belongs to one'
   async selectRelationType(name: string) {
     await this.relationTypeSelect.click();
     await this.page.getByTestId('tooltip').filter({ hasText: name }).click();

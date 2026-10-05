@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
-import { isValidElement, type ReactNode } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isValidElement, type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Radio } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Radio } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCard = styled.div`
   background-color: ${themeCssVariables.background.primary};
@@ -15,37 +16,44 @@ const StyledCard = styled.div`
   width: 100%;
 `;
 
-const StyledHeader = styled.button<{ hasBody: boolean; hasNote: boolean }>`
-  align-items: center;
+const StyledHeader = styled.label<{ hasBody: boolean; hasNote: boolean }>`
   background-color: transparent;
   border: none;
   border-bottom: ${({ hasBody }) =>
     hasBody ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
+  box-sizing: border-box;
   cursor: pointer;
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
   padding: ${({ hasNote }) =>
     hasNote
       ? `${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]}`
       : themeCssVariables.spacing[3]};
-  position: relative;
   text-align: left;
   width: 100%;
-`;
-
-const StyledHeaderLeft = styled.div<{ hasNote: boolean }>`
-  display: flex;
-  flex: 1 1 0;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  min-width: 0;
-  padding-right: ${({ hasNote }) =>
-    hasNote ? themeCssVariables.spacing[8] : '0'};
 `;
 
 const StyledTitleRow = styled.div`
   align-items: center;
   display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledTitleContent = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1 1 0;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+`;
+
+const StyledTitleText = styled.div`
+  align-items: baseline;
+  display: flex;
+  flex: 1 0 auto;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
 `;
 
@@ -79,13 +87,6 @@ const StyledNote = styled.span`
   line-height: 1.4;
 `;
 
-const StyledHeaderRight = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  min-height: ${themeCssVariables.spacing[6]};
-`;
-
 const StyledBadge = styled.span`
   align-items: center;
   background-color: ${themeCssVariables.grayScale.gray3};
@@ -105,69 +106,76 @@ const StyledRadioContainer = styled.div`
   display: flex;
   height: ${themeCssVariables.spacing[6]};
   justify-content: center;
-  position: absolute;
-  right: ${themeCssVariables.spacing[2]};
-  top: ${themeCssVariables.spacing[2]};
   width: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledTags = styled.span`
+  display: contents;
 `;
 
 const StyledBody = styled.div`
   display: flex;
   flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
   padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
 `;
 
 type OnboardingPlanCardProps = {
   title: string;
   titleSuffix?: string;
+  tags?: ReactNode;
   note?: string;
   badge?: string;
-  selected: boolean;
-  onSelect: () => void;
+  value: boolean;
   children?: ReactNode;
 };
 
 export const OnboardingPlanCard = ({
   title,
   titleSuffix,
+  tags,
   note,
   badge,
-  selected,
-  onSelect,
+  value,
   children,
 }: OnboardingPlanCardProps) => {
+  const titleId = useId();
+  const noteId = useId();
+  const tagsId = useId();
   const hasBody = isValidElement(children);
   const hasNote = isDefined(note);
+  const hasTags = isDefined(tags);
+  const describedByIds = [hasTags ? tagsId : null, hasNote ? noteId : null]
+    .filter(isDefined)
+    .join(' ');
 
   return (
     <StyledCard>
-      <StyledHeader
-        type="button"
-        hasBody={hasBody}
-        hasNote={hasNote}
-        onClick={onSelect}
-      >
-        <StyledHeaderLeft hasNote={hasNote}>
-          <StyledTitleRow>
-            <StyledTitle>{title}</StyledTitle>
-            {isDefined(titleSuffix) && (
-              <StyledTitleSuffix isEmphasized={hasNote}>
-                {titleSuffix}
-              </StyledTitleSuffix>
-            )}
-          </StyledTitleRow>
-          {hasNote && <StyledNote>{note}</StyledNote>}
-        </StyledHeaderLeft>
-        {hasNote ? (
-          <StyledRadioContainer>
-            <Radio checked={selected} />
-          </StyledRadioContainer>
-        ) : (
-          <StyledHeaderRight>
+      <StyledHeader hasBody={hasBody} hasNote={hasNote}>
+        <StyledTitleRow>
+          <StyledTitleContent>
+            <StyledTitleText>
+              <StyledTitle id={titleId}>{title}</StyledTitle>
+              {isDefined(titleSuffix) && (
+                <StyledTitleSuffix isEmphasized={hasNote}>
+                  {titleSuffix}
+                </StyledTitleSuffix>
+              )}
+            </StyledTitleText>
+            {hasTags && <StyledTags id={tagsId}>{tags}</StyledTags>}
             {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
-            <Radio checked={selected} />
-          </StyledHeaderRight>
-        )}
+          </StyledTitleContent>
+          <StyledRadioContainer>
+            <Radio
+              value={value}
+              aria-labelledby={titleId}
+              aria-describedby={
+                isNonEmptyString(describedByIds) ? describedByIds : undefined
+              }
+            />
+          </StyledRadioContainer>
+        </StyledTitleRow>
+        {hasNote && <StyledNote id={noteId}>{note}</StyledNote>}
       </StyledHeader>
       {hasBody && <StyledBody>{children}</StyledBody>}
     </StyledCard>

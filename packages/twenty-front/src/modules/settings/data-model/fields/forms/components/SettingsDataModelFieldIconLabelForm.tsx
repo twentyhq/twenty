@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { type z } from 'zod';
 
@@ -8,17 +7,18 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/AdvancedSettingsContentWrapperWithDot';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconRefresh } from 'twenty-ui/icon';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 export const settingsDataModelFieldIconLabelFormSchema = (
@@ -90,7 +90,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
     trigger,
   } = useFormContext<SettingsDataModelFieldIconLabelFormValues>();
 
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const label = watch('label');
 
   const { t } = useLingui();
@@ -149,7 +149,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
             <IconPicker
               selectedIconKey={value ?? 'IconUsers'}
               onChange={({ iconKey }) => onChange(iconKey)}
-              variant="primary"
+              variant="outline"
               disabled={readonly}
             />
           )}
@@ -192,40 +192,37 @@ export const SettingsDataModelFieldIconLabelForm = ({
                     control={control}
                     defaultValue={fieldMetadataItem?.name}
                     render={({ field: { onChange, value } }) => (
-                      <>
-                        <SettingsTextInput
-                          instanceId={nameTextInputId}
-                          label={t`API Name`}
-                          placeholder={t`employees`}
-                          value={value}
-                          onChange={onChange}
-                          readOnly={readonly}
-                          disabled={!isNameEditEnabled}
-                          fullWidth
-                          maxLength={IDENTIFIER_MAX_CHAR_LENGTH}
-                          RightIcon={() =>
-                            apiNameTooltipText && (
-                              <>
+                      <SettingsTextInput
+                        instanceId={nameTextInputId}
+                        label={t`API Name`}
+                        placeholder={t`employees`}
+                        value={value}
+                        onChange={onChange}
+                        readOnly={readonly}
+                        disabled={!isNameEditEnabled}
+                        fullWidth
+                        maxLength={IDENTIFIER_MAX_CHAR_LENGTH}
+                        RightIcon={() =>
+                          apiNameTooltipText && (
+                            <>
+                              <Tooltip
+                                content={apiNameTooltipText}
+                                sideOffset={5}
+                                side="bottom"
+                                positionMethod="fixed"
+                                delay={TooltipDelay.shortDelay}
+                              >
                                 <IconInfoCircle
                                   id="info-circle-id-name"
                                   size={theme.icon.size.md}
                                   color={theme.font.color.tertiary}
                                   style={{ outline: 'none' }}
                                 />
-                                <AppTooltip
-                                  anchorSelect="#info-circle-id-name"
-                                  content={apiNameTooltipText}
-                                  offset={5}
-                                  noArrow
-                                  place="bottom"
-                                  positionStrategy="fixed"
-                                  delay={TooltipDelay.shortDelay}
-                                />
-                              </>
-                            )
-                          }
-                        />
-                      </>
+                              </Tooltip>
+                            </>
+                          )
+                        }
+                      />
                     )}
                   />
                 </StyledInputsContainer>
@@ -240,8 +237,8 @@ export const SettingsDataModelFieldIconLabelForm = ({
                       hideDot={false}
                       dotPosition="centered"
                     >
-                      <Card rounded>
-                        <SettingsOptionCardContentToggle
+                      <Card.Root rounded>
+                        <SettingsOptionCardContentSwitch
                           Icon={IconRefresh}
                           title={t`Synchronize Field Label and API Name`}
                           description={t`Should changing a field's label also change the API name?`}
@@ -264,7 +261,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                             }
                           }}
                         />
-                      </Card>
+                      </Card.Root>
                     </AdvancedSettingsContentWrapperWithDot>
                   )}
                 />

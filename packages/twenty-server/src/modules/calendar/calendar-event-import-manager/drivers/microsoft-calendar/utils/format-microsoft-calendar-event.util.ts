@@ -6,7 +6,7 @@ import {
 
 import { sanitizeCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/utils/sanitizeCalendarEvent';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 export const formatMicrosoftCalendarEvents = (
   events: Event[],
@@ -49,7 +49,7 @@ const formatMicrosoftCalendarEvent = (event: Event): FetchedCalendarEvent => {
     recurringEventExternalId: event.id ?? '',
     participants:
       event.attendees?.map((attendee) => ({
-        handle: attendee.emailAddress?.address ?? '',
+        handle: attendee.emailAddress?.address?.toLowerCase() ?? '',
         displayName: attendee.emailAddress?.name ?? '',
         isOrganizer: attendee.status?.response === 'organizer',
         responseStatus: formatResponseStatus(attendee.status?.response),

@@ -5,7 +5,7 @@ describe('getActionHeaderTypeOrThrow', () => {
     expect(getActionHeaderTypeOrThrow('CODE').message).toBe('Core');
   });
 
-  it('should return "Record" for record-related action types', () => {
+  it('should return "Data" for record-related action types', () => {
     const recordActionTypes = [
       'CREATE_RECORD',
       'UPDATE_RECORD',
@@ -14,12 +14,15 @@ describe('getActionHeaderTypeOrThrow', () => {
     ] as const;
 
     recordActionTypes.forEach((type) => {
-      expect(getActionHeaderTypeOrThrow(type).message).toBe('Record');
+      expect(getActionHeaderTypeOrThrow(type).message).toBe('Data');
     });
   });
 
   it('should return "Human Input" for FORM action type', () => {
     expect(getActionHeaderTypeOrThrow('FORM').message).toBe('Human Input');
+    expect(getActionHeaderTypeOrThrow('SEND_CHAT_MESSAGE').message).toBe(
+      'Human Input',
+    );
   });
 
   it('should return "Core" for SEND_EMAIL action type', () => {
@@ -30,7 +33,14 @@ describe('getActionHeaderTypeOrThrow', () => {
     expect(getActionHeaderTypeOrThrow('HTTP_REQUEST').message).toBe('Core');
   });
 
-  it('should return "AI" for AI_AGENT action type', () => {
-    expect(getActionHeaderTypeOrThrow('AI_AGENT').message).toBe('AI');
+  it.each(['AI_AGENT', 'CLASSIFY'] as const)('labels %s as AI', (type) => {
+    expect(getActionHeaderTypeOrThrow(type).message).toBe('AI');
   });
+
+  it.each(['ITERATOR', 'FILTER', 'IF_ELSE', 'DELAY'] as const)(
+    'labels %s as Flow',
+    (type) => {
+      expect(getActionHeaderTypeOrThrow(type).message).toBe('Flow');
+    },
+  );
 });

@@ -1,124 +1,134 @@
-import { useLingui } from '@lingui/react/macro';
-
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { MobileNavigationBarScrollEffect } from '@/navigation/components/MobileNavigationBarScrollEffect';
+import { MOBILE_NAVIGATION_BAR_PADDING } from '@/navigation/constants/MobileNavigationBarPadding';
+import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
+import { isMobileNavigationBarVisibleState } from '@/navigation/states/isMobileNavigationBarVisibleState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useNavigate } from 'react-router-dom';
-import {
-  type IconComponent,
-  IconList,
-  IconMessageCirclePlus,
-  IconSearch,
-} from 'twenty-ui/icon';
-import { NavigationBar } from 'twenty-ui/navigation';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import { useLocation } from 'react-router-dom';
+import { IconButton } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { isAiChatPath } from '~/utils/isAiChatPath';
 
-type NavigationBarItemName = 'main' | 'search' | 'newAiChat';
+// Lets taps reach the page scrolling underneath; flex-start follows the writing direction.
+const StyledFloatingContainer = styled.div`
+  bottom: 0;
+  display: flex;
+  justify-content: flex-start;
+  left: 0;
+  padding: ${MOBILE_NAVIGATION_BAR_PADDING};
+  padding-bottom: calc(
+    ${MOBILE_NAVIGATION_BAR_PADDING} + env(safe-area-inset-bottom, 0px)
+  );
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  z-index: ${RootStackingContextZIndices.MobileNavigationBar};
+
+  @media print {
+    display: none;
+  }
+`;
+
+const StyledNavigationBar = styled.nav`
+  align-items: center;
+  backdrop-filter: ${themeCssVariables.blur.strong};
+  background: ${themeCssVariables.background.transparent.primary};
+  border: 1px solid ${themeCssVariables.border.color.transparentStrong};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  box-sizing: border-box;
+  corner-shape: round;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  justify-content: center;
+  padding: ${themeCssVariables.spacing[1]};
+  pointer-events: auto;
+  transition:
+    opacity calc(${themeCssVariables.animation.duration.normal} * 1s) ease,
+    transform calc(${themeCssVariables.animation.duration.normal} * 1s) ease,
+    visibility calc(${themeCssVariables.animation.duration.normal} * 1s);
+  width: max-content;
+
+  &[data-hidden] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(calc(100% + ${themeCssVariables.spacing[4]}));
+    visibility: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
+
+const navigationButtonClassName = css`
+  && {
+    --tw-button-size: ${themeCssVariables.spacing[10]};
+    --tw-icon-button-icon-size: ${themeCssVariables.icon.size.lg};
+
+    border: none;
+    color: ${themeCssVariables.grayScale.gray10};
+    transition: background-color
+      calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
+
+    &[aria-pressed='true'] {
+      background: ${themeCssVariables.background.transparent.medium};
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        background: ${themeCssVariables.background.transparent.light};
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+`;
 
 export const MobileNavigationBar = () => {
-  const { t } = useLingui();
-  const navigate = useNavigate();
-  const { defaultHomePagePath } = useDefaultHomePagePath();
+  const { pathname } = useLocation();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
-  const { closeSidePanelMenu } = useSidePanelMenu();
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
-  const isSettingsPage = useIsSettingsPage();
-  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useAtomState(isNavigationDrawerExpandedState);
-  const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
-    useAtomState(currentMobileNavigationDrawerState);
-  const { switchToNewChat } = useSwitchToNewAiChat();
-  const { alphaSortedActiveNonSystemObjectMetadataItems } =
-    useFilteredObjectMetadataItems();
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-
-  const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  const isMobileNavigationBarVisible = useAtomStateValue(
+    isMobileNavigationBarVisibleState,
   );
+  const { items, activeItemName } = useMobileNavigationBarItems();
 
-  const activeItemName = isNavigationDrawerExpanded
-    ? currentMobileNavigationDrawer
-    : isSidePanelOpened
-      ? 'search'
-      : 'main';
+  // The chat page keeps the keyboard up and carries its own close button.
+  const isHidden =
+    isSidePanelOpened ||
+    !isMobileNavigationBarVisible ||
+    isAiChatPath(pathname);
 
-  const items: {
-    name: NavigationBarItemName;
-    label: string;
-    Icon: IconComponent;
-    onClick: () => void;
-  }[] = [
-    {
-      name: 'main',
-      label: t`Main navigation`,
-      Icon: IconList,
-      onClick: () => {
-        closeSidePanelMenu();
-        setIsNavigationDrawerExpanded(
-          (previousIsOpen) => activeItemName !== 'main' || !previousIsOpen,
-        );
-        setCurrentMobileNavigationDrawer('main');
-
-        if (isSettingsPage) {
-          navigate(
-            navigationMemorizedUrl !== '/'
-              ? navigationMemorizedUrl
-              : defaultHomePagePath,
-          );
-        }
-      },
-    },
-    {
-      name: 'search',
-      label: t`Search`,
-      Icon: IconSearch,
-      onClick: () => {
-        setIsNavigationDrawerExpanded(false);
-        closeSidePanelMenu();
-
-        if (isSettingsPage) {
-          const firstObjectMetadataItem =
-            alphaSortedActiveNonSystemObjectMetadataItems[0];
-          if (firstObjectMetadataItem !== undefined) {
-            setContextStoreCurrentObjectMetadataItemId(
-              firstObjectMetadataItem.id,
-            );
-          }
-        }
-
-        openRecordsSearchPage();
-      },
-    },
-    ...(hasAiPermission
-      ? [
-          {
-            name: 'newAiChat' as const,
-            label: t`New AI chat`,
-            Icon: IconMessageCirclePlus,
-            onClick: () => {
-              setIsNavigationDrawerExpanded(false);
-              closeSidePanelMenu();
-              switchToNewChat();
-            },
-          },
-        ]
-      : []),
-  ];
-
-  return <NavigationBar activeItemName={activeItemName} items={items} />;
+  return (
+    <>
+      <MobileNavigationBarScrollEffect />
+      <StyledFloatingContainer>
+        <StyledNavigationBar
+          data-hidden={isHidden ? '' : undefined}
+          aria-hidden={isHidden}
+          inert={isHidden || undefined}
+        >
+          {items.map(({ Icon, name, label, onClick }) => (
+            <IconButton
+              key={name}
+              className={navigationButtonClassName}
+              variant="ghost"
+              shape="round"
+              aria-label={label}
+              aria-pressed={activeItemName === name}
+              onClick={onClick}
+              tabIndex={isHidden ? -1 : 0}
+            >
+              <Icon aria-hidden />
+            </IconButton>
+          ))}
+        </StyledNavigationBar>
+      </StyledFloatingContainer>
+    </>
+  );
 };

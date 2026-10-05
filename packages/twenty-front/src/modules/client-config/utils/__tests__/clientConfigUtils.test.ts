@@ -29,6 +29,7 @@ const mockClientConfig = {
     environment: 'development',
     release: '1.0.0',
     dsn: undefined,
+    tracesSampleRate: 0.1,
   },
   captcha: {
     provider: undefined,
@@ -62,13 +63,7 @@ describe('getClientConfig', () => {
     const result = await getClientConfig();
 
     expect(fetch).toHaveBeenCalledWith(
-      `${REACT_APP_SERVER_BASE_URL}/client-config`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
+      `${REACT_APP_SERVER_BASE_URL}/client-config?v=v1`,
     );
     expect(result).toEqual(mockClientConfig);
   });

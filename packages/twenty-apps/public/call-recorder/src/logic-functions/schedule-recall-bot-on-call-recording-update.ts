@@ -6,13 +6,14 @@ import {
   type ObjectRecordBaseEvent,
 } from 'twenty-sdk/define';
 
-import { SCHEDULE_RECALL_BOT_ON_CALL_RECORDING_UPDATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/schedule-recall-bot-on-call-recording-update-logic-function-universal-identifier';
+import { SCHEDULE_RECALL_BOT_ON_CALL_RECORDING_UPDATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import {
   resumePendingCallRecording,
   type ResumePendingCallRecordingResult,
 } from 'src/logic-functions/flows/resume-pending-call-recording.util';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 const CALL_RECORDING_OBJECT_NAME = 'callRecording';
 
@@ -94,8 +95,8 @@ const contradictsPendingCallRecording = (
         CallRecordingRequestStatus.REQUESTED) ||
     (!isUndefined(knownValues.status) &&
       knownValues.status !== CallRecordingStatus.SCHEDULED) ||
-    (!isUndefined(knownValues.externalBotId) &&
-      knownValues.externalBotId !== null)
+    // Event payloads serialize a NULL text column as an empty string.
+    isNonEmptyString(knownValues.externalBotId)
   );
 };
 

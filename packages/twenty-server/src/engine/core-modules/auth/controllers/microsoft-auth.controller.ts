@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { MicrosoftOAuthGuard } from 'src/engine/core-modules/auth/guards/microsoft-oauth.guard';
@@ -18,7 +19,7 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-@Controller('auth/microsoft')
+@Controller(`${ApiPath.Auth}/microsoft`)
 @UseFilters(AuthRestApiExceptionFilter)
 export class MicrosoftAuthController {
   constructor(private readonly authService: AuthService) {}
@@ -31,7 +32,6 @@ export class MicrosoftAuthController {
     NoPermissionGuard,
   )
   async microsoftAuth() {
-    // As this method is protected by Microsoft Auth guard, it will trigger Microsoft SSO flow
     return;
   }
 
@@ -47,7 +47,7 @@ export class MicrosoftAuthController {
     @Res() res: Response,
   ) {
     return res.redirect(
-      await this.authService.signInUpWithSocialSSO(
+      await this.authService.signInUpWithSocialSso(
         req.user,
         AuthProviderEnum.Microsoft,
       ),

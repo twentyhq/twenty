@@ -1,0 +1,17 @@
+.title {
+  color: var(--t-font-color-primary);
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-xl);
+  font-weight: var(--t-font-weight-semi-bold);
+  line-height: 1.2;
+  letter-spacing: normal;
+  margin: 0;
+}
+.subtitle {
+  color: var(--t-font-color-secondary);
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-md);
+  line-height: 1.4;
+  letter-spacing: normal;
+  margin: 0;
+}

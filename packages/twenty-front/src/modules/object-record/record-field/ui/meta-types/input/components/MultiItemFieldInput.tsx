@@ -1,7 +1,3 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Key } from 'ts-key-enum';
-import { useDebounce } from 'use-debounce';
-
 import {
   MultiItemBaseInput,
   type MultiItemBaseInputProps,
@@ -10,7 +6,7 @@ import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/
 import { sanitizeAndValidateInput } from '@/object-record/record-field/ui/meta-types/input/utils/sanitizeAndValidateInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -20,14 +16,20 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { Key } from 'ts-key-enum';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { useDebounce } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -36,6 +38,7 @@ type MultiItemFieldInputProps<T> = {
   onChange: (newItemsValue: T[]) => void;
   onEscape: (newItemsValue: T[]) => void;
   onEnter: (newItemsValue: T[]) => void;
+  onSubmit: (newItemsValue: T[]) => void;
   onClickOutside: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
   onError?: (hasError: boolean, values: any[]) => void;
   placeholder: string;
@@ -55,13 +58,13 @@ type MultiItemFieldInputProps<T> = {
   maxItemCount?: number;
 };
 
-// Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
-// This should be refactored with a hook instead that exposes those events in a context around this component and its children.
+// TODO: replace renderInput/renderItem/formatInput with a hook exposing them through context.
 export const MultiItemFieldInput = <T,>({
   items,
   onChange,
   onEscape,
   onEnter,
+  onSubmit,
   onError,
   placeholder,
   validateInput,
@@ -225,9 +228,13 @@ export const MultiItemFieldInput = <T,>({
     }
 
     onChange(updatedItems);
+
     if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
       onEnter(updatedItems);
+    } else if (!isDeeplyEqual(items, updatedItems)) {
+      onSubmit(updatedItems);
     }
+
     setIsInputDisplayed(false);
     setIsAddingNewItem(false);
     setInputValue('');
@@ -283,11 +290,13 @@ export const MultiItemFieldInput = <T,>({
   const handleSetPrimaryItem = (index: number) => {
     const updatedItems = moveArrayItem(items, { fromIndex: index, toIndex: 0 });
     onChange(updatedItems);
+    onSubmit(updatedItems);
   };
 
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
+    onSubmit(updatedItems);
     showInputIfNoItemsRemain(updatedItems);
   };
 
@@ -303,7 +312,7 @@ export const MultiItemFieldInput = <T,>({
   });
 
   return (
-    <DropdownContent ref={containerRef}>
+    <LegacyDropdownContent ref={containerRef}>
       {shouldShowSearch && !isInputDisplayed && (
         <>
           <DropdownMenuSearchInput
@@ -359,21 +368,23 @@ export const MultiItemFieldInput = <T,>({
           rightComponent={
             items.length ? (
               <LightIconButton
-                Icon={isAddingNewItem ? IconPlus : IconCheck}
                 onClick={handleEnter}
-              />
+                aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
+              >
+                {isAddingNewItem ? <IconPlus /> : <IconCheck />}
+              </LightIconButton>
             ) : null
           }
         />
       ) : !isLimitReached ? (
         <DropdownMenuItemsContainer>
-          <MenuItem
-            onClick={handleAddButtonClick}
-            LeftIcon={IconPlus}
-            text={newItemLabel || `Add ${placeholder}`}
-          />
+          <ListItem onClick={handleAddButtonClick} startIcon={<IconPlus />}>
+            <OverflowingTextWithTooltip
+              text={newItemLabel || `Add ${placeholder}`}
+            />
+          </ListItem>
         </DropdownMenuItemsContainer>
       ) : null}
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

@@ -1,6 +1,9 @@
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { Trans } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -12,7 +15,7 @@ import {
 
 type SettingsProtectedRouteWrapperProps = {
   children?: ReactNode;
-  settingsPermission?: PermissionFlagType;
+  settingsPermission: PermissionFlagType;
   requiredFeatureFlag?: FeatureFlagKey;
 };
 
@@ -21,20 +24,27 @@ export const SettingsProtectedRouteWrapper = ({
   settingsPermission,
   requiredFeatureFlag,
 }: SettingsProtectedRouteWrapperProps) => {
-  const hasAccessTokenPair = useHasAccessTokenPair();
+  const isLogged = useIsLogged();
   const hasPermission = useHasPermissionFlag(settingsPermission);
   const requiredFeatureFlagEnabled = useIsFeatureEnabled(
     requiredFeatureFlag || null,
   );
+  const workspaceSurface = useWorkspaceSurface();
 
-  if (!hasAccessTokenPair) {
+  if (!isLogged) {
     return null;
   }
 
-  // TODO: this should be part of PageChangeEffect as otherwise we will have multiple sources of redirection that can:
-  // - conflict (race conditions)
-  // - degrade performance as we will redirect multiple times
+  // TODO: move into PageChangeEffect to avoid conflicting and repeated redirects
   if ((requiredFeatureFlag && !requiredFeatureFlagEnabled) || !hasPermission) {
+    if (workspaceSurface.type === 'side-panel') {
+      return (
+        <WorkspaceRouteUnavailable>
+          <Trans>You don't have access to this settings page.</Trans>
+        </WorkspaceRouteUnavailable>
+      );
+    }
+
     return <Navigate to={getSettingsPath(SettingsPath.ProfilePage)} replace />;
   }
 

@@ -2,13 +2,16 @@ import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/P
 import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 import {
   AggregateOperations,
+  PageLayoutTabLayoutMode,
+  type PageLayoutWidget,
   WidgetConfigurationType,
   WidgetType,
-  type PageLayoutWidget,
 } from '~/generated-metadata/graphql';
 
 describe('prepareGridLayoutItemsWithPlaceholders', () => {
   const createMockWidget = (id: string): PageLayoutWidget => ({
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     id,
     applicationId: '',
     isActive: true,
@@ -16,7 +19,9 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
     title: `Test Widget ${id}`,
     type: WidgetType.GRAPH,
     objectMetadataId: null,
-    gridPosition: {
+    position: {
+      __typename: 'PageLayoutWidgetGridPosition' as const,
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 0,
       column: 0,
       rowSpan: 2,
@@ -155,13 +160,11 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
       const result = prepareGridLayoutItemsWithPlaceholders(widgets, true);
 
       expect(result).toHaveLength(6);
-      // Check that the last item is the pending placeholder
       const lastItem = result[result.length - 1];
       expect(lastItem).toEqual({
         id: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
         type: 'placeholder',
       });
-      // Check that all other items are widgets
       for (let i = 0; i < result.length - 1; i++) {
         expect(result[i].type).toBe('widget');
       }
@@ -212,7 +215,7 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
         expect(resultWidget.title).toBe(widget.title);
         expect(resultWidget.type).toBe(widget.type);
         expect(resultWidget.objectMetadataId).toBe(widget.objectMetadataId);
-        expect(resultWidget.gridPosition).toEqual(widget.gridPosition);
+        expect(resultWidget.position).toEqual(widget.position);
         expect(resultWidget.configuration).toEqual(widget.configuration);
         expect(resultWidget.createdAt).toBe(widget.createdAt);
         expect(resultWidget.updatedAt).toBe(widget.updatedAt);
@@ -231,7 +234,6 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
 
       prepareGridLayoutItemsWithPlaceholders(originalWidgets, true);
 
-      // Check that the array wasn't mutated
       expect(originalWidgets).toHaveLength(2);
       expect(originalWidgets).toEqual(widgetsCopy);
       expect(originalWidgets[0]).toBe(widget1);

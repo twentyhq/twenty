@@ -1,22 +1,15 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import {
-  type ChangeEvent,
-  useCallback,
-  useContext,
-  useId,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useId, useMemo, useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconUserCircle } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronDown } from 'twenty-ui/icon';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 
 import { MAX_WORKSPACE_MEMBERS_TO_DISPLAY } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormWorkspaceMemberFilterValueInputDropdownContent } from '@/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent';
@@ -29,9 +22,12 @@ import {
 } from '@/object-record/record-field/ui/form-types/utils/parseWorkspaceMemberFilterValue';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { Field } from 'twenty-ui/primitives/input';
+import { Dropdown } from 'twenty-ui/components';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -45,7 +41,7 @@ const StyledIconButton = styled.div`
   padding-right: ${themeCssVariables.spacing[2]};
 `;
 
-export type FormWorkspaceMemberFilterValueInputProps = {
+type FormWorkspaceMemberFilterValueInputProps = {
   label?: string;
   defaultValue?: string | null;
   onChange: (value: JsonValue) => void;
@@ -62,11 +58,10 @@ export const FormWorkspaceMemberFilterValueInput = ({
   readonly,
   VariablePicker,
 }: FormWorkspaceMemberFilterValueInputProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const componentId = useId();
   const dropdownId = `form-workspace-member-filter-picker-${componentId}`;
-  const selectableListId = `${dropdownId}-selectable-list`;
   const variablesDropdownId = `${dropdownId}-variables`;
 
   const [searchFilter, setSearchFilter] = useState('');
@@ -109,26 +104,14 @@ export const FormWorkspaceMemberFilterValueInput = ({
     [onChange, onClear],
   );
 
-  const meSelectableItem: SelectableItem = useMemo(
-    () => ({
-      id: CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
-      name: t`Me`,
-      isSelected: isCurrentWorkspaceMemberSelected,
-      AvatarIcon: IconUserCircle,
-    }),
-    [isCurrentWorkspaceMemberSelected],
-  );
-
-  const filteredPinnedSelectableItems = useMemo(
-    () =>
-      [meSelectableItem].filter((item) =>
-        item.name.toLowerCase().includes(searchFilter.toLowerCase()),
-      ),
-    [meSelectableItem, searchFilter],
-  );
-
   const handleSelectChange = useCallback(
-    (itemToSelect: SelectableItem, isNewSelectedValue: boolean) => {
+    ({
+      itemToSelect,
+      isNewSelectedValue,
+    }: {
+      itemToSelect: Pick<SelectableItem, 'id'>;
+      isNewSelectedValue: boolean;
+    }) => {
       if (loading) {
         return;
       }
@@ -170,17 +153,6 @@ export const FormWorkspaceMemberFilterValueInput = ({
     onChange('');
   }, [onChange, onClear]);
 
-  const handleSearchChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setSearchFilter(event.target.value);
-    },
-    [],
-  );
-
-  const handleDropdownClose = useCallback(() => {
-    setSearchFilter('');
-  }, []);
-
   const triggerDisplayText = useMemo(() => {
     const selectedRecordNames = [
       ...recordsToSelect,
@@ -194,12 +166,12 @@ export const FormWorkspaceMemberFilterValueInput = ({
       .filter((record) => selectedRecordIds.includes(record.id))
       .map((record) => record.name);
 
-    const selectedPinnedItemNames = isCurrentWorkspaceMemberSelected
+    const selectedCurrentMemberNames = isCurrentWorkspaceMemberSelected
       ? [t`Me`]
       : [];
 
     const selectedItemNames = [
-      ...selectedPinnedItemNames,
+      ...selectedCurrentMemberNames,
       ...selectedRecordNames,
     ];
 
@@ -233,7 +205,7 @@ export const FormWorkspaceMemberFilterValueInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {label ? <Field.Label>{label}</Field.Label> : null}
       <FormFieldInputRowContainer>
         {readonly ? (
           <StyledFormSelectContainerWrapper readonly>
@@ -245,47 +217,55 @@ export const FormWorkspaceMemberFilterValueInput = ({
             </FormFieldInputInnerContainer>
           </StyledFormSelectContainerWrapper>
         ) : (
-          <Dropdown
+          <DropdownRoot
             dropdownId={dropdownId}
-            dropdownPlacement="bottom-start"
-            clickableComponentWidth="100%"
-            onClose={handleDropdownClose}
-            dropdownOffset={{
-              y: parseInt(theme.spacing[1], 10),
+            type="picker"
+            multiple
+            onOpenChange={(open) => {
+              if (!open) {
+                setSearchFilter('');
+              }
             }}
-            clickableComponent={
-              <StyledFormSelectContainerWrapper>
-                <FormFieldInputInnerContainer
-                  formFieldInputInstanceId={componentId}
-                  hasRightElement={isDefined(VariablePicker)}
-                  hoverable
-                  preventFocusStackUpdate
-                >
-                  {triggerContent}
-                  <StyledIconButton>
-                    <IconChevronDown
-                      size={theme.icon.size.md}
-                      color={theme.font.color.light}
-                    />
-                  </StyledIconButton>
-                </FormFieldInputInnerContainer>
-              </StyledFormSelectContainerWrapper>
-            }
-            dropdownComponents={
+          >
+            <Dropdown.Trigger
+              render={<StyledFormSelectContainerWrapper />}
+              nativeButton={false}
+            >
+              <FormFieldInputInnerContainer
+                formFieldInputInstanceId={componentId}
+                hasRightElement={isDefined(VariablePicker)}
+                hoverable
+                preventFocusStackUpdate
+              >
+                {triggerContent}
+                <StyledIconButton>
+                  <IconChevronDown
+                    size={theme.icon.size.md}
+                    color={theme.font.color.light}
+                  />
+                </StyledIconButton>
+              </FormFieldInputInnerContainer>
+            </Dropdown.Trigger>
+            <DropdownContent
+              aria-label={t`Select workspace members`}
+              side="bottom"
+              align="start"
+              sideOffset={parseInt(theme.spacing[1], 10)}
+              width={GenericDropdownContentWidth.ExtraLarge}
+            >
               <FormWorkspaceMemberFilterValueInputDropdownContent
-                dropdownId={dropdownId}
-                selectableListId={selectableListId}
                 searchFilter={searchFilter}
-                onSearchChange={handleSearchChange}
-                pinnedSelectableItems={filteredPinnedSelectableItems}
+                onSearchChange={setSearchFilter}
+                isCurrentWorkspaceMemberSelected={
+                  isCurrentWorkspaceMemberSelected
+                }
                 recordsToSelect={recordsToSelect}
                 filteredSelectedRecords={filteredSelectedRecords}
-                selectedRecords={selectedRecords}
                 loading={loading}
                 onSelectChange={handleSelectChange}
               />
-            }
-          />
+            </DropdownContent>
+          </DropdownRoot>
         )}
         {isDefined(VariablePicker) && !readonly && (
           <VariablePicker

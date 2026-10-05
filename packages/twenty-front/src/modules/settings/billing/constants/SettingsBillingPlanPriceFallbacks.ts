@@ -3,7 +3,7 @@ import {
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
-import { type SettingsBillingPlanPrices } from '@/settings/billing/types/settingsBillingPlanComparison.type';
+import { type SettingsBillingPlanPrices } from '@/settings/billing/types/SettingsBillingPlanComparison';
 
 export const SETTINGS_BILLING_PLAN_PRICE_FALLBACKS = {
   [BillingPlanKey.PRO]: {

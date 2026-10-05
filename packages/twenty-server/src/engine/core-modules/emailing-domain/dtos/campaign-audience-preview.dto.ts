@@ -12,10 +12,16 @@ export class CampaignAudiencePreviewDTO {
   duplicateEmails: number;
 
   @Field(() => Int)
+  hardSuppressed: number;
+
+  @Field(() => Int)
   globallyUnsubscribed: number;
 
   @Field(() => Int)
   topicUnsubscribed: number;
+
+  @Field(() => Int)
+  trackingRefused: number;
 
   @Field(() => Int)
   sendable: number;

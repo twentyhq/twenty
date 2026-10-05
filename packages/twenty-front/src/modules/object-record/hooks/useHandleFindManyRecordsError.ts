@@ -1,9 +1,10 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { type ErrorLike } from '@apollo/client';
 
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useCallback } from 'react';
+
+import { useToast } from 'twenty-ui/components';
 import { logError } from '~/utils/logError';
 
 export const useHandleFindManyRecordsError = ({
@@ -13,7 +14,7 @@ export const useHandleFindManyRecordsError = ({
   objectMetadataItem: EnrichedObjectMetadataItem;
   handleError?: (error?: Error) => void;
 }) => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const handleFindManyRecordsError = useCallback(
     (error: ErrorLike) => {
@@ -21,16 +22,10 @@ export const useHandleFindManyRecordsError = ({
         `useFindManyRecords for "${objectMetadataItem.namePlural}" error : ` +
           error,
       );
-      if (CombinedGraphQLErrors.is(error)) {
-        enqueueErrorSnackBar({
-          apolloError: error,
-        });
-      } else {
-        enqueueErrorSnackBar({});
-      }
+      enqueueToast(getToastOptionsFromError({ error }));
       handleError?.(error as Error);
     },
-    [enqueueErrorSnackBar, handleError, objectMetadataItem.namePlural],
+    [enqueueToast, handleError, objectMetadataItem.namePlural],
   );
 
   return {

@@ -1,10 +1,11 @@
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledItems = styled.div`
   display: flex;
@@ -18,6 +19,8 @@ type CollapsibleNavigationDrawerSectionProps = {
   label: string;
   children: ReactNode;
   wrapTitle?: (titleNode: ReactNode) => ReactNode;
+  rightIcon?: ReactNode;
+  alwaysShowRightIcon?: boolean;
 };
 
 export const CollapsibleNavigationDrawerSection = ({
@@ -25,13 +28,18 @@ export const CollapsibleNavigationDrawerSection = ({
   label,
   children,
   wrapTitle,
+  rightIcon,
+  alwaysShowRightIcon,
 }: CollapsibleNavigationDrawerSectionProps) => {
+  const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection(sectionId);
 
   const titleNode = (
     <NavigationDrawerSectionTitle
       label={label}
+      rightIcon={rightIcon}
+      alwaysShowRightIcon={alwaysShowRightIcon}
       onClick={toggleNavigationSection}
       isOpen={isNavigationSectionOpen}
     />
@@ -39,16 +47,15 @@ export const CollapsibleNavigationDrawerSection = ({
 
   return (
     <NavigationDrawerSection>
-      {wrapTitle ? wrapTitle(titleNode) : titleNode}
-      <AnimatedExpandableContainer
-        isExpanded={isNavigationSectionOpen}
+      {isNavigationDrawerExpanded &&
+        (wrapTitle ? wrapTitle(titleNode) : titleNode)}
+      <Collapsible
+        isExpanded={!isNavigationDrawerExpanded || isNavigationSectionOpen}
         dimension="height"
-        mode="fit-content"
         containAnimation
-        initial={false}
       >
         <StyledItems>{children}</StyledItems>
-      </AnimatedExpandableContainer>
+      </Collapsible>
     </NavigationDrawerSection>
   );
 };

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, LessThan, Not, Repository } from 'typeorm';
+import { IsNull, LessThan, Like, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -11,9 +11,13 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import {
   PENDING_FILE_CLEANUP_BATCH_SIZE,
   PENDING_FILE_MAX_AGE_MS,
+  RECORD_EXPORT_FILE_MAX_AGE_MS,
 } from 'src/engine/core-modules/file/file-upload/crons/constants/pending-file-cleanup.constants';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class PendingFileCleanupService {
@@ -23,25 +27,30 @@ export class PendingFileCleanupService {
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository -- the reaper runs in a cron with no workspace context and must sweep stale PENDING files across every workspace
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository -- resolves the application universalIdentifier of a cross-workspace file while reaping outside any workspace context
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     private readonly fileStorageService: FileStorageService,
   ) {}
 
-  // Deletes file records stuck in PENDING (direct uploads that were initiated
-  // but never completed) together with any partially uploaded object. Never
-  // promotes to UPLOADED: a file that was never confirmed is referenced by
-  // nothing, the client recovery path is re-uploading under a fresh fileId.
-  async cleanupStalePendingFiles(): Promise<number> {
+  async cleanupStaleFiles(): Promise<number> {
     const staleThreshold = new Date(Date.now() - PENDING_FILE_MAX_AGE_MS);
+    const exportThreshold = new Date(
+      Date.now() - RECORD_EXPORT_FILE_MAX_AGE_MS,
+    );
 
     const staleFiles = await this.fileRepository.find({
-      where: {
-        status: FILE_STATUS.PENDING,
-        createdAt: LessThan(staleThreshold),
-        workspaceId: Not(IsNull()),
-      },
+      where: [
+        {
+          status: FILE_STATUS.PENDING,
+          createdAt: LessThan(staleThreshold),
+          workspaceId: Not(IsNull()),
+        },
+        {
+          path: Like(`${FileFolder.RecordExport}/%`),
+          createdAt: LessThan(exportThreshold),
+          workspaceId: Not(IsNull()),
+        },
+      ],
       take: PENDING_FILE_CLEANUP_BATCH_SIZE,
     });
 
@@ -49,10 +58,21 @@ export class PendingFileCleanupService {
 
     for (const file of staleFiles) {
       try {
-        // Claim the row atomically: delete it only while it is still PENDING.
-        // If completeFileUpload promoted it to UPLOADED between the fetch above
-        // and here, the delete affects no rows and the now-live file (and its
-        // object) are left untouched.
+        if (
+          file.path.startsWith(`${FileFolder.RecordExport}/`) &&
+          isDefined(file.workspaceId)
+        ) {
+          await this.fileStorageService.deleteByFileId({
+            fileId: file.id,
+            workspaceId: file.workspaceId,
+            fileFolder: FileFolder.RecordExport,
+          });
+          deletedCount++;
+
+          continue;
+        }
+
+        // Delete only while still PENDING, so a file completeFileUpload just promoted is left untouched.
         const { affected } = await this.fileRepository.delete({
           id: file.id,
           status: FILE_STATUS.PENDING,
@@ -62,12 +82,21 @@ export class PendingFileCleanupService {
           continue;
         }
 
+        if (isDefined(file.workspaceId)) {
+          await this.fileStorageService.releaseStorageStock({
+            workspaceId: file.workspaceId,
+            applicationId: file.applicationId,
+            bytes: file.size,
+            quantity: 1,
+          });
+        }
+
         await this.deleteStorageObject(file);
 
         deletedCount++;
       } catch (error) {
         this.logger.warn(
-          `Failed to clean up stale pending file ${file.id} in workspace ${file.workspaceId}: ${error.message}`,
+          `Failed to clean up stale file ${file.id} in workspace ${file.workspaceId}: ${error.message}`,
         );
       }
     }
@@ -75,9 +104,7 @@ export class PendingFileCleanupService {
     return deletedCount;
   }
 
-  // The row has already been removed, so this only tidies the (possibly
-  // partial, possibly absent) storage object. A failure here leaks bytes but
-  // never data, so it is logged rather than retried.
+  // The row is already gone, so a failure here only leaks bytes and is logged rather than retried.
   private async deleteStorageObject(file: FileEntity): Promise<void> {
     if (!isDefined(file.workspaceId)) {
       return;
@@ -85,19 +112,45 @@ export class PendingFileCleanupService {
 
     const [fileFolder] = file.path.split('/');
 
-    const application = await this.applicationRepository.findOne({
-      where: { id: file.applicationId, workspaceId: file.workspaceId },
-    });
+    const application = await this.applicationRepository.findOne(
+      file.workspaceId,
+      {
+        where: { id: file.applicationId },
+      },
+    );
 
     if (!isDefined(application)) {
       return;
     }
 
-    await this.fileStorageService.deleteFile({
+    const resourcePath = removeFileFolderFromFileEntityPath(file.path);
+
+    const location = {
       workspaceId: file.workspaceId,
       applicationUniversalIdentifier: application.universalIdentifier,
       fileFolder: fileFolder as FileFolder,
-      resourcePath: removeFileFolderFromFileEntityPath(file.path),
-    });
+    };
+
+    // A crash between move and row update leaves the object at its final path, so both are deleted.
+    // Quarantine goes first: a racing completion could otherwise move it into an already-cleaned final path.
+    const failures: unknown[] = [];
+
+    for (const pathToDelete of [
+      buildPendingUploadResourcePath({ fileId: file.id, resourcePath }),
+      resourcePath,
+    ]) {
+      try {
+        await this.fileStorageService.deleteFileObject({
+          ...location,
+          resourcePath: pathToDelete,
+        });
+      } catch (error) {
+        failures.push(error);
+      }
+    }
+
+    if (failures.length > 0) {
+      throw failures[0];
+    }
   }
 }

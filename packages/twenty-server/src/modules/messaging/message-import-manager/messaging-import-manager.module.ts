@@ -56,6 +56,7 @@ import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modul
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
 import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/messaging-monitoring.module';
+import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 @Module({
   imports: [
     RefreshTokensManagerModule,
@@ -86,6 +87,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     ConnectedAccountModule,
   ],
   providers: [
+    BlocklistRepository,
     provideWorkspaceScopedRepository(MessageChannelEntity),
     MessagingMessageListFetchCronCommand,
     MessagingMessagesImportCronCommand,
@@ -117,6 +119,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingImportFolderMessagesService,
     MessagingDeleteGroupEmailMessagesService,
     InboundEmailImportService,
+    provideWorkspaceScopedRepository(MessageFolderEntity),
   ],
   exports: [
     MessagingMessageListFetchCronCommand,
@@ -126,6 +129,8 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingProcessGroupEmailActionsService,
     InboundEmailImportService,
     MessagingSaveMessagesAndEnqueueContactCreationService,
+    MessagingMessagesImportService,
+    MessagingMessageListFetchService,
   ],
 })
 export class MessagingImportManagerModule {}

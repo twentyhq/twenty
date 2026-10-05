@@ -7,9 +7,7 @@ import {
 
 import { type Response } from 'express';
 
-// In case of exception in middleware run before the CORS middleware (eg: JSON Middleware that checks the request body),
-// the CORS headers are missing in the response.
-// This class add CORS headers to exception response to avoid misleading CORS error
+// Exceptions thrown before the CORS middleware (e.g. JSON body parsing) would otherwise lack CORS headers
 @Catch()
 export class UnhandledExceptionFilter implements ExceptionFilter {
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -22,15 +20,18 @@ export class UnhandledExceptionFilter implements ExceptionFilter {
     }
 
     // TODO: Check if needed, remove otherwise.
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header(
-      'Access-Control-Allow-Methods',
-      'GET,HEAD,PUT,PATCH,POST,DELETE',
-    );
-    response.header(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept',
-    );
+    // Only when the CORS middleware never ran: overwriting a reflected origin with * would make the browser reject a credentialed request
+    if (!response.getHeader('Access-Control-Allow-Origin')) {
+      response.header('Access-Control-Allow-Origin', '*');
+      response.header(
+        'Access-Control-Allow-Methods',
+        'GET,HEAD,PUT,PATCH,POST,DELETE',
+      );
+      response.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept',
+      );
+    }
 
     const status =
       exception instanceof HttpException ? exception.getStatus() : 500;

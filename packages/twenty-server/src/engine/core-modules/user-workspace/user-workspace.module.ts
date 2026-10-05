@@ -1,3 +1,6 @@
+import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
+import { WorkflowRunRecordShareModule } from 'src/engine/core-modules/workflow/workflow-run-record-share.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -17,13 +20,14 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { RoleValidationModule } from 'src/engine/metadata-modules/role-validation/role-validation.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
 @Module({
   imports: [
+    WorkspaceCacheModule,
     TypeOrmModule.forFeature([
       UserWorkspaceEntity,
       UserEntity,
@@ -35,7 +39,6 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     ApprovedAccessDomainModule,
     WorkspaceInvitationModule,
     WorkspaceDomainsModule,
-    TwentyORMModule,
     UserRoleModule,
     FileModule,
     TokenModule,
@@ -44,8 +47,14 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     EnterpriseModule,
     FeatureFlagModule,
     CoreEntityCacheModule,
+    WorkflowRunRecordShareModule,
   ],
-  exports: [UserWorkspaceService],
-  providers: [UserWorkspaceService, UserWorkspaceEntityCacheProviderService],
+  exports: [UserWorkspaceService, UserWorkspaceAuthContextService],
+  providers: [
+    UserWorkspaceAuthContextService,
+    UserWorkspaceService,
+    UserWorkspaceEntityCacheProviderService,
+    provideWorkspaceScopedRepository(RoleTargetEntity),
+  ],
 })
 export class UserWorkspaceModule {}

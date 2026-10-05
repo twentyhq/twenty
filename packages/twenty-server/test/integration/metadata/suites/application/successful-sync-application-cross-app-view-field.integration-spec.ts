@@ -71,7 +71,7 @@ describe('Sync application should succeed when extending another app view with a
               name: APP_A_VIEW_NAME,
               objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
               type: ViewType.TABLE,
-              icon: 'IconList',
+              icon: 'IconTable',
             },
           ],
         },

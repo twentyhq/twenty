@@ -5,8 +5,8 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
-import { Checkbox, CheckboxAccent } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledPermissionContent = styled.div`
   align-items: center;
@@ -89,9 +89,9 @@ export const SettingsRolePermissionsObjectsTableRow = ({
       >
         <Checkbox
           checked={permission.value ?? false}
-          onChange={() => permission.setValue(!permission.value)}
+          onCheckedChange={() => permission.setValue(!permission.value)}
           disabled={isDisabled}
-          accent={isRevoked ? CheckboxAccent.Orange : CheckboxAccent.Blue}
+          color={isRevoked ? 'warning' : 'accent'}
         />
       </TableCell>
     </TableRow>

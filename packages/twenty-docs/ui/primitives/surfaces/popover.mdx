@@ -1,0 +1,127 @@
+---
+title: Popover
+description: Display contextual content anchored to a trigger.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import PopoverReference from '/snippets/ui/generated/surfaces/popover.mdx';
+
+Use `Popover` for contextual information or lightweight controls. `Popup` includes positioning and a portal, so you can compose content directly inside it.
+
+<StoryEmbed
+  storyId="ui-surfaces-popover--documentation"
+  title="Popover example"
+  height={440}
+/>
+
+## Anatomy
+
+Keep the trigger and popup inside `Popover.Root`. The popup can contain text, form controls, and actions.
+
+```text
+Popover.Root
+├── Popover.Trigger
+└── Popover.Popup
+    ├── Popover.Title
+    ├── Popover.Description
+    └── Popover.Close
+```
+
+| Part          | Requirement                             | Purpose                                                               |
+| ------------- | --------------------------------------- | --------------------------------------------------------------------- |
+| `Root`        | Required                                | Coordinates open state and interactions.                              |
+| `Trigger`     | Required for a trigger-anchored popover | Opens or closes the popup and supplies its anchor.                    |
+| `Popup`       | Required                                | Renders positioned content with focus management.                     |
+| `Title`       | Recommended                             | Supplies a visible popup name. An accessible name is always required. |
+| `Description` | Optional                                | Associates explanatory text with the popup.                           |
+| `Close`       | Optional                                | Provides an explicit close action within the popup.                   |
+
+`Popup` includes the portal and positioner. Set `arrow` on `Popup` to add its built-in arrow. All parts share their root's context even though the popup renders in a portal; the tree describes component nesting, not the final DOM placement.
+
+## Uncontrolled state
+
+Use `defaultOpen` to set the initial visibility. The popover owns subsequent changes from its trigger, close controls, and dismissal interactions.
+
+```tsx
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ImportHelp = () => (
+  <Popover.Root defaultOpen={false}>
+    <Popover.Trigger>Import help</Popover.Trigger>
+    <Popover.Popup arrow>
+      <Popover.Title>Import a CSV file</Popover.Title>
+      <Popover.Description>
+        Use a header row to identify your columns.
+      </Popover.Description>
+      <Popover.Close>Got it</Popover.Close>
+    </Popover.Popup>
+  </Popover.Root>
+);
+```
+
+`defaultOpen` defaults to `false`, so it can be omitted. Use `Title` and `Description` to identify the popup. The trigger renders a button by default; `render` lets you supply a compatible element.
+
+## Controlled state
+
+Pass `open` and update it with `onOpenChange` to own the same popover's visibility in React state.
+
+```tsx
+import { useState } from 'react';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ImportHelp = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger>Import help</Popover.Trigger>
+      <Popover.Popup arrow>
+        <Popover.Title>Import a CSV file</Popover.Title>
+        <Popover.Description>
+          Use a header row to identify your columns.
+        </Popover.Description>
+        <Popover.Close>Got it</Popover.Close>
+      </Popover.Popup>
+    </Popover.Root>
+  );
+};
+```
+
+`onOpenChange` receives the next boolean and event details, including changes requested by the trigger, close controls, Escape, and outside interaction.
+
+## Compose with buttons
+
+Pass a Twenty UI `Button` through `render` to use it as the trigger or close control. The popover keeps its open state, keyboard behavior, and focus handling.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ImportHelp = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<Button variant="outline">Import help</Button>} />
+    <Popover.Popup arrow>
+      <Popover.Title>Import a CSV file</Popover.Title>
+      <Popover.Description>
+        Use a header row to identify your columns.
+      </Popover.Description>
+      <Popover.Close render={<Button>Got it</Button>} />
+    </Popover.Popup>
+  </Popover.Root>
+);
+```
+
+`render` composes behavior onto the supplied button. Custom wrapper components must [forward the supplied props and ref](/ui/primitives/overview#custom-components) to preserve that behavior.
+
+## Placement and focus
+
+`Popup` defaults to `side="bottom"`, `align="center"`, and `sideOffset={8}`. Set `arrow` to show an arrow. Set `container` to override the theme's portal container; see [theming](/ui/theming).
+
+Escape closes the popup and focus returns to the trigger. Outside interaction dismisses it by default. Use the focus props on `Popup` when its content needs a specific initial or return focus target.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<PopoverReference />

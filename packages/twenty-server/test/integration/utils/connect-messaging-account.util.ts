@@ -1,4 +1,3 @@
-import gql from 'graphql-tag';
 import request from 'supertest';
 
 import {
@@ -7,13 +6,12 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
+import { generateTransientToken } from 'test/integration/utils/generate-transient-token.util';
 import {
   deleteConnectedAccount,
-  getDataOrThrow,
   queryCalendarChannels,
   queryMessageChannels,
 } from 'test/integration/utils/query-messaging.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 type ConnectMessagingAccountInput = {
@@ -33,26 +31,6 @@ type ConnectMessagingAccountResult = {
 const OAUTH_CALLBACK_PATH: Partial<Record<ConnectedAccountProvider, string>> = {
   [ConnectedAccountProvider.GOOGLE]: '/auth/google-apis/get-access-token',
   [ConnectedAccountProvider.MICROSOFT]: '/auth/microsoft-apis/get-access-token',
-};
-
-const generateTransientToken = async (): Promise<string> => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
-      mutation GenerateTransientToken {
-        generateTransientToken {
-          transientToken {
-            token
-          }
-        }
-      }
-    `,
-  });
-
-  const data = getDataOrThrow(response) as {
-    generateTransientToken: { transientToken: { token: string } };
-  };
-
-  return data.generateTransientToken.transientToken.token;
 };
 
 export const connectMessagingAccount = async ({

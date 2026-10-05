@@ -1,18 +1,16 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useFieldMetadataItemByIdOrThrow';
 import { useSortSubFieldChoicesForField } from '@/object-metadata/hooks/useSortSubFieldChoicesForField';
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { Dropdown } from 'twenty-ui/components';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 type EditableSortChipProps = {
@@ -23,7 +21,6 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
   const { t } = useLingui();
   const { removeRecordSort } = useRemoveRecordSort();
   const { upsertRecordSort } = useUpsertRecordSort();
-  const { closeDropdown } = useCloseDropdown();
 
   const { fieldMetadataItem } = useFieldMetadataItemByIdOrThrow(
     recordSort.fieldMetadataId,
@@ -54,12 +51,6 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
 
   const handleSubFieldSelect = (value: string) => {
     upsertRecordSort({ ...recordSort, subFieldName: value });
-    closeDropdown(dropdownId);
-  };
-
-  const handleDirectionSelect = (direction: ViewSortDirection) => {
-    setDirection(direction);
-    closeDropdown(dropdownId);
   };
 
   const Icon =
@@ -82,9 +73,8 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
   }
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
+    <DropdownRoot dropdownId={dropdownId} type="picker">
+      <Dropdown.Trigger render={<div />} nativeButton={false}>
         <SortOrFilterChip
           key={recordSort.fieldMetadataId}
           testId={recordSort.fieldMetadataId}
@@ -94,38 +84,33 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
           onRemove={handleRemove}
           type="sort"
         />
-      }
-      dropdownComponents={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <MenuItemSelect
-              LeftIcon={IconArrowUp}
-              text={t`Ascending`}
-              selected={recordSort.direction === ViewSortDirection.ASC}
-              onClick={() => handleDirectionSelect(ViewSortDirection.ASC)}
-            />
-            <MenuItemSelect
-              LeftIcon={IconArrowDown}
-              text={t`Descending`}
-              selected={recordSort.direction === ViewSortDirection.DESC}
-              onClick={() => handleDirectionSelect(ViewSortDirection.DESC)}
-            />
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer>
-            {subFieldChoices.options.map((option) => (
-              <MenuItemSelect
-                key={option.value}
-                text={option.label}
-                selected={option.value === subFieldChoices.selectedValue}
-                onClick={() => handleSubFieldSelect(option.value)}
-              />
-            ))}
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-      dropdownOffset={{ y: 8, x: 0 }}
-      dropdownPlacement="bottom-start"
-    />
+      </Dropdown.Trigger>
+      <DropdownContent sideOffset={8}>
+        <Dropdown.Section>
+          <Dropdown.OptionItem
+            onSelect={() => setDirection(ViewSortDirection.ASC)}
+            selected={recordSort.direction === ViewSortDirection.ASC}
+            startIcon={<SelectOptionIcon Icon={IconArrowUp} />}
+          >{t`Ascending`}</Dropdown.OptionItem>
+          <Dropdown.OptionItem
+            onSelect={() => setDirection(ViewSortDirection.DESC)}
+            selected={recordSort.direction === ViewSortDirection.DESC}
+            startIcon={<SelectOptionIcon Icon={IconArrowDown} />}
+          >{t`Descending`}</Dropdown.OptionItem>
+        </Dropdown.Section>
+        <Dropdown.Separator />
+        <Dropdown.Section>
+          {subFieldChoices.options.map((option) => (
+            <Dropdown.OptionItem
+              key={option.value}
+              onSelect={() => handleSubFieldSelect(option.value)}
+              selected={option.value === subFieldChoices.selectedValue}
+            >
+              {option.label}
+            </Dropdown.OptionItem>
+          ))}
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

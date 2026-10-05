@@ -8,7 +8,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ChartRatioAggregateOperationSelectableListItem = ({
   label,
@@ -42,13 +42,17 @@ export const ChartRatioAggregateOperationSelectableListItem = ({
       itemId={DASHBOARD_AGGREGATE_OPERATION_RATIO}
       onEnter={onSelect}
     >
-      <MenuItemSelect
-        text={label}
-        selected={isCurrentlyRatio}
+      <ListItem
         focused={isFocused}
-        hasSubMenu={true}
         onClick={onSelect}
-      />
+        role="option"
+        aria-selected={isCurrentlyRatio}
+        selected={isCurrentlyRatio}
+        indicator="check"
+        hasSubmenu={true}
+      >
+        {label}
+      </ListItem>
     </SelectableListItem>
   );
 };

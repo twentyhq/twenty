@@ -1,20 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Key } from 'ts-key-enum';
-
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
+import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -23,9 +18,13 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useEffect, useMemo, useState } from 'react';
+import { Key } from 'ts-key-enum';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined, parseJson } from 'twenty-shared/utils';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '';
@@ -172,22 +171,30 @@ export const ObjectFilterDropdownOptionSelect = ({
       selectableItemIdArray={objectRecordsIds}
       focusId={focusId}
     >
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
         {showNoResult ? (
-          <MenuItem text={t`No results`} />
+          <ListItem disabled>{t`No results`}</ListItem>
         ) : (
           optionsInDropdown?.map((option) => (
-            <MenuItemMultiSelect
+            <ListItem
+              render={<button type="button" />}
               key={option.id}
-              selected={option.isSelected}
-              isKeySelected={option.id === selectedItemId}
-              onSelectChange={(selected) =>
-                handleMultipleOptionSelectChange(option, selected)
-              }
-              text={option.label}
-              color={option.color}
               className=""
-            />
+              focused={option.id === selectedItemId}
+              role="option"
+              aria-selected={option.isSelected}
+              selected={option.isSelected}
+              indicator="checkbox"
+              onClick={() =>
+                handleMultipleOptionSelectChange(option, !option.isSelected)
+              }
+            >
+              {isDefined(option.color) ? (
+                <Tag color={option.color}>{option.label}</Tag>
+              ) : (
+                <OverflowingTextWithTooltip text={option.label} />
+              )}
+            </ListItem>
           ))
         )}
       </DropdownMenuItemsContainer>

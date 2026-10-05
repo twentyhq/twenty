@@ -1,3 +1,4 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -12,6 +13,7 @@ import { applyDiff, isDefined } from 'twenty-shared/utils';
 import { type WorkflowVersionStepChanges } from '~/generated/graphql';
 
 export const useApplyWorkflowVersionStepChanges = (instanceId?: string) => {
+  const isCore = useIsWorkflowCoreEnabled();
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -53,6 +55,10 @@ export const useApplyWorkflowVersionStepChanges = (instanceId?: string) => {
         steps: applyDiff({ steps: currentFlow.steps }, stepsDiff).steps,
       };
     });
+
+    if (isCore) {
+      return;
+    }
 
     const cachedRecord = getRecordFromCache<WorkflowVersion>(workflowVersionId);
 

@@ -43,7 +43,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -61,7 +61,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -79,7 +79,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -277,7 +277,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -295,7 +295,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -313,7 +313,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -513,7 +513,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -531,7 +531,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -549,7 +549,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -749,7 +749,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -767,7 +767,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -785,7 +785,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -803,7 +803,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: {
@@ -1039,7 +1039,7 @@ describe('generateWorkflowRunDiagram', () => {
         valid: true,
         settings: {
           errorHandlingOptions: {
-            retryOnFailure: { value: true },
+            retryOnFailure: { value: 3 },
             continueOnFailure: { value: false },
           },
           input: [

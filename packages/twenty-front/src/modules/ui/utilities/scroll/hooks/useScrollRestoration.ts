@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useScrollRestoration = (componentInstanceId: string) => {
   const location = useLocation();
-  const storageKey = `scroll-${location.pathname}`;
+  const storageKey = `scroll-${location.pathname}-${componentInstanceId}`;
   const [isRestoring, setIsRestoring] = useState(false);
 
   const scrollWrapperScrollTop = useAtomComponentStateValue(

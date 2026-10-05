@@ -45,7 +45,7 @@ export function EnterpriseActivateHero() {
         <HeadingPair>
           <HeadingMeasure>
             <Heading as="h1" size="lg" weight="light">
-              {i18n._(msg`Enterprise *activation*`)}
+              {i18n._(msg`Organization *activation*`)}
             </Heading>
           </HeadingMeasure>
           <BodyMeasure>

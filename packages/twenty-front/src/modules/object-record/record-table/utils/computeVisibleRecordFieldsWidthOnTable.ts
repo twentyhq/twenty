@@ -1,33 +1,25 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
-import { sumByProperty } from 'twenty-shared/utils';
+import { isDefined, sumByProperty } from 'twenty-shared/utils';
 
 export const computeVisibleRecordFieldsWidthOnTable = ({
-  shouldCompactFirstColumn,
+  firstColumnWidthOverride,
   visibleRecordFields,
 }: {
-  shouldCompactFirstColumn: boolean;
+  firstColumnWidthOverride?: number;
   visibleRecordFields: Pick<RecordField, 'size'>[];
 }) => {
-  const visibleRecordFieldsWithoutFirst = visibleRecordFields.slice(1);
+  const sumOfAllFields = visibleRecordFields.reduce(sumByProperty('size'), 0);
 
-  const sumWithoutFirstField = visibleRecordFieldsWithoutFirst.reduce(
-    sumByProperty('size'),
-    0,
-  );
+  const firstRecordField = visibleRecordFields[0];
 
-  const sumWithAllFields = visibleRecordFields.reduce(sumByProperty('size'), 0);
-
-  const sumForCompactedFirstColumn =
-    RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE + sumWithoutFirstField;
-
-  const sumForNoCompactColumn = sumWithAllFields;
-
-  const visibleRecordFieldsWidth = shouldCompactFirstColumn
-    ? sumForCompactedFirstColumn
-    : sumForNoCompactColumn;
+  if (!isDefined(firstColumnWidthOverride) || !isDefined(firstRecordField)) {
+    return {
+      visibleRecordFieldsWidth: sumOfAllFields,
+    };
+  }
 
   return {
-    visibleRecordFieldsWidth,
+    visibleRecordFieldsWidth:
+      sumOfAllFields - firstRecordField.size + firstColumnWidthOverride,
   };
 };

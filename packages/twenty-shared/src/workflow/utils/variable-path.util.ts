@@ -41,7 +41,6 @@ export const parseVariablePath = (path: string): string[] => {
       current = '';
       inBracket = false;
       segmentIndex++;
-      // Skip the following dot if present
       if (segmentIndex < path.length && path[segmentIndex] === '.') {
         segmentIndex++;
       }

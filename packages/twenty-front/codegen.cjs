@@ -6,11 +6,13 @@ module.exports = {
     '/graphql',
   documents: [
     './src/modules/workflow/**/graphql/**/*.{ts,tsx}',
+    './src/modules/object-core/**/graphql/**/*.{ts,tsx}',
     './src/modules/activities/emails/graphql/queries/**/*.{ts,tsx}',
     './src/modules/activities/emails/graphql/operation-signatures/**/*.{ts,tsx}',
-    './src/modules/activities/calendar/graphql/**/*.{ts,tsx}',
+    './src/modules/activities/calendar/graphql/queries/**/*.{ts,tsx}',
     './src/modules/search/graphql/**/*.{ts,tsx}',
     './src/modules/command-menu/graphql/**/*.{ts,tsx}',
+    './src/modules/ai/graphql/mutations/answerToolCall.ts',
 
     '!./src/**/*.test.{ts,tsx}',
     '!./src/**/*.stories.{ts,tsx}',

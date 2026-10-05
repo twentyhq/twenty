@@ -1,16 +1,17 @@
 import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
+import { MetadataWritability } from '~/generated-metadata/graphql';
 
 describe('isRecordReadOnly', () => {
   it('should return false if record is not deleted, has update permissions and object metadata is not read only', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: true,
-        objectMetadataId: '123',
       },
       isRecordDeleted: false,
       objectMetadataItem: {
         isUIEditable: true,
         isRemote: false,
+        writability: MetadataWritability.OPEN,
       },
     });
 
@@ -21,12 +22,12 @@ describe('isRecordReadOnly', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: false,
-        objectMetadataId: '123',
       },
       isRecordDeleted: false,
       objectMetadataItem: {
         isUIEditable: true,
         isRemote: false,
+        writability: MetadataWritability.OPEN,
       },
     });
 
@@ -37,12 +38,12 @@ describe('isRecordReadOnly', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: true,
-        objectMetadataId: '123',
       },
       isRecordDeleted: true,
       objectMetadataItem: {
         isUIEditable: true,
         isRemote: false,
+        writability: MetadataWritability.OPEN,
       },
     });
 
@@ -53,12 +54,12 @@ describe('isRecordReadOnly', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: false,
-        objectMetadataId: '123',
       },
       isRecordDeleted: true,
       objectMetadataItem: {
         isUIEditable: false,
         isRemote: false,
+        writability: MetadataWritability.OPEN,
       },
     });
 
@@ -69,12 +70,12 @@ describe('isRecordReadOnly', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: true,
-        objectMetadataId: '123',
       },
       isRecordDeleted: false,
       objectMetadataItem: {
         isUIEditable: true,
         isRemote: true,
+        writability: MetadataWritability.OPEN,
       },
     });
 

@@ -14,11 +14,10 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import QRCodeModule from 'react-qr-code';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { MainButton } from 'twenty-ui/components';
 import { IconCopy } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Loader } from 'twenty-ui/primitives/feedback';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { resolveCjsModuleDefaultExport } from '~/utils/resolveCjsModuleDefaultExport';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -52,7 +51,7 @@ const StyledCopySetupKeyLink = styled.button`
 `;
 
 export const SignInUpTwoFactorAuthenticationProvision = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const qrCode = useAtomStateValue(qrCodeState);
@@ -90,12 +89,7 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
             </StyledCopySetupKeyLink>
           )}
         </StyledTwoFactorMainContent>
-        <MainButton
-          title={t`Next`}
-          onClick={handleClick}
-          variant="primary"
-          fullWidth
-        />
+        <MainButton onClick={handleClick} fullWidth>{t`Next`}</MainButton>
       </StyledForm>
     </>
   );

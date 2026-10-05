@@ -8,7 +8,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { MenuItemSelectTag } from 'twenty-ui/navigation';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { AggregateOperations } from '~/generated-metadata/graphql';
 
@@ -64,13 +65,22 @@ export const ChartRatioOptionSelectSelectableListItem = ({
 
   return (
     <SelectableListItem itemId={optionValue} onEnter={handleClick}>
-      <MenuItemSelectTag
-        text={label}
-        color={color ?? 'transparent'}
-        selected={isSelected}
+      <ListItem
         focused={isFocused}
         onClick={handleClick}
-      />
+        role="option"
+        aria-selected={isSelected}
+        selected={isSelected}
+        indicator="check"
+      >
+        <Tag
+          color={color ?? 'transparent'}
+          borderStyle="dashed"
+          variant={'soft'}
+        >
+          {label}
+        </Tag>
+      </ListItem>
     </SelectableListItem>
   );
 };

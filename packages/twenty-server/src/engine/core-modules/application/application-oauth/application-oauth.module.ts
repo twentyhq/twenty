@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApplicationAuthorizationModule } from 'src/engine/core-modules/application/application-authorization/application-authorization.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -20,6 +21,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
       UserWorkspaceEntity,
     ]),
     ApplicationRegistrationModule,
+    ApplicationAuthorizationModule,
     ApplicationCoreModule,
     ApplicationInstallModule,
     TokenModule,
@@ -45,7 +48,11 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
     OAuthDiscoveryController,
     OAuthRegistrationController,
   ],
-  providers: [OAuthService, ApplicationOAuthResolver],
+  providers: [
+    OAuthService,
+    ApplicationOAuthResolver,
+    provideWorkspaceScopedRepository(ApplicationEntity),
+  ],
   exports: [OAuthService],
 })
 export class ApplicationOAuthModule {}

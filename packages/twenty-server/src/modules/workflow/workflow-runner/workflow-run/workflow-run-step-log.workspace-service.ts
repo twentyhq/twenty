@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
+import { DataSource } from 'typeorm';
 
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const MAX_STEP_LOG_BYTES = 256_000;
 
@@ -21,8 +21,10 @@ export class WorkflowRunStepLogWorkspaceService {
   private readonly logger = new Logger(WorkflowRunStepLogWorkspaceService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
+
   async setStepLog({
     workflowRunId,
     workspaceId,
@@ -49,29 +51,11 @@ export class WorkflowRunStepLogWorkspaceService {
       sizeBytes,
     };
 
-    const authContext = buildSystemAuthContext(workspaceId);
+    const schemaName = getWorkspaceSchemaName(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowRunRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-          workspaceId,
-          'workflowRun',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      await workflowRunRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          stepLogs: () =>
-            `jsonb_set(COALESCE("stepLogs", '{}'::jsonb), ARRAY[:stepId]::text[], :stepLog::jsonb, true)`,
-        })
-        .where('id = :workflowRunId', { workflowRunId })
-        .setParameters({
-          stepId,
-          stepLog: JSON.stringify(stepLogWithSize),
-        })
-        .execute();
-    }, authContext);
+    await this.coreDataSource.query(
+      `UPDATE ${schemaName}."workflowRun" SET "stepLogs" = jsonb_set(COALESCE("stepLogs", '{}'::jsonb), ARRAY[$1]::text[], $2::jsonb, true) WHERE "id" = $3`,
+      [stepId, JSON.stringify(stepLogWithSize), workflowRunId],
+    );
   }
 }

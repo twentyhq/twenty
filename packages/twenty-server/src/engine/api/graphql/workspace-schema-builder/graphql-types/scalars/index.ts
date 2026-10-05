@@ -1,5 +1,6 @@
 import { BigFloatScalarType } from './big-float.scalar';
 import { BigIntScalarType } from './big-int.scalar';
+import { ConnectionCursorScalarType } from './connection-cursor.scalar';
 import { CursorScalarType } from './cursor.scalar';
 import { DateScalarType } from './date.scalar';
 import { PositionScalarType } from './position.scalar';
@@ -9,6 +10,7 @@ import { UUIDScalarType } from './uuid.scalar';
 
 export * from './big-float.scalar';
 export * from './big-int.scalar';
+export * from './connection-cursor.scalar';
 export * from './cursor.scalar';
 
 export * from './date.scalar';
@@ -20,6 +22,7 @@ export * from './uuid.scalar';
 export const scalars = [
   BigFloatScalarType,
   BigIntScalarType,
+  ConnectionCursorScalarType,
   DateScalarType,
   TimeScalarType,
   UUIDScalarType,

@@ -50,6 +50,7 @@
       }
     },
     "typecheck": {},
+    "knip": {},
     "lint": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -69,6 +70,19 @@
         "fix": {
           "command": "npx oxlint --type-aware --fix -c .oxlintrc.json src/ && npx oxfmt src/"
         }
+      }
+    },
+    "lint:i18n": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/locales/*.po",
+        "{projectRoot}/.eloqnt/config.ts",
+        "{workspaceRoot}/yarn.lock"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx eloqnt lint"
       }
     },
     "lint:diff-with-main": {

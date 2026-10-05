@@ -3,7 +3,9 @@ import {
   type AuthProviders,
   type Billing,
   type Captcha,
+  type ClientAiEvaluationModelConfig,
   type ClientAiModelConfig,
+  type ClientAiModelTierConfig,
   type ClientConfigMaintenanceMode,
   type PublicFeatureFlag,
   type Sentry,
@@ -15,11 +17,15 @@ import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 export type ClientConfig = {
   appVersion?: string;
   aiModels: Array<ClientAiModelConfig>;
+  aiEvaluationModels: Array<ClientAiEvaluationModelConfig>;
+  aiModelTiers: Array<ClientAiModelTierConfig>;
   analyticsEnabled: boolean;
   api: ApiConfig;
   authProviders: AuthProviders;
   billing: Billing;
   calendarBookingPageId?: string;
+  isBookCallOnboardingStepEnabled: boolean;
+  isCompanyEnrichmentEnabled: boolean;
   canManageFeatureFlags: boolean;
   captcha: Captcha;
   defaultSubdomain?: string;
@@ -39,7 +45,7 @@ export type ClientConfig = {
   isClickHouseConfigured: boolean;
   isWorkspaceSchemaDDLLocked: boolean;
   isOnboardingAiChatEnabled: boolean;
-  onboarding: OnboardingConfig;
+  onboarding: OnboardingConfig | null;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: boolean;

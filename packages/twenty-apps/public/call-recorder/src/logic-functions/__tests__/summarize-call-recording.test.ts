@@ -13,7 +13,8 @@ vi.mock('twenty-client-sdk/core', () => ({
   },
 }));
 
-vi.mock('twenty-sdk/logic-function', () => ({
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
   runAgent: runAgentMock,
 }));
 
@@ -135,6 +136,39 @@ describe('summarize-call-recording logic function', () => {
         id: true,
       },
     });
+  });
+
+  it('rethrows a generation failure as retryable so the trigger is redelivered', async () => {
+    runAgentMock.mockRejectedValue(new Error('Agent unavailable'));
+
+    await expect(
+      summarizeCallRecordingHandler(
+        buildEvent({
+          name: 'callRecording.updated',
+          updatedFields: ['transcript'],
+        }),
+      ),
+    ).rejects.toMatchObject({
+      name: 'RetryableLogicFunctionError',
+      message: expect.stringContaining('Agent unavailable'),
+    });
+  });
+
+  it('returns a save error without rethrowing so a paid agent run is never redelivered', async () => {
+    mutationMock.mockRejectedValue(new Error('Write timed out'));
+
+    const result = await summarizeCallRecordingHandler(
+      buildEvent({
+        name: 'callRecording.updated',
+        updatedFields: ['transcript'],
+      }),
+    );
+
+    expect(result).toEqual({
+      callRecordingId: 'call-recording-1',
+      outcome: 'save-error',
+    });
+    expect(runAgentMock).toHaveBeenCalledTimes(1);
   });
 
   it('skips summary-only updates to avoid re-entrancy', async () => {

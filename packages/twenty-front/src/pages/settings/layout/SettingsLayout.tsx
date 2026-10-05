@@ -1,24 +1,16 @@
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
-import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
+import { SettingsDiscoveryHeroCardFooter } from '@/settings/components/SettingsDiscoveryHeroCardFooter';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLayoutItemsStats } from '@/settings/layout/components/SettingsLayoutItemsStats';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconAppWindow,
-  IconCommand,
-  IconLayoutDashboard,
-  IconLayoutSidebarLeftExpand,
-  IconPencil,
-  IconTable,
-} from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
+import { IconLayoutDashboard, IconPencil, IconSparkle2 } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 import coverDark from '~/pages/settings/layout/assets/cover-dark.png';
 import coverLight from '~/pages/settings/layout/assets/cover-light.png';
 
@@ -37,34 +29,11 @@ export const SettingsLayout = () => {
 
   const heroTabs = [
     {
-      id: 'sidebar',
-      title: t`Sidebar`,
-      Icon: IconLayoutSidebarLeftExpand,
-      vimeoId: '1185511790',
-    },
-    {
-      id: 'record-page',
-      title: t`Record page`,
-      Icon: IconAppWindow,
-      vimeoId: '1185511790',
-    },
-    {
-      id: 'command-menu',
-      title: t`Command menu`,
-      Icon: IconCommand,
-      vimeoId: '1185416775',
-    },
-    {
-      id: 'views',
-      title: t`Views`,
-      Icon: IconTable,
-      vimeoId: '1145648745',
-    },
-    {
-      id: 'dashboards',
-      title: t`Dashboards`,
-      Icon: IconLayoutDashboard,
-      vimeoId: '1185511768',
+      id: 'layout_walkthrough',
+      title: t`Walkthrough`,
+      Icon: IconSparkle2,
+      vimeoId: '1217964357',
+      hasSound: true,
     },
   ];
 
@@ -80,7 +49,7 @@ export const SettingsLayout = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
+        <Section.Root>
           <SettingsDiscoveryHeroCard
             lightSrc={coverLight}
             darkSrc={coverDark}
@@ -88,31 +57,30 @@ export const SettingsLayout = () => {
             tabs={heroTabs}
             playButtonAriaLabel={t`Watch customization demo`}
             footer={
-              <SettingsOptionCardContentButton
+              <SettingsDiscoveryHeroCardFooter
                 Icon={IconLayoutDashboard}
                 title={t`Customize layout`}
                 description={t`Customize how your workspace looks.`}
-                Button={
+                action={
                   <Button
-                    title={t`Customize`}
-                    variant="primary"
-                    accent="blue"
-                    size="small"
-                    Icon={IconPencil}
+                    size="sm"
+                    startIcon={<IconPencil />}
                     onClick={handleCustomize}
-                  />
+                    variant="solid"
+                    color="accent"
+                  >{t`Customize`}</Button>
                 }
               />
             }
           />
-        </Section>
-        <Section>
-          <H2Title
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Overview`}
             description={t`All the layout items declared on your workspace`}
           />
           <SettingsLayoutItemsStats />
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

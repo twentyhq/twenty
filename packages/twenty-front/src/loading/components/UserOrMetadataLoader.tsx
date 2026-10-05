@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 
@@ -10,7 +10,7 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  height: 100dvh;
+  height: calc(100dvh / var(--t-zoom, 1));
   min-width: ${NAVIGATION_DRAWER_CONSTRAINTS.default}px;
   overflow: hidden;
   width: 100%;

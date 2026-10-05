@@ -10,6 +10,7 @@ export const CLIENT_BRIEF_COPY = {
   submitInFlight: msg`Submitting…`,
   successTitle: msg`Thanks — we received your brief.`,
   successBody: msg`Our team will review your project and follow up by email. You won't hear from partners until we've matched you.`,
+  successDone: msg`Done`,
   stepProgressLabel: (current: number, total: number) =>
     msg`Step ${current} of ${total}`,
   validation: {

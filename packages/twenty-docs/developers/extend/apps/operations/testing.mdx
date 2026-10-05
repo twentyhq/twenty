@@ -8,7 +8,7 @@ The SDK provides programmatic APIs that let you build, deploy, install, and unin
 
 ## Using npm packages
 
-You can install and use any npm package in your app. Both logic functions and front components are bundled with [esbuild](https://esbuild.github.io/), which inlines all dependencies into the output — no `node_modules` are needed at runtime.
+You can install and use any npm package in your app. Both logic functions and front components are bundled with [esbuild](https://esbuild.github.io/), which inlines their dependencies into the output — no `node_modules` are needed at runtime.
 
 ### Installing a package
 
@@ -56,13 +56,15 @@ export default defineFrontComponent({
 
 ### How bundling works
 
-The build step uses esbuild to produce a single self-contained file per logic function and per front component. All imported packages are inlined into the bundle.
+The build step uses esbuild to produce a single self-contained file per logic function and per front component. Imported packages are inlined into the bundle, except for the ones listed below.
 
 **Logic functions** run in a Node.js environment. Node built-in modules (`fs`, `path`, `crypto`, `http`, etc.) are available and do not need to be installed.
 
 **Front components** run in a Web Worker. Node built-in modules are **not** available — only npm packages that work in a browser environment. Note that the sandbox implements a *partial* DOM, so a package can build cleanly and still fail at runtime; see [Current limitations](/developers/extend/apps/layout/front-components#current-limitations).
 
 Both environments have `twenty-client-sdk/core` and `twenty-client-sdk/metadata` available as pre-provided modules — these are not bundled but resolved at runtime by the server.
+
+Front components can also share dependencies through a [shared dependencies bundle](/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components). Packages listed in the `frontComponentSharedDependencies` field of the app's package.json are built once into a separate file and loaded from it at runtime instead of being inlined into each component, so a component that imports only shared packages carries almost no dependency code of its own.
 
 ## Setup
 

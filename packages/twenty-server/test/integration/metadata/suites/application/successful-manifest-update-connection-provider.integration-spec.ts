@@ -84,6 +84,7 @@ describe('Manifest update - connection providers', () => {
         usePkce: true,
       },
       onConnectLogicFunctionUniversalIdentifier: null,
+      onDisconnectLogicFunctionUniversalIdentifier: null,
     });
   }, 60000);
 

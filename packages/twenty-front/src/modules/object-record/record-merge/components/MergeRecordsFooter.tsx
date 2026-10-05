@@ -5,8 +5,8 @@ import { styled } from '@linaria/react';
 import { Key } from 'ts-key-enum';
 import { t } from '@lingui/core/macro';
 import { IconArrowMerge } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFooterContainer = styled.div`
   align-items: flex-end;
@@ -50,15 +50,16 @@ export const MergeRecordsFooter = ({
     <StyledFooterContainer>
       <StyledFooterActions>
         <Button
-          title={isMerging ? t`Merging...` : t`Merge`}
-          variant="primary"
-          accent="blue"
-          size="medium"
-          Icon={IconArrowMerge}
-          hotkeys={isMerging ? undefined : ['⌘', '⏎']}
+          size="md"
+          startIcon={<IconArrowMerge />}
+          shortcut={isMerging ? undefined : ['Mod', 'Enter']}
           onClick={handleMergeRecords}
           disabled={isMerging}
-        />
+          variant="solid"
+          color="accent"
+        >
+          {isMerging ? t`Merging...` : t`Merge`}
+        </Button>
       </StyledFooterActions>
     </StyledFooterContainer>
   );

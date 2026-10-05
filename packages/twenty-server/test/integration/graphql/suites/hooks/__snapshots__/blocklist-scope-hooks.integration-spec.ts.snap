@@ -1,0 +1,166 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`blocklist scope hooks refuses a member-scoped entry targeting another workspace member 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "BAD_REQUEST",
+    "userFriendlyMessage": "Cannot manage a blocklist entry of another workspace member.",
+  },
+  "message": "A workspace-member-scoped blocklist entry must target its own workspace member",
+}
+`;
+
+exports[`blocklist scope hooks refuses a member-scoped entry with no workspace member 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "BAD_REQUEST",
+    "userFriendlyMessage": "Cannot manage a blocklist entry of another workspace member.",
+  },
+  "message": "A workspace-member-scoped blocklist entry must target its own workspace member",
+}
+`;
+
+exports[`blocklist scope hooks refuses a scope change on an existing entry 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "BAD_REQUEST",
+    "userFriendlyMessage": "Blocklist scope cannot be updated.",
+  },
+  "message": "Blocklist scope cannot be updated",
+}
+`;
+
+exports[`blocklist scope hooks refuses a second workspace-scoped entry with the same handle 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "BAD_REQUEST",
+    "userFriendlyMessage": "Blocklist handle already exists.",
+  },
+  "message": "Blocklist handle already exists",
+}
+`;
+
+exports[`blocklist scope hooks refuses a workspace-scoped entry created without the workspace permission 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+}
+`;
+
+exports[`blocklist scope hooks refuses a workspace-scoped entry that also targets a workspace member 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "BAD_REQUEST",
+    "userFriendlyMessage": "A workspace-wide blocklist entry cannot target a workspace member.",
+  },
+  "message": "A workspace-scoped blocklist entry cannot target a workspace member",
+}
+`;
+
+exports[`blocklist scope hooks refuses deletion and restoration of a workspace-scoped entry without the workspace permission 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+}
+`;
+
+exports[`blocklist scope hooks refuses deletion and restoration of a workspace-scoped entry without the workspace permission 2`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+}
+`;
+
+exports[`blocklist scope hooks refuses every bulk mutation of blocklist entries 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "BAD_REQUEST",
+    "userFriendlyMessage": "Bulk deletion of blocklist entries is not allowed.",
+  },
+  "message": "Method not allowed.",
+}
+`;
+
+exports[`blocklist scope hooks refuses every bulk mutation of blocklist entries 2`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "BAD_REQUEST",
+    "userFriendlyMessage": "Bulk deletion of blocklist entries is not allowed.",
+  },
+  "message": "Method not allowed.",
+}
+`;
+
+exports[`blocklist scope hooks refuses every bulk mutation of blocklist entries 3`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "BAD_REQUEST",
+    "userFriendlyMessage": "Bulk restoration of blocklist entries is not allowed.",
+  },
+  "message": "Method not allowed.",
+}
+`;
+
+exports[`blocklist scope hooks refuses every bulk mutation of blocklist entries 4`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "BAD_REQUEST",
+    "userFriendlyMessage": "Bulk update of blocklist entries is not allowed.",
+  },
+  "message": "Method not allowed.",
+}
+`;
+
+exports[`blocklist scope hooks refuses every bulk mutation of blocklist entries 5`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_QUERY_INPUT",
+    "userFriendlyMessage": "This type of record cannot be merged.",
+  },
+  "message": "Merge is only available for objects with duplicate criteria. Object 'blocklist' does not have duplicate criteria defined.",
+}
+`;
+
+exports[`blocklist scope hooks refuses to null out the workspace member of a member-scoped entry 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "BAD_REQUEST",
+    "userFriendlyMessage": "Workspace member cannot be updated.",
+  },
+  "message": "Workspace member cannot be updated",
+}
+`;
+
+exports[`blocklist scope hooks refuses to overwrite a workspace-scoped entry through an upsert create 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+}
+`;

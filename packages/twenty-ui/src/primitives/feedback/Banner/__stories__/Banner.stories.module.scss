@@ -1,0 +1,23 @@
+.bannerContent {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+}
+
+.invertedButton[data-variant='outline'] {
+  --tw-button-active: var(--t-background-transparent-medium);
+  --tw-button-background: transparent;
+  --tw-button-border: var(--t-background-transparent-primary);
+  --tw-button-color: var(--t-font-color-inverted);
+  --tw-button-hover: var(--t-background-transparent-light);
+}
+
+.invertedIconButton {
+  color: var(--t-font-color-inverted) !important;
+}

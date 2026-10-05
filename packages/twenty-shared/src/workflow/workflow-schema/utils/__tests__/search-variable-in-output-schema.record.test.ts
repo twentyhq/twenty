@@ -1,5 +1,5 @@
 import { FieldMetadataType } from '@/types/FieldMetadataType';
-import { type RecordOutputSchemaV2 } from '../../types/output-schema.type';
+import { type RecordOutputSchemaV2 } from '../../types/OutputSchema';
 import { searchVariableInOutputSchema } from '../search-variable-in-output-schema';
 
 const searchVariableThroughRecordOutputSchema = ({
@@ -52,7 +52,6 @@ describe('searchVariableInOutputSchema - record output schema', () => {
           },
         },
       },
-      // Record field (nested record)
       owner: {
         isLeaf: false,
         label: 'Owner',

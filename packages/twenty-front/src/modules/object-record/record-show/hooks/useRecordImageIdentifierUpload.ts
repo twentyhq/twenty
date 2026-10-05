@@ -1,13 +1,10 @@
+import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
-import { useApolloClient, useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  FieldMetadataType,
-  UploadFilesFieldFileDocument,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType, FileFolder } from '~/generated-metadata/graphql';
 
 type UseRecordImageIdentifierUploadParams = {
   objectNameSingular: string;
@@ -18,10 +15,7 @@ export const useRecordImageIdentifierUpload = ({
   objectNameSingular,
   recordId,
 }: UseRecordImageIdentifierUploadParams) => {
-  const apolloClient = useApolloClient();
-  const [uploadFilesFieldFile] = useMutation(UploadFilesFieldFileDocument, {
-    client: apolloClient,
-  });
+  const { uploadFile } = useDirectFileUpload();
   const { updateOneRecord } = useUpdateOneRecord();
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
@@ -49,18 +43,10 @@ export const useRecordImageIdentifierUpload = ({
       return;
     }
 
-    const result = await uploadFilesFieldFile({
-      variables: {
-        file,
-        fieldMetadataId: filesImageIdentifierFieldMetadataItem.id,
-      },
+    const uploadedFile = await uploadFile(file, {
+      fileFolder: FileFolder.FilesField,
+      fieldMetadataId: filesImageIdentifierFieldMetadataItem.id,
     });
-
-    const uploadedFile = result?.data?.uploadFilesFieldFile;
-
-    if (!isDefined(uploadedFile)) {
-      return;
-    }
 
     await updateOneRecord({
       objectNameSingular,

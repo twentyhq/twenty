@@ -4,7 +4,7 @@ import {
   type BaseOutputSchemaV2,
   type Leaf,
   type Node,
-} from '../types/base-output-schema.type';
+} from '../types/BaseOutputSchema';
 
 export const isFlattenedArrayOutputSchema = (
   schema: BaseOutputSchemaV2 | undefined,

@@ -55,8 +55,10 @@ describe('flatEntityToScalarFlatEntity', () => {
   "icon": "IconTest",
   "id": "field-metadata-id",
   "isActive": true,
+  "isAuditLogged": true,
   "isLabelSyncedWithName": false,
   "isNullable": true,
+  "isSearchable": false,
   "isSystem": false,
   "isSystemSideEffect": false,
   "isUIEditable": true,
@@ -74,6 +76,7 @@ describe('flatEntityToScalarFlatEntity', () => {
   "universalIdentifier": "universal-identifier",
   "updatedAt": "2025-01-01T00:00:00.000Z",
   "workspaceId": "workspace-id",
+  "writability": "OPEN",
 }
 `);
   });

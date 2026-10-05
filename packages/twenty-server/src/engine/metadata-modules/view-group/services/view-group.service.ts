@@ -10,7 +10,6 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewGroupInputToFlatViewGroupToCreate } from 'src/engine/metadata-modules/flat-view-group/utils/from-create-view-group-input-to-flat-view-group-to-create.util';
-import { fromDeleteViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util';
 import { fromDestroyViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util';
 import { fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util';
 import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
@@ -252,68 +251,10 @@ export class ViewGroupService {
     deleteViewGroupInput: DeleteViewGroupInput;
     workspaceId: string;
   }): Promise<ViewGroupDTO> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    const { flatViewGroupMaps: existingFlatViewGroupMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewGroupMaps'],
-        },
-      );
-
-    const optimisticallyUpdatedFlatViewGroupWithDeletedAt =
-      fromDeleteViewGroupInputToFlatViewGroupOrThrow({
-        flatViewGroupMaps: existingFlatViewGroupMaps,
-        deleteViewGroupInput,
-      });
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            viewGroup: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                optimisticallyUpdatedFlatViewGroupWithDeletedAt,
-              ],
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-        },
-      );
-
-    if (validateAndBuildResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while deleting view group',
-      );
-    }
-
-    const { flatViewGroupMaps: recomputedExistingFlatViewGroupMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewGroupMaps'],
-        },
-      );
-
-    return fromFlatViewGroupToViewGroupDto(
-      findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier:
-          optimisticallyUpdatedFlatViewGroupWithDeletedAt.universalIdentifier,
-        flatEntityMaps: recomputedExistingFlatViewGroupMaps,
-      }),
-    );
+    return this.destroyOne({
+      destroyViewGroupInput: deleteViewGroupInput,
+      workspaceId,
+    });
   }
 
   async destroyOne({
@@ -384,7 +325,7 @@ export class ViewGroupService {
       where: {
         deletedAt: IsNull(),
       },
-      order: { position: 'ASC' },
+      order: { position: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
   }
@@ -398,7 +339,7 @@ export class ViewGroupService {
         viewId,
         deletedAt: IsNull(),
       },
-      order: { position: 'ASC' },
+      order: { position: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
   }

@@ -4,9 +4,9 @@ import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '
 
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledSettingsCardContainer = styled.div`
@@ -42,13 +42,13 @@ export const SettingsRoleAssignmentConfirmationModalSubtitle = ({
           title={selectedRoleTarget.role?.label || ''}
           Icon={
             <Avatar
-              avatarUrl={getAbsoluteImageUrl(
+              src={getAbsoluteImageUrl(
                 enrichedSelectedWorkspaceMember?.avatarUrl,
               )}
-              placeholderColorSeed={enrichedSelectedWorkspaceMember?.id}
-              placeholder={workspaceMemberName}
+              colorSeed={enrichedSelectedWorkspaceMember?.id}
+              name={workspaceMemberName}
               size="md"
-              type="rounded"
+              shape="circle"
             />
           }
           onClick={() =>

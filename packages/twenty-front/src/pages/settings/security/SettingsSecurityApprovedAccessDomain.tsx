@@ -1,18 +1,16 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { useMutation } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { Section, useToast } from 'twenty-ui/components';
 import { z } from 'zod';
-import { useMutation } from '@apollo/client/react';
 import { CreateApprovedAccessDomainDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -21,7 +19,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
 
   const { t } = useLingui();
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [createApprovedAccessDomain] = useMutation(
     CreateApprovedAccessDomainDocument,
@@ -63,21 +61,18 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           },
         },
         onCompleted: () => {
-          enqueueSuccessSnackBar({
-            message: t`Please check your email for a verification link.`,
+          enqueueToast({
+            variant: 'success',
+            children: t`Please check your email for a verification link.`,
           });
           navigate(SettingsPath.WorkspaceMembersPage);
         },
         onError: (error) => {
-          enqueueErrorSnackBar({
-            apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-          });
+          enqueueToast(getToastOptionsFromError({ error }));
         },
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
@@ -104,8 +99,8 @@ export const SettingsSecurityApprovedAccessDomain = () => {
         ]}
       >
         <SettingsPageContainer>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Domain`}
               description={t`The name of your Domain`}
             />
@@ -128,9 +123,9 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 />
               )}
             />
-          </Section>
-          <Section>
-            <H2Title
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
               title={t`Email verification`}
               description={t`We will send you a link to verify domain ownership`}
             />
@@ -152,7 +147,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 />
               )}
             />
-          </Section>
+          </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
     </form>

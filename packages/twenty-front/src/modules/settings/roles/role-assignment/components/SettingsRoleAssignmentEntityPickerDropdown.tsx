@@ -1,13 +1,9 @@
-import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@apollo/client/react';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { Dropdown } from 'twenty-ui/components';
 import {
   type Agent,
   type ApiKeyForRole,
@@ -15,26 +11,6 @@ import {
   GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledLoadingContainer = styled.div`
-  padding: ${themeCssVariables.spacing[2]};
-  text-align: center;
-`;
-
-const StyledDropdownItem = styled.div`
-  cursor: pointer;
-  padding: ${themeCssVariables.spacing[2]};
-
-  &:hover {
-    background-color: ${themeCssVariables.background.transparent.lighter};
-  }
-`;
-
-const StyledItemName = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
 
 type EntityData = Agent | ApiKeyForRole;
 
@@ -53,6 +29,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
   const { t } = useLingui();
 
   const isAgent = entityType === 'agent';
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   const { data: agentsData, loading: agentsLoading } = useQuery(
     FindManyAgentsDocument,
@@ -71,9 +48,17 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
 
   const entities = useMemo(() => {
     return ((isAgent
-      ? agentsData?.findManyAgents.filter((agent) => agent.isCustom)
+      ? agentsData?.findManyAgents.filter(
+          (agent) =>
+            agent.isCustom && (!agent.isSystem || isAdvancedModeEnabled),
+        )
       : apiKeysData?.apiKeys) || []) as EntityData[];
-  }, [isAgent, agentsData?.findManyAgents, apiKeysData?.apiKeys]);
+  }, [
+    isAgent,
+    agentsData?.findManyAgents,
+    apiKeysData?.apiKeys,
+    isAdvancedModeEnabled,
+  ]);
 
   const placeholder = isAgent ? t`Search agents` : t`Search API keys`;
 
@@ -111,33 +96,29 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
   }, [entities, searchFilter, excludedIds, isAgent]);
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
-      <DropdownMenuSearchInput
+    <>
+      <Dropdown.Search
         value={searchFilter}
-        onChange={(event) => setSearchFilter(event.target.value)}
+        onValueChange={setSearchFilter}
         placeholder={placeholder}
+        aria-label={placeholder}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {loading ? (
-          <StyledLoadingContainer>{t`Loading...`}</StyledLoadingContainer>
-        ) : filteredEntities.length > 0 ? (
-          filteredEntities.map((entity) => (
-            <StyledDropdownItem
-              key={entity.id}
-              onClick={() => onSelect(entity as EntityData)}
-            >
-              <StyledItemName>
-                {isAgent ? (entity as Agent).label : entity.name}
-              </StyledItemName>
-            </StyledDropdownItem>
-          ))
-        ) : (
-          <SettingsEmptyPlaceholder padding="2">
-            {getEmptyStateMessage()}
-          </SettingsEmptyPlaceholder>
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable>
+        {loading && <Dropdown.Loading>{t`Loading...`}</Dropdown.Loading>}
+        {!loading && filteredEntities.length === 0 && (
+          <Dropdown.Empty>{getEmptyStateMessage()}</Dropdown.Empty>
         )}
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+        {!loading &&
+          filteredEntities.map((entity) => (
+            <Dropdown.ActionItem
+              key={entity.id}
+              onClick={() => onSelect(entity)}
+            >
+              {isAgent ? (entity as Agent).label : entity.name}
+            </Dropdown.ActionItem>
+          ))}
+      </Dropdown.Section>
+    </>
   );
 };

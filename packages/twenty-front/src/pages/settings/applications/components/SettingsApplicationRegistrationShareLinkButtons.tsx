@@ -1,4 +1,7 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
+import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
 import { styled } from '@linaria/react';
@@ -11,10 +14,9 @@ import {
   IconDownload,
   IconInfoCircle,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledButtonGroup = styled.div`
   display: flex;
@@ -36,13 +38,15 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 }) => {
   const { t } = useLingui();
 
-  const { copyToClipboard } = useCopyToClipboard();
-
-  const { requestInstall, install, isInstalling, modalInstanceId } =
-    useInstallMarketplaceAppWithPermissionValidation();
+  const { copyMarketplaceAppLink } = useCopyMarketplaceAppLink();
 
   const installable =
     isDefined(isInstalled) && isDefined(universalIdentifier) && !isInstalled;
+
+  const { requestInstall, install, isInstalling, modalInstanceId } =
+    useInstallMarketplaceAppWithPermissionValidation({
+      universalIdentifier,
+    });
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: universalIdentifier ?? '' },
@@ -54,56 +58,49 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
-  const handleInstall = async () => {
-    if (installable) {
-      await install({ universalIdentifier });
-    }
-  };
-
   return (
     <StyledButtonGroup>
       {installable && (
         <>
           <Button
-            Icon={IconDownload}
-            title={isInstalling ? t`Installing...` : t`Install`}
-            variant={'secondary'}
+            startIcon={<IconDownload />}
             onClick={requestInstall}
             disabled={isInstalling}
-          />
+            variant="outline"
+          >
+            {isInstalling ? t`Installing...` : t`Install`}
+          </Button>
           <SettingsApplicationInstallPermissionValidationModal
             modalInstanceId={modalInstanceId}
             appDisplayName={displayName}
             appLogoUrl={detail?.logoUrl ?? undefined}
             defaultRole={defaultRole}
-            onAuthorize={handleInstall}
+            requestedCapabilities={detail?.requestedCapabilities}
+            onAuthorize={install}
             isInstalling={isInstalling}
           />
         </>
       )}
       {withCopyButton && (
         <Button
-          Icon={IconCopy}
-          title={t`Copy sharing link`}
-          variant="secondary"
-          disabled={!shareLink}
-          onClick={async () => {
-            if (shareLink) {
-              await copyToClipboard(
-                `${window.location.origin}${shareLink}`,
-                t`Sharing link copied to clipboard`,
-              );
+          startIcon={<IconCopy />}
+          disabled={!isDefined(universalIdentifier)}
+          onClick={() => {
+            if (isDefined(universalIdentifier)) {
+              copyMarketplaceAppLink(universalIdentifier);
             }
           }}
-        />
+          variant="outline"
+        >{t`Copy sharing link`}</Button>
       )}
-      <Button
-        Icon={isNpmSource ? IconArrowUpRight : IconInfoCircle}
-        title={isNpmSource ? t`See on marketplace` : t`See app page`}
-        variant="secondary"
+      <NavigationButton
+        startIcon={isNpmSource ? <IconArrowUpRight /> : <IconInfoCircle />}
         disabled={!shareLink}
-        to={shareLink}
-      />
+        to={isNonEmptyString(shareLink) ? shareLink : undefined}
+        variant="outline"
+      >
+        {isNpmSource ? t`See on marketplace` : t`See app page`}
+      </NavigationButton>
     </StyledButtonGroup>
   );
 };

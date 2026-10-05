@@ -32,5 +32,6 @@ export type MessageFolderDriver = {
       | 'workspaceId'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
+    existingFolders: MessageFolder[],
   ): Promise<DiscoveredMessageFolder[]>;
 };

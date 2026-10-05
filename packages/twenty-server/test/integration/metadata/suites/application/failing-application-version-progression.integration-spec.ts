@@ -29,6 +29,15 @@ const buildTarball = (version: string): Promise<Buffer> =>
     }),
   });
 
+const findApplicationState = async (): Promise<string> => {
+  const [application] = await globalThis.testDataSource.query(
+    `SELECT state FROM core."application" WHERE "universalIdentifier" = $1`,
+    [APP_UNIVERSAL_IDENTIFIER],
+  );
+
+  return application.state;
+};
+
 describe('Application version progression gate', () => {
   beforeAll(async () => {
     jest.useRealTimers();
@@ -84,6 +93,8 @@ describe('Application version progression gate', () => {
       input: { universalIdentifier: APP_UNIVERSAL_IDENTIFIER },
     });
 
+    expect(await findApplicationState()).toBe('INSTALLED');
+
     const { errors } = await installApplication({
       input: { universalIdentifier: APP_UNIVERSAL_IDENTIFIER },
       expectToFail: true,
@@ -93,5 +104,7 @@ describe('Application version progression gate', () => {
       errors,
       normalizeMessage: scrubSemverVersions,
     });
+
+    expect(await findApplicationState()).toBe('INSTALLED');
   });
 });

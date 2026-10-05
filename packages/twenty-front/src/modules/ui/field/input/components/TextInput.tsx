@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const StyledTextInput = styled.input`
   background-color: transparent;
@@ -34,6 +34,7 @@ export type TextInputProps = {
   instanceId: string;
   placeholder?: string;
   autoFocus?: boolean;
+  selectOnFocus?: boolean;
   value: string;
   onEnter?: (newText: string) => void;
   onEscape?: (newText: string) => void;
@@ -59,6 +60,7 @@ export const TextInput = ({
   instanceId,
   placeholder,
   autoFocus,
+  selectOnFocus = false,
   value,
   onEnter,
   onEscape,
@@ -105,6 +107,9 @@ export const TextInput = ({
         placeholder={placeholder}
         onChange={handleChange}
         autoFocus={autoFocus}
+        onFocus={
+          selectOnFocus ? (event) => event.currentTarget.select() : undefined
+        }
         value={internalText}
         disabled={disabled}
         className={className}

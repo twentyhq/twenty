@@ -12,7 +12,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsAiUsageUserDetail = () => {
   const { t: tLingui } = useLingui();
@@ -65,14 +65,14 @@ export const SettingsAiUsageUserDetail = () => {
     <SettingsPageLayout title={displayName} links={breadcrumbLinks}>
       <SettingsPageContainer>
         {!hasAnyData && (
-          <Section>
+          <Section.Root>
             <SubscriptionInfoContainer>
               <SettingsBillingLabelValueItem
                 label={t`No usage data`}
                 value={t`No AI consumption recorded for this user.`}
               />
             </SubscriptionInfoContainer>
-          </Section>
+          </Section.Root>
         )}
 
         <UsageDailyChartSection

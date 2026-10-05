@@ -5,6 +5,13 @@ import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recal
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 import { computeRecallBotCreationIdempotencyKey } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 
+const enqueueJobsMock = vi.hoisted(() => vi.fn());
+
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  enqueueJobs: enqueueJobsMock,
+}));
+
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
 const UPCOMING_STARTS_AT = '2026-01-01T13:00:00.000Z';
@@ -42,6 +49,30 @@ type CalendarEventNode = {
   iCalUid?: string | null;
   conferenceLink?: { primaryLinkUrl?: string | null } | null;
 };
+
+const matchesCallRecordingFilter = (
+  callRecording: CallRecordingNode,
+  filter: Record<string, { eq?: unknown; in?: unknown[]; is?: 'NULL' }>,
+): boolean =>
+  Object.entries(filter).every(([field, condition]) => {
+    const value = callRecording[field as keyof CallRecordingNode] ?? null;
+
+    if (condition.is === 'NULL') {
+      return value === null || value === '';
+    }
+
+    if (condition.in !== undefined) {
+      return condition.in.includes(value);
+    }
+
+    if ('eq' in condition) {
+      return value === condition.eq;
+    }
+
+    throw new Error(
+      `Unhandled filter on ${field}: ${JSON.stringify(condition)}`,
+    );
+  });
 
 class FakeCoreApiClient {
   callRecordings: CallRecordingNode[];
@@ -92,6 +123,21 @@ class FakeCoreApiClient {
   }
 
   async mutation(mutation: any): Promise<any> {
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+      const matchingCallRecordings = this.callRecordings.filter(
+        (callRecording) => matchesCallRecordingFilter(callRecording, filter),
+      );
+
+      matchingCallRecordings.forEach((callRecording) =>
+        Object.assign(callRecording, data),
+      );
+
+      return {
+        updateCallRecordings: matchingCallRecordings.map(({ id }) => ({ id })),
+      };
+    }
+
     if (mutation.updateCallRecording !== undefined) {
       const { id, data } = mutation.updateCallRecording.__args;
       const callRecording = this.callRecordings.find(
@@ -137,11 +183,9 @@ const buildCalendarEvent = (
 });
 
 const stubRecallApi = ({
-  listedBots = [],
   listStatus = 200,
   createBotStatus = 201,
 }: {
-  listedBots?: unknown[];
   listStatus?: number;
   createBotStatus?: number;
 } = {}) => {
@@ -153,10 +197,9 @@ const stubRecallApi = ({
         method === 'GET' &&
         requestUrl.startsWith(RECALL_LIST_BOTS_URL_PREFIX)
       ) {
-        return new Response(
-          JSON.stringify({ next: null, results: listedBots }),
-          { status: listStatus },
-        );
+        return new Response(JSON.stringify({ next: null, results: [] }), {
+          status: listStatus,
+        });
       }
 
       if (method === 'POST' && requestUrl === RECALL_CREATE_BOT_URL) {
@@ -198,6 +241,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
       buildAccessToken({ workspaceId: WORKSPACE_ID }),
     );
     fetchMock.mockReset();
+    enqueueJobsMock.mockReset();
     stubRecallApi();
   });
 
@@ -243,96 +287,6 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 
-  it('attaches an existing bot claiming the recording instead of scheduling a duplicate', async () => {
-    stubRecallApi({
-      listedBots: [
-        {
-          id: 'recall-bot-existing',
-          metadata: {
-            twentyWorkspaceId: WORKSPACE_ID,
-            twentyCallRecordingId: 'call-recording-1',
-          },
-        },
-      ],
-    });
-    const client = new FakeCoreApiClient({
-      callRecordings: [
-        buildPendingCallRecording({
-          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
-        }),
-      ],
-      calendarEvents: [buildCalendarEvent()],
-    });
-
-    const result = await scheduleRecallBotsForPendingCallRecordings({
-      client: client as unknown as CoreApiClient,
-      now: NOW,
-    });
-
-    expect(result.attachedCallRecordingIds).toEqual(['call-recording-1']);
-    expect(result.scheduledCallRecordingIds).toEqual([]);
-    expect(createBotCalls()).toHaveLength(0);
-    const lookupParameters = new URL(listBotRequestUrls()[0]).searchParams;
-    expect(lookupParameters.get('metadata__twentyWorkspaceId')).toBe(
-      WORKSPACE_ID,
-    );
-    expect(lookupParameters.has('metadata__twentyCallRecordingId')).toBe(
-      false,
-    );
-    expect(lookupParameters.has('join_at_after')).toBe(false);
-    expect(lookupParameters.has('join_at_before')).toBe(false);
-    expect(lookupParameters.getAll('status')).toEqual([
-      'ready',
-      'joining_call',
-      'in_waiting_room',
-      'in_call_not_recording',
-      'recording_permission_allowed',
-      'recording_permission_denied',
-      'in_call_recording',
-    ]);
-    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-existing');
-  });
-
-  it('looks up existing bots once for the whole run instead of per recording', async () => {
-    stubRecallApi({
-      listedBots: [
-        {
-          id: 'recall-bot-existing',
-          metadata: {
-            twentyWorkspaceId: WORKSPACE_ID,
-            twentyCallRecordingId: 'call-recording-1',
-          },
-        },
-      ],
-    });
-    const client = new FakeCoreApiClient({
-      callRecordings: [
-        buildPendingCallRecording({
-          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
-        }),
-        buildPendingCallRecording({
-          id: 'call-recording-2',
-          calendarEventId: 'calendar-event-2',
-          botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
-        }),
-      ],
-      calendarEvents: [
-        buildCalendarEvent(),
-        buildCalendarEvent({ id: 'calendar-event-2' }),
-      ],
-    });
-
-    const result = await scheduleRecallBotsForPendingCallRecordings({
-      client: client as unknown as CoreApiClient,
-      now: NOW,
-    });
-
-    expect(listBotRequestUrls()).toHaveLength(1);
-    expect(result.attachedCallRecordingIds).toEqual(['call-recording-1']);
-    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-2']);
-    expect(createBotCalls()).toHaveLength(1);
-  });
-
   it('defers scheduling when the existing-bot lookup fails so no duplicate bot is created', async () => {
     stubRecallApi({ listStatus: 400 });
     const client = new FakeCoreApiClient({
@@ -363,6 +317,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',
       },
+      attemptedAt: '2026-01-01T11:55:00.000Z',
     });
     const client = new FakeCoreApiClient({
       callRecordings: [
@@ -401,6 +356,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',
       },
+      attemptedAt: '2025-12-30T12:00:00.000Z',
     });
     const client = new FakeCoreApiClient({
       callRecordings: [
@@ -429,6 +385,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',
       },
+      attemptedAt: '2026-01-01T11:55:00.000Z',
     });
     const client = new FakeCoreApiClient({
       callRecordings: [

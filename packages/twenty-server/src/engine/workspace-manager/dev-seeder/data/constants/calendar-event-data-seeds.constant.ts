@@ -160,14 +160,12 @@ const GENERATE_CALENDAR_EVENT_SEEDS = (): CalendarEventDataSeed[] => {
     const TEMPLATE_INDEX = (INDEX - 1) % EVENT_TEMPLATES.length;
     const TEMPLATE = EVENT_TEMPLATES[TEMPLATE_INDEX];
 
-    // Random date within the last 6 months and next 6 months
     const NOW = new Date();
     const RANDOM_DAYS_OFFSET = Math.floor(Math.random() * 365) - 182; // -182 to +182 days
     const EVENT_DATE = new Date(
       NOW.getTime() + RANDOM_DAYS_OFFSET * 24 * 60 * 60 * 1000,
     );
 
-    // Random time between 9 AM and 6 PM
     const START_HOUR = 9 + Math.floor(Math.random() * 9);
     const START_MINUTE = Math.floor(Math.random() * 4) * 15; // 0, 15, 30, or 45 minutes
 
@@ -184,7 +182,6 @@ const GENERATE_CALENDAR_EVENT_SEEDS = (): CalendarEventDataSeed[] => {
       END_TIME.setMinutes(END_TIME.getMinutes() + TEMPLATE.duration);
     }
 
-    // Random location and conference solution
     const LOCATION =
       TEMPLATE.locations[Math.floor(Math.random() * TEMPLATE.locations.length)];
     const CONFERENCE_SOLUTION =
@@ -192,10 +189,8 @@ const GENERATE_CALENDAR_EVENT_SEEDS = (): CalendarEventDataSeed[] => {
         Math.floor(Math.random() * TEMPLATE.conferenceSolutions.length)
       ];
 
-    // 5% chance of being cancelled
     const IS_CANCELLED = Math.random() < 0.05;
 
-    // Generate conference link if it's an online meeting
     const CONFERENCE_LINK = ['Zoom', 'Teams', 'Google Meet'].includes(
       CONFERENCE_SOLUTION,
     )

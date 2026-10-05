@@ -6,6 +6,7 @@ import { useGlobalHotkeysSequence } from '@/ui/utilities/hotkey/hooks/useGlobalH
 type GoToHotkeysProps = {
   key: Keys;
   location: string;
+  isEnabled?: boolean;
   preNavigateFunction?: () => void;
 };
 
@@ -13,6 +14,7 @@ export const useGoToHotkeys = ({
   key,
   location,
   preNavigateFunction,
+  isEnabled = true,
 }: GoToHotkeysProps) => {
   const navigate = useNavigate();
 
@@ -20,6 +22,10 @@ export const useGoToHotkeys = ({
     'g',
     key,
     () => {
+      if (!isEnabled) {
+        return;
+      }
+
       preNavigateFunction?.();
       navigate(location);
     },
@@ -28,6 +34,6 @@ export const useGoToHotkeys = ({
       enableOnFormTags: true,
       preventDefault: true,
     },
-    [navigate],
+    [navigate, location, preNavigateFunction, isEnabled],
   );
 };

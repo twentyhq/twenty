@@ -1,147 +1,54 @@
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 
-import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
-import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
-import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
-import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
-import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
+import { useUpdateStepFilterFromVariable } from '@/workflow/workflow-steps/filters/hooks/useUpdateStepFilterFromVariable';
+import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { type WorkflowVariableSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
-import { searchVariableThroughOutputSchemaV2 } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchemaV2';
+import { getWorkflowVariableRecordObjectDisplay } from '@/workflow/workflow-variables/utils/getWorkflowVariableRecordObjectDisplay';
 import { useLingui } from '@lingui/react/macro';
-import { useStore } from 'jotai';
-import { useCallback } from 'react';
-import {
-  type FilterableAndTSVectorFieldType,
-  type StepFilter,
-} from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { extractRawVariableNamePart } from 'twenty-shared/workflow';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type StepFilter } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
 
 type WorkflowDropdownStepOutputItemsProps = {
   stepFilter: StepFilter;
   step: StepOutputSchemaV2;
-  onSelect: () => void;
+  initialPath?: string[];
   onBack: () => void;
 };
 
 export const WorkflowDropdownStepOutputItems = ({
   stepFilter,
   step,
-  onSelect,
+  initialPath,
   onBack,
 }: WorkflowDropdownStepOutputItemsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const { getSelectIconPropsFromObjectMetadataItem } =
-    useObjectMetadataSelectHelpers();
 
-  const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
-  const { getFieldMetadataItemByIdOrThrow } =
-    useGetFieldMetadataItemByIdOrThrow();
-
-  const workflowVersionId = useWorkflowVersionIdOrThrow();
+  const { updateStepFilterFromVariable } = useUpdateStepFilterFromVariable({
+    stepFilter,
+  });
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const { getInitialFilterValue } = useGetInitialFilterValue();
-
-  const jotaiStore = useStore();
-
-  const updateStepFilter = useCallback(
-    ({
+  const handleStepFilterFieldSelect = ({
+    rawVariableName,
+    isFullRecord,
+  }: WorkflowVariableSelection) => {
+    updateStepFilterFromVariable({
       rawVariableName,
       isFullRecord,
-    }: {
-      rawVariableName: string;
-      isFullRecord: boolean;
-    }) => {
-      const stepId = extractRawVariableNamePart({
-        rawVariableName,
-        part: 'stepId',
-      });
-      const [currentStepOutputSchema] = jotaiStore.get(
-        stepsOutputSchemaFamilySelector.selectorFamily({
-          workflowVersionId,
-          stepIds: [stepId],
-        }),
-      );
-
-      const { variableType, fieldMetadataId, compositeFieldSubFieldName } =
-        searchVariableThroughOutputSchemaV2({
-          stepOutputSchema: currentStepOutputSchema,
-          stepType: step.type,
-          rawVariableName,
-          isFullRecord: false,
-        });
-
-      const { fieldMetadataItem: filterFieldMetadataItem } = isDefined(
-        fieldMetadataId,
-      )
-        ? getFieldMetadataItemByIdOrThrow(fieldMetadataId)
-        : { fieldMetadataItem: undefined };
-
-      const filterType = isDefined(fieldMetadataId)
-        ? (filterFieldMetadataItem?.type ?? 'unknown')
-        : variableType;
-
-      const availableOperandsForFilter = getStepFilterOperands({
-        filterType,
-        subFieldName: compositeFieldSubFieldName,
-      });
-      const defaultOperand = availableOperandsForFilter[0];
-
-      const { value } = getInitialFilterValue(
-        filterType as FilterableAndTSVectorFieldType,
-        defaultOperand,
-      );
-
-      upsertStepFilterSettings({
-        stepFilterToUpsert: {
-          ...stepFilter,
-          stepOutputKey: rawVariableName,
-          isFullRecord,
-          type: filterType ?? 'unknown',
-          value: value,
-          fieldMetadataId,
-          compositeFieldSubFieldName,
-          operand: defaultOperand,
-        },
-      });
-    },
-    [
-      jotaiStore,
-      workflowVersionId,
-      step.type,
-      getFieldMetadataItemByIdOrThrow,
-      upsertStepFilterSettings,
-      stepFilter,
-      getInitialFilterValue,
-    ],
-  );
-
-  const handleStepFilterFieldSelect = (key: string) => {
-    updateStepFilter({
-      rawVariableName: key,
-      isFullRecord: false,
+      stepType: step.type,
     });
-    onSelect();
   };
 
   const {
@@ -149,12 +56,18 @@ export const WorkflowDropdownStepOutputItems = ({
     setSearchInputValue,
     handleSelectField,
     goBack,
-    filteredOptions,
+    options,
     currentPath,
+    isSearching,
+    searchResults,
+    handleSelectSearchResult,
   } = useVariableDropdown({
     step,
+    initialPath,
     onSelect: handleStepFilterFieldSelect,
     onBack,
+    shouldDisplaySpecialItems: false,
+    shouldDisplayRecordObjects: true,
   });
 
   const getDisplayedSubStepObject = () => {
@@ -174,14 +87,14 @@ export const WorkflowDropdownStepOutputItems = ({
       return;
     }
 
-    updateStepFilter({
+    updateStepFilterFromVariable({
       rawVariableName: getVariableTemplateFromPath({
         stepId: step.id,
         path: [...currentPath, currentSubStep.object.fieldIdName ?? 'id'],
       }),
       isFullRecord: true,
+      stepType: step.type,
     });
-    onSelect();
   };
 
   const displayedSubStepObject = getDisplayedSubStepObject();
@@ -194,84 +107,98 @@ export const WorkflowDropdownStepOutputItems = ({
       )
     : undefined;
 
-  const shouldDisplaySubStepObject = searchInputValue
-    ? isDefined(subStepObjectMetadataItem) &&
-      subStepObjectMetadataItem.labelSingular
-        .toLowerCase()
-        .includes(searchInputValue.toLowerCase())
-    : isDefined(displayedSubStepObject);
-
-  const objectLabel = subStepObjectMetadataItem?.labelSingular;
-
-  const subStepObjectIconProps = isDefined(subStepObjectMetadataItem)
-    ? getSelectIconPropsFromObjectMetadataItem(subStepObjectMetadataItem)
+  const subStepObjectDisplay = isDefined(displayedSubStepObject)
+    ? getWorkflowVariableRecordObjectDisplay({
+        recordObject: displayedSubStepObject,
+        objectMetadataItem: subStepObjectMetadataItem,
+      })
     : undefined;
 
-  return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={goBack}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        <OverflowingTextWithTooltip
-          text={getStepHeaderLabel(step, currentPath)}
-        />
-      </DropdownMenuHeader>
-      <DropdownMenuSearchInput
-        autoFocus
-        value={searchInputValue}
-        onChange={(event) => setSearchInputValue(event.target.value)}
-      />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {shouldDisplaySubStepObject && (
-          <MenuItemSelect
-            selected={false}
-            focused={false}
-            onClick={handleSelectObject}
-            text={objectLabel || ''}
-            hasSubMenu={false}
-            LeftIcon={subStepObjectIconProps?.Icon}
-            leftIconColor={subStepObjectIconProps?.iconThemeColor}
-            contextualText={t`Pick a ${objectLabel} record`}
-          />
-        )}
-        {filteredOptions.length > 0 && shouldDisplaySubStepObject && (
-          <DropdownMenuSeparator />
-        )}
-        {filteredOptions.map(([key, subStep]) => {
-          if (!isDefined(subStep)) {
-            return null;
-          }
+  const shouldDisplaySubStepObject =
+    subStepObjectDisplay?.isSelectable === true;
 
-          return (
-            <MenuItemSelect
-              key={key}
-              selected={false}
-              focused={false}
-              onClick={() => handleSelectField(key)}
-              text={subStep.label || key}
-              hasSubMenu={!subStep.isLeaf}
-              LeftIcon={
-                subStep.icon
-                  ? getIcon(subStep.icon)
-                  : getIcon(
-                      getStepItemIcon({
-                        itemType: subStep.type,
-                      }),
-                    )
+  return (
+    <>
+      <Dropdown.Header>
+        <LightIconButton size="sm" aria-label={t`Back`} onClick={goBack}>
+          <IconChevronLeft />
+        </LightIconButton>
+        <Dropdown.Title>{getStepHeaderLabel(step, currentPath)}</Dropdown.Title>
+        <Dropdown.Close aria-label={t`Close`} />
+      </Dropdown.Header>
+      <Dropdown.Search
+        key={JSON.stringify(currentPath)}
+        autoFocus
+        aria-label={t`Search fields`}
+        value={searchInputValue}
+        onValueChange={setSearchInputValue}
+      />
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable>
+        {isSearching ? (
+          <WorkflowVariableSearchResultItems
+            searchResults={searchResults}
+            onSelect={handleSelectSearchResult}
+          />
+        ) : (
+          <>
+            {shouldDisplaySubStepObject && (
+              <Dropdown.OptionItem
+                onSelect={handleSelectObject}
+                hasSubmenu={false}
+                description={t`Pick a ${subStepObjectDisplay?.label} record`}
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={
+                      isDefined(subStepObjectDisplay?.icon)
+                        ? getIcon(subStepObjectDisplay.icon)
+                        : undefined
+                    }
+                    color={subStepObjectDisplay?.iconColor}
+                  />
+                }
+              >
+                {subStepObjectDisplay?.label ?? ''}
+              </Dropdown.OptionItem>
+            )}
+            {isNonEmptyArray(options) && shouldDisplaySubStepObject && (
+              <Dropdown.Separator />
+            )}
+            {options.map(([key, subStep]) => {
+              if (!isDefined(subStep)) {
+                return null;
               }
-              contextualText={
-                subStep.isLeaf ? subStep?.value?.toString() : undefined
-              }
-            />
-          );
-        })}
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+
+              return (
+                <Dropdown.OptionItem
+                  key={key}
+                  onSelect={() => handleSelectField(key)}
+                  hasSubmenu={!subStep.isLeaf}
+                  closeOnSelect={subStep.isLeaf}
+                  description={
+                    subStep.isLeaf ? subStep.value?.toString() : undefined
+                  }
+                  startIcon={
+                    <SelectOptionIcon
+                      Icon={
+                        isNonEmptyString(subStep.icon)
+                          ? getIcon(subStep.icon)
+                          : getIcon(
+                              getStepItemIcon({
+                                itemType: subStep.type,
+                              }),
+                            )
+                      }
+                    />
+                  }
+                >
+                  {subStep.label || key}
+                </Dropdown.OptionItem>
+              );
+            })}
+          </>
+        )}
+      </Dropdown.Section>
+    </>
   );
 };

@@ -1,6 +1,3 @@
-import { styled } from '@linaria/react';
-import { useCallback, useEffect, useRef } from 'react';
-
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -8,21 +5,24 @@ import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
+import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
+import { useSetCurrentWorkspaceOnboardingFreeCredits } from '@/onboarding/hooks/useSetCurrentWorkspaceOnboardingFreeCredits';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { onboardingActivationFailedState } from '@/onboarding/states/onboardingActivationFailedState';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useCallback, useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MainButton, useToast } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
+
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -41,7 +41,7 @@ const StyledButtonContainer = styled.div`
 
 export const WorkspaceActivation = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { loadCurrentUser } = useLoadCurrentUser();
   const [activateWorkspace, { loading: isActivating }] = useMutation(
@@ -55,7 +55,8 @@ export const WorkspaceActivation = () => {
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const setIsCreatingWorkspace = useSetAtomState(isCreatingWorkspaceState);
-  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
+  const setOnboardingFreeCredits =
+    useSetCurrentWorkspaceOnboardingFreeCredits();
   const setIsAppEffectRedirectEnabled = useSetAtomState(
     isAppEffectRedirectEnabledState,
   );
@@ -76,7 +77,7 @@ export const WorkspaceActivation = () => {
 
       setIsAppEffectRedirectEnabled(false);
       await loadCurrentUser();
-      setNextOnboardingStatus();
+      setNextOnboardingStatus({ stepHistoryEffect: 'leaveUnchanged' });
       setIsCreatingWorkspace(false);
       setIsAppEffectRedirectEnabled(true);
     } catch (error) {
@@ -84,13 +85,11 @@ export const WorkspaceActivation = () => {
       setIsCreatingWorkspace(false);
       setOnboardingActivationFailed(true);
 
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   }, [
     activateWorkspace,
-    enqueueErrorSnackBar,
+    enqueueToast,
     loadCurrentUser,
     setOnboardingActivationFailed,
     setIsAppEffectRedirectEnabled,
@@ -110,11 +109,7 @@ export const WorkspaceActivation = () => {
     }
 
     hasTriggeredRef.current = true;
-    setOnboardingFreeCredits({
-      importContacts: 0,
-      inviteTeam: 0,
-      installApps: 0,
-    });
+    setOnboardingFreeCredits(ONBOARDING_FREE_CREDITS_DEFAULT_VALUE);
     void activate();
   }, [activate, currentWorkspace, setOnboardingFreeCredits]);
 
@@ -149,13 +144,12 @@ export const WorkspaceActivation = () => {
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
           <MainButton
-            title={t`Retry`}
             onClick={() => {
               void activate();
             }}
             disabled={isActivating}
             fullWidth
-          />
+          >{t`Retry`}</MainButton>
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledContainer>

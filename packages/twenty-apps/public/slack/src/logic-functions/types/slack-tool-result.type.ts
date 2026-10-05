@@ -4,4 +4,5 @@ export type SlackToolResult = {
   error?: string;
   slackTs?: string;
   channel?: string;
+  retryAfterSeconds?: number;
 };

@@ -1,0 +1,72 @@
+.container {
+  align-items: center;
+  display: flex;
+  gap: var(--t-spacing-0_5);
+}
+.mode {
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--t-border-radius-sm-round);
+  color: var(--t-font-color-tertiary);
+  corner-shape: round;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: var(--t-font-size-md);
+  font-weight: var(--t-font-weight-medium);
+  gap: 0;
+  height: var(--t-spacing-7);
+  padding: 0 var(--t-spacing-1_5);
+  transition:
+    background duration(fast) ease,
+    color duration(fast) ease,
+    gap duration(normal) ease;
+  &[data-size='medium'] {
+    height: var(--t-spacing-8);
+  }
+  &[data-active] {
+    background: var(--t-background-transparent-light);
+    color: var(--t-font-color-primary);
+    gap: var(--t-spacing-1);
+  }
+  &:hover {
+    background: var(--t-background-transparent-lighter);
+    color: var(--t-font-color-primary);
+  }
+  &[data-active]:hover {
+    background: var(--t-background-transparent-light);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--t-color-blue);
+    outline-offset: 2px;
+  }
+}
+.icon {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  height: var(--t-spacing-4);
+  justify-content: center;
+  width: var(--t-spacing-4);
+}
+.label {
+  display: grid;
+  grid-template-columns: 0fr;
+  transition: grid-template-columns duration(normal) ease;
+}
+.mode[data-active] .label {
+  grid-template-columns: 1fr;
+}
+.labelText {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mode,
+  .label {
+    transition: none;
+  }
+}

@@ -5,7 +5,7 @@ import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getW
 import { styled } from '@linaria/react';
 import { Handle, Position, type HandleProps } from '@xyflow/react';
 import { useMemo, type CSSProperties } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const HANDLE_SCALE_ON_HOVER = 1.5;
 
@@ -13,6 +13,7 @@ const StyledHandleContainer = styled.div`
   & .react-flow__handle {
     background: var(--handle-bg);
     border-color: var(--handle-border-color);
+    corner-shape: round;
     height: ${NODE_HANDLE_HEIGHT_PX}px;
     opacity: var(--handle-opacity, 1);
     transform: var(--handle-transform);

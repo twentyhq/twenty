@@ -4,19 +4,22 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
 import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
-import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
+import { UpdatePaymentMethodModal } from '@/settings/billing/components/UpdatePaymentMethodModal';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
+import { usePaymentMethodFlow } from '@/settings/billing/hooks/usePaymentMethodFlow';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconCircleX, IconCreditCard } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
+
+const SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID =
+  'settings-billing-update-payment-modal';
+
 export const SettingsBillingContent = () => {
   const { t } = useLingui();
 
@@ -29,6 +32,14 @@ export const SettingsBillingContent = () => {
   const billingHasPaymentMethod = useAtomStateValue(
     billingHasPaymentMethodSelector,
   );
+
+  const {
+    shouldAddPaymentMethodInProduct,
+    openPaymentMethodFlow,
+    isPaymentMethodFlowDisabled,
+    isBillingPortalSessionDisabled,
+    openBillingPortal,
+  } = usePaymentMethodFlow(SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID);
 
   const { isGetResourceCreditUsageQueryLoaded: isUsageQueryLoaded } =
     useGetResourceCreditUsage();
@@ -46,9 +57,6 @@ export const SettingsBillingContent = () => {
   const canCancelCurrentSubscription =
     hasNotCanceledCurrentSubscription && !hasScheduledCancellation;
 
-  const { isBillingPortalSessionDisabled, openBillingPortal } =
-    useBillingPortalSession(getSettingsPath(SettingsPath.Billing));
-
   return (
     <SettingsPageContainer>
       {displayTrialNoPaymentMethodCard && currentBillingSubscription && (
@@ -62,8 +70,10 @@ export const SettingsBillingContent = () => {
           <SettingsBillingSubscriptionInfo
             currentWorkspace={currentWorkspace}
             currentBillingSubscription={currentBillingSubscription}
-            onUpdatePayment={openBillingPortal}
-            isUpdatePaymentDisabled={isBillingPortalSessionDisabled}
+            onManageBilling={openBillingPortal}
+            isManageBillingDisabled={isBillingPortalSessionDisabled}
+            onUpdatePayment={openPaymentMethodFlow}
+            isUpdatePaymentDisabled={isPaymentMethodFlowDisabled}
           />
         )}
       {hasNotCanceledCurrentSubscription &&
@@ -72,38 +82,43 @@ export const SettingsBillingContent = () => {
         isUsageQueryLoaded && (
           <SettingsBillingCreditsSection
             currentBillingSubscription={currentBillingSubscription}
-            onUpdatePayment={openBillingPortal}
-            isUpdatePaymentDisabled={isBillingPortalSessionDisabled}
+            onManageBilling={openBillingPortal}
+            isManageBillingDisabled={isBillingPortalSessionDisabled}
+            onUpdatePayment={openPaymentMethodFlow}
+            isUpdatePaymentDisabled={isPaymentMethodFlowDisabled}
           />
         )}
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title={t`Manage billing information`}
           description={t`Edit payment method, see your invoices and more`}
         />
         <Button
-          Icon={IconCreditCard}
-          title={t`View billing details`}
-          variant="secondary"
+          startIcon={<IconCreditCard />}
           onClick={openBillingPortal}
           disabled={isBillingPortalSessionDisabled}
-        />
-      </Section>
+          variant="outline"
+        >{t`View billing details`}</Button>
+      </Section.Root>
       {canCancelCurrentSubscription && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Cancel your subscription`}
             description={t`Your workspace will be disabled`}
           />
           <Button
-            Icon={IconCircleX}
-            title={t`Cancel Plan`}
-            variant="secondary"
-            accent="danger"
+            startIcon={<IconCircleX />}
             onClick={openBillingPortal}
             disabled={isBillingPortalSessionDisabled}
-          />
-        </Section>
+            variant="outline"
+            color="danger"
+          >{t`Cancel Plan`}</Button>
+        </Section.Root>
+      )}
+      {shouldAddPaymentMethodInProduct && (
+        <UpdatePaymentMethodModal
+          modalInstanceId={SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID}
+        />
       )}
     </SettingsPageContainer>
   );

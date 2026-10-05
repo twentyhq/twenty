@@ -81,12 +81,14 @@ export class WorkspaceSchemaIndexManagerService {
     queryRunner,
     schemaName,
     indexName,
+    concurrently = false,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     indexName: string;
+    concurrently?: boolean;
   }): Promise<void> {
-    const sql = `DROP INDEX IF EXISTS ${escapeIdentifier(schemaName)}.${escapeIdentifier(indexName)}`;
+    const sql = `DROP INDEX ${concurrently ? 'CONCURRENTLY ' : ''}IF EXISTS ${escapeIdentifier(schemaName)}.${escapeIdentifier(indexName)}`;
 
     await queryRunner.query(sql);
   }

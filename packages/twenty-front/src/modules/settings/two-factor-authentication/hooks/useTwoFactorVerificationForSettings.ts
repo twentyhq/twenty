@@ -1,16 +1,17 @@
 import { type OTPFormValues } from '@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm';
+import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER } from '@/settings/two-factor-authentication/graphql/mutations/verifyTwoFactorAuthenticationMethod';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/components';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useTwoFactorVerificationForSettings = () => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const navigate = useNavigateSettings();
   const { t } = useLingui();
   const [isLoading, setIsLoading] = useState(false);
@@ -32,14 +33,13 @@ export const useTwoFactorVerificationForSettings = () => {
   const canSave = !isSubmitting && otpValue?.length === 6;
 
   const handleVerificationSuccess = async () => {
-    enqueueSuccessSnackBar({
-      message: t`Two-factor authentication setup completed successfully!`,
+    enqueueToast({
+      variant: 'success',
+      children: t`Two-factor authentication setup completed successfully!`,
     });
 
-    // Reload current user to refresh 2FA status
     await loadCurrentUser();
 
-    // Navigate back to profile page
     navigate(SettingsPath.ProfilePage);
   };
 
@@ -54,17 +54,14 @@ export const useTwoFactorVerificationForSettings = () => {
       });
 
       await handleVerificationSuccess();
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Invalid verification code. Please try again.`,
-      });
+    } catch (error) {
+      enqueueToast(getTwoFactorAuthenticationErrorToastOptions({ error }));
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleCancel = () => {
-    // Reset form and navigate back to profile page
     formConfig.reset();
     navigate(SettingsPath.ProfilePage);
   };

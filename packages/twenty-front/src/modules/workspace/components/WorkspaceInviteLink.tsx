@@ -3,8 +3,8 @@ import { styled } from '@linaria/react';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
 import { IconLink } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -40,14 +40,13 @@ export const WorkspaceInviteLink = ({
         />
       </StyledLinkContainer>
       <Button
-        Icon={IconLink}
-        variant="primary"
-        accent="blue"
-        title={t`Copy link`}
+        startIcon={<IconLink />}
         onClick={() => {
           copyToClipboard(inviteLink, t`Link copied to clipboard`);
         }}
-      />
+        variant="solid"
+        color="accent"
+      >{t`Copy link`}</Button>
     </StyledContainer>
   );
 };

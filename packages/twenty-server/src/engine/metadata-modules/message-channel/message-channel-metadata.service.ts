@@ -86,7 +86,7 @@ export class MessageChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageChannelDTO[]> {
-    await this.connectedAccountMetadataService.verifyOwnership({
+    await this.connectedAccountMetadataService.verifyUsableByCaller({
       id: connectedAccountId,
       userWorkspaceId,
       workspaceId,
@@ -133,7 +133,7 @@ export class MessageChannelMetadataService {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
-  async verifyOwnership({
+  async verifyUsableByCaller({
     id,
     userWorkspaceId,
     workspaceId,
@@ -142,16 +142,29 @@ export class MessageChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageChannelEntity> {
-    const messageChannel = await this.repository.findOne({
-      where: { id, workspaceId },
+    const messageChannel = await this.findByIdOrThrow({ id, workspaceId });
+
+    await this.connectedAccountMetadataService.verifyUsableByCaller({
+      id: messageChannel.connectedAccountId,
+      userWorkspaceId,
+      workspaceId,
     });
 
-    if (!messageChannel) {
-      throw new MessageChannelException(
-        `Message channel ${id} not found`,
-        MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
-      );
-    }
+    return messageChannel;
+  }
+
+  async verifyAdministrableByCaller({
+    id,
+    userWorkspaceId,
+    workspaceId,
+    applicationId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+    applicationId?: string;
+  }): Promise<MessageChannelEntity> {
+    const messageChannel = await this.findByIdOrThrow({ id, workspaceId });
 
     const connectedAccount =
       await this.connectedAccountMetadataService.findById({
@@ -159,20 +172,46 @@ export class MessageChannelMetadataService {
         workspaceId,
       });
 
-    if (connectedAccount?.visibility === 'workspace') {
-      return messageChannel;
+    if (!isDefined(connectedAccount)) {
+      throw new MessageChannelException(
+        `Connected account ${messageChannel.connectedAccountId} of message channel ${id} not found`,
+        MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
+      );
     }
 
-    const userAccountIds =
-      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
+    const isAdministrableByCaller =
+      await this.connectedAccountMetadataService.isAdministrableByCaller({
+        connectedAccount,
         userWorkspaceId,
         workspaceId,
+        applicationId,
       });
 
-    if (!userAccountIds.includes(messageChannel.connectedAccountId)) {
+    if (!isAdministrableByCaller) {
       throw new MessageChannelException(
-        `Message channel ${id} does not belong to user workspace ${userWorkspaceId}`,
+        `Message channel ${id} cannot be administered by user workspace ${userWorkspaceId}`,
         MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
+      );
+    }
+
+    return messageChannel;
+  }
+
+  private async findByIdOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<MessageChannelEntity> {
+    const messageChannel = await this.repository.findOne({
+      where: { id, workspaceId },
+    });
+
+    if (!isDefined(messageChannel)) {
+      throw new MessageChannelException(
+        `Message channel ${id} not found`,
+        MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
       );
     }
 
@@ -225,18 +264,25 @@ export class MessageChannelMetadataService {
     const inboundEmailDomain = this.twentyConfigService.get(
       'INBOUND_EMAIL_DOMAIN',
     );
-    const storageType = this.twentyConfigService.get('STORAGE_TYPE');
+    const emailingDomainDriver = this.twentyConfigService.get(
+      'EMAILING_DOMAIN_DRIVER',
+    );
     const isEmailingDomainInDemoMode =
-      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
-      EmailingDomainDriver.LOG;
+      emailingDomainDriver === EmailingDomainDriver.LOG;
+
+    const isInboundMessageStoreConfigured =
+      emailingDomainDriver === EmailingDomainDriver.RESEND
+        ? isNonEmptyString(this.twentyConfigService.get('RESEND_API_KEY'))
+        : this.twentyConfigService.get('STORAGE_TYPE') ===
+          StorageDriverType.S_3;
 
     if (
       !isEmailingDomainInDemoMode &&
       (!isNonEmptyString(inboundEmailDomain) ||
-        storageType !== StorageDriverType.S_3)
+        !isInboundMessageStoreConfigured)
     ) {
       throw new MessageChannelException(
-        'Email handles are not configured: INBOUND_EMAIL_DOMAIN must be set and STORAGE_TYPE must be S3',
+        'Email handles are not configured: INBOUND_EMAIL_DOMAIN must be set, plus S3 storage for the AWS_SES driver or RESEND_API_KEY for the RESEND driver',
         MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED,
       );
     }
@@ -358,7 +404,7 @@ export class MessageChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageChannelDTO> {
-    const messageChannel = await this.verifyOwnership({
+    const messageChannel = await this.verifyAdministrableByCaller({
       id,
       userWorkspaceId,
       workspaceId,
@@ -398,7 +444,7 @@ export class MessageChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageChannelDTO> {
-    const messageChannel = await this.verifyOwnership({
+    const messageChannel = await this.verifyAdministrableByCaller({
       id,
       userWorkspaceId,
       workspaceId,

@@ -21,125 +21,57 @@ export const parseGmailApiError = (
       'Unknown error',
   };
 
-  switch (gmailApiError.code) {
-    case 400:
-      if (gmailApiError.reason === 'invalid_grant') {
-        return new MessageImportDriverException(
-          gmailApiError.message,
-          MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-        );
-      }
-      if (gmailApiError.reason === 'failedPrecondition') {
-        if (gmailApiError.message.includes('Mail service not enabled')) {
-          return new MessageImportDriverException(
-            gmailApiError.message,
-            MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-          );
-        }
-
-        return new MessageImportDriverException(
-          gmailApiError.message,
-          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-        );
-      }
-
-      return new MessageImportDriverException(
-        gmailApiError.message,
-        MessageImportDriverExceptionCode.UNKNOWN,
-      );
-
-    case 404:
-      return new MessageImportDriverException(
-        gmailApiError.message,
-        MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-      );
-
-    case 429:
-      return new MessageImportDriverException(
-        gmailApiError.message,
-        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-        {
-          throttleRetryAfter: parseGmailErrorRetryAfter(gmailApiError.message),
-        },
-      );
-
-    case 403:
-      if (
-        gmailApiError.reason === 'rateLimitExceeded' ||
-        gmailApiError.reason === 'userRateLimitExceeded' ||
-        gmailApiError.reason === 'dailyLimitExceeded'
-      ) {
-        return new MessageImportDriverException(
-          gmailApiError.message,
-          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-          {
-            throttleRetryAfter: parseGmailErrorRetryAfter(
-              gmailApiError.message,
-            ),
-          },
-        );
-      }
-      if (gmailApiError.reason === 'domainPolicy') {
-        return new MessageImportDriverException(
-          gmailApiError.message,
-          MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-        );
-      }
-
-      if (gmailApiError.reason === 'insufficientPermissions') {
-        return new MessageImportDriverException(
-          gmailApiError.message,
-          MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-        );
-      }
-
-      break;
-
-    case 401:
+  if (gmailApiError.code === 400) {
+    if (gmailApiError.reason === 'invalid_grant') {
       return new MessageImportDriverException(
         gmailApiError.message,
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        { cause: error },
       );
+    }
 
-    case 503:
+    if (
+      gmailApiError.reason === 'failedPrecondition' &&
+      gmailApiError.message.includes('Mail service not enabled')
+    ) {
       return new MessageImportDriverException(
         gmailApiError.message,
-        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+        MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        { cause: error },
       );
+    }
 
-    case 500:
-    case 502:
-    case 504:
-      if (gmailApiError.reason === 'backendError') {
-        return new MessageImportDriverException(
-          gmailApiError.message,
-          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-        );
-      }
+    if (gmailApiError.reason !== 'failedPrecondition') {
+      return new MessageImportDriverException(
+        gmailApiError.message,
+        MessageImportDriverExceptionCode.UNKNOWN,
+        { cause: error },
+      );
+    }
+  }
 
-      if (
-        gmailApiError.message.includes(`Authentication backend unavailable`)
-      ) {
-        return new MessageImportDriverException(
-          `${gmailApiError.code} - ${gmailApiError.message}`,
-          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-        );
-      }
+  if (gmailApiError.code === 404) {
+    return new MessageImportDriverException(
+      gmailApiError.message,
+      MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+      { cause: error },
+    );
+  }
 
-      if (gmailApiError.reason === 'internal_failure') {
-        return new MessageImportDriverException(
-          `${gmailApiError.code} - ${gmailApiError.message}`,
-          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-        );
-      }
-      break;
-
-    default:
-      break;
+  if (gmailApiError.code === 429 || gmailApiError.code === 403) {
+    return new MessageImportDriverException(
+      gmailApiError.message,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      {
+        cause: error,
+        throttleRetryAfter: parseGmailErrorRetryAfter(gmailApiError.message),
+      },
+    );
   }
 
   return new MessageImportDriverException(
     gmailApiError.message,
-    MessageImportDriverExceptionCode.UNKNOWN,
+    MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+    { cause: error },
   );
 };

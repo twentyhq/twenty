@@ -1,3 +1,4 @@
+import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/types/EmailRecipientSuggestion';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -16,15 +17,6 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export type EmailRecipientSuggestion = {
-  suggestionId: string;
-  recipient: { address: string; displayName?: string };
-  label: string;
-  secondaryText: string;
-  avatarUrl: string | null;
-  avatarColorSeed: string;
-};
-
 type UseEmailRecipientSuggestionsArgs = {
   searchInput: string;
   excludedRecipientKeys: string[];
@@ -38,6 +30,7 @@ const getSuggestion = ({
   secondaryText,
   avatarUrl,
   avatarColorSeed,
+  personId,
 }: {
   suggestionId: string;
   fullName: string;
@@ -45,11 +38,13 @@ const getSuggestion = ({
   secondaryText: string;
   avatarUrl: string | null;
   avatarColorSeed: string;
+  personId?: string;
 }): EmailRecipientSuggestion => ({
   suggestionId,
   recipient: {
     address,
     displayName: isNonEmptyString(fullName) ? fullName : undefined,
+    personId,
   },
   label: isNonEmptyString(fullName) ? fullName : address,
   secondaryText,
@@ -67,6 +62,7 @@ const getPersonSuggestion = (
     secondaryText: person.primaryEmail,
     avatarUrl: person.avatarUrl,
     avatarColorSeed: person.id,
+    personId: person.id,
   });
 
 export const useEmailRecipientSuggestions = ({
@@ -114,7 +110,7 @@ export const useEmailRecipientSuggestions = ({
     skip: !isDefined(contextCompanyId),
   });
 
-  const { searchRecords } = useObjectRecordSearchRecords({
+  const { searchRecords, error } = useObjectRecordSearchRecords({
     objectNameSingulars: [
       CoreObjectNameSingular.Person,
       CoreObjectNameSingular.WorkspaceMember,
@@ -230,7 +226,7 @@ export const useEmailRecipientSuggestions = ({
     !excludedKeySet.has(literalKey);
 
   if (!bufferIsAddableAddress) {
-    return { suggestions: dedupedRecordSuggestions };
+    return { suggestions: dedupedRecordSuggestions, error };
   }
 
   const exactMatchSuggestion = dedupedRecordSuggestions.find(
@@ -248,6 +244,7 @@ export const useEmailRecipientSuggestions = ({
   };
 
   return {
+    error,
     suggestions: [
       firstSuggestion,
       ...dedupedRecordSuggestions.filter(

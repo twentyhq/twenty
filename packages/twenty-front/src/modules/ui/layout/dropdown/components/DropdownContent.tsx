@@ -1,37 +1,62 @@
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { styled } from '@linaria/react';
-import { type Ref, forwardRef } from 'react';
+import { type ComponentProps, useContext } from 'react';
+import { Dropdown } from 'twenty-ui/components';
 
-const StyledInternalBaseDropdownContent = styled.div<{
-  widthInPixels: number;
-}>`
-  display: flex;
+import { DropdownClickOutsideListenerExclusion } from '@/ui/layout/dropdown/components/DropdownClickOutsideListenerExclusion';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 
-  flex-direction: column;
-  height: 100%;
-  width: ${({ widthInPixels }) => widthInPixels}px;
-`;
+type DropdownContentProps = Pick<
+  ComponentProps<typeof Dropdown.Content>,
+  | 'children'
+  | 'side'
+  | 'align'
+  | 'sideOffset'
+  | 'alignOffset'
+  | 'anchor'
+  | 'collisionPadding'
+  | 'width'
+  | 'initialFocus'
+  | 'finalFocus'
+  | 'className'
+  | 'aria-label'
+  | 'ref'
+>;
 
-export const DropdownContent = forwardRef(
-  (
-    {
-      children,
-      widthInPixels = GenericDropdownContentWidth.Medium,
-      selectDisabled = false,
-    }: React.PropsWithChildren<{
-      widthInPixels?: number;
-      selectDisabled?: boolean;
-    }>,
-    ref: Ref<HTMLDivElement>,
-  ) => {
-    return (
-      <StyledInternalBaseDropdownContent
-        data-select-disable={selectDisabled}
-        widthInPixels={widthInPixels}
-        ref={ref}
-      >
+export const DropdownContent = ({
+  children,
+  side,
+  align,
+  sideOffset,
+  alignOffset,
+  anchor,
+  collisionPadding,
+  width,
+  initialFocus,
+  finalFocus,
+  className,
+  'aria-label': ariaLabel,
+  ref,
+}: DropdownContentProps) => {
+  const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
+
+  return (
+    <Dropdown.Content
+      ref={ref}
+      data-click-outside-id={parentClickOutsideId}
+      side={side}
+      align={align}
+      sideOffset={sideOffset}
+      alignOffset={alignOffset}
+      anchor={anchor}
+      collisionPadding={collisionPadding}
+      width={width}
+      initialFocus={initialFocus}
+      finalFocus={finalFocus}
+      className={className}
+      aria-label={ariaLabel}
+    >
+      <DropdownClickOutsideListenerExclusion>
         {children}
-      </StyledInternalBaseDropdownContent>
-    );
-  },
-);
+      </DropdownClickOutsideListenerExclusion>
+    </Dropdown.Content>
+  );
+};

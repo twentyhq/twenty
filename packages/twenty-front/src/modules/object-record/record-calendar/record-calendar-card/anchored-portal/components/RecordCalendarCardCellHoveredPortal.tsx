@@ -3,18 +3,20 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCalendarCardCellHoveredPortalContent } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellHoveredPortalContent';
 import { RecordCalendarCardInputContextProvider } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardInputContextProvider';
-import { RECORD_CALENDAR_CARD_INPUT_ID_PREFIX } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardInputIdPrefix';
 import { useRecordCalendarCardMetadataFromPosition } from '@/object-record/record-calendar/record-calendar-card/hooks/useRecordCalendarCardMetadataFromPosition';
 import { recordCalendarCardHoverPositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardHoverPositionComponentState';
+import { getRecordCalendarCardInstanceIdPrefix } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardInstanceIdPrefix';
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordCalendarCardCellHoveredPortalProps = {
   recordId: string;
+  calendarDay: string;
 };
 
 export const RecordCalendarCardCellHoveredPortal = ({
   recordId,
+  calendarDay,
 }: RecordCalendarCardCellHoveredPortalProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
@@ -37,10 +39,10 @@ export const RecordCalendarCardCellHoveredPortal = ({
       fieldMetadataItem={hoveredFieldMetadataItem}
       objectMetadataItem={objectMetadataItem}
       recordId={recordId}
-      instanceIdPrefix={RECORD_CALENDAR_CARD_INPUT_ID_PREFIX}
+      instanceIdPrefix={getRecordCalendarCardInstanceIdPrefix(calendarDay)}
     >
       <RecordCalendarCardInputContextProvider>
-        <RecordCalendarCardCellHoveredPortalContent />
+        <RecordCalendarCardCellHoveredPortalContent calendarDay={calendarDay} />
       </RecordCalendarCardInputContextProvider>
     </RecordInlineCellAnchoredPortal>
   );

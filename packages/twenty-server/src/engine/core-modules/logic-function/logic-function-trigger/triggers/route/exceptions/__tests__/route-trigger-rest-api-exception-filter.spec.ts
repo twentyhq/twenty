@@ -58,6 +58,24 @@ describe('RouteTriggerRestApiExceptionFilter', () => {
     expect(handleError).toHaveBeenCalledWith(exception, response, 500);
   });
 
+  it('maps oversized dependencies to 422 without Sentry capture', () => {
+    const exception = new RouteTriggerException(
+      'dependencies too large',
+      RouteTriggerExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED,
+    );
+
+    filter.catch(exception, host);
+
+    expect(handleError).toHaveBeenCalledWith(
+      exception,
+      response,
+      422,
+      undefined,
+      undefined,
+      { shouldBeCapturedBySentry: false },
+    );
+  });
+
   it('maps a disabled function to 403', () => {
     const exception = new RouteTriggerException(
       'disabled',

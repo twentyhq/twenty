@@ -1,5 +1,5 @@
 import { useAuth } from '@/auth/hooks/useAuth';
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -12,7 +12,7 @@ export const SignInUpGlobalScopeFormEffect = () => {
   const signInUpStep = useAtomStateValue(signInUpStepState);
   const { navigateAfterMultiWorkspaceSignInUp } = useAuth();
   const { loadCurrentUser } = useLoadCurrentUser();
-  const hasAccessTokenPair = useHasAccessTokenPair();
+  const isLogged = useIsLogged();
 
   useEffect(() => {
     const resumeOnCentralDomain = async () => {
@@ -24,13 +24,13 @@ export const SignInUpGlobalScopeFormEffect = () => {
     };
 
     if (signInUpStep !== SignInUpStep.Init) return;
-    if (!hasAccessTokenPair) return;
+    if (!isLogged) return;
 
     void resumeOnCentralDomain();
   }, [
     loadCurrentUser,
     signInUpStep,
-    hasAccessTokenPair,
+    isLogged,
     navigateAfterMultiWorkspaceSignInUp,
   ]);
 

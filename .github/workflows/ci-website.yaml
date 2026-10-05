@@ -21,6 +21,7 @@ jobs:
         yarn.lock
         packages/twenty-website/**
         packages/twenty-shared/**
+        packages/twenty-ui/**
   website-task:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'

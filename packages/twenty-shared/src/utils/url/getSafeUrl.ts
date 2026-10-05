@@ -11,6 +11,10 @@ export const getSafeUrl = (
     return url;
   }
 
+  if (url.startsWith('/')) {
+    return undefined;
+  }
+
   const withScheme = `https://${url}`;
 
   return isSafeUrl(withScheme) ? withScheme : undefined;

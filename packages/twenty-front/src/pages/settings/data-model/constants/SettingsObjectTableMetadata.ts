@@ -33,6 +33,6 @@ export const GET_SETTINGS_OBJECT_TABLE_METADATA: TableMetadata<SettingsObjectTab
     ],
     initialSort: {
       fieldName: 'labelPlural',
-      orderBy: 'AscNullsLast',
+      direction: 'asc',
     },
   };

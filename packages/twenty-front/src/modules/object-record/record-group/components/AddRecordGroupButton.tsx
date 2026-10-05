@@ -10,8 +10,8 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { LightButton } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/input';
 
 type AddRecordGroupButtonProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -58,7 +58,10 @@ export const AddRecordGroupButton = ({
       dropdownPlacement="bottom-start"
       dropdownOffset={dropdownOffset}
       clickableComponent={
-        <LightButton Icon={IconPlus} title={t`New group`} accent="tertiary" />
+        <LightButton
+          emphasis="subtle"
+          startIcon={<IconPlus />}
+        >{t`New group`}</LightButton>
       }
       dropdownComponents={
         <SingleRecordPicker

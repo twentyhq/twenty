@@ -65,6 +65,7 @@ Key points:
 - `icon` (optional) sets the icon displayed in the UI.
 - `modelId` (optional) overrides the default AI model used by the agent.
 - `responseFormat` (optional) controls the shape of the agent's output. Defaults to `{ type: 'text' }` for free-form text. Use `{ type: 'json', schema }` to force structured JSON output.
+- `roleUniversalIdentifier` (optional) binds the agent to a role your app defines. That role must not grant more than the application role, or the build fails; see [Agent roles](/developers/extend/apps/config/roles#agent-roles).
 
 By default an agent returns free-form text. To get structured output, set `responseFormat` to `{ type: 'json' }` and provide a `schema`:
 
@@ -102,18 +103,22 @@ Schema notes:
 
 `runAgent()` lets a logic function run one of your app's agents (with its
 skills and tools). Identify the agent by the `universalIdentifier` you passed
-to `defineAgent()`:
+to `defineAgent()`, and pass what you want it to work on as `input`:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
 const { result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
+  input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
 ```
 
 Key points:
+- `input` is a string, or a list of 1 to 100 messages
+  (`{ role: 'user' | 'assistant', content: string }`). A `user` message can
+  also carry file attachments (see below). To hold a conversation, pass a
+  `thread` rather than replaying earlier turns yourself.
 - The agent runs **synchronously** and can read/update records itself via its
   own tools — `runAgent()` resolves once the run completes.
 - An app can only run its own agents.
@@ -144,6 +149,164 @@ export default defineApplicationRole({
   `updatedFields` to a field the agent never writes (e.g. the source URL), or
   guard on whether any target field is still empty before calling `runAgent()`.
 </Warning>
+
+### Sending files with a message
+
+A `user` message can carry `attachments`, so the agent sees a screenshot or a
+PDF instead of only its name. Each entry references a file your app has already
+uploaded into the `agent-chat` folder:
+
+```ts src/logic-functions/describe-screenshot.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: [
+    {
+      role: 'user',
+      content: 'What does this error screen say?',
+      attachments: [{ fileId: uploadedFileId, filename: 'error.png' }],
+    },
+  ],
+});
+```
+
+Uploading requires the `UPLOAD_FILE` permission flag on the app's default role,
+alongside `AI`. `filename` is optional and only labels the file for the model.
+
+- Only `user` messages may carry attachments. They cannot be represented on an
+  assistant turn, so `runAgent()` rejects them there rather than dropping them.
+- At most **10** attachments per message.
+- The `fileId` must name a fully uploaded file in the same workspace, under the
+  `agent-chat` folder. Anything else fails the call instead of quietly
+  answering without the file.
+
+### Continuing a conversation
+
+Pass a `thread` and Twenty keeps the conversation for you: each call sends only
+the new input, and the agent sees the earlier turns, including what its tools
+returned. Use any stable identifier from your side as the key, such as a Slack
+channel and thread timestamp:
+
+```ts src/logic-functions/reply-in-thread.ts
+const { result, threadId } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: 'What was the last touchpoint?',
+  additionalInstructions: 'Answer in Slack markdown.',
+  thread: { key: `${channelId}:${threadTs}`, title: 'Acme renewal' },
+});
+```
+
+- Keys are scoped to your app and agent, so two apps never share a
+  conversation. Only app access tokens can pass a `thread`.
+- `input` may only hold `user` messages: the conversation already holds the
+  agent's replies.
+- `additionalInstructions` are given to the model for this call only and are not
+  stored, which suits per-request guidance such as formatting rules or a
+  deadline. They work without a `thread` too.
+- A turn is stored once the run succeeds. A failed run leaves the conversation
+  as it was.
+- Calls on the same thread run one at a time: a second call waits for the
+  first to finish, so each one sees the turns before it.
+- When turns run as different members (see below), each one only sees the text
+  of the others' turns, never their tool results, since those were read with
+  someone else's permissions.
+
+### Running on behalf of a workspace member
+
+Pass `runAsWorkspaceMemberId` when the run is triggered by a person — a chat
+bot answering a message, for instance — so the agent acts as that member
+instead of as the app:
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+The run then acts with the **member's own role**: it can do whatever that
+member can do and nothing more, records it creates are attributed to them, and
+their row-level permissions apply. The agent's role does not participate — it
+is the app's default for runs with nobody behind them. Omit the field for
+autonomous runs (scheduled jobs, database-event triggers): those keep the
+agent's own role. The acting application stays attached to the run's context
+for provenance, without narrowing the member's permissions.
+
+Your app is responsible for mapping the person who triggered the run to a
+workspace member. Naming one requires an app access token, and what a token may
+name depends on whether it carries a user:
+
+- A token with **no user attached** may name any member. A logic function runs
+  with one, and so do tokens minted through `client_credentials` or from an API
+  key.
+- A token issued **on behalf of a user**, as a front component receives, may
+  only name that user's own member.
+
+Anything else — a plain user session, an API key without an app token — may not
+name a member at all.
+
+<Warning>
+  `runAgent()` throws when the workspace member cannot be resolved — an
+  unknown or removed member, or one with no role. It never falls back to the
+  agent's own role, since that would grant more access than the caller asked
+  for.
+</Warning>
+
+</Accordion>
+<Accordion title="sendInboxMessage" description="Start or continue a conversation in a member's chats">
+
+`sendInboxMessage()` posts a message from your app in a workspace member's
+chats. It can end on a tool call the member answers from the chat, after which
+the conversation continues with Twenty's assistant.
+
+```ts src/logic-functions/notify-first-recording.ts
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberId,
+  threadKey: 'first-call-recording',
+  idempotencyKey: 'first-call-recording',
+  title: 'Your first call recording is ready',
+  text: 'Your first call was recorded: **Weekly sync**.',
+  toolCall: {
+    toolName: 'ask_question',
+    input: {
+      header: 'Share',
+      question: 'Do you want to share it with the other attendees?',
+      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+    },
+  },
+});
+```
+
+Key points:
+- `threadKey` picks the conversation for this app and member. A new key starts
+  a conversation titled `title`; a key you used before adds the message to that
+  conversation.
+- `idempotencyKey` identifies the message within the conversation. Sending
+  again with the same keys writes nothing new, so retries and concurrent runs
+  never duplicate a message.
+- `toolCall` (optional) ends the message on one of:
+  - a call the member answers, which pauses the conversation: `ask_question`
+    (one multiple-choice question), `request_form` (fields to fill in) or
+    `propose_tool_call` (a call to approve). Its `input` takes the `toolName`,
+    the `arguments` you would call the tool with and a one-sentence `summary`.
+    The tool must be one your app's default role could run itself, such as
+    `create_one_person` or `update_one_opportunity` (with the record `id`); an
+    email (`send_email` or `draft_email`, with `recipients`, `subject` and a
+    `body` in HTML) needs no permission of your app. The member reviews the call
+    in the same card as a call the assistant proposes, edits it if they want, and
+    the approved call runs with their own access;
+  - one of your app's own tools, by `logicFunctionUniversalIdentifier`, rendered
+    by its front component with the `input` and `output` you pass. It does not
+    pause the conversation.
+- Only one call the member answers can wait in a conversation at a time:
+  sending another before they answer fails with `THREAD_AWAITING_ANSWER`. Plain
+  messages and app tool calls are still accepted.
+- A conversation the member deleted is not recreated, and nothing is added to it.
+- The member must have the `AI` permission, and your app's
+  [default role](/developers/extend/apps/config/roles) must grant
+  `SystemPermissionFlag.AI`.
 
 </Accordion>
 </AccordionGroup>

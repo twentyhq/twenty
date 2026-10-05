@@ -44,6 +44,13 @@ export const useCurrentResourceCredit = () => {
   return {
     currentResourceCreditSubscriptionItem,
     currentResourceCreditBillingPrice,
+    // Subscription item first: an archived package is gone from listPlans but still billed.
+    currentResourceCreditUnitAmount:
+      currentResourceCreditSubscriptionItem?.unitAmount ??
+      currentResourceCreditBillingPrice?.unitAmount,
+    currentResourceCreditAmount:
+      currentResourceCreditSubscriptionItem?.creditAmount ??
+      currentResourceCreditBillingPrice?.creditAmount,
     getResourceCreditPricesByInterval,
   };
 };

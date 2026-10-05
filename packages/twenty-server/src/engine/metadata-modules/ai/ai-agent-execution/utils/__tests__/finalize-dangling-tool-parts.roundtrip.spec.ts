@@ -1,10 +1,10 @@
 import { convertToModelMessages, type UIMessage } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
-import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartToUIMessagePart';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
+import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-db-parts-to-ui-message-parts.util';
+import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-db-parts.util';
 
 const toolPart = (
   state: string,
@@ -20,8 +20,10 @@ const toolPart = (
 const persistAndReload = (
   parts: ExtendedUIMessagePart[],
 ): ExtendedUIMessagePart[] =>
-  mapUIMessagePartsToDBParts(parts, 'message-1', 'workspace-1')
-    .map((dbPart) => mapDBPartToUIMessagePart(dbPart as AgentMessagePartEntity))
+  mapUIMessagePartsToDBParts(parts, 'message-1')
+    .map((dbPart) =>
+      mapDBPartToUIMessagePart(dbPart as AgentMessagePartWorkspaceEntity),
+    )
     .filter((part): part is ExtendedUIMessagePart => part !== null);
 
 const buildThread = (assistantParts: ExtendedUIMessagePart[]): UIMessage[] =>
@@ -68,8 +70,7 @@ const unresolvedToolCallIds = async (
   return [...pending];
 };
 
-// convertToModelMessages drops the `input` field when a tool part's input is
-// nullish, so every reconstructed tool-call must carry a defined input.
+// convertToModelMessages drops a nullish `input`, so every reconstructed tool-call must carry one
 const toolCallInputs = async (messages: UIMessage[]): Promise<unknown[]> => {
   const modelMessages = await convertToModelMessages(messages);
   const inputs: unknown[] = [];
@@ -149,8 +150,7 @@ describe('finalizeDanglingToolParts round-trip', () => {
     );
   });
 
-  // A tool call that failed input validation: persisted as output-error with
-  // a null input (issue #21695).
+  // failed input validation: persisted as output-error with a null input (#21695)
   const validationErroredPart: ExtendedUIMessagePart = {
     type: 'tool-execute_tool',
     toolCallId: 'validation_failed_1',
@@ -182,7 +182,6 @@ describe('finalizeDanglingToolParts round-trip', () => {
     const [dbPart] = mapUIMessagePartsToDBParts(
       finalizeDanglingToolParts([validationErroredPart]),
       'message-1',
-      'workspace-1',
     );
 
     expect(dbPart.toolInput).toEqual({});

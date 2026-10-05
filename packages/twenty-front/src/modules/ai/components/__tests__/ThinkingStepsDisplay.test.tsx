@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
-import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
+import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
 
 jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({
@@ -48,6 +48,28 @@ jest.mock('@/ui/layout/tab-list/components/TabList', () => ({
   ),
 }));
 
+jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
+  LazyMarkdownRenderer: ({ text }: { text: string }) => (
+    <div data-testid="markdown-renderer">{text}</div>
+  ),
+}));
+
+jest.mock('@/ai/components/ToolRecordsWidget', () => ({
+  ToolRecordsWidget: ({
+    recordReferences,
+  }: {
+    recordReferences: Array<{ displayName: string }>;
+  }) => (
+    <div>
+      {recordReferences.map((recordReference) => (
+        <span key={recordReference.displayName}>
+          {recordReference.displayName}
+        </span>
+      ))}
+    </div>
+  ),
+}));
+
 const createReasoningPart = ({
   state = 'done',
   text = 'Reasoning content',
@@ -64,28 +86,32 @@ const createReasoningPart = ({
 const createToolPart = ({
   input = { query: 'crm software' },
   output = { result: { ok: true } },
+  state = 'output-available',
   type = 'tool-web_search',
 }: {
   type?: `tool-${string}`;
   input?: Record<string, unknown>;
   output?: unknown;
+  state?: string;
 } = {}): ThinkingStepPart =>
   ({
     type,
     toolCallId: `${type}-call-id`,
     input,
     output,
-    state: 'output-available',
+    state,
   }) as ThinkingStepPart;
 
 const renderThinkingStepsDisplay = ({
   hasAssistantTextResponseStarted = false,
   isLastMessageStreaming,
   parts,
+  isTrailingWhileStreaming = false,
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   hasAssistantTextResponseStarted?: boolean;
+  isTrailingWhileStreaming?: boolean;
 }) => {
   return render(
     <ThemeProvider colorScheme="light">
@@ -93,6 +119,7 @@ const renderThinkingStepsDisplay = ({
         parts={parts}
         isLastMessageStreaming={isLastMessageStreaming}
         hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
+        isTrailingWhileStreaming={isTrailingWhileStreaming}
       />
     </ThemeProvider>,
   );
@@ -113,11 +140,56 @@ describe('ThinkingStepsDisplay', () => {
 
     expect(screen.queryByRole('button', { name: /steps/i })).toBeNull();
     expect(screen.getByText('Thinking')).toBeInTheDocument();
-    expect(screen.getByText('Active reasoning content')).toBeInTheDocument();
+    expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
+      'Active reasoning content',
+    );
     expect(
       screen.getByText('Searched the web for crm software'),
     ).toBeInTheDocument();
     expect(document.querySelector('svg[viewBox="0 0 14 14"]')).not.toBeNull();
+  });
+
+  it('should render the loading label for a tool step awaiting its output while streaming', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [createToolPart({ output: null, state: 'input-available' })],
+    });
+
+    expect(
+      screen.getByText('Searching the web for crm software'),
+    ).toBeInTheDocument();
+  });
+
+  it('should append the pending thinking row after completed steps when requested', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      isTrailingWhileStreaming: true,
+      parts: [createToolPart()],
+    });
+
+    expect(screen.getByText('Thinking')).toBeInTheDocument();
+  });
+
+  it('should not render a thinking row for completed steps by default', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [createToolPart()],
+    });
+
+    expect(screen.queryByText('Thinking')).toBeNull();
+  });
+
+  it('should not append the pending thinking row while a tool step is still running', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      isTrailingWhileStreaming: true,
+      parts: [createToolPart({ output: null, state: 'input-available' })],
+    });
+
+    expect(screen.queryByText('Thinking')).toBeNull();
+    expect(
+      screen.getByText('Searching the web for crm software'),
+    ).toBeInTheDocument();
   });
 
   it('should render done state collapsed by default', () => {
@@ -240,5 +312,38 @@ describe('ThinkingStepsDisplay', () => {
       expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
       expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
     });
+  });
+
+  it('should show the records a tool step found when its row is expanded', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      hasAssistantTextResponseStarted: true,
+      parts: [
+        createToolPart({
+          type: 'tool-find_many_companies',
+          input: {},
+          output: {
+            message: 'Found 1 company record',
+            recordReferences: [
+              {
+                objectNameSingular: 'company',
+                recordId: '20202020-0000-4000-8000-000000000001',
+                displayName: 'Clearstreet',
+              },
+            ],
+          },
+        }),
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+
+    expect(screen.queryByText('Clearstreet')).toBeNull();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /find_many_companies/i }),
+    );
+
+    expect(screen.getByText('Clearstreet')).toBeInTheDocument();
   });
 });

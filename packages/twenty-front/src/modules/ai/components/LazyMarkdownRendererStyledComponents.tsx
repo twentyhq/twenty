@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const StyledMarkdownContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -162,10 +162,11 @@ export const StyledParagraph = styled.div`
 `;
 
 export const StyledSkeletonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  width: 100%;
+  max-width: 100%;
+
+  .react-loading-skeleton {
+    max-width: 100%;
+  }
 `;
 
 export const StyledTableScrollContainer = styled.div`

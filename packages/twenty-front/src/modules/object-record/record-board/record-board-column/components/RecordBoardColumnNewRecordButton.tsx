@@ -1,16 +1,20 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { isRecordBoardCellsNonEditableComponentState } from '@/object-record/record-board/states/isRecordBoardCellsNonEditableComponentState';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledNewButton = styled.button`
   align-items: center;
@@ -30,7 +34,7 @@ const StyledNewButton = styled.button`
 `;
 
 export const RecordBoardColumnNewRecordButton = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { objectMetadataItem, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 
@@ -40,6 +44,10 @@ export const RecordBoardColumnNewRecordButton = () => {
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
+  const isRecordBoardCellsNonEditable = useAtomComponentStateValue(
+    isRecordBoardCellsNonEditableComponentState,
+  );
+
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
@@ -47,6 +55,20 @@ export const RecordBoardColumnNewRecordButton = () => {
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem: objectMetadataItem,
   });
+
+  // Creating through a nested relation or junction needs a record picker only the table layout offers.
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
+
+  if (
+    isDefined(recordTableWidgetContext?.nestedRelationCreateThrough) ||
+    isDefined(recordTableWidgetContext?.junctionCreateThrough)
+  ) {
+    return null;
+  }
+
+  if (isRecordBoardCellsNonEditable) {
+    return null;
+  }
 
   if (
     !canCreateRecordsForObjectMetadataItem({

@@ -1,0 +1,24 @@
+.wrapper {
+  align-items: center;
+  display: flex;
+  gap: var(--t-spacing-2);
+  width: 100%;
+}
+
+.filterButton {
+  @include square-button;
+}
+
+.inputGroup {
+  box-sizing: border-box;
+  flex: 1;
+  min-width: 0;
+}
+
+.searchIcon {
+  color: var(--t-font-color-light);
+}
+
+.inputGroup:focus-within .searchIcon {
+  color: var(--t-font-color-secondary);
+}

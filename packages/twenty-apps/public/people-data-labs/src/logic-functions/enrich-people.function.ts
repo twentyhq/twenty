@@ -38,6 +38,14 @@ export default defineLogicFunction({
             label: 'Update fields',
             enum: [...UPDATE_FIELDS_OPTION_VALUES],
           },
+          minLikelihood: {
+            type: 'number',
+            label: 'Minimum likelihood (1-10)',
+          },
+          weakIdentifierMinLikelihood: {
+            type: 'number',
+            label: 'Minimum likelihood for name-based matches (1-10)',
+          },
         },
       },
     ],

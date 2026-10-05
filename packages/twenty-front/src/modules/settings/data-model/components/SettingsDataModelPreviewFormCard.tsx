@@ -3,9 +3,9 @@ import { type ReactNode } from 'react';
 
 import { StyledFormCardTitle } from '@/settings/data-model/fields/components/StyledFormCardTitle';
 import { Trans } from '@lingui/react/macro';
-import { Card, CardContent } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsDataModelPreviewFormCardProps = {
   className?: string;
@@ -15,13 +15,13 @@ type SettingsDataModelPreviewFormCardProps = {
 };
 
 const StyledPreviewContainerWrapper = styled.div`
-  > * {
+  > div {
     background-color: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 
 const StyledFormContainerWrapper = styled.div`
-  > * {
+  > div {
     padding: 0;
   }
 `;
@@ -31,19 +31,19 @@ export const SettingsDataModelPreviewFormCard = ({
   preview,
   form,
 }: SettingsDataModelPreviewFormCardProps) => (
-  <Card className={className} fullWidth rounded>
+  <Card.Root className={className} fullWidth rounded>
     <StyledPreviewContainerWrapper>
-      <CardContent divider={isDefined(form)}>
+      <Card.Content divider={isDefined(form)}>
         <StyledFormCardTitle>
           <Trans>Preview</Trans>
         </StyledFormCardTitle>
         {preview}
-      </CardContent>
+      </Card.Content>
     </StyledPreviewContainerWrapper>
     {isDefined(form) && (
       <StyledFormContainerWrapper>
-        <CardContent>{form}</CardContent>
+        <Card.Content>{form}</Card.Content>
       </StyledFormContainerWrapper>
     )}
-  </Card>
+  </Card.Root>
 );

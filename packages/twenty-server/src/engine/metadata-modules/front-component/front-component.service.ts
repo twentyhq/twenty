@@ -310,12 +310,11 @@ export class FrontComponentService {
       workspaceId,
     );
 
-    const application = await this.applicationService.findOneApplicationOrThrow(
-      {
+    const application =
+      await this.applicationService.findOneApplicationWithRelationsOrThrow({
         id: frontComponent.applicationId,
         workspaceId,
-      },
-    );
+      });
 
     const mimeType = 'application/javascript';
     const resourceIdentifier = {

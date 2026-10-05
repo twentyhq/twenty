@@ -2,17 +2,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
-
-type GetWorkflowRunToolContext = WorkflowToolContext & {
-  rolePermissionConfig: RolePermissionConfig;
-};
 
 const getWorkflowRunSchema = z.object({
   workflowRunId: z.uuid().describe('The UUID of the workflow run to inspect'),
@@ -26,8 +21,8 @@ const FAILED_STEP_STATUSES: StepStatus[] = [
 ];
 
 export const createGetWorkflowRunTool = (
-  deps: Pick<WorkflowToolDependencies, 'globalWorkspaceOrmManager'>,
-  context: GetWorkflowRunToolContext,
+  deps: Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
+  context: WorkflowToolContext,
 ) => ({
   name: 'get_workflow_run' as const,
   description:
@@ -37,11 +32,10 @@ export const createGetWorkflowRunTool = (
     try {
       const authContext = buildSystemAuthContext(context.workspaceId);
 
-      return await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      return await deps.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRunRepository =
-            await deps.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-              context.workspaceId,
+            deps.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
               'workflowRun',
               context.rolePermissionConfig,
             );
@@ -93,8 +87,8 @@ export const createGetWorkflowRunTool = (
               startedAt: workflowRun.startedAt,
               endedAt: workflowRun.endedAt,
               enqueuedAt: workflowRun.enqueuedAt,
-              workflowId: workflowRun.workflowId,
-              workflowVersionId: workflowRun.workflowVersionId,
+              coreWorkflowId: workflowRun.coreWorkflowId,
+              coreWorkflowVersionId: workflowRun.coreWorkflowVersionId,
               steps,
               failedStepLogs,
             },

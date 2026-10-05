@@ -1,3 +1,4 @@
+import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -27,10 +28,13 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
   flatFieldMetadataMaps,
   updatedLabelIdentifierFieldMetadataId,
 }: RecomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdateArgs): FlatViewFieldToCreateAndUpdate => {
+  // FIELDS_WIDGET record-page views are excluded: the engine owns their label
+  // identifier lifecycle (objectRecordPageLabelIdentifierOnUpdate) and the
+  // record page never displays the label identifier.
   const flatViews = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityMaps: flatViewMaps,
     flatEntityIds: existingFlatObjectMetadata.viewIds,
-  });
+  }).filter((flatView) => flatView.type !== ViewType.FIELDS_WIDGET);
 
   const updatedLabelIdentifierFieldMetadata =
     findFlatEntityByIdInFlatEntityMapsOrThrow({

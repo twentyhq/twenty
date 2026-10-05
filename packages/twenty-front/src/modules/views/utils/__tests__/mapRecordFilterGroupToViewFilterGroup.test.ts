@@ -5,9 +5,10 @@ import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { ViewType } from '@/views/types/ViewType';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewOpenRecordIn, ViewVisibility } from '~/generated-metadata/graphql';
+import { ViewVisibility } from '~/generated-metadata/graphql';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mockObjectMetadataItemNameSingular = 'company';
@@ -32,12 +33,12 @@ describe('mapRecordFilterGroupToViewFilterGroup', () => {
     type: ViewType.TABLE,
     key: null,
     isCompact: false,
-    openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     viewFields: [],
     viewGroups: [],
     viewSorts: [],
     mainGroupByFieldMetadataId: '',
     shouldHideEmptyGroups: false,
+    groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     kanbanAggregateOperation: AggregateOperations.COUNT,
     icon: '',
     kanbanAggregateOperationFieldMetadataId: '',

@@ -6,8 +6,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { Dropdown } from 'twenty-ui/components';
 
 export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   aggregateOperations,
@@ -23,7 +22,7 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
     currentViewFieldAggregateOperation,
   } = useViewFieldAggregateOperation();
 
-  const { dropdownId, resetContent } = useContext(
+  const { dropdownId } = useContext(
     RecordTableColumnAggregateFooterDropdownContext,
   );
   const { closeDropdown } = useCloseDropdown();
@@ -31,35 +30,27 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
   return (
     <>
       {aggregateOperations.map((operation) => (
-        <MenuItem
+        <Dropdown.OptionItem
           key={operation}
-          onClick={async () => {
+          closeOnSelect={false}
+          onSelect={async () => {
             await updateViewFieldAggregateOperation(operation);
             closeDropdown(dropdownId);
           }}
-          text={getAggregateOperationLabel(operation)}
-          RightIcon={
-            currentViewFieldAggregateOperation === operation
-              ? IconCheck
-              : undefined
-          }
-          aria-selected={currentViewFieldAggregateOperation === operation}
-        />
+          selected={currentViewFieldAggregateOperation === operation}
+        >
+          {getAggregateOperationLabel(operation)}
+        </Dropdown.OptionItem>
       ))}
       {children}
-      <MenuItem
-        key="none"
-        onClick={async () => {
+      <Dropdown.OptionItem
+        closeOnSelect={false}
+        onSelect={async () => {
           await updateViewFieldAggregateOperation(null);
-          resetContent();
           closeDropdown(dropdownId);
         }}
-        text={t`None`}
-        RightIcon={
-          !isDefined(currentViewFieldAggregateOperation) ? IconCheck : undefined
-        }
-        aria-selected={!isDefined(currentViewFieldAggregateOperation)}
-      />
+        selected={!isDefined(currentViewFieldAggregateOperation)}
+      >{t`None`}</Dropdown.OptionItem>
     </>
   );
 };

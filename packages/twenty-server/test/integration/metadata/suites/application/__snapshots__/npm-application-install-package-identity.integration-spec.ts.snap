@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`npm application install package identity (integration) rejects a path-traversal version before any registry call 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Invalid npm version: expected an exact semver version or a dist-tag",
+  "name": "UserInputError",
+}
+`;

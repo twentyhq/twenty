@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 export const createCustomRoleWithObjectPermissions = async (options: {
   label: string;
@@ -30,13 +30,12 @@ export const createCustomRoleWithObjectPermissions = async (options: {
       `,
   };
 
-  const response = await makeMetadataAPIRequest(createRoleOperation);
+  const response = await makeMetadataApiRequest(createRoleOperation);
 
   expect(response.body.errors).toBeUndefined();
   expect(response.body.data.createOneRole).toBeDefined();
   const roleId = response.body.data.createOneRole.id;
 
-  // Get object metadata IDs for Person and Company
   const getObjectMetadataOperation = {
     query: gql`
       query {
@@ -52,7 +51,7 @@ export const createCustomRoleWithObjectPermissions = async (options: {
     `,
   };
 
-  const objectMetadataResponse = await makeMetadataAPIRequest(
+  const objectMetadataResponse = await makeMetadataApiRequest(
     getObjectMetadataOperation,
   );
   const objects = objectMetadataResponse.body.data.objects.edges;
@@ -67,7 +66,6 @@ export const createCustomRoleWithObjectPermissions = async (options: {
     (obj: any) => obj.node.nameSingular === 'opportunity',
   )?.node.id;
 
-  // Create object permissions based on the options
   const objectPermissions = [];
 
   if (
@@ -140,7 +138,7 @@ export const createCustomRoleWithObjectPermissions = async (options: {
       },
     };
 
-    await makeMetadataAPIRequest(upsertObjectPermissionsOperation);
+    await makeMetadataApiRequest(upsertObjectPermissionsOperation);
   }
 
   return {

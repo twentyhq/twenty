@@ -4,6 +4,7 @@ import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 
 import { MentionTag } from '@/mention/extensions/MentionTag';
+import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 
 // Mock ReactNodeViewRenderer since we're testing in a non-DOM environment
 jest.mock('@tiptap/react', () => ({
@@ -67,9 +68,7 @@ describe('MentionTag', () => {
 
       const text = editor.getText();
 
-      expect(text).toBe(
-        'Hello [[record:company:abc-123:Acme Corp[[/record]] world',
-      );
+      expect(text).toBe('Hello [[record:company:abc-123:Acme Corp]] world');
     });
 
     it('should handle mentions with empty label', () => {
@@ -95,7 +94,7 @@ describe('MentionTag', () => {
 
       const text = editor.getText();
 
-      expect(text).toBe('[[record:person:id-456:[[/record]]');
+      expect(text).toBe('[[record:person:id-456:]]');
     });
 
     it('should serialize multiple mentions in the same paragraph', () => {
@@ -132,35 +131,23 @@ describe('MentionTag', () => {
       const text = editor.getText();
 
       expect(text).toBe(
-        '[[record:person:r1:Alice[[/record]] and [[record:company:r2:Beta Inc[[/record]]',
+        '[[record:person:r1:Alice]] and [[record:company:r2:Beta Inc]]',
       );
     });
   });
 
   describe('insertContent command', () => {
-    it('should insert a mention tag via editor commands', () => {
-      editor.commands.setContent('<p></p>');
-      editor.commands.focus();
-
-      editor
-        .chain()
-        .focus()
-        .insertContent({
-          type: 'mentionTag',
-          attrs: {
-            recordId: 'test-id',
-            objectNameSingular: 'opportunity',
-            label: 'Big Deal',
-            imageUrl: 'https://example.com/img.png',
-          },
-        })
-        .run();
-
-      const text = editor.getText();
-
-      expect(text).toContain(
-        '[[record:opportunity:test-id:Big Deal[[/record]]',
+    it('should insert a picked record as a reference followed by a space', () => {
+      editor.commands.insertContent(
+        getMentionTagContent({
+          recordId: 'test-id',
+          objectNameSingular: 'opportunity',
+          label: 'Big Deal',
+          imageUrl: null,
+        }),
       );
+
+      expect(editor.getText()).toBe('[[record:opportunity:test-id:Big Deal]] ');
     });
   });
 
@@ -194,6 +181,46 @@ describe('MentionTag', () => {
       expect(html).toContain('data-image-url="https://example.com/task.png"');
       expect(html).toContain('data-type="mentionTag"');
       expect(html).toContain('class="mention-tag"');
+    });
+
+    it('should keep the participant flag out of the copied HTML', () => {
+      editor.commands.setContent({
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'mentionTag',
+                attrs: {
+                  recordId: 'person-id',
+                  objectNameSingular: 'person',
+                  label: 'Linus',
+                },
+              },
+              {
+                type: 'mentionTag',
+                attrs: {
+                  recordId: 'member-id',
+                  objectNameSingular: 'workspaceMember',
+                  label: 'Grace',
+                  shouldAddAsParticipant: true,
+                },
+              },
+            ],
+          },
+        ],
+      });
+
+      const html = editor.getHTML();
+      const renderedMentionTexts = Array.from(
+        new DOMParser()
+          .parseFromString(html, 'text/html')
+          .querySelectorAll('.mention-tag'),
+      ).map((mention) => mention.textContent);
+
+      expect(renderedMentionTexts).toEqual(['@Linus', '@Grace']);
+      expect(html).not.toContain('shouldAddAsParticipant');
     });
   });
 });

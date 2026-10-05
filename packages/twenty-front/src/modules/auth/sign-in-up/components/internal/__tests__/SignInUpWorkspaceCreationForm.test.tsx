@@ -3,7 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import { SignInUpWorkspaceCreationForm } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm';
 import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
@@ -74,6 +74,9 @@ describe('SignInUpWorkspaceCreationForm', () => {
       createWorkspaceMock.mockResolvedValue(true);
 
       renderForm();
+
+      expect(screen.getByPlaceholderText('Apple')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('apple')).toBeInTheDocument();
 
       const createButton = screen.getByRole('button', {
         name: 'Create workspace',

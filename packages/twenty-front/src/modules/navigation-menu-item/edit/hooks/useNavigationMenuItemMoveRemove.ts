@@ -1,3 +1,4 @@
+import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
@@ -5,10 +6,12 @@ import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 
-export const useNavigationMenuItemMoveRemove = () => {
+export const useNavigationMenuItemMoveRemove = (
+  section: NavigationMenuItemSection,
+) => {
   const { currentItems, updateItem, deleteItems } =
-    useNavigationMenuItemEditController();
-  const items = useNavigationMenuItemEditSectionItems();
+    useNavigationMenuItemEditController(section);
+  const items = useNavigationMenuItemEditSectionItems(section);
   const visibleItemIds = new Set(items.map((item) => item.id));
 
   const getSortedSiblings = (navigationMenuItemId: string) => {
@@ -134,5 +137,5 @@ export const useNavigationMenuItemMoveRemove = () => {
     });
   };
 
-  return { moveUp, moveDown, remove, moveToFolder };
+  return { items, getSortedSiblings, moveUp, moveDown, remove, moveToFolder };
 };

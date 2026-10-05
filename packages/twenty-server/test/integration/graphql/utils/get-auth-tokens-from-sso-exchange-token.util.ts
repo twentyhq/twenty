@@ -1,20 +1,20 @@
 import gql from 'graphql-tag';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
 import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
 
-type GetAuthTokensFromSSOExchangeTokenUtilArgs = {
+type GetAuthTokensFromSsoExchangeTokenUtilArgs = {
   ssoExchangeToken: string;
   expectToFail?: boolean;
 };
 
-export const getAuthTokensFromSSOExchangeToken = async ({
+export const getAuthTokensFromSsoExchangeToken = async ({
   ssoExchangeToken,
   expectToFail,
-}: GetAuthTokensFromSSOExchangeTokenUtilArgs): CommonResponseBody<{
+}: GetAuthTokensFromSsoExchangeTokenUtilArgs): CommonResponseBody<{
   getAuthTokensFromSSOExchangeToken: AuthTokens;
 }> => {
   const mutation = gql`
@@ -34,7 +34,7 @@ export const getAuthTokensFromSSOExchangeToken = async ({
     }
   `;
 
-  const response = await makeMetadataAPIRequest(
+  const response = await makeMetadataApiRequest(
     {
       query: mutation,
       variables: { ssoExchangeToken },

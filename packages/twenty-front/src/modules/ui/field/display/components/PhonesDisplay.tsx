@@ -1,14 +1,12 @@
-import { t } from '@lingui/core/macro';
-import React, { useMemo } from 'react';
-
+import { useLingui } from '@lingui/react/macro';
+import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-
+import { OverflowingList } from 'twenty-ui/components';
 import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
+import React, { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { RoundedLink } from 'twenty-ui/navigation';
-import { logError } from '~/utils/logError';
+import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink/RoundedLink';
 
 type PhonesDisplayProps = {
   value?: FieldPhonesValue;
@@ -37,34 +35,15 @@ export const PhonesDisplay = ({
   isFocused,
   onPhoneNumberClick,
 }: PhonesDisplayProps) => {
-  const phones = useMemo(
-    () =>
-      [
-        value?.primaryPhoneNumber
-          ? {
-              number: value.primaryPhoneNumber,
-              callingCode:
-                value.primaryPhoneCallingCode ||
-                value.primaryPhoneCountryCode ||
-                '',
-            }
-          : null,
-        ...parseAdditionalPhones(value?.additionalPhones),
-      ]
-        .filter(isDefined)
-        .map(({ number, callingCode }) => {
-          return {
-            number,
-            callingCode,
-          };
-        }),
-    [
-      value?.primaryPhoneNumber,
-      value?.primaryPhoneCallingCode,
-      value?.primaryPhoneCountryCode,
-      value?.additionalPhones,
-    ],
-  );
+  const { t } = useLingui();
+
+  const phones = useMemo(() => {
+    if (!isDefined(value)) {
+      return [];
+    }
+
+    return createPhonesFromFieldValue(value);
+  }, [value]);
   const parsePhoneNumberOrReturnInvalidValue = (number: string) => {
     try {
       return { parsedPhone: parsePhoneNumber(number) };
@@ -74,7 +53,7 @@ export const PhonesDisplay = ({
   };
 
   return isFocused ? (
-    <ExpandableList isChipCountDisplayed>
+    <OverflowingList overflowLabel={t`Show all items`} showOverflowCount>
       {phones.map(({ number, callingCode }, index) => {
         const { parsedPhone, invalidPhone } =
           parsePhoneNumberOrReturnInvalidValue(callingCode + number);
@@ -92,7 +71,7 @@ export const PhonesDisplay = ({
           />
         );
       })}
-    </ExpandableList>
+    </OverflowingList>
   ) : (
     <StyledContainer>
       {phones.map(({ number, callingCode }, index) => {
@@ -114,24 +93,4 @@ export const PhonesDisplay = ({
       })}
     </StyledContainer>
   );
-};
-
-const parseAdditionalPhones = (additionalPhones?: any) => {
-  if (!additionalPhones) {
-    return [];
-  }
-
-  if (typeof additionalPhones === 'object') {
-    return additionalPhones;
-  }
-
-  if (typeof additionalPhones === 'string') {
-    try {
-      return JSON.parse(additionalPhones);
-    } catch (error) {
-      logError(t`Error parsing additional phones: ${String(error)}`);
-    }
-  }
-
-  return [];
 };

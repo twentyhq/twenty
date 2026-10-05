@@ -8,7 +8,7 @@ import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/s
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-query-factory.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
+import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -59,7 +59,6 @@ describe('datamodel permissions', () => {
     });
     describe('createOne', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        // Arrange
         const FIELD_NAME = 'testFieldForCreateOne';
         const createFieldInput = {
           name: FIELD_NAME,
@@ -68,7 +67,6 @@ describe('datamodel permissions', () => {
           objectMetadataId: listingObjectId,
         };
 
-        // Act
         const graphqlOperation = createOneFieldMetadataQueryFactory({
           input: createFieldInput,
           gqlFields: `
@@ -78,9 +76,8 @@ describe('datamodel permissions', () => {
         });
 
         const response =
-          await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+          await makeMetadataApiRequestWithMemberRole(graphqlOperation);
 
-        // Assert
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
         expect(response.body.errors[0].message).toBe(
@@ -94,7 +91,6 @@ describe('datamodel permissions', () => {
 
     describe('updateOne', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        // Arrange
         const updateFieldInput = {
           name: 'updatedName',
           label: 'Updated Name',
@@ -109,9 +105,8 @@ describe('datamodel permissions', () => {
         });
 
         const response =
-          await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+          await makeMetadataApiRequestWithMemberRole(graphqlOperation);
 
-        // Assert
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
         expect(response.body.errors[0].message).toBe(
@@ -125,15 +120,13 @@ describe('datamodel permissions', () => {
 
     describe('deleteOne', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        // Arrange
         const graphqlOperation = deleteOneFieldMetadataQueryFactory({
           input: { idToDelete: testFieldId },
         });
 
         const response =
-          await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+          await makeMetadataApiRequestWithMemberRole(graphqlOperation);
 
-        // Assert
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
         expect(response.body.errors[0].message).toBe(
@@ -149,7 +142,6 @@ describe('datamodel permissions', () => {
   describe('objectMetadata', () => {
     describe('createOne', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        // Arrange
         const graphqlOperation = createOneObjectMetadataQueryFactory({
           gqlFields: `
             id
@@ -163,9 +155,8 @@ describe('datamodel permissions', () => {
         });
 
         const response =
-          await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+          await makeMetadataApiRequestWithMemberRole(graphqlOperation);
 
-        // Assert
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
         expect(response.body.errors[0].message).toBe(
@@ -209,7 +200,6 @@ describe('datamodel permissions', () => {
       });
       describe('updateOne', () => {
         it('should throw a permission error when user does not have permission (member role)', async () => {
-          // Arrange
           const graphqlOperation = updateOneObjectMetadataQueryFactory({
             gqlFields: `
           id
@@ -224,9 +214,8 @@ describe('datamodel permissions', () => {
           });
 
           const response =
-            await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+            await makeMetadataApiRequestWithMemberRole(graphqlOperation);
 
-          // Assert
           expect(response.body.data).toBeNull();
           expect(response.body.errors).toBeDefined();
           expect(response.body.errors[0].message).toBe(
@@ -239,15 +228,13 @@ describe('datamodel permissions', () => {
       });
       describe('deleteOne', () => {
         it('should throw a permission error when user does not have permission (member role)', async () => {
-          // Arrange
           const graphqlOperation = deleteOneObjectMetadataQueryFactory({
             input: { idToDelete: listingObjectId },
           });
 
           const response =
-            await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+            await makeMetadataApiRequestWithMemberRole(graphqlOperation);
 
-          // Assert
           expect(response.body.data).toBeNull();
           expect(response.body.errors).toBeDefined();
           expect(response.body.errors[0].message).toBe(

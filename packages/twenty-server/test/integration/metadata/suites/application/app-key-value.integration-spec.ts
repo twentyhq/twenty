@@ -1,9 +1,10 @@
 import gql from 'graphql-tag';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
-import { generateApplicationToken } from 'test/integration/metadata/suites/application/utils/generate-application-token.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { v4 as uuidv4 } from 'uuid';
 
+import { AUTH_PRINCIPAL_REFUSED_MESSAGE } from 'src/engine/guards/constants/auth-principal-refused-message.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -49,12 +50,11 @@ describe('application key-value store (e2e)', () => {
 
     expect(standardApplication).toBeDefined();
 
-    const { data: tokenData } = await generateApplicationToken({
+    const tokenPair = await generateAppleAdminApplicationTokenPair({
       applicationId: standardApplication!.id,
-      expectToFail: false,
     });
 
-    appToken = tokenData.generateApplicationToken.applicationAccessToken.token;
+    appToken = tokenPair.applicationAccessToken.token;
   });
 
   afterAll(async () => {
@@ -65,19 +65,22 @@ describe('application key-value store (e2e)', () => {
   });
 
   it('rejects requests that do not carry an APPLICATION_ACCESS token', async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: GET_APP_KEY_VALUE,
       variables: { key: `${KEY_PREFIX}:no-app-token` },
     });
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toContain('APPLICATION_ACCESS');
+    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
+    expect(response.body.errors[0].message).toBe(
+      AUTH_PRINCIPAL_REFUSED_MESSAGE,
+    );
   });
 
   it('sets, reads, overwrites and deletes a WORKSPACE entry', async () => {
     const key = `${KEY_PREFIX}:workspace`;
 
-    const setResponse = await makeMetadataAPIRequest(
+    const setResponse = await makeMetadataApiRequest(
       {
         query: SET_APP_KEY_VALUE,
         variables: { input: { key, value: { count: 1 } } },
@@ -92,7 +95,7 @@ describe('application key-value store (e2e)', () => {
       scope: 'WORKSPACE',
     });
 
-    const overwriteResponse = await makeMetadataAPIRequest(
+    const overwriteResponse = await makeMetadataApiRequest(
       {
         query: SET_APP_KEY_VALUE,
         variables: { input: { key, value: 'overwritten' } },
@@ -102,7 +105,7 @@ describe('application key-value store (e2e)', () => {
 
     expect(overwriteResponse.body.errors).toBeUndefined();
 
-    const getResponse = await makeMetadataAPIRequest(
+    const getResponse = await makeMetadataApiRequest(
       { query: GET_APP_KEY_VALUE, variables: { key } },
       appToken,
     );
@@ -110,7 +113,7 @@ describe('application key-value store (e2e)', () => {
     expect(getResponse.body.errors).toBeUndefined();
     expect(getResponse.body.data.appKeyValue.value).toBe('overwritten');
 
-    const deleteResponse = await makeMetadataAPIRequest(
+    const deleteResponse = await makeMetadataApiRequest(
       { query: DELETE_APP_KEY_VALUE, variables: { key } },
       appToken,
     );
@@ -118,14 +121,14 @@ describe('application key-value store (e2e)', () => {
     expect(deleteResponse.body.errors).toBeUndefined();
     expect(deleteResponse.body.data.deleteAppKeyValue).toBe(true);
 
-    const getAfterDeleteResponse = await makeMetadataAPIRequest(
+    const getAfterDeleteResponse = await makeMetadataApiRequest(
       { query: GET_APP_KEY_VALUE, variables: { key } },
       appToken,
     );
 
     expect(getAfterDeleteResponse.body.data.appKeyValue).toBeNull();
 
-    const deleteAgainResponse = await makeMetadataAPIRequest(
+    const deleteAgainResponse = await makeMetadataApiRequest(
       { query: DELETE_APP_KEY_VALUE, variables: { key } },
       appToken,
     );
@@ -134,7 +137,7 @@ describe('application key-value store (e2e)', () => {
   });
 
   it('returns null for a missing key', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: GET_APP_KEY_VALUE,
         variables: { key: `${KEY_PREFIX}:missing` },
@@ -149,7 +152,7 @@ describe('application key-value store (e2e)', () => {
   it('claims a SERVER key for the caller workspace and keeps it separate from WORKSPACE entries', async () => {
     const key = `${KEY_PREFIX}:server`;
 
-    const claimResponse = await makeMetadataAPIRequest(
+    const claimResponse = await makeMetadataApiRequest(
       {
         query: SET_APP_KEY_VALUE,
         variables: { input: { key, scope: 'SERVER' } },
@@ -165,7 +168,7 @@ describe('application key-value store (e2e)', () => {
     });
 
     // Claiming again from the same workspace is idempotent
-    const reclaimResponse = await makeMetadataAPIRequest(
+    const reclaimResponse = await makeMetadataApiRequest(
       {
         query: SET_APP_KEY_VALUE,
         variables: { input: { key, scope: 'SERVER' } },
@@ -178,7 +181,7 @@ describe('application key-value store (e2e)', () => {
       SEED_APPLE_WORKSPACE_ID,
     );
 
-    const getServerScopeResponse = await makeMetadataAPIRequest(
+    const getServerScopeResponse = await makeMetadataApiRequest(
       { query: GET_APP_KEY_VALUE, variables: { key, scope: 'SERVER' } },
       appToken,
     );
@@ -187,21 +190,21 @@ describe('application key-value store (e2e)', () => {
       SEED_APPLE_WORKSPACE_ID,
     );
 
-    const getWorkspaceScopeResponse = await makeMetadataAPIRequest(
+    const getWorkspaceScopeResponse = await makeMetadataApiRequest(
       { query: GET_APP_KEY_VALUE, variables: { key } },
       appToken,
     );
 
     expect(getWorkspaceScopeResponse.body.data.appKeyValue).toBeNull();
 
-    const releaseResponse = await makeMetadataAPIRequest(
+    const releaseResponse = await makeMetadataApiRequest(
       { query: DELETE_APP_KEY_VALUE, variables: { key, scope: 'SERVER' } },
       appToken,
     );
 
     expect(releaseResponse.body.data.deleteAppKeyValue).toBe(true);
 
-    const getAfterReleaseResponse = await makeMetadataAPIRequest(
+    const getAfterReleaseResponse = await makeMetadataApiRequest(
       { query: GET_APP_KEY_VALUE, variables: { key, scope: 'SERVER' } },
       appToken,
     );
@@ -210,7 +213,7 @@ describe('application key-value store (e2e)', () => {
   });
 
   it('ignores a provided value for SERVER claims and stores the caller workspaceId', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: SET_APP_KEY_VALUE,
         variables: {
@@ -225,6 +228,8 @@ describe('application key-value store (e2e)', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.setAppKeyValue.value).toBe(SEED_APPLE_WORKSPACE_ID);
+    expect(response.body.data.setAppKeyValue.value).toBe(
+      SEED_APPLE_WORKSPACE_ID,
+    );
   });
 });

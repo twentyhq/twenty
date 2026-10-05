@@ -25,6 +25,10 @@ If you use Docker Compose, follow these steps:
 
 The server runs all required upgrade migrations automatically on startup. No manual command is needed.
 
+## Upgrading to v2.34+ — PostgreSQL 15 minimum
+
+Twenty v2.34 requires PostgreSQL 15 or newer. The official Docker Compose configuration uses PostgreSQL 16. If your instance connects to an externally managed database, upgrade it before starting the v2.34 server.
+
 ## Cross-version upgrades (v1.23+)
 
 Starting from **v1.23**, Twenty supports cross-version upgrades. You can jump directly from any supported version to the latest release without stepping through each intermediate version.
@@ -66,7 +70,7 @@ Instance
     At:               2026-04-16T11:43:58.823Z
 
 Workspace
-  Apple (20202020-1c25-4d02-bf25-6aeccf7ea419)
+  App*** (20202020-***)
       Inferred version: 1.23.0
       Latest command:   1.23.0_UpdateGlobalObjectContextCommandMenuItemsCommand_1780000005000
       Status:           Up to date
@@ -84,6 +88,7 @@ Summary
 | --- | --- |
 | `-w, --workspace-id <id>` | Filter to a specific workspace. Can be passed multiple times. |
 | `-f, --failed-only` | Hide up-to-date workspaces, only show behind and failed entries. |
+| `--show-full-identifiers` | Display full workspace names and IDs. By default, only the first three characters of each workspace name and the first section of each workspace ID are shown. |
 
 ## Troubleshooting
 

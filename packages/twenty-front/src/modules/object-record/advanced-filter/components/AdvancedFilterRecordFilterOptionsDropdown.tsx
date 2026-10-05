@@ -5,17 +5,14 @@ import { useRemoveRootRecordFilterGroupIfEmpty } from '@/object-record/record-fi
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 
-import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
+import { Dropdown, IconButton } from 'twenty-ui/components';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
 
 type AdvancedFilterRecordFilterOptionsDropdownProps = {
   recordFilterId: string;
@@ -25,8 +22,6 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
   recordFilterId,
 }: AdvancedFilterRecordFilterOptionsDropdownProps) => {
   const dropdownId = `advanced-filter-record-filter-options-${recordFilterId}`;
-
-  const { closeDropdown } = useCloseDropdown();
 
   const { removeRecordFilter } = useRemoveRecordFilter();
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
@@ -47,16 +42,15 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
   const { removeRootRecordFilterGroupIfEmpty } =
     useRemoveRootRecordFilterGroupIfEmpty();
 
-  const handleRemove = async () => {
-    closeDropdown(dropdownId);
+  const handleRemove = () => {
+    const isOnlyViewFilterInGroup =
+      childRecordFiltersAndRecordFilterGroups?.length === 1;
 
-    if (isDefined(currentRecordFilter?.recordFilterGroupId)) {
-      const isOnlyViewFilterInGroup =
-        childRecordFiltersAndRecordFilterGroups?.length === 1;
-
-      if (isOnlyViewFilterInGroup) {
-        removeRecordFilterGroup(currentRecordFilter.recordFilterGroupId);
-      }
+    if (
+      isDefined(currentRecordFilter?.recordFilterGroupId) &&
+      isOnlyViewFilterInGroup
+    ) {
+      removeRecordFilterGroup(currentRecordFilter.recordFilterGroupId);
     }
 
     removeRecordFilter({ recordFilterId: recordFilterId });
@@ -65,29 +59,30 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
   };
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      clickableComponent={
-        <IconButton
-          aria-label={t`Record filter rule options`}
-          variant="tertiary"
-          Icon={IconDotsVertical}
-        />
-      }
-      dropdownComponents={
-        <DropdownContent>
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              text={t`Remove rule`}
-              onClick={handleRemove}
-              LeftIcon={IconTrash}
-              accent="danger"
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownContent>
-      }
-      dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
-      dropdownPlacement="bottom-start"
-    />
+    <DropdownRoot dropdownId={dropdownId} type="menu">
+      <Dropdown.Trigger
+        render={
+          <IconButton
+            aria-label={t`Record filter rule options`}
+            variant="ghost"
+          >
+            <IconDotsVertical />
+          </IconButton>
+        }
+      />
+      <DropdownContent
+        sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
+      >
+        <Dropdown.Section>
+          <Dropdown.ActionItem
+            onClick={handleRemove}
+            startIcon={<IconTrash />}
+            color="danger"
+          >
+            {t`Remove rule`}
+          </Dropdown.ActionItem>
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

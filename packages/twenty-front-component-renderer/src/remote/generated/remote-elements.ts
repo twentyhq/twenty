@@ -6,12 +6,13 @@ import {
   type RemoteElementEventListenerDefinition,
   type RemoteElementEventListenersDefinition,
 } from '@remote-dom/core/elements';
-import { applySerializedEventProperties } from '@/constants/applySerializedEventProperties';
-import { applySerializedEventTargetProperties } from '@/constants/applySerializedEventTargetProperties';
+import { applySerializedEventProperties } from '@/remote/elements/utils/applySerializedEventProperties';
+import { applySerializedEventTargetProperties } from '@/remote/elements/utils/applySerializedEventTargetProperties';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export type HtmlCommonProperties = {
   id?: string;
+  dir?: string;
   className?: string;
   style?: string;
   title?: string;
@@ -119,10 +120,10 @@ const createSerializedEventConfig = (
   eventType: string,
 ): RemoteElementEventListenerDefinition => ({
   dispatchEvent(this: Element, eventData: SerializedEventData) {
-    applySerializedEventTargetProperties(
-      this as unknown as Record<string, unknown>,
+    applySerializedEventTargetProperties({
+      element: this as unknown as Record<string, unknown>,
       eventData,
-    );
+    });
 
     const event = new CustomEvent(eventType, {
       detail: eventData,
@@ -144,6 +145,7 @@ const HTML_COMMON_EVENTS_CONFIG = Object.fromEntries(
 ) as RemoteElementEventListenersDefinition<HtmlCommonEvents>;
 const HTML_COMMON_PROPERTIES_CONFIG = {
   id: { type: String },
+  dir: { type: String },
   className: { type: String },
   style: { type: String },
   title: { type: String },
@@ -1182,21 +1184,13 @@ export const HtmlBdiElement = createRemoteElement<
     ...HTML_COMMON_EVENTS_CONFIG,
   },
 });
-
-export type HtmlBdoProperties = HtmlCommonProperties & {
-  dir?: string;
-};
-
 export const HtmlBdoElement = createRemoteElement<
-  HtmlBdoProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
   HtmlCommonEvents
 >({
-  properties: {
-    ...HTML_COMMON_PROPERTIES_CONFIG,
-    dir: { type: String },
-  },
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
   },

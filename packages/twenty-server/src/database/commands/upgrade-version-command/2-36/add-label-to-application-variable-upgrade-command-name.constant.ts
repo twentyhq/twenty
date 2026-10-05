@@ -1,0 +1,2 @@
+export const ADD_LABEL_TO_APPLICATION_VARIABLE_UPGRADE_COMMAND_NAME =
+  '2.36.0_AddLabelToApplicationVariableFastInstanceCommand_1787761629092';

@@ -65,6 +65,7 @@ export const transformPageLayoutEntityToFlatPageLayout = ({
     type: pageLayoutEntity.type,
     objectMetadataId: pageLayoutEntity.objectMetadataId,
     isSystemSideEffect: pageLayoutEntity.isSystemSideEffect,
+    isFirstTabPinned: pageLayoutEntity.isFirstTabPinned,
     workspaceId: pageLayoutEntity.workspaceId,
     universalIdentifier: pageLayoutEntity.universalIdentifier,
     applicationId: pageLayoutEntity.applicationId,
@@ -76,6 +77,12 @@ export const transformPageLayoutEntityToFlatPageLayout = ({
     tabUniversalIdentifiers: pageLayoutEntity.tabs.map(
       (tab) => tab.universalIdentifier,
     ),
+    navigationMenuItemIds:
+      pageLayoutEntity.navigationMenuItems?.map(({ id }) => id) ?? [],
+    navigationMenuItemUniversalIdentifiers:
+      pageLayoutEntity.navigationMenuItems?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
     defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
   };
 };

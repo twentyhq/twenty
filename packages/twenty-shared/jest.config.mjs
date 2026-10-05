@@ -3,6 +3,7 @@ const jestConfig = {
   displayName: 'twenty-shared',
   preset: '../../jest.preset.js',
   testEnvironment: 'jsdom',
+  setupFiles: ['<rootDir>/jest.setup.ts'],
   transformIgnorePatterns: ['../../node_modules/'],
   transform: {
     '^.+\\.[tj]sx?$': [
@@ -24,14 +25,6 @@ const jestConfig = {
   },
   moduleNameMapper: {
     // TODO prastoin investigate not working with pathsToModuleNameMapper
-    /*
-      {
-        '^@/(.*)\\.js$': './src/$1',
-        '^@/(.*)$': './src/$1',
-        '^(\\.{1,2}/.*)\\.js$': '$1'
-      } // use esm true
-      { '^@/(.*)$': './src/$1' } // useEsm false
-    */
     '/^@/(.*)$/': './src/$1',
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
       '<rootDir>/__mocks__/imageMockShared.js',

@@ -1,14 +1,20 @@
 import { forwardRef } from 'react';
-import { AvatarOrIcon } from 'twenty-ui/data-display';
-import { MenuItemSuggestion } from 'twenty-ui/navigation';
+import { MenuItemSuggestion } from 'twenty-ui/components';
 
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import type { MentionSuggestionMenuProps } from '@/mention/types/MentionSuggestionMenuProps';
+import { groupMentionSearchResultsBySection } from '@/mention/utils/groupMentionSearchResultsBySection';
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { SuggestionMenu } from '@/ui/suggestion/components/SuggestionMenu';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const getItemKey = (item: MentionSearchResult) =>
   `${item.objectNameSingular}-${item.recordId}`;
+
+const getItemSection = (item: MentionSearchResult) => ({
+  key: item.objectNameSingular,
+  label: item.objectLabelPlural,
+});
 
 const renderItem = (
   item: MentionSearchResult,
@@ -18,10 +24,10 @@ const renderItem = (
   <MenuItemSuggestion
     LeftIcon={() => (
       <AvatarOrIcon
-        placeholder={item.label}
-        placeholderColorSeed={item.recordId}
-        avatarType="rounded"
-        avatarUrl={getAbsoluteImageUrl(item.imageUrl)}
+        name={item.label}
+        colorSeed={item.recordId}
+        shape="circle"
+        src={getAbsoluteImageUrl(item.imageUrl)}
       />
     )}
     text={item.label}
@@ -42,11 +48,12 @@ export const MentionSuggestionMenu = forwardRef<
   return (
     <SuggestionMenu
       ref={ref}
-      items={items}
+      items={groupMentionSearchResultsBySection(items)}
       onSelect={onSelect}
       editor={editor}
       range={range}
       getItemKey={getItemKey}
+      getItemSection={getItemSection}
       renderItem={(item, isSelected) => renderItem(item, isSelected, onSelect)}
     />
   );

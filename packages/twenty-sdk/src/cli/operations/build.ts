@@ -1,15 +1,16 @@
 import { execSync } from 'child_process';
 import path from 'path';
 
-import { applyGeneratedCover } from '@/cli/utilities/build/cover/apply-generated-cover';
-import { buildApplication } from '@/cli/utilities/build/common/build-application';
+import { compileApplication } from '@/cli/utilities/build/common/compile-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
-import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
-import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
-import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
-import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
+import { type BuildErrorCode } from '@/application-build/types';
+
+const COMPILATION_ERROR_CODE_MAP: Partial<Record<BuildErrorCode, string>> = {
+  MANIFEST_BUILD_FAILED: APP_ERROR_CODES.MANIFEST_BUILD_FAILED,
+  TYPECHECK_FAILED: APP_ERROR_CODES.TYPECHECK_FAILED,
+};
 
 export type AppBuildOptions = {
   appPath: string;
@@ -28,86 +29,50 @@ const innerAppBuild = async (
 ): Promise<CommandResult<AppBuildResult>> => {
   const { appPath, onProgress } = options;
 
-  onProgress?.('Building manifest...');
+  const compilation = await compileApplication({
+    appPath,
+    onProgress,
+    onTranslationWarning: (message) => console.warn(message),
+    typecheck: async () => {
+      const typecheckErrors = await runTypecheck(appPath);
 
-  const manifestResult = await buildAndValidateManifest(appPath);
+      if (typecheckErrors.length > 0) {
+        const errorMessages = typecheckErrors.map(
+          (error) =>
+            `${error.file}(${error.line},${error.column + 1}): ${error.text}`,
+        );
 
-  if (!manifestResult.success) {
+        return {
+          success: false,
+          error: {
+            code: 'TYPECHECK_FAILED',
+            message: `Typecheck failed:\n${errorMessages.join('\n')}`,
+          },
+          diagnostics: [],
+        };
+      }
+
+      return { success: true, data: null, diagnostics: [] };
+    },
+  });
+
+  if (!compilation.success) {
     return {
       success: false,
       error: {
-        code: APP_ERROR_CODES.MANIFEST_BUILD_FAILED,
-        message: manifestResult.errors.join('\n'),
+        code:
+          COMPILATION_ERROR_CODE_MAP[compilation.error.code] ??
+          APP_ERROR_CODES.BUILD_FAILED,
+        message: compilation.error.message,
       },
     };
   }
-
-  const { filePaths } = manifestResult;
-
-  for (const warning of manifestResult.warnings) {
-    onProgress?.(`⚠ ${warning}`);
-  }
-
-  const { manifest, generatedAssets } = await applyGeneratedCover({
-    appPath,
-    manifest: manifestResult.manifest,
-  }).catch((error) => {
-    onProgress?.(
-      `⚠ Skipped cover image generation: ${error instanceof Error ? error.message : String(error)}`,
-    );
-
-    return { manifest: manifestResult.manifest, generatedAssets: [] };
-  });
-
-  if (generatedAssets.length > 0) {
-    onProgress?.('Generated cover image from logo');
-  }
-
-  const translations = await compileApplicationTranslations(appPath);
-
-  onProgress?.('Building application files...');
-
-  const buildResult = await buildApplication({
-    appPath,
-    manifest,
-    filePaths,
-    generatedAssets,
-  });
-
-  onProgress?.('Running typecheck...');
-
-  const typecheckErrors = await runTypecheck(appPath);
-
-  if (typecheckErrors.length > 0) {
-    const errorMessages = typecheckErrors.map(
-      (error) =>
-        `${error.file}(${error.line},${error.column + 1}): ${error.text}`,
-    );
-
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.TYPECHECK_FAILED,
-        message: `Typecheck failed:\n${errorMessages.join('\n')}`,
-      },
-    };
-  }
-
-  const updatedManifest = manifestUpdateChecksums({
-    manifest,
-    builtFileInfos: buildResult.builtFileInfos,
-  });
-
-  await writeManifestToOutput(
-    appPath,
-    translations ? { ...updatedManifest, translations } : updatedManifest,
-  );
 
   const outputDir = path.join(appPath, '.twenty', 'output');
 
   const result: AppBuildResult = {
     outputDir,
-    fileCount: buildResult.builtFileInfos.size,
+    fileCount: compilation.data.builtFileInfos.size,
   };
 
   if (options.tarball) {

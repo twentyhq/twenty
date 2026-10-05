@@ -1,6 +1,7 @@
 import { relative } from 'path';
 import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import type { EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 
@@ -11,6 +12,7 @@ export type ManifestBuildResult = {
 };
 
 export type UpdateManifestChecksumParams = {
+  outputDir?: string;
   manifest: Manifest;
   builtFileInfos: Map<
     string,
@@ -26,13 +28,14 @@ export type UpdateManifestChecksumParams = {
 export const manifestUpdateChecksums = ({
   manifest,
   builtFileInfos,
+  outputDir = OUTPUT_DIR,
 }: UpdateManifestChecksumParams): Manifest => {
   let result = structuredClone(manifest);
   for (const [
     builtPath,
     { fileFolder, checksum },
   ] of builtFileInfos.entries()) {
-    const rootBuiltPath = relative(OUTPUT_DIR, builtPath);
+    const rootBuiltPath = relative(outputDir, builtPath);
     if (fileFolder === FileFolder.BuiltLogicFunction) {
       const logicFunctions = result.logicFunctions;
       const fnIndex = logicFunctions.findIndex(
@@ -65,6 +68,26 @@ export const manifestUpdateChecksums = ({
     }
 
     if (fileFolder === FileFolder.BuiltFrontComponent) {
+      const sharedDependencies =
+        result.application.frontComponentSharedDependencies;
+
+      if (
+        isDefined(sharedDependencies) &&
+        sharedDependencies.builtPath === rootBuiltPath
+      ) {
+        result = {
+          ...result,
+          application: {
+            ...result.application,
+            frontComponentSharedDependencies: {
+              ...sharedDependencies,
+              builtChecksum: checksum,
+            },
+          },
+        };
+        continue;
+      }
+
       const frontComponents = result.frontComponents;
       const componentIndex =
         frontComponents.findIndex(

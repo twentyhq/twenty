@@ -4,8 +4,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelFieldPreview } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreview';
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
-import { Card, CardContent } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 type SettingsDataModelFieldPreviewWidgetProps = {
@@ -22,14 +22,14 @@ type SettingsDataModelFieldPreviewWidgetProps = {
 };
 
 const StyledCardContainer = styled.div`
-  > * {
+  > div {
     border-radius: ${themeCssVariables.border.radius.md};
     color: ${themeCssVariables.font.color.primary};
   }
 `;
 
 const StyledCardContentContainer = styled.div`
-  > * {
+  > div {
     padding: ${themeCssVariables.spacing[2]};
   }
 `;
@@ -48,9 +48,9 @@ export const SettingsDataModelFieldPreviewWidget = ({
 
   return (
     <StyledCardContainer className={className}>
-      <Card fullWidth>
+      <Card.Root fullWidth>
         <StyledCardContentContainer>
-          <CardContent>
+          <Card.Content>
             <SettingsDataModelObjectPreview
               objectMetadataItems={[objectMetadataItem]}
               pluralizeLabel={pluralizeLabel}
@@ -69,9 +69,9 @@ export const SettingsDataModelFieldPreviewWidget = ({
               shrink={shrink}
               withFieldLabel={withFieldLabel}
             />
-          </CardContent>
+          </Card.Content>
         </StyledCardContentContainer>
-      </Card>
+      </Card.Root>
     </StyledCardContainer>
   );
 };

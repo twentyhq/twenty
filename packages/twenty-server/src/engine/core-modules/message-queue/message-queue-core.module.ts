@@ -115,6 +115,7 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
           config.options,
           config.metricsService,
           config.twentyConfigService,
+          config.eventEmitter,
         );
       }
       case MessageQueueDriverType.Sync: {

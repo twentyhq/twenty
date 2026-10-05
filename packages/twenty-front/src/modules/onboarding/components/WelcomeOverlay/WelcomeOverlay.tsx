@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { WelcomeAnimationAutoLeaveEffect } from '@/onboarding/components/WelcomeOverlay/WelcomeAnimationAutoLeaveEffect';
 import { WelcomeAnimationForcedTeardownEffect } from '@/onboarding/components/WelcomeOverlay/WelcomeAnimationForcedTeardownEffect';
@@ -15,7 +15,7 @@ import { isWelcomeAnimationLeavingState } from '@/onboarding/states/isWelcomeAni
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { welcomeTitleFlightState } from '@/onboarding/states/welcomeTitleFlightState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledOverlay = styled.div`
@@ -91,7 +91,9 @@ const StyledTitle = styled.div`
 
   @media (max-width: 600px) {
     flex-wrap: wrap;
-    max-width: 90vw;
+    font-size: 20px;
+    max-width: calc(90vw / var(--t-zoom, 1));
+    padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]};
   }
 
   &.is-leaving {
@@ -144,8 +146,10 @@ const StyledTitle = styled.div`
 const StyledTitleBoldRun = styled.span`
   align-items: center;
   display: inline-flex;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
-  white-space: nowrap;
+  justify-content: center;
+  white-space: normal;
 
   .is-flying & {
     animation: welcomeTitleBoldRunOut 0.38s ease 0.12s forwards;

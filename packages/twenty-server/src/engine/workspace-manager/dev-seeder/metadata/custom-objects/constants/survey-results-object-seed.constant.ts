@@ -5,5 +5,6 @@ export const SURVEY_RESULT_CUSTOM_OBJECT_SEED: ObjectMetadataSeed = {
   labelSingular: 'Survey result',
   namePlural: 'surveyResults',
   nameSingular: 'surveyResult',
+  color: 'gray',
   icon: 'IconRulerMeasure',
 };

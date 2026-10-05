@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewApiUpdate } from '@/views/hooks/internal/usePerformViewApiUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
@@ -42,7 +42,7 @@ export const useUpdateViewFromCurrentState = () => {
     viewPickerVisibilityComponentState,
   );
 
-  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
+  const { performViewApiUpdate } = usePerformViewApiUpdate();
 
   const store = useStore();
 
@@ -66,7 +66,7 @@ export const useUpdateViewFromCurrentState = () => {
     const visibility = store.get(viewPickerVisibilityCallbackState);
 
     try {
-      await performViewAPIUpdate({
+      await performViewApiUpdate({
         id: viewPickerReferenceViewId,
         input: {
           name: viewPickerInputName,
@@ -87,7 +87,7 @@ export const useUpdateViewFromCurrentState = () => {
     viewPickerInputNameCallbackState,
     viewPickerSelectedIconCallbackState,
     viewPickerVisibilityCallbackState,
-    performViewAPIUpdate,
+    performViewApiUpdate,
     store,
   ]);
 

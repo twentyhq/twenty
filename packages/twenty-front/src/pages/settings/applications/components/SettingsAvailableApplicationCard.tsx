@@ -8,9 +8,9 @@ import { t } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
-import { Card } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type MarketplaceApp } from '~/generated-metadata/graphql';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -58,14 +58,14 @@ export const SettingsAvailableApplicationCard = ({
           availableApplicationId: application.id,
         })}
       >
-        <Card rounded fullWidth>
+        <Card.Root rounded fullWidth>
           <StyledSettingsCardContent alignItems="flex-start" fullHeight>
             <Avatar
-              avatarUrl={getAbsoluteImageUrl(application.logoUrl || null)}
-              placeholder={application.name}
-              placeholderColorSeed={application.name}
+              src={getAbsoluteImageUrl(application.logoUrl || null)}
+              name={application.name}
+              colorSeed={application.name}
               size="lg"
-              type="squared"
+              shape="square"
             />
             <div>
               <StyledSettingsCardTitle>
@@ -77,7 +77,7 @@ export const SettingsAvailableApplicationCard = ({
               </StyledSettingsCardThirdLine>
             </div>
           </StyledSettingsCardContent>
-        </Card>
+        </Card.Root>
       </Link>
     </StyledLinkContainer>
   );

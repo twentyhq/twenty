@@ -11,6 +11,7 @@ const TOOL_NAMES = {
   createNote: 'create_one_note',
   createNoteTarget: 'create_one_note_target',
   groupByNoteTargets: 'group_by_note_targets',
+  groupByCompanies: 'group_by_companies',
 } as const;
 
 type McpToolCallResult = {
@@ -165,9 +166,7 @@ describe('MCP tool execution (integration)', () => {
         format: 'uuid',
       });
 
-      // Morph relations must be exposed as `${name}Id` UUIDs (the join column),
-      // not as the relation name typed as string — the data-arg-processor only
-      // accepts the join-column form for write operations.
+      // Morph relations must be exposed as `${name}Id` UUIDs: the data-arg-processor only accepts that form for writes
       expect(resolveProperty(properties?.targetCompanyId)).toMatchObject({
         type: 'string',
         format: 'uuid',
@@ -236,7 +235,7 @@ describe('MCP tool execution (integration)', () => {
   describe('group_by_note_targets (morph relation column)', () => {
     let createdCompanyAId: string | undefined;
     let createdCompanyBId: string | undefined;
-    let createdNoteId: string | undefined;
+    const createdNoteIds: string[] = [];
     const createdNoteTargetIds: string[] = [];
 
     beforeAll(async () => {
@@ -254,15 +253,6 @@ describe('MCP tool execution (integration)', () => {
 
       createdCompanyBId = companyB.id;
 
-      const note = await executeWorkspaceTool<CreatedRecord>(
-        TOOL_NAMES.createNote,
-        { title: `mcp-group-by-note-${randomUUID()}` },
-      );
-
-      createdNoteId = note.id;
-
-      // Two targets on company A, one on company B — the grouped counts
-      // we'll assert against later.
       const targetCompanyIds = [
         createdCompanyAId,
         createdCompanyAId,
@@ -270,9 +260,16 @@ describe('MCP tool execution (integration)', () => {
       ];
 
       for (const targetCompanyId of targetCompanyIds) {
+        const note = await executeWorkspaceTool<CreatedRecord>(
+          TOOL_NAMES.createNote,
+          { title: `mcp-group-by-note-${randomUUID()}` },
+        );
+
+        createdNoteIds.push(note.id);
+
         const noteTarget = await executeWorkspaceTool<CreatedRecord>(
           TOOL_NAMES.createNoteTarget,
-          { noteId: createdNoteId, targetCompanyId },
+          { noteId: note.id, targetCompanyId },
         );
 
         createdNoteTargetIds.push(noteTarget.id);
@@ -283,8 +280,8 @@ describe('MCP tool execution (integration)', () => {
       if (createdNoteTargetIds.length > 0) {
         await deleteRecordsByIds('noteTarget', createdNoteTargetIds);
       }
-      if (createdNoteId) {
-        await deleteRecordsByIds('note', [createdNoteId]);
+      if (createdNoteIds.length > 0) {
+        await deleteRecordsByIds('note', createdNoteIds);
       }
 
       const companyIds = [createdCompanyAId, createdCompanyBId].filter(
@@ -313,8 +310,6 @@ describe('MCP tool execution (integration)', () => {
 
       expect(groupByItems).toBeDefined();
 
-      // Each groupBy variant is { [columnName]: true }. Collect every column
-      // the schema offers so we can assert on the morph-relation columns.
       const groupByColumns = new Set<string>();
 
       if (groupByItems?.anyOf) {
@@ -352,9 +347,7 @@ describe('MCP tool execution (integration)', () => {
         {
           groupBy: [{ targetCompanyId: true }],
           aggregateOperation: 'COUNT',
-          // Scope to the noteTargets we created so other seeded rows don't
-          // leak into the counts.
-          noteId: { eq: createdNoteId },
+          noteId: { in: createdNoteIds },
         },
       );
 
@@ -372,6 +365,93 @@ describe('MCP tool execution (integration)', () => {
 
       expect(countsByCompany[createdCompanyAId as string]).toBe(2);
       expect(countsByCompany[createdCompanyBId as string]).toBe(1);
+    });
+  });
+
+  describe('group_by_companies (multi-select work policy)', () => {
+    const createdCompanyIds: string[] = [];
+    const createdCompanyNames: string[] = [];
+
+    type GroupByResult = {
+      groups: Array<{ dimensions: unknown[]; value: string | number }>;
+      dimensionLabels: string[];
+      aggregation: string;
+      groupCount: number;
+    };
+
+    beforeAll(async () => {
+      const workPolicies = [
+        ['ON_SITE', 'HYBRID'],
+        ['HYBRID'],
+        ['REMOTE_WORK'],
+        [],
+      ];
+
+      for (const workPolicy of workPolicies) {
+        const name = `mcp-group-by-work-policy-${randomUUID()}`;
+        const company = await executeWorkspaceTool<CreatedRecord>(
+          TOOL_NAMES.createCompany,
+          { name, workPolicy },
+        );
+
+        createdCompanyIds.push(company.id);
+        createdCompanyNames.push(name);
+      }
+    });
+
+    afterAll(async () => {
+      if (createdCompanyIds.length > 0) {
+        await deleteRecordsByIds('company', createdCompanyIds);
+      }
+    });
+
+    it('counts each selected value and preserves the empty-array null group', async () => {
+      const result = await executeWorkspaceTool<GroupByResult>(
+        TOOL_NAMES.groupByCompanies,
+        {
+          groupBy: [{ workPolicy: { unnest: true } }],
+          aggregateOperation: 'COUNT',
+          name: { in: createdCompanyNames },
+        },
+      );
+
+      expect(result.dimensionLabels).toEqual(['workPolicy']);
+      expect(result.aggregation).toBe('COUNT');
+      expect(result.groupCount).toBe(4);
+      expect(result.groups).toHaveLength(4);
+
+      const countsByWorkPolicy = Object.fromEntries(
+        result.groups.map((group) => [
+          String(group.dimensions[0]),
+          Number(group.value),
+        ]),
+      );
+
+      expect(countsByWorkPolicy).toEqual({
+        HYBRID: 2,
+        ON_SITE: 1,
+        REMOTE_WORK: 1,
+        null: 1,
+      });
+    });
+
+    it('keeps whole-array grouping as the default', async () => {
+      const result = await executeWorkspaceTool<GroupByResult>(
+        TOOL_NAMES.groupByCompanies,
+        {
+          groupBy: [{ workPolicy: true }],
+          aggregateOperation: 'COUNT',
+          name: { in: createdCompanyNames },
+        },
+      );
+
+      expect(result.dimensionLabels).toEqual(['workPolicy']);
+      expect(result.aggregation).toBe('COUNT');
+      expect(result.groupCount).toBe(4);
+      expect(result.groups).toHaveLength(4);
+      expect(result.groups.map((group) => Number(group.value))).toEqual([
+        1, 1, 1, 1,
+      ]);
     });
   });
 });

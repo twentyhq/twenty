@@ -7,6 +7,7 @@ import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-model
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
+import { mergeCustomProvidersIntoCatalog } from 'src/engine/metadata-modules/ai/ai-models/utils/merge-custom-providers-into-catalog.util';
 
 @Injectable()
 export class ProviderConfigService {
@@ -21,14 +22,22 @@ export class ProviderConfigService {
     );
   }
 
-  getResolvedProviders(): AiProvidersConfig {
+  getResolvedProviders({
+    includeCustomProviders = true,
+  }: { includeCustomProviders?: boolean } = {}): AiProvidersConfig {
     const rawCatalog = this.defaultAiCatalogService.getDefaultAiCatalog();
-    // Only resolve {{VAR}} templates in the committed catalog — never in
-    // user-supplied custom providers, to prevent config variable exfiltration.
+    // never resolve {{VAR}} templates in custom providers, to prevent config variable exfiltration
     const catalog = this.resolveTemplates(rawCatalog);
-    const custom = this.twentyConfigService.get('AI_PROVIDERS');
 
-    return { ...catalog, ...custom };
+    // dropping custom entries, rather than filtering the merged map, also restores catalog providers a same-named custom entry shadowed
+    if (!includeCustomProviders) {
+      return catalog;
+    }
+
+    return mergeCustomProvidersIntoCatalog({
+      catalog,
+      custom: this.twentyConfigService.get('AI_PROVIDERS'),
+    });
   }
 
   private resolveTemplates(providers: AiProvidersConfig): AiProvidersConfig {
@@ -62,9 +71,7 @@ export class ProviderConfigService {
       return value;
     }
 
-    // Registered config variables first (supports admin panel / DB overrides),
-    // then fall back to process.env for vars not in ConfigVariables
-    // (e.g. when CI replaces the catalog with custom provider entries).
+    // falls back to process.env for vars outside ConfigVariables (e.g. CI-replaced catalogs)
     try {
       const resolved = this.twentyConfigService.get(
         varName as keyof ConfigVariables,

@@ -3,6 +3,7 @@ import * as fs from 'fs-extra';
 import { tmpdir } from 'os';
 import createTwentyAppPackageJson from 'package.json';
 import { join } from 'path';
+import ts from 'typescript';
 
 jest.mock('fs-extra', () => {
   const actual = jest.requireActual('fs-extra');
@@ -36,6 +37,7 @@ const TEMPLATE_PACKAGE_JSON = {
   devDependencies: {
     'twenty-client-sdk': '0.0.0',
     'twenty-sdk': '0.0.0',
+    'twenty-ui': '0.0.0',
   },
 };
 
@@ -109,11 +111,113 @@ describe('copyBaseApplicationProject', () => {
     expect(content).not.toContain('DESCRIPTION-TO-BE-GENERATED');
     expect(content).not.toContain('UUID-TO-BE-GENERATED');
 
-    // Both UUIDs should be valid v4 format
     const uuidMatches = content.match(
       /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g,
     );
     expect(uuidMatches).toHaveLength(2);
+  });
+
+  it.each([
+    ['quotes', "Owner's app", "Owner\\'s app"],
+    ['backslashes', 'C:\\apps', 'C:\\\\apps'],
+    ['line breaks', 'First\nSecond\rThird', 'First\\nSecond\\rThird'],
+    ['replacement tokens', '$& $` $$', '$& $` $$'],
+  ])(
+    'should preserve %s in generated metadata',
+    async (_, value, escapedValue) => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: value,
+        appDescription: value,
+        appDirectory: testAppDirectory,
+      });
+
+      const content = await fs.readFile(
+        join(testAppDirectory, UNIVERSAL_IDENTIFIERS_PATH),
+        'utf8',
+      );
+
+      expect(content).toContain(`APP_DISPLAY_NAME = '${escapedValue}'`);
+      expect(content).toContain(`APP_DESCRIPTION = '${escapedValue}'`);
+    },
+  );
+
+  it('should copy a caller-provided template directory', async () => {
+    const templateDirectory = join(testAppDirectory, 'custom-template');
+    const customFileName = 'custom-template.txt';
+
+    await fs.ensureDir(templateDirectory);
+    await fs.writeFile(
+      join(templateDirectory, customFileName),
+      'Custom template',
+    );
+    jest
+      .mocked(fs.copy)
+      .mockImplementationOnce(jest.requireActual<typeof fs>('fs-extra').copy);
+
+    await copyBaseApplicationProject({
+      appName: 'my-test-app',
+      appDisplayName: 'My Test App',
+      appDescription: '',
+      appDirectory: testAppDirectory,
+      templateDirectory,
+    });
+
+    expect(
+      await fs.readFile(join(testAppDirectory, customFileName), 'utf8'),
+    ).toBe('Custom template');
+  });
+
+  it('should pin first-party packages to a caller-provided version', async () => {
+    await copyBaseApplicationProject({
+      appName: 'my-test-app',
+      appDisplayName: 'My Test App',
+      appDescription: '',
+      appDirectory: testAppDirectory,
+      packageVersion: '2.45.0-canary.1',
+    });
+
+    const packageJson = await fs.readJson(
+      join(testAppDirectory, 'package.json'),
+    );
+
+    expect(packageJson.devDependencies).toEqual({
+      'twenty-client-sdk': '2.45.0-canary.1',
+      'twenty-sdk': '2.45.0-canary.1',
+      'twenty-ui': '2.45.0-canary.1',
+    });
+  });
+
+  it('should typecheck app sources before the test project is built', async () => {
+    const templateDirectory = join(__dirname, '../../constants/template');
+    const templateConfig = await fs.readJson(
+      join(templateDirectory, 'tsconfig.json'),
+    );
+
+    await fs.writeJson(join(testAppDirectory, 'tsconfig.json'), templateConfig);
+    await fs.writeJson(join(testAppDirectory, 'tsconfig.spec.json'), {
+      extends: './tsconfig.json',
+      compilerOptions: { composite: true },
+      include: ['src/**/*.ts'],
+    });
+
+    const parsedConfig = ts.parseJsonConfigFileContent(
+      templateConfig,
+      ts.sys,
+      testAppDirectory,
+      { types: [] },
+    );
+    const program = ts.createProgram({
+      rootNames: parsedConfig.fileNames,
+      options: parsedConfig.options,
+      projectReferences: parsedConfig.projectReferences,
+    });
+
+    expect(parsedConfig.errors).toEqual([]);
+    expect(
+      program.getSourceFiles().map((sourceFile) => sourceFile.fileName),
+    ).toContain(join(testAppDirectory, UNIVERSAL_IDENTIFIERS_PATH));
+    expect(ts.getPreEmitDiagnostics(program)).toEqual([]);
   });
 
   it('should generate different UUIDs for each identifier', async () => {
@@ -136,7 +240,7 @@ describe('copyBaseApplicationProject', () => {
     expect(uuidMatches![0]).not.toBe(uuidMatches![1]);
   });
 
-  it('should update package.json with app name and SDK versions', async () => {
+  it('should update package.json with app name and matching package versions', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
       appDisplayName: 'My Test App',
@@ -152,6 +256,9 @@ describe('copyBaseApplicationProject', () => {
       createTwentyAppPackageJson.version,
     );
     expect(packageJson.devDependencies['twenty-client-sdk']).toBe(
+      createTwentyAppPackageJson.version,
+    );
+    expect(packageJson.devDependencies['twenty-ui']).toBe(
       createTwentyAppPackageJson.version,
     );
   });
@@ -212,7 +319,7 @@ describe('copyBaseApplicationProject', () => {
     expect(content).toContain("APP_DESCRIPTION = ''");
   });
 
-  it.each(['CHANGELOG.md', 'SETUP.md'])(
+  it.each(['CHANGELOG.md', 'SETUP.md', 'locales/en.json'])(
     'should seed %s in the base template',
     async (seedFileName) => {
       const templateDirectory = join(

@@ -7,7 +7,9 @@ import {
   type Manifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
+import { copyBuildFile } from '@/cli/utilities/build/common/copy-build-file';
 import { copyReadmeToOutput } from '@/cli/utilities/build/common/copy-readme-to-output';
 import { type GeneratedAsset } from '@/cli/utilities/build/cover/generated-asset.type';
 import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
@@ -16,10 +18,11 @@ import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { createStubTwentySdkDefinePlugin } from '@/cli/utilities/build/common/plugins/stub-twenty-sdk-define.plugin';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
+import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/build-shared-dependencies-bundle';
+import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/types/shared-dependencies-build-context.type';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { loadFrontComponentTranslationCatalogs } from '@/cli/utilities/translations/load-front-component-translation-catalogs';
 import {
-  copy,
   emptyDir,
   ensureDir,
   pathExists,
@@ -32,6 +35,8 @@ export type AppBuildOptions = {
   manifest: Manifest;
   filePaths: EntityFilePaths;
   generatedAssets?: GeneratedAsset[];
+  outputDir?: string;
+  dereferenceSymlinks?: boolean;
 };
 
 export type BuiltFileInfo = {
@@ -49,7 +54,8 @@ export type AppBuildResult = {
 export const buildApplication = async (
   options: AppBuildOptions,
 ): Promise<AppBuildResult> => {
-  const outputDir = join(options.appPath, OUTPUT_DIR);
+  const relativeOutputDir = options.outputDir ?? OUTPUT_DIR;
+  const outputDir = join(options.appPath, relativeOutputDir);
 
   await ensureDir(outputDir);
   await emptyDir(outputDir);
@@ -67,11 +73,10 @@ export const buildApplication = async (
   };
 
   const { logicFunctions, frontComponents } = options.filePaths;
+  const sharedDependencies =
+    options.manifest.application.frontComponentSharedDependencies;
 
-  // Bake the app's compiled translation catalogs into every front-component
-  // bundle so the runtime t()/<Trans> resolves them in the sandboxed worker
-  // without a server round-trip. Omitted entirely when the app has no
-  // translations, leaving the runtime to fall back to source strings.
+  // Baked into each bundle so t()/<Trans> resolve in the sandboxed worker without a server round-trip
   const frontComponentTranslationCatalogs =
     await loadFrontComponentTranslationCatalogs(options.appPath);
 
@@ -94,7 +99,7 @@ export const buildApplication = async (
       splitting: false,
       format: 'esm',
       platform: 'node',
-      outdir: join(options.appPath, OUTPUT_DIR),
+      outdir: outputDir,
       outExtension: { '.js': '.mjs' },
       external: LOGIC_FUNCTION_EXTERNAL_MODULES,
       tsconfig: join(options.appPath, 'tsconfig.json'),
@@ -107,13 +112,23 @@ export const buildApplication = async (
     onFileBuilt: collectFileBuilt,
   });
 
+  const sharedDependenciesBuildContext: SharedDependenciesBuildContext | null =
+    isDefined(sharedDependencies)
+      ? await buildSharedDependenciesBundle({
+          appPath: options.appPath,
+          outputDir: relativeOutputDir,
+          sharedDependencies,
+          onFileBuilt: collectFileBuilt,
+        })
+      : null;
+
   await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: frontComponents,
     fileFolder: FileFolder.BuiltFrontComponent,
     buildOptions: {
       ...getBaseFrontComponentBuildOptions(),
-      outdir: join(options.appPath, OUTPUT_DIR),
+      outdir: outputDir,
       tsconfig: join(options.appPath, 'tsconfig.json'),
       jsx: 'automatic',
       sourcemap: true,
@@ -123,7 +138,10 @@ export const buildApplication = async (
         ? { banner: frontComponentTranslationsBanner }
         : {}),
       plugins: [
-        ...getFrontComponentBuildPlugins(),
+        ...getFrontComponentBuildPlugins({
+          getSharedDependenciesBuildContext: () =>
+            sharedDependenciesBuildContext,
+        }),
         createStubTwentySdkDefinePlugin(),
       ],
     },
@@ -135,6 +153,8 @@ export const buildApplication = async (
     fileFolder: FileFolder.Source,
     filePaths: [...new Set([...logicFunctions, ...frontComponents])],
     collectFileBuilt,
+    outputDir: relativeOutputDir,
+    dereferenceSymlinks: options.dereferenceSymlinks,
   });
 
   await copyStaticFiles({
@@ -142,6 +162,8 @@ export const buildApplication = async (
     fileFolder: FileFolder.PublicAsset,
     filePaths: options.filePaths.publicAssets,
     collectFileBuilt,
+    outputDir: relativeOutputDir,
+    dereferenceSymlinks: options.dereferenceSymlinks,
   });
 
   await copyStaticFiles({
@@ -151,17 +173,24 @@ export const buildApplication = async (
       pathExistsSync(join(options.appPath, filePath)),
     ),
     collectFileBuilt,
+    outputDir: relativeOutputDir,
+    dereferenceSymlinks: options.dereferenceSymlinks,
   });
 
   for (const generatedAsset of options.generatedAssets ?? []) {
     await writeGeneratedAsset({
       appPath: options.appPath,
       generatedAsset,
+      outputDir: relativeOutputDir,
       collectFileBuilt,
     });
   }
 
-  await copyReadmeToOutput(options.appPath);
+  await copyReadmeToOutput({
+    appPath: options.appPath,
+    relativeOutputDir,
+    dereferenceSymlinks: options.dereferenceSymlinks,
+  });
 
   return { builtFileInfos };
 };
@@ -169,13 +198,15 @@ export const buildApplication = async (
 const writeGeneratedAsset = async ({
   appPath,
   generatedAsset,
+  outputDir,
   collectFileBuilt,
 }: {
   appPath: string;
   generatedAsset: GeneratedAsset;
+  outputDir: string;
   collectFileBuilt: OnFileBuiltCallback;
 }) => {
-  const builtPath = join(OUTPUT_DIR, generatedAsset.relativePath);
+  const builtPath = join(outputDir, generatedAsset.relativePath);
   const absoluteBuiltPath = join(appPath, builtPath);
 
   await ensureDir(dirname(absoluteBuiltPath));
@@ -198,11 +229,15 @@ const copyStaticFiles = async ({
   appPath,
   fileFolder,
   filePaths,
+  outputDir,
+  dereferenceSymlinks = false,
   collectFileBuilt,
 }: {
   appPath: string;
   fileFolder: FileFolder;
   filePaths: string[];
+  outputDir: string;
+  dereferenceSymlinks?: boolean;
   collectFileBuilt: OnFileBuiltCallback;
 }) => {
   for (const sourcePath of filePaths) {
@@ -212,11 +247,15 @@ const copyStaticFiles = async ({
       continue;
     }
 
-    const builtPath = join(OUTPUT_DIR, sourcePath);
+    const builtPath = join(outputDir, sourcePath);
     const absoluteBuiltPath = join(appPath, builtPath);
 
     await ensureDir(dirname(absoluteBuiltPath));
-    await copy(absoluteSourcePath, absoluteBuiltPath);
+    await copyBuildFile({
+      sourcePath: absoluteSourcePath,
+      destinationPath: absoluteBuiltPath,
+      dereferenceSymlinks,
+    });
 
     const content = await readFile(absoluteBuiltPath);
     const checksum = crypto.createHash('md5').update(content).digest('hex');

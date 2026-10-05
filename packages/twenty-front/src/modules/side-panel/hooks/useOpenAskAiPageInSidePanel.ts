@@ -8,6 +8,7 @@ import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconSparkles } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
+import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export const useOpenAskAiPageInSidePanel = () => {
   const { navigateSidePanelMenu } = useSidePanelMenu();
@@ -22,6 +23,10 @@ export const useOpenAskAiPageInSidePanel = () => {
     }: {
       resetNavigationStack?: boolean;
     } = {}) => {
+      if (isCurrentPathAiChatPage()) {
+        return;
+      }
+
       const shouldReset =
         resetNavigationStack !== undefined
           ? resetNavigationStack

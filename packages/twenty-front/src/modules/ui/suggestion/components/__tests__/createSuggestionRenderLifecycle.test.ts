@@ -169,7 +169,6 @@ describe('createSuggestionRenderLifecycle', () => {
 
       lifecycle.onStart(createMockCallbackProps({ command: originalCommand }));
 
-      // Extract the onSelect callback from the props passed to ReactRenderer
       const { ReactRenderer } = jest.requireMock('@tiptap/react');
       const constructorCall = ReactRenderer.mock.calls[0];
       const menuProps = constructorCall[1].props;
@@ -181,6 +180,50 @@ describe('createSuggestionRenderLifecycle', () => {
         label: 'Item A',
       });
       expect(mockDestroy).toHaveBeenCalled();
+    });
+  });
+
+  describe('local items', () => {
+    it('opens with the local items while searched items load, then lists them first', () => {
+      const localItem = { id: 'local', label: 'Local' };
+      const searchedItem = { id: 'searched', label: 'Searched' };
+      const { ReactRenderer } = jest.requireMock('@tiptap/react');
+      const lifecycle = createSuggestionRenderLifecycle<
+        TestItem,
+        TestMenuProps
+      >(
+        {
+          component: (() =>
+            null) as unknown as React.ComponentType<TestMenuProps>,
+          getMenuProps: ({ items, onSelect, editor, range }) => ({
+            items,
+            onSelect,
+            editor,
+            range,
+          }),
+          getLocalItems: (query) => (query === 'lo' ? [localItem] : []),
+        },
+        mockEditor,
+      );
+
+      lifecycle.onStart(createMockCallbackProps({ items: [], query: 'lo' }));
+
+      expect(ReactRenderer).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          props: expect.objectContaining({ items: [localItem] }),
+        }),
+      );
+
+      lifecycle.onUpdate(
+        createMockCallbackProps({ items: [searchedItem], query: 'lo' }),
+      );
+
+      expect(mockUpdateProps).toHaveBeenCalledWith(
+        expect.objectContaining({ items: [localItem, searchedItem] }),
+      );
+
+      lifecycle.onExit();
     });
   });
 });

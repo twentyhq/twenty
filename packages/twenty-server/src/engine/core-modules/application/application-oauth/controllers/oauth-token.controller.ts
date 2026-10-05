@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 
 import { type Request, type Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 
 import { OAuthIntrospectInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-introspect.input';
 import { OAuthRevokeInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-revoke.input';
@@ -28,7 +29,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 const OAUTH_RATE_LIMIT_MAX = 60;
 const OAUTH_RATE_LIMIT_WINDOW_MS = 60_000;
 
-@Controller('oauth')
+@Controller(ApiPath.OAuth)
 @UseFilters(AuthRestApiExceptionFilter)
 export class OAuthTokenController {
   constructor(

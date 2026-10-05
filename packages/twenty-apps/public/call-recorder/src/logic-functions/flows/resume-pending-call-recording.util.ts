@@ -80,9 +80,6 @@ export const resumePendingCallRecording = async ({
     return scheduleBot({ client, callRecording, calendarEvent });
   }
 
-  // Ambiguous attempts need a Recall bot lookup; doing one per event could
-  // burst past the shared list budget, so the recovery cron owns them and
-  // amortizes a single lookup across all ambiguous rows.
   return {
     status: 'deferred',
     reason: 'ambiguous prior attempt; the recovery cron will reconcile it',
@@ -98,15 +95,19 @@ const scheduleBot = async ({
   callRecording: CallRecordingRecord;
   calendarEvent: CalendarEventRecord;
 }): Promise<ResumePendingCallRecordingResult> => {
-  const didScheduleRecallBot = await scheduleRecallBotForCallRecording(
-    client,
-    {
-      callRecording,
-      calendarEvent,
-    },
-  );
+  const scheduleResult = await scheduleRecallBotForCallRecording(client, {
+    callRecording,
+    calendarEvent,
+  });
 
-  return didScheduleRecallBot
-    ? { status: 'scheduled' }
-    : { status: 'deferred', reason: 'Recall bot scheduling failed' };
+  switch (scheduleResult.status) {
+    case 'scheduled':
+      return { status: 'scheduled' };
+    case 'blocked':
+      return { status: 'skipped', reason: scheduleResult.failureReason };
+    case 'skipped':
+      return { status: 'skipped', reason: scheduleResult.reason };
+    case 'failed':
+      return { status: 'deferred', reason: 'Recall bot scheduling failed' };
+  }
 };

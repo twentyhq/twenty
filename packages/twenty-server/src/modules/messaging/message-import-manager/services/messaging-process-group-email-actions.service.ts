@@ -6,10 +6,12 @@ import { Repository } from 'typeorm';
 
 import { MessageChannelPendingGroupEmailsAction } from 'twenty-shared/types';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessagingDeleteGroupEmailMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-group-email-messages.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class MessagingProcessGroupEmailActionsService {
@@ -18,11 +20,11 @@ export class MessagingProcessGroupEmailActionsService {
   );
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectRepository(MessageFolderEntity)
-    private readonly messageFolderRepository: Repository<MessageFolderEntity>,
+    @InjectWorkspaceScopedRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
     private readonly messagingDeleteGroupEmailMessagesService: MessagingDeleteGroupEmailMessagesService,
   ) {}
 
@@ -61,7 +63,7 @@ export class MessagingProcessGroupEmailActionsService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     try {
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           switch (pendingGroupEmailsAction) {
             case MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION:
@@ -135,7 +137,8 @@ export class MessagingProcessGroupEmailActionsService {
     );
 
     await this.messageFolderRepository.update(
-      { messageChannelId, workspaceId },
+      workspaceId,
+      { messageChannelId },
       { syncCursor: '' },
     );
   }

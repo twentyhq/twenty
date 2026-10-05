@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EmailOperation } from 'twenty-shared/types';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
@@ -7,14 +8,14 @@ import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/dr
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { EmailWorkflowActionBase } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/email-workflow-action.base';
 import { isWorkflowDraftEmailAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/guards/is-workflow-draft-email-action.guard';
-import { type EmailStepLogMode } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
@@ -23,18 +24,20 @@ export class DraftEmailWorkflowAction extends EmailWorkflowActionBase {
   constructor(
     private readonly draftEmailTool: DraftEmailTool,
     workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
-    globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
     userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    workflowExecutionContextService: WorkflowExecutionContextService,
   ) {
     super(
       DraftEmailWorkflowAction.name,
       workflowRunStepLogService,
-      globalWorkspaceOrmManager,
+      workspaceOrmManager,
       connectedAccountRepository,
       userWorkspaceRepository,
+      workflowExecutionContextService,
     );
   }
 
@@ -42,8 +45,8 @@ export class DraftEmailWorkflowAction extends EmailWorkflowActionBase {
     return this.draftEmailTool;
   }
 
-  protected getMode(): EmailStepLogMode {
-    return 'DRAFT';
+  protected getMode(): EmailOperation {
+    return EmailOperation.DRAFT;
   }
 
   protected assertStep(step: WorkflowAction): void {

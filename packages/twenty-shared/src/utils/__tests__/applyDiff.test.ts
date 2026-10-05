@@ -20,7 +20,7 @@ describe('applyDiff', () => {
       const result = applyDiff(obj, []);
 
       expect(result).toEqual({ test: 'value' });
-      expect(result).not.toBe(obj); // Should return a copy
+      expect(result).not.toBe(obj);
     });
 
     it('should skip invalid diffs', () => {
@@ -220,8 +220,8 @@ describe('applyDiff', () => {
     it('should remove multiple array elements in correct order', () => {
       const obj = ['a', 'b', 'c', 'd', 'e'];
       const diffs: Difference[] = [
-        { type: 'REMOVE', path: [1], oldValue: 'b' }, // Remove 'b'
-        { type: 'REMOVE', path: [3], oldValue: 'd' }, // Remove 'd'
+        { type: 'REMOVE', path: [1], oldValue: 'b' },
+        { type: 'REMOVE', path: [3], oldValue: 'd' },
       ];
 
       const result = applyDiff(obj, diffs);
@@ -231,9 +231,9 @@ describe('applyDiff', () => {
     it('should handle complex array removal scenarios', () => {
       const obj = ['a', 'b', 'c', 'd', 'e', 'f'];
       const diffs: Difference[] = [
-        { type: 'REMOVE', path: [0], oldValue: 'a' }, // Remove 'a'
-        { type: 'REMOVE', path: [2], oldValue: 'c' }, // Remove 'c'
-        { type: 'REMOVE', path: [4], oldValue: 'e' }, // Remove 'e'
+        { type: 'REMOVE', path: [0], oldValue: 'a' },
+        { type: 'REMOVE', path: [2], oldValue: 'c' },
+        { type: 'REMOVE', path: [4], oldValue: 'e' },
       ];
 
       const result = applyDiff(obj, diffs);
@@ -248,7 +248,7 @@ describe('applyDiff', () => {
         ],
       };
       const diffs: Difference[] = [
-        { type: 'REMOVE', path: ['items', 0, 'tags', 1], oldValue: 'tag2' }, // Remove 'tag2'
+        { type: 'REMOVE', path: ['items', 0, 'tags', 1], oldValue: 'tag2' },
       ];
 
       const result = applyDiff(obj, diffs);
@@ -292,7 +292,7 @@ describe('applyDiff', () => {
           value: 'newValue',
         },
         { type: 'REMOVE', path: ['remove'], oldValue: 'toDelete' },
-        { type: 'REMOVE', path: ['nested', 'array', 1], oldValue: 'b' }, // Remove 'b'
+        { type: 'REMOVE', path: ['nested', 'array', 1], oldValue: 'b' },
         { type: 'CREATE', path: ['nested', 'newArray'], value: [1, 2, 3] },
       ];
 
@@ -311,10 +311,10 @@ describe('applyDiff', () => {
     it('should handle operations on the same array', () => {
       const obj = ['a', 'b', 'c', 'd'];
       const diffs: Difference[] = [
-        { type: 'CHANGE', path: [0], oldValue: 'a', value: 'A' }, // Change 'a' to 'A'
-        { type: 'REMOVE', path: [1], oldValue: 'b' }, // Remove 'b'
-        { type: 'REMOVE', path: [3], oldValue: 'd' }, // Remove 'd'
-        { type: 'REMOVE', path: [3], oldValue: 'd' }, // Remove 'd'
+        { type: 'CHANGE', path: [0], oldValue: 'a', value: 'A' },
+        { type: 'REMOVE', path: [1], oldValue: 'b' },
+        { type: 'REMOVE', path: [3], oldValue: 'd' },
+        { type: 'REMOVE', path: [3], oldValue: 'd' },
       ];
 
       const result = applyDiff(obj, diffs);
@@ -368,18 +368,15 @@ describe('applyDiff', () => {
       const obj = { safe: 'value' };
 
       const unicodeBypassAttempts = [
-        // __proto__ with Unicode escapes
         '__\u0070roto__', // \u0070 = 'p'
         '__\u{70}roto__', // ES6 syntax
         '__pr\u006fto__', // \u006f = 'o'
         '__proto\u005f\u005f', // \u005f = '_'
 
-        // constructor with Unicode escapes
         'construc\u0074or', // \u0074 = 't'
         'constr\u0075ctor', // \u0075 = 'u'
         '\u0063onstructor', // \u0063 = 'c'
 
-        // prototype with Unicode escapes
         'proto\u0074ype', // \u0074 = 't'
         'prototy\u0070e', // \u0070 = 'p'
         '\u0070rototype', // \u0070 = 'p'
@@ -422,22 +419,18 @@ describe('applyDiff', () => {
       };
 
       const diffs: Difference[] = [
-        // Try to remove forbidden keys (these should be silently skipped)
         { type: 'REMOVE', path: ['__proto__'], oldValue: 'anything' },
         { type: 'REMOVE', path: ['constructor'], oldValue: 'anything' },
         { type: 'REMOVE', path: ['prototype'], oldValue: 'anything' },
-        // Remove a normal property (this should work)
         { type: 'REMOVE', path: ['safe'], oldValue: 'value' },
       ];
 
       const result = applyDiff(obj, diffs);
 
-      // Only the safe property should be removed, normalProp should remain
       expect(result).toEqual({
         normalProp: 'normal',
       });
 
-      // Verify safe property was actually removed
       expect(result).not.toHaveProperty('safe');
     });
   });
@@ -493,7 +486,7 @@ describe('applyDiff', () => {
 
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({ prop: 'newValue' });
-      expect(obj.prop).toBe('value'); // Original unchanged
+      expect(obj.prop).toBe('value');
     });
   });
 
@@ -519,23 +512,19 @@ describe('applyDiff', () => {
       };
 
       const diffs: Difference[] = [
-        // Update trigger settings
         {
           type: 'CHANGE',
           path: ['trigger', 'settings', 'table'],
           oldValue: 'users',
           value: 'contacts',
         },
-        // Remove first step
         { type: 'REMOVE', path: ['steps', 0], oldValue: '1' },
-        // Update remaining step
         {
           type: 'CHANGE',
           path: ['steps', 1, 'settings', 'to'],
           oldValue: 'test@example.com',
           value: 'new@example.com',
         },
-        // Add new step
         {
           type: 'CREATE',
           path: ['steps', 2],
@@ -580,18 +569,15 @@ describe('applyDiff', () => {
       };
 
       const diffs: Difference[] = [
-        // Remove items at indices 1 and 3 (Item 2 and Item 4)
         { type: 'REMOVE', path: ['items', 1], oldValue: 'Item 2' },
         { type: 'REMOVE', path: ['items', 3], oldValue: 'Item 4' },
         { type: 'REMOVE', path: ['items', 3], oldValue: 'Item 4' },
-        // Update remaining item
         {
           type: 'CHANGE',
           path: ['items', 0, 'name'],
           oldValue: 'Item 1',
           value: 'Updated Item 1',
         },
-        // Add new item
         {
           type: 'CREATE',
           path: ['items', 5],

@@ -8,9 +8,12 @@ export const WORKSPACE_MEMBER_QUERY_FRAGMENT = gql`
       lastName
     }
     colorScheme
+    uiScale
+    openRecordIn
     avatarUrl
     locale
     userEmail
+    userId
     userWorkspaceId
     timeZone
     dateFormat

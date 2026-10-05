@@ -1,10 +1,10 @@
 import {
   PermissionFlagType,
   SystemPermissionFlag,
+  TOOL_PERMISSION_FLAGS,
 } from 'twenty-shared/constants';
 
 import { type PermissionFlagPermissionType } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
-import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 
 export type StandardPermissionFlagDefinition = {
   key: PermissionFlagType;
@@ -42,7 +42,7 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
   [PermissionFlagType.ROLES]: {
     label: 'Roles',
     description: 'Define user roles and access levels',
-    icon: 'IconLockOpen',
+    icon: 'IconLock',
   },
   [PermissionFlagType.DATA_MODEL]: {
     label: 'Data Model',
@@ -82,7 +82,7 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
   [PermissionFlagType.LAYOUTS]: {
     label: 'Layouts',
     description: 'Customize page layouts and UI structure',
-    icon: 'IconLayoutSidebarRightCollapse',
+    icon: 'IconAppWindow',
   },
   [PermissionFlagType.BILLING]: {
     label: 'Billing',

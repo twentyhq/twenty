@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronRight } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledAccordionHeaderButton = styled.button`
   align-items: center;
@@ -82,7 +82,7 @@ export const SettingsAdminWorkspacesByHealthAccordion = ({
   const hasWorkspaces = workspaces.length > 0;
 
   return (
-    <Card rounded={true}>
+    <Card.Root rounded={true}>
       {hasWorkspaces ? (
         <StyledAccordionHeaderButton
           onClick={() => setIsExpanded((currentValue) => !currentValue)}
@@ -100,11 +100,7 @@ export const SettingsAdminWorkspacesByHealthAccordion = ({
         </StyledAccordionHeaderButtonDisabled>
       )}
       {hasWorkspaces && (
-        <AnimatedExpandableContainer
-          isExpanded={isExpanded}
-          dimension="height"
-          mode="scroll-height"
-        >
+        <Collapsible isExpanded={isExpanded} dimension="height">
           <StyledAccordionContent>
             <StyledWorkspaceList>
               {workspaces.map((workspace) => (
@@ -123,8 +119,8 @@ export const SettingsAdminWorkspacesByHealthAccordion = ({
               ))}
             </StyledWorkspaceList>
           </StyledAccordionContent>
-        </AnimatedExpandableContainer>
+        </Collapsible>
       )}
-    </Card>
+    </Card.Root>
   );
 };

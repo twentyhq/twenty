@@ -11,7 +11,7 @@ export const getFirefliesWebhookSecret = ():
     return {
       success: false,
       error:
-        'FIREFLIES_WEBHOOK_SECRET application variable is not set. Set it in Twenty Fireflies app settings, then configure the same value on the Fireflies side when registering the webhook URL.',
+        'FIREFLIES_WEBHOOK_SECRET application variable is not set. Set it in Fireflies app settings, then configure the same value on the Fireflies side when registering the webhook URL.',
     };
   }
 

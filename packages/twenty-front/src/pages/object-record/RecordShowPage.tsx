@@ -1,85 +1,78 @@
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  FeatureFlagKey,
+} from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 
-import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
-import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
-import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
-import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
-import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
-import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
-import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
-import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
-import { RecordShowPageTitle } from '~/pages/object-record/RecordShowPageTitle';
+import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPage';
+import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
+import {
+  type RecordShowPageParameters,
+  RecordShowPageContent,
+} from '~/pages/object-record/RecordShowPageContent';
 
 export const RecordShowPage = () => {
-  const isLayoutCustomizationModeEnabled = useAtomStateValue(
-    isLayoutCustomizationModeEnabledState,
+  const parameters = useParams<RecordShowPageParameters>();
+  const workspaceSurface = useWorkspaceSurface();
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
   );
 
-  const parameters = useParams<{
-    objectNameSingular: string;
-    objectRecordId: string;
-  }>();
+  const isInSidePanel = workspaceSurface.type === 'side-panel';
+  const isRouteObjectMetadataAvailable =
+    isDefined(parameters.objectNameSingular) &&
+    objectMetadataItems.some(
+      (objectMetadataItem) =>
+        objectMetadataItem.nameSingular === parameters.objectNameSingular,
+    );
 
-  const { objectNameSingular, objectRecordId } = useRecordShowPage(
-    parameters.objectNameSingular ?? '',
-    parameters.objectRecordId ?? '',
-  );
+  if (isInSidePanel && !isRouteObjectMetadataAvailable) {
+    return <WorkspaceRouteUnavailable />;
+  }
 
-  const recordShowComponentInstanceId =
-    computeRecordShowComponentInstanceId(objectRecordId);
+  if (
+    parameters.objectNameSingular === CoreObjectNameSingular.AgentChatThread &&
+    isDefined(parameters.objectRecordId)
+  ) {
+    // A chat's record page is the chat page, on its own route
+    if (!isInSidePanel) {
+      return (
+        <Navigate
+          replace
+          to={getAppPath(AppPath.AiChat, {
+            threadId: parameters.objectRecordId,
+          })}
+        />
+      );
+    }
 
-  return (
-    <RecordComponentInstanceContextsWrapper
-      componentInstanceId={recordShowComponentInstanceId}
-    >
-      <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
-      >
-        <CommandMenuComponentInstanceContext.Provider
-          value={{ instanceId: recordShowComponentInstanceId }}
-        >
-          <RecordShowPageTitle
-            objectNameSingular={objectNameSingular}
-            objectRecordId={objectRecordId}
-          />
-          <PageCardLayout
-            header={
-              <RecordShowPageHeader
-                objectNameSingular={objectNameSingular}
-                objectRecordId={objectRecordId}
-              >
-                <RecordShowCommandMenu />
-                {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
-              </RecordShowPageHeader>
-            }
-          >
-            <TimelineActivityContext.Provider
-              value={{
-                recordId: objectRecordId,
-              }}
-            >
-              <PageLayoutRecordPageRenderer
-                targetRecordIdentifier={{
-                  id: objectRecordId,
-                  targetObjectNameSingular: objectNameSingular,
-                }}
-                isInSidePanel={false}
-              />
-              <RecordShowPageSSESubscribeEffect
-                objectNameSingular={objectNameSingular}
-                recordId={objectRecordId}
-              />
-            </TimelineActivityContext.Provider>
-          </PageCardLayout>
-        </CommandMenuComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
-    </RecordComponentInstanceContextsWrapper>
-  );
+    return <AiChatThreadPageContent threadId={parameters.objectRecordId} />;
+  }
+
+  if (
+    isWorkspaceWorkflowVersionRouteHidden({
+      objectNameSingular: parameters.objectNameSingular,
+      isWorkflowCoreIndexPageEnabled,
+    })
+  ) {
+    return <WorkspaceRouteUnavailable />;
+  }
+
+  const CoreObjectShowPage = isWorkflowCoreIndexPageEnabled
+    ? findCoreObjectShowPage(parameters.objectNameSingular)
+    : undefined;
+
+  if (isDefined(CoreObjectShowPage) && isDefined(parameters.objectRecordId)) {
+    return <CoreObjectShowPage objectRecordId={parameters.objectRecordId} />;
+  }
+
+  return <RecordShowPageContent parameters={parameters} />;
 };

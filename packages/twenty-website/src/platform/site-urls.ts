@@ -1,5 +1,4 @@
-// Every external destination the site links to, in one place. Sections and
-// data files never inline these.
+// Sections and data files never inline external URLs.
 export const SITE_URLS: Record<
   | 'appWelcome'
   | 'calBooking'
@@ -8,6 +7,8 @@ export const SITE_URLS: Record<
   | 'docsDevelopers'
   | 'docsGettingStarted'
   | 'docsMcp'
+  | 'docsSelfHost'
+  | 'docsSelfHostLicense'
   | 'docsUserGuide'
   | 'github'
   | 'linkedin'
@@ -22,6 +23,10 @@ export const SITE_URLS: Record<
   docsDevelopers: 'https://docs.twenty.com/developers/introduction',
   docsGettingStarted: 'https://docs.twenty.com/getting-started/introduction',
   docsMcp: 'https://docs.twenty.com/user-guide/ai/capabilities/mcp',
+  docsSelfHost:
+    'https://docs.twenty.com/developers/self-host/capabilities/docker-compose',
+  docsSelfHostLicense:
+    'https://docs.twenty.com/user-guide/billing/capabilities/pricing-plans#get-an-organization-key',
   docsUserGuide: 'https://docs.twenty.com/user-guide/introduction',
   github: 'https://github.com/twentyhq/twenty',
   linkedin: 'https://www.linkedin.com/company/twenty',

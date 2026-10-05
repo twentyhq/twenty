@@ -7,7 +7,7 @@ import {
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
@@ -240,7 +240,7 @@ describe('Code step workflow with PREBUILT logic function (e2e)', () => {
   });
 
   it('flips the underlying logic function to PREBUILT on workflow activation', async () => {
-    const findLogicFunctionResponse = await makeMetadataAPIRequest({
+    const findLogicFunctionResponse = await makeMetadataApiRequest({
       query: gql`
         query FindOneLogicFunction($input: LogicFunctionIdInput!) {
           findOneLogicFunction(input: $input) {

@@ -1,11 +1,13 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownCleanupEffect } from '@/ui/layout/dropdown/components/DropdownCleanupEffect';
 
 import { AdvancedFilterRootRecordFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRootRecordFilterGroup';
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { AdvancedFilterChip } from '@/views/advanced-filter-chip/components/AdvancedFilterChip';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { getViewBarAdvancedFilterDropdownId } from '@/views/utils/getViewBarAdvancedFilterDropdownId';
 import { isDefined } from 'twenty-shared/utils';
 
 export const AdvancedFilterDropdownButton = () => {
@@ -15,6 +17,8 @@ export const AdvancedFilterDropdownButton = () => {
 
   const { setAdvancedFilterDropdownStates } =
     useSetAdvancedFilterDropdownStates();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+  const dropdownId = getViewBarAdvancedFilterDropdownId(recordIndexId);
 
   const handleOpenAdvancedFilterDropdown = () => {
     setAdvancedFilterDropdownStates();
@@ -25,13 +29,16 @@ export const AdvancedFilterDropdownButton = () => {
   }
 
   return (
-    <Dropdown
-      dropdownId={ViewBarFilterDropdownIds.ADVANCED}
-      clickableComponent={<AdvancedFilterChip />}
-      dropdownComponents={<AdvancedFilterRootRecordFilterGroup />}
-      dropdownOffset={{ y: 8, x: 0 }}
-      dropdownPlacement="bottom-start"
-      onOpen={handleOpenAdvancedFilterDropdown}
-    />
+    <>
+      <DropdownCleanupEffect dropdownId={dropdownId} />
+      <Dropdown
+        dropdownId={dropdownId}
+        clickableComponent={<AdvancedFilterChip />}
+        dropdownComponents={<AdvancedFilterRootRecordFilterGroup />}
+        dropdownOffset={{ y: 8, x: 0 }}
+        dropdownPlacement="bottom-start"
+        onOpen={handleOpenAdvancedFilterDropdown}
+      />
+    </>
   );
 };

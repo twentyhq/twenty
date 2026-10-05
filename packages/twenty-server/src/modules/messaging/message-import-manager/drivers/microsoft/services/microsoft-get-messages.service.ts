@@ -9,9 +9,9 @@ import { MessageDirection } from 'src/modules/messaging/common/enums/message-dir
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 import { type MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
-import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { buildReplyToParticipants } from 'src/modules/messaging/message-import-manager/utils/build-reply-to-participants.util';
-import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
+import { extractMessageTextWithoutQuotedHistory } from 'src/modules/messaging/message-import-manager/utils/extract-message-text-without-quoted-history.util';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse-email-address.util';
 
@@ -76,6 +76,10 @@ export class MicrosoftGetMessagesService {
 
     const messages = parsedResponses.map((response) => {
       if ('error' in response) {
+        if (response.error.statusCode === 404) {
+          return undefined;
+        }
+
         throw new MicrosoftImportDriverException(
           response.error.message,
           response.error.code,
@@ -139,7 +143,7 @@ export class MicrosoftGetMessagesService {
           : []),
       ];
 
-      const text = extractMessageBodyText(
+      const text = extractMessageTextWithoutQuotedHistory(
         response.body?.contentType === 'text'
           ? { text: response.body?.content }
           : { html: response.body?.content },

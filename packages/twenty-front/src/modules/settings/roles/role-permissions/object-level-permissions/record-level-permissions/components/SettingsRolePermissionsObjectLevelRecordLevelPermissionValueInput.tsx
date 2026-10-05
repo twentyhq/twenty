@@ -6,7 +6,7 @@ import { useContext, useMemo } from 'react';
 import { FieldMetadataType, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconEraser } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { type JsonValue } from 'type-fest';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
@@ -22,10 +22,13 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
-import { createRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
+import { type RLSDynamicValue } from '@/object-record/record-filter/types/RecordFilter';
+import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
+import { SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
+import { RecordLevelPermissionVariablePickerContext } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/contexts/RecordLevelPermissionVariablePickerContext';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: stretch;
@@ -98,7 +101,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
   ({
     recordFilterId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInputProps) => {
-    const { theme } = useContext(ThemeContext);
+    const theme = useTheme();
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
     const currentRecordFilters = useAtomComponentStateValue(
@@ -149,11 +152,12 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
 
         if (
           isDefined(dynamicValue.workspaceMemberSubFieldName) &&
+          isValidSubFieldName(dynamicValue.workspaceMemberSubFieldName) &&
           isCompositeFieldType(workspaceMemberField.type)
         ) {
           const subFieldLabel = getCompositeSubFieldLabel(
-            workspaceMemberField.type as CompositeFieldType,
-            dynamicValue.workspaceMemberSubFieldName as any,
+            workspaceMemberField.type,
+            dynamicValue.workspaceMemberSubFieldName,
           );
 
           return subFieldLabel ? `${baseLabel} / ${subFieldLabel}` : baseLabel;
@@ -168,10 +172,10 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
       );
     }, [dynamicValue, workspaceMemberMetadataItem?.fields]);
 
-    const handleSelectDynamicValue = (
-      workspaceMemberFieldMetadataId: string,
-      workspaceMemberSubFieldName?: string | null,
-    ) => {
+    const handleSelectDynamicValue = ({
+      workspaceMemberFieldMetadataId,
+      workspaceMemberSubFieldName,
+    }: RLSDynamicValue) => {
       if (!recordFilter) {
         return;
       }
@@ -208,30 +212,27 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
         : 'Me';
 
       return (
-        <>
-          <StyledContainer>
+        <StyledContainer>
+          <Tooltip
+            content={fullLabel}
+            delay={TooltipDelay.shortDelay}
+            side="bottom"
+            positionMethod="fixed"
+          >
             <StyledReadOnlyInput id={tooltipId}>
               <StyledMeText>{t`Me`}</StyledMeText>
               {isDefined(workspaceMemberFieldLabel) && (
                 <StyledFieldLabel>{` / ${workspaceMemberFieldLabel}`}</StyledFieldLabel>
               )}
             </StyledReadOnlyInput>
-            <StyledIconContainer
-              onClick={handleResetToStaticValue}
-              aria-label={t`Reset to static value`}
-            >
-              <IconEraser size={theme.icon.size.sm} />
-            </StyledIconContainer>
-          </StyledContainer>
-          <AppTooltip
-            anchorSelect={`#${tooltipId}`}
-            content={fullLabel}
-            delay={TooltipDelay.shortDelay}
-            noArrow
-            place="bottom"
-            positionStrategy="fixed"
-          />
-        </>
+          </Tooltip>
+          <StyledIconContainer
+            onClick={handleResetToStaticValue}
+            aria-label={t`Reset to static value`}
+          >
+            <IconEraser size={theme.icon.size.sm} />
+          </StyledIconContainer>
+        </StyledContainer>
       );
     }
 
@@ -254,12 +255,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
 
       applyObjectFilterDropdownFilterValue(valueToUpsert);
     };
-
-    const RecordLevelPermissionPicker =
-      createRecordLevelPermissionVariablePicker(
-        recordFilterId,
-        handleSelectDynamicValue,
-      );
 
     let fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
       field: {
@@ -305,30 +300,42 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
 
       return (
         <StyledContainer>
-          <StyledFormFieldInputWrapper>
-            <FormMultiSelectFieldInput
-              label=""
-              defaultValue={formattedValue}
-              onChange={handleChange}
-              options={fieldMetadataItem?.options ?? []}
-              VariablePicker={RecordLevelPermissionPicker}
-              dropdownWidth={200}
-            />
-          </StyledFormFieldInputWrapper>
+          <RecordLevelPermissionVariablePickerContext.Provider
+            value={{ recordFilterId, onSelect: handleSelectDynamicValue }}
+          >
+            <StyledFormFieldInputWrapper>
+              <FormMultiSelectFieldInput
+                label=""
+                defaultValue={formattedValue}
+                onChange={handleChange}
+                options={fieldMetadataItem?.options ?? []}
+                VariablePicker={
+                  SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker
+                }
+                dropdownWidth={200}
+              />
+            </StyledFormFieldInputWrapper>
+          </RecordLevelPermissionVariablePickerContext.Provider>
         </StyledContainer>
       );
     }
 
     return (
       <StyledContainer>
-        <StyledFormFieldInputWrapper>
-          <FormFieldInput
-            field={fieldDefinition}
-            defaultValue={recordFilter.value}
-            onChange={handleChange}
-            VariablePicker={RecordLevelPermissionPicker}
-          />
-        </StyledFormFieldInputWrapper>
+        <RecordLevelPermissionVariablePickerContext.Provider
+          value={{ recordFilterId, onSelect: handleSelectDynamicValue }}
+        >
+          <StyledFormFieldInputWrapper>
+            <FormFieldInput
+              field={fieldDefinition}
+              defaultValue={recordFilter.value}
+              onChange={handleChange}
+              VariablePicker={
+                SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker
+              }
+            />
+          </StyledFormFieldInputWrapper>
+        </RecordLevelPermissionVariablePickerContext.Provider>
       </StyledContainer>
     );
   };

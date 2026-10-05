@@ -99,6 +99,14 @@
       },
       "dependsOn": ["^build"]
     },
+    "knip": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "{workspaceRoot}/knip.json"],
+      "options": {
+        "command": "knip --workspace {projectRoot}"
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "cache": true,
@@ -112,16 +120,17 @@
       "options": {
         "jestConfig": "{projectRoot}/jest.config.mjs",
         "silent": true,
-        "coverage": true,
         "coverageReporters": ["text-summary"],
         "cacheDirectory": "../../.cache/jest/{projectRoot}"
       },
       "configurations": {
         "ci": {
           "ci": true,
-          "maxWorkers": 1
+          "maxWorkers": 1,
+          "coverage": true
         },
         "coverage": {
+          "coverage": true,
           "coverageReporters": ["lcov", "text"]
         },
         "watch": {

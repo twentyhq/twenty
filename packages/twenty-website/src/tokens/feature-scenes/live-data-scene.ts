@@ -32,7 +32,7 @@ export const LIVE_DATA_SCENE = {
     filterPressedWash: 'rgba(25, 97, 237, 0.08)',
     filterHoverWash: 'rgba(25, 97, 237, 0.06)',
     cursorShadow: CURSOR_GLYPH_SHADOW,
-    // The status tag's edited (purple) state inside the table.
+    // The status tag's resting (green) and edited (purple) states in the table.
     tagGreen: '#18794e',
     tagGreenSurface: '#ddf3e4',
     tagPurple: '#793aaf',

@@ -75,6 +75,7 @@ const METADATA_QUERY = `
             isUIEditable
             isNullable
             isUnique
+            isSearchable
             createdAt
             updatedAt
             defaultValue

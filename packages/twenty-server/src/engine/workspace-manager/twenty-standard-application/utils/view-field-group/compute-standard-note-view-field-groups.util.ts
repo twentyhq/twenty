@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import {
   createStandardViewFieldGroupFlatMetadata,
@@ -14,19 +16,10 @@ export const computeStandardNoteViewFieldGroups = (
       context: {
         viewName: 'noteRecordPageFields',
         viewFieldGroupName: 'general',
-        name: 'General',
+        name: i18nLabel(
+          msg({ message: `General`, context: 'viewFieldGroup.name' }),
+        ),
         position: 0,
-        isVisible: true,
-      },
-    }),
-    noteRecordPageFieldsSystem: createStandardViewFieldGroupFlatMetadata({
-      ...args,
-      objectName: 'note',
-      context: {
-        viewName: 'noteRecordPageFields',
-        viewFieldGroupName: 'system',
-        name: 'System',
-        position: 1,
         isVisible: true,
       },
     }),

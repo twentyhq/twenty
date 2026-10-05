@@ -11,7 +11,7 @@ import { renderResponseTypes } from '../render/responseTypes/renderResponseTypes
 import { renderSchema } from '../render/schema/renderSchema';
 import { renderTypeGuards } from '../render/typeGuards/renderTypeGuards';
 import { renderTypeMap } from '../render/typeMap/renderTypeMap';
-import { RUNTIME_TEMPLATE_FILES } from '../runtime-templates';
+import { RUNTIME_TEMPLATE_FILES } from '../../runtime-templates';
 
 const schemaTypesFile = 'schema.ts';
 const schemaGqlFile = 'schema.graphql';

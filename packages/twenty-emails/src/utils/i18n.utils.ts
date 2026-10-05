@@ -14,6 +14,7 @@ import { messages as fiMessages } from '@/locales/generated/fi-FI';
 import { messages as frMessages } from '@/locales/generated/fr-FR';
 import { messages as heMessages } from '@/locales/generated/he-IL';
 import { messages as huMessages } from '@/locales/generated/hu-HU';
+import { messages as hyMessages } from '@/locales/generated/hy-AM';
 import { messages as itMessages } from '@/locales/generated/it-IT';
 import { messages as jaMessages } from '@/locales/generated/ja-JP';
 import { messages as koMessages } from '@/locales/generated/ko-KR';
@@ -25,10 +26,12 @@ import { messages as ptBRMessages } from '@/locales/generated/pt-BR';
 import { messages as ptPTMessages } from '@/locales/generated/pt-PT';
 import { messages as roMessages } from '@/locales/generated/ro-RO';
 import { messages as ruMessages } from '@/locales/generated/ru-RU';
-import { messages as srMessages } from '@/locales/generated/sr-Cyrl';
+import { messages as srCyrlMessages } from '@/locales/generated/sr-Cyrl';
+import { messages as srLatnMessages } from '@/locales/generated/sr-Latn';
 import { messages as svMessages } from '@/locales/generated/sv-SE';
 import { messages as trMessages } from '@/locales/generated/tr-TR';
 import { messages as ukMessages } from '@/locales/generated/uk-UA';
+import { messages as uzMessages } from '@/locales/generated/uz-UZ';
 import { messages as viMessages } from '@/locales/generated/vi-VN';
 import { messages as zhHansMessages } from '@/locales/generated/zh-CN';
 import { messages as zhHantMessages } from '@/locales/generated/zh-TW';
@@ -48,6 +51,7 @@ const messages: Record<keyof typeof APP_LOCALES, Messages> = {
   'fr-FR': frMessages,
   'he-IL': heMessages,
   'hu-HU': huMessages,
+  'hy-AM': hyMessages,
   'it-IT': itMessages,
   'ja-JP': jaMessages,
   'ko-KR': koMessages,
@@ -58,10 +62,12 @@ const messages: Record<keyof typeof APP_LOCALES, Messages> = {
   'pt-PT': ptPTMessages,
   'ro-RO': roMessages,
   'ru-RU': ruMessages,
-  'sr-Cyrl': srMessages,
+  'sr-Cyrl': srCyrlMessages,
+  'sr-Latn': srLatnMessages,
   'sv-SE': svMessages,
   'tr-TR': trMessages,
   'uk-UA': ukMessages,
+  'uz-UZ': uzMessages,
   'vi-VN': viMessages,
   'zh-CN': zhHansMessages,
   'zh-TW': zhHantMessages,

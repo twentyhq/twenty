@@ -7,4 +7,5 @@ export type SlackAssistantRequestRecord = {
   slackMessageTimestamp?: string;
   slackUserId?: string;
   requestText?: string;
+  updatedAt?: string;
 };

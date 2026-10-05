@@ -7,11 +7,11 @@ import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 
 import { useLingui } from '@lingui/react/macro';
+import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTableRows = styled.div`
@@ -41,7 +41,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
   }
 
   return (
-    <Section>
+    <Section.Root>
       <Table>
         <SettingsConnectedAccountsTableHeader />
         <StyledTableRows>
@@ -54,16 +54,15 @@ export const SettingsAccountsConnectedAccountsListCard = ({
         </StyledTableRows>
       </Table>
       <StyledAddAccountSectionContainer>
-        <Section>
+        <Section.Root>
           <Button
-            Icon={IconPlus}
-            title={t`Add account`}
-            variant="secondary"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={() => navigateSettings(SettingsPath.NewAccount)}
-          />
-        </Section>
+            variant="outline"
+          >{t`Add account`}</Button>
+        </Section.Root>
       </StyledAddAccountSectionContainer>
-    </Section>
+    </Section.Root>
   );
 };

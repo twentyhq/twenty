@@ -1,3 +1,4 @@
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { Module } from '@nestjs/common';
 
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
@@ -42,10 +43,12 @@ import { WorkflowVersionRestoreOnePreQueryHook } from 'src/modules/workflow/comm
 import { WorkflowVersionUpdateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-many.pre-query.hook';
 import { WorkflowVersionUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-one.pre-query.hook';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
+import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
+import { WorkflowVersionQueryValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service';
 
 @Module({
   imports: [
+    WorkflowCoreModule,
     LogicFunctionModule,
     RecordPositionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
@@ -54,6 +57,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     CommandMenuItemModule,
     FeatureFlagModule,
     WorkflowVersionCoreModule,
+    WorkflowMetadataReadModule,
   ],
   providers: [
     WorkflowCreateOnePreQueryHook,
@@ -83,7 +87,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     WorkflowVersionRestoreManyPreQueryHook,
     WorkflowCreateOnePostQueryHook,
     WorkflowCreateManyPostQueryHook,
-    WorkflowVersionValidationWorkspaceService,
+    WorkflowVersionQueryValidationWorkspaceService,
     WorkflowCommonWorkspaceService,
     WorkflowDeleteManyPostQueryHook,
     WorkflowDeleteOnePostQueryHook,

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { t } from '@lingui/core/macro';
 import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export type PlansTagsProps = {
   plan: BillingPlanKey;
@@ -23,8 +23,8 @@ export const PlansTags = ({ plan, isTrialPeriod = false }: PlansTagsProps) => {
 
   return (
     <StyledTagsWrapper>
-      <Tag color={planDescriptor.color} text={planDescriptor.label} />
-      {isTrialPeriod && <Tag color="blue" text={t`Trial`} preventShrink />}
+      <Tag color={planDescriptor.color}>{planDescriptor.label}</Tag>
+      {isTrialPeriod && <Tag color="blue" preventShrink>{t`Trial`}</Tag>}
     </StyledTagsWrapper>
   );
 };

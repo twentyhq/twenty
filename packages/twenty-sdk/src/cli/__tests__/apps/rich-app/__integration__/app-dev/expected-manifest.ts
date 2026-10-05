@@ -1,18 +1,46 @@
+import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { FieldType } from '@/sdk/define';
 import type { Manifest } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   FieldMetadataType,
+  HTTPMethod,
   NavigationMenuItemType,
   PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
   RelationOnDeleteAction,
   RelationType,
   ViewCalendarLayout,
   ViewType,
+  WidgetType,
 } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
+  timelineActivityTypes: [
+    {
+      universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
+      name: 'postCardCreated',
+      label: 'created a post card',
+      icon: 'IconMail',
+      frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+    },
+    {
+      universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+      name: 'postCardLinked',
+      label: 'received a post card',
+      icon: 'IconMail',
+      emit: {
+        on: 'linked',
+        objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+        through: {
+          relationFieldUniversalIdentifier:
+            'a1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+      },
+      frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+    },
+  ],
   commandMenuItems: [],
   permissionFlags: [],
   pageLayouts: [],
@@ -23,22 +51,12 @@ export const EXPECTED_MANIFEST: Manifest = {
       title: 'Extra Tab',
       position: 1000,
       icon: 'IconLayout',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
-        {
-          universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000011',
-          title: 'Extra Widget',
-          type: 'FRONT_COMPONENT',
-          configuration: {
-            configurationType: 'FRONT_COMPONENT',
-            frontComponentUniversalIdentifier:
-              '370ae182-743f-4ecb-b625-7ac48e21f0e5',
-          },
-        },
         {
           universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000012',
           title: 'Total Priority',
-          type: 'GRAPH',
+          type: WidgetType.GRAPH,
           objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
           configuration: {
             configurationType: 'AGGREGATE_CHART',
@@ -47,7 +65,38 @@ export const EXPECTED_MANIFEST: Manifest = {
             aggregateOperation: AggregateOperations.SUM,
           },
         },
+        {
+          universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000011',
+          title: 'Extra Widget',
+          type: WidgetType.FRONT_COMPONENT,
+          heightBehavior:
+            PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              '370ae182-743f-4ecb-b625-7ac48e21f0e5',
+          },
+        },
       ],
+    },
+  ],
+  pageLayoutWidgets: [
+    {
+      universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000013',
+      pageLayoutTabUniversalIdentifier:
+        STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.home
+          .universalIdentifier,
+      title: 'Extra Home Widget',
+      type: WidgetType.FRONT_COMPONENT,
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 1000,
+      },
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          '370ae182-743f-4ecb-b625-7ac48e21f0e5',
+      },
     },
   ],
   publicAssets: [
@@ -59,6 +108,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
   ],
   skills: [],
+  settingsMenuItems: [],
   agents: [],
   application: {
     applicationVariables: {
@@ -232,7 +282,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     galleryImages: [],
     defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
-    yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
+    yarnLockChecksum: '375f53c8fcdc373d081ba4523f7bb3b4',
     packageJsonChecksum: '2851d0e2c3621a57e1fd103a245b6fde',
     requiredServerVersionRange: null,
   },
@@ -297,7 +347,6 @@ export const EXPECTED_MANIFEST: Manifest = {
   ],
 
   fields: [
-    // User-defined relation and field definitions
     {
       label: 'Post Card',
       name: 'postCard',
@@ -325,6 +374,8 @@ export const EXPECTED_MANIFEST: Manifest = {
       type: FieldType.RELATION,
       universalIdentifier: 'a1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
       universalSettings: {
+        junctionTargetFieldUniversalIdentifier:
+          'a1a2b3c4-0004-4a7b-8c9d-0e1f2a3b4c5d',
         relationType: RelationType.ONE_TO_MANY,
       },
     },
@@ -404,7 +455,6 @@ export const EXPECTED_MANIFEST: Manifest = {
         relationType: RelationType.MANY_TO_ONE,
       },
     },
-    // Field on standard company object
     {
       defaultValue: false,
       description: 'Whether the company can receive postcards',
@@ -652,7 +702,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       description: 'Default role for function Twenty client',
       fieldPermissions: [
         {
-          universalIdentifier: 'dbc86ced-bd2c-5874-93f1-1f72c5111991',
+          universalIdentifier: 'd0b74fcb-3993-5ff9-bbd6-d76ea9b6493f',
           canReadFieldValue: false,
           canUpdateFieldValue: false,
           fieldUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
@@ -662,12 +712,20 @@ export const EXPECTED_MANIFEST: Manifest = {
       label: 'Default function role',
       objectPermissions: [
         {
-          universalIdentifier: '99c7c326-04ca-5c8b-ad11-da6c5b819813',
+          universalIdentifier: 'fab82874-880a-556f-93d9-626610bb0770',
           canDestroyObjectRecords: false,
           canReadObjectRecords: true,
           canSoftDeleteObjectRecords: false,
           canUpdateObjectRecords: true,
           objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+        },
+        {
+          universalIdentifier: '518fbc62-c198-5e31-8df8-c79402aa84b4',
+          canDestroyObjectRecords: false,
+          canReadObjectRecords: true,
+          canSoftDeleteObjectRecords: false,
+          canUpdateObjectRecords: true,
+          objectUniversalIdentifier: '20202020-6736-4337-b5c4-8b39fae325a5',
         },
       ],
       rowLevelPermissionPredicateGroups: [],
@@ -859,7 +917,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceHandlerPath: 'src/root.function.ts',
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
-        httpMethod: 'GET',
+        httpMethod: HTTPMethod.GET,
         isAuthRequired: false,
         path: '/root',
       },
@@ -873,7 +931,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceHandlerPath: 'src/logic-functions/greeting.function.ts',
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
-        httpMethod: 'GET',
+        httpMethod: HTTPMethod.GET,
         isAuthRequired: false,
         path: '/greet',
       },
@@ -965,7 +1023,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       timeoutSeconds: 2,
       httpRouteTriggerSettings: {
         forwardedRequestHeaders: ['signature'],
-        httpMethod: 'GET',
+        httpMethod: HTTPMethod.GET,
         isAuthRequired: false,
         path: '/post-card/create',
       },

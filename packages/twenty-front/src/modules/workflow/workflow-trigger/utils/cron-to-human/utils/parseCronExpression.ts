@@ -1,4 +1,4 @@
-import { type CronExpressionParts } from '@/workflow/workflow-trigger/utils/cron-to-human/types/cronExpressionParts';
+import { type CronExpressionParts } from '@/workflow/workflow-trigger/utils/cron-to-human/types/CronExpressionParts';
 import { CronExpressionParser } from 'cron-parser';
 import { isDefined } from 'twenty-shared/utils';
 import { normalizeWhitespace } from './normalizeWhitespace';
@@ -25,7 +25,6 @@ export const parseCronExpression = (
   try {
     CronExpressionParser.parse(normalized, { tz: 'UTC' });
 
-    // Handle different cron formats that cron-parser accepts
     if (parts.length === 4) {
       // Reduced format: hour day month dayOfWeek (minute defaults to 0)
       return {

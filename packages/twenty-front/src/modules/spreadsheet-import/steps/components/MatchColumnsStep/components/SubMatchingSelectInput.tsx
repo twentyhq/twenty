@@ -1,72 +1,70 @@
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useMemo, useRef, useState } from 'react';
-import { type TagColor } from 'twenty-ui/data-display';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelectTag } from 'twenty-ui/navigation';
+import { useLingui } from '@lingui/react/macro';
+import { createElement, useState } from 'react';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
+import { type TagColor, Tag } from 'twenty-ui/primitives/data-display';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-interface SubMatchingSelectInputProps {
+type SubMatchingSelectInputProps = {
   onOptionSelected: (selectedOption: SelectOption) => void;
-  options: SelectOption[];
-  defaultOption?: SelectOption;
-}
+  options: readonly SelectOption[];
+  selectedOption?: SelectOption;
+};
 
 export const SubMatchingSelectInput = ({
   onOptionSelected,
   options,
-  defaultOption,
+  selectedOption,
 }: SubMatchingSelectInputProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   const [searchFilter, setSearchFilter] = useState('');
-  const [selectedOption, setSelectedOption] = useState<
-    SelectOption | undefined
-  >(defaultOption);
-
-  const optionsToSelect = useMemo(() => {
-    const searchTerm = normalizeSearchText(searchFilter);
-    return options.filter((option) => {
-      return (
-        option.value !== selectedOption?.value &&
-        normalizeSearchText(option.label).includes(searchTerm)
-      );
-    });
-  }, [options, searchFilter, selectedOption?.value]);
-
-  const optionsInDropDown = useMemo(
-    () =>
-      selectedOption ? [selectedOption, ...optionsToSelect] : optionsToSelect,
-    [optionsToSelect, selectedOption],
+  const { t } = useLingui();
+  const searchTerm = normalizeSearchText(searchFilter);
+  const matchingOptions = options.filter((option) =>
+    normalizeSearchText(option.label).includes(searchTerm),
   );
-
-  const handleOptionChange = (option: SelectOption) => {
-    setSelectedOption(option);
-    onOptionSelected(option);
-  };
+  const optionsInDropdown = [
+    ...matchingOptions.filter(
+      (option) => option.value === selectedOption?.value,
+    ),
+    ...matchingOptions.filter(
+      (option) => option.value !== selectedOption?.value,
+    ),
+  ];
 
   return (
-    <DropdownContent ref={containerRef}>
-      <DropdownMenuSearchInput
+    <>
+      <Dropdown.Search
         value={searchFilter}
-        onChange={(e) => setSearchFilter(e.target.value)}
-        autoFocus
+        onValueChange={setSearchFilter}
+        placeholder={t`Search`}
+        aria-label={t`Search`}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {optionsInDropDown.map((option) => (
-          <MenuItemSelectTag
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable>
+        {optionsInDropdown.map((option) => (
+          <Dropdown.OptionItem
             key={option.value}
+            onSelect={() => onOptionSelected(option)}
             selected={selectedOption?.value === option.value}
-            text={option.label}
-            color={(option.color as TagColor) ?? 'transparent'}
-            onClick={() => handleOptionChange(option)}
-            LeftIcon={option.Icon}
-          />
+            disabled={option.disabled}
+          >
+            <Tag
+              color={(option.color as TagColor) ?? 'transparent'}
+              borderStyle="dashed"
+              variant="soft"
+              startIcon={
+                isDefined(option.Icon) ? createElement(option.Icon) : undefined
+              }
+            >
+              {option.label}
+            </Tag>
+          </Dropdown.OptionItem>
         ))}
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+      </Dropdown.Section>
+      {!isNonEmptyArray(optionsInDropdown) && (
+        <Dropdown.Empty>{t`No options found`}</Dropdown.Empty>
+      )}
+    </>
   );
 };

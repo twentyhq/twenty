@@ -1,9 +1,16 @@
 import { faker } from '@faker-js/faker';
 import { type EachTestingContext } from 'twenty-shared/testing';
-import { FieldMetadataType, NumberDataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  NumberDataType,
+  PageLayoutWidgetVerticalListHeightBehavior,
+} from 'twenty-shared/types';
 
 import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
-import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
+import {
+  computeMetadataSchemaComponents,
+  computeSchemaComponents,
+} from 'src/engine/core-modules/open-api/utils/components.utils';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -67,26 +74,26 @@ describe('computeSchemaComponents', () => {
     "description": "Object description",
     "example": {
       "fieldCurrency": {
-        "amountMicros": "284000000",
+        "amountMicros": "773000000",
         "currencyCode": "EUR",
       },
       "fieldEmails": {
         "additionalEmails": null,
-        "primaryEmail": "mina.gutmann9@hotmail.com",
+        "primaryEmail": "nola.considine15@yahoo.com",
       },
       "fieldFullName": {
-        "firstName": "Shad",
-        "lastName": "Osinski",
+        "firstName": "Clint",
+        "lastName": "Bradtke",
       },
       "fieldLinks": {
         "primaryLinkLabel": "",
-        "primaryLinkUrl": "https://narrow-help.net/",
+        "primaryLinkUrl": "https://frivolous-lox.info/",
         "secondaryLinks": [],
       },
       "fieldMultiSelect": [
         "OPTION_1",
       ],
-      "fieldNumber": 346.2151663160047,
+      "fieldNumber": 352.6893054576472,
       "fieldPhones": {
         "additionalPhones": [],
         "primaryPhoneCallingCode": "+33",
@@ -582,26 +589,26 @@ describe('computeSchemaComponents', () => {
     "description": "Object description",
     "example": {
       "fieldCurrency": {
-        "amountMicros": "253000000",
+        "amountMicros": "773000000",
         "currencyCode": "EUR",
       },
       "fieldEmails": {
         "additionalEmails": null,
-        "primaryEmail": "keegan_donnelly96@hotmail.com",
+        "primaryEmail": "nola.considine15@yahoo.com",
       },
       "fieldFullName": {
-        "firstName": "Shad",
-        "lastName": "Jones",
+        "firstName": "Clint",
+        "lastName": "Bradtke",
       },
       "fieldLinks": {
         "primaryLinkLabel": "",
-        "primaryLinkUrl": "https://unlawful-blowgun.biz",
+        "primaryLinkUrl": "https://frivolous-lox.info/",
         "secondaryLinks": [],
       },
       "fieldMultiSelect": [
         "OPTION_1",
       ],
-      "fieldNumber": 692.6302930536448,
+      "fieldNumber": 352.6893054576472,
       "fieldPhones": {
         "additionalPhones": [],
         "primaryPhoneCallingCode": "+33",
@@ -927,5 +934,34 @@ describe('computeSchemaComponents', () => {
         flatFieldMetadataMaps,
       ),
     ).toMatchSnapshot();
+  });
+});
+
+describe('computeMetadataSchemaComponents', () => {
+  it('includes vertical-list height behavior in page layout widget positions', () => {
+    const components = computeMetadataSchemaComponents([
+      {
+        nameSingular: 'pageLayoutWidget',
+        namePlural: 'pageLayoutWidgets',
+      },
+    ]);
+
+    expect(components.PageLayoutWidgetPosition).toMatchObject({
+      oneOf: [
+        expect.any(Object),
+        {
+          properties: {
+            heightBehavior: {
+              type: 'string',
+              enum: [
+                PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT,
+                PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+              ],
+            },
+          },
+        },
+        expect.any(Object),
+      ],
+    });
   });
 });

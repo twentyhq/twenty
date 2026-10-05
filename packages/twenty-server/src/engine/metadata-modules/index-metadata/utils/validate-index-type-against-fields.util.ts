@@ -1,12 +1,11 @@
 import { msg } from '@lingui/core/macro';
 import { GIN_COMPATIBLE_FIELD_TYPES } from 'twenty-shared/constants';
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType, IndexType } from 'twenty-shared/types';
 
 import {
   IndexMetadataException,
   IndexMetadataExceptionCode,
 } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 
 type IndexFieldForValidation = {
   type: FieldMetadataType;

@@ -1,0 +1,1 @@
+export const CAMPAIGN_DELIVERY_CLAIM_TTL_MS = 15 * 60 * 1000;

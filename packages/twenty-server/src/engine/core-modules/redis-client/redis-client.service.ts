@@ -32,6 +32,10 @@ export class RedisClientService implements OnModuleDestroy {
     return this.redisQueueClient;
   }
 
+  getQueuePrefix() {
+    return this.twentyConfigService.get('REDIS_QUEUE_PREFIX');
+  }
+
   getClient() {
     if (!this.redisClient) {
       const redisUrl = this.twentyConfigService.get('REDIS_URL');

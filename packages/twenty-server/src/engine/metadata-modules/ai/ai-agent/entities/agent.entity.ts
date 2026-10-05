@@ -8,9 +8,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-is-system-to-agent-and-workflow-upgrade-command-name.constant';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
-import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/modelConfiguration';
-import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
+import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/model-configuration.type';
+import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
@@ -46,16 +48,23 @@ export class AgentEntity
   @Column({
     nullable: false,
     type: 'varchar',
-    default: AUTO_SELECT_SMART_MODEL_ID,
+    default: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
   })
   modelId: ModelId;
 
-  // Should not be nullable
+  // TODO: make non-nullable
   @Column({ nullable: true, type: 'jsonb', default: { type: 'text' } })
   responseFormat: JsonbProperty<AgentResponseFormat>;
 
   @Column({ default: false })
   isCustom: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ default: false })
+  isSystem: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

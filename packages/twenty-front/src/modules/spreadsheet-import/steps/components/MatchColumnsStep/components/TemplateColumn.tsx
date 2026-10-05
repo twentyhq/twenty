@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { MatchColumnToFieldSelect } from '@/spreadsheet-import/components/MatchColumnToFieldSelect';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
@@ -75,7 +75,7 @@ export const TemplateColumn = ({
       <MatchColumnToFieldSelect
         placeholder={t`Select column...`}
         value={isIgnored ? ignoreValue : selectValue}
-        onChange={(value) => onChange(value?.value as string, column.index)}
+        onChange={(value) => onChange(value.value, column.index)}
         options={selectOptions}
         suggestedOptions={suggestedFieldOptions}
         columnIndex={column.index.toString()}

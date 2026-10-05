@@ -2,26 +2,38 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request, type Response } from 'express';
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/get-auth-exception-rest-status.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
 import { bindDataToRequestObject } from 'src/engine/utils/bind-data-to-request-object.util';
+import { getRequestLocaleFromHeader } from 'src/engine/utils/get-request-locale-from-header.util';
 import {
   handleException,
   handleExceptionAndConvertToGraphQLError,
 } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { type CustomException } from 'src/utils/custom-exception';
+
+const DEAD_SESSION_COOKIE_EXCEPTION_CODES = new Set<string>([
+  AuthExceptionCode.UNAUTHENTICATED,
+  AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+  AuthExceptionCode.FORBIDDEN_EXCEPTION,
+  AuthExceptionCode.USER_NOT_FOUND,
+  AuthExceptionCode.WORKSPACE_NOT_FOUND,
+]);
 
 @Injectable()
 export class MiddlewareService {
@@ -31,19 +43,25 @@ export class MiddlewareService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly jwtWrapperService: JwtWrapperService,
+    private readonly userSessionCookieService: UserSessionCookieService,
   ) {}
 
   public isTokenPresent(request: Request): boolean {
     const token = this.jwtWrapperService.extractJwtFromRequest()(request);
 
-    return !!token;
+    if (token) {
+      return true;
+    }
+
+    return isDefined(
+      this.userSessionCookieService.extractSessionTokenFromRequest(request),
+    );
   }
 
   // oxlint-disable-next-line typescript/no-explicit-any
   public writeRestResponseOnExceptionCaught(res: Response, error: any) {
     const statusCode = this.getStatus(error);
 
-    // capture and handle custom exceptions
     handleException({
       exception: error as CustomException,
       exceptionHandlerService: this.exceptionHandlerService,
@@ -115,16 +133,44 @@ export class MiddlewareService {
     bindDataToRequestObject(data, request, metadataVersion);
   }
 
+  private clearDeadSessionCookie(request: Request, error: unknown) {
+    const isCookieAuthenticated = !isNonEmptyString(
+      this.jwtWrapperService.extractJwtFromRequest()(request),
+    );
+
+    const isDeadCredential =
+      error instanceof AuthException &&
+      DEAD_SESSION_COOKIE_EXCEPTION_CODES.has(error.code);
+
+    if (
+      !isCookieAuthenticated ||
+      !isDeadCredential ||
+      !isDefined(request.res)
+    ) {
+      return;
+    }
+
+    this.userSessionCookieService.clearSessionCookie(request.res);
+  }
+
   public async hydrateGraphqlRequest(request: Request) {
     if (!this.isTokenPresent(request)) {
-      request.locale =
-        (request.headers['x-locale'] as keyof typeof APP_LOCALES) ??
-        SOURCE_LOCALE;
+      request.locale = getRequestLocaleFromHeader(request);
 
       return;
     }
 
-    const data = await this.accessTokenService.validateTokenByRequest(request);
+    let data;
+
+    try {
+      data = await this.accessTokenService.validateTokenByRequest(request);
+    } catch (error) {
+      // Never swallow: continuing unauthenticated yields "Cannot query field" instead of an auth error
+      this.clearDeadSessionCookie(request, error);
+
+      throw error;
+    }
+
     const metadataVersion = data.workspace
       ? await this.getOrSeedMetadataVersion(data.workspace)
       : undefined;

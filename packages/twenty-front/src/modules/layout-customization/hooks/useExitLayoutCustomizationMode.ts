@@ -1,3 +1,5 @@
+import { objectColorsDraftState } from '@/layout-customization/states/objectColorsDraftState';
+import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
@@ -30,6 +32,7 @@ export const useExitLayoutCustomizationMode = () => {
   );
 
   const exitLayoutCustomizationMode = useCallback(() => {
+    store.set(objectColorsDraftState.atom, {});
     const activePageLayoutIds = store.get(
       activeCustomizationPageLayoutIdsState.atom,
     );
@@ -46,6 +49,7 @@ export const useExitLayoutCustomizationMode = () => {
     resetRecordIndexSelection();
     setNavigationMenuItemsDraft(null);
     setSelectedNavigationMenuItemIdInEditMode(null);
+    store.set(navigationMenuItemIdToRenameState.atom, null);
     store.set(commandMenuItemsDraftState.atom, null);
     setIsLayoutCustomizationModeEnabled(false);
     closeSidePanelMenu();

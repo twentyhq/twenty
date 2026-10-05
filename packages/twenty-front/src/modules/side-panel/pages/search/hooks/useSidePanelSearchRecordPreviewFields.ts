@@ -5,9 +5,7 @@ import { useViewOrDefaultView } from '@/views/hooks/useViewOrDefaultView';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-// The preview mirrors the columns of the object's index view, so what you see
-// while searching matches the list view you came from. Columns hidden in that
-// view stay available behind the "More" expander.
+// Mirrors the index view's columns so the preview matches the list view you came from
 export const useSidePanelSearchRecordPreviewFields = (
   objectMetadataItem: EnrichedObjectMetadataItem,
 ): {
@@ -26,7 +24,6 @@ export const useSidePanelSearchRecordPreviewFields = (
     const readableActiveFields = objectMetadataItem.readableFields.filter(
       (fieldMetadata) =>
         isActiveFieldMetadataItem({
-          objectNameSingular: objectMetadataItem.nameSingular,
           fieldMetadata,
         }),
     );

@@ -6,7 +6,7 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 
@@ -35,7 +35,7 @@ describe('noteTargets hooks on note actions', () => {
         filter: { id: { in: noteIds } },
       });
 
-      await makeGraphqlAPIRequest(destroyNotesOperation);
+      await makeGraphqlApiRequest(destroyNotesOperation);
     }
 
     if (noteTargetIds.length > 0) {
@@ -46,7 +46,7 @@ describe('noteTargets hooks on note actions', () => {
         filter: { id: { in: noteTargetIds } },
       });
 
-      await makeGraphqlAPIRequest(destroyNoteTargetsOperation);
+      await makeGraphqlApiRequest(destroyNoteTargetsOperation);
     }
   });
 
@@ -75,7 +75,7 @@ describe('noteTargets hooks on note actions', () => {
       recordId: noteId,
     });
 
-    const deleteResponse = await makeGraphqlAPIRequest(deleteNoteOperation);
+    const deleteResponse = await makeGraphqlApiRequest(deleteNoteOperation);
 
     expect(deleteResponse.body.data.deleteNote).toBeDefined();
     expect(deleteResponse.body.data.deleteNote.deletedAt).not.toBeNull();
@@ -90,7 +90,7 @@ describe('noteTargets hooks on note actions', () => {
       },
     });
 
-    const noteTargetResponse = await makeGraphqlAPIRequest(
+    const noteTargetResponse = await makeGraphqlApiRequest(
       findNoteTargetsOperation,
     );
 
@@ -98,6 +98,81 @@ describe('noteTargets hooks on note actions', () => {
     expect(
       noteTargetResponse.body.data.noteTargets.edges[0].node.deletedAt,
     ).not.toBeNull();
+  });
+
+  it('deleteOne note should leave a noteTarget detached earlier at its own deletion time', async () => {
+    const noteId = randomUUID();
+    const detachedNoteTargetId = randomUUID();
+    const attachedNoteTargetId = randomUUID();
+
+    noteIds.push(noteId);
+    noteTargetIds.push(detachedNoteTargetId, attachedNoteTargetId);
+
+    await createOneOperation({
+      objectMetadataSingularName: 'note',
+      gqlFields: NOTE_GQL_FIELDS,
+      input: { id: noteId, title: 'Test Note with a detached target' },
+    });
+
+    await Promise.all([
+      createOneOperation({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        input: { id: detachedNoteTargetId, noteId },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        input: { id: attachedNoteTargetId, noteId },
+      }),
+    ]);
+
+    const detachResponse = await makeGraphqlApiRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'noteTarget',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        recordId: detachedNoteTargetId,
+      }),
+    );
+    const detachedAt = detachResponse.body.data.deleteNoteTarget.deletedAt;
+
+    expect(detachedAt).not.toBeNull();
+
+    const deleteResponse = await makeGraphqlApiRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'note',
+        gqlFields: NOTE_GQL_FIELDS,
+        recordId: noteId,
+      }),
+    );
+
+    expect(deleteResponse.body.data.deleteNote.deletedAt).not.toBeNull();
+
+    const noteTargetsResponse = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'noteTarget',
+        objectMetadataPluralName: 'noteTargets',
+        gqlFields: NOTE_TARGET_GQL_FIELDS,
+        filter: {
+          id: { in: [detachedNoteTargetId, attachedNoteTargetId] },
+          not: { deletedAt: { is: 'NULL' } },
+        },
+      }),
+    );
+    const deletedAtByNoteTargetId = Object.fromEntries(
+      noteTargetsResponse.body.data.noteTargets.edges.map(
+        ({ node }: { node: { id: string; deletedAt: string } }) => [
+          node.id,
+          node.deletedAt,
+        ],
+      ),
+    );
+
+    expect(deletedAtByNoteTargetId[detachedNoteTargetId]).toBe(detachedAt);
+    expect(deletedAtByNoteTargetId[attachedNoteTargetId]).not.toBeNull();
+    expect(
+      new Date(deletedAtByNoteTargetId[attachedNoteTargetId]).getTime(),
+    ).toBeGreaterThan(new Date(detachedAt).getTime());
   });
 
   it('deleteMany notes should soft delete related noteTargets', async () => {
@@ -142,7 +217,7 @@ describe('noteTargets hooks on note actions', () => {
       filter: { id: { in: [noteId1, noteId2] } },
     });
 
-    const deleteResponse = await makeGraphqlAPIRequest(deleteNotesOperation);
+    const deleteResponse = await makeGraphqlApiRequest(deleteNotesOperation);
 
     expect(deleteResponse.body.data.deleteNotes).toHaveLength(2);
 
@@ -156,7 +231,7 @@ describe('noteTargets hooks on note actions', () => {
       },
     });
 
-    const noteTargetResponse = await makeGraphqlAPIRequest(
+    const noteTargetResponse = await makeGraphqlApiRequest(
       findNoteTargetsOperation,
     );
 
@@ -194,7 +269,7 @@ describe('noteTargets hooks on note actions', () => {
       recordId: noteId,
     });
 
-    await makeGraphqlAPIRequest(deleteNoteOperation);
+    await makeGraphqlApiRequest(deleteNoteOperation);
 
     const restoreNoteOperation = restoreOneOperationFactory({
       objectMetadataSingularName: 'note',
@@ -202,7 +277,7 @@ describe('noteTargets hooks on note actions', () => {
       recordId: noteId,
     });
 
-    const restoreResponse = await makeGraphqlAPIRequest(restoreNoteOperation);
+    const restoreResponse = await makeGraphqlApiRequest(restoreNoteOperation);
 
     expect(restoreResponse.body.data.restoreNote).toBeDefined();
     expect(restoreResponse.body.data.restoreNote.deletedAt).toBeNull();
@@ -214,7 +289,7 @@ describe('noteTargets hooks on note actions', () => {
       filter: { id: { eq: noteTargetId } },
     });
 
-    const noteTargetResponse = await makeGraphqlAPIRequest(
+    const noteTargetResponse = await makeGraphqlApiRequest(
       findNoteTargetsOperation,
     );
 
@@ -266,7 +341,7 @@ describe('noteTargets hooks on note actions', () => {
       filter: { id: { in: [noteId1, noteId2] } },
     });
 
-    await makeGraphqlAPIRequest(deleteNotesOperation);
+    await makeGraphqlApiRequest(deleteNotesOperation);
 
     const restoreNotesOperation = restoreManyOperationFactory({
       objectMetadataSingularName: 'note',
@@ -275,7 +350,7 @@ describe('noteTargets hooks on note actions', () => {
       filter: { id: { in: [noteId1, noteId2] } },
     });
 
-    const restoreResponse = await makeGraphqlAPIRequest(restoreNotesOperation);
+    const restoreResponse = await makeGraphqlApiRequest(restoreNotesOperation);
 
     expect(restoreResponse.body.data.restoreNotes).toHaveLength(2);
 
@@ -286,7 +361,7 @@ describe('noteTargets hooks on note actions', () => {
       filter: { id: { in: [noteTargetId1, noteTargetId2] } },
     });
 
-    const noteTargetResponse = await makeGraphqlAPIRequest(
+    const noteTargetResponse = await makeGraphqlApiRequest(
       findNoteTargetsOperation,
     );
 
@@ -323,7 +398,7 @@ describe('noteTargets hooks on note actions', () => {
       recordId: noteId,
     });
 
-    const destroyResponse = await makeGraphqlAPIRequest(destroyNoteOperation);
+    const destroyResponse = await makeGraphqlApiRequest(destroyNoteOperation);
 
     expect(destroyResponse.body.data.destroyNote).toBeDefined();
 
@@ -334,7 +409,7 @@ describe('noteTargets hooks on note actions', () => {
       filter: { id: { eq: noteTargetId } },
     });
 
-    const noteTargetResponse = await makeGraphqlAPIRequest(
+    const noteTargetResponse = await makeGraphqlApiRequest(
       findNoteTargetsOperation,
     );
 
@@ -382,7 +457,7 @@ describe('noteTargets hooks on note actions', () => {
       filter: { id: { in: [noteId1, noteId2] } },
     });
 
-    const destroyResponse = await makeGraphqlAPIRequest(destroyNotesOperation);
+    const destroyResponse = await makeGraphqlApiRequest(destroyNotesOperation);
 
     expect(destroyResponse.body.data.destroyNotes).toHaveLength(2);
 
@@ -393,7 +468,7 @@ describe('noteTargets hooks on note actions', () => {
       filter: { id: { in: [noteTargetId1, noteTargetId2] } },
     });
 
-    const noteTargetResponse = await makeGraphqlAPIRequest(
+    const noteTargetResponse = await makeGraphqlApiRequest(
       findNoteTargetsOperation,
     );
 

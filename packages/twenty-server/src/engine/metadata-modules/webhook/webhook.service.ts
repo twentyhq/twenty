@@ -41,7 +41,10 @@ export class WebhookService {
 
     return Object.values(flatWebhookMaps.byUniversalIdentifier)
       .filter(isDefined)
-      .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+      .sort(
+        (a, b) =>
+          a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id),
+      )
       .map(fromFlatWebhookToWebhookDto);
   }
 

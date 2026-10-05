@@ -4,24 +4,17 @@ import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
-import { IconCheck } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { Dropdown } from 'twenty-ui/components';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {
-  const {
-    fieldMetadataId,
-    dropdownId,
-    onContentChange,
-    fieldMetadataType,
-    resetContent,
-  } = useContext(RecordTableColumnAggregateFooterDropdownContext);
+  const { fieldMetadataId, dropdownId, fieldMetadataType } = useContext(
+    RecordTableColumnAggregateFooterDropdownContext,
+  );
   const { closeDropdown } = useCloseDropdown();
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
@@ -54,58 +47,39 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   } = useViewFieldAggregateOperation();
 
   return (
-    <DropdownContent>
-      <DropdownMenuItemsContainer>
-        <MenuItem
-          onClick={() => {
-            onContentChange('countAggregateOperationsOptions');
-          }}
-          text={t`Count`}
-          hasSubMenu
-        />
+    <>
+      <Dropdown.Section>
+        <Dropdown.ActionItem
+          page="countAggregateOperationsOptions"
+          hasSubmenu
+        >{t`Count`}</Dropdown.ActionItem>
         {!fieldIsRelation && (
-          <MenuItem
-            onClick={() => {
-              onContentChange('percentAggregateOperationsOptions');
-            }}
-            text={t`Percent`}
-            hasSubMenu
-          />
+          <Dropdown.ActionItem
+            page="percentAggregateOperationsOptions"
+            hasSubmenu
+          >{t`Percent`}</Dropdown.ActionItem>
         )}
         {fieldIsDateKind && (
-          <MenuItem
-            onClick={() => {
-              onContentChange('datesAggregateOperationsOptions');
-            }}
-            text={t`Date`}
-            hasSubMenu
-          />
+          <Dropdown.ActionItem
+            page="datesAggregateOperationsOptions"
+            hasSubmenu
+          >{t`Date`}</Dropdown.ActionItem>
         )}
         {nonStandardAvailableAggregateOperation.length > 0 ? (
-          <MenuItem
-            onClick={() => {
-              onContentChange('moreAggregateOperationOptions');
-            }}
-            text={t`More options`}
-            hasSubMenu
-          />
+          <Dropdown.ActionItem
+            page="moreAggregateOperationOptions"
+            hasSubmenu
+          >{t`More options`}</Dropdown.ActionItem>
         ) : null}
-        <MenuItem
-          key="none"
-          onClick={async () => {
+        <Dropdown.OptionItem
+          closeOnSelect={false}
+          onSelect={async () => {
             await updateViewFieldAggregateOperation(null);
-            resetContent();
             closeDropdown(dropdownId);
           }}
-          text={t`None`}
-          RightIcon={
-            !isDefined(currentViewFieldAggregateOperation)
-              ? IconCheck
-              : undefined
-          }
-          aria-selected={!isDefined(currentViewFieldAggregateOperation)}
-        />
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+          selected={!isDefined(currentViewFieldAggregateOperation)}
+        >{t`None`}</Dropdown.OptionItem>
+      </Dropdown.Section>
+    </>
   );
 };

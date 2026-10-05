@@ -46,6 +46,60 @@ describe('assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly', () => {
     },
   );
 
+  it.each([
+    'deletedAt',
+    'createdAt',
+    'updatedAt',
+    'createdBy',
+    'updatedBy',
+    'position',
+    'searchVector',
+    'userEmail',
+    'assignedTasks',
+    'accountOwnerForCompanies',
+    'authoredAttachments',
+    'messageParticipants',
+    'blocklist',
+    'calendarEventParticipants',
+    'timelineActivities',
+    'ownedOpportunities',
+  ] as const)(
+    'should throw when the update includes the system or relation field %s',
+    (fieldName) => {
+      expect(() =>
+        assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
+          update: {
+            [fieldName]: 'value',
+          },
+        }),
+      ).toThrow(UserInputError);
+    },
+  );
+
+  it('should throw when a system field is mixed with allowed settings fields', () => {
+    expect(() =>
+      assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
+        update: {
+          timeZone: 'Europe/Paris',
+          deletedAt: new Date().toISOString(),
+        },
+      }),
+    ).toThrow(UserInputError);
+  });
+
+  it('should not throw for editable settings fields', () => {
+    expect(() =>
+      assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
+        update: {
+          colorScheme: 'Dark',
+          locale: 'en',
+          dateFormat: 'MONTH_FIRST',
+          avatarUrl: 'https://example.com/a.png',
+        },
+      }),
+    ).not.toThrow();
+  });
+
   it('should throw when a top-level key is not in the standard field allowlist', () => {
     const unknownKey = 'notAWorkspaceMemberField';
 

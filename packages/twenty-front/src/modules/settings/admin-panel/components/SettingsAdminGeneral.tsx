@@ -1,9 +1,9 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsAdminServerAdmins } from '@/settings/admin-panel/components/SettingsAdminServerAdmins';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -14,18 +14,17 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
-import { useDebounce } from 'use-debounce';
+import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { useDebounce } from 'use-debounce';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { Avatar } from 'twenty-ui/data-display';
+import { Section } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import {
   AdminPanelRecentUsersDocument,
   AdminPanelTopWorkspacesDocument,
@@ -45,7 +44,7 @@ const RECENT_USERS_GRID_TEMPLATE_COLUMNS = '1fr 2fr 1fr 36px';
 const TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS = '2fr 1fr 36px';
 
 export const SettingsAdminGeneral = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { formatNumber } = useNumberFormat();
   const apolloAdminClient = useApolloAdminClient();
   const [userSearchTerm, setUserSearchTerm] = useState('');
@@ -84,20 +83,20 @@ export const SettingsAdminGeneral = () => {
     <>
       {canAccessFullAdminPanel && (
         <>
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`About`}
               description={t`Version of the application`}
             />
             <SettingsAdminVersionContainer />
-          </Section>
+          </Section.Root>
           <SettingsAdminServerAdmins />
         </>
       )}
 
       {(canImpersonate || canAccessFullAdminPanel) && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Recent Users`}
             description={
               canManageFeatureFlags
@@ -145,14 +144,14 @@ export const SettingsAdminGeneral = () => {
                       overflow="hidden"
                     >
                       <Avatar
-                        avatarUrl={getAbsoluteImageUrl(user.avatarUrl)}
-                        placeholder={
+                        src={getAbsoluteImageUrl(user.avatarUrl)}
+                        name={
                           `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
                           user.email
                         }
-                        placeholderColorSeed={user.id}
+                        colorSeed={user.id}
                         size="md"
-                        type="rounded"
+                        shape="circle"
                       />
                       <OverflowingTextWithTooltip
                         text={
@@ -169,9 +168,9 @@ export const SettingsAdminGeneral = () => {
                       {user.workspaceId ? (
                         <>
                           <Avatar
-                            avatarUrl={getAbsoluteImageUrl(user.workspaceLogo)}
-                            placeholder={user.workspaceName || ''}
-                            placeholderColorSeed={user.workspaceId}
+                            src={getAbsoluteImageUrl(user.workspaceLogo)}
+                            name={user.workspaceName || ''}
+                            colorSeed={user.workspaceId}
                             size="sm"
                           />
                           <OverflowingTextWithTooltip
@@ -194,12 +193,12 @@ export const SettingsAdminGeneral = () => {
               </TableBody>
             </Table>
           )}
-        </Section>
+        </Section.Root>
       )}
 
       {canImpersonate && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title={t`Top Workspaces`}
             description={t`Top 10 workspaces by number of users`}
           />
@@ -243,9 +242,9 @@ export const SettingsAdminGeneral = () => {
                       overflow="hidden"
                     >
                       <Avatar
-                        avatarUrl={getAbsoluteImageUrl(workspace.logoUrl)}
-                        placeholder={workspace.name || ''}
-                        placeholderColorSeed={workspace.id}
+                        src={getAbsoluteImageUrl(workspace.logoUrl)}
+                        name={workspace.name || ''}
+                        colorSeed={workspace.id}
                         size="md"
                       />
                       <OverflowingTextWithTooltip
@@ -267,7 +266,7 @@ export const SettingsAdminGeneral = () => {
               </TableBody>
             </Table>
           )}
-        </Section>
+        </Section.Root>
       )}
     </>
   );

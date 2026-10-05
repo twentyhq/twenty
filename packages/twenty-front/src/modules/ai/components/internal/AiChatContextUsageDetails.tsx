@@ -1,0 +1,119 @@
+import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { MetricRow } from 'twenty-ui/components';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import {
+  IconArrowUp,
+  IconArrowDown,
+  IconCoins,
+  IconHistory,
+} from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { formatNumber } from '~/utils/format/formatNumber';
+
+const StyledSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledSectionTitle = styled.span`
+  align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  height: 20px;
+`;
+
+export const AiChatContextUsageDetails = () => {
+  const { t } = useLingui();
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const agentChatUsage = useAtomComponentFamilyStateValue(
+    agentChatUsageComponentFamilyState,
+    { threadId: currentAiChatThread },
+  );
+  if (!isDefined(agentChatUsage)) {
+    return null;
+  }
+
+  const lastMessage = agentChatUsage.lastMessage;
+
+  return (
+    <>
+      {isDefined(lastMessage) && (
+        <>
+          <HorizontalSeparator noMargin />
+          <StyledSection>
+            <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
+            <MetricRow
+              startIcon={IconArrowUp}
+              value={formatAiChatTokens(lastMessage.inputTokens)}
+            >
+              {t`Input tokens`}
+            </MetricRow>
+            <MetricRow
+              startIcon={IconHistory}
+              value={formatAiChatTokens(lastMessage.cachedInputTokens)}
+            >
+              {t`Cached input`}
+            </MetricRow>
+            <MetricRow
+              startIcon={IconArrowDown}
+              value={formatAiChatTokens(lastMessage.outputTokens)}
+            >
+              {t`Output tokens`}
+            </MetricRow>
+            <MetricRow
+              startIcon={IconCoins}
+              value={formatNumber(
+                lastMessage.inputCredits + lastMessage.outputCredits,
+                { decimals: 3 },
+              )}
+            >
+              {t`Credits`}
+            </MetricRow>
+          </StyledSection>
+        </>
+      )}
+      <HorizontalSeparator noMargin />
+      <StyledSection>
+        <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
+        <MetricRow
+          startIcon={IconArrowUp}
+          value={formatAiChatTokens(agentChatUsage.inputTokens)}
+        >
+          {t`Input tokens`}
+        </MetricRow>
+        <MetricRow
+          startIcon={IconHistory}
+          value={formatAiChatTokens(agentChatUsage.cachedInputTokens)}
+        >
+          {t`Cached input`}
+        </MetricRow>
+        <MetricRow
+          startIcon={IconArrowDown}
+          value={formatAiChatTokens(agentChatUsage.outputTokens)}
+        >
+          {t`Output tokens`}
+        </MetricRow>
+        <MetricRow
+          startIcon={IconCoins}
+          value={formatNumber(
+            agentChatUsage.inputCredits + agentChatUsage.outputCredits,
+            { decimals: 3 },
+          )}
+        >
+          {t`Credits`}
+        </MetricRow>
+      </StyledSection>
+    </>
+  );
+};

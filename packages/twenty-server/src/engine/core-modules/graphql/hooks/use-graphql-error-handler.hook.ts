@@ -19,19 +19,16 @@ import { type GraphQLContext } from 'src/engine/api/graphql/graphql-config/inter
 
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { generateGraphQLErrorFromError } from 'src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util';
+import { getGraphqlOperationMetricKeyFromErrorCode } from 'src/engine/core-modules/graphql/utils/get-graphql-operation-metric-key-from-error-code.util';
 import {
   BaseGraphQLError,
   convertGraphQLErrorToBaseGraphQLError,
-  ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import {
-  graphQLErrorCodesToFilter,
-  shouldCaptureException,
-} from 'src/engine/utils/global-exception-handler.util';
+import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { translateUserFriendlyMessageDescriptors } from 'src/engine/core-modules/i18n/utils/translate-user-friendly-message-descriptors.util';
 
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
@@ -44,18 +41,12 @@ const APP_VERSION_MISMATCH_CODE = 'APP_VERSION_MISMATCH';
 type GraphQLErrorHandlerHookOptions = {
   metricsService: MetricsService;
 
-  /**
-   * The exception handler service to use.
-   */
   exceptionHandlerService: ExceptionHandlerService;
 
   i18nService: I18nService;
 
   twentyConfigService: TwentyConfigService;
-  /**
-   * The key of the event id in the error's extension. `null` to disable.
-   * @default exceptionEventId
-   */
+  // `null` disables the event id extension; any other value falls back to DEFAULT_EVENT_ID_KEY.
   eventIdKey?: string | null;
 };
 
@@ -123,7 +114,6 @@ export const useGraphQLErrorHandlerHook = <
               return;
             }
 
-            // Step 1: Process errors - extract original errors and convert to BaseGraphQLError
             const processedErrors = result.errors.map((error) => {
               const originalError = error.originalError || error;
 
@@ -144,15 +134,6 @@ export const useGraphQLErrorHandlerHook = <
               return originalError;
             });
 
-            // Error metrics
-            const codeToMetricKey: Partial<Record<ErrorCode, MetricsKeys>> = {
-              [ErrorCode.UNAUTHENTICATED]: MetricsKeys.GraphqlOperation401,
-              [ErrorCode.FORBIDDEN]: MetricsKeys.GraphqlOperation403,
-              [ErrorCode.NOT_FOUND]: MetricsKeys.GraphqlOperation404,
-              [ErrorCode.INTERNAL_SERVER_ERROR]:
-                MetricsKeys.GraphqlOperation500,
-            };
-
             const statusToMetricKey: Record<number, MetricsKeys> = {
               400: MetricsKeys.GraphqlOperation400,
               401: MetricsKeys.GraphqlOperation401,
@@ -165,12 +146,9 @@ export const useGraphQLErrorHandlerHook = <
               let metricKey: MetricsKeys | undefined;
 
               if (error instanceof BaseGraphQLError) {
-                const code = error.extensions?.code as ErrorCode;
-
-                metricKey = codeToMetricKey[code];
-                if (!metricKey && graphQLErrorCodesToFilter.includes(code)) {
-                  metricKey = MetricsKeys.GraphqlOperation400;
-                }
+                metricKey = getGraphqlOperationMetricKeyFromErrorCode(
+                  error.extensions?.code,
+                );
               } else if (error instanceof GraphQLError) {
                 const status = error.extensions?.http?.status as number;
 
@@ -188,7 +166,6 @@ export const useGraphQLErrorHandlerHook = <
               }
             });
 
-            // Step 2: Send errors to monitoring service (with stack traces)
             const errorsToCapture = processedErrors.filter(
               shouldCaptureException,
             );
@@ -216,7 +193,6 @@ export const useGraphQLErrorHandlerHook = <
               });
             }
 
-            // Step 3: Transform errors for GraphQL response (clean GraphQL errors)
             const userLocale = args.contextValue.req.locale ?? SOURCE_LOCALE;
             const i18n = options.i18nService.getI18nInstance(userLocale);
             const defaultErrorMessage = msg`An error occurred.`;

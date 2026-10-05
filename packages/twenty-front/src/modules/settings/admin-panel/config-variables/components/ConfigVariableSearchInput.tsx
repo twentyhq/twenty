@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { SearchInput } from 'twenty-ui/input';
+import { SearchInput } from 'twenty-ui/components';
 
 type ConfigVariableSearchInputProps = {
   value: string;
@@ -14,7 +14,7 @@ export const ConfigVariableSearchInput = ({
     <SearchInput
       placeholder={t`Search config variables`}
       value={value}
-      onChange={onChange}
+      onValueChange={onChange}
     />
   );
 };

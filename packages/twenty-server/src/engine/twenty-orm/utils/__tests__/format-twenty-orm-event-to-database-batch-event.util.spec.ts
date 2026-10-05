@@ -1,4 +1,8 @@
-import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
+import {
+  type ObjectRecordDeleteEvent,
+  type ObjectRecordDestroyEvent,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-shared/database-events';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -6,10 +10,11 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
+import { type InheritedReadabilityChildRecordsCarrier } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
 
 describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
   const workspaceId = 'workspace-id';
@@ -85,7 +90,7 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
   } as any;
 
   describe('UPDATED action', () => {
-    it('should throw TwentyORMException when no matching before entity is found in array of beforeEntities', () => {
+    it('should throw TwentyOrmException when no matching before entity is found in array of beforeEntities', () => {
       const afterEntities = [
         {
           id: 'record-1',
@@ -119,11 +124,11 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
           recordsBefore: beforeEntities,
         });
       } catch (error) {
-        expect(error).toBeInstanceOf(TwentyORMException);
-        expect((error as TwentyORMException).code).toBe(
-          TwentyORMExceptionCode.ORM_EVENT_DATA_CORRUPTED,
+        expect(error).toBeInstanceOf(TwentyOrmException);
+        expect((error as TwentyOrmException).code).toBe(
+          TwentyOrmExceptionCode.ORM_EVENT_DATA_CORRUPTED,
         );
-        expect((error as TwentyORMException).message).toBe(
+        expect((error as TwentyOrmException).message).toBe(
           'Record mismatch detected while computing event data for UPDATED action',
         );
       }
@@ -182,61 +187,151 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
       expect(updateEvent2.properties?.after?.name).toBe('Jane Doe Updated');
     });
 
-    it('should include both relation field name and join column name in updatedFields', () => {
-      const companyField = createMockField({
-        id: 'company-id',
-        type: FieldMetadataType.RELATION,
-        name: 'company',
-        label: 'Company',
-        settings: {
-          relationType: RelationType.MANY_TO_ONE,
-          joinColumnName: 'companyId',
+    it.each([FieldMetadataType.RELATION, FieldMetadataType.MORPH_RELATION])(
+      'should include both %s field name and join column name in updatedFields',
+      (fieldMetadataType) => {
+        const companyField = createMockField({
+          id: 'company-id',
+          type: fieldMetadataType,
+          name: 'company',
+          label: 'Company',
+          settings: {
+            relationType: RelationType.MANY_TO_ONE,
+            joinColumnName: 'companyId',
+          },
+        } as Parameters<typeof createMockField>[0]);
+
+        const flatFieldMetadataMapsWithRelation: FlatEntityMaps<FlatFieldMetadata> =
+          {
+            byUniversalIdentifier: {
+              'name-id': nameField,
+              'company-id': companyField,
+            },
+            universalIdentifierById: {
+              'name-id': 'name-id',
+              'company-id': 'company-id',
+            },
+            universalIdentifiersByApplicationId: {},
+          };
+
+        const flatObjectMetadataWithRelation = {
+          ...flatObjectMetadata,
+          fieldIds: ['name-id', 'company-id'],
+        } as FlatObjectMetadata;
+
+        const result = formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPDATED,
+          objectMetadataItem: flatObjectMetadataWithRelation,
+          flatFieldMetadataMaps: flatFieldMetadataMapsWithRelation,
+          workspaceId: mockWorkspaceId,
+          authContext: mockAuthContext,
+          recordsAfter: [{ id: 'record-1', companyId: 'new-company-id' }],
+          recordsBefore: [{ id: 'record-1', companyId: 'old-company-id' }],
+        });
+
+        const updateEvent = result?.events[0] as ObjectRecordUpdateEvent<{
+          id: string;
+          companyId: string;
+        }>;
+
+        expect(updateEvent.properties?.updatedFields).toEqual([
+          'company',
+          'companyId',
+        ]);
+        expect(updateEvent.properties?.diff).toEqual({
+          company: {
+            before: { id: 'old-company-id' },
+            after: { id: 'new-company-id' },
+          },
+        });
+      },
+    );
+  });
+
+  describe('DELETED and DESTROYED actions', () => {
+    const deletedAtField = createMockField({
+      id: 'deleted-at-id',
+      type: FieldMetadataType.DATE_TIME,
+      name: 'deletedAt',
+      label: 'Deleted at',
+    });
+    const flatFieldMetadataMapsWithDeletedAt: FlatEntityMaps<FlatFieldMetadata> =
+      {
+        byUniversalIdentifier: {
+          'name-id': nameField,
+          'deleted-at-id': deletedAtField,
         },
-      } as Parameters<typeof createMockField>[0]);
+        universalIdentifierById: {
+          'name-id': 'name-id',
+          'deleted-at-id': 'deleted-at-id',
+        },
+        universalIdentifiersByApplicationId: {},
+      };
+    const flatObjectMetadataWithDeletedAt = {
+      ...flatObjectMetadata,
+      fieldIds: ['name-id', 'deleted-at-id'],
+    } as FlatObjectMetadata;
+    const inheritedReadabilityChildRecordsByRecordId = new Map([
+      [
+        'record-1',
+        { noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }] },
+      ],
+    ]);
 
-      const flatFieldMetadataMapsWithRelation: FlatEntityMaps<FlatFieldMetadata> =
-        {
-          byUniversalIdentifier: {
-            'name-id': nameField,
-            'company-id': companyField,
-          },
-          universalIdentifierById: {
-            'name-id': 'name-id',
-            'company-id': 'company-id',
-          },
-          universalIdentifiersByApplicationId: {},
-        };
-
-      const flatObjectMetadataWithRelation = {
-        ...flatObjectMetadata,
-        fieldIds: ['name-id', 'company-id'],
-      } as FlatObjectMetadata;
-
+    it('should carry the child records captured for a record on its deleted event only', () => {
       const result = formatTwentyOrmEventToDatabaseBatchEvent({
-        action: DatabaseEventAction.UPDATED,
-        objectMetadataItem: flatObjectMetadataWithRelation,
-        flatFieldMetadataMaps: flatFieldMetadataMapsWithRelation,
+        action: DatabaseEventAction.DELETED,
+        objectMetadataItem: flatObjectMetadataWithDeletedAt,
+        flatFieldMetadataMaps: flatFieldMetadataMapsWithDeletedAt,
         workspaceId: mockWorkspaceId,
         authContext: mockAuthContext,
-        recordsAfter: [{ id: 'record-1', companyId: 'new-company-id' }],
-        recordsBefore: [{ id: 'record-1', companyId: 'old-company-id' }],
+        recordsBefore: [
+          { id: 'record-1', name: 'John', deletedAt: null },
+          { id: 'record-2', name: 'Jane', deletedAt: null },
+        ],
+        recordsAfter: [
+          { id: 'record-1', name: 'John', deletedAt: '2026-09-15T00:00:00Z' },
+          { id: 'record-2', name: 'Jane', deletedAt: '2026-09-15T00:00:00Z' },
+        ],
+        inheritedReadabilityChildRecordsByRecordId,
       });
+      const [deleteEvent1, deleteEvent2] =
+        result?.events as ObjectRecordDeleteEvent[];
 
-      const updateEvent = result?.events[0] as ObjectRecordUpdateEvent<{
-        id: string;
-        companyId: string;
-      }>;
-
-      expect(updateEvent.properties?.updatedFields).toEqual([
-        'company',
-        'companyId',
-      ]);
-      expect(updateEvent.properties?.diff).toEqual({
-        company: {
-          before: { id: 'old-company-id' },
-          after: { id: 'new-company-id' },
-        },
+      expect(
+        (deleteEvent1.properties as InheritedReadabilityChildRecordsCarrier)
+          .inheritedReadabilityChildRecords,
+      ).toEqual({
+        noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }],
       });
+      expect(deleteEvent2.properties).not.toHaveProperty(
+        'inheritedReadabilityChildRecords',
+      );
+    });
+
+    it('should carry the child records captured for a record on its destroyed event only', () => {
+      const result = formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.DESTROYED,
+        objectMetadataItem: flatObjectMetadata,
+        flatFieldMetadataMaps,
+        workspaceId: mockWorkspaceId,
+        authContext: mockAuthContext,
+        recordsBefore: [
+          { id: 'record-1', name: 'John' },
+          { id: 'record-2', name: 'Jane' },
+        ],
+        inheritedReadabilityChildRecordsByRecordId,
+      });
+      const [destroyEvent1, destroyEvent2] =
+        result?.events as ObjectRecordDestroyEvent[];
+
+      expect(
+        (destroyEvent1.properties as InheritedReadabilityChildRecordsCarrier)
+          .inheritedReadabilityChildRecords,
+      ).toEqual({ noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }] });
+      expect(destroyEvent2.properties).not.toHaveProperty(
+        'inheritedReadabilityChildRecords',
+      );
     });
   });
 });

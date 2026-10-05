@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { BillingWebhookController } from 'src/engine/core-modules/billing-webhook/billing-webhook.controller';
 import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
+import { BillingSyncEntitlementsCommand } from 'src/engine/core-modules/billing-webhook/commands/billing-sync-entitlements.command';
+import { BillingEntitlementSyncService } from 'src/engine/core-modules/billing-webhook/services/billing-entitlement-sync.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
 import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-invoice.service';
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-price.service';
@@ -11,6 +13,9 @@ import { BillingWebhookProductService } from 'src/engine/core-modules/billing-we
 import { BillingWebhookSubscriptionScheduleService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription-schedule.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -39,6 +44,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PermissionsModule,
     WorkspaceModule,
     BillingModule,
+    UsageLimitModule,
+    CacheLockModule,
+    WorkspaceIteratorModule,
     WorkspaceCacheModule,
     TypeOrmModule.forFeature([
       BillingSubscriptionEntity,
@@ -62,6 +70,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingWebhookCustomerService,
     BillingWebhookSubscriptionService,
     BillingWebhookSubscriptionScheduleService,
+    BillingEntitlementSyncService,
+    BillingSyncEntitlementsCommand,
     BillingWebhookEntitlementService,
     provideWorkspaceScopedRepository(BillingEntitlementEntity),
     provideWorkspaceScopedRepository(BillingCustomerEntity),

@@ -1,16 +1,17 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
 import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { IconCheck } from 'twenty-ui/icon';
 
 const StyledBooleanSelectContainer = styled.div<{ selected?: boolean }>`
@@ -33,7 +34,11 @@ const StyledIconCheckContainer = styled.div`
 `;
 
 export const ObjectFilterDropdownBooleanSelect = () => {
-  const { theme } = useContext(ThemeContext);
+  const objectFilterDropdownComponentInstanceId =
+    useAvailableComponentInstanceIdOrThrow(
+      ObjectFilterDropdownComponentInstanceContext,
+    );
+  const theme = useTheme();
   const options = [true, false];
 
   const { objectFilterDropdownFilterValue } =
@@ -54,9 +59,11 @@ export const ObjectFilterDropdownBooleanSelect = () => {
   };
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+    <LegacyDropdownContent
+      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+    >
       <SelectableList
-        selectableListInstanceId="boolean-select"
+        selectableListInstanceId={`${objectFilterDropdownComponentInstanceId}-boolean-select`}
         selectableItemIdArray={options.map((option) => option.toString())}
         focusId="boolean-select"
       >
@@ -77,6 +84,6 @@ export const ObjectFilterDropdownBooleanSelect = () => {
           ))}
         </DropdownMenuItemsContainer>
       </SelectableList>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

@@ -198,7 +198,11 @@ describe('failing create phone field metadata test suite', () => {
             primaryPhoneNumber
             primaryPhoneCountryCode
             primaryPhoneCallingCode
-            additionalPhones
+            additionalPhones {
+              number
+              callingCode
+              countryCode
+            }
             __typename
           }
         `,

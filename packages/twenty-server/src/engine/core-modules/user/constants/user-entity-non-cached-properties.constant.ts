@@ -8,6 +8,7 @@ export const USER_ENTITY_NON_CACHED_PROPERTIES = [
   'workspaceMember',
   'userWorkspaces',
   'onboardingStatus',
+  'previousOnboardingStatus',
   'currentWorkspace',
   'currentUserWorkspace',
 ] as const satisfies ReadonlyArray<keyof UserEntity>;

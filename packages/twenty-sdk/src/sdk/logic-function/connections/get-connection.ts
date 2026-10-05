@@ -11,9 +11,11 @@ const GET_APP_CONNECTION_QUERY = `
       handle
       visibility
       userWorkspaceId
+      workspaceMemberId
       accessToken
       scopes
       authFailedAt
+      authFailedReason
     }
   }
 `;

@@ -1,3 +1,7 @@
+import {
+  TEST_AI_MODEL_ID,
+  TEST_AI_OTHER_MODEL_ID,
+} from 'test/integration/constants/test-ai-model-ids.constants';
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
@@ -15,7 +19,7 @@ describe('Agent update should succeed', () => {
         description: 'Original description',
         icon: 'IconRobot',
         prompt: 'Original prompt',
-        modelId: 'openai/gpt-4.1',
+        modelId: TEST_AI_MODEL_ID,
         responseFormat: { type: 'text' },
         evaluationInputs: ['input 1'],
       },
@@ -100,13 +104,13 @@ describe('Agent update should succeed', () => {
       expectToFail: false,
       input: {
         id: testAgentId,
-        modelId: 'openai/gpt-5.2',
+        modelId: TEST_AI_OTHER_MODEL_ID,
       },
     });
 
     expect(data.updateOneAgent).toMatchObject({
       id: testAgentId,
-      modelId: 'openai/gpt-5.2',
+      modelId: TEST_AI_OTHER_MODEL_ID,
     });
   });
 
@@ -226,7 +230,7 @@ describe('Agent update should succeed', () => {
         description: 'Updated multiple fields',
         icon: 'IconBrain',
         prompt: 'New comprehensive prompt',
-        modelId: 'openai/gpt-5.2',
+        modelId: TEST_AI_OTHER_MODEL_ID,
         responseFormat: {
           type: 'json',
           schema: DEFAULT_TOOL_INPUT_SCHEMA as AgentResponseSchema,
@@ -241,7 +245,7 @@ describe('Agent update should succeed', () => {
       description: 'Updated multiple fields',
       icon: 'IconBrain',
       prompt: 'New comprehensive prompt',
-      modelId: 'openai/gpt-5.2',
+      modelId: TEST_AI_OTHER_MODEL_ID,
       responseFormat: {
         type: 'json',
         schema: { type: 'object' },

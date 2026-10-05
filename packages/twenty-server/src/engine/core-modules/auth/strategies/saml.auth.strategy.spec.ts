@@ -2,7 +2,7 @@
 
 import { type Request } from 'express';
 
-import { type SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { type SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 
 import { SamlAuthStrategy } from './saml.auth.strategy';
 
@@ -48,18 +48,16 @@ describe('SamlAuthStrategy.validate', () => {
 
   beforeEach(() => {
     const ssoService = {
-      findSSOIdentityProviderById: jest.fn(),
-      isSAMLIdentityProvider: jest.fn(),
+      findSsoIdentityProviderById: jest.fn(),
+      isSamlIdentityProvider: jest.fn(),
       buildIssuerURL: jest.fn(),
       buildCallbackUrl: jest.fn(),
-    } as unknown as SSOService;
+    } as unknown as SsoService;
 
     strategy = new SamlAuthStrategy(ssoService);
   });
 
-  // Regression test for the workspace-confusion finding. An attacker-controlled
-  // RelayState that claims a different identity-provider id than the one whose
-  // cert verified the assertion must have zero influence on the resolved IdP.
+  // A RelayState claiming another IdP than the one whose cert verified the assertion must not influence the resolved IdP
   it('ignores RelayState.identityProviderId and sources it exclusively from the URL path', async () => {
     const request = buildRequest({
       paramsIdpId: IDP_A,

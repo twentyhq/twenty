@@ -137,6 +137,25 @@ export const computeWhereConditionParts = ({
           ? { [`${key}${secondParamSuffix}`]: nullEquivalentFieldValue }
           : {},
       };
+    // Keyset cursors must mirror SQL scan order, where only real NULLs sort into the NULL block, so the
+    // empty-value widening of 'is' and 'eq' would skip or duplicate rows at the block boundaries
+    case 'isStrictly':
+      return {
+        sql: `${fieldReference} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,
+        params: {},
+      };
+    case 'eqStrict':
+      if (isDateTimeField) {
+        return {
+          sql: `(${fieldReference} >= :${key}${paramSuffix} AND ${fieldReference} < :${key}${paramSuffix}::timestamptz + interval '1 millisecond')`,
+          params: { [`${key}${paramSuffix}`]: value },
+        };
+      }
+
+      return {
+        sql: `${fieldReference} = :${key}${paramSuffix}`,
+        params: { [`${key}${paramSuffix}`]: value },
+      };
     case 'like':
       return {
         sql: `${fieldReference}::text LIKE :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,

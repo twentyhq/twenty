@@ -3,30 +3,34 @@ import * as https from 'https';
 import { type Socket } from 'net';
 import { type Duplex } from 'stream';
 
-import { isPrivateIp } from 'src/engine/core-modules/secure-http-client/utils/is-private-ip.util';
+import { getIsBlockedIp } from 'src/engine/core-modules/secure-http-client/utils/get-is-blocked-ip.util';
 
-// Checks whether a hostname is a private IP literal.
-// Returns false for domain names — those are validated after DNS
-// resolution in the socket 'lookup' event handler.
-const isHostnamePrivateIp = (hostname: string): boolean => {
+type IsBlockedIp = ReturnType<typeof getIsBlockedIp>;
+
+// Domain names are validated after DNS resolution, in the socket 'lookup' handler.
+const isHostnameBlockedIp = (
+  hostname: string,
+  isBlockedIp: IsBlockedIp,
+): boolean => {
   try {
-    return isPrivateIp(hostname);
+    return isBlockedIp(hostname);
   } catch {
     return false;
   }
 };
 
-const validateHost = (host?: string) => {
-  if (host && isHostnamePrivateIp(host)) {
+const validateHost = (host: string | undefined, isBlockedIp: IsBlockedIp) => {
+  if (host && isHostnameBlockedIp(host, isBlockedIp)) {
     throw new Error(`Request to internal IP address ${host} is not allowed.`);
   }
 };
 
-// Validates a resolved IP and destroys the socket if it's private.
-// Fails closed: if the IP cannot be parsed, the socket is destroyed.
-const attachLookupValidation = (duplex: Duplex): Socket => {
-  // createConnection returns a net.Socket at runtime; the Duplex
-  // return type in @types/node is overly broad.
+// Fails closed: an unparseable IP destroys the socket.
+const attachLookupValidation = (
+  duplex: Duplex,
+  isBlockedIp: IsBlockedIp,
+): Socket => {
+  // @types/node types this as Duplex, but it is a net.Socket at runtime.
   const socket = duplex as Socket;
 
   socket.on('lookup', (error: Error | null, address: string) => {
@@ -35,7 +39,7 @@ const attachLookupValidation = (duplex: Duplex): Socket => {
     }
 
     try {
-      if (isPrivateIp(address)) {
+      if (isBlockedIp(address)) {
         socket.destroy(
           new Error(
             `Request to internal IP address ${address} is not allowed.`,
@@ -54,34 +58,58 @@ const attachLookupValidation = (duplex: Duplex): Socket => {
   return socket;
 };
 
-// Agents that block connections to private IPs. Validation happens at
-// the connection level (createConnection + socket 'lookup' event),
-// which means every connection is checked — including those created
-// by automatic redirect following.
+// Validated per connection, so connections opened by redirect following are checked too.
 class SsrfSafeHttpAgent extends http.Agent {
+  constructor(private readonly allowedInternalHosts: string[]) {
+    super();
+  }
+
   createConnection(
     options: http.ClientRequestArgs,
     callback?: (err: Error, stream: Duplex) => void,
   ): Duplex {
-    validateHost(options.host ?? undefined);
+    const isBlockedIp = getIsBlockedIp(
+      options.host ?? undefined,
+      this.allowedInternalHosts,
+    );
 
-    return attachLookupValidation(super.createConnection(options, callback));
+    validateHost(options.host ?? undefined, isBlockedIp);
+
+    return attachLookupValidation(
+      super.createConnection(options, callback),
+      isBlockedIp,
+    );
   }
 }
 
 class SsrfSafeHttpsAgent extends https.Agent {
+  constructor(private readonly allowedInternalHosts: string[]) {
+    super();
+  }
+
   createConnection(
     options: http.ClientRequestArgs,
     callback?: (err: Error, stream: Duplex) => void,
   ): Duplex {
-    validateHost(options.host ?? undefined);
+    const isBlockedIp = getIsBlockedIp(
+      options.host ?? undefined,
+      this.allowedInternalHosts,
+    );
 
-    return attachLookupValidation(super.createConnection(options, callback));
+    validateHost(options.host ?? undefined, isBlockedIp);
+
+    return attachLookupValidation(
+      super.createConnection(options, callback),
+      isBlockedIp,
+    );
   }
 }
 
-export const createSsrfSafeAgent = (protocol: 'http' | 'https'): http.Agent => {
+export const createSsrfSafeAgent = (
+  protocol: 'http' | 'https',
+  allowedInternalHosts: string[] = [],
+): http.Agent => {
   return protocol === 'https'
-    ? new SsrfSafeHttpsAgent()
-    : new SsrfSafeHttpAgent();
+    ? new SsrfSafeHttpsAgent(allowedInternalHosts)
+    : new SsrfSafeHttpAgent(allowedInternalHosts);
 };

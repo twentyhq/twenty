@@ -1,16 +1,17 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { qrCodeState } from '@/auth/states/qrCode';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useToast } from 'twenty-ui/components';
 import { InitiateOtpProvisioningForAuthenticatedUserDocument } from '~/generated-metadata/graphql';
 
 export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [qrCode, setQrCode] = useAtomState(qrCodeState);
   const currentUser = useAtomStateValue(currentUserState);
 
@@ -41,20 +42,21 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
           initiateOTPProvisioningResult.data
             .initiateOTPProvisioningForAuthenticatedUser.uri,
         );
-      } catch {
-        enqueueErrorSnackBar({
-          message: t`Two factor authentication provisioning failed.`,
-          options: {
+      } catch (error) {
+        enqueueToast(
+          getTwoFactorAuthenticationErrorToastOptions({
+            error,
+            fallbackMessage: t`Two factor authentication provisioning failed.`,
             dedupeKey:
               'two-factor-authentication-provisioning-initiation-failed',
-          },
-        });
+          }),
+        );
       }
     };
 
     handleTwoFactorAuthenticationProvisioningInitiation();
   }, [
-    enqueueErrorSnackBar,
+    enqueueToast,
     initiateOTPProvisioningForAuthenticatedUser,
     t,
     setQrCode,

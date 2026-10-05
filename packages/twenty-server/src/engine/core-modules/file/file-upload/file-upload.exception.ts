@@ -8,6 +8,8 @@ export enum FileUploadExceptionCode {
   FILE_NOT_UPLOADED = 'FILE_NOT_UPLOADED',
   FILE_SIZE_MISMATCH = 'FILE_SIZE_MISMATCH',
   FILE_TOO_LARGE = 'FILE_TOO_LARGE',
+  STORAGE_TIMEOUT = 'STORAGE_TIMEOUT',
+  STORAGE_INCONSISTENT = 'STORAGE_INCONSISTENT',
 }
 
 export class FileUploadException extends CustomException<FileUploadExceptionCode> {

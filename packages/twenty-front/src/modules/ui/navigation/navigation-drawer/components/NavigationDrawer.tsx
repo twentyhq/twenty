@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
-import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
@@ -16,17 +15,15 @@ import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
 } from '@/ui/navigation/states/navigationDrawerWidthState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
 export type NavigationDrawerProps = {
   children?: ReactNode;
   className?: string;
-  title: string;
 };
 
 const StyledAnimatedContainer = styled.div<{
@@ -47,7 +44,8 @@ const StyledAnimatedContainer = styled.div<{
       : `${NAVIGATION_DRAWER_COLLAPSED_WIDTH}px`};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: ${({ isExpanded }) => (isExpanded ? '100vw' : '0')};
+    width: ${({ isExpanded }) =>
+      isExpanded ? 'calc(100vw / var(--t-zoom, 1))' : '0'};
   }
 `;
 
@@ -57,16 +55,25 @@ const StyledContainer = styled.div<{
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
   height: 100%;
-  padding: ${themeCssVariables.spacing[2]} 0 ${themeCssVariables.spacing[4]}
-    ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[4]};
   width: ${({ isExpanded }) =>
     isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    gap: ${themeCssVariables.spacing[4]};
     width: 100%;
-    padding-left: ${themeCssVariables.spacing[2]};
+  }
+`;
+
+const StyledContent = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  min-height: 0;
+  padding-left: ${themeCssVariables.spacing[2]};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    gap: ${themeCssVariables.spacing[4]};
     padding-right: ${themeCssVariables.spacing[2]};
   }
 `;
@@ -74,11 +81,9 @@ const StyledContainer = styled.div<{
 export const NavigationDrawer = ({
   children,
   className,
-  title,
 }: NavigationDrawerProps) => {
   const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
-  const isSettingsDrawer = useIsSettingsDrawer();
   const isExpanded = useNavigationDrawerExpanded();
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
@@ -106,7 +111,7 @@ export const NavigationDrawer = ({
     setTableWidthResizeIsActive(true);
   };
 
-  const handleResizeStart = () => {
+  const handleResizeStart = (_size: number) => {
     setIsResizing(true);
     setTableWidthResizeIsActive(false);
   };
@@ -121,20 +126,16 @@ export const NavigationDrawer = ({
         isResizing={isResizing}
       >
         <StyledContainer isExpanded={isExpanded}>
-          {!isMobile && isSettingsDrawer && title ? (
-            <NavigationDrawerBackButton title={title} />
-          ) : (
-            <NavigationDrawerHeader showCollapseButton />
-          )}
-          {children}
+          <NavigationDrawerHeader />
+          <StyledContent>{children}</StyledContent>
         </StyledContainer>
 
-        {isNavigationDrawerExpanded && !isMobile && !isSettingsDrawer && (
+        {isNavigationDrawerExpanded && !isMobile && (
           <ResizablePanelEdge
             side="right"
             constraints={NAVIGATION_DRAWER_CONSTRAINTS}
-            currentWidth={navigationDrawerWidth}
-            onWidthChange={handleWidthChange}
+            currentSize={navigationDrawerWidth}
+            onSizeChange={handleWidthChange}
             onCollapse={handleCollapse}
             showHandle={false}
             cssVariableName={NAVIGATION_DRAWER_WIDTH_VAR}

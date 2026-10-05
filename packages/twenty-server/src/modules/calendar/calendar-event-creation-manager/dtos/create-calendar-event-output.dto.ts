@@ -5,9 +5,12 @@ export class CreateCalendarEventOutputDTO {
   @Field(() => Boolean)
   success: boolean;
 
-  // Stable cross-provider identifier; query the created event in Twenty by iCalUid.
   @Field(() => String, { nullable: true })
   iCalUid?: string;
+
+  // Unset when persistence failed after provider creation; the next sync recovers the record
+  @Field(() => String, { nullable: true })
+  calendarEventId?: string;
 
   @Field(() => String, { nullable: true })
   conferenceLink?: string;

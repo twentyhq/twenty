@@ -1,7 +1,9 @@
 import { TerminalOutput } from '@/ai/components/TerminalOutput';
 import { styled } from '@linaria/react';
-import { useContext, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { LightIconButton } from 'twenty-ui/components';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
 import {
   IconChevronDown,
   IconChevronUp,
@@ -9,13 +11,10 @@ import {
   IconCopy,
   IconDownload,
   IconFile,
-  IconPlayerPlay,
-  IconSquareRoundedCheck,
-  IconSquareRoundedX,
 } from 'twenty-ui/icon';
-import { CodeEditor, LightIconButton } from 'twenty-ui/input';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -27,7 +26,7 @@ const StyledContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledHeader = styled.div<{ status: 'success' | 'error' | 'running' }>`
+const StyledHeader = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -47,31 +46,6 @@ const StyledHeaderRight = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledStatusBadge = styled.div<{
-  status: 'success' | 'error' | 'running';
-}>`
-  align-items: center;
-  background: ${({ status }) =>
-    status === 'success'
-      ? themeCssVariables.background.transparent.success
-      : status === 'error'
-        ? themeCssVariables.background.transparent.danger
-        : themeCssVariables.background.transparent.medium};
-  border-radius: ${themeCssVariables.border.radius.pill};
-  color: ${({ status }) =>
-    status === 'success'
-      ? themeCssVariables.color.turquoise
-      : status === 'error'
-        ? themeCssVariables.color.red
-        : themeCssVariables.font.color.secondary};
-  corner-shape: round;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitle = styled.span`
@@ -202,7 +176,7 @@ export const CodeExecutionDisplay = ({
   files = [],
   isRunning = false,
 }: CodeExecutionDisplayProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isCodeExpanded, setIsCodeExpanded] = useState(false);
@@ -215,13 +189,6 @@ export const CodeExecutionDisplay = ({
       ? 'success'
       : 'error';
 
-  const StatusIcon =
-    status === 'success'
-      ? IconSquareRoundedCheck
-      : status === 'error'
-        ? IconSquareRoundedX
-        : IconPlayerPlay;
-
   const statusText = isRunning
     ? t`Running...`
     : exitCode === 0
@@ -233,16 +200,25 @@ export const CodeExecutionDisplay = ({
 
   return (
     <StyledContainer>
-      <StyledHeader status={status}>
+      <StyledHeader>
         <StyledHeaderLeft>
           <IconCode size={theme.icon.size.md} />
           <StyledTitle>{t`Python Code Execution`}</StyledTitle>
         </StyledHeaderLeft>
         <StyledHeaderRight>
-          <StyledStatusBadge status={status}>
-            <StatusIcon size={theme.icon.size.sm} />
+          <Tag
+            color={
+              status === 'success'
+                ? 'turquoise'
+                : status === 'error'
+                  ? 'red'
+                  : 'gray'
+            }
+            weight="medium"
+            preventShrink
+          >
             {statusText}
-          </StyledStatusBadge>
+          </Tag>
         </StyledHeaderRight>
       </StyledHeader>
 
@@ -254,15 +230,17 @@ export const CodeExecutionDisplay = ({
           </StyledSectionHeaderLeft>
           <StyledHeaderRight>
             <LightIconButton
-              Icon={IconCopy}
               onClick={(e) => {
                 e.stopPropagation();
                 copyToClipboard(code);
               }}
               title={t`Copy code`}
-              size="small"
-              accent="tertiary"
-            />
+              size="sm"
+              emphasis="subtle"
+              aria-label={t`Copy code`}
+            >
+              <IconCopy />
+            </LightIconButton>
             {isCodeExpanded ? (
               <IconChevronUp size={theme.icon.size.sm} />
             ) : (
@@ -270,10 +248,7 @@ export const CodeExecutionDisplay = ({
             )}
           </StyledHeaderRight>
         </StyledSectionHeader>
-        <AnimatedExpandableContainer
-          isExpanded={isCodeExpanded}
-          mode="fit-content"
-        >
+        <Collapsible isExpanded={isCodeExpanded}>
           <StyledCodeEditorContainer>
             <CodeEditor
               value={code}
@@ -286,7 +261,7 @@ export const CodeExecutionDisplay = ({
               }}
             />
           </StyledCodeEditorContainer>
-        </AnimatedExpandableContainer>
+        </Collapsible>
       </StyledSection>
 
       {(hasOutput || isRunning) && (
@@ -301,16 +276,13 @@ export const CodeExecutionDisplay = ({
               <IconChevronDown size={theme.icon.size.sm} />
             )}
           </StyledSectionHeader>
-          <AnimatedExpandableContainer
-            isExpanded={isOutputExpanded}
-            mode="fit-content"
-          >
+          <Collapsible isExpanded={isOutputExpanded}>
             <TerminalOutput
               stdout={stdout}
               stderr={stderr}
               isRunning={isRunning}
             />
-          </AnimatedExpandableContainer>
+          </Collapsible>
         </StyledSection>
       )}
 
@@ -329,10 +301,7 @@ export const CodeExecutionDisplay = ({
               <IconChevronDown size={theme.icon.size.sm} />
             )}
           </StyledSectionHeader>
-          <AnimatedExpandableContainer
-            isExpanded={isFilesExpanded}
-            mode="fit-content"
-          >
+          <Collapsible isExpanded={isFilesExpanded}>
             <StyledFilesGrid>
               {files.map((file) => {
                 const filename = file.filename;
@@ -368,7 +337,7 @@ export const CodeExecutionDisplay = ({
                 );
               })}
             </StyledFilesGrid>
-          </AnimatedExpandableContainer>
+          </Collapsible>
         </StyledSection>
       )}
     </StyledContainer>

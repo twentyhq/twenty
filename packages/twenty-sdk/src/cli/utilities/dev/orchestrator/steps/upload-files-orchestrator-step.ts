@@ -3,6 +3,7 @@ import {
   type OrchestratorStateBuiltFileInfo,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
+import { formatUploadFailures } from '@/cli/utilities/file/format-upload-failures';
 import { type FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,6 +11,12 @@ export type UploadFilesOrchestratorStepOutput = {
   fileUploader: FileUploader | null;
   builtFileInfos: Map<string, OrchestratorStateBuiltFileInfo>;
   activeUploads: Set<Promise<void>>;
+};
+
+type QueuedUpload = {
+  builtPath: string;
+  sourcePath: string;
+  fileFolder: FileFolder;
 };
 
 export class UploadFilesOrchestratorStep {
@@ -59,63 +66,7 @@ export class UploadFilesOrchestratorStep {
     sourcePath: string,
     fileFolder: FileFolder,
   ): void {
-    const step = this.state.steps.uploadFiles;
-
-    if (!step.output.fileUploader) {
-      return;
-    }
-
-    step.status = 'in_progress';
-    this.totalQueued++;
-
-    if (this.verbose) {
-      this.state.addEvent({
-        message: `Uploading ${builtPath}`,
-        status: 'info',
-      });
-    }
-    this.state.updateEntityStatus(sourcePath, 'uploading');
-    this.notify();
-
-    const uploadPromise = step.output.fileUploader
-      .uploadFile({ builtPath, fileFolder })
-      .then((result) => {
-        if (result.success) {
-          this.uploadedCount++;
-
-          if (this.verbose) {
-            this.state.addEvent({
-              message: `Successfully uploaded ${builtPath}`,
-              status: 'success',
-            });
-          }
-          this.state.updateEntityStatus(sourcePath, 'success');
-        } else {
-          this.failedCount++;
-          this.state.addEvent({
-            message: `Failed to upload ${builtPath}: ${result.error}`,
-            status: 'error',
-          });
-        }
-      })
-      .catch((error) => {
-        this.failedCount++;
-        this.state.addEvent({
-          message: `Upload failed for ${builtPath}: ${error}`,
-          status: 'error',
-        });
-      })
-      .finally(() => {
-        step.output.activeUploads.delete(uploadPromise);
-
-        if (step.output.activeUploads.size === 0) {
-          this.logUploadSummary();
-          step.status = 'done';
-          this.notify();
-        }
-      });
-
-    step.output.activeUploads.add(uploadPromise);
+    this.queueUploads([{ builtPath, sourcePath, fileFolder }]);
   }
 
   async waitForUploads(): Promise<void> {
@@ -158,11 +109,84 @@ export class UploadFilesOrchestratorStep {
   }
 
   private uploadPendingFiles(): void {
-    for (const [
-      builtPath,
-      { fileFolder, sourcePath },
-    ] of this.state.steps.uploadFiles.output.builtFileInfos.entries()) {
-      this.uploadFile(builtPath, sourcePath, fileFolder);
+    this.queueUploads(
+      Array.from(
+        this.state.steps.uploadFiles.output.builtFileInfos.entries(),
+      ).map(([builtPath, { fileFolder, sourcePath }]) => ({
+        builtPath,
+        sourcePath,
+        fileFolder,
+      })),
+    );
+  }
+
+  private queueUploads(files: QueuedUpload[]): void {
+    const step = this.state.steps.uploadFiles;
+    const fileUploader = step.output.fileUploader;
+
+    if (!isDefined(fileUploader) || files.length === 0) {
+      return;
     }
+
+    step.status = 'in_progress';
+    this.totalQueued += files.length;
+
+    if (this.verbose) {
+      this.state.addEvent({
+        message: `Uploading ${files.map(({ builtPath }) => builtPath).join(', ')}`,
+        status: 'info',
+      });
+    }
+
+    for (const { sourcePath } of files) {
+      this.state.updateEntityStatus(sourcePath, 'uploading');
+    }
+    this.notify();
+
+    const uploadPromise = fileUploader
+      .uploadFiles(
+        files.map(({ builtPath, fileFolder }) => ({ builtPath, fileFolder })),
+      )
+      .then((failures) => {
+        this.failedCount += failures.length;
+
+        for (const message of formatUploadFailures(failures)) {
+          this.state.addEvent({ message, status: 'error' });
+        }
+
+        for (const { builtPath, sourcePath } of files) {
+          if (failures.some((failure) => failure.builtPath === builtPath)) {
+            continue;
+          }
+
+          this.uploadedCount++;
+
+          if (this.verbose) {
+            this.state.addEvent({
+              message: `Successfully uploaded ${builtPath}`,
+              status: 'success',
+            });
+          }
+          this.state.updateEntityStatus(sourcePath, 'success');
+        }
+      })
+      .catch((error) => {
+        this.failedCount += files.length;
+        this.state.addEvent({
+          message: `Upload failed: ${error}`,
+          status: 'error',
+        });
+      })
+      .finally(() => {
+        step.output.activeUploads.delete(uploadPromise);
+
+        if (step.output.activeUploads.size === 0) {
+          this.logUploadSummary();
+          step.status = 'done';
+          this.notify();
+        }
+      });
+
+    step.output.activeUploads.add(uploadPromise);
   }
 }

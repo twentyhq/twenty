@@ -1,4 +1,4 @@
-import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { type EventCommonPropertiesType } from 'src/engine/core-modules/event-logs/emit/common.type';
 import {
   type TrackEventName,
@@ -13,8 +13,10 @@ import {
   type GenericTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/track';
 
-const common = (): Record<EventCommonPropertiesType, string> => ({
-  timestamp: formatDateTimeForClickHouse(new Date()),
+const common = (
+  occurredAt: Date = new Date(),
+): Record<EventCommonPropertiesType, string> => ({
+  timestamp: formatDateTimeForClickHouse(occurredAt),
   version: '1',
 });
 
@@ -33,6 +35,7 @@ export function makePageview(
 export function makeTrackEvent<T extends TrackEventName>(
   event: T,
   properties: TrackEventProperties<T>,
+  occurredAt?: Date,
 ): GenericTrackEvent<T> {
   const schema = eventsRegistry.get(event);
 
@@ -44,6 +47,6 @@ export function makeTrackEvent<T extends TrackEventName>(
     type: 'track',
     event,
     properties,
-    ...common(),
+    ...common(occurredAt),
   });
 }

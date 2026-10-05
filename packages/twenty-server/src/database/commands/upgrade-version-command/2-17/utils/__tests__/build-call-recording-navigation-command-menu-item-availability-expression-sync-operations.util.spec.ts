@@ -7,7 +7,7 @@ import {
   LEGACY_CALL_RECORDING_NAVIGATION_AVAILABILITY_EXPRESSION,
 } from 'src/database/commands/upgrade-version-command/2-17/utils/build-call-recording-navigation-command-menu-item-availability-expression-sync-operations.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { buildNavigationFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
+import { buildLegacyNavigationFlatCommandMenuItem } from 'src/database/commands/upgrade-version-command/utils/build-legacy-navigation-flat-command-menu-item.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -80,7 +80,7 @@ const buildCallRecordingNavigationCommandMenuItem = ({
 }: {
   conditionalAvailabilityExpression: string | null;
 }): FlatCommandMenuItem => ({
-  ...buildNavigationFlatCommandMenuItem({
+  ...buildLegacyNavigationFlatCommandMenuItem({
     objectMetadata: {
       id: 'call-recording-object-metadata-id',
       universalIdentifier: STANDARD_OBJECTS.callRecording.universalIdentifier,

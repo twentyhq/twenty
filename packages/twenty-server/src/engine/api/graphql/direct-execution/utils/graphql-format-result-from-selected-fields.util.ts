@@ -22,10 +22,11 @@ import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/inter
 import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
 import { ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
+import { getCompositeSubFieldObjectTypeName } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-composite-sub-field-gql-types.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -40,13 +41,13 @@ import {
 
 type GraphQLFormatInput = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   objectIdByNameSingular: Record<string, string>;
   method: string;
 };
 
 type GraphQLFormatContext = GraphQLFormatInput & {
-  fieldMetadataByNameCache: Map<string, Map<string, FlatFieldMetadata>>;
+  fieldMetadataByNameCache: Map<string, Map<string, OrmFlatFieldMetadata>>;
 };
 
 export const graphQLFormatResultFromSelectedFields = (
@@ -204,17 +205,64 @@ const backfillNullValuesAndComputeTypeNameForObjectRecord = (
 const backfillNullValuesAndComputeTypeNameForCompositeField = (
   record: Record<string, unknown>,
   selectedFields: Record<string, object>,
-  fieldMetadataType: string,
+  fieldMetadataType: FieldMetadataType,
 ): Record<string, unknown> => {
   const formatted: Record<string, unknown> = {};
 
-  for (const key of Object.keys(selectedFields)) {
+  for (const [key, subFields] of Object.entries(selectedFields)) {
     if (key === '__typename') {
       formatted.__typename = pascalCase(fieldMetadataType);
       continue;
     }
 
-    formatted[key] = record[key] ?? null;
+    const value = record[key] ?? null;
+    const subFieldTypeName = getCompositeSubFieldObjectTypeName(
+      fieldMetadataType,
+      key,
+    );
+
+    if (
+      !isDefined(subFieldTypeName) ||
+      isNull(value) ||
+      !isDefined(subFields) ||
+      isEmptyObject(subFields)
+    ) {
+      formatted[key] = value;
+      continue;
+    }
+
+    formatted[key] = Array.isArray(value)
+      ? value.map((item) =>
+          backfillNullValuesAndComputeTypeNameForCompositeSubField(
+            item,
+            subFields as Record<string, object>,
+            subFieldTypeName,
+          ),
+        )
+      : backfillNullValuesAndComputeTypeNameForCompositeSubField(
+          value,
+          subFields as Record<string, object>,
+          subFieldTypeName,
+        );
+  }
+
+  return formatted;
+};
+
+const backfillNullValuesAndComputeTypeNameForCompositeSubField = (
+  value: unknown,
+  selectedFields: Record<string, object>,
+  typeName: string,
+): unknown => {
+  if (!isDefined(value) || typeof value !== 'object' || Array.isArray(value)) {
+    return value;
+  }
+
+  const record = value as Record<string, unknown>;
+  const formatted: Record<string, unknown> = {};
+
+  for (const key of Object.keys(selectedFields)) {
+    formatted[key] = key === '__typename' ? typeName : (record[key] ?? null);
   }
 
   return formatted;
@@ -344,14 +392,14 @@ const backfillNullValuesAndComputeTypeNameForConnectionArray = (
 const getOrBuildFieldMetadataByNameMap = (
   objectNameSingular: string,
   context: GraphQLFormatContext,
-): Map<string, FlatFieldMetadata> => {
+): Map<string, OrmFlatFieldMetadata> => {
   const cached = context.fieldMetadataByNameCache.get(objectNameSingular);
 
   if (isDefined(cached)) {
     return cached;
   }
 
-  const map = new Map<string, FlatFieldMetadata>();
+  const map = new Map<string, OrmFlatFieldMetadata>();
   const objectId = context.objectIdByNameSingular[objectNameSingular];
 
   if (!isDefined(objectId)) {
@@ -391,7 +439,7 @@ const findFieldMetadataByName = (
   objectNameSingular: string,
   fieldName: string,
   context: GraphQLFormatContext,
-): FlatFieldMetadata | undefined => {
+): OrmFlatFieldMetadata | undefined => {
   return getOrBuildFieldMetadataByNameMap(objectNameSingular, context).get(
     fieldName,
   );

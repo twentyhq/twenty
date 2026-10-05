@@ -4,6 +4,8 @@ import {
 } from '@/auth/graphql/fragments/authFragments';
 import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
 import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
+import { ROW_LEVEL_PERMISSION_PREDICATE_FRAGMENT } from '@/settings/roles/graphql/fragments/rowLevelPermissionPredicateFragment';
+import { ROW_LEVEL_PERMISSION_PREDICATE_GROUP_FRAGMENT } from '@/settings/roles/graphql/fragments/rowLevelPermissionPredicateGroupFragment';
 import { BILLING_SUBSCRIPTION_FRAGMENT } from '@/users/graphql/fragments/billingSubscriptionsFragment';
 import { CURRENT_BILLING_SUBSCRIPTION_FRAGMENT } from '@/users/graphql/fragments/currentBillingSubscriptionFragement';
 import { WORKSPACE_URLS_FRAGMENT } from '@/users/graphql/fragments/workspaceUrlsFragment';
@@ -23,6 +25,8 @@ export const USER_QUERY_FRAGMENT = gql`
     canImpersonate
     supportUserHash
     onboardingStatus
+    previousOnboardingStatus
+    isWorkspaceCreator
     workspaceMember {
       ...WorkspaceMemberQueryFragment
     }
@@ -35,8 +39,15 @@ export const USER_QUERY_FRAGMENT = gql`
     currentUserWorkspace {
       id
       permissionFlags
+      isImpersonating
       objectsPermissions {
         ...ObjectPermissionFragment
+        rowLevelPermissionPredicates {
+          ...RowLevelPermissionPredicateFragment
+        }
+        rowLevelPermissionPredicateGroups {
+          ...RowLevelPermissionPredicateGroupFragment
+        }
       }
       twoFactorAuthenticationMethodSummary {
         twoFactorAuthenticationMethodId
@@ -52,6 +63,7 @@ export const USER_QUERY_FRAGMENT = gql`
       allowImpersonation
       activationStatus
       isPublicInviteLinkEnabled
+      isCampaignClickTrackingEnabled
       workspaceDiscoverability
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled
@@ -98,11 +110,11 @@ export const USER_QUERY_FRAGMENT = gql`
       defaultRole {
         ...RoleFragment
       }
-      fastModel
-      smartModel
+      aiChatModelTier
+      aiAgentModelTier
+      isAutoModelSelectionEnabled
+      aiModelIdByTier
       aiAdditionalInstructions
-      enabledAiModelIds
-      useRecommendedModels
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
       eventLogRetentionDays
@@ -119,6 +131,8 @@ export const USER_QUERY_FRAGMENT = gql`
   ${DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT}
   ${PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT}
   ${OBJECT_PERMISSION_FRAGMENT}
+  ${ROW_LEVEL_PERMISSION_PREDICATE_FRAGMENT}
+  ${ROW_LEVEL_PERMISSION_PREDICATE_GROUP_FRAGMENT}
   ${WORKSPACE_URLS_FRAGMENT}
   ${ROLE_FRAGMENT}
   ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}

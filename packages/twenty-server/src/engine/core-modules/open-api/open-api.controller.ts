@@ -1,16 +1,26 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Req,
+  Res,
+  UseGuards,
+  UseFilters,
+} from '@nestjs/common';
 
 import { Request, Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 
 import { OpenApiService } from 'src/engine/core-modules/open-api/open-api.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
 @Controller()
+@UseFilters(AuthRestApiExceptionFilter)
 export class OpenApiController {
   constructor(private readonly openApiService: OpenApiService) {}
 
-  @Get(['open-api/core', 'rest/open-api/core'])
+  @Get([`${ApiPath.OpenApi}/core`, `${ApiPath.Rest}/open-api/core`])
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async generateOpenApiSchemaCore(
     @Req() request: Request,
@@ -21,7 +31,7 @@ export class OpenApiController {
     res.send(data);
   }
 
-  @Get(['open-api/metadata', 'rest/open-api/metadata'])
+  @Get([`${ApiPath.OpenApi}/metadata`, `${ApiPath.Rest}/open-api/metadata`])
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async generateOpenApiSchemaMetaData(
     @Req() request: Request,

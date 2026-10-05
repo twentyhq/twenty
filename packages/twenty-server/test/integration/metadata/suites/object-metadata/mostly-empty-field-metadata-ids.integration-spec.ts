@@ -3,7 +3,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -18,7 +18,7 @@ const MOSTLY_EMPTY_FIELD_METADATA_IDS_QUERY = gql`
 const fetchMostlyEmptyFieldMetadataIds = async (
   objectMetadataId: string,
 ): Promise<string[]> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: MOSTLY_EMPTY_FIELD_METADATA_IDS_QUERY,
     variables: { objectMetadataId },
   });
@@ -113,7 +113,6 @@ describe('mostlyEmptyFieldMetadataIds', () => {
   });
 
   it('should flag a never-filled field only while the record gate passes and the field stays empty', async () => {
-    // Below the minimum record count nothing is flagged
     await insertProbeRecords(50);
     await analyzeProbeTable();
 
@@ -121,8 +120,7 @@ describe('mostlyEmptyFieldMetadataIds', () => {
       await fetchMostlyEmptyFieldMetadataIds(testObjectMetadataId),
     ).toEqual([]);
 
-    // Past the gate, the untouched custom text field is the only expected hit:
-    // name is the label identifier and system fields are excluded
+    // Past the gate, only the untouched custom text field hits: name is the label identifier and system fields are excluded.
     await insertProbeRecords(100);
     await analyzeProbeTable();
 
@@ -130,7 +128,6 @@ describe('mostlyEmptyFieldMetadataIds', () => {
       await fetchMostlyEmptyFieldMetadataIds(testObjectMetadataId),
     ).toEqual([probeNotesFieldMetadataId]);
 
-    // Once the field is backfilled everywhere the hint disappears
     await global.testDataSource.query(
       `UPDATE "${testSchemaName}"."${TEST_TABLE_NAME}" SET "probeNotes" = 'filled'`,
     );

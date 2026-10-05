@@ -15,7 +15,7 @@ import {
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { IndexType } from 'twenty-shared/types';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -24,11 +24,12 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'workspaceId',
   'objectMetadataId',
 ])
-@Index('IDX_INDEX_METADATA_WORKSPACE_ID_OBJECT_METADATA_ID', [
-  'workspaceId',
+@Index('IDX_INDEX_METADATA_OBJECT_METADATA_ID_WORKSPACE_ID', [
   'objectMetadataId',
+  'workspaceId',
 ])
 @Entity('indexMetadata')
+@Index('IDX_INDEX_METADATA_APPLICATION_ID', ['applicationId'])
 export class IndexMetadataEntity
   extends SyncableEntity
   implements Required<IndexMetadataEntity>

@@ -138,7 +138,7 @@ describe('Application manifest sync - search field metadata on label identifier 
     expect(await searchRecordIds(RECORD_TOTO_VALUE)).toEqual([]);
   }, 120000);
 
-  it('should make records searchable through both name and toto after relabeling onto toto', async () => {
+  it('should swap the search surface onto toto after relabeling onto it', async () => {
     // Second sync: relabel the object onto the pre-existing `toto` field.
     await syncObjectManifest(
       buildObjectManifest({
@@ -148,7 +148,22 @@ describe('Application manifest sync - search field metadata on label identifier 
       }),
     );
 
-    // Relabeling is additive: the previous `name` surface is preserved.
+    expect(await searchRecordIds(RECORD_NAME_VALUE)).toEqual([]);
+    expect(await searchRecordIds(RECORD_TOTO_VALUE)).toEqual([recordId]);
+  }, 120000);
+
+  it('should keep the previous label searchable when the manifest declares it so', async () => {
+    await syncObjectManifest(
+      buildObjectManifest({
+        labelIdentifierFieldMetadataUniversalIdentifier:
+          TOTO_FIELD_UNIVERSAL_IDENTIFIER,
+        fields: [
+          { ...NAME_FIELD_MANIFEST, isSearchable: true },
+          TOTO_FIELD_MANIFEST,
+        ],
+      }),
+    );
+
     expect(await searchRecordIds(RECORD_NAME_VALUE)).toEqual([recordId]);
     expect(await searchRecordIds(RECORD_TOTO_VALUE)).toEqual([recordId]);
   }, 120000);

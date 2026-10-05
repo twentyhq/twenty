@@ -16,7 +16,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { CreateCalendarEventOutputDTO } from 'src/modules/calendar/calendar-event-creation-manager/dtos/create-calendar-event-output.dto';
 import { CreateCalendarEventInput } from 'src/modules/calendar/calendar-event-creation-manager/dtos/create-calendar-event.input';
@@ -27,7 +27,17 @@ import { CreateCalendarEventService } from 'src/modules/calendar/calendar-event-
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 @UseGuards(
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   SettingsPermissionGuard(PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL),
 )
 export class CreateCalendarEventResolver {
@@ -46,7 +56,7 @@ export class CreateCalendarEventResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<CreateCalendarEventOutputDTO> {
     try {
-      await this.connectedAccountMetadataService.verifyOwnership({
+      await this.connectedAccountMetadataService.verifyUsableByCaller({
         id: input.connectedAccountId,
         userWorkspaceId,
         workspaceId: workspace.id,
@@ -82,16 +92,18 @@ export class CreateCalendarEventResolver {
           result.data,
         );
 
-      await this.createCalendarEventService.persistCalendarEvent(
-        createdEvent,
-        result.data,
-        workspace.id,
-      );
+      const calendarEventId =
+        await this.createCalendarEventService.persistCalendarEvent(
+          createdEvent,
+          result.data,
+          workspace.id,
+        );
 
       return {
         success: true,
         iCalUid: createdEvent.iCalUid || undefined,
         conferenceLink: createdEvent.conferenceLinkUrl || undefined,
+        calendarEventId: calendarEventId ?? undefined,
       };
     } catch (error) {
       if (error instanceof ForbiddenException) {

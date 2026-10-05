@@ -428,7 +428,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
         blocknote: 'Rich content in blocknote format',
         markdown: 'Content in markdown format',
       },
-      dateField: '2023-12-25T00:00:00.000Z',
+      dateField: '2023-12-25',
       dateTimeField: '2023-12-25T10:30:00.000Z',
       ratingField: '4',
     });
@@ -456,6 +456,77 @@ describe('buildRecordFromImportedStructuredRow', () => {
       },
     });
   });
+
+  it('should keep the other phone sub-fields when the calling code is missing', () => {
+    const importedStructuredRow: ImportedStructuredRow = {
+      'Primary Phone Number (phoneField)': '0612345678',
+      'Primary Phone Country Code (phoneField)': 'FR',
+      'Additional Phones (phoneField)':
+        '[{"number": "0698765432", "callingCode": "+33", "countryCode": "FR"}]',
+    };
+
+    const result = buildRecordFromImportedStructuredRow({
+      importedStructuredRow,
+      fieldMetadataItems: fields,
+      spreadsheetImportFields: [],
+    });
+
+    expect(result).toEqual({
+      phoneField: {
+        primaryPhoneNumber: '+33612345678',
+        primaryPhoneCountryCode: 'FR',
+        primaryPhoneCallingCode: '+33',
+        additionalPhones: [
+          {
+            number: '0698765432',
+            callingCode: '+33',
+            countryCode: 'FR',
+          },
+        ],
+      },
+      createdBy: {
+        source: 'IMPORT',
+        context: {},
+      },
+    });
+  });
+
+  it.each([
+    ['an ISO date-only value', '2023-12-25', '2023-12-25'],
+    ['a US-style date without time', '12/25/2023', '2023-12-25'],
+    [
+      'a timezone-bearing value on its UTC day',
+      '2023-12-25T00:30:00Z',
+      '2023-12-25',
+    ],
+    [
+      'a timezone-bearing value with a late UTC time',
+      '2023-12-25T23:30:00Z',
+      '2023-12-25',
+    ],
+    [
+      'an offset-bearing value on its UTC day',
+      '2023-12-25T00:30:00-08:00',
+      '2023-12-25',
+    ],
+    ['an ISO date-time without a zone', '2023-12-25T10:30:00', '2023-12-25'],
+    [
+      'an impossible date normalized rather than rejected',
+      '2023-02-30',
+      '2023-03-02',
+    ],
+  ])(
+    'keeps the calendar day when importing %s into a DATE field',
+    (_label, importedDate, expectedDate) => {
+      const result = buildRecordFromImportedStructuredRow({
+        importedStructuredRow: { dateField: importedDate },
+        fieldMetadataItems: fields,
+        spreadsheetImportFields: [],
+      });
+
+      expect(result.dateField).toBe(expectedDate);
+    },
+  );
 
   it('should successfully build a record from imported structured row with relation composite subfield', () => {
     const importedStructuredRow: ImportedStructuredRow = {

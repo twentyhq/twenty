@@ -8,6 +8,7 @@ import ms from 'ms';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { isWorkspaceDeletionRequestPending } from 'src/engine/core-modules/workspace/utils/is-workspace-deletion-request-pending.util';
 import { type ApplicationAccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-access-token-jwt-payload.type';
 import { type ApplicationRefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-refresh-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
@@ -23,6 +24,8 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_MESSAGE =
   'Application refresh token invalid or expired';
@@ -34,8 +37,8 @@ export class ApplicationTokenService {
     private readonly jwtWrapperService: JwtWrapperService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -63,6 +66,57 @@ export class ApplicationTokenService {
       userId,
       tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
       expiresIn,
+    });
+  }
+
+  async generateWorkspaceDeletionApplicationAccessToken({
+    workspaceId,
+    applicationId,
+    workspaceDeletionRequestTimestamp,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    workspaceDeletionRequestTimestamp: string;
+  }): Promise<AuthToken> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      withDeleted: true,
+    });
+
+    if (
+      !isWorkspaceDeletionRequestPending(
+        workspace,
+        workspaceDeletionRequestTimestamp,
+      )
+    ) {
+      throw new AuthException(
+        'Workspace deletion request not found',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: { id: applicationId },
+    });
+
+    assertIsDefinedOrThrow(
+      application,
+      new ApplicationException(
+        'Application not found',
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      ),
+    );
+
+    const expiresIn = this.twentyConfigService.get(
+      'APPLICATION_ACCESS_TOKEN_EXPIRES_IN',
+    );
+
+    return this.signApplicationToken({
+      workspaceId,
+      applicationId,
+      tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+      expiresIn,
+      workspaceDeletionRequestTimestamp,
     });
   }
 
@@ -149,6 +203,41 @@ export class ApplicationTokenService {
     }
   }
 
+  async validateApplicationRefreshTokenForSessionOrThrow({
+    applicationRefreshToken,
+    workspaceId,
+    userId,
+    userWorkspaceId,
+  }: {
+    applicationRefreshToken: string;
+    workspaceId: string;
+    userId: string;
+    userWorkspaceId: string;
+  }): Promise<ApplicationRefreshTokenJwtPayload> {
+    const applicationRefreshTokenPayload =
+      await this.validateApplicationRefreshToken(applicationRefreshToken);
+
+    if (applicationRefreshTokenPayload.workspaceId !== workspaceId) {
+      throw new ApplicationException(
+        'Refresh token workspace does not match authenticated workspace',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
+    const hasMismatchedUser = applicationRefreshTokenPayload.userId !== userId;
+    const hasMismatchedUserWorkspace =
+      applicationRefreshTokenPayload.userWorkspaceId !== userWorkspaceId;
+
+    if (hasMismatchedUser || hasMismatchedUserWorkspace) {
+      throw new ApplicationException(
+        'Refresh token does not match authenticated session',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
+    return applicationRefreshTokenPayload;
+  }
+
   async validateApplicationAccessToken(
     token: string,
   ): Promise<ApplicationAccessTokenJwtPayload> {
@@ -217,8 +306,8 @@ export class ApplicationTokenService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    const application = await this.applicationRepository.findOne({
-      where: { id: applicationId, workspaceId },
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: { id: applicationId },
     });
 
     assertIsDefinedOrThrow(
@@ -237,6 +326,7 @@ export class ApplicationTokenService {
     userId,
     tokenType,
     expiresIn,
+    workspaceDeletionRequestTimestamp,
   }: {
     workspaceId: string;
     applicationId: string;
@@ -246,6 +336,7 @@ export class ApplicationTokenService {
       | JwtTokenTypeEnum.APPLICATION_ACCESS
       | JwtTokenTypeEnum.APPLICATION_REFRESH;
     expiresIn: string;
+    workspaceDeletionRequestTimestamp?: string;
   }): Promise<AuthToken> {
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
@@ -256,6 +347,9 @@ export class ApplicationTokenService {
       applicationId,
       workspaceId,
       type: tokenType,
+      ...(workspaceDeletionRequestTimestamp
+        ? { workspaceDeletionRequestTimestamp }
+        : {}),
       ...(userWorkspaceId ? { userWorkspaceId } : {}),
       ...(userId ? { userId } : {}),
     };

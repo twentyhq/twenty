@@ -1,4 +1,4 @@
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { settingsPermissionFlagDefinitionsState } from '@/settings/roles/states/settingsPermissionFlagDefinitionsState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
@@ -20,6 +20,10 @@ export const SettingsRolesQueryEffect = () => {
     settingsRolesIsLoadingState,
   );
 
+  const setSettingsPermissionFlagDefinitions = useSetAtomState(
+    settingsPermissionFlagDefinitionsState,
+  );
+
   const store = useStore();
 
   const populateRoles = useCallback(
@@ -31,19 +35,11 @@ export const SettingsRolesQueryEffect = () => {
           settingsPersistedRoleFamilyState.atomFamily(role.id),
         );
 
-        const currentDraftRole = store.get(
-          settingsDraftRoleFamilyState.atomFamily(role.id),
-        );
-
         if (isDeeplyEqual(role, persistedRole)) {
           return;
         }
 
         store.set(settingsPersistedRoleFamilyState.atomFamily(role.id), role);
-
-        if (!isDeeplyEqual(currentDraftRole, role)) {
-          store.set(settingsDraftRoleFamilyState.atomFamily(role.id), role);
-        }
       });
     },
     [store],
@@ -52,14 +48,20 @@ export const SettingsRolesQueryEffect = () => {
   useEffect(() => {
     setSettingsRolesIsLoading(loading);
     if (!loading) {
-      const roles = data?.getRoles;
-      if (!isDefined(roles)) {
+      if (!isDefined(data?.getRoles)) {
         return;
       }
 
-      populateRoles(roles);
+      setSettingsPermissionFlagDefinitions(data.getPermissionFlags);
+      populateRoles(data.getRoles);
     }
-  }, [data, loading, populateRoles, setSettingsRolesIsLoading]);
+  }, [
+    data,
+    loading,
+    populateRoles,
+    setSettingsPermissionFlagDefinitions,
+    setSettingsRolesIsLoading,
+  ]);
 
   return null;
 };

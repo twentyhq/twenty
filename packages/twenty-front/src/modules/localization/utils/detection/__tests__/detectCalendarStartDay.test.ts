@@ -1,6 +1,5 @@
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 
-// Mock navigator.language
 Object.defineProperty(navigator, 'language', {
   writable: true,
   value: 'en-US',
@@ -10,7 +9,6 @@ describe('detectCalendarStartDay', () => {
   let originalIntlLocale: typeof Intl.Locale;
 
   beforeEach(() => {
-    // Reset to default
     Object.defineProperty(navigator, 'language', {
       writable: true,
       value: 'en-US',
@@ -24,7 +22,6 @@ describe('detectCalendarStartDay', () => {
   });
 
   afterEach(() => {
-    // Restore original Intl.Locale
     (global.Intl as any).Locale = originalIntlLocale;
   });
 
@@ -93,7 +90,6 @@ describe('detectCalendarStartDay', () => {
   });
 
   it('should handle Intl.Locale with weekInfo support', () => {
-    // Temporarily restore original and mock with weekInfo
     (global.Intl as any).Locale = jest.fn().mockImplementation(() => ({
       weekInfo: { firstDay: 1 }, // Monday
     }));
@@ -102,7 +98,6 @@ describe('detectCalendarStartDay', () => {
   });
 
   it('should handle Intl.Locale with Saturday firstDay', () => {
-    // Temporarily restore original and mock with weekInfo
     (global.Intl as any).Locale = jest.fn().mockImplementation(() => ({
       weekInfo: { firstDay: 6 }, // Saturday
     }));
@@ -111,7 +106,6 @@ describe('detectCalendarStartDay', () => {
   });
 
   it('should handle Intl.Locale throwing error', () => {
-    // This test uses the default mock that throws an error
     Object.defineProperty(navigator, 'language', {
       writable: true,
       value: 'de-DE',

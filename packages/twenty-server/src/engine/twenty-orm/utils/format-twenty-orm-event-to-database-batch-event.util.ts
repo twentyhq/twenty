@@ -22,12 +22,13 @@ import {
   objectRecordChangedValues,
 } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import type { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { type InheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <
@@ -40,16 +41,30 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   authContext,
   recordsAfter,
   recordsBefore,
+  inheritedReadabilityChildRecordsByRecordId,
 }: {
   action: DatabaseEventAction;
   objectMetadataItem: FlatObjectMetadata;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   workspaceId: string;
   authContext?: RawAuthContext;
   recordsAfter?: T[];
   recordsBefore?: T[];
+  inheritedReadabilityChildRecordsByRecordId?: Map<
+    string,
+    InheritedReadabilityChildRecords
+  >;
 }): DatabaseBatchEventInput<T, DatabaseEventAction> | undefined => {
   const objectMetadataNameSingular = objectMetadataItem.nameSingular;
+
+  const buildInheritedReadabilityChildRecordsProperty = (recordId: string) => {
+    const inheritedReadabilityChildRecords =
+      inheritedReadabilityChildRecordsByRecordId?.get(recordId);
+
+    return isDefined(inheritedReadabilityChildRecords)
+      ? { inheritedReadabilityChildRecords }
+      : {};
+  };
 
   let events: (
     | ObjectRecordDeleteEvent<T>
@@ -118,9 +133,9 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
           );
 
           if (!isDefined(correspondingRecordBefore)) {
-            throw new TwentyORMException(
+            throw new TwentyOrmException(
               `Record mismatch detected while computing event data for ${action.toUpperCase()} action`,
-              TwentyORMExceptionCode.ORM_EVENT_DATA_CORRUPTED,
+              TwentyOrmExceptionCode.ORM_EVENT_DATA_CORRUPTED,
             );
           }
 
@@ -151,6 +166,9 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
               after: recordAfter,
               updatedFields,
               diff,
+              ...(action === DatabaseEventAction.DELETED
+                ? buildInheritedReadabilityChildRecordsProperty(recordAfter.id)
+                : {}),
             },
           } satisfies
             | ObjectRecordUpdateEvent<T>
@@ -196,7 +214,10 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         event.userWorkspaceId = authContext?.userWorkspaceId;
         event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = recordBefore.id;
-        event.properties = { before: recordBefore };
+        event.properties = {
+          before: recordBefore,
+          ...buildInheritedReadabilityChildRecordsProperty(recordBefore.id),
+        };
 
         return event;
       });

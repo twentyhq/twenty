@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  type ObjectRecordCreateEvent,
   type ObjectRecordDeleteEvent,
   type ObjectRecordDestroyEvent,
   type ObjectRecordRestoreEvent,
@@ -23,18 +22,6 @@ export class WorkflowCoreDualWriteListener {
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
   ) {}
 
-  @OnDatabaseBatchEvent('workflow', DatabaseEventAction.CREATED)
-  async handleCreated(
-    batchEvent: CustomWorkspaceEventBatch<
-      ObjectRecordCreateEvent<WorkflowWorkspaceEntity>
-    >,
-  ): Promise<void> {
-    await this.upsertToCore(
-      batchEvent.workspaceId,
-      batchEvent.events.map((event) => event.properties.after),
-    );
-  }
-
   @OnDatabaseBatchEvent('workflow', DatabaseEventAction.UPDATED)
   async handleUpdated(
     batchEvent: CustomWorkspaceEventBatch<
@@ -43,7 +30,7 @@ export class WorkflowCoreDualWriteListener {
   ): Promise<void> {
     await this.upsertToCore(
       batchEvent.workspaceId,
-      batchEvent.events.map((event) => event.properties.after),
+      batchEvent.events.map((event) => event.properties.after.id),
     );
   }
 
@@ -55,7 +42,7 @@ export class WorkflowCoreDualWriteListener {
   ): Promise<void> {
     await this.upsertToCore(
       batchEvent.workspaceId,
-      batchEvent.events.map((event) => event.properties.after),
+      batchEvent.events.map((event) => event.properties.after.id),
     );
   }
 
@@ -68,7 +55,7 @@ export class WorkflowCoreDualWriteListener {
     await this.deleteFromCore(
       batchEvent.workspaceId,
       batchEvent.events
-        .map((event) => event.properties.before.coreWorkflowId)
+        .map((event) => event.properties.before.id)
         .filter(isDefined),
     );
   }
@@ -82,21 +69,24 @@ export class WorkflowCoreDualWriteListener {
     await this.deleteFromCore(
       batchEvent.workspaceId,
       batchEvent.events
-        .map((event) => event.properties.before.coreWorkflowId)
+        .map((event) => event.properties.before.id)
         .filter(isDefined),
     );
   }
 
   private async upsertToCore(
     workspaceId: string | undefined,
-    workflows: WorkflowWorkspaceEntity[],
+    workflowIds: string[],
   ): Promise<void> {
     if (!isDefined(workspaceId)) {
       return;
     }
 
     try {
-      await this.workflowCoreSyncService.upsertToCore(workspaceId, workflows);
+      await this.workflowCoreSyncService.reconcileWorkspaceWorkflows(
+        workspaceId,
+        workflowIds,
+      );
     } catch (error) {
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: workspaceId },
@@ -106,16 +96,16 @@ export class WorkflowCoreDualWriteListener {
 
   private async deleteFromCore(
     workspaceId: string | undefined,
-    coreWorkflowIds: string[],
+    workspaceWorkflowIds: string[],
   ): Promise<void> {
     if (!isDefined(workspaceId)) {
       return;
     }
 
     try {
-      await this.workflowCoreSyncService.deleteFromCore(
+      await this.workflowCoreSyncService.reconcileWorkspaceWorkflows(
         workspaceId,
-        coreWorkflowIds,
+        workspaceWorkflowIds,
       );
     } catch (error) {
       this.exceptionHandlerService.captureExceptions([error], {

@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationClaimController } from 'src/engine/core-modules/application/application-registration/application-registration-claim.controller';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
+import { ApplicationRegistrationClaimStateCookieService } from 'src/engine/core-modules/application/application-registration/services/application-registration-claim-state-cookie.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationResolver } from 'src/engine/core-modules/application/application-registration/application-registration.resolver';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -14,32 +16,43 @@ import { ApplicationRegistrationVariableModule } from 'src/engine/core-modules/a
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
+import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 
 @Module({
   imports: [
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([
       ApplicationRegistrationEntity,
       ApplicationEntity,
       WorkspaceEntity,
+      FileEntity,
     ]),
     ApplicationRegistrationVariableModule,
+    ApplicationLookupModule,
+    ApplicationRegistrationLookupModule,
     ApplicationModule,
     ApplicationPackageModule,
     CacheLockModule,
     CoreEntityCacheModule,
+    TypeORMModule,
     DomainServerConfigModule,
     WorkspaceDomainsModule,
     FeatureFlagModule,
@@ -47,6 +60,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     JwtModule,
     PermissionsModule,
     FileStorageModule,
+    FileUploadModule,
     FileUrlModule,
     MetricsModule,
     WorkspaceCacheStorageModule,
@@ -55,11 +69,13 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
   providers: [
     ApplicationRegistrationService,
     ApplicationRegistrationClaimService,
+    ApplicationRegistrationClaimStateCookieService,
     ApplicationRegistrationResolver,
     ApplicationRegistrationSummaryResolver,
     ApplicationTarballService,
     ApplicationRegistrationAssetService,
     ApplicationRegistrationAssetUrlService,
+    provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
     ApplicationRegistrationService,

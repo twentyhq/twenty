@@ -5,7 +5,6 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import testTokens from './test/integration/constants/test-tokens.json';
 
-// Load .env vars at jest boot time
 if (process.env.NODE_ENV === 'test') {
   dotenv.config({ path: '.env.test', override: true });
 } else {
@@ -18,8 +17,7 @@ const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
 const tsConfig = require('./tsconfig.json');
 
 const jestConfig: JestConfigWithTsJest = {
-  // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
-  // Prettier v3 should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
+  // Prettier v3 is only supported from jest v30 (https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1)
   prettierPath: null,
   silent: false,
   errorOnDeprecated: true,
@@ -30,20 +28,21 @@ const jestConfig: JestConfigWithTsJest = {
   testPathIgnorePatterns: [
     ...(isBillingEnabled ? [] : ['<rootDir>/test/integration/billing']),
     ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/audit']),
+    // Needs a secure-deployment app; runs via jest-integration-secure.config.ts (nx test:integration:secure)
+    '<rootDir>/test/integration/secure-deployment',
   ],
   testRegex: '\\.integration-spec\\.ts$',
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
-  setupFilesAfterEnv: ['<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts'],
+  setupFilesAfterEnv: [
+    '<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts',
+  ],
   testTimeout: 20000,
   maxWorkers: 1,
-  // jsdom 29 and msw ship ESM-only transitive deps (parse5, entities,
-  // tough-cookie, @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp
-  // css engine, @mswjs/interceptors and friends); let swc transform them
-  // (and .mjs below) so jest can require them.
+  // ESM-only deps (jsdom 29 and msw chains, ai, @ai-sdk/*, @workflow/serde) that swc must transform for jest
   transformIgnorePatterns: [
-    '/node_modules/(?!(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser)/)',
+    '/node_modules/(?!(.*/node_modules/)?(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser|ai|@ai-sdk|@workflow|htmlparser2|marked|domhandler|domutils|dom-serializer|domelementtype|@faker-js)/)',
   ],
   transform: {
     '^.+\\.(t|j|mj)s$': [
@@ -86,8 +85,6 @@ const jestConfig: JestConfigWithTsJest = {
   globals: {
     APP_PORT: 4000,
     NODE_ENV: NodeEnvironment.TEST,
-    // Test tokens are loaded from a shared JSON file to ensure consistency
-    // with CI workflows and other tools that need these tokens
     ...testTokens,
   },
 };

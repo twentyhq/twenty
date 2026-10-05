@@ -1,7 +1,6 @@
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { getMultiItemFieldEditorContent } from '@/workflow/workflow-variables/utils/getMultiItemFieldEditorContent';
+import { WorkflowVariableTag } from '@/workflow/workflow-variables/extensions/WorkflowVariableTag';
 import { TextTag } from '@/workflow/workflow-variables/utils/textTag';
-import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
 import { Extension } from '@tiptap/core';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
@@ -11,6 +10,7 @@ import { UndoRedo } from '@tiptap/extensions/undo-redo';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { type Editor, useEditor } from '@tiptap/react';
 import { isDefined } from 'twenty-shared/utils';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 
 type UseMultiItemFieldEditorProps = {
   placeholder: string | undefined;
@@ -137,7 +137,7 @@ export const useMultiItemFieldEditor = ({
       Placeholder.configure({
         placeholder,
       }),
-      VariableTag,
+      WorkflowVariableTag,
       TextTag,
       CommaToTagExtension,
       UndoRedo,

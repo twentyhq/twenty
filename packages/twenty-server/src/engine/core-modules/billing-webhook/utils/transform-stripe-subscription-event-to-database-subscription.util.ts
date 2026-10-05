@@ -12,7 +12,6 @@ import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 
-// Converts Stripe AutomaticTax to serialized JSON for JSONB storage
 // Normalizes expandable fields (e.g., liability.account) to string IDs
 const toAutomaticTaxJson = (
   value: Stripe.Subscription.AutomaticTax | null | undefined,
@@ -36,7 +35,6 @@ const toAutomaticTaxJson = (
   };
 };
 
-// Converts Stripe CancellationDetails to serialized JSON for JSONB storage
 const toCancellationDetailsJson = (
   value: Stripe.Subscription.CancellationDetails | null | undefined,
 ): CancellationDetailsJson | undefined => {

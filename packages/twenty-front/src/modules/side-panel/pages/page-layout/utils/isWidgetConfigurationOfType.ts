@@ -3,11 +3,16 @@ import {
   type AggregateChartConfiguration,
   type BarChartConfiguration,
   type CalendarConfiguration,
+  type CallRecordingSummaryConfiguration,
+  type CallRecordingTranscriptConfiguration,
+  type ChatConfiguration,
+  type ChatThreadsConfiguration,
   type EmailThreadConfiguration,
   type EmailsConfiguration,
   type FieldRichTextConfiguration,
   type FieldsConfiguration,
   type FilesConfiguration,
+  type FormFieldConfiguration,
   type FrontComponentConfiguration,
   type IframeConfiguration,
   type LineChartConfiguration,
@@ -52,6 +57,27 @@ type WidgetConfigurationTypenameMap = {
   > & {
     configurationType: WidgetConfigurationType.EMAIL_THREAD;
   };
+  CallRecordingSummaryConfiguration: Omit<
+    CallRecordingSummaryConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.CALL_RECORDING_SUMMARY;
+  };
+  CallRecordingTranscriptConfiguration: Omit<
+    CallRecordingTranscriptConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT;
+  };
+  ChatThreadsConfiguration: Omit<
+    ChatThreadsConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.CHAT_THREADS;
+  };
+  ChatConfiguration: Omit<ChatConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.CHAT;
+  };
   MessageCampaignBodyConfiguration: Omit<
     MessageCampaignBodyConfiguration,
     'configurationType'
@@ -78,6 +104,9 @@ type WidgetConfigurationTypenameMap = {
   };
   FieldsConfiguration: Omit<FieldsConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.FIELDS;
+  };
+  FormFieldConfiguration: Omit<FormFieldConfiguration, 'configurationType'> & {
+    configurationType: WidgetConfigurationType.FORM_FIELD;
   };
   FilesConfiguration: Omit<FilesConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.FILES;
@@ -133,9 +162,6 @@ type WidgetConfigurationTypenameMap = {
 };
 
 type WidgetConfigurationTypename = keyof WidgetConfigurationTypenameMap;
-
-export type WidgetConfigurationOfType<T extends WidgetConfigurationTypename> =
-  WidgetConfigurationTypenameMap[T];
 
 export const isWidgetConfigurationOfType = <
   T extends WidgetConfigurationTypename,

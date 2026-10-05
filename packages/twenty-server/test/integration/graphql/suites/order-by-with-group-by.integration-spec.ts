@@ -4,7 +4,7 @@ import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-field
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 describe('group-by resolvers - order by', () => {
   const testCompanyId1 = randomUUID();
@@ -16,7 +16,7 @@ describe('group-by resolvers - order by', () => {
   const testCompanyId7 = randomUUID();
 
   beforeAll(async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -29,7 +29,7 @@ describe('group-by resolvers - order by', () => {
         },
       }),
     );
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -43,7 +43,7 @@ describe('group-by resolvers - order by', () => {
       }),
     );
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -56,7 +56,7 @@ describe('group-by resolvers - order by', () => {
         },
       }),
     );
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -69,7 +69,7 @@ describe('group-by resolvers - order by', () => {
         },
       }),
     );
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -82,7 +82,7 @@ describe('group-by resolvers - order by', () => {
         },
       }),
     );
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -95,7 +95,7 @@ describe('group-by resolvers - order by', () => {
         },
       }),
     );
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -111,7 +111,6 @@ describe('group-by resolvers - order by', () => {
   });
 
   afterAll(async () => {
-    // cleanup created companies
     for (const id of [
       testCompanyId1,
       testCompanyId2,
@@ -121,7 +120,7 @@ describe('group-by resolvers - order by', () => {
       testCompanyId6,
       testCompanyId7,
     ]) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName: 'company',
           gqlFields: 'id',
@@ -169,7 +168,7 @@ describe('group-by resolvers - order by', () => {
 
   describe('valid cases', () => {
     it('should order results in the right order - createdAt, avgEmployees, addressCity', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByAddressCreatedAtAndARR([
           {
             createdAt: {
@@ -195,7 +194,6 @@ describe('group-by resolvers - order by', () => {
       expect(groups).toBeDefined();
       expect(Array.isArray(groups)).toBe(true);
 
-      // Extract group info for easier assertions
       const groupInfos = groups.map((g: any) => ({
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
@@ -204,7 +202,6 @@ describe('group-by resolvers - order by', () => {
         totalCount: g.totalCount,
       }));
 
-      // Order by dayOfWeek (chronological) then avgEmployees then city
       expect(groupInfos).toEqual([
         {
           city: 'Dallas',
@@ -251,7 +248,7 @@ describe('group-by resolvers - order by', () => {
       ]);
     });
     it('should order results in the right order - createdAt, addressCity, avgEmployees', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByAddressCreatedAtAndARR([
           {
             createdAt: {
@@ -284,7 +281,6 @@ describe('group-by resolvers - order by', () => {
         totalCount: g.totalCount,
       }));
 
-      // Order by dayOfWeek (chronological) then addressCity then avgEmployees
       expect(groupInfos).toEqual([
         {
           city: 'Anvers',
@@ -331,7 +327,7 @@ describe('group-by resolvers - order by', () => {
       ]);
     });
     it('should order results in the right order - addressCity, createdAt, avgEmployees', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByAddressCreatedAtAndARR([
           {
             address: {
@@ -410,7 +406,7 @@ describe('group-by resolvers - order by', () => {
       ]);
     });
     it('should order results in the right order - avgEmployees, createdAt, addressCity', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByAddressCreatedAtAndARR([
           {
             aggregate: {
@@ -492,7 +488,7 @@ describe('group-by resolvers - order by', () => {
 
   describe('chronological ordering for date granularities', () => {
     it('should order DAY_OF_THE_WEEK chronologically (Monday=1 to Sunday=7), not alphabetically', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByOperationFactory({
           objectMetadataSingularName: 'company',
           objectMetadataPluralName: 'companies',
@@ -524,7 +520,7 @@ describe('group-by resolvers - order by', () => {
     });
 
     it('should order DAY_OF_THE_WEEK in descending chronological order', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByOperationFactory({
           objectMetadataSingularName: 'company',
           objectMetadataPluralName: 'companies',
@@ -558,7 +554,7 @@ describe('group-by resolvers - order by', () => {
       // Test data has January (companies 4,5,6) and March (companies 1,2,3,7)
       // Chronological order: January (1), March (3)
       // Alphabetical would be: January, March (same in this case, but tests the mechanism)
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByOperationFactory({
           objectMetadataSingularName: 'company',
           objectMetadataPluralName: 'companies',
@@ -590,7 +586,7 @@ describe('group-by resolvers - order by', () => {
     });
 
     it('should order MONTH_OF_THE_YEAR in descending chronological order', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByOperationFactory({
           objectMetadataSingularName: 'company',
           objectMetadataPluralName: 'companies',
@@ -623,7 +619,7 @@ describe('group-by resolvers - order by', () => {
 
   describe('invalid cases', () => {
     it('should fail if attempt to order by a field that is not part of the groupBy', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByAddressCreatedAtAndARR([{ employees: 'AscNullsFirst' }]),
       );
 
@@ -635,7 +631,7 @@ describe('group-by resolvers - order by', () => {
     });
 
     it('should fail if attempt to order by a date granularity that is not the same as in the groupBy', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByAddressCreatedAtAndARR([
           { createdAt: { granularity: 'MONTH', orderBy: 'AscNullsFirst' } },
         ]),
@@ -649,7 +645,7 @@ describe('group-by resolvers - order by', () => {
     });
 
     it('should fail if attempt to order by a date without indicating the granularity', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByAddressCreatedAtAndARR([
           { createdAt: { orderBy: 'AscNullsFirst' } },
         ]),
@@ -663,7 +659,7 @@ describe('group-by resolvers - order by', () => {
     });
 
     it('should fail if attempt to indicate more than one orderBy field at the time (aggregate)', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByAddressCreatedAtAndARR([
           {
             aggregate: {
@@ -682,7 +678,7 @@ describe('group-by resolvers - order by', () => {
     });
 
     it('should fail if attempt to indicate more than one orderBy field at the time', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByAddressCreatedAtAndARR([
           {
             employees: 'AscNullsFirst',
@@ -718,7 +714,7 @@ describe('group-by resolvers - order by', () => {
       ];
 
       for (const company of companies) {
-        await makeGraphqlAPIRequest(
+        await makeGraphqlApiRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'company',
             gqlFields: COMPANY_GQL_FIELDS,
@@ -750,7 +746,7 @@ describe('group-by resolvers - order by', () => {
       ];
 
       for (const person of people) {
-        await makeGraphqlAPIRequest(
+        await makeGraphqlApiRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'person',
             gqlFields: 'id',
@@ -765,7 +761,7 @@ describe('group-by resolvers - order by', () => {
       ];
 
       for (const opportunity of opportunities) {
-        await makeGraphqlAPIRequest(
+        await makeGraphqlApiRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'opportunity',
             gqlFields: 'id',
@@ -777,7 +773,7 @@ describe('group-by resolvers - order by', () => {
 
     afterAll(async () => {
       for (const id of [aliceOpportunityId, bobOpportunityId]) {
-        await makeGraphqlAPIRequest(
+        await makeGraphqlApiRequest(
           destroyOneOperationFactory({
             objectMetadataSingularName: 'opportunity',
             gqlFields: 'id',
@@ -792,7 +788,7 @@ describe('group-by resolvers - order by', () => {
         carolPersonId,
         personWithoutCompanyId,
       ]) {
-        await makeGraphqlAPIRequest(
+        await makeGraphqlApiRequest(
           destroyOneOperationFactory({
             objectMetadataSingularName: 'person',
             gqlFields: 'id',
@@ -802,7 +798,7 @@ describe('group-by resolvers - order by', () => {
       }
 
       for (const id of [aardvarkCompanyId, mangoCompanyId, zebraCompanyId]) {
-        await makeGraphqlAPIRequest(
+        await makeGraphqlApiRequest(
           destroyOneOperationFactory({
             objectMetadataSingularName: 'company',
             gqlFields: 'id',
@@ -813,7 +809,7 @@ describe('group-by resolvers - order by', () => {
     });
 
     it('should order groups by the related record TEXT label, not its id', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByOperationFactory({
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
@@ -845,7 +841,7 @@ describe('group-by resolvers - order by', () => {
     });
 
     it('should order groups by the related record FULL_NAME label subfields', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByOperationFactory({
           objectMetadataSingularName: 'opportunity',
           objectMetadataPluralName: 'opportunities',
@@ -873,7 +869,7 @@ describe('group-by resolvers - order by', () => {
     });
 
     it('should fail when ordering by a relation absent from groupBy', async () => {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         groupByOperationFactory({
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',

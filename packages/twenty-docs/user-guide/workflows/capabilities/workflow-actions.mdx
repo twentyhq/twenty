@@ -87,6 +87,29 @@ Creates a new record or updates an existing one based on matching criteria. This
 
 **Output**: The created or updated record data is available for use in subsequent steps.
 
+### Pick Record
+Picks a single record out of a list of candidates, using a distribution strategy. Useful for assigning an incoming lead to a rep, or spreading records across a set of owners.
+
+**Configuration**:
+- Select the candidate records in the **Pick from** field
+<Note>
+**Pick from** only accepts a static, manually selected set of records, you cannot pass in a variable such as the output of a `Search Records` step.
+</Note>
+- Choose a strategy:
+
+| Strategy | Description |
+|---|---|
+| **Random** | Picks one candidate at random |
+| **Round Robin** | Cycles through candidates in order, remembering its position between runs |
+| **Load Balanced** | Picks the candidate currently linked to the fewest records on a field you choose (e.g., the sales rep with the fewest linked opportunities) |
+
+- For **Load Balanced**, select the object and field used to count existing load per candidate
+<Note>
+Load Balanced counts every linked record on that field, regardless of status, for example, all opportunities linked to a rep, not just open ones.
+</Note>
+
+**Output**: The picked record is available for use in subsequent steps.
+
 ## Flow Actions
 
 ### Iterator
@@ -146,7 +169,7 @@ The scheduled date cannot be in the past. If a date field from a previous step i
 
 **Limits & Credits**:
 - **No maximum duration limit**—you can set delays of minutes, days, weeks, or longer
-- **1 credit consumed** when the Delay node executes, regardless of duration
+- **0.0001 credit ($0.0001) consumed** when the Delay node executes, the same as a standard workflow step, regardless of duration
 - **No credits consumed** while waiting—a 5-minute delay costs the same as a 5-day delay
 
 ## Communication Actions
@@ -175,10 +198,31 @@ Only one recipient is possible at the moment.
 Adding HTML signatures is not possible at the moment.
 </Note>
 
+### Draft Email
+Creates a draft email instead of sending it. Same configuration as Send Email, but the message is saved to the connected mailbox's Drafts folder for manual review and sending, rather than going out automatically.
+
+**Configuration**: Same fields as [Send Email](#send-email) — sender account, recipient, subject, and body.
+
+**Use case**: AI- or workflow-generated emails you want a human to review before they go out.
+
+### Create Calendar Event
+Creates an event on a connected calendar.
+
+**Configuration**:
+- Select the connected calendar account
+- Set the event title, description, and location
+- Set start and end date/time, or mark the event as full-day
+- Optionally set a time zone
+- Add attendees
+- Choose whether to send calendar invitations to attendees
+- Choose whether to add a conferencing link to the event
+
+**Output**: The created event data is available for use in subsequent steps.
+
 ### Form
-Prompts a form during workflow execution to collect user input. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
+Opens a form for the person who launches the workflow, to collect input on the spot. The responses can then be used in subsequent steps to create records, send emails, or execute any other action based on the input.
 <Warning>
-**Forms are designed for manual triggers only**. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface, which is not the expected user experience. A notification center will be released in 2026 to properly support forms in automated workflows.
+**Forms are designed for manual triggers only**. A form is filled in right away by the person running the workflow and does not reach anyone's inbox. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface. To ask someone for an answer or an approval in their inbox, use the Send to Inbox step instead.
 </Warning>
 **Configuration**:
 - Configure the fields that users will be asked to fill. For each field, choose
@@ -186,6 +230,7 @@ Prompts a form during workflow execution to collect user input. The responses ca
   - a label
   - a default value under `Placeholder` (optional)
 - Edit the form title
+- Add instructions shown above the fields (optional). They can include variables from previous steps, for example the name of the record the form is about.
 
 **Output**: Form responses are available for use in subsequent steps.
 
@@ -260,7 +305,7 @@ Sends a request to an external API as part of your workflow.
 
 ## AI Actions
 
-### AI Agent - Coming Soon
+### AI Agent
 Runs an AI agent within your workflow to perform intelligent tasks.
 
 **Configuration**:
@@ -284,3 +329,20 @@ AI Agent actions consume workflow credits based on the AI model used. See [Workf
 <Note>
 AI agents respect role-based permissions. You can assign specific roles to agents under **Settings → Members → Roles** to control what data they can access. See [Permissions](/user-guide/permissions-access/capabilities/permissions) for details.
 </Note>
+
+### Classify
+Asks an AI model to answer one or more structured questions about data from previous steps — for example, scoring a lead or categorizing an inbound message. Unlike AI Agent, Classify always returns a value in the shape you defined, so it's suited for driving branches deterministically.
+
+<Note>
+**Prerequisite**: Classify runs on Twenty's evaluation model (Jev), which an admin must enable and configure with a TypeSafe AI API key. Without it, running this step fails.
+</Note>
+
+**Configuration**:
+- **Input**: The data to classify (e.g., a record or text from a previous step)
+- **Questions**: Add one or more questions, each with:
+  - A **name** — used to read the answer downstream (e.g., `{{stepId.answers.<name>}}`)
+  - A **type**: `boolean`, `choice`, or `score`
+  - **Instructions** for the model
+  - **Criteria** — the possible choices, or the score levels from lowest to highest (not needed for `boolean`)
+
+**Output**: The answer to each question, keyed by its name, plus the model used.

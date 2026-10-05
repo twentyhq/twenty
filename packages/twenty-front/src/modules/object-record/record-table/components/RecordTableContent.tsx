@@ -4,7 +4,7 @@ import {
   getRecordTableColumnWidthInlineStyles,
   RecordTableStyleWrapper,
 } from '@/object-record/record-table/components/RecordTableStyleWrapper';
-import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
 import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
@@ -13,12 +13,9 @@ import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/recor
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
-import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
-import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
-import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -63,23 +60,9 @@ export const RecordTableContent = ({
     handleDragSelectionEnd();
   };
 
-  const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
-    isRowSelectedComponentFamilyState,
-    recordTableId,
-  );
+  const { visibleRecordFields } = useRecordTableContextOrThrow();
 
   const store = useStore();
-
-  const handleDragSelectionChange = useCallback(
-    (rowId: string, selected: boolean) => {
-      store.set(isRowSelectedFamilyState(rowId), selected);
-    },
-    [isRowSelectedFamilyState, store],
-  );
-
-  const recordTableScrollWrapperId = `record-table-scroll-${recordTableId}`;
-
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
 
   const recordTableHoverPositionCallbackState =
     useAtomComponentStateCallbackState(
@@ -129,9 +112,8 @@ export const RecordTableContent = ({
     isRecordTableDragColumnHiddenComponentState,
   );
 
-  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
-    isRecordTableCheckboxColumnHiddenComponentState,
-  );
+  const isRecordTableCheckboxColumnHidden =
+    useIsRecordTableCheckboxColumnHidden();
 
   const columnWidthStyles = useMemo(
     () =>
@@ -167,13 +149,10 @@ export const RecordTableContent = ({
         <RecordTableColumnWidthEffect />
         <RecordTableWidthEffect />
       </RecordTableStyleWrapper>
-      <DragSelect
+      <RecordSelectionDragSelect
         selectableItemsContainerRef={containerRef}
         onDragSelectionStart={handleDragStart}
-        onDragSelectionChange={handleDragSelectionChange}
         onDragSelectionEnd={handleDragEnd}
-        scrollWrapperComponentInstanceId={recordTableScrollWrapperId}
-        selectionBoundaryClass={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
       />
     </StyledTableContainer>
   );

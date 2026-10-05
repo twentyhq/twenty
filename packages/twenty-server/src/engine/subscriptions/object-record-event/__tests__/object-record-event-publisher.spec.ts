@@ -1,13 +1,21 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
+  FeatureFlagKey,
   FieldMetadataType,
+  MetadataReadability,
+  type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
   type RecordGqlOperationFilter,
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
 } from 'twenty-shared/types';
 
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
-import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -16,10 +24,13 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
@@ -54,6 +65,7 @@ type MockObjectRecordEvent = {
     after?: object;
     updatedFields?: string[];
     diff?: object;
+    inheritedReadabilityChildRecords?: object;
   };
 };
 
@@ -92,9 +104,8 @@ describe('ObjectRecordEventPublisher', () => {
       'getOrRecomputeManyOrAllFlatEntityMaps'
     >
   >;
-
-  let mockGlobalWorkspaceOrmManager: jest.Mocked<
-    Pick<GlobalWorkspaceOrmManager, 'getGlobalWorkspaceDataSourceReplica'>
+  let mockRecordShareStorageService: jest.Mocked<
+    Pick<RecordShareStorageService, 'findByRecordIds'>
   >;
 
   const workspaceId = COMPANY_FLAT_OBJECT_MOCK.workspaceId;
@@ -102,7 +113,10 @@ describe('ObjectRecordEventPublisher', () => {
   const userWorkspaceId = 'test-user-workspace-id';
   const roleId = 'test-role-id';
 
-  const companyObjectMetadata: FlatObjectMetadata = COMPANY_FLAT_OBJECT_MOCK;
+  let mockWorkspaceOrmManager: {
+    executeInWorkspaceContext: jest.Mock;
+    getRepository: jest.Mock;
+  };
 
   const companyNameField = getFlatFieldMetadataMock({
     objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
@@ -113,9 +127,29 @@ describe('ObjectRecordEventPublisher', () => {
     workspaceId,
   });
 
-  const mockFlatFieldMetadataMaps = buildFlatFieldMetadataMaps([
-    companyNameField,
-  ]);
+  const rowLevelPermissionFilteredFields = [
+    'status',
+    'assigneeId',
+    'locale',
+  ].map((name) =>
+    getFlatFieldMetadataMock({
+      objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
+      type: FieldMetadataType.TEXT,
+      name,
+      label: name,
+      universalIdentifier: `company-${name}-field-universal-id`,
+      workspaceId,
+    }),
+  );
+
+  const companyFields = [companyNameField, ...rowLevelPermissionFilteredFields];
+
+  const companyObjectMetadata: FlatObjectMetadata = {
+    ...COMPANY_FLAT_OBJECT_MOCK,
+    fieldIds: companyFields.map((field) => field.id),
+  };
+
+  const mockFlatFieldMetadataMaps = buildFlatFieldMetadataMaps(companyFields);
 
   const mockUserWorkspaceRoleMap: Record<string, string> = {
     [userWorkspaceId]: roleId,
@@ -163,6 +197,14 @@ describe('ObjectRecordEventPublisher', () => {
     ...overrides,
   });
 
+  type PermissionsContextOverrides = {
+    flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>;
+    userWorkspaceRoleMap?: Record<string, string>;
+    rolesPermissions?: ObjectsPermissionsByRoleId;
+    flatApplicationMaps?: FlatApplicationCacheMaps;
+    featureFlagsMap?: Partial<Record<FeatureFlagKey, boolean>>;
+  };
+
   const mockFlatWorkspaceMemberMaps = {
     byId: {
       'test-workspace-member-id': {
@@ -178,12 +220,10 @@ describe('ObjectRecordEventPublisher', () => {
   };
 
   const createPermissionsContext = (
-    overrides: {
-      flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>;
-      userWorkspaceRoleMap?: Record<string, string>;
-      rolesPermissions?: ObjectsPermissionsByRoleId;
-    } = {},
+    overrides: PermissionsContextOverrides = {},
   ) => ({
+    flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+    billingEntitlements: {},
     flatRowLevelPermissionPredicateMaps: {
       byId: {},
       idByUniversalIdentifier: {},
@@ -196,17 +236,21 @@ describe('ObjectRecordEventPublisher', () => {
     },
     flatFieldMetadataMaps:
       overrides.flatFieldMetadataMaps ?? mockFlatFieldMetadataMaps,
+    flatFieldMetadataMapsOrm:
+      overrides.flatFieldMetadataMaps ?? mockFlatFieldMetadataMaps,
     userWorkspaceRoleMap:
       overrides.userWorkspaceRoleMap ?? mockUserWorkspaceRoleMap,
     rolesPermissions: overrides.rolesPermissions ?? mockRolesPermissions,
+    flatApplicationMaps: overrides.flatApplicationMaps ?? {
+      byId: {},
+      idByUniversalIdentifier: {},
+    },
+    featureFlagsMap: overrides.featureFlagsMap ?? {},
+    roleIdsWithAllRecordsAccess: [],
   });
 
   const createCacheMock = (
-    permissionsOverrides: {
-      flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>;
-      userWorkspaceRoleMap?: Record<string, string>;
-      rolesPermissions?: ObjectsPermissionsByRoleId;
-    } = {},
+    permissionsOverrides: PermissionsContextOverrides = {},
     workspaceMemberMapsOverride?: {
       byId: Record<string, unknown>;
       idByUserId: Record<string, string>;
@@ -253,6 +297,15 @@ describe('ObjectRecordEventPublisher', () => {
       processNestedRelations: jest.fn(),
     };
 
+    mockRecordShareStorageService = {
+      findByRecordIds: jest.fn().mockResolvedValue([]),
+    };
+
+    mockWorkspaceOrmManager = {
+      executeInWorkspaceContext: jest.fn(),
+      getRepository: jest.fn(),
+    };
+
     mockWorkspaceManyOrAllFlatEntityMapsCacheService = {
       getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
         flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
@@ -264,12 +317,6 @@ describe('ObjectRecordEventPublisher', () => {
           universalIdentifiersByApplicationId: {},
         },
       } as never),
-    };
-
-    mockGlobalWorkspaceOrmManager = {
-      getGlobalWorkspaceDataSourceReplica: jest.fn().mockResolvedValue({
-        getRepository: jest.fn(),
-      }),
     };
 
     (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue({});
@@ -301,12 +348,18 @@ describe('ObjectRecordEventPublisher', () => {
           useValue: mockWorkspaceManyOrAllFlatEntityMapsCacheService,
         },
         {
-          provide: GlobalWorkspaceOrmManager,
-          useValue: mockGlobalWorkspaceOrmManager,
+          provide: CommonSelectFieldsBuilder,
+          useValue: new CommonSelectFieldsBuilder(),
         },
         {
-          provide: CommonSelectFieldsHelper,
-          useValue: new CommonSelectFieldsHelper(),
+          provide: RecordShareStorageService,
+          useValue: mockRecordShareStorageService,
+        },
+
+        RecordAccessPolicyService,
+        {
+          provide: WorkspaceOrmManager,
+          useValue: mockWorkspaceOrmManager,
         },
       ],
     }).compile();
@@ -400,6 +453,61 @@ describe('ObjectRecordEventPublisher', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('publishes events of a record named for a subscriber whose role cannot read the object', async () => {
+      mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+        createCacheMock({
+          rolesPermissions: {
+            [roleId]: {
+              [companyObjectMetadata.id]: {
+                ...mockRolesPermissions[roleId][companyObjectMetadata.id],
+                canReadObjectRecords: false,
+              },
+            },
+          },
+          featureFlagsMap: {
+            [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
+          },
+        }),
+      );
+      mockRecordShareStorageService.findByRecordIds.mockResolvedValue([
+        {
+          id: 'record-share-1',
+          recordId: 'record-1',
+          objectMetadataId: companyObjectMetadata.id,
+          principalId: 'test-workspace-member-id',
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          accessLevel: RecordShareAccessLevel.READ,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: 'record-1',
+        },
+      ] as RecordShare[]);
+
+      await service.publish({
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent(),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: { id: 'record-2', name: 'Hidden Company' } },
+          }),
+        ],
+      } as WorkspaceEventBatch<never>);
+
+      expect(mockSubscriptionService.publishToEventStream).toHaveBeenCalled();
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds.map(
+          (matchedEvent: { objectRecordEvent: { recordId: string } }) =>
+            matchedEvent.objectRecordEvent.recordId,
+        ),
+      ).toEqual(['record-1']);
+    });
+
     it('should not publish events when query object name does not match event', async () => {
       const streamDataWithDifferentObject: EventStreamData = {
         ...mockStreamData,
@@ -432,6 +540,158 @@ describe('ObjectRecordEventPublisher', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('should not evaluate the record share gate for a stream whose queries target another object', async () => {
+      const inheritedObjectMetadata: FlatObjectMetadata = {
+        ...companyObjectMetadata,
+        readability: MetadataReadability.INHERITED,
+      };
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([
+          [
+            streamChannelId,
+            {
+              ...mockStreamData,
+              queries: {
+                'query-1': { objectNameSingular: 'person', variables: {} },
+              },
+            },
+          ],
+        ]) as Map<string, EventStreamData | undefined>,
+      );
+
+      await service.publish({
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: inheritedObjectMetadata,
+        events: [createMockEvent()],
+      } as WorkspaceEventBatch<never>);
+
+      expect(
+        mockRecordShareStorageService.findByRecordIds,
+      ).not.toHaveBeenCalled();
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should not forward the child records captured with a deletion to the stream', async () => {
+      await service.publish({
+        name: 'company.deleted',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent({
+            properties: {
+              before: { id: 'record-1', name: 'Test Company' },
+              after: {
+                id: 'record-1',
+                name: 'Test Company',
+                deletedAt: '2026-09-15T00:00:00.000Z',
+              },
+              updatedFields: ['deletedAt'],
+              diff: {},
+              inheritedReadabilityChildRecords: {
+                noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }],
+              },
+            },
+          }),
+        ],
+      } as WorkspaceEventBatch<never>);
+
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds[0].objectRecordEvent
+          .properties,
+      ).toEqual({
+        before: { id: 'record-1', name: 'Test Company' },
+        after: {
+          id: 'record-1',
+          name: 'Test Company',
+          deletedAt: '2026-09-15T00:00:00.000Z',
+        },
+        updatedFields: ['deletedAt'],
+        diff: {},
+      });
+    });
+
+    it('only publishes shared private records after metadata activation', async () => {
+      const privateObjectMetadata: FlatObjectMetadata = {
+        ...companyObjectMetadata,
+        readability: MetadataReadability.PRIVATE,
+      };
+
+      mockRecordShareStorageService.findByRecordIds.mockResolvedValue([
+        {
+          id: 'record-share-1',
+          recordId: 'record-1',
+          objectMetadataId: privateObjectMetadata.id,
+          principalId: EVERYONE_PRINCIPAL_ID,
+          principalType: RecordSharePrincipalType.EVERYONE,
+          accessLevel: RecordShareAccessLevel.READ,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: 'source-1',
+        },
+      ] as RecordShare[]);
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: privateObjectMetadata,
+        events: [
+          createMockEvent(),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: { id: 'record-2', name: 'Hidden Company' } },
+          }),
+        ],
+      };
+
+      await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+      expect(
+        mockRecordShareStorageService.findByRecordIds,
+      ).toHaveBeenCalledWith({
+        workspaceId,
+        objectMetadataId: privateObjectMetadata.id,
+        recordIds: ['record-1', 'record-2'],
+      });
+
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds.map(
+          (matchedEvent: { objectRecordEvent: { recordId: string } }) =>
+            matchedEvent.objectRecordEvent.recordId,
+        ),
+      ).toEqual(['record-1']);
+    });
+
+    it('publishes a batch without consulting the sharing rollout flag', async () => {
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([
+          [streamChannelId, mockStreamData],
+          ['second-stream-channel-id', mockStreamData],
+          ['third-stream-channel-id', mockStreamData],
+        ]) as Map<string, EventStreamData | undefined>,
+      );
+
+      await service.publish({
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [createMockEvent()],
+      } as WorkspaceEventBatch<never>);
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).toHaveBeenCalledTimes(3);
+    });
+
     it('should not publish events when record does not match RLS filter', async () => {
       (
         isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
@@ -461,6 +721,157 @@ describe('ObjectRecordEventPublisher', () => {
         workspaceId,
         objectMetadata: companyObjectMetadata,
         events: [createMockEvent()],
+      };
+
+      await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should publish update events when only the BEFORE state matches the filter (record leaving the view)', async () => {
+      (
+        isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
+      ).mockImplementation(
+        ({ record }: { record: { name?: string } }) =>
+          record.name === 'Open Company',
+      );
+
+      const streamDataWithFilter: EventStreamData = {
+        ...mockStreamData,
+        queries: {
+          'query-1': {
+            objectNameSingular: 'company',
+            variables: {
+              filter: { name: { eq: 'Open Company' } },
+            },
+          },
+        },
+      };
+
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([[streamChannelId, streamDataWithFilter]]) as Map<
+          string,
+          EventStreamData | undefined
+        >,
+      );
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.updated',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent({
+            properties: {
+              before: { id: 'record-1', name: 'Open Company' },
+              after: { id: 'record-1', name: 'Done Company' },
+            } as MockObjectRecordEvent['properties'],
+          }),
+        ],
+      };
+
+      await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).toHaveBeenCalledTimes(1);
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+
+      expect(publishCall.payload.objectRecordEventsWithQueryIds).toHaveLength(
+        1,
+      );
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds[0].queryIds,
+      ).toEqual(['query-1']);
+    });
+
+    it('should not publish update events when the delivered state fails the RLS filter, even if the before state matched', async () => {
+      const rlsFilter: RecordGqlOperationFilter = { status: { eq: 'active' } };
+
+      (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
+        rlsFilter,
+      );
+
+      (
+        isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
+      ).mockImplementation(
+        ({
+          record,
+          filter,
+        }: {
+          record: { status?: string };
+          filter: RecordGqlOperationFilter;
+        }) => ('status' in filter ? record.status === 'active' : true),
+      );
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.updated',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent({
+            properties: {
+              before: {
+                id: 'record-1',
+                name: 'Test Company',
+                status: 'active',
+              },
+              after: {
+                id: 'record-1',
+                name: 'Test Company',
+                status: 'archived',
+              },
+            } as MockObjectRecordEvent['properties'],
+          }),
+        ],
+      };
+
+      await service.publish(eventBatch as WorkspaceEventBatch<never>);
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should not publish update events when neither state matches the filter', async () => {
+      (
+        isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
+      ).mockReturnValue(false);
+
+      const streamDataWithFilter: EventStreamData = {
+        ...mockStreamData,
+        queries: {
+          'query-1': {
+            objectNameSingular: 'company',
+            variables: {
+              filter: { name: { eq: 'Open Company' } },
+            },
+          },
+        },
+      };
+
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([[streamChannelId, streamDataWithFilter]]) as Map<
+          string,
+          EventStreamData | undefined
+        >,
+      );
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.updated',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent({
+            properties: {
+              before: { id: 'record-1', name: 'Unrelated A' },
+              after: { id: 'record-1', name: 'Unrelated B' },
+            } as MockObjectRecordEvent['properties'],
+          }),
+        ],
       };
 
       await service.publish(eventBatch as WorkspaceEventBatch<never>);
@@ -756,7 +1167,161 @@ describe('ObjectRecordEventPublisher', () => {
       ).not.toHaveBeenCalled();
     });
 
-    it('should combine query filter with RLS filter', async () => {
+    describe('stream opened by an application acting for a user', () => {
+      const applicationId = 'test-application-id';
+      const applicationRoleId = 'test-application-role-id';
+
+      const mockApplicationStream = (
+        overrides: PermissionsContextOverrides = {},
+      ) => {
+        mockEventStreamService.getStreamsData.mockResolvedValue(
+          new Map([
+            [
+              streamChannelId,
+              {
+                ...mockStreamData,
+                authContext: { ...mockStreamData.authContext, applicationId },
+              },
+            ],
+          ]) as Map<string, EventStreamData | undefined>,
+        );
+
+        mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+          createCacheMock({
+            flatApplicationMaps: {
+              byId: {
+                [applicationId]: {
+                  id: applicationId,
+                  defaultRoleId: applicationRoleId,
+                } as never,
+              },
+              idByUniversalIdentifier: {},
+            },
+            ...overrides,
+          }),
+        );
+      };
+
+      const publishCompanyCreated = async () => {
+        const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+          name: 'company.created',
+          workspaceId,
+          objectMetadata: companyObjectMetadata,
+          events: [createMockEvent()],
+        };
+
+        await service.publish(eventBatch as WorkspaceEventBatch<never>);
+      };
+
+      const buildRolePermissions = (
+        canReadObjectRecords: boolean,
+      ): ObjectsPermissions => ({
+        [companyObjectMetadata.id]: {
+          canReadObjectRecords,
+          canUpdateObjectRecords: true,
+          canSoftDeleteObjectRecords: true,
+          canDestroyObjectRecords: true,
+          restrictedFields: {},
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
+        },
+      });
+
+      it('should not publish when the application role denies read', async () => {
+        mockApplicationStream({
+          rolesPermissions: {
+            [roleId]: buildRolePermissions(true),
+            [applicationRoleId]: buildRolePermissions(false),
+          },
+        });
+
+        await publishCompanyCreated();
+
+        expect(
+          mockSubscriptionService.publishToEventStream,
+        ).not.toHaveBeenCalled();
+      });
+
+      it('should publish when both roles allow read', async () => {
+        mockApplicationStream({
+          rolesPermissions: {
+            [roleId]: buildRolePermissions(true),
+            [applicationRoleId]: buildRolePermissions(true),
+          },
+        });
+
+        await publishCompanyCreated();
+
+        expect(mockSubscriptionService.publishToEventStream).toHaveBeenCalled();
+      });
+
+      it('should not publish when the application role cannot be resolved', async () => {
+        mockApplicationStream({
+          rolesPermissions: { [roleId]: buildRolePermissions(true) },
+        });
+
+        await publishCompanyCreated();
+
+        expect(
+          mockSubscriptionService.publishToEventStream,
+        ).not.toHaveBeenCalled();
+      });
+
+      it('should filter row level rules with both roles', async () => {
+        mockApplicationStream({
+          rolesPermissions: {
+            [roleId]: buildRolePermissions(true),
+            [applicationRoleId]: buildRolePermissions(true),
+          },
+        });
+
+        await publishCompanyCreated();
+
+        expect(buildRowLevelPermissionRecordFilter).toHaveBeenCalledWith(
+          expect.objectContaining({ roleIds: [roleId, applicationRoleId] }),
+        );
+      });
+
+      it('should not publish when the application no longer exists', async () => {
+        mockApplicationStream({
+          flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+          rolesPermissions: { [roleId]: buildRolePermissions(true) },
+        });
+
+        await publishCompanyCreated();
+
+        expect(
+          mockSubscriptionService.publishToEventStream,
+        ).not.toHaveBeenCalled();
+      });
+
+      it('should not publish when the application has been soft deleted', async () => {
+        mockApplicationStream({
+          flatApplicationMaps: {
+            byId: {
+              [applicationId]: {
+                id: applicationId,
+                defaultRoleId: applicationRoleId,
+                deletedAt: new Date(),
+              } as never,
+            },
+            idByUniversalIdentifier: {},
+          },
+          rolesPermissions: {
+            [roleId]: buildRolePermissions(true),
+            [applicationRoleId]: buildRolePermissions(true),
+          },
+        });
+
+        await publishCompanyCreated();
+
+        expect(
+          mockSubscriptionService.publishToEventStream,
+        ).not.toHaveBeenCalled();
+      });
+    });
+
+    it('should check the RLS filter and the query filter separately', async () => {
       const rlsFilter: RecordGqlOperationFilter = { status: { eq: 'active' } };
 
       (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
@@ -809,12 +1374,18 @@ describe('ObjectRecordEventPublisher', () => {
             name: 'Test Company',
             status: 'active',
           }),
-          filter: expect.objectContaining({
-            and: expect.arrayContaining([
-              { name: { eq: 'Test Company' } },
-              { status: { eq: 'active' } },
-            ]),
+          filter: { status: { eq: 'active' } },
+        }),
+      );
+      expect(
+        isRecordMatchingRLSRowLevelPermissionPredicate,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          record: expect.objectContaining({
+            name: 'Test Company',
+            status: 'active',
           }),
+          filter: { name: { eq: 'Test Company' } },
         }),
       );
     });
@@ -1249,10 +1820,6 @@ describe('ObjectRecordEventPublisher', () => {
         });
 
         expect(
-          mockGlobalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica,
-        ).toHaveBeenCalled();
-
-        expect(
           mockProcessNestedRelationsHelper.processNestedRelations,
         ).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -1261,9 +1828,6 @@ describe('ObjectRecordEventPublisher', () => {
             authContext: expect.objectContaining({
               userWorkspaceId,
               userId: 'test-user-id',
-            }),
-            workspaceDataSource: expect.objectContaining({
-              getRepository: expect.any(Function),
             }),
             rolePermissionConfig: expect.objectContaining({
               intersectionOf: [roleId],

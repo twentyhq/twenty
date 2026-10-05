@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { IconX } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -36,7 +35,7 @@ type NavigationMenuItemBackButtonProps = {
 export const NavigationMenuItemBackButton = ({
   folderName,
 }: NavigationMenuItemBackButtonProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const setCurrentNavigationMenuItemFolderId = useSetAtomState(
     currentNavigationMenuItemFolderIdState,
   );

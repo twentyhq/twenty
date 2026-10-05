@@ -3,8 +3,10 @@ import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-rec
 import { getCompositeSubFieldLabelWithFieldLabel } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldLabelWithFieldLabel';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
-import { formatValueForCSV } from '@/spreadsheet-import/utils/formatValueForCSV';
-import { sanitizeValueForCSVExport } from '@/spreadsheet-import/utils/sanitizeValueForCSVExport';
+import {
+  formatValueForCSV,
+  sanitizeValueForCSVExport,
+} from 'twenty-shared/utils';
 import { saveAs } from 'file-saver';
 import { FieldMetadataType } from 'twenty-shared/types';
 

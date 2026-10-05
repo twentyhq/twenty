@@ -1,6 +1,7 @@
 import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useResetFilterDropdown';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
@@ -11,6 +12,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { ViewBarFilterButton } from './ViewBarFilterButton';
 
 export const ViewBarFilterDropdown = () => {
+  const dropdownId = useAvailableComponentInstanceIdOrThrow(
+    ObjectFilterDropdownComponentInstanceContext,
+  );
   const { resetFilterDropdown } = useResetFilterDropdown();
   const { removeRecordFilter } = useRemoveRecordFilter();
 
@@ -40,7 +44,7 @@ export const ViewBarFilterDropdown = () => {
 
   return (
     <Dropdown
-      dropdownId={ViewBarFilterDropdownIds.MAIN}
+      dropdownId={dropdownId}
       onClose={handleDropdownClose}
       onOpen={handleDropdownOpen}
       clickableComponent={<ViewBarFilterButton />}

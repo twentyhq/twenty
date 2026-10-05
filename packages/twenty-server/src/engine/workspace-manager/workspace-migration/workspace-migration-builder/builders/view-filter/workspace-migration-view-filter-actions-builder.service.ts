@@ -7,15 +7,15 @@ import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-man
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
-import { FlatViewFilterValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service';
+import { validateFlatViewFilterCreation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util';
+import { validateFlatViewFilterDeletion } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-deletion.util';
+import { validateFlatViewFilterUpdate } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util';
 
 @Injectable()
 export class WorkspaceMigrationViewFilterActionsBuilderService extends WorkspaceEntityMigrationBuilderService<
   typeof ALL_METADATA_NAME.viewFilter
 > {
-  constructor(
-    private readonly flatViewFilterValidatorService: FlatViewFilterValidatorService,
-  ) {
+  constructor() {
     super(ALL_METADATA_NAME.viewFilter);
   }
 
@@ -27,8 +27,7 @@ export class WorkspaceMigrationViewFilterActionsBuilderService extends Workspace
     typeof ALL_METADATA_NAME.viewFilter,
     'create'
   > {
-    const validationResult =
-      this.flatViewFilterValidatorService.validateFlatViewFilterCreation(args);
+    const validationResult = validateFlatViewFilterCreation(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -57,8 +56,7 @@ export class WorkspaceMigrationViewFilterActionsBuilderService extends Workspace
     typeof ALL_METADATA_NAME.viewFilter,
     'delete'
   > {
-    const validationResult =
-      this.flatViewFilterValidatorService.validateFlatViewFilterDeletion(args);
+    const validationResult = validateFlatViewFilterDeletion(args);
 
     if (validationResult.errors.length > 0) {
       return {
@@ -85,8 +83,7 @@ export class WorkspaceMigrationViewFilterActionsBuilderService extends Workspace
     typeof ALL_METADATA_NAME.viewFilter,
     'update'
   > {
-    const validationResult =
-      this.flatViewFilterValidatorService.validateFlatViewFilterUpdate(args);
+    const validationResult = validateFlatViewFilterUpdate(args);
 
     if (validationResult.errors.length > 0) {
       return {

@@ -4,14 +4,14 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, waitFor, within } from 'storybook/test';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
-  getWorkflowNodeIdMock,
   MOCKED_STEP_ID,
+  getWorkflowNodeIdMock,
 } from '~/testing/mock-data/workflow';
 
 const DEFAULT_ACTION: WorkflowHttpRequestAction = {
@@ -29,7 +29,7 @@ const DEFAULT_ACTION: WorkflowHttpRequestAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,
@@ -59,7 +59,7 @@ const CONFIGURED_ACTION: WorkflowHttpRequestAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: true,
+        value: 3,
       },
       continueOnFailure: {
         value: false,
@@ -81,7 +81,7 @@ const meta: Meta<typeof WorkflowEditActionHttpRequest> = {
     WorkflowStepActionDrawerDecorator,
     WorkflowStepDecorator,
     ComponentWithRouterDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     WorkspaceDecorator,
     ObjectMetadataItemsDecorator,
   ],
@@ -170,7 +170,7 @@ export const WithArrayStringBody: Story = {
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -220,7 +220,7 @@ export const WithObjectStringBody: Story = {
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -276,7 +276,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -323,7 +323,7 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,

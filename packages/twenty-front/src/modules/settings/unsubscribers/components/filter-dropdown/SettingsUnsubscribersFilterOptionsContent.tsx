@@ -1,19 +1,12 @@
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { Dropdown } from 'twenty-ui/components';
 
 import { type SettingsUnsubscribersFilterOption } from '@/settings/unsubscribers/components/filter-dropdown/types/SettingsUnsubscribersFilterOption';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
 type SettingsUnsubscribersFilterOptionsContentProps = {
   title: string;
   options: SettingsUnsubscribersFilterOption[];
   selectedValue: string;
   onSelect: (value: string) => void;
-  onBack: () => void;
 };
 
 export const SettingsUnsubscribersFilterOptionsContent = ({
@@ -21,37 +14,21 @@ export const SettingsUnsubscribersFilterOptionsContent = ({
   options,
   selectedValue,
   onSelect,
-  onBack,
 }: SettingsUnsubscribersFilterOptionsContentProps) => {
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleSelect = (value: string) => {
-    onSelect(value);
-    closeDropdown();
-  };
-
   return (
-    <DropdownContent>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={onBack}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        {title}
-      </DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
+    <>
+      <Dropdown.Back>{title}</Dropdown.Back>
+      <Dropdown.Section>
         {options.map((option) => (
-          <MenuItemSelect
+          <Dropdown.OptionItem
             key={option.value}
-            text={option.label}
             selected={selectedValue === option.value}
-            onClick={() => handleSelect(option.value)}
-          />
+            onSelect={() => onSelect(option.value)}
+          >
+            {option.label}
+          </Dropdown.OptionItem>
         ))}
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
+      </Dropdown.Section>
+    </>
   );
 };

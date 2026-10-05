@@ -19,6 +19,7 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
     hasNextPage,
     queryIdentifier,
     loading,
+    error,
     totalCount,
     fetchMoreRecords,
   } = useFindManyRecords({
@@ -29,6 +30,7 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
   return {
     records,
     loading,
+    error,
     hasNextPage,
     queryIdentifier,
     totalCount,

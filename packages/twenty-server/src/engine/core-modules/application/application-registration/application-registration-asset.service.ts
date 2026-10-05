@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import isEqual from 'lodash.isequal';
 import { ServerFileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-modules/application/application-registration/types/application-registration-gallery-image.type';
 import { isStorableAssetPath } from 'src/engine/core-modules/application/application-registration/utils/is-storable-asset-path.util';
 import { toGalleryImagePaths } from 'src/engine/core-modules/application/application-registration/utils/to-gallery-image-paths.util';
@@ -30,6 +32,7 @@ export class ApplicationRegistrationAssetService {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly serverFileStorageService: ServerFileStorageService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
   ) {}
 
   async storeRegistrationAssets({
@@ -72,6 +75,12 @@ export class ApplicationRegistrationAssetService {
       galleryImages.push({ path, fileId });
     }
 
+    const registrationBeforeAssetWrite =
+      await this.applicationRegistrationRepository.findOne({
+        select: { id: true, logoFileId: true, galleryImages: true },
+        where: { id: applicationRegistrationId },
+      });
+
     await this.applicationRegistrationRepository.update(
       applicationRegistrationId,
       {
@@ -79,6 +88,19 @@ export class ApplicationRegistrationAssetService {
         galleryImages,
       } as QueryDeepPartialEntity<ApplicationRegistrationEntity>,
     );
+
+    const haveAssetsChanged =
+      !isDefined(registrationBeforeAssetWrite) ||
+      registrationBeforeAssetWrite.logoFileId !== logoFileId ||
+      !isEqual(registrationBeforeAssetWrite.galleryImages, galleryImages);
+
+    // Callers broadcast the registration update before this write, so without
+    // a second event a client refetching on that event keeps the pre-asset row
+    if (haveAssetsChanged) {
+      await this.applicationRegistrationService.broadcastApplicationRegistrationUpdatedById(
+        applicationRegistrationId,
+      );
+    }
   }
 
   private async storeAssetFile({

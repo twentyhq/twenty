@@ -14,10 +14,7 @@ export const getSettingsPath = <T extends SettingsPath>(
   let path = `/${AppPath.Settings}/${to}`;
 
   if (isDefined(params)) {
-    path = generatePath<`/${AppPath.Settings}/${T}`>(
-      `/${AppPath.Settings}/${to}`,
-      params,
-    );
+    path = generatePath(path, params);
   }
 
   if (isDefined(queryParams)) {

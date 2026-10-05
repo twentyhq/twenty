@@ -1,18 +1,8 @@
 import request from 'supertest';
+import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 
 const SERVER_URL = `http://localhost:${APP_PORT}`;
-
-const buildAppleOrigin = (): string => {
-  const origin = new URL(SERVER_URL);
-
-  origin.hostname =
-    process.env.IS_MULTIWORKSPACE_ENABLED === 'true'
-      ? `apple.${origin.hostname}`
-      : origin.hostname;
-
-  return origin.toString();
-};
 
 type GetAccessTokenForCredentialsArgs = {
   email: string;
@@ -26,7 +16,7 @@ export const getAccessTokenForCredentials = async ({
   email,
   password = 'tim@apple.dev',
 }: GetAccessTokenForCredentialsArgs): Promise<string> => {
-  const origin = buildAppleOrigin();
+  const origin = buildAppleWorkspaceOrigin();
 
   const loginResponse = await request(SERVER_URL)
     .post('/metadata')

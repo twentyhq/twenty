@@ -6,8 +6,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsAdminQueueDetail = () => {
   const { queueName } = useParams<{ queueName: string }>();
@@ -75,13 +74,13 @@ export const SettingsAdminQueueDetail = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title title={t`Jobs`} description={queueDescription} />
+        <Section.Root>
+          <Section.Header title={t`Jobs`} description={queueDescription} />
           <SettingsAdminQueueJobsTable
             queueName={queueName}
             onRetentionConfigLoaded={setRetentionConfig}
           />
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

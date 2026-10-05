@@ -1,6 +1,6 @@
 export { defineAgent } from '@/sdk/define/agents/define-agent';
 
-export type { ApplicationConfig } from '@/sdk/define/application/application-config';
+export type { ApplicationConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 export { defineApplication } from '@/sdk/define/application/define-application';
 
 export type {
@@ -32,58 +32,74 @@ export { RelationType } from '@/sdk/define/fields/relation-type';
 export { validateFields } from '@/sdk/define/fields/validate-fields';
 
 export { defineCommandMenuItem } from '@/sdk/define/command-menu-items/define-command-menu-item';
-export type { CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
-export type { CommandMenuItemManifest } from 'twenty-shared/application';
+export type {
+  CommandMenuItemConfig,
+  CommandMenuItemManifest,
+} from '@/sdk/define/common/types/loose-shared-types.type';
+
+export { defineTimelineActivityType } from '@/sdk/define/timeline-activity-types/define-timeline-activity-type';
+export type {
+  TimelineActivityTypeConfig,
+  TimelineActivityTypeManifest,
+} from '@/sdk/define/common/types/loose-shared-types.type';
+
+export { defineSettingsMenuItem } from '@/sdk/define/settings-menu-items/define-settings-menu-item';
+export type {
+  SettingsMenuItemConfig,
+  SettingsMenuItemManifest,
+} from '@/sdk/define/common/types/loose-shared-types.type';
+export type { SettingsMenuItemScope } from 'twenty-shared/application';
 
 export {
-  pageType,
-  isInSidePanel,
-  isDashboardPageLayoutInEditMode,
-  isLayoutCustomizationModeEnabled,
-  favoriteRecordIds,
-  isSelectAll,
-  hasAnySoftDeleteFilterOnView,
-  numberOfSelectedRecords,
-  objectPermissions,
-  selectedRecords,
-  featureFlags,
-  targetObjectReadPermissions,
-  targetObjectWritePermissions,
-  canImpersonate,
   canAccessFullAdminPanel,
-  isDefined,
-  isNonEmptyString,
-  includes,
+  canImpersonate,
   every,
   everyDefined,
   everyEquals,
-  some,
-  someDefined,
-  someEquals,
+  favoriteRecordIds,
+  featureFlags,
+  hasAnySoftDeleteFilterOnView,
+  includes,
+  includesEvery,
+  isDashboardPageLayoutInEditMode,
+  isDefined,
+  isInSidePanel,
+  isLayoutCustomizationModeEnabled,
+  isNonEmptyString,
+  isSelectAll,
   none,
   noneDefined,
   noneEquals,
-  someNonEmptyString,
-  includesEvery,
+  numberOfSelectedRecords,
   objectMetadataItem,
   objectMetadataLabel,
+  objectPermissions,
+  pageType,
+  selectedRecords,
+  some,
+  someDefined,
+  someEquals,
+  someNonEmptyString,
+  targetObjectReadPermissions,
+  targetObjectWritePermissions,
 } from '@/sdk/define/conditional-availability/conditional-availability-variables';
 
 export { defineFrontComponent } from '@/sdk/define/front-component/define-front-component';
 export { defineSettingsFrontComponent } from '@/sdk/define/front-component/define-settings-front-component';
+export type { FrontComponentType } from '@/sdk/define/front-component/front-component-config';
 export type {
   FrontComponentConfig,
-  FrontComponentType,
-} from '@/sdk/define/front-component/front-component-config';
-export type { SettingsFrontComponentConfig } from '@/sdk/define/front-component/settings-front-component-config';
+  SettingsFrontComponentConfig,
+} from '@/sdk/define/common/types/loose-shared-types.type';
 
 export { defineIndex } from '@/sdk/define/indexes/define-index';
-export type { IndexConfig } from '@/sdk/define/indexes/index-config';
 export type {
+  IndexConfig,
   IndexFieldManifest,
   IndexManifest,
-} from 'twenty-shared/application';
+} from '@/sdk/define/common/types/loose-shared-types.type';
 
+export { defineHealthCheck } from '@/sdk/define/logic-functions/define-health-check';
 export { defineLogicFunction } from '@/sdk/define/logic-functions/define-logic-function';
 export { definePostInstallLogicFunction } from '@/sdk/define/logic-functions/define-post-install-logic-function';
 export { definePreInstallLogicFunction } from '@/sdk/define/logic-functions/define-pre-install-logic-function';
@@ -96,14 +112,22 @@ export type {
   UninstallHandler,
   UninstallPayload,
 } from '@/sdk/define/logic-functions/uninstall-payload-type';
+export type { HealthCheckHandler } from '@/sdk/define/logic-functions/health-check-handler-type';
+export type { HealthCheckLogicFunctionConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 export type {
-  LogicFunctionConfig,
+  ApplicationHealthCheckAction,
+  ApplicationHealthCheckResult,
+} from 'twenty-shared/application';
+export { ApplicationHealthStatus } from 'twenty-shared/application';
+export type { LogicFunctionConfig } from '@/sdk/define/common/types/loose-shared-types.type';
+export type {
   LogicFunctionHandler,
   ServerRouteResolverResult,
 } from '@/sdk/define/logic-functions/logic-function-config';
 export type { ServerRouteDispatchResult } from 'twenty-shared/application';
 export type { CronPayload } from '@/sdk/define/logic-functions/triggers/cron-payload-type';
 export type {
+  DatabaseEventBatchPayload,
   DatabaseEventPayload,
   ObjectRecordBaseEvent,
   ObjectRecordCreateEvent,
@@ -130,8 +154,11 @@ export type { TwentyRecord } from '@/sdk/define/objects/twenty-record.type';
 
 export { definePageLayout } from '@/sdk/define/page-layouts/define-page-layout';
 export { definePageLayoutTab } from '@/sdk/define/page-layouts/define-page-layout-tab';
-export type { PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
-export type { PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+export { definePageLayoutWidget } from '@/sdk/define/page-layouts/define-page-layout-widget';
+export type {
+  PageLayoutConfig,
+  PageLayoutTabConfig,
+} from '@/sdk/define/common/types/loose-shared-types.type';
 export {
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS as STANDARD_PAGE_LAYOUT,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
@@ -140,21 +167,22 @@ export type {
   PageLayoutManifest,
   PageLayoutTabManifest,
   PageLayoutWidgetManifest,
-} from 'twenty-shared/application';
+  StandalonePageLayoutWidgetManifest,
+} from '@/sdk/define/common/types/loose-shared-types.type';
 
 export { definePermissionFlag } from '@/sdk/define/permission-flags/define-permission-flag';
-export type { PermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
 export type {
+  PermissionFlagConfig,
   PermissionFlagManifest,
-  PermissionFlagPermissionType,
-} from 'twenty-shared/application';
+} from '@/sdk/define/common/types/loose-shared-types.type';
+export type { PermissionFlagPermissionType } from 'twenty-shared/application';
 
 export { defineApplicationRole } from '@/sdk/define/roles/define-application-role';
 export { defineRole } from '@/sdk/define/roles/define-role';
 export type {
   RowLevelPermissionPredicateManifest,
   RowLevelPermissionPredicateGroupManifest,
-} from 'twenty-shared/application';
+} from '@/sdk/define/common/types/loose-shared-types.type';
 export {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
@@ -166,10 +194,14 @@ export { defineSkill } from '@/sdk/define/skills/define-skill';
 export { defineView } from '@/sdk/define/views/define-view';
 export { defineViewField } from '@/sdk/define/view-fields/define-view-field';
 export {
+  getSystemPageLayoutTabUniversalIdentifier,
+  getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+  type SystemViewKey,
 } from 'twenty-shared/application';
-export type { ViewConfig } from '@/sdk/define/views/view-config';
+export type { ViewConfig } from '@/sdk/define/common/types/loose-shared-types.type';
 export { ViewKey } from '@/sdk/define/views/view-key';
 export type {
   StandaloneViewFieldManifest,
@@ -178,19 +210,26 @@ export type {
   ViewFilterGroupManifest,
   ViewFilterManifest,
   ViewGroupManifest,
-  ViewManifestFilterValue,
   ViewSortManifest,
-} from 'twenty-shared/application';
+} from '@/sdk/define/common/types/loose-shared-types.type';
+export type { ViewManifestFilterValue } from 'twenty-shared/application';
 
 export {
   AggregateOperations,
+  CommandMenuItemAvailabilityType,
   DateDisplayFormat,
   FieldMetadataSettingsOnClickAction,
   HTTPMethod,
+  IndexType,
+  MetadataReadability,
+  MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,
+  ObjectOpenRecordIn,
   ObjectRecordGroupByDateGranularity,
+  ObjectSharingReach,
   PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
   PageLayoutType,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
@@ -199,9 +238,13 @@ export {
   ViewSortDirection,
   ViewType,
   ViewVisibility,
+  WidgetType,
 } from 'twenty-shared/types';
 export type {
-  GridPosition,
+  PageLayoutWidgetCanvasPosition,
   PageLayoutWidgetConditionalDisplay,
+  PageLayoutWidgetGridPosition,
+  PageLayoutWidgetPosition,
   PageLayoutWidgetUniversalConfiguration,
-} from 'twenty-shared/types';
+  PageLayoutWidgetVerticalListPosition,
+} from '@/sdk/define/common/types/loose-shared-types.type';

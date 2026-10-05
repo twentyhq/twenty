@@ -1,13 +1,8 @@
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import {
-  DEFAULT_COLOR_LABELS,
-  MenuItemSelectColor,
-} from 'twenty-ui/navigation';
+import { Dropdown, DEFAULT_COLOR_LABELS } from 'twenty-ui/components';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 type ThemeColorPickerMenuProps = {
@@ -20,9 +15,7 @@ export const ThemeColorPickerMenu = ({
   onSelectColor,
 }: ThemeColorPickerMenuProps) => {
   const [searchValue, setSearchValue] = useState('');
-
   const query = searchValue.trim().toLowerCase();
-
   const filteredColorNames = isNonEmptyString(query)
     ? MAIN_COLOR_NAMES.filter(
         (colorName) =>
@@ -33,23 +26,25 @@ export const ThemeColorPickerMenu = ({
 
   return (
     <>
-      <DropdownMenuSearchInput
+      <Dropdown.Search
+        aria-label={t`Search colors`}
         placeholder={t`Search colors...`}
         value={searchValue}
-        onChange={(event) => setSearchValue(event.target.value)}
+        onValueChange={setSearchValue}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable>
         {filteredColorNames.map((colorName) => (
-          <MenuItemSelectColor
+          <Dropdown.OptionItem
             key={colorName}
-            onClick={() => onSelectColor(colorName)}
-            color={colorName}
             selected={colorName === selectedColor}
-            colorLabels={DEFAULT_COLOR_LABELS}
-          />
+            onSelect={() => onSelectColor(colorName)}
+            startIcon={<ColorSample colorName={colorName} />}
+          >
+            {DEFAULT_COLOR_LABELS[colorName]}
+          </Dropdown.OptionItem>
         ))}
-      </DropdownMenuItemsContainer>
+      </Dropdown.Section>
     </>
   );
 };

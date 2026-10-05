@@ -1,12 +1,11 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { H2Title } from 'twenty-ui/typography';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { DpaDocumentPreview } from '@/settings/legal/components/DpaDocumentPreview';
@@ -53,48 +52,47 @@ export const SettingsLegalDpa = () => {
         { children: t`Legal` },
       ]}
       actionButton={
-        <UndecoratedLink to={getSettingsPath(SettingsPath.LegalDpaNew)}>
-          <Button
-            Icon={IconPlus}
-            title={t`Generate DPA`}
-            accent="blue"
-            size="small"
-          />
-        </UndecoratedLink>
+        <NavigationButton
+          to={getSettingsPath(SettingsPath.LegalDpaNew)}
+          startIcon={<IconPlus />}
+          size="sm"
+          variant="solid"
+          color="accent"
+        >{t`Generate DPA`}</NavigationButton>
       }
     >
       <SettingsPageContainer>
         {isLoading ? (
           <SettingsSkeletonLoader />
         ) : hasAgreements ? (
-          <Section>
-            <H2Title
+          <Section.Root>
+            <Section.Header
               title={t`Executed copies`}
               description={t`Accepted and signed DPAs for this workspace, with their template version and date.`}
             />
             <SettingsDpaAgreementsTable agreements={agreements} />
-          </Section>
+          </Section.Root>
         ) : preview ? (
           <>
             {preview.notice && (
-              <Section>
+              <Section.Root>
                 <DpaNotice text={preview.notice} />
-              </Section>
+              </Section.Root>
             )}
-            <Section>
-              <H2Title
+            <Section.Root>
+              <Section.Header
                 title={t`Data Processing Agreement`}
                 description={t`No copy has been generated yet. This is the agreement that applies to your deployment — generate a signed copy from the top-right.`}
               />
               <DpaDocumentPreview document={preview} />
-            </Section>
+            </Section.Root>
           </>
         ) : (
-          <Section>
+          <Section.Root>
             <DpaNotice
               text={t`The Data Processing Agreement could not be loaded. Please try again.`}
             />
-          </Section>
+          </Section.Root>
         )}
       </SettingsPageContainer>
     </SettingsPageLayout>

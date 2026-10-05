@@ -18,8 +18,15 @@ const updateRecord = fn();
 const {
   FieldInputEventContextProviderWithJestMocks,
   handleEscapeMocked,
+  handleSubmitMocked,
   handleClickoutsideMocked,
 } = getFieldInputEventContextProviderWithJestMocks();
+
+const EMPTY_LINKS_VALUE = {
+  primaryLinkUrl: null,
+  primaryLinkLabel: null,
+  secondaryLinks: [],
+};
 
 const LinksValueSetterEffect = ({
   value,
@@ -114,7 +121,7 @@ const LinksInputWithContext = ({
 };
 
 const getPrimaryLinkBookmarkIcon = (canvasElement: HTMLElement) =>
-  // It would be better to use an aria-label on the icon, but we'll do this for now
+  // TODO: query by an aria-label on the icon instead
   canvasElement.querySelector('svg[class*="tabler-icon-bookmark"]');
 
 const meta: Meta = {
@@ -305,6 +312,66 @@ export const DeletePrimaryLink: Story = {
   },
 };
 
+export const DeletePrimaryLinkPersistsEmptyValue: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'https://www.twenty.com',
+      primaryLinkLabel: 'Twenty Website',
+      secondaryLinks: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const openDropdownButton = await canvas.findByRole('button', {
+      expanded: false,
+    });
+    await userEvent.click(openDropdownButton);
+
+    const deleteOption = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('Delete');
+    await userEvent.click(deleteOption);
+
+    expect(handleSubmitMocked).toHaveBeenCalledWith({
+      newValue: EMPTY_LINKS_VALUE,
+      skipClose: true,
+    });
+  },
+};
+
+export const ClearPrimaryLinkAndPressEnter: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'https://www.twenty.com',
+      primaryLinkLabel: 'Twenty Website',
+      secondaryLinks: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const openDropdownButton = await canvas.findByRole('button', {
+      expanded: false,
+    });
+    await userEvent.click(openDropdownButton);
+
+    const editOption = await within(
+      canvasElement.ownerDocument.body,
+    ).findByText('Edit');
+    await userEvent.click(editOption);
+
+    const input = await canvas.findByPlaceholderText('URL');
+    await userEvent.clear(input);
+    await userEvent.type(input, '{enter}');
+
+    expect(handleSubmitMocked).toHaveBeenCalledWith({
+      newValue: EMPTY_LINKS_VALUE,
+      skipClose: true,
+    });
+  },
+};
+
 export const DeletePrimaryLinkAndUseSecondaryLinkAsTheNewPrimaryLink: Story = {
   args: {
     value: {
@@ -481,12 +548,23 @@ export const MakeSecondaryLinkPrimary: Story = {
     const openDropdownButtons = await canvas.findAllByRole('button', {
       expanded: false,
     });
-    await userEvent.click(openDropdownButtons[1]); // Click the secondary link's dropdown
+    await userEvent.click(openDropdownButtons[1]);
 
     const setPrimaryOption = await within(
       canvasElement.ownerDocument.body,
     ).findByText('Set as Primary');
     await userEvent.click(setPrimaryOption);
+
+    expect(handleSubmitMocked).toHaveBeenCalledWith({
+      newValue: {
+        primaryLinkUrl: 'https://docs.twenty.com',
+        primaryLinkLabel: 'Documentation',
+        secondaryLinks: [
+          { url: 'https://www.twenty.com', label: 'Twenty Website' },
+        ],
+      },
+      skipClose: true,
+    });
   },
 };
 
@@ -511,7 +589,6 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     });
     await userEvent.click(openDropdownButton);
 
-    // Should not see "Set as Primary" option for primary link
     const setPrimaryOption = within(
       canvasElement.ownerDocument.body,
     ).queryByText('Set as Primary');

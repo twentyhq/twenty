@@ -1,45 +1,45 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { t } from '@lingui/core/macro';
 
-import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
+import { SpreadsheetImportSingleSelectTable } from '@/spreadsheet-import/components/SpreadsheetImportSingleSelectTable';
 import { type ImportedRow } from '@/spreadsheet-import/types';
-
-import { generateSelectionColumns } from './SelectColumn';
 
 type SelectHeaderTableProps = {
   importedRows: ImportedRow[];
-  selectedRowIndexes: ReadonlySet<number>;
-  setSelectedRowIndexes: (rowIndexes: ReadonlySet<number>) => void;
+  selectedRowIndex: number;
+  onSelectedRowChange: (rowIndex: number) => void;
 };
 
 export const SelectHeaderTable = ({
   importedRows,
-  selectedRowIndexes,
-  setSelectedRowIndexes,
+  selectedRowIndex,
+  onSelectedRowChange,
 }: SelectHeaderTableProps) => {
-  const columns = useMemo(
-    () => generateSelectionColumns(importedRows),
+  const rowKeyGetter = useCallback(
+    (row: ImportedRow) => importedRows.indexOf(row),
     [importedRows],
   );
 
+  const columns = useMemo(() => {
+    const longestRowLength = importedRows.reduce(
+      (length, row) => Math.max(length, row.length),
+      0,
+    );
+
+    return Array.from({ length: longestRowLength }, (_, index) => ({
+      key: index.toString(),
+      name: '',
+    }));
+  }, [importedRows]);
+
   return (
-    <SpreadsheetImportTable
-      // Todo: remove usage of react-data-grid
-      rowKeyGetter={(row: any) => importedRows.indexOf(row)}
+    <SpreadsheetImportSingleSelectTable
+      rowKeyGetter={rowKeyGetter}
       rows={importedRows}
       columns={columns}
-      selectedRows={selectedRowIndexes}
-      onSelectedRowsChange={(newSelectedRows) => {
-        for (const value of newSelectedRows) {
-          const rowIndex = Number(value);
-          if (!selectedRowIndexes.has(rowIndex)) {
-            setSelectedRowIndexes(new Set([rowIndex]));
-            return;
-          }
-        }
-      }}
-      onCellClick={(args) => {
-        setSelectedRowIndexes(new Set([importedRows.indexOf(args.row)]));
-      }}
+      selectionLabel={t`Select header row`}
+      selectedRowKey={selectedRowIndex}
+      onSelectedRowChange={onSelectedRowChange}
       headerRowHeight={0}
     />
   );

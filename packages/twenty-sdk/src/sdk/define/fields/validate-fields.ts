@@ -2,7 +2,41 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type ObjectFieldManifest } from 'twenty-shared/application';
+import { TAG_COLORS } from 'twenty-shared/constants';
+import {
+  isDefined,
+  isFieldMetadataSelectKind,
+  isPlainObject,
+  isTagColor,
+} from 'twenty-shared/utils';
+
+import { type ObjectFieldManifest } from '@/sdk/define/common/types/loose-shared-types.type';
+
+const getSelectOptionErrors = (field: ObjectFieldManifest): string[] => {
+  if (!isFieldMetadataSelectKind(field.type) || !Array.isArray(field.options)) {
+    return [];
+  }
+
+  return field.options.flatMap((option, index) => {
+    if (!isPlainObject(option)) {
+      return [
+        `Field "${field.label}" option at index ${index} must be an object`,
+      ];
+    }
+
+    if (
+      !('color' in option) ||
+      !isDefined(option.color) ||
+      isTagColor(option.color)
+    ) {
+      return [];
+    }
+
+    return [
+      `Field "${field.label}" option "${option.label}" has an unsupported color. Supported colors: ${TAG_COLORS.join(', ')}`,
+    ];
+  });
+};
 
 export const validateFields = (
   fields: ObjectFieldManifest[] | undefined,
@@ -35,6 +69,8 @@ export const validateFields = (
         `Field "${field.label}" is a SELECT/MULTI_SELECT type and must have options`,
       );
     }
+
+    errors.push(...getSelectOptionErrors(field));
 
     if (
       field.isUnique === true &&

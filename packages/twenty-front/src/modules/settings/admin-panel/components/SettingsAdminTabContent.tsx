@@ -28,7 +28,7 @@ export const SettingsAdminTabContent = ({
       return <SettingsAdminConfigVariables />;
     case SETTINGS_ADMIN_TABS.HEALTH_STATUS:
       return <SettingsAdminHealthStatus />;
-    case SETTINGS_ADMIN_TABS.ENTERPRISE:
+    case SETTINGS_ADMIN_TABS.ORGANIZATION:
       return (
         <Suspense fallback={<SettingsSectionSkeletonLoader />}>
           <SettingsEnterprise isAdminPanelTab />

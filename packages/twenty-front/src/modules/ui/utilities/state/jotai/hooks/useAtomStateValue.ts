@@ -1,5 +1,6 @@
 import { useAtomValue as useJotaiAtomValue } from 'jotai';
 
+import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { type Selector } from '@/ui/utilities/state/jotai/types/Selector';
 import { type State } from '@/ui/utilities/state/jotai/types/State';
 import { type WritableSelector } from '@/ui/utilities/state/jotai/types/WritableSelector';
@@ -7,5 +8,9 @@ import { type WritableSelector } from '@/ui/utilities/state/jotai/types/Writable
 export const useAtomStateValue = <ValueType>(
   state: State<ValueType> | Selector<ValueType> | WritableSelector<ValueType>,
 ): ValueType => {
-  return useJotaiAtomValue(state.atom);
+  const scopeId = useRoutedFlowStateScopeId();
+
+  return useJotaiAtomValue(
+    state.type === 'State' ? state.getAtom(scopeId) : state.atom,
+  );
 };

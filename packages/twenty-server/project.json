@@ -18,6 +18,16 @@
       },
       "dependsOn": ["^build"]
     },
+    "test:integration:secure": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "commands": [
+          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=6144\" nx jest --config ./jest-integration-secure.config.ts --logHeapUsage"
+        ]
+      },
+      "parallel": false
+    },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
@@ -56,6 +66,7 @@
     "typecheck": {
       "dependsOn": ["^build"]
     },
+    "knip": {},
     "start": {
       "executor": "nx:run-commands",
       "cache": false,
@@ -159,6 +170,7 @@
       "dependsOn": ["twenty-oxlint-rules:build"],
       "inputs": [
         "{projectRoot}/src/**/*.{ts,tsx}",
+        "{projectRoot}/test/**/*.{ts,tsx}",
         "{projectRoot}/tsconfig*.json",
         "{workspaceRoot}/tsconfig.base.json",
         "{projectRoot}/.oxlintrc.json",
@@ -166,12 +178,12 @@
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ && (npx oxfmt --check src/ || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint twenty-server --configuration=fix' && false))"
+        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ test/ && (npx oxfmt --check src/ test/ || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint twenty-server --configuration=fix' && false))"
       },
       "configurations": {
         "ci": {},
         "fix": {
-          "command": "npx oxlint --type-aware --fix -c .oxlintrc.json src/ && npx oxfmt src/"
+          "command": "npx oxlint --type-aware --fix -c .oxlintrc.json src/ test/ && npx oxfmt src/ test/"
         }
       }
     },
@@ -180,15 +192,19 @@
       "dependsOn": ["twenty-oxlint-rules:build"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware -c .oxlintrc.json $FILES && (npx oxfmt --check $FILES || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint:diff-with-main twenty-server --configuration=fix' && false)))"
+        "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ test/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware -c .oxlintrc.json $FILES && (npx oxfmt --check $FILES || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint:diff-with-main twenty-server --configuration=fix' && false)))"
       },
       "configurations": {
         "fix": {
-          "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware --fix -c .oxlintrc.json $FILES && npx oxfmt $FILES)"
+          "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ test/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware --fix -c .oxlintrc.json $FILES && npx oxfmt $FILES)"
         }
       }
     },
-    "test": {},
+    "test": {
+      "options": {
+        "maxWorkers": "50%"
+      }
+    },
     "test:debug": {
       "executor": "nx:run-commands",
       "options": {
@@ -249,6 +265,7 @@
         "no-seed": {
           "cwd": "packages/twenty-server",
           "commands": [
+            "node dist/database/scripts/truncate-clickhouse.js",
             "node dist/database/scripts/truncate-db.js",
             "nx database:init",
             "nx command-no-deps -- cache:flush"
@@ -258,6 +275,7 @@
         "seed": {
           "cwd": "packages/twenty-server",
           "commands": [
+            "node dist/database/scripts/truncate-clickhouse.js",
             "node dist/database/scripts/truncate-db.js",
             "nx database:init",
             "nx command-no-deps -- cache:flush",
@@ -272,14 +290,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "nx ts-node-no-deps-transpile-only -- src/database/clickHouse/migrations/run-migrations.ts"
+        "command": "nx ts-node-no-deps-transpile-only -- src/database/clickhouse/migrations/run-migrations.ts"
       }
     },
     "clickhouse:seed": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "nx ts-node-no-deps-transpile-only -- src/database/clickHouse/seeds/run-seeds.ts"
+        "command": "nx ts-node-no-deps-transpile-only -- src/database/clickhouse/seeds/run-seeds.ts"
       }
     },
     "lingui:extract": {

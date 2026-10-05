@@ -1,3 +1,4 @@
+import { RecordDragEndDropZone } from '@/object-record/record-drag/components/RecordDragEndDropZone';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -8,16 +9,10 @@ import { RecordTableRow } from '@/object-record/record-table/record-table-row/co
 import { RecordTableRecordGroupSectionAddNew } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew';
 import { RecordTableRecordGroupSectionLoadMore } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
-import { DragDropItemEndDropZone } from '@/ui/utilities/drag-and-drop/components/DragDropItemEndDropZone';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-
-const StyledRecordGroupEndDropZone = styled(DragDropItemEndDropZone)`
-  width: 100%;
-`;
 
 export const RecordTableRecordGroupRows = () => {
   const currentRecordGroupId = useCurrentRecordGroupId();
@@ -69,17 +64,14 @@ export const RecordTableRecordGroupRows = () => {
           />
         );
       })}
-      <StyledRecordGroupEndDropZone
-        id={`record-group-end-drop-zone-${currentRecordGroupId}`}
-        accept={RECORD_TABLE_ROW_DND_TYPE}
-        data={{
-          droppableId: currentRecordGroupId,
-          index: recordIndexRecordIdsByGroup.length,
-        }}
+      <RecordDragEndDropZone
+        droppableId={currentRecordGroupId}
+        dndType={RECORD_TABLE_ROW_DND_TYPE}
+        index={recordIndexRecordIdsByGroup.length}
       >
         <RecordTableRecordGroupSectionLoadMore />
         <RecordTableRecordGroupSectionAddNew />
-      </StyledRecordGroupEndDropZone>
+      </RecordDragEndDropZone>
       <RecordTableAggregateFooter
         key={currentRecordGroupId}
         currentRecordGroupId={currentRecordGroupId}

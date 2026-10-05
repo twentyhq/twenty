@@ -4,6 +4,7 @@ import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { buildAlphabeticalRankByKey } from '@/page-layout/widgets/graph/utils/buildAlphabeticalRankByKey';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type LineSeries } from '@nivo/line';
@@ -27,14 +28,17 @@ export const useLineChartData = ({
   );
 
   const allEnrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
-    const shouldApplyGradient = colorMode === 'explicitSingleColor';
+    const alphabeticalRankByKey = buildAlphabeticalRankByKey(
+      data.map((series) => series.key),
+    );
 
     return data.map((series, index) => {
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: series.color,
-        fallbackIndex: index,
-        totalGroups: shouldApplyGradient ? data.length : undefined,
+        colorKey: series.key,
+        colorMode,
+        alphabeticalRankByKey,
       });
 
       const sanitizedSeriesKey = series.key

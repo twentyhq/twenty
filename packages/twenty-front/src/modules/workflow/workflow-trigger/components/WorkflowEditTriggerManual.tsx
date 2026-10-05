@@ -16,8 +16,8 @@ import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type WorkflowEditTriggerManualProps = {
   trigger: WorkflowManualTrigger;
@@ -44,6 +44,8 @@ const StyledDescription = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
   margin-top: 1px;
 `;
+
+const MANUAL_TRIGGER_VISIBLE_ICON_COUNT = 72;
 
 const StyledIconPickerContainer = styled.div`
   display: flex;
@@ -109,7 +111,7 @@ export const WorkflowEditTriggerManual = ({
               }),
             });
           }}
-          dropdownOffset={{ y: 4 }}
+          dropdownSideOffset={4}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
@@ -144,7 +146,7 @@ export const WorkflowEditTriggerManual = ({
                 },
               });
             }}
-            dropdownOffset={{ y: 4 }}
+            dropdownSideOffset={4}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             withSearchInput
           />
@@ -153,12 +155,13 @@ export const WorkflowEditTriggerManual = ({
         <IconPicker
           dropdownId="workflow-edit-manual-trigger-icon"
           selectedIconKey={trigger.settings.icon}
-          dropdownOffset={{ y: -12 }}
+          dropdownSideOffset={-12}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-          maxIconsVisible={9 * 8} // 9 columns * 8 lines
+          maxIconsVisible={MANUAL_TRIGGER_VISIBLE_ICON_COUNT}
           disabled={triggerOptions.readonly}
           clickableComponent={
             <StyledIconPickerContainer
+              aria-label={t`Command Icon`}
               onClick={(e) => {
                 if (triggerOptions.readonly === true) {
                   e.stopPropagation();
@@ -215,7 +218,7 @@ export const WorkflowEditTriggerManual = ({
               },
             });
           }}
-          dropdownOffset={{ y: 4 }}
+          dropdownSideOffset={4}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
       </WorkflowStepBody>

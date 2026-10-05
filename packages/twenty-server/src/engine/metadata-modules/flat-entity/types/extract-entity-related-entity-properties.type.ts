@@ -1,7 +1,7 @@
 import { type ExtractEntityManyToOneEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-entity-relation-properties.type';
 import { type ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-one-to-many-entity-relation-properties.type';
 import { type AllNonWorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/all-non-workspace-related-entity.type';
-import { type WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { type WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
 export type ExtractEntityRelatedEntityProperties<
   T,

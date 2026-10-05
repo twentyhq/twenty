@@ -1,6 +1,7 @@
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
 export type FieldMetadataOverrides = {
+  isActive?: boolean;
   label?: string | null;
   description?: string | null;
   icon?: string | null;

@@ -10,8 +10,8 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import {
-  type TwentyORMException,
-  TwentyORMExceptionCode,
+  type TwentyOrmException,
+  TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -44,7 +44,7 @@ export class MessageImportExceptionHandlerService {
     exception:
       | MessageImportDriverException
       | Error
-      | TwentyORMException
+      | TwentyOrmException
       | ConnectedAccountRefreshAccessTokenException,
     syncStep: MessageImportSyncStep,
     messageChannel: Pick<
@@ -71,7 +71,8 @@ export class MessageImportExceptionHandlerService {
             workspaceId,
           );
           break;
-        case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
+        case TwentyOrmExceptionCode.QUERY_READ_TIMEOUT:
+        case TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR:
         case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
         case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
         case MessageNetworkExceptionCode.ECONNABORTED:
@@ -96,12 +97,16 @@ export class MessageImportExceptionHandlerService {
             message: `${exception.code}: ${exception.message ?? ''}`,
           });
           await this.handleInsufficientPermissionsException(
+            exception,
+            syncStep,
             messageChannel,
             workspaceId,
           );
           break;
         case MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
           await this.handleInsufficientPermissionsException(
+            exception,
+            syncStep,
             messageChannel,
             workspaceId,
           );
@@ -228,9 +233,20 @@ export class MessageImportExceptionHandlerService {
   }
 
   private async handleInsufficientPermissionsException(
-    messageChannel: Pick<MessageChannelEntity, 'id'>,
+    exception: Error,
+    syncStep: MessageImportSyncStep,
+    messageChannel: Pick<MessageChannelEntity, 'id' | 'connectedAccountId'>,
     workspaceId: string,
   ): Promise<void> {
+    this.exceptionHandlerService.captureExceptions([exception], {
+      additionalData: {
+        messageChannelId: messageChannel.id,
+        connectedAccountId: messageChannel.connectedAccountId,
+        syncStep,
+      },
+      workspace: { id: workspaceId },
+    });
+
     await this.messageChannelSyncStatusService.markAsFailed(
       [messageChannel.id],
       workspaceId,

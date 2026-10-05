@@ -1,15 +1,16 @@
-import { isDefined } from 'twenty-shared/utils';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { publicDomainRecordsState } from '@/settings/domains/states/publicDomainRecordsState';
-import { useMutation } from '@apollo/client/react';
-import { CheckPublicDomainValidRecordsDocument } from '~/generated-metadata/graphql';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useMutation } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
+import { CheckPublicDomainValidRecordsDocument } from '~/generated-metadata/graphql';
 
 export const useCheckPublicDomainValidRecords = () => {
   const [checkPublicDomainValidRecords] = useMutation(
     CheckPublicDomainValidRecordsDocument,
   );
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [{ isLoading, publicDomainRecords }, setPublicDomainRecords] =
     useAtomState(publicDomainRecordsState);
@@ -36,7 +37,7 @@ export const useCheckPublicDomainValidRecords = () => {
         }));
       },
       onError: (error) => {
-        enqueueErrorSnackBar({ apolloError: error });
+        enqueueToast(getToastOptionsFromError({ error }));
         setPublicDomainRecords((currentState) => ({
           ...currentState,
           isLoading: false,

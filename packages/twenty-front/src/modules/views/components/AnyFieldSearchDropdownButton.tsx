@@ -4,20 +4,23 @@ import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffset
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { AnyFieldSearchChip } from '@/views/components/AnyFieldSearchChip';
 import { AnyFieldSearchDropdownContent } from '@/views/components/AnyFieldSearchDropdownContent';
-import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDropdownId';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { getAnyFieldSearchDropdownId } from '@/views/utils/getAnyFieldSearchDropdownId';
 
 export const AnyFieldSearchDropdownButton = () => {
   const { openDropdown } = useOpenDropdown();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+  const dropdownId = getAnyFieldSearchDropdownId(recordIndexId);
 
   const handleOpenAnyFieldSearchDropdown = () => {
     openDropdown({
-      dropdownComponentInstanceIdFromProps: ANY_FIELD_SEARCH_DROPDOWN_ID,
+      dropdownComponentInstanceIdFromProps: dropdownId,
     });
   };
 
   return (
     <Dropdown
-      dropdownId={ANY_FIELD_SEARCH_DROPDOWN_ID}
+      dropdownId={dropdownId}
       clickableComponent={<AnyFieldSearchChip />}
       dropdownComponents={<AnyFieldSearchDropdownContent />}
       dropdownOffset={{ y: DROPDOWN_OFFSET_Y, x: 0 }}

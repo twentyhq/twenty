@@ -4,7 +4,7 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { aggregateRelationFieldPairs } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-relation-field-pairs.util';
-import { type UniversalCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import { type UniversalCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 
 describe('aggregateRelationFieldPairs', () => {
   it('should bundle relation field pairs into single action with relatedFieldId', () => {
@@ -57,7 +57,6 @@ describe('aggregateRelationFieldPairs', () => {
       orchestratorActionsReport: input,
     });
 
-    // Should be bundled into a single action with flatEntity and relatedUniversalFlatFieldMetadata
     expect(result.fieldMetadata.create).toMatchObject([
       {
         flatEntity: { universalIdentifier: targetTaskFieldId },
@@ -100,7 +99,6 @@ describe('aggregateRelationFieldPairs', () => {
       orchestratorActionsReport: input,
     });
 
-    // Should remain as single action without relatedUniversalFlatFieldMetadata
     expect(result.fieldMetadata.create).toMatchObject([
       {
         flatEntity: { universalIdentifier: fieldUniversalId },
@@ -146,7 +144,6 @@ describe('aggregateRelationFieldPairs', () => {
       orchestratorActionsReport: input,
     });
 
-    // Should remain as single action without relatedUniversalFlatFieldMetadata (target not being created)
     expect(result.fieldMetadata.create).toMatchObject([
       {
         flatEntity: { universalIdentifier: relationFieldId },
@@ -234,7 +231,6 @@ describe('aggregateRelationFieldPairs', () => {
       orchestratorActionsReport: input,
     });
 
-    // Should result in 2 bundled actions (one per pair)
     expect(result.fieldMetadata.create).toMatchObject([
       {
         flatEntity: { universalIdentifier: pair1FieldA },

@@ -7,7 +7,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { type Layout, type Layouts } from 'react-grid-layout';
+import { type Layout, type ResponsiveLayouts } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePageLayoutHandleLayoutChange = ({
@@ -35,7 +35,7 @@ export const usePageLayoutHandleLayoutChange = ({
   );
 
   const handleLayoutChange = useCallback(
-    (_: Layout[], allLayouts: Layouts) => {
+    (_: Layout, allLayouts: ResponsiveLayouts) => {
       const activeTabId = store.get(
         activeTabIdComponentState.atomFamily({
           instanceId: tabListInstanceId,

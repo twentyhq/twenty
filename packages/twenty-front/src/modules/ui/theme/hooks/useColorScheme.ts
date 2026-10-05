@@ -1,10 +1,15 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useCallback } from 'react';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import { useToast } from 'twenty-ui/components';
 import {
   type IconComponent,
   IconMoon,
@@ -13,43 +18,62 @@ import {
 } from 'twenty-ui/icon';
 
 export const useColorScheme = () => {
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
-    currentWorkspaceMemberState,
-  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const store = useStore();
 
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
-  const setPersistedColorScheme = useSetAtomState(persistedColorSchemeState);
+  const { enqueueToast } = useToast();
 
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 
   const setColorScheme = useCallback(
     async (value: ColorScheme) => {
-      if (!currentWorkspaceMember) {
+      const workspaceMember = store.get(currentWorkspaceMemberState.atom);
+
+      if (!isDefined(workspaceMember)) {
         return;
       }
-      setPersistedColorScheme(value);
-      setCurrentWorkspaceMember((current) => {
-        if (!current) {
-          return current;
+
+      const previousPersistedColorScheme = store.get(
+        persistedColorSchemeState.atom,
+      );
+
+      store.set(currentWorkspaceMemberState.atom, {
+        ...workspaceMember,
+        colorScheme: value,
+      });
+      store.set(persistedColorSchemeState.atom, value);
+
+      try {
+        await updateWorkspaceMemberSettings({
+          workspaceMemberId: workspaceMember.id,
+          update: {
+            colorScheme: value,
+          },
+        });
+      } catch (error) {
+        const latestWorkspaceMember = store.get(
+          currentWorkspaceMemberState.atom,
+        );
+
+        if (
+          latestWorkspaceMember?.id === workspaceMember.id &&
+          latestWorkspaceMember.colorScheme === value
+        ) {
+          store.set(currentWorkspaceMemberState.atom, {
+            ...latestWorkspaceMember,
+            colorScheme: workspaceMember.colorScheme,
+          });
+          store.set(
+            persistedColorSchemeState.atom,
+            previousPersistedColorScheme,
+          );
         }
-        return {
-          ...current,
-          colorScheme: value,
-        };
-      });
-      await updateWorkspaceMemberSettings({
-        workspaceMemberId: currentWorkspaceMember.id,
-        update: {
-          colorScheme: value,
-        },
-      });
+
+        enqueueToast(getToastOptionsFromError({ error }));
+      }
     },
-    [
-      currentWorkspaceMember,
-      setCurrentWorkspaceMember,
-      setPersistedColorScheme,
-      updateWorkspaceMemberSettings,
-    ],
+    [store, updateWorkspaceMemberSettings, enqueueToast],
   );
 
   const colorSchemeList: Array<{

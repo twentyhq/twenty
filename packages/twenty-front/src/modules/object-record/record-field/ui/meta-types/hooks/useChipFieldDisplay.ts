@@ -22,7 +22,6 @@ export const useChipFieldDisplay = () => {
     maxWidth,
     triggerEvent,
     onRecordChipClick,
-    isLabelIdentifierCompact,
   } = useContext(FieldContext);
 
   const { indexIdentifierUrl, labelIdentifierFieldMetadataItem } =
@@ -65,6 +64,5 @@ export const useChipFieldDisplay = () => {
     maxWidth,
     triggerEvent,
     onRecordChipClick,
-    isLabelIdentifierCompact,
   };
 };

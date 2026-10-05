@@ -28,9 +28,51 @@ describe('parseMicrosoftCalendarError', () => {
     );
   });
 
-  it('should be insufficient permissions when access is denied', () => {
+  it('should be temporary when access is denied because Graph 403s can be transient mailbox-level denials', () => {
     const exception = parseMicrosoftCalendarError(
       buildGraphError({ statusCode: 403, code: 'ErrorAccessDenied' }),
+    );
+
+    expect(exception.code).toBe(
+      CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
+  });
+
+  it('should be insufficient permissions when the mailbox is not enabled for the REST API', () => {
+    const exception = parseMicrosoftCalendarError(
+      buildGraphError({
+        statusCode: 404,
+        code: 'MailboxNotEnabledForRESTAPI',
+        message: 'Some reworded message from Microsoft.',
+      }),
+    );
+
+    expect(exception.code).toBe(
+      CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+    );
+  });
+
+  it('should be insufficient permissions when the account has no valid licence', () => {
+    const exception = parseMicrosoftCalendarError(
+      buildGraphError({
+        statusCode: 403,
+        code: 'ErrorInvalidLicense',
+        message: 'The license of the user is invalid.',
+      }),
+    );
+
+    expect(exception.code).toBe(
+      CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+    );
+  });
+
+  it('should be insufficient permissions on a dead-account code regardless of status code', () => {
+    const exception = parseMicrosoftCalendarError(
+      buildGraphError({
+        statusCode: 500,
+        code: 'ErrorAccountDisabled',
+        message: 'The account in question has been disabled.',
+      }),
     );
 
     expect(exception.code).toBe(
@@ -78,11 +120,13 @@ describe('parseMicrosoftCalendarError', () => {
     );
   });
 
-  it('should be unknown for an unhandled status code', () => {
+  it('should be temporary for an unhandled status code so channels are never killed on unrecognized errors', () => {
     const exception = parseMicrosoftCalendarError(
       buildGraphError({ statusCode: 418 }),
     );
 
-    expect(exception.code).toBe(CalendarEventImportDriverExceptionCode.UNKNOWN);
+    expect(exception.code).toBe(
+      CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
   });
 });

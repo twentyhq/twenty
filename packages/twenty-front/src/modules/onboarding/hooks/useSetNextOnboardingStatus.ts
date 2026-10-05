@@ -1,71 +1,22 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type CurrentUser,
-  currentUserState,
-} from '@/auth/states/currentUserState';
-import {
-  type CurrentWorkspace,
-  currentWorkspaceState,
-} from '@/auth/states/currentWorkspaceState';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
+import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
-import { getIsPlanRequired } from '@/onboarding/utils/getIsPlanRequired';
+import { getIsBookCallRequired } from '@/onboarding/utils/getIsBookCallRequired';
+import { getNextOnboardingStatus } from '@/onboarding/utils/getNextOnboardingStatus';
+import { getNextPreviousOnboardingStatus } from '@/onboarding/utils/getNextPreviousOnboardingStatus';
+import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-import { useCallback } from 'react';
-import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
-
-type GetNextOnboardingStatusArgs = {
-  currentUser: CurrentUser | null;
-  currentWorkspace: CurrentWorkspace | null;
-  isBillingEnabled: boolean;
-};
-
-const getNextOnboardingStatus = ({
-  currentUser,
-  currentWorkspace,
-  isBillingEnabled,
-}: GetNextOnboardingStatusArgs) => {
-  const isPlanRequired = getIsPlanRequired({
-    isBillingEnabled,
-    currentWorkspace,
-  });
-
-  if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
-    return OnboardingStatus.SYNC_EMAIL;
-  }
-
-  if (currentUser?.onboardingStatus === OnboardingStatus.SYNC_EMAIL) {
-    if (currentWorkspace?.workspaceMembersCount === 1) {
-      return OnboardingStatus.APPS_INSTALLATION;
-    }
-    return OnboardingStatus.PROFILE_CREATION;
-  }
-
-  if (currentUser?.onboardingStatus === OnboardingStatus.APPS_INSTALLATION) {
-    return OnboardingStatus.PROFILE_CREATION;
-  }
-
-  if (currentUser?.onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
-    if (currentWorkspace?.workspaceMembersCount === 1) {
-      return OnboardingStatus.INVITE_TEAM;
-    }
-    return isPlanRequired
-      ? OnboardingStatus.PLAN_REQUIRED
-      : OnboardingStatus.COMPLETED;
-  }
-  if (currentUser?.onboardingStatus === OnboardingStatus.INVITE_TEAM) {
-    return isPlanRequired
-      ? OnboardingStatus.PLAN_REQUIRED
-      : OnboardingStatus.COMPLETED;
-  }
-  return OnboardingStatus.COMPLETED;
-};
+import { useCallback } from 'react';
 
 export const useSetNextOnboardingStatus = () => {
   const store = useStore();
@@ -77,39 +28,59 @@ export const useSetNextOnboardingStatus = () => {
     isOnboardingAiChatEnabledState,
   );
 
-  return useCallback(() => {
-    const nextOnboardingStatus = getNextOnboardingStatus({
+  return useCallback(
+    ({
+      stepHistoryEffect,
+    }: {
+      stepHistoryEffect: OnboardingStepHistoryEffect;
+    }) => {
+      const nextOnboardingStatus = getNextOnboardingStatus({
+        currentUser,
+        currentWorkspace,
+        isBillingEnabled,
+        isBookCallRequired: getIsBookCallRequired({
+          isBookCallOnboardingStepEnabled: store.get(
+            isBookCallOnboardingStepEnabledState.atom,
+          ),
+          currentUser: store.get(currentUserState.atom),
+        }),
+      });
+
+      store.set(onboardingNavigationDirectionState.atom, 'forward');
+      store.set(currentUserState.atom, (current) => {
+        if (isDefined(current)) {
+          return {
+            ...current,
+            onboardingStatus: nextOnboardingStatus,
+            previousOnboardingStatus: getNextPreviousOnboardingStatus({
+              stepHistoryEffect,
+              currentOnboardingStatus: current.onboardingStatus,
+              currentPreviousOnboardingStatus: current.previousOnboardingStatus,
+            }),
+          };
+        }
+        return current;
+      });
+
+      if (
+        getHasJustCompletedOnboarding({
+          previousOnboardingStatus: currentUser?.onboardingStatus,
+          nextOnboardingStatus,
+        })
+      ) {
+        store.set(isWelcomeAnimationVisibleState.atom, true);
+        store.set(
+          shouldOpenAiChatAfterOnboardingState.atom,
+          isOnboardingAiChatEnabled && currentUser?.isWorkspaceCreator === true,
+        );
+      }
+    },
+    [
       currentUser,
       currentWorkspace,
       isBillingEnabled,
-    });
-    store.set(currentUserState.atom, (current) => {
-      if (isDefined(current)) {
-        return {
-          ...current,
-          onboardingStatus: nextOnboardingStatus,
-        };
-      }
-      return current;
-    });
-
-    if (
-      getHasJustCompletedOnboarding({
-        previousOnboardingStatus: currentUser?.onboardingStatus,
-        nextOnboardingStatus,
-      })
-    ) {
-      store.set(isWelcomeAnimationVisibleState.atom, true);
-      store.set(
-        shouldOpenAiChatAfterOnboardingState.atom,
-        isOnboardingAiChatEnabled,
-      );
-    }
-  }, [
-    currentUser,
-    currentWorkspace,
-    isBillingEnabled,
-    isOnboardingAiChatEnabled,
-    store,
-  ]);
+      isOnboardingAiChatEnabled,
+      store,
+    ],
+  );
 };

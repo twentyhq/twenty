@@ -6,6 +6,7 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export enum LogicFunctionExceptionCode {
   LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
+  LOGIC_FUNCTION_FORBIDDEN = 'LOGIC_FUNCTION_FORBIDDEN',
   LOGIC_FUNCTION_ALREADY_EXIST = 'LOGIC_FUNCTION_ALREADY_EXIST',
   LOGIC_FUNCTION_NOT_READY = 'LOGIC_FUNCTION_NOT_READY',
   LOGIC_FUNCTION_BUILDING = 'LOGIC_FUNCTION_BUILDING',
@@ -16,6 +17,7 @@ export enum LogicFunctionExceptionCode {
   LOGIC_FUNCTION_EXECUTION_TIMEOUT = 'LOGIC_FUNCTION_EXECUTION_TIMEOUT',
   LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR = 'LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR',
   LOGIC_FUNCTION_LAYER_BUILD_FAILED = 'LOGIC_FUNCTION_LAYER_BUILD_FAILED',
+  LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED = 'LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED',
   LOGIC_FUNCTION_DISABLED = 'LOGIC_FUNCTION_DISABLED',
   LOGIC_FUNCTION_INVALID_SEED_PROJECT = 'LOGIC_FUNCTION_INVALID_SEED_PROJECT',
   INVALID_LOGIC_FUNCTION_INPUT = 'INVALID_LOGIC_FUNCTION_INPUT',
@@ -28,6 +30,8 @@ const getLogicFunctionExceptionUserFriendlyMessage = (
   switch (code) {
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
       return msg`Function not found.`;
+    case LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN:
+      return msg`You are not allowed to access this function.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_ALREADY_EXIST:
       return msg`A function with this name already exists.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_READY:
@@ -48,6 +52,8 @@ const getLogicFunctionExceptionUserFriendlyMessage = (
       return msg`Function execution failed.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED:
       return msg`Failed to build function dependencies.`;
+    case LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED:
+      return msg`Your application's production dependencies are too large to install. Move packages that are not imported by your logic functions (UI libraries, dev tooling) out of "dependencies".`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED:
       return msg`Logic function execution is disabled.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_INVALID_SEED_PROJECT:

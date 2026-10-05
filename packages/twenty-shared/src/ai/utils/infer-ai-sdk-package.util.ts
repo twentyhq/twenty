@@ -1,7 +1,10 @@
-import { type AiSdkPackage } from '../constants/ai-sdk-packages.const';
-import { NATIVE_AI_SDK_PROVIDER_IDS } from '../constants/native-ai-sdk-provider-ids.const';
+import {
+  AI_SDK_PACKAGES,
+  type AiSdkPackage,
+} from '../constants/ai-sdk-packages.const';
 
+// models.dev vendor ids match the AI SDK package names we bundle; anything else goes through the compatible shim.
 export const inferAiSdkPackage = (providerId: string): AiSdkPackage =>
-  (NATIVE_AI_SDK_PROVIDER_IDS as readonly string[]).includes(providerId)
+  (AI_SDK_PACKAGES as readonly string[]).includes(`@ai-sdk/${providerId}`)
     ? (`@ai-sdk/${providerId}` as AiSdkPackage)
     : '@ai-sdk/openai-compatible';

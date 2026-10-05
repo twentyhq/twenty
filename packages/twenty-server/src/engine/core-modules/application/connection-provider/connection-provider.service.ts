@@ -11,14 +11,16 @@ import { ConnectionProviderEntity } from 'src/engine/core-modules/application/co
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class ConnectionProviderService {
   constructor(
-    @InjectRepository(ConnectionProviderEntity)
-    private readonly connectionProviderRepository: Repository<ConnectionProviderEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ConnectionProviderEntity)
+    private readonly connectionProviderRepository: WorkspaceScopedRepository<ConnectionProviderEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly registrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
     private readonly secretEncryptionService: SecretEncryptionService,
@@ -29,9 +31,10 @@ export class ConnectionProviderService {
   ): Promise<{ clientId: string; clientSecret: string }> {
     assertOAuthProvider(provider);
 
-    const application = await this.applicationRepository.findOneBy({
-      id: provider.applicationId,
-    });
+    const application = await this.applicationRepository.findOneBy(
+      provider.workspaceId,
+      { id: provider.applicationId },
+    );
 
     if (!isDefined(application?.applicationRegistrationId)) {
       throw new ConnectionProviderException(
@@ -52,11 +55,7 @@ export class ConnectionProviderService {
     const valuesByKey = new Map(
       variables.map((v) => [
         v.key,
-        v.encryptedValue !== ''
-          ? this.secretEncryptionService.decryptVersionedOrThrow(
-              v.encryptedValue,
-            )
-          : '',
+        this.secretEncryptionService.decryptVersionedOrThrow(v.encryptedValue),
       ]),
     );
 
@@ -76,14 +75,21 @@ export class ConnectionProviderService {
   async areClientCredentialsConfigured(
     provider: ConnectionProviderEntity,
   ): Promise<boolean> {
-    const result = await this.areClientCredentialsConfiguredBatch([provider]);
+    const result = await this.areClientCredentialsConfiguredBatch({
+      providers: [provider],
+      workspaceId: provider.workspaceId,
+    });
 
     return result.get(provider.id) ?? false;
   }
 
-  async areClientCredentialsConfiguredBatch(
-    providers: ConnectionProviderEntity[],
-  ): Promise<Map<string, boolean>> {
+  async areClientCredentialsConfiguredBatch({
+    providers,
+    workspaceId,
+  }: {
+    providers: ConnectionProviderEntity[];
+    workspaceId: string;
+  }): Promise<Map<string, boolean>> {
     const result = new Map<string, boolean>();
 
     if (providers.length === 0) {
@@ -105,7 +111,7 @@ export class ConnectionProviderService {
     const applicationIds = [
       ...new Set(oauthProviders.map((p) => p.applicationId)),
     ];
-    const applications = await this.applicationRepository.find({
+    const applications = await this.applicationRepository.find(workspaceId, {
       where: { id: In(applicationIds) },
     });
     const registrationIdByApplicationId = new Map(
@@ -138,7 +144,13 @@ export class ConnectionProviderService {
     const filledKeysByRegistrationId = new Map<string, Set<string>>();
 
     for (const variable of variables) {
-      if (variable.encryptedValue === '') continue;
+      if (
+        this.secretEncryptionService.decryptVersionedOrThrow(
+          variable.encryptedValue,
+        ) === ''
+      ) {
+        continue;
+      }
       const set =
         filledKeysByRegistrationId.get(variable.applicationRegistrationId) ??
         new Set<string>();
@@ -172,19 +184,28 @@ export class ConnectionProviderService {
   async findOneByApplicationAndName({
     applicationId,
     name,
+    workspaceId,
   }: {
     applicationId: string;
     name: string;
+    workspaceId: string;
   }): Promise<ConnectionProviderEntity | null> {
-    return this.connectionProviderRepository.findOne({
+    return this.connectionProviderRepository.findOne(workspaceId, {
       where: { applicationId, name },
     });
   }
 
-  async findOneByIdOrThrow(id: string): Promise<ConnectionProviderEntity> {
-    const provider = await this.connectionProviderRepository.findOne({
-      where: { id },
-    });
+  async findOneByIdOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ConnectionProviderEntity> {
+    const provider = await this.connectionProviderRepository.findOne(
+      workspaceId,
+      { where: { id } },
+    );
 
     if (!isDefined(provider)) {
       throw new ConnectionProviderException(
@@ -203,8 +224,8 @@ export class ConnectionProviderService {
     applicationId: string;
     workspaceId: string;
   }): Promise<ConnectionProviderEntity[]> {
-    return this.connectionProviderRepository.find({
-      where: { applicationId, workspaceId },
+    return this.connectionProviderRepository.find(workspaceId, {
+      where: { applicationId },
     });
   }
 }

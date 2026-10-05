@@ -1,26 +1,24 @@
 import { styled } from '@linaria/react';
+import { atom, useAtomValue, useStore } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlaceAutocompleteSelect } from '@/geo-map/components/PlaceAutocompleteSelect';
 import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/SelectAutocompleteListDropDownId';
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
-import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { TEXT_INPUT_CLICK_OUTSIDE_ID } from '@/ui/input/components/constants/TextInputClickOutsideId';
+import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
+import { type AddressInputProps } from '@/ui/field/input/types/AddressInputProps';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
-import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { Autocomplete } from 'twenty-ui/primitives/input';
 import { isDefined } from 'twenty-shared/utils';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
-import { v4 } from 'uuid';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 import { t } from '@lingui/core/macro';
 import { type AllowedAddressSubField } from 'twenty-shared/types';
 import { useAddressAutocomplete } from '@/ui/field/input/hooks/useAddressAutocomplete';
+import { useAddressInputClickOutside } from '@/ui/field/input/hooks/useAddressInputClickOutside';
 import { useCountryUtils } from '@/ui/field/input/hooks/useCountryUtils';
 import { useFocusManagement } from '@/ui/field/input/hooks/useFocusManagement';
 
@@ -61,22 +59,6 @@ const StyledInputWithDropdownContainer = styled.div`
   width: 100%;
 `;
 
-export type AddressInputProps = {
-  instanceId: string;
-  value: FieldAddressValue;
-  onTab: (newAddress: FieldAddressDraftValue) => void;
-  onShiftTab: (newAddress: FieldAddressDraftValue) => void;
-  onEnter: (newAddress: FieldAddressDraftValue) => void;
-  onEscape: (newAddress: FieldAddressDraftValue) => void;
-  onClickOutside: (
-    event: MouseEvent | TouchEvent,
-    newAddress: FieldAddressDraftValue,
-  ) => void;
-  clearable?: boolean;
-  onChange?: (updatedValue: FieldAddressDraftValue) => void;
-  subFields?: AllowedAddressSubField[] | null;
-};
-
 export const AddressInput = ({
   instanceId,
   value,
@@ -88,7 +70,16 @@ export const AddressInput = ({
   onChange,
   subFields,
 }: AddressInputProps) => {
-  const [internalValue, setInternalValue] = useState(value);
+  const store = useStore();
+  const [internalValueAtom] = useState(() =>
+    atom<FieldAddressDraftValue>(value),
+  );
+  const internalValue = useAtomValue(internalValueAtom);
+  const setInternalValue = useCallback(
+    (updatedValue: FieldAddressDraftValue) =>
+      store.set(internalValueAtom, updatedValue),
+    [internalValueAtom, store],
+  );
 
   const addressStreet1InputRef = useRef<HTMLInputElement>(null);
   const addressStreet2InputRef = useRef<HTMLInputElement>(null);
@@ -114,7 +105,6 @@ export const AddressInput = ({
     placeAutocompleteData,
     tokenForPlaceApi,
     typeOfAddressForAutocomplete,
-    setTokenForPlaceApi,
     setTypeOfAddressForAutocomplete,
     getAutocompletePlaceData,
     autoFillInputsFromPlaceDetails,
@@ -148,10 +138,6 @@ export const AddressInput = ({
       onChange?.(updatedAddress);
 
       if (field === 'addressStreet1' || field === 'addressCity') {
-        const token = tokenForPlaceApi ?? v4();
-        if (token !== tokenForPlaceApi) {
-          setTokenForPlaceApi(token);
-        }
         const countryCode = findCountryCodeByCountryName(
           updatedAddress.addressCountry ?? '',
         );
@@ -159,19 +145,17 @@ export const AddressInput = ({
           setTypeOfAddressForAutocomplete(field);
         }
         const isFieldCity = field === 'addressCity';
-        getAutocompletePlaceData(
-          updatedAddressPart,
-          token,
-          countryCode,
+        getAutocompletePlaceData({
+          address: updatedAddressPart,
+          country: countryCode,
           isFieldCity,
-        );
+        });
       }
     },
     [
       internalValue,
+      setInternalValue,
       onChange,
-      tokenForPlaceApi,
-      setTokenForPlaceApi,
       findCountryCodeByCountryName,
       typeOfAddressForAutocomplete,
       setTypeOfAddressForAutocomplete,
@@ -181,7 +165,7 @@ export const AddressInput = ({
   );
 
   const handlePlaceSelection = useCallback(
-    (placeId: string) => {
+    async (placeId: string) => {
       const placeAutocomplete = placeAutocompleteData?.find(
         (place) => place.placeId === placeId,
       );
@@ -193,20 +177,29 @@ export const AddressInput = ({
           ? placeAutocomplete.text
           : undefined;
 
-      autoFillInputsFromPlaceDetails(placeId, token, text, internalValue);
+      const updatedAddress = await autoFillInputsFromPlaceDetails({
+        placeId,
+        token,
+        addressStreet1: text,
+        getInternalValue: () => store.get(internalValueAtom),
+      });
+
+      if (!isDefined(updatedAddress)) {
+        return;
+      }
+
+      setInternalValue(updatedAddress);
     },
     [
       placeAutocompleteData,
       tokenForPlaceApi,
       typeOfAddressForAutocomplete,
       autoFillInputsFromPlaceDetails,
-      internalValue,
+      internalValueAtom,
+      setInternalValue,
+      store,
     ],
   );
-
-  const handleClickOutside = useCallback(() => {
-    closeDropdownOfAutocomplete();
-  }, [closeDropdownOfAutocomplete]);
 
   const handleEnter = useCallback(() => {
     onEnter(internalValue);
@@ -220,7 +213,7 @@ export const AddressInput = ({
 
   const handleOutsideClick = useCallback(
     (event: MouseEvent | TouchEvent) => {
-      onClickOutside?.(event, internalValue);
+      onClickOutside?.({ event, newAddress: internalValue });
       closeDropdownOfAutocomplete();
     },
     [onClickOutside, internalValue, closeDropdownOfAutocomplete],
@@ -236,93 +229,69 @@ export const AddressInput = ({
     onShiftTab: handleShiftTab,
   });
 
-  const activeDropdownFocusId = useAtomStateValue(activeDropdownFocusIdState);
-
-  useListenClickOutside({
-    refs: [wrapperRef],
-    callback: (event) => {
-      if (
-        activeDropdownFocusId === SELECT_COUNTRY_DROPDOWN_ID ||
-        activeDropdownFocusId === SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID
-      ) {
-        return;
-      }
-
-      event.stopImmediatePropagation();
-      handleOutsideClick(event);
-    },
-    enabled: isDefined(onClickOutside),
-    listenerId: 'address-input',
+  useAddressInputClickOutside({
+    inputRef: wrapperRef,
+    onClickOutside: handleOutsideClick,
   });
 
   useEffect(() => {
     setInternalValue(value);
-  }, [value]);
+  }, [setInternalValue, value]);
 
-  const validAutocompleteData = useMemo(
-    () =>
-      placeAutocompleteData && placeAutocompleteData.length > 0
-        ? placeAutocompleteData
-        : null,
-    [placeAutocompleteData],
-  );
-
-  const renderInputWithAutocomplete = (
-    inputElement: React.ReactNode | null,
-    fieldType: 'addressStreet1' | 'addressCity',
-  ) => {
-    const shouldShowDropdown =
-      validAutocompleteData && typeOfAddressForAutocomplete === fieldType;
-
-    if (!shouldShowDropdown) {
-      return inputElement;
-    }
-
-    return (
-      <StyledInputWithDropdownContainer>
-        <Dropdown
-          dropdownId={SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID}
-          dropdownPlacement="bottom-start"
-          excludedClickOutsideIds={[
-            TEXT_INPUT_CLICK_OUTSIDE_ID,
-            SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID,
-          ]}
-          disableClickForClickableComponent={true}
-          onClickOutside={handleClickOutside}
-          clickableComponent={inputElement}
-          dropdownComponents={
-            <PlaceAutocompleteSelect
-              list={validAutocompleteData}
-              onChange={handlePlaceSelection}
-              dropdownId={SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID}
+  const renderInputWithAutocomplete = ({
+    fieldType,
+    label,
+    autoFocus = false,
+  }: {
+    fieldType: 'addressStreet1' | 'addressCity';
+    label: string;
+    autoFocus?: boolean;
+  }) => (
+    <StyledInputWithDropdownContainer>
+      <AutocompleteRoot
+        dropdownId={SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID}
+        enabled={typeOfAddressForAutocomplete === fieldType}
+        items={placeAutocompleteData}
+        itemToStringValue={(place) => place.text}
+        value={internalValue[fieldType] ?? ''}
+        openOnValueChange={false}
+        closeOnItemPress={false}
+        onValueChange={(updatedValue) =>
+          getChangeHandler(fieldType)(
+            turnIntoEmptyStringIfWhitespacesOnly(updatedValue),
+          )
+        }
+        onClose={closeDropdownOfAutocomplete}
+      >
+        <Autocomplete.Input
+          aria-label={label}
+          render={(inputProps) => (
+            <TextInput
+              inputProps={{ ...inputProps, className: undefined }}
+              autoFocus={autoFocus}
+              ref={inputRefs[fieldType]}
+              label={label}
+              fullWidth
+              onFocus={getFocusHandler(fieldType)}
             />
-          }
+          )}
         />
-      </StyledInputWithDropdownContainer>
-    );
-  };
+        <PlaceAutocompleteSelect
+          list={placeAutocompleteData}
+          onChange={handlePlaceSelection}
+        />
+      </AutocompleteRoot>
+    </StyledInputWithDropdownContainer>
+  );
 
   return (
     <StyledAddressContainer ref={wrapperRef}>
       {isFieldInputInSubFieldsAddress('addressStreet1') &&
-        renderInputWithAutocomplete(
-          <TextInput
-            autoFocus
-            value={internalValue.addressStreet1 ?? ''}
-            ref={inputRefs.addressStreet1}
-            label={t`Address 1`}
-            fullWidth
-            onChange={getChangeHandler('addressStreet1')}
-            onFocus={getFocusHandler('addressStreet1')}
-            textClickOutsideId={
-              validAutocompleteData &&
-              typeOfAddressForAutocomplete === 'addressStreet1'
-                ? TEXT_INPUT_CLICK_OUTSIDE_ID
-                : undefined
-            }
-          />,
-          'addressStreet1',
-        )}
+        renderInputWithAutocomplete({
+          fieldType: 'addressStreet1',
+          label: t`Address 1`,
+          autoFocus: true,
+        })}
       {isFieldInputInSubFieldsAddress('addressStreet2') && (
         <TextInput
           value={internalValue.addressStreet2 ?? ''}
@@ -335,23 +304,10 @@ export const AddressInput = ({
       )}
       <StyledHalfRowContainer>
         {isFieldInputInSubFieldsAddress('addressCity') &&
-          renderInputWithAutocomplete(
-            <TextInput
-              value={internalValue.addressCity ?? ''}
-              ref={inputRefs.addressCity}
-              label={t`City`}
-              fullWidth
-              onChange={getChangeHandler('addressCity')}
-              onFocus={getFocusHandler('addressCity')}
-              textClickOutsideId={
-                validAutocompleteData &&
-                typeOfAddressForAutocomplete === 'addressCity'
-                  ? TEXT_INPUT_CLICK_OUTSIDE_ID
-                  : undefined
-              }
-            />,
-            'addressCity',
-          )}
+          renderInputWithAutocomplete({
+            fieldType: 'addressCity',
+            label: t`City`,
+          })}
         {isFieldInputInSubFieldsAddress('addressState') && (
           <TextInput
             value={internalValue.addressState ?? ''}

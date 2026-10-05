@@ -1,5 +1,4 @@
 import { msg, t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 
 import { isViewFieldInLowestPosition } from 'src/engine/metadata-modules/flat-view-field/utils/is-view-field-in-lowest-position.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
@@ -35,14 +34,6 @@ export const validateLabelIdentifierFieldMetadataIdFlatViewField = ({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Label identifier view field has to be visible`,
       userFriendlyMessage: msg`Label identifier view field has to be visible`,
-    });
-  }
-
-  if (isDefined(flatViewFieldToValidate.deletedAt)) {
-    errors.push({
-      code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`Label identifier view field cannot be deleted`,
-      userFriendlyMessage: msg`Label identifier view field cannot be deleted`,
     });
   }
 

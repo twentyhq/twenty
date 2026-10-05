@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 export const getEmailDraftPrefillFromMessage = (
@@ -26,6 +27,6 @@ export const getEmailDraftPrefillFromMessage = (
     cc: joinRecipientsByRole(MessageParticipantRole.CC),
     bcc: joinRecipientsByRole(MessageParticipantRole.BCC),
     subject: message.subject,
-    body: message.text,
+    body: serializePlainTextAsAdvancedTextEditorDocument(message.text),
   };
 };

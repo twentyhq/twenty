@@ -90,6 +90,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
         render={({ field: { onChange, value } }) => {
           const format = value?.format ?? fieldMetadataCurrencyFormat[0];
           const decimals = value?.decimals ?? DEFAULT_DECIMAL_VALUE;
+          const example = (1000).toFixed(decimals);
 
           return (
             <>
@@ -126,8 +127,8 @@ export const SettingsDataModelFieldCurrencyForm = ({
                   Icon={IconDecimal}
                   title={t`Number of decimals`}
                   description={plural(decimals, {
-                    one: `E.g. ${(1000).toFixed(decimals)} for ${decimals} decimal`,
-                    other: `E.g. ${(1000).toFixed(decimals)} for ${decimals} decimals`,
+                    one: `E.g. ${example} for # decimal`,
+                    other: `E.g. ${example} for # decimals`,
                   })}
                   value={decimals}
                   onChange={(newDecimals: number) =>

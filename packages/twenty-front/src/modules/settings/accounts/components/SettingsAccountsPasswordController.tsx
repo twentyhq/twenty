@@ -6,8 +6,8 @@ import { type AccountType } from 'twenty-shared/constants';
 
 import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ClickToActionLink } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledPasswordFieldContainer = styled.div`
   display: flex;
@@ -15,7 +15,7 @@ const StyledPasswordFieldContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledChangePasswordLink = styled(ClickToActionLink)`
+const StyledChangePasswordButton = styled(Button)`
   align-self: flex-end;
 `;
 
@@ -47,15 +47,17 @@ export const SettingsAccountsPasswordController = ({
             label={label}
             placeholder={disabled ? MASKED_PASSWORD_PLACEHOLDER : ''}
             type={disabled ? 'text' : 'password'}
+            autoComplete="new-password"
+            ignorePasswordManagers
             value={field.value || ''}
             onChange={field.onChange}
             error={fieldState.error?.message}
             disabled={disabled}
           />
           {disabled && (
-            <StyledChangePasswordLink onClick={onUnlock}>
+            <StyledChangePasswordButton variant="link" onClick={onUnlock}>
               <Trans>Change password</Trans>
-            </StyledChangePasswordLink>
+            </StyledChangePasswordButton>
           )}
         </StyledPasswordFieldContainer>
       )}

@@ -46,6 +46,18 @@ export const findMatchingBranch = ({
   stepFilterGroups: StepFilterGroup[];
   resolvedFilters: ResolvedFilter[];
 }): StepIfElseBranch => {
+  for (const branch of branches) {
+    if (
+      isDefined(branch.filterGroupId) &&
+      !stepFilterGroups.some((group) => group.id === branch.filterGroupId)
+    ) {
+      throw new WorkflowStepExecutorException(
+        `Branch "${branch.id}" references filter group "${branch.filterGroupId}", which does not exist`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+  }
+
   const matchingBranch = branches.find((branch) => {
     if (!isDefined(branch.filterGroupId)) {
       return true;

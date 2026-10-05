@@ -55,10 +55,18 @@ export const useResolveDefaultEmailRecipient = ({
         ? (opportunityRecord?.pointOfContact?.emails?.primaryEmail ?? '')
         : '';
 
+  const defaultRecipientPersonId = isPerson
+    ? personRecord?.id
+    : isCompany
+      ? companyPeople[0]?.id
+      : isOpportunity
+        ? opportunityRecord?.pointOfContact?.id
+        : undefined;
+
   const loading =
     (isPerson && personLoading) ||
     (isCompany && companyPeopleLoading) ||
     (isOpportunity && opportunityLoading);
 
-  return { defaultTo, loading };
+  return { defaultRecipientPersonId, defaultTo, loading };
 };

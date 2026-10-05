@@ -1,5 +1,6 @@
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
+import { ViewType } from 'twenty-shared/types';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = 'a1a2a3a4-a5a6-4000-8000-000000000001';
 
@@ -29,7 +30,7 @@ describe('getViewBaseFile', () => {
     );
     expect(result).toContain("name: 'my-view'");
     expect(result).toContain("objectUniversalIdentifier: 'obj-abc-123'");
-    expect(result).toContain("icon: 'IconList'");
+    expect(result).toContain("icon: 'IconTable'");
     expect(result).toContain('position: 0');
   });
 
@@ -39,6 +40,23 @@ describe('getViewBaseFile', () => {
     });
 
     expect(result).toContain("objectUniversalIdentifier: 'fill-later'");
+  });
+
+  it.each([
+    [ViewType.TABLE, 'IconTable'],
+    [ViewType.KANBAN, 'IconLayoutKanban'],
+    [ViewType.CALENDAR, 'IconCalendar'],
+    [ViewType.FIELDS_WIDGET, 'IconListDetails'],
+    [ViewType.TABLE_WIDGET, 'IconTable'],
+    [ViewType.KANBAN_WIDGET, 'IconLayoutKanban'],
+    [ViewType.CALENDAR_WIDGET, 'IconCalendar'],
+  ])('should use the canonical icon for %s views', (type, icon) => {
+    const result = getTestViewBaseFile({
+      name: 'typed-view',
+      type,
+    });
+
+    expect(result).toContain(`icon: '${icon}'`);
   });
 
   it('should include commented fields, filters and sorts when no fields provided', () => {
@@ -85,7 +103,6 @@ describe('getViewBaseFile', () => {
       ],
     });
 
-    // Default isVisible is true, default size is 200
     expect(result).toContain('isVisible: true');
     expect(result).toContain('size: 200');
   });
@@ -119,7 +136,6 @@ describe('getViewBaseFile', () => {
       ],
     });
 
-    // The field should get a generated universalIdentifier
     const uuidRegex =
       /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g;
     const matches = result.match(uuidRegex);

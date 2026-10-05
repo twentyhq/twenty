@@ -1,5 +1,4 @@
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 type ZeroLineProps = {
   isVertical: boolean;
   zeroPosition: number;
@@ -13,7 +12,7 @@ export const ZeroLine = ({
   innerWidth,
   innerHeight,
 }: ZeroLineProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <line

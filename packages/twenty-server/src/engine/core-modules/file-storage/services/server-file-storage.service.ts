@@ -172,43 +172,6 @@ export class ServerFileStorageService {
     });
   }
 
-  checkServerFileExists({
-    fileFolder,
-    applicationRegistrationId,
-    resourcePath,
-  }: ServerResourceIdentifier): Promise<boolean> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    const { onStorageFilePath } =
-      this.validateAndBuildServerFileStoragePathOrThrow({
-        fileFolder,
-        applicationRegistrationId,
-        resourcePath,
-      });
-
-    return driver.checkFileExists({ filePath: onStorageFilePath });
-  }
-
-  async deleteServerFile({
-    fileFolder,
-    applicationRegistrationId,
-    resourcePath,
-  }: ServerResourceIdentifier): Promise<void> {
-    const { onStorageFilePath, filePath } =
-      this.validateAndBuildServerFileStoragePathOrThrow({
-        fileFolder,
-        applicationRegistrationId,
-        resourcePath,
-      });
-
-    await this.deleteServerFileBytesBestEffort(onStorageFilePath);
-
-    await this.serverFileRepository.delete({
-      path: filePath,
-      workspaceId: IsNull(),
-    });
-  }
-
   async deleteByApplicationRegistrationId(
     applicationRegistrationId: string,
   ): Promise<void> {

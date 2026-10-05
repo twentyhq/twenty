@@ -1,13 +1,14 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useMoveWidgetToTab } from '@/page-layout/hooks/useMoveWidgetToTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { canVerticalListAcceptWidget } from '@/page-layout/utils/canVerticalListAcceptWidget';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/navigation';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const MoveToTabDropdownContent = () => {
@@ -33,10 +34,19 @@ export const MoveToTabDropdownContent = () => {
       )
     : undefined;
 
+  const currentWidget = currentTab?.widgets.find(
+    (widget) => widget.id === pageLayoutEditingWidgetId,
+  );
+
   const eligibleTabs = pageLayoutDraft.tabs.filter(
     (tab) =>
       tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
-      tab.id !== currentTab?.id,
+      tab.id !== currentTab?.id &&
+      isDefined(currentWidget) &&
+      canVerticalListAcceptWidget({
+        destinationWidgets: tab.widgets,
+        widget: currentWidget,
+      }),
   );
 
   if (!isDefined(pageLayoutEditingWidgetId)) {
@@ -46,7 +56,7 @@ export const MoveToTabDropdownContent = () => {
   if (eligibleTabs.length === 0) {
     return (
       <DropdownMenuItemsContainer>
-        <MenuItem text={t`No available tabs`} />
+        <ListItem disabled>{t`No available tabs`}</ListItem>
       </DropdownMenuItemsContainer>
     );
   }
@@ -54,14 +64,15 @@ export const MoveToTabDropdownContent = () => {
   return (
     <DropdownMenuItemsContainer>
       {eligibleTabs.map((tab) => (
-        <MenuItem
+        <ListItem
           key={tab.id}
-          text={tab.title ?? ''}
           onClick={() => {
             moveWidgetToTab(pageLayoutEditingWidgetId, tab.id);
             closeDropdown();
           }}
-        />
+        >
+          {tab.title ?? ''}
+        </ListItem>
       ))}
     </DropdownMenuItemsContainer>
   );

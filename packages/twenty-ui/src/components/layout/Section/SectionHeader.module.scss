@@ -1,0 +1,33 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  margin-block-end: var(--t-spacing-4);
+  min-inline-size: 0;
+}
+
+.titleRow {
+  align-items: center;
+  display: flex;
+  gap: var(--t-spacing-2);
+  justify-content: space-between;
+  min-inline-size: 0;
+}
+
+.title {
+  line-height: inherit;
+  min-inline-size: 0;
+}
+
+.adornment {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+}
+
+.description {
+  color: var(--t-font-color-secondary);
+  font-size: var(--t-font-size-md);
+  font-weight: var(--t-font-weight-regular);
+  line-height: var(--t-text-line-height-lg);
+  margin-block-start: var(--t-spacing-2);
+}

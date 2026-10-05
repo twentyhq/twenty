@@ -3,6 +3,7 @@ import {
   FieldMetadataOptions,
   FieldMetadataSettings,
   FieldMetadataType,
+  MetadataWritability,
 } from 'twenty-shared/types';
 import {
   Check,
@@ -22,6 +23,8 @@ import {
 
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant';
+import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant';
+import { ADD_FIELD_METADATA_IS_AUDIT_LOGGED_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-40/add-field-metadata-is-audit-logged-upgrade-command-name.constant';
 import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
@@ -38,11 +41,12 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
-// This entity is used as a reference test case for type utilities in:
-// Modifying relations or properties may require updating type test expectations for Typecheck to pass.
+// changes here may require updating types/__tests__/field-metadata-entity.test-type.ts
 @Entity('fieldMetadata')
+@Index('IDX_FIELD_METADATA_APPLICATION_ID', ['applicationId'])
 @Check(
   'CHK_FIELD_METADATA_MORPH_RELATION_REQUIRES_MORPH_ID',
   `("type" != 'MORPH_RELATION') OR ("type" = 'MORPH_RELATION' AND "morphId" IS NOT NULL)`,
@@ -62,7 +66,6 @@ import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/
   'objectMetadataId',
   'workspaceId',
 ])
-@Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
 export class FieldMetadataEntity<
   TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
 >
@@ -80,7 +83,6 @@ export class FieldMetadataEntity<
     nullable: false,
   })
   @JoinColumn({ name: 'objectMetadataId' })
-  @Index('IDX_FIELD_METADATA_OBJECT_METADATA_ID', ['objectMetadataId'])
   object: Relation<ObjectMetadataEntity>;
 
   @Column({
@@ -108,7 +110,7 @@ export class FieldMetadataEntity<
     upgradeCommandName: ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME,
   })
   @Column({ type: 'jsonb', nullable: true })
-  overrides: JsonbProperty<FieldMetadataOverrides> | null;
+  overrides: JsonbProperty<AuthoredOverrides<FieldMetadataOverrides>> | null;
 
   /**
    * @deprecated Please use `overrides` instead.
@@ -152,26 +154,36 @@ export class FieldMetadataEntity<
   @Column({ default: true })
   isUIEditable: boolean;
 
-  // Superseded by isUIEditable. Intentionally NOT @WasRemovedInUpgrade: dropping
-  // it in 2.13 would break the previous release's pods mid rolling-deploy, since
-  // they still SELECT it. The WasRemovedInUpgrade<T> type is kept so callers may
-  // omit it; the decorator + physical drop are deferred (core-team-issues#2542).
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'enum',
+    enum: Object.values(MetadataWritability),
+    default: MetadataWritability.OPEN,
+  })
+  writability: MetadataWritability;
+
+  // superseded by isUIEditable; no @WasRemovedInUpgrade yet: previous-release pods still SELECT it mid rolling deploy (core-team-issues#2542)
   @Column({ type: 'boolean', default: false })
   isUIReadOnly: WasRemovedInUpgrade<boolean>;
 
-  // Is this really nullable ?
   @Column({ nullable: true, default: true, type: 'boolean' })
   isNullable: boolean | null;
 
-  // Derived at flat-entity cache build time from the existence of a
-  // single-field UNIQUE IndexMetadata covering this field — never persisted
-  // on this entity. Kept on the type so flat-entity consumers continue to
-  // read field.isUnique without per-call derivation; the PG column was
-  // dropped by 1798300000000-drop-field-metadata-is-unique-column.ts.
+  // not persisted: derived from single-field UNIQUE IndexMetadata when the flat cache is built
   isUnique: boolean | null;
+
+  isSearchable: boolean;
 
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_FIELD_METADATA_IS_AUDIT_LOGGED_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: true, type: 'boolean' })
+  isAuditLogged: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
   relationTargetFieldMetadataId: AssignTypeIfIsMorphOrRelationFieldMetadataType<

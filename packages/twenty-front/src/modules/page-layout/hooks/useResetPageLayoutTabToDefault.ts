@@ -7,14 +7,14 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { RESET_PAGE_LAYOUT_TAB_TO_DEFAULT } from '@/page-layout/graphql/mutations/resetPageLayoutTabToDefault';
 import { useRefreshPageLayoutAfterReset } from '@/page-layout/hooks/useRefreshPageLayoutAfterReset';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useToast } from 'twenty-ui/components';
 
 export const useResetPageLayoutTabToDefault = (
   pageLayoutIdFromProps: string,
 ) => {
   const [resetMutation] = useMutation(RESET_PAGE_LAYOUT_TAB_TO_DEFAULT);
   const { handleMetadataError } = useMetadataErrorHandler();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { refreshPageLayoutAfterReset } = useRefreshPageLayoutAfterReset(
     pageLayoutIdFromProps,
   );
@@ -31,7 +31,7 @@ export const useResetPageLayoutTabToDefault = (
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          enqueueErrorSnackBar({ message: t`An error occurred.` });
+          enqueueToast({ variant: 'error', children: t`An error occurred.` });
         }
       }
     },
@@ -39,7 +39,7 @@ export const useResetPageLayoutTabToDefault = (
       resetMutation,
       refreshPageLayoutAfterReset,
       handleMetadataError,
-      enqueueErrorSnackBar,
+      enqueueToast,
     ],
   );
 

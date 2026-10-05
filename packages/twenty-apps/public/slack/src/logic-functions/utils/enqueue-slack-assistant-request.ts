@@ -1,15 +1,53 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
-import { createSlackAssistantRequest } from 'src/logic-functions/data/create-slack-assistant-request';
-import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
+import { SLACK_CHANNEL_SILENCED_SKIP_REASON } from 'src/logic-functions/constants/slack-channel-silenced-skip-reason';
+import { type SlackEventsEnqueueResult } from 'src/logic-functions/types/slack-events-enqueue-result.type';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
-import { isDuplicateRecordError } from 'src/logic-functions/utils/is-duplicate-record-error';
-import { isSlackThreadActive } from 'src/logic-functions/utils/is-slack-thread-active';
+import { enqueueSlackAssistantRequestRecord } from 'src/logic-functions/utils/enqueue-slack-assistant-request-record';
+import { gateSlackThreadFollowUp } from 'src/logic-functions/utils/gate-slack-thread-follow-up';
+import { isSlackChannelSilenced } from 'src/logic-functions/utils/is-slack-channel-silenced';
+import { notifySilencedSlackChannel } from 'src/logic-functions/utils/notify-silenced-slack-channel';
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
+import { replyToEmptySlackAssistantRequest } from 'src/logic-functions/utils/reply-to-empty-slack-assistant-request';
 
-const ALREADY_QUEUED_SKIP_REASON = 'Slack message is already queued';
+const DIRECT_MESSAGE_CHANNEL_TYPE = 'im';
 
-type SlackEventsEnqueueResult = { ok: boolean; skipped?: string };
+const gateSilencedChannelEvent = async ({
+  body,
+  slackChannelId,
+  shouldNotifyRequester,
+}: {
+  body: SlackEventsRequestBody;
+  slackChannelId: string;
+  shouldNotifyRequester: boolean;
+}): Promise<SlackEventsEnqueueResult | undefined> => {
+  if (body.event?.channel_type === DIRECT_MESSAGE_CHANNEL_TYPE) {
+    return undefined;
+  }
+
+  const isSilenced = await isSlackChannelSilenced({
+    client: new CoreApiClient(),
+    slackChannelId,
+  });
+
+  if (!isSilenced) {
+    return undefined;
+  }
+
+  const slackUserId = body.event?.user;
+
+  if (shouldNotifyRequester && isNonEmptyString(slackUserId)) {
+    await notifySilencedSlackChannel({
+      slackChannelId,
+      slackUserId,
+      parentMessageTimestamp: body.event?.thread_ts,
+    });
+  }
+
+  return { ok: true, skipped: SLACK_CHANNEL_SILENCED_SKIP_REASON };
+};
 
 export const enqueueSlackAssistantRequest = async (
   body: SlackEventsRequestBody,
@@ -17,46 +55,40 @@ export const enqueueSlackAssistantRequest = async (
   const parsed = parseSlackAssistantRequest(body);
 
   if (parsed.request === null) {
-    return { ok: true, skipped: parsed.skipReason };
+    if (!isDefined(parsed.emptyRequest)) {
+      return { ok: true, skipped: parsed.skipReason };
+    }
+
+    const silencedEmptyRequestResult = await gateSilencedChannelEvent({
+      body,
+      slackChannelId: parsed.emptyRequest.slackChannelId,
+      shouldNotifyRequester: true,
+    });
+
+    if (isDefined(silencedEmptyRequestResult)) {
+      return silencedEmptyRequestResult;
+    }
+
+    return await replyToEmptySlackAssistantRequest(parsed.emptyRequest);
+  }
+
+  const silencedRequestResult = await gateSilencedChannelEvent({
+    body,
+    slackChannelId: parsed.request.slackChannelId,
+    shouldNotifyRequester: !parsed.requiresActiveThreadSubscription,
+  });
+
+  if (isDefined(silencedRequestResult)) {
+    return silencedRequestResult;
   }
 
   if (parsed.requiresActiveThreadSubscription) {
-    const isActive = await isSlackThreadActive({
-      channelId: parsed.request.slackChannelId,
-      threadTimestamp: parsed.request.slackThreadTimestamp,
-    });
+    const followUpGateResult = await gateSlackThreadFollowUp(parsed.request);
 
-    if (!isActive) {
-      return {
-        ok: true,
-        skipped: 'Thread is not subscribed for unmentioned follow-ups',
-      };
+    if (isDefined(followUpGateResult)) {
+      return followUpGateResult;
     }
   }
 
-  const client = new CoreApiClient();
-
-  const existingRequestId = await findSlackAssistantRequestBySlackMessage(
-    client,
-    {
-      slackChannelId: parsed.request.slackChannelId,
-      slackMessageTimestamp: parsed.request.slackMessageTimestamp,
-    },
-  );
-
-  if (existingRequestId !== undefined) {
-    return { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
-  }
-
-  try {
-    await createSlackAssistantRequest(client, parsed.request);
-  } catch (error) {
-    if (isDuplicateRecordError(error)) {
-      return { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
-    }
-
-    throw error;
-  }
-
-  return { ok: true };
+  return await enqueueSlackAssistantRequestRecord(parsed.request);
 };

@@ -33,6 +33,18 @@ export const validateAgentResponseFormat = ({
     });
   }
 
+  if (
+    type === 'json' &&
+    isDefined(responseFormat.schema) &&
+    !isDefined(responseFormat.schema.properties)
+  ) {
+    errors.push({
+      code: AiExceptionCode.INVALID_AGENT_INPUT,
+      message: t`Response format with type "json" must include output fields`,
+      userFriendlyMessage: msg`Add at least one output field to the JSON response format`,
+    });
+  }
+
   if (type === 'json' && isDefined(responseFormat.schema)) {
     const invalidPropertyNames = Object.keys(
       responseFormat.schema.properties ?? {},

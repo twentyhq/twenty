@@ -1,10 +1,9 @@
-import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { IconPencil } from 'twenty-ui/icon';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 type SidePanelMultipleRecordsInfoProps = {
   sidePanelPageInstanceId: string;
@@ -13,7 +12,7 @@ type SidePanelMultipleRecordsInfoProps = {
 export const SidePanelMultipleRecordsInfo = ({
   sidePanelPageInstanceId,
 }: SidePanelMultipleRecordsInfoProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { formatNumber } = useNumberFormat();
   const { totalCount } = useFindManyRecordsSelectedInContextStore({
     instanceId: sidePanelPageInstanceId,
@@ -21,7 +20,7 @@ export const SidePanelMultipleRecordsInfo = ({
   });
 
   return (
-    <SidePanelPageInfoLayout
+    <HeaderIdentifier
       icon={
         <IconPencil size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       }

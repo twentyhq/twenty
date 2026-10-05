@@ -1,0 +1,215 @@
+---
+title: Messaging Channels
+description: Bring conversations from any provider into Twenty's Message and Message Thread records.
+icon: "messages"
+---
+
+A **messaging channel** lets your app put conversations from an external provider — LinkedIn, WhatsApp, SMS, an in-app inbox — into the same `Message` and `Message Thread` records Twenty uses for email. Threads you ingest appear on the Person, Company and Opportunity records of the people in them, in the timeline and in search, with no bespoke UI.
+
+Twenty's message model is deliberately channel-neutral: a message has participants, text, a timestamp and a thread; a participant has a `handle` and an optional link to a Person. Nothing in it is email-specific. A channel is what binds a stream of those messages to one account on one provider.
+
+<Note>
+**Beta — and possibly not live on your instance yet.** App-owned message channels are new; the API described here may change, and it may not be available on the version of Twenty you are running. Check that `createMessageChannel` exists in your SDK before building on it.
+</Note>
+
+## Prerequisites
+
+A channel always belongs to one of your app's [connections](/developers/extend/apps/logic/connections) — the credential it speaks through. You need a connection provider before you can create a channel.
+
+## Creating a channel
+
+Create the channel once per connected account, from the connection provider's `onConnect` hook. That way the channel's lifetime matches the credential's.
+
+```ts src/logic-functions/handlers/linkedin-register-connection-handler.ts
+import { createMessageChannel, getConnection } from 'twenty-sdk/logic-function';
+import { MessageChannelVisibility } from 'twenty-shared/types';
+
+export const linkedinRegisterConnectionHandler = async (payload: {
+  connectedAccountId: string;
+}) => {
+  const connection = await getConnection(payload.connectedAccountId);
+  const profile = await fetchLinkedinProfile(connection.accessToken);
+
+  const channel = await createMessageChannel({
+    connectedAccountId: connection.id,
+    handle: profile.memberUrn,
+    displayName: profile.name,
+    // LinkedIn DMs are personal, so other members see participants and dates
+    // but not subjects or bodies.
+    visibility: MessageChannelVisibility.METADATA,
+  });
+
+  return { channelId: channel.id };
+};
+```
+
+### `handle`
+
+The account's identity **as the provider names it** — a LinkedIn member URN, an E.164 phone number, a workspace-scoped user id. Twenty treats it as opaque. It is what you match inbound payloads against, and what decides whether an ingested message is incoming or outgoing.
+
+Pick the most stable identifier the provider offers. A handle that changes when the user renames themselves will split their history across two channels.
+
+### `visibility`
+
+`visibility` is **required**, with no default, because it decides who in the workspace can read these conversations:
+
+| Value | Other members see |
+|---|---|
+| `METADATA` | participants and dates only |
+| `SUBJECT` | the above, plus the subject |
+| `SHARE_EVERYTHING` | the above, plus the message body |
+
+The member who owns the underlying connection always reads their own messages in full, whatever this is set to.
+
+Choose based on how private the provider's messages are, not on what is convenient to display. Personal inboxes (LinkedIn DMs, personal WhatsApp) want `METADATA`; shared ones (a support inbox, a team number) want `SHARE_EVERYTHING`.
+
+<Warning>
+`visibility` is the only thing standing between one member's private conversations and the rest of the workspace. Twenty deliberately makes you state it rather than inheriting a default that might over-share.
+</Warning>
+
+## Ingesting messages
+
+Once the channel exists, `ingestMessages` writes conversations into it. Threading, de-duplication, channel association and per-message privacy are handled server-side — the same path Twenty's own email import uses.
+
+```ts src/logic-functions/handlers/linkedin-inbound-handler.ts
+import { ingestMessages } from 'twenty-sdk/logic-function';
+import { MessageParticipantRole } from 'twenty-shared/types';
+
+export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) => {
+  const ingested = await ingestMessages({
+    messageChannelId: payload.channelId,
+    messages: payload.events.map((event) => ({
+      externalId: event.messageUrn,
+      threadExternalId: event.conversationUrn,
+      text: event.body,
+      receivedAt: new Date(event.createdAt),
+      participants: [
+        {
+          role: MessageParticipantRole.FROM,
+          handle: event.sender.memberUrn,
+          displayName: event.sender.name,
+        },
+        ...event.recipients.map((recipient) => ({
+          role: MessageParticipantRole.TO,
+          handle: recipient.memberUrn,
+          displayName: recipient.name,
+        })),
+      ],
+    })),
+  });
+
+  return { ingested: ingested.length };
+};
+```
+
+### What the server does for you
+
+**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays. Calls against one channel are serialised, so a redelivery arriving while its original is still being written waits rather than racing it.
+
+**Threading.** Messages sharing a `threadExternalId` land in one Message Thread, which then appears on the Person, Company and Opportunity records of its participants.
+
+**Direction.** Derived, not declared: the message is outgoing when the `FROM` participant's handle equals the channel's handle, incoming otherwise. Exactly one participant must carry `FROM` — direction, the thread's sender column and the timeline preview all read it, so a message without one is rejected rather than rendering as an empty conversation.
+
+**De-duplication is scoped to the channel.** `externalId` only has to be unique within one channel, which is what most providers actually guarantee — plenty number messages per conversation or per account. The consequence is that two members in the same provider conversation each get their own Message rather than a shared one. That is deliberate: merging them would require every app to guarantee a global namespace it does not control, and getting it wrong would attach one member's body to another member's channel.
+
+**Privacy.** Each message inherits its channel's `visibility`. Nothing you ingest is more visible than the channel you ingest it into.
+
+### Batching
+
+One call is one transaction inside one logic-function timeout, capped at **100 messages**. Page a provider backfill rather than sending it whole:
+
+```ts
+for (const page of chunk(allHistoricalMessages, 100)) {
+  await ingestMessages({ messageChannelId, messages: page });
+}
+```
+
+A batch is all-or-nothing, and repeating one `externalId` inside a single batch is rejected — de-duplicate before you send. A message body is capped at 256KB.
+
+### Linking participants to People
+
+Twenty matches email participants to People by email address. That cannot match a LinkedIn URN or a phone number, so **an app must say who a participant is** — an unlinked thread does not appear on anyone's record page.
+
+Pass `personId` alongside the handle:
+
+```ts
+participants: [
+  {
+    role: MessageParticipantRole.FROM,
+    handle: event.sender.memberUrn,
+    displayName: event.sender.name,
+    personId: await resolvePersonIdFromLinkedinUrn(event.sender.memberUrn),
+  },
+]
+```
+
+Resolve the id however your provider's identity is stored — against `Person.linkedinLink`, or an identity field your app added with [`defineField`](/developers/extend/apps/data/extending-objects). Unknown ids are rejected up front rather than stored as dangling links.
+
+Once a participant is linked, Twenty builds the thread's targets, and the conversation appears on that Person's record page and on their company's, exactly as an email thread does.
+
+`workspaceMemberId` is also accepted, for a participant who is a member of this workspace rather than a contact. It is **attribution only**: thread targets are built from `personId` alone — the same as for email — so a participant linked only to a workspace member shows in the thread but pulls the conversation onto no record page. Pass `personId` when you want the thread to land somewhere.
+
+<Note>
+A late match is not lost. Re-ingesting a message with an identity you have since resolved links the participant that is already there — matched on the message, handle and role, so a display name that changed or was omitted in the meantime does not split it in two. An omitted name keeps the one already stored; a new one replaces it. Sending a different `personId` corrects an earlier link rather than adding a second one.
+
+There is no way to *clear* an identity yet: a null is treated as "leave it alone", not "unlink". Correcting a wrong link means supplying the right one.
+</Note>
+
+Participants you leave unlinked are still stored and still render in the thread — they simply do not pull the conversation onto a record.
+
+## Listing and updating channels
+
+```ts
+import {
+  listMessageChannels,
+  updateMessageChannel,
+} from 'twenty-sdk/logic-function';
+
+// Every channel this app owns, across all its connections
+const channels = await listMessageChannels();
+
+// Just the ones on a given connection
+const forConnection = await listMessageChannels({
+  connectedAccountId: connection.id,
+});
+
+// Rename it, re-scope who can read it, or pause ingestion
+await updateMessageChannel({ id: channel.id, displayName: 'Ada (LinkedIn)' });
+await updateMessageChannel({ id: channel.id, isSyncEnabled: false });
+```
+
+Changing `visibility` through `updateMessageChannel` re-scopes every message already ingested into the channel, not only the ones that follow. Ingesting into a channel with `isSyncEnabled: false` is rejected, so pausing a channel stops the stream without deleting anything.
+
+Your app only ever sees channels created against its own connections. Channels belonging to other apps, and Twenty's own email channels, are invisible to it.
+
+A channel is also only reachable by the person whose connection it speaks through, when that connection is private to them. A run triggered by another member of the workspace cannot see it, change it or ingest into it; a run with nobody behind it — a cron, a webhook, an install hook — acts as the application and reaches every channel the app owns.
+
+## Retiring a channel
+
+Call `deleteMessageChannel(id)` from the connection provider's `onDisconnect` hook so a channel never outlives the credential it speaks through.
+
+```ts src/logic-functions/handlers/linkedin-disconnect-handler.ts
+import {
+  deleteMessageChannel,
+  listMessageChannels,
+} from 'twenty-sdk/logic-function';
+
+export const linkedinDisconnectHandler = async (payload: {
+  connectedAccountId: string;
+}) => {
+  const channels = await listMessageChannels({
+    connectedAccountId: payload.connectedAccountId,
+  });
+
+  await Promise.all(channels.map((channel) => deleteMessageChannel(channel.id)));
+};
+```
+
+Deleting a channel deletes the messages ingested through it, and any thread left with no messages. To stop ingesting while keeping the history, set `isSyncEnabled: false` instead.
+
+## What a channel does not do
+
+- **It is not polled.** Twenty's import pipeline polls mailbox providers on a cron. App channels are push-only: nothing fetches on your behalf, so your app is responsible for getting messages in, via a webhook route or a cron logic function.
+- **It does not send.** Outbound delivery is not yet routed to apps; a reply composed in Twenty cannot reach your provider. Until it is, link out to the provider's own UI for replies.
+- **It does not resolve contacts.** Twenty matches email participants to People by email address, which cannot match a LinkedIn URN, so app channels [link participants explicitly at ingestion](#linking-participants-to-people) instead.
+- **It does not create contacts.** Twenty's auto-creation derives people and companies from email domains, which is meaningless for most providers, so it is off for app channels. Create the Person yourself, then pass its `personId`.

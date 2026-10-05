@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
-import { type SettingsBillingPlanComparisonRow } from '@/settings/billing/types/settingsBillingPlanComparison.type';
+import { type SettingsBillingPlanComparisonRow } from '@/settings/billing/types/SettingsBillingPlanComparison';
 import { BillingPlanKey } from '~/generated-metadata/graphql';
 
 export const SETTINGS_BILLING_PLAN_COMPARISON_ROWS = [

@@ -1,14 +1,17 @@
+import { type RefObject } from 'react';
+import { Dropdown } from 'twenty-ui/components';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 
 import { EmailRecipientChipMenuContent } from '@/activities/emails/recipients/components/EmailRecipientChipMenuContent';
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
 import { getEmailIdentityDisplayName } from '@/activities/emails/utils/getEmailIdentityDisplayName';
-import { BaseChip } from '@/object-record/record-field/ui/form-types/components/BaseChip';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { BaseChip } from '@/ui/input/components/BaseChip';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const CHIP_MAX_WIDTH = 240;
@@ -16,6 +19,7 @@ const CHIP_MAX_WIDTH = 240;
 type EmailRecipientsFieldChipProps = {
   chipId: string;
   dropdownId: string;
+  inputRef: RefObject<HTMLInputElement | null>;
   recipient: EmailRecipient;
   resolution: EmailRecipientResolution | undefined;
   isInvalid: boolean;
@@ -28,6 +32,7 @@ type EmailRecipientsFieldChipProps = {
 export const EmailRecipientsFieldChip = ({
   chipId,
   dropdownId,
+  inputRef,
   recipient,
   resolution,
   isInvalid,
@@ -58,21 +63,19 @@ export const EmailRecipientsFieldChip = ({
   const avatar =
     isDefined(workspaceMember) || isDefined(person) ? (
       <Avatar
-        avatarUrl={getAbsoluteImageUrl(
+        src={getAbsoluteImageUrl(
           workspaceMember?.avatarUrl ?? person?.avatarUrl,
         )}
-        placeholder={resolvedLabel}
-        placeholderColorSeed={workspaceMember?.id ?? person?.id}
+        name={resolvedLabel}
+        colorSeed={workspaceMember?.id ?? person?.id}
         size="sm"
-        type="rounded"
+        shape="circle"
       />
     ) : undefined;
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownPlacement="bottom-start"
-      clickableComponent={
+    <DropdownRoot dropdownId={dropdownId} type="menu">
+      <Dropdown.Trigger render={<div />} nativeButton={false} tabIndex={-1}>
         <BaseChip
           chipId={chipId}
           label={resolvedLabel}
@@ -93,17 +96,21 @@ export const EmailRecipientsFieldChip = ({
           }}
           removeAriaLabel={t`Remove ${recipient.address}`}
         />
-      }
-      dropdownComponents={
+      </Dropdown.Trigger>
+      <DropdownContent
+        align="start"
+        width={280}
+        initialFocus={false}
+        finalFocus={inputRef}
+      >
         <EmailRecipientChipMenuContent
-          dropdownId={dropdownId}
           recipient={recipient}
           resolution={resolution}
           isInvalid={isInvalid}
           onEdit={onEdit}
           onRemove={onRemove}
         />
-      }
-    />
+      </DropdownContent>
+    </DropdownRoot>
   );
 };
