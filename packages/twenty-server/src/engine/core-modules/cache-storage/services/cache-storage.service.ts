@@ -4,6 +4,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { type Milliseconds } from 'cache-manager';
 import { type RedisCache } from 'cache-manager-redis-yet';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   CacheStorageException,
   CacheStorageExceptionCode,
@@ -123,6 +125,34 @@ export class CacheStorageService {
     for (const { key, value, ttl } of entries) {
       await this.set(key, value, ttl);
     }
+  }
+
+  async msetAndMdel<T = unknown>({
+    entries,
+    keysToDelete,
+  }: {
+    entries: Array<{ key: string; value: T; ttl?: Milliseconds }>;
+    keysToDelete: string[];
+  }): Promise<void> {
+    if (!this.isRedisCache(this.cache)) {
+      throw new Error('msetAndMdel is only supported with Redis cache');
+    }
+
+    const transaction = this.cache.store.client.multi();
+
+    for (const { key, value, ttl } of entries) {
+      transaction.set(
+        this.getKey(key),
+        JSON.stringify(value),
+        isDefined(ttl) && ttl > 0 ? { PX: ttl } : {},
+      );
+    }
+
+    if (keysToDelete.length > 0) {
+      transaction.del(keysToDelete.map((key) => this.getKey(key)));
+    }
+
+    await transaction.exec();
   }
 
   async setAdd(key: string, value: string[], ttl?: Milliseconds) {

@@ -179,32 +179,24 @@ describe('Workspace cache concurrent publication', () => {
     },
   );
 
-  it('removes orphaned data before exposing a replacement hash', async () => {
+  it('replaces orphaned data left without a hash', async () => {
     await updateValue('first');
-    const cacheStorage = global.app.get<CacheStorageService>(
-      CacheStorageNamespace.EngineWorkspace,
-    );
-    const cacheKey = `flatApplicationVariableMaps:${SEED_APPLE_WORKSPACE_ID}`;
-
-    await cacheStorage.del(`${cacheKey}:hash`);
+    await global.app
+      .get<CacheStorageService>(CacheStorageNamespace.EngineWorkspace)
+      .del(`flatApplicationVariableMaps:${SEED_APPLE_WORKSPACE_ID}:hash`);
+    await overwriteStoredValue('second');
     await workspaceCacheService.evictWorkspaceFromLocalCache(
       SEED_APPLE_WORKSPACE_ID,
     );
-    const { snapshotLoaded, resume } = pauseNextValueSnapshot();
-    const pendingRead = readCachedValue();
 
-    try {
-      await snapshotLoaded;
-      expect(await cacheStorage.get(`${cacheKey}:data`)).toBeUndefined();
-      expect(await cacheStorage.get(`${cacheKey}:hash`)).toBeDefined();
-    } finally {
-      resume();
-    }
-    await pendingRead;
-    expect(await readCachedValue()).toBe('first');
+    expect(await readCachedValue()).toBe('second');
+    await workspaceCacheService.evictWorkspaceFromLocalCache(
+      SEED_APPLE_WORKSPACE_ID,
+    );
+    expect(await readCachedValue()).toBe('second');
   });
 
-  it('fails boundedly instead of publishing under sustained invalidation', async () => {
+  it('skips publication under sustained invalidation', async () => {
     await updateValue('first');
     const provider = getAppProviderByClassName<
       WorkspaceCacheProvider<FlatApplicationVariableMaps>
@@ -225,9 +217,7 @@ describe('Workspace cache concurrent publication', () => {
       workspaceCacheService.invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
         'flatApplicationVariableMaps',
       ]),
-    ).rejects.toThrow(
-      'Workspace cache changed repeatedly during recomputation',
-    );
+    ).resolves.toBeUndefined();
     expect(
       await global.app
         .get<CacheStorageService>(CacheStorageNamespace.EngineWorkspace)
@@ -235,7 +225,7 @@ describe('Workspace cache concurrent publication', () => {
     ).toBeUndefined();
   });
 
-  it('retries superseded local-only computations without storing their data in Redis', async () => {
+  it('does not install superseded local-only computations', async () => {
     const provider =
       getAppProviderByClassName<WorkspaceFlatWorkspaceMemberMapCacheService>(
         'WorkspaceFlatWorkspaceMemberMapCacheService',
@@ -274,12 +264,21 @@ describe('Workspace cache concurrent publication', () => {
     } finally {
       resume();
     }
-    const result = await pendingRead;
-    expect(result.hashes).toEqual(
-      await workspaceCacheService.getCacheHashes(SEED_APPLE_WORKSPACE_ID, [
-        'flatWorkspaceMemberMaps',
-      ]),
+    const { hashes: supersededHashes } = await pendingRead;
+    const currentHashes = await workspaceCacheService.getCacheHashes(
+      SEED_APPLE_WORKSPACE_ID,
+      ['flatWorkspaceMemberMaps'],
     );
+
+    expect(supersededHashes).not.toEqual(currentHashes);
+    expect(
+      (
+        await workspaceCacheService.getOrRecomputeWithHashes(
+          SEED_APPLE_WORKSPACE_ID,
+          ['flatWorkspaceMemberMaps'],
+        )
+      ).hashes,
+    ).toEqual(currentHashes);
     expect(
       await global.app
         .get<CacheStorageService>(CacheStorageNamespace.EngineWorkspace)
