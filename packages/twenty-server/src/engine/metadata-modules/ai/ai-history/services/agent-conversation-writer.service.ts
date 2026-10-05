@@ -66,6 +66,46 @@ export class AgentConversationWriterService {
     return (id ?? turnInsertResult.identifiers[0].id) as string;
   }
 
+  // A turn the agent opens has no user message: a system message gives the
+  // model its context, and is written with the turn so neither exists alone
+  async insertAgentOpenedTurn({
+    workspaceId,
+    threadId,
+    turnId,
+    contextMessageId,
+    context,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId?: string;
+    contextMessageId?: string;
+    context: string;
+  }): Promise<string> {
+    return this.transactionService.run(workspaceId, async (scope) => {
+      const insertedTurnId = await this.insertTurn({
+        workspaceId,
+        threadId,
+        id: turnId,
+        agentId: null,
+        scope,
+      });
+
+      await this.insertMessage({
+        workspaceId,
+        id: contextMessageId,
+        threadId,
+        turnId: insertedTurnId,
+        role: AgentMessageRole.SYSTEM,
+        agentId: null,
+        senderUserWorkspaceId: null,
+        parts: [{ type: 'text', text: context }],
+        scope,
+      });
+
+      return insertedTurnId;
+    });
+  }
+
   // The message and its parts are written together, so a message that
   // exists is complete. A message that awaits an answer also takes the
   // thread's single pending slot in the same write, and fails if another
@@ -79,7 +119,6 @@ export class AgentConversationWriterService {
     agentId,
     senderUserWorkspaceId,
     senderApplicationId,
-    isHidden,
     isAwaitingAnswer,
     processedAt,
     parts,
@@ -93,7 +132,6 @@ export class AgentConversationWriterService {
     agentId: string | null;
     senderUserWorkspaceId: string | null;
     senderApplicationId?: string | null;
-    isHidden?: boolean;
     isAwaitingAnswer?: boolean;
     processedAt?: Date;
     parts: ExtendedUIMessagePart[];
@@ -111,7 +149,6 @@ export class AgentConversationWriterService {
         processedAt: (processedAt ?? new Date()).toISOString(),
         ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
         ...(isDefined(senderApplicationId) ? { senderApplicationId } : {}),
-        ...(isDefined(isHidden) ? { isHidden } : {}),
       });
 
       const dbParts = mapUIMessagePartsToDBParts(parts, messageId);

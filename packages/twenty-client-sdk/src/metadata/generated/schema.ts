@@ -3097,7 +3097,7 @@ export interface ChatStreamCatchupChunks {
 }
 
 export interface SendChatMessageResult {
-    messageId: Scalars['String']
+    messageId?: Scalars['String']
     queued: Scalars['Boolean']
     streamId?: Scalars['String']
     __typename: 'SendChatMessageResult'
