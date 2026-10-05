@@ -2,7 +2,10 @@ import { getSchema } from '@tiptap/core';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
-import { compileValidationRuleExpression } from 'twenty-shared/utils';
+import {
+  compileValidationRuleExpression,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { ValidationRuleFieldNode } from '@/validation-rules/extensions/ValidationRuleFieldNode';
@@ -54,7 +57,7 @@ const findOpportunity = (objectMetadataItems: EnrichedObjectMetadataItem[]) => {
     ({ nameSingular }) => nameSingular === 'opportunity',
   );
 
-  if (opportunity === undefined) {
+  if (!isDefined(opportunity)) {
     throw new Error('The opportunity mock is missing');
   }
 

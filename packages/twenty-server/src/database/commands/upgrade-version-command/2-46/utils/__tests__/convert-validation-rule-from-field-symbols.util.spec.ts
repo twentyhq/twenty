@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { convertValidationRuleFromFieldSymbols } from 'src/database/commands/upgrade-version-command/2-46/utils/convert-validation-rule-from-field-symbols.util';
 import { convertValidationRuleToFieldSymbols } from 'src/database/commands/upgrade-version-command/2-46/utils/convert-validation-rule-to-field-symbols.util';
 
@@ -23,7 +25,7 @@ describe('convertValidationRuleFromFieldSymbols', () => {
   it('should restore the name-based rule the conversion started from', () => {
     const convertedRule = convertValidationRuleToFieldSymbols(LEGACY_RULE);
 
-    if (convertedRule === null) {
+    if (!isDefined(convertedRule)) {
       throw new Error('The legacy rule should be converted');
     }
 
