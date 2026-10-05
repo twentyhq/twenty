@@ -229,8 +229,6 @@ describe('BullMQDriver queue wait metric', () => {
     } as unknown as Job);
   };
 
-  // Fake timers are on globally, so Date.now() is frozen between the job
-  // creation below and the processor call
   beforeAll(() => {
     jest.setSystemTime(1_700_000_000_000);
   });

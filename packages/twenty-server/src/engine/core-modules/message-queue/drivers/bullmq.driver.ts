@@ -81,9 +81,6 @@ export class BullMQDriver
   ) {}
 
   onModuleInit() {
-    // Delayed jobs are reported apart: a job waiting for its scheduled time
-    // (workflow wait, campaign schedule, retry backoff, next cron iteration)
-    // is not a backlog the workers could absorb
     this.metricsService.createMultiObservableGauge({
       metricName: 'twenty_queue_jobs_waiting_total',
       options: {
