@@ -296,16 +296,6 @@ export class LogicFunctionExecutorService {
       return;
     }
 
-    const isExecutionQuotaEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
-        workspaceId,
-      );
-
-    if (!isExecutionQuotaEnabled) {
-      return;
-    }
-
     await this.billingUsageService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.LOGIC_FUNCTION,
