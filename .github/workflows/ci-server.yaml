@@ -92,7 +92,7 @@ jobs:
           tag: scope:backend
           tasks: lingui:compile
 
-  server-previous-version-upgrade-mutation-guard:
+  server-upgrade-mutation-guard:
     if: github.event_name != 'merge_group'
     timeout-minutes: 5
     runs-on: ubuntu-latest
@@ -406,7 +406,7 @@ jobs:
         changed-files-check,
         server-build,
         server-lint-typecheck,
-        server-previous-version-upgrade-mutation-guard,
+        server-upgrade-mutation-guard,
         server-validation,
         server-test,
         server-integration-test,
