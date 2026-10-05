@@ -134,7 +134,7 @@ export interface CommandMenuItem {
     __typename: 'CommandMenuItem'
 }
 
-export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_RECORDS' | 'RESTORE_RECORDS' | 'DESTROY_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_LIST' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'RETRY_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'NEW_AI_CHAT' | 'SHARE_RECORD' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MARK_AI_CHAT_AS_DONE' | 'REOPEN_AI_CHAT' | 'SNOOZE_AI_CHAT' | 'NAVIGATION' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER' | 'REPLY_TO_EMAIL_THREAD' | 'COMPOSE_EMAIL' | 'COMPOSE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'CANCEL_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'EMAIL_BLOCK_SETTINGS' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'GO_TO_WORKFLOWS' | 'GO_TO_RUNS' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS'
+export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_RECORDS' | 'RESTORE_RECORDS' | 'DESTROY_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_LIST' | 'ADD_TO_MESSAGE_LIST' | 'ADD_VIEW_TO_MESSAGE_LIST' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'RETRY_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'NEW_AI_CHAT' | 'SHARE_RECORD' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MARK_AI_CHAT_AS_DONE' | 'REOPEN_AI_CHAT' | 'SNOOZE_AI_CHAT' | 'NAVIGATION' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER' | 'REPLY_TO_EMAIL_THREAD' | 'COMPOSE_EMAIL' | 'COMPOSE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'CANCEL_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'EMAIL_BLOCK_SETTINGS' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'GO_TO_WORKFLOWS' | 'GO_TO_RUNS' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS'
 
 export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'GLOBAL_OBJECT_CONTEXT' | 'RECORD_SELECTION' | 'FALLBACK'
 
@@ -2774,6 +2774,11 @@ export interface DuplicatedMessageList {
     __typename: 'DuplicatedMessageList'
 }
 
+export interface TriggerAddPeopleToMessageListJobResult {
+    jobId: Scalars['String']
+    __typename: 'TriggerAddPeopleToMessageListJobResult'
+}
+
 export interface MessageSuppression {
     id: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -3467,6 +3472,7 @@ export interface Query {
     getViewGroups: ViewGroup[]
     getViewGroup?: ViewGroup
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
+    findAddPeopleToMessageListJobStatus?: JobStatus
     messageSuppressions: MessageSuppressionList
     unsubscribeTopics: UnsubscribeTopic[]
     myMessageChannels: MessageChannel[]
@@ -3692,6 +3698,7 @@ export interface Mutation {
     cancelMessageCampaign: CancelMessageCampaignOutputDTO
     sendMessageCampaignTest: SendEmailViaDomainOutput
     duplicateMessageList: DuplicatedMessageList
+    triggerAddPeopleToMessageListJob: TriggerAddPeopleToMessageListJobResult
     createMessageSuppression: MessageSuppression
     deleteMessageSuppression: Scalars['Boolean']
     createUnsubscribeTopic: UnsubscribeTopic
@@ -6697,6 +6704,12 @@ export interface DuplicatedMessageListGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TriggerAddPeopleToMessageListJobResultGenqlSelection{
+    jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface MessageSuppressionGenqlSelection{
     id?: boolean | number
     createdAt?: boolean | number
@@ -7435,6 +7448,7 @@ export interface QueryGenqlSelection{
     getViewGroups?: (ViewGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getViewGroup?: (ViewGroupGenqlSelection & { __args: {id: Scalars['String']} })
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
+    findAddPeopleToMessageListJobStatus?: (JobStatusGenqlSelection & { __args: {messageListId: Scalars['UUID']} })
     messageSuppressions?: (MessageSuppressionListGenqlSelection & { __args: {input: FindMessageSuppressionsInput} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
@@ -7699,6 +7713,7 @@ export interface MutationGenqlSelection{
     cancelMessageCampaign?: (CancelMessageCampaignOutputDTOGenqlSelection & { __args: {input: CancelMessageCampaignInput} })
     sendMessageCampaignTest?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendMessageCampaignTestInput} })
     duplicateMessageList?: (DuplicatedMessageListGenqlSelection & { __args: {id: Scalars['UUID']} })
+    triggerAddPeopleToMessageListJob?: (TriggerAddPeopleToMessageListJobResultGenqlSelection & { __args: {input: TriggerAddPeopleToMessageListJobInput} })
     createMessageSuppression?: (MessageSuppressionGenqlSelection & { __args: {input: CreateMessageSuppressionInput} })
     deleteMessageSuppression?: { __args: {id: Scalars['UUID']} }
     createUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: CreateUnsubscribeTopicInput} })
@@ -8151,6 +8166,8 @@ export interface SendMessageCampaignInput {campaignId: Scalars['String'],schedul
 export interface CancelMessageCampaignInput {campaignId: Scalars['String']}
 
 export interface SendMessageCampaignTestInput {toAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
+
+export interface TriggerAddPeopleToMessageListJobInput {messageListId: Scalars['UUID'],personFilter: Scalars['JSON']}
 
 export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
@@ -10299,6 +10316,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const TriggerAddPeopleToMessageListJobResult_possibleTypes: string[] = ['TriggerAddPeopleToMessageListJobResult']
+    export const isTriggerAddPeopleToMessageListJobResult = (obj?: { __typename?: any } | null): obj is TriggerAddPeopleToMessageListJobResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerAddPeopleToMessageListJobResult"')
+      return TriggerAddPeopleToMessageListJobResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const MessageSuppression_possibleTypes: string[] = ['MessageSuppression']
     export const isMessageSuppression = (obj?: { __typename?: any } | null): obj is MessageSuppression => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageSuppression"')
@@ -10841,6 +10866,8 @@ export const enumEngineComponentKey = {
    CANCEL_DASHBOARD_LAYOUT: 'CANCEL_DASHBOARD_LAYOUT' as const,
    DUPLICATE_DASHBOARD: 'DUPLICATE_DASHBOARD' as const,
    DUPLICATE_MESSAGE_LIST: 'DUPLICATE_MESSAGE_LIST' as const,
+   ADD_TO_MESSAGE_LIST: 'ADD_TO_MESSAGE_LIST' as const,
+   ADD_VIEW_TO_MESSAGE_LIST: 'ADD_VIEW_TO_MESSAGE_LIST' as const,
    ACTIVATE_WORKFLOW: 'ACTIVATE_WORKFLOW' as const,
    DEACTIVATE_WORKFLOW: 'DEACTIVATE_WORKFLOW' as const,
    DISCARD_DRAFT_WORKFLOW: 'DISCARD_DRAFT_WORKFLOW' as const,

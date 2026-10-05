@@ -1,6 +1,7 @@
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -12,6 +13,7 @@ import {
   JobState,
   TriggerAddPeopleToMessageListJobDocument,
 } from '~/generated-metadata/graphql';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 type UseAddPeopleToMessageListArgs = {
   messageListId: string | null;
@@ -86,13 +88,11 @@ export const useAddPeopleToMessageList = ({
         trackJob({ jobId, context: messageListId });
       }
     } catch (error) {
-      const graphqlMessage = error instanceof Error ? error.message : undefined;
-
       enqueueToast({
         variant: 'error',
-        children:
-          graphqlMessage ??
-          t`Failed to add people to the list. Please try again.`,
+        children: CombinedGraphQLErrors.is(error)
+          ? getErrorMessageFromApolloError(error)
+          : t`Failed to add people to the list. Please try again.`,
       });
     }
   };
