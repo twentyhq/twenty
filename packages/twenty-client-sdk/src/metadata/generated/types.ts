@@ -7810,48 +7810,11 @@ export default {
                     ]
                 }
             ],
-            "objects": [
-                283,
-                {
-                    "paging": [
-                        30,
-                        "CursorPaging!"
-                    ],
-                    "filter": [
-                        432,
-                        "ObjectFilter!"
-                    ]
-                }
-            ],
-            "object": [
-                25,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "objectRecordCounts": [
-                286
-            ],
-            "mostlyEmptyFieldMetadataIds": [
-                3,
-                {
-                    "objectMetadataId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "currentUserSessions": [
-                156
-            ],
             "findOneLogicFunction": [
                 23,
                 {
                     "input": [
-                        433,
+                        432,
                         "LogicFunctionIdInput!"
                     ]
                 }
@@ -7863,7 +7826,7 @@ export default {
                 9,
                 {
                     "input": [
-                        433,
+                        432,
                         "LogicFunctionIdInput!"
                     ]
                 }
@@ -7872,10 +7835,13 @@ export default {
                 1,
                 {
                     "input": [
-                        433,
+                        432,
                         "LogicFunctionIdInput!"
                     ]
                 }
+            ],
+            "currentUserSessions": [
+                156
             ],
             "commandMenuItems": [
                 14
@@ -7896,6 +7862,40 @@ export default {
                 13,
                 {
                     "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "objects": [
+                283,
+                {
+                    "paging": [
+                        30,
+                        "CursorPaging!"
+                    ],
+                    "filter": [
+                        433,
+                        "ObjectFilter!"
+                    ]
+                }
+            ],
+            "object": [
+                25,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "objectRecordCounts": [
+                286
+            ],
+            "mostlyEmptyFieldMetadataIds": [
+                3,
+                {
+                    "objectMetadataId": [
                         3,
                         "UUID!"
                     ]
@@ -8632,12 +8632,20 @@ export default {
                 1
             ]
         },
+        "LogicFunctionIdInput": {
+            "id": [
+                184
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "ObjectFilter": {
             "and": [
-                432
+                433
             ],
             "or": [
-                432
+                433
             ],
             "id": [
                 34
@@ -8665,14 +8673,6 @@ export default {
             ],
             "isUIReadOnly": [
                 35
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "LogicFunctionIdInput": {
-            "id": [
-                184
             ],
             "__typename": [
                 1
@@ -9472,57 +9472,39 @@ export default {
                     ]
                 }
             ],
-            "createOneObject": [
-                25,
+            "deleteOneLogicFunction": [
+                23,
+                {
+                    "input": [
+                        432,
+                        "LogicFunctionIdInput!"
+                    ]
+                }
+            ],
+            "createOneLogicFunction": [
+                23,
                 {
                     "input": [
                         501,
-                        "CreateOneObjectInput!"
+                        "CreateLogicFunctionFromSourceInput!"
                     ]
                 }
             ],
-            "deleteOneObject": [
-                25,
+            "executeOneLogicFunction": [
+                154,
+                {
+                    "input": [
+                        502,
+                        "ExecuteOneLogicFunctionInput!"
+                    ]
+                }
+            ],
+            "updateOneLogicFunction": [
+                8,
                 {
                     "input": [
                         503,
-                        "DeleteOneObjectInput!"
-                    ]
-                }
-            ],
-            "updateOneObject": [
-                25,
-                {
-                    "input": [
-                        504,
-                        "UpdateOneObjectInput!"
-                    ]
-                }
-            ],
-            "updateManyObjects": [
-                25,
-                {
-                    "inputs": [
-                        504,
-                        "[UpdateOneObjectInput!]!"
-                    ]
-                }
-            ],
-            "createOneIndex": [
-                279,
-                {
-                    "input": [
-                        507,
-                        "CreateOneIndexInput!"
-                    ]
-                }
-            ],
-            "deleteOneIndex": [
-                279,
-                {
-                    "input": [
-                        510,
-                        "DeleteOneIndexInput!"
+                        "UpdateLogicFunctionFromSourceInput!"
                     ]
                 }
             ],
@@ -9538,47 +9520,11 @@ export default {
             "revokeAllOtherUserSessions": [
                 31
             ],
-            "deleteOneLogicFunction": [
-                23,
-                {
-                    "input": [
-                        433,
-                        "LogicFunctionIdInput!"
-                    ]
-                }
-            ],
-            "createOneLogicFunction": [
-                23,
-                {
-                    "input": [
-                        511,
-                        "CreateLogicFunctionFromSourceInput!"
-                    ]
-                }
-            ],
-            "executeOneLogicFunction": [
-                154,
-                {
-                    "input": [
-                        512,
-                        "ExecuteOneLogicFunctionInput!"
-                    ]
-                }
-            ],
-            "updateOneLogicFunction": [
-                8,
-                {
-                    "input": [
-                        513,
-                        "UpdateLogicFunctionFromSourceInput!"
-                    ]
-                }
-            ],
             "createCommandMenuItem": [
                 14,
                 {
                     "input": [
-                        515,
+                        505,
                         "CreateCommandMenuItemInput!"
                     ]
                 }
@@ -9587,7 +9533,7 @@ export default {
                 14,
                 {
                     "input": [
-                        516,
+                        506,
                         "UpdateCommandMenuItemInput!"
                     ]
                 }
@@ -9623,7 +9569,7 @@ export default {
                 13,
                 {
                     "input": [
-                        517,
+                        507,
                         "CreateFrontComponentInput!"
                     ]
                 }
@@ -9632,7 +9578,7 @@ export default {
                 13,
                 {
                     "input": [
-                        518,
+                        508,
                         "UpdateFrontComponentInput!"
                     ]
                 }
@@ -9659,6 +9605,60 @@ export default {
                     ],
                     "applicationId": [
                         3
+                    ]
+                }
+            ],
+            "createOneObject": [
+                25,
+                {
+                    "input": [
+                        510,
+                        "CreateOneObjectInput!"
+                    ]
+                }
+            ],
+            "deleteOneObject": [
+                25,
+                {
+                    "input": [
+                        512,
+                        "DeleteOneObjectInput!"
+                    ]
+                }
+            ],
+            "updateOneObject": [
+                25,
+                {
+                    "input": [
+                        513,
+                        "UpdateOneObjectInput!"
+                    ]
+                }
+            ],
+            "updateManyObjects": [
+                25,
+                {
+                    "inputs": [
+                        513,
+                        "[UpdateOneObjectInput!]!"
+                    ]
+                }
+            ],
+            "createOneIndex": [
+                279,
+                {
+                    "input": [
+                        516,
+                        "CreateOneIndexInput!"
+                    ]
+                }
+            ],
+            "deleteOneIndex": [
+                279,
+                {
+                    "input": [
+                        519,
+                        "DeleteOneIndexInput!"
                     ]
                 }
             ],
@@ -12565,188 +12565,6 @@ export default {
                 1
             ]
         },
-        "CreateOneObjectInput": {
-            "object": [
-                502
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateObjectInput": {
-            "nameSingular": [
-                1
-            ],
-            "namePlural": [
-                1
-            ],
-            "labelSingular": [
-                1
-            ],
-            "labelPlural": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "shortcut": [
-                1
-            ],
-            "color": [
-                1
-            ],
-            "skipNameField": [
-                8
-            ],
-            "isRemote": [
-                8
-            ],
-            "primaryKeyColumnType": [
-                1
-            ],
-            "primaryKeyFieldMetadataSettings": [
-                9
-            ],
-            "isLabelSyncedWithName": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DeleteOneObjectInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateOneObjectInput": {
-            "update": [
-                505
-            ],
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateObjectPayload": {
-            "labelSingular": [
-                1
-            ],
-            "labelPlural": [
-                1
-            ],
-            "nameSingular": [
-                1
-            ],
-            "namePlural": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "shortcut": [
-                1
-            ],
-            "color": [
-                1
-            ],
-            "isActive": [
-                8
-            ],
-            "labelIdentifierFieldMetadataId": [
-                3
-            ],
-            "imageIdentifierFieldMetadataId": [
-                3
-            ],
-            "isLabelSyncedWithName": [
-                8
-            ],
-            "isSearchable": [
-                8
-            ],
-            "openRecordIn": [
-                26
-            ],
-            "readability": [
-                27
-            ],
-            "sharingReach": [
-                28
-            ],
-            "translations": [
-                506
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "MetadataTranslationOverrideInput": {
-            "locale": [
-                1
-            ],
-            "property": [
-                1
-            ],
-            "value": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateOneIndexInput": {
-            "index": [
-                508
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateIndexInput": {
-            "objectMetadataId": [
-                3
-            ],
-            "fields": [
-                509
-            ],
-            "indexType": [
-                280
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateIndexFieldInput": {
-            "fieldMetadataId": [
-                3
-            ],
-            "subFieldName": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DeleteOneIndexInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "CreateLogicFunctionFromSourceInput": {
             "id": [
                 3
@@ -12804,7 +12622,7 @@ export default {
                 3
             ],
             "update": [
-                514
+                504
             ],
             "__typename": [
                 1
@@ -12973,7 +12791,7 @@ export default {
                 3
             ],
             "update": [
-                519
+                509
             ],
             "__typename": [
                 1
@@ -12985,6 +12803,188 @@ export default {
             ],
             "description": [
                 1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateOneObjectInput": {
+            "object": [
+                511
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateObjectInput": {
+            "nameSingular": [
+                1
+            ],
+            "namePlural": [
+                1
+            ],
+            "labelSingular": [
+                1
+            ],
+            "labelPlural": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "shortcut": [
+                1
+            ],
+            "color": [
+                1
+            ],
+            "skipNameField": [
+                8
+            ],
+            "isRemote": [
+                8
+            ],
+            "primaryKeyColumnType": [
+                1
+            ],
+            "primaryKeyFieldMetadataSettings": [
+                9
+            ],
+            "isLabelSyncedWithName": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DeleteOneObjectInput": {
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateOneObjectInput": {
+            "update": [
+                514
+            ],
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateObjectPayload": {
+            "labelSingular": [
+                1
+            ],
+            "labelPlural": [
+                1
+            ],
+            "nameSingular": [
+                1
+            ],
+            "namePlural": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "shortcut": [
+                1
+            ],
+            "color": [
+                1
+            ],
+            "isActive": [
+                8
+            ],
+            "labelIdentifierFieldMetadataId": [
+                3
+            ],
+            "imageIdentifierFieldMetadataId": [
+                3
+            ],
+            "isLabelSyncedWithName": [
+                8
+            ],
+            "isSearchable": [
+                8
+            ],
+            "openRecordIn": [
+                26
+            ],
+            "readability": [
+                27
+            ],
+            "sharingReach": [
+                28
+            ],
+            "translations": [
+                515
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "MetadataTranslationOverrideInput": {
+            "locale": [
+                1
+            ],
+            "property": [
+                1
+            ],
+            "value": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateOneIndexInput": {
+            "index": [
+                517
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateIndexInput": {
+            "objectMetadataId": [
+                3
+            ],
+            "fields": [
+                518
+            ],
+            "indexType": [
+                280
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateIndexFieldInput": {
+            "fieldMetadataId": [
+                3
+            ],
+            "subFieldName": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DeleteOneIndexInput": {
+            "id": [
+                3
             ],
             "__typename": [
                 1
@@ -13690,7 +13690,7 @@ export default {
                 9
             ],
             "translations": [
-                506
+                515
             ],
             "__typename": [
                 1
@@ -14413,7 +14413,7 @@ export default {
                 8
             ],
             "translations": [
-                506
+                515
             ],
             "__typename": [
                 1
