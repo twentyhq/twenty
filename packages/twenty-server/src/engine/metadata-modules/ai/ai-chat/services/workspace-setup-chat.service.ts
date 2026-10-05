@@ -21,7 +21,7 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
-import { buildWorkspaceSetupTurnContext } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-turn-context.util';
+import { buildWorkspaceSetupKickoffMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-kickoff-message-text.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -169,7 +169,7 @@ export class WorkspaceSetupChatService {
       userWorkspaceId,
       workspaceMemberId,
       workspace,
-      context: buildWorkspaceSetupTurnContext({
+      context: buildWorkspaceSetupKickoffMessageText({
         companyEnrichment: companyContext,
         personEnrichment: personContext,
         workspaceContext: {

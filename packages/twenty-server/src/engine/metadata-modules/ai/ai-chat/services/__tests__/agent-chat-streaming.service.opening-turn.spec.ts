@@ -23,18 +23,11 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
     const agentChatService = {
       hasMessages: jest.fn().mockResolvedValue(hasMessages),
       getQueuedMessages: jest.fn().mockResolvedValue([]),
-      deleteTurns: jest.fn().mockResolvedValue(undefined),
+      replaceOpeningTurn: jest.fn().mockResolvedValue('opening-turn-id'),
       getMessagesForThread: jest.fn().mockResolvedValue([]),
-      getTurnContexts: jest.fn().mockResolvedValue([
-        {
-          turnId: 'opening-turn-id',
-          context: 'Company: Acme Inc',
-          createdAt: '2026-01-01T00:00:00.000Z',
-        },
-      ]),
+      getThreadContexts: jest.fn().mockResolvedValue(['Company: Acme Inc']),
     };
     const threadService = {
-      openAgentTurn: jest.fn().mockResolvedValue('opening-turn-id'),
       notifyThreadActivityUpdated: jest.fn().mockResolvedValue(undefined),
     };
     const streamHeartbeatService = {
@@ -91,7 +84,7 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
   it('returns null without starting a turn when the claim is lost', async () => {
     const {
       service,
-      threadService,
+      agentChatService,
       messageQueueService,
       streamHeartbeatService,
     } = buildService({ claimAffected: 0 });
@@ -99,24 +92,19 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
     const result = await service.startOpeningTurn(openingTurnArguments);
 
     expect(result).toBeNull();
-    expect(threadService.openAgentTurn).not.toHaveBeenCalled();
+    expect(agentChatService.replaceOpeningTurn).not.toHaveBeenCalled();
     expect(messageQueueService.add).not.toHaveBeenCalled();
     expect(streamHeartbeatService.clear).toHaveBeenCalled();
   });
 
   it('releases the claim and flushes the queue when the conversation already started', async () => {
-    const {
-      service,
-      threadRepository,
-      agentChatService,
-      threadService,
-      messageQueueService,
-    } = buildService({ hasMessages: true });
+    const { service, threadRepository, agentChatService, messageQueueService } =
+      buildService({ hasMessages: true });
 
     const result = await service.startOpeningTurn(openingTurnArguments);
 
     expect(result).toBeNull();
-    expect(threadService.openAgentTurn).not.toHaveBeenCalled();
+    expect(agentChatService.replaceOpeningTurn).not.toHaveBeenCalled();
     expect(messageQueueService.add).not.toHaveBeenCalled();
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
@@ -129,7 +117,7 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
     });
   });
 
-  it('starts over the turns of an empty thread and opens one on the context alone', async () => {
+  it('starts over an empty thread and opens a turn on its context alone', async () => {
     const {
       service,
       threadRepository,
@@ -140,13 +128,9 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
 
     const result = await service.startOpeningTurn(openingTurnArguments);
 
-    expect(agentChatService.deleteTurns).toHaveBeenCalledWith({
+    expect(agentChatService.replaceOpeningTurn).toHaveBeenCalledWith({
       threadId: 'thread-id',
       workspaceId: 'workspace-id',
-    });
-    expect(threadService.openAgentTurn).toHaveBeenCalledWith({
-      workspaceId: 'workspace-id',
-      threadId: 'thread-id',
       context: 'Company: Acme Inc',
     });
     expect(messageQueueService.add).toHaveBeenCalledWith(
@@ -154,10 +138,11 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
       expect.objectContaining({
         threadId: 'thread-id',
         messages: [
-          expect.objectContaining({
-            id: 'turn-context-opening-turn-id',
-            role: 'user',
-          }),
+          {
+            id: 'context-0',
+            role: 'system',
+            parts: [{ type: 'text', text: 'Company: Acme Inc' }],
+          },
         ],
         browsingContext: null,
         modelId: 'default-fast-model',

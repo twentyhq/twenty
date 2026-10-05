@@ -68,6 +68,7 @@ const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
       messages {
         id
         role
+        isHidden
         parts {
           type
           orderIndex
@@ -80,10 +81,6 @@ const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
           state
           errorMessage
         }
-      }
-      contexts {
-        context
-        createdAt
       }
     }
   }
@@ -114,7 +111,6 @@ describe('Admin panel global chat threads (integration)', () => {
   let answeredQuestionThreadId: string;
   let pendingQuestionThreadId: string;
   const seededThreadIds: string[] = [];
-  const seededTurnIds: string[] = [];
   const seededMessageIds: string[] = [];
   const seededPartIds: string[] = [];
 
@@ -136,12 +132,10 @@ describe('Admin panel global chat threads (integration)', () => {
     id,
     title,
     lastStreamError,
-    owner = { workspaceMemberId, userWorkspaceId },
   }: {
     id: string;
     title: string;
     lastStreamError?: object;
-    owner?: { workspaceMemberId: string; userWorkspaceId: string };
   }): Promise<string> => {
     await insertHistory(
       'agentChatThread',
@@ -154,8 +148,8 @@ describe('Admin panel global chat threads (integration)', () => {
       ],
       [
         id,
-        owner.workspaceMemberId,
-        owner.userWorkspaceId,
+        workspaceMemberId,
+        userWorkspaceId,
         title,
         lastStreamError ? JSON.stringify(lastStreamError) : null,
       ],
@@ -167,41 +161,23 @@ describe('Admin panel global chat threads (integration)', () => {
     return id;
   };
 
-  const insertTurnWithContext = async ({
-    threadId,
-    context,
-    createdAt,
-  }: {
-    threadId: string;
-    context: string;
-    createdAt: string;
-  }): Promise<void> => {
-    const id = randomUUID();
-
-    await insertHistory(
-      'agentTurn',
-      ['id', 'threadId', 'context', 'createdAt'],
-      [id, threadId, context, createdAt],
-    );
-
-    seededTurnIds.push(id);
-  };
-
   const insertMessage = async ({
     threadId,
     role,
+    isHidden = false,
     createdAt,
   }: {
     threadId: string;
-    role: 'user' | 'assistant';
+    role: 'system' | 'user' | 'assistant';
+    isHidden?: boolean;
     createdAt: string;
   }): Promise<string> => {
     const id = randomUUID();
 
     await insertHistory(
       'agentMessage',
-      ['id', 'threadId', 'role', 'createdAt'],
-      [id, threadId, role, createdAt],
+      ['id', 'threadId', 'role', 'isHidden', 'createdAt'],
+      [id, threadId, role, isHidden, createdAt],
     );
 
     seededMessageIds.push(id);
@@ -288,7 +264,7 @@ describe('Admin panel global chat threads (integration)', () => {
       'AgentHistoryUpgradeStorageService',
     );
 
-    const [firstUserWorkspace, secondUserWorkspace] = await dataSource.query(
+    const [firstUserWorkspace] = await dataSource.query(
       `SELECT "userWorkspace".id, "user".email, "workspaceMember".id AS "workspaceMemberId"
        FROM core."userWorkspace" "userWorkspace"
        JOIN core."user" "user" ON "user".id = "userWorkspace"."userId"
@@ -296,7 +272,7 @@ describe('Admin panel global chat threads (integration)', () => {
        WHERE "userWorkspace"."workspaceId" = $1
          AND "userWorkspace"."deletedAt" IS NULL
        ORDER BY "userWorkspace"."createdAt" ASC
-       LIMIT 2`,
+       LIMIT 1`,
       [SEED_APPLE_WORKSPACE_ID],
     );
 
@@ -305,16 +281,20 @@ describe('Admin panel global chat threads (integration)', () => {
     userEmail = firstUserWorkspace.email;
 
     kickoffThreadId = await insertThread({
-      id: v5(
-        `${SEED_APPLE_WORKSPACE_ID}:${userWorkspaceId}`,
-        WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
-      ),
+      id: randomUUID(),
       title: 'integration-onboarding-kickoff-thread',
     });
-    await insertTurnWithContext({
+    const kickoffContextMessageId = await insertMessage({
       threadId: kickoffThreadId,
-      context: 'kickoff prompt with company context',
+      role: 'system',
       createdAt: '2026-01-01T00:00:00Z',
+    });
+
+    await insertPart({
+      messageId: kickoffContextMessageId,
+      orderIndex: 0,
+      type: 'text',
+      textContent: 'kickoff prompt with company context',
     });
 
     await insertMessage({
@@ -347,14 +327,10 @@ describe('Admin panel global chat threads (integration)', () => {
 
     deterministicThreadId = await insertThread({
       id: v5(
-        `${SEED_APPLE_WORKSPACE_ID}:${secondUserWorkspace.id}`,
+        `${SEED_APPLE_WORKSPACE_ID}:${userWorkspaceId}`,
         WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
       ),
       title: 'integration-onboarding-deterministic-thread',
-      owner: {
-        workspaceMemberId: secondUserWorkspace.workspaceMemberId,
-        userWorkspaceId: secondUserWorkspace.id,
-      },
     });
 
     regularThreadId = await insertThread({
@@ -387,6 +363,12 @@ describe('Admin panel global chat threads (integration)', () => {
       id: randomUUID(),
       title: 'integration-answered-question-thread',
     });
+    await insertMessage({
+      threadId: answeredQuestionThreadId,
+      role: 'user',
+      isHidden: true,
+      createdAt: '2026-01-01T00:04:00Z',
+    });
 
     const answeredQuestionMessageId = await insertMessage({
       threadId: answeredQuestionThreadId,
@@ -417,6 +399,12 @@ describe('Admin panel global chat threads (integration)', () => {
       id: randomUUID(),
       title: 'integration-pending-question-thread',
     });
+    await insertMessage({
+      threadId: pendingQuestionThreadId,
+      role: 'user',
+      isHidden: true,
+      createdAt: '2026-01-01T00:06:00Z',
+    });
 
     const pendingQuestionMessageId = await insertMessage({
       threadId: pendingQuestionThreadId,
@@ -445,7 +433,6 @@ describe('Admin panel global chat threads (integration)', () => {
       for (const { name, ids } of [
         { name: 'agentMessagePart' as const, ids: seededPartIds },
         { name: 'agentMessage' as const, ids: seededMessageIds },
-        { name: 'agentTurn' as const, ids: seededTurnIds },
         { name: 'agentChatThread' as const, ids: seededThreadIds },
       ]) {
         if (ids.length > 0) {
@@ -558,7 +545,7 @@ describe('Admin panel global chat threads (integration)', () => {
       ]);
     });
 
-    it('counts messages and user replies', async () => {
+    it('counts only visible messages and user replies', async () => {
       const result = await fetchThreads({
         scope: 'ALL',
         searchTerm: kickoffThreadId,
@@ -588,7 +575,7 @@ describe('Admin panel global chat threads (integration)', () => {
 
     it('filters threads without user replies via userNeverEngagedOnly', async () => {
       const result = await fetchThreads({
-        scope: 'ALL',
+        scope: 'ONBOARDING',
         userNeverEngagedOnly: true,
         limit: 100,
       });
@@ -715,7 +702,7 @@ describe('Admin panel global chat threads (integration)', () => {
   });
 
   describe('getAdminChatThreadMessages', () => {
-    it('returns the kickoff turn context and enriched ordered parts', async () => {
+    it('returns the kickoff context first with enriched ordered parts', async () => {
       const response = await makeAdminPanelApiRequest({
         query: GET_ADMIN_CHAT_THREAD_MESSAGES,
         variables: { threadId: kickoffThreadId },
@@ -726,13 +713,14 @@ describe('Admin panel global chat threads (integration)', () => {
       const result = response.body.data?.getAdminChatThreadMessages;
 
       expect(result.thread.messageCount).toBe(2);
-      expect(result.messages).toHaveLength(2);
-      expect(result.contexts).toEqual([
-        {
-          context: 'kickoff prompt with company context',
-          createdAt: '2026-01-01T00:00:00.000Z',
-        },
-      ]);
+      expect(result.messages).toHaveLength(3);
+      expect(result.messages[0]).toMatchObject({
+        role: 'SYSTEM',
+        isHidden: false,
+      });
+      expect(result.messages[0].parts[0].textContent).toBe(
+        'kickoff prompt with company context',
+      );
 
       const assistantMessage = result.messages.find(
         (message: { role: string }) => message.role === 'ASSISTANT',

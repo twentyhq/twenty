@@ -65,7 +65,6 @@ const buildResolver = () => {
         updatedAt: new Date(),
       }),
     } as never,
-    {} as never,
   );
   const chatService = new AgentChatService(
     threadRepository as never,

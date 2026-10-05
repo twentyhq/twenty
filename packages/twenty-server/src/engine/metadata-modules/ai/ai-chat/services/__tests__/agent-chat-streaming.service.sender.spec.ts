@@ -27,7 +27,7 @@ const build = () => {
     getQueuedMessages: jest.fn().mockResolvedValue([queued]),
     promoteQueuedMessage: jest.fn().mockResolvedValue('turn-b'),
     getMessagesForThread: jest.fn().mockResolvedValue([]),
-    getTurnContexts: jest.fn().mockResolvedValue([]),
+    getThreadContexts: jest.fn().mockResolvedValue([]),
     deleteQueuedMessage: jest.fn().mockResolvedValue(true),
   };
   const actors = {
@@ -151,7 +151,7 @@ describe('Sender-aware queue draining', () => {
     expect(queue.add).not.toHaveBeenCalled();
     expect(heartbeat.clear).toHaveBeenCalled();
   });
-  it('places each turn context where its turn opened', async () => {
+  it('opens the conversation with the thread contexts as system messages', async () => {
     const { service, chat, queue } = build();
     const message = (id: string, role: string, createdAt: string) => ({
       id,
@@ -160,43 +160,23 @@ describe('Sender-aware queue draining', () => {
       parts: [{ type: 'text', textContent: id }],
     });
     chat.getMessagesForThread.mockResolvedValue([
-      message('question', 'user', '2026-01-01T10:00:00.000Z'),
-      message('answer', 'assistant', '2026-01-01T10:01:00.000Z'),
       message('inbox-message', 'assistant', '2026-01-01T11:00:01.000Z'),
       message('follow-up', 'user', '2026-01-01T12:00:00.000Z'),
     ]);
-    chat.getTurnContexts.mockResolvedValue([
-      {
-        turnId: 'inbox-turn',
-        context: 'Billing app started this conversation.',
-        createdAt: '2026-01-01T11:00:00.000Z',
-      },
-      {
-        turnId: 'silent-turn',
-        context: 'An opening that produced no message.',
-        createdAt: '2026-01-01T11:30:00.000Z',
-      },
+    chat.getThreadContexts.mockResolvedValue([
+      'Billing app started this conversation.',
     ]);
     await service.flushNextQueuedMessage(args);
     const { messages } = queue.add.mock.calls[0][1];
     expect(messages.map(({ id }: { id: string }) => id)).toEqual([
-      'question',
-      'answer',
-      'turn-context-inbox-turn',
+      'context-0',
       'inbox-message',
-      'turn-context-silent-turn',
       'follow-up',
     ]);
-    expect(messages[2]).toMatchObject({
-      role: 'user',
-      parts: [
-        {
-          type: 'text',
-          text: expect.stringContaining(
-            'Billing app started this conversation.',
-          ),
-        },
-      ],
+    expect(messages[0]).toEqual({
+      id: 'context-0',
+      role: 'system',
+      parts: [{ type: 'text', text: 'Billing app started this conversation.' }],
     });
   });
 });

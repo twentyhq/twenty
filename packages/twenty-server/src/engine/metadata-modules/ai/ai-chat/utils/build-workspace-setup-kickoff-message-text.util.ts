@@ -16,7 +16,7 @@ const NO_COMPANY_CONTEXT_LINE =
 const NO_PERSON_CONTEXT_LINE =
   'No third-party information about the person setting up this workspace is available.';
 
-export const buildWorkspaceSetupTurnContext = ({
+export const buildWorkspaceSetupKickoffMessageText = ({
   companyEnrichment,
   personEnrichment,
   workspaceContext,

@@ -31,7 +31,6 @@ export const SettingsAdminWorkspaceChatThread = () => {
 
   const thread = data?.getAdminChatThreadMessages?.thread;
   const messages = data?.getAdminChatThreadMessages?.messages ?? [];
-  const contexts = data?.getAdminChatThreadMessages?.contexts ?? [];
 
   const threadTitle = thread?.title || t`Untitled`;
 
@@ -67,10 +66,7 @@ export const SettingsAdminWorkspaceChatThread = () => {
             title={threadTitle}
             description={t`Chat conversation`}
           />
-          <SettingsAdminChatThreadMessageList
-            messages={messages}
-            contexts={contexts}
-          />
+          <SettingsAdminChatThreadMessageList messages={messages} />
         </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>

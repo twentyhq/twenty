@@ -11,7 +11,7 @@ import {
   isNonEmptyArray,
   isNonEmptyString,
 } from 'twenty-shared/utils';
-import { type FindOptionsWhere, In } from 'typeorm';
+import { type FindOptionsWhere, In, Not } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
@@ -186,7 +186,7 @@ export class AgentChatService {
   }
 
   // the contexts are the thread owner's, so the turns of other participants run without them
-  async getTurnContexts({
+  async getThreadContexts({
     threadId,
     workspaceMemberId,
     workspaceId,
@@ -194,7 +194,7 @@ export class AgentChatService {
     threadId: string;
     workspaceMemberId: string;
     workspaceId: string;
-  }): Promise<{ turnId: string; context: string; createdAt: string }[]> {
+  }): Promise<string[]> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
       select: ['id', 'workspaceMemberId'],
@@ -204,25 +204,46 @@ export class AgentChatService {
       return [];
     }
 
-    // filtered here rather than in the query: workspaces the 2.46 commands have not reached lack the column
-    const turns = await this.turnRepository.find(workspaceId, {
-      where: { threadId },
+    // hidden user messages are contexts the 2.46 upgrade has not turned into system messages yet
+    const contextMessages = await this.messageRepository.find(workspaceId, {
+      where: [
+        { threadId, role: AgentMessageRole.SYSTEM },
+        { threadId, isHidden: true },
+      ],
       order: { createdAt: 'ASC', id: 'ASC' },
+      relations: ['parts'],
     });
 
-    return turns.flatMap(({ id, context, createdAt }) =>
-      isNonEmptyString(context) ? [{ turnId: id, context, createdAt }] : [],
-    );
+    return contextMessages.flatMap(({ parts }) => {
+      const context = (parts ?? [])
+        .sort((first, second) => first.orderIndex - second.orderIndex)
+        .flatMap(({ textContent }) =>
+          isNonEmptyString(textContent) ? [textContent] : [],
+        )
+        .join('\n\n');
+
+      return isNonEmptyString(context) ? [context] : [];
+    });
   }
 
-  async deleteTurns({
+  // an earlier attempt that never got an answer left only its context, which would repeat
+  async replaceOpeningTurn({
     threadId,
     workspaceId,
+    context,
   }: {
     threadId: string;
     workspaceId: string;
-  }): Promise<void> {
+    context: string;
+  }): Promise<string> {
+    await this.messageRepository.delete(workspaceId, { threadId });
     await this.turnRepository.delete(workspaceId, { threadId });
+
+    return this.conversationWriterService.insertAgentOpenedTurn({
+      workspaceId,
+      threadId,
+      context,
+    });
   }
 
   async hasMessages({
@@ -235,6 +256,7 @@ export class AgentChatService {
     return this.messageRepository.existsBy(workspaceId, {
       threadId,
       isHidden: false,
+      role: Not(AgentMessageRole.SYSTEM),
     });
   }
 
@@ -266,9 +288,13 @@ export class AgentChatService {
       workspaceId,
     });
 
-    // hidden messages wait for upgrade:2-46:move-hidden-agent-messages-to-turn-context, and are never shown
+    // contexts are given to the model, never shown
     return this.messageRepository.find(workspaceId, {
-      where: { threadId, isHidden: false },
+      where: {
+        threadId,
+        isHidden: false,
+        role: Not(AgentMessageRole.SYSTEM),
+      },
       order: { processedAt: { order: 'ASC', nulls: 'NULLS LAST' } },
       relations: ['parts', 'parts.file'],
     });

@@ -30,6 +30,7 @@ export const seedAgentChatThreadInboxState = async ({
          FROM ${table('agentMessage')} message
          WHERE message."threadId" = thread.id
            AND message."deletedAt" IS NULL
+           AND message."isHidden" = false
            AND message.role IN ('user', 'assistant')
          ORDER BY message."createdAt" DESC, message.id DESC
          LIMIT 1
@@ -50,6 +51,7 @@ export const seedAgentChatThreadInboxState = async ({
          FROM ${table('agentMessage')} message
          WHERE message."threadId" = thread.id
            AND message."deletedAt" IS NULL
+           AND message."isHidden" = false
            AND message.role = 'user'
        ) writer ON true
        WHERE thread."lastActivityAt" IS NULL

@@ -44,7 +44,6 @@ import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
-import { buildTurnContextMessage } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-turn-context-message.util';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import {
@@ -270,12 +269,9 @@ export class AgentChatStreamingService {
           return null;
         }
 
-        // earlier attempts left only empty turns, which would repeat their context
-        await this.agentChatService.deleteTurns({ threadId, workspaceId });
-
-        const turnId = await this.threadService.openAgentTurn({
-          workspaceId,
+        const turnId = await this.agentChatService.replaceOpeningTurn({
           threadId,
+          workspaceId,
           context,
         });
 
@@ -735,13 +731,13 @@ export class AgentChatStreamingService {
     workspaceId: string,
     workspaceMemberId: string,
   ): Promise<ExtendedUIMessage[]> {
-    const [allMessages, turnContexts] = await Promise.all([
+    const [allMessages, contexts] = await Promise.all([
       this.agentChatService.getMessagesForThread({
         threadId,
         workspaceMemberId,
         workspaceId,
       }),
-      this.agentChatService.getTurnContexts({
+      this.agentChatService.getThreadContexts({
         threadId,
         workspaceMemberId,
         workspaceId,
@@ -781,29 +777,16 @@ export class AgentChatStreamingService {
       })),
     );
 
-    // a context stands where its turn opened, ahead of the messages written after it
-    const pendingContexts = [...turnContexts];
-    const takeContextsOpenedBy = (createdAt: string) => {
-      const firstLaterIndex = pendingContexts.findIndex(
-        (turnContext) =>
-          new Date(turnContext.createdAt).getTime() >
-          new Date(createdAt).getTime(),
-      );
-
-      return pendingContexts
-        .splice(
-          0,
-          firstLaterIndex === -1 ? pendingContexts.length : firstLaterIndex,
-        )
-        .map(buildTurnContextMessage);
-    };
-
+    // contexts open their thread, and Google and Bedrock only take system messages ahead of the conversation
     return [
-      ...sentMessages.flatMap((message, index) => [
-        ...takeContextsOpenedBy(message.createdAt),
-        uiMessages[index],
-      ]),
-      ...pendingContexts.map(buildTurnContextMessage),
+      ...contexts.map(
+        (context, index): ExtendedUIMessage => ({
+          id: `context-${index}`,
+          role: 'system',
+          parts: [{ type: 'text', text: context }],
+        }),
+      ),
+      ...uiMessages,
     ];
   }
 

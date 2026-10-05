@@ -203,10 +203,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     const chatRecordEvents = {
       emitThreadUpdated: jest.fn().mockResolvedValue(undefined),
     };
-    const conversationWriter = new AgentConversationWriterService(
-      turns as never,
-      new AgentHistoryTransactionService(workspaceStorage, orm as never),
-    );
     const chatThreadService = new AgentChatThreadService(
       threads as never,
       chatSharing as never,
@@ -217,7 +213,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           updatedAt: new Date(),
         }),
       } as never,
-      conversationWriter,
     );
     const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
@@ -229,7 +224,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         {} as never,
         chatSharing as never,
         chatRecordEvents as never,
-        conversationWriter,
+        new AgentConversationWriterService(
+          turns as never,
+          new AgentHistoryTransactionService(workspaceStorage, orm as never),
+        ),
         chatThreadService,
       );
 
@@ -1352,7 +1350,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceRepository,
         threads,
         messages,
-        turns,
       );
       expect(await chat.getChatThreadMessages(THREAD_ID)).toMatchObject({
         thread: { id: THREAD_ID },

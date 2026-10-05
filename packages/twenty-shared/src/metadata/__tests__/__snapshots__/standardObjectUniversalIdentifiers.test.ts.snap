@@ -366,9 +366,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "agentId": {
         "universalIdentifier": "4ac55a9a-95e8-4fd9-8c03-47ee3b618ae7",
       },
-      "context": {
-        "universalIdentifier": "ef743060-2ebb-41fa-80da-252c860eb681",
-      },
       "createdAt": {
         "universalIdentifier": "46926fcc-4c5b-5826-a6ca-1eb419bdf42e",
       },

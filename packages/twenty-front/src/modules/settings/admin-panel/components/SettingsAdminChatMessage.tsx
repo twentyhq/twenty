@@ -1,7 +1,9 @@
+import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { SettingsAdminChatCollapsibleSection } from '@/settings/admin-panel/components/SettingsAdminChatCollapsibleSection';
 import { SettingsAdminChatMessagePartRenderer } from '@/settings/admin-panel/components/SettingsAdminChatMessagePartRenderer';
 import { type AdminChatThreadMessage } from '@/settings/admin-panel/types/AdminChatThreadMessage';
 import { isRenderableAdminChatMessagePart } from '@/settings/admin-panel/utils/isRenderableAdminChatMessagePart';
@@ -35,14 +37,17 @@ export const SettingsAdminChatMessage = ({
   message,
 }: SettingsAdminChatMessageProps) => {
   const isUser = message.role === AgentMessageRole.USER;
+  // hidden user messages are contexts the 2.46 upgrade has not turned into system messages yet
+  const isContext =
+    message.role === AgentMessageRole.SYSTEM || message.isHidden;
 
   const renderableParts = message.parts
     .filter(isRenderableAdminChatMessagePart)
     .sort((a, b) => a.orderIndex - b.orderIndex);
 
-  return (
-    <StyledMessageBubble isUser={isUser}>
-      <StyledRoleLabel>{message.role}</StyledRoleLabel>
+  const messageBody = (
+    <StyledMessageBubble isUser={isUser && !isContext}>
+      {!isContext && <StyledRoleLabel>{message.role}</StyledRoleLabel>}
       {renderableParts.map((part) => (
         <SettingsAdminChatMessagePartRenderer
           key={part.orderIndex}
@@ -55,4 +60,14 @@ export const SettingsAdminChatMessage = ({
       </StyledTimestamp>
     </StyledMessageBubble>
   );
+
+  if (isContext) {
+    return (
+      <SettingsAdminChatCollapsibleSection label={t`Context`}>
+        {messageBody}
+      </SettingsAdminChatCollapsibleSection>
+    );
+  }
+
+  return messageBody;
 };

@@ -7,7 +7,6 @@ import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -71,23 +70,6 @@ export class AgentChatSharingService {
       flatObjectMetadataMaps,
       'agentChatThreadParticipant',
     )?.id;
-  }
-
-  // Fence for the 2.46 cross-upgrade window: until
-  // upgrade:2-46:move-hidden-agent-messages-to-turn-context has reached a
-  // workspace, its turns have no context column. Remove once 2.46 leaves the
-  // window.
-  async hasTurnContext(workspaceId: string): Promise<boolean> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-
-    return isDefined(
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentTurn.fields.context.universalIdentifier
-      ],
-    );
   }
 
   getReadableThread(args: AgentChatThreadAccessArgs) {

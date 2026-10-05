@@ -1,4 +1,5 @@
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 
 const WORKSPACE_ID = 'workspace-id';
 const THREAD_ID = 'thread-id';
@@ -10,25 +11,23 @@ const buildService = () => {
       .fn()
       .mockResolvedValue({ id: THREAD_ID, workspaceMemberId: OWNER_ID }),
   };
-  const turnRepository = {
+  const messageRepository = {
     find: jest.fn().mockResolvedValue([
       {
-        id: 'opening-turn',
-        context: 'Company: Acme Inc',
-        createdAt: '2026-01-01T00:00:00.000Z',
+        id: 'context-message',
+        parts: [
+          { orderIndex: 1, textContent: 'The user locale is French.' },
+          { orderIndex: 0, textContent: 'Company: Acme Inc' },
+        ],
       },
-      {
-        id: 'user-turn',
-        context: null,
-        createdAt: '2026-01-01T00:01:00.000Z',
-      },
+      { id: 'interrupted-context-message', parts: [] },
     ]),
   };
 
   const service = new AgentChatService(
     threadRepository as never,
-    turnRepository as never,
     {} as never,
+    messageRepository as never,
     {} as never,
     {} as never,
     {} as never,
@@ -38,46 +37,44 @@ const buildService = () => {
     {} as never,
   );
 
-  return { service, threadRepository, turnRepository };
+  return { service, threadRepository, messageRepository };
 };
 
-describe('AgentChatService getTurnContexts', () => {
-  it('gives the thread owner the context of the turns the agent opened', async () => {
-    const { service, threadRepository, turnRepository } = buildService();
+describe('AgentChatService getThreadContexts', () => {
+  it('gives the thread owner the text of its system and not yet upgraded hidden messages', async () => {
+    const { service, threadRepository, messageRepository } = buildService();
 
     await expect(
-      service.getTurnContexts({
+      service.getThreadContexts({
         threadId: THREAD_ID,
         workspaceMemberId: OWNER_ID,
         workspaceId: WORKSPACE_ID,
       }),
-    ).resolves.toEqual([
-      {
-        turnId: 'opening-turn',
-        context: 'Company: Acme Inc',
-        createdAt: '2026-01-01T00:00:00.000Z',
-      },
-    ]);
+    ).resolves.toEqual(['Company: Acme Inc\n\nThe user locale is French.']);
     expect(threadRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
       where: { id: THREAD_ID },
       select: ['id', 'workspaceMemberId'],
     });
-    expect(turnRepository.find).toHaveBeenCalledWith(WORKSPACE_ID, {
-      where: { threadId: THREAD_ID },
+    expect(messageRepository.find).toHaveBeenCalledWith(WORKSPACE_ID, {
+      where: [
+        { threadId: THREAD_ID, role: AgentMessageRole.SYSTEM },
+        { threadId: THREAD_ID, isHidden: true },
+      ],
       order: { createdAt: 'ASC', id: 'ASC' },
+      relations: ['parts'],
     });
   });
 
   it('keeps the owner’s contexts from the turns of other participants', async () => {
-    const { service, turnRepository } = buildService();
+    const { service, messageRepository } = buildService();
 
     await expect(
-      service.getTurnContexts({
+      service.getThreadContexts({
         threadId: THREAD_ID,
         workspaceMemberId: 'participant-member-id',
         workspaceId: WORKSPACE_ID,
       }),
     ).resolves.toEqual([]);
-    expect(turnRepository.find).not.toHaveBeenCalled();
+    expect(messageRepository.find).not.toHaveBeenCalled();
   });
 });

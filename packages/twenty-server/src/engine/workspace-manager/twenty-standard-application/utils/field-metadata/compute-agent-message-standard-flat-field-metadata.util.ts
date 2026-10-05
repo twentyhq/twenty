@@ -191,7 +191,7 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
-  // Unused since thread context replaced hidden messages; the 2.42 history move still copies it
+  // Only marks contexts the 2.46 upgrade has not turned into system messages yet; the 2.42 history move still copies it
   isHidden: {
     ...createStandardFieldFlatMetadata({
       ...args,

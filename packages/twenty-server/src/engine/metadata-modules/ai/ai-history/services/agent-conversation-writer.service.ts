@@ -41,25 +41,18 @@ export class AgentConversationWriterService {
     threadId,
     agentId,
     id,
-    context,
     scope,
   }: {
     workspaceId: string;
     threadId: string;
     agentId: string | null;
     id?: string;
-    context?: string;
     scope?: AgentHistoryTransactionScope;
   }): Promise<string> {
     if (isDefined(scope)) {
       const turnId = id ?? randomUUID();
 
-      await scope.insert('agentTurn', {
-        id: turnId,
-        threadId,
-        agentId,
-        ...(isDefined(context) ? { context } : {}),
-      });
+      await scope.insert('agentTurn', { id: turnId, threadId, agentId });
 
       return turnId;
     }
@@ -68,10 +61,49 @@ export class AgentConversationWriterService {
       ...(isDefined(id) ? { id } : {}),
       threadId,
       agentId,
-      ...(isDefined(context) ? { context } : {}),
     });
 
     return (id ?? turnInsertResult.identifiers[0].id) as string;
+  }
+
+  // A turn the agent opens has no user message: a system message gives the
+  // model its context, and is written with the turn so neither exists alone
+  async insertAgentOpenedTurn({
+    workspaceId,
+    threadId,
+    turnId,
+    contextMessageId,
+    context,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId?: string;
+    contextMessageId?: string;
+    context: string;
+  }): Promise<string> {
+    return this.transactionService.run(workspaceId, async (scope) => {
+      const insertedTurnId = await this.insertTurn({
+        workspaceId,
+        threadId,
+        id: turnId,
+        agentId: null,
+        scope,
+      });
+
+      await this.insertMessage({
+        workspaceId,
+        id: contextMessageId,
+        threadId,
+        turnId: insertedTurnId,
+        role: AgentMessageRole.SYSTEM,
+        agentId: null,
+        senderUserWorkspaceId: null,
+        parts: [{ type: 'text', text: context }],
+        scope,
+      });
+
+      return insertedTurnId;
+    });
   }
 
   // The message and its parts are written together, so a message that

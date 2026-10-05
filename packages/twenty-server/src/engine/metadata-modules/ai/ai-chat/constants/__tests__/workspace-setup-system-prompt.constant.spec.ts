@@ -20,7 +20,7 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
       'kicking off the setup of this brand-new workspace',
     );
     expect(prompt).toContain(
-      'The conversation opens with a <context> block, not with a message from the user',
+      'These instructions are followed by a context, not by a message from the user',
     );
     expect(prompt).toContain('the person setting it up');
     expect(prompt).toContain('what you know about them and their company');

@@ -5,6 +5,7 @@ import { INBOX_MESSAGE_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-ch
 type InboxMessageIds = {
   threadId: string;
   turnId: string;
+  openingMessageId: string;
   messageId: string;
   toolCallId: string;
 };
@@ -29,11 +30,13 @@ export const buildInboxMessageIds = ({
     INBOX_MESSAGE_ID_NAMESPACE,
   );
 
-  // Every message the application sends shares one turn.
+  // A thread opens with a single context message, so every message the
+  // application sends shares the turn that opener starts.
   return {
     threadId,
     messageId,
     toolCallId: `call_${messageId.replace(/-/g, '')}`,
     turnId: v5(`${threadId}:turn`, INBOX_MESSAGE_ID_NAMESPACE),
+    openingMessageId: v5(`${threadId}:opening`, INBOX_MESSAGE_ID_NAMESPACE),
   };
 };

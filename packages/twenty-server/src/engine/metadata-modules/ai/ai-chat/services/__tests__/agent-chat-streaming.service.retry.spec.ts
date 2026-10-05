@@ -47,7 +47,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       findLatestTurnId: jest.fn().mockResolvedValue('turn-id'),
       deleteAssistantMessagesForTurn: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue(threadMessages),
-      getTurnContexts: jest.fn().mockResolvedValue([]),
+      getThreadContexts: jest.fn().mockResolvedValue([]),
     };
     const threadService = {
       getWritableThread: jest
@@ -201,13 +201,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       turnUserMessage: null,
       threadMessages: [],
     });
-    agentChatService.getTurnContexts.mockResolvedValue([
-      {
-        turnId: 'turn-id',
-        context: 'Company: Acme Inc',
-        createdAt: '2026-01-01T00:00:00.000Z',
-      },
-    ]);
+    agentChatService.getThreadContexts.mockResolvedValue(['Company: Acme Inc']);
 
     const result = await service.retryLastFailedTurn(retryArguments);
 
@@ -218,16 +212,11 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       expect.any(String),
       expect.objectContaining({
         messages: [
-          expect.objectContaining({
-            id: 'turn-context-turn-id',
-            role: 'user',
-            parts: [
-              {
-                type: 'text',
-                text: expect.stringContaining('Company: Acme Inc'),
-              },
-            ],
-          }),
+          {
+            id: 'context-0',
+            role: 'system',
+            parts: [{ type: 'text', text: 'Company: Acme Inc' }],
+          },
         ],
         existingTurnId: 'turn-id',
         lastUserMessageText: '',

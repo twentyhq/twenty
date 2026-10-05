@@ -245,21 +245,25 @@ describe('Conversation sharing through the authenticated API', () => {
       try {
         const privateContext =
           'Private setup enrichment and workspace identity';
-        await getAgentChatThreadService().openAgentTurn({
+        const chatService =
+          getAppProviderByClassName<AgentChatService>('AgentChatService');
+        await chatService.replaceOpeningTurn({
           workspaceId,
           threadId,
           context: privateContext,
         });
-        const turnContextsFor = (workspaceMemberId: string) =>
-          getAppProviderByClassName<AgentChatService>(
-            'AgentChatService',
-          ).getTurnContexts({ workspaceId, threadId, workspaceMemberId });
-        expect(await turnContextsFor(owner.workspaceMemberId)).toEqual([
-          expect.objectContaining({ context: privateContext }),
+        const contextsFor = (workspaceMemberId: string) =>
+          chatService.getThreadContexts({
+            workspaceId,
+            threadId,
+            workspaceMemberId,
+          });
+        expect(await contextsFor(owner.workspaceMemberId)).toEqual([
+          privateContext,
         ]);
-        expect(
-          await turnContextsFor(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
-        ).toEqual([]);
+        expect(await contextsFor(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY)).toEqual(
+          [],
+        );
         expect((await read()).body.errors[0].extensions.code).toBe('NOT_FOUND');
         expect(await listedThreadIds()).not.toContain(threadId);
         expect((await changeShare(true)).body.errors).toBeUndefined();

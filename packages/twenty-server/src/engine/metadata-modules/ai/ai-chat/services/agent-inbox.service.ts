@@ -64,12 +64,13 @@ export class AgentInboxService {
     }>;
   }): Promise<AgentInboxDelivery> {
     const senderDetails = getAgentInboxSenderDetails(sender);
-    const { threadId, turnId, messageId, toolCallId } = buildInboxMessageIds({
-      senderKey: senderDetails.key,
-      workspaceMemberId: input.workspaceMemberId,
-      threadKey: input.threadKey,
-      idempotencyKey: input.idempotencyKey,
-    });
+    const { threadId, turnId, openingMessageId, messageId, toolCallId } =
+      buildInboxMessageIds({
+        senderKey: senderDetails.key,
+        workspaceMemberId: input.workspaceMemberId,
+        threadKey: input.threadKey,
+        idempotencyKey: input.idempotencyKey,
+      });
 
     const existingThread = await this.findThread({ workspaceId, threadId });
 
@@ -119,10 +120,11 @@ export class AgentInboxService {
       }));
 
     await this.ignoreDuplicate(() =>
-      this.threadService.openAgentTurn({
+      this.conversationWriterService.insertAgentOpenedTurn({
         workspaceId,
         threadId,
-        id: turnId,
+        turnId,
+        contextMessageId: openingMessageId,
         context: `${senderDetails.description} started this conversation. Its messages follow.`,
       }),
     );

@@ -11,7 +11,6 @@ import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { touchAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/touch-agent-chat-thread.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
@@ -27,7 +26,6 @@ export class AgentChatThreadService {
     private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly participantService: AgentChatThreadParticipantService,
-    private readonly conversationWriterService: AgentConversationWriterService,
   ) {}
 
   async createThread(
@@ -48,30 +46,6 @@ export class AgentChatThreadService {
     });
 
     return savedThread;
-  }
-
-  // A turn the agent opens has no user message: its context stands in for one
-  async openAgentTurn({
-    workspaceId,
-    threadId,
-    id,
-    context,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    id?: string;
-    context: string;
-  }): Promise<string> {
-    const hasTurnContext =
-      await this.sharingService.hasTurnContext(workspaceId);
-
-    return this.conversationWriterService.insertTurn({
-      workspaceId,
-      threadId,
-      id,
-      agentId: null,
-      ...(hasTurnContext ? { context } : {}),
-    });
   }
 
   async findWritableThread(args: AgentChatThreadAccessArgs) {
