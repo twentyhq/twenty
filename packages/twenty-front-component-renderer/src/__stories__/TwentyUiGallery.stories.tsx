@@ -35,7 +35,6 @@ import { type TwentyUiGalleryStory as Story } from '@/__stories__/twenty-ui-gall
 import {
   statusControlsTest,
   tagControlsTest,
-  avatarControlsTest,
   chipControlsTest,
 } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
@@ -66,6 +65,8 @@ import { radioGroupTest } from '@/__stories__/twenty-ui-gallery/utils/radioGroup
 import { sliderRangeTest } from '@/__stories__/twenty-ui-gallery/utils/sliderRangeTest';
 import { sliderTest } from '@/__stories__/twenty-ui-gallery/utils/sliderTest';
 import { toastTest } from '@/__stories__/twenty-ui-gallery/utils/toastTest';
+import { avatarImageTest } from '@/__stories__/twenty-ui-gallery/utils/avatarImageTest';
+import { avatarControlsTest } from '@/__stories__/twenty-ui-gallery/utils/avatarControlsTest';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/Twenty UI Gallery',
@@ -585,6 +586,18 @@ export const AvatarControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-avatar-controls',
   runtime: 'preact',
   play: avatarControlsTest,
+});
+
+export const AvatarImageReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-avatar-image',
+  runtime: 'react',
+  play: avatarImageTest,
+});
+
+export const AvatarImagePreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-avatar-image',
+  runtime: 'preact',
+  play: avatarImageTest,
 });
 
 export const ChipControlsReact: Story = createGalleryStory({

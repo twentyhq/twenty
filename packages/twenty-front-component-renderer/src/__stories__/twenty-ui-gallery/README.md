@@ -18,6 +18,8 @@ requiring them to occur.
 | `twenty-ui-field-controls` | Field, Input, InputGroup, Textarea |
 | `twenty-ui-number-stepper` | NumberStepper (keyboard bounds, disabled/read-only state, named form values and submission) |
 | `twenty-ui-display-helpers` | Text |
+| `twenty-ui-avatar-controls` | Avatar (fallback, pointer/keyboard activation and disabled state) |
+| `twenty-ui-avatar-image` | Avatar (decoded images, broken-source fallback, replacement and unmount/remount) |
 | `twenty-ui-image-input` | ImageInput |
 | `twenty-ui-list-item` | ListItem |
 | `twenty-ui-tabs` | Tabs |
@@ -42,6 +44,14 @@ not fit the card's width.
 The story builder resolves that stylesheet to the individual build's CSS so
 class names match the JavaScript used by the sandbox. Importing CSS through the
 shared card also exercises the SDK's CSS injection and the renderer's style bridge.
+
+The Avatar image browser tests also hold real SVG responses until after source
+replacement or unmount. A test-only observer waits for the native image's load
+event before checking that the old response cannot replace the fallback or
+restore the removed Avatar. The Storybook Vite fixture middleware owns these
+pending responses and closes them on teardown or timeout. These delayed-response
+steps run only in test mode; the regular and static stories use data images and
+retain working source controls, fallback, replacement and unmount/remount checks.
 
 ## Known sandbox limitations
 
