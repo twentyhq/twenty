@@ -13,55 +13,51 @@ import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modu
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import {
+  type FlatIndexFieldMetadata,
+  type FlatIndexMetadata,
+} from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-const computeIndexLeadingColumn = (
-  flatIndexMetadata: FlatIndexMetadata,
+const computeIndexFieldColumns = (
+  flatIndexFieldMetadata: FlatIndexFieldMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-): { name: string; relationTargetObjectMetadataId: string | null } | null => {
-  const [leadingIndexField] = [
-    ...flatIndexMetadata.flatIndexFieldMetadatas,
-  ].sort((a, b) => a.order - b.order);
-
-  if (!isDefined(leadingIndexField)) {
-    return null;
-  }
-
+): { name: string; relationTargetObjectMetadataId: string | null }[] => {
   const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityId: leadingIndexField.fieldMetadataId,
+    flatEntityId: flatIndexFieldMetadata.fieldMetadataId,
     flatEntityMaps: flatFieldMetadataMaps,
   });
 
   if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
-    return {
-      name: computeMorphOrRelationFieldJoinColumnName({
-        name: flatFieldMetadata.name,
-      }),
-      relationTargetObjectMetadataId:
-        flatFieldMetadata.relationTargetObjectMetadataId,
-    };
+    return [
+      {
+        name: computeMorphOrRelationFieldJoinColumnName({
+          name: flatFieldMetadata.name,
+        }),
+        relationTargetObjectMetadataId:
+          flatFieldMetadata.relationTargetObjectMetadataId,
+      },
+    ];
   }
 
   if (!isCompositeFieldMetadataType(flatFieldMetadata.type)) {
-    return {
-      name: flatFieldMetadata.name,
-      relationTargetObjectMetadataId: null,
-    };
+    return [
+      { name: flatFieldMetadata.name, relationTargetObjectMetadataId: null },
+    ];
   }
 
-  const compositeProperty = compositeTypeDefinitions
-    .get(flatFieldMetadata.type)
-    ?.properties.find(
-      (property) => property.name === leadingIndexField.subFieldName,
-    );
-
-  return isDefined(compositeProperty)
-    ? {
-        name: computeCompositeColumnName(flatFieldMetadata, compositeProperty),
-        relationTargetObjectMetadataId: null,
-      }
-    : null;
+  return (
+    compositeTypeDefinitions.get(flatFieldMetadata.type)?.properties ?? []
+  )
+    .filter((property) =>
+      isDefined(flatIndexFieldMetadata.subFieldName)
+        ? property.name === flatIndexFieldMetadata.subFieldName
+        : property.isIncludedInUniqueConstraint,
+    )
+    .map((property) => ({
+      name: computeCompositeColumnName(flatFieldMetadata, property),
+      relationTargetObjectMetadataId: null,
+    }));
 };
 
 const buildIndexedColumnByName = (
@@ -83,18 +79,20 @@ const buildIndexedColumnByName = (
   );
 
   for (const flatIndexMetadata of fullBtreeIndexes) {
-    const leadingColumn = computeIndexLeadingColumn(
-      flatIndexMetadata,
-      flatFieldMetadataMaps,
-    );
+    const indexColumns = [...flatIndexMetadata.flatIndexFieldMetadatas]
+      .sort((a, b) => a.order - b.order)
+      .flatMap((flatIndexFieldMetadata) =>
+        computeIndexFieldColumns(flatIndexFieldMetadata, flatFieldMetadataMaps),
+      );
+
+    const [leadingColumn] = indexColumns;
 
     if (!isDefined(leadingColumn)) {
       continue;
     }
 
     const isSingleColumnUniqueIndex =
-      flatIndexMetadata.isUnique &&
-      flatIndexMetadata.flatIndexFieldMetadatas.length === 1;
+      flatIndexMetadata.isUnique && indexColumns.length === 1;
 
     indexedColumnByName.set(leadingColumn.name, {
       isUnique:

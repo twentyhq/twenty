@@ -118,7 +118,6 @@ const personPrimaryEmailUniqueIndex = buildSingleFieldIndex({
   universalIdentifier: 'person-primary-email-unique',
   objectMetadataId: 'person',
   fieldMetadataId: personEmailsField.id,
-  subFieldName: 'primaryEmail',
   isUnique: true,
 });
 
