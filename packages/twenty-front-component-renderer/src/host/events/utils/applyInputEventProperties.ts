@@ -18,11 +18,11 @@ export const applyInputEventProperties = ({
   if (isBoolean(nativeEvent.isComposing)) {
     serializedEvent.isComposing = nativeEvent.isComposing;
   }
-  if (isString(domEvent.inputType)) {
-    serializedEvent.inputType = domEvent.inputType;
+  if (isString(nativeEvent.inputType)) {
+    serializedEvent.inputType = nativeEvent.inputType;
   }
-  if (isString(domEvent.data)) {
-    serializedEvent.data = domEvent.data.slice(
+  if (isString(nativeEvent.data)) {
+    serializedEvent.data = nativeEvent.data.slice(
       0,
       MAX_SERIALIZED_EVENT_TEXT_LENGTH,
     );

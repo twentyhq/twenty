@@ -14,6 +14,7 @@ import {
 } from '@remote-dom/react/host';
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import { isDefined } from 'twenty-shared/utils';
 
 import { createHtmlHostWrapper } from '@/host/elements/utils/createHtmlHostWrapper';
 import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
@@ -29,6 +30,17 @@ import { installInputSelectionPolyfill } from '../installInputSelectionPolyfill'
 ).IS_REACT_ACT_ENVIRONMENT = true;
 
 type TextControl = HTMLInputElement | HTMLTextAreaElement;
+
+const flushRemoteMutations = async (connection: BatchingRemoteConnection) => {
+  await act(async () => {
+    await Promise.resolve();
+    connection.flush();
+  });
+};
+
+const readRemoteSelectionRequest = (remoteControl: TextControl) =>
+  (serializeRemoteNode(remoteControl) as RemoteElementSerialization)
+    .properties?.[INPUT_SELECTION_BRIDGE_PROPERTIES.request];
 
 describe('forwarding input selection to the host', () => {
   const mountedRoots: Root[] = [];
@@ -53,10 +65,14 @@ describe('forwarding input selection to the host', () => {
 
   const renderRemoteControl = ({
     htmlTag,
+    type,
     selectionStore = workerInputSelectionStore,
+    shouldReadBeforeConnect = true,
   }: {
     htmlTag: 'input' | 'textarea';
+    type?: string;
     selectionStore?: ReturnType<typeof createWorkerInputSelectionStore>;
+    shouldReadBeforeConnect?: boolean;
   }) => {
     const container = document.createElement('div');
     const remoteRoot = document.createElement(
@@ -65,6 +81,9 @@ describe('forwarding input selection to the host', () => {
     const remoteControl = document.createElement(
       `html-${htmlTag}`,
     ) as unknown as TextControl;
+    const remoteSibling = document.createElement(
+      'html-div',
+    ) as unknown as HTMLElement;
     const root = createRoot(container);
     const receiver = new RemoteReceiver();
     const scheduleBatch = jest.fn();
@@ -77,15 +96,24 @@ describe('forwarding input selection to the host', () => {
     mountedRoots.push(root);
     containers.push(container, remoteRoot);
     observers.push(observer);
+
+    if (isDefined(type)) {
+      remoteControl.setAttribute('type', type);
+    }
+
     remoteControl.value = 'initial';
     remoteControl.addEventListener('change', jest.fn());
-    remoteRoot.append(remoteControl);
+    remoteRoot.append(remoteControl, remoteSibling);
     selectionStore.setRootElement(remoteRoot);
     installInputSelectionPolyfill({
       elementPrototypes: [remoteControl],
       selectionStore,
     });
-    selectionStore.read(remoteControl);
+
+    if (shouldReadBeforeConnect) {
+      selectionStore.read(remoteControl);
+    }
+
     remoteRoot.connect(connection);
     observer.observe(remoteRoot, { initial: false });
 
@@ -99,6 +127,10 @@ describe('forwarding input selection to the host', () => {
               [
                 `html-${htmlTag}`,
                 createRemoteComponentRenderer(createHtmlHostWrapper(htmlTag)),
+              ],
+              [
+                'html-div',
+                createRemoteComponentRenderer(createHtmlHostWrapper('div')),
               ],
             ])
           }
@@ -116,6 +148,7 @@ describe('forwarding input selection to the host', () => {
       hostControl,
       remoteControl,
       remoteRoot,
+      remoteSibling,
       root,
       scheduleBatch,
       selectionStore,
@@ -156,7 +189,7 @@ describe('forwarding input selection to the host', () => {
     expect(hostControl.selectionEnd).toBe(hostControl.value.length);
 
     hostControl.setSelectionRange(2, 2);
-    hostControl.dispatchEvent(new Event('select'));
+    hostControl.dispatchEvent(new Event('selectionchange'));
 
     expect(remoteControl.selectionStart).toBe(2);
 
@@ -232,6 +265,255 @@ describe('forwarding input selection to the host', () => {
     expect(hostControl.selectionEnd).toBe(4);
   });
 
+  it('should read its own writes before the host acknowledges them', () => {
+    const { connection, hostControl, remoteControl } = renderRemoteControl({
+      htmlTag: 'input',
+    });
+
+    remoteControl.setSelectionRange(2, 4, 'backward');
+
+    expect(remoteControl.selectionStart).toBe(2);
+    expect(remoteControl.selectionEnd).toBe(4);
+    expect(remoteControl.selectionDirection).toBe('backward');
+
+    remoteControl.selectionStart = 5;
+
+    expect(remoteControl.selectionStart).toBe(5);
+    expect(remoteControl.selectionEnd).toBe(5);
+    expect(remoteControl.selectionDirection).toBe('backward');
+
+    remoteControl.setSelectionRange(3, 100);
+
+    expect(remoteControl.selectionStart).toBe(3);
+    expect(remoteControl.selectionEnd).toBe(7);
+    expect(remoteControl.selectionDirection).toBe('none');
+
+    remoteControl.select();
+
+    expect(remoteControl.selectionStart).toBe(0);
+    expect(remoteControl.selectionEnd).toBe(7);
+
+    act(() => connection.flush());
+
+    expect(hostControl.selectionStart).toBe(0);
+    expect(hostControl.selectionEnd).toBe(7);
+    expect(remoteControl.selectionStart).toBe(0);
+    expect(remoteControl.selectionEnd).toBe(7);
+  });
+
+  it('should keep an optimistic write when a stale event snapshot arrives', () => {
+    const { connection, hostControl, remoteControl, selectionStore } =
+      renderRemoteControl({ htmlTag: 'input' });
+
+    remoteControl.setSelectionRange(2, 4);
+    selectionStore.applySnapshot({
+      element: remoteControl,
+      state: { selectionStart: 6, selectionEnd: 6, selectionDirection: 'none' },
+    });
+
+    expect(remoteControl.selectionStart).toBe(2);
+    expect(remoteControl.selectionEnd).toBe(4);
+
+    act(() => connection.flush());
+    hostControl.setSelectionRange(6, 6);
+    hostControl.dispatchEvent(new Event('selectionchange'));
+
+    expect(remoteControl.selectionStart).toBe(6);
+    expect(remoteControl.selectionEnd).toBe(6);
+  });
+
+  it('should convert offsets and directions the way the DOM does', () => {
+    const { connection, hostControl, remoteControl } = renderRemoteControl({
+      htmlTag: 'input',
+    });
+
+    remoteControl.setSelectionRange(-1, 2);
+
+    expect(remoteControl.selectionStart).toBe(2);
+    expect(remoteControl.selectionEnd).toBe(2);
+
+    act(() => connection.flush());
+
+    expect(hostControl.selectionStart).toBe(2);
+    expect(hostControl.selectionEnd).toBe(2);
+
+    remoteControl.selectionStart = '3' as never;
+
+    expect(remoteControl.selectionStart).toBe(3);
+
+    remoteControl.selectionDirection = 'sideways' as never;
+
+    expect(remoteControl.selectionDirection).toBe('none');
+
+    act(() => connection.flush());
+
+    expect(hostControl.selectionStart).toBe(3);
+    expect(hostControl.selectionDirection).toBe('none');
+  });
+
+  it('should read its own writes on an input whose value is a number', () => {
+    const { remoteControl } = renderRemoteControl({
+      htmlTag: 'input',
+      shouldReadBeforeConnect: false,
+    });
+
+    (remoteControl as unknown as { value: unknown }).value = 1234567;
+
+    expect(remoteControl.selectionStart).toBe(7);
+    expect(remoteControl.selectionEnd).toBe(7);
+
+    remoteControl.setSelectionRange(1, 3, 'backward');
+
+    expect(remoteControl.selectionStart).toBe(1);
+    expect(remoteControl.selectionEnd).toBe(3);
+    expect(remoteControl.selectionDirection).toBe('backward');
+  });
+
+  it('should default to the end of the value before any host snapshot', () => {
+    const { remoteControl } = renderRemoteControl({
+      htmlTag: 'input',
+      shouldReadBeforeConnect: false,
+    });
+
+    expect(remoteControl.selectionStart).toBe(7);
+    expect(remoteControl.selectionEnd).toBe(7);
+    expect(remoteControl.selectionDirection).toBe('none');
+  });
+
+  it('should not queue selection commands for controls without selectable text', () => {
+    const { connection, remoteControl } = renderRemoteControl({
+      htmlTag: 'input',
+      type: 'checkbox',
+      shouldReadBeforeConnect: false,
+    });
+    const selectHost = jest.spyOn(HTMLInputElement.prototype, 'select');
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    expect(remoteControl.selectionStart).toBeNull();
+    expect(remoteControl.selectionEnd).toBeNull();
+    expect(remoteControl.selectionDirection).toBeNull();
+    expect(() => remoteControl.setSelectionRange(0, 1)).toThrow(
+      expect.objectContaining({ name: 'InvalidStateError' }),
+    );
+    expect(() => {
+      remoteControl.selectionStart = 1;
+    }).toThrow(expect.objectContaining({ name: 'InvalidStateError' }));
+
+    remoteControl.select();
+    remoteControl.select();
+    act(() => connection.flush());
+
+    expect(readRemoteSelectionRequest(remoteControl)).toBeUndefined();
+
+    remoteControl.setAttribute('type', 'text');
+    act(() => connection.flush());
+
+    expect(selectHost).not.toHaveBeenCalled();
+  });
+
+  it('should acknowledge commands without replaying them when the type leaves selectable text', () => {
+    const { connection, remoteControl } = renderRemoteControl({
+      htmlTag: 'input',
+    });
+    const selectHost = jest.spyOn(HTMLInputElement.prototype, 'select');
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    remoteControl.select();
+    remoteControl.setAttribute('type', 'checkbox');
+    act(() => connection.flush());
+
+    expect(readRemoteSelectionRequest(remoteControl)).toEqual([]);
+
+    remoteControl.setAttribute('type', 'text');
+    act(() => connection.flush());
+
+    expect(selectHost).not.toHaveBeenCalled();
+  });
+
+  it.each(['email', 'number'])(
+    'should select the text of a %s input without exposing its range',
+    (type) => {
+      const { connection, hostControl, remoteControl } = renderRemoteControl({
+        htmlTag: 'input',
+        type,
+      });
+      const selectHost = jest.spyOn(hostControl, 'select');
+
+      remoteControl.select();
+      act(() => connection.flush());
+
+      expect(selectHost).toHaveBeenCalledTimes(1);
+      expect(remoteControl.selectionStart).toBeNull();
+      expect(() => remoteControl.setSelectionRange(0, 1)).toThrow(
+        expect.objectContaining({ name: 'InvalidStateError' }),
+      );
+    },
+  );
+
+  it('should forward a document-level selectionchange of the focused control', () => {
+    const { hostControl, remoteControl } = renderRemoteControl({
+      htmlTag: 'input',
+    });
+
+    hostControl.focus();
+    hostControl.setSelectionRange(3, 6);
+    document.dispatchEvent(new Event('selectionchange'));
+
+    expect(remoteControl.selectionStart).toBe(3);
+    expect(remoteControl.selectionEnd).toBe(6);
+  });
+
+  it('should keep a pending selection command when the control moves within its parent', async () => {
+    const {
+      connection,
+      container,
+      hostControl,
+      remoteControl,
+      remoteRoot,
+      selectionStore,
+    } = renderRemoteControl({ htmlTag: 'input' });
+    const selectHost = jest.spyOn(hostControl, 'select');
+
+    remoteControl.select();
+    remoteControl.remove();
+    selectionStore.scheduleDetachedElementSweep();
+    remoteRoot.appendChild(remoteControl);
+
+    expect(remoteControl.selectionStart).toBe(0);
+    expect(remoteControl.selectionEnd).toBe(7);
+
+    await flushRemoteMutations(connection);
+
+    expect(container.querySelector('input')).toBe(hostControl);
+    expect(selectHost).toHaveBeenCalledTimes(1);
+  });
+
+  it('should keep the selection readable while the control moves', async () => {
+    const {
+      connection,
+      hostControl,
+      remoteControl,
+      remoteRoot,
+      selectionStore,
+    } = renderRemoteControl({ htmlTag: 'input' });
+
+    hostControl.setSelectionRange(2, 4, 'backward');
+    hostControl.dispatchEvent(new Event('selectionchange'));
+    remoteControl.remove();
+    selectionStore.scheduleDetachedElementSweep();
+    remoteRoot.appendChild(remoteControl);
+
+    expect(remoteControl.selectionStart).toBe(2);
+    expect(remoteControl.selectionEnd).toBe(4);
+    expect(remoteControl.selectionDirection).toBe('backward');
+
+    await flushRemoteMutations(connection);
+
+    expect(remoteControl.selectionStart).toBe(2);
+    expect(remoteControl.selectionEnd).toBe(4);
+    expect(remoteControl.selectionDirection).toBe('backward');
+  });
+
   it('should ignore detached controls and controls owned by another renderer', async () => {
     const first = renderRemoteControl({ htmlTag: 'input' });
     const second = renderRemoteControl({
@@ -259,20 +541,18 @@ describe('forwarding input selection to the host', () => {
   });
 
   it('should discard pending commands when the control unmounts', async () => {
-    const { connection, hostControl, remoteControl } = renderRemoteControl({
-      htmlTag: 'input',
-    });
+    const { connection, hostControl, remoteControl, selectionStore } =
+      renderRemoteControl({ htmlTag: 'input' });
     const selectHost = jest.spyOn(hostControl, 'select');
 
     remoteControl.select();
     remoteControl.remove();
+    selectionStore.scheduleDetachedElementSweep();
 
-    await act(async () => {
-      await Promise.resolve();
-      connection.flush();
-    });
+    await flushRemoteMutations(connection);
 
     expect(selectHost).not.toHaveBeenCalled();
+    expect(readRemoteSelectionRequest(remoteControl)).toEqual([]);
   });
 
   it('should remove host selection listeners when the renderer unmounts', () => {
@@ -281,66 +561,67 @@ describe('forwarding input selection to the host', () => {
     });
 
     hostControl.setSelectionRange(1, 1);
-    hostControl.dispatchEvent(new Event('select'));
+    hostControl.dispatchEvent(new Event('selectionchange'));
 
     expect(remoteControl.selectionStart).toBe(1);
 
     act(() => root.render(null));
     hostControl.setSelectionRange(4, 4);
-    hostControl.dispatchEvent(new Event('select'));
     hostControl.dispatchEvent(new Event('selectionchange'));
-    hostControl.dispatchEvent(new Event('input'));
 
     expect(remoteControl.selectionStart).toBe(1);
   });
 
   it('should not replay an acknowledged command when a control is remounted', async () => {
-    const { connection, hostControl, remoteControl, remoteRoot } =
-      renderRemoteControl({ htmlTag: 'input' });
+    const {
+      connection,
+      hostControl,
+      remoteControl,
+      remoteRoot,
+      selectionStore,
+    } = renderRemoteControl({ htmlTag: 'input' });
 
     remoteControl.select();
     act(() => connection.flush());
     hostControl.setSelectionRange(2, 2);
-    hostControl.dispatchEvent(new Event('select'));
+    hostControl.dispatchEvent(new Event('selectionchange'));
     remoteControl.remove();
+    selectionStore.scheduleDetachedElementSweep();
 
-    await act(async () => {
-      await Promise.resolve();
-      connection.flush();
-    });
+    await flushRemoteMutations(connection);
 
     const selectHost = jest.spyOn(HTMLInputElement.prototype, 'select');
 
     remoteRoot.append(remoteControl);
 
-    await act(async () => {
-      await Promise.resolve();
-      connection.flush();
-    });
+    await flushRemoteMutations(connection);
 
     expect(selectHost).not.toHaveBeenCalled();
   });
 
   it('should clear pending commands throughout a detached subtree before remounting', async () => {
-    const { connection, remoteControl, remoteRoot, selectionStore } =
-      renderRemoteControl({ htmlTag: 'input' });
+    const {
+      connection,
+      remoteControl,
+      remoteRoot,
+      remoteSibling,
+      selectionStore,
+    } = renderRemoteControl({ htmlTag: 'input' });
     const selectHost = jest.spyOn(HTMLInputElement.prototype, 'select');
 
-    remoteControl.select();
-    selectionStore.clearSubtree(remoteRoot);
-    remoteControl.remove();
+    remoteSibling.append(remoteControl);
 
-    await act(async () => {
-      await Promise.resolve();
-      connection.flush();
-    });
+    await flushRemoteMutations(connection);
+
+    remoteControl.select();
+    remoteSibling.remove();
+    selectionStore.scheduleDetachedElementSweep();
+
+    await flushRemoteMutations(connection);
 
     remoteRoot.append(remoteControl);
 
-    await act(async () => {
-      await Promise.resolve();
-      connection.flush();
-    });
+    await flushRemoteMutations(connection);
 
     expect(selectHost).not.toHaveBeenCalled();
   });
@@ -363,20 +644,14 @@ describe('forwarding input selection to the host', () => {
 
     hostControl.setSelectionRange(1, 1);
     hostControl.dispatchEvent(new Event('selectionchange'));
-    selectionStore.clearSubtree(remoteRoot);
     remoteControl.remove();
+    selectionStore.scheduleDetachedElementSweep();
 
-    await act(async () => {
-      await Promise.resolve();
-      connection.flush();
-    });
+    await flushRemoteMutations(connection);
 
     remoteRoot.append(remoteControl);
 
-    await act(async () => {
-      await Promise.resolve();
-      connection.flush();
-    });
+    await flushRemoteMutations(connection);
 
     const remountedHostControl = container.querySelector('input')!;
 

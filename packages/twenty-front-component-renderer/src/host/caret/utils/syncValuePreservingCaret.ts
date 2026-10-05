@@ -8,9 +8,9 @@ export const syncValuePreservingCaret = ({
 }: {
   element: CaretPreservingElement;
   nextValue: string;
-}): void => {
+}): boolean => {
   if (element.value === nextValue) {
-    return;
+    return false;
   }
 
   const isFocused = document.activeElement === element;
@@ -25,4 +25,6 @@ export const syncValuePreservingCaret = ({
       element.setSelectionRange(start, end, direction ?? undefined);
     } catch {}
   }
+
+  return true;
 };

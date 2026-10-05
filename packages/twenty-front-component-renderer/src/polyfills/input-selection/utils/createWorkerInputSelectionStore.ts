@@ -2,15 +2,12 @@ import { updateRemoteElementProperty } from '@remote-dom/core/elements';
 import { isDefined } from 'twenty-shared/utils';
 
 import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
-import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
+import { resolveOptimisticInputSelectionState } from '@/polyfills/input-selection/utils/resolveOptimisticInputSelectionState';
 import { type InputSelectionCommand } from '@/types/InputSelectionCommand';
 import { type InputSelectionRequest } from '@/types/InputSelectionRequest';
+import { type InputSelectionSnapshot } from '@/types/InputSelectionSnapshot';
 import { type InputSelectionState } from '@/types/InputSelectionState';
-
-type InputSelectionSnapshot = InputSelectionState & {
-  selectionCommandSequence?: number;
-};
 
 export const createWorkerInputSelectionStore = () => {
   let rootElement: object | null = null;
@@ -21,33 +18,25 @@ export const createWorkerInputSelectionStore = () => {
     object,
     (state: InputSelectionSnapshot) => void
   >();
+  const trackedElements = new Set<object>();
+  let hasScheduledDetachedElementSweep = false;
 
   const updatePendingCommands = ({
     element,
     commands,
   }: {
-    element: Element;
+    element: object;
     commands: InputSelectionCommand[];
   }) => {
     pendingCommands.set(element, commands);
     updateRemoteElementProperty(
-      element,
+      element as Element,
       INPUT_SELECTION_BRIDGE_PROPERTIES.request,
       commands,
     );
   };
 
-  const applySnapshot = ({
-    element,
-    state,
-  }: {
-    element: object;
-    state: InputSelectionState;
-  }) => {
-    states.set(element, state);
-  };
-
-  const replaceSubscription = (element: Element) => {
+  const replaceSubscription = (element: object) => {
     const handleSelectionUpdate = (state: InputSelectionSnapshot) => {
       if (
         subscriptions.get(element) !== handleSelectionUpdate ||
@@ -56,7 +45,8 @@ export const createWorkerInputSelectionStore = () => {
         return;
       }
 
-      applySnapshot({ element, state });
+      states.set(element, state);
+      trackedElements.add(element);
 
       const commands = pendingCommands.get(element);
 
@@ -78,58 +68,94 @@ export const createWorkerInputSelectionStore = () => {
 
     subscriptions.set(element, handleSelectionUpdate);
     updateRemoteElementProperty(
-      element,
+      element as Element,
       INPUT_SELECTION_BRIDGE_PROPERTIES.update,
       handleSelectionUpdate,
     );
   };
 
-  const subscribe = (element: Element) => {
-    if (
-      subscriptions.has(element) ||
-      !isElementUnderRemoteRoot(element, rootElement)
-    ) {
+  const subscribe = (element: object) => {
+    if (!isElementUnderRemoteRoot(element, rootElement)) {
+      return;
+    }
+
+    trackedElements.add(element);
+
+    if (subscriptions.has(element)) {
       return;
     }
 
     replaceSubscription(element);
   };
 
+  const forgetDetachedElement = (element: object) => {
+    trackedElements.delete(element);
+    states.delete(element);
+
+    if (pendingCommands.delete(element)) {
+      updateRemoteElementProperty(
+        element as Element,
+        INPUT_SELECTION_BRIDGE_PROPERTIES.request,
+        [],
+      );
+    }
+
+    if (subscriptions.has(element)) {
+      replaceSubscription(element);
+    }
+  };
+
+  const sweepDetachedElements = () => {
+    hasScheduledDetachedElementSweep = false;
+
+    for (const element of trackedElements) {
+      if (isElementUnderRemoteRoot(element, rootElement)) {
+        continue;
+      }
+
+      forgetDetachedElement(element);
+    }
+  };
+
   return {
     setRootElement: (element: object) => {
       rootElement = element;
     },
-    applySnapshot,
-    clearSubtree: (rootNode: object) => {
-      for (const element of iterateElementSubtree(rootNode)) {
-        states.delete(element);
+    applySnapshot: ({
+      element,
+      state,
+    }: {
+      element: object;
+      state: InputSelectionState;
+    }) => {
+      states.set(element, state);
 
-        if (pendingCommands.delete(element)) {
-          updateRemoteElementProperty(
-            element as Element,
-            INPUT_SELECTION_BRIDGE_PROPERTIES.request,
-            [],
-          );
-        }
-
-        if (subscriptions.has(element)) {
-          replaceSubscription(element as Element);
-        }
+      if (isElementUnderRemoteRoot(element, rootElement)) {
+        trackedElements.add(element);
       }
     },
-    read: (element: Element): InputSelectionState => {
-      subscribe(element);
-      const state = states.get(element);
-      if (isDefined(state)) {
-        return state;
+    scheduleDetachedElementSweep: () => {
+      if (hasScheduledDetachedElementSweep || trackedElements.size === 0) {
+        return;
       }
-      return { selectionStart: 0, selectionEnd: 0, selectionDirection: 'none' };
+
+      hasScheduledDetachedElementSweep = true;
+      queueMicrotask(sweepDetachedElements);
+    },
+    read: (element: object): InputSelectionState => {
+      subscribe(element);
+
+      return resolveOptimisticInputSelectionState({
+        hostState: states.get(element),
+        pendingCommands: pendingCommands.get(element) ?? [],
+        value: (element as { value?: unknown }).value,
+      });
     },
     request: ({
       element,
       request,
     }: {
-      element: Element;
+      element: object;
       request: InputSelectionRequest;
     }) => {
       if (!isElementUnderRemoteRoot(element, rootElement)) {

@@ -1,5 +1,7 @@
+import { type InputSelectionDirection } from '@/types/InputSelectionDirection';
+
 export type InputSelectionState = {
   selectionStart: number | null;
   selectionEnd: number | null;
-  selectionDirection: 'forward' | 'backward' | 'none' | null;
+  selectionDirection: InputSelectionDirection | null;
 };

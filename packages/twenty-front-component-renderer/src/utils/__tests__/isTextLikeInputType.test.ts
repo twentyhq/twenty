@@ -13,6 +13,11 @@ describe('isTextLikeInputType', () => {
     expect(isTextLikeInputType('')).toBe(true);
   });
 
+  it('should treat an unknown type as text, as browsers do', () => {
+    expect(isTextLikeInputType('datetime')).toBe(true);
+    expect(isTextLikeInputType('bogus')).toBe(true);
+  });
+
   it('should ignore casing', () => {
     expect(isTextLikeInputType('TEXT')).toBe(true);
   });

@@ -1,4 +1,4 @@
-import { type InputSelectionState } from '@/types/InputSelectionState';
+import { type InputSelectionDirection } from '@/types/InputSelectionDirection';
 
 export type InputSelectionRequest =
   | { method: 'select' }
@@ -6,6 +6,7 @@ export type InputSelectionRequest =
       method: 'setSelectionRange';
       start: number;
       end: number;
-      direction?: string;
+      direction: InputSelectionDirection;
     }
-  | { property: keyof InputSelectionState; value: number | string | null };
+  | { property: 'selectionStart' | 'selectionEnd'; value: number }
+  | { property: 'selectionDirection'; value: InputSelectionDirection };

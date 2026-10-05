@@ -1,6 +1,7 @@
 import { isNull, isNumber, isObject } from '@sniptt/guards';
 
 import { type InputSelectionState } from '@/types/InputSelectionState';
+import { isInputSelectionDirection } from '@/utils/isInputSelectionDirection';
 
 export const readInputSelectionState = (
   target: unknown,
@@ -16,9 +17,7 @@ export const readInputSelectionState = (
     !(isNumber(selectionStart) || isNull(selectionStart)) ||
     !(isNumber(selectionEnd) || isNull(selectionEnd)) ||
     !(
-      selectionDirection === 'forward' ||
-      selectionDirection === 'backward' ||
-      selectionDirection === 'none' ||
+      isInputSelectionDirection(selectionDirection) ||
       isNull(selectionDirection)
     )
   ) {

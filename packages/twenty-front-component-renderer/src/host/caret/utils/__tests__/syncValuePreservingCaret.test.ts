@@ -9,18 +9,26 @@ describe('syncValuePreservingCaret', () => {
     const input = document.createElement('input');
     input.value = 'old';
 
-    syncValuePreservingCaret({ element: input, nextValue: 'new' });
+    const didWriteValue = syncValuePreservingCaret({
+      element: input,
+      nextValue: 'new',
+    });
 
     expect(input.value).toBe('new');
+    expect(didWriteValue).toBe(true);
   });
 
   it('should do nothing when the value is already equal', () => {
     const input = document.createElement('input');
     input.value = 'same';
 
-    syncValuePreservingCaret({ element: input, nextValue: 'same' });
+    const didWriteValue = syncValuePreservingCaret({
+      element: input,
+      nextValue: 'same',
+    });
 
     expect(input.value).toBe('same');
+    expect(didWriteValue).toBe(false);
   });
 
   it('should preserve the caret selection when the element is focused', () => {

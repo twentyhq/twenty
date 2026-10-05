@@ -1,13 +1,17 @@
 import { isNull, isNumber, isObject } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
+import { isInputSelectionDirection } from '@/utils/isInputSelectionDirection';
+import { normalizeInputSelectionDirection } from '@/utils/normalizeInputSelectionDirection';
 
 export const applyInputSelectionRequest = ({
   element,
   request,
 }: {
-  element: HTMLInputElement | HTMLTextAreaElement;
+  element: HTMLInputElement | HTMLTextAreaElement | null;
   request: unknown;
 }): void => {
-  if (!element.isConnected || !isObject(request)) {
+  if (!isDefined(element) || !element.isConnected || !isObject(request)) {
     return;
   }
   const command = request as Record<string, unknown>;
@@ -26,9 +30,7 @@ export const applyInputSelectionRequest = ({
     element.setSelectionRange(
       command.start,
       command.end,
-      command.direction === 'forward' || command.direction === 'backward'
-        ? command.direction
-        : 'none',
+      normalizeInputSelectionDirection(command.direction),
     );
     return;
   }
@@ -42,10 +44,7 @@ export const applyInputSelectionRequest = ({
   }
   if (
     command.property === 'selectionDirection' &&
-    (command.value === 'forward' ||
-      command.value === 'backward' ||
-      command.value === 'none' ||
-      isNull(command.value))
+    (isInputSelectionDirection(command.value) || isNull(command.value))
   ) {
     element.selectionDirection = command.value;
   }

@@ -1,3 +1,4 @@
+import { type InputSelectionDirection } from '@/types/InputSelectionDirection';
 import { type SerializedFileData } from '@/types/SerializedFileData';
 
 export type SerializedEventData = {
@@ -46,7 +47,7 @@ export type SerializedEventData = {
   value?: string;
   selectionStart?: number | null;
   selectionEnd?: number | null;
-  selectionDirection?: 'forward' | 'backward' | 'none' | null;
+  selectionDirection?: InputSelectionDirection | null;
   checked?: boolean;
   selectedOptionIndexes?: number[];
   scrollTop?: number;

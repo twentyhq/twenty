@@ -173,6 +173,20 @@ describe('serializeEvent', () => {
     },
   );
 
+  it('should read the input type and data from the native event of a React input event', () => {
+    expect(
+      serializeEvent({
+        type: 'input',
+        nativeEvent: { inputType: 'insertText', data: 'a', isComposing: false },
+      }),
+    ).toEqual({
+      type: 'input',
+      inputType: 'insertText',
+      data: 'a',
+      isComposing: false,
+    });
+  });
+
   it('should ignore invalid composition and keyboard state', () => {
     expect(
       serializeEvent({
