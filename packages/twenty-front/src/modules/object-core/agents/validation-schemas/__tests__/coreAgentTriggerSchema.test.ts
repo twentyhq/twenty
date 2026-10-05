@@ -41,4 +41,34 @@ describe('coreAgentTriggerSchema', () => {
       }).success,
     ).toBe(false);
   });
+
+  it('rejects instructions longer than the server accepts', () => {
+    expect(
+      coreAgentTriggerSchema.safeParse({
+        ...CRON_TRIGGER,
+        instructions: 'a'.repeat(10_001),
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects watched fields outside of an updated event or with empty names', () => {
+    expect(
+      coreAgentTriggerSchema.safeParse({
+        ...DATABASE_EVENT_TRIGGER,
+        settings: { eventName: 'company.created', updatedFields: ['name'] },
+      }).success,
+    ).toBe(false);
+    expect(
+      coreAgentTriggerSchema.safeParse({
+        ...DATABASE_EVENT_TRIGGER,
+        settings: { eventName: 'company.updated', updatedFields: [''] },
+      }).success,
+    ).toBe(false);
+    expect(
+      coreAgentTriggerSchema.safeParse({
+        ...DATABASE_EVENT_TRIGGER,
+        settings: { eventName: 'company.updated', updatedFields: ['name'] },
+      }).success,
+    ).toBe(true);
+  });
 });

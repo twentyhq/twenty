@@ -94,6 +94,8 @@ export const CoreAgentTriggerCard = ({
     { label: t`Updated`, value: 'updated' },
     { label: t`Created or updated`, value: 'upserted' },
     { label: t`Deleted`, value: 'deleted' },
+    { label: t`Permanently deleted`, value: 'destroyed' },
+    { label: t`Restored`, value: 'restored' },
   ];
 
   const selectedObjectMetadataItem = objectMetadataItems.find(
