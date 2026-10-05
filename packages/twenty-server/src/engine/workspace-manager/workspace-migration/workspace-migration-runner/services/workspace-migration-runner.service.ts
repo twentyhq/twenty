@@ -65,10 +65,6 @@ export class WorkspaceMigrationRunnerService {
       flatMapsKeysSet.has('flatObjectMetadataMaps') ||
       flatMapsKeysSet.has('flatFieldMetadataMaps');
 
-    if (shouldIncrementMetadataGraphqlSchemaVersion) {
-      legacyCacheKeyNames.push('ORMEntityMetadatas');
-    }
-
     const shouldInvalidateRolesPermissionsCache =
       flatMapsKeysSet.has('flatRoleMaps') ||
       flatMapsKeysSet.has('flatRoleTargetMaps') ||
