@@ -16,9 +16,13 @@ requiring them to occur.
 | Fixture | Components |
 | --- | --- |
 | `twenty-ui-field-controls` | Field, Input, InputGroup, Textarea |
+| `twenty-ui-number-stepper` | NumberStepper (keyboard bounds, disabled/read-only state, named form values and submission) |
 | `twenty-ui-display-helpers` | Text |
+| `twenty-ui-image-input` | ImageInput |
 | `twenty-ui-list-item` | ListItem |
 | `twenty-ui-tabs` | Tabs |
+| `twenty-ui-overflowing-list` | OverflowingList |
+| `twenty-ui-phone-country-picker` | PhoneCountryPicker |
 | `twenty-ui-popover` | Popover |
 | `twenty-ui-menu` | Menu |
 | `twenty-ui-select` | Select |
@@ -27,7 +31,7 @@ requiring them to occur.
 | `twenty-ui-switch` | Switch (interaction coverage in addition to the original input gallery) |
 | `twenty-ui-tooltip` | Tooltip (convenience and compound APIs) |
 | `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, Button hotkeys |
-| `twenty-ui-reading-directions` | Callout, ColorSchemePicker, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
+| `twenty-ui-reading-directions` | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
@@ -51,8 +55,12 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | Component | Current limitation |
 | --- | --- |
 | Field controls | Forwarded events lack the `nativeEvent` Base UI reads for `composedPath`. Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
+| NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Text editing fails because forwarded events lack the `nativeEvent.defaultPrevented` Base UI reads. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree and stops Preact rendering. Separate React and Preact stories assert the pointer and typing gaps and successful keyboard bounds, disabled/read-only state, named form values and submission. |
+| ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/image-input.mdx). |
 | Tabs | Activation fails on the missing `nativeEvent` for `composedPath` in both runtimes. |
 | Popover, Dialog, AlertDialog | Opening fails while reading pointer contact data from the missing `nativeEvent`. |
+| OverflowingList | Both runtimes measure, resize, and unmount the inline list, and keep rendering afterwards. A scoped light provider keeps popup portals inside the connected remote root and matches the gallery theme. Popup lifecycle checks verify selection, dismissal, focus restoration, and independent lists while requiring the missing native pointer width error; missing native `defaultPrevented` data and event constructor errors are optional. Focus restoration can also call a stale host listener, which is checked with the existing exact host-error assertion. Separate event isolation failure stories verify that opening the trigger activates the surrounding host, then check that popup selection adds no host activation. Full popup compatibility remains blocked on the event bridge work in [#26356](https://github.com/twentyhq/twenty/pull/26356). |
+| PhoneCountryPicker | Both runtimes render the triggers, flags, and disabled state. Opening fails while reading pointer contact data from the missing `nativeEvent`. In React the popup still mounts, and the Dropdown search effect then reads `dataset`, which sandbox elements lack; the uncaught error unmounts the React tree, so the React story requires that error and keeps the pointer error optional. See the [PhoneCountryPicker documentation](../../../../twenty-docs/ui/components/phone-country-picker.mdx). |
 | Menu | Opening fails on the missing `nativeEvent.pointerType` and pointer contact data. |
 | Select | Opening fails on missing native event data and focus support. Preact can report only the last of these failures when the host coalesces sandbox errors. |
 | Switch, Checkbox, Radio (standard and card), SegmentedControl | Activation attempts to construct an unavailable `PointerEvent`. `RadioCardReact` never gets that far: React drops the click handler Base UI adds through `React.cloneElement`, so only the group's focus handling fails on the missing `nativeEvent` for `composedPath`. |
@@ -62,12 +70,16 @@ No stories are skipped or marked as expected-to-fail by the runner.
 
 The worker DOM now provides `Node.contains`, `compareDocumentPosition`,
 `getRootNode`, `Element.matches`, `closest`, `querySelector` backed by
-`css-select`, and property accessors for boolean ARIA attributes so React and
-Preact forward `true`/`false` instead of empty strings and remove the attribute
-when the prop is cleared. `getAttribute` and the selector engine read the remote
-properties React and Preact set, and the selector engine matches the sandbox's
-custom element tags by their HTML tag names. `TooltipPreact` therefore covers
-hover opening and Escape dismissal. Pointer leave still needs document-level
+`css-select`, `focus`/`blur` forwarding to page elements with a
+`document.activeElement` that the host keeps in sync with the page's focus
+inside the component and that clears when
+the focused subtree is detached, and property accessors for boolean ARIA
+attributes so React and Preact forward `true`/`false` instead of empty strings
+and remove the attribute when the prop is cleared. `getAttribute` and the
+selector engine read the remote properties React and Preact set, and the
+selector engine matches the sandbox's custom element tags by their HTML tag
+names and reads live control properties. `TooltipPreact` therefore covers hover
+opening and Escape dismissal. Pointer leave still needs document-level
 `mousemove` delivery for the safe polygon, and the compound tooltip's title and
 description are not covered yet.
 

@@ -299,8 +299,8 @@ export class EmailComposerService {
     return attachments;
   }
 
-  // Resolve parent's root thread id (Gmail/MS native or stored) + RFC 5322 §3.6.4
-  // References chain so replies thread on both Twenty and recipient mail clients.
+  // Parent's root thread id (provider-native or stored) and RFC 5322 §3.6.4 References chain, so replies thread
+  // on both Twenty and recipient mail clients.
   private async getParentThreadContext(
     workspaceId: string,
     inReplyTo: string,

@@ -215,16 +215,36 @@ export class RunWorkflowJob {
       });
     }
 
-    await this.workflowExecutorWorkspaceService.executeFromSteps({
-      stepIds: stepIdsToRetry,
-      workflowRunId,
-      workspaceId,
-    });
+    // a step that failed after resuming on an answer kept its conversation, and continues it
+    const resumedStepIds = stepIdsToRetry.filter((stepId) =>
+      isDefined(stepInfosToReset[stepId]?.threadId),
+    );
+    const restartedStepIds = stepIdsToRetry.filter(
+      (stepId) => !resumedStepIds.includes(stepId),
+    );
+
+    await Promise.all([
+      ...(restartedStepIds.length > 0
+        ? [
+            this.workflowExecutorWorkspaceService.executeFromSteps({
+              stepIds: restartedStepIds,
+              workflowRunId,
+              workspaceId,
+            }),
+          ]
+        : []),
+      ...resumedStepIds.map((stepId) =>
+        this.workflowExecutorWorkspaceService.executeFromSteps({
+          stepIds: [stepId],
+          workflowRunId,
+          workspaceId,
+          resumedThreadId: stepInfosToReset[stepId].threadId,
+        }),
+      ),
+    ]);
   }
 
-  // An answered step stays PENDING until here, which keeps its run from
-  // completing while the resume waits in the queue. Claiming it out of PENDING
-  // is what makes a second resume of the same step do nothing.
+  // The step stays PENDING until claimed here, so its run can't complete while queued and a second resume no-ops
   private async resumeAnsweredStep({
     workflowRunId,
     stepToResume: { stepId, threadId },

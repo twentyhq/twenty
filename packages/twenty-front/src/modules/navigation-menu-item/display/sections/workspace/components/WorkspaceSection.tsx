@@ -105,8 +105,7 @@ export const WorkspaceSection = () => {
       sectionTitle={t`Workspace`}
       items={items}
       rightIcon={
-        // Customising the menu is a desktop job, so mobile shows neither the
-        // entry point nor the add button it turns into.
+        // Customising the menu is desktop-only.
         isMobile ? undefined : (
           <StyledRightIconsContainer>
             {isLayoutCustomizationModeEnabled ? (

@@ -12,6 +12,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
@@ -198,14 +199,15 @@ export const SignInUpTOTPVerification = () => {
       }
 
       await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
-    } catch {
+    } catch (error) {
       form.setValue('otp', '');
 
-      enqueueToast({
-        variant: 'error',
-        children: t`Invalid verification code. Please try again.`,
-        dedupeKey: 'invalid-otp-dedupe-key',
-      });
+      enqueueToast(
+        getTwoFactorAuthenticationErrorToastOptions({
+          error,
+          dedupeKey: 'invalid-otp-dedupe-key',
+        }),
+      );
     } finally {
       setIsLoading(false);
     }

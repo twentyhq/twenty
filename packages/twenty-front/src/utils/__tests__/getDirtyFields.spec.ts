@@ -55,7 +55,6 @@ describe('getDirtyFields', () => {
     const draft = { a: 1 };
     const persisted = { a: 1, b: 2 };
     // When a field is removed, its value in draft effectively becomes undefined
-    // Cast persisted to any to satisfy TS in this test scenario
     expect(getDirtyFields(draft, persisted as any)).toEqual({ b: undefined });
   });
 

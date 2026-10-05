@@ -60,15 +60,13 @@ describe('collectTranslatableStrings', () => {
         { message: 'A company', context: 'objectMetadata.description' },
         { message: 'Name', context: 'fieldMetadata.label' },
         { message: 'Name', context: 'fieldMetadata.description' },
-        // the same string in two roles is two entries now
+        // the same string in two roles is two entries
         { message: 'Company', context: 'fieldMetadata.label' },
       ]),
     );
   });
 
-  // Pins every manifest collection the shared registry maps, so a change to
-  // TRANSLATABLE_PROPERTIES_BY_METADATA_NAME that silently drops a collection
-  // shows up here rather than as an app shipping untranslatable strings.
+  // Pins every collection the shared registry maps, so dropping one fails here instead of shipping untranslatable strings
   it('collects the fields declared inline on an object', () => {
     const manifest = buildManifest({
       objects: [

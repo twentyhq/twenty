@@ -1,22 +1,15 @@
+import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { AgentChatFilePreview } from './AgentChatFilePreview';
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  width: 100%;
-`;
 
 const StyledPreviewsContainer = styled.div`
   display: flex;
-  flex-direction: row;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
+  width: 100%;
 `;
 
 export const AgentChatContextPreview = () => {
@@ -41,29 +34,29 @@ export const AgentChatContextPreview = () => {
   }
 
   return (
-    <StyledContainer>
-      <StyledPreviewsContainer>
-        {agentChatSelectedFiles.map((file) => (
-          <AgentChatFilePreview
-            file={file}
-            key={file.name}
-            onRemove={() => {
-              setAgentChatSelectedFiles(
-                agentChatSelectedFiles.filter((f) => f.name !== file.name),
-              );
-            }}
-            isUploading
-          />
-        ))}
-        {agentChatUploadedFiles.map((file, index) => (
-          <AgentChatFilePreview
-            file={file}
-            key={index}
-            onRemove={() => handleRemoveUploadedFile(index)}
-            isUploading={false}
-          />
-        ))}
-      </StyledPreviewsContainer>
-    </StyledContainer>
+    <StyledPreviewsContainer>
+      {agentChatSelectedFiles.map((file, index) => (
+        <AgentChatFilePreview
+          file={file}
+          key={`${index}-${file.name}`}
+          onRemove={() => {
+            setAgentChatSelectedFiles(
+              agentChatSelectedFiles.filter(
+                (selectedFile) => selectedFile !== file,
+              ),
+            );
+          }}
+          isUploading
+        />
+      ))}
+      {agentChatUploadedFiles.map((file, index) => (
+        <AgentChatFilePreview
+          file={file}
+          key={index}
+          onRemove={() => handleRemoveUploadedFile(index)}
+          isUploading={false}
+        />
+      ))}
+    </StyledPreviewsContainer>
   );
 };

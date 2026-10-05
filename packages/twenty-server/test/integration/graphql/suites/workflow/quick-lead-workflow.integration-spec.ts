@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { answerAsk } from 'test/integration/graphql/suites/workflow/utils/answer-ask.util';
+import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import {
   destroyWorkflowRun,
   getWorkflowRun,
@@ -202,7 +202,6 @@ describe('Quick Lead Workflow (e2e)', () => {
     let createdPersonId: string | null = null;
 
     afterAll(async () => {
-      // Clean up created records in reverse order of creation
       if (createdPersonId) {
         await client
           .post('/graphql')
@@ -270,16 +269,14 @@ describe('Quick Lead Workflow (e2e)', () => {
         companyDomain: `https://test-${testId}.example.com`,
       };
 
-      const submitFormResponse = await answerAsk({
-        ask: {
-          workflowRunId: testWorkflowRunId as string,
-          stepId: FORM_STEP_ID,
-        },
+      const submitFormResponse = await submitFormStep({
+        workflowRunId: testWorkflowRunId as string,
+        stepId: FORM_STEP_ID,
         response: testFormData,
       });
 
       expect(submitFormResponse.body.errors).toBeUndefined();
-      expect(submitFormResponse.body.data.answerAsk.streamId).toBeNull();
+      expect(submitFormResponse.body.data.submitFormStep).toBe(true);
 
       workflowRun = await waitForWorkflowCompletion(
         testWorkflowRunId as string,

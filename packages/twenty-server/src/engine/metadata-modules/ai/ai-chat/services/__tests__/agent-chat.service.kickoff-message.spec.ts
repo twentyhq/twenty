@@ -1,8 +1,7 @@
-import {
-  AgentMessageRole,
-  AgentMessageStatus,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 
 const WORKSPACE_ID = 'workspace-id';
 const THREAD_ID = 'thread-id';
@@ -14,9 +13,7 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
   };
   const messageRepository = {
     findOne: jest.fn().mockResolvedValue(existingHiddenMessage),
-    insert: jest
-      .fn()
-      .mockResolvedValue({ identifiers: [{ id: 'kickoff-message-id' }] }),
+    insert: jest.fn().mockResolvedValue({}),
     delete: jest.fn().mockResolvedValue({ affected: 1 }),
   };
   const turnRepository = {
@@ -26,6 +23,21 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
     delete: jest.fn().mockResolvedValue({ affected: 1 }),
   };
   const messagePartRepository = { insert: jest.fn().mockResolvedValue({}) };
+  const run = jest.fn(
+    (
+      workspaceId: string,
+      work: (scope: {
+        insert: (name: string, values: unknown) => Promise<unknown>;
+      }) => Promise<unknown>,
+    ) =>
+      work({
+        insert: (name, values) =>
+          (name === 'agentMessage'
+            ? messageRepository
+            : messagePartRepository
+          ).insert(workspaceId, values),
+      }),
+  );
 
   const service = new AgentChatService(
     threadRepository as never,
@@ -37,6 +49,11 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
     {
       getReadableThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
     } as never,
+    {} as never,
+    new AgentConversationWriterService(
+      turnRepository as never,
+      { run } as never,
+    ),
     {} as never,
   );
 
@@ -96,7 +113,7 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
     ]);
 
     expect(result).toEqual({
-      id: 'kickoff-message-id',
+      id: insertedMessage.id,
       turnId: 'kickoff-turn-id',
     });
   });
@@ -136,7 +153,7 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
       id: 'partial-turn-id',
     });
     expect(result).toEqual({
-      id: 'kickoff-message-id',
+      id: messageRepository.insert.mock.calls[0][1].id,
       turnId: 'kickoff-turn-id',
     });
   });
@@ -157,7 +174,7 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
     });
     expect(turnRepository.delete).not.toHaveBeenCalled();
     expect(result).toEqual({
-      id: 'kickoff-message-id',
+      id: messageRepository.insert.mock.calls[0][1].id,
       turnId: 'kickoff-turn-id',
     });
   });

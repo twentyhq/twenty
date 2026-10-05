@@ -68,7 +68,20 @@ export class MarketplaceResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
+  )
   async syncMarketplaceCatalog(): Promise<boolean> {
     await this.messageQueueService.add(
       MarketplaceCatalogSyncCronJob.name,

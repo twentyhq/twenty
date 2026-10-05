@@ -16,16 +16,14 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const SIDE_TRACK = `min(${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px, calc(100% / 3))`;
 
-// Equal side tracks center the tabs independently of the record name. Their
-// width stays independent of visible tabs so overflow can recover on resize.
+// Equal side tracks center the tabs; their width ignores visible tabs so overflow can recover on resize.
 const StyledBar = styled.div<{
   hasPinnedTab: boolean;
   hasTabList: boolean;
 }>`
   align-items: stretch;
   background: ${themeCssVariables.background.secondary};
-  // The bottom line sits inside the box so the tab strip can fill the whole row
-  // and land its active indicator on that line rather than above it.
+  // Inset so the tab strip's active indicator lands on the bottom line.
   box-shadow: inset 0 -1px 0 ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: grid;

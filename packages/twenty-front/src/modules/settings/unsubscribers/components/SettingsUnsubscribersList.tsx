@@ -139,7 +139,7 @@ export const SettingsUnsubscribersList = () => {
               <SearchInput
                 placeholder={t`Search by email address`}
                 value={searchText}
-                onChange={handleSearchChange}
+                onValueChange={handleSearchChange}
               />
             </StyledSearch>
             <SettingsUnsubscribersFilterDropdown

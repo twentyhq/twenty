@@ -1,17 +1,9 @@
-import { type AgentResponseFieldType } from 'twenty-shared/ai';
 import { msg } from '@lingui/core/macro';
 import {
   IllustrationIconNumbers,
   IllustrationIconText,
   IllustrationIconToggle,
 } from 'twenty-ui/icon';
-
-export interface OutputSchemaField {
-  id: string;
-  name: string;
-  description?: string;
-  type: AgentResponseFieldType | undefined;
-}
 
 export const OUTPUT_FIELD_TYPE_OPTIONS = [
   {

@@ -41,7 +41,7 @@ describe('mergeAiAgentStepLogs', () => {
       previousStepLog: buildAgentStepLog({
         modelId: 'model-a',
         tokens: 10,
-        toolCallNames: ['search', 'ask_questions'],
+        toolCallNames: ['search', 'ask_question'],
         durationMs: 100,
       }),
       nextStepLog: buildAgentStepLog({
@@ -68,7 +68,7 @@ describe('mergeAiAgentStepLogs', () => {
       merged.details.type === 'AI_AGENT'
         ? merged.details.toolCalls.map(({ toolName }) => toolName)
         : [],
-    ).toEqual(['search', 'ask_questions', 'send_email']);
+    ).toEqual(['search', 'ask_question', 'send_email']);
   });
 
   it('keeps the new log when there is nothing before it', () => {

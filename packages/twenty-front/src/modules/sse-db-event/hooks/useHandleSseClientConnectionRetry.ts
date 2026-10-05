@@ -21,9 +21,7 @@ const destroyStream = async (
   store.set(sseClientState.atom, null);
 };
 
-// The session cookie is httpOnly, so the client cannot inspect its own
-// credential; clearSession dropping this flag is what "signed out" looks like
-// from here.
+// The session cookie is httpOnly, so this flag is the only signed-out signal the client has
 const hasCredential = (store: ReturnType<typeof useStore>): boolean =>
   store.get(isCookieAuthActiveState.atom);
 
@@ -46,9 +44,7 @@ export const useHandleSseClientConnectionRetry = () => {
         return;
       }
 
-      // Without this the loop is unbounded: graphql-sse resets its retry count
-      // whenever a result arrives, so retryCount alone never trips on a stream
-      // that keeps reconnecting. A signed-out client has to stop here.
+      // graphql-sse resets its retry count on every result, so a signed-out client must stop here or loop forever
       if (!hasCredential(store)) {
         await destroyStream(store, sseClient);
         return;

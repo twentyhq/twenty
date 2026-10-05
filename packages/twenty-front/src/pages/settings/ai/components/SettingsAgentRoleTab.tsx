@@ -7,6 +7,8 @@ import { v4 } from 'uuid';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,11 +16,10 @@ import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useMutation } from '@apollo/client/react';
 import {
   AssignRoleToAgentDocument,
   CreateOneRoleDocument,
-  GetRolesDocument,
 } from '~/generated-metadata/graphql';
 import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
 
@@ -49,7 +50,10 @@ export const SettingsAgentRoleTab = ({
   const { t } = useLingui();
   const [isCreatingRole, setIsCreatingRole] = useState(false);
 
-  const { data: rolesData } = useQuery(GetRolesDocument);
+  const settingsPersistedRole = useAtomFamilyStateValue(
+    settingsPersistedRoleFamilyState,
+    formValues.role || '',
+  );
   const [createRole] = useMutation(CreateOneRoleDocument);
   const [assignRoleToAgent] = useMutation(AssignRoleToAgentDocument);
   const setSettingsDraftRole = useSetAtomFamilyState(
@@ -57,31 +61,24 @@ export const SettingsAgentRoleTab = ({
     formValues.role || '',
   );
 
-  const selectedRole = rolesData?.getRoles?.find(
-    (role) => role.id === formValues.role,
-  );
-
   const hasValidAgentId = isNonEmptyString(agentId);
 
-  const isRoleShared = selectedRole
-    ? (selectedRole.workspaceMembers?.length || 0) +
-        (selectedRole.agents?.length || 0) +
-        (selectedRole.apiKeys?.length || 0) >
+  const isRoleShared = settingsPersistedRole
+    ? (settingsPersistedRole.workspaceMembers?.length || 0) +
+        (settingsPersistedRole.agents?.length || 0) +
+        (settingsPersistedRole.apiKeys?.length || 0) >
       1
     : false;
 
-  // Role is only editable if it's not shared and either:
-  // 1. Assigned exclusively to this agent (edit mode)
-  // 2. Not yet assigned to anyone (create mode)
   const isRoleExclusiveToThisAgent =
     !isRoleShared &&
-    selectedRole &&
-    (selectedRole.workspaceMembers?.length || 0) === 0 &&
-    (selectedRole.apiKeys?.length || 0) === 0 &&
+    settingsPersistedRole &&
+    (settingsPersistedRole.workspaceMembers?.length || 0) === 0 &&
+    (settingsPersistedRole.apiKeys?.length || 0) === 0 &&
     (hasValidAgentId
-      ? selectedRole.agents?.length === 1 &&
-        selectedRole.agents[0].id === agentId
-      : (selectedRole.agents?.length || 0) === 0);
+      ? settingsPersistedRole.agents?.length === 1 &&
+        settingsPersistedRole.agents[0].id === agentId
+      : (settingsPersistedRole.agents?.length || 0) === 0);
 
   const handleCreateRole = async () => {
     setIsCreatingRole(true);
@@ -141,7 +138,7 @@ export const SettingsAgentRoleTab = ({
   };
 
   const isRoleEditable =
-    Boolean(selectedRole?.isEditable) &&
+    Boolean(settingsPersistedRole?.isEditable) &&
     !disabled &&
     Boolean(isRoleExclusiveToThisAgent);
 
@@ -162,7 +159,7 @@ export const SettingsAgentRoleTab = ({
         </>
       ) : (
         <>
-          {selectedRole?.id && (
+          {settingsPersistedRole?.id && (
             <>
               {isRoleShared && (
                 <StyledWarningText>
@@ -170,7 +167,7 @@ export const SettingsAgentRoleTab = ({
                 </StyledWarningText>
               )}
               <SettingsRolePermissions
-                roleId={selectedRole.id}
+                roleId={settingsPersistedRole.id}
                 isEditable={isRoleEditable}
                 fromAgentId={hasValidAgentId ? agentId : undefined}
               />

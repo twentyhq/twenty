@@ -9,8 +9,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
-// Non-editable system roles are rejected downstream with ROLE_NOT_EDITABLE,
-// which is the more accurate error there; lockout only concerns editable roles.
+// Non-editable roles are left to the more accurate downstream ROLE_NOT_EDITABLE error
 export const validateRoleDeletionDoesNotLockOutActorOrThrow = ({
   flatRole,
   actingRoleIds,
@@ -28,8 +27,6 @@ export const validateRoleDeletionDoesNotLockOutActorOrThrow = ({
   );
 };
 
-// Revoking settings access from a role the actor holds would lock them out of
-// role management, unless the role keeps an explicit ROLES permission flag.
 export const validateRoleUpdateDoesNotLockOutActorOrThrow = ({
   flatRole,
   canUpdateAllSettingsUpdate,

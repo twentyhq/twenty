@@ -1,8 +1,8 @@
 import { useId } from 'react';
 
 import { Switch } from '@ui/primitives/input/Switch/Switch';
-import { isRenderableSlot } from '@ui/primitives/navigation/ListItem/internal/isRenderableSlot';
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 
 import { type SettingsRowProps } from './types/SettingsRowProps';
 

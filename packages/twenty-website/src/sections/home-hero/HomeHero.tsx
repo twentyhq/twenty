@@ -43,9 +43,6 @@ const BodyMeasure = styled.div`
   max-width: 591px;
 `;
 
-// Reserves the product mockup's footprint ahead of the DOM landing — CLS
-// settles in this commit, and the frame's opaque surface already hides
-// the bridge center exactly as the old window does.
 /* The app window is LIFE-SIZE at every viewport (measured on old at five
    widths: fixed 1040x676, centered when it fits, anchored 16px left and
    bleeding off the right edge when it does not — the Linear-class

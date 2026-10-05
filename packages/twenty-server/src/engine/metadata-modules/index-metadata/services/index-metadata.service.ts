@@ -99,8 +99,6 @@ export class IndexMetadataService {
       );
     }
 
-    // Resolve each input to a flat field + validated subFieldName (or null
-    // for scalar/relation parents).
     const resolvedInputs = fieldInputs.map((input) => {
       const flatField = findFlatEntityByIdInFlatEntityMaps({
         flatEntityMaps: existingFlatFieldMetadataMaps,
@@ -161,7 +159,6 @@ export class IndexMetadataService {
           );
         }
       } else if (isNonEmptyString(input.subFieldName)) {
-        // Scalar / relation parent — sub-field doesn't apply.
         throw new IndexMetadataException(
           `Field ${flatField.name} is not composite — subFieldName must not be set`,
           IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_COMPOSITE_FIELD,

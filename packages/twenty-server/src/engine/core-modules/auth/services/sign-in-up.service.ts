@@ -33,7 +33,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
   PASSWORD_REGEX,
-  compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-organization-key.constants';
@@ -177,26 +176,6 @@ export class SignInUpService {
     }
 
     return await hashPassword(password);
-  }
-
-  async validatePassword({
-    password,
-    passwordHash,
-  }: {
-    password: string;
-    passwordHash: string;
-  }) {
-    const isValid = await compareHash(password, passwordHash);
-
-    if (!isValid) {
-      throw new AuthException(
-        'Wrong password',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        {
-          userFriendlyMessage: msg`Wrong password`,
-        },
-      );
-    }
   }
 
   private async signInUpWithPersonalInvitation(
@@ -474,8 +453,7 @@ export class SignInUpService {
     }
   }
 
-  // Enforced here rather than at workspace creation so a restricted instance
-  // stops accumulating verified users that can never reach a workspace.
+  // Enforced at sign-up so a restricted instance stops accumulating users who can never reach a workspace
   private async assertSignUpWithoutWorkspaceAllowed(
     email: string,
   ): Promise<void> {
@@ -507,9 +485,7 @@ export class SignInUpService {
   }
 
   private async hasProvisionedDestination(email: string): Promise<boolean> {
-    // Invitations are read directly instead of through the sign-in picker,
-    // which hides HIDDEN workspaces: that is a listing rule, not a statement
-    // that the invitee has nowhere to land.
+    // Read directly: the sign-in picker hides HIDDEN workspaces, which is only a listing rule
     const invitations =
       await this.workspaceInvitationService.findInvitationsByEmail(email);
 
@@ -800,13 +776,8 @@ export class SignInUpService {
             queryRunner,
           );
 
-          // Click-through DPA: the DPA is incorporated by reference into the
-          // ToS/signup, so acceptance = execution. Only relevant on Twenty's
-          // managed cloud (multi-workspace), where Twenty is the Processor
-          // hosting the data; on self-hosted deployments Twenty is not the
-          // Processor, so there is nothing to record. Done atomically with
-          // workspace creation so we can later prove what was agreed. (Billing
-          // is an independent feature flag and must not be used to detect cloud.)
+          // Click-through DPA, recorded with the workspace as proof: only on managed cloud, where Twenty is the Processor
+          // Billing is an independent flag and must not be used to detect cloud
           if (
             this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') === true
           ) {
