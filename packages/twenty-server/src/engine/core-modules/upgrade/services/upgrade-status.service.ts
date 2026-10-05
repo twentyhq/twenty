@@ -197,20 +197,15 @@ export class UpgradeStatusService {
       return null;
     }
 
-    try {
-      const refreshedStatus =
-        await this.refreshInstanceAndAllWorkspacesStatus();
+    const refreshedStatus = await this.refreshInstanceAndAllWorkspacesStatus();
 
-      return {
-        instanceUpgradeStatus: refreshedStatus.instanceUpgradeStatus,
-        behindWorkspaceCount: refreshedStatus.workspacesBehind.length,
-        failedWorkspaceCount: refreshedStatus.workspacesFailed.length,
-        upToDateWorkspaceCount: refreshedStatus.upToDateWorkspaceCount,
-        computedAt: refreshedStatus.computedAt,
-      };
-    } finally {
-      await this.upgradeStatusCacheService.releaseRefreshLock();
-    }
+    return {
+      instanceUpgradeStatus: refreshedStatus.instanceUpgradeStatus,
+      behindWorkspaceCount: refreshedStatus.workspacesBehind.length,
+      failedWorkspaceCount: refreshedStatus.workspacesFailed.length,
+      upToDateWorkspaceCount: refreshedStatus.upToDateWorkspaceCount,
+      computedAt: refreshedStatus.computedAt,
+    };
   }
 
   async getInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {

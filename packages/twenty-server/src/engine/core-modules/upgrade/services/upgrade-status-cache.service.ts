@@ -13,7 +13,7 @@ const COMPUTED_AT_KEY = 'upgrade-status:computed-at';
 const REFRESH_LOCK_KEY = 'upgrade-status:refresh-lock';
 
 const CACHE_TTL_MS = 60 * 60 * 1000;
-const REFRESH_LOCK_TTL_MS = 2 * 60 * 1000;
+const REFRESH_LOCK_TTL_MS = 60 * 1000;
 @Injectable()
 export class UpgradeStatusCacheService {
   constructor(
@@ -83,10 +83,6 @@ export class UpgradeStatusCacheService {
 
   async tryAcquireRefreshLock(): Promise<boolean> {
     return this.cacheStorage.acquireLock(REFRESH_LOCK_KEY, REFRESH_LOCK_TTL_MS);
-  }
-
-  async releaseRefreshLock(): Promise<void> {
-    await this.cacheStorage.releaseLock(REFRESH_LOCK_KEY);
   }
 
   async invalidate(): Promise<void> {

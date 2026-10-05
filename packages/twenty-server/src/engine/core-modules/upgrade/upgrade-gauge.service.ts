@@ -120,7 +120,11 @@ export class UpgradeGaugeService implements OnModuleInit {
     }
 
     if (this.inflightUpgradeStatusPromise) {
-      return this.inflightUpgradeStatusPromise.catch(() => null);
+      return this.inflightUpgradeStatusPromise.then(
+        (upgradeStatus) =>
+          isDefined(upgradeStatus) ? upgradeStatus : this.cachedUpgradeStatus,
+        () => null,
+      );
     }
 
     this.inflightUpgradeStatusPromise =
