@@ -14,7 +14,7 @@ describe('getSubdomainAndCustomDomainFromHostname', () => {
       expected: {
         subdomain: undefined,
         customDomain: null,
-        isPublicDomainOrigin: false,
+        isUnderPublicDomainUrl: false,
       },
     },
     {
@@ -23,7 +23,7 @@ describe('getSubdomainAndCustomDomainFromHostname', () => {
       expected: {
         subdomain: 'acme',
         customDomain: null,
-        isPublicDomainOrigin: false,
+        isUnderPublicDomainUrl: false,
       },
     },
     {
@@ -32,7 +32,7 @@ describe('getSubdomainAndCustomDomainFromHostname', () => {
       expected: {
         subdomain: undefined,
         customDomain: null,
-        isPublicDomainOrigin: false,
+        isUnderPublicDomainUrl: false,
       },
     },
     {
@@ -41,7 +41,7 @@ describe('getSubdomainAndCustomDomainFromHostname', () => {
       expected: {
         subdomain: 'acme',
         customDomain: null,
-        isPublicDomainOrigin: true,
+        isUnderPublicDomainUrl: true,
       },
     },
     {
@@ -50,7 +50,7 @@ describe('getSubdomainAndCustomDomainFromHostname', () => {
       expected: {
         subdomain: undefined,
         customDomain: 'crm.acme.com',
-        isPublicDomainOrigin: false,
+        isUnderPublicDomainUrl: false,
       },
     },
   ])('should resolve $case', ({ hostname, expected }) => {
@@ -70,7 +70,7 @@ describe('getSubdomainAndCustomDomainFromHostname', () => {
     ).toEqual({
       subdomain: undefined,
       customDomain: null,
-      isPublicDomainOrigin: false,
+      isUnderPublicDomainUrl: false,
     });
   });
 
@@ -85,7 +85,7 @@ describe('getSubdomainAndCustomDomainFromHostname', () => {
     ).toEqual({
       subdomain: 'acme',
       customDomain: null,
-      isPublicDomainOrigin: false,
+      isUnderPublicDomainUrl: false,
     });
   });
 
@@ -99,7 +99,7 @@ describe('getSubdomainAndCustomDomainFromHostname', () => {
     ).toEqual({
       subdomain: undefined,
       customDomain: 'acme.withtwenty.com',
-      isPublicDomainOrigin: false,
+      isUnderPublicDomainUrl: false,
     });
   });
 });

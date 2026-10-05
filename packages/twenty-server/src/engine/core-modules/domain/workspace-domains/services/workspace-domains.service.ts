@@ -103,9 +103,9 @@ export class WorkspaceDomainsService {
   async resolveWorkspaceAndPublicDomain(origin: string): Promise<{
     workspace: WorkspaceEntity | undefined;
     publicDomain: PublicDomainEntity | null;
-    isIsolatedOrigin: boolean;
+    isPublicDomain: boolean;
   }> {
-    const { subdomain, customDomain, isPublicDomainOrigin } =
+    const { subdomain, customDomain, isUnderPublicDomainUrl } =
       this.domainServerConfigService.getSubdomainAndCustomDomainFromUrl(origin);
 
     if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
@@ -119,11 +119,11 @@ export class WorkspaceDomainsService {
       return {
         workspace: await this.getDefaultWorkspace(),
         publicDomain: publicDomain ?? null,
-        isIsolatedOrigin: isPublicDomainOrigin || isDefined(publicDomain),
+        isPublicDomain: isUnderPublicDomainUrl || isDefined(publicDomain),
       };
     }
 
-    if (isPublicDomainOrigin) {
+    if (isUnderPublicDomainUrl) {
       const hostname = new URL(origin).hostname;
 
       const registeredPublicDomain = await this.publicDomainRepository.findOne({
@@ -135,7 +135,7 @@ export class WorkspaceDomainsService {
         return {
           workspace: registeredPublicDomain.workspace ?? undefined,
           publicDomain: registeredPublicDomain,
-          isIsolatedOrigin: true,
+          isPublicDomain: true,
         };
       }
 
@@ -149,7 +149,7 @@ export class WorkspaceDomainsService {
       return {
         workspace: workspaceFromSubdomain,
         publicDomain: null,
-        isIsolatedOrigin: true,
+        isPublicDomain: true,
       };
     }
 
@@ -157,7 +157,7 @@ export class WorkspaceDomainsService {
       return {
         workspace: undefined,
         publicDomain: null,
-        isIsolatedOrigin: false,
+        isPublicDomain: false,
       };
     }
 
@@ -176,7 +176,7 @@ export class WorkspaceDomainsService {
       return {
         workspace: workspaceFromCustomDomainOrSubdomain,
         publicDomain: null,
-        isIsolatedOrigin: false,
+        isPublicDomain: false,
       };
     }
 
@@ -188,7 +188,7 @@ export class WorkspaceDomainsService {
     return {
       workspace: publicDomain?.workspace ?? undefined,
       publicDomain: publicDomain ?? null,
-      isIsolatedOrigin: isDefined(publicDomain),
+      isPublicDomain: isDefined(publicDomain),
     };
   }
 

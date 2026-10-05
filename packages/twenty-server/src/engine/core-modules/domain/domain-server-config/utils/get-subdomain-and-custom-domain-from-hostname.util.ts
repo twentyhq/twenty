@@ -15,7 +15,7 @@ export const getSubdomainAndCustomDomainFromHostname = ({
 }): {
   subdomain: string | undefined;
   customDomain: string | null;
-  isPublicDomainOrigin: boolean;
+  isUnderPublicDomainUrl: boolean;
 } => {
   const isFrontDomain =
     hostname === frontDomain || hostname.endsWith(`.${frontDomain}`);
@@ -29,7 +29,7 @@ export const getSubdomainAndCustomDomainFromHostname = ({
     return {
       subdomain: subdomain === defaultSubdomain ? undefined : subdomain,
       customDomain: null,
-      isPublicDomainOrigin: false,
+      isUnderPublicDomainUrl: false,
     };
   }
 
@@ -45,13 +45,13 @@ export const getSubdomainAndCustomDomainFromHostname = ({
     return {
       subdomain: subdomain === defaultSubdomain ? undefined : subdomain,
       customDomain: null,
-      isPublicDomainOrigin: true,
+      isUnderPublicDomainUrl: true,
     };
   }
 
   return {
     subdomain: undefined,
     customDomain: hostname,
-    isPublicDomainOrigin: false,
+    isUnderPublicDomainUrl: false,
   };
 };
