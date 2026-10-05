@@ -461,7 +461,7 @@ export class WorkflowExecutorWorkspaceService {
       resourceType: UsageResourceType.WORKFLOW,
       operationType: UsageOperationType.WORKFLOW_EXECUTION,
       spenders: billingSpenders,
-      cost: { creditsUsedMicro: 100, quantity: 1 },
+      cost: { [UsageUnit.CREDIT]: 100, [UsageUnit.INVOCATION]: 1 },
     });
 
     await this.usageRecorderService.record(workspaceId, [

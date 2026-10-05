@@ -15,4 +15,4 @@ export const doesUsageLimitRowSuppressDefault = ({
   scope.spenderType === usageLimitDefault.spenderType &&
   scope.spenderId === usageLimitDefault.spenderId &&
   scope.limitKind === usageLimitDefault.limitKind &&
-  scope.meter === usageLimitDefault.meter;
+  scope.unit === usageLimitDefault.unit;

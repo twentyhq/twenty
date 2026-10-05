@@ -7,6 +7,7 @@ import { type UsageQuotaWithConsumption } from '@/settings/billing/types/UsageQu
 import {
   UsageOperationType,
   UsageResourceType,
+  UsageUnit,
 } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
@@ -21,7 +22,7 @@ const buildQuota = (
   spenderId: null,
   spenderLabel: null,
   periodUnit: 'month',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   limitValue: 100_000_000,
   isEnforced: true,
   consumedValue: 23_860_000,
@@ -44,15 +45,15 @@ const CUSTOM_USER_QUOTA = buildQuota({
   isEnforced: false,
 });
 
-const API_KEY_QUOTA = buildQuota({
+const LOGIC_FUNCTION_RUNS_QUOTA = buildQuota({
   id: 'limit-2',
-  resourceType: UsageResourceType.API,
-  operationType: UsageOperationType.API_REQUEST,
-  spenderType: 'apiKey',
+  resourceType: UsageResourceType.LOGIC_FUNCTION,
+  operationType: UsageOperationType.CODE_EXECUTION,
+  spenderType: 'logicFunction',
   spenderId: 'b1b2c3d4-0000-0000-0000-000000000000',
-  spenderLabel: 'Production key',
+  spenderLabel: 'Enrich company',
   periodUnit: 'day',
-  meter: 'quantity',
+  unit: UsageUnit.INVOCATION,
   limitValue: 10_000,
   consumedValue: 9_800,
   remainingValue: 200,
@@ -62,7 +63,13 @@ const meta: Meta<typeof SettingsBillingLimitsTable> = {
   title: 'Modules/Settings/Billing/SettingsBillingLimitsTable',
   component: SettingsBillingLimitsTable,
   decorators: [ComponentDecorator, MemoryRouterDecorator],
-  args: { quotas: [ALL_OPERATIONS_QUOTA, CUSTOM_USER_QUOTA, API_KEY_QUOTA] },
+  args: {
+    quotas: [
+      ALL_OPERATIONS_QUOTA,
+      CUSTOM_USER_QUOTA,
+      LOGIC_FUNCTION_RUNS_QUOTA,
+    ],
+  },
 };
 
 export default meta;
@@ -72,11 +79,11 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(
-      await canvas.findByRole('progressbar', {
-        name: /used by Production key$/,
-      }),
-    ).toHaveAttribute('aria-valuenow', '98');
+    const [logicFunctionRunsRing] = await canvas.findAllByRole('progressbar', {
+      name: /used by Enrich company$/,
+    });
+
+    await expect(logicFunctionRunsRing).toHaveAttribute('aria-valuenow', '98');
 
     await userEvent.hover(await canvas.findByText('Deactivated'));
 
