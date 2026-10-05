@@ -44,7 +44,7 @@ describe('scheduleMeetings', () => {
   it('should enqueue one job per slot, delayed until just after the slot ends', async () => {
     await scheduleMeetings([
       '2026-06-12T12:05:00.000Z',
-      '2026-06-12T12:14:59.000Z',
+      '2026-06-12T12:09:59.000Z',
       '2026-06-12T13:30:00.000Z',
     ]);
 
@@ -54,17 +54,17 @@ describe('scheduleMeetings', () => {
         MEETING_SLOT_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       jobs: [
         {
-          jobId: `meeting-slot-${Date.parse('2026-06-12T12:00:00.000Z')}`,
+          jobId: `meeting-slot-${Date.parse('2026-06-12T12:05:00.000Z')}`,
           payload: {
-            slotStart: '2026-06-12T12:00:00.000Z',
-            slotEnd: '2026-06-12T12:15:00.000Z',
+            slotStart: '2026-06-12T12:05:00.000Z',
+            slotEnd: '2026-06-12T12:10:00.000Z',
           },
         },
       ],
-      delayMs: 16 * MINUTE_MS,
+      delayMs: 11 * MINUTE_MS,
       retryLimit: 3,
     });
-    expect(enqueueJobsMock.mock.calls[1][0].delayMs).toBe(106 * MINUTE_MS);
+    expect(enqueueJobsMock.mock.calls[1][0].delayMs).toBe(96 * MINUTE_MS);
   });
 
   it('should skip started meetings and unparsable start times', async () => {

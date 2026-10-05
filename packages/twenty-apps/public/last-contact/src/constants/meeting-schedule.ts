@@ -1,4 +1,4 @@
-export const MEETING_SLOT_MS = 15 * 60 * 1000;
+export const MEETING_SLOT_MS = 5 * 60 * 1000;
 
 export const MEETING_SLOT_JOB_DELAY_BUFFER_MS = 60 * 1000;
 

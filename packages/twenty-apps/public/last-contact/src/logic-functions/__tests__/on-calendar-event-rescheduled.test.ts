@@ -50,7 +50,7 @@ describe('on-calendar-event-rescheduled', () => {
     await handler(
       buildBatch([
         { startsAt: '2026-06-12T14:20:00.000Z', isCanceled: false },
-        { startsAt: '2026-06-12T14:25:00.000Z', isCanceled: false },
+        { startsAt: '2026-06-12T14:24:00.000Z', isCanceled: false },
         { startsAt: '2026-06-12T16:00:00.000Z', isCanceled: true },
         { startsAt: '2026-06-12T10:00:00.000Z', isCanceled: false },
         { startsAt: null, isCanceled: false },
@@ -59,8 +59,8 @@ describe('on-calendar-event-rescheduled', () => {
 
     expect(enqueueJobsMock).toHaveBeenCalledTimes(1);
     expect(enqueueJobsMock.mock.calls[0][0].jobs[0].payload).toEqual({
-      slotStart: '2026-06-12T14:15:00.000Z',
-      slotEnd: '2026-06-12T14:30:00.000Z',
+      slotStart: '2026-06-12T14:20:00.000Z',
+      slotEnd: '2026-06-12T14:25:00.000Z',
     });
   });
 });

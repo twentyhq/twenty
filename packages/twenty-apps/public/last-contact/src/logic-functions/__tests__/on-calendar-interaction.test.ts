@@ -162,8 +162,8 @@ describe('on-calendar-interaction handler', () => {
     expect(mutationMock).not.toHaveBeenCalled();
     expect(enqueueJobsMock).toHaveBeenCalledTimes(1);
     expect(enqueueJobsMock.mock.calls[0][0].jobs[0].payload).toEqual({
-      slotStart: '2026-06-12T14:15:00.000Z',
-      slotEnd: '2026-06-12T14:30:00.000Z',
+      slotStart: '2026-06-12T14:20:00.000Z',
+      slotEnd: '2026-06-12T14:25:00.000Z',
     });
   });
 

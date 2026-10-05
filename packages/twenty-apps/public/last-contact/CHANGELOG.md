@@ -5,10 +5,10 @@
 All installs of the app share one API rate limit, 500 calls per minute across every workspace. This version is about spending far fewer of those calls.
 
 - **No more calendar cron.** The 5-minute cron ran in every workspace in the same minute and made at least one API call each time, even with nothing to do. With about 1500 installs, that alone used more than the limit. Meetings are now scheduled instead:
-  - When a participant is linked to a meeting that has not started yet, or when a meeting's start time changes, the app enqueues one delayed job for the meeting's 15-minute slot. The job runs just after the slot ends and updates last contact for that slot's meetings. Enqueuing a job costs no API call, all meetings in a slot share one job, and a slot with no meeting linked to a person costs one call.
+  - When a participant is linked to a meeting that has not started yet, or when a meeting's start time changes, the app enqueues one delayed job for the meeting's 5-minute slot. The job runs just after the slot ends and updates last contact for that slot's meetings. Enqueuing a job costs no API call, all meetings in a slot share one job, and a slot with no meeting linked to a person costs one call.
   - Enqueued jobs can be delayed by at most 7 days, so meetings more than 6 days out are reached through a horizon job. It runs every 3 days, schedules the meetings that came within reach, and enqueues the next run only while meetings remain further out. A workspace with no upcoming meetings runs nothing.
   - Every install and upgrade schedules the upcoming meetings and applies meetings from the last hour, so meetings linked before this version are not missed.
-  - A meeting's last contact now updates within about 16 minutes of its start, instead of 5.
+  - A meeting's last contact still updates within about 6 minutes of its start: the job runs 1 minute after the end of its 5-minute slot.
 - **Fewer calls per email or meeting batch: at most 5 instead of 8.** A person's company and opportunities are read nested in the same query as the person, which costs no extra call. Recomputing an opportunity's last contact also reads its point of contact nested: 2 calls instead of 3.
 - **Retries that respect the rate limit.** A rate-limited call now waits for the server's `retryAfterMs` instead of a fixed backoff. Once a function has waited 2 minutes in total, it hands the job back to the queue to retry later, instead of failing it or holding a worker.
 
