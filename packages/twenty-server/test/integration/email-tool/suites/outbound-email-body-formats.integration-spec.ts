@@ -9,7 +9,7 @@ import {
   parseJson,
 } from 'twenty-shared/utils';
 
-import { type ConvertWorkflowEmailBodiesToEmailDocumentsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791191421295-convert-workflow-email-bodies-to-email-documents.command';
+import { type ConvertWorkflowEmailBodiesToEmailDocumentsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791209963000-convert-workflow-email-bodies-to-email-documents.command';
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { type SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';

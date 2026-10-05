@@ -30,7 +30,7 @@ export const buildInboxMessageIds = ({
     INBOX_MESSAGE_ID_NAMESPACE,
   );
 
-  // A thread holds a single hidden message, so every message the
+  // A thread opens with a single context message, so every message the
   // application sends shares the turn that opener starts.
   return {
     threadId,
