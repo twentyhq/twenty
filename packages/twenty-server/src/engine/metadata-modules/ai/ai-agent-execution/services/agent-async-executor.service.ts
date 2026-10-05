@@ -599,6 +599,13 @@ export class AgentAsyncExecutorService {
             inputSchema,
             error,
             model: registeredModel.model,
+            billingContext: {
+              aiBillingService: this.aiBillingService,
+              modelId: registeredModel.modelId,
+              workspaceId,
+              userWorkspaceId: userWorkspaceId ?? null,
+              operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+            },
           });
         },
       });

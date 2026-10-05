@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import {
   type LanguageModel,
   type LanguageModelUsage,
@@ -7,12 +9,15 @@ import {
   type ToolSet,
   generateText,
 } from 'ai';
+import { isDefined } from 'twenty-shared/utils';
 import { type z } from 'zod';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
+
+const logger = new Logger('repairToolCall');
 
 type ToolCall = {
   type: 'tool-call';
@@ -42,7 +47,7 @@ export const repairToolCall = async ({
   inputSchema: (toolCall: { toolName: string }) => unknown;
   error: Error;
   model: LanguageModel;
-  billingContext?: RepairToolCallBillingContext;
+  billingContext: RepairToolCallBillingContext;
 }): Promise<ToolCall | null> => {
   if (NoSuchToolError.isInstance(error)) {
     return null;
@@ -84,8 +89,8 @@ export const repairToolCall = async ({
       ].join('\n'),
       ...buildAiTelemetry({
         functionId: 'repair-tool-call',
-        workspaceId: billingContext?.workspaceId,
-        userWorkspaceId: billingContext?.userWorkspaceId,
+        workspaceId: billingContext.workspaceId,
+        userWorkspaceId: billingContext.userWorkspaceId,
       }),
     });
 
@@ -107,19 +112,26 @@ export const repairToolCall = async ({
   } catch {
     return null;
   } finally {
-    if (billingContext && usage) {
+    if (isDefined(usage)) {
       const cacheCreationTokens = steps
         ? extractCacheCreationTokensFromSteps(steps)
         : 0;
 
-      void billingContext.aiBillingService.calculateAndBillUsage(
-        billingContext.modelId,
-        { usage, cacheCreationTokens },
-        billingContext.workspaceId,
-        billingContext.operationType,
-        null,
-        billingContext.userWorkspaceId,
-      );
+      void billingContext.aiBillingService
+        .calculateAndBillUsage(
+          billingContext.modelId,
+          { usage, cacheCreationTokens },
+          billingContext.workspaceId,
+          billingContext.operationType,
+          null,
+          billingContext.userWorkspaceId,
+        )
+        .catch((error: unknown) =>
+          logger.error(
+            `Could not bill the repair of tool call ${toolCall.toolCallId} in workspace ${billingContext.workspaceId}`,
+            error instanceof Error ? error.stack : error,
+          ),
+        );
     }
   }
 };
