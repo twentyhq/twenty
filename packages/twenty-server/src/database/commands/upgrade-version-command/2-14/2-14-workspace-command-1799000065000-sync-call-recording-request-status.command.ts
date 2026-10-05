@@ -26,14 +26,14 @@ const CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
     .universalIdentifier;
 const CALL_RECORDING_INDEX_VIEW_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.callRecording.views.allCallRecordings.universalIdentifier;
-const CALL_RECORDING_REQUEST_STATUS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
+const CALL_RECORDING_REQUEST_STATUS_INDEX_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.callRecording.views.allCallRecordings.viewFields
-    .recordingRequestStatus.universalIdentifier,
+    .recordingRequestStatus.universalIdentifier;
+const CALL_RECORDING_REQUEST_STATUS_RECORD_PAGE_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   toPre231RecordPageUniversalIdentifier(
     STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields
       .viewFields.recordingRequestStatus.universalIdentifier,
-  ),
-];
+  );
 const CALL_RECORDING_REQUEST_STATUS_FIELD_NAME = 'recordingRequestStatus';
 
 @RegisteredWorkspaceCommand('2.14.0', 1799000065000)
@@ -144,41 +144,42 @@ export class SyncCallRecordingRequestStatusCommand extends ProvisionedWorkspaceC
             existingCallRecordingObjectMetadata.applicationUniversalIdentifier,
       );
 
-    const recordingRequestStatusViewFieldsToCreate =
+    if (!isDefined(callRecordingIndexFlatView)) {
+      this.logger.warn(
+        `No INDEX view found for CallRecording in workspace ${workspaceId}, skipping its ${CALL_RECORDING_REQUEST_STATUS_FIELD_NAME} view field`,
+      );
+    }
+
+    const indexViewFieldsToCreate = isDefined(callRecordingIndexFlatView)
+      ? getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
+          standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
+          existingFlatEntityMaps: flatViewFieldMaps,
+          universalIdentifiers: [
+            CALL_RECORDING_REQUEST_STATUS_INDEX_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+          ],
+        }).map((flatViewField) => ({
+          ...flatViewField,
+          viewUniversalIdentifier:
+            callRecordingIndexFlatView.universalIdentifier,
+        }))
+      : [];
+
+    const recordPageViewFieldsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
         existingFlatEntityMaps: flatViewFieldMaps,
-        universalIdentifiers:
-          CALL_RECORDING_REQUEST_STATUS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
-      })
-        .flatMap((flatViewField) => {
-          if (
-            flatViewField.viewUniversalIdentifier !==
-            CALL_RECORDING_INDEX_VIEW_UNIVERSAL_IDENTIFIER
-          ) {
-            return [flatViewField];
-          }
+        universalIdentifiers: [
+          CALL_RECORDING_REQUEST_STATUS_RECORD_PAGE_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+        ],
+      });
 
-          if (!isDefined(callRecordingIndexFlatView)) {
-            this.logger.warn(
-              `No INDEX view found for CallRecording in workspace ${workspaceId}, skipping its ${CALL_RECORDING_REQUEST_STATUS_FIELD_NAME} view field`,
-            );
-
-            return [];
-          }
-
-          return [
-            {
-              ...flatViewField,
-              viewUniversalIdentifier:
-                callRecordingIndexFlatView.universalIdentifier,
-            },
-          ];
-        })
-        .filter(
-          (flatViewField) =>
-            !isFieldAlreadyInView({ flatViewField, flatViewFieldMaps }),
-        );
+    const recordingRequestStatusViewFieldsToCreate = [
+      ...indexViewFieldsToCreate,
+      ...recordPageViewFieldsToCreate,
+    ].filter(
+      (flatViewField) =>
+        !isFieldAlreadyInView({ flatViewField, flatViewFieldMaps }),
+    );
 
     const totalOperationCount =
       recordingRequestStatusFieldsToCreate.length +
