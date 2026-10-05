@@ -28,7 +28,7 @@ import { type MessageQueueJobData } from 'src/engine/core-modules/message-queue/
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { buildJobStatus } from 'src/engine/core-modules/message-queue/utils/build-job-status.util';
-import { getQueueJobIdPrefix } from 'src/engine/core-modules/message-queue/utils/get-queue-job-id-prefix.util';
+import { findInFlightQueueJobIdByPrefix } from 'src/engine/core-modules/message-queue/utils/find-in-flight-queue-job-id-by-prefix.util';
 
 type LifecycleJobTarget = {
   universalIdentifier: string;
@@ -207,11 +207,9 @@ export class ApplicationLifecycleJobService {
   private async findInFlightJobId(
     jobIdPrefix: string,
   ): Promise<string | undefined> {
-    const inFlightJobs = await this.workspaceQueueService.getInFlightJobs();
-
-    return inFlightJobs
-      .map((job) => job.id)
-      .filter(isDefined)
-      .find((jobId) => getQueueJobIdPrefix(jobId) === jobIdPrefix);
+    return findInFlightQueueJobIdByPrefix({
+      inFlightJobs: await this.workspaceQueueService.getInFlightJobs(),
+      jobIdPrefix,
+    });
   }
 }

@@ -2780,6 +2780,11 @@ export interface DuplicatedMessageList {
     __typename: 'DuplicatedMessageList'
 }
 
+export interface TriggerAddPeopleToMessageListJobResult {
+    jobId: Scalars['String']
+    __typename: 'TriggerAddPeopleToMessageListJobResult'
+}
+
 export interface MessageSuppression {
     id: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -3454,6 +3459,7 @@ export interface Query {
     getViewGroups: ViewGroup[]
     getViewGroup?: ViewGroup
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
+    findAddPeopleToMessageListJobStatus?: JobStatus
     messageSuppressions: MessageSuppressionList
     unsubscribeTopics: UnsubscribeTopic[]
     myMessageChannels: MessageChannel[]
@@ -3678,6 +3684,7 @@ export interface Mutation {
     cancelMessageCampaign: CancelMessageCampaignOutputDTO
     sendMessageCampaignTest: SendEmailViaDomainOutput
     duplicateMessageList: DuplicatedMessageList
+    triggerAddPeopleToMessageListJob: TriggerAddPeopleToMessageListJobResult
     createMessageSuppression: MessageSuppression
     deleteMessageSuppression: Scalars['Boolean']
     createUnsubscribeTopic: UnsubscribeTopic
@@ -6686,6 +6693,12 @@ export interface DuplicatedMessageListGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TriggerAddPeopleToMessageListJobResultGenqlSelection{
+    jobId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface MessageSuppressionGenqlSelection{
     id?: boolean | number
     createdAt?: boolean | number
@@ -7403,6 +7416,7 @@ export interface QueryGenqlSelection{
     getViewGroups?: (ViewGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getViewGroup?: (ViewGroupGenqlSelection & { __args: {id: Scalars['String']} })
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
+    findAddPeopleToMessageListJobStatus?: (JobStatusGenqlSelection & { __args: {messageListId: Scalars['UUID']} })
     messageSuppressions?: (MessageSuppressionListGenqlSelection & { __args: {input: FindMessageSuppressionsInput} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
@@ -7666,6 +7680,7 @@ export interface MutationGenqlSelection{
     cancelMessageCampaign?: (CancelMessageCampaignOutputDTOGenqlSelection & { __args: {input: CancelMessageCampaignInput} })
     sendMessageCampaignTest?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendMessageCampaignTestInput} })
     duplicateMessageList?: (DuplicatedMessageListGenqlSelection & { __args: {id: Scalars['UUID']} })
+    triggerAddPeopleToMessageListJob?: (TriggerAddPeopleToMessageListJobResultGenqlSelection & { __args: {input: TriggerAddPeopleToMessageListJobInput} })
     createMessageSuppression?: (MessageSuppressionGenqlSelection & { __args: {input: CreateMessageSuppressionInput} })
     deleteMessageSuppression?: { __args: {id: Scalars['UUID']} }
     createUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: CreateUnsubscribeTopicInput} })
@@ -8116,6 +8131,8 @@ export interface SendMessageCampaignInput {campaignId: Scalars['String'],schedul
 export interface CancelMessageCampaignInput {campaignId: Scalars['String']}
 
 export interface SendMessageCampaignTestInput {toAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
+
+export interface TriggerAddPeopleToMessageListJobInput {messageListId: Scalars['UUID'],personFilter: Scalars['JSON']}
 
 export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
@@ -10268,6 +10285,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isDuplicatedMessageList = (obj?: { __typename?: any } | null): obj is DuplicatedMessageList => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isDuplicatedMessageList"')
       return DuplicatedMessageList_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TriggerAddPeopleToMessageListJobResult_possibleTypes: string[] = ['TriggerAddPeopleToMessageListJobResult']
+    export const isTriggerAddPeopleToMessageListJobResult = (obj?: { __typename?: any } | null): obj is TriggerAddPeopleToMessageListJobResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTriggerAddPeopleToMessageListJobResult"')
+      return TriggerAddPeopleToMessageListJobResult_possibleTypes.includes(obj.__typename)
     }
     
 
