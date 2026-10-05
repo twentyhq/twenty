@@ -83,6 +83,7 @@ export { TWENTY_ICONS_BASE_URL } from './TwentyIconsBaseUrl';
 export { UI_SCALE_VALUES } from './UiScaleValues';
 export { VALIDATION_RULE_EMPTINESS_SUBFIELDS_BY_COMPOSITE_TYPE } from './ValidationRuleEmptinessSubfieldsByCompositeType';
 export { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from './ValidationRuleExpressionMaxLength';
+export { VALIDATION_RULE_FIELD_SYMBOL_PREFIX } from './ValidationRuleFieldSymbolPrefix';
 export { VALIDATION_RULE_FUNCTIONS } from './ValidationRuleFunctions';
 export { VALIDATION_RULE_NOW_VARIABLE_NAME } from './ValidationRuleNowVariableName';
 export { VIEW_GROUP_LOAD_LIMIT_OPTIONS } from './ViewGroupLoadLimitOptions';

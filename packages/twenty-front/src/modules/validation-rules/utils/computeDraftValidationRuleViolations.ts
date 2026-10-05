@@ -7,8 +7,8 @@ import {
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
 import {
-  compileValidationRuleExpression,
   evaluateValidationRuleExpression,
+  getValidationRuleReadFieldPaths,
   isDefined,
 } from 'twenty-shared/utils';
 import { stripSimpleQuotesFromStringRecursive } from '~/utils/string/stripSimpleQuotesFromString';
@@ -55,38 +55,33 @@ const withStaticDefaultValues = ({
 });
 
 const canEvaluateOnDraft = ({
-  expression,
+  validationRule,
   fields,
   draftRecord,
   serverFilledFieldNames,
 }: {
-  expression: string;
+  validationRule: ValidationRule;
   fields: ValidationRuleFieldDescriptor[];
   draftRecord: Record<string, unknown>;
   serverFilledFieldNames: string[];
 }): boolean => {
-  const compilationResult = compileValidationRuleExpression({
-    expression,
+  const readFieldPaths = getValidationRuleReadFieldPaths({
+    expression: validationRule.expression,
+    bindings: validationRule.bindings,
     fields,
   });
 
-  if (!compilationResult.isValid) {
-    return false;
-  }
-
-  const bindingPaths = Object.keys(compilationResult.bindings);
-
-  const isEveryReferencedRelationLoaded = bindingPaths
-    .filter((bindingPath) => bindingPath.includes('.'))
-    .map((bindingPath) => bindingPath.split('.')[0])
+  const isEveryReferencedRelationLoaded = readFieldPaths
+    .filter((readFieldPath) => readFieldPath.includes('.'))
+    .map((readFieldPath) => readFieldPath.split('.')[0])
     .every((relationFieldName) => {
       const relatedRecord = draftRecord[relationFieldName];
 
       return typeof relatedRecord === 'object' && isDefined(relatedRecord);
     });
 
-  const isEveryServerFilledFieldInDraft = bindingPaths
-    .map((bindingPath) => bindingPath.split('.')[0])
+  const isEveryServerFilledFieldInDraft = readFieldPaths
+    .map((readFieldPath) => readFieldPath.split('.')[0])
     .filter((fieldName) => serverFilledFieldNames.includes(fieldName))
     .every((fieldName) => fieldName in draftRecord);
 
@@ -144,7 +139,7 @@ export const computeDraftValidationRuleViolations = ({
     .filter((validationRule) => validationRule.isActive)
     .filter((validationRule) =>
       canEvaluateOnDraft({
-        expression: validationRule.expression,
+        validationRule,
         fields,
         draftRecord: draftRecordWithDefaultValues,
         serverFilledFieldNames,
@@ -154,6 +149,7 @@ export const computeDraftValidationRuleViolations = ({
       (validationRule) =>
         evaluateValidationRuleExpression({
           expression: validationRule.expression,
+          bindings: validationRule.bindings,
           record: withRelationPresenceFromJoinColumns({
             draftRecord: draftRecordWithDefaultValues,
             fields,

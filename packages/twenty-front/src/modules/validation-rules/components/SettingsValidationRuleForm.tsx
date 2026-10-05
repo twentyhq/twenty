@@ -68,11 +68,13 @@ export const SettingsValidationRuleForm = ({
               fields={fields}
               editorFields={editorFields}
               expression={values.expression}
+              bindings={values.bindings}
             />
           }
           form={
             <SettingsValidationRuleExpressionEditor
               value={values.expression}
+              bindings={values.bindings}
               fields={fields}
               editorFields={editorFields}
               onChange={(expression) => onChange({ ...values, expression })}

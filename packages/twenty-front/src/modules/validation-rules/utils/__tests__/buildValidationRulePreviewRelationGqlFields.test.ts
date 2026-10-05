@@ -51,7 +51,7 @@ describe('buildValidationRulePreviewRelationGqlFields', () => {
   it('should load the name of a related record read as a whole, so the preview does not show it as empty', () => {
     expect(
       buildValidationRulePreviewRelationGqlFields({
-        bindingPaths: ['company'],
+        readFieldPaths: ['company'],
         fields: FIELDS,
       }),
     ).toEqual({ company: { id: true, name: true } });
@@ -60,7 +60,7 @@ describe('buildValidationRulePreviewRelationGqlFields', () => {
   it('should load only the fields read through the relation', () => {
     expect(
       buildValidationRulePreviewRelationGqlFields({
-        bindingPaths: ['company', 'company.employees', 'stage'],
+        readFieldPaths: ['company', 'company.employees', 'stage'],
         fields: FIELDS,
       }),
     ).toEqual({ company: { id: true, name: true, employees: true } });
@@ -69,7 +69,7 @@ describe('buildValidationRulePreviewRelationGqlFields', () => {
   it('should load the id alone when the related object has no name field', () => {
     expect(
       buildValidationRulePreviewRelationGqlFields({
-        bindingPaths: ['pointOfContact'],
+        readFieldPaths: ['pointOfContact'],
         fields: FIELDS,
       }),
     ).toEqual({ pointOfContact: { id: true } });

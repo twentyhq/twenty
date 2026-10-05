@@ -317,11 +317,15 @@ export { buildValidationRuleEvaluationContext } from './validation-rule/buildVal
 export { compileValidationRuleExpression } from './validation-rule/compileValidationRuleExpression';
 export { createValidationRuleEvaluator } from './validation-rule/createValidationRuleEvaluator';
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
+export { getValidationRuleReadFieldPaths } from './validation-rule/getValidationRuleReadFieldPaths';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
+export { isValidationRuleFieldSymbol } from './validation-rule/isValidationRuleFieldSymbol';
 export { isValidationRuleReservedName } from './validation-rule/isValidationRuleReservedName';
 export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';
 export { isValidationRuleValueEmpty } from './validation-rule/isValidationRuleValueEmpty';
+export { mapValidationRuleExpressionPaths } from './validation-rule/mapValidationRuleExpressionPaths';
 export { parseValidationRuleExpression } from './validation-rule/parseValidationRuleExpression';
+export { renderValidationRuleExpression } from './validation-rule/renderValidationRuleExpression';
 export { resolveValidationRuleIdentifierPath } from './validation-rule/resolveValidationRuleIdentifierPath';
 export { tokenizeValidationRuleExpression } from './validation-rule/tokenizeValidationRuleExpression';
 export { validationRuleParser } from './validation-rule/validationRuleParser';

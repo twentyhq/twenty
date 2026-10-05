@@ -1,3 +1,5 @@
+import gql from 'graphql-tag';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
@@ -94,7 +96,14 @@ describe('Validation rules should follow the fields they read', () => {
     });
   });
 
-  it('should rewrite the rule when the field is renamed', async () => {
+  it('should keep the rule untouched and enforced when the field is renamed', async () => {
+    const validationRuleBeforeRename = await findValidationRule();
+
+    expect(validationRuleBeforeRename).toMatchObject({
+      expression: 'not isDefined($f1) or $f1 >= 0',
+      bindings: { $f1: expect.any(String) },
+    });
+
     await updateOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -104,11 +113,25 @@ describe('Validation rules should follow the fields they read', () => {
       gqlFields: 'id',
     });
 
-    expect(await findValidationRule()).toMatchObject({
-      expression: 'not isDefined(points) or points >= 0',
+    expect(await findValidationRule()).toEqual({
+      ...validationRuleBeforeRename,
       isActive: true,
       errorFieldMetadataId: scoreFieldMetadataId,
     });
+
+    const createResponse = await makeGraphqlApiRequest({
+      query: gql`
+        mutation {
+          createValidationRuleLifecycleGadget(data: { points: -1 }) {
+            id
+          }
+        }
+      `,
+    });
+
+    expect(createResponse.body.errors?.[0]?.extensions?.subCode).toBe(
+      'VALIDATION_RULE_VIOLATION',
+    );
   });
 
   it('should disable the rule and move its error to the record when the field is deactivated', async () => {
@@ -131,7 +154,7 @@ describe('Validation rules should follow the fields they read', () => {
     });
 
     expect(enableResponse.body.errors?.[0]?.message).toBe(
-      'Unknown field "points"',
+      '"$f1" refers to a field that was deleted or deactivated',
     );
   });
 

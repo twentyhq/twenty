@@ -15,7 +15,7 @@ export class FieldValidationRulesOnUpdateSideEffectHandlerService extends Metada
     metadataName: 'fieldMetadata',
     name: 'fieldValidationRulesOnUpdate',
     description:
-      'Keep object validation rules in step with a field they read, on any object: a rename rewrites the rule expression and its bindings to the new name, a type change or a deactivation disables the rules that read the field, and a deactivation moves errors shown on that field to the record level.',
+      'Keep object validation rules in step with a field they read, on any object: a type change or a deactivation disables the rules that read the field, and a deactivation moves errors shown on that field to the record level. A rename leaves rules untouched, since they bind fields by universal identifier.',
   },
 ) {
   buildSideEffects({

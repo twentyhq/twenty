@@ -8,6 +8,7 @@ const VALIDATION_RULE_GQL_FIELDS = `
   description
   icon
   expression
+  bindings
   message
   errorFieldMetadataId
   isActive

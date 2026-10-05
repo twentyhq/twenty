@@ -1,7 +1,9 @@
 import { VALIDATION_RULE_NOW_VARIABLE_NAME } from '@/constants/ValidationRuleNowVariableName';
 import { compositeTypeDefinitions } from '@/types/composite-types/composite-type-definitions';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
+import { type ValidationRuleEvaluationIdentifierPath } from '@/types/ValidationRuleEvaluationIdentifierPath';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { type ValidationRuleResolvedIdentifierPath } from '@/types/ValidationRuleResolvedIdentifierPath';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isDefined } from '@/utils/validation/isDefined';
 import {
@@ -77,72 +79,105 @@ const descendIntoContainer = (
   return ownedCopy;
 };
 
+type EvaluationLevel = {
+  segment: string;
+  recordKey: string;
+  field: ValidationRuleFieldDescriptor | undefined;
+};
+
+const computeEvaluationLevels = ({
+  segments,
+  resolvedPath,
+}: {
+  segments: string[];
+  resolvedPath: Extract<
+    ValidationRuleResolvedIdentifierPath,
+    { type: 'field' }
+  >;
+}): EvaluationLevel[] => {
+  const { rootField, targetField, subfieldName } = resolvedPath;
+
+  return [
+    { segment: segments[0], recordKey: rootField.name, field: rootField },
+    isDefined(targetField)
+      ? {
+          segment: segments[1],
+          recordKey: targetField.name,
+          field: targetField,
+        }
+      : undefined,
+    isDefined(subfieldName)
+      ? { segment: subfieldName, recordKey: subfieldName, field: undefined }
+      : undefined,
+  ].filter(
+    (level): level is EvaluationLevel =>
+      isDefined(level) && isDefined(level.segment),
+  );
+};
+
 export const buildValidationRuleEvaluationContext = ({
   record,
-  fieldByName,
   identifierPaths,
   now,
 }: {
   record: Record<string, unknown>;
-  fieldByName: ReadonlyMap<string, ValidationRuleFieldDescriptor>;
-  identifierPaths: string[];
+  identifierPaths: ValidationRuleEvaluationIdentifierPath[];
   now: string;
 }): EvaluationContainer => {
   const context: EvaluationContainer = {};
   const ownedContainers = new WeakSet<object>();
 
-  for (const path of identifierPaths) {
-    const segments = path.split('.');
-    const [rootSegment] = segments;
-
-    if (!isDefined(rootSegment)) {
-      continue;
-    }
-
-    if (rootSegment === VALIDATION_RULE_NOW_VARIABLE_NAME) {
+  for (const { segments, resolvedPath } of identifierPaths) {
+    if (resolvedPath.type === 'now') {
       context[VALIDATION_RULE_NOW_VARIABLE_NAME] = now;
       continue;
     }
 
-    const rootField = fieldByName.get(rootSegment);
+    const levels = computeEvaluationLevels({ segments, resolvedPath });
+    const [rootLevel] = levels;
 
-    if (!(rootSegment in context)) {
-      const rootValue = normalizeLeafValue(record[rootSegment], rootField);
+    if (!isDefined(rootLevel)) {
+      continue;
+    }
 
-      registerCompositeValue(rootValue, rootField);
-      context[rootSegment] = rootValue;
+    if (!(rootLevel.segment in context)) {
+      const rootValue = normalizeLeafValue(
+        record[rootLevel.recordKey],
+        rootLevel.field,
+      );
+
+      registerCompositeValue(rootValue, rootLevel.field);
+      context[rootLevel.segment] = rootValue;
     }
 
     let container: EvaluationContainer | null = context;
 
-    for (const [index, segment] of segments.entries()) {
+    for (const [index, level] of levels.entries()) {
       if (!isDefined(container)) {
         break;
       }
 
-      if (index === segments.length - 1) {
-        container[segment] = normalizeLeafValue(
-          container[segment],
-          index === 0
-            ? rootField
-            : rootField?.relationTargetFields?.find(
-                (field) => field.name === segment,
-              ),
+      if (index > 0 && !(level.segment in container)) {
+        container[level.segment] = container[level.recordKey];
+      }
+
+      if (index === 1) {
+        registerCompositeValue(container[level.segment], level.field);
+      }
+
+      if (index === levels.length - 1) {
+        container[level.segment] = normalizeLeafValue(
+          container[level.segment],
+          level.field,
         );
         break;
       }
 
-      container = descendIntoContainer(container, segment, ownedContainers);
-
-      const nextSegment = segments[index + 1];
-
-      if (index === 0 && isDefined(container) && isDefined(nextSegment)) {
-        const targetField = rootField?.relationTargetFields?.find(
-          (field) => field.name === nextSegment,
-        );
-
-        registerCompositeValue(container[nextSegment], targetField);
-      }
+      container = descendIntoContainer(
+        container,
+        level.segment,
+        ownedContainers,
+      );
     }
   }
 

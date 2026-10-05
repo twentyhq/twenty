@@ -2,10 +2,14 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { VALIDATION_RULE_NOW_VARIABLE_NAME } from 'twenty-shared/constants';
-import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
+import {
+  type ValidationRuleBindings,
+  type ValidationRuleFieldDescriptor,
+} from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   evaluateValidationRuleExpression,
+  getValidationRuleReadFieldPaths,
   isDefined,
   parseValidationRuleExpression,
 } from 'twenty-shared/utils';
@@ -109,6 +113,7 @@ type SettingsValidationRulePreviewProps = {
   fields: ValidationRuleFieldDescriptor[];
   editorFields: ValidationRuleEditorField[];
   expression: string;
+  bindings: ValidationRuleBindings;
 };
 
 export const SettingsValidationRulePreview = ({
@@ -116,6 +121,7 @@ export const SettingsValidationRulePreview = ({
   fields,
   editorFields,
   expression,
+  bindings,
 }: SettingsValidationRulePreviewProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -125,6 +131,7 @@ export const SettingsValidationRulePreview = ({
 
   const compilationResult = compileValidationRuleExpression({
     expression,
+    bindings,
     fields,
   });
 
@@ -139,8 +146,12 @@ export const SettingsValidationRulePreview = ({
         depth: 0,
       }),
       ...buildValidationRulePreviewRelationGqlFields({
-        bindingPaths: compilationResult.isValid
-          ? Object.keys(compilationResult.bindings)
+        readFieldPaths: compilationResult.isValid
+          ? getValidationRuleReadFieldPaths({
+              expression: compilationResult.expression,
+              bindings: compilationResult.bindings,
+              fields,
+            })
           : [],
         fields,
       }),
@@ -181,7 +192,8 @@ export const SettingsValidationRulePreview = ({
     }
 
     const evaluationResult = evaluateValidationRuleExpression({
-      expression,
+      expression: compilationResult.expression,
+      bindings: compilationResult.bindings,
       record,
       fields,
       now: new Date().toISOString(),

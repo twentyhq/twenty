@@ -21,12 +21,17 @@ const toScalarFieldDescriptor = (
 export const buildValidationRuleFieldDescriptors = ({
   objectMetadataItem,
   objectMetadataItems,
+  includesInactiveFields = false,
 }: {
   objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'>;
   objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id' | 'fields'>[];
-}): ValidationRuleFieldDescriptor[] =>
-  objectMetadataItem.fields
-    .filter((fieldMetadataItem) => fieldMetadataItem.isActive)
+  includesInactiveFields?: boolean;
+}): ValidationRuleFieldDescriptor[] => {
+  const isIncluded = (fieldMetadataItem: FieldMetadataItem) =>
+    includesInactiveFields || fieldMetadataItem.isActive;
+
+  return objectMetadataItem.fields
+    .filter(isIncluded)
     .map((fieldMetadataItem) => {
       const relation = fieldMetadataItem.relation;
 
@@ -51,8 +56,9 @@ export const buildValidationRuleFieldDescriptors = ({
         relationTargetFields:
           isManyToOne && isDefined(targetObjectMetadataItem)
             ? targetObjectMetadataItem.fields
-                .filter((targetField) => targetField.isActive)
+                .filter(isIncluded)
                 .map(toScalarFieldDescriptor)
             : undefined,
       };
     });
+};

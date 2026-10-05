@@ -17,14 +17,19 @@ const FIELDS = [
 
 const WON_WITHOUT_AMOUNT_RULE = {
   id: 'rule-won-without-amount',
-  expression: 'stage != "WON" or not isEmpty(amount)',
+  expression: '$f1 != "WON" or not isEmpty($f2)',
+  bindings: {
+    $f1: 'stage-universal-identifier',
+    $f2: 'amount-universal-identifier',
+  },
   message: 'A won opportunity needs an amount',
   errorFieldMetadataId: 'amount-field-metadata-id',
 };
 
 const BROKEN_RULE = {
   id: 'rule-broken',
-  expression: 'stage',
+  expression: '$f1',
+  bindings: { $f1: 'stage-universal-identifier' },
   message: 'Never shown',
   errorFieldMetadataId: null,
 };

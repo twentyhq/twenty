@@ -15,5 +15,8 @@ export const isValidationRuleFormSubmittable = ({
 }): boolean =>
   isNonEmptyString(values.name.trim()) &&
   isNonEmptyString(values.message.trim()) &&
-  compileValidationRuleExpression({ expression: values.expression, fields })
-    .isValid;
+  compileValidationRuleExpression({
+    expression: values.expression,
+    bindings: values.bindings,
+    fields,
+  }).isValid;

@@ -11,6 +11,7 @@ export const fromFlatValidationRuleToValidationRuleDto = (
   icon: flatValidationRule.icon,
   errorFieldMetadataId: flatValidationRule.errorFieldMetadataId,
   expression: flatValidationRule.expression,
+  bindings: flatValidationRule.bindings,
   message: flatValidationRule.message,
   isActive: flatValidationRule.isActive,
 });

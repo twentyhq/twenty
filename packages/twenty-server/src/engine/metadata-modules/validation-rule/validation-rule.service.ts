@@ -159,8 +159,9 @@ export class ValidationRuleService {
         { workspaceId },
       );
 
-    const bindings = compileValidationRuleExpressionOrThrow({
+    const { expression, bindings } = compileValidationRuleExpressionOrThrow({
       expression: input.expression,
+      bindings: input.bindings ?? {},
       objectMetadataId: input.objectMetadataId,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -169,6 +170,7 @@ export class ValidationRuleService {
     const flatValidationRuleToCreate =
       fromCreateValidationRuleInputToFlatValidationRuleToCreate({
         createValidationRuleInput: input,
+        expression,
         bindings,
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
@@ -208,28 +210,35 @@ export class ValidationRuleService {
       workspaceId,
     });
 
-    const expression =
-      input.update.expression ?? existingFlatValidationRule.expression;
     const isActive =
       input.update.isActive ?? existingFlatValidationRule.isActive;
+    const isExpressionChanged =
+      isDefined(input.update.expression) &&
+      (input.update.expression !== existingFlatValidationRule.expression ||
+        isDefined(input.update.bindings));
     const shouldCompile =
-      expression !== existingFlatValidationRule.expression ||
-      (isActive && !existingFlatValidationRule.isActive);
+      isExpressionChanged || (isActive && !existingFlatValidationRule.isActive);
 
-    const bindings = shouldCompile
+    const compiledExpression = shouldCompile
       ? compileValidationRuleExpressionOrThrow({
-          expression,
+          expression:
+            input.update.expression ?? existingFlatValidationRule.expression,
+          bindings:
+            input.update.bindings ?? existingFlatValidationRule.bindings,
           objectMetadataId: existingFlatValidationRule.objectMetadataId,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         })
-      : existingFlatValidationRule.bindings;
+      : {
+          expression: existingFlatValidationRule.expression,
+          bindings: existingFlatValidationRule.bindings,
+        };
 
     const flatValidationRuleToUpdate =
       fromUpdateValidationRuleInputToFlatValidationRuleToUpdate({
         existingFlatValidationRule,
         update: input.update,
-        bindings,
+        compiledExpression,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       });

@@ -11,13 +11,13 @@ import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-
 export const fromUpdateValidationRuleInputToFlatValidationRuleToUpdate = ({
   existingFlatValidationRule,
   update,
-  bindings,
+  compiledExpression,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
 }: {
   existingFlatValidationRule: FlatValidationRule;
   update: UpdateValidationRuleInputUpdates;
-  bindings: ValidationRuleBindings;
+  compiledExpression: { expression: string; bindings: ValidationRuleBindings };
 } & Pick<
   AllFlatEntityMaps,
   'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
@@ -29,7 +29,8 @@ export const fromUpdateValidationRuleInputToFlatValidationRuleToUpdate = ({
       ...update,
       ...(isDefined(update.name) && { name: update.name.trim() }),
       ...(isDefined(update.message) && { message: update.message.trim() }),
-      bindings,
+      expression: compiledExpression.expression,
+      bindings: compiledExpression.bindings,
     },
   });
 

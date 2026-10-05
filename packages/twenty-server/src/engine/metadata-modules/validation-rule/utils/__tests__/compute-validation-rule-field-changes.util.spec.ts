@@ -22,40 +22,27 @@ const EXISTING_FIELD_BY_UNIVERSAL_IDENTIFIER = {
 };
 
 describe('computeValidationRuleFieldChanges', () => {
-  it('should list every change of the migration, updates and deletions alike', () => {
+  it('should list every deactivation and deletion of the migration', () => {
     expect(
       computeValidationRuleFieldChanges({
-        updatedFields: [
-          { ...AMOUNT, name: 'dealValue' },
-          { ...STAGE, isActive: false },
-        ],
+        updatedFields: [{ ...STAGE, isActive: false }],
         deletedFields: [{ universalIdentifier: 'score-universal-identifier' }],
         existingFieldByUniversalIdentifier:
           EXISTING_FIELD_BY_UNIVERSAL_IDENTIFIER,
       }),
     ).toEqual([
       {
-        fieldUniversalIdentifier: AMOUNT.universalIdentifier,
-        newFieldName: 'dealValue',
-        shouldDisableRulesReadingField: false,
-        shouldDetachErrorField: false,
-      },
-      {
         fieldUniversalIdentifier: STAGE.universalIdentifier,
-        newFieldName: null,
-        shouldDisableRulesReadingField: true,
         shouldDetachErrorField: true,
       },
       {
         fieldUniversalIdentifier: 'score-universal-identifier',
-        newFieldName: null,
-        shouldDisableRulesReadingField: true,
         shouldDetachErrorField: true,
       },
     ]);
   });
 
-  it('should disable rules on a type change without detaching the error field', () => {
+  it('should list a type change without detaching the error field', () => {
     expect(
       computeValidationRuleFieldChanges({
         updatedFields: [{ ...STAGE, type: FieldMetadataType.MULTI_SELECT }],
@@ -66,18 +53,16 @@ describe('computeValidationRuleFieldChanges', () => {
     ).toEqual([
       {
         fieldUniversalIdentifier: STAGE.universalIdentifier,
-        newFieldName: null,
-        shouldDisableRulesReadingField: true,
         shouldDetachErrorField: false,
       },
     ]);
   });
 
-  it('should ignore updates that leave the name, type and activation alone, and fields that did not exist', () => {
+  it('should ignore renames, updates that leave the type and activation alone, and fields that did not exist', () => {
     expect(
       computeValidationRuleFieldChanges({
         updatedFields: [
-          { ...AMOUNT },
+          { ...AMOUNT, name: 'dealValue' },
           { ...STAGE, isActive: true },
           {
             universalIdentifier: 'new-universal-identifier',

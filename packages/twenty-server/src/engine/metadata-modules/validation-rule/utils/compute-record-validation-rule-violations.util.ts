@@ -23,7 +23,7 @@ export const computeRecordValidationRuleViolations = ({
   records: ObjectRecord[];
   validationRules: Pick<
     FlatValidationRule,
-    'id' | 'expression' | 'message' | 'errorFieldMetadataId'
+    'id' | 'expression' | 'bindings' | 'message' | 'errorFieldMetadataId'
   >[];
   fields: ValidationRuleFieldDescriptor[];
   now: string;
@@ -37,6 +37,7 @@ export const computeRecordValidationRuleViolations = ({
     validationRule,
     evaluate: createValidationRuleEvaluator({
       expression: validationRule.expression,
+      bindings: validationRule.bindings,
       fields,
     }),
   }));

@@ -49,7 +49,14 @@ export const SettingsValidationRuleEditForm = ({
     useValidationRuleMutations({ objectMetadataId: objectMetadataItem.id });
 
   const [values, setValues] = useState<ValidationRuleFormValues>(() =>
-    getValidationRuleFormValues(validationRule),
+    getValidationRuleFormValues({
+      validationRule,
+      fields: buildValidationRuleFieldDescriptors({
+        objectMetadataItem,
+        objectMetadataItems,
+        includesInactiveFields: true,
+      }),
+    }),
   );
 
   const fields = buildValidationRuleFieldDescriptors({

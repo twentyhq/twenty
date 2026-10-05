@@ -8,7 +8,10 @@ import { Placeholder } from '@tiptap/extensions/placeholder';
 import { UndoRedo } from '@tiptap/extensions/undo-redo';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import { useState } from 'react';
-import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
+import {
+  type ValidationRuleBindings,
+  type ValidationRuleFieldDescriptor,
+} from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   isDefined,
@@ -107,6 +110,7 @@ const StyledError = styled.div`
 
 type SettingsValidationRuleExpressionEditorProps = {
   value: string;
+  bindings: ValidationRuleBindings;
   fields: ValidationRuleFieldDescriptor[];
   editorFields: ValidationRuleEditorField[];
   onChange: (expression: string) => void;
@@ -114,6 +118,7 @@ type SettingsValidationRuleExpressionEditorProps = {
 
 export const SettingsValidationRuleExpressionEditor = ({
   value,
+  bindings,
   fields,
   editorFields,
   onChange,
@@ -270,6 +275,7 @@ export const SettingsValidationRuleExpressionEditor = ({
 
   const compilationResult = compileValidationRuleExpression({
     expression: value,
+    bindings,
     fields,
   });
   const errorMessage =

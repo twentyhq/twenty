@@ -41,8 +41,11 @@ describe('buildValidationRuleEditorFields', () => {
 
     const unresolvedPaths = paths.filter(
       (path) =>
-        !resolveValidationRuleIdentifierPath({ path, fields: descriptors })
-          .isResolved,
+        !resolveValidationRuleIdentifierPath({
+          path,
+          fields: descriptors,
+          bindings: {},
+        }).isResolved,
     );
 
     expect(unresolvedPaths).toEqual([]);

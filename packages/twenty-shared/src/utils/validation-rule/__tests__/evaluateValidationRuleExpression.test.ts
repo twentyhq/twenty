@@ -1,6 +1,7 @@
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { RelationType } from '@/types/RelationType';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { compileValidationRuleExpression } from '@/utils/validation-rule/compileValidationRuleExpression';
 import { evaluateValidationRuleExpression } from '@/utils/validation-rule/evaluateValidationRuleExpression';
 
 const NOW = '2026-09-23T10:00:00.000Z';
@@ -53,6 +54,11 @@ const FIELDS: ValidationRuleFieldDescriptor[] = [
         universalIdentifier: 'company-industry',
       },
       {
+        name: 'employees',
+        type: FieldMetadataType.NUMBER,
+        universalIdentifier: 'company-employees',
+      },
+      {
         name: 'address',
         type: FieldMetadataType.ADDRESS,
         universalIdentifier: 'company-address',
@@ -69,6 +75,7 @@ const FIELDS: ValidationRuleFieldDescriptor[] = [
 const evaluate = (expression: string, record: Record<string, unknown>) =>
   evaluateValidationRuleExpression({
     expression,
+    bindings: {},
     record,
     fields: FIELDS,
     now: NOW,
@@ -300,5 +307,66 @@ describe('evaluateValidationRuleExpression', () => {
 
   it('should report an expression that cannot be parsed', () => {
     expect(evaluate('stage ==', { stage: 'WON' }).status).toBe('errored');
+  });
+  it('should keep the result of a compiled rule when the fields it reads are renamed', () => {
+    const compilation = compileValidationRuleExpression({
+      expression: 'stage != "WON" or company.industry == "SaaS"',
+      fields: FIELDS,
+    });
+
+    if (!compilation.isValid) {
+      throw new Error(compilation.errorMessage);
+    }
+
+    const renamedFields = FIELDS.map((field) => {
+      if (field.universalIdentifier === 'opportunity-stage') {
+        return { ...field, name: 'pipelineStage' };
+      }
+
+      if (field.universalIdentifier === 'opportunity-company') {
+        return {
+          ...field,
+          name: 'account',
+          relationTargetFields: field.relationTargetFields?.map((targetField) =>
+            targetField.universalIdentifier === 'company-industry'
+              ? { ...targetField, name: 'sector' }
+              : targetField,
+          ),
+        };
+      }
+
+      return field;
+    });
+
+    const evaluateCompiled = (
+      fields: ValidationRuleFieldDescriptor[],
+      record: Record<string, unknown>,
+    ) =>
+      evaluateValidationRuleExpression({
+        expression: compilation.expression,
+        bindings: compilation.bindings,
+        record,
+        fields,
+        now: NOW,
+      });
+
+    expect(
+      evaluateCompiled(FIELDS, {
+        stage: 'WON',
+        company: { industry: 'Retail' },
+      }),
+    ).toEqual({ status: 'failed' });
+    expect(
+      evaluateCompiled(renamedFields, {
+        pipelineStage: 'WON',
+        account: { sector: 'Retail' },
+      }),
+    ).toEqual({ status: 'failed' });
+    expect(
+      evaluateCompiled(renamedFields, {
+        pipelineStage: 'WON',
+        account: { sector: 'SaaS' },
+      }),
+    ).toEqual({ status: 'passed' });
   });
 });

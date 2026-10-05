@@ -1,10 +1,14 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  renderValidationRuleExpression,
+} from 'twenty-shared/utils';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -15,6 +19,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { SettingsValidationRuleExpressionText } from '@/validation-rules/components/SettingsValidationRuleExpressionText';
 import { VALIDATION_RULE_DEFAULT_ICON } from '@/validation-rules/constants/ValidationRuleDefaultIcon';
 import { useValidationRules } from '@/validation-rules/hooks/useValidationRules';
+import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
 
 const VALIDATION_RULE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 1fr 80px';
 
@@ -72,8 +77,15 @@ export const SettingsObjectValidationRulesSection = ({
   const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const { objectMetadataItems } = useObjectMetadataItems();
   const { validationRules } = useValidationRules({
     objectMetadataId: objectMetadataItem.id,
+  });
+
+  const fields = buildValidationRuleFieldDescriptors({
+    objectMetadataItem,
+    objectMetadataItems,
+    includesInactiveFields: true,
   });
 
   const objectNamePlural = objectMetadataItem.namePlural;
@@ -122,7 +134,11 @@ export const SettingsObjectValidationRulesSection = ({
                     <TableCell minWidth="0" overflow="hidden">
                       <StyledExpression>
                         <SettingsValidationRuleExpressionText
-                          expression={validationRule.expression}
+                          expression={renderValidationRuleExpression({
+                            expression: validationRule.expression,
+                            bindings: validationRule.bindings,
+                            fields,
+                          })}
                         />
                       </StyledExpression>
                     </TableCell>

@@ -12,17 +12,20 @@ import {
 
 export const compileValidationRuleExpressionOrThrow = ({
   expression,
+  bindings,
   objectMetadataId,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   expression: string;
+  bindings: ValidationRuleBindings;
   objectMetadataId: string;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-}): ValidationRuleBindings => {
+}): { expression: string; bindings: ValidationRuleBindings } => {
   const compilationResult = compileValidationRuleExpression({
     expression,
+    bindings,
     fields: buildValidationRuleFieldDescriptors({
       objectMetadataId,
       flatObjectMetadataMaps,
@@ -37,5 +40,8 @@ export const compileValidationRuleExpressionOrThrow = ({
     );
   }
 
-  return compilationResult.bindings;
+  return {
+    expression: compilationResult.expression,
+    bindings: compilationResult.bindings,
+  };
 };

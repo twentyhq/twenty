@@ -53,34 +53,108 @@ const OPPORTUNITY_FIELDS: ValidationRuleFieldDescriptor[] = [
   },
 ];
 
-const compile = (expression: string) =>
-  compileValidationRuleExpression({ expression, fields: OPPORTUNITY_FIELDS });
+const compile = (expression: string, bindings?: Record<string, string>) =>
+  compileValidationRuleExpression({
+    expression,
+    fields: OPPORTUNITY_FIELDS,
+    bindings,
+  });
 
 describe('compileValidationRuleExpression', () => {
-  it('should bind every referenced field to its universal identifier', () => {
+  it('should replace every referenced field with a symbol bound to its universal identifier', () => {
     expect(
       compile('stage == "WON" and not isDefined(amount.amountMicros)'),
     ).toEqual({
       isValid: true,
+      expression: '$f1 == "WON" and not isDefined($f2.amountMicros)',
       bindings: {
-        stage: 'opportunity-stage',
-        amount: 'opportunity-amount',
+        $f1: 'opportunity-stage',
+        $f2: 'opportunity-amount',
       },
     });
   });
 
-  it('should bind a one-hop to-one relation path', () => {
+  it('should bind a one-hop to-one relation path with one symbol per field', () => {
     expect(compile('company.industry == "SaaS"')).toEqual({
       isValid: true,
+      expression: '$f1.$f2 == "SaaS"',
       bindings: {
-        company: 'opportunity-company',
-        'company.industry': 'company-industry',
+        $f1: 'opportunity-company',
+        $f2: 'company-industry',
       },
+    });
+  });
+
+  it('should reuse the symbol of a field read several times', () => {
+    expect(
+      compile('stage == "WON" or (stage == "LOST" and isDefined(company))'),
+    ).toEqual({
+      isValid: true,
+      expression: '$f1 == "WON" or ($f1 == "LOST" and isDefined($f2))',
+      bindings: { $f1: 'opportunity-stage', $f2: 'opportunity-company' },
+    });
+  });
+
+  it('should accept symbols resolved through the given bindings and number them again', () => {
+    expect(
+      compile('isDefined($f7) and $f3.$f9 == "SaaS"', {
+        $f3: 'opportunity-company',
+        $f7: 'opportunity-stage',
+        $f9: 'company-industry',
+      }),
+    ).toEqual({
+      isValid: true,
+      expression: 'isDefined($f1) and $f2.$f3 == "SaaS"',
+      bindings: {
+        $f1: 'opportunity-stage',
+        $f2: 'opportunity-company',
+        $f3: 'company-industry',
+      },
+    });
+  });
+
+  it('should compile its own output to the same expression and bindings', () => {
+    const firstCompilation = compile(
+      'company.industry == "SaaS" or isEmpty(amount)',
+    );
+
+    if (!firstCompilation.isValid) {
+      throw new Error(firstCompilation.errorMessage);
+    }
+
+    expect(
+      compile(firstCompilation.expression, firstCompilation.bindings),
+    ).toEqual(firstCompilation);
+  });
+
+  it('should reject a symbol that is not bound', () => {
+    expect(compile('isDefined($f1)')).toEqual({
+      isValid: false,
+      errorMessage: '"$f1" is not bound to a field',
+    });
+  });
+
+  it('should reject a symbol bound to a field that no longer exists', () => {
+    expect(compile('isDefined($f1)', { $f1: 'deleted-field' })).toEqual({
+      isValid: false,
+      errorMessage: '"$f1" refers to a field that was deleted or deactivated',
+    });
+  });
+
+  it('should reject member access that does not directly follow a field name', () => {
+    expect(compile('(company).industry == "SaaS"')).toEqual({
+      isValid: false,
+      errorMessage:
+        'Write each field path in one piece, without parentheses or spaces',
     });
   });
 
   it('should accept now as a value', () => {
-    expect(compile('isDefined(now)')).toEqual({ isValid: true, bindings: {} });
+    expect(compile('isDefined(now)')).toEqual({
+      isValid: true,
+      expression: 'isDefined(now)',
+      bindings: {},
+    });
   });
 
   it('should reject an unknown field', () => {
@@ -165,7 +239,8 @@ describe('compileValidationRuleExpression', () => {
   it('should accept a value in a list field', () => {
     expect(compile('"PRIORITY" in tags')).toEqual({
       isValid: true,
-      bindings: { tags: 'opportunity-tags' },
+      expression: '"PRIORITY" in $f1',
+      bindings: { $f1: 'opportunity-tags' },
     });
   });
 

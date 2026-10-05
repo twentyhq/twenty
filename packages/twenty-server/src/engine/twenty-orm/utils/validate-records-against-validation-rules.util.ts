@@ -1,6 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  getValidationRuleReadFieldPaths,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -62,24 +65,16 @@ const findLiveRelatedRecords = async <TEntity extends ObjectLiteral>({
 const attachRelatedRecords = async <TEntity extends ObjectLiteral>({
   repository,
   tableShape,
-  validationRules,
+  readFieldPaths,
   rawWrittenRecords,
 }: {
   repository: WorkspaceRepository<TEntity>;
   tableShape: WorkspaceTableShape;
-  validationRules: FlatValidationRule[];
+  readFieldPaths: string[];
   rawWrittenRecords: ObjectRecord[];
 }): Promise<ObjectRecord[]> => {
-  const bindingPaths = [
-    ...new Set(
-      validationRules.flatMap((validationRule) =>
-        Object.keys(validationRule.bindings),
-      ),
-    ),
-  ];
-
-  const referencedRelationShapes = bindingPaths
-    .map((bindingPath) => tableShape.relationShapeByFieldName[bindingPath])
+  const referencedRelationShapes = readFieldPaths
+    .map((readFieldPath) => tableShape.relationShapeByFieldName[readFieldPath])
     .filter(isDefined)
     .filter(
       (relationShape) =>
@@ -102,12 +97,12 @@ const attachRelatedRecords = async <TEntity extends ObjectLiteral>({
             .filter(isNonEmptyString),
         ),
       ],
-      fieldNames: bindingPaths
-        .filter((bindingPath) =>
-          bindingPath.startsWith(`${relationShape.fieldName}.`),
+      fieldNames: readFieldPaths
+        .filter((readFieldPath) =>
+          readFieldPath.startsWith(`${relationShape.fieldName}.`),
         )
-        .map((bindingPath) =>
-          bindingPath.slice(relationShape.fieldName.length + 1),
+        .map((readFieldPath) =>
+          readFieldPath.slice(relationShape.fieldName.length + 1),
         ),
     });
 
@@ -177,15 +172,20 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
     flatObjectMetadataMaps: repository.internalContext.flatObjectMetadataMaps,
     flatFieldMetadataMaps: repository.internalContext.flatFieldMetadataMaps,
   });
-  const fieldNames = [
+  const readFieldPaths = [
     ...new Set(
       validationRules.flatMap((validationRule) =>
-        Object.keys(validationRule.bindings).filter(
-          (bindingPath) => !bindingPath.includes('.'),
-        ),
+        getValidationRuleReadFieldPaths({
+          expression: validationRule.expression,
+          bindings: validationRule.bindings,
+          fields,
+        }),
       ),
     ),
   ];
+  const fieldNames = readFieldPaths.filter(
+    (readFieldPath) => !readFieldPath.includes('.'),
+  );
   const now = new Date().toISOString();
 
   const violations: RecordValidationRuleViolation[] = [];
@@ -211,7 +211,7 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
       records: await attachRelatedRecords({
         repository,
         tableShape,
-        validationRules,
+        readFieldPaths,
         rawWrittenRecords,
       }),
       validationRules,

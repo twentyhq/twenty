@@ -74,6 +74,8 @@ describe('Validation rule metadata', () => {
       name: 'Company has a name',
       description: 'Every company needs a name',
       icon: 'IconBuilding',
+      expression: 'isNonEmptyString($f1)',
+      bindings: { $f1: expect.any(String) },
       isActive: true,
       errorFieldMetadataId: null,
     });
@@ -143,6 +145,38 @@ describe('Validation rule metadata', () => {
     expect(validationRuleById.get(secondValidationRule.id)).toMatchObject({
       message: 'Second message',
       isActive: false,
+    });
+  });
+  it('should accept back the condition it returns, and field names mixed with its symbols', async () => {
+    const validationRule = await createRule({
+      objectMetadataId: companyObjectMetadataId,
+      name: 'Named or staffed',
+      expression: 'isNonEmptyString(name) or employees > 0',
+      message: 'Name the company or give it employees',
+    });
+
+    expect(validationRule.expression).toBe('isNonEmptyString($f1) or $f2 > 0');
+
+    const unchangedResponse = await updateValidationRule(validationRule.id, {
+      expression: validationRule.expression,
+      bindings: validationRule.bindings,
+    });
+
+    expect(unchangedResponse.body.data.updateValidationRule).toMatchObject({
+      expression: validationRule.expression,
+      bindings: validationRule.bindings,
+    });
+
+    const mixedResponse = await updateValidationRule(validationRule.id, {
+      expression: '$f2 > 0 or isNonEmptyString(name)',
+    });
+
+    expect(mixedResponse.body.data.updateValidationRule).toMatchObject({
+      expression: '$f1 > 0 or isNonEmptyString($f2)',
+      bindings: {
+        $f1: validationRule.bindings.$f2,
+        $f2: validationRule.bindings.$f1,
+      },
     });
   });
 });

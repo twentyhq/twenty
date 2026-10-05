@@ -56,7 +56,8 @@ const AMOUNT_RULE = {
   description: null,
   icon: null,
   errorFieldMetadataId: 'amount-field',
-  expression: 'stage != "CUSTOMER" or not isEmpty(amount)',
+  expression: '$f1 != "CUSTOMER" or not isEmpty($f2)',
+  bindings: { $f1: 'stage', $f2: 'amount' },
   message: 'A customer deal needs an amount',
   isActive: true,
 };
@@ -68,7 +69,8 @@ const COMPANY_RULE = {
   description: null,
   icon: null,
   errorFieldMetadataId: null,
-  expression: 'company.employees >= 10',
+  expression: '$f1.$f2 >= 10',
+  bindings: { $f1: 'company', $f2: 'company-employees' },
   message: 'Company is too small',
   isActive: true,
 };
@@ -92,7 +94,8 @@ const compute = (
 const TAGLINE_RULE = {
   ...AMOUNT_RULE,
   id: 'tagline-rule',
-  expression: 'isNonEmptyString(tagline)',
+  expression: 'isNonEmptyString($f1)',
+  bindings: { $f1: 'tagline' },
   message: 'A company needs a tagline',
 };
 
@@ -126,7 +129,8 @@ describe('computeDraftValidationRuleViolations', () => {
     };
     const closeDateRule = {
       ...AMOUNT_RULE,
-      expression: 'isDefined(closeDate) or not isEmpty(amount)',
+      expression: 'isDefined($f1) or not isEmpty($f2)',
+      bindings: { $f1: 'closeDate', $f2: 'amount' },
     };
     const closeDateFieldMetadataItem = {
       name: 'closeDate',
@@ -203,14 +207,26 @@ describe('computeDraftValidationRuleViolations', () => {
     expect(
       compute(
         {},
-        [{ ...AMOUNT_RULE, expression: 'isDefined(createdAt)' }],
+        [
+          {
+            ...AMOUNT_RULE,
+            expression: 'isDefined($f1)',
+            bindings: { $f1: 'createdAt' },
+          },
+        ],
         [{ name: 'createdAt', isSystem: true, defaultValue: 'now' }],
       ),
     ).toEqual([]);
     expect(
       compute(
         {},
-        [{ ...AMOUNT_RULE, expression: 'position > 1' }],
+        [
+          {
+            ...AMOUNT_RULE,
+            expression: '$f1 > 1',
+            bindings: { $f1: 'position' },
+          },
+        ],
         [{ name: 'position', isSystem: true, defaultValue: 0 }],
       ),
     ).toEqual([]);
@@ -229,12 +245,12 @@ describe('computeDraftValidationRuleViolations', () => {
   it('should treat a set join column as a defined relation', () => {
     expect(
       compute({ companyId: 'company-id' }, [
-        { ...COMPANY_RULE, expression: 'isDefined(company)' },
+        { ...COMPANY_RULE, expression: 'isDefined($f1)' },
       ]),
     ).toEqual([]);
     expect(
       compute({ companyId: null }, [
-        { ...COMPANY_RULE, expression: 'isDefined(company)' },
+        { ...COMPANY_RULE, expression: 'isDefined($f1)' },
       ]).map((violation) => violation.ruleId),
     ).toEqual(['company-rule']);
   });
@@ -244,6 +260,29 @@ describe('computeDraftValidationRuleViolations', () => {
       compute({ company: { employees: 3 } }, [COMPANY_RULE]).map(
         (violation) => violation.ruleId,
       ),
+    ).toEqual(['company-rule']);
+  });
+  it('should keep checking a rule after the fields it reads are renamed', () => {
+    const renamedFields = FIELDS.map((field) =>
+      field.universalIdentifier === 'company'
+        ? {
+            ...field,
+            name: 'account',
+            relationTargetFields: field.relationTargetFields?.map(
+              (targetField) => ({ ...targetField, name: 'headcount' }),
+            ),
+          }
+        : field,
+    );
+
+    expect(
+      computeDraftValidationRuleViolations({
+        validationRules: [COMPANY_RULE],
+        draftRecord: { account: { headcount: 3 } },
+        fields: renamedFields,
+        fieldMetadataItems: [],
+        now: '2026-09-23T10:00:00.000Z',
+      }).map((violation) => violation.ruleId),
     ).toEqual(['company-rule']);
   });
 });

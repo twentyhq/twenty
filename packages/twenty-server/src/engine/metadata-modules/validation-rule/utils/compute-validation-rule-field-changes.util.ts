@@ -5,7 +5,6 @@ import { type ValidationRuleFieldChange } from 'src/engine/metadata-modules/vali
 
 type ValidationRuleFieldState = {
   universalIdentifier: string;
-  name: string;
   type: FieldMetadataType;
   isActive: boolean;
 };
@@ -29,27 +28,22 @@ export const computeValidationRuleFieldChanges = ({
       return [];
     }
 
-    const isRenamed = existingField.name !== updatedField.name;
     const isRetyped = existingField.type !== updatedField.type;
     const isDeactivated = existingField.isActive && !updatedField.isActive;
 
-    if (!isRenamed && !isRetyped && !isDeactivated) {
+    if (!isRetyped && !isDeactivated) {
       return [];
     }
 
     return [
       {
         fieldUniversalIdentifier: updatedField.universalIdentifier,
-        newFieldName: isRenamed ? updatedField.name : null,
-        shouldDisableRulesReadingField: isRetyped || isDeactivated,
         shouldDetachErrorField: isDeactivated,
       },
     ];
   }),
   ...deletedFields.map((deletedField) => ({
     fieldUniversalIdentifier: deletedField.universalIdentifier,
-    newFieldName: null,
-    shouldDisableRulesReadingField: true,
     shouldDetachErrorField: true,
   })),
 ];

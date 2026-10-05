@@ -6,6 +6,7 @@ export const EMPTY_VALIDATION_RULE_FORM_VALUES: ValidationRuleFormValues = {
   description: null,
   icon: VALIDATION_RULE_DEFAULT_ICON,
   expression: '',
+  bindings: {},
   message: '',
   errorFieldMetadataId: null,
 };

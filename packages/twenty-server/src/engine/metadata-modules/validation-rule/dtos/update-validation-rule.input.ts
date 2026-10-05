@@ -4,12 +4,15 @@ import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
+import { type ValidationRuleBindings } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -39,6 +42,11 @@ export class UpdateValidationRuleInputUpdates {
   @ValidateIf((_, value) => value !== undefined)
   @Field({ nullable: true })
   expression?: string;
+
+  @IsObject()
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  bindings?: ValidationRuleBindings | null;
 
   @IsString()
   @ValidateIf((_, value) => value !== undefined)

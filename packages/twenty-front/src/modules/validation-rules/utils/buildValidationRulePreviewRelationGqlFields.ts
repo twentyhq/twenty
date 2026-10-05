@@ -4,14 +4,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 
 export const buildValidationRulePreviewRelationGqlFields = ({
-  bindingPaths,
+  readFieldPaths,
   fields,
 }: {
-  bindingPaths: string[];
+  readFieldPaths: string[];
   fields: ValidationRuleFieldDescriptor[];
 }): RecordGqlFields =>
-  bindingPaths.reduce<RecordGqlFields>((relationGqlFields, bindingPath) => {
-    const [relationFieldName, targetFieldName] = bindingPath.split('.');
+  readFieldPaths.reduce<RecordGqlFields>((relationGqlFields, readFieldPath) => {
+    const [relationFieldName, targetFieldName] = readFieldPath.split('.');
     const relationField = fields.find(
       (field) =>
         field.name === relationFieldName &&

@@ -3,10 +3,13 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import {
   IsBoolean,
   IsNotEmpty,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
+import { type ValidationRuleBindings } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -45,6 +48,10 @@ export class ValidationRuleDTO {
   @IsNotEmpty()
   @Field()
   expression: string;
+
+  @IsObject()
+  @Field(() => GraphQLJSON)
+  bindings: ValidationRuleBindings;
 
   @IsString()
   @IsNotEmpty()

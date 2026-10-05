@@ -131,13 +131,14 @@ describe('Validation rules across application syncs', () => {
     expect(await findValidationRules(objectMetadataId)).toMatchObject([
       {
         id: validationRuleId,
-        expression: 'isNonEmptyString(reference)',
+        expression: 'isNonEmptyString($f1)',
+        bindings: { $f1: REFERENCE_FIELD_ID },
         isActive: true,
       },
     ]);
   }, 60000);
 
-  it('should rewrite a workspace rule when the application renames a field it reads', async () => {
+  it('should leave a workspace rule untouched when the application renames a field it reads', async () => {
     const { errors } = await syncApplication({
       manifest: buildManifest({ name: 'code' }),
       expectToFail: false,
@@ -147,7 +148,8 @@ describe('Validation rules across application syncs', () => {
     expect(await findValidationRules(objectMetadataId)).toMatchObject([
       {
         id: validationRuleId,
-        expression: 'isNonEmptyString(code)',
+        expression: 'isNonEmptyString($f1)',
+        bindings: { $f1: REFERENCE_FIELD_ID },
         isActive: true,
       },
     ]);
@@ -185,11 +187,13 @@ describe('Validation rules across application syncs', () => {
     );
 
     expect(validationRuleById.get(twoFieldValidationRuleId)).toMatchObject({
-      expression: 'isNonEmptyString(ticketCode) or isNonEmptyString(priority)',
+      expression: 'isNonEmptyString($f1) or isNonEmptyString($f2)',
+      bindings: { $f1: REFERENCE_FIELD_ID, $f2: PRIORITY_FIELD_ID },
       isActive: false,
     });
     expect(validationRuleById.get(validationRuleId)).toMatchObject({
-      expression: 'isNonEmptyString(ticketCode)',
+      expression: 'isNonEmptyString($f1)',
+      bindings: { $f1: REFERENCE_FIELD_ID },
       isActive: true,
     });
   }, 60000);

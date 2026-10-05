@@ -9,6 +9,7 @@ export const VALIDATION_RULE_FRAGMENT = gql`
     icon
     errorFieldMetadataId
     expression
+    bindings
     message
     isActive
   }

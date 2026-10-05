@@ -1,0 +1,1 @@
+export const VALIDATION_RULE_FIELD_SYMBOL_PREFIX = '$f';

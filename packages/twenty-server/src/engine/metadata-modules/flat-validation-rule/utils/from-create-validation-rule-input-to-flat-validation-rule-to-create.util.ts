@@ -9,6 +9,7 @@ import { type CreateValidationRuleInput } from 'src/engine/metadata-modules/vali
 
 export const fromCreateValidationRuleInputToFlatValidationRuleToCreate = ({
   createValidationRuleInput,
+  expression,
   bindings,
   workspaceId,
   flatApplication,
@@ -16,6 +17,7 @@ export const fromCreateValidationRuleInputToFlatValidationRuleToCreate = ({
   flatFieldMetadataMaps,
 }: {
   createValidationRuleInput: CreateValidationRuleInput;
+  expression: string;
   bindings: ValidationRuleBindings;
   workspaceId: string;
   flatApplication: FlatApplication;
@@ -53,7 +55,7 @@ export const fromCreateValidationRuleInputToFlatValidationRuleToCreate = ({
     name: createValidationRuleInput.name.trim(),
     description: createValidationRuleInput.description ?? null,
     icon: createValidationRuleInput.icon ?? null,
-    expression: createValidationRuleInput.expression,
+    expression,
     bindings,
     message: createValidationRuleInput.message.trim(),
     isActive: createValidationRuleInput.isActive ?? true,
