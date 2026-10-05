@@ -26,10 +26,7 @@ export const createWorkerEventFromSerializedEvent = ({
     targetRemoteElementId: eventData.targetRemoteElementId,
   });
 
-  applySerializedEventTargetProperties({
-    element: dispatchTarget as unknown as Record<string, unknown>,
-    eventData,
-  });
+  applySerializedEventTargetProperties({ element: dispatchTarget, eventData });
 
   const eventClass = resolveEventClassForEventType({
     eventType,
