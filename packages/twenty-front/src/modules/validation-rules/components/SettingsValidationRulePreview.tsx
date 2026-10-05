@@ -13,7 +13,6 @@ import { LightIconButton } from 'twenty-ui/components';
 import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -80,16 +79,16 @@ const StyledFieldValue = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   line-height: 24px;
   min-width: 0;
-  white-space: nowrap;
 `;
 
 const StyledFieldLabel = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
   max-width: 50%;
-  min-width: 0;
+  overflow-wrap: anywhere;
 `;
 
 const StyledValue = styled.span<{ isEmpty: boolean }>`
@@ -97,8 +96,8 @@ const StyledValue = styled.span<{ isEmpty: boolean }>`
     isEmpty
       ? themeCssVariables.font.color.light
       : themeCssVariables.font.color.primary};
-  overflow: hidden;
-  text-overflow: ellipsis;
+  min-width: 0;
+  overflow-wrap: anywhere;
 `;
 
 const StyledMuted = styled.div`
@@ -282,7 +281,7 @@ export const SettingsValidationRulePreview = ({
                         stroke={theme.icon.stroke.sm}
                       />
                     )}
-                    <OverflowingTextWithTooltip text={t`${fieldLabel}:`} />
+                    {t`${fieldLabel}:`}
                   </StyledFieldLabel>
                   <StyledValue isEmpty={formattedValue.length === 0}>
                     {formattedValue.length > 0 ? formattedValue : t`Empty`}
