@@ -1,4 +1,4 @@
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
@@ -33,10 +33,12 @@ export const currencyPickerTest: TwentyUiGalleryPlayFunction = async (
   expect(disabledTrigger).toBeDisabled();
   await userEvent.click(disabledTrigger);
 
-  await primaryCurrencyPickerOpenTest(context);
+  await waitFor(() => {
+    expect(disabledTrigger).toHaveAttribute('aria-expanded', 'false');
+    expect(
+      page.queryByRole('dialog', { name: 'Disabled currencies' }),
+    ).toBeNull();
+  });
 
-  expect(disabledTrigger).toHaveAttribute('aria-expanded', 'false');
-  expect(
-    page.queryByRole('dialog', { name: 'Disabled currencies' }),
-  ).toBeNull();
+  await primaryCurrencyPickerOpenTest(context);
 };

@@ -32,8 +32,12 @@ export const listItemTest: TwentyUiGalleryPlayFunction = async ({
   await waitFor(() => expect(canvas.getByText('Fields: open')).toBeVisible());
 
   const overflowingLabel = canvas.getByText(OVERFLOW_LABEL);
-  expect(overflowingLabel.scrollWidth).toBeGreaterThan(
-    overflowingLabel.clientWidth,
+  await waitFor(
+    () =>
+      expect(overflowingLabel.scrollWidth).toBeGreaterThan(
+        overflowingLabel.clientWidth,
+      ),
+    { timeout: INTERACTION_TIMEOUT },
   );
   await waitFor(
     async () => {
