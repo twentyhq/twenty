@@ -205,13 +205,16 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
     peopleClient: people_v1.People;
     fromEmail: string;
   }): Promise<string | undefined> {
-    const { data: sendAsData } = await gmailClient.users.settings.sendAs.get({
+    const { data: sendAsData } = await gmailClient.users.settings.sendAs.list({
       userId: 'me',
-      sendAsEmail: fromEmail,
     });
 
-    if (isNonEmptyString(sendAsData.displayName)) {
-      return sendAsData.displayName;
+    const sendAsDisplayName = sendAsData.sendAs?.find(
+      (sendAs) => sendAs.sendAsEmail?.toLowerCase() === fromEmail.toLowerCase(),
+    )?.displayName;
+
+    if (isNonEmptyString(sendAsDisplayName)) {
+      return sendAsDisplayName;
     }
 
     const { data: peopleData } = await peopleClient.people.get({

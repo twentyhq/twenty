@@ -5,6 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
+import { GOOGLE_ALIAS_DISPLAY_NAME } from 'test/integration/google/mocks/google-alias-display-name.constant';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { createCalendarEvent } from 'test/integration/utils/create-calendar-event.util';
@@ -245,7 +246,7 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
 
     const [{ raw }] = google.sentMessages.slice(-1);
 
-    expect(raw).toContain(`<${ALIAS}>`);
+    expect(raw).toContain(`From: ${GOOGLE_ALIAS_DISPLAY_NAME} <${ALIAS}>`);
   }, 60000);
 
   it('refuses to send from an address the account has not verified', async () => {
