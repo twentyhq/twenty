@@ -112,6 +112,11 @@ const inputs = {
   },
   ITERATOR: { items: '{{trigger.items}}', initialLoopStepIds: [FIELD_ID] },
   DELAY: { delayType: 'DURATION', duration: { seconds: 1 } },
+  WAIT_FOR_EVENT: {
+    eventName: 'company.updated',
+    recordId: '{{trigger.recordId}}',
+    timeout: { days: 1 },
+  },
   EMPTY: {},
 } satisfies Record<WorkflowStepManifest['type'], unknown>;
 

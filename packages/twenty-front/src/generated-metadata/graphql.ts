@@ -1587,13 +1587,13 @@ export type CreateUsageLimitInput = {
   burstValue?: InputMaybe<Scalars['BigInt']['input']>;
   limitKind: Scalars['String']['input'];
   limitValue: Scalars['BigInt']['input'];
-  meter: Scalars['String']['input'];
   operationType: UsageOperationType;
   periodCount: Scalars['Int']['input'];
   periodUnit: Scalars['String']['input'];
   resourceType: UsageResourceType;
   spenderId?: InputMaybe<Scalars['String']['input']>;
   spenderType: Scalars['String']['input'];
+  unit: UsageUnit;
 };
 
 export type CreateValidationRuleInput = {
@@ -2152,7 +2152,6 @@ export enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CONVERSATIONS_TAB_ENABLED = 'IS_CONVERSATIONS_TAB_ENABLED',
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
-  IS_EXECUTION_QUOTA_ENABLED = 'IS_EXECUTION_QUOTA_ENABLED',
   IS_INITIAL_OBJECT_VIEW_ENABLED = 'IS_INITIAL_OBJECT_VIEW_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED = 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED',
@@ -2163,7 +2162,6 @@ export enum FeatureFlagKey {
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED = 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_VALIDATION_RULES_ENABLED = 'IS_VALIDATION_RULES_ENABLED',
-  IS_WEBHOOK_RATE_LIMIT_ENABLED = 'IS_WEBHOOK_RATE_LIMIT_ENABLED',
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED = 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED',
   IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED = 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
 }
@@ -7243,14 +7241,20 @@ export type UsageLimit = {
   id: Scalars['UUID']['output'];
   limitKind: Scalars['String']['output'];
   limitValue: Scalars['BigInt']['output'];
-  meter: Scalars['String']['output'];
   operationType: UsageOperationType;
   periodCount: Scalars['Int']['output'];
   periodUnit: Scalars['String']['output'];
   resourceType: UsageResourceType;
   spenderId?: Maybe<Scalars['String']['output']>;
   spenderType: Scalars['String']['output'];
+  unit: UsageUnit;
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type UsageLimitOperationDefinition = {
+  __typename?: 'UsageLimitOperationDefinition';
+  allowedUnits: Array<UsageUnit>;
+  operationType: UsageOperationType;
 };
 
 export enum UsageOperationType {
@@ -7272,8 +7276,7 @@ export enum UsageOperationType {
 
 export type UsageQuotaDefinition = {
   __typename?: 'UsageQuotaDefinition';
-  allowedMeters: Array<Scalars['String']['output']>;
-  allowedOperationTypes: Array<UsageOperationType>;
+  allowedOperations: Array<UsageLimitOperationDefinition>;
   allowedSpenderTypes: Array<Scalars['String']['output']>;
   limitKind: Scalars['String']['output'];
   resourceType: UsageResourceType;
@@ -7294,12 +7297,12 @@ export type UsageQuotaScopeConsumption = {
 };
 
 export type UsageQuotaScopeInput = {
-  meter: Scalars['String']['input'];
   operationType: UsageOperationType;
   periodUnit: Scalars['String']['input'];
   resourceType: UsageResourceType;
   spenderId?: InputMaybe<Scalars['String']['input']>;
   spenderType: Scalars['String']['input'];
+  unit: UsageUnit;
 };
 
 export type UsageQuotaWithConsumption = {
@@ -7308,7 +7311,6 @@ export type UsageQuotaWithConsumption = {
   id: Scalars['UUID']['output'];
   isEnforced: Scalars['Boolean']['output'];
   limitValue: Scalars['BigInt']['output'];
-  meter: Scalars['String']['output'];
   operationType: UsageOperationType;
   periodEnd?: Maybe<Scalars['DateTime']['output']>;
   periodStart?: Maybe<Scalars['DateTime']['output']>;
@@ -7318,6 +7320,7 @@ export type UsageQuotaWithConsumption = {
   spenderId?: Maybe<Scalars['String']['output']>;
   spenderLabel?: Maybe<Scalars['String']['output']>;
   spenderType: Scalars['String']['output'];
+  unit: UsageUnit;
 };
 
 export enum UsageResourceType {
@@ -7337,6 +7340,20 @@ export type UsageTimeSeries = {
   creditsUsed: Scalars['Float']['output'];
   date: Scalars['String']['output'];
 };
+
+export enum UsageUnit {
+  BYTE = 'BYTE',
+  COMPLEXITY = 'COMPLEXITY',
+  CREDIT = 'CREDIT',
+  FILE = 'FILE',
+  INVOCATION = 'INVOCATION',
+  MILLISECOND = 'MILLISECOND',
+  MINUTE = 'MINUTE',
+  RECORD = 'RECORD',
+  REQUEST = 'REQUEST',
+  SEAT = 'SEAT',
+  TOKEN = 'TOKEN'
+}
 
 export type UsageUserDaily = {
   __typename?: 'UsageUserDaily';
@@ -9869,7 +9886,7 @@ export type ListPlansQuery = { __typename?: 'Query', listPlans: Array<{ __typena
 export type UsageQuotaDefinitionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UsageQuotaDefinitionsQuery = { __typename?: 'Query', usageQuotaDefinitions: { __typename?: 'UsageQuotaDefinitions', isIntraWorkspaceLimitEntitled: boolean, hasAllowancePeriod: boolean, definitions: Array<{ __typename?: 'UsageQuotaDefinition', resourceType: UsageResourceType, allowedOperationTypes: Array<UsageOperationType>, allowedSpenderTypes: Array<string>, allowedMeters: Array<string> }> } };
+export type UsageQuotaDefinitionsQuery = { __typename?: 'Query', usageQuotaDefinitions: { __typename?: 'UsageQuotaDefinitions', isIntraWorkspaceLimitEntitled: boolean, hasAllowancePeriod: boolean, definitions: Array<{ __typename?: 'UsageQuotaDefinition', resourceType: UsageResourceType, allowedSpenderTypes: Array<string>, allowedOperations: Array<{ __typename?: 'UsageLimitOperationDefinition', operationType: UsageOperationType, allowedUnits: Array<UsageUnit> }> }> } };
 
 export type UsageQuotaScopeConsumptionQueryVariables = Exact<{
   input: UsageQuotaScopeInput;
@@ -9881,7 +9898,7 @@ export type UsageQuotaScopeConsumptionQuery = { __typename?: 'Query', usageQuota
 export type UsageQuotasWithConsumptionQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UsageQuotasWithConsumptionQuery = { __typename?: 'Query', usageQuotasWithConsumption: Array<{ __typename?: 'UsageQuotaWithConsumption', id: string, resourceType: UsageResourceType, operationType: UsageOperationType, spenderType: string, spenderId?: string | null, spenderLabel?: string | null, periodUnit: string, meter: string, limitValue: any, isEnforced: boolean, consumedValue?: any | null, remainingValue?: any | null, periodStart?: string | null, periodEnd?: string | null }> };
+export type UsageQuotasWithConsumptionQuery = { __typename?: 'Query', usageQuotasWithConsumption: Array<{ __typename?: 'UsageQuotaWithConsumption', id: string, resourceType: UsageResourceType, operationType: UsageOperationType, spenderType: string, spenderId?: string | null, spenderLabel?: string | null, periodUnit: string, unit: UsageUnit, limitValue: any, isEnforced: boolean, consumedValue?: any | null, remainingValue?: any | null, periodStart?: string | null, periodEnd?: string | null }> };
 
 export type ApiKeyFragmentFragment = { __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } };
 
@@ -10910,9 +10927,9 @@ export const UpdateUsageLimitDocument = {"kind":"Document","definitions":[{"kind
 export const BillingPortalSessionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"BillingPortalSession"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"returnUrlPath"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"forPaymentMethodUpdate"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"billingPortalSession"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"returnUrlPath"},"value":{"kind":"Variable","name":{"kind":"Name","value":"returnUrlPath"}}},{"kind":"Argument","name":{"kind":"Name","value":"forPaymentMethodUpdate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"forPaymentMethodUpdate"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>;
 export const GetResourceCreditUsageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetResourceCreditUsage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getResourceCreditUsage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"usedCredits"}},{"kind":"Field","name":{"kind":"Name","value":"grantedCredits"}},{"kind":"Field","name":{"kind":"Name","value":"rolloverCredits"}},{"kind":"Field","name":{"kind":"Name","value":"totalGrantedCredits"}},{"kind":"Field","name":{"kind":"Name","value":"unitPriceCents"}}]}}]}}]} as unknown as DocumentNode<GetResourceCreditUsageQuery, GetResourceCreditUsageQueryVariables>;
 export const ListPlansDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"listPlans"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"listPlans"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"baseProducts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"images"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageBased"}},{"kind":"Field","name":{"kind":"Name","value":"isLegacy"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingLicensedProduct"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingPriceLicensedFragment"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"resourceCreditProducts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"images"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageBased"}},{"kind":"Field","name":{"kind":"Name","value":"isLegacy"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingLicensedProduct"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingPriceLicensedFragment"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"meteredProducts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"images"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageBased"}},{"kind":"Field","name":{"kind":"Name","value":"isLegacy"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingMeteredProduct"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingPriceMeteredFragment"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingPriceLicensedFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingPriceLicensed"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"stripePriceId"}},{"kind":"Field","name":{"kind":"Name","value":"unitAmount"}},{"kind":"Field","name":{"kind":"Name","value":"recurringInterval"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageType"}},{"kind":"Field","name":{"kind":"Name","value":"creditAmount"}},{"kind":"Field","name":{"kind":"Name","value":"isSellable"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingPriceMeteredFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingPriceMetered"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"priceUsageType"}},{"kind":"Field","name":{"kind":"Name","value":"recurringInterval"}},{"kind":"Field","name":{"kind":"Name","value":"stripePriceId"}},{"kind":"Field","name":{"kind":"Name","value":"tiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"flatAmount"}},{"kind":"Field","name":{"kind":"Name","value":"unitAmount"}},{"kind":"Field","name":{"kind":"Name","value":"upTo"}}]}}]}}]} as unknown as DocumentNode<ListPlansQuery, ListPlansQueryVariables>;
-export const UsageQuotaDefinitionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotaDefinitions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotaDefinitions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"definitions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resourceType"}},{"kind":"Field","name":{"kind":"Name","value":"allowedOperationTypes"}},{"kind":"Field","name":{"kind":"Name","value":"allowedSpenderTypes"}},{"kind":"Field","name":{"kind":"Name","value":"allowedMeters"}}]}},{"kind":"Field","name":{"kind":"Name","value":"isIntraWorkspaceLimitEntitled"}},{"kind":"Field","name":{"kind":"Name","value":"hasAllowancePeriod"}}]}}]}}]} as unknown as DocumentNode<UsageQuotaDefinitionsQuery, UsageQuotaDefinitionsQueryVariables>;
+export const UsageQuotaDefinitionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotaDefinitions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotaDefinitions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"definitions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resourceType"}},{"kind":"Field","name":{"kind":"Name","value":"allowedOperations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"operationType"}},{"kind":"Field","name":{"kind":"Name","value":"allowedUnits"}}]}},{"kind":"Field","name":{"kind":"Name","value":"allowedSpenderTypes"}}]}},{"kind":"Field","name":{"kind":"Name","value":"isIntraWorkspaceLimitEntitled"}},{"kind":"Field","name":{"kind":"Name","value":"hasAllowancePeriod"}}]}}]}}]} as unknown as DocumentNode<UsageQuotaDefinitionsQuery, UsageQuotaDefinitionsQueryVariables>;
 export const UsageQuotaScopeConsumptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotaScopeConsumption"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UsageQuotaScopeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotaScopeConsumption"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"consumedValue"}},{"kind":"Field","name":{"kind":"Name","value":"periodStart"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}}]}}]}}]} as unknown as DocumentNode<UsageQuotaScopeConsumptionQuery, UsageQuotaScopeConsumptionQueryVariables>;
-export const UsageQuotasWithConsumptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotasWithConsumption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotasWithConsumption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"resourceType"}},{"kind":"Field","name":{"kind":"Name","value":"operationType"}},{"kind":"Field","name":{"kind":"Name","value":"spenderType"}},{"kind":"Field","name":{"kind":"Name","value":"spenderId"}},{"kind":"Field","name":{"kind":"Name","value":"spenderLabel"}},{"kind":"Field","name":{"kind":"Name","value":"periodUnit"}},{"kind":"Field","name":{"kind":"Name","value":"meter"}},{"kind":"Field","name":{"kind":"Name","value":"limitValue"}},{"kind":"Field","name":{"kind":"Name","value":"isEnforced"}},{"kind":"Field","name":{"kind":"Name","value":"consumedValue"}},{"kind":"Field","name":{"kind":"Name","value":"remainingValue"}},{"kind":"Field","name":{"kind":"Name","value":"periodStart"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}}]}}]}}]} as unknown as DocumentNode<UsageQuotasWithConsumptionQuery, UsageQuotasWithConsumptionQueryVariables>;
+export const UsageQuotasWithConsumptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotasWithConsumption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotasWithConsumption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"resourceType"}},{"kind":"Field","name":{"kind":"Name","value":"operationType"}},{"kind":"Field","name":{"kind":"Name","value":"spenderType"}},{"kind":"Field","name":{"kind":"Name","value":"spenderId"}},{"kind":"Field","name":{"kind":"Name","value":"spenderLabel"}},{"kind":"Field","name":{"kind":"Name","value":"periodUnit"}},{"kind":"Field","name":{"kind":"Name","value":"unit"}},{"kind":"Field","name":{"kind":"Name","value":"limitValue"}},{"kind":"Field","name":{"kind":"Name","value":"isEnforced"}},{"kind":"Field","name":{"kind":"Name","value":"consumedValue"}},{"kind":"Field","name":{"kind":"Name","value":"remainingValue"}},{"kind":"Field","name":{"kind":"Name","value":"periodStart"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}}]}}]}}]} as unknown as DocumentNode<UsageQuotasWithConsumptionQuery, UsageQuotasWithConsumptionQueryVariables>;
 export const AssignRoleToApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AssignRoleToApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"apiKeyId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assignRoleToApiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"apiKeyId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"apiKeyId"}}},{"kind":"Argument","name":{"kind":"Name","value":"roleId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}}}]}]}}]} as unknown as DocumentNode<AssignRoleToApiKeyMutation, AssignRoleToApiKeyMutationVariables>;
 export const CreateApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateApiKeyInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createApiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApiKeyFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApiKeyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApiKey"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"revokedAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]}}]} as unknown as DocumentNode<CreateApiKeyMutation, CreateApiKeyMutationVariables>;
 export const CreateWebhookDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWebhook"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateWebhookInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWebhook"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WebhookFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WebhookFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Webhook"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"targetUrl"}},{"kind":"Field","name":{"kind":"Name","value":"operations"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]} as unknown as DocumentNode<CreateWebhookMutation, CreateWebhookMutationVariables>;

@@ -37,6 +37,7 @@ import { WorkflowCleanWorkflowRunsCronCommand } from 'src/modules/workflow/workf
 import { WorkflowHandleStaledRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-handle-staled-runs.cron.command';
 import { WorkflowRunEnqueueCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-run-enqueue.cron.command';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
+import { WorkflowStepWaitSweepCronCommand } from 'src/modules/workflow/workflow-wait/crons/commands/workflow-step-wait-sweep.cron.command';
 
 @Command({
   name: 'cron:register:all',
@@ -66,6 +67,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
     private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCronCommand,
     private readonly workflowCoreConsistencyCronCommand: WorkflowCoreConsistencyCronCommand,
+    private readonly workflowStepWaitSweepCronCommand: WorkflowStepWaitSweepCronCommand,
 
     private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
     private readonly checkPublicDomainsValidRecordsCronCommand: CheckPublicDomainsValidRecordsCronCommand,
@@ -178,6 +180,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'WorkflowCoreConsistency',
         command: this.workflowCoreConsistencyCronCommand,
+      },
+      {
+        name: 'WorkflowStepWaitSweep',
+        command: this.workflowStepWaitSweepCronCommand,
       },
       {
         name: 'CronTrigger',

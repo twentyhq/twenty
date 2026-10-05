@@ -1268,18 +1268,25 @@ export interface LogicFunctionExecutionResult {
 /** Status of the logic function execution */
 export type LogicFunctionExecutionStatus = 'IDLE' | 'SUCCESS' | 'ERROR'
 
+export interface UsageLimitOperationDefinition {
+    operationType: UsageOperationType
+    allowedUnits: UsageUnit[]
+    __typename: 'UsageLimitOperationDefinition'
+}
+
+export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'RECORD_WRITE' | 'SUBSCRIPTION'
+
+export type UsageUnit = 'CREDIT' | 'TOKEN' | 'INVOCATION' | 'MINUTE' | 'MILLISECOND' | 'BYTE' | 'FILE' | 'REQUEST' | 'SEAT' | 'RECORD' | 'COMPLEXITY'
+
 export interface UsageQuotaDefinition {
     resourceType: UsageResourceType
     limitKind: Scalars['String']
-    allowedOperationTypes: UsageOperationType[]
+    allowedOperations: UsageLimitOperationDefinition[]
     allowedSpenderTypes: Scalars['String'][]
-    allowedMeters: Scalars['String'][]
     __typename: 'UsageQuotaDefinition'
 }
 
 export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL' | 'WEBHOOK' | 'RECORD'
-
-export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'RECORD_WRITE' | 'SUBSCRIPTION'
 
 export interface UsageQuotaDefinitions {
     definitions: UsageQuotaDefinition[]
@@ -1296,7 +1303,7 @@ export interface UsageQuotaWithConsumption {
     spenderId?: Scalars['String']
     spenderLabel?: Scalars['String']
     periodUnit: Scalars['String']
-    meter: Scalars['String']
+    unit: UsageUnit
     limitValue: Scalars['BigInt']
     isEnforced: Scalars['Boolean']
     consumedValue?: Scalars['BigInt']
@@ -1322,7 +1329,7 @@ export interface UsageLimit {
     limitKind: Scalars['String']
     periodCount: Scalars['Int']
     periodUnit: Scalars['String']
-    meter: Scalars['String']
+    unit: UsageUnit
     limitValue: Scalars['BigInt']
     burstValue?: Scalars['BigInt']
     createdAt: Scalars['DateTime']
@@ -1707,7 +1714,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED'
+export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -5119,12 +5126,18 @@ export interface LogicFunctionExecutionResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UsageLimitOperationDefinitionGenqlSelection{
+    operationType?: boolean | number
+    allowedUnits?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface UsageQuotaDefinitionGenqlSelection{
     resourceType?: boolean | number
     limitKind?: boolean | number
-    allowedOperationTypes?: boolean | number
+    allowedOperations?: UsageLimitOperationDefinitionGenqlSelection
     allowedSpenderTypes?: boolean | number
-    allowedMeters?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5145,7 +5158,7 @@ export interface UsageQuotaWithConsumptionGenqlSelection{
     spenderId?: boolean | number
     spenderLabel?: boolean | number
     periodUnit?: boolean | number
-    meter?: boolean | number
+    unit?: boolean | number
     limitValue?: boolean | number
     isEnforced?: boolean | number
     consumedValue?: boolean | number
@@ -5173,7 +5186,7 @@ export interface UsageLimitGenqlSelection{
     limitKind?: boolean | number
     periodCount?: boolean | number
     periodUnit?: boolean | number
-    meter?: boolean | number
+    unit?: boolean | number
     limitValue?: boolean | number
     burstValue?: boolean | number
     createdAt?: boolean | number
@@ -7490,7 +7503,7 @@ export interface QueryGenqlSelection{
 
 export interface RecordTargetInput {objectMetadataId: Scalars['UUID'],recordId: Scalars['UUID']}
 
-export interface UsageQuotaScopeInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),periodUnit: Scalars['String'],meter: Scalars['String']}
+export interface UsageQuotaScopeInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),periodUnit: Scalars['String'],unit: UsageUnit}
 
 export interface AgentIdInput {
 /** The id of the agent. */
@@ -7830,7 +7843,7 @@ update: UpdateNavigationMenuItemInput}
 
 export interface UpdateNavigationMenuItemInput {folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
-export interface CreateUsageLimitInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),limitKind: Scalars['String'],periodCount: Scalars['Int'],periodUnit: Scalars['String'],meter: Scalars['String'],limitValue: Scalars['BigInt'],burstValue?: (Scalars['BigInt'] | null)}
+export interface CreateUsageLimitInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),limitKind: Scalars['String'],periodCount: Scalars['Int'],periodUnit: Scalars['String'],unit: UsageUnit,limitValue: Scalars['BigInt'],burstValue?: (Scalars['BigInt'] | null)}
 
 export interface UpdateUsageLimitInput {id: Scalars['UUID'],payload: CreateUsageLimitInput}
 
@@ -9031,6 +9044,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isLogicFunctionExecutionResult = (obj?: { __typename?: any } | null): obj is LogicFunctionExecutionResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionExecutionResult"')
       return LogicFunctionExecutionResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageLimitOperationDefinition_possibleTypes: string[] = ['UsageLimitOperationDefinition']
+    export const isUsageLimitOperationDefinition = (obj?: { __typename?: any } | null): obj is UsageLimitOperationDefinition => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimitOperationDefinition"')
+      return UsageLimitOperationDefinition_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11303,18 +11324,6 @@ export const enumLogicFunctionExecutionStatus = {
    ERROR: 'ERROR' as const
 }
 
-export const enumUsageResourceType = {
-   AI: 'AI' as const,
-   WORKFLOW: 'WORKFLOW' as const,
-   APP: 'APP' as const,
-   STORAGE: 'STORAGE' as const,
-   API: 'API' as const,
-   LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
-   EMAIL: 'EMAIL' as const,
-   WEBHOOK: 'WEBHOOK' as const,
-   RECORD: 'RECORD' as const
-}
-
 export const enumUsageOperationType = {
    ALL: 'ALL' as const,
    AI_CHAT_TOKEN: 'AI_CHAT_TOKEN' as const,
@@ -11330,6 +11339,32 @@ export const enumUsageOperationType = {
    STORAGE_FILE: 'STORAGE_FILE' as const,
    RECORD_WRITE: 'RECORD_WRITE' as const,
    SUBSCRIPTION: 'SUBSCRIPTION' as const
+}
+
+export const enumUsageUnit = {
+   CREDIT: 'CREDIT' as const,
+   TOKEN: 'TOKEN' as const,
+   INVOCATION: 'INVOCATION' as const,
+   MINUTE: 'MINUTE' as const,
+   MILLISECOND: 'MILLISECOND' as const,
+   BYTE: 'BYTE' as const,
+   FILE: 'FILE' as const,
+   REQUEST: 'REQUEST' as const,
+   SEAT: 'SEAT' as const,
+   RECORD: 'RECORD' as const,
+   COMPLEXITY: 'COMPLEXITY' as const
+}
+
+export const enumUsageResourceType = {
+   AI: 'AI' as const,
+   WORKFLOW: 'WORKFLOW' as const,
+   APP: 'APP' as const,
+   STORAGE: 'STORAGE' as const,
+   API: 'API' as const,
+   LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
+   EMAIL: 'EMAIL' as const,
+   WEBHOOK: 'WEBHOOK' as const,
+   RECORD: 'RECORD' as const
 }
 
 export const enumNavigationMenuItemType = {
@@ -11410,9 +11445,7 @@ export const enumFeatureFlagKey = {
    IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' as const,
    IS_AI_CHAT_SHARING_DROPDOWN_ENABLED: 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' as const,
    IS_INITIAL_OBJECT_VIEW_ENABLED: 'IS_INITIAL_OBJECT_VIEW_ENABLED' as const,
-   IS_WEBHOOK_RATE_LIMIT_ENABLED: 'IS_WEBHOOK_RATE_LIMIT_ENABLED' as const,
    IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED: 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' as const,
-   IS_EXECUTION_QUOTA_ENABLED: 'IS_EXECUTION_QUOTA_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_LOGS_SETTINGS_SECTION_ENABLED: 'IS_LOGS_SETTINGS_SECTION_ENABLED' as const,
    IS_CONVERSATIONS_TAB_ENABLED: 'IS_CONVERSATIONS_TAB_ENABLED' as const,

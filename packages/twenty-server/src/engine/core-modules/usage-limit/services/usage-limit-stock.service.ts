@@ -26,7 +26,6 @@ import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spen
 import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
 import { type StockCounter } from 'src/engine/core-modules/usage-limit/types/stock-counter.type';
 import { type StockLimitDefault } from 'src/engine/core-modules/usage-limit/types/stock-limit-default.type';
-import { type StockMeter } from 'src/engine/core-modules/usage-limit/types/stock-meter.type';
 import { type StockResourceType } from 'src/engine/core-modules/usage-limit/types/stock-resource-type.type';
 import { buildStockCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter-key.util';
 import { buildStockCounters } from 'src/engine/core-modules/usage-limit/utils/build-stock-counters.util';
@@ -42,6 +41,7 @@ import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock
 import { isStockResourceType } from 'src/engine/core-modules/usage-limit/utils/is-stock-resource-type.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -122,7 +122,7 @@ export class UsageLimitStockService {
       cost,
       script: CONSUME_QUOTA_COUNTERS_SCRIPT,
       buildArgs: (counters) => [
-        JSON.stringify(counters.map((counter) => cost[counter.meter] ?? 0)),
+        JSON.stringify(counters.map((counter) => cost[counter.unit] ?? 0)),
       ],
     });
   }
@@ -136,7 +136,7 @@ export class UsageLimitStockService {
       cost,
       script: RELEASE_STOCK_COUNTERS_SCRIPT,
       buildArgs: (counters) => [
-        JSON.stringify(counters.map((counter) => cost[counter.meter] ?? 0)),
+        JSON.stringify(counters.map((counter) => cost[counter.unit] ?? 0)),
         JSON.stringify(counters.map((counter) => counter.limitValue)),
       ],
     });
@@ -148,7 +148,7 @@ export class UsageLimitStockService {
     operationType,
     spenderType,
     spenderId,
-    meter,
+    unit,
     limitValue,
   }: {
     workspaceId: string;
@@ -156,7 +156,7 @@ export class UsageLimitStockService {
     operationType: UsageOperationType;
     spenderType: SpenderType;
     spenderId: string | null;
-    meter: StockMeter;
+    unit: UsageUnit;
     limitValue: number;
   }) {
     const keys = [
@@ -166,7 +166,7 @@ export class UsageLimitStockService {
         operationType,
         spenderType,
         spenderId,
-        meter,
+        unit,
         limitValue,
       }),
     ];
@@ -184,7 +184,7 @@ export class UsageLimitStockService {
               resourceType,
               operationType,
               spenderType,
-              meter: stockLimitDefault.meter,
+              unit: stockLimitDefault.unit,
               limitValue: stockLimitDefault.limitValue,
             }),
           ),
@@ -252,7 +252,7 @@ export class UsageLimitStockService {
   }): Promise<void> {
     try {
       const counters = (await this.buildCounters(args)).filter(
-        (counter) => (cost[counter.meter] ?? 0) > 0,
+        (counter) => (cost[counter.unit] ?? 0) > 0,
       );
 
       if (counters.length === 0) {
@@ -324,7 +324,7 @@ export class UsageLimitStockService {
       )
       .map((stockLimitDefaultDefinition) => ({
         spenderType: stockLimitDefaultDefinition.spenderType,
-        meter: stockLimitDefaultDefinition.meter,
+        unit: stockLimitDefaultDefinition.unit,
         isOverridable: stockLimitDefaultDefinition.isOverridable,
         limitValue: this.twentyConfigService.get(
           stockLimitDefaultDefinition.limitValueConfigVariable,
