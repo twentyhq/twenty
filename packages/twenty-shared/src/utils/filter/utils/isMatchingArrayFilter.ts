@@ -18,7 +18,7 @@ export const isMatchingArrayFilter = ({
       }
     }
     case arrayFilter.isEmptyArray !== undefined: {
-      return Array.isArray(value) && value.length === 0;
+      return arrayFilter.isEmptyArray !== isNonEmptyArray(value);
     }
     case arrayFilter.containsIlike !== undefined: {
       if (!isNonEmptyArray(value)) {

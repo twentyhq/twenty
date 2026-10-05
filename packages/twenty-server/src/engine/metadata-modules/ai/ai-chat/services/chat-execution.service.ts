@@ -1,4 +1,5 @@
 import { injectChatMessageSenders } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-chat-message-senders.util';
+import { splitContextInstructions } from 'src/engine/metadata-modules/ai/ai-chat/utils/split-context-instructions.util';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { Injectable, Logger } from '@nestjs/common';
@@ -433,11 +434,13 @@ export class ChatExecutionService {
       new Set(Object.keys(activeTools)),
     );
 
-    const rawModelMessages = await convertToModelMessages(sanitizedMessages);
+    const { contexts, conversation } = splitContextInstructions(
+      await convertToModelMessages(sanitizedMessages),
+    );
 
     const pruningResult =
       this.messagePruningService.pruneIfOverContextWindowLimit(
-        rawModelMessages,
+        conversation,
         modelConfig.contextWindowTokens,
         conversationSizeTokens,
       );
@@ -532,7 +535,7 @@ export class ChatExecutionService {
 
     const stream = streamText({
       model: registeredModel.model,
-      instructions: systemMessage,
+      instructions: [systemMessage, ...contexts],
       messages: modelMessages,
       tools: activeTools,
       // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first pausing tool call.

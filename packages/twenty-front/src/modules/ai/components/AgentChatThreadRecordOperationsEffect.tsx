@@ -4,7 +4,6 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
@@ -74,14 +73,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
           const createdThread =
             operation.createdRecord as AgentChatThreadRecord;
 
-          // a workflow run's conversation is listed only for the member it is routed to
-          if (
-            !isDefined(createdThread.workflowRunId) ||
-            createdThread.workspaceMemberId ===
-              store.get(currentWorkspaceMemberState.atom)?.id
-          ) {
-            addAgentChatThread(createdThread);
-          }
+          addAgentChatThread(createdThread);
           return;
         }
         case 'update-one':
@@ -93,7 +85,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
 
           applyUpdates(updateInputs.map(toThreadUpdate));
 
-          // An updated chat past the loaded pages moves to the top; reloading keeps workflow run chats out.
+          // An updated chat past the loaded pages moves to the top
           const listedThreadIds =
             store.get(agentChatThreadListState.atom)?.threadIds ?? [];
 

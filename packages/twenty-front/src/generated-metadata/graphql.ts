@@ -2154,7 +2154,6 @@ export enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CONVERSATIONS_TAB_ENABLED = 'IS_CONVERSATIONS_TAB_ENABLED',
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
-  IS_EXECUTION_QUOTA_ENABLED = 'IS_EXECUTION_QUOTA_ENABLED',
   IS_INITIAL_OBJECT_VIEW_ENABLED = 'IS_INITIAL_OBJECT_VIEW_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED = 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED',
@@ -2165,7 +2164,6 @@ export enum FeatureFlagKey {
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED = 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_VALIDATION_RULES_ENABLED = 'IS_VALIDATION_RULES_ENABLED',
-  IS_WEBHOOK_RATE_LIMIT_ENABLED = 'IS_WEBHOOK_RATE_LIMIT_ENABLED',
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED = 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED',
   IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED = 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
 }
@@ -6220,7 +6218,7 @@ export type SearchField = {
 
 export type SendChatMessageResult = {
   __typename?: 'SendChatMessageResult';
-  messageId: Scalars['String']['output'];
+  messageId?: Maybe<Scalars['String']['output']>;
   queued: Scalars['Boolean']['output'];
   streamId?: Maybe<Scalars['String']['output']>;
 };
@@ -8157,7 +8155,7 @@ export type RetryChatMessageMutationVariables = Exact<{
 }>;
 
 
-export type RetryChatMessageMutation = { __typename?: 'Mutation', retryChatMessage: { __typename?: 'SendChatMessageResult', messageId: string, queued: boolean, streamId?: string | null } };
+export type RetryChatMessageMutation = { __typename?: 'Mutation', retryChatMessage: { __typename?: 'SendChatMessageResult', messageId?: string | null, queued: boolean, streamId?: string | null } };
 
 export type RunEvaluationInputMutationVariables = Exact<{
   agentId: Scalars['UUID']['input'];
@@ -8177,7 +8175,7 @@ export type SendChatMessageMutationVariables = Exact<{
 }>;
 
 
-export type SendChatMessageMutation = { __typename?: 'Mutation', sendChatMessage: { __typename?: 'SendChatMessageResult', messageId: string, queued: boolean, streamId?: string | null } };
+export type SendChatMessageMutation = { __typename?: 'Mutation', sendChatMessage: { __typename?: 'SendChatMessageResult', messageId?: string | null, queued: boolean, streamId?: string | null } };
 
 export type SnoozeAgentChatThreadMutationVariables = Exact<{
   threadId: Scalars['UUID']['input'];
