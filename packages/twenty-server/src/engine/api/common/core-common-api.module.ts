@@ -20,6 +20,7 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { ObjectRecordCountModule } from 'src/engine/metadata-modules/object-metadata/object-record-count.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -51,6 +52,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     FeatureFlagModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    ObjectRecordCountModule,
   ],
   providers: [
     ProcessNestedRelationsHelper,

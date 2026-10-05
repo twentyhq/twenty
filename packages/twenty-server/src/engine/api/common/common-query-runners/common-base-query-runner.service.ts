@@ -148,7 +148,11 @@ export abstract class CommonBaseQueryRunnerService<
     );
 
     if (isRootOperation) {
-      this.recordApiComplexityUsage(authContext, queryComplexity);
+      this.recordApiUsage({
+        authContext,
+        quantity: queryComplexity,
+        unit: UsageUnit.COMPLEXITY,
+      });
     }
 
     const results = await this.workspaceOrmManager.executeInWorkspaceContext(
@@ -486,10 +490,15 @@ export abstract class CommonBaseQueryRunnerService<
     };
   }
 
-  private recordApiComplexityUsage(
-    authContext: WorkspaceAuthContext,
-    queryComplexity: number,
-  ) {
+  protected recordApiUsage({
+    authContext,
+    quantity,
+    unit,
+  }: {
+    authContext: WorkspaceAuthContext;
+    quantity: number;
+    unit: UsageUnit;
+  }) {
     const apiType = getApiType();
 
     if (!isDefined(apiType)) {
@@ -499,8 +508,8 @@ export abstract class CommonBaseQueryRunnerService<
     this.usageRecorderService.accumulate(authContext.workspace.id, {
       resourceType: UsageResourceType.API,
       operationType: UsageOperationType.API_REQUEST,
-      quantity: queryComplexity,
-      unit: UsageUnit.COMPLEXITY,
+      quantity,
+      unit,
       resourceContext: apiType,
       spenders: buildUsageSpendersFromAuthContext(authContext),
     });

@@ -1,0 +1,1 @@
+export const APPROXIMATE_RECORD_COUNT_CACHE_TTL_MS = 5 * 60 * 1_000;

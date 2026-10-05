@@ -18,7 +18,7 @@ import { MostlyEmptyFieldsService } from 'src/engine/metadata-modules/object-met
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
+import { ObjectRecordCountModule } from 'src/engine/metadata-modules/object-metadata/object-record-count.module';
 import { ObjectMetadataToolsFactory } from 'src/engine/metadata-modules/object-metadata/tools/object-metadata-tools.factory';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
@@ -54,12 +54,12 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ViewModule,
     ViewFieldModule,
     WorkspaceCacheModule,
+    ObjectRecordCountModule,
   ],
   controllers: [ObjectMetadataController],
   providers: [
     ObjectMetadataService,
     ObjectMetadataResolver,
-    ObjectRecordCountService,
     MostlyEmptyFieldsService,
     ObjectMetadataToolsFactory,
     provideWorkspaceScopedRepository(ObjectMetadataEntity),

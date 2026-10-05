@@ -22,6 +22,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { estimateRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-rows-read.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonFindManyOutput } from 'src/engine/api/common/types/common-find-many-output.type';
@@ -44,18 +45,28 @@ import { buildOrderByValuesByRecordId } from 'src/engine/api/utils/build-order-b
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import {
   buildOrderByFromLeaves,
+  type OrderByLeaf,
   resolveOrderByLeaves,
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { getApiType } from 'src/engine/core-modules/usage/storage/api-request-context.storage';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
 
 @Injectable()
 export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerService<
   FindManyQueryArgs,
   CommonFindManyOutput
 > {
+  constructor(
+    private readonly objectRecordCountService: ObjectRecordCountService,
+  ) {
+    super();
+  }
+
   protected readonly operationName = CommonQueryNames.FIND_MANY;
   protected readonly isReadOnly = true;
 
@@ -151,6 +162,17 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
+    const hasAggregatedFields =
+      Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
+
+    await this.recordApiEstimatedRowsReadUsage({
+      filter: args.filter ?? {},
+      orderByLeaves,
+      limit: limit + (args.offset ?? 0),
+      hasAggregatedFields,
+      queryRunnerContext,
+    });
+
     const columnsToSelect = {
       ...buildColumnsToSelect({
         select: args.selectedFieldsResult.select,
@@ -224,8 +246,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatFieldMetadataMaps,
       orderByValuesByRecordId,
     });
-    const hasAggregatedFields =
-      Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
 
     const parentObjectRecordsAggregatedValues = hasAggregatedFields
       ? await aggregateQueryBuilder.getRawOne<Record<string, number>>()
@@ -353,6 +373,62 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
+  }
+
+  private async recordApiEstimatedRowsReadUsage({
+    filter,
+    orderByLeaves,
+    limit,
+    hasAggregatedFields,
+    queryRunnerContext,
+  }: {
+    filter: Partial<ObjectRecordFilter>;
+    orderByLeaves: OrderByLeaf[];
+    limit: number;
+    hasAggregatedFields: boolean;
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+  }) {
+    const {
+      authContext,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatIndexMaps,
+      nestedOperationDepth,
+    } = queryRunnerContext;
+
+    if (
+      (nestedOperationDepth ?? 0) > 0 ||
+      !isDefined(getApiType()) ||
+      !isDefined(flatIndexMaps)
+    ) {
+      return;
+    }
+
+    const approximateRecordCountByTableName =
+      await this.objectRecordCountService.getCachedApproximateRecordCountByTableName(
+        authContext.workspace.id,
+      );
+
+    const estimateRowsReadUpTo = (rowLimit?: number) =>
+      estimateRowsRead({
+        filter,
+        orderByLeaves,
+        limit: rowLimit,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatIndexMaps,
+        approximateRecordCountByTableName,
+      });
+
+    this.recordApiUsage({
+      authContext,
+      quantity:
+        estimateRowsReadUpTo(limit) +
+        (hasAggregatedFields ? estimateRowsReadUpTo() : 0),
+      unit: UsageUnit.ESTIMATED_ROWS_READ,
+    });
   }
 
   protected override computeQueryComplexity(

@@ -14,6 +14,7 @@ export enum UsageUnit {
   SEAT = 'SEAT',
   RECORD = 'RECORD',
   COMPLEXITY = 'COMPLEXITY',
+  ESTIMATED_ROWS_READ = 'ESTIMATED_ROWS_READ',
 }
 
 registerEnumType(UsageUnit, {
