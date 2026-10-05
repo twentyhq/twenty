@@ -5,7 +5,7 @@ import {
 } from 'twenty-shared/ai';
 
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
-import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
+import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
 
 // stored messages are replayed to a model, so dangling tool parts are finalized first
 export const mapUIMessagePartsToDBParts = (

@@ -1,6 +1,6 @@
 import { type StepResult, type ToolSet } from 'ai';
 
-import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
+import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 
 const buildStep = (
   content: StepResult<ToolSet>['content'],
