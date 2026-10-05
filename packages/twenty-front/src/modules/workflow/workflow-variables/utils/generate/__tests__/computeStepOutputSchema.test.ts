@@ -25,6 +25,49 @@ const mockCompanyObjectMetadataItem: EnrichedObjectMetadataItem = {
 } as EnrichedObjectMetadataItem;
 
 describe('computeStepOutputSchema', () => {
+  describe('SEND_CHAT_MESSAGE', () => {
+    it('only outputs the conversation when nothing waits for approval', () => {
+      const result = computeStepOutputSchema({
+        step: {
+          type: 'SEND_CHAT_MESSAGE',
+          settings: {
+            input: { workspaceMemberId: '', title: '', text: 'Hello' },
+          },
+        } as any,
+        objectMetadataItems: [],
+      });
+
+      expect(Object.keys(result ?? {})).toEqual(['threadId']);
+    });
+
+    it('outputs the decision when an action waits for approval', () => {
+      const result = computeStepOutputSchema({
+        step: {
+          type: 'SEND_CHAT_MESSAGE',
+          settings: {
+            input: {
+              workspaceMemberId: '',
+              title: '',
+              text: 'Approve?',
+              toolCall: { toolName: 'update_one_company', arguments: {} },
+            },
+          },
+        } as any,
+        objectMetadataItems: [],
+      });
+
+      expect(Object.keys(result ?? {})).toEqual([
+        'threadId',
+        'outcome',
+        'toolName',
+        'feedback',
+        'error',
+        'arguments',
+        'output',
+      ]);
+    });
+  });
+
   describe('PERSISTED_OUTPUT_SCHEMA_TYPES', () => {
     it('should return undefined for CODE step type', () => {
       const result = computeStepOutputSchema({

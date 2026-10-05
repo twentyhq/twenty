@@ -1,5 +1,4 @@
 import { type PageLayoutManifest } from 'twenty-shared/application';
-import { type PageLayoutType } from 'twenty-shared/types';
 
 import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
 
@@ -16,7 +15,7 @@ export const fromPageLayoutManifestToUniversalFlatPageLayout = ({
     universalIdentifier: pageLayoutManifest.universalIdentifier,
     applicationUniversalIdentifier,
     name: pageLayoutManifest.name,
-    type: pageLayoutManifest.type as PageLayoutType,
+    type: pageLayoutManifest.type,
     objectMetadataUniversalIdentifier:
       pageLayoutManifest.objectUniversalIdentifier ?? null,
     defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier:

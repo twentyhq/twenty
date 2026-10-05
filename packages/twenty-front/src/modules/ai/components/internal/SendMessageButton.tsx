@@ -1,6 +1,6 @@
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
-import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
+import { agentChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
@@ -24,7 +24,7 @@ export const SendMessageButton = ({
     agentChatInputIsEmptySelector,
   );
 
-  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
+  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingSelector);
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const agentChatIsStreaming = useAtomComponentFamilyStateValue(

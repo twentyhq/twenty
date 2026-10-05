@@ -1,39 +1,19 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 import { AUTO_SCROLL_EDGE_THRESHOLD_PX } from '@/ui/utilities/drag-select/constants/AutoScrollEdgeThresholdPx';
 import { AUTO_SCROLL_MAX_SPEED_PX } from '@/ui/utilities/drag-select/constants/AutoScrollMaxSpeedPx';
 
-type UseDragSelectWithAutoScrollProps = {
-  scrollWrapperComponentInstanceId?: string;
-};
-
-export const useDragSelectWithAutoScroll = ({
-  scrollWrapperComponentInstanceId,
-}: UseDragSelectWithAutoScrollProps) => {
-  const instanceStateContext = useComponentInstanceStateContext(
+export const useDragSelectWithAutoScroll = () => {
+  const scrollWrapperInstanceId = useComponentInstanceStateContext(
     ScrollWrapperComponentInstanceContext,
-  );
-
-  const instanceIdFromContext = instanceStateContext?.instanceId;
-
-  const scrollWrapperInstanceId = useMemo(() => {
-    if (isNonEmptyString(scrollWrapperComponentInstanceId)) {
-      return scrollWrapperComponentInstanceId;
-    } else if (isNonEmptyString(instanceIdFromContext)) {
-      return instanceIdFromContext;
-    }
-    return null;
-  }, [scrollWrapperComponentInstanceId, instanceIdFromContext]);
-
-  const hasScrollWrapper = isDefined(scrollWrapperInstanceId);
+  )?.instanceId;
 
   const handleAutoScroll = useCallback(
     (mouseX: number, mouseY: number) => {
-      if (!hasScrollWrapper || !scrollWrapperInstanceId) {
+      if (!isNonEmptyString(scrollWrapperInstanceId)) {
         return;
       }
 
@@ -87,7 +67,7 @@ export const useDragSelectWithAutoScroll = ({
         });
       }
     },
-    [hasScrollWrapper, scrollWrapperInstanceId],
+    [scrollWrapperInstanceId],
   );
 
   return {

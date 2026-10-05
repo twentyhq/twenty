@@ -1,8 +1,6 @@
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
-import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { type RefObject } from 'react';
 
@@ -28,15 +26,11 @@ export const RecordBoardDragSelect = ({
     toggleClickOutside(true);
   };
 
-  const { setRecordAsSelected } = useRecordBoardSelection();
-
   return (
-    <DragSelect
+    <RecordSelectionDragSelect
       selectableItemsContainerRef={boardRef}
-      onDragSelectionEnd={handleDragSelectionEnd}
-      onDragSelectionChange={setRecordAsSelected}
       onDragSelectionStart={handleDragSelectionStart}
-      selectionBoundaryClass={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
+      onDragSelectionEnd={handleDragSelectionEnd}
     />
   );
 };
