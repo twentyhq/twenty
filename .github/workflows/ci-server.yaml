@@ -119,6 +119,7 @@ jobs:
         with:
           base_sha: ${{ steps.merged-base.outputs.sha }}
           allow_previous_version_mutation: ${{ contains(github.event.pull_request.labels.*.name, 'ci:allow-previous-version-upgrade-mutation') }}
+          allow_next_version_mutation: ${{ contains(github.event.pull_request.labels.*.name, 'ci:allow-next-version-upgrade-mutation') }}
 
   server-validation:
     needs: server-build

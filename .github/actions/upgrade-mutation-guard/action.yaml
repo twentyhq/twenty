@@ -2,7 +2,8 @@ name: Upgrade Mutation Guard
 description: >
   Validates that added/modified upgrade commands stay in the current version
   directory (frozen as well once its tag exists) and keep timestamps real and
-  append-only, diffed against a given base. Shared by the PR-level guard
+  append-only, diffed against a given base. Previous and next version
+  directories each have their own label bypass. Shared by the PR-level guard
   (base = PR base) and the merge-queue guard (base = merge candidate's base,
   i.e. the current tip of main).
 
@@ -11,7 +12,11 @@ inputs:
     description: Commit to diff the working tree against.
     required: true
   allow_previous_version_mutation:
-    description: Skip the version-directory check (PR label bypass).
+    description: Allow changes to previous (or released) version directories (PR label bypass).
+    required: false
+    default: 'false'
+  allow_next_version_mutation:
+    description: Allow changes to next version directories (PR label bypass).
     required: false
     default: 'false'
 
@@ -31,11 +36,12 @@ runs:
         git fetch --no-tags --depth=1 origin "$BASE_SHA"
 
     - name: Check upgrade version commands are in current version only
-      if: ${{ inputs.allow_previous_version_mutation != 'true' }}
       shell: bash
       env:
         BASE_SHA: ${{ inputs.base_sha }}
         COMMANDS_ROOT: packages/twenty-server/src/database/commands/upgrade-version-command
+        ALLOW_PREVIOUS_VERSION_MUTATION: ${{ inputs.allow_previous_version_mutation }}
+        ALLOW_NEXT_VERSION_MUTATION: ${{ inputs.allow_next_version_mutation }}
       run: |
         set -euo pipefail
         VERSION_CONSTANT_FILE="packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts"
@@ -82,21 +88,27 @@ runs:
           esac
         fi
 
-        ADDED_OFFENDERS=""
-        MODIFIED_OFFENDERS=""
+        is_next_version_dir() {
+          [ "$1" != "$CURRENT_DIR" ] && [ "$(printf '%s\n%s\n' "$1" "$CURRENT_DIR" | sort -V | tail -n 1)" = "$1" ]
+        }
+
+        PREVIOUS_VERSION_OFFENDERS=""
+        NEXT_VERSION_OFFENDERS=""
 
         check_files() {
-          local category="$1"
+          local change="$1"
           shift
           for file in "$@"; do
             VERSION_DIR=$(echo "$file" | sed -n 's|.*upgrade-version-command/\([0-9]*-[0-9]*\)/.*|\1|p')
 
-            if [ -n "$VERSION_DIR" ] && { [ "$VERSION_DIR" != "$CURRENT_DIR" ] || [ "$IS_CURRENT_VERSION_RELEASED" = "true" ]; }; then
-              if [ "$category" = "added" ]; then
-                ADDED_OFFENDERS="$ADDED_OFFENDERS\n  - $file (version directory: $VERSION_DIR)"
-              else
-                MODIFIED_OFFENDERS="$MODIFIED_OFFENDERS\n  - $file (version directory: $VERSION_DIR)"
-              fi
+            if [ -z "$VERSION_DIR" ]; then
+              continue
+            fi
+
+            if is_next_version_dir "$VERSION_DIR"; then
+              NEXT_VERSION_OFFENDERS="$NEXT_VERSION_OFFENDERS\n  - $file ($change, version directory: $VERSION_DIR)"
+            elif [ "$VERSION_DIR" != "$CURRENT_DIR" ] || [ "$IS_CURRENT_VERSION_RELEASED" = "true" ]; then
+              PREVIOUS_VERSION_OFFENDERS="$PREVIOUS_VERSION_OFFENDERS\n  - $file ($change, version directory: $VERSION_DIR)"
             fi
           done
         }
@@ -104,25 +116,16 @@ runs:
         check_files "added" $ADDED_FILES
         check_files "modified" $MODIFIED_FILES
 
-        if [ -n "$ADDED_OFFENDERS" ] || [ -n "$MODIFIED_OFFENDERS" ]; then
+        FAILED=false
+
+        if [ -n "$PREVIOUS_VERSION_OFFENDERS" ] && [ "$ALLOW_PREVIOUS_VERSION_MUTATION" != "true" ]; then
+          FAILED=true
           if [ "$IS_CURRENT_VERSION_RELEASED" = "true" ]; then
             echo "This change touches upgrade command files of a released version: twenty/v${CURRENT_VERSION} is already tagged, so ${CURRENT_DIR} is frozen."
           else
-            echo "This change touches upgrade command files outside the current version directory ($CURRENT_DIR / $CURRENT_VERSION)."
+            echo "This change touches upgrade command files of previous version directories (current: $CURRENT_DIR / $CURRENT_VERSION)."
           fi
-
-          if [ -n "$ADDED_OFFENDERS" ]; then
-            echo ""
-            echo "New files added to non-current version directories:"
-            echo -e "$ADDED_OFFENDERS"
-          fi
-
-          if [ -n "$MODIFIED_OFFENDERS" ]; then
-            echo ""
-            echo "Existing files modified in non-current version directories:"
-            echo -e "$MODIFIED_OFFENDERS"
-          fi
-
+          echo -e "$PREVIOUS_VERSION_OFFENDERS"
           echo ""
           echo "If this is intentional, add the label 'ci:allow-previous-version-upgrade-mutation' to the PR and re-run CI."
           if [ "$IS_CURRENT_VERSION_RELEASED" = "true" ]; then
@@ -130,8 +133,22 @@ runs:
           else
             echo "Otherwise, move your changes to the current version directory ($CURRENT_DIR)."
           fi
+          echo ""
+        fi
 
-          echo "::error::Upgrade commands were added or modified in non-current version directories."
+        if [ -n "$NEXT_VERSION_OFFENDERS" ] && [ "$ALLOW_NEXT_VERSION_MUTATION" != "true" ]; then
+          FAILED=true
+          echo "This change touches upgrade command files of next version directories (current: $CURRENT_DIR / $CURRENT_VERSION)."
+          echo "These commands stay dormant until their version becomes current."
+          echo -e "$NEXT_VERSION_OFFENDERS"
+          echo ""
+          echo "If this is intentional (e.g. a deferred drop), add the label 'ci:allow-next-version-upgrade-mutation' to the PR and re-run CI."
+          echo "Otherwise, move your changes to the current version directory ($CURRENT_DIR)."
+          echo ""
+        fi
+
+        if [ "$FAILED" = "true" ]; then
+          echo "::error::Upgrade commands were added or modified outside the current version directory."
           exit 1
         fi
 
