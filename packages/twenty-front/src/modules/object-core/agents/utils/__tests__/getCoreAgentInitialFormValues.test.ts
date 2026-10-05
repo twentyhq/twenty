@@ -14,6 +14,7 @@ const agent = {
   isCustom: true,
   isSystem: false,
   modelConfiguration: { webSearch: { enabled: true } },
+  triggers: [],
   applicationId: 'application-id',
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
