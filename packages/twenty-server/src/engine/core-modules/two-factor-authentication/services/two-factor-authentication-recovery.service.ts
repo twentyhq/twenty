@@ -10,12 +10,15 @@ import {
   renderEmail,
 } from 'twenty-emails';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import {
-  FeatureFlagKey,
-  TwoFactorAuthenticationStrategy,
-} from 'twenty-shared/types';
+import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, MoreThan, QueryFailedError, Repository } from 'typeorm';
+import {
+  IsNull,
+  MoreThan,
+  MoreThanOrEqual,
+  QueryFailedError,
+  Repository,
+} from 'typeorm';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -25,7 +28,6 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { userHasAdminPrivileges } from 'src/engine/core-modules/impersonation/utils/user-has-admin-privileges.util';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -38,7 +40,6 @@ import {
   TWO_FACTOR_AUTHENTICATION_RECOVERY_ENROLLMENT_WINDOW_MS,
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-recovery-code.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
-import { TwoFactorAuthenticationRecoveryCodeEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-recovery-code.entity';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import {
   TwoFactorAuthenticationException,
@@ -76,8 +77,6 @@ export class TwoFactorAuthenticationRecoveryService {
   );
 
   constructor(
-    @InjectWorkspaceScopedRepository(TwoFactorAuthenticationRecoveryCodeEntity)
-    private readonly twoFactorAuthenticationRecoveryCodeRepository: WorkspaceScopedRepository<TwoFactorAuthenticationRecoveryCodeEntity>,
     @InjectWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity)
     private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
     @InjectRepository(AppTokenEntity)
@@ -89,7 +88,6 @@ export class TwoFactorAuthenticationRecoveryService {
     private readonly emailService: EmailService,
     private readonly i18nService: I18nService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async generateRecoveryCode({
@@ -156,7 +154,7 @@ export class TwoFactorAuthenticationRecoveryService {
 
     await this.twoFactorAuthenticationService.revokePendingRecoveryCodes({
       workspaceId: targetWorkspaceId,
-      userWorkspaceId: targetUserWorkspace.id,
+      userId: targetUserId,
     });
 
     const recoveryCode = generateTwoFactorAuthenticationRecoveryCode();
@@ -170,15 +168,14 @@ export class TwoFactorAuthenticationRecoveryService {
     );
 
     try {
-      await this.twoFactorAuthenticationRecoveryCodeRepository.insert(
-        targetWorkspaceId,
-        {
-          userWorkspaceId: targetUserWorkspace.id,
-          codeHash: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
-          issuedByUserId: actor.id,
-          expiresAt,
-        },
-      );
+      await this.appTokenRepository.insert({
+        userId: targetUserId,
+        workspaceId: targetWorkspaceId,
+        type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+        value: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
+        expiresAt,
+        context: { issuedByUserId: actor.id },
+      });
     } catch (error) {
       if (
         error instanceof QueryFailedError &&
@@ -222,7 +219,7 @@ export class TwoFactorAuthenticationRecoveryService {
     const revokedCount =
       await this.twoFactorAuthenticationService.revokePendingRecoveryCodes({
         workspaceId: targetWorkspaceId,
-        userWorkspaceId: targetUserWorkspace.id,
+        userId: targetUserWorkspace.userId,
       });
 
     return revokedCount > 0;
@@ -250,18 +247,16 @@ export class TwoFactorAuthenticationRecoveryService {
     const hasVerifiedTwoFactorAuthenticationMethod =
       await this.hasVerifiedTwoFactorAuthenticationMethod(targetUserWorkspace);
 
-    const pendingRecoveryCode =
-      await this.twoFactorAuthenticationRecoveryCodeRepository.findOne(
-        targetWorkspaceId,
-        {
-          where: {
-            userWorkspaceId: targetUserWorkspace.id,
-            usedAt: IsNull(),
-            revokedAt: IsNull(),
-            expiresAt: MoreThan(new Date()),
-          },
-        },
-      );
+    const pendingRecoveryCode = await this.appTokenRepository.findOne({
+      where: {
+        userId: targetUserWorkspace.userId,
+        workspaceId: targetWorkspaceId,
+        type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+        deletedAt: IsNull(),
+        revokedAt: IsNull(),
+        expiresAt: MoreThan(new Date()),
+      },
+    });
 
     return {
       hasVerifiedTwoFactorAuthenticationMethod,
@@ -283,19 +278,6 @@ export class TwoFactorAuthenticationRecoveryService {
     >;
     recoveryCode: string;
   }): Promise<{ provisioningUri: string | null }> {
-    const isRecoveryCodeEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
-        workspace.id,
-      );
-
-    if (!isRecoveryCodeEnabled) {
-      throw new TwoFactorAuthenticationException(
-        'Recovery codes are not enabled for this workspace',
-        TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
-      );
-    }
-
     const userWorkspace = await this.getTargetUserWorkspaceOrThrow({
       targetUserId: userId,
       targetWorkspaceId: workspace.id,
@@ -312,19 +294,22 @@ export class TwoFactorAuthenticationRecoveryService {
 
     const redemption = await this.appTokenRepository.manager.transaction(
       async (entityManager) => {
-        const consumeResult = await entityManager
-          .getRepository(TwoFactorAuthenticationRecoveryCodeEntity)
-          .update(
-            {
-              workspaceId: workspace.id,
-              userWorkspaceId: userWorkspace.id,
-              codeHash: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
-              usedAt: IsNull(),
-              revokedAt: IsNull(),
-              expiresAt: MoreThan(new Date()),
-            },
-            { usedAt: new Date() },
-          );
+        const appTokenRepository = entityManager.getRepository(AppTokenEntity);
+
+        // deletedAt marks the redemption and anchors the post-recovery enrollment window
+        const consumeResult = await appTokenRepository.update(
+          {
+            userId,
+            workspaceId: workspace.id,
+            type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+            value: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
+            deletedAt: IsNull(),
+            revokedAt: IsNull(),
+            expiresAt: MoreThan(new Date()),
+            createdAt: MoreThanOrEqual(userWorkspace.createdAt),
+          },
+          { deletedAt: new Date() },
+        );
 
         if ((consumeResult.affected ?? 0) === 0) {
           return null;
@@ -338,7 +323,7 @@ export class TwoFactorAuthenticationRecoveryService {
           userWorkspaceId: userWorkspace.id,
         });
 
-        await entityManager.getRepository(AppTokenEntity).update(
+        await appTokenRepository.update(
           {
             userId,
             workspaceId: workspace.id,
@@ -419,20 +404,19 @@ export class TwoFactorAuthenticationRecoveryService {
     }
 
     const hasRecentlyRedeemedRecoveryCode =
-      await this.twoFactorAuthenticationRecoveryCodeRepository.exists(
-        workspaceId,
-        {
-          where: {
-            userWorkspaceId: userWorkspace.id,
-            usedAt: MoreThan(
-              new Date(
-                Date.now() -
-                  TWO_FACTOR_AUTHENTICATION_RECOVERY_ENROLLMENT_WINDOW_MS,
-              ),
+      await this.appTokenRepository.exists({
+        where: {
+          userId,
+          workspaceId,
+          type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+          deletedAt: MoreThan(
+            new Date(
+              Date.now() -
+                TWO_FACTOR_AUTHENTICATION_RECOVERY_ENROLLMENT_WINDOW_MS,
             ),
-          },
+          ),
         },
-      );
+      });
 
     if (hasRecentlyRedeemedRecoveryCode) {
       throw new TwoFactorAuthenticationException(

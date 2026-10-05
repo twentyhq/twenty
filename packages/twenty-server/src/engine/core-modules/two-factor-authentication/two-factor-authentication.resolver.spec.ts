@@ -4,7 +4,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
@@ -111,10 +110,6 @@ describe('TwoFactorAuthenticationResolver', () => {
         },
         {
           provide: PermissionsService,
-          useValue: {},
-        },
-        {
-          provide: FeatureFlagService,
           useValue: {},
         },
         {

@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import GraphQLJSON from 'graphql-type-json';
 import { AI_MODEL_TIERS } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
@@ -78,10 +77,7 @@ import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import {
-  ForbiddenError,
-  UserInputError,
-} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -271,18 +267,6 @@ export class AdminPanelResolver {
     @AuthUser() actor: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<TwoFactorAuthenticationRecoveryCodeDTO> {
-    const isRecoveryCodeEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
-        input.workspaceId,
-      );
-
-    if (!isRecoveryCodeEnabled) {
-      throw new ForbiddenError(
-        `Feature flag "${FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED}" is not enabled for this workspace`,
-      );
-    }
-
     return this.twoFactorAuthenticationRecoveryService.generateRecoveryCode({
       actor,
       actorWorkspaceId: workspace.id,

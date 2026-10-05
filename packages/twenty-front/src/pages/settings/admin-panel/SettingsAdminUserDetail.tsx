@@ -44,7 +44,6 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  FeatureFlagKey,
   type UserLookupAdminPanelQuery,
   UserLookupAdminPanelDocument,
 } from '~/generated-admin/graphql';
@@ -168,12 +167,6 @@ export const SettingsAdminUserDetail = () => {
         )}
       {currentUser?.canAccessFullAdminPanel &&
         activeWorkspace &&
-        activeWorkspace.featureFlags.some(
-          (featureFlag) =>
-            featureFlag.key ===
-              FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED &&
-            featureFlag.value,
-        ) &&
         isDefined(user) &&
         user.id !== currentUser.id && (
           <SettingsAdminTwoFactorAuthenticationRecoveryCode

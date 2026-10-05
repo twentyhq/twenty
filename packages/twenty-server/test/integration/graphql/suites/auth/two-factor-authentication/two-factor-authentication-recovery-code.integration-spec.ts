@@ -12,10 +12,9 @@ import { initiateOtpProvisioningForAuthenticatedUser } from 'test/integration/gr
 import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
 import { verifyTwoFactorAuthenticationMethod } from 'test/integration/graphql/utils/verify-two-factor-authentication-method.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import { TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_MAX } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-recovery-code.constant';
@@ -105,21 +104,25 @@ const insertMethodRows = async (
 
 const deleteRecoveryCodes = () =>
   global.testDataSource.query(
-    `DELETE FROM core."twoFactorAuthenticationRecoveryCode" WHERE "userWorkspaceId" = ANY($1)`,
+    `DELETE FROM core."appToken" WHERE "type" = $1 AND "userId" = ANY($2)`,
     [
+      AppTokenType.TwoFactorAuthenticationRecoveryCode,
       [
-        USER_WORKSPACE_DATA_SEED_IDS.JANE,
-        USER_WORKSPACE_DATA_SEED_IDS.JONY,
-        USER_WORKSPACE_DATA_SEED_IDS.JONY_ACME,
-        USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+        USER_DATA_SEED_IDS.JANE,
+        USER_DATA_SEED_IDS.JONY,
+        USER_DATA_SEED_IDS.PHIL,
       ],
     ],
   );
 
 const selectPendingRecoveryCodes = (): Promise<{ id: string }[]> =>
   global.testDataSource.query(
-    `SELECT "id" FROM core."twoFactorAuthenticationRecoveryCode" WHERE "userWorkspaceId" = $1 AND "usedAt" IS NULL AND "revokedAt" IS NULL`,
-    [USER_WORKSPACE_DATA_SEED_IDS.JONY],
+    `SELECT "id" FROM core."appToken" WHERE "type" = $1 AND "userId" = $2 AND "workspaceId" = $3 AND "deletedAt" IS NULL AND "revokedAt" IS NULL`,
+    [
+      AppTokenType.TwoFactorAuthenticationRecoveryCode,
+      USER_DATA_SEED_IDS.JONY,
+      SEED_APPLE_WORKSPACE_ID,
+    ],
   );
 
 const enrollAuthenticator = async (accessToken: string): Promise<string> => {
@@ -162,21 +165,20 @@ const getJonyLoginToken = async (): Promise<string> => {
 const insertRecoveryCode = async ({
   recoveryCode,
   workspaceId,
-  userWorkspaceId,
   expiresAt,
   revokedAt = null,
 }: {
   recoveryCode: string;
   workspaceId: string;
-  userWorkspaceId: string;
   expiresAt: Date;
   revokedAt?: Date | null;
 }) =>
   global.testDataSource.query(
-    `INSERT INTO core."twoFactorAuthenticationRecoveryCode" ("workspaceId", "userWorkspaceId", "codeHash", "expiresAt", "revokedAt") VALUES ($1, $2, $3, $4, $5)`,
+    `INSERT INTO core."appToken" ("userId", "workspaceId", "type", "value", "expiresAt", "revokedAt") VALUES ($1, $2, $3, $4, $5, $6)`,
     [
+      USER_DATA_SEED_IDS.JONY,
       workspaceId,
-      userWorkspaceId,
+      AppTokenType.TwoFactorAuthenticationRecoveryCode,
       hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
       expiresAt,
       revokedAt,
@@ -274,34 +276,6 @@ describe('Two-factor authentication recovery codes (integration)', () => {
   });
 
   describe('issuing a code', () => {
-    it('is unavailable while the feature flag is off', async () => {
-      await updateFeatureFlag({
-        featureFlag:
-          FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
-
-      try {
-        const { errors } = await generateTwoFactorAuthenticationRecoveryCode({
-          userId: USER_DATA_SEED_IDS.JONY,
-          otp: await generateOtp(janeSecret),
-          accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-          expectToFail: true,
-        });
-
-        expect(errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
-        expect(await selectPendingRecoveryCodes()).toHaveLength(0);
-      } finally {
-        await updateFeatureFlag({
-          featureFlag:
-            FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
-          value: true,
-          expectToFail: false,
-        });
-      }
-    });
-
     it('is refused to a member without the security permission', async () => {
       const { errors } = await generateTwoFactorAuthenticationRecoveryCode({
         userId: USER_DATA_SEED_IDS.JANE,
@@ -457,20 +431,17 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       await insertRecoveryCode({
         recoveryCode: 'EXPIR-EDCOD-E0000-00001',
         workspaceId: SEED_APPLE_WORKSPACE_ID,
-        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
         expiresAt: new Date(Date.now() - 60_000),
       });
       await insertRecoveryCode({
         recoveryCode: 'REVOK-EDCOD-E0000-00002',
         workspaceId: SEED_APPLE_WORKSPACE_ID,
-        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
         expiresAt: new Date(Date.now() + 60_000),
         revokedAt: new Date(),
       });
       await insertRecoveryCode({
         recoveryCode: 'OTHER-WORKS-PACE0-00003',
         workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
-        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY_ACME,
         expiresAt: new Date(Date.now() + 60_000),
       });
 
@@ -781,28 +752,6 @@ describe('Two-factor authentication recovery codes (integration)', () => {
         data.generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin
           .recoveryCode,
       ).toMatch(/^[0-9A-Z]{5}(-[0-9A-Z]{5}){3}$/);
-    });
-
-    it('is unavailable while the target workspace has the feature flag off', async () => {
-      await updateFeatureFlag({
-        featureFlag:
-          FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
-
-      try {
-        const { errors } = await generateAsServerAdmin(SEED_APPLE_WORKSPACE_ID);
-
-        expect(errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
-      } finally {
-        await updateFeatureFlag({
-          featureFlag:
-            FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
-          value: true,
-          expectToFail: false,
-        });
-      }
     });
 
     it('reaches members of other workspaces but still requires an authenticator to recover', async () => {

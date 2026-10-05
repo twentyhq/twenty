@@ -3,19 +3,17 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { renderEmail } from 'twenty-emails';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
-import { IsNull, QueryFailedError } from 'typeorm';
+import { IsNull, MoreThanOrEqual, QueryFailedError } from 'typeorm';
 
 import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
-import { TwoFactorAuthenticationRecoveryCodeEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-recovery-code.entity';
 import { TwoFactorAuthenticationRecoveryService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import { TwoFactorAuthenticationExceptionCode } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
@@ -35,6 +33,7 @@ jest.mock('twenty-emails', () => ({
 const WORKSPACE_ID = 'workspace-id';
 const TARGET_USER_ID = 'target-user-id';
 const TARGET_USER_WORKSPACE_ID = 'target-user-workspace-id';
+const MEMBERSHIP_CREATED_AT = new Date('2026-01-01T00:00:00.000Z');
 const REPLACEMENT_PROVISIONING_URI =
   'otpauth://totp/Twenty%20-%20Apple:target@example.com?secret=REPLACEMENT';
 
@@ -58,6 +57,7 @@ const buildTargetUserWorkspace = ({
   userId: TARGET_USER_ID,
   workspaceId: WORKSPACE_ID,
   locale: 'en',
+  createdAt: MEMBERSHIP_CREATED_AT,
   user: {
     id: TARGET_USER_ID,
     email: 'target@example.com',
@@ -69,14 +69,13 @@ const buildTargetUserWorkspace = ({
 
 describe('TwoFactorAuthenticationRecoveryService', () => {
   let service: TwoFactorAuthenticationRecoveryService;
-  let recoveryCodeRepository: {
+  let appTokenRepository: {
     insert: jest.Mock;
     findOne: jest.Mock;
     exists: jest.Mock;
   };
   let methodRepository: { exists: jest.Mock };
   let transactionalRepositories: {
-    recoveryCode: { update: jest.Mock };
     method: { delete: jest.Mock; insert: jest.Mock };
     appToken: { update: jest.Mock };
   };
@@ -89,21 +88,15 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   let userSessionService: { revokeAllSessionsForUser: jest.Mock };
   let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
   let emailService: { send: jest.Mock };
-  let featureFlagService: { isFeatureEnabled: jest.Mock };
 
   beforeEach(async () => {
     transactionalRepositories = {
-      recoveryCode: { update: jest.fn().mockResolvedValue({ affected: 1 }) },
       method: { delete: jest.fn(), insert: jest.fn() },
-      appToken: { update: jest.fn() },
+      appToken: { update: jest.fn().mockResolvedValue({ affected: 1 }) },
     };
 
     const entityManager = {
       getRepository: (entity: unknown) => {
-        if (entity === TwoFactorAuthenticationRecoveryCodeEntity) {
-          return transactionalRepositories.recoveryCode;
-        }
-
         if (entity === TwoFactorAuthenticationMethodEntity) {
           return transactionalRepositories.method;
         }
@@ -117,16 +110,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         TwoFactorAuthenticationRecoveryService,
         {
           provide: getWorkspaceScopedRepositoryToken(
-            TwoFactorAuthenticationRecoveryCodeEntity,
-          ),
-          useValue: {
-            insert: jest.fn(),
-            findOne: jest.fn(),
-            exists: jest.fn().mockResolvedValue(false),
-          },
-        },
-        {
-          provide: getWorkspaceScopedRepositoryToken(
             TwoFactorAuthenticationMethodEntity,
           ),
           useValue: {
@@ -136,6 +119,9 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         {
           provide: getRepositoryToken(AppTokenEntity),
           useValue: {
+            insert: jest.fn(),
+            findOne: jest.fn(),
+            exists: jest.fn().mockResolvedValue(false),
             manager: {
               transaction: jest.fn(
                 (callback: (manager: typeof entityManager) => unknown) =>
@@ -190,19 +176,11 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
                 : 'noreply@example.com',
           },
         },
-        {
-          provide: FeatureFlagService,
-          useValue: { isFeatureEnabled: jest.fn().mockResolvedValue(true) },
-        },
       ],
     }).compile();
 
     service = module.get(TwoFactorAuthenticationRecoveryService);
-    recoveryCodeRepository = module.get(
-      getWorkspaceScopedRepositoryToken(
-        TwoFactorAuthenticationRecoveryCodeEntity,
-      ),
-    );
+    appTokenRepository = module.get(getRepositoryToken(AppTokenEntity));
     methodRepository = module.get(
       getWorkspaceScopedRepositoryToken(TwoFactorAuthenticationMethodEntity),
     );
@@ -211,7 +189,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
     userSessionService = module.get(UserSessionService);
     throttlerService = module.get(ThrottlerService);
     emailService = module.get(EmailService);
-    featureFlagService = module.get(FeatureFlagService);
   });
 
   afterEach(() => {
@@ -250,13 +227,15 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         twoFactorAuthenticationService.revokePendingRecoveryCodes,
       ).toHaveBeenCalledWith({
         workspaceId: WORKSPACE_ID,
-        userWorkspaceId: TARGET_USER_WORKSPACE_ID,
+        userId: TARGET_USER_ID,
       });
-      expect(recoveryCodeRepository.insert).toHaveBeenCalledWith(WORKSPACE_ID, {
-        userWorkspaceId: TARGET_USER_WORKSPACE_ID,
-        codeHash: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
-        issuedByUserId: ACTOR.id,
+      expect(appTokenRepository.insert).toHaveBeenCalledWith({
+        userId: TARGET_USER_ID,
+        workspaceId: WORKSPACE_ID,
+        type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+        value: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
         expiresAt,
+        context: { issuedByUserId: ACTOR.id },
       });
       expect(emailService.send).toHaveBeenCalledWith(
         expect.objectContaining({ to: 'target@example.com' }),
@@ -288,7 +267,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       await expect(generate()).rejects.toMatchObject({
         code: TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED,
       });
-      expect(recoveryCodeRepository.insert).not.toHaveBeenCalled();
+      expect(appTokenRepository.insert).not.toHaveBeenCalled();
     });
 
     it('lets a server admin generate a code for another server admin', async () => {
@@ -304,7 +283,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         targetWorkspaceId: WORKSPACE_ID,
       });
 
-      expect(recoveryCodeRepository.insert).toHaveBeenCalled();
+      expect(appTokenRepository.insert).toHaveBeenCalled();
     });
 
     it('refuses a user who is not a member of the workspace', async () => {
@@ -316,7 +295,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
     });
 
     it('reports a conflict when another code was issued for the member at the same time', async () => {
-      recoveryCodeRepository.insert.mockRejectedValue(
+      appTokenRepository.insert.mockRejectedValue(
         Object.assign(new QueryFailedError('INSERT', [], new Error()), {
           code: '23505',
         }),
@@ -353,11 +332,13 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       });
 
     const redeemableCodeWhere = {
+      userId: TARGET_USER_ID,
       workspaceId: WORKSPACE_ID,
-      userWorkspaceId: TARGET_USER_WORKSPACE_ID,
-      codeHash: hashTwoFactorAuthenticationRecoveryCode('ABCDEFGHJKMNPQRSTVWX'),
-      usedAt: IsNull(),
+      type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+      value: hashTwoFactorAuthenticationRecoveryCode('ABCDEFGHJKMNPQRSTVWX'),
+      deletedAt: IsNull(),
       revokedAt: IsNull(),
+      createdAt: MoreThanOrEqual(MEMBERSHIP_CREATED_AT),
     };
 
     it('consumes the code, removes the authenticator and revokes refresh tokens together, then signs out the member', async () => {
@@ -371,16 +352,17 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         expect.any(Number),
         expect.any(Number),
       );
-      expect(
-        transactionalRepositories.recoveryCode.update,
-      ).toHaveBeenCalledWith(expect.objectContaining(redeemableCodeWhere), {
-        usedAt: expect.any(Date),
-      });
+      expect(transactionalRepositories.appToken.update).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining(redeemableCodeWhere),
+        { deletedAt: expect.any(Date) },
+      );
       expect(transactionalRepositories.method.delete).toHaveBeenCalledWith({
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: TARGET_USER_WORKSPACE_ID,
       });
-      expect(transactionalRepositories.appToken.update).toHaveBeenCalledWith(
+      expect(transactionalRepositories.appToken.update).toHaveBeenNthCalledWith(
+        2,
         {
           userId: TARGET_USER_ID,
           workspaceId: WORKSPACE_ID,
@@ -402,8 +384,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         reason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
       });
       expect(
-        transactionalRepositories.recoveryCode.update.mock
-          .invocationCallOrder[0],
+        transactionalRepositories.appToken.update.mock.invocationCallOrder[0],
       ).toBeLessThan(
         userSessionService.revokeAllSessionsForUser.mock.invocationCallOrder[0],
       );
@@ -432,7 +413,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
     });
 
     it('rejects an unknown, expired, used or revoked code without signing anyone out', async () => {
-      transactionalRepositories.recoveryCode.update.mockResolvedValue({
+      transactionalRepositories.appToken.update.mockResolvedValueOnce({
         affected: 0,
       });
 
@@ -443,18 +424,10 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         userSessionService.revokeAllSessionsForUser,
       ).not.toHaveBeenCalled();
       expect(transactionalRepositories.method.delete).not.toHaveBeenCalled();
+      expect(transactionalRepositories.appToken.update).toHaveBeenCalledTimes(
+        1,
+      );
       expect(emailService.send).not.toHaveBeenCalled();
-    });
-
-    it('refuses every code while the feature flag is off', async () => {
-      featureFlagService.isFeatureEnabled.mockResolvedValue(false);
-
-      await expect(redeem()).rejects.toMatchObject({
-        code: TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
-      });
-      expect(
-        transactionalRepositories.recoveryCode.update,
-      ).not.toHaveBeenCalled();
     });
   });
 
@@ -467,7 +440,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
 
     it('refuses public enrollment while a recently redeemed recovery has no verified authenticator', async () => {
       methodRepository.exists.mockResolvedValue(false);
-      recoveryCodeRepository.exists.mockResolvedValue(true);
+      appTokenRepository.exists.mockResolvedValue(true);
 
       await expect(assertEnrollmentAllowed()).rejects.toMatchObject({
         code: TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
@@ -476,7 +449,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
 
     it('allows enrollment when no recovery code was redeemed recently', async () => {
       methodRepository.exists.mockResolvedValue(false);
-      recoveryCodeRepository.exists.mockResolvedValue(false);
+      appTokenRepository.exists.mockResolvedValue(false);
 
       await expect(assertEnrollmentAllowed()).resolves.toBeUndefined();
     });
@@ -485,7 +458,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       userWorkspaceService.getUserWorkspaceForUser.mockResolvedValue(null);
 
       await expect(assertEnrollmentAllowed()).resolves.toBeUndefined();
-      expect(recoveryCodeRepository.exists).not.toHaveBeenCalled();
+      expect(appTokenRepository.exists).not.toHaveBeenCalled();
     });
   });
 
@@ -525,7 +498,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       ).rejects.toMatchObject({
         code: TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED,
       });
-      expect(recoveryCodeRepository.findOne).not.toHaveBeenCalled();
+      expect(appTokenRepository.findOne).not.toHaveBeenCalled();
     });
   });
 });

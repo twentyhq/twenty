@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { type MessageDescriptor } from '@lingui/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
+import {
+  AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -21,7 +26,6 @@ import {
   TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-otp-rate-limit.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
-import { TwoFactorAuthenticationRecoveryCodeEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-recovery-code.entity';
 import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 import { buildTwoFactorAuthenticationOtpRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-otp-rate-limit-key.util';
@@ -46,8 +50,8 @@ export class TwoFactorAuthenticationService {
   constructor(
     @InjectWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity)
     private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
-    @InjectWorkspaceScopedRepository(TwoFactorAuthenticationRecoveryCodeEntity)
-    private readonly twoFactorAuthenticationRecoveryCodeRepository: WorkspaceScopedRepository<TwoFactorAuthenticationRecoveryCodeEntity>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly throttlerService: ThrottlerService,
@@ -245,25 +249,26 @@ export class TwoFactorAuthenticationService {
       { status: OTPStatus.VERIFIED },
     );
 
-    await this.revokePendingRecoveryCodes({
-      workspaceId,
-      userWorkspaceId: userTwoFactorAuthenticationMethod.userWorkspaceId,
-    });
+    await this.revokePendingRecoveryCodes({ workspaceId, userId });
   }
 
   async revokePendingRecoveryCodes({
     workspaceId,
-    userWorkspaceId,
+    userId,
   }: {
     workspaceId: WorkspaceEntity['id'];
-    userWorkspaceId: string;
+    userId: UserEntity['id'];
   }): Promise<number> {
-    const updateResult =
-      await this.twoFactorAuthenticationRecoveryCodeRepository.update(
+    const updateResult = await this.appTokenRepository.update(
+      {
         workspaceId,
-        { userWorkspaceId, usedAt: IsNull(), revokedAt: IsNull() },
-        { revokedAt: new Date() },
-      );
+        userId,
+        type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+        deletedAt: IsNull(),
+        revokedAt: IsNull(),
+      },
+      { revokedAt: new Date() },
+    );
 
     return updateResult.affected ?? 0;
   }

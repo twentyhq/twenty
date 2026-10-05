@@ -28,6 +28,7 @@ export enum AppTokenType {
   EmailVerificationToken = 'EMAIL_VERIFICATION_TOKEN',
   EnterpriseValidityToken = 'ENTERPRISE_VALIDITY_TOKEN',
   SsoExchangeToken = 'SSO_EXCHANGE_TOKEN',
+  TwoFactorAuthenticationRecoveryCode = 'TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
@@ -39,6 +40,14 @@ export enum AppTokenType {
   unique: true,
   where: `"type" = 'SSO_EXCHANGE_TOKEN' AND "deletedAt" IS NULL AND "revokedAt" IS NULL`,
 })
+@Index(
+  'IDX_APP_TOKEN_RECOVERY_CODE_PENDING_UNIQUE',
+  ['userId', 'workspaceId'],
+  {
+    unique: true,
+    where: `"type" = 'TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE' AND "deletedAt" IS NULL AND "revokedAt" IS NULL`,
+  },
+)
 export class AppTokenEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -100,5 +109,6 @@ export class AppTokenEntity {
     scope?: string;
     authProvider?: AuthProviderEnum;
     revokedReason?: UserSessionRevokedReason;
+    issuedByUserId?: string;
   } | null;
 }

@@ -2,7 +2,6 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -23,10 +22,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -257,10 +252,6 @@ export class TwoFactorAuthenticationResolver {
       application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.SECURITY),
-    FeatureFlagGuard,
-  )
-  @RequireFeatureFlag(
-    FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
   )
   async twoFactorAuthenticationRecoveryStatus(
     @Args() { userId }: TwoFactorAuthenticationRecoveryTargetInput,
@@ -288,10 +279,6 @@ export class TwoFactorAuthenticationResolver {
       application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.SECURITY),
-    FeatureFlagGuard,
-  )
-  @RequireFeatureFlag(
-    FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
   )
   async generateTwoFactorAuthenticationRecoveryCode(
     @Args() { userId, otp }: GenerateTwoFactorAuthenticationRecoveryCodeInput,
@@ -323,10 +310,6 @@ export class TwoFactorAuthenticationResolver {
       application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.SECURITY),
-    FeatureFlagGuard,
-  )
-  @RequireFeatureFlag(
-    FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
   )
   async revokeTwoFactorAuthenticationRecoveryCode(
     @Args() { userId }: TwoFactorAuthenticationRecoveryTargetInput,
