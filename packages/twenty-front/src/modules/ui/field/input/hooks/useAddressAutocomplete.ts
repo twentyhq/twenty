@@ -1,3 +1,4 @@
+import { atom, useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 
 import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/SelectAutocompleteListDropDownId';
@@ -13,6 +14,8 @@ export const useAddressAutocomplete = (
 ) => {
   const [typeOfAddressForAutocomplete, setTypeOfAddressForAutocomplete] =
     useState<string | null>(null);
+  const [latestPlaceSelectionIdAtom] = useState(() => atom(0));
+  const store = useStore();
 
   const { getPlaceDetailsData } = useGetPlaceApiData();
   const { findCountryNameByCountryCode } = useCountryUtils();
@@ -41,9 +44,29 @@ export const useAddressAutocomplete = (
       token: string;
       addressStreet1?: string;
       getInternalValue?: () => FieldAddressDraftValue;
-    }) => {
+    }): Promise<FieldAddressDraftValue | undefined> => {
+      const placeSelectionId = store.get(latestPlaceSelectionIdAtom) + 1;
+      store.set(latestPlaceSelectionIdAtom, placeSelectionId);
+
+      const isLatestPlaceSelection = () =>
+        placeSelectionId === store.get(latestPlaceSelectionIdAtom);
+
       const internalValueAtSelection = getInternalValue?.();
-      const placeData = await getPlaceDetailsData(placeId, token);
+      const placeData = await getPlaceDetailsData(placeId, token).finally(
+        () => {
+          if (!isLatestPlaceSelection()) {
+            return;
+          }
+
+          resetPlaceAutocomplete();
+          setTypeOfAddressForAutocomplete(null);
+        },
+      );
+
+      if (!isLatestPlaceSelection()) {
+        return undefined;
+      }
+
       const countryName = findCountryNameByCountryCode(placeData?.country);
       const internalValue = getInternalValue?.();
 
@@ -70,13 +93,13 @@ export const useAddressAutocomplete = (
         currentAddress: internalValue,
       });
 
-      resetPlaceAutocomplete();
-      setTypeOfAddressForAutocomplete(null);
       onChange?.(updatedAddress);
 
       return updatedAddress;
     },
     [
+      store,
+      latestPlaceSelectionIdAtom,
       getPlaceDetailsData,
       findCountryNameByCountryCode,
       resetPlaceAutocomplete,

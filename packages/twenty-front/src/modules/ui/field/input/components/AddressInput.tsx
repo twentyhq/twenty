@@ -183,6 +183,11 @@ export const AddressInput = ({
         addressStreet1: text,
         getInternalValue: () => store.get(internalValueAtom),
       });
+
+      if (!isDefined(updatedAddress)) {
+        return;
+      }
+
       setInternalValue(updatedAddress);
     },
     [
