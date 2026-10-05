@@ -19,6 +19,7 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { ADD_PEOPLE_TO_MESSAGE_LIST_JOB_START_DELAY_MS } from 'src/modules/emailing/constants/add-people-to-message-list-job-start-delay-ms.constant';
 import { ADD_PEOPLE_TO_MESSAGE_LIST_MAX_PERSON_COUNT } from 'src/modules/emailing/constants/add-people-to-message-list-max-person-count.constant';
 import {
   MessageListException,
@@ -163,10 +164,8 @@ export class AddPeopleToMessageListJobService {
         data,
         {
           id: jobIdPrefix,
-          broadcastTo: {
-            workspaceId: data.workspaceId,
-            userWorkspaceId: data.userWorkspaceId,
-          },
+          delay: ADD_PEOPLE_TO_MESSAGE_LIST_JOB_START_DELAY_MS,
+          broadcastTo: { workspaceId: data.workspaceId },
         },
       );
 

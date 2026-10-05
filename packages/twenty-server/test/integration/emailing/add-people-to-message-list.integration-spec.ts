@@ -1,10 +1,10 @@
 import gql from 'graphql-tag';
-import { setTimeout } from 'node:timers/promises';
 import { createManyOperation } from 'test/integration/graphql/utils/create-many-operation.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -261,9 +261,9 @@ describe('triggerAddPeopleToMessageListJob (integration)', () => {
       const jobId: string =
         firstResponse.body.data.triggerAddPeopleToMessageListJob.jobId;
 
-      while ((await getJobState(jobId)) !== 'active') {
-        await setTimeout(25);
-      }
+      await expectEventually(async () =>
+        expect(await getJobState(jobId)).toBe('active'),
+      );
 
       const statusResponse =
         await findAddPeopleToMessageListJobStatus(messageListId);

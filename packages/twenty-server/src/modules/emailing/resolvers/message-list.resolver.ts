@@ -69,7 +69,20 @@ export class MessageListResolver {
   }
 
   @Mutation(() => TriggerAddPeopleToMessageListJobResultDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
   @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async triggerAddPeopleToMessageListJob(
     @Args('input') input: TriggerAddPeopleToMessageListJobInput,

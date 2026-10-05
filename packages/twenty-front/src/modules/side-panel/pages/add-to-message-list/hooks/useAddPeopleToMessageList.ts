@@ -3,7 +3,6 @@ import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -49,9 +48,7 @@ export const useAddPeopleToMessageList = ({
       if (jobStatus.state === JobState.FAILED) {
         enqueueToast({
           variant: 'error',
-          children: isNonEmptyString(jobStatus.failedReason)
-            ? jobStatus.failedReason
-            : t`Failed to add people to the list. Please try again.`,
+          children: t`Failed to add people to the list. Please try again.`,
         });
         return;
       }
