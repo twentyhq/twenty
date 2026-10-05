@@ -143,9 +143,9 @@ describe('versioned agent history upgrade (integration)', () => {
       await runner.release();
     }
 
-    // Run-owned threads arrived with 2.44 and have no member owner in the core tables 2.42 restores.
+    // Threads no member owns arrived with 2.44 and have no owner in the core tables 2.42 restores.
     await dataSource.query(
-      `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE "workflowRunId" IS NOT NULL`,
+      `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE "workspaceMemberId" IS NULL`,
     );
     await runCommand('down');
     await dataSource.query(

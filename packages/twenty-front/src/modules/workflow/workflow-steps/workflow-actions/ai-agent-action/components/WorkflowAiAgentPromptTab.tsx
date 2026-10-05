@@ -5,9 +5,11 @@ import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchem
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
 import { fieldsToSchema } from '@/ai/utils/fieldsToSchema';
 import { schemaToFields } from '@/ai/utils/schemaToFields';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
+import { WorkflowConversationFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields';
 import { WorkflowOutputSchemaBuilder } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -18,6 +20,8 @@ import {
   type AgentResponseSchema,
   type ModelConfiguration,
 } from 'twenty-shared/ai';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { type WorkflowConversation } from 'twenty-shared/workflow';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   UpdateOneAgentDocument,
@@ -31,6 +35,10 @@ type WorkflowAiAgentPromptTabProps = {
   onPromptChange: (value: string) => void;
   humanInputInstructions: string;
   onHumanInputInstructionsChange: (value: string) => void;
+  recipientWorkspaceMemberId: string | undefined;
+  onRecipientChange: (workspaceMemberId: string | undefined) => void;
+  conversation: WorkflowConversation | undefined;
+  onConversationChange: (conversation: WorkflowConversation) => void;
   onActionUpdate?: (action: WorkflowAiAgentAction) => void;
 };
 
@@ -41,6 +49,10 @@ export const WorkflowAiAgentPromptTab = ({
   onPromptChange,
   humanInputInstructions,
   onHumanInputInstructionsChange,
+  recipientWorkspaceMemberId,
+  onRecipientChange,
+  conversation,
+  onConversationChange,
   onActionUpdate,
 }: WorkflowAiAgentPromptTabProps) => {
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
@@ -159,6 +171,27 @@ export const WorkflowAiAgentPromptTab = ({
         defaultValue={humanInputInstructions}
         onChange={onHumanInputInstructionsChange}
         readonly={readonly}
+      />
+
+      <FormSingleRecordPicker
+        label={t`Recipient`}
+        objectNameSingulars={[CoreObjectNameSingular.WorkspaceMember]}
+        defaultValue={recipientWorkspaceMemberId}
+        onChange={(workspaceMemberId) =>
+          onRecipientChange(workspaceMemberId ?? undefined)
+        }
+        disabled={readonly}
+        testId="workflow-edit-action-ai-agent-recipient"
+        VariablePicker={WorkflowVariablePicker}
+      />
+
+      <WorkflowConversationFields
+        dropdownId={`workflow-ai-agent-conversation-${action.id}`}
+        conversation={conversation}
+        defaultScope="STEP"
+        description={t`With the recipient, or the workflow creator when empty. It stays out of their inbox until the agent needs them.`}
+        readonly={readonly}
+        onChange={onConversationChange}
       />
 
       <SettingsAgentModelCapabilities
