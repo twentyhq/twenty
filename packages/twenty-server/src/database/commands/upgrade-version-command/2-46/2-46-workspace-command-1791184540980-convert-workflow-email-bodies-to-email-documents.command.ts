@@ -66,7 +66,9 @@ export class ConvertWorkflowEmailBodiesToEmailDocumentsCommand extends Provision
         ),
       );
       const convertedWorkspaceVersions = convertEmailBodiesInRows(
-        await queryRunner.query(`SELECT id, steps FROM ${workspaceVersionTable}`),
+        await queryRunner.query(
+          `SELECT id, steps FROM ${workspaceVersionTable}`,
+        ),
       );
 
       if (
