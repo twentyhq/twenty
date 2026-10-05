@@ -12,10 +12,10 @@ import {
   type FindOneAgentQuery,
   UpdateOneAgentDocument,
 } from '~/generated-metadata/graphql';
-import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
+import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const useSettingsAgentSave = ({
+export const useCoreAgentSave = ({
   agent,
   formValues,
   initialFormValues,
@@ -24,8 +24,8 @@ export const useSettingsAgentSave = ({
   validateForm,
 }: {
   agent: FindOneAgentQuery['findOneAgent'];
-  formValues: SettingsAiAgentFormValues;
-  initialFormValues: SettingsAiAgentFormValues;
+  formValues: CoreAgentFormValues;
+  initialFormValues: CoreAgentFormValues;
   isReadonlyMode: boolean;
   isRoleDirty: boolean;
   validateForm: () => boolean;

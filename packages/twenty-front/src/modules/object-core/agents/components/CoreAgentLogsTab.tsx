@@ -31,13 +31,11 @@ const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-type SettingsAgentLogsTabProps = {
+type CoreAgentLogsTabProps = {
   agentId: string;
 };
 
-export const SettingsAgentLogsTab = ({
-  agentId,
-}: SettingsAgentLogsTabProps) => {
+export const CoreAgentLogsTab = ({ agentId }: CoreAgentLogsTabProps) => {
   const { enqueueToast } = useToast();
   const [evaluatingTurnIds, setEvaluatingTurnIds] = useState<Set<string>>(
     new Set(),

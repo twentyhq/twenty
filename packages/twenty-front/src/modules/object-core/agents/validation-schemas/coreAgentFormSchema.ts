@@ -2,7 +2,7 @@ import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { z } from 'zod';
 import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
 
-export const settingsAiAgentFormSchema = z.object({
+export const coreAgentFormSchema = z.object({
   name: z.string().optional(),
   label: zodNonEmptyString,
   description: z.string().nullish(),
@@ -36,6 +36,4 @@ export const settingsAiAgentFormSchema = z.object({
   evaluationInputs: z.array(z.string()).default([]),
 });
 
-export type SettingsAiAgentFormValues = z.infer<
-  typeof settingsAiAgentFormSchema
->;
+export type CoreAgentFormValues = z.infer<typeof coreAgentFormSchema>;

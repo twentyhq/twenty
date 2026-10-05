@@ -14,11 +14,13 @@ import {
   type WorkspaceRouteHandle,
   type WorkspaceRouteObject,
 } from '@/app/routing/types/WorkspaceRouteObject';
+import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const SettingsGraphQLPlayground = lazy(() =>
@@ -83,6 +85,28 @@ function LegacySettingsPathRedirect({ to }: LegacySettingsPathRedirectProps) {
   return (
     <Navigate to={`${pathname}${location.search}${location.hash}`} replace />
   );
+}
+
+// TODO: remove these legacy agent settings redirects after 2027-01-05.
+const LEGACY_AI_AGENT_SETTINGS_PATHS = {
+  AiNewAgent: 'ai/new-agent',
+  AiAgentDetail: 'ai/agents/:agentId',
+  AiAgentTurnDetail: 'ai/agents/:agentId/turns/:turnId',
+} as const;
+
+function LegacyAiAgentSettingsPathRedirect() {
+  const { agentId, turnId } = useParams();
+
+  const pathname = isDefined(agentId)
+    ? getCoreAgentLink(
+        agentId,
+        isDefined(turnId) ? { turn: turnId } : undefined,
+      )
+    : getAppPath(AppPath.RecordIndexPage, {
+        objectNamePlural: CoreObjectNamePlural.Agent,
+      });
+
+  return <Navigate to={pathname} replace />;
 }
 
 const SettingsAccountsConfiguration = lazy(() =>
@@ -860,6 +884,18 @@ const createSettingsRouteElements = ({
       }
     >
       <Route path={SettingsPath.AI} element={<SettingsAI />} />
+      <Route
+        path={LEGACY_AI_AGENT_SETTINGS_PATHS.AiNewAgent}
+        element={<LegacyAiAgentSettingsPathRedirect />}
+      />
+      <Route
+        path={LEGACY_AI_AGENT_SETTINGS_PATHS.AiAgentDetail}
+        element={<LegacyAiAgentSettingsPathRedirect />}
+      />
+      <Route
+        path={LEGACY_AI_AGENT_SETTINGS_PATHS.AiAgentTurnDetail}
+        element={<LegacyAiAgentSettingsPathRedirect />}
+      />
       <Route path={SettingsPath.AiPrompts} element={<SettingsAiPrompts />} />
       <Route
         path={SettingsPath.AiNewSkill}

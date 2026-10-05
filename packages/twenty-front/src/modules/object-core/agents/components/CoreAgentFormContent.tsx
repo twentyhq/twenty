@@ -25,15 +25,15 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type FindOneAgentQuery } from '~/generated-metadata/graphql';
-import { SettingsAgentEvalsTab } from '~/pages/settings/ai/components/SettingsAgentEvalsTab';
-import { SettingsAgentLogsTab } from '~/pages/settings/ai/components/SettingsAgentLogsTab';
-import { SettingsAgentRoleTab } from '~/pages/settings/ai/components/SettingsAgentRoleTab';
-import { SettingsAgentSettingsTab } from '~/pages/settings/ai/components/SettingsAgentSettingsTab';
-import { SETTINGS_AGENT_DETAIL_TABS } from '~/pages/settings/ai/constants/SettingsAgentDetailTabs';
-import { useSettingsAgentFormState } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
-import { useSettingsAgentSave } from '~/pages/settings/ai/hooks/useSettingsAgentSave';
-import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
-import { getSettingsAgentInitialFormValues } from '~/pages/settings/ai/utils/getSettingsAgentInitialFormValues';
+import { CoreAgentEvalsTab } from '@/object-core/agents/components/CoreAgentEvalsTab';
+import { CoreAgentLogsTab } from '@/object-core/agents/components/CoreAgentLogsTab';
+import { CoreAgentRoleTab } from '@/object-core/agents/components/CoreAgentRoleTab';
+import { CoreAgentSettingsTab } from '@/object-core/agents/components/CoreAgentSettingsTab';
+import { CORE_AGENT_DETAIL_TABS } from '@/object-core/agents/constants/CoreAgentDetailTabs';
+import { useCoreAgentFormState } from '@/object-core/agents/hooks/useCoreAgentFormState';
+import { useCoreAgentSave } from '@/object-core/agents/hooks/useCoreAgentSave';
+import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
+import { getCoreAgentInitialFormValues } from '@/object-core/agents/utils/getCoreAgentInitialFormValues';
 import { isOwnedByInstalledApplication } from '~/pages/settings/ai/utils/isOwnedByInstalledApplication';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -45,13 +45,11 @@ const StyledContentContainer = styled.div`
   width: 100%;
 `;
 
-type SettingsAgentFormContentProps = {
+type CoreAgentFormContentProps = {
   agent: FindOneAgentQuery['findOneAgent'];
 };
 
-export const SettingsAgentFormContent = ({
-  agent,
-}: SettingsAgentFormContentProps) => {
+export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -64,17 +62,17 @@ export const SettingsAgentFormContent = ({
   const agentId = agent.id;
 
   const [initialFormValues] = useState(() =>
-    getSettingsAgentInitialFormValues(agent),
+    getCoreAgentInitialFormValues(agent),
   );
 
-  const tabListComponentId = `${SETTINGS_AGENT_DETAIL_TABS.COMPONENT_INSTANCE_ID}-${agentId}`;
+  const tabListComponentId = `${CORE_AGENT_DETAIL_TABS.COMPONENT_INSTANCE_ID}-${agentId}`;
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     tabListComponentId,
   );
 
   const { formValues, setFieldValue, validateForm } =
-    useSettingsAgentFormState(initialFormValues);
+    useCoreAgentFormState(initialFormValues);
 
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
@@ -89,7 +87,7 @@ export const SettingsAgentFormContent = ({
     isDefined(formValues.role) &&
     !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
 
-  const { scheduleAutoSave } = useSettingsAgentSave({
+  const { scheduleAutoSave } = useCoreAgentSave({
     agent,
     formValues,
     initialFormValues,
@@ -99,8 +97,8 @@ export const SettingsAgentFormContent = ({
   });
 
   const handleFieldChange = (
-    field: keyof SettingsAiAgentFormValues,
-    value: SettingsAiAgentFormValues[keyof SettingsAiAgentFormValues],
+    field: keyof CoreAgentFormValues,
+    value: CoreAgentFormValues[keyof CoreAgentFormValues],
   ) => {
     setFieldValue(field, value);
     scheduleAutoSave();
@@ -108,22 +106,22 @@ export const SettingsAgentFormContent = ({
 
   const tabs = [
     {
-      id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS,
+      id: CORE_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS,
       title: t`Settings`,
       Icon: IconSettings,
     },
     {
-      id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.ROLE,
+      id: CORE_AGENT_DETAIL_TABS.TABS_IDS.ROLE,
       title: t`Role`,
       Icon: IconLock,
     },
     {
-      id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.EVALS,
+      id: CORE_AGENT_DETAIL_TABS.TABS_IDS.EVALS,
       title: t`Evals`,
       Icon: IconListCheck,
     },
     {
-      id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.LOGS,
+      id: CORE_AGENT_DETAIL_TABS.TABS_IDS.LOGS,
       title: t`Logs`,
       Icon: IconTerminal,
     },
@@ -132,11 +130,11 @@ export const SettingsAgentFormContent = ({
   const title = agent.label;
   const AgentIcon = getIcon(formValues.icon || 'IconLego');
 
-  const isRoleTab = activeTabId === SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.ROLE;
+  const isRoleTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.ROLE;
   const isSettingsTab =
-    activeTabId === SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS;
-  const isEvalsTab = activeTabId === SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.EVALS;
-  const isLogsTab = activeTabId === SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.LOGS;
+    activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS;
+  const isEvalsTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.EVALS;
+  const isLogsTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.LOGS;
 
   const isFormDisabled = isReadonlyMode || !agent.isCustom;
   const isEvalsDisabled =
@@ -163,7 +161,7 @@ export const SettingsAgentFormContent = ({
           <Section.Root>
             <StyledContentContainer>
               {isRoleTab && (
-                <SettingsAgentRoleTab
+                <CoreAgentRoleTab
                   formValues={formValues}
                   onFieldChange={handleFieldChange}
                   disabled={isFormDisabled}
@@ -172,7 +170,7 @@ export const SettingsAgentFormContent = ({
                 />
               )}
               {isSettingsTab && (
-                <SettingsAgentSettingsTab
+                <CoreAgentSettingsTab
                   formValues={formValues}
                   onFieldChange={handleFieldChange}
                   disabled={isFormDisabled}
@@ -180,7 +178,7 @@ export const SettingsAgentFormContent = ({
                 />
               )}
               {isEvalsTab && (
-                <SettingsAgentEvalsTab
+                <CoreAgentEvalsTab
                   agentId={agentId}
                   evaluationInputs={formValues.evaluationInputs}
                   onEvaluationInputsChange={(inputs) =>
@@ -189,7 +187,7 @@ export const SettingsAgentFormContent = ({
                   disabled={isEvalsDisabled}
                 />
               )}
-              {isLogsTab && <SettingsAgentLogsTab agentId={agentId} />}
+              {isLogsTab && <CoreAgentLogsTab agentId={agentId} />}
             </StyledContentContainer>
           </Section.Root>
         </SettingsPageContainer>

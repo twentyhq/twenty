@@ -11,9 +11,9 @@ import { type CoreObjectShowPageProps } from '@/object-core/types/CoreObjectShow
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { FindOneAgentDocument } from '~/generated-metadata/graphql';
-import { SettingsAgentDetailSkeletonLoader } from '~/pages/settings/ai/components/SettingsAgentDetailSkeletonLoader';
-import { SettingsAgentFormContent } from '~/pages/settings/ai/components/SettingsAgentFormContent';
-import { SettingsAgentTurnDetail } from '~/pages/settings/ai/components/SettingsAgentTurnDetail';
+import { CoreAgentDetailSkeletonLoader } from '@/object-core/agents/components/CoreAgentDetailSkeletonLoader';
+import { CoreAgentFormContent } from '@/object-core/agents/components/CoreAgentFormContent';
+import { CoreAgentTurnDetail } from '@/object-core/agents/components/CoreAgentTurnDetail';
 import { useNavigateToNotFoundOnLoadFailure } from '~/pages/settings/ai/hooks/useNavigateToNotFoundOnLoadFailure';
 
 type AgentCoreObjectShowPageProps = CoreObjectShowPageProps;
@@ -56,7 +56,7 @@ export const AgentCoreObjectShowPage = ({
       >
         <SettingsPageContainer>
           <Section.Root>
-            <SettingsAgentDetailSkeletonLoader />
+            <CoreAgentDetailSkeletonLoader />
           </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
@@ -64,8 +64,8 @@ export const AgentCoreObjectShowPage = ({
   }
 
   if (isDefined(turnId)) {
-    return <SettingsAgentTurnDetail agent={agent} turnId={turnId} />;
+    return <CoreAgentTurnDetail agent={agent} turnId={turnId} />;
   }
 
-  return <SettingsAgentFormContent key={agent.id} agent={agent} />;
+  return <CoreAgentFormContent key={agent.id} agent={agent} />;
 };

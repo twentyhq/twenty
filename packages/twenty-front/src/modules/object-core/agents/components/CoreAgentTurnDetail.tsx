@@ -54,15 +54,15 @@ const StyledMessageContent = styled.div`
   max-width: 100%;
 `;
 
-type SettingsAgentTurnDetailProps = {
+type CoreAgentTurnDetailProps = {
   agent: Pick<FindOneAgentQuery['findOneAgent'], 'id' | 'label'>;
   turnId: string;
 };
 
-export const SettingsAgentTurnDetail = ({
+export const CoreAgentTurnDetail = ({
   agent,
   turnId,
-}: SettingsAgentTurnDetailProps) => {
+}: CoreAgentTurnDetailProps) => {
   const { data, loading } = useQuery(GetAgentTurnsDocument, {
     variables: { agentId: agent.id },
   });

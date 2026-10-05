@@ -1,5 +1,5 @@
-export const SETTINGS_AGENT_DETAIL_TABS = {
-  COMPONENT_INSTANCE_ID: 'settings-agent-detail-tabs',
+export const CORE_AGENT_DETAIL_TABS = {
+  COMPONENT_INSTANCE_ID: 'core-agent-detail-tabs',
   TABS_IDS: {
     ROLE: 'role',
     SETTINGS: 'settings',

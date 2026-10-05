@@ -13,15 +13,15 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
 
-type SettingsAgentDeleteConfirmationModalProps = {
+type CoreAgentDeleteConfirmationModalProps = {
   agentId: string;
   agentName: string;
 };
 
-export const SettingsAgentDeleteConfirmationModal = ({
+export const CoreAgentDeleteConfirmationModal = ({
   agentId,
   agentName,
-}: SettingsAgentDeleteConfirmationModalProps) => {
+}: CoreAgentDeleteConfirmationModalProps) => {
   const { t } = useLingui();
   const { closeDialog } = useDialog();
   const navigate = useNavigateApp();

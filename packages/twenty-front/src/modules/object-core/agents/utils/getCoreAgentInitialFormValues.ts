@@ -1,9 +1,9 @@
 import { type FindOneAgentQuery } from '~/generated-metadata/graphql';
-import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
+import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 
-export const getSettingsAgentInitialFormValues = (
+export const getCoreAgentInitialFormValues = (
   agent: FindOneAgentQuery['findOneAgent'],
-): SettingsAiAgentFormValues => {
+): CoreAgentFormValues => {
   return {
     name: agent.name,
     label: agent.label,

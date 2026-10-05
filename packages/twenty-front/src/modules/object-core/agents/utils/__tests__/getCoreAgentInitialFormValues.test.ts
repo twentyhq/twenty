@@ -1,4 +1,4 @@
-import { getSettingsAgentInitialFormValues } from '~/pages/settings/ai/utils/getSettingsAgentInitialFormValues';
+import { getCoreAgentInitialFormValues } from '@/object-core/agents/utils/getCoreAgentInitialFormValues';
 
 const agent = {
   __typename: 'Agent' as const,
@@ -20,9 +20,9 @@ const agent = {
   updatedAt: '2026-01-01T00:00:00.000Z',
 };
 
-describe('getSettingsAgentInitialFormValues', () => {
+describe('getCoreAgentInitialFormValues', () => {
   it('maps a loaded agent onto the form fields', () => {
-    expect(getSettingsAgentInitialFormValues(agent)).toEqual({
+    expect(getCoreAgentInitialFormValues(agent)).toEqual({
       name: 'salesAssistant',
       label: 'Sales assistant',
       description: 'Qualifies leads',
@@ -38,7 +38,7 @@ describe('getSettingsAgentInitialFormValues', () => {
   });
 
   it('falls back to the default icon, empty configuration and text format when the agent has none', () => {
-    const formValues = getSettingsAgentInitialFormValues({
+    const formValues = getCoreAgentInitialFormValues({
       ...agent,
       icon: null,
       modelConfiguration: null,

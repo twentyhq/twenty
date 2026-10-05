@@ -14,10 +14,10 @@ import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type Agent } from '~/generated-metadata/graphql';
-import { SettingsAgentDeleteConfirmationModal } from '~/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal';
-import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
+import { CoreAgentDeleteConfirmationModal } from '@/object-core/agents/components/CoreAgentDeleteConfirmationModal';
+import { CoreAgentResponseFormat } from '@/object-core/agents/components/CoreAgentResponseFormat';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
-import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
+import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledFormContainer = styled.div`
@@ -44,22 +44,22 @@ const StyledErrorMessage = styled.div`
 
 const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
 
-type SettingsAgentSettingsTabProps = {
-  formValues: SettingsAiAgentFormValues;
+type CoreAgentSettingsTabProps = {
+  formValues: CoreAgentFormValues;
   onFieldChange: (
-    field: keyof SettingsAiAgentFormValues,
-    value: SettingsAiAgentFormValues[keyof SettingsAiAgentFormValues],
+    field: keyof CoreAgentFormValues,
+    value: CoreAgentFormValues[keyof CoreAgentFormValues],
   ) => void;
   disabled: boolean;
   agent?: Agent;
 };
 
-export const SettingsAgentSettingsTab = ({
+export const CoreAgentSettingsTab = ({
   formValues,
   onFieldChange,
   disabled,
   agent,
-}: SettingsAgentSettingsTabProps) => {
+}: CoreAgentSettingsTabProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
 
@@ -147,7 +147,7 @@ export const SettingsAgentSettingsTab = ({
         />
       </StyledFormContainer>
       <StyledFormContainer>
-        <SettingsAgentResponseFormat
+        <CoreAgentResponseFormat
           responseFormat={formValues.responseFormat}
           onResponseFormatChange={(format) =>
             onFieldChange('responseFormat', format)
@@ -170,7 +170,7 @@ export const SettingsAgentSettingsTab = ({
         </Section.Root>
       )}
       {!disabled && agent && (
-        <SettingsAgentDeleteConfirmationModal
+        <CoreAgentDeleteConfirmationModal
           agentId={agent.id}
           agentName={agent.label}
         />
