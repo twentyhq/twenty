@@ -40,11 +40,9 @@ export const PromiseRejectionEffect = () => {
         return; // already handled by apolloLink
       }
 
-      // WebKit (Safari) names cancelled fetches 'Cancelled' instead of 'AbortError'
       const isAbortError =
         error?.networkError?.name === 'AbortError' ||
-        error?.name === 'AbortError' ||
-        error?.message === 'Cancelled';
+        error?.name === 'AbortError';
 
       const isViteStaleChunkLazyLoadingError =
         error instanceof Error &&
