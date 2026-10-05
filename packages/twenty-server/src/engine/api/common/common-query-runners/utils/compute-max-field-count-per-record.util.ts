@@ -64,5 +64,5 @@ export const computeMaxFieldCountPerRecord = ({
     0,
   );
 
-  return Math.max(maxFieldCount, 1);
+  return maxFieldCount || 1;
 };
