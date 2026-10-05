@@ -200,5 +200,6 @@ export const FilterHandoff: Story = {
     expect(existingInput).toHaveValue('Acme');
     await waitFor(() => expect(existingInput).toHaveFocus());
     await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(existingInput).not.toBeInTheDocument());
   },
 };

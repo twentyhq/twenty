@@ -95,57 +95,59 @@ const flatPersonRecords = mockedPersonRecords.map((record) =>
 
 const onDetach = fn();
 
+const withRecordsParameters = {
+  msw: {
+    handlers: [
+      graphql.query('AggregatePeople', () =>
+        HttpResponse.json({
+          data: {
+            people: {
+              __typename: 'PersonConnection',
+              totalCount: flatPersonRecords.length,
+            },
+          },
+        }),
+      ),
+      graphql.query('FindOneWorkspaceMember', ({ variables }) =>
+        HttpResponse.json({
+          data: {
+            workspaceMember:
+              mockedWorkspaceMemberRecords.find(
+                (record) => record.id === variables.objectRecordId,
+              ) ?? null,
+          },
+        }),
+      ),
+      graphql.mutation('UpdateOnePerson', ({ variables }) => {
+        onDetach(variables);
+        return HttpResponse.json({
+          data: {
+            updatePerson: {
+              ...mockedPersonRecords[0],
+              companyId: null,
+              company: null,
+            },
+          },
+        });
+      }),
+      ...graphqlMocks.handlers,
+    ],
+  },
+  records: [
+    {
+      ...mockedCompanyRecords[0],
+      people: flatPersonRecords,
+    },
+    ...flatPersonRecords,
+  ],
+};
+
 export const WithRecords: Story = {
   decorators: [RecordStoreDecorator],
   beforeEach: () => {
     onDetach.mockClear();
   },
-  parameters: {
-    msw: {
-      handlers: [
-        graphql.query('AggregatePeople', () =>
-          HttpResponse.json({
-            data: {
-              people: {
-                __typename: 'PersonConnection',
-                totalCount: flatPersonRecords.length,
-              },
-            },
-          }),
-        ),
-        graphql.query('FindOneWorkspaceMember', ({ variables }) =>
-          HttpResponse.json({
-            data: {
-              workspaceMember:
-                mockedWorkspaceMemberRecords.find(
-                  (record) => record.id === variables.objectRecordId,
-                ) ?? null,
-            },
-          }),
-        ),
-        graphql.mutation('UpdateOnePerson', ({ variables }) => {
-          onDetach(variables);
-          return HttpResponse.json({
-            data: {
-              updatePerson: {
-                ...mockedPersonRecords[0],
-                companyId: null,
-                company: null,
-              },
-            },
-          });
-        }),
-        ...graphqlMocks.handlers,
-      ],
-    },
-    records: [
-      {
-        ...mockedCompanyRecords[0],
-        people: flatPersonRecords,
-      },
-      ...flatPersonRecords,
-    ],
-  },
+  parameters: withRecordsParameters,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
@@ -161,12 +163,17 @@ export const WithRecords: Story = {
     expect(trigger).toHaveStyle({ opacity: '1', pointerEvents: 'auto' });
     await userEvent.click(trigger);
     const menu = await body.findByRole('menu', { name: 'More options' });
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(menu).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.unhover(row);
     expect(trigger).toHaveStyle({ opacity: '1' });
+    await userEvent.click(trigger);
+    const deleteMenu = await body.findByRole('menu', { name: 'More options' });
     await userEvent.click(
-      within(menu).getByRole('menuitem', { name: 'Delete' }),
+      within(deleteMenu).getByRole('menuitem', { name: 'Delete' }),
     );
-    await waitFor(() => expect(menu).not.toBeInTheDocument());
+    await waitFor(() => expect(deleteMenu).not.toBeInTheDocument());
     const confirmation = await body.findByRole('dialog', {
       name: 'Delete Related Person',
     });
@@ -203,7 +210,7 @@ export const WithRecords: Story = {
 
 export const ReadOnly: Story = {
   decorators: [RecordStoreDecorator],
-  parameters: { ...WithRecords.parameters, readOnly: true },
+  parameters: { ...withRecordsParameters, readOnly: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findAllByRole('button', { name: 'Expand relation' });

@@ -380,6 +380,11 @@ export const IdentifierBarNarrow: Story = {
         ),
       ).toBe('revenue'),
     );
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: /More/ }),
+      ).not.toBeInTheDocument(),
+    );
     await userEvent.click(moreButton);
 
     expect(

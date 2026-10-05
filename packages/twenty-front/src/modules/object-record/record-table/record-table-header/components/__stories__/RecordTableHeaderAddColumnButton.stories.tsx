@@ -1,3 +1,5 @@
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import {
   useRecordTableContextOrThrow,
   RecordTableContextProvider,
@@ -5,16 +7,24 @@ import {
 import { RecordTableHeaderAddColumnButton } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { PermissionFlagsDecorator } from '~/testing/decorators/PermissionFlagsDecorator';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+
+const onCreateManyViewFields = fn();
+
+const companyView = mockedViews.find((view) => view.name === 'All Companies');
 
 const AddColumnStory = ({
   allFieldsVisible = false,
@@ -54,13 +64,26 @@ const meta: Meta<typeof AddColumnStory> = {
     ContextStoreDecorator,
     ToastDecorator,
     ObjectMetadataItemsDecorator,
+    PermissionFlagsDecorator,
   ],
+  beforeEach: () => {
+    onCreateManyViewFields.mockClear();
+    jotaiStore.set(
+      contextStoreCurrentViewIdComponentState.atomFamily({
+        instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
+      companyView?.id,
+    );
+  },
   parameters: {
     recordTableObjectNameSingular: 'company',
+    permissionFlags: [PermissionFlagType.VIEWS],
     msw: {
       handlers: [
-        graphql.mutation('CreateManyViewFields', ({ variables }) =>
-          HttpResponse.json({
+        graphql.mutation('CreateManyViewFields', ({ variables }) => {
+          onCreateManyViewFields(variables.inputs);
+
+          return HttpResponse.json({
             data: {
               createManyViewFields: variables.inputs.map(
                 (input: Record<string, unknown>) => ({
@@ -70,8 +93,8 @@ const meta: Meta<typeof AddColumnStory> = {
                 }),
               ),
             },
-          }),
-        ),
+          });
+        }),
         ...graphqlMocks.handlers,
       ],
     },
@@ -97,6 +120,11 @@ export const SearchAndAddColumn: Story = {
     );
     await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(onCreateManyViewFields).toHaveBeenCalledWith([
+        expect.objectContaining({ isVisible: true }),
+      ]),
+    );
     await userEvent.click(trigger);
     const reopenedPopup = await body.findByRole('dialog', {
       name: 'Add column',
