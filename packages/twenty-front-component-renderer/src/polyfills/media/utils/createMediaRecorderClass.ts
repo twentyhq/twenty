@@ -1,3 +1,4 @@
+import { isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkerMediaBridge } from '@/polyfills/media/types/WorkerMediaBridge';
@@ -59,6 +60,9 @@ export const createMediaRecorderClass = ({
     #hasPendingDataRequest = false;
 
     #eventHandlers = new Map<string, EventListener>();
+    #invokeEventHandler: EventListener = (event) => {
+      this.#eventHandlers.get(event.type)?.call(this, event);
+    };
 
     static isTypeSupported(mimeType: string): boolean {
       return bridge.isRecorderMimeTypeSupported(String(mimeType));
@@ -346,17 +350,14 @@ export const createMediaRecorderClass = ({
     }
 
     #setEventHandler(eventType: string, handler: EventListener | null): void {
-      const previousHandler = this.#eventHandlers.get(eventType);
-
-      if (isDefined(previousHandler)) {
-        this.removeEventListener(eventType, previousHandler);
-        this.#eventHandlers.delete(eventType);
-      }
-
-      if (handler !== null) {
+      if (isFunction(handler)) {
         this.#eventHandlers.set(eventType, handler);
-        this.addEventListener(eventType, handler);
+        this.addEventListener(eventType, this.#invokeEventHandler);
+        return;
       }
+
+      this.#eventHandlers.delete(eventType);
+      this.removeEventListener(eventType, this.#invokeEventHandler);
     }
   }
 

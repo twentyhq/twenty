@@ -9,6 +9,8 @@ import { IsNull } from 'typeorm';
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-db-parts.util';
+import { type ToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/types/tool-call-workflow-step.type';
+import { stampPendingToolPartsWithWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/utils/stamp-pending-tool-parts-with-workflow-step.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -191,6 +193,7 @@ export class AgentConversationWriterService {
     turnId,
     agentId,
     execution,
+    workflowStep,
     scope,
   }: {
     workspaceId: string;
@@ -198,12 +201,19 @@ export class AgentConversationWriterService {
     turnId: string;
     agentId: string | null;
     execution: RecordableAgentExecution;
+    workflowStep?: ToolCallWorkflowStep;
     scope?: AgentHistoryTransactionScope;
   }): Promise<{
     isAwaitingAnswer: boolean;
     replyParts: ExtendedUIMessagePart[];
   }> {
-    const replyParts = mapAiStepsToUIMessageParts(execution.steps ?? []);
+    const mappedReplyParts = mapAiStepsToUIMessageParts(execution.steps ?? []);
+    const replyParts = isDefined(workflowStep)
+      ? stampPendingToolPartsWithWorkflowStep({
+          parts: mappedReplyParts,
+          workflowStep,
+        })
+      : mappedReplyParts;
 
     if (replyParts.length === 0) {
       return { isAwaitingAnswer: false, replyParts };

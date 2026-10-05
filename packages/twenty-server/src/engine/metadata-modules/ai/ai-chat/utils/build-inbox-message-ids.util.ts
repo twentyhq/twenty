@@ -1,6 +1,7 @@
 import { v5 } from 'uuid';
 
 import { INBOX_MESSAGE_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/inbox-message-id-namespace.constant';
+import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 
 type InboxMessageIds = {
   threadId: string;
@@ -21,10 +22,11 @@ export const buildInboxMessageIds = ({
   threadKey: string;
   idempotencyKey: string;
 }): InboxMessageIds => {
-  const threadId = v5(
-    `${senderKey}:${workspaceMemberId}:${threadKey}`,
-    INBOX_MESSAGE_ID_NAMESPACE,
-  );
+  const threadId = buildInboxThreadId({
+    senderKey,
+    workspaceMemberId,
+    threadKey,
+  });
   const messageId = v5(
     `${threadId}:message:${idempotencyKey}`,
     INBOX_MESSAGE_ID_NAMESPACE,

@@ -18,6 +18,10 @@ import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/
 import { buildRecordValidationRuleViolationsMessage } from 'src/engine/metadata-modules/validation-rule/utils/build-record-validation-rule-violations-message.util';
 import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
 import { computeRecordValidationRuleViolations } from 'src/engine/metadata-modules/validation-rule/utils/compute-record-validation-rule-violations.util';
+import {
+  attachToOneRelationToRecords,
+  collectForeignKeys,
+} from 'src/engine/twenty-orm/repository/utils/attach-relations.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
@@ -82,7 +86,7 @@ const attachRelatedRecords = async <TEntity extends ObjectLiteral>({
         isNonEmptyString(relationShape.joinColumnName),
     );
 
-  let records = repository.formatResult<ObjectRecord[]>(rawWrittenRecords);
+  const records = repository.formatResult<ObjectRecord[]>(rawWrittenRecords);
 
   for (const relationShape of referencedRelationShapes) {
     const joinColumnName = relationShape.joinColumnName ?? '';
@@ -90,13 +94,7 @@ const attachRelatedRecords = async <TEntity extends ObjectLiteral>({
     const relatedRecords = await findLiveRelatedRecords({
       repository,
       targetObjectMetadataId: relationShape.targetObjectMetadataId,
-      ids: [
-        ...new Set(
-          rawWrittenRecords
-            .map((rawWrittenRecord) => rawWrittenRecord[joinColumnName])
-            .filter(isNonEmptyString),
-        ),
-      ],
+      ids: collectForeignKeys(records, joinColumnName),
       fieldNames: readFieldPaths
         .filter((readFieldPath) =>
           readFieldPath.startsWith(`${relationShape.fieldName}.`),
@@ -106,20 +104,12 @@ const attachRelatedRecords = async <TEntity extends ObjectLiteral>({
         ),
     });
 
-    const relatedRecordById = new Map(
-      relatedRecords.map((relatedRecord) => [
-        String(relatedRecord.id),
-        relatedRecord,
-      ]),
-    );
-
-    records = records.map((record, recordIndex) => ({
-      ...record,
-      [relationShape.fieldName]:
-        relatedRecordById.get(
-          String(rawWrittenRecords[recordIndex]?.[joinColumnName]),
-        ) ?? null,
-    }));
+    attachToOneRelationToRecords({
+      records,
+      fieldName: relationShape.fieldName,
+      joinColumnName,
+      targets: relatedRecords,
+    });
   }
 
   return records;

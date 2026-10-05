@@ -4,6 +4,7 @@ import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionB
 import { ENTERPRISE_CHECKOUT_SESSION } from '@/settings/enterprise/graphql/queries/enterpriseCheckoutSession';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -13,6 +14,7 @@ import { Loader } from 'twenty-ui/primitives/feedback';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 const StyledCheckoutButton = styled(MainButton)`
   width: 200px;
@@ -136,8 +138,13 @@ export const EnterprisePlanModal = () => {
           children: t`Could not open Stripe. Please contact support.`,
         });
       }
-    } catch {
-      enqueueToast({ variant: 'error', children: t`Error opening Stripe` });
+    } catch (error) {
+      enqueueToast({
+        variant: 'error',
+        children: CombinedGraphQLErrors.is(error)
+          ? getErrorMessageFromApolloError(error)
+          : t`Error opening Stripe`,
+      });
     } finally {
       setIsLoading(false);
     }
