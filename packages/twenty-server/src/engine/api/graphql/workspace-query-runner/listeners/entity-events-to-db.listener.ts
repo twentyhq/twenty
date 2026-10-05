@@ -83,6 +83,13 @@ export class EntityEventsToDbListener {
   // agent triggers, which can watch `upserted` on its own, consume them here
   @OnDatabaseBatchEvent('*', DatabaseEventAction.UPSERTED)
   async handleUpsert(batchEvent: WorkspaceEventBatch<ObjectRecordUpsertEvent>) {
+    if (
+      batchEvent.objectMetadata.universalIdentifier ===
+      STANDARD_OBJECTS.timelineActivity.universalIdentifier
+    ) {
+      return;
+    }
+
     await this.enqueueAgentDatabaseEventTriggerJobIfAnyAgentMatches(batchEvent);
   }
 

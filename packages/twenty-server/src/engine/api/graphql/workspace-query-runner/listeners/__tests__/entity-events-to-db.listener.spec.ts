@@ -1,4 +1,5 @@
 import { type ObjectRecordUpsertEvent } from 'twenty-shared/database-events';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { EntityEventsToDbListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/entity-events-to-db.listener';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -74,6 +75,25 @@ describe('EntityEventsToDbListener', () => {
       { retryLimit: 3 },
     );
     expect(otherQueueService.add).not.toHaveBeenCalled();
+  });
+
+  it('should not dispatch timeline activity upserts', async () => {
+    const { listener, triggerQueueService } = buildListener(
+      'timelineActivity.upserted',
+    );
+
+    await listener.handleUpsert({
+      ...UPSERT_BATCH_EVENT,
+      name: 'timelineActivity.upserted',
+      objectMetadata: {
+        id: 'object-id',
+        nameSingular: 'timelineActivity',
+        universalIdentifier:
+          STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+      },
+    } as unknown as WorkspaceEventBatch<ObjectRecordUpsertEvent>);
+
+    expect(triggerQueueService.add).not.toHaveBeenCalled();
   });
 
   it('should not dispatch upsert events when no agent watches them', async () => {
