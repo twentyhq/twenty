@@ -31,5 +31,13 @@ export const validateApplicationVariableScope = ({
     });
   }
 
+  if (scope === 'WORKSPACE' && !isDefined(value)) {
+    errors.push({
+      code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
+      message: t`Workspace application variable must have a value`,
+      userFriendlyMessage: msg`A workspace variable must have a value.`,
+    });
+  }
+
   return errors;
 };

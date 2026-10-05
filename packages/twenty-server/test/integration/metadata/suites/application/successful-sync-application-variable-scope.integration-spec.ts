@@ -54,6 +54,12 @@ const findStoredApplicationVariable = async (
     [universalIdentifier],
   );
 
+  if (!isDefined(applicationVariable)) {
+    throw new Error(
+      `No application variable with universalIdentifier ${universalIdentifier}`,
+    );
+  }
+
   return applicationVariable;
 };
 
@@ -126,8 +132,20 @@ describe('Sync application should create application variables of every scope', 
         VARIABLE_ID_BY_SCOPE[scope],
       );
 
+      const { data } = await findOneApplication({
+        input: { universalIdentifier: TEST_APP_ID },
+        gqlFields: 'applicationVariables { key value }',
+        expectToFail: false,
+      });
+
       expect(defaultValue).toBe('true');
       expect(isDefined(value)).toBe(scope === 'WORKSPACE');
+      expect(data.findOneApplication.applicationVariables).toEqual([
+        {
+          key: 'RECORD_MY_MEETINGS',
+          value: scope === 'WORKSPACE' ? 'true' : '',
+        },
+      ]);
     },
     60000,
   );

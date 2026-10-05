@@ -33,6 +33,18 @@ describe('validateApplicationVariableScope', () => {
     expect(errors[0].message).toContain('TEAM');
   });
 
+  it('should return an error for a workspace variable without a value', () => {
+    const errors = validateApplicationVariableScope({
+      scope: 'WORKSPACE',
+      value: null,
+    });
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].code).toBe(
+      ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
+    );
+  });
+
   it('should return an error for a user variable with a value', () => {
     const errors = validateApplicationVariableScope({
       scope: 'USER',

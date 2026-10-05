@@ -135,6 +135,10 @@ Each application variable has a `scope`:
 - **`WORKSPACE`** (default): one value for the whole workspace, set by a member who can manage apps.
 - **`USER`**: each member keeps their own value.
 
+<Note>
+Members cannot save or read their own value of a user variable yet. Until per-member values land, a user variable is declared and synced, but nothing reads it.
+</Note>
+
 ```ts src/application-config.ts
 import { defineApplication, FieldType } from 'twenty-sdk/define';
 
