@@ -16,4 +16,8 @@ export const USAGE_LIMIT_UNIT_LABELS: Record<UsageUnit, UsageLimitUnitLabel> = {
   [UsageUnit.RECORD]: { name: msg`Records`, suffix: msg`records` },
   [UsageUnit.COMPLEXITY]: { name: msg`Complexity`, suffix: msg`points` },
   [UsageUnit.ESTIMATED_ROWS_READ]: { name: msg`Rows read`, suffix: msg`rows` },
+  [UsageUnit.ESTIMATED_ROWS_WRITTEN]: {
+    name: msg`Rows written`,
+    suffix: msg`rows`,
+  },
 };

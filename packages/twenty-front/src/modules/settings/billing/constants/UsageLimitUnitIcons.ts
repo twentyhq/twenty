@@ -24,4 +24,5 @@ export const USAGE_LIMIT_UNIT_ICONS: Record<UsageUnit, IconComponent> = {
   [UsageUnit.RECORD]: IconAddressBook,
   [UsageUnit.COMPLEXITY]: IconNumber123,
   [UsageUnit.ESTIMATED_ROWS_READ]: IconDatabase,
+  [UsageUnit.ESTIMATED_ROWS_WRITTEN]: IconDatabase,
 };

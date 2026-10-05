@@ -1669,6 +1669,7 @@ enum UsageUnit {
   RECORD
   COMPLEXITY
   ESTIMATED_ROWS_READ
+  ESTIMATED_ROWS_WRITTEN
 }
 
 type UsageQuotaDefinition {
