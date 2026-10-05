@@ -23,6 +23,8 @@ import { CallWebhookJobsJob } from 'src/engine/metadata-modules/webhook/jobs/cal
 import { WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/call-database-event-trigger-jobs.job';
+import { CallAgentDatabaseEventTriggersJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/call-agent-database-event-triggers.job';
+import { findAgentDatabaseEventTriggersMatchingEvent } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/find-agent-database-event-triggers-matching-event.util';
 import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-logic-functions-triggered-by-event-name';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -109,6 +111,7 @@ export class EntityEventsToDbListener {
       this.objectRecordEventPublisher.publish(batchEvent),
       this.enqueueWebhookJobsIfAnyWebhookMatches(batchEventForWebhook),
       this.enqueueDatabaseEventTriggerJobsIfAnyLogicFunctionMatches(batchEvent),
+      this.enqueueAgentDatabaseEventTriggerJobIfAnyAgentMatches(batchEvent),
     ];
 
     if (shouldCreateTimelineActivity) {
@@ -195,6 +198,31 @@ export class EntityEventsToDbListener {
 
     await this.triggerQueueService.add<WorkspaceEventBatch<T>>(
       CallDatabaseEventTriggerJobsJob.name,
+      batchEvent,
+      { retryLimit: 3 },
+    );
+  }
+
+  private async enqueueAgentDatabaseEventTriggerJobIfAnyAgentMatches<
+    T extends ObjectRecordEvent,
+  >(batchEvent: WorkspaceEventBatch<T>) {
+    const hasMatchingAgentTrigger = await this.workspaceCacheService
+      .getOrRecompute(batchEvent.workspaceId, ['flatAgentMaps'])
+      .then(
+        ({ flatAgentMaps }) =>
+          findAgentDatabaseEventTriggersMatchingEvent({
+            flatAgentMaps,
+            eventName: batchEvent.name,
+          }).length > 0,
+      )
+      .catch(() => true);
+
+    if (!hasMatchingAgentTrigger) {
+      return;
+    }
+
+    await this.triggerQueueService.add<WorkspaceEventBatch<T>>(
+      CallAgentDatabaseEventTriggersJob.name,
       batchEvent,
       { retryLimit: 3 },
     );
