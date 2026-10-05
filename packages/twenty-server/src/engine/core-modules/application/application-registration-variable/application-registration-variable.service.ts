@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type ServerVariables } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Not, type EntityManager, type Repository } from 'typeorm';
+import { In, type EntityManager, type Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ApplicationRegistrationVariableFileService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable-file.service';
@@ -162,6 +162,14 @@ export class ApplicationRegistrationVariableService {
       const isDeprecated = schema.isDeprecated ?? false;
       const isRequired = isDeprecated ? false : (schema.isRequired ?? false);
       const type = schema.type ?? FieldMetadataType.TEXT;
+
+      if (type !== FieldMetadataType.FILES && isDefined(schema.signUrl)) {
+        throw new ApplicationRegistrationException(
+          `Server variable ${key} declares signUrl, which only applies to FILES variables`,
+          ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        );
+      }
+
       // The file list is shown in the settings, so a FILES variable is never masked
       const isSecret =
         type === FieldMetadataType.FILES ? false : (schema.isSecret ?? true);
@@ -175,9 +183,7 @@ export class ApplicationRegistrationVariableService {
         signUrl: schema.signUrl ?? false,
       };
 
-      if (existing) {
-        await variableRepository.update(existing.id, schemaColumns);
-      } else {
+      if (!isDefined(existing)) {
         await variableRepository.save(
           variableRepository.create({
             applicationRegistrationId,
@@ -188,16 +194,59 @@ export class ApplicationRegistrationVariableService {
             ...schemaColumns,
           }),
         );
+
+        continue;
+      }
+
+      // A file list means nothing to another type, and a scalar is no file:
+      // a variable crossing the FILES boundary starts over
+      const crossesFilesBoundary =
+        existing.type !== type &&
+        (existing.type === FieldMetadataType.FILES ||
+          type === FieldMetadataType.FILES);
+
+      if (crossesFilesBoundary && existing.type === FieldMetadataType.FILES) {
+        await this.applicationRegistrationVariableFileService.deleteFilesOfValue(
+          {
+            applicationRegistrationId,
+            plaintextValue: this.decryptValue(existing),
+            entityManager,
+          },
+        );
+      }
+
+      await variableRepository.update(existing.id, {
+        ...schemaColumns,
+        ...(crossesFilesBoundary
+          ? {
+              encryptedValue: this.encryptionService.encryptVersioned(
+                '' as PlaintextString,
+              ),
+            }
+          : {}),
+      });
+    }
+
+    const removedVariables = existingVariables.filter(
+      ({ key }) => !declaredKeys.includes(key),
+    );
+
+    for (const removedVariable of removedVariables) {
+      if (removedVariable.type === FieldMetadataType.FILES) {
+        await this.applicationRegistrationVariableFileService.deleteFilesOfValue(
+          {
+            applicationRegistrationId,
+            plaintextValue: this.decryptValue(removedVariable),
+            entityManager,
+          },
+        );
       }
     }
 
-    if (declaredKeys.length > 0) {
+    if (removedVariables.length > 0) {
       await variableRepository.delete({
-        applicationRegistrationId,
-        key: Not(In(declaredKeys)),
+        id: In(removedVariables.map(({ id }) => id)),
       });
-    } else {
-      await variableRepository.delete({ applicationRegistrationId });
     }
   }
 
@@ -318,18 +367,32 @@ export class ApplicationRegistrationVariableService {
       updateData.description = update.description;
     }
 
-    if (Object.keys(updateData).length > 0) {
-      await this.variableRepository.update(variable.id, updateData);
-    }
+    // One transaction keeps the stored file list and the file rows in step
+    const droppedFiles = await this.variableRepository.manager.transaction(
+      async (entityManager) => {
+        const droppedFiles = isDefined(filesValueUpdate)
+          ? await this.applicationRegistrationVariableFileService.applyFilesValueUpdate(
+              {
+                ...filesValueUpdate,
+                entityManager,
+                applicationRegistrationId: variable.applicationRegistrationId,
+              },
+            )
+          : [];
 
-    if (isDefined(filesValueUpdate)) {
-      await this.applicationRegistrationVariableFileService.applyFilesValueUpdate(
-        {
-          ...filesValueUpdate,
-          applicationRegistrationId: variable.applicationRegistrationId,
-        },
-      );
-    }
+        if (Object.keys(updateData).length > 0) {
+          await entityManager
+            .getRepository(ApplicationRegistrationVariableEntity)
+            .update(variable.id, updateData);
+        }
+
+        return droppedFiles;
+      },
+    );
+
+    await this.applicationRegistrationVariableFileService.deleteFileBytes(
+      droppedFiles,
+    );
 
     return this.variableRepository.findOneOrFail({
       where: { id: variable.id },

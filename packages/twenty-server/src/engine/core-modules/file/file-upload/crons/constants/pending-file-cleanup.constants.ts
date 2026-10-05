@@ -4,5 +4,8 @@ export const PENDING_FILE_CLEANUP_CRON_PATTERN = '0 * * * *';
 // so the cleanup can never race a legitimate in-flight upload.
 export const PENDING_FILE_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 export const RECORD_EXPORT_FILE_MAX_AGE_MS = 60 * 60 * 1000;
+// A variable file is bound when its variable is saved; one still temporary
+// after a day belongs to a save that never happened
+export const UNBOUND_VARIABLE_FILE_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 export const PENDING_FILE_CLEANUP_BATCH_SIZE = 200;

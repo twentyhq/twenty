@@ -497,6 +497,34 @@ describe('FileController', () => {
       );
     });
 
+    it('should throw INTERNAL_SERVER_ERROR when the stream errors before headers are sent', async () => {
+      jest
+        .spyOn(serverFileStorageService, 'readServerFileById')
+        .mockResolvedValue({
+          stream: createMockStream(),
+          mimeType: 'image/png',
+        });
+
+      mockPipeline.mockRejectedValue(new Error('source backend exploded'));
+
+      const mockResponse = createMockResponse({ headersSent: false }) as any;
+
+      await expect(
+        controller.getApplicationRegistrationVariableFile(
+          mockResponse,
+          createVariableFileRequest(),
+          'file-id',
+        ),
+      ).rejects.toThrow(
+        new FileException(
+          'Error streaming file from storage',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
+        ),
+      );
+
+      expect(mockResponse.destroy).not.toHaveBeenCalled();
+    });
+
     it('should destroy the response without throwing when the stream errors after headers are sent', async () => {
       jest
         .spyOn(serverFileStorageService, 'readServerFileById')

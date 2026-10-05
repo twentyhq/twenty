@@ -42,9 +42,13 @@ export type ApplicationVariableValue =
   | number
   | boolean
   | string[]
-  | ApplicationVariableFileValue[]
   | Record<string, unknown>
   | null;
+
+// A FILES variable reads as a file list, but a manifest never carries one
+export type ApplicationVariableReadValue =
+  | ApplicationVariableValue
+  | ApplicationVariableFileValue[];
 
 type TypedApplicationVariable = {
   label?: string;

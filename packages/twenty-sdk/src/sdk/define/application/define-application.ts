@@ -61,7 +61,7 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
           `Application variable "${variableName}" of type ${FieldMetadataType.FILES} cannot be secret`,
         );
       }
-    } else if ('signUrl' in variable) {
+    } else if ('signUrl' in variable && isDefined(variable.signUrl)) {
       errors.push(
         `Application variable "${variableName}" declares signUrl, which only applies to ${FieldMetadataType.FILES} variables`,
       );

@@ -201,6 +201,22 @@ describe('defineApplication', () => {
     expect(refused.errors).toEqual([
       expect.stringMatching(/API_KEY.*signUrl.*only applies to FILES/),
     ]);
+
+    const unset = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      applicationVariables: {
+        API_KEY: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          isSecret: true,
+          signUrl: undefined,
+        } as never,
+      },
+    });
+
+    expect(unset.success).toBe(true);
+    expect(unset.errors).toEqual([]);
   });
 
   it('should accept FILES server variables', () => {

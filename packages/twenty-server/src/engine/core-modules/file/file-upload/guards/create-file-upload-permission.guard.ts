@@ -13,12 +13,19 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { CORE_PICTURE_UPLOAD_PERMISSION_FLAGS } from 'src/engine/core-modules/file/file-upload/constants/core-picture-upload-permission-flags.constant';
+import { userIsFullAdmin } from 'src/engine/core-modules/impersonation/utils/user-is-full-admin.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+
+// Completed by their own mutation, which an application cannot call
+const APPLICATION_FORBIDDEN_FILE_FOLDERS: FileFolder[] = [
+  FileFolder.AppTarball,
+  FileFolder.ApplicationRegistrationVariableUpload,
+];
 
 const buildPermissionDeniedException = () =>
   new PermissionsException(
@@ -39,10 +46,19 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
     const { fileFolder } = gqlContext.getArgs<{ fileFolder: FileFolder }>();
 
     if (
-      fileFolder === FileFolder.AppTarball &&
+      APPLICATION_FORBIDDEN_FILE_FOLDERS.includes(fileFolder) &&
       isDefined(getScopedCallingApplication(request.application))
     ) {
       throw buildPermissionDeniedException();
+    }
+
+    // The admin panel completes these uploads for registrations of any workspace
+    if (
+      fileFolder === FileFolder.ApplicationRegistrationVariableUpload &&
+      isDefined(request.user) &&
+      userIsFullAdmin(request.user)
+    ) {
+      return true;
     }
 
     if (

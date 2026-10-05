@@ -9,6 +9,7 @@ import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { type ServerVariables } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
@@ -70,6 +71,7 @@ describe('FILES server variable', () => {
   let dataSource: DataSource;
   let applicationRegistrationId: string;
   const applicationUniversalIdentifier = randomUUID();
+  const roleUniversalIdentifier = randomUUID();
 
   const createUpload = async (filename: string) => {
     const response = await makeMetadataApiRequest({
@@ -228,18 +230,7 @@ describe('FILES server variable', () => {
     return row ?? null;
   };
 
-  beforeAll(async () => {
-    dataSource = global.testDataSource;
-
-    const roleUniversalIdentifier = randomUUID();
-
-    await setupApplicationForSync({
-      applicationUniversalIdentifier,
-      name: 'Server Files Variable App',
-      description: 'Declares FILES server variables',
-      sourcePath: `test-${applicationUniversalIdentifier}`,
-    });
-
+  const syncServerVariables = async (serverVariables: ServerVariables) => {
     await syncApplication({
       manifest: buildBaseManifest({
         appId: applicationUniversalIdentifier,
@@ -250,17 +241,7 @@ describe('FILES server variable', () => {
             defaultRoleUniversalIdentifier: roleUniversalIdentifier,
             displayName: 'Server Files Variable App',
             description: 'Declares FILES server variables',
-            serverVariables: {
-              [VARIABLE_KEY]: {
-                description: 'Printed on every invoice',
-                type: FieldMetadataType.FILES,
-              },
-              [SIGNED_VARIABLE_KEY]: {
-                description: 'Signs every invoice',
-                type: FieldMetadataType.FILES,
-                signUrl: true,
-              },
-            },
+            serverVariables,
             packageJsonChecksum: null,
             yarnLockChecksum: null,
           },
@@ -279,6 +260,29 @@ describe('FILES server variable', () => {
         },
       }),
       expectToFail: false,
+    });
+  };
+
+  beforeAll(async () => {
+    dataSource = global.testDataSource;
+
+    await setupApplicationForSync({
+      applicationUniversalIdentifier,
+      name: 'Server Files Variable App',
+      description: 'Declares FILES server variables',
+      sourcePath: `test-${applicationUniversalIdentifier}`,
+    });
+
+    await syncServerVariables({
+      [VARIABLE_KEY]: {
+        description: 'Printed on every invoice',
+        type: FieldMetadataType.FILES,
+      },
+      [SIGNED_VARIABLE_KEY]: {
+        description: 'Signs every invoice',
+        type: FieldMetadataType.FILES,
+        signUrl: true,
+      },
     });
 
     const { data } = await findOneApplication({
@@ -476,5 +480,53 @@ describe('FILES server variable', () => {
     expect(await findFileRow(uploadTarget.fileId)).toMatchObject({
       path: `${FileFolder.ApplicationRegistrationVariableUpload}/${uploadTarget.fileId}.png`,
     });
+  });
+
+  it('should drop the files of a variable the manifest retypes', async () => {
+    const { id: fileId } = await uploadLogo('retyped.png');
+
+    await saveFiles({ files: [{ fileId, label: 'retyped.png' }] });
+
+    await syncServerVariables({
+      [VARIABLE_KEY]: {
+        description: 'Now a plain text',
+        type: FieldMetadataType.TEXT,
+      },
+      [SIGNED_VARIABLE_KEY]: {
+        description: 'Signs every invoice',
+        type: FieldMetadataType.FILES,
+        signUrl: true,
+      },
+    });
+
+    const variable = await readVariable();
+
+    expect(variable).toMatchObject({
+      type: FieldMetadataType.TEXT,
+      value: null,
+      isFilled: false,
+    });
+    expect(await findFileRow(fileId)).toBeNull();
+  });
+
+  it('should drop the files of a variable the manifest removes', async () => {
+    const { id: fileId } = await uploadLogo('removed.png');
+
+    await saveFiles({
+      variableKey: SIGNED_VARIABLE_KEY,
+      files: [{ fileId, label: 'removed.png' }],
+    });
+
+    await syncServerVariables({
+      [VARIABLE_KEY]: {
+        description: 'Now a plain text',
+        type: FieldMetadataType.TEXT,
+      },
+    });
+
+    await expect(readVariable(SIGNED_VARIABLE_KEY)).rejects.toThrow(
+      'was not synced',
+    );
+    expect(await findFileRow(fileId)).toBeNull();
   });
 });

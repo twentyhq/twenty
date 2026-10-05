@@ -328,21 +328,20 @@ describe('FILES application variable', () => {
     );
   });
 
-  it('should refuse binding the same upload twice', async () => {
-    const { files } = await readVariable();
-    const [boundFile] = files;
-    const otherFileId = await uploadLogo('other.png');
-
-    await saveFiles({
-      files: [{ fileId: otherFileId, label: 'other.png' }],
-    });
+  it('should refuse binding a file already bound to another variable', async () => {
+    const [boundFile] = (await readVariable()).files;
 
     const { errors } = await saveFiles({
+      variableKey: SIGNED_VARIABLE_KEY,
       files: [{ fileId: boundFile.fileId, label: 'again.png' }],
       expectToFail: true,
     });
 
     expect(errors).toBeDefined();
+
+    const { files } = await readVariable(SIGNED_VARIABLE_KEY);
+
+    expect(files.map(({ fileId }) => fileId)).not.toContain(boundFile.fileId);
   });
 
   it('should delete the file dropped when the list is replaced', async () => {

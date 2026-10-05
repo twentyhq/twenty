@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ToastProvider } from 'twenty-ui/components';
 
@@ -56,7 +56,10 @@ const renderInput = ({
 
   return {
     onChange,
-    selectFiles: (files: File[]) => fileUploadOptions?.onUpload(files),
+    selectFiles: (files: File[]) =>
+      act(async () => {
+        await fileUploadOptions?.onUpload(files);
+      }),
   };
 };
 

@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type DataSource } from 'typeorm';
 
 import { ApplicationVariableFileService } from 'src/engine/core-modules/application/application-variable/application-variable-file.service';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
@@ -29,6 +31,8 @@ export class ApplicationVariableEntityService {
   constructor(
     @InjectWorkspaceScopedRepository(ApplicationVariableEntity)
     private readonly applicationVariableRepository: WorkspaceScopedRepository<ApplicationVariableEntity>,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly applicationVariableFileService: ApplicationVariableFileService,
@@ -189,24 +193,38 @@ export class ApplicationVariableEntityService {
 
     const plaintextValueToStore = (filesValueUpdate?.plaintextValueToStore ??
       plainTextValue) as PlaintextString;
+    const encryptedValue = this.secretEncryptionService.encryptVersioned(
+      plaintextValueToStore,
+      { workspaceId },
+    );
 
-    await this.applicationVariableRepository.update(
-      workspaceId,
-      { key, applicationId },
-      {
-        value: this.secretEncryptionService.encryptVersioned(
-          plaintextValueToStore,
-          { workspaceId },
-        ),
+    // One transaction keeps the stored file list and the file rows in step
+    const droppedFiles = await this.coreDataSource.transaction(
+      async (manager) => {
+        const droppedFiles = isDefined(filesValueUpdate)
+          ? await this.applicationVariableFileService.applyFilesValueUpdate({
+              ...filesValueUpdate,
+              manager,
+              workspaceId,
+            })
+          : [];
+
+        await this.applicationVariableRepository
+          .withManager(manager)
+          .update(
+            workspaceId,
+            { key, applicationId },
+            { value: encryptedValue },
+          );
+
+        return droppedFiles;
       },
     );
 
-    if (isDefined(filesValueUpdate)) {
-      await this.applicationVariableFileService.applyFilesValueUpdate({
-        ...filesValueUpdate,
-        workspaceId,
-      });
-    }
+    await this.applicationVariableFileService.deleteFileBytes({
+      workspaceId,
+      files: droppedFiles,
+    });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatApplicationVariableMaps',

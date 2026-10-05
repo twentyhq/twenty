@@ -5,6 +5,7 @@ import {
 import {
   isApplicationVariableFileValue,
   parseApplicationVariableFilesValue,
+  toStoredApplicationVariableFileValue,
 } from '@/application/utils/applicationVariableFilesValue';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 
@@ -25,10 +26,37 @@ describe('isApplicationVariableFileValue', () => {
   it('should refuse anything without a fileId and a label', () => {
     expect(isApplicationVariableFileValue(null)).toBe(false);
     expect(isApplicationVariableFileValue('logo.png')).toBe(false);
+    expect(isApplicationVariableFileValue([LOGO_FILE])).toBe(false);
     expect(isApplicationVariableFileValue({ fileId: LOGO_FILE.fileId })).toBe(
       false,
     );
     expect(isApplicationVariableFileValue({ label: 'logo.png' })).toBe(false);
+    expect(isApplicationVariableFileValue({ ...LOGO_FILE, fileId: '' })).toBe(
+      false,
+    );
+  });
+
+  it('should refuse a non-string extension or url', () => {
+    expect(
+      isApplicationVariableFileValue({ ...LOGO_FILE, extension: 123 }),
+    ).toBe(false);
+    expect(isApplicationVariableFileValue({ ...LOGO_FILE, url: {} })).toBe(
+      false,
+    );
+  });
+});
+
+describe('toStoredApplicationVariableFileValue', () => {
+  it('should keep the identity of the file and drop its url', () => {
+    expect(
+      toStoredApplicationVariableFileValue({ ...LOGO_FILE, url: 'https://x' }),
+    ).toEqual(LOGO_FILE);
+  });
+
+  it('should omit an empty extension', () => {
+    expect(
+      toStoredApplicationVariableFileValue({ ...LOGO_FILE, extension: '' }),
+    ).toEqual({ fileId: LOGO_FILE.fileId, label: LOGO_FILE.label });
   });
 });
 
@@ -62,6 +90,15 @@ describe('FILES application variable serialization', () => {
     expect(
       serializeApplicationVariableValue(null, FieldMetadataType.FILES),
     ).toBe('');
+  });
+
+  it('should strip the read urls of a file list', () => {
+    expect(
+      serializeApplicationVariableValue(
+        [{ ...LOGO_FILE, url: 'https://signed/logo' }],
+        FieldMetadataType.FILES,
+      ),
+    ).toBe(JSON.stringify([LOGO_FILE]));
   });
 
   it('should keep an already serialized list and drop a scalar', () => {

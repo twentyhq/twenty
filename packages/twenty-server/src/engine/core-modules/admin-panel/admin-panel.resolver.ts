@@ -71,6 +71,7 @@ import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/applica
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FindApplicationRegistrationInstalledWorkspacesInput } from 'src/engine/core-modules/application/application-registration/dtos/find-application-registration-installed-workspaces.input';
 import { PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
+import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -84,6 +85,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { FileUploadGraphqlApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-graphql-api-exception.filter';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
@@ -811,6 +813,7 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
+  @UseFilters(ApplicationRegistrationExceptionFilter)
   @Mutation(() => ApplicationRegistrationVariableDTO)
   async updateAdminApplicationRegistrationVariable(
     @Args('input') input: UpdateApplicationRegistrationVariableInput,
@@ -821,6 +824,10 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
+  @UseFilters(
+    ApplicationRegistrationExceptionFilter,
+    FileUploadGraphqlApiExceptionFilter,
+  )
   @Mutation(() => FileWithSignedUrlDTO)
   async completeAdminApplicationRegistrationVariableFileUpload(
     @Args('applicationRegistrationId') applicationRegistrationId: string,

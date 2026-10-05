@@ -8,7 +8,9 @@ import { v4 } from 'uuid';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
+  type EntityManager,
   type FindOptionsWhere,
+  In,
   Like,
   type QueryRunner,
   type UpdateResult,
@@ -155,7 +157,7 @@ export class FileStorageService {
     workspaceId: string;
     where: FindOptionsWhere<FileEntity>;
     fileRepository: WorkspaceScopedRepository<FileEntity>;
-  }): Promise<void> {
+  }): Promise<FileEntity[]> {
     const deletedRows = await fileRepository.deleteAndReturn(
       workspaceId,
       where,
@@ -168,6 +170,8 @@ export class FileStorageService {
         this.releaseStorageStock({ workspaceId, applicationId, ...released }),
       ),
     );
+
+    return deletedRows;
   }
 
   private findFileByPath({
@@ -724,6 +728,55 @@ export class FileStorageService {
     return driver.downloadFile({
       onStoragePath: onStorageFilePath,
       localPath: params.localPath,
+    });
+  }
+
+  // Rows go first: a file stops being served as soon as its row is gone, even
+  // if its bytes outlive it. Returns the deleted rows so the bytes can follow.
+  async deleteFileRowsByIds({
+    workspaceId,
+    fileIds,
+    fileFolder,
+    manager,
+  }: {
+    workspaceId: string;
+    fileIds: string[];
+    fileFolder: FileFolder;
+    manager?: EntityManager;
+  }): Promise<FileEntity[]> {
+    if (fileIds.length === 0) {
+      return [];
+    }
+
+    const fileRepository = isDefined(manager)
+      ? this.fileRepository.withManager(manager)
+      : this.fileRepository;
+
+    return this.deleteFileRows({
+      workspaceId,
+      where: { id: In(fileIds), path: Like(`${fileFolder}/%`) },
+      fileRepository,
+    });
+  }
+
+  async deleteFileObjectOfDeletedRow({
+    workspaceId,
+    file,
+  }: {
+    workspaceId: string;
+    file: Pick<FileEntity, 'path' | 'applicationId'>;
+  }): Promise<void> {
+    const [fileFolder] = file.path.split('/');
+
+    await this.deleteFileObject({
+      workspaceId,
+      applicationUniversalIdentifier:
+        await this.resolveApplicationUniversalIdentifierOrThrow({
+          applicationId: file.applicationId,
+          workspaceId,
+        }),
+      fileFolder: fileFolder as FileFolder,
+      resourcePath: removeFileFolderFromFileEntityPath(file.path),
     });
   }
 

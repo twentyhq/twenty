@@ -57,9 +57,16 @@ export const SettingsApplicationVariableFilesInput = ({
   };
 
   const handleOpen = ({ url, label }: ApplicationVariableFileValue) => {
-    if (isDefined(url)) {
-      downloadFile(url, label);
+    if (!isDefined(url)) {
+      return;
     }
+
+    downloadFile(url, label).catch(() => {
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to download file`,
+      });
+    });
   };
 
   const handleUploadClick = () => {

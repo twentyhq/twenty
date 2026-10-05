@@ -25,8 +25,13 @@ describe('ApplicationVariableFileService', () => {
   const fileRepository = {
     find: jest.fn(),
     update: jest.fn(),
+    withManager: jest.fn(),
   };
-  const fileStorageService = { deleteByFileId: jest.fn() };
+  const fileStorageService = {
+    deleteFileRowsByIds: jest.fn(),
+    deleteFileObjectOfDeletedRow: jest.fn(),
+  };
+  const manager = { transactional: true } as never;
   const fileUrlService = {
     signFileByIdUrl: jest.fn(
       async ({ fileId }: { fileId: string }) => `https://signed/${fileId}`,
@@ -41,6 +46,8 @@ describe('ApplicationVariableFileService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    fileRepository.withManager.mockReturnValue(fileRepository);
+    fileStorageService.deleteFileRowsByIds.mockResolvedValue([]);
   });
 
   describe('signFilesValue', () => {
@@ -218,37 +225,82 @@ describe('ApplicationVariableFileService', () => {
   });
 
   describe('applyFilesValueUpdate', () => {
-    it('should make bound files permanent and delete dropped ones', async () => {
-      await service.applyFilesValueUpdate({
+    it('should claim the bound files and drop the rows of the removed ones in the transaction', async () => {
+      fileRepository.update.mockResolvedValue({ affected: 1 });
+      const droppedFile = buildUploadedFile({ id: OLD_LOGO_FILE_ID });
+
+      fileStorageService.deleteFileRowsByIds.mockResolvedValue([droppedFile]);
+
+      const droppedFiles = await service.applyFilesValueUpdate({
+        manager,
         fileIdsToBind: [LOGO_FILE_ID],
         fileIdsToDelete: [OLD_LOGO_FILE_ID],
         workspaceId: WORKSPACE_ID,
       });
 
+      expect(fileRepository.withManager).toHaveBeenCalledWith(manager);
       expect(fileRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        { id: expect.anything() },
+        { id: expect.anything(), settings: expect.anything() },
         { settings: { isTemporaryFile: false, toDelete: false } },
       );
-      expect(fileStorageService.deleteByFileId).toHaveBeenCalledWith({
-        fileId: OLD_LOGO_FILE_ID,
+      expect(fileStorageService.deleteFileRowsByIds).toHaveBeenCalledWith({
         workspaceId: WORKSPACE_ID,
+        fileIds: [OLD_LOGO_FILE_ID],
         fileFolder: FileFolder.ApplicationVariable,
+        manager,
       });
+      expect(droppedFiles).toEqual([droppedFile]);
     });
 
-    it('should not fail the update when a dropped file is already gone', async () => {
-      fileStorageService.deleteByFileId.mockRejectedValue(
-        new Error('not found'),
-      );
+    it('should refuse the update when a file was bound by a concurrent save', async () => {
+      fileRepository.update.mockResolvedValue({ affected: 0 });
 
       await expect(
         service.applyFilesValueUpdate({
-          fileIdsToBind: [],
-          fileIdsToDelete: [OLD_LOGO_FILE_ID],
+          manager,
+          fileIdsToBind: [LOGO_FILE_ID],
+          fileIdsToDelete: [],
           workspaceId: WORKSPACE_ID,
         }),
+      ).rejects.toMatchObject({
+        code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
+      });
+
+      expect(fileStorageService.deleteFileRowsByIds).not.toHaveBeenCalled();
+    });
+
+    it('should not claim anything when no file is added', async () => {
+      await service.applyFilesValueUpdate({
+        manager,
+        fileIdsToBind: [],
+        fileIdsToDelete: [OLD_LOGO_FILE_ID],
+        workspaceId: WORKSPACE_ID,
+      });
+
+      expect(fileRepository.update).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteFileBytes', () => {
+    it('should only warn when the bytes of a dropped file cannot be deleted', async () => {
+      fileStorageService.deleteFileObjectOfDeletedRow.mockRejectedValue(
+        new Error('storage down'),
+      );
+
+      await expect(
+        service.deleteFileBytes({
+          workspaceId: WORKSPACE_ID,
+          files: [buildUploadedFile({ id: OLD_LOGO_FILE_ID })],
+        }),
       ).resolves.toBeUndefined();
+
+      expect(
+        fileStorageService.deleteFileObjectOfDeletedRow,
+      ).toHaveBeenCalledWith({
+        workspaceId: WORKSPACE_ID,
+        file: expect.objectContaining({ id: OLD_LOGO_FILE_ID }),
+      });
     });
   });
 });

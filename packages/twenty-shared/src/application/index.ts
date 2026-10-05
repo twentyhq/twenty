@@ -56,6 +56,7 @@ export type {
   ApplicationVariableOption,
   ApplicationVariableFileValue,
   ApplicationVariableValue,
+  ApplicationVariableReadValue,
   ApplicationVariable,
   ApplicationVariables,
 } from './applicationVariablesType';
@@ -243,6 +244,7 @@ export {
 } from './usageOperationTypesType';
 export {
   isApplicationVariableFileValue,
+  toStoredApplicationVariableFileValue,
   parseApplicationVariableFilesValue,
 } from './utils/applicationVariableFilesValue';
 export {

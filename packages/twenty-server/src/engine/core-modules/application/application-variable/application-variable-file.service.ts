@@ -4,7 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { parseApplicationVariableFilesValue } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { type EntityManager, In, Raw } from 'typeorm';
 
 import {
   ApplicationVariableEntityException,
@@ -109,7 +109,11 @@ export class ApplicationVariableFileService {
     };
   }
 
+  // Runs in the transaction that stores the value: the claim is conditional,
+  // so two concurrent saves can never bind the same upload, and dropped rows
+  // disappear with the value they belonged to. Returns the dropped rows.
   async applyFilesValueUpdate({
+    manager,
     fileIdsToBind,
     fileIdsToDelete,
     workspaceId,
@@ -117,26 +121,54 @@ export class ApplicationVariableFileService {
     ApplicationVariableFilesValueUpdate,
     'fileIdsToBind' | 'fileIdsToDelete'
   > & {
+    manager: EntityManager;
     workspaceId: string;
-  }): Promise<void> {
+  }): Promise<FileEntity[]> {
     if (fileIdsToBind.length > 0) {
-      await this.fileRepository.update(
-        workspaceId,
-        { id: In(fileIdsToBind) },
-        { settings: { isTemporaryFile: false, toDelete: false } },
-      );
+      const { affected } = await this.fileRepository
+        .withManager(manager)
+        .update(
+          workspaceId,
+          {
+            id: In(fileIdsToBind),
+            settings: Raw((alias) => `${alias} ->> 'isTemporaryFile' = 'true'`),
+          },
+          { settings: { isTemporaryFile: false, toDelete: false } },
+        );
+
+      if (affected !== fileIdsToBind.length) {
+        throw this.buildInvalidFilesValueException(
+          `Some of the files ${fileIdsToBind.join(', ')} are already bound to a variable`,
+          msg`A file is already used by another variable. Please upload it again.`,
+        );
+      }
     }
 
-    for (const fileId of fileIdsToDelete) {
+    return this.fileStorageService.deleteFileRowsByIds({
+      workspaceId,
+      fileIds: fileIdsToDelete,
+      fileFolder: FileFolder.ApplicationVariable,
+      manager,
+    });
+  }
+
+  // The rows are already gone, so a failure here only leaks bytes
+  async deleteFileBytes({
+    workspaceId,
+    files,
+  }: {
+    workspaceId: string;
+    files: FileEntity[];
+  }): Promise<void> {
+    for (const file of files) {
       try {
-        await this.fileStorageService.deleteByFileId({
-          fileId,
+        await this.fileStorageService.deleteFileObjectOfDeletedRow({
           workspaceId,
-          fileFolder: FileFolder.ApplicationVariable,
+          file,
         });
       } catch (error) {
         this.logger.warn(
-          `Failed to delete file ${fileId} dropped from an application variable in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to delete the bytes of file ${file.id} dropped from an application variable in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }

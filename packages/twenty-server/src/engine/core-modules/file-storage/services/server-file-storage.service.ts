@@ -6,7 +6,16 @@ import { type Readable } from 'stream';
 
 import { type ServerFileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Like, Repository } from 'typeorm';
+import {
+  type EntityManager,
+  type FindOptionsWhere,
+  In,
+  IsNull,
+  LessThan,
+  Like,
+  Raw,
+  Repository,
+} from 'typeorm';
 
 import { SERVER_FILE_STORAGE_PREFIX } from 'src/engine/core-modules/file-storage/constants/server-file-storage-prefix.constant';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
@@ -107,15 +116,82 @@ export class ServerFileStorageService {
       sourceFile: contents,
     });
 
+    return this.upsertServerFileRow({
+      applicationRegistrationId,
+      filePath,
+      size:
+        typeof contents === 'string'
+          ? Buffer.byteLength(contents)
+          : contents.length,
+      mimeType,
+      fileId,
+      settings,
+    });
+  }
+
+  // Streams the bytes so a large file never sits in memory
+  async writeServerFileFromStream({
+    fileFolder,
+    applicationRegistrationId,
+    resourcePath,
+    stream,
+    size,
+    mimeType,
+    fileId,
+    settings,
+  }: ServerResourceIdentifier & {
+    stream: Readable;
+    size: number;
+    mimeType: string;
+    fileId?: string;
+    settings?: FileSettings;
+  }): Promise<FileEntity> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const { onStorageFilePath, filePath } =
+      this.validateAndBuildServerFileStoragePathOrThrow({
+        fileFolder,
+        applicationRegistrationId,
+        resourcePath,
+      });
+
+    await driver.writeFileStream({
+      filePath: onStorageFilePath,
+      mimeType,
+      stream,
+    });
+
+    return this.upsertServerFileRow({
+      applicationRegistrationId,
+      filePath,
+      size,
+      mimeType,
+      fileId,
+      settings,
+    });
+  }
+
+  private async upsertServerFileRow({
+    applicationRegistrationId,
+    filePath,
+    size,
+    mimeType,
+    fileId,
+    settings,
+  }: {
+    applicationRegistrationId: string;
+    filePath: string;
+    size: number;
+    mimeType: string;
+    fileId?: string;
+    settings?: FileSettings;
+  }): Promise<FileEntity> {
     await this.serverFileRepository.upsert(
       {
         ...(isDefined(fileId) ? { id: fileId } : {}),
         path: filePath,
         workspaceId: null,
-        size:
-          typeof contents === 'string'
-            ? Buffer.byteLength(contents)
-            : contents.length,
+        size,
         mimeType,
         applicationRegistrationId,
         ...(isDefined(settings) ? { settings } : {}),
@@ -196,14 +272,13 @@ export class ServerFileStorageService {
       return [];
     }
 
-    return this.serverFileRepository.find({
-      where: {
-        id: In(fileIds),
+    return this.serverFileRepository.findBy(
+      this.buildServerFilesWhere({
+        fileFolder,
         applicationRegistrationId,
-        workspaceId: IsNull(),
-        path: Like(`${fileFolder}/${applicationRegistrationId}/%`),
-      },
-    });
+        fileIds,
+      }),
+    );
   }
 
   async readServerFileById(
@@ -227,47 +302,123 @@ export class ServerFileStorageService {
     return { stream, mimeType: serverFile.mimeType };
   }
 
-  async updateServerFilesSettings({
+  // Claims only files still waiting to be bound, so two concurrent saves
+  // can never share one upload. Returns how many files were claimed.
+  async claimTemporaryServerFiles({
     fileFolder,
     applicationRegistrationId,
     fileIds,
-    settings,
+    entityManager,
   }: Omit<ServerFileIdentifier, 'fileId'> & {
     fileIds: string[];
-    settings: FileSettings;
-  }): Promise<void> {
+    entityManager?: EntityManager;
+  }): Promise<number> {
     if (fileIds.length === 0) {
-      return;
+      return 0;
     }
 
-    await this.serverFileRepository.update(
+    const { affected } = await this.getServerFileRepository(
+      entityManager,
+    ).update(
       {
-        id: In(fileIds),
-        applicationRegistrationId,
-        workspaceId: IsNull(),
-        path: Like(`${fileFolder}/${applicationRegistrationId}/%`),
+        ...this.buildServerFilesWhere({
+          fileFolder,
+          applicationRegistrationId,
+          fileIds,
+        }),
+        settings: Raw((alias) => `${alias} ->> 'isTemporaryFile' = 'true'`),
       },
-      { settings },
+      { settings: { isTemporaryFile: false, toDelete: false } },
     );
+
+    return affected ?? 0;
   }
 
-  async deleteServerFileById(
-    serverFileIdentifier: ServerFileIdentifier,
-  ): Promise<void> {
-    const serverFile = await this.findServerFileById(serverFileIdentifier);
+  async findStaleTemporaryServerFiles({
+    fileFolder,
+    olderThan,
+    take,
+  }: {
+    fileFolder: ServerFileFolder;
+    olderThan: Date;
+    take: number;
+  }): Promise<FileEntity[]> {
+    return this.serverFileRepository.find({
+      where: {
+        workspaceId: IsNull(),
+        path: Like(`${fileFolder}/%`),
+        createdAt: LessThan(olderThan),
+        settings: Raw((alias) => `${alias} ->> 'isTemporaryFile' = 'true'`),
+      },
+      take,
+    });
+  }
 
-    if (!isDefined(serverFile)) {
-      return;
+  // Rows go first: a file stops being served as soon as its row is gone, even
+  // if its bytes outlive it. Returns the deleted rows so the bytes can follow.
+  async deleteServerFileRowsByIds({
+    fileFolder,
+    applicationRegistrationId,
+    fileIds,
+    entityManager,
+  }: Omit<ServerFileIdentifier, 'fileId'> & {
+    fileIds: string[];
+    entityManager?: EntityManager;
+  }): Promise<FileEntity[]> {
+    if (fileIds.length === 0) {
+      return [];
     }
 
-    await this.deleteServerFileBytesBestEffort(
-      this.buildServerOnStorageFilePath(serverFile),
-    );
-
-    await this.serverFileRepository.delete({
-      id: serverFile.id,
-      workspaceId: IsNull(),
+    const serverFileRepository = this.getServerFileRepository(entityManager);
+    const where = this.buildServerFilesWhere({
+      fileFolder,
+      applicationRegistrationId,
+      fileIds,
     });
+
+    const serverFiles = await serverFileRepository.findBy(where);
+
+    if (serverFiles.length === 0) {
+      return [];
+    }
+
+    await serverFileRepository.delete({
+      ...where,
+      id: In(serverFiles.map(({ id }) => id)),
+    });
+
+    return serverFiles;
+  }
+
+  async deleteServerFileBytes(serverFiles: FileEntity[]): Promise<void> {
+    for (const serverFile of serverFiles) {
+      await this.deleteServerFileBytesBestEffort(
+        this.buildServerOnStorageFilePath(serverFile),
+      );
+    }
+  }
+
+  private getServerFileRepository(
+    entityManager?: EntityManager,
+  ): Repository<FileEntity> {
+    return isDefined(entityManager)
+      ? entityManager.getRepository(FileEntity)
+      : this.serverFileRepository;
+  }
+
+  private buildServerFilesWhere({
+    fileFolder,
+    applicationRegistrationId,
+    fileIds,
+  }: Omit<ServerFileIdentifier, 'fileId'> & {
+    fileIds: string[];
+  }): FindOptionsWhere<FileEntity> {
+    return {
+      id: In(fileIds),
+      applicationRegistrationId,
+      workspaceId: IsNull(),
+      path: Like(`${fileFolder}/${applicationRegistrationId}/%`),
+    };
   }
 
   private async findServerFileById({

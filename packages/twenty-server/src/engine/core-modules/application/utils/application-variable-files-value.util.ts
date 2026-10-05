@@ -4,6 +4,7 @@ import {
   type ApplicationVariableFileValue,
   isApplicationVariableFileValue,
   parseApplicationVariableFilesValue,
+  toStoredApplicationVariableFileValue,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -80,7 +81,7 @@ export const diffApplicationVariableFilesValue = ({
   };
 };
 
-// Only the identity of each file is stored: urls are minted on every read
+// The extension comes from the stored path, never from the client
 export const serializeApplicationVariableFilesValueToStore = ({
   nextFiles,
   previousFileById,
@@ -93,13 +94,13 @@ export const serializeApplicationVariableFilesValueToStore = ({
   const filesToStore = nextFiles.map(({ fileId, label }) => {
     const uploadedFile = uploadedFileById.get(fileId);
 
-    return {
+    return toStoredApplicationVariableFileValue({
       fileId,
       label,
       extension: isDefined(uploadedFile)
         ? path.extname(uploadedFile.path)
         : previousFileById.get(fileId)?.extension,
-    };
+    });
   });
 
   return filesToStore.length === 0 ? '' : JSON.stringify(filesToStore);

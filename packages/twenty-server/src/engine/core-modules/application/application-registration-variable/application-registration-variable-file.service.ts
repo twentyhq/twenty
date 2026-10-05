@@ -7,7 +7,7 @@ import { msg } from '@lingui/core/macro';
 import { parseApplicationVariableFilesValue } from 'twenty-shared/application';
 import { FileFolder, ServerFileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Like, Repository } from 'typeorm';
+import { type EntityManager, Like, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -35,7 +35,6 @@ import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const FILE_FOLDER = ServerFileFolder.ApplicationRegistrationVariable;
 
@@ -116,29 +115,39 @@ export class ApplicationRegistrationVariableFileService {
     try {
       const serverFileId = v4();
 
-      const serverFile = await this.serverFileStorageService.writeServerFile({
-        fileFolder: FILE_FOLDER,
-        applicationRegistrationId,
-        resourcePath: `${serverFileId}${path.extname(uploadedFile.path)}`,
-        contents: await streamToBuffer(
-          await this.fileStorageService.readFile(uploadLocation),
-        ),
-        mimeType,
-        fileId: serverFileId,
-        settings: { isTemporaryFile: true, toDelete: false },
-      });
-
-      return {
-        id: serverFile.id,
-        path: serverFile.path,
-        size: serverFile.size,
-        createdAt: serverFile.createdAt,
-        url: await this.fileUrlService.signServerFileByIdUrl({
-          fileId: serverFile.id,
-          applicationRegistrationId,
+      const serverFile =
+        await this.serverFileStorageService.writeServerFileFromStream({
           fileFolder: FILE_FOLDER,
-        }),
-      };
+          applicationRegistrationId,
+          resourcePath: `${serverFileId}${path.extname(uploadedFile.path)}`,
+          stream: await this.fileStorageService.readFile(uploadLocation),
+          size: uploadedFile.size,
+          mimeType,
+          fileId: serverFileId,
+          settings: { isTemporaryFile: true, toDelete: false },
+        });
+
+      try {
+        return {
+          id: serverFile.id,
+          path: serverFile.path,
+          size: serverFile.size,
+          createdAt: serverFile.createdAt,
+          url: await this.fileUrlService.signServerFileByIdUrl({
+            fileId: serverFile.id,
+            applicationRegistrationId,
+            fileFolder: FILE_FOLDER,
+          }),
+        };
+      } catch (error) {
+        // The client never learns this id, so the copy would stay unreachable
+        await this.deleteServerFilesSilently({
+          applicationRegistrationId,
+          fileIds: [serverFile.id],
+        });
+
+        throw error;
+      }
     } finally {
       // The workspace copy only existed to be inspected: a failed copy is retried with a new upload
       await this.deleteUploadSilently({ fileId, uploaderWorkspaceId });
@@ -217,7 +226,11 @@ export class ApplicationRegistrationVariableFileService {
     };
   }
 
+  // Runs in the transaction that stores the value: the claim is conditional,
+  // so two concurrent saves can never bind the same upload, and dropped rows
+  // disappear with the value they belonged to. Returns the dropped rows.
   async applyFilesValueUpdate({
+    entityManager,
     applicationRegistrationId,
     fileIdsToBind,
     fileIdsToDelete,
@@ -225,28 +238,58 @@ export class ApplicationRegistrationVariableFileService {
     ApplicationVariableFilesValueUpdate,
     'fileIdsToBind' | 'fileIdsToDelete'
   > & {
+    entityManager: EntityManager;
     applicationRegistrationId: string;
-  }): Promise<void> {
-    await this.serverFileStorageService.updateServerFilesSettings({
+  }): Promise<FileEntity[]> {
+    const claimedCount =
+      await this.serverFileStorageService.claimTemporaryServerFiles({
+        fileFolder: FILE_FOLDER,
+        applicationRegistrationId,
+        fileIds: fileIdsToBind,
+        entityManager,
+      });
+
+    if (claimedCount !== fileIdsToBind.length) {
+      throw this.buildInvalidFilesValueException(
+        `Some of the files ${fileIdsToBind.join(', ')} are already bound to a variable`,
+        msg`A file is already used by another variable. Please upload it again.`,
+      );
+    }
+
+    return this.serverFileStorageService.deleteServerFileRowsByIds({
       fileFolder: FILE_FOLDER,
       applicationRegistrationId,
-      fileIds: fileIdsToBind,
-      settings: { isTemporaryFile: false, toDelete: false },
+      fileIds: fileIdsToDelete,
+      entityManager,
     });
+  }
 
-    for (const fileId of fileIdsToDelete) {
-      try {
-        await this.serverFileStorageService.deleteServerFileById({
-          fileFolder: FILE_FOLDER,
-          applicationRegistrationId,
-          fileId,
-        });
-      } catch (error) {
-        this.logger.warn(
-          `Failed to delete file ${fileId} dropped from a server variable of registration ${applicationRegistrationId}: ${error instanceof Error ? error.message : String(error)}`,
-        );
-      }
-    }
+  // The rows are already gone, so a failure here only leaks bytes
+  async deleteFileBytes(files: FileEntity[]): Promise<void> {
+    await this.serverFileStorageService.deleteServerFileBytes(files);
+  }
+
+  // For a variable that stops being a FILES variable or disappears
+  async deleteFilesOfValue({
+    applicationRegistrationId,
+    plaintextValue,
+    entityManager,
+  }: {
+    applicationRegistrationId: string;
+    plaintextValue: string;
+    entityManager?: EntityManager;
+  }): Promise<void> {
+    const droppedFiles =
+      await this.serverFileStorageService.deleteServerFileRowsByIds({
+        fileFolder: FILE_FOLDER,
+        applicationRegistrationId,
+        fileIds: parseApplicationVariableFilesValue(plaintextValue).map(
+          ({ fileId }) => fileId,
+        ),
+        entityManager,
+      });
+
+    await this.deleteFileBytes(droppedFiles);
   }
 
   private async assertRegistrationExistsOrThrow(
@@ -281,6 +324,28 @@ export class ApplicationRegistrationVariableFileService {
     } catch (error) {
       this.logger.warn(
         `Failed to delete variable file upload ${fileId} of workspace ${uploaderWorkspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  private async deleteServerFilesSilently({
+    applicationRegistrationId,
+    fileIds,
+  }: {
+    applicationRegistrationId: string;
+    fileIds: string[];
+  }): Promise<void> {
+    try {
+      await this.deleteFileBytes(
+        await this.serverFileStorageService.deleteServerFileRowsByIds({
+          fileFolder: FILE_FOLDER,
+          applicationRegistrationId,
+          fileIds,
+        }),
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to delete server variable files ${fileIds.join(', ')} of registration ${applicationRegistrationId}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }

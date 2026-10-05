@@ -56,11 +56,13 @@ describe('ApplicationRegistrationVariableFileService', () => {
     deleteByFileId: jest.fn(),
   };
   const serverFileStorageService = {
-    writeServerFile: jest.fn(),
+    writeServerFileFromStream: jest.fn(),
     findServerFilesByIds: jest.fn(),
-    updateServerFilesSettings: jest.fn(),
-    deleteServerFileById: jest.fn(),
+    claimTemporaryServerFiles: jest.fn(),
+    deleteServerFileRowsByIds: jest.fn(),
+    deleteServerFileBytes: jest.fn(),
   };
+  const entityManager = { transactional: true } as never;
   const fileUploadCompletionService = {
     completeUploadedFile: jest.fn(async () => ({ mimeType: 'image/png' })),
   };
@@ -83,6 +85,7 @@ describe('ApplicationRegistrationVariableFileService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     applicationRegistrationRepository.existsBy.mockResolvedValue(true);
+    serverFileStorageService.deleteServerFileRowsByIds.mockResolvedValue([]);
   });
 
   describe('completeFileUpload', () => {
@@ -95,7 +98,7 @@ describe('ApplicationRegistrationVariableFileService', () => {
 
     it('should inspect the upload, copy it to the registration storage and drop the upload', async () => {
       fileRepository.findOne.mockResolvedValue(buildUpload());
-      serverFileStorageService.writeServerFile.mockImplementation(
+      serverFileStorageService.writeServerFileFromStream.mockImplementation(
         async ({ fileId, resourcePath }) =>
           buildServerFile({
             id: fileId,
@@ -117,11 +120,14 @@ describe('ApplicationRegistrationVariableFileService', () => {
           }),
         }),
       );
-      expect(serverFileStorageService.writeServerFile).toHaveBeenCalledWith(
+      expect(
+        serverFileStorageService.writeServerFileFromStream,
+      ).toHaveBeenCalledWith(
         expect.objectContaining({
           fileFolder: ServerFileFolder.ApplicationRegistrationVariable,
           applicationRegistrationId: REGISTRATION_ID,
           resourcePath: `${completedFile.id}.png`,
+          stream: expect.any(Readable),
           mimeType: 'image/png',
           settings: { isTemporaryFile: true, toDelete: false },
         }),
@@ -137,11 +143,40 @@ describe('ApplicationRegistrationVariableFileService', () => {
       });
     });
 
+    it('should drop the copied file when its url cannot be signed', async () => {
+      fileRepository.findOne.mockResolvedValue(buildUpload());
+      serverFileStorageService.writeServerFileFromStream.mockResolvedValue(
+        buildServerFile(),
+      );
+      serverFileStorageService.deleteServerFileRowsByIds.mockResolvedValue([
+        buildServerFile(),
+      ]);
+      fileUrlService.signServerFileByIdUrl.mockRejectedValueOnce(
+        new Error('signing key unavailable'),
+      );
+
+      await expect(complete()).rejects.toThrow('signing key unavailable');
+
+      expect(
+        serverFileStorageService.deleteServerFileRowsByIds,
+      ).toHaveBeenCalledWith({
+        fileFolder: ServerFileFolder.ApplicationRegistrationVariable,
+        applicationRegistrationId: REGISTRATION_ID,
+        fileIds: [LOGO_FILE_ID],
+      });
+      expect(
+        serverFileStorageService.deleteServerFileBytes,
+      ).toHaveBeenCalledWith([expect.objectContaining({ id: LOGO_FILE_ID })]);
+      expect(fileStorageService.deleteByFileId).toHaveBeenCalledWith(
+        expect.objectContaining({ fileId: UPLOAD_FILE_ID }),
+      );
+    });
+
     it('should not inspect again an upload already completed', async () => {
       fileRepository.findOne.mockResolvedValue(
         buildUpload({ status: FILE_STATUS.UPLOADED, mimeType: 'image/png' }),
       );
-      serverFileStorageService.writeServerFile.mockResolvedValue(
+      serverFileStorageService.writeServerFileFromStream.mockResolvedValue(
         buildServerFile(),
       );
 
@@ -150,7 +185,9 @@ describe('ApplicationRegistrationVariableFileService', () => {
       expect(
         fileUploadCompletionService.completeUploadedFile,
       ).not.toHaveBeenCalled();
-      expect(serverFileStorageService.writeServerFile).toHaveBeenCalledWith(
+      expect(
+        serverFileStorageService.writeServerFileFromStream,
+      ).toHaveBeenCalledWith(
         expect.objectContaining({ mimeType: 'image/png' }),
       );
     });
@@ -163,7 +200,9 @@ describe('ApplicationRegistrationVariableFileService', () => {
 
       await expect(complete()).rejects.toThrow('not uploaded yet');
 
-      expect(serverFileStorageService.writeServerFile).not.toHaveBeenCalled();
+      expect(
+        serverFileStorageService.writeServerFileFromStream,
+      ).not.toHaveBeenCalled();
       expect(fileStorageService.deleteByFileId).not.toHaveBeenCalled();
     });
 
@@ -336,42 +375,87 @@ describe('ApplicationRegistrationVariableFileService', () => {
   });
 
   describe('applyFilesValueUpdate', () => {
-    it('should make bound files permanent and delete the dropped ones', async () => {
-      await service.applyFilesValueUpdate({
+    it('should claim the bound files and drop the rows of the removed ones in the transaction', async () => {
+      serverFileStorageService.claimTemporaryServerFiles.mockResolvedValue(1);
+      const droppedFile = buildServerFile({ id: OLD_LOGO_FILE_ID });
+
+      serverFileStorageService.deleteServerFileRowsByIds.mockResolvedValue([
+        droppedFile,
+      ]);
+
+      const droppedFiles = await service.applyFilesValueUpdate({
+        entityManager,
         applicationRegistrationId: REGISTRATION_ID,
         fileIdsToBind: [LOGO_FILE_ID],
         fileIdsToDelete: [OLD_LOGO_FILE_ID],
       });
 
       expect(
-        serverFileStorageService.updateServerFilesSettings,
+        serverFileStorageService.claimTemporaryServerFiles,
       ).toHaveBeenCalledWith({
         fileFolder: ServerFileFolder.ApplicationRegistrationVariable,
         applicationRegistrationId: REGISTRATION_ID,
         fileIds: [LOGO_FILE_ID],
-        settings: { isTemporaryFile: false, toDelete: false },
+        entityManager,
       });
       expect(
-        serverFileStorageService.deleteServerFileById,
+        serverFileStorageService.deleteServerFileRowsByIds,
       ).toHaveBeenCalledWith({
         fileFolder: ServerFileFolder.ApplicationRegistrationVariable,
         applicationRegistrationId: REGISTRATION_ID,
-        fileId: OLD_LOGO_FILE_ID,
+        fileIds: [OLD_LOGO_FILE_ID],
+        entityManager,
       });
+      expect(droppedFiles).toEqual([droppedFile]);
     });
 
-    it('should keep the update when a dropped file cannot be deleted', async () => {
-      serverFileStorageService.deleteServerFileById.mockRejectedValueOnce(
-        new Error('storage down'),
-      );
+    it('should refuse the update when a file was bound by a concurrent save', async () => {
+      serverFileStorageService.claimTemporaryServerFiles.mockResolvedValue(0);
 
       await expect(
         service.applyFilesValueUpdate({
+          entityManager,
           applicationRegistrationId: REGISTRATION_ID,
-          fileIdsToBind: [],
-          fileIdsToDelete: [OLD_LOGO_FILE_ID],
+          fileIdsToBind: [LOGO_FILE_ID],
+          fileIdsToDelete: [],
         }),
-      ).resolves.toBeUndefined();
+      ).rejects.toMatchObject({
+        code: ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      });
+
+      expect(
+        serverFileStorageService.deleteServerFileRowsByIds,
+      ).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteFilesOfValue', () => {
+    it('should drop the rows and bytes of every file of the value', async () => {
+      const droppedFile = buildServerFile();
+
+      serverFileStorageService.deleteServerFileRowsByIds.mockResolvedValue([
+        droppedFile,
+      ]);
+
+      await service.deleteFilesOfValue({
+        applicationRegistrationId: REGISTRATION_ID,
+        plaintextValue: JSON.stringify([
+          { fileId: LOGO_FILE_ID, label: 'logo.png' },
+        ]),
+        entityManager,
+      });
+
+      expect(
+        serverFileStorageService.deleteServerFileRowsByIds,
+      ).toHaveBeenCalledWith({
+        fileFolder: ServerFileFolder.ApplicationRegistrationVariable,
+        applicationRegistrationId: REGISTRATION_ID,
+        fileIds: [LOGO_FILE_ID],
+        entityManager,
+      });
+      expect(
+        serverFileStorageService.deleteServerFileBytes,
+      ).toHaveBeenCalledWith([droppedFile]);
     });
   });
 });
