@@ -1,8 +1,10 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
+  ConflictError,
   InternalServerError,
   NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   MessageListException,
@@ -14,7 +16,12 @@ export const messageListGraphqlApiExceptionHandler = (error: Error) => {
     switch (error.code) {
       case MessageListExceptionCode.MESSAGE_LIST_NOT_FOUND:
         throw new NotFoundError(error);
+      case MessageListExceptionCode.TOO_MANY_PEOPLE_TO_ADD:
+        throw new UserInputError(error);
+      case MessageListExceptionCode.ADDING_PEOPLE_IN_PROGRESS:
+        throw new ConflictError(error);
       case MessageListExceptionCode.MESSAGE_LIST_DUPLICATION_FAILED:
+      case MessageListExceptionCode.ADDING_PEOPLE_FAILED:
         throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);

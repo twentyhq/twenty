@@ -1,77 +1,107 @@
-import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
-import { useIncrementalFetchAndMutateRecords } from '@/object-record/hooks/useIncrementalFetchAndMutateRecords';
-import { useState } from 'react';
+import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
+import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
+import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useCallback } from 'react';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
 import {
-  CoreObjectNameSingular,
-  type RecordGqlOperationFilter,
-} from 'twenty-shared/types';
+  FindAddPeopleToMessageListJobStatusDocument,
+  JobState,
+  TriggerAddPeopleToMessageListJobDocument,
+} from '~/generated-metadata/graphql';
+
+type UseAddPeopleToMessageListArgs = {
+  messageListId: string | null;
+  personFilter: RecordGqlOperationFilter;
+  onCompleted: () => void;
+};
 
 export const useAddPeopleToMessageList = ({
+  messageListId,
   personFilter,
-}: {
-  personFilter: RecordGqlOperationFilter;
-}) => {
-  const [
-    messageListMembersAbortController,
-    setMessageListMembersAbortController,
-  ] = useState<AbortController | null>(null);
+  onCompleted,
+}: UseAddPeopleToMessageListArgs) => {
+  const { enqueueToast } = useToast();
+  const [triggerAddPeopleToMessageListJob, { loading: isTriggeringAdd }] =
+    useMutation(TriggerAddPeopleToMessageListJobDocument);
 
-  const { createManyRecords: createManyMessageListMembers } =
-    useCreateManyRecords({
-      objectNameSingular: 'messageListMember',
-      recordGqlFields: { id: true, listId: true, personId: true },
-    });
+  const { data: jobStatusData } = useQuery(
+    FindAddPeopleToMessageListJobStatusDocument,
+    {
+      variables: { messageListId: messageListId ?? '' },
+      skip: !isDefined(messageListId),
+      fetchPolicy: 'network-only',
+    },
+  );
 
-  const {
-    incrementalFetchAndMutate,
-    progress,
-    isProcessing,
-    updateProgress,
-    cancel,
-  } = useIncrementalFetchAndMutateRecords({
-    objectNameSingular: CoreObjectNameSingular.Person,
-    filter: personFilter,
-    recordGqlFields: { id: true },
+  const runningJobStatus = jobStatusData?.findAddPeopleToMessageListJobStatus;
+  const runningJobId =
+    isDefined(runningJobStatus) && !isTerminalJobState(runningJobStatus.state)
+      ? runningJobStatus.jobId
+      : undefined;
+
+  const handleAddJobSettled = useCallback(
+    (jobStatus: TrackedJobStatus) => {
+      if (jobStatus.state === JobState.FAILED) {
+        enqueueToast({
+          variant: 'error',
+          children: isNonEmptyString(jobStatus.failedReason)
+            ? jobStatus.failedReason
+            : t`Failed to add people to the list. Please try again.`,
+        });
+        return;
+      }
+
+      enqueueToast({
+        variant: 'success',
+        children: t`People added to the list.`,
+      });
+      onCompleted();
+    },
+    [enqueueToast, onCompleted],
+  );
+
+  const { activeJobId, trackJob } = useTrackedQueueJob({
+    runningJob:
+      isDefined(runningJobId) && isDefined(messageListId)
+        ? { jobId: runningJobId, context: messageListId }
+        : undefined,
+    onQueueJobSettled: handleAddJobSettled,
   });
 
-  const addPeopleToMessageList = async (messageListId: string) => {
-    const runAbortController = new AbortController();
+  const addPeopleToMessageList = async (): Promise<void> => {
+    if (!isDefined(messageListId)) {
+      return;
+    }
 
-    setMessageListMembersAbortController(runAbortController);
-
-    let listedPersonCount = 0;
-
-    await incrementalFetchAndMutate(async ({ recordIds, totalCount }) => {
-      await createManyMessageListMembers({
-        recordsToCreate: recordIds.map((personId) => ({
-          listId: messageListId,
-          personId,
-        })),
-        upsert: true,
-        abortController: runAbortController,
-      }).catch((error) => {
-        if (!runAbortController.signal.aborted) {
-          throw error;
-        }
+    try {
+      const { data } = await triggerAddPeopleToMessageListJob({
+        variables: { input: { messageListId, personFilter } },
       });
 
-      listedPersonCount += recordIds.length;
+      const jobId = data?.triggerAddPeopleToMessageListJob.jobId;
 
-      updateProgress(listedPersonCount, totalCount);
-    });
+      if (isDefined(jobId)) {
+        trackJob({ jobId, context: messageListId });
+      }
+    } catch (error) {
+      const graphqlMessage = error instanceof Error ? error.message : undefined;
 
-    return runAbortController.signal.aborted ? undefined : listedPersonCount;
-  };
-
-  const cancelAddingPeopleToMessageList = () => {
-    cancel();
-    messageListMembersAbortController?.abort();
+      enqueueToast({
+        variant: 'error',
+        children:
+          graphqlMessage ??
+          t`Failed to add people to the list. Please try again.`,
+      });
+    }
   };
 
   return {
     addPeopleToMessageList,
-    isAdding: isProcessing,
-    progress,
-    cancel: cancelAddingPeopleToMessageList,
+    isAdding: isTriggeringAdd || isDefined(activeJobId),
   };
 };

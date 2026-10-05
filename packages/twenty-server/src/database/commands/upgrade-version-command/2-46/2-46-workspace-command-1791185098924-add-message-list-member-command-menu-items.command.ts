@@ -1,5 +1,6 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -7,12 +8,18 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { buildMissingStandardCommandMenuItemsToCreate } from 'src/database/commands/upgrade-version-command/2-39/utils/build-missing-standard-command-menu-items-to-create.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.44.0', 1790597839000)
+const MESSAGE_LIST_MEMBER_COMMAND_MENU_ITEM_NAMES = [
+  'addToMessageList',
+  'addViewToMessageList',
+] as const;
+
+@RegisteredWorkspaceCommand('2.46.0', 1791185098924)
 @Command({
-  name: 'upgrade:2-44:add-message-list-member-command-menu-items',
+  name: 'upgrade:2-46:add-message-list-member-command-menu-items',
   description:
     'Add the Add to List and Add View to List people commands to workspaces that predate them',
 })
@@ -25,10 +32,22 @@ export class AddMessageListMemberCommandMenuItemsCommand extends ProvisionedWork
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace({
-    workspaceId,
-    options,
-  }: RunOnWorkspaceArgs): Promise<void> {
+  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
+    await this.up(args);
+  }
+
+  async up(args: RunOnWorkspaceArgs): Promise<void> {
+    await this.apply(args, 'up');
+  }
+
+  async down(args: RunOnWorkspaceArgs): Promise<void> {
+    await this.apply(args, 'down');
+  }
+
+  private async apply(
+    { workspaceId, options }: RunOnWorkspaceArgs,
+    direction: 'up' | 'down',
+  ): Promise<void> {
     const { flatCommandMenuItemMaps, flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
@@ -36,46 +55,62 @@ export class AddMessageListMemberCommandMenuItemsCommand extends ProvisionedWork
       ]);
 
     const commandMenuItemsToCreate =
-      buildMissingStandardCommandMenuItemsToCreate({
-        commandMenuItemNames: ['addToMessageList', 'addViewToMessageList'],
-        flatCommandMenuItemByUniversalIdentifier:
-          flatCommandMenuItemMaps.byUniversalIdentifier,
-        flatObjectMetadataMaps,
-        workspaceId,
-        now: new Date().toISOString(),
-      });
+      direction === 'up'
+        ? buildMissingStandardCommandMenuItemsToCreate({
+            commandMenuItemNames: [
+              ...MESSAGE_LIST_MEMBER_COMMAND_MENU_ITEM_NAMES,
+            ],
+            flatCommandMenuItemByUniversalIdentifier:
+              flatCommandMenuItemMaps.byUniversalIdentifier,
+            flatObjectMetadataMaps,
+            workspaceId,
+            now: new Date().toISOString(),
+          })
+        : [];
+    const commandMenuItemsToDelete =
+      direction === 'down'
+        ? MESSAGE_LIST_MEMBER_COMMAND_MENU_ITEM_NAMES.map(
+            (name) =>
+              flatCommandMenuItemMaps.byUniversalIdentifier[
+                STANDARD_COMMAND_MENU_ITEMS[name].universalIdentifier
+              ],
+          ).filter(isDefined)
+        : [];
 
-    if (commandMenuItemsToCreate.length === 0) {
+    if (
+      commandMenuItemsToCreate.length + commandMenuItemsToDelete.length ===
+      0
+    ) {
       return;
     }
+
+    this.logger.log(
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId} (${direction}): creating ${commandMenuItemsToCreate.length} and deleting ${commandMenuItemsToDelete.length} message list member command menu item(s)`,
+    );
 
     if (options.dryRun) {
-      this.logger.log(
-        `Would add ${commandMenuItemsToCreate.length} message list member command(s) for workspace ${workspaceId}`,
-      );
-
       return;
     }
 
-    const validateAndBuildResult =
+    const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
-          allFlatEntityOperationByMetadataName: {
-            commandMenuItem: {
-              flatEntityToCreate: commandMenuItemsToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-          },
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          allFlatEntityOperationByMetadataName: {
+            commandMenuItem: {
+              flatEntityToCreate: commandMenuItemsToCreate,
+              flatEntityToDelete: commandMenuItemsToDelete,
+              flatEntityToUpdate: [],
+            },
+          },
         },
       );
 
-    if (validateAndBuildResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(validateAndBuildResult);
+    if (result.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(result);
     }
   }
 }

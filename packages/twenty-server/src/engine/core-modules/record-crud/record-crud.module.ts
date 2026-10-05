@@ -39,6 +39,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UpsertManyRecordsService,
   ],
   exports: [
+    CommonApiContextBuilderService,
     CreateRecordService,
     CreateManyRecordsService,
     UpdateRecordService,

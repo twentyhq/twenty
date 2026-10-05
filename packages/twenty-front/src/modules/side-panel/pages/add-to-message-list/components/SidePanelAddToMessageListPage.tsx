@@ -1,15 +1,12 @@
 import { styled } from '@linaria/react';
-import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
 import { IconUserPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { computeProgressText } from '@/command-menu-item/utils/computeProgressText';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -41,17 +38,17 @@ export const SidePanelAddToMessageListPage = () => {
   const [messageListId, setMessageListId] = useState<string | null>(null);
 
   const { t } = useLingui();
-  const { enqueueToast } = useToast();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { createOneRecord: createOneMessageList } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.MessageList,
   });
 
-  const { addPeopleToMessageList, isAdding, progress, cancel } =
-    useAddPeopleToMessageList({
-      personFilter: addToMessageListPersonFilter,
-    });
+  const { addPeopleToMessageList, isAdding } = useAddPeopleToMessageList({
+    messageListId,
+    personFilter: addToMessageListPersonFilter,
+    onCompleted: closeSidePanelMenu,
+  });
 
   const handleCreateMessageList = async (searchInput?: string) => {
     const createdMessageList = await createOneMessageList({
@@ -60,45 +57,6 @@ export const SidePanelAddToMessageListPage = () => {
 
     setMessageListId(createdMessageList.id);
   };
-
-  const handleAdd = async () => {
-    if (!isDefined(messageListId)) {
-      return;
-    }
-
-    try {
-      const listedPersonCount = await addPeopleToMessageList(messageListId);
-
-      if (!isDefined(listedPersonCount)) {
-        return;
-      }
-
-      enqueueToast({
-        variant: 'success',
-        children: plural(listedPersonCount, {
-          one: '# person is now on the list',
-          other: '# people are now on the list',
-        }),
-      });
-
-      closeSidePanelMenu();
-    } catch (error) {
-      enqueueToast({
-        variant: 'error',
-        children:
-          error instanceof Error
-            ? error.message
-            : t`Failed to add people to the list. Please try again.`,
-      });
-    }
-  };
-
-  const handleCancel = () => {
-    cancel();
-    closeSidePanelMenu();
-  };
-
-  const progressText = computeProgressText(progress);
 
   return (
     <StyledContainer>
@@ -119,20 +77,18 @@ export const SidePanelAddToMessageListPage = () => {
             key="cancel"
             size="sm"
             variant="outline"
-            onClick={handleCancel}
+            onClick={closeSidePanelMenu}
           >{t`Cancel`}</Button>,
           <Button
             key="add-to-list"
             size="sm"
             startIcon={<IconUserPlus />}
-            loading={isAdding && !progressText}
+            loading={isAdding}
             disabled={isAdding || !isDefined(messageListId)}
-            onClick={handleAdd}
+            onClick={addPeopleToMessageList}
             variant="solid"
             color="accent"
-          >
-            {isAdding ? t`Add to List${progressText}` : t`Add to List`}
-          </Button>,
+          >{t`Add to List`}</Button>,
         ]}
       />
     </StyledContainer>
