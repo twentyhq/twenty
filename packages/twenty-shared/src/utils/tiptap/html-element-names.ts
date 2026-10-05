@@ -66,6 +66,7 @@ export const HTML_ELEMENT_NAMES: ReadonlySet<string> = new Set([
   'ol',
   'option',
   'p',
+  'param',
   'picture',
   'pre',
   'q',

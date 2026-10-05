@@ -95,6 +95,25 @@ describe('convertWorkflowEmailBodiesToEmailDocuments', () => {
       emailStep('<b>Hi</b>'),
     ]);
 
+    expect(value).toEqual([
+      emailStep(
+        canonicalDocument([
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: 'Hello' },
+              { type: 'hardBreak' },
+              { type: 'text', text: 'World' },
+            ],
+          },
+        ]),
+      ),
+      emailStep(
+        canonicalDocument([
+          { type: 'htmlDocument', attrs: { html: '<b>Hi</b>' } },
+        ]),
+      ),
+    ]);
     expect(convertWorkflowEmailBodiesToEmailDocuments(value).hasChanged).toBe(
       false,
     );

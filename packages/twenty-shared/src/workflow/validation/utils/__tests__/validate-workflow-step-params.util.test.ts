@@ -41,10 +41,10 @@ describe('validateWorkflowStepParams', () => {
   });
 
   describe('email step body', () => {
-    const emailStepWithBody = (body: string) => ({
+    const emailStepWithBody = (body: string, type = 'SEND_EMAIL') => ({
       id: '8d5a0b6c-3f1e-4e4a-9a3b-2f6d1c0e7a11',
       name: 'Send email',
-      type: 'SEND_EMAIL',
+      type,
       valid: true,
       settings: {
         input: { connectedAccountId: '', recipients: {}, body },
@@ -56,10 +56,10 @@ describe('validateWorkflowStepParams', () => {
       },
     });
 
-    const bodyIssues = (body: string) =>
+    const bodyIssues = (body: string, type?: string) =>
       validateWorkflowStepParams({
         trigger: undefined,
-        steps: [emailStepWithBody(body)],
+        steps: [emailStepWithBody(body, type)],
       });
 
     it('should accept an empty body and serialized email documents', () => {
@@ -76,9 +76,12 @@ describe('validateWorkflowStepParams', () => {
       ).toEqual([]);
     });
 
-    it('should reject HTML and plain text bodies', () => {
-      for (const body of ['<p>Hi</p>', 'Hi {{trigger.name}},\n\nThanks']) {
-        expect(bodyIssues(body)).toEqual([
+    it('should reject HTML and plain text bodies of send and draft steps', () => {
+      for (const [body, type] of [
+        ['<p>Hi</p>', 'SEND_EMAIL'],
+        ['Hi {{trigger.name}},\n\nThanks', 'DRAFT_EMAIL'],
+      ]) {
+        expect(bodyIssues(body, type)).toEqual([
           expect.objectContaining({
             code: 'INVALID_STEP_PARAMS',
             stepId: '8d5a0b6c-3f1e-4e4a-9a3b-2f6d1c0e7a11',
