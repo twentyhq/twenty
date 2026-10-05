@@ -66,7 +66,6 @@ export class DomainServerConfigService {
     const frontDomain = this.getFrontUrl().hostname;
 
     if (originHostname === frontDomain) {
-      // Keep the main frontend host out of a broader public-function domain.
       return {
         subdomain: undefined,
         domain: originHostname,
