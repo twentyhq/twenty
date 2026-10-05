@@ -66,6 +66,7 @@ type Agent {
   responseFormat: JSON
   roleId: UUID
   isCustom: Boolean!
+  isSystem: Boolean!
   applicationId: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3993,7 +3994,6 @@ type Query {
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAiSystemPromptPreview: AiSystemPromptPreview!
-  myAgentChatThreadParticipants: [AgentChatThreadParticipant!]!
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!
