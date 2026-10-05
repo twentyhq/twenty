@@ -32,6 +32,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type RecordSharePrincipalInput } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -43,6 +44,9 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
+
+const getAgentChatThreadService = () =>
+  getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
 
 // Avoids loading the migration runner's ESM dependencies in Jest; the command gets the real service from the test app.
 jest.mock(
@@ -224,7 +228,7 @@ describe('Conversation sharing through the authenticated API', () => {
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       };
-      await chatService.createThread({
+      await getAgentChatThreadService().createThread({
         ...owner,
         id: threadId,
         title: 'Private sharing regression',
@@ -381,7 +385,7 @@ describe('Conversation sharing through the authenticated API', () => {
       const actors = getAppProviderByClassName<AgentChatActorService>(
         'AgentChatActorService',
       );
-      await chat.createThread({
+      await getAgentChatThreadService().createThread({
         ...owner,
         id: threadId,
         title: 'Multiplayer regression',
@@ -557,7 +561,7 @@ describe('Conversation sharing through the authenticated API', () => {
     };
     const options = { workspaceId, options: { dryRun: false } } as never;
 
-    await chatService.createThread({
+    await getAgentChatThreadService().createThread({
       ...owner,
       id: owner.threadId,
       title: 'Upgrade ownership test',
@@ -580,7 +584,7 @@ describe('Conversation sharing through the authenticated API', () => {
       const { deletedAt } = softDeleted.body.data.deleteAgentChatThread;
       expect(new Date(deletedAt).toISOString()).toMatch(/^\d{4}-\d{2}-\d{2}T/);
       expect(
-        (await chatService.getWritableThread(owner)).deletedAt,
+        (await getAgentChatThreadService().getWritableThread(owner)).deletedAt,
       ).not.toBeNull();
       expect(await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toContain(
         owner.threadId,
@@ -609,8 +613,6 @@ describe('Conversation sharing through the authenticated API', () => {
   });
   it('lets non-owner writers rename through ordinary permissions and denies them after revocation', async () => {
     const workspaceId = SEED_APPLE_WORKSPACE_ID;
-    const chat =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
     const cache = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
@@ -628,7 +630,7 @@ describe('Conversation sharing through the authenticated API', () => {
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     };
-    await chat.createThread({
+    await getAgentChatThreadService().createThread({
       ...owner,
       id: owner.threadId,
       title: 'Original',
@@ -652,7 +654,9 @@ describe('Conversation sharing through the authenticated API', () => {
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
       expect(collaborativeRename.body.errors).toBeUndefined();
-      expect(await chat.getWritableThread(owner)).toMatchObject({
+      expect(
+        await getAgentChatThreadService().getWritableThread(owner),
+      ).toMatchObject({
         title: 'Collaborative rename',
         workspaceMemberId: owner.workspaceMemberId,
       });
@@ -664,7 +668,9 @@ describe('Conversation sharing through the authenticated API', () => {
       expect(writerView.body.data.recordPermissions[0]).toMatchObject({
         permissions: { canUpdate: true },
       });
-      await expect(chat.getWritableThread(writer)).resolves.toMatchObject({
+      await expect(
+        getAgentChatThreadService().getWritableThread(writer),
+      ).resolves.toMatchObject({
         id: owner.threadId,
       });
       await setManualRecordShare({ workspaceId, share, enabled: false });
@@ -674,7 +680,9 @@ describe('Conversation sharing through the authenticated API', () => {
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
       expect(revokedRename.body.errors[0].extensions.code).toBe('NOT_FOUND');
-      expect(await chat.getWritableThread(owner)).toMatchObject({
+      expect(
+        await getAgentChatThreadService().getWritableThread(owner),
+      ).toMatchObject({
         title: 'Collaborative rename',
       });
     } finally {
@@ -683,8 +691,6 @@ describe('Conversation sharing through the authenticated API', () => {
   });
 
   it('rolls back creation when grant initialization fails', async () => {
-    const chat =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
     const shareService = getAppProviderByClassName<RecordShareStorageService>(
       'RecordShareStorageService',
     );
@@ -699,26 +705,32 @@ describe('Conversation sharing through the authenticated API', () => {
       .mockRejectedValueOnce(new Error('Grant storage unavailable'));
     try {
       await expect(
-        chat.createThread({ ...owner, id: owner.threadId }),
+        getAgentChatThreadService().createThread({
+          ...owner,
+          id: owner.threadId,
+        }),
       ).rejects.toThrow('Grant storage unavailable');
     } finally {
       cleanup.mockRestore();
     }
-    await expect(chat.getWritableThread(owner)).rejects.toMatchObject({
+    await expect(
+      getAgentChatThreadService().getWritableThread(owner),
+    ).rejects.toMatchObject({
       code: 'THREAD_NOT_FOUND',
     });
   });
 
   it('stores the member owner and preserves the legacy API identity', async () => {
-    const chat =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
     const owner = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId: randomUUID(),
     };
-    await chat.createThread({ ...owner, id: owner.threadId });
+    await getAgentChatThreadService().createThread({
+      ...owner,
+      id: owner.threadId,
+    });
     try {
       const response = await makeGraphqlApiRequest(
         findOneOperationFactory({
@@ -772,11 +784,9 @@ describe('Conversations through the record API', () => {
       [threadId],
     );
   it('reads a conversation with its relations even though its messages stay out of the API', async () => {
-    const chat =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
     const threadId = randomUUID();
 
-    await chat.createThread({
+    await getAgentChatThreadService().createThread({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       id: threadId,
@@ -1040,14 +1050,12 @@ describe('Conversations through the record API', () => {
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       };
-      const chatService =
-        getAppProviderByClassName<AgentChatService>('AgentChatService');
       const { flatObjectMetadataMaps } =
         await getAppProviderByClassName<WorkspaceCacheService>(
           'WorkspaceCacheService',
         ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatObjectMetadataMaps']);
 
-      await chatService.createThread({
+      await getAgentChatThreadService().createThread({
         ...owner,
         id: threadId,
         title: 'Destroyed conversation audience',

@@ -314,8 +314,6 @@ If you have to create multiple things you *MUST* use the relevant create many to
 - Use *create_many_field_metadata* to create all non-relation fields at once (including new fields on standard objects)
 - Use *create_many_relation_fields* to create all relation fields between objects at once (do this AFTER creating the objects and non-relation fields)
 
-If you have to wait use the navigate_app tool.
-
 For the fields you will create, make sure to create a good variety of field types to showcase the different capabilities of the platform, for example:
 - Create SELECT and SELECT_MULTIPLE field types for building demo board index views and table with groups views
 - Create DATE_TIME fields to be able to create calendar views
@@ -333,14 +331,11 @@ STEP 0: Present a plan to the user and wait for approval.
   - A brief description of the key relations between objects
 - Present this plan to the user and *wait for their confirmation or adjustments* before proceeding
 - Once approved, archive every existing custom object without asking for further confirmation: call get_object_metadata, keep the objects where isCustom is true, then set isActive to false on all of them in a single update_many_object_metadata call
-- Wait 3 seconds after deletions for the backend side effects to be completed
 
 STEP 1: Create all the custom objects at once with create_many_object_metadata
 name must start with lowercase letter and contain only alphanumeric letters
 
-STEP 2: Wait 3 seconds, for the backend side effects to be completed
-
-STEP 3: Create all NON-RELATION fields for ALL objects by batch with create_many_field_metadata.
+STEP 2: Create all NON-RELATION fields for ALL objects by batch with create_many_field_metadata.
 Do a separate batch call for each object.
 This includes:
 - New custom fields for the standard objects (Person, Company, Opportunity) — use their objectMetadataId from get_object_metadata
@@ -348,15 +343,11 @@ This includes:
 DO NOT include relation fields in this step. Only create TEXT, NUMBER, BOOLEAN, DATE_TIME, SELECT, MULTI_SELECT, CURRENCY, etc.
 SELECT option values must be UPPER_SNAKE_CASE
 
-STEP 4: Wait 3 seconds, for the backend side effects to be completed
-
-STEP 5: Create all RELATION fields between objects at once with create_many_relation_fields
+STEP 3: Create all RELATION fields between objects at once with create_many_relation_fields
 The name property should be camel-cased or the backend will throw, targetFieldLabel must be a string, targetFieldIcon must be a string, type must be one of the following values: MANY_TO_ONE, ONE_TO_MANY
 targetFieldIcon is like IconSomething, it's ok if it doesn't exist in the icon library, it will just be a blank icon, but it needs to be a string that starts with Icon and is in PascalCase
 
-STEP 6: Wait 3 seconds, for the backend side effects to be completed
-
-STEP 7: Rename and enrich the first N records of People, Companies, and Opportunities.
+STEP 4: Rename and enrich the first N records of People, Companies, and Opportunities.
 - Use find_many_people (limit: 50, orderBy: [{ position: "AscNullsFirst" }]), find_many_companies (limit: 50, orderBy: [{ position: "AscNullsFirst" }]), find_many_opportunities (limit: 50, orderBy: [{ position: "AscNullsFirst" }]) to get the IDs of the first records in each table
   - Ordering by position ascending gives the earliest-inserted records, which are contiguous in the table — this keeps the demo data tightly grouped and makes the workspace feel coherent
 - For each standard object, call update_one_person / update_one_company / update_one_opportunity **individually per record** (one call per record) to set domain-relevant names and field values:
@@ -365,36 +356,24 @@ STEP 7: Rename and enrich the first N records of People, Companies, and Opportun
   - **Opportunities**: replace name with a domain-relevant deal name (e.g. "Q2 retainer — Ashford & Partners", "New patient intake — Meridian Health").
   - Also set the new custom fields on each record: spread realistic values across SELECT fields, set plausible CURRENCY/NUMERIC amounts, set DATE_TIME fields around TODAY.
 - Do this one record at a time — the API does not support bulk individual updates with different values per record
-- Wait 3 seconds after finishing all updates for one object type before moving to the next
 
-STEP 7.5: Add view fields to the default views of standard objects to expose the new custom fields.
+STEP 5: Add view fields to the default views of standard objects to expose the new custom fields.
 For each of People, Companies, and Opportunities:
-- Navigate to the object's default view using the navigate_app tool
-- Wait 3 seconds
 - Use create_many_view_fields to add all the new custom fields to the default view so they are visible
   - Use decimal positions between 0 and 1 to insert them right after the label identifier field
-- Navigate to the object's default view again using the navigate_app tool so the user can see the enriched records
-- Wait 3 seconds
 
-STEP 8: For each new custom object, repeat ALL of the following sub-steps before moving to the next object:
-- Navigate the object's default view using the navigate_app tool
-- Wait 3 seconds, so the user has time to see the object default view
+STEP 6: For each new custom object, repeat ALL of the following sub-steps before moving to the next object:
 - Create the view fields for the default view, use the create_many_view_fields tool, and make sure to include all created fields, including the relation fields, so that we have a complete view of the object with all its fields.
   BE CAREFUL to use a position that will put those view fields right after the first label identifier field
   which has a position of 0 and the next system created fields which begin at 1, *so use decimal positions between 0 and 1*
   *YOU MUST CREATE ALL VIEW FIELDS FOR ALL FIELDS, INCLUDING RELATION FIELDS, IN THIS STEP, DO NOT LEAVE ANY FIELD WITHOUT A VIEW FIELD, OTHERWISE IT WILL NOT BE VISIBLE IN THE DEFAULT VIEW AND THE USER WON'T KNOW IT EXISTS*
 
-- **MANDATORY**: Navigate to the object's default view again using the navigate_app tool — YOU MUST DO THIS BEFORE EACH OBJECT'S DATA SEEDING, every single time, without exception
-- Wait 3 seconds
 - Seed relevant and realistic mock data for this object:
   - use the relevant tool to create many records for this object
   - between 20 and 50
   - with a coherent combination of values
   - link records to existing People and Companies using the relation fields you created
   - use dates that are around TODAY so it's relevant for seeing past / future and present records
-
-- **MANDATORY**: Navigate to the object's default view again using the navigate_app tool so the user can see the populated data — DO NOT SKIP THIS, even if you already navigated earlier in this loop iteration
-- Wait 3 seconds so the user has time to see the seeded records
 
 - Then create 2 to 3 additional views for this object, one at a time. For each view, complete ALL of the following sub-steps before creating the next view:
   - Create the view using the create_view tool:
@@ -408,16 +387,15 @@ STEP 8: For each new custom object, repeat ALL of the following sub-steps before
     - **KANBAN views**: Sort by a CURRENCY or NUMERIC field DESC (biggest value first) if one exists, or by createdAt DESC. Add a filter to exclude archived/cancelled records if such a SELECT option exists.
     - **CALENDAR views**: Sort by the date field ASC (earliest events first). Add a filter using IS_IN_FUTURE or IS_RELATIVE to show only upcoming records by default.
     - **TABLE with groups**: Sort by createdAt DESC (most recent first) and add a filter on a meaningful field (e.g. status IS_NOT "CANCELLED", or amount GREATER_THAN_OR_EQUAL to some threshold that keeps ~80% of the records visible).
-  - **MANDATORY**: Navigate to this view immediately using the navigate_app tool (navigateToView with the view id returned when you created it) — YOU MUST DO THIS FOR EVERY SINGLE VIEW, right after its fields/filters/sorts are set up, without exception
-  - Wait 3 seconds so the user can see the view and course-correct if needed
 
 Also create additional views for the standard objects (People, Companies, Opportunities) that showcase the new custom fields:
 - For People: a KANBAN view grouped by the new SELECT field you added (e.g. "By Specialisation", "By Status")
 - For Opportunities: a KANBAN view grouped by the new stage/status field (pipeline view)
 - For Companies: a TABLE view grouped by the new SELECT field
-Navigate to each view after creating it, using navigate_app with the view id returned when you created it. Wait 3 seconds.
 
-Loop STEP 8 for all the custom objects
+Share links to the configured objects and views so the user can open them when ready.
+
+Loop STEP 6 for all the custom objects
 `,
         isCustom: false,
         isSystem: true,
@@ -1295,7 +1273,6 @@ You help users create and configure views, and the filters and sorts that decide
 - update_many_view_fields - Update column configuration
 - get_view_fields - List columns in a view
 - get_object_metadata / get_field_metadata - Discover objects and their fields
-- navigate_app - Navigate to a view after creation, by the view id returned by the tool that created it
 
 ## upsert_complete_view (preferred)
 
@@ -1327,7 +1304,7 @@ Example: { "objectNameSingular": "opportunity", "type": "KANBAN", "name": "Pipel
    - For CALENDAR: provide both \`calendarFieldName\` (a DATE/DATE_TIME field name) and \`calendarLayout\` ("DAY", "WEEK", or "MONTH").
    - For TABLE: No special configuration needed beyond the fields list.
 
-4. **Navigate**: Use navigate_app (navigateToView with the view id returned by upsert_complete_view) to show the user their new view.
+4. **Share the view**: Include a clickable view reference using the id returned by upsert_complete_view so the user can open it.
 
 ## KANBAN Best Practices
 
@@ -1395,7 +1372,7 @@ Some fields carry sub-fields you filter on directly:
 
 - If the user is vague (e.g., "create a board"), ask which object they want to see
 - Suggest the most relevant view type based on the object's fields
-- After creating a view, always configure useful view fields and navigate to it
+- After creating a view, configure useful view fields and share a clickable view reference
 - Explain what each view type does so users can make informed choices`,
         isCustom: false,
         isSystem: true,

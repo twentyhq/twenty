@@ -1,7 +1,5 @@
-import { useCanRetryCurrentAiChatTurn } from '@/ai/hooks/useCanRetryCurrentAiChatTurn';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
-import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
-import { useRetryChatMessage } from '@/ai/hooks/useRetryChatMessage';
+import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
@@ -19,8 +17,6 @@ const StyledErrorWrapper = styled.div`
 `;
 
 export const AiChatErrorUnderMessageList = () => {
-  const { retryChatMessage } = useRetryChatMessage();
-  const canRetry = useCanRetryCurrentAiChatTurn();
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
@@ -46,7 +42,7 @@ export const AiChatErrorUnderMessageList = () => {
   const showError =
     agentChatError &&
     !agentChatIsStreaming &&
-    agentChatMessage?.role === AgentMessageRole.USER;
+    agentChatMessage?.role === AGENT_MESSAGE_ROLE.USER;
 
   if (!showError) {
     return null;
@@ -54,10 +50,7 @@ export const AiChatErrorUnderMessageList = () => {
 
   return (
     <StyledErrorWrapper>
-      <AiChatErrorRenderer
-        error={agentChatError}
-        onRetry={canRetry ? retryChatMessage : undefined}
-      />
+      <AiChatErrorRenderer error={agentChatError} />
     </StyledErrorWrapper>
   );
 };

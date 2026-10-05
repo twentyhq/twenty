@@ -84,8 +84,9 @@ When adding AI behavior:
 
 - `workspaceMemberId` is the member who receives it, and `text` is the message, in markdown.
 - `threadKey` picks the conversation per app and member: a new key starts one titled `title`, a known key adds to it. `idempotencyKey` identifies the message in it, so sending again with the same keys writes nothing and retries never duplicate it.
-- `toolCall` (optional) ends the message on `ask_questions`, `request_form` or `propose_email`, which pause the conversation until the member answers, or on one of the app's own tools by `logicFunctionUniversalIdentifier`, rendered by its front component without pausing.
-- Only one call the member answers (`ask_questions`, `request_form`, `propose_email`) can wait at a time; another fails with `THREAD_AWAITING_ANSWER` until they answer. Plain messages and app tool calls are still accepted.
+- `toolCall` (optional) ends the message on `ask_question` (one multiple-choice question), `request_form` or `propose_tool_call`, which pause the conversation until the member answers, or on one of the app's own tools by `logicFunctionUniversalIdentifier`, rendered by its front component without pausing.
+- `propose_tool_call` takes `toolName`, `arguments` and a one-sentence `summary`. The tool must be one the app's default role could run itself, such as `create_one_person` or `update_one_opportunity` (with `id`), or `send_email` / `draft_email` (`recipients`, `subject` and an HTML `body`), which need no permission of the app. The member reviews the call, edits it if they want, and the approved call runs with their own access.
+- Only one call the member answers (`ask_question`, `request_form`, `propose_tool_call`) can wait at a time; another fails with `THREAD_AWAITING_ANSWER` until they answer. Plain messages and app tool calls are still accepted.
 - A conversation the member deleted is not recreated.
 - The app's default role needs `SystemPermissionFlag.AI`, and the member needs the AI permission.
 - It always uses the app's access and ignores `runAs`.

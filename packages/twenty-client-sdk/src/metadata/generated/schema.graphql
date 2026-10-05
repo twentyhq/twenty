@@ -66,6 +66,7 @@ type Agent {
   responseFormat: JSON
   roleId: UUID
   isCustom: Boolean!
+  isSystem: Boolean!
   applicationId: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -1121,6 +1122,22 @@ type BillingCustomer {
   hasPaymentMethod: Boolean
 }
 
+type EnterpriseLicenseInfoDTO {
+  isValid: Boolean!
+  licensee: String
+  expiresAt: DateTime
+  subscriptionId: String
+}
+
+type EnterpriseSubscriptionStatusDTO {
+  status: String!
+  licensee: String
+  expiresAt: DateTime
+  cancelAt: DateTime
+  currentPeriodEnd: DateTime
+  isCancellationScheduled: Boolean!
+}
+
 type SdkClientChecksums {
   core: String
   metadata: String!
@@ -1617,40 +1634,9 @@ enum LogicFunctionExecutionStatus {
   ERROR
 }
 
-type EnterpriseLicenseInfoDTO {
-  isValid: Boolean!
-  licensee: String
-  expiresAt: DateTime
-  subscriptionId: String
-}
-
-type EnterpriseSubscriptionStatusDTO {
-  status: String!
-  licensee: String
-  expiresAt: DateTime
-  cancelAt: DateTime
-  currentPeriodEnd: DateTime
-  isCancellationScheduled: Boolean!
-}
-
-type UsageQuotaDefinition {
-  resourceType: UsageResourceType!
-  limitKind: String!
-  allowedOperationTypes: [UsageOperationType!]!
-  allowedSpenderTypes: [String!]!
-  allowedMeters: [String!]!
-}
-
-enum UsageResourceType {
-  AI
-  WORKFLOW
-  APP
-  STORAGE
-  API
-  LOGIC_FUNCTION
-  EMAIL
-  WEBHOOK
-  RECORD
+type UsageLimitOperationDefinition {
+  operationType: UsageOperationType!
+  allowedUnits: [UsageUnit!]!
 }
 
 enum UsageOperationType {
@@ -1670,6 +1656,39 @@ enum UsageOperationType {
   SUBSCRIPTION
 }
 
+enum UsageUnit {
+  CREDIT
+  TOKEN
+  INVOCATION
+  MINUTE
+  MILLISECOND
+  BYTE
+  FILE
+  REQUEST
+  SEAT
+  RECORD
+  COMPLEXITY
+}
+
+type UsageQuotaDefinition {
+  resourceType: UsageResourceType!
+  limitKind: String!
+  allowedOperations: [UsageLimitOperationDefinition!]!
+  allowedSpenderTypes: [String!]!
+}
+
+enum UsageResourceType {
+  AI
+  WORKFLOW
+  APP
+  STORAGE
+  API
+  LOGIC_FUNCTION
+  EMAIL
+  WEBHOOK
+  RECORD
+}
+
 type UsageQuotaDefinitions {
   definitions: [UsageQuotaDefinition!]!
   isIntraWorkspaceLimitEntitled: Boolean!
@@ -1684,7 +1703,7 @@ type UsageQuotaWithConsumption {
   spenderId: String
   spenderLabel: String
   periodUnit: String!
-  meter: String!
+  unit: UsageUnit!
   limitValue: BigInt!
   isEnforced: Boolean!
   consumedValue: BigInt
@@ -1713,7 +1732,7 @@ type UsageLimit {
   limitKind: String!
   periodCount: Int!
   periodUnit: String!
-  meter: String!
+  unit: UsageUnit!
   limitValue: BigInt!
   burstValue: BigInt
   createdAt: DateTime!
@@ -2134,6 +2153,8 @@ enum FeatureFlagKey {
   IS_VALIDATION_RULES_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED
+  IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
+  IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2962,40 +2983,6 @@ type ApplicationAuthorization {
   createdAt: DateTime!
 }
 
-type ApplicationExportApplication {
-  universalIdentifier: String!
-  displayName: String!
-  sourceType: ApplicationRegistrationSourceType!
-}
-
-type ApplicationExportCoverageEntry {
-  metadataName: String!
-  universalIdentifier: String!
-  status: ApplicationExportCoverageStatus!
-  reason: String
-}
-
-enum ApplicationExportCoverageStatus {
-  EXPORTED
-  ENGINE_DERIVED
-  EXCLUDED
-  UNSUPPORTED
-  FOREIGN_OWNED
-}
-
-type ApplicationExportFile {
-  folder: String!
-  path: String!
-  content: String!
-}
-
-type ApplicationExport {
-  application: ApplicationExportApplication!
-  manifest: JSON!
-  coverage: [ApplicationExportCoverageEntry!]!
-  files: [ApplicationExportFile!]!
-}
-
 type File {
   id: UUID!
   path: String!
@@ -3059,6 +3046,40 @@ type DevelopmentApplication {
 type WorkspaceMigration {
   applicationUniversalIdentifier: String!
   actions: JSON!
+}
+
+type ApplicationExportApplication {
+  universalIdentifier: String!
+  displayName: String!
+  sourceType: ApplicationRegistrationSourceType!
+}
+
+type ApplicationExportCoverageEntry {
+  metadataName: String!
+  universalIdentifier: String!
+  status: ApplicationExportCoverageStatus!
+  reason: String
+}
+
+enum ApplicationExportCoverageStatus {
+  EXPORTED
+  ENGINE_DERIVED
+  EXCLUDED
+  UNSUPPORTED
+  FOREIGN_OWNED
+}
+
+type ApplicationExportFile {
+  folder: String!
+  path: String!
+  content: String!
+}
+
+type ApplicationExport {
+  application: ApplicationExportApplication!
+  manifest: JSON!
+  coverage: [ApplicationExportCoverageEntry!]!
+  files: [ApplicationExportFile!]!
 }
 
 type PublicDomain {
@@ -3319,6 +3340,30 @@ type ImapSmtpCaldavConnectionSuccess {
   connectedAccountId: String!
 }
 
+type Webhook {
+  id: UUID!
+  targetUrl: String!
+  operations: [String!]!
+  description: String
+  secret: String!
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+}
+
+type ToolIndexEntry {
+  name: String!
+  label: String!
+  description: String!
+  category: String!
+  objectName: String
+  icon: String
+  widgetName: String
+  frontComponentId: String
+  inputSchema: JSON
+}
+
 type AgentMessagePart {
   id: UUID!
   messageId: UUID!
@@ -3333,7 +3378,6 @@ type AgentMessagePart {
   state: String
   providerExecuted: Boolean
   errorMessage: String
-  errorDetails: JSON
   sourceUrlSourceId: String
   sourceUrlUrl: String
   sourceUrlTitle: String
@@ -3362,34 +3406,11 @@ type AgentMessage {
   createdAt: DateTime!
 }
 
-type Webhook {
-  id: UUID!
-  targetUrl: String!
-  operations: [String!]!
-  description: String
-  secret: String!
-  applicationId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  deletedAt: DateTime
-}
-
-type ToolIndexEntry {
-  name: String!
-  label: String!
-  description: String!
-  category: String!
-  objectName: String
-  icon: String
-  widgetName: String
-  frontComponentId: String
-  inputSchema: JSON
-}
-
 type RunAgentResult {
   result: JSON
   error: String
   success: Boolean!
+  threadId: UUID
 }
 
 type ChannelSyncSuccess {
@@ -3534,10 +3555,12 @@ type SendChatMessageResult {
 }
 
 type AgentChatThreadParticipant {
+  id: UUID!
   threadId: UUID!
   lastReadAt: DateTime
   archivedAt: DateTime
   snoozedUntil: DateTime
+  updatedAt: DateTime!
 }
 
 type AgentChatEvent {
@@ -3990,7 +4013,6 @@ type Query {
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAiSystemPromptPreview: AiSystemPromptPreview!
-  myAgentChatThreadParticipants: [AgentChatThreadParticipant!]!
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!
@@ -4030,7 +4052,7 @@ input UsageQuotaScopeInput {
   spenderType: String!
   spenderId: String
   periodUnit: String!
-  meter: String!
+  unit: UsageUnit!
 }
 
 input AgentIdInput {
@@ -4332,10 +4354,10 @@ type Mutation {
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
-  runAgent(input: RunAgentInput!): RunAgentResult!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
+  runAgent(input: RunAgentInput!): RunAgentResult!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
@@ -4354,6 +4376,7 @@ type Mutation {
   archiveAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
   snoozeAgentChatThread(threadId: UUID!, snoozedUntil: DateTime!): AgentChatThreadParticipant!
   moveAgentChatThreadToInbox(threadId: UUID!): AgentChatThreadParticipant!
+  addAgentChatThreadParticipants(threadId: UUID!, workspaceMemberIds: [UUID!]!): [UUID!]!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   createSkill(input: CreateSkillInput!): Skill!
@@ -4486,7 +4509,7 @@ input CreateUsageLimitInput {
   limitKind: String!
   periodCount: Int!
   periodUnit: String!
-  meter: String!
+  unit: UsageUnit!
   limitValue: BigInt!
   burstValue: BigInt
 }
@@ -5525,29 +5548,6 @@ input CreateEmailingDomainInput {
   domain: String!
 }
 
-input RunAgentInput {
-  agentUniversalIdentifier: String!
-  prompt: String
-  runAsWorkspaceMemberId: UUID
-  messages: [RunAgentMessageInput!]
-}
-
-input RunAgentMessageInput {
-  role: RunAgentMessageRole!
-  content: String!
-  attachments: [RunAgentMessageAttachmentInput!]
-}
-
-enum RunAgentMessageRole {
-  user
-  assistant
-}
-
-input RunAgentMessageAttachmentInput {
-  fileId: UUID!
-  filename: String
-}
-
 input CreateWebhookInput {
   id: UUID
   targetUrl: String!
@@ -5569,6 +5569,37 @@ input UpdateWebhookInputUpdates {
   operations: [String!]
   description: String
   secret: String
+}
+
+input RunAgentInput {
+  agentUniversalIdentifier: String!
+  prompt: String @deprecated(reason: "Use input instead.")
+  runAsWorkspaceMemberId: UUID
+  messages: [RunAgentMessageInput!] @deprecated(reason: "Use input instead.")
+  input: [RunAgentMessageInput!]
+  additionalInstructions: String
+  thread: RunAgentThreadInput
+}
+
+input RunAgentMessageInput {
+  role: RunAgentMessageRole!
+  content: String!
+  attachments: [RunAgentMessageAttachmentInput!]
+}
+
+enum RunAgentMessageRole {
+  user
+  assistant
+}
+
+input RunAgentMessageAttachmentInput {
+  fileId: UUID!
+  filename: String
+}
+
+input RunAgentThreadInput {
+  key: String!
+  title: String
 }
 
 input UpdateMessageFolderInput {

@@ -22,6 +22,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { OPPORTUNITY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -35,13 +36,11 @@ const SEND_INBOX_MESSAGE = parse(`
   }
 `);
 
-const QUESTIONS = [
-  {
-    header: 'Share',
-    question: 'Do you want to share it with the other attendees?',
-    options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
-  },
-];
+const QUESTION = {
+  header: 'Share',
+  question: 'Do you want to share it with the other attendees?',
+  options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+};
 
 // The model is not called here: the resumed stream is only checked for being
 // queued.
@@ -52,7 +51,7 @@ describe('Sending an inbox message as an application', () => {
     idempotencyKey: 'first-recording',
     title: 'Your first call recording is ready',
     text: 'Your first call was recorded: **Weekly sync**.',
-    toolCall: { toolName: 'ask_questions', input: { questions: QUESTIONS } },
+    toolCall: { toolName: 'ask_question', input: QUESTION },
   };
   let application: ApplicationWithResources;
   let applicationToken: string;
@@ -152,6 +151,22 @@ describe('Sending an inbox message as an application', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: application.universalIdentifier,
     });
+  });
+
+  it('refuses to propose a record call the application could not run itself', async () => {
+    const response = await sendInboxMessage(applicationToken, {
+      threadKey: `inbox-thread-${uuidv4()}`,
+      toolCall: {
+        toolName: 'propose_tool_call',
+        input: {
+          toolName: 'update_one_opportunity',
+          arguments: { id: OPPORTUNITY_DATA_SEED_IDS.ID_1, stage: 'WON' },
+          summary: 'Mark the deal as won',
+        },
+      },
+    });
+
+    expect(JSON.stringify(response.body.errors)).toContain('not available');
   });
 
   it('rejects a member session', async () => {
@@ -348,9 +363,7 @@ describe('Sending an inbox message as an application', () => {
         threadId,
         toolCallId: `call_${pendingQuestionMessageId!.replace(/-/g, '')}`,
       },
-      response: {
-        answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
-      },
+      response: { selectedOptionIndices: [0] },
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -361,5 +374,89 @@ describe('Sending an inbox message as an application', () => {
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       }),
     );
+  });
+});
+
+describe('Proposing a record call as an application', () => {
+  let application: ApplicationWithResources;
+  let applicationToken: string;
+  let threadId: string | undefined;
+
+  beforeAll(async () => {
+    application = await setupApplicationWithResources({
+      name: 'Inbox Record Application',
+      permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+      canReadAndUpdateAllObjectRecords: true,
+    });
+    jest.useRealTimers();
+
+    applicationToken = (
+      await generateApplicationTokenPair({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationId: application.id,
+      })
+    ).applicationAccessToken.token;
+  });
+
+  afterAll(async () => {
+    if (threadId !== undefined) {
+      await destroyAgentChatThread({ threadId });
+    }
+
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: application.universalIdentifier,
+    });
+  });
+
+  it('proposes an update the application could run, with the values it changes', async () => {
+    const response = await makeMetadataApiRequest(
+      {
+        query: SEND_INBOX_MESSAGE,
+        variables: {
+          input: {
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+            threadKey: `inbox-thread-${uuidv4()}`,
+            idempotencyKey: 'record-proposal',
+            title: 'A deal looks won',
+            text: 'The signed quote came in.',
+            toolCall: {
+              toolName: 'propose_tool_call',
+              input: {
+                toolName: 'update_one_opportunity',
+                arguments: { id: OPPORTUNITY_DATA_SEED_IDS.ID_1, stage: 'WON' },
+                summary: 'Mark the deal as won',
+              },
+            },
+          },
+        },
+      },
+      applicationToken,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    threadId = response.body.data.sendInboxMessage.threadId;
+
+    const [part] = await global.testDataSource.query(
+      `SELECT part."toolOutput" FROM "${schema}"."agentMessagePart" part
+       JOIN "${schema}"."agentMessage" message ON message.id = part."messageId"
+       WHERE message."threadId" = $1 AND part."toolName" = 'propose_tool_call'`,
+      [threadId],
+    );
+
+    const [opportunity] = await global.testDataSource.query(
+      `SELECT stage FROM "${schema}"."opportunity" WHERE id = $1`,
+      [OPPORTUNITY_DATA_SEED_IDS.ID_1],
+    );
+
+    expect(part.toolOutput.result).toMatchObject({
+      status: 'pending',
+      proposal: {
+        toolName: 'update_one_opportunity',
+        template: 'recordUpdate',
+        objectNameSingular: 'opportunity',
+        recordId: OPPORTUNITY_DATA_SEED_IDS.ID_1,
+        currentValues: { stage: opportunity.stage },
+      },
+    });
   });
 });

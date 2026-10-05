@@ -7,5 +7,12 @@ export const workflowSendChatMessageActionSettingsSchema =
       workspaceMemberId: z.string(),
       title: z.string(),
       text: z.string(),
+      // a tool call the recipient approves, edits or rejects before the run goes on
+      toolCall: z
+        .object({
+          toolName: z.string(),
+          arguments: z.record(z.string(), z.any()),
+        })
+        .optional(),
     }),
   });

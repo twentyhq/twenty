@@ -1,21 +1,17 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { isValidUuid } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_ENSURE_THREAD_FOR_DRAFT_EVENT_NAME } from '@/ai/constants/AgentChatEnsureThreadForDraftEventName';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import { useAgentChatSubscription } from '@/ai/hooks/useAgentChatSubscription';
-import { useCreateAgentChatThread } from '@/ai/hooks/useCreateAgentChatThread';
 import { useEnsureAgentChatThreadExistsForDraft } from '@/ai/hooks/useEnsureAgentChatThreadExistsForDraft';
 import { useEnsureAgentChatThreadIdForSend } from '@/ai/hooks/useEnsureAgentChatThreadIdForSend';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatIsAwaitingPersistedRefetchComponentFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchComponentFamilyState';
-import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
-import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -26,13 +22,9 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 export const AgentChatStreamSubscriptionEffect = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
-  const { createChatThread } = useCreateAgentChatThread();
-
   const { ensureThreadExistsForDraft } =
-    useEnsureAgentChatThreadExistsForDraft(createChatThread);
-
-  const { ensureThreadIdForSend } =
-    useEnsureAgentChatThreadIdForSend(createChatThread);
+    useEnsureAgentChatThreadExistsForDraft();
+  const { ensureThreadIdForSend } = useEnsureAgentChatThreadIdForSend();
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_ENSURE_THREAD_FOR_DRAFT_EVENT_NAME,
@@ -116,29 +108,6 @@ export const AgentChatStreamSubscriptionEffect = () => {
     agentChatDisplayedThread,
     setAgentChatDisplayedThread,
   ]);
-
-  const setAgentChatIsLoading = useSetAtomState(agentChatIsLoadingState);
-  const agentChatThreadsLoading = useAtomStateValue(
-    agentChatThreadsLoadingState,
-  );
-  const agentChatMessagesLoading = useAtomStateValue(
-    agentChatMessagesLoadingState,
-  );
-
-  const handleLoadingChange = useCallback(() => {
-    const combinedIsLoading =
-      agentChatMessagesLoading || agentChatThreadsLoading;
-
-    setAgentChatIsLoading(combinedIsLoading);
-  }, [
-    agentChatMessagesLoading,
-    agentChatThreadsLoading,
-    setAgentChatIsLoading,
-  ]);
-
-  useEffect(() => {
-    handleLoadingChange();
-  }, [handleLoadingChange]);
 
   return null;
 };

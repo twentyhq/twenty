@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { usePhonesField } from '@/object-record/record-field/ui/meta-types/hooks/usePhonesField';
@@ -158,6 +158,37 @@ export const TrimInput: Story = {
 
     const newPhoneElement = await canvas.findByText('+33 6 42 64 62 74');
     expect(newPhoneElement).toBeVisible();
+  },
+};
+
+export const CountryPickerReopensOnEnter: Story = {
+  args: {
+    value: {
+      primaryPhoneCountryCode: 'FR',
+      primaryPhoneNumber: '642646272',
+      primaryPhoneCallingCode: '+33',
+      additionalPhones: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await canvas.findByText('Add Phone'));
+    const trigger = await canvas.findByRole('button', { name: 'Country' });
+
+    await userEvent.click(trigger);
+    await body.findByRole('dialog', { name: 'Country' });
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull());
+    await waitFor(() => expect(trigger).toHaveFocus());
+
+    await userEvent.keyboard('{Enter}');
+
+    const reopenedPopup = await body.findByRole('dialog', { name: 'Country' });
+    await waitFor(() => expect(reopenedPopup).toBeVisible());
+    expect(canvas.getByPlaceholderText('Phone')).toBeVisible();
+    await userEvent.keyboard('{Escape}');
   },
 };
 
