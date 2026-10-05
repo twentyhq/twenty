@@ -10,7 +10,6 @@ describe('useUserTimezone', () => {
   const mockSystemTimezone = 'America/New_York';
 
   beforeAll(() => {
-    // Mock Intl.DateTimeFormat to return a consistent system timezone
     global.Intl = {
       ...originalIntl,
       DateTimeFormat: jest.fn().mockImplementation(() => ({

@@ -15,16 +15,13 @@ export {
 } from './color/utils/stringToThemeColorP3String';
 export { themeColorSchema } from './color/utils/themeColorSchema';
 export { getOsControlSymbol } from './device/getOsControlSymbol';
-export { getOsShortcutSeparator } from './device/getOsShortcutSeparator';
 export { getUserDevice } from './device/getUserDevice';
 export { MOBILE_MEDIA_QUERY } from './responsive/constants/MobileMediaQuery';
 export { TOUCH_DEVICE_MEDIA_QUERY } from './responsive/constants/TouchDeviceMediaQuery';
 export { useIsMobile } from './responsive/hooks/useIsMobile';
 export { useIsTouchDevice } from './responsive/hooks/useIsTouchDevice';
 export { useMediaQuery } from './responsive/hooks/useMediaQuery';
-export type { ClickOutsideAttributes } from './types/ClickOutsideAttributes';
 export type { Nullable } from './types/Nullable';
 export { getSafeUrl } from './utils/getSafeUrl';
 export { isDefined } from './utils/isDefined';
-export type { LinkifyMatch } from './utils/linkifyText';
-export { linkifyText } from './utils/linkifyText';
+export { normalizeSearchText } from './utils/normalizeSearchText';

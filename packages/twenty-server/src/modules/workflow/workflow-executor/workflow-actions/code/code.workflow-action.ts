@@ -6,6 +6,7 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import {
@@ -26,6 +27,7 @@ export class CodeWorkflowAction implements WorkflowAction {
 
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly logicFunctionFromSourceHelperService: LogicFunctionFromSourceHelperService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
   ) {}
@@ -55,8 +57,25 @@ export class CodeWorkflowAction implements WorkflowAction {
 
     const { workspaceId } = runInfo;
 
-    const { authContext } =
+    const { flatLogicFunction } =
+      await this.logicFunctionFromSourceHelperService.findLogicFunctionRunnableOnDemandOrThrow(
+        {
+          id: workflowActionInput.logicFunctionId,
+          workspaceId,
+        },
+      );
+
+    const { authContext, application } =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
+
+    await this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
+      {
+        application,
+        workspaceId,
+        targetApplicationId: flatLogicFunction.applicationId,
+        targetLabel: `Logic function "${flatLogicFunction.name}"`,
+      },
+    );
 
     const result = await this.logicFunctionExecutorService.execute({
       logicFunctionId: workflowActionInput.logicFunctionId,

@@ -40,6 +40,7 @@ export type PageLayoutWidgetOverrides = {
 };
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
+@Index('IDX_PAGE_LAYOUT_WIDGET_APPLICATION_ID', ['applicationId'])
 @ObjectType('PageLayoutWidget')
 @Index(
   'IDX_PAGE_LAYOUT_WIDGET_WORKSPACE_ID_PAGE_LAYOUT_TAB_ID',

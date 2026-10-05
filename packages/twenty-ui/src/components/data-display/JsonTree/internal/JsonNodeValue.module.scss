@@ -14,3 +14,20 @@
 .red {
   color: var(--t-color-red8);
 }
+
+.button {
+  @include focus-ring;
+
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+  text-align: inherit;
+
+  &:disabled {
+    cursor: inherit;
+  }
+}

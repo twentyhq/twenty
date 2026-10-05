@@ -10,6 +10,7 @@ import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/wo
 type FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs =
   FromEntityToFlatEntityArgs<'pageLayoutWidget'> & {
     fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+    pageLayoutTabUniversalIdentifierById: Partial<Record<string, string>>;
     frontComponentUniversalIdentifierById?: Partial<Record<string, string>>;
     viewFieldGroupUniversalIdentifierById?: Partial<Record<string, string>>;
     viewUniversalIdentifierById?: Partial<Record<string, string>>;
@@ -20,8 +21,8 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
 ): FlatPageLayoutWidget => {
   const {
     entity: pageLayoutWidgetEntity,
-    pageLayoutTabIdToUniversalIdentifierMap,
     fieldMetadataUniversalIdentifierById,
+    pageLayoutTabUniversalIdentifierById,
     frontComponentUniversalIdentifierById,
     viewFieldGroupUniversalIdentifierById,
     viewUniversalIdentifierById,
@@ -46,10 +47,6 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
       viewFieldGroupUniversalIdentifierById,
       viewUniversalIdentifierById,
     });
-
-  const pageLayoutTabUniversalIdentifierById = Object.fromEntries(
-    pageLayoutTabIdToUniversalIdentifierMap.entries(),
-  );
 
   const universalOverrides = isDefined(pageLayoutWidgetEntity.overrides)
     ? fromPageLayoutWidgetOverridesToUniversalOverrides({

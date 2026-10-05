@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { createTransport, type Transporter } from 'nodemailer';
 
-import type SMTPConnection from 'nodemailer/lib/smtp-connection';
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -50,7 +50,7 @@ export class SmtpClientProvider {
     const validatedSmtpHost =
       await this.secureHttpClientService.getValidatedHost(smtpParams.host);
 
-    const options: SMTPConnection.Options = {
+    const options: SMTPTransport.Options = {
       host: validatedSmtpHost,
       port: smtpParams.port,
       ...buildSmtpTlsOptions(smtpParams.connectionSecurity),

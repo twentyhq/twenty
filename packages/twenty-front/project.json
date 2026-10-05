@@ -50,6 +50,7 @@
       }
     },
     "typecheck": {},
+    "knip": {},
     "lint": {
       "executor": "nx:run-commands",
       "cache": true,

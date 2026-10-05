@@ -21,6 +21,7 @@ Other rules:
 - Return a bulk summary with per-record results for multi-record actions, including counts for success, no match, and failed records.
 - Prefer idempotent behavior for jobs and repeated invocations.
 - Read secrets through the application-config helper, not raw `process.env`.
+- Twenty injects `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID` into every run. Never declare an application or server variable with one of these names: the manifest is rejected on sync and publish.
 - Do not hide customer-impacting side effects behind UI-only actions.
 
 Soft cap: a `*.logic-function.ts` or `*.post-install.ts` file over 200 lines is a refactor signal.
@@ -75,6 +76,20 @@ When adding AI behavior:
 - Keep instructions grounded in available app data and tools.
 - State when the agent should ask for missing workspace or record context.
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
+- A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `yarn twenty apply` fail otherwise, listing the excess grants.
+
+## Inbox Messages
+
+`sendInboxMessage` from `twenty-sdk/logic-function` posts a message from the app in a workspace member's chats.
+
+- `workspaceMemberId` is the member who receives it, and `text` is the message, in markdown.
+- `threadKey` picks the conversation per app and member: a new key starts one titled `title`, a known key adds to it. `idempotencyKey` identifies the message in it, so sending again with the same keys writes nothing and retries never duplicate it.
+- `toolCall` (optional) ends the message on `ask_question` (one multiple-choice question), `request_form` or `propose_tool_call`, which pause the conversation until the member answers, or on one of the app's own tools by `logicFunctionUniversalIdentifier`, rendered by its front component without pausing.
+- `propose_tool_call` takes `toolName`, `arguments` and a one-sentence `summary`. The tool must be one the app's default role could run itself, such as `create_one_person` or `update_one_opportunity` (with `id`), or `send_email` / `draft_email` (`recipients`, `subject` and an HTML `body`), which need no permission of the app. The member reviews the call, edits it if they want, and the approved call runs with their own access.
+- Only one call the member answers (`ask_question`, `request_form`, `propose_tool_call`) can wait at a time; another fails with `THREAD_AWAITING_ANSWER` until they answer. Plain messages and app tool calls are still accepted.
+- A conversation the member deleted is not recreated.
+- The app's default role needs `SystemPermissionFlag.AI`, and the member needs the AI permission.
+- It always uses the app's access and ignores `runAs`.
 
 ## Connection Providers
 

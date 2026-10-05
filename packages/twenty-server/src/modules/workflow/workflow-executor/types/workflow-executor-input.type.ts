@@ -4,6 +4,8 @@ export type WorkflowExecutorInput = {
   workspaceId: string;
   shouldComputeWorkflowRunStatus?: boolean;
   executedStepsCount?: number;
+  // The conversation the resumed step continues; set only when stepIds is that one step, already claimed out of PENDING
+  resumedThreadId?: string;
 };
 
 export type WorkflowBranchExecutorInput = {
@@ -12,4 +14,5 @@ export type WorkflowBranchExecutorInput = {
   workflowRunId: string;
   workspaceId: string;
   executedStepsCount?: number;
+  resumedThreadId?: string;
 };

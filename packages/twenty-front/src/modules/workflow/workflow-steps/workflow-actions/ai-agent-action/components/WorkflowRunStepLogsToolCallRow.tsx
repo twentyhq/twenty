@@ -4,7 +4,7 @@ import { type AiToolCallLog } from 'twenty-shared/workflow';
 
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
+import { getToolDisplayMessage } from '@/ai/utils/tool-display/getToolDisplayMessage';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { JsonTree } from 'twenty-ui/components';
@@ -14,7 +14,7 @@ import {
   IconChevronUp,
   IconCircleX,
 } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -198,7 +198,7 @@ export const WorkflowRunStepLogsToolCallRow = ({
       </StyledToggleButton>
 
       {isExpandable && (
-        <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
+        <Collapsible isExpanded={isExpanded}>
           <StyledContentContainer>
             {hasError && isDefined(toolCall.errorMessage) ? (
               <StyledErrorMessage>{toolCall.errorMessage}</StyledErrorMessage>
@@ -240,7 +240,7 @@ export const WorkflowRunStepLogsToolCallRow = ({
               </>
             )}
           </StyledContentContainer>
-        </AnimatedExpandableContainer>
+        </Collapsible>
       )}
     </StyledContainer>
   );

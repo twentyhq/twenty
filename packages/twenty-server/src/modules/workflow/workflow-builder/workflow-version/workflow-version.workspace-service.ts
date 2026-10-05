@@ -6,6 +6,7 @@ import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type WorkflowStepPositionUpdateInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-update.input';
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -40,6 +41,7 @@ export class WorkflowVersionWorkspaceService {
     private readonly recordPositionService: RecordPositionService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
   ) {}
 
   @WithLock('workflowId')
@@ -247,6 +249,10 @@ export class WorkflowVersionWorkspaceService {
       const newWorkflowId = (
         insertWorkflowResult.generatedMaps[0] as WorkflowWorkspaceEntity
       ).id;
+
+      await this.workflowCoreSyncService.upsertToCore(workspaceId, [
+        newWorkflowId,
+      ]);
 
       const versionPosition =
         await this.recordPositionService.buildRecordPosition({

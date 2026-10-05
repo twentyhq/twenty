@@ -1,4 +1,5 @@
 import { type MultiSelectFilter } from '@/types';
+import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 
 export const isMatchingMultiSelectFilter = ({
   multiSelectFilter,
@@ -15,7 +16,7 @@ export const isMatchingMultiSelectFilter = ({
       );
     }
     case multiSelectFilter.isEmptyArray !== undefined: {
-      return Array.isArray(value) && value.length === 0;
+      return multiSelectFilter.isEmptyArray !== isNonEmptyArray(value);
     }
     case multiSelectFilter.is !== undefined: {
       if (multiSelectFilter.is === 'NULL') {

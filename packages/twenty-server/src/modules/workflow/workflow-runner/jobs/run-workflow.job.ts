@@ -43,6 +43,7 @@ export class RunWorkflowJob {
     workflowRunId,
     lastExecutedStepId,
     stepIdsToRetry,
+    stepToResume,
     workspaceId,
   }: RunWorkflowJobData): Promise<void> {
     this.logger.log(
@@ -52,7 +53,13 @@ export class RunWorkflowJob {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       try {
-        if (isDefined(stepIdsToRetry)) {
+        if (isDefined(stepToResume)) {
+          await this.resumeAnsweredStep({
+            workspaceId,
+            workflowRunId,
+            stepToResume,
+          });
+        } else if (isDefined(stepIdsToRetry)) {
           await this.retryWorkflowExecution({
             workspaceId,
             workflowRunId,
@@ -208,10 +215,63 @@ export class RunWorkflowJob {
       });
     }
 
+    // a step that failed after resuming on an answer kept its conversation, and continues it
+    const resumedStepIds = stepIdsToRetry.filter((stepId) =>
+      isDefined(stepInfosToReset[stepId]?.threadId),
+    );
+    const restartedStepIds = stepIdsToRetry.filter(
+      (stepId) => !resumedStepIds.includes(stepId),
+    );
+
+    await Promise.all([
+      ...(restartedStepIds.length > 0
+        ? [
+            this.workflowExecutorWorkspaceService.executeFromSteps({
+              stepIds: restartedStepIds,
+              workflowRunId,
+              workspaceId,
+            }),
+          ]
+        : []),
+      ...resumedStepIds.map((stepId) =>
+        this.workflowExecutorWorkspaceService.executeFromSteps({
+          stepIds: [stepId],
+          workflowRunId,
+          workspaceId,
+          resumedThreadId: stepInfosToReset[stepId].threadId,
+        }),
+      ),
+    ]);
+  }
+
+  // The step stays PENDING until claimed here, so its run can't complete while queued and a second resume no-ops
+  private async resumeAnsweredStep({
+    workflowRunId,
+    stepToResume: { stepId, threadId },
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    stepToResume: { stepId: string; threadId: string };
+    workspaceId: string;
+  }): Promise<void> {
+    const isClaimed =
+      await this.workflowRunWorkspaceService.updateStepInfoIfPending({
+        stepId,
+        stepInfo: { status: StepStatus.RUNNING },
+        expectedThreadId: threadId,
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (!isClaimed) {
+      return;
+    }
+
     await this.workflowExecutorWorkspaceService.executeFromSteps({
-      stepIds: stepIdsToRetry,
+      stepIds: [stepId],
       workflowRunId,
       workspaceId,
+      resumedThreadId: threadId,
     });
   }
 

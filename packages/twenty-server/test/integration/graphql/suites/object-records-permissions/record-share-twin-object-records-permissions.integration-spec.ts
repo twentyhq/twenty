@@ -15,11 +15,9 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   MetadataReadability,
   RecordShareAccessLevel,
@@ -66,13 +64,6 @@ const findManyOperation = findManyOperationFactory({
   gqlFields: RECORD_GQL_FIELDS,
   filter: ALL_RECORDS_FILTER,
 });
-
-const setRecordSharingEnabled = (value: boolean) =>
-  updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-    value,
-    expectToFail: false,
-  });
 
 describe('recordShareTwinObjectRecordsPermissions', () => {
   let recordShareStorageService: RecordShareStorageService;
@@ -202,11 +193,9 @@ describe('recordShareTwinObjectRecordsPermissions', () => {
     });
 
     await setObjectReadability(objectMetadataId, MetadataReadability.PRIVATE);
-    await setRecordSharingEnabled(true);
   });
 
   afterAll(async () => {
-    await setRecordSharingEnabled(false);
     await recordShareStorageService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,

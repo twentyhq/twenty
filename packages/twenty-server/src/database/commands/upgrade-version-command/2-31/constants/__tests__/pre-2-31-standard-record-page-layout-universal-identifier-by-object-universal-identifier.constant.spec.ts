@@ -9,6 +9,7 @@ import { PRE_2_31_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNI
 // scheme and need no pre-2.31 literal: list them here to keep the
 // completeness check green.
 const POST_2_28_RECORD_PAGE_KEYS: string[] = [
+  'agentChatThreadRecordPage',
   'attachmentRecordPage',
   'messageRecordPage',
 ];

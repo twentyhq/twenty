@@ -7,7 +7,6 @@ const NO_EXCLUSIONS = {
   hardSuppressed: 0,
   globallyUnsubscribed: 0,
   topicUnsubscribed: 0,
-  overCap: 0,
 };
 
 describe('buildExcludedRecipientReasons', () => {
@@ -44,10 +43,10 @@ describe('buildExcludedRecipientReasons', () => {
   it('formats large counts with the given formatter', () => {
     expect(
       buildExcludedRecipientReasons({
-        counts: { ...NO_EXCLUSIONS, overCap: 8300 },
+        counts: { ...NO_EXCLUSIONS, withoutEmail: 8300 },
         formatNumber,
       }),
-    ).toEqual(['8,300 over the recipient limit']);
+    ).toEqual(['8,300 without an email address']);
   });
 
   it('lists every reason that applies, in a stable order', () => {
@@ -59,7 +58,6 @@ describe('buildExcludedRecipientReasons', () => {
           hardSuppressed: 3,
           globallyUnsubscribed: 4,
           topicUnsubscribed: 5,
-          overCap: 6,
         },
         formatNumber,
       }),
@@ -69,7 +67,6 @@ describe('buildExcludedRecipientReasons', () => {
       '3 bounced or complained',
       '4 unsubscribed from everything',
       '5 opted out of this topic',
-      '6 over the recipient limit',
     ]);
   });
 });

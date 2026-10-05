@@ -11,11 +11,12 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useIsObjectReadOnly } from '@/object-record/read-only/hooks/useIsObjectReadOnly';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
-import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { RecordTableBodyContextValueProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import {
   RecordTableContextProvider,
   useRecordTableContextOrThrow,
@@ -23,7 +24,7 @@ import {
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -106,6 +107,7 @@ const InternalTableContextProviders = ({
 }) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const isObjectReadOnly = useIsObjectReadOnly(objectMetadataItem.id);
 
   const currentRecordFields = useAtomComponentStateValue(
     currentRecordFieldsComponentState,
@@ -178,26 +180,27 @@ const InternalTableContextProviders = ({
           objectMetadataItems: objectMetadataItems,
           recordTableId: objectMetadataItem.namePlural,
           viewBarId: 'view-bar',
-          objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
+          objectPermissions: getObjectPermissionsForObject(
             objectPermissionsByObjectMetadataId,
-            objectMetadataId: objectMetadataItem.id,
-          }),
+            objectMetadataItem.id,
+          ),
+          isObjectReadOnly,
           visibleRecordFields,
           onRecordIdentifierClick: () => {},
           triggerEvent,
         }}
       >
-        <RecordTableBodyContextProvider
+        <RecordTableBodyContextValueProvider
           value={{
             onCloseTableCell: () => {},
             onOpenTableCell: () => {},
-            onCommandMenuDropdownOpened: () => {},
+            openRecordContextMenu: () => {},
             onMoveFocus: () => {},
             onMoveHoverToCurrentCell: () => {},
           }}
         >
           {children}
-        </RecordTableBodyContextProvider>
+        </RecordTableBodyContextValueProvider>
       </RecordTableContextProvider>
     </RecordIndexContextProvider>
   );

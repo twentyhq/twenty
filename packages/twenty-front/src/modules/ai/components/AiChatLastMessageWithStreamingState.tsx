@@ -1,6 +1,4 @@
-import { useCanRetryCurrentAiChatTurn } from '@/ai/hooks/useCanRetryCurrentAiChatTurn';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { useRetryChatMessage } from '@/ai/hooks/useRetryChatMessage';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
@@ -11,8 +9,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined } from 'twenty-shared/utils';
 
 export const AiChatLastMessageWithStreamingState = () => {
-  const { retryChatMessage } = useRetryChatMessage();
-  const canRetry = useCanRetryCurrentAiChatTurn();
   const lastMessageId = useAtomComponentSelectorValue(
     agentChatLastMessageIdComponentSelector,
   );
@@ -38,7 +34,6 @@ export const AiChatLastMessageWithStreamingState = () => {
       messageId={lastMessageId}
       isLastMessageStreaming={agentChatIsStreaming}
       error={agentChatError ?? undefined}
-      onRetry={canRetry ? retryChatMessage : undefined}
     />
   );
 };

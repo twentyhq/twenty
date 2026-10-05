@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { SearchInput } from 'twenty-ui/components';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -18,7 +19,6 @@ import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRi
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNameCellSecondaryLabel';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
-import { ProgressRingWithLabel } from '@/ui/feedback/progress-ring/components/ProgressRingWithLabel';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -130,7 +130,7 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
               {t`Used`}
               <SettingsBillingLimitAmount
                 text={item.consumedText}
-                isCreditsMeter={item.isCreditsMeter}
+                unit={item.unit}
               />
             </StyledTooltipRow>
           )}
@@ -138,7 +138,7 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
             {t`Limit`}
             <SettingsBillingLimitAmount
               text={item.limitText}
-              isCreditsMeter={item.isCreditsMeter}
+              unit={item.unit}
             />
           </StyledTooltipRow>
         </StyledTooltipRows>
@@ -146,13 +146,17 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
     >
       <StyledUsed id={anchorId}>
         {isDefined(item.consumedPercentage) ? (
-          <ProgressRingWithLabel
+          <ProgressRing
             value={item.consumedPercentage}
+            size="sm"
+            aria-label={t`${item.name} used by ${item.spenderName}`}
             barColor={getUsageLimitRingColor({
               consumedPercentage: item.consumedPercentage,
               isExhausted: item.isExhausted,
             })}
-          />
+          >
+            {`${item.consumedPercentage}%`}
+          </ProgressRing>
         ) : (
           <StyledEmptyValue>—</StyledEmptyValue>
         )}
@@ -208,7 +212,7 @@ export const SettingsBillingLimitsTable = ({
             <SearchInput
               placeholder={t`Search a limit`}
               value={searchText}
-              onChange={setSearchText}
+              onValueChange={setSearchText}
               filterButtonAriaLabel={t`Filter limits`}
               filterDropdown={(filterButton) => (
                 <SettingsBillingLimitsFilterDropdown

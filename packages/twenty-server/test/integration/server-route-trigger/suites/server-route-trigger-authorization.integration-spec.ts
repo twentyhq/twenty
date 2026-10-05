@@ -9,7 +9,10 @@ import {
   type LogicFunctionManifest,
   type ServerRouteTriggerSettings,
 } from 'twenty-shared/application';
-import { LOGIC_FUNCTION_HTTP_RESPONSE_MARKER } from 'twenty-shared/types';
+import {
+  HTTPMethod,
+  LOGIC_FUNCTION_HTTP_RESPONSE_MARKER,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -87,7 +90,7 @@ const buildLogicFunctionManifest = ({
     ? {
         httpRouteTriggerSettings: {
           path: `/${name}`,
-          httpMethod: 'POST',
+          httpMethod: HTTPMethod.POST,
           isAuthRequired: true,
         },
       }
@@ -190,7 +193,7 @@ describe('ServerRouteTrigger authorization (integration)', () => {
               name: 'get-handshake-resolver',
               serverRouteExposed: true,
               authRequired: false,
-              httpMethods: ['GET', 'POST'],
+              httpMethods: [HTTPMethod.GET, HTTPMethod.POST],
             }),
             buildLogicFunctionManifest({
               universalIdentifier: TARGET_FUNCTION_UNIVERSAL_IDENTIFIER,

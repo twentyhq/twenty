@@ -34,42 +34,62 @@ const pillLinkClassName = css`
   }
 `;
 
-const OrganizationAdornmentContent = () => (
-  <>
-    <IconLock size={12} />
-    {t`Organization`}
-  </>
-);
+const iconOnlyPillClassName = css`
+  block-size: 24px;
+  box-sizing: border-box;
+  inline-size: 24px;
+  justify-content: center;
+  padding: 0;
+`;
 
 type OrganizationAdornmentProps = {
   tooltipContent?: string;
+  iconOnly?: boolean;
 };
 
 export const OrganizationAdornment = ({
   tooltipContent,
+  iconOnly = false,
 }: OrganizationAdornmentProps) => {
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const label = t`Organization`;
+  const className = cx(pillClassName, iconOnly && iconOnlyPillClassName);
+  const content = iconOnly ? (
+    <IconLock size={16} />
+  ) : (
+    <>
+      <IconLock size={12} />
+      {label}
+    </>
+  );
   const adornment = isBillingEnabled ? (
     <Link
-      className={cx(pillClassName, pillLinkClassName)}
+      className={cx(className, pillLinkClassName)}
       to={getSettingsPath(SettingsPath.BillingPlans)}
+      aria-label={iconOnly ? label : undefined}
     >
-      <OrganizationAdornmentContent />
+      {content}
     </Link>
   ) : (
-    <span className={pillClassName}>
-      <OrganizationAdornmentContent />
+    <span
+      className={className}
+      role={iconOnly ? 'img' : undefined}
+      aria-label={iconOnly ? label : undefined}
+    >
+      {content}
     </span>
   );
+  const resolvedTooltipContent =
+    tooltipContent ?? (iconOnly ? label : undefined);
 
-  if (!isNonEmptyString(tooltipContent)) {
+  if (!isNonEmptyString(resolvedTooltipContent)) {
     return adornment;
   }
 
   return (
     <Tooltip
-      content={tooltipContent}
+      content={resolvedTooltipContent}
       delay={TooltipDelay.shortDelay}
       side="top"
       maxWidth="260px"

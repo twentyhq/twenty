@@ -334,8 +334,6 @@ export class EnterprisePlanService implements OnModuleInit {
           errorData.code ===
           EnterprisePlanService.ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED_CODE
         ) {
-          // Rate limited: the existing token stays valid, surface the reason so
-          // callers (e.g. the manual refresh button) can tell the user.
           throw new EnterpriseException(
             'Validity token refresh rate limit exceeded',
             EnterpriseExceptionCode.ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED,
@@ -346,10 +344,7 @@ export class EnterprisePlanService implements OnModuleInit {
           this.lastRefreshRejectionCode = errorData.code;
         }
 
-        // Only a key claimed by a different server means this instance is
-        // definitively displaced, so revoke its stored license. Other
-        // rejections (missing SERVER_ID, dev-needs-prod, dev-slot-taken) are
-        // recoverable: the existing token simply expires without reissue.
+        // Only a key bound to another server is definitive; other rejections are recoverable and the token just expires.
         if (
           errorData.code ===
           EnterprisePlanService.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER_CODE
@@ -387,8 +382,7 @@ export class EnterprisePlanService implements OnModuleInit {
     }
   }
 
-  // Self-hosted pricing is per user: a user who belongs to several workspaces
-  // on the same instance only counts as one seat.
+  // Self-hosted pricing is per user, so a user in several workspaces counts as one seat.
   async getBillableSeatCount(): Promise<number> {
     const result = await this.userWorkspaceRepository
       .createQueryBuilder('userWorkspace')
@@ -621,12 +615,24 @@ export class EnterprisePlanService implements OnModuleInit {
     }
 
     const checkoutUrl = `${apiUrl}/checkout`;
+    const serverId = await this.getOrCreateServerId();
+
+    if (!isDefined(serverId)) {
+      throw new EnterpriseException(
+        'Enterprise checkout requires a server id',
+        EnterpriseExceptionCode.ENTERPRISE_MISSING_SERVER_ID,
+      );
+    }
 
     try {
       const response = await fetch(checkoutUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ billingInterval, seatCount }),
+        body: JSON.stringify({
+          billingInterval,
+          seatCount,
+          instanceMetadata: { serverId },
+        }),
       });
 
       if (!response.ok) {
@@ -720,8 +726,7 @@ export class EnterprisePlanService implements OnModuleInit {
     }
   }
 
-  // In development and Jest integration tests, tries both keys so production keys
-  // work locally
+  // Development and tests try both keys so production keys also work locally.
   private getPublicKeysToTry(): string[] {
     const nodeEnv = this.twentyConfigService.get('NODE_ENV');
 

@@ -15,8 +15,6 @@ const i18nContext = {
 };
 
 describe('buildViewNameObjectLabels', () => {
-  // Capitalization rides along: the value carries the casing because a
-  // placeholder can start a label.
   it('resolves only the placeholder the name carries', () => {
     expect(
       buildViewNameObjectLabels({

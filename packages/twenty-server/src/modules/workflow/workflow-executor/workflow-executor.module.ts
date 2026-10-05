@@ -22,9 +22,12 @@ import { IfElseActionModule } from 'src/modules/workflow/workflow-executor/workf
 import { IteratorActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/iterator-action.module';
 import { LogicFunctionActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/logic-function-action.module';
 import { MailSenderActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/mail-sender-action.module';
+import { SendChatMessageActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/send-chat-message-action.module';
+import { WaitForEventActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/wait-for-event-action.module';
 import { RecordCRUDActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/record-crud-action.module';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
+import { WorkflowStepWaitStoreModule } from 'src/modules/workflow/workflow-wait/workflow-step-wait-store.module';
 
 @Module({
   imports: [
@@ -34,6 +37,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     CodeActionModule,
     LogicFunctionActionModule,
     DelayActionModule,
+    WaitForEventActionModule,
     RecordCRUDActionModule,
     FormActionModule,
     BillingModule,
@@ -47,12 +51,14 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     FeatureFlagModule,
     HttpRequestActionModule,
     MailSenderActionModule,
+    SendChatMessageActionModule,
     CreateCalendarEventActionModule,
     MetricsModule,
     UsageLimitModule,
     UsageModule,
+    WorkflowStepWaitStoreModule,
   ],
   providers: [WorkflowExecutorWorkspaceService, WorkflowActionFactory],
-  exports: [WorkflowExecutorWorkspaceService],
+  exports: [WorkflowExecutorWorkspaceService, WorkflowActionFactory],
 })
 export class WorkflowExecutorModule {}

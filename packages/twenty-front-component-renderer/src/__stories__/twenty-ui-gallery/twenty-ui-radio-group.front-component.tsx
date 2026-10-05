@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { CardPicker } from 'twenty-ui/components';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
@@ -28,8 +27,12 @@ const RadioGroupExample = () => {
         defaultValue="basic"
         onValueChange={setPlan}
       >
-        <CardPicker value="basic">Basic plan</CardPicker>
-        <CardPicker value="pro">Pro plan</CardPicker>
+        <Radio variant="card" value="basic">
+          Basic plan
+        </Radio>
+        <Radio variant="card" value="pro">
+          Pro plan
+        </Radio>
       </RadioGroup>
       <p>Plan: {plan}</p>
     </TwentyUiGalleryCard>
@@ -39,6 +42,7 @@ const RadioGroupExample = () => {
 export default defineFrontComponent({
   universalIdentifier: '4d23e9af-7cb3-4e4a-bbca-8e960f840014',
   name: 'twenty-ui-radio-group',
-  description: 'RadioGroup selection with Radio and CardPicker in the sandbox',
+  description:
+    'RadioGroup selection with standard and card Radio options in the sandbox',
   component: RadioGroupExample,
 });

@@ -3,11 +3,13 @@ import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/us
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const buildRow = (
   overrides: Partial<UsageConsumptionRow>,
 ): UsageConsumptionRow => ({
   operationType: UsageOperationType.AI_CHAT_TOKEN,
+  unit: UsageUnit.TOKEN,
   userWorkspaceId: 'user-1',
   apiKeyId: '',
   applicationId: '',
@@ -23,9 +25,10 @@ const buildCounter = (
   overrides: Partial<LimitQuotaCounter>,
 ): LimitQuotaCounter => ({
   kind: 'limit',
+  isDefault: false,
   key: 'counter-key',
   limitValue: 1_000,
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   resourceType: UsageResourceType.AI,
   periodUnit: 'month',
   periodStart: new Date('2026-08-01T00:00:00.000Z'),
@@ -53,7 +56,7 @@ const rows = [
 ];
 
 describe('computeQuotaConsumed', () => {
-  it('sums every row for a workspace scope with no operation', () => {
+  it('sums the credits of every operation for a credit counter on every operation', () => {
     expect(computeQuotaConsumed({ rows, scope: buildCounter({}) })).toBe(147);
   });
 
@@ -92,11 +95,27 @@ describe('computeQuotaConsumed', () => {
     ).toBe(140);
   });
 
-  it('sums the quantity column when the counter meters on it', () => {
+  it('sums the token quantity of every operation for a token counter', () => {
     expect(
       computeQuotaConsumed({
         rows,
-        scope: buildCounter({ meter: 'quantity' }),
+        scope: buildCounter({ unit: UsageUnit.TOKEN }),
+      }),
+    ).toBe(23);
+  });
+
+  it('leaves rows of another unit out of a token counter', () => {
+    expect(
+      computeQuotaConsumed({
+        rows: [
+          ...rows,
+          buildRow({
+            operationType: UsageOperationType.WEB_SEARCH,
+            unit: UsageUnit.INVOCATION,
+            quantity: '5',
+          }),
+        ],
+        scope: buildCounter({ unit: UsageUnit.TOKEN }),
       }),
     ).toBe(23);
   });
@@ -132,5 +151,66 @@ describe('computeQuotaConsumed', () => {
         }),
       }),
     ).toBe(40);
+  });
+
+  describe('when one run records an INVOCATION row and a MILLISECOND row', () => {
+    const logicFunctionRunRows = [
+      buildRow({
+        operationType: UsageOperationType.CODE_EXECUTION,
+        unit: UsageUnit.INVOCATION,
+        logicFunctionId: 'logic-function-1',
+        creditsUsedMicro: '3000',
+        quantity: '1',
+      }),
+      buildRow({
+        operationType: UsageOperationType.CODE_EXECUTION,
+        unit: UsageUnit.MILLISECOND,
+        logicFunctionId: 'logic-function-1',
+        creditsUsedMicro: '150',
+        quantity: '1500',
+      }),
+    ];
+
+    const logicFunctionScope = buildCounter({
+      operationType: UsageOperationType.CODE_EXECUTION,
+      spenderType: 'logicFunction',
+      spenderId: 'logic-function-1',
+    });
+
+    it('sums the credits of both units', () => {
+      expect(
+        computeQuotaConsumed({
+          rows: logicFunctionRunRows,
+          scope: logicFunctionScope,
+        }),
+      ).toBe(3150);
+    });
+
+    it('counts the run once on an INVOCATION counter', () => {
+      expect(
+        computeQuotaConsumed({
+          rows: logicFunctionRunRows,
+          scope: { ...logicFunctionScope, unit: UsageUnit.INVOCATION },
+        }),
+      ).toBe(1);
+    });
+  });
+
+  it('counts the credits of a credit-unit row, never its quantity', () => {
+    expect(
+      computeQuotaConsumed({
+        rows: [
+          buildRow({
+            operationType: UsageOperationType.SUBSCRIPTION,
+            unit: UsageUnit.CREDIT,
+            userWorkspaceId: '',
+            applicationId: 'application-1',
+            quantity: '1',
+            creditsUsedMicro: '20000000',
+          }),
+        ],
+        scope: buildCounter({}),
+      }),
+    ).toBe(20_000_000);
   });
 });

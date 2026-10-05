@@ -11,7 +11,6 @@ import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -37,7 +36,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   providers: [
     JwtAuthGuard,
     McpAuthGuard,
-    WorkspaceAuthGuard,
     McpInstructionBuilderService,
     McpProtocolService,
     McpToolExecutorService,

@@ -42,6 +42,7 @@ export type CommandMenuItemOverrides = {
 };
 
 @Entity({ name: 'commandMenuItem', schema: 'core' })
+@Index('IDX_COMMAND_MENU_ITEM_APPLICATION_ID', ['applicationId'])
 @Index('IDX_COMMAND_MENU_ITEM_WORKFLOW_VERSION_ID_WORKSPACE_ID', [
   'workflowVersionId',
   'workspaceId',

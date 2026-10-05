@@ -6,7 +6,6 @@ describe('isRecordReadOnly', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: true,
-        objectMetadataId: '123',
       },
       isRecordDeleted: false,
       objectMetadataItem: {
@@ -23,7 +22,6 @@ describe('isRecordReadOnly', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: false,
-        objectMetadataId: '123',
       },
       isRecordDeleted: false,
       objectMetadataItem: {
@@ -40,7 +38,6 @@ describe('isRecordReadOnly', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: true,
-        objectMetadataId: '123',
       },
       isRecordDeleted: true,
       objectMetadataItem: {
@@ -57,7 +54,6 @@ describe('isRecordReadOnly', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: false,
-        objectMetadataId: '123',
       },
       isRecordDeleted: true,
       objectMetadataItem: {
@@ -74,7 +70,6 @@ describe('isRecordReadOnly', () => {
     const result = isRecordReadOnly({
       objectPermissions: {
         canUpdateObjectRecords: true,
-        objectMetadataId: '123',
       },
       isRecordDeleted: false,
       objectMetadataItem: {

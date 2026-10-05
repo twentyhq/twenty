@@ -20,11 +20,25 @@ import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.f
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
 @Controller(ApiPath.Rest)
-@UseGuards(JwtAuthGuard, WorkspaceAuthGuard, CustomPermissionGuard)
+@UseGuards(
+  JwtAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  CustomPermissionGuard,
+)
 @UseFilters(RestApiExceptionFilter, AuthRestApiExceptionFilter)
 export class RestApiCoreController {
   private readonly logger = new Logger(RestApiCoreController.name);
@@ -147,9 +161,7 @@ export class RestApiCoreController {
     res.status(200).send(result);
   }
 
-  // This endpoint is not documented in the OpenAPI schema.
-  // We keep it to avoid a breaking change since it initially used PUT instead
-  // of PATCH, and because the PUT verb is often used as a PATCH.
+  // Undocumented legacy alias of PATCH, kept to avoid a breaking change
   @Put('*path')
   async handleApiPut(
     @Req() request: AuthenticatedRequest,

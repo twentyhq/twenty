@@ -43,6 +43,30 @@ describe('createGeometryTracker', () => {
     expect(geometryGlobals.getScheduledFrameCount()).toBe(0);
   });
 
+  it('should find the remote element id of a node through its nearest registered ancestor', () => {
+    const tracker = createGeometryTracker();
+    const tabList = document.createElement('div');
+    const tab = document.createElement('button');
+    const tabIcon = document.createElement('span');
+    tab.append(tabIcon);
+    tabList.append(tab);
+    document.body.append(tabList);
+
+    tracker.registerNode('tab-list', tabList);
+    tracker.registerNode('tab', tab);
+
+    expect(tracker.findRemoteElementIdContainingNode(tabIcon)).toBe('tab');
+    expect(tracker.findRemoteElementIdContainingNode(tabList)).toBe('tab-list');
+    expect(
+      tracker.findRemoteElementIdContainingNode(document.body),
+    ).toBeUndefined();
+    expect(tracker.findRemoteElementIdContainingNode(null)).toBeUndefined();
+
+    tracker.unregisterNode('tab', tab);
+
+    expect(tracker.findRemoteElementIdContainingNode(tabIcon)).toBe('tab-list');
+  });
+
   it('should not schedule a frame when observing before being armed', () => {
     const tracker = createGeometryTracker();
     armedTrackers.push(tracker);

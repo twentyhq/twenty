@@ -103,7 +103,6 @@ describe('getViewBaseFile', () => {
       ],
     });
 
-    // Default isVisible is true, default size is 200
     expect(result).toContain('isVisible: true');
     expect(result).toContain('size: 200');
   });
@@ -137,7 +136,6 @@ describe('getViewBaseFile', () => {
       ],
     });
 
-    // The field should get a generated universalIdentifier
     const uuidRegex =
       /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g;
     const matches = result.match(uuidRegex);

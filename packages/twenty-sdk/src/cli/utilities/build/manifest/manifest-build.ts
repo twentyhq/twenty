@@ -11,9 +11,11 @@ import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/uti
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { extractFrontComponentSharedDependencies } from '@/cli/utilities/build/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
+import { validateAgentRolesWithinApplicationRole } from '@/cli/utilities/build/manifest/utils/validate-agent-roles-within-application-role';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
-import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
+import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type IndexConfig } from '@/sdk/define/indexes/index-config';
@@ -670,6 +672,21 @@ export const buildManifest = async (
       fields,
     }),
   );
+
+  if (
+    isDefined(applicationConfig) &&
+    isDefined(resolvedDefaultRoleUniversalIdentifier)
+  ) {
+    errors.push(
+      ...validateAgentRolesWithinApplicationRole({
+        agents,
+        roles,
+        objects,
+        permissionFlags,
+        defaultRoleUniversalIdentifier: resolvedDefaultRoleUniversalIdentifier,
+      }),
+    );
+  }
 
   const application: ApplicationManifest | undefined =
     applicationConfig && resolvedDefaultRoleUniversalIdentifier

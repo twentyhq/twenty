@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application export should fail when another workspace owns the application registration 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": ""<applicationUniversalIdentifier>" is registered to another workspace. Change the universalIdentifier in your manifest, or transfer the registration from the owning workspace.",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application export should fail when no workspace has claimed the application registration 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": ""<applicationUniversalIdentifier>" is registered on this instance but claimed by no workspace. Claim its ownership before developing on it.",
+  "name": "ForbiddenError",
+}
+`;
