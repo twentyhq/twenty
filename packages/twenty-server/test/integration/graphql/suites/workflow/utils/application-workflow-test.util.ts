@@ -201,7 +201,7 @@ export const runCoreWorkflowVersion = (coreWorkflowVersionId: string) =>
     { input: { coreWorkflowVersionId } },
   );
 
-const findTestWorkflowRun = async (
+export const findTestWorkflowRun = async (
   workflowRunId: string,
 ): Promise<TestWorkflowRun | undefined> => {
   const [workflowRun] = await globalThis.testDataSource.query(
@@ -228,6 +228,34 @@ export const waitForTestWorkflowRun = async (
 
   throw new Error(
     `Workflow run ${workflowRunId} did not reach the expected state`,
+  );
+};
+
+export const countTestWorkflowRuns = async (
+  workflowRunIds: string[],
+): Promise<number> => {
+  const [{ count }] = await globalThis.testDataSource.query(
+    `SELECT COUNT(*)::int AS count FROM "${SCHEMA}"."workflowRun"
+     WHERE id = ANY($1)`,
+    [workflowRunIds],
+  );
+
+  return count;
+};
+
+export const waitForTestWorkflowRunsToBeDeleted = async (
+  workflowRunIds: string[],
+): Promise<void> => {
+  for (let attempt = 0; attempt < 300; attempt++) {
+    if ((await countTestWorkflowRuns(workflowRunIds)) === 0) {
+      return;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+
+  throw new Error(
+    `Workflow runs ${workflowRunIds.join(', ')} were not deleted`,
   );
 };
 

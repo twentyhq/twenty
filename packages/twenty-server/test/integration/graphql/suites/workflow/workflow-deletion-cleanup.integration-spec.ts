@@ -5,6 +5,7 @@ import {
   buildTestApplicationWorkflow,
   countCoreWorkflows,
   countTestCompanies,
+  countTestWorkflowRuns,
   createCompanyStep,
   findTestWorkflowVersionId,
   formStep,
@@ -12,6 +13,7 @@ import {
   runCoreWorkflowVersion,
   type TestApplicationWorkflow,
   waitForTestWorkflowRun,
+  waitForTestWorkflowRunsToBeDeleted,
 } from 'test/integration/graphql/suites/workflow/utils/application-workflow-test.util';
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
@@ -57,23 +59,6 @@ const countRows = async (query: string, parameters: unknown[]) => {
   );
 
   return count;
-};
-
-const countWorkflowRuns = (workflowRunIds: string[]) =>
-  countRows(`"${SCHEMA}"."workflowRun" WHERE id = ANY($1)`, [workflowRunIds]);
-
-const waitForWorkflowRunsToBeDeleted = async (workflowRunIds: string[]) => {
-  for (let attempt = 0; attempt < 300; attempt++) {
-    if ((await countWorkflowRuns(workflowRunIds)) === 0) {
-      return;
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
-
-  throw new Error(
-    `Workflow runs ${workflowRunIds.join(', ')} were not deleted`,
-  );
 };
 
 const cleanUpDeletedWorkflowsAgain = async (coreWorkflowIds: string[]) =>
@@ -383,9 +368,11 @@ describe('workflow deletion cleanup', () => {
         ]),
       ).toBe(0);
 
-      await waitForWorkflowRunsToBeDeleted([completedRunId, waitingRunId]);
+      await waitForTestWorkflowRunsToBeDeleted([completedRunId, waitingRunId]);
 
-      expect(await countWorkflowRuns([completedRunId, waitingRunId])).toBe(0);
+      expect(await countTestWorkflowRuns([completedRunId, waitingRunId])).toBe(
+        0,
+      );
       expect(
         await countRows(`core."workflowStepWait" WHERE "workflowRunId" = $1`, [
           waitingRunId,
@@ -402,7 +389,7 @@ describe('workflow deletion cleanup', () => {
           keptWorkflow.coreWorkflowVersionId,
         ]),
       ).toBe(1);
-      expect(await countWorkflowRuns([keptRunId])).toBe(1);
+      expect(await countTestWorkflowRuns([keptRunId])).toBe(1);
     }, 120000);
 
     it('lets nothing resume a deleted run', async () => {
@@ -422,13 +409,13 @@ describe('workflow deletion cleanup', () => {
         lastExecutedStepId: formStepId,
       });
 
-      expect(await countWorkflowRuns([waitingRunId])).toBe(0);
+      expect(await countTestWorkflowRuns([waitingRunId])).toBe(0);
     }, 120000);
 
     it('repeats the cleanup safely', async () => {
       await cleanUpDeletedWorkflowsAgain([deletedWorkflow.coreWorkflowId]);
 
-      expect(await countWorkflowRuns([keptRunId])).toBe(1);
+      expect(await countTestWorkflowRuns([keptRunId])).toBe(1);
       expect(
         await countRows(`core."workflowVersion" WHERE id = $1`, [
           keptWorkflow.coreWorkflowVersionId,
@@ -631,7 +618,7 @@ describe('workflow deletion cleanup', () => {
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         expect(await countCoreWorkflows(FORM_WORKFLOW)).toBe(1);
-        expect(await countWorkflowRuns([formRunId, slowRunId])).toBe(2);
+        expect(await countTestWorkflowRuns([formRunId, slowRunId])).toBe(2);
 
         const uninstall = await uninstallApplication({
           universalIdentifier: APP_ID,
@@ -641,17 +628,17 @@ describe('workflow deletion cleanup', () => {
         expect(await countCoreWorkflows(FORM_WORKFLOW)).toBe(0);
         expect(await countCoreWorkflows(SLOW_WORKFLOW)).toBe(0);
 
-        await waitForWorkflowRunsToBeDeleted([formRunId, slowRunId]);
+        await waitForTestWorkflowRunsToBeDeleted([formRunId, slowRunId]);
 
-        expect(await countWorkflowRuns([formRunId, slowRunId])).toBe(0);
+        expect(await countTestWorkflowRuns([formRunId, slowRunId])).toBe(0);
 
         releaseFunction();
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        expect(await countWorkflowRuns([slowRunId])).toBe(0);
+        expect(await countTestWorkflowRuns([slowRunId])).toBe(0);
         expect(await countTestCompanies(SLOW_COMPANY)).toBe(0);
-        expect(await countWorkflowRuns([otherAppRunId])).toBe(1);
+        expect(await countTestWorkflowRuns([otherAppRunId])).toBe(1);
       } finally {
         releaseFunction();
         executeSpy.mockRestore();
