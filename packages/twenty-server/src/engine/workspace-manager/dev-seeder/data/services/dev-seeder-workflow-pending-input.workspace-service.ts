@@ -239,15 +239,20 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         workflow,
         initiator: agentWorkflow.initiator,
         recordConversation: async () => {
-          const { threadId } =
-            await this.workflowAgentConversationService.openConversation({
+          const openConversation = (
+            recipientWorkspaceMemberId: string | null,
+          ) =>
+            this.workflowAgentConversationService.openConversation({
               runInfo: { workspaceId, workflowRunId },
               stepId: workflow.step.id,
               title: workflow.step.name,
-              recipientWorkspaceMemberId:
-                INITIATORS[agentWorkflow.initiator].workspaceMemberId,
+              recipientWorkspaceMemberId,
               threadKey: `${workflowRunId}:${workflow.step.id}`,
             });
+          // an initiator who cannot hold a chat in this workspace leaves the question with no recipient
+          const { threadId } = await openConversation(
+            INITIATORS[agentWorkflow.initiator].workspaceMemberId,
+          ).catch(() => openConversation(null));
 
           await this.workflowAgentConversationService.recordExecution({
             workspaceId,
