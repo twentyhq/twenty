@@ -111,13 +111,9 @@ export const RecordTableCellEditMode = ({
 
   const { focusRecordTableCell } = useFocusRecordTableCell();
 
-  return (
-    <StyledEditableCellEditModeContainer
-      ref={refs.setReference}
-      data-testid="editable-cell-edit-mode-container"
-      isFieldInputOnly={isFieldInputOnly}
-    >
-      {isFieldInputOnly ? (
+  const renderEditModeContent = () => {
+    if (isFieldInputOnly) {
+      return (
         <StyledInputModeOnlyContainer
           onClick={() => {
             focusRecordTableCell(cellPosition);
@@ -125,7 +121,11 @@ export const RecordTableCellEditMode = ({
         >
           {children}
         </StyledInputModeOnlyContainer>
-      ) : isDropdownFieldInput ? (
+      );
+    }
+
+    if (isDropdownFieldInput) {
+      return (
         <FieldInputAnchorContextProvider
           value={getFieldInputAnchorPosition({
             anchorRef: refs.domReference,
@@ -136,22 +136,34 @@ export const RecordTableCellEditMode = ({
         >
           {children}
         </FieldInputAnchorContextProvider>
-      ) : (
-        <FloatingPortal>
-          <StyledOverlayPortalLayer
-            data-floating-ui-viewport
-            ref={refs.setFloating}
-            style={floatingStyles}
+      );
+    }
+
+    return (
+      <FloatingPortal>
+        <StyledOverlayPortalLayer
+          data-floating-ui-viewport
+          ref={refs.setFloating}
+          style={floatingStyles}
+        >
+          <OverlayContainer
+            borderRadius="sm"
+            hasDangerBorder={recordFieldInputIsFieldInError}
           >
-            <OverlayContainer
-              borderRadius="sm"
-              hasDangerBorder={recordFieldInputIsFieldInError}
-            >
-              {children}
-            </OverlayContainer>
-          </StyledOverlayPortalLayer>
-        </FloatingPortal>
-      )}
+            {children}
+          </OverlayContainer>
+        </StyledOverlayPortalLayer>
+      </FloatingPortal>
+    );
+  };
+
+  return (
+    <StyledEditableCellEditModeContainer
+      ref={refs.setReference}
+      data-testid="editable-cell-edit-mode-container"
+      isFieldInputOnly={isFieldInputOnly}
+    >
+      {renderEditModeContent()}
     </StyledEditableCellEditModeContainer>
   );
 };
