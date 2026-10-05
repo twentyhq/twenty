@@ -9,14 +9,14 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export const computeMaxRecordCountPerRecord = ({
-  relations,
+export const computeMaxFieldCountPerRecord = ({
+  select,
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   recordLimitPerOneToManyRelation,
 }: {
-  relations: CommonSelectedFields;
+  select: CommonSelectedFields;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -27,10 +27,14 @@ export const computeMaxRecordCountPerRecord = ({
     flatObjectMetadata,
   );
 
-  return Object.entries(relations).reduce(
-    (maxRecordCount, [relationFieldName, nestedRelations]) => {
+  const maxFieldCount = Object.entries(select).reduce(
+    (fieldCount, [fieldName, selectedValue]) => {
+      if (typeof selectedValue !== 'object') {
+        return fieldCount + 1;
+      }
+
       const relationField = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: fieldIdByName[relationFieldName],
+        flatEntityId: fieldIdByName[fieldName],
         flatEntityMaps: flatFieldMetadataMaps,
       });
 
@@ -38,7 +42,7 @@ export const computeMaxRecordCountPerRecord = ({
         !isDefined(relationField) ||
         !isMorphOrRelationFlatFieldMetadata(relationField)
       ) {
-        return maxRecordCount;
+        return fieldCount;
       }
 
       const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -47,7 +51,7 @@ export const computeMaxRecordCountPerRecord = ({
       });
 
       if (!isDefined(targetObjectMetadata)) {
-        return maxRecordCount;
+        return fieldCount;
       }
 
       const relatedRecordCountPerRecord =
@@ -56,11 +60,10 @@ export const computeMaxRecordCountPerRecord = ({
           : 1;
 
       return (
-        maxRecordCount +
+        fieldCount +
         relatedRecordCountPerRecord *
-          computeMaxRecordCountPerRecord({
-            relations:
-              typeof nestedRelations === 'object' ? nestedRelations : {},
+          computeMaxFieldCountPerRecord({
+            select: selectedValue,
             flatObjectMetadata: targetObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
@@ -68,6 +71,8 @@ export const computeMaxRecordCountPerRecord = ({
           })
       );
     },
-    1,
+    0,
   );
+
+  return Math.max(maxFieldCount, 1);
 };

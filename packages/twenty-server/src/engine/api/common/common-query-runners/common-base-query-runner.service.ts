@@ -21,7 +21,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
-import { computeMaxRecordCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-record-count-per-record.util';
+import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -156,8 +156,8 @@ export abstract class CommonBaseQueryRunnerService<
       this.recordApiComplexityUsage(
         authContext,
         this.computeRootRecordCount(processedArgs) *
-          computeMaxRecordCountPerRecord({
-            relations: selectedFieldsResult.relations,
+          computeMaxFieldCountPerRecord({
+            select: selectedFieldsResult.select,
             flatObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
@@ -508,7 +508,7 @@ export abstract class CommonBaseQueryRunnerService<
 
   private recordApiComplexityUsage(
     authContext: WorkspaceAuthContext,
-    maxRecordCount: number,
+    maxFieldCount: number,
   ) {
     const apiType = getApiType();
 
@@ -519,7 +519,7 @@ export abstract class CommonBaseQueryRunnerService<
     this.usageRecorderService.accumulate(authContext.workspace.id, {
       resourceType: UsageResourceType.API,
       operationType: UsageOperationType.API_REQUEST,
-      quantity: maxRecordCount,
+      quantity: maxFieldCount,
       unit: UsageUnit.COMPLEXITY,
       resourceContext: apiType,
       spenders: buildUsageSpendersFromAuthContext(authContext),
