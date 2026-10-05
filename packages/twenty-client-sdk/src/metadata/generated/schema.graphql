@@ -1668,6 +1668,7 @@ enum UsageUnit {
   SEAT
   RECORD
   COMPLEXITY
+  ESTIMATED_ROWS_READ
 }
 
 type UsageQuotaDefinition {

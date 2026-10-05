@@ -1276,7 +1276,7 @@ export interface UsageLimitOperationDefinition {
 
 export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'API_REQUEST' | 'WEBHOOK_CALL' | 'STORAGE_FILE' | 'RECORD_WRITE' | 'SUBSCRIPTION'
 
-export type UsageUnit = 'CREDIT' | 'TOKEN' | 'INVOCATION' | 'MINUTE' | 'MILLISECOND' | 'BYTE' | 'FILE' | 'REQUEST' | 'SEAT' | 'RECORD' | 'COMPLEXITY'
+export type UsageUnit = 'CREDIT' | 'TOKEN' | 'INVOCATION' | 'MINUTE' | 'MILLISECOND' | 'BYTE' | 'FILE' | 'REQUEST' | 'SEAT' | 'RECORD' | 'COMPLEXITY' | 'ESTIMATED_ROWS_READ'
 
 export interface UsageQuotaDefinition {
     resourceType: UsageResourceType
@@ -11352,7 +11352,8 @@ export const enumUsageUnit = {
    REQUEST: 'REQUEST' as const,
    SEAT: 'SEAT' as const,
    RECORD: 'RECORD' as const,
-   COMPLEXITY: 'COMPLEXITY' as const
+   COMPLEXITY: 'COMPLEXITY' as const,
+   ESTIMATED_ROWS_READ: 'ESTIMATED_ROWS_READ' as const
 }
 
 export const enumUsageResourceType = {
