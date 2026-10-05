@@ -210,6 +210,16 @@ export class ValidationRuleService {
       workspaceId,
     });
 
+    if (
+      isDefined(input.update.bindings) &&
+      !isDefined(input.update.expression)
+    ) {
+      throw new ValidationRuleException(
+        'Bindings can only be sent with the expression whose symbols they resolve',
+        ValidationRuleExceptionCode.INVALID_VALIDATION_RULE_INPUT,
+      );
+    }
+
     const isActive =
       input.update.isActive ?? existingFlatValidationRule.isActive;
     const sourceExpression = isDefined(input.update.expression)
