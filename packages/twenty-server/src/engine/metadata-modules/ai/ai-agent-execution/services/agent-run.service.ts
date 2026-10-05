@@ -1,15 +1,21 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
+import { randomUUID } from 'node:crypto';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   type RunAgentMessage,
   type RunAgentResult,
   type RunAgentThread,
 } from 'twenty-shared/application';
+import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
+import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
@@ -143,6 +149,12 @@ export class AgentRunService {
         }
       : { type: 'application', applicationId: application.id };
 
+    const senderUserWorkspaceId = this.resolveRunSender({
+      runAsContext,
+      callerApplication,
+      requestUserWorkspaceId,
+    });
+
     const threadTitle = isNonEmptyString(thread?.title)
       ? thread.title
       : agent.label;
@@ -153,7 +165,11 @@ export class AgentRunService {
           agentId: agent.id,
           threadKey: thread.key,
         })
-      : null;
+      : randomUUID();
+
+    const createdBy =
+      runAsContext?.actorContext ??
+      this.buildRunCreator({ callerApplication, application });
 
     const executionMessages = isNonEmptyString(input.additionalInstructions)
       ? addAdditionalInstructionsToLastRunAgentMessage({
@@ -163,7 +179,7 @@ export class AgentRunService {
       : messages;
 
     const runTurn = async (): Promise<RunAgentResult> => {
-      const priorMessages = isDefined(threadId)
+      const priorMessages = isDefined(thread)
         ? await this.conversationReaderService.loadMessages({
             workspaceId: workspace.id,
             threadId,
@@ -171,23 +187,21 @@ export class AgentRunService {
           })
         : [];
 
-      const turnId = isDefined(threadId)
-        ? await this.recordConversation({
+      const turnId = await this.recordConversation({
+        threadId,
+        agentUniversalIdentifier: input.agentUniversalIdentifier,
+        record: () =>
+          this.agentRunConversationService.openTurn({
+            workspaceId: workspace.id,
             threadId,
-            agentUniversalIdentifier: input.agentUniversalIdentifier,
-            record: () =>
-              this.agentRunConversationService.openTurn({
-                workspaceId: workspace.id,
-                threadId,
-                title: threadTitle,
-                agentId: agent.id,
-                application,
-                actor,
-                createdBy: runAsContext?.actorContext,
-                messages,
-              }),
-          })
-        : null;
+            title: threadTitle,
+            agentId: agent.id,
+            senderUserWorkspaceId,
+            senderApplicationId: callerApplication?.id ?? null,
+            createdBy,
+            messages,
+          }),
+      });
 
       let executionResult: AgentExecutionResult;
 
@@ -209,7 +223,7 @@ export class AgentRunService {
           }),
         );
       } catch (error) {
-        if (isDefined(threadId) && isDefined(turnId)) {
+        if (isDefined(turnId)) {
           await this.recordConversation({
             threadId,
             agentUniversalIdentifier: input.agentUniversalIdentifier,
@@ -225,7 +239,7 @@ export class AgentRunService {
         throw error;
       }
 
-      if (isDefined(threadId) && isDefined(turnId)) {
+      if (isDefined(turnId)) {
         await this.recordConversation({
           threadId,
           agentUniversalIdentifier: input.agentUniversalIdentifier,
@@ -258,7 +272,7 @@ export class AgentRunService {
     };
 
     try {
-      return isDefined(threadId)
+      return isDefined(thread)
         ? await this.agentRunConversationService.withThreadLock({
             workspaceId: workspace.id,
             threadId,
@@ -285,6 +299,45 @@ export class AgentRunService {
         threadId,
       };
     }
+  }
+
+  // a member calling without runAs still sent the input, while an app's call has no member behind it
+  private resolveRunSender({
+    runAsContext,
+    callerApplication,
+    requestUserWorkspaceId,
+  }: {
+    runAsContext?: RunAsWorkspaceMemberContext;
+    callerApplication?: FlatApplication;
+    requestUserWorkspaceId: string | null;
+  }): string | null {
+    if (isDefined(runAsContext)) {
+      return runAsContext.authContext.userWorkspaceId;
+    }
+
+    if (isDefined(callerApplication)) {
+      return null;
+    }
+
+    return requestUserWorkspaceId;
+  }
+
+  private buildRunCreator({
+    callerApplication,
+    application,
+  }: {
+    callerApplication?: FlatApplication;
+    application: FlatApplication;
+  }): ActorMetadata {
+    if (isDefined(callerApplication)) {
+      return buildCreatedByFromApplication({ application: callerApplication });
+    }
+
+    const requestAuthContext = workspaceAuthContextStorage.getStore();
+
+    return isDefined(requestAuthContext)
+      ? buildActorMetadataFromAuthContext(requestAuthContext)
+      : buildCreatedByFromApplication({ application });
   }
 
   // A record of the run, not its outcome, so a write failure must not fail the run

@@ -121,6 +121,9 @@ Key points:
   `thread` rather than replaying earlier turns yourself.
 - The agent runs **synchronously** and can read/update records itself via its
   own tools — `runAgent()` resolves once the run completes.
+- Every call is stored with its input and status, plus its reply and usage
+  when it completes, so it shows up in the agent's runs. Without a `thread`, a call gets a conversation of its
+  own: `threadId` names it, and a later call never sees it.
 - An app can only run its own agents.
 - The app's [default role](/developers/extend/apps/config/roles) must grant the
   `AI` permission flag — add `SystemPermissionFlag.AI` to its
