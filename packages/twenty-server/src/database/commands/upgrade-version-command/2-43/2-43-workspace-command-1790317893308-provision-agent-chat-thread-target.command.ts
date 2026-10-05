@@ -249,6 +249,11 @@ export class ProvisionAgentChatThreadTargetCommand extends ProvisionedWorkspaceC
       [schemaName, tableName],
     );
 
+    const tableRows = await dataSource.query<{ table_name: string }[]>(
+      `SELECT table_name FROM information_schema.tables WHERE table_schema = $1`,
+      [schemaName],
+    );
+
     const { flatObjectMetadatas, unprovisionableRelations } =
       findObjectsMissingAgentChatThreadTargetRelation({
         flatObjectMetadataMaps,
@@ -256,6 +261,9 @@ export class ProvisionAgentChatThreadTargetCommand extends ProvisionedWorkspaceC
         targetFlatObjectMetadata,
         existingTargetColumnNames: new Set(
           columnRows.map(({ column_name }) => column_name),
+        ),
+        existingTableNames: new Set(
+          tableRows.map(({ table_name }) => table_name),
         ),
         twentyStandardApplicationUniversalIdentifier,
       });
