@@ -108,9 +108,6 @@ export abstract class CommonBaseQueryRunnerService<
 
   protected readonly isReadOnly: boolean = false;
 
-  protected readonly recordLimitPerOneToManyRelation: number =
-    QUERY_MAX_RECORDS_FROM_RELATION;
-
   public async execute(
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
@@ -162,7 +159,7 @@ export abstract class CommonBaseQueryRunnerService<
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
             recordLimitPerOneToManyRelation:
-              this.recordLimitPerOneToManyRelation,
+              this.computeRecordLimitPerOneToManyRelation(processedArgs),
           }) || 1,
       );
     }
@@ -220,6 +217,12 @@ export abstract class CommonBaseQueryRunnerService<
 
   protected computeRootRecordCount(_args: CommonExtendedInput<Args>): number {
     return 1;
+  }
+
+  protected computeRecordLimitPerOneToManyRelation(
+    _args: CommonExtendedInput<Args>,
+  ): number {
+    return QUERY_MAX_RECORDS_FROM_RELATION;
   }
 
   private async processArgs(

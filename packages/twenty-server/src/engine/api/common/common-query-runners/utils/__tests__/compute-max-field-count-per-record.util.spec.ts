@@ -98,4 +98,8 @@ describe('computeMaxFieldCountPerRecord', () => {
   it('should use the given one-to-many limit', () => {
     expect(computeFor(company, { id: true, people: { id: true } }, 5)).toBe(6);
   });
+
+  it('should count no one-to-many record when the limit is zero', () => {
+    expect(computeFor(company, { id: true, people: { id: true } }, 0)).toBe(1);
+  });
 });

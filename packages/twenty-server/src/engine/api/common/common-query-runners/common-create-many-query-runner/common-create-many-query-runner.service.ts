@@ -835,4 +835,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   ): number {
     return args.data.length;
   }
+
+  protected override computeRecordLimitPerOneToManyRelation(
+    args: CommonExtendedInput<CreateManyQueryArgs>,
+  ): number {
+    return args.upsert ? QUERY_MAX_RECORDS : 0;
+  }
 }

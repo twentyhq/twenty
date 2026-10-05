@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type ObjectRecord } from 'twenty-shared/types';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
@@ -101,5 +102,11 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     if (args.data?.id) {
       assertIsValidUuid(args.data.id);
     }
+  }
+
+  protected override computeRecordLimitPerOneToManyRelation(
+    args: CommonExtendedInput<CreateOneQueryArgs>,
+  ): number {
+    return args.upsert ? QUERY_MAX_RECORDS : 0;
   }
 }

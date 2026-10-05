@@ -76,8 +76,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
   protected readonly operationName = CommonQueryNames.GROUP_BY;
 
-  protected override readonly recordLimitPerOneToManyRelation =
-    RELATIONS_PER_RECORD_LIMIT;
   protected readonly isReadOnly = true;
 
   async run(
@@ -479,5 +477,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     return args.includeRecords
       ? groupCount * RECORDS_PER_GROUP_LIMIT
       : groupCount;
+  }
+
+  protected override computeRecordLimitPerOneToManyRelation(): number {
+    return RELATIONS_PER_RECORD_LIMIT;
   }
 }
