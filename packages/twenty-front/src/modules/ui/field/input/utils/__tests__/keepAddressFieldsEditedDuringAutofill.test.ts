@@ -52,6 +52,29 @@ describe('keepAddressFieldsEditedDuringAutofill', () => {
     });
   });
 
+  it('keeps a field cleared while the place details were loading', () => {
+    expect(
+      keepAddressFieldsEditedDuringAutofill({
+        autofilledAddress: AUTOFILLED_ADDRESS,
+        addressAtSelection: {
+          ...ADDRESS_AT_SELECTION,
+          addressPostcode: '69001',
+        },
+        currentAddress: { ...ADDRESS_AT_SELECTION, addressPostcode: null },
+      }),
+    ).toEqual({ ...AUTOFILLED_ADDRESS, addressPostcode: null });
+  });
+
+  it('keeps a field replaced while the place details were loading', () => {
+    expect(
+      keepAddressFieldsEditedDuringAutofill({
+        autofilledAddress: AUTOFILLED_ADDRESS,
+        addressAtSelection: { ...ADDRESS_AT_SELECTION, addressCity: 'Lyon' },
+        currentAddress: { ...ADDRESS_AT_SELECTION, addressCity: 'Marseille' },
+      }),
+    ).toEqual({ ...AUTOFILLED_ADDRESS, addressCity: 'Marseille' });
+  });
+
   it('keeps the autofilled address when no current value is known', () => {
     expect(
       keepAddressFieldsEditedDuringAutofill({
