@@ -97,14 +97,17 @@ export class ToolCallAnswerService {
       );
     }
 
-    // a workflow step that posted the call waits on it, and the answer resumes that step
+    // a workflow step that posted the call waits on it, and the answer resumes that step. An answer
+    // replaces that output, so a call no longer pending starts nothing and is refused below
     const workflowStep = readToolCallWorkflowStep(toolPart.toolOutput);
     const workflowRunId = workflowStep?.workflowRunId ?? null;
 
     await this.assertCanAnswerInChat({
       ...args,
       messageId: toolPart.messageId,
-      isStartingChatTurn: !isDefined(workflowStep),
+      isStartingChatTurn:
+        !isDefined(workflowStep) &&
+        thread.pendingQuestionMessageId === toolPart.messageId,
     });
 
     if (thread.pendingQuestionMessageId !== toolPart.messageId) {

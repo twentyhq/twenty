@@ -816,10 +816,18 @@ describe('core workflow visibility (e2e)', () => {
           'WorkflowAgentConversationWorkspaceService',
         );
 
-      const recordedConversation = await conversationService.recordExecution({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        workflowRunId,
+      ({ threadId } = await conversationService.openConversation({
+        runInfo: { workspaceId: SEED_APPLE_WORKSPACE_ID, workflowRunId },
         stepId: 'trigger',
+        title: 'Summarize the lead',
+        recipientWorkspaceMemberId: null,
+        threadKey: `${workflowRunId}:trigger`,
+      }));
+
+      await conversationService.recordExecution({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        threadId,
+        workflowStep: { workflowRunId, stepId: 'trigger' },
         title: 'Summarize the lead',
         agentId: null,
         prompt: 'Summarize the lead',
@@ -830,9 +838,6 @@ describe('core workflow visibility (e2e)', () => {
           ] as AgentExecutionResult['steps'],
         },
       });
-
-      expect(recordedConversation).not.toBeNull();
-      threadId = recordedConversation!.threadId;
     });
 
     afterAll(async () => {
@@ -875,82 +880,24 @@ describe('core workflow visibility (e2e)', () => {
       ).toEqual(['user', 'assistant']);
     });
 
-    it('keeps it out of the chat list of someone who can read it', async () => {
-      expect(
-        await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN),
-      ).not.toContain(threadId);
-    });
-
-    it('refuses to rename or delete it, even for the workflow creator', async () => {
-      const renameResponse = await graphqlRequestAs(
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        `
-          mutation RenameRunConversation($threadId: UUID!) {
-            updateAgentChatThread(id: $threadId, data: { title: "Renamed" }) {
-              id
-            }
-          }
-        `,
-        { threadId },
+    it("files it under done in the workflow creator's chats", async () => {
+      expect(await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toContain(
+        threadId,
       );
 
-      expect(renameResponse.body.errors?.[0]?.extensions?.code).toBe(
-        'FORBIDDEN',
-      );
-
-      const deleteResponse = await graphqlRequestAs(
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        `
-          mutation DeleteRunConversation($threadId: UUID!) {
-            deleteAgentChatThread(id: $threadId) {
-              id
-            }
-          }
-        `,
-        { threadId },
-      );
-
-      expect(deleteResponse.body.errors?.[0]?.extensions?.code).toBe(
-        'FORBIDDEN',
-      );
-
-      const [storedThread] = await global.testDataSource.query(
-        `SELECT title, "deletedAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThread" WHERE id = $1`,
+      const [{ archivedAt }] = await global.testDataSource.query(
+        `SELECT "archivedAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThreadParticipant" WHERE "threadId" = $1`,
         [threadId],
       );
 
-      expect(storedThread).toEqual({
-        title: 'Summarize the lead',
-        deletedAt: null,
-      });
+      expect(archivedAt).not.toBeNull();
     });
 
-    it('follows the workflow visibility for another member', async () => {
-      const whileVisible = await readConversation(
-        APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      );
+    it('keeps it private to its owner even when the workflow is visible', async () => {
+      const response = await readConversation(APPLE_JONY_MEMBER_ACCESS_TOKEN);
 
-      expect(whileVisible.body.errors).toBeUndefined();
-      expect(whileVisible.body.data.chatThread.id).toBe(threadId);
-
-      const response = await setVisibility(
-        conversationCoreWorkflowId,
-        WorkflowVisibility.PRIVATE,
-      );
-
-      expect(response.body.errors).toBeUndefined();
-
-      const whilePrivate = await readConversation(
-        APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      );
-
-      expect(whilePrivate.body.data?.chatThread ?? null).toBeNull();
-      expect(whilePrivate.body.errors).toBeDefined();
-
-      const asCreator = await readConversation(APPLE_JANE_ADMIN_ACCESS_TOKEN);
-
-      expect(asCreator.body.errors).toBeUndefined();
-      expect(asCreator.body.data.chatThread.id).toBe(threadId);
+      expect(response.body.data?.chatThread ?? null).toBeNull();
+      expect(response.body.errors).toBeDefined();
     });
 
     it('keeps the conversation of an attempt that is retried in the step history', async () => {
