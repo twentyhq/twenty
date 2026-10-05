@@ -303,7 +303,7 @@ describe('SendEmailWorkflowAction', () => {
       expect(mockSendEmailTool.execute).not.toHaveBeenCalled();
     });
 
-    it('should resolve a plain text body into lines of text', async () => {
+    it('should resolve a plain text body as HTML with its line breaks', async () => {
       await executeWithBody('{{trigger.name}}\n{{trigger.email}}');
 
       expect(executedBodyDocument()).toEqual({
@@ -311,12 +311,8 @@ describe('SendEmailWorkflowAction', () => {
         attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
         content: [
           {
-            type: 'paragraph',
-            content: [
-              { type: 'text', text: 'John' },
-              { type: 'hardBreak' },
-              { type: 'text', text: 'john@example.com' },
-            ],
+            type: 'htmlDocument',
+            attrs: { html: 'John<br>john@example.com' },
           },
         ],
       });

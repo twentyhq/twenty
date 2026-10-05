@@ -33,18 +33,15 @@ describe('parseLegacyWorkflowEmailBodyDocument', () => {
     });
   });
 
-  it('shows a body stored as plain text before the upgrade as lines and variable tags', () => {
-    expect(
-      parseLegacyWorkflowEmailBodyDocument('Hello {{trigger.name}}\nBye'),
-    ).toEqual({
+  it('shows a body stored as plain text before the upgrade as editable lines', () => {
+    expect(parseLegacyWorkflowEmailBodyDocument('Hello\nBye')).toEqual({
       type: 'doc',
       attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [
         {
           type: 'paragraph',
           content: [
-            { type: 'text', text: 'Hello ' },
-            { type: 'variableTag', attrs: { variable: '{{trigger.name}}' } },
+            { type: 'text', text: 'Hello' },
             { type: 'hardBreak' },
             { type: 'text', text: 'Bye' },
           ],

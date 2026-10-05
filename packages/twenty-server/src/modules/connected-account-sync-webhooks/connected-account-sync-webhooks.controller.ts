@@ -13,9 +13,7 @@ import {
 
 import { type Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
-import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
+import { escapeHtml, isDefined } from 'twenty-shared/utils';
 
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';

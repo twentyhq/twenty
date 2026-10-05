@@ -1,4 +1,5 @@
 import { parseJson } from '@/utils/parseJson';
+import { escapeHtml } from '@/utils/strings/escapeHtml';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 
@@ -41,6 +42,17 @@ const containsHtmlMarkup = (body: string): boolean => {
   );
 };
 
+const VARIABLE_PATTERN = /{{[^{}]+}}/;
+
+const buildHtmlDocument = (html: string): EmailDocument => ({
+  type: TIPTAP_NODE_TYPES.DOCUMENT,
+  attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+  content: [{ type: TIPTAP_NODE_TYPES.HTML_DOCUMENT, attrs: { html } }],
+});
+
+const convertPlainTextToHtml = (text: string): string =>
+  escapeHtml(text.replace(/\r\n?/g, '\n')).replace(/\n/g, '<br>');
+
 const convertStringToEmailDocument = (body: string): EmailDocument => {
   if (body.trim() === '') {
     return {
@@ -50,15 +62,15 @@ const convertStringToEmailDocument = (body: string): EmailDocument => {
     };
   }
 
-  if (!containsHtmlMarkup(body) && !isStandaloneVariableString(body.trim())) {
-    return convertPlainTextToEmailDocument(body);
+  if (containsHtmlMarkup(body) || isStandaloneVariableString(body.trim())) {
+    return buildHtmlDocument(body);
   }
 
-  return {
-    type: TIPTAP_NODE_TYPES.DOCUMENT,
-    attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
-    content: [{ type: TIPTAP_NODE_TYPES.HTML_DOCUMENT, attrs: { html: body } }],
-  };
+  if (VARIABLE_PATTERN.test(body)) {
+    return buildHtmlDocument(convertPlainTextToHtml(body));
+  }
+
+  return convertPlainTextToEmailDocument(body);
 };
 
 export const parseEmailBodyAsEmailDocument = (body: unknown) => {

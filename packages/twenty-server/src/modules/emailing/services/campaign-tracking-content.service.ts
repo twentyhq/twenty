@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { toPlainText } from 'twenty-emails';
 import { ApiPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { escapeHtml, isDefined } from 'twenty-shared/utils';
 
 import { buildLogDriverUnsubscribeBaseUrl } from 'src/engine/core-modules/emailing-domain/drivers/log/utils/build-log-driver-unsubscribe-base-url.util';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
@@ -15,7 +15,6 @@ import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emaili
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { encodeCampaignTrackingToken } from 'src/engine/core-modules/emailing-domain/utils/encode-campaign-tracking-token.util';
 import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
-import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
 import { hashShortLink } from 'src/engine/core-modules/short-link/utils/hash-short-link.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';

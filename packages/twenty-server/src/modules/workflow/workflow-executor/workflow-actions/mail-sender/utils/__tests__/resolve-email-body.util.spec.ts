@@ -135,16 +135,16 @@ describe('resolveEmailBody', () => {
     ).rejects.toThrow('Invalid workflow email document');
   });
 
-  it('should keep stored plain text as editable lines with its line breaks', async () => {
-    const resolvedBody = await resolveEmailBody('Hi {{trigger.name}}\nBye', {
-      trigger: { name: 'Ada' },
-    });
+  it('should insert values raw into stored plain text and keep its line breaks', async () => {
+    const resolvedBody = await resolveEmailBody(
+      'Hi {{trigger.name}} & co\nBye',
+      {
+        trigger: { name: '<b>Ada</b>' },
+      },
+    );
 
-    expect(JSON.parse(resolvedBody).content[0].content).toEqual([
-      { type: 'text', text: 'Hi ' },
-      { type: 'text', text: 'Ada' },
-      { type: 'hardBreak' },
-      { type: 'text', text: 'Bye' },
-    ]);
+    expect(JSON.parse(resolvedBody)).toEqual(
+      htmlDocument('Hi <b>Ada</b> &amp; co<br>Bye'),
+    );
   });
 });

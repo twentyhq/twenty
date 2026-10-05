@@ -302,16 +302,16 @@ describe('Outbound email body formats (integration)', () => {
   });
 
   describe('workflow email body stored as a string before the upgrade', () => {
-    it('keeps the paragraphs of a plain-text body and escapes its variable values', async () => {
+    it('keeps the line breaks of a plain-text body and inserts its variable values as before', async () => {
       const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
         body: 'Hi {{trigger.name}},\n\nSee you soon\nJane',
-        payload: { name: 'Tom & <Jerry>' },
+        payload: { name: '<b>Ada</b>' },
       });
 
-      expect(sanitizedHtmlBody).toContain(
-        'Hi Tom &amp; &lt;Jerry&gt;,<br><br>See you soon<br>Jane',
+      expect(sanitizedHtmlBody).toBe(
+        'Hi <b>Ada</b>,<br><br>See you soon<br>Jane',
       );
-      expect(plainTextBody).toBe('Hi Tom & <Jerry>,\n\nSee you soon\nJane');
+      expect(plainTextBody).toBe('Hi Ada,\n\nSee you soon\nJane');
     }, 300000);
 
     it('injects variable values raw into a legacy HTML body and sends it without the email shell', async () => {

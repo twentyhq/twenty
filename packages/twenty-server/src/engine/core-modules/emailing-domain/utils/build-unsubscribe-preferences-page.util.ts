@@ -1,8 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { escapeHtml, isDefined } from 'twenty-shared/utils';
 
 import { type TopicOptOutState } from 'src/engine/core-modules/emailing-domain/types/topic-opt-out-state.type';
-import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
 
 type BuildUnsubscribePreferencesPageArgs = {
   token: string;

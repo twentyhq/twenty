@@ -10,10 +10,8 @@ const htmlDocument = (html: string): EmailDocument => ({
 });
 
 describe('parseEmailBodyAsEmailDocument', () => {
-  it('should keep line breaks and variables of a plain-text body', () => {
-    expect(
-      parseEmailBodyAsEmailDocument('Dear {{person.name}},\r\n\r\nThanks'),
-    ).toEqual({
+  it('should keep the line breaks of plain text as editable lines', () => {
+    expect(parseEmailBodyAsEmailDocument('Dear Ada,\r\n\r\nThanks')).toEqual({
       success: true,
       document: {
         type: 'doc',
@@ -22,9 +20,7 @@ describe('parseEmailBodyAsEmailDocument', () => {
           {
             type: 'paragraph',
             content: [
-              { type: 'text', text: 'Dear ' },
-              { type: 'variableTag', attrs: { variable: '{{person.name}}' } },
-              { type: 'text', text: ',' },
+              { type: 'text', text: 'Dear Ada,' },
               { type: 'hardBreak' },
               { type: 'hardBreak' },
               { type: 'text', text: 'Thanks' },
@@ -32,6 +28,15 @@ describe('parseEmailBodyAsEmailDocument', () => {
           },
         ],
       },
+    });
+  });
+
+  it('should keep plain text with variables as HTML so their values stay raw, with its line breaks', () => {
+    expect(
+      parseEmailBodyAsEmailDocument('Dear {{person.name}} & co,\r\n\r\nThanks'),
+    ).toEqual({
+      success: true,
+      document: htmlDocument('Dear {{person.name}} &amp; co,<br><br>Thanks'),
     });
   });
 
@@ -63,17 +68,20 @@ describe('parseEmailBodyAsEmailDocument', () => {
   });
 
   it('should treat angle-bracketed words that are not HTML tags as plain text', () => {
-    for (const body of [
-      'Reach Bob <bob@acme.com>',
-      'Hi <John>',
-      '<support> {{contact.name}}',
-    ]) {
+    for (const body of ['Reach Bob <bob@acme.com>', 'Hi <John>']) {
       const result = parseEmailBodyAsEmailDocument(body);
 
       expect(result.success && result.document.content?.[0]?.type).toBe(
         'paragraph',
       );
     }
+
+    expect(parseEmailBodyAsEmailDocument('<support> {{contact.name}}')).toEqual(
+      {
+        success: true,
+        document: htmlDocument('&lt;support&gt; {{contact.name}}'),
+      },
+    );
   });
 
   it('should turn a blank body into an empty document', () => {
