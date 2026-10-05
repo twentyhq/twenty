@@ -33,6 +33,15 @@ describe('coreAgentTriggerSchema', () => {
     ).toBe(false);
   });
 
+  it('rejects a cleared cron pattern', () => {
+    expect(
+      coreAgentTriggerSchema.safeParse({
+        ...CRON_TRIGGER,
+        settings: { pattern: '  ' },
+      }).success,
+    ).toBe(false);
+  });
+
   it('rejects an event name without an action', () => {
     expect(
       coreAgentTriggerSchema.safeParse({

@@ -43,7 +43,7 @@ export const coreAgentTriggerSchema = z.discriminatedUnion('type', [
     ...agentTriggerBaseShape,
     type: z.literal('CRON'),
     settings: z.object({
-      pattern: z.string().refine(isValidCronPattern),
+      pattern: z.string().trim().min(1).refine(isValidCronPattern),
     }),
   }),
 ]);
