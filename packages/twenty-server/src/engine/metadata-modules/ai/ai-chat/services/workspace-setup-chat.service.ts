@@ -138,13 +138,12 @@ export class WorkspaceSetupChatService {
         }
       }
 
-      const hasConversationMessages =
-        await this.agentChatService.hasConversationMessages({
-          threadId,
-          workspaceId: workspace.id,
-        });
+      const hasMessages = await this.agentChatService.hasMessages({
+        threadId,
+        workspaceId: workspace.id,
+      });
 
-      if (hasConversationMessages) {
+      if (hasMessages) {
         return { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED, thread };
       }
     }
@@ -165,32 +164,31 @@ export class WorkspaceSetupChatService {
       locale,
     });
 
-    const kickoffResult =
-      await this.agentChatStreamingService.startHiddenKickoffStream({
-        thread,
-        userWorkspaceId,
-        workspaceMemberId,
-        workspace,
-        text: buildWorkspaceSetupKickoffMessageText({
-          companyEnrichment: companyContext,
-          personEnrichment: personContext,
-          workspaceContext: {
-            workspaceDisplayName: workspace.displayName ?? null,
-            workspaceSubdomain: workspace.subdomain,
-            userEmail,
-          },
-          locale,
-        }),
-        modelId: AUTO_SELECT_MODEL_ID_BY_TIER.fast,
-      });
+    const openingTurn = await this.agentChatStreamingService.startOpeningTurn({
+      thread,
+      userWorkspaceId,
+      workspaceMemberId,
+      workspace,
+      context: buildWorkspaceSetupKickoffMessageText({
+        companyEnrichment: companyContext,
+        personEnrichment: personContext,
+        workspaceContext: {
+          workspaceDisplayName: workspace.displayName ?? null,
+          workspaceSubdomain: workspace.subdomain,
+          userEmail,
+        },
+        locale,
+      }),
+      modelId: AUTO_SELECT_MODEL_ID_BY_TIER.fast,
+    });
 
-    if (!isDefined(kickoffResult)) {
+    if (!isDefined(openingTurn)) {
       return { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED, thread };
     }
 
     tagAiChatStreamScope({
-      streamId: kickoffResult.streamId,
-      turnId: kickoffResult.turnId,
+      streamId: openingTurn.streamId,
+      turnId: openingTurn.turnId,
       threadId,
       workspaceId: workspace.id,
     });

@@ -71,7 +71,6 @@ type Agent {
   createdAt: DateTime!
   updatedAt: DateTime!
   modelConfiguration: JSON
-  evaluationInputs: [String!]!
 }
 
 type AuthToken {
@@ -2140,7 +2139,6 @@ enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED
   IS_MESSAGE_CAMPAIGN_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
-  IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
   IS_AI_CHAT_SHARING_DROPDOWN_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
@@ -3547,7 +3545,7 @@ type ChatStreamCatchupChunks {
 }
 
 type SendChatMessageResult {
-  messageId: String!
+  messageId: String
   queued: Boolean!
   streamId: String
 }
@@ -3619,23 +3617,6 @@ type RecordExport {
   progress: Int!
   errorMessage: String
   downloadPath: String
-}
-
-type AgentTurnEvaluation {
-  id: UUID!
-  turnId: UUID!
-  score: Int!
-  comment: String
-  createdAt: DateTime!
-}
-
-type AgentTurn {
-  id: UUID!
-  threadId: UUID!
-  agentId: UUID
-  evaluations: [AgentTurnEvaluation!]!
-  messages: [AgentMessage!]!
-  createdAt: DateTime!
 }
 
 type WorkspaceAiStats {
@@ -4013,7 +3994,6 @@ type Query {
   getAiSystemPromptPreview: AiSystemPromptPreview!
   skills: [Skill!]!
   skill(id: UUID!): Skill
-  agentTurns(agentId: UUID!): [AgentTurn!]!
   validationRules(objectMetadataId: UUID!): [ValidationRule!]!
   timelineActivityTypes: [TimelineActivityType!]!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
@@ -4382,8 +4362,6 @@ type Mutation {
   deleteSkill(id: UUID!): Skill!
   activateSkill(id: UUID!): Skill!
   deactivateSkill(id: UUID!): Skill!
-  evaluateAgentTurn(turnId: UUID!): AgentTurnEvaluation!
-  runEvaluationInput(agentId: UUID!, input: String!): AgentTurn!
   createValidationRule(input: CreateValidationRuleInput!): ValidationRule!
   updateValidationRule(input: UpdateValidationRuleInput!): ValidationRule!
   deleteValidationRule(id: UUID!): ValidationRule!
@@ -4910,7 +4888,6 @@ input CreateAgentInput {
   roleId: UUID
   responseFormat: JSON
   modelConfiguration: JSON
-  evaluationInputs: [String!]
 }
 
 input UpdateAgentInput {
@@ -4924,7 +4901,6 @@ input UpdateAgentInput {
   roleId: UUID
   responseFormat: JSON
   modelConfiguration: JSON
-  evaluationInputs: [String!]
 }
 
 input CreateOneObjectInput {

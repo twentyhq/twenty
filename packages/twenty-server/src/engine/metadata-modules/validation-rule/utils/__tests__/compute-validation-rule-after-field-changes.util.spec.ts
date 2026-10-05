@@ -35,7 +35,7 @@ const rename = (
   fieldUniversalIdentifier,
   newFieldName,
   shouldDisableRulesReadingField: false,
-  shouldDetachErrorField: false,
+  isDeleted: false,
 });
 
 const deletion = (
@@ -44,7 +44,7 @@ const deletion = (
   fieldUniversalIdentifier,
   newFieldName: null,
   shouldDisableRulesReadingField: true,
-  shouldDetachErrorField: true,
+  isDeleted: true,
 });
 
 describe('computeValidationRuleAfterFieldChanges', () => {

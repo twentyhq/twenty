@@ -3,6 +3,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/SettingsRoleSettings';
@@ -102,6 +103,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const handleCancel = () => {
     if (isCreateMode) {
+      setSettingsDraftRole(DEFAULT_SETTINGS_DRAFT_ROLE);
       navigateSettings(SettingsPath.Roles);
       return;
     }

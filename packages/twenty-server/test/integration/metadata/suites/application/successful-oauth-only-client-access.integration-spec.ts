@@ -1,6 +1,4 @@
 import crypto from 'crypto';
-import gql from 'graphql-tag';
-import request from 'supertest';
 import { getMcpToolCatalog } from 'test/integration/graphql/suites/application-role-intersection/utils/get-mcp-tool-catalog.util';
 import { findApplicationRegistrationByUniversalIdentifier } from 'test/integration/metadata/suites/application-registration/utils/find-application-registration-by-universal-identifier.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
@@ -11,6 +9,7 @@ import { createAppTarballUpload } from 'test/integration/metadata/suites/applica
 import { createApplicationFileUploads } from 'test/integration/metadata/suites/application/utils/create-application-file-uploads.util';
 import { exportApplication } from 'test/integration/metadata/suites/application/utils/export-application.util';
 import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
+import { loginAsTwentyCli } from 'test/integration/metadata/suites/application/utils/login-as-twenty-cli.util';
 import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites/application/utils/put-application-file-upload-target.util';
 import {
   type ApplicationWithResources,
@@ -20,70 +19,12 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
 import { findManyLogicFunctions } from 'test/integration/metadata/suites/logic-function/utils/find-many-logic-functions.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { ToolCategory } from 'twenty-shared/ai';
 
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
-
-const CLI_CALLBACK_URL = 'http://127.0.0.1:53682/callback';
-
-// Same browser flow as `twenty remote add`: authorize the CLI client with PKCE
-// as the workspace admin, then exchange the code for the CLI access token.
-const loginAsTwentyCli = async (): Promise<string> => {
-  const baseUrl = `http://localhost:${APP_PORT}`;
-
-  const discovery = await request(baseUrl)
-    .get('/.well-known/oauth-authorization-server')
-    .expect(200);
-
-  const clientId: string = discovery.body.cli_client_id;
-  const codeVerifier = crypto.randomBytes(32).toString('base64url');
-  const codeChallenge = crypto
-    .createHash('sha256')
-    .update(codeVerifier)
-    .digest('base64url');
-
-  const authorizeResponse = await makeMetadataApiRequest({
-    query: gql`
-      mutation AuthorizeApp(
-        $clientId: String!
-        $codeChallenge: String
-        $redirectUrl: String!
-      ) {
-        authorizeApp(
-          clientId: $clientId
-          codeChallenge: $codeChallenge
-          redirectUrl: $redirectUrl
-        ) {
-          redirectUrl
-        }
-      }
-    `,
-    variables: { clientId, codeChallenge, redirectUrl: CLI_CALLBACK_URL },
-  });
-
-  expect(authorizeResponse.body.errors).toBeUndefined();
-
-  const code = new URL(
-    authorizeResponse.body.data.authorizeApp.redirectUrl,
-  ).searchParams.get('code');
-
-  const tokenResponse = await request(baseUrl)
-    .post('/oauth/token')
-    .send({
-      grant_type: 'authorization_code',
-      code,
-      code_verifier: codeVerifier,
-      redirect_uri: CLI_CALLBACK_URL,
-      client_id: clientId,
-    })
-    .expect(200);
-
-  return tokenResponse.body.access_token;
-};
 
 describe('OAuth-only client access to installed applications should succeed', () => {
   let installedApplication: ApplicationWithResources;
