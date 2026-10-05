@@ -127,7 +127,12 @@ describe('Workspace cache concurrent publication', () => {
       ]);
       const { snapshotLoaded, resume } = pauseNextValueSnapshot();
       const pendingOperation =
-        operation === 'refresh' ? updateValue('first') : readCachedValue();
+        operation === 'refresh'
+          ? workspaceCacheService.invalidateAndRecompute(
+              SEED_APPLE_WORKSPACE_ID,
+              ['flatApplicationVariableMaps'],
+            )
+          : readCachedValue();
 
       try {
         await snapshotLoaded;
