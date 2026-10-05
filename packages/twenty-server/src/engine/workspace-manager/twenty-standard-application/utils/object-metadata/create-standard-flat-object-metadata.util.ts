@@ -31,13 +31,13 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         namePlural: 'agentChatThreads',
         labelSingular: i18nLabel(
           msg({
-            message: 'Agent chat thread',
+            message: 'Chat',
             context: 'objectMetadata.labelSingular',
           }),
         ),
         labelPlural: i18nLabel(
           msg({
-            message: 'Agent chat threads',
+            message: 'Chats',
             context: 'objectMetadata.labelPlural',
           }),
         ),
@@ -51,15 +51,13 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isSearchable: false,
         isAuditLogged: false,
-        isUIEditable: false,
+        isUIEditable: true,
         isUICreatable: false,
-        // A conversation outside a workflow run has no parent and is read only
-        // through its own grants, as a PRIVATE record is. One held by a run's
-        // agent step is read by whoever reads the run.
+        // Read by whoever reads its workflow run; with no run it reads only through its own grants, like a PRIVATE record
         readability: MetadataReadability.INHERITED,
         readabilityParentFieldMetadataNames: ['workflowRun'],
         writability: MetadataWritability.OPEN,
-        labelIdentifierFieldMetadataName: 'id',
+        labelIdentifierFieldMetadataName: 'title',
       },
     }),
   agentChatThreadTarget: (
@@ -100,10 +98,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        // A link is exactly as private as the conversation it files, as a
-        // messageThreadTarget is for its thread, so it inherits from the thread
-        // rather than from the record. It stays writable because merging
-        // records re-points its legs under the caller, as for noteTarget.
+        // Inherits from the thread, not the record, so a link stays as private as the conversation. It stays
+        // writable because record merges re-point its legs under the caller, as for noteTarget
         readability: MetadataReadability.INHERITED,
         readabilityParentFieldMetadataNames: ['thread'],
         labelIdentifierFieldMetadataName: 'id',
@@ -226,6 +222,51 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUIEditable: false,
         isUICreatable: false,
         readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+    }),
+  agentChatThreadParticipant: (
+    args: Omit<
+      CreateStandardObjectArgs<'agentChatThreadParticipant'>,
+      'context' | 'objectName'
+    >,
+  ) =>
+    createStandardObjectFlatMetadata({
+      ...args,
+      objectName: 'agentChatThreadParticipant',
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
+        nameSingular: 'agentChatThreadParticipant',
+        namePlural: 'agentChatThreadParticipants',
+        labelSingular: i18nLabel(
+          msg({
+            message: 'Chat thread participant',
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: 'Chat thread participants',
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Read and inbox state of a member in a chat thread',
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconMessage',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        // Each row is one member's private inbox state, readable through its
+        // owner grant and written only through the chat resolvers
+        readability: MetadataReadability.PRIVATE,
         writability: MetadataWritability.SYSTEM,
         labelIdentifierFieldMetadataName: 'id',
       },
@@ -1647,9 +1688,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
-        // A run carries its workflow's inputs and outputs, so it is exactly as
-        // private as its core workflow; WorkflowRunRecordShareService writes
-        // the grants.
+        // As private as its core workflow; WorkflowRunRecordShareService writes the grants
         readability: MetadataReadability.PRIVATE,
         labelIdentifierFieldMetadataName: 'name',
       },

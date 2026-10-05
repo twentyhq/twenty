@@ -42,7 +42,7 @@ import {
   IconUnlink,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
@@ -263,10 +263,7 @@ export const RecordDetailRelationRecordsListItem = ({
           />
         )}
       </RecordDetailRecordsListItemContainer>
-      <AnimatedExpandableContainer
-        containAnimation={false}
-        isExpanded={isExpanded}
-      >
+      <Collapsible containAnimation={false} isExpanded={isExpanded}>
         <RecordFieldList
           instanceId={`${scopeInstanceId}-relation-${relationRecord.id}`}
           objectNameSingular={relationObjectMetadataNameSingular}
@@ -276,7 +273,7 @@ export const RecordDetailRelationRecordsListItem = ({
           excludeCreatedAtAndUpdatedAt={true}
           excludeFieldMetadataIds={[relationFieldMetadataId]}
         />
-      </AnimatedExpandableContainer>
+      </Collapsible>
       {createPortal(
         <ConfirmationDialog
           dialogId={getDeleteRelationModalId(relationRecord.id)}

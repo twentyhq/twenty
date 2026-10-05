@@ -83,7 +83,7 @@ export const SaveNotification = () => {
 };
 ```
 
-`onClose` is called by the close button and when the countdown completes. Remove the toast in that callback. The countdown defaults to 6,000 milliseconds and pauses while the pointer is over the toast.
+`onClose` is called by the close button and when the countdown completes. Remove the toast in that callback. The countdown defaults to 6,000 milliseconds and pauses while the pointer is over the toast or a control inside it has keyboard focus. It resumes when both leave the toast.
 
 ## Progress and cancellation
 

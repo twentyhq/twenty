@@ -3,8 +3,7 @@ import { getFieldRelations } from '@/object-record/record-field/ui/utils/junctio
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
 
-// A junction object carries no marker of its own, so the relation graph is walked to
-// collect every object resolved as a junction.
+// A junction object carries no marker of its own, so walk the relation graph.
 export const getJunctionObjectMetadataIds = (
   objectMetadataItems: JunctionObjectMetadataItem[],
 ): Set<string> =>

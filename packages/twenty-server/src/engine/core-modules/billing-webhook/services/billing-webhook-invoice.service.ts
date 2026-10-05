@@ -99,8 +99,7 @@ export class BillingWebhookInvoiceService {
 
     await this.processRollover({
       subscription,
-      // Stripe's own clock, so it can be compared to the subscription's
-      // boundaries without allowing for skew against ours.
+      // Stripe's own clock, comparable to subscription boundaries without skew
       invoiceCreatedAt: new Date(invoiceCreatedAtInSeconds * 1000),
     });
   }
@@ -127,9 +126,7 @@ export class BillingWebhookInvoiceService {
         subscription.id,
       );
 
-    // Skipping the transition leaves every grant of this workspace to reach its
-    // expiry with nothing carrying the unspent part forward, so it is the one
-    // early return here that costs the workspace credits it was given.
+    // Skipping the transition forfeits the unspent part of every grant of this workspace
     if (!isDefined(params)) {
       this.logger.error(
         `Skipping credit rollover for workspace ${subscription.workspaceId}: subscription ${subscription.id} carries no priced resource credit item`,
@@ -144,8 +141,7 @@ export class BillingWebhookInvoiceService {
       subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
     });
 
-    // Only needed while subscriptions that predate previousPeriodStart are
-    // still transitioning for the first time.
+    // Only needed while subscriptions predating previousPeriodStart transition for the first time
     const ledgerPeriodStart =
       await this.billingCreditGrantService.findPeriodStartBefore({
         workspaceId: subscription.workspaceId,
@@ -167,9 +163,7 @@ export class BillingWebhookInvoiceService {
       ledgerPeriodStart,
     });
 
-    // Credits earned during the trial follow the workspace into its first paid
-    // period, so the trial closes like any other period. Its allowance comes
-    // from config rather than the price, which only applies once paid.
+    // Trial credits carry into the first paid period; the trial allowance comes from config, not the price
     const closingAllowanceMicro = isFirstPeriodAfterTrial
       ? this.billingUsageService.getTrialResourceUsageCap(subscription)
       : params.tierQuantity;
@@ -200,9 +194,7 @@ export class BillingWebhookInvoiceService {
       );
     }
 
-    // Paying a past-due invoice won't reactivate the subscription if Stripe
-    // already generated a draft for the next period. Finalize it so Stripe
-    // can collect payment and resume the subscription.
+    // Stripe won't reactivate on a paid past-due invoice while a next-period draft exists
     await this.finalizePastDueDraftInvoicesAfterPaidInvoice(
       stripeSubscriptionId,
       paidInvoicePeriodEnd,

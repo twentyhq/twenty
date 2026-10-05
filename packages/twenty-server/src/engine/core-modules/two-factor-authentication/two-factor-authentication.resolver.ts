@@ -12,7 +12,9 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { assertLoginTokenIsNotForImpersonation } from 'src/engine/core-modules/auth/utils/assert-login-token-is-not-for-impersonation.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -21,12 +23,11 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
+import { TwoFactorAuthenticationExceptionFilter } from './two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
 import { DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
@@ -38,7 +39,12 @@ import { VerifyTwoFactorAuthenticationMethodDTO } from './dto/verify-two-factor-
 import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 
 @MetadataResolver()
-@UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
+@UseFilters(
+  AuthGraphqlApiExceptionFilter,
+  PermissionsGraphqlApiExceptionFilter,
+  TwoFactorAuthenticationExceptionFilter,
+  ThrottlerGraphqlApiExceptionFilter,
+)
 export class TwoFactorAuthenticationResolver {
   constructor(
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
@@ -57,10 +63,13 @@ export class TwoFactorAuthenticationResolver {
     initiateTwoFactorAuthenticationProvisioningInput: InitiateTwoFactorAuthenticationProvisioningInput,
     @Args('origin') origin: string,
   ): Promise<InitiateTwoFactorAuthenticationProvisioningDTO> {
-    const { sub: userEmail, workspaceId: tokenWorkspaceId } =
-      await this.loginTokenService.verifyLoginToken(
-        initiateTwoFactorAuthenticationProvisioningInput.loginToken,
-      );
+    const loginTokenPayload = await this.loginTokenService.verifyLoginToken(
+      initiateTwoFactorAuthenticationProvisioningInput.loginToken,
+    );
+
+    assertLoginTokenIsNotForImpersonation(loginTokenPayload);
+
+    const { sub: userEmail, workspaceId: tokenWorkspaceId } = loginTokenPayload;
 
     const workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -103,7 +112,20 @@ export class TwoFactorAuthenticationResolver {
   }
 
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningDTO)
-  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: false,
+        workspaceAgnostic: true,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
   async initiateOTPProvisioningForAuthenticatedUser(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -128,9 +150,17 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => DeleteTwoFactorAuthenticationMethodDTO)
   @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     CustomPermissionGuard,
   )
   async deleteTwoFactorAuthenticationMethod(
@@ -170,9 +200,17 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => VerifyTwoFactorAuthenticationMethodDTO)
   @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     NoPermissionGuard,
   )
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(

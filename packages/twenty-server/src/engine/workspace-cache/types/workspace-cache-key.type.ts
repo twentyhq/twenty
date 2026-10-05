@@ -9,7 +9,6 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type ResolverNameMapEntry } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
-import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
@@ -26,18 +25,13 @@ import { type UsageLimits } from 'src/engine/core-modules/usage-limit/types/usag
 export type AdditionalCacheDataMaps = {
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   rolesPermissions: ObjectsPermissionsByRoleId;
-  userWorkspaceRoleMap: UserWorkspaceRoleMap;
-  apiKeyRoleMap: Record<string, string>;
   apiKeyMap: Record<string, FlatApiKey>;
   flatApplicationMaps: FlatApplicationCacheMaps;
   ORMEntityMetadatas: EntityMetadata[];
   flatFieldMetadataMapsOrm: FlatEntityMaps<OrmFlatFieldMetadata>;
-  flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
-  applicationVariableMaps: ApplicationVariableCacheMaps;
-  graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
   currentBillingSubscription: CurrentBillingSubscription;
   billingEntitlements: BillingEntitlements;
   workflowAutomatedTriggerMaps: WorkflowAutomatedTriggerMaps;
@@ -49,15 +43,34 @@ export type WorkspaceCacheDataMap = AllFlatEntityMaps<true> &
 
 export type WorkspaceCacheKeyName = keyof WorkspaceCacheDataMap;
 
-export type WorkspaceCacheResult<K extends WorkspaceCacheKeyName[]> = {
-  [P in K[number]]: WorkspaceCacheDataMap[P];
+export type WorkspaceDerivedCacheDataMap = {
+  roleIdsWithAllRecordsAccess: string[];
+  userWorkspaceRoleMap: UserWorkspaceRoleMap;
+  apiKeyRoleMap: Record<string, string>;
+  flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
+  graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
 };
 
-export type WorkspaceCacheResultWithHashes<K extends WorkspaceCacheKeyName[]> =
-  {
-    data: WorkspaceCacheResult<K>;
-    hashes: { [P in K[number]]: string };
-  };
+export type WorkspaceDerivedCacheKeyName = keyof WorkspaceDerivedCacheDataMap;
+
+export type WorkspaceCacheOrDerivedCacheDataMap = WorkspaceCacheDataMap &
+  WorkspaceDerivedCacheDataMap;
+
+export type WorkspaceCacheOrDerivedCacheKeyName =
+  keyof WorkspaceCacheOrDerivedCacheDataMap;
+
+export type WorkspaceCacheResult<
+  K extends WorkspaceCacheOrDerivedCacheKeyName[],
+> = {
+  [P in K[number]]: WorkspaceCacheOrDerivedCacheDataMap[P];
+};
+
+export type WorkspaceCacheResultWithHashes<
+  K extends WorkspaceCacheOrDerivedCacheKeyName[],
+> = {
+  data: WorkspaceCacheResult<K>;
+  hashes: { [P in K[number]]: string };
+};
 
 export type WorkspaceCacheStoredDataMap = Omit<
   WorkspaceCacheDataMap,

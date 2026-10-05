@@ -53,8 +53,7 @@ export const PageLayoutTabWidgetDropTarget = ({
     data,
   });
 
-  // Grid drags come from react-grid-layout, outside dnd-kit; their hover
-  // highlight is driven by pointer hit-testing instead of isDropTarget.
+  // Grid drags bypass dnd-kit, so their hover highlight comes from pointer hit-testing.
   const pageLayoutGridDragHoveredTabId = useAtomComponentStateValue(
     pageLayoutGridDragHoveredTabIdComponentState,
   );

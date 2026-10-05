@@ -1,12 +1,8 @@
-// Single source of truth for standard object universal identifiers: an object
-// identifier is referenced from its own STANDARD_OBJECTS entry, from its
-// STANDARD_OBJECT_FIELDS entry (system fields and INDEX view derivation), and
-// sometimes from another object's declaration (default relation builders need
-// both the host and the source object identifiers, and an object literal
-// cannot reference its sibling keys).
+// Separate from STANDARD_OBJECTS because an object literal cannot reference its sibling keys.
 export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
   agentChatThread: 'fab0fff8-0c90-4116-9bb0-7dbc07392633',
   agentChatThreadTarget: '9f2a5bf4-3a57-4e61-b561-eaf5a5b86973',
+  agentChatThreadParticipant: 'a043622a-48ef-426f-b55d-3fdcf4ae52f2',
   agentTurn: '63697477-8606-415e-86cb-be078d7fcf7e',
   agentMessage: '62d0354c-3b99-4769-b0f5-4e2651c2ca7d',
   agentMessagePart: '214bacb0-df89-494e-be42-e5b11c99cff6',

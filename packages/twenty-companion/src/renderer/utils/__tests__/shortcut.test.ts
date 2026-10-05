@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { shortcutFromKeyboardEvent } from '../shortcutFromKeyboardEvent';
-import { formatShortcut } from '../formatShortcut';
-import { DEFAULT_SETTINGS } from '../../../shared/constants/DEFAULT_SETTINGS';
 
 const key = {
   key: 'a',
@@ -39,15 +37,4 @@ describe('shortcut capture', () => {
   ])('ignores unsupported or incomplete combinations: %o', (event) => {
     expect(shortcutFromKeyboardEvent(event)).toBeNull();
   });
-});
-
-it('formats the shared default for macOS and other platforms', () => {
-  expect(formatShortcut(DEFAULT_SETTINGS.openShortcut, true)).toBe(
-    '⌘ + Shift + Space',
-  );
-  expect(formatShortcut(DEFAULT_SETTINGS.openShortcut, false)).toBe(
-    'Ctrl + Shift + Space',
-  );
-  expect(formatShortcut('Control+Alt+7', true)).toBe('Ctrl + ⌥ + 7');
-  expect(formatShortcut('Control+Alt+7', false)).toBe('Ctrl + Alt + 7');
 });

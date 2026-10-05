@@ -33,9 +33,12 @@ export class AgentChatEventPublisherService {
       const redis = this.redisClientService.getClient();
       const key = this.getStreamChunksKey(threadId);
 
-      // RPUSH returns the new list length — use it as a 1-based sequence number
-      const seq = await redis.rpush(key, JSON.stringify(event.chunk));
-      await redis.expire(key, STREAM_CHUNKS_TTL_SECONDS);
+      // RPUSH returns the new list length — use it as a 1-based sequence number.
+      // Sent together on one connection, Redis still runs them in order.
+      const [seq] = await Promise.all([
+        redis.rpush(key, JSON.stringify(event.chunk)),
+        redis.expire(key, STREAM_CHUNKS_TTL_SECONDS),
+      ]);
 
       publishedEvent = { ...event, seq };
     } else if (

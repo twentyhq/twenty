@@ -29,8 +29,6 @@ export class FormWorkflowAction implements WorkflowAction {
       );
     }
 
-    return {
-      pendingEvent: true,
-    };
+    return { pendingEvent: true };
   }
 }

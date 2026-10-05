@@ -8,9 +8,8 @@ export type TabButtonProps = Omit<
   | 'fullWidth'
   | 'loading'
   | 'elevated'
-  | 'hotkeys'
-  | 'soon'
-  | 'soonLabel'
+  | 'shortcut'
+  | 'shortcutJoinLabel'
 > &
   Pick<TabsTabProps, 'badge'> & {
     active?: boolean;

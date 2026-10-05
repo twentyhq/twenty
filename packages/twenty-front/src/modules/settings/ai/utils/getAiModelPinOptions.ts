@@ -5,9 +5,7 @@ import { type PinnableAiModel } from '@/settings/ai/types/PinnableAiModel';
 import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
 import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 
-// Effort variants are picked through their base model and a separate effort
-// select, so only base models are listed. A deprecated model stays listed
-// while it is the current pin, so an existing choice is visible until changed.
+// Effort variants are picked via their base model; a deprecated current pin stays listed.
 export const getAiModelPinOptions = ({
   aiModels,
   keepModelId,

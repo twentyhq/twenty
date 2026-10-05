@@ -1,3 +1,4 @@
+import { type ShortcutDefinition } from 'twenty-ui/primitives/typography';
 import { type IconComponent } from 'twenty-ui/icon';
 
 export type SidePanelFooterCommandMenuItem = {
@@ -8,5 +9,5 @@ export type SidePanelFooterCommandMenuItem = {
   isPinned?: boolean;
   onClick: () => void;
   disabled?: boolean;
-  hotkeys?: string[];
+  shortcut?: ShortcutDefinition;
 };

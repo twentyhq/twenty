@@ -5,6 +5,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { applyFindOptionsToQueryBuilder } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 import { buildQueryBuilder } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
   it('should filter a to-many relation with a correlated EXISTS instead of a join', () => {
@@ -240,6 +241,11 @@ describe('WorkspaceSelectQueryBuilder relation-keyed where', () => {
 
     queryBuilder.where({ people: { name: Equal('Twenty') } });
 
-    expect(() => queryBuilder.delete()).toThrow(TwentyOrmException);
+    expect(() =>
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        queryBuilder,
+        'delete',
+      ),
+    ).toThrow(TwentyOrmException);
   });
 });

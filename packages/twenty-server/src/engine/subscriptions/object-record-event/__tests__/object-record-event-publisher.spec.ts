@@ -15,7 +15,7 @@ import {
 
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
-import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
+import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -118,8 +118,6 @@ describe('ObjectRecordEventPublisher', () => {
     getRepository: jest.Mock;
   };
 
-  const companyObjectMetadata: FlatObjectMetadata = COMPANY_FLAT_OBJECT_MOCK;
-
   const companyNameField = getFlatFieldMetadataMock({
     objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
     type: FieldMetadataType.TEXT,
@@ -129,9 +127,29 @@ describe('ObjectRecordEventPublisher', () => {
     workspaceId,
   });
 
-  const mockFlatFieldMetadataMaps = buildFlatFieldMetadataMaps([
-    companyNameField,
-  ]);
+  const rowLevelPermissionFilteredFields = [
+    'status',
+    'assigneeId',
+    'locale',
+  ].map((name) =>
+    getFlatFieldMetadataMock({
+      objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
+      type: FieldMetadataType.TEXT,
+      name,
+      label: name,
+      universalIdentifier: `company-${name}-field-universal-id`,
+      workspaceId,
+    }),
+  );
+
+  const companyFields = [companyNameField, ...rowLevelPermissionFilteredFields];
+
+  const companyObjectMetadata: FlatObjectMetadata = {
+    ...COMPANY_FLAT_OBJECT_MOCK,
+    fieldIds: companyFields.map((field) => field.id),
+  };
+
+  const mockFlatFieldMetadataMaps = buildFlatFieldMetadataMaps(companyFields);
 
   const mockUserWorkspaceRoleMap: Record<string, string> = {
     [userWorkspaceId]: roleId,
@@ -218,6 +236,8 @@ describe('ObjectRecordEventPublisher', () => {
     },
     flatFieldMetadataMaps:
       overrides.flatFieldMetadataMaps ?? mockFlatFieldMetadataMaps,
+    flatFieldMetadataMapsOrm:
+      overrides.flatFieldMetadataMaps ?? mockFlatFieldMetadataMaps,
     userWorkspaceRoleMap:
       overrides.userWorkspaceRoleMap ?? mockUserWorkspaceRoleMap,
     rolesPermissions: overrides.rolesPermissions ?? mockRolesPermissions,
@@ -226,6 +246,7 @@ describe('ObjectRecordEventPublisher', () => {
       idByUniversalIdentifier: {},
     },
     featureFlagsMap: overrides.featureFlagsMap ?? {},
+    roleIdsWithAllRecordsAccess: [],
   });
 
   const createCacheMock = (
@@ -327,8 +348,8 @@ describe('ObjectRecordEventPublisher', () => {
           useValue: mockWorkspaceManyOrAllFlatEntityMapsCacheService,
         },
         {
-          provide: CommonSelectFieldsHelper,
-          useValue: new CommonSelectFieldsHelper(),
+          provide: CommonSelectFieldsBuilder,
+          useValue: new CommonSelectFieldsBuilder(),
         },
         {
           provide: RecordShareStorageService,
@@ -430,6 +451,61 @@ describe('ObjectRecordEventPublisher', () => {
       expect(
         mockSubscriptionService.publishToEventStream,
       ).not.toHaveBeenCalled();
+    });
+
+    it('publishes events of a record named for a subscriber whose role cannot read the object', async () => {
+      mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+        createCacheMock({
+          rolesPermissions: {
+            [roleId]: {
+              [companyObjectMetadata.id]: {
+                ...mockRolesPermissions[roleId][companyObjectMetadata.id],
+                canReadObjectRecords: false,
+              },
+            },
+          },
+          featureFlagsMap: {
+            [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
+          },
+        }),
+      );
+      mockRecordShareStorageService.findByRecordIds.mockResolvedValue([
+        {
+          id: 'record-share-1',
+          recordId: 'record-1',
+          objectMetadataId: companyObjectMetadata.id,
+          principalId: 'test-workspace-member-id',
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          accessLevel: RecordShareAccessLevel.READ,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: 'record-1',
+        },
+      ] as RecordShare[]);
+
+      await service.publish({
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent(),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: { id: 'record-2', name: 'Hidden Company' } },
+          }),
+        ],
+      } as WorkspaceEventBatch<never>);
+
+      expect(mockSubscriptionService.publishToEventStream).toHaveBeenCalled();
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds.map(
+          (matchedEvent: { objectRecordEvent: { recordId: string } }) =>
+            matchedEvent.objectRecordEvent.recordId,
+        ),
+      ).toEqual(['record-1']);
     });
 
     it('should not publish events when query object name does not match event', async () => {

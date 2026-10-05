@@ -45,13 +45,9 @@ export class MessageCampaignDeliveryFeedbackService {
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       );
-      return campaignDeliveryRepository
-        .createQueryBuilder()
-        .where({ providerMessageId })
-        .update()
-        .set(update)
-        .returning(['campaignId'])
-        .execute();
+      return campaignDeliveryRepository.update({ providerMessageId }, update, {
+        columnsToReturn: ['campaignId'],
+      });
     }, buildSystemAuthContext(workspaceId));
 
     if (!isDefined(updatedDelivery)) {

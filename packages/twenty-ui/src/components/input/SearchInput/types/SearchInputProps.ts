@@ -1,15 +1,8 @@
 import { type ReactElement, type ReactNode } from 'react';
 
-export type SearchInputProps = {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
+import { type InputProps } from '@ui/primitives/input/Input/types/InputProps';
+
+export type SearchInputProps = InputProps & {
   filterDropdown?: (filterButton: ReactElement) => ReactNode;
-  autoFocus?: boolean;
-  disabled?: boolean;
-  className?: string;
-  id?: string;
   filterButtonAriaLabel?: string;
-  'aria-label'?: string;
-  'aria-labelledby'?: string;
 };

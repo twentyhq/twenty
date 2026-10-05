@@ -18,6 +18,7 @@ export const ImportNotice = ({ onReview }: { onReview: () => void }) => (
     description="Review the missing email addresses before importing."
     action={{ label: 'Review records', onClick: onReview }}
     isClosable
+    closeLabel="Dismiss import notice"
   />
 );
 ```
@@ -31,6 +32,12 @@ The component does not add live-region semantics or forward native attributes. P
   title="Callout example"
   height={280}
 />
+
+## Labels and dismissal
+
+Your application owns `title`, `description`, and `action.label`. Set `isClosable` to show a dismiss button and pass `closeLabel` for its accessible name. The default is `Close`.
+
+Pass labels from your application's localization system. Twenty UI does not require an i18n provider.
 
 ## Props
 

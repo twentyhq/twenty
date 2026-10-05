@@ -2,6 +2,7 @@ import { formatRecordReference } from '@/ai/utils/formatRecordReference';
 import { MentionChip } from '@/mention/components/MentionChip';
 import { Node } from '@tiptap/core';
 import { mergeAttributes, ReactNodeViewRenderer } from '@tiptap/react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 export const MentionTag = Node.create({
   name: 'mentionTag',
@@ -38,6 +39,15 @@ export const MentionTag = Node.create({
         'data-image-url': attributes.imageUrl,
       }),
     },
+    // Marks the record a conversation started from; left out of the HTML so a copied mention does not carry it.
+    isConversationTarget: {
+      default: false,
+      rendered: false,
+    },
+    shouldAddAsParticipant: {
+      default: false,
+      rendered: false,
+    },
   }),
 
   renderHTML: ({ node, HTMLAttributes }) => {
@@ -47,7 +57,7 @@ export const MentionTag = Node.create({
         'data-type': 'mentionTag',
         class: 'mention-tag',
       }),
-      `@${node.attrs.label}`,
+      `${node.attrs.objectNameSingular === CoreObjectNameSingular.WorkspaceMember ? '@' : '#'}${node.attrs.label}`,
     ];
   },
 
