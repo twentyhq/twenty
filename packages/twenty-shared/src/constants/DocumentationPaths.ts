@@ -134,6 +134,7 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_CALLOUT: '/ui/components/callout',
   UI_COMPONENTS_CODE_EDITOR: '/ui/components/code-editor',
   UI_COMPONENTS_COMMAND_BLOCK: '/ui/components/command-block',
+  UI_COMPONENTS_COUNTRY_SELECT: '/ui/components/country-select',
   UI_COMPONENTS_CURRENCY_PICKER: '/ui/components/currency-picker',
   UI_COMPONENTS_DROPDOWN: '/ui/components/dropdown',
   UI_COMPONENTS_IMAGE_INPUT: '/ui/components/image-input',

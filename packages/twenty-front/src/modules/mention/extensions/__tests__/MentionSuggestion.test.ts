@@ -61,12 +61,12 @@ describe('MentionSuggestion', () => {
     expect(hasSuggestionPlugin).toBe(true);
   });
 
-  it('should accept # character in editor content', () => {
+  it('should accept @ character in editor content', () => {
     editor.commands.setContent('<p></p>');
     editor.commands.focus();
-    editor.commands.insertContent('#');
+    editor.commands.insertContent('@');
 
-    expect(editor.getText()).toContain('#');
+    expect(editor.getText()).toContain('@');
   });
 
   it('should use default empty search function when not configured', () => {

@@ -1,4 +1,3 @@
-import { useProcessUIToolCallMessage } from '@/ai/hooks/useProcessUIToolCallMessage';
 import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -13,7 +12,6 @@ export const useUpdateStreamingPartsWithDiff = () => {
     agentChatUISessionStartTimeState,
   );
 
-  const { processUIToolCallMessage } = useProcessUIToolCallMessage();
   const { processWorkspaceSetupCompletion } =
     useProcessWorkspaceSetupCompletion();
 
@@ -65,7 +63,6 @@ export const useUpdateStreamingPartsWithDiff = () => {
         continue;
       }
 
-      processUIToolCallMessage(incomingMessage);
       processWorkspaceSetupCompletion(incomingMessage);
     }
   };

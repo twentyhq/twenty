@@ -1,4 +1,4 @@
-import { StepStatus } from 'twenty-shared/workflow';
+import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { IsNull } from 'typeorm';
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -54,6 +54,7 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       {} as never,
       threadRepository as never,
       messagePartRepository as never,
+      { cancelRunWaits: jest.fn().mockResolvedValue(undefined) } as never,
     );
 
     // The run lock serializes these methods with every other step write.
@@ -63,12 +64,16 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       },
     });
 
-    const step = { id: 'step-id', name: 'Ask' };
+    const step = {
+      id: 'step-id',
+      name: 'Ask',
+      type: WorkflowActionType.AI_AGENT,
+    };
     const workflowRun: {
       id: string;
       status: WorkflowRunStatus;
       state: {
-        flow: { steps: { id: string; name: string }[] };
+        flow: { steps: { id: string; name: string; type: string }[] };
         stepInfos: Record<string, Record<string, unknown>>;
       };
     } = {
@@ -111,7 +116,11 @@ describe('WorkflowRunWorkspaceService conversations', () => {
 
     it('finds the step a call names among steps sharing one inbox conversation', async () => {
       const { service, workflowRun } = buildService();
-      const approvalStep = { id: 'second-step-id', name: 'Approve' };
+      const approvalStep = {
+        id: 'second-step-id',
+        name: 'Approve',
+        type: WorkflowActionType.SEND_CHAT_MESSAGE,
+      };
 
       workflowRun.state = {
         flow: { steps: [...workflowRun.state.flow.steps, approvalStep] },
@@ -135,6 +144,16 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       expect(await findNamedStep('second-step-id')).toEqual(approvalStep);
       expect(await findNamedStep('step-id')).toBeNull();
       expect(await findStep(service)).toEqual(approvalStep);
+    });
+
+    it('finds nothing for a form step, which is submitted from its run', async () => {
+      const { service, workflowRun } = buildService();
+
+      workflowRun.state.flow.steps = [
+        { id: 'step-id', name: 'Form', type: WorkflowActionType.FORM },
+      ];
+
+      expect(await findStep(service)).toBeNull();
     });
 
     it.each([
