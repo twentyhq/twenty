@@ -1719,6 +1719,15 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       );
 
       expect(deleteResponse.body.errors).toBeUndefined();
+
+      for (
+        let attempt = 0;
+        attempt < 100 && deletionListenerSpy.mock.calls.length === 0;
+        attempt++
+      ) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
       expect(deletionListenerSpy).toHaveBeenCalledTimes(1);
       expect(deletionListenerSpy).toHaveBeenCalledWith(
         expect.objectContaining({

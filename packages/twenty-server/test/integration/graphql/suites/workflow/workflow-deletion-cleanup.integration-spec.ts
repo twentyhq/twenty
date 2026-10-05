@@ -32,7 +32,7 @@ import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type DeleteWorkflowActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workflow/services/delete-workflow-action-handler.service';
-import { CleanUpDeletedWorkflowsJob } from 'src/modules/workflow/workflow-deletion/jobs/clean-up-deleted-workflows.job';
+import { type WorkflowDeletionCleanupWorkspaceService } from 'src/modules/workflow/workflow-deletion/services/workflow-deletion-cleanup.workspace-service';
 import { type WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -61,8 +61,10 @@ const countRows = async (query: string, parameters: unknown[]) => {
   return count;
 };
 
-const cleanUpDeletedWorkflowsAgain = async (coreWorkflowIds: string[]) =>
-  (await global.app.resolve(CleanUpDeletedWorkflowsJob)).handle({
+const cleanUpDeletedWorkflowsAgain = (coreWorkflowIds: string[]) =>
+  getAppProviderByClassName<WorkflowDeletionCleanupWorkspaceService>(
+    'WorkflowDeletionCleanupWorkspaceService',
+  ).cleanUpDeletedWorkflows({
     workspaceId: SEED_APPLE_WORKSPACE_ID,
     coreWorkflowIds,
   });
