@@ -33,10 +33,14 @@ describe('parseEmailBodyAsEmailDocument', () => {
 
   it('should keep plain text with variables as HTML so their values stay raw, with its line breaks', () => {
     expect(
-      parseEmailBodyAsEmailDocument('Dear {{person.name}} & co,\r\n\r\nThanks'),
+      parseEmailBodyAsEmailDocument(
+        "Dear {{person.name}} & {{step.['a&b']}},\r\n\r\nThanks",
+      ),
     ).toEqual({
       success: true,
-      document: htmlDocument('Dear {{person.name}} &amp; co,<br><br>Thanks'),
+      document: htmlDocument(
+        "Dear {{person.name}} &amp; {{step.['a&b']}},<br><br>Thanks",
+      ),
     });
   });
 

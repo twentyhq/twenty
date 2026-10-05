@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { workflowActionSchema } from '@/workflow/schemas/workflow-action-schema';
 import { workflowTriggerSchema } from '@/workflow/schemas/workflow-trigger-schema';
 import { isDefined } from '@/utils';
@@ -29,7 +30,7 @@ const formatZodIssues = (zodError: z.ZodError): string[] =>
 
 const isEmailBodyStoredAsDocument = (body: string | undefined): boolean =>
   !isDefined(body) ||
-  body.trim() === '' ||
+  !isNonEmptyString(body.trim()) ||
   parseEmailDocument(parseJson<unknown>(body)).success;
 
 export const validateWorkflowStepParams = ({
