@@ -15,6 +15,7 @@ const VALID_VALUES = {
   description: null,
   icon: 'IconListCheck',
   expression: 'stage != "WON"',
+  bindings: {},
   message: 'Deals cannot be won yet',
   errorFieldMetadataId: null,
 };
