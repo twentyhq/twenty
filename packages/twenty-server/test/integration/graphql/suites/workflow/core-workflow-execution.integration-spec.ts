@@ -21,6 +21,7 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
+import { type WorkflowDeletionListener } from 'src/modules/workflow/workflow-deletion/listeners/workflow-deletion.listener';
 
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -1684,7 +1685,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(retried.state.stepInfos[failedStep.id].status).toBe('FAILED');
   });
 
-  it('relinks restored runs before retrying their captured snapshots', async () => {
+  it('relinks runs that outlived their workflow deletion before retrying their captured snapshots', async () => {
     const failedStep: WorkflowAction = {
       ...emptyStep(),
       type: WorkflowActionType.DELAY,
@@ -1702,12 +1703,26 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
     await waitForRun(runId, 'FAILED');
 
-    const deleteResponse = await workflowGraphqlRequest(
-      'mutation Delete($id: UUID!) { deleteWorkflow(id: $id) { id } }',
-      { id: fixture.workflowId },
-    );
+    const deletionListenerSpy = jest
+      .spyOn(
+        getAppProviderByClassName<WorkflowDeletionListener>(
+          'WorkflowDeletionListener',
+        ),
+        'handleDeleted',
+      )
+      .mockResolvedValueOnce(undefined);
 
-    expect(deleteResponse.body.errors).toBeUndefined();
+    try {
+      const deleteResponse = await workflowGraphqlRequest(
+        'mutation Delete($id: UUID!) { deleteWorkflow(id: $id) { id } }',
+        { id: fixture.workflowId },
+      );
+
+      expect(deleteResponse.body.errors).toBeUndefined();
+      expect(deletionListenerSpy).toHaveBeenCalled();
+    } finally {
+      deletionListenerSpy.mockRestore();
+    }
 
     await global.testDataSource.query(
       'DELETE FROM core.workflow WHERE id = $1',
