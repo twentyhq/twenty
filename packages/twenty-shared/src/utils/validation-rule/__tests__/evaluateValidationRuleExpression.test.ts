@@ -176,6 +176,34 @@ describe('evaluateValidationRuleExpression', () => {
     ).toEqual({ status: 'passed' });
   });
 
+  it('should check that a value is in a list field', () => {
+    const expression = '"PRIORITY" in tags';
+
+    expect(evaluate(expression, { tags: ['NEW', 'PRIORITY'] })).toEqual({
+      status: 'passed',
+    });
+    expect(evaluate(expression, { tags: ['NEW'] })).toEqual({
+      status: 'failed',
+    });
+    expect(evaluate(expression, { tags: [] })).toEqual({ status: 'failed' });
+    expect(evaluate(expression, { tags: null })).toEqual({ status: 'failed' });
+    expect(evaluate(expression, {})).toEqual({ status: 'failed' });
+  });
+
+  it('should check that a value is in a list of values', () => {
+    const expression = 'stage in ["WON", "LOST"]';
+
+    expect(evaluate(expression, { stage: 'LOST' })).toEqual({
+      status: 'passed',
+    });
+    expect(evaluate(expression, { stage: 'OPEN' })).toEqual({
+      status: 'failed',
+    });
+    expect(evaluate(expression, { stage: null })).toEqual({
+      status: 'failed',
+    });
+  });
+
   it('should not treat whitespace as empty', () => {
     expect(evaluate('isEmpty(stage)', { stage: ' ' })).toEqual({
       status: 'failed',
