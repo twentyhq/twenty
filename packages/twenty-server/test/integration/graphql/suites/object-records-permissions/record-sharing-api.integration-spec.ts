@@ -11,7 +11,6 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   MetadataReadability,
   MetadataWritability,
@@ -33,9 +32,9 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { GRANTABLE_RECORD_SHARE_ACCESS_LEVELS } from 'src/engine/core-modules/record-share/constants/grantable-record-share-access-levels.constant';
 import { type RecordSharePrincipalInput } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
 import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -47,24 +46,23 @@ const OBJECT_PLURAL = 'sharingPolicyRecords';
 const RECORD_ID = randomUUID();
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const fields =
-  'viewerAccessLevel permissions { canRead canUpdate canDelete canSoftDelete } isEnabled hasInheritedAccess roles { id } shares { principalId rowCause accessLevel }';
+  'sharingMode canManageSharing generalAccessLevel permissions { canRead canUpdate canDelete canSoftDelete } roles { id canRead canUpdate } shares { principalId principalRoleId rowCause accessLevel }';
 const READ_SHARING = parse(
-  `query RecordSharing($target: RecordSharingTargetInput!) { recordSharing(target: $target) { ${fields} } }`,
+  `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { ${fields} } }`,
 );
 const SET_SHARE = parse(
-  `mutation SetShare($target: RecordSharingTargetInput!, $principal: RecordSharePrincipalInput!, $enabled: Boolean!, $accessLevel: RecordShareAccessLevel) { setRecordShare(target: $target, principal: $principal, enabled: $enabled, accessLevel: $accessLevel) { ${fields} } }`,
+  `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { sharing: setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { ${fields} } }`,
 );
-const setFlag = (value: boolean) =>
-  updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-    value,
-    expectToFail: false,
-  });
+const REMOVE_SHARE = parse(
+  `mutation RemoveShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) { sharing: removeRecordShare(target: $target, principal: $principal) { ${fields} } }`,
+);
+const SET_GENERAL_ACCESS = parse(
+  `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { sharing: setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { ${fields} } }`,
+);
 
 describe('Generic sharing API on an ordinary private object', () => {
   let objectMetadataId: string;
   let memberRoleId: string;
-  let originalFlag: boolean;
   let shares: RecordShareStorageService;
   const target = () => ({ objectMetadataId, recordId: RECORD_ID });
   const grant = async (
@@ -90,16 +88,34 @@ describe('Generic sharing API on an ordinary private object', () => {
       { query: READ_SHARING, variables: { target: target() } },
       token,
     );
-  const change = (
+  const share = (
     principal: RecordSharePrincipalInput,
-    enabled: boolean,
-    token = APPLE_JONY_MEMBER_ACCESS_TOKEN,
     accessLevel = RecordShareAccessLevel.READ,
+    token = APPLE_JONY_MEMBER_ACCESS_TOKEN,
   ) =>
     makeMetadataApiRequest(
       {
         query: SET_SHARE,
-        variables: { target: target(), principal, enabled, accessLevel },
+        variables: { target: target(), principal, accessLevel },
+      },
+      token,
+    );
+  const unshare = (
+    principal: RecordSharePrincipalInput,
+    token = APPLE_JONY_MEMBER_ACCESS_TOKEN,
+  ) =>
+    makeMetadataApiRequest(
+      { query: REMOVE_SHARE, variables: { target: target(), principal } },
+      token,
+    );
+  const setGeneralAccess = (
+    accessLevel: RecordShareAccessLevel,
+    token = APPLE_JONY_MEMBER_ACCESS_TOKEN,
+  ) =>
+    makeMetadataApiRequest(
+      {
+        query: SET_GENERAL_ACCESS,
+        variables: { target: target(), accessLevel },
       },
       token,
     );
@@ -135,10 +151,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     };
     const invite = (accessLevel: RecordShareAccessLevel) =>
-      makeMetadataApiRequest({
-        query: SET_SHARE,
-        variables: { target: target(), principal, enabled: true, accessLevel },
-      });
+      share(principal, accessLevel, APPLE_JANE_ADMIN_ACCESS_TOKEN);
     expect(
       (await invite(RecordShareAccessLevel.READ_WRITE)).body.errors,
     ).toBeUndefined();
@@ -153,8 +166,8 @@ describe('Generic sharing API on an ordinary private object', () => {
     expect(
       (await invite(RecordShareAccessLevel.FULL)).body.errors,
     ).toBeUndefined();
-    expect((await settings()).body.data.recordSharing.viewerAccessLevel).toBe(
-      RecordShareAccessLevel.FULL,
+    expect((await settings()).body.data.recordSharing.canManageSharing).toBe(
+      true,
     );
   });
 
@@ -162,13 +175,6 @@ describe('Generic sharing API on an ordinary private object', () => {
     shares = getAppProviderByClassName<RecordShareStorageService>(
       'RecordShareStorageService',
     );
-    const cache = getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    );
-    originalFlag =
-      (await cache.getOrRecompute(workspaceId, ['featureFlagsMap']))
-        .featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] === true;
-    await setFlag(true);
     const { data } = await createOneObjectMetadata({
       input: {
         nameSingular: OBJECT_NAME,
@@ -205,7 +211,6 @@ describe('Generic sharing API on an ordinary private object', () => {
   });
 
   beforeEach(async () => {
-    await setFlag(true);
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -250,17 +255,15 @@ describe('Generic sharing API on an ordinary private object', () => {
       expectToFail: false,
     });
     await deleteOneObjectMetadata({ input: { idToDelete: objectMetadataId } });
-    await setFlag(originalFlag);
   });
 
-  it('keeps flag-off creates private after activation', async () => {
-    await setFlag(false);
+  it('keeps creates private', async () => {
     const recordId = randomUUID();
     const created = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: OBJECT_NAME,
         gqlFields: 'id',
-        data: { id: recordId, name: 'Private with sharing UI disabled' },
+        data: { id: recordId, name: 'Private create' },
       }),
     );
     expect(created.body.errors).toBeUndefined();
@@ -278,7 +281,9 @@ describe('Generic sharing API on an ordinary private object', () => {
         (await readSettings(APPLE_JANE_ADMIN_ACCESS_TOKEN)).body.data
           .recordSharing,
       ).toMatchObject({
-        isEnabled: false,
+        sharingMode: 'PRIVATE',
+        canManageSharing: true,
+        generalAccessLevel: RecordShareAccessLevel.NONE,
         permissions: { canRead: true, canUpdate: true },
         shares: [
           expect.objectContaining({
@@ -297,7 +302,6 @@ describe('Generic sharing API on an ordinary private object', () => {
           filter: { id: { eq: recordId } },
         }),
       );
-      await setFlag(true);
     }
   });
 
@@ -311,7 +315,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       makeMetadataApiRequest(
         {
           query: parse(
-            `query Permissions($targets: [RecordPermissionsTargetInput!]!) { recordPermissions(targets: $targets) { objectMetadataId recordId permissions { canRead canUpdate canDelete canSoftDelete } } }`,
+            `query Permissions($targets: [RecordTargetInput!]!) { recordPermissions(targets: $targets) { objectMetadataId recordId permissions { canRead canUpdate canDelete canSoftDelete } } }`,
           ),
           variables: { targets: [target(), missingTarget, foreignTarget] },
         },
@@ -366,13 +370,13 @@ describe('Generic sharing API on an ordinary private object', () => {
       expect((await settings()).body.errors).toBeDefined();
       await grant(RecordShareAccessLevel.FULL);
       expect((await settings()).body.data.recordSharing).toMatchObject({
-        viewerAccessLevel: 'FULL',
+        canManageSharing: true,
         permissions: { canRead: true, canUpdate: true },
       });
       const permissions = await makeMetadataApiRequest(
         {
           query: parse(
-            `query Permissions($targets: [RecordPermissionsTargetInput!]!) { recordPermissions(targets: $targets) { permissions { canRead canUpdate } } }`,
+            `query Permissions($targets: [RecordTargetInput!]!) { recordPermissions(targets: $targets) { permissions { canRead canUpdate } } }`,
           ),
           variables: { targets: [target()] },
         },
@@ -383,11 +387,11 @@ describe('Generic sharing API on an ordinary private object', () => {
         canUpdate: true,
       });
       expect(
-        (await change({ everyone: true }, true)).body.errors,
+        (await setGeneralAccess(RecordShareAccessLevel.READ)).body.errors,
       ).toBeUndefined();
       await setRoleUpdate(false);
       expect(
-        (await change({ everyone: true }, false)).body.errors,
+        (await setGeneralAccess(RecordShareAccessLevel.NONE)).body.errors,
       ).toBeDefined();
     } finally {
       await setRoleUpdate(true);
@@ -409,42 +413,37 @@ describe('Generic sharing API on an ordinary private object', () => {
     ).toEqual([RECORD_ID]);
     expect((await settings()).body.data.recordSharing).toMatchObject({
       permissions: { canRead: true, canUpdate: false, canDelete: false },
+      canManageSharing: false,
       shares: [],
       roles: [],
     });
-    expect((await change({ everyone: true }, true)).body.errors).toBeDefined();
+    expect(
+      (await setGeneralAccess(RecordShareAccessLevel.READ)).body.errors,
+    ).toBeDefined();
   });
 
   it.each([RecordShareAccessLevel.READ, RecordShareAccessLevel.READ_WRITE])(
     'refuses additions, changes, removals and self-escalation by %s recipients',
     async (accessLevel) => {
       await grant(accessLevel);
-      await change({ everyone: true }, true, APPLE_JANE_ADMIN_ACCESS_TOKEN);
+      await setGeneralAccess(
+        RecordShareAccessLevel.READ,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
       const before = await shares.findByRecordIds({
         workspaceId,
         objectMetadataId,
         recordIds: [RECORD_ID],
       });
-      for (const [principal, enabled, requestedLevel] of [
-        [{ roleId: memberRoleId }, true, RecordShareAccessLevel.READ],
-        [{ everyone: true }, true, RecordShareAccessLevel.READ_WRITE],
-        [{ everyone: true }, false, RecordShareAccessLevel.READ],
-        [
-          { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
-          true,
-          RecordShareAccessLevel.FULL,
-        ],
-      ] as const) {
-        expect(
-          (
-            await change(
-              principal,
-              enabled,
-              APPLE_JONY_MEMBER_ACCESS_TOKEN,
-              requestedLevel,
-            )
-          ).body.errors,
-        ).toBeDefined();
+      const jony = { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY };
+      for (const attempt of [
+        () => share({ roleId: memberRoleId }, RecordShareAccessLevel.READ),
+        () => setGeneralAccess(RecordShareAccessLevel.READ_WRITE),
+        () => setGeneralAccess(RecordShareAccessLevel.NONE),
+        () => share(jony, RecordShareAccessLevel.FULL),
+        () => unshare(jony),
+      ]) {
+        expect((await attempt()).body.errors).toBeDefined();
       }
       expect(
         await shares.findByRecordIds({
@@ -454,7 +453,7 @@ describe('Generic sharing API on an ordinary private object', () => {
         }),
       ).toEqual(before);
       expect((await settings()).body.data.recordSharing).toMatchObject({
-        viewerAccessLevel: accessLevel,
+        canManageSharing: false,
         shares: [],
         roles: [],
         permissions: {
@@ -517,18 +516,11 @@ describe('Generic sharing API on an ordinary private object', () => {
       const principal = {
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       };
-      for (const accessLevel of Object.values(RecordShareAccessLevel)) {
-        const response = await change(
-          principal,
-          true,
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-          accessLevel,
-        );
+      for (const accessLevel of GRANTABLE_RECORD_SHARE_ACCESS_LEVELS) {
+        const response = await share(principal, accessLevel);
         expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.setRecordShare.viewerAccessLevel).toBe(
-          RecordShareAccessLevel.FULL,
-        );
-        expect(response.body.data.setRecordShare.shares).toEqual(
+        expect(response.body.data.sharing.canManageSharing).toBe(true);
+        expect(response.body.data.sharing.shares).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
               principalId: principal.workspaceMemberId,
@@ -538,7 +530,7 @@ describe('Generic sharing API on an ordinary private object', () => {
           ]),
         );
       }
-      expect((await change(principal, false)).body.errors).toBeUndefined();
+      expect((await unshare(principal)).body.errors).toBeUndefined();
       const remaining = await shares.findByRecordIds({
         workspaceId,
         objectMetadataId,
@@ -555,20 +547,20 @@ describe('Generic sharing API on an ordinary private object', () => {
 
   it('commits self-downgrade but immediately removes grant management', async () => {
     await grant(RecordShareAccessLevel.FULL);
-    const response = await change(
+    const response = await share(
       { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
-      true,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
       RecordShareAccessLevel.READ_WRITE,
     );
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.setRecordShare).toMatchObject({
-      viewerAccessLevel: RecordShareAccessLevel.READ_WRITE,
+    expect(response.body.data.sharing).toMatchObject({
+      canManageSharing: false,
       permissions: { canRead: true, canUpdate: true },
       shares: [],
       roles: [],
     });
-    expect((await change({ everyone: true }, true)).body.errors).toBeDefined();
+    expect(
+      (await setGeneralAccess(RecordShareAccessLevel.READ)).body.errors,
+    ).toBeDefined();
   });
 
   it('keeps object writability above FULL grants', async () => {
@@ -587,14 +579,13 @@ describe('Generic sharing API on an ordinary private object', () => {
         (await settings()).body.data.recordSharing.permissions.canUpdate,
       ).toBe(false);
       expect(
-        (await change({ everyone: true }, true)).body.errors,
+        (await setGeneralAccess(RecordShareAccessLevel.READ)).body.errors,
       ).toBeDefined();
       expect(
         (
-          await change(
-            { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
-            false,
-          )
+          await unshare({
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          })
         ).body.errors,
       ).toBeDefined();
     } finally {
@@ -610,7 +601,7 @@ describe('Generic sharing API on an ordinary private object', () => {
         (await settings()).body.data.recordSharing.permissions.canUpdate,
       ).toBe(false);
       expect(
-        (await change({ everyone: true }, true)).body.errors,
+        (await setGeneralAccess(RecordShareAccessLevel.READ)).body.errors,
       ).toBeDefined();
       const result = await makeGraphqlApiRequest(
         updateOneOperationFactory({
@@ -627,20 +618,22 @@ describe('Generic sharing API on an ordinary private object', () => {
     }
   });
 
-  it('preserves saved grants while the sharing UI is disabled', async () => {
+  it('enforces saved grants', async () => {
     await grant(RecordShareAccessLevel.READ);
-    await setFlag(false);
     expect((await read()).body.data[OBJECT_PLURAL].edges).toHaveLength(1);
     expect(
       (await settings(APPLE_JANE_ADMIN_ACCESS_TOKEN)).body.data.recordSharing,
-    ).toMatchObject({ isEnabled: false, permissions: { canUpdate: true } });
+    ).toMatchObject({
+      sharingMode: 'PRIVATE',
+      canManageSharing: true,
+      permissions: { canUpdate: true },
+    });
     await grant(RecordShareAccessLevel.READ, RecordShareRowCause.APPLICATION);
     expect((await read()).body.data[OBJECT_PLURAL].edges).toHaveLength(1);
     expect(
       (
-        await change(
+        await unshare(
           { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
-          false,
           APPLE_JANE_ADMIN_ACCESS_TOKEN,
         )
       ).body.errors,
@@ -656,14 +649,49 @@ describe('Generic sharing API on an ordinary private object', () => {
     ]);
   });
 
+  it('reports the role behind each member grant and what each role can do on the object', async () => {
+    await grant(RecordShareAccessLevel.READ);
+    const readRoles = async () => {
+      const response = await settings(APPLE_JANE_ADMIN_ACCESS_TOKEN);
+      expect(response.body.errors).toBeUndefined();
+      return response.body.data.recordSharing;
+    };
+    const sharing = await readRoles();
+    expect(sharing.shares).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          principalRoleId: memberRoleId,
+        }),
+      ]),
+    );
+    expect(sharing.roles).toEqual(
+      expect.arrayContaining([
+        { id: memberRoleId, canRead: true, canUpdate: true },
+      ]),
+    );
+    await setRoleUpdate(false);
+    try {
+      expect((await readRoles()).roles).toEqual(
+        expect.arrayContaining([
+          { id: memberRoleId, canRead: true, canUpdate: false },
+        ]),
+      );
+    } finally {
+      await setRoleUpdate(true);
+    }
+  });
+
   it('commits self-revocation and returns a redacted response', async () => {
     await grant(RecordShareAccessLevel.FULL);
-    const response = await change(
-      { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
-      false,
-    );
+    const response = await unshare({
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.setRecordShare).toMatchObject({
+    expect(response.body.data.sharing).toMatchObject({
+      sharingMode: 'PRIVATE',
+      canManageSharing: false,
+      generalAccessLevel: null,
       permissions: { canRead: false, canUpdate: false },
       shares: [],
       roles: [],
@@ -674,7 +702,9 @@ describe('Generic sharing API on an ordinary private object', () => {
   it('serializes repeated grants and rejects missing target records', async () => {
     await grant(RecordShareAccessLevel.FULL);
     const responses = await Promise.all(
-      Array.from({ length: 5 }, () => change({ everyone: true }, true)),
+      Array.from({ length: 5 }, () =>
+        setGeneralAccess(RecordShareAccessLevel.READ),
+      ),
     );
     for (const response of responses)
       expect(response.body.errors).toBeUndefined();
@@ -692,11 +722,10 @@ describe('Generic sharing API on an ordinary private object', () => {
     ).toHaveLength(1);
     const missingId = randomUUID();
     const missing = await makeMetadataApiRequest({
-      query: SET_SHARE,
+      query: SET_GENERAL_ACCESS,
       variables: {
         target: { objectMetadataId, recordId: missingId },
-        principal: { everyone: true },
-        enabled: true,
+        accessLevel: RecordShareAccessLevel.READ,
       },
     });
     expect(missing.body.errors).toBeDefined();

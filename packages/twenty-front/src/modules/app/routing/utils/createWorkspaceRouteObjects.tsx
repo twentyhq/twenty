@@ -11,9 +11,15 @@ import {
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 
-const WorkflowCoreIndexPage = lazy(() =>
-  import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
-    default: module.WorkflowCoreIndexPage,
+const AgentCoreIndexPage = lazy(() =>
+  import('~/pages/object-core/AgentCoreIndexPage').then((module) => ({
+    default: module.AgentCoreIndexPage,
+  })),
+);
+
+const AgentCoreShowPage = lazy(() =>
+  import('~/pages/object-core/AgentCoreShowPage').then((module) => ({
+    default: module.AgentCoreShowPage,
   })),
 );
 
@@ -47,6 +53,12 @@ const AiChatPage = lazy(() =>
   })),
 );
 
+const AiChatInboxPage = lazy(() =>
+  import('~/pages/ai-chat/AiChatInboxPage').then((module) => ({
+    default: module.AiChatInboxPage,
+  })),
+);
+
 const MobileHomePage = lazy(() =>
   import('~/pages/mobile-home/MobileHomePage').then((module) => ({
     default: module.MobileHomePage,
@@ -61,7 +73,6 @@ const NotFound = lazy(() =>
 
 type CreateWorkspaceRouteObjectsArgs = {
   isAdminPageEnabled?: boolean;
-  isWorkflowCoreIndexPageEnabled?: boolean;
 };
 
 const MAIN_AND_SIDE_PANEL = ['main', 'side-panel'] as const;
@@ -69,7 +80,6 @@ const SETTINGS_ROOT_PATH = AppPath.SettingsCatchAll.replace('/*', '');
 
 export const createWorkspaceRouteObjects = ({
   isAdminPageEnabled,
-  isWorkflowCoreIndexPageEnabled,
 }: CreateWorkspaceRouteObjectsArgs): WorkspaceRouteObject[] => {
   const settingsRouteObjects = createSettingsRouteObjects({
     isAdminPageEnabled,
@@ -88,22 +98,22 @@ export const createWorkspaceRouteObjects = ({
         isLocationExpandableFromSidePanel: true,
       },
     },
-    ...(isWorkflowCoreIndexPageEnabled
-      ? [
-          {
-            path: AppPath.WorkflowCoreIndexPage,
-            element: (
-              <LazyRoute>
-                <WorkflowCoreIndexPage />
-              </LazyRoute>
-            ),
-            handle: {
-              workspaceSurfaces: MAIN_AND_SIDE_PANEL,
-              isLocationExpandableFromSidePanel: true,
-            },
-          } satisfies WorkspaceRouteObject,
-        ]
-      : []),
+    {
+      path: AppPath.AgentIndexPage,
+      element: (
+        <LazyRoute fallback={<RecordIndexSkeletonLoader />}>
+          <AgentCoreIndexPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.AgentShowPage,
+      element: (
+        <LazyRoute>
+          <AgentCoreShowPage />
+        </LazyRoute>
+      ),
+    },
     {
       path: AppPath.Index,
       element: <RecordIndexSkeletonLoader />,
@@ -142,6 +152,14 @@ export const createWorkspaceRouteObjects = ({
       element: (
         <LazyRoute>
           <AiChatPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.AiChatInbox,
+      element: (
+        <LazyRoute>
+          <AiChatInboxPage />
         </LazyRoute>
       ),
     },

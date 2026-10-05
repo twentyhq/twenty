@@ -1,4 +1,4 @@
-import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
+import { type OutputSchemaField } from '@/ai/types/OutputSchemaField';
 import { v4 } from 'uuid';
 
 export const createDefaultOutputSchemaField = (): OutputSchemaField => ({

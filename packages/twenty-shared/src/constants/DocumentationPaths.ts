@@ -128,20 +128,39 @@ export const DOCUMENTATION_PATHS = {
   GETTING_STARTED_KEY_FEATURES: '/getting-started/key-features',
   GETTING_STARTED_QUICKSTART: '/getting-started/quickstart',
   UI_ACCESSIBILITY: '/ui/accessibility',
+  UI_COMPONENTS_ANIMATED_ICON_CROSSFADE:
+    '/ui/components/animated-icon-crossfade',
+  UI_COMPONENTS_AVATAR_GROUP: '/ui/components/avatar-group',
+  UI_COMPONENTS_CALLOUT: '/ui/components/callout',
   UI_COMPONENTS_CODE_EDITOR: '/ui/components/code-editor',
+  UI_COMPONENTS_COMMAND_BLOCK: '/ui/components/command-block',
+  UI_COMPONENTS_COUNTRY_SELECT: '/ui/components/country-select',
+  UI_COMPONENTS_CURRENCY_PICKER: '/ui/components/currency-picker',
   UI_COMPONENTS_DROPDOWN: '/ui/components/dropdown',
+  UI_COMPONENTS_IMAGE_INPUT: '/ui/components/image-input',
+  UI_COMPONENTS_INLINE_BANNER: '/ui/components/inline-banner',
   UI_COMPONENTS_INPUT_ICON_BUTTON: '/ui/components/input/icon-button',
   UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',
   UI_COMPONENTS_INPUT_LIGHT_ICON_BUTTON:
     '/ui/components/input/light-icon-button',
   UI_COMPONENTS_INPUT_MAIN_BUTTON: '/ui/components/input/main-button',
+  UI_COMPONENTS_JSON_TREE: '/ui/components/json-tree',
+  UI_COMPONENTS_MENU_ITEMS: '/ui/components/menu-items',
+  UI_COMPONENTS_MENU_PICKER: '/ui/components/menu-picker',
+  UI_COMPONENTS_METRIC_ROW: '/ui/components/metric-row',
+  UI_COMPONENTS_NOTIFICATION_COUNTER: '/ui/components/notification-counter',
+  UI_COMPONENTS_OVERFLOWING_LIST: '/ui/components/overflowing-list',
   UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
+  UI_COMPONENTS_PHONE_COUNTRY_PICKER: '/ui/components/phone-country-picker',
+  UI_COMPONENTS_SEARCH_INPUT: '/ui/components/search-input',
   UI_COMPONENTS_SECTION: '/ui/components/section',
   UI_COMPONENTS_SETTINGS_ROW: '/ui/components/settings-row',
   UI_COMPONENTS_TAB_BUTTON: '/ui/components/tab-button',
+  UI_COMPONENTS_TINTED_ICON_TILE: '/ui/components/tinted-icon-tile',
   UI_COMPONENTS_TOAST: '/ui/components/toast',
   UI_DARK_MODE: '/ui/dark-mode',
   UI_GETTING_STARTED: '/ui/getting-started',
+  UI_ICONS: '/ui/icons',
   UI_PRIMITIVES_ACCESSIBILITY_VISIBILITY_HIDDEN:
     '/ui/primitives/accessibility/visibility-hidden',
   UI_PRIMITIVES_DATA_DISPLAY_AVATAR: '/ui/primitives/data-display/avatar',
@@ -152,16 +171,16 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_DATA_DISPLAY_STATUS: '/ui/primitives/data-display/status',
   UI_PRIMITIVES_DATA_DISPLAY_TAG: '/ui/primitives/data-display/tag',
   UI_PRIMITIVES_FEEDBACK_BANNER: '/ui/primitives/feedback/banner',
-  UI_PRIMITIVES_FEEDBACK_CIRCULAR_PROGRESS_BAR:
-    '/ui/primitives/feedback/circular-progress-bar',
   UI_PRIMITIVES_FEEDBACK_LOADER: '/ui/primitives/feedback/loader',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_BAR: '/ui/primitives/feedback/progress-bar',
+  UI_PRIMITIVES_FEEDBACK_PROGRESS_RING: '/ui/primitives/feedback/progress-ring',
   UI_PRIMITIVES_INPUT_BUTTON: '/ui/primitives/input/button',
   UI_PRIMITIVES_INPUT_BUTTON_GROUP: '/ui/primitives/input/button-group',
   UI_PRIMITIVES_INPUT_CHECKBOX: '/ui/primitives/input/checkbox',
   UI_PRIMITIVES_INPUT_FIELD: '/ui/primitives/input/field',
   UI_PRIMITIVES_INPUT_INPUT: '/ui/primitives/input/input',
   UI_PRIMITIVES_INPUT_INPUT_GROUP: '/ui/primitives/input/input-group',
+  UI_PRIMITIVES_INPUT_NUMBER_STEPPER: '/ui/primitives/input/number-stepper',
   UI_PRIMITIVES_INPUT_RADIO: '/ui/primitives/input/radio',
   UI_PRIMITIVES_INPUT_RADIO_GROUP: '/ui/primitives/input/radio-group',
   UI_PRIMITIVES_INPUT_SEGMENTED_CONTROL:
@@ -170,15 +189,13 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_INPUT_SLIDER: '/ui/primitives/input/slider',
   UI_PRIMITIVES_INPUT_SWITCH: '/ui/primitives/input/switch',
   UI_PRIMITIVES_INPUT_TEXTAREA: '/ui/primitives/input/textarea',
-  UI_PRIMITIVES_LAYOUT_ANIMATED_EXPANDABLE_CONTAINER:
-    '/ui/primitives/layout/animated-expandable-container',
+  UI_PRIMITIVES_LAYOUT_COLLAPSIBLE: '/ui/primitives/layout/collapsible',
   UI_PRIMITIVES_LAYOUT_HORIZONTAL_SEPARATOR:
     '/ui/primitives/layout/horizontal-separator',
   UI_PRIMITIVES_LAYOUT_RESIZE_HANDLE: '/ui/primitives/layout/resize-handle',
   UI_PRIMITIVES_LAYOUT_TEXT_DIRECTION_PROVIDER:
     '/ui/primitives/layout/text-direction-provider',
-  UI_PRIMITIVES_NAVIGATION_CLICK_TO_ACTION_LINK:
-    '/ui/primitives/navigation/click-to-action-link',
+  UI_PRIMITIVES_NAVIGATION_BREADCRUMB: '/ui/primitives/navigation/breadcrumb',
   UI_PRIMITIVES_NAVIGATION_LIST_ITEM: '/ui/primitives/navigation/list-item',
   UI_PRIMITIVES_NAVIGATION_TABS: '/ui/primitives/navigation/tabs',
   UI_PRIMITIVES_OVERVIEW: '/ui/primitives/overview',
@@ -191,8 +208,10 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_TYPOGRAPHY_HEADING: '/ui/primitives/typography/heading',
   UI_PRIMITIVES_TYPOGRAPHY_OVERFLOWING_TEXT_WITH_TOOLTIP:
     '/ui/primitives/typography/overflowing-text-with-tooltip',
+  UI_PRIMITIVES_TYPOGRAPHY_SHORTCUT: '/ui/primitives/typography/shortcut',
   UI_PRIMITIVES_TYPOGRAPHY_TEXT: '/ui/primitives/typography/text',
   UI_SSR: '/ui/ssr',
+  UI_TESTING: '/ui/testing',
   UI_THEMING: '/ui/theming',
   UI_TOKENS: '/ui/tokens',
   USER_GUIDE_AI_CAPABILITIES_AI_AGENTS: '/user-guide/ai/capabilities/ai-agents',
@@ -295,6 +314,17 @@ export const DOCUMENTATION_PATHS = {
   USER_GUIDE_DATA_MODEL_HOW_TOS_DATA_MODEL_FAQ:
     '/user-guide/data-model/how-tos/data-model-faq',
   USER_GUIDE_DATA_MODEL_OVERVIEW: '/user-guide/data-model/overview',
+  USER_GUIDE_EMAIL_CAMPAIGNS_HOW_TOS_CREATE_A_CAMPAIGN_WITH_AI:
+    '/user-guide/email-campaigns/how-tos/create-a-campaign-with-ai',
+  USER_GUIDE_EMAIL_CAMPAIGNS_HOW_TOS_EMAIL_CAMPAIGN_BEST_PRACTICES:
+    '/user-guide/email-campaigns/how-tos/email-campaign-best-practices',
+  USER_GUIDE_EMAIL_CAMPAIGNS_HOW_TOS_MANAGE_UNSUBSCRIBES_AND_TOPICS:
+    '/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics',
+  USER_GUIDE_EMAIL_CAMPAIGNS_HOW_TOS_SEND_YOUR_FIRST_CAMPAIGN:
+    '/user-guide/email-campaigns/how-tos/send-your-first-campaign',
+  USER_GUIDE_EMAIL_CAMPAIGNS_HOW_TOS_SET_UP_A_SENDING_DOMAIN:
+    '/user-guide/email-campaigns/how-tos/set-up-a-sending-domain',
+  USER_GUIDE_EMAIL_CAMPAIGNS_OVERVIEW: '/user-guide/email-campaigns/overview',
   USER_GUIDE_INTRODUCTION: '/user-guide/introduction',
   USER_GUIDE_LAYOUT_CAPABILITIES_NAVIGATION:
     '/user-guide/layout/capabilities/navigation',

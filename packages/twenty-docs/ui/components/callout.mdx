@@ -1,0 +1,44 @@
+---
+title: Callout
+description: A message with semantic styling, an optional action, and dismissal.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CalloutReference from '/snippets/ui/generated/components/callout.mdx';
+
+`Callout` combines a title, optional description, icon, and action. Choose `info`, `warning`, `error`, `neutral`, or `success` to match the message.
+
+```tsx
+import { Callout } from 'twenty-ui/components';
+
+export const ImportNotice = ({ onReview }: { onReview: () => void }) => (
+  <Callout
+    variant="warning"
+    title="Some records need attention"
+    description="Review the missing email addresses before importing."
+    action={{ label: 'Review records', onClick: onReview }}
+    isClosable
+    closeLabel="Dismiss import notice"
+  />
+);
+```
+
+Closing a closable callout updates its internal visibility and calls `onClose`. Remount it to show it again. `fullWidth` fills its container. Use `Icon` to replace the default help icon.
+
+The component does not add live-region semantics or forward native attributes. Put it in a separately labeled or announced region when that is needed.
+
+<StoryEmbed
+  storyId="ui-feedback-callout--default"
+  title="Callout example"
+  height={280}
+/>
+
+## Labels and dismissal
+
+Your application owns `title`, `description`, and `action.label`. Set `isClosable` to show a dismiss button and pass `closeLabel` for its accessible name. The default is `Close`.
+
+Pass labels from your application's localization system. Twenty UI does not require an i18n provider.
+
+## Props
+
+<CalloutReference />

@@ -6,6 +6,7 @@ import { type MeetingRecording } from 'src/logic-functions/types/meeting-recordi
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
+import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
@@ -66,6 +67,17 @@ export const rescheduleCallRecordingBot = async (
   // confirmed gone), so clearing it lets recovery schedule directly instead
   // of treating the row as an ambiguous attempt.
   if (rescheduleResult.status === RECALL_API_NOT_FOUND_STATUS) {
+    const currentCallRecording = (
+      await findCallRecordingsByIds(client, [callRecording.id])
+    )[0];
+
+    if (
+      isUndefined(currentCallRecording) ||
+      currentCallRecording.externalBotId !== externalBotId
+    ) {
+      return;
+    }
+
     await updateCallRecording(client, {
       id: callRecording.id,
       data: {

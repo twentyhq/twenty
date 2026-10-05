@@ -26,9 +26,7 @@ export const useMoveHoverToCurrentCell = (recordTableId: string) => {
 
   const moveHoverToCurrentCell = useCallback(
     (cellPosition: TableCellPosition) => {
-      // A tap synthesises a mousemove before its mousedown. Hovering on it
-      // would mount the hover portal under the finger, and the click that
-      // follows would hit that new subtree instead of what the user aimed at.
+      // A tap synthesises mousemove before mousedown; hovering would mount a portal that steals the click.
       if (isTouchDevice || store.get(isSomeCellInEditMode)) {
         return;
       }

@@ -1,6 +1,17 @@
 import { expect, test } from '../lib/fixtures/screenshot';
 import { postBackendGraphQL } from '../lib/requests/post-backend-graphql';
 
+type FindOnePersonData = {
+  person: {
+    name: { firstName: string; lastName: string };
+    emails: { primaryEmail: string };
+    intro: string;
+    linkedinLink: { primaryLinkUrl: string };
+    phones: { primaryPhoneNumber: string };
+    workPreference: string[];
+  };
+};
+
 const query = `query FindOnePerson($objectRecordId: UUID!) {
   person(
     filter: {or: [{deletedAt: {is: NULL}}, {deletedAt: {is: NOT_NULL}}], id: {eq: $objectRecordId}}
@@ -58,10 +69,8 @@ test('Create and update record', async ({ page }) => {
   await page.goto('/objects/people');
   await page.getByRole('button', { name: 'Create Person' }).click();
 
-  // Generate a random email for testing
   const randomEmail = `testuser_${Math.random().toString(36).substring(2, 10)}@example.com`;
 
-  // Fill the record creation form in the side panel
   const firstNameInput = page.locator('[contenteditable]').filter({
     has: page.locator('p[data-placeholder="F‌‌irst name"]'),
   });
@@ -86,14 +95,12 @@ test('Create and update record', async ({ page }) => {
 
   await page.getByTestId('record-creation-form-create-button').click();
 
-  // The created record opens in the side panel
   const recordFieldList = page.getByTestId('record-fields-widget');
   await expect(recordFieldList).toBeVisible({ timeout: 15_000 });
   await expect(recordFieldList.getByText(randomEmail)).toBeVisible({
     timeout: 15_000,
   });
 
-  // Fill intro
   const introInput = recordFieldList.getByText('Intro', { exact: true }).nth(1);
   await expect(introInput).toBeVisible();
   await introInput.click({ force: true });
@@ -101,7 +108,6 @@ test('Create and update record', async ({ page }) => {
   await page.getByPlaceholder('Intro').fill('This is an intro');
   await page.getByPlaceholder('Intro').press('Enter');
 
-  // Fill URL
   await recordFieldList.getByText('Linkedin', { exact: true }).first().click();
   const urlInput = recordFieldList.getByText('Linkedin', { exact: true }).nth(1);
   await expect(urlInput).toBeVisible();
@@ -109,7 +115,6 @@ test('Create and update record', async ({ page }) => {
   await page.getByPlaceholder('URL').fill('linkedin.com/johndoe');
   await page.getByPlaceholder('URL').press('Enter');
 
-  // Click on 4th star to rate
   await recordFieldList
     .getByText('Performance Rating', { exact: true })
     .first()
@@ -117,7 +122,6 @@ test('Create and update record', async ({ page }) => {
   const ratingContainer = recordFieldList.locator('div[aria-label="Rating"]');
   await ratingContainer.locator('svg').nth(3).click({ force: true });
 
-  // Fill phone field
   await recordFieldList.getByText('Phones', { exact: true }).first().click();
   const phoneInput = recordFieldList.getByText('Phones', { exact: true }).nth(1);
   await expect(phoneInput).toBeVisible();
@@ -125,7 +129,6 @@ test('Create and update record', async ({ page }) => {
   await page.getByPlaceholder('Phone').fill('+336 1 122 3344');
   await page.getByPlaceholder('Phone').press('Enter');
 
-  // Fill work preference
   await recordFieldList
     .getByText('Work Preference', { exact: true })
     .first()
@@ -141,13 +144,11 @@ test('Create and update record', async ({ page }) => {
     .first()
     .click({ force: true });
 
-  // Open full record page to get person ID
   await page.getByRole('button', { name: 'Expand record' }).click();
   await page.waitForURL(/\/object\/person\//);
   const newPersonId = page.url().match(/\/object\/person\/([a-f0-9-]+)/)?.[1];
 
-  // Check data was saved
-  const findOnePersonResponse = await postBackendGraphQL({
+  const findOnePersonResponse = await postBackendGraphQL<FindOnePersonData>({
     page,
     data: {
       operationName: 'FindOnePerson',
@@ -158,21 +159,14 @@ test('Create and update record', async ({ page }) => {
     },
   });
 
-  const findOnePersonReponseBody = await findOnePersonResponse.json();
-
-  expect(findOnePersonReponseBody.data.person.name.firstName).toBe('John');
-  expect(findOnePersonReponseBody.data.person.name.lastName).toBe('Doe');
-  expect(findOnePersonReponseBody.data.person.emails.primaryEmail).toBe(
-    randomEmail,
-  );
-  expect(findOnePersonReponseBody.data.person.intro).toBe('This is an intro');
-  expect(findOnePersonReponseBody.data.person.linkedinLink.primaryLinkUrl).toBe(
-    'linkedin.com/johndoe',
-  );
-  expect(findOnePersonReponseBody.data.person.phones.primaryPhoneNumber).toBe(
-    '611223344',
-  );
-  expect(findOnePersonReponseBody.data.person.workPreference).toEqual([
-    'HYBRID',
-  ]);
+  expect(findOnePersonResponse.status).toBe(200);
+  expect(findOnePersonResponse.body.errors).toBeUndefined();
+  expect(findOnePersonResponse.body.data?.person).toMatchObject({
+    name: { firstName: 'John', lastName: 'Doe' },
+    emails: { primaryEmail: randomEmail },
+    intro: 'This is an intro',
+    linkedinLink: { primaryLinkUrl: 'linkedin.com/johndoe' },
+    phones: { primaryPhoneNumber: '611223344' },
+    workPreference: ['HYBRID'],
+  });
 });

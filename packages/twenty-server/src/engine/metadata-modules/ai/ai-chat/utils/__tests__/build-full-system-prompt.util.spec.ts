@@ -11,6 +11,8 @@ const WORKSPACE_INSTRUCTIONS_DOCUMENT = JSON.stringify({
   ],
 });
 
+const USER_WORKSPACE_ID = 'user-workspace-id';
+
 const USER_CONTEXT = {
   firstName: 'Ada',
   lastName: 'Lovelace',
@@ -24,6 +26,7 @@ const buildPrompt = (isWorkspaceSetupThread?: boolean) =>
     toolCatalog: [],
     skillCatalog: [],
     preloadedTools: [],
+    userWorkspaceId: USER_WORKSPACE_ID,
     workspaceInstructions: WORKSPACE_INSTRUCTIONS_DOCUMENT,
     userContext: USER_CONTEXT,
     isWorkspaceSetupThread,
@@ -50,6 +53,7 @@ describe('buildFullSystemPrompt', () => {
       skillCatalog: [],
       referencedSkills: [REFERENCED_SKILL],
       preloadedTools: [],
+      userWorkspaceId: USER_WORKSPACE_ID,
     });
 
     expect(prompt).toContain('## Referenced Skills (already loaded)');
@@ -97,5 +101,32 @@ describe('buildFullSystemPrompt', () => {
 
     expect(prompt).not.toContain('## Workspace Instructions');
     expect(prompt).not.toContain('Always answer in bullet points.');
+  });
+
+  it('should explain attaching the conversation to records only where the tool is offered', () => {
+    const buildPromptWithAttachment = (
+      canAttachConversationToRecords: boolean,
+    ) =>
+      buildFullSystemPrompt({
+        toolCatalog: [],
+        skillCatalog: [],
+        preloadedTools: [],
+        userWorkspaceId: USER_WORKSPACE_ID,
+        canAttachConversationToRecords,
+      });
+
+    expect(buildPromptWithAttachment(true)).toContain(
+      '## Attaching this conversation to records',
+    );
+    expect(buildPromptWithAttachment(false)).not.toContain(
+      'attach_conversation_to_record',
+    );
+    expect(buildPrompt(false)).not.toContain('attach_conversation_to_record');
+  });
+
+  it('should end by scoping actions to the current participant', () => {
+    expect(buildPrompt(false)).toMatch(
+      /\n\nThis conversation can have multiple participants\. .*workspace membership user-workspace-id;.*$/,
+    );
   });
 });

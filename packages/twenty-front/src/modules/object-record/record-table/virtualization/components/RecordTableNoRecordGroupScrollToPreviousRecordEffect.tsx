@@ -37,8 +37,7 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
   const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
 
   useEffect(() => {
-    // Read directly from the Jotai store to avoid stale values from useAtom's
-    // internal useReducer, which can desync under high-frequency store updates.
+    // Read from the store directly: useAtom's useReducer can desync under high-frequency updates.
     const lastShowPageRecordId = store.get(lastShowPageRecordIdAtom);
 
     if (!isNonEmptyString(lastShowPageRecordId)) {

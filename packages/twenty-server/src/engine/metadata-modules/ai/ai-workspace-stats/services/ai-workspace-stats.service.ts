@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { WorkspaceAiStatsDTO } from 'src/engine/metadata-modules/ai/ai-workspace-stats/dtos/workspace-ai-stats.dto';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 
@@ -13,7 +13,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 export class AiWorkspaceStatsService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly toolRegistryService: ToolRegistryService,
   ) {}
@@ -28,9 +28,7 @@ export class AiWorkspaceStatsService {
         workspaceId,
         flatMapsKeys: ['flatSkillMaps'],
       }),
-      // Count the full tool catalog the user can see (built-in tools + custom
-      // logic-function tools), matching the Tools tab rather than only the
-      // custom subset. The catalog is role-scoped, like the tab.
+      // the full role-scoped catalog, to match the Tools tab
       this.toolRegistryService.buildToolIndex(workspaceId, roleId),
     ]);
 

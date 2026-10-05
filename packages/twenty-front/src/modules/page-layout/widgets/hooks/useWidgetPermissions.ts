@@ -1,8 +1,8 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { checkFieldPermissions } from '@/page-layout/utils/checkFieldPermissions';
 import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { isDefined } from 'twenty-shared/utils';
@@ -48,23 +48,22 @@ export const useWidgetPermissions = (
     };
   }
 
-  const fieldMetadataIds = extractFieldMetadataIdsFromWidget(widget);
-  const allFieldsAccessible = checkFieldPermissions(
-    fieldMetadataIds,
-    objectPermissions,
+  const nonReadableFieldMetadataIds = extractFieldMetadataIdsFromWidget(
+    widget,
+  ).filter(
+    (fieldMetadataId) =>
+      !getFieldPermissions({ objectPermissions, fieldMetadataId }).canReadField,
   );
 
-  if (!allFieldsAccessible) {
-    const restrictedFieldNames = fieldMetadataIds
-      .filter((fieldId) => {
-        const fieldPermission = objectPermissions.restrictedFields[fieldId];
-        return isDefined(fieldPermission) && fieldPermission.canRead === false;
-      })
-      .map((fieldId) => {
-        const field = objectMetadata?.fields?.find((f) => f.id === fieldId);
-        return field?.label || field?.name || 'Unknown';
-      })
-      .filter(isDefined);
+  if (nonReadableFieldMetadataIds.length > 0) {
+    const restrictedFieldNames = nonReadableFieldMetadataIds.map(
+      (fieldMetadataId) => {
+        const fieldMetadataItem = objectMetadata?.fields?.find(
+          (field) => field.id === fieldMetadataId,
+        );
+        return fieldMetadataItem?.label || fieldMetadataItem?.name || 'Unknown';
+      },
+    );
 
     return {
       hasAccess: false,

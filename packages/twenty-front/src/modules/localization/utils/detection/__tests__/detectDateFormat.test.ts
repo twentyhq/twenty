@@ -2,7 +2,6 @@ import { detectDateFormat } from '@/localization/utils/detection/detectDateForma
 
 describe('detectDateFormat', () => {
   it('should return MONTH_FIRST if the detected format starts with month', () => {
-    // Mock the Intl.DateTimeFormat to return a specific format
     const mockDateTimeFormat = jest.fn().mockReturnValue({
       formatToParts: () => [
         { type: 'month', value: '01' },
@@ -19,7 +18,6 @@ describe('detectDateFormat', () => {
   });
 
   it('should return DAY_FIRST if the detected format starts with day', () => {
-    // Mock the Intl.DateTimeFormat to return a specific format
     const mockDateTimeFormat = jest.fn().mockReturnValue({
       formatToParts: () => [
         { type: 'day', value: '01' },
@@ -35,7 +33,6 @@ describe('detectDateFormat', () => {
   });
 
   it('should return YEAR_FIRST if the detected format starts with year', () => {
-    // Mock the Intl.DateTimeFormat to return a specific format
     const mockDateTimeFormat = jest.fn().mockReturnValue({
       formatToParts: () => [
         { type: 'year', value: '2022' },
@@ -51,7 +48,6 @@ describe('detectDateFormat', () => {
   });
 
   it('should return MONTH_FIRST by default if the detected format does not match any specific order', () => {
-    // Mock the Intl.DateTimeFormat to return a specific format
     const mockDateTimeFormat = jest.fn().mockReturnValue({
       formatToParts: () => [
         { type: 'hour', value: '12' },

@@ -11,9 +11,7 @@ export const classifyAgentChatTurnOutcome = ({
   isAwaitingUserAnswer: boolean;
   outOfCredits: boolean;
 }): AgentChatTurnOutcome => {
-  // Asking the user a question is how a turn is meant to end when the request is
-  // ambiguous, and stopWhen ends the stream on it — so it is a completed turn
-  // waiting on an answer, not an abandoned one.
+  // stopWhen ends the stream on a question, so this is a completed turn, not an abandoned one
   if (isAwaitingUserAnswer) {
     return { kind: 'completed', outcome: 'awaiting_user' };
   }
@@ -32,11 +30,8 @@ export const classifyAgentChatTurnOutcome = ({
   };
 };
 
-// Losing the stream claim says the turn's result may never have reached the
-// user, which is worth recording over "completed". It says nothing about a
-// failure that already happened, so those keep their own phase — otherwise a
-// turn that ran out of credits during a claim handover is filed as a plain
-// cancellation and the billing signal disappears.
+// a lost stream claim overrides completion, but failures keep their phase so an out-of-credits turn
+// during a claim handover keeps its billing signal
 export const resolveSupersededTurnOutcome = (
   outcome: AgentChatTurnOutcome,
 ): AgentChatTurnOutcome =>

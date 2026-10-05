@@ -97,10 +97,7 @@ const StyledGridContainer = styled.div`
       height: auto !important;
     }
 
-    // Flow the absolutely-positioned grid items into the page, but keep the
-    // pixel width and height react-grid-layout sets inline: the charts are sized
-    // by a resize observer (Nivo SVG and a custom canvas bar chart), so changing
-    // their box would re-measure mid-print and render them blank.
+    // Keep react-grid-layout's inline size: resize-observed charts would re-measure mid-print and render blank.
     .react-grid-item {
       break-inside: avoid;
       margin-bottom: ${themeCssVariables.spacing[4]};

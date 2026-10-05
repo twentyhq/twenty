@@ -7,6 +7,15 @@ import {
 export const buildAgentMessageStandardFlatIndexMetadatas = (
   args: Omit<CreateStandardIndexArgs<'agentMessage'>, 'context'>,
 ): Record<string, FlatIndexMetadata> => ({
+  senderWorkspaceMemberIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: 'senderWorkspaceMemberIndex',
+      relatedFieldNames: ['senderWorkspaceMember'],
+      isUnique: false,
+      indexWhereClause: null,
+    },
+  }),
   agentIndex: createStandardIndexFlatMetadata({
     ...args,
     context: {

@@ -6,13 +6,19 @@ import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entit
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
 
+type FromCommandMenuItemEntityToFlatCommandMenuItemArgs =
+  FromEntityToFlatEntityArgs<'commandMenuItem'> & {
+    objectMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+    pageLayoutUniversalIdentifierById: Partial<Record<string, string>>;
+  };
+
 export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
-  args: FromEntityToFlatEntityArgs<'commandMenuItem'>,
+  args: FromCommandMenuItemEntityToFlatCommandMenuItemArgs,
 ): FlatCommandMenuItem => {
   const {
     entity: commandMenuItemEntity,
-    objectMetadataIdToUniversalIdentifierMap,
-    pageLayoutIdToUniversalIdentifierMap,
+    objectMetadataUniversalIdentifierById,
+    pageLayoutUniversalIdentifierById,
   } = args;
 
   const commandMenuItemScalarEntity = fromEntityToScalarEntity({
@@ -29,12 +35,8 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
   const universalOverrides = isDefined(commandMenuItemEntity.overrides)
     ? fromCommandMenuItemOverridesToUniversalOverrides({
         overrides: commandMenuItemEntity.overrides,
-        objectMetadataUniversalIdentifierById: Object.fromEntries(
-          objectMetadataIdToUniversalIdentifierMap.entries(),
-        ),
-        pageLayoutUniversalIdentifierById: Object.fromEntries(
-          pageLayoutIdToUniversalIdentifierMap.entries(),
-        ),
+        objectMetadataUniversalIdentifierById,
+        pageLayoutUniversalIdentifierById,
         shouldThrowOnMissingIdentifier: false,
       })
     : null;

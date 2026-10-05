@@ -3,8 +3,8 @@ import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPart
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemAvatar } from 'twenty-ui/components';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Dropdown } from 'twenty-ui/components';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { type SearchRecord } from '~/generated/graphql';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
@@ -29,7 +29,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
   }
 
   if (!filteredWorkspaceMembers.length && searchFilter.length > 0) {
-    return <ListItem disabled>{t`No Results`}</ListItem>;
+    return <Dropdown.Empty>{t`No Results`}</Dropdown.Empty>;
   }
 
   const enrichedWorkspaceMembers = filteredWorkspaceMembers
@@ -46,19 +46,22 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
         const workspaceMemberFullName = `${workspaceMember?.name.firstName ?? ''} ${workspaceMember?.name.lastName ?? ''}`;
 
         return (
-          <MenuItemAvatar
+          <Dropdown.ActionItem
             key={workspaceMember.id}
             onClick={() => onSelect(workspaceMember)}
-            avatar={{
-              shape: 'circle',
-              size: 'md',
-              name: workspaceMemberFullName,
-              colorSeed: workspaceMember.id,
-              src: workspaceMember.avatarUrl,
-            }}
-            text={workspaceMemberFullName}
-            contextualText={workspaceMember.userEmail}
-          />
+            startIcon={
+              <Avatar
+                shape="circle"
+                size="md"
+                name={workspaceMemberFullName}
+                colorSeed={workspaceMember.id}
+                src={workspaceMember.avatarUrl}
+              />
+            }
+            description={workspaceMember.userEmail}
+          >
+            {workspaceMemberFullName}
+          </Dropdown.ActionItem>
         );
       })}
     </>

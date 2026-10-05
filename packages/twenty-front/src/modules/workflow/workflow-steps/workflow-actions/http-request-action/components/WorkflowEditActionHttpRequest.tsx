@@ -159,9 +159,7 @@ export const WorkflowEditActionHttpRequest = ({
                 value={formData.method}
                 onChange={(value) => handleFieldChange('method', value)}
                 disabled={actionOptions.readonly}
-                dropdownOffset={{
-                  y: parseInt(theme.spacing[1], 10),
-                }}
+                dropdownSideOffset={parseInt(theme.spacing[1], 10)}
                 dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
               />
 

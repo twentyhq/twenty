@@ -63,16 +63,19 @@ describe('Standard object readability', () => {
   ) as (keyof typeof INHERITED_STANDARD_OBJECT_PARENT_FIELDS)[];
 
   const nonOpenObjectUniversalIdentifiers: string[] = [
-    STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     STANDARD_OBJECTS.agentMessage.universalIdentifier,
     STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
     STANDARD_OBJECTS.agentTurn.universalIdentifier,
     STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
+    STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
 
     STANDARD_OBJECTS.campaignDelivery.universalIdentifier,
     STANDARD_OBJECTS.messageSuppression.universalIdentifier,
 
     STANDARD_OBJECTS.recordShare.universalIdentifier,
+    STANDARD_OBJECTS.workflowRun.universalIdentifier,
+    STANDARD_OBJECTS.shortLink.universalIdentifier,
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
     ),
@@ -85,15 +88,46 @@ describe('Standard object readability', () => {
       ),
   );
 
-  it('declares recordShare SYSTEM for readability and writability', () => {
-    expect(findStandardFlatObjectMetadata('recordShare')).toMatchObject({
-      readability: MetadataReadability.SYSTEM,
+  // workflowRun grants follow the core workflow's visibility, which does not live on the workspace workflow record
+  it('declares workflowRun PRIVATE and leaves workflow and workflowVersion OPEN', () => {
+    expect(findStandardFlatObjectMetadata('workflowRun')).toMatchObject({
+      readability: MetadataReadability.PRIVATE,
+    });
+    expect(findStandardFlatObjectMetadata('workflow')).toMatchObject({
+      readability: MetadataReadability.OPEN,
+    });
+    expect(findStandardFlatObjectMetadata('workflowVersion')).toMatchObject({
+      readability: MetadataReadability.OPEN,
+    });
+  });
+
+  it.each(['recordShare', 'shortLink'] as const)(
+    'declares %s SYSTEM for readability and writability',
+    (objectName) => {
+      expect(findStandardFlatObjectMetadata(objectName)).toMatchObject({
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+      });
+    },
+  );
+
+  it('declares agentChatThread PRIVATE, read through its own grants', () => {
+    expect(findStandardFlatObjectMetadata('agentChatThread')).toMatchObject({
+      readability: MetadataReadability.PRIVATE,
+      readabilityParentFieldUniversalIdentifiers: null,
+    });
+  });
+
+  it('declares agentChatThreadParticipant PRIVATE, written only by the chat resolvers', () => {
+    expect(
+      findStandardFlatObjectMetadata('agentChatThreadParticipant'),
+    ).toMatchObject({
+      readability: MetadataReadability.PRIVATE,
       writability: MetadataWritability.SYSTEM,
     });
   });
 
-  // A link inheriting from its record, as noteTarget does, would tell everyone
-  // who can read the record which private conversations are filed under it.
+  // Inheriting from the record would reveal which private conversations are filed under it
   it('resolves its thread as the only parent of an agentChatThreadTarget', () => {
     expect(
       resolveParents('agentChatThreadTarget').map((parent) =>

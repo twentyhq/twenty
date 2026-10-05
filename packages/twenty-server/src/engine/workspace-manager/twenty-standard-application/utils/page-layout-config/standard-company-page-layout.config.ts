@@ -119,6 +119,20 @@ const COMPANY_PAGE_TABS = {
       },
     },
   },
+  conversations: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+        .conversations.universalIdentifier,
+    ...TAB_PROPS.conversations,
+    widgets: {
+      conversations: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
+            .conversations.widgets.conversations.universalIdentifier,
+        ...WIDGET_PROPS.conversations,
+      },
+    },
+  },
   calendar: {
     universalIdentifier:
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.calendar

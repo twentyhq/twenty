@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -15,6 +14,11 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util';
+
+const ACCESS_LEVELS_RESTRICTING_OPEN_RECORDS = [
+  RecordShareAccessLevel.NONE,
+  RecordShareAccessLevel.READ,
+];
 
 type RecordShareInputForRecord = Omit<
   RecordShareInput,
@@ -107,20 +111,23 @@ const buildCreatorRows = ({
   ];
 };
 
+// The creator of a record open by default owns it without a row, until
+// everyone is restricted below the default: the creator then keeps a grant,
+// as setRecordGeneralAccess writes one
 export const buildRecordShareInputsForCreatedRecords = ({
   recordIds,
   objectMetadataId,
   authContext,
   apiKeyRoleMap,
   shareWith,
-  isRecordSharingEnforced = true,
+  isOpenByDefault = false,
 }: {
   recordIds: string[];
   objectMetadataId: string;
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
   shareWith?: ShareWithInput[] | null;
-  isRecordSharingEnforced?: boolean;
+  isOpenByDefault?: boolean;
 }): RecordShareInput[] => {
   const shareWithEntries = shareWith ?? [];
   const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
@@ -132,27 +139,28 @@ export const buildRecordShareInputsForCreatedRecords = ({
         : shareWithPrincipal,
     );
 
+  const shouldWriteCreatorRows =
+    !isOpenByDefault ||
+    shareWithPrincipals.some(
+      (shareWithPrincipal) =>
+        shareWithPrincipal.principalType ===
+          RecordSharePrincipalType.EVERYONE &&
+        ACCESS_LEVELS_RESTRICTING_OPEN_RECORDS.includes(
+          shareWithPrincipal.accessLevel,
+        ),
+    );
+
   return [
     ...recordIds.flatMap((recordId) => [
-      ...(!isRecordSharingEnforced && shareWithEntries.length === 0
-        ? [
-            {
-              recordId,
-              objectMetadataId,
-              principalId: EVERYONE_PRINCIPAL_ID,
-              principalType: RecordSharePrincipalType.EVERYONE,
-              accessLevel: RecordShareAccessLevel.FULL,
-              rowCause: RecordShareRowCause.APPLICATION,
-              sourceId: objectMetadataId,
-            },
-          ]
-        : []),
-      ...buildCreatorRows({
-        authContext,
-        apiKeyRoleMap,
-        recordId,
-        shareWithPrincipals,
-      }).map((creatorRow) => ({ recordId, objectMetadataId, ...creatorRow })),
+      ...(shouldWriteCreatorRows
+        ? buildCreatorRows({
+            authContext,
+            apiKeyRoleMap,
+            recordId,
+            shareWithPrincipals,
+          })
+        : []
+      ).map((creatorRow) => ({ recordId, objectMetadataId, ...creatorRow })),
       ...shareWithPrincipals.map((shareWithPrincipal) => ({
         recordId,
         objectMetadataId,

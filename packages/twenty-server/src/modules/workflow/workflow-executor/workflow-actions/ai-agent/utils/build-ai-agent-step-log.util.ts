@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/workflow';
 
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
-import { mapAiStepsToToolCallLogs } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-tool-call-logs.util';
+import { mapAiStepsToToolCallLogs } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/map-ai-steps-to-tool-call-logs.util';
 
 export const buildAiAgentStepLog = ({
   executionResult,
@@ -12,15 +12,7 @@ export const buildAiAgentStepLog = ({
 }: {
   executionResult: AgentExecutionResult;
   durationMs: number;
-}): WorkflowRunStepLog | null => {
-  if (!executionResult.modelId) {
-    return null;
-  }
-
-  const toolCalls = executionResult.steps
-    ? mapAiStepsToToolCallLogs(executionResult.steps)
-    : [];
-
+}): WorkflowRunStepLog => {
   const details: AiAgentStepLogDetails = {
     type: 'AI_AGENT',
     modelId: executionResult.modelId,
@@ -34,11 +26,11 @@ export const buildAiAgentStepLog = ({
       totalTokens: executionResult.usage.totalTokens ?? 0,
     },
     cost: {
-      totalCostInDollars: executionResult.totalCostInDollars ?? 0,
-      creditsUsedMicro: executionResult.creditsUsedMicro ?? 0,
+      totalCostInDollars: executionResult.totalCostInDollars,
+      creditsUsedMicro: executionResult.creditsUsedMicro,
     },
     nativeWebSearchCallCount: executionResult.nativeWebSearchCallCount,
-    toolCalls,
+    toolCalls: mapAiStepsToToolCallLogs(executionResult.steps),
     durationMs,
   };
 

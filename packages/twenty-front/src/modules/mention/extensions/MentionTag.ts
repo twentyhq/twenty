@@ -38,6 +38,15 @@ export const MentionTag = Node.create({
         'data-image-url': attributes.imageUrl,
       }),
     },
+    // Marks the record a conversation started from; left out of the HTML so a copied mention does not carry it.
+    isConversationTarget: {
+      default: false,
+      rendered: false,
+    },
+    shouldAddAsParticipant: {
+      default: false,
+      rendered: false,
+    },
   }),
 
   renderHTML: ({ node, HTMLAttributes }) => {
