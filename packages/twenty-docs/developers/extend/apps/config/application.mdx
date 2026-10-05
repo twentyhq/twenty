@@ -164,8 +164,8 @@ The value reaches your code as a JSON array, one entry per uploaded file, with a
 type ApplicationVariableFile = {
   fileId: string;
   label: string; // the uploaded file name, editable in the settings
-  extension: string; // e.g. ".png"
-  url: string; // download url, signed with an expiry when the variable sets signUrl
+  extension?: string; // e.g. ".png", absent when the uploaded file had none
+  url?: string; // download url, set on every read, signed with an expiry when the variable sets signUrl
 };
 
 const [logo] = JSON.parse(process.env.INVOICE_LOGO ?? '[]') as ApplicationVariableFile[];
