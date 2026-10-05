@@ -55,7 +55,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -112,7 +111,6 @@ export class LogicFunctionExecutorService {
     private readonly subscriptionService: SubscriptionService,
     private readonly eventLogLiveService: EventLogLiveService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly usageRecorderService: UsageRecorderService,
     private readonly billingUsageService: BillingUsageService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly featureFlagService: FeatureFlagService,
@@ -637,29 +635,20 @@ export class LogicFunctionExecutorService {
         functionName: flatLogicFunction.name,
       });
 
-    const spenders = {
-      logicFunctionId: flatLogicFunction.id,
-      applicationId: flatApplication.id,
-    };
-
     // Billing-exempt apps skip the invocation charge; their explicit chargeCredits and AI usage are still billed.
-    const { usageEvents, cost } = buildLogicFunctionExecutionUsage({
-      durationMs: result.billedDurationMs,
-      isBillingExempt: isBillingExemptApplication(
-        flatApplication.universalIdentifier,
-      ),
-      resourceId: flatLogicFunction.id,
-      spenders,
-    });
-
-    await this.usageLimitQuotaService.consumeQuota({
+    await this.usageLimitQuotaService.charge({
       workspaceId,
-      resourceType: UsageResourceType.LOGIC_FUNCTION,
-      operationType: UsageOperationType.CODE_EXECUTION,
-      spenders,
-      cost,
+      events: buildLogicFunctionExecutionUsage({
+        durationMs: result.billedDurationMs,
+        isBillingExempt: isBillingExemptApplication(
+          flatApplication.universalIdentifier,
+        ),
+        resourceId: flatLogicFunction.id,
+        spenders: {
+          logicFunctionId: flatLogicFunction.id,
+          applicationId: flatApplication.id,
+        },
+      }),
     });
-
-    await this.usageRecorderService.record(workspaceId, usageEvents);
   }
 }
