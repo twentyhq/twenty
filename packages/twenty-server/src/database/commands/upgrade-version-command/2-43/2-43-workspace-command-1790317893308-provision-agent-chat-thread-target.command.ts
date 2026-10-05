@@ -15,6 +15,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildSystemRelationFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -249,9 +250,21 @@ export class ProvisionAgentChatThreadTargetCommand extends ProvisionedWorkspaceC
       [schemaName, tableName],
     );
 
-    const tableRows = await dataSource.query<{ table_name: string }[]>(
-      `SELECT table_name FROM information_schema.tables WHERE table_schema = $1`,
-      [schemaName],
+    // Looked up by name so Postgres uses the pg_class name index: listing a
+    // schema scans the catalog of every workspace schema on the instance.
+    const tableRows = await dataSource.query<{ name: string }[]>(
+      `SELECT c.relname AS name
+         FROM pg_class c
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+         WHERE n.nspname = $1 AND c.relname = ANY($2) AND c.relkind IN ('r', 'p')`,
+      [
+        schemaName,
+        Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+          .filter(isDefined)
+          .map((flatObjectMetadata) =>
+            computeObjectTargetTable(flatObjectMetadata),
+          ),
+      ],
     );
 
     const { flatObjectMetadatas, unprovisionableRelations } =
@@ -263,7 +276,7 @@ export class ProvisionAgentChatThreadTargetCommand extends ProvisionedWorkspaceC
           columnRows.map(({ column_name }) => column_name),
         ),
         existingTableNames: new Set(
-          tableRows.map(({ table_name }) => table_name),
+          tableRows.map(({ name }) => name),
         ),
         twentyStandardApplicationUniversalIdentifier,
       });

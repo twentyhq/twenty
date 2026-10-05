@@ -22,6 +22,7 @@ import {
   buildSystemRelationFlatFieldMetadatasForObject,
   type SystemRelationFlatFieldMetadataBundle,
 } from 'src/engine/metadata-modules/object-metadata/utils/build-system-relation-flat-field-metadatas-for-object.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -100,6 +101,11 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
     const existingTableNames = await this.readExistingTableNames({
       dataSource,
       workspaceId,
+      tableNames: Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .map((flatObjectMetadata) =>
+          computeObjectTargetTable(flatObjectMetadata),
+        ),
     });
 
     const { twentyStandardFlatApplication } =
@@ -308,18 +314,25 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
     return existingColumnNamesByHolderNameSingular;
   }
 
+  // Looked up by name so Postgres uses the pg_class name index: listing a
+  // schema scans the catalog of every workspace schema on the instance.
   private async readExistingTableNames({
     dataSource,
     workspaceId,
+    tableNames,
   }: {
     dataSource: DataSource;
     workspaceId: string;
+    tableNames: string[];
   }): Promise<Set<string>> {
-    const rows = await dataSource.query<{ table_name: string }[]>(
-      `SELECT table_name FROM information_schema.tables WHERE table_schema = $1`,
-      [getWorkspaceSchemaName(workspaceId)],
+    const rows = await dataSource.query<{ name: string }[]>(
+      `SELECT c.relname AS name
+       FROM pg_class c
+       JOIN pg_namespace n ON n.oid = c.relnamespace
+       WHERE n.nspname = $1 AND c.relname = ANY($2) AND c.relkind IN ('r', 'p')`,
+      [getWorkspaceSchemaName(workspaceId), tableNames],
     );
 
-    return new Set(rows.map(({ table_name }) => table_name));
+    return new Set(rows.map(({ name }) => name));
   }
 }
