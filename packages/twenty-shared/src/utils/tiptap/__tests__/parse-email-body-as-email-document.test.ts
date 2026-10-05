@@ -50,6 +50,7 @@ describe('parseEmailBodyAsEmailDocument', () => {
       '<my-widget>Hi</my-widget>',
       'Hi <x-tag>Ada</x-tag>',
       'Total: <price>12</price>',
+      'Thanks </foo>',
     ];
 
     for (const body of bodies) {

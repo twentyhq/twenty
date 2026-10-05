@@ -21,24 +21,12 @@ const containsHtmlMarkup = (body: string): boolean => {
     return true;
   }
 
-  const tags = Array.from(
-    body.matchAll(HTML_TAG_PATTERN),
-    ([, closingSlash, tagName, selfClosingSlash]) => ({
-      isClosing: closingSlash === '/',
-      isSelfClosing: selfClosingSlash === '/',
-      tagName: tagName?.toLowerCase() ?? '',
-    }),
-  );
-  const closedTagNames = new Set(
-    tags.filter((tag) => tag.isClosing).map((tag) => tag.tagName),
-  );
-
-  return tags.some(
-    (tag) =>
-      HTML_ELEMENT_NAMES.has(tag.tagName) ||
-      tag.tagName.includes('-') ||
-      tag.isSelfClosing ||
-      (!tag.isClosing && closedTagNames.has(tag.tagName)),
+  return Array.from(body.matchAll(HTML_TAG_PATTERN)).some(
+    ([, closingSlash, tagName, selfClosingSlash]) =>
+      closingSlash === '/' ||
+      selfClosingSlash === '/' ||
+      HTML_ELEMENT_NAMES.has(tagName?.toLowerCase() ?? '') ||
+      (tagName?.includes('-') ?? false),
   );
 };
 
