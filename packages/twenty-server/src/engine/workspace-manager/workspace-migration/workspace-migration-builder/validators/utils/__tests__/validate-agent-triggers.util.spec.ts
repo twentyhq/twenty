@@ -103,7 +103,7 @@ describe('validateAgentTriggers', () => {
         {
           ...CRON_TRIGGER,
           type: 'WEBHOOK',
-        } as unknown as AgentTrigger,
+        },
       ],
     });
 
@@ -130,9 +130,7 @@ describe('validateAgentTriggers', () => {
 
   it('should reject a missing isActive flag', () => {
     const errors = validateAgentTriggers({
-      triggers: [
-        { ...CRON_TRIGGER, isActive: undefined } as unknown as AgentTrigger,
-      ],
+      triggers: [{ ...CRON_TRIGGER, isActive: undefined }],
     });
 
     expect(errors).toHaveLength(1);
@@ -153,6 +151,19 @@ describe('validateAgentTriggers', () => {
     }));
 
     const errors = validateAgentTriggers({ triggers });
+
+    expect(errors).toHaveLength(1);
+  });
+
+  it('should reject a missing list', () => {
+    const errors = validateAgentTriggers({ triggers: null });
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].message).toContain('must be a list');
+  });
+
+  it('should report a null trigger without throwing', () => {
+    const errors = validateAgentTriggers({ triggers: [null, CRON_TRIGGER] });
 
     expect(errors).toHaveLength(1);
   });
