@@ -4,7 +4,6 @@ import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/recor
 import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
 import { isValidCreditAmountMicro } from 'src/engine/core-modules/usage/utils/is-valid-credit-amount-micro.util';
 
-// Mirrors the usageEvent row the recorder writes (invalid credits stored as 0), so a debit counts what ClickHouse will store.
 export const fromRecordUsageInputToUsageConsumptionRow = ({
   operationType,
   unit,

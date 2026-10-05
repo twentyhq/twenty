@@ -137,7 +137,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
     return { exhaustedKind };
   }
 
-  // The streaming AI loop debits each step to stop early, then records the whole turn when it ends.
   async debitAheadOfRecord({
     workspaceId,
     event,
@@ -449,7 +448,6 @@ export class UsageLimitQuotaService implements OnModuleInit {
     }
   }
 
-  // Never throws: the caller records the events whatever happens to the debit, so a failed debit cannot lose a usage row.
   private async debitCountersAdmittingOnFailure({
     workspaceId,
     events,

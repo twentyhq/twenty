@@ -17,7 +17,6 @@ const ALLOWANCE_CONSUMPTION_SCOPE: QuotaConsumptionScope = {
   unit: UsageUnit.CREDIT,
 };
 
-// Each counter is debited by the rule that rebuilds it from ClickHouse, so a live debit and a warm cannot disagree.
 export const buildQuotaDebits = ({
   counters,
   events,
