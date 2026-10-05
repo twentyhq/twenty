@@ -83,7 +83,7 @@ describe('Sending an inbox message as an application', () => {
     global.testDataSource.query(
       `SELECT id, role, "isHidden", "senderUserWorkspaceId", "senderApplicationId"
        FROM "${schema}"."agentMessage" WHERE "threadId" = $1
-       ORDER BY "processedAt" ASC`,
+       ORDER BY "processedAt" ASC, "createdAt" ASC`,
       [id],
     );
 

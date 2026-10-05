@@ -119,15 +119,13 @@ export class AgentInboxService {
         title: input.title,
       }));
 
-    await this.ignoreDuplicate(() =>
-      this.conversationWriterService.insertAgentOpenedTurn({
-        workspaceId,
-        threadId,
-        turnId,
-        contextMessageId: openingMessageId,
-        context: `${senderDetails.description} started this conversation. Its messages follow.`,
-      }),
-    );
+    await this.ensureOpener({
+      workspaceId,
+      threadId,
+      turnId,
+      openingMessageId,
+      senderDescription: senderDetails.description,
+    });
 
     const parts: ExtendedUIMessagePart[] = [{ type: 'text', text: input.text }];
 
@@ -183,6 +181,50 @@ export class AgentInboxService {
     });
 
     return part?.toolOutput;
+  }
+
+  // The opener is a system message naming the sender, and holds no text from
+  // it. Written as two idempotent writes, so a retry completes an opener that
+  // a failure left half written.
+  private async ensureOpener({
+    workspaceId,
+    threadId,
+    turnId,
+    openingMessageId,
+    senderDescription,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId: string;
+    openingMessageId: string;
+    senderDescription: string;
+  }): Promise<void> {
+    await this.ignoreDuplicate(() =>
+      this.conversationWriterService.insertTurn({
+        workspaceId,
+        id: turnId,
+        threadId,
+        agentId: null,
+      }),
+    );
+
+    await this.ignoreDuplicate(() =>
+      this.conversationWriterService.insertMessage({
+        workspaceId,
+        id: openingMessageId,
+        threadId,
+        turnId,
+        role: AgentMessageRole.SYSTEM,
+        agentId: null,
+        senderUserWorkspaceId: null,
+        parts: [
+          {
+            type: 'text',
+            text: `${senderDescription} started this conversation. Its messages follow.`,
+          },
+        ],
+      }),
+    );
   }
 
   private findThread({

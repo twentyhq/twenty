@@ -67,6 +67,9 @@ describe('2-46 workspace command - turn hidden agent messages into system messag
   });
 
   afterAll(async () => {
+    // down reaches every system message of the workspace
+    await runCommand('up');
+
     for (const table of ['agentMessage', 'agentTurn']) {
       await global.testDataSource.query(
         `DELETE FROM ${SCHEMA}."${table}" WHERE "threadId" = $1`,

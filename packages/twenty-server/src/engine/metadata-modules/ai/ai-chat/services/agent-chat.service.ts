@@ -236,8 +236,30 @@ export class AgentChatService {
     workspaceId: string;
     context: string;
   }): Promise<string> {
-    await this.messageRepository.delete(workspaceId, { threadId });
-    await this.turnRepository.delete(workspaceId, { threadId });
+    // only the contexts and their turns go, so a message queued meanwhile stays
+    const earlierContexts = await this.messageRepository.find(workspaceId, {
+      where: [
+        { threadId, role: AgentMessageRole.SYSTEM },
+        { threadId, isHidden: true },
+      ],
+      select: ['id', 'turnId'],
+    });
+
+    if (isNonEmptyArray(earlierContexts)) {
+      await this.messageRepository.delete(workspaceId, {
+        id: In(earlierContexts.map(({ id }) => id)),
+      });
+    }
+
+    const earlierTurnIds = earlierContexts.flatMap(({ turnId }) =>
+      isDefined(turnId) ? [turnId] : [],
+    );
+
+    if (isNonEmptyArray(earlierTurnIds)) {
+      await this.turnRepository.delete(workspaceId, {
+        id: In(earlierTurnIds),
+      });
+    }
 
     return this.conversationWriterService.insertAgentOpenedTurn({
       workspaceId,
