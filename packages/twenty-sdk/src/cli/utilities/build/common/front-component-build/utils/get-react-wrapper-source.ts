@@ -1,12 +1,34 @@
+const REACT_WRAPPER_RUNTIME_PARTS = {
+  react: {
+    refCompatImport: '',
+    cloneNonCustomElement:
+      'return originalCloneElement.apply(null, cloneElementArguments);',
+    overriddenExports: 'createElement, cloneElement',
+  },
+  preact: {
+    refCompatImport:
+      "import { memo, normalizeClonedElementRef, useImperativeHandle } from '__preact_ref_compat__';",
+    cloneNonCustomElement: `return normalizeClonedElementRef({
+      element,
+      clonedElement: originalCloneElement.apply(null, cloneElementArguments),
+      config: getPropsArgument(cloneElementArguments),
+    });`,
+    overriddenExports: 'createElement, cloneElement, memo, useImperativeHandle',
+  },
+};
+
 export const getReactWrapperSource = ({
-  readsElementRefFromVnode,
+  usePreact,
 }: {
-  readsElementRefFromVnode: boolean;
-}): string =>
-  `
+  usePreact: boolean;
+}): string => {
+  const { refCompatImport, cloneNonCustomElement, overriddenExports } =
+    REACT_WRAPPER_RUNTIME_PARTS[usePreact ? 'preact' : 'react'];
+
+  return `
 export * from '__real_react__';
 import React from '__real_react__';
-${readsElementRefFromVnode ? "import { normalizeClonedFunctionRef } from '__preact_ref_compat__';" : ''}
+${refCompatImport}
 
 import {
   customElementMap,
@@ -19,7 +41,7 @@ import {
 
 const originalCreateElement = React.createElement;
 const originalCloneElement = React.cloneElement;
-const readsElementRefFromVnode = ${readsElementRefFromVnode};
+const readsElementRefFromVnode = ${usePreact};
 
 function getPropsArgument(elementArguments) {
   return elementArguments.length > 1 ? elementArguments[1] : null;
@@ -73,14 +95,7 @@ function cloneElement(element) {
   const cloneElementArguments = arguments;
   const isCustomElement = !!element && isCustomElementTag(element.type);
   if (!isCustomElement) {
-    ${
-      readsElementRefFromVnode
-        ? `return normalizeClonedFunctionRef({
-      vnode: originalCloneElement.apply(null, cloneElementArguments),
-      config: getPropsArgument(cloneElementArguments),
-    });`
-        : 'return originalCloneElement.apply(null, cloneElementArguments);'
-    }
+    ${cloneNonCustomElement}
   }
 
   const propsWithCloneEventRef = withCloneEventRef(
@@ -99,6 +114,7 @@ function cloneElement(element) {
   );
 }
 
-export { createElement, cloneElement };
-export default Object.assign({}, React, { createElement, cloneElement });
+export { ${overriddenExports} };
+export default Object.assign({}, React, { ${overriddenExports} });
 `.trim();
+};

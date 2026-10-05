@@ -26,28 +26,27 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
     setup: (build) => {
       let realJsxRuntimePath: string | undefined;
       let realReactPath: string | undefined;
-      const refCompatImport = usePreact
-        ? "import '__preact_ref_compat__';\n"
-        : '';
 
-      build.onResolve({ filter: /^__preact_ref_compat__$/ }, () => ({
-        path: '__preact_ref_compat__',
-        namespace: 'preact-ref-compat',
-      }));
+      if (usePreact) {
+        build.onResolve({ filter: /^__preact_ref_compat__$/ }, () => ({
+          path: '__preact_ref_compat__',
+          namespace: 'preact-ref-compat',
+        }));
 
-      build.onLoad({ filter: /.*/, namespace: 'preact-ref-compat' }, () => {
-        const realRuntimePath = realJsxRuntimePath ?? realReactPath;
+        build.onLoad({ filter: /.*/, namespace: 'preact-ref-compat' }, () => {
+          const realRuntimePath = realJsxRuntimePath ?? realReactPath;
 
-        if (!isDefined(realRuntimePath)) {
-          throw new Error('Preact runtime path has not been resolved');
-        }
+          if (!isDefined(realRuntimePath)) {
+            throw new Error('Preact runtime path has not been resolved');
+          }
 
-        return {
-          contents: PREACT_REF_COMPAT_SOURCE,
-          loader: 'js' as const,
-          resolveDir: dirname(realRuntimePath),
-        };
-      });
+          return {
+            contents: PREACT_REF_COMPAT_SOURCE,
+            loader: 'js' as const,
+            resolveDir: dirname(realRuntimePath),
+          };
+        });
+      }
 
       build.onResolve({ filter: /^__jsx_shared_helpers__$/ }, () => ({
         path: '__jsx_shared_helpers__',
@@ -91,7 +90,9 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
       });
 
       build.onLoad({ filter: /.*/, namespace: 'jsx-runtime-wrapper' }, () => ({
-        contents: refCompatImport + JSX_RUNTIME_WRAPPER_SOURCE,
+        contents: usePreact
+          ? `import '__preact_ref_compat__';\n${JSX_RUNTIME_WRAPPER_SOURCE}`
+          : JSX_RUNTIME_WRAPPER_SOURCE,
         loader: 'js' as const,
       }));
 
@@ -127,9 +128,7 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
       });
 
       build.onLoad({ filter: /.*/, namespace: 'react-wrapper' }, () => ({
-        contents:
-          refCompatImport +
-          getReactWrapperSource({ readsElementRefFromVnode: usePreact }),
+        contents: getReactWrapperSource({ usePreact }),
         loader: 'js' as const,
       }));
     },

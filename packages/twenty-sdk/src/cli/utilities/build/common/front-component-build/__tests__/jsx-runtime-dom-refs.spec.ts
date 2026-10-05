@@ -1,3 +1,4 @@
+import { isNull } from '@sniptt/guards';
 import * as esbuild from 'esbuild';
 import { JSDOM } from 'jsdom';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
@@ -20,6 +21,12 @@ import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/fron
 
 type Fixture = ReturnType<typeof createDomRefFixture>;
 type Composition = Parameters<Fixture['render']>[0]['composition'];
+type ReusableElementKind = Parameters<
+  Fixture['createReusableElement']
+>[0]['kind'];
+type ClassComponentConstruction = Parameters<
+  Fixture['renderClass']
+>[0]['construction'];
 
 const COMPOSITIONS: Composition[] = [
   'native',
@@ -31,19 +38,104 @@ const COMPOSITIONS: Composition[] = [
   'base-ui-render',
 ];
 
+const PREACT_REF_COMPAT_MODULE_INPUT =
+  'preact-ref-compat:__preact_ref_compat__';
+
+const CLONE_REF_CASES = [
+  { mount: 'fresh', cloneRef: 'null', refCalls: [] },
+  {
+    mount: 'fresh',
+    cloneRef: 'a replacement',
+    refCalls: ['replacement attached', 'replacement detached'],
+  },
+  {
+    mount: 'fresh',
+    cloneRef: 'undefined',
+    refCalls: ['original attached', 'original detached'],
+  },
+  {
+    mount: 'mounted',
+    cloneRef: 'null',
+    refCalls: ['original attached', 'original detached'],
+  },
+  {
+    mount: 'mounted',
+    cloneRef: 'a replacement',
+    refCalls: [
+      'original attached',
+      'original detached',
+      'replacement attached',
+      'replacement detached',
+    ],
+  },
+  {
+    mount: 'mounted',
+    cloneRef: 'undefined',
+    refCalls: ['original attached', 'original detached'],
+  },
+] as const;
+
+const REUSABLE_ELEMENT_KINDS: ReusableElementKind[] = [
+  'host',
+  'unmapped-host',
+  'function',
+  'forward-ref',
+  'memo',
+  'class',
+];
+
+const REF_FORWARDING_ELEMENT_KINDS = [
+  'function',
+  'forward-ref',
+  'memo',
+] as const;
+
+const CLASS_COMPONENT_CONSTRUCTIONS: ClassComponentConstruction[] = [
+  'jsx',
+  'create-element',
+  'clone-element',
+  'forward-ref',
+];
+
+const getCloneRefConfig = <TReplacementRef>(
+  cloneRef: (typeof CLONE_REF_CASES)[number]['cloneRef'],
+  replacementRef: TReplacementRef,
+) =>
+  ({ null: null, 'a replacement': replacementRef, undefined: undefined })[
+    cloneRef
+  ];
+
 describe.each([false, true])(
   'front-component DOM refs (usePreact: %s)',
   (usePreact) => {
     let source: string;
+    let metafile: esbuild.Metafile;
     let environment: JSDOM;
     let fixture: Fixture;
     let container: Element;
+
+    const getButtonByText = (text: string) =>
+      Array.from(container.querySelectorAll('html-button')).find(
+        (button) => button.textContent === text,
+      );
+
+    const nameRefCalls = (
+      ref: { mock: { calls: unknown[][] } },
+      targetsByName: Record<string, unknown>,
+    ) =>
+      ref.mock.calls.map(([value]) =>
+        isNull(value)
+          ? null
+          : (Object.entries(targetsByName).find(
+              ([, target]) => target === value,
+            )?.[0] ?? 'an unexpected value'),
+      );
 
     beforeAll(async () => {
       const outputDirectory = await mkdtemp(join(tmpdir(), 'dom-ref-fixture-'));
 
       try {
-        await esbuild.build({
+        const buildResult = await esbuild.build({
           ...getBaseFrontComponentBuildOptions(),
           entryPoints: [
             fileURLToPath(
@@ -55,8 +147,10 @@ describe.each([false, true])(
           globalName: 'domRefFixture',
           outdir: outputDirectory,
           sourcemap: false,
+          metafile: true,
         });
 
+        metafile = buildResult.metafile;
         source = await readFile(
           join(outputDirectory, 'dom-ref-components.mjs'),
           'utf8',
@@ -88,20 +182,30 @@ describe.each([false, true])(
       environment.window.close();
     });
 
-    it.each(['jsx', 'create-element', 'clone-element'] as const)(
+    it('bundles the Preact ref compat module only for Preact, importing nothing but Preact', () => {
+      expect(
+        metafile.inputs[PREACT_REF_COMPAT_MODULE_INPUT]?.imports.map(
+          (importedModule) => importedModule.original,
+        ),
+      ).toEqual(
+        usePreact ? ['preact', 'preact/hooks', 'preact/compat'] : undefined,
+      );
+    });
+
+    it.each(CLASS_COMPONENT_CONSTRUCTIONS)(
       'preserves class component instances in %s refs',
-      async (construction) => {
+      (construction) => {
         const ref = vi.fn();
 
         fixture.renderClass({ construction, label: 'Initial', ref });
-        await vi.waitFor(() => expect(container.textContent).toBe('Initial'));
+        expect(container.textContent).toBe('Initial');
         const instance = ref.mock.lastCall?.[0];
 
         expect(instance.getLabel()).toBe('Initial');
         expect(instance).not.toBe(container.firstElementChild);
 
         fixture.renderClass({ construction, label: 'Updated', ref });
-        await vi.waitFor(() => expect(container.textContent).toBe('Updated'));
+        expect(container.textContent).toBe('Updated');
         expect(ref.mock.lastCall?.[0]).toBe(instance);
         expect(instance.getLabel()).toBe('Updated');
 
@@ -110,7 +214,36 @@ describe.each([false, true])(
       },
     );
 
-    it('merges the Base UI render element ref with its parent ref through updates and unmount', async () => {
+    it.each(CLASS_COMPONENT_CONSTRUCTIONS)(
+      'detaches a class component instance ref that a later %s render removes',
+      (construction) => {
+        const ref = vi.fn();
+
+        fixture.renderClass({ construction, label: 'Initial', ref });
+        const instance = ref.mock.lastCall?.[0];
+
+        fixture.renderClass({ construction, label: 'Updated' });
+        expect(container.textContent).toBe('Updated');
+        expect(nameRefCalls(ref, { instance })).toEqual(['instance', null]);
+
+        fixture.renderClass({ construction, label: 'Restored', ref });
+        expect(nameRefCalls(ref, { instance })).toEqual([
+          'instance',
+          null,
+          'instance',
+        ]);
+
+        fixture.unmount();
+        expect(nameRefCalls(ref, { instance })).toEqual([
+          'instance',
+          null,
+          'instance',
+          null,
+        ]);
+      },
+    );
+
+    it('merges the Base UI render element ref with its parent ref through updates and unmount', () => {
       const firstParentRef = vi.fn();
       const firstRenderRef = vi.fn();
       const secondParentRef = vi.fn();
@@ -121,7 +254,7 @@ describe.each([false, true])(
         ref: firstParentRef,
         renderRef: firstRenderRef,
       });
-      await vi.waitFor(() => expect(container.textContent).toBe('Initial'));
+      expect(container.textContent).toBe('Initial');
       const element = container.firstElementChild;
 
       expect(firstParentRef.mock.lastCall?.[0]?.nodeType).toBe(1);
@@ -134,7 +267,7 @@ describe.each([false, true])(
         ref: secondParentRef,
         renderRef: secondRenderRef,
       });
-      await vi.waitFor(() => expect(container.textContent).toBe('Updated'));
+      expect(container.textContent).toBe('Updated');
 
       expect(container.firstElementChild).toBe(element);
       expect(firstParentRef).toHaveBeenLastCalledWith(null);
@@ -147,11 +280,159 @@ describe.each([false, true])(
       expect(secondRenderRef).toHaveBeenLastCalledWith(null);
     });
 
-    it('replaces a callback ref when cloning an element before its first render', async () => {
+    it.each(REF_FORWARDING_ELEMENT_KINDS)(
+      'keeps a rendered %s element ref when the element is reused as a Base UI render prop',
+      async (kind) => {
+        const ref = vi.fn();
+
+        fixture
+          .createReusableElement({ kind, label: 'Reused', ref })
+          .renderInRenderPropSwitch('Render through Base UI');
+        const directlyRenderedButton = getButtonByText('Reused');
+
+        expect(directlyRenderedButton?.nodeType).toBe(1);
+        expect(nameRefCalls(ref, { directlyRenderedButton })).toEqual([
+          'directlyRenderedButton',
+        ]);
+
+        await fixture.click(getButtonByText('Render through Base UI')!);
+        const renderPropButton = getButtonByText('Reused');
+
+        expect(renderPropButton?.nodeType).toBe(1);
+        expect(
+          nameRefCalls(ref, { directlyRenderedButton, renderPropButton }),
+        ).toEqual(['directlyRenderedButton', null, 'renderPropButton']);
+
+        fixture.unmount();
+        expect(
+          nameRefCalls(ref, { directlyRenderedButton, renderPropButton }),
+        ).toEqual(['directlyRenderedButton', null, 'renderPropButton', null]);
+      },
+    );
+
+    it.each(REF_FORWARDING_ELEMENT_KINDS)(
+      'attaches the ref of a %s element rendered directly and by a following Base UI render prop sibling',
+      (kind) => {
+        const ref = vi.fn();
+
+        fixture
+          .createReusableElement({ kind, label: 'Reused', ref })
+          .renderWithRenderPropSibling();
+        const [directlyRenderedButton, renderPropButton] = Array.from(
+          container.querySelectorAll('html-button'),
+        );
+        const buttons = { directlyRenderedButton, renderPropButton };
+
+        expect(renderPropButton?.nodeType).toBe(1);
+        expect(nameRefCalls(ref, buttons)).toEqual([
+          'directlyRenderedButton',
+          'renderPropButton',
+        ]);
+
+        fixture.unmount();
+        expect(nameRefCalls(ref, buttons)).toEqual([
+          'directlyRenderedButton',
+          'renderPropButton',
+          null,
+          null,
+        ]);
+      },
+    );
+
+    it.each(REF_FORWARDING_ELEMENT_KINDS)(
+      'shows a following sibling the ref of a %s element rendered before it',
+      (kind) => {
+        const ref = vi.fn();
+        const handleElementRefRead = vi.fn();
+
+        fixture
+          .createReusableElement({ kind, label: 'Read', ref })
+          .renderWithRefReaderSibling(handleElementRefRead);
+
+        expect(handleElementRefRead.mock.calls).toEqual([[ref]]);
+      },
+    );
+
+    it('shows a following sibling no ref for a class element rendered before it without one', () => {
+      const handleElementRefRead = vi.fn();
+
+      fixture
+        .createReusableElement({ kind: 'class', label: 'Read' })
+        .renderWithRefReaderSibling(handleElementRefRead);
+
+      expect(handleElementRefRead).toHaveBeenCalledOnce();
+      expect(handleElementRefRead.mock.calls[0]?.[0] ?? null).toBeNull();
+    });
+
+    it('attaches the ref of an element rendered again after it was unmounted', () => {
+      const ref = vi.fn();
+      const reusableElement = fixture.createReusableElement({
+        kind: 'function',
+        label: 'Remounted',
+        ref,
+      });
+
+      reusableElement.render();
+      const firstButton = container.firstElementChild;
+      fixture.renderNothing();
+      reusableElement.render();
+      const secondButton = container.firstElementChild;
+
+      expect(firstButton?.nodeType).toBe(1);
+      expect(secondButton?.nodeType).toBe(1);
+      expect(nameRefCalls(ref, { firstButton, secondButton })).toEqual([
+        'firstButton',
+        null,
+        'secondButton',
+      ]);
+
+      fixture.unmount();
+      expect(nameRefCalls(ref, { firstButton, secondButton })).toEqual([
+        'firstButton',
+        null,
+        'secondButton',
+        null,
+      ]);
+    });
+
+    it('keeps keyed function component refs on their elements when the list is reordered', () => {
+      const firstRef = vi.fn();
+      const secondRef = vi.fn();
+      const thirdRef = vi.fn();
+      const items = [
+        { label: 'First', ref: firstRef },
+        { label: 'Second', ref: secondRef },
+        { label: 'Third', ref: thirdRef },
+      ];
+
+      fixture.renderKeyedList(items);
+      const [firstButton, secondButton, thirdButton] = Array.from(
+        container.children,
+      );
+
+      fixture.renderKeyedList([items[2], items[0], items[1]]);
+      const buttons = { firstButton, secondButton, thirdButton };
+
+      expect(container.textContent).toBe('ThirdFirstSecond');
+      expect(container.children[0]).toBe(thirdButton);
+      expect(container.children[1]).toBe(firstButton);
+      expect(container.children[2]).toBe(secondButton);
+      expect(nameRefCalls(firstRef, buttons)).toEqual(['firstButton']);
+      expect(nameRefCalls(secondRef, buttons)).toEqual(['secondButton']);
+      expect(nameRefCalls(thirdRef, buttons)).toEqual(['thirdButton']);
+
+      fixture.unmount();
+      expect(nameRefCalls(firstRef, buttons)).toEqual(['firstButton', null]);
+      expect(nameRefCalls(secondRef, buttons)).toEqual(['secondButton', null]);
+      expect(nameRefCalls(thirdRef, buttons)).toEqual(['thirdButton', null]);
+    });
+
+    it('replaces a callback ref when cloning an element before its first render', () => {
       const originalRef = vi.fn();
       const replacementCleanup = vi.fn();
       const replacementRef = vi.fn(() => replacementCleanup);
       const reusableElement = fixture.createReusableElement({
+        kind: 'function',
         label: 'Original',
         ref: originalRef,
       });
@@ -160,36 +441,37 @@ describe.each([false, true])(
         label: 'Cloned',
         ref: replacementRef,
       });
-      await vi.waitFor(() => expect(container.textContent).toBe('Cloned'));
+      expect(container.textContent).toBe('Cloned');
 
       expect(originalRef).not.toHaveBeenCalled();
-      expect(replacementRef.mock.calls.length).toBe(1);
-      expect(replacementRef).toHaveBeenLastCalledWith(
-        container.firstElementChild,
-      );
+      expect(
+        nameRefCalls(replacementRef, { element: container.firstElementChild }),
+      ).toEqual(['element']);
 
       fixture.unmount();
       expect(originalRef).not.toHaveBeenCalled();
+      expect(replacementRef.mock.calls).toHaveLength(1);
       expect(replacementCleanup).toHaveBeenCalledOnce();
     });
 
-    it('replaces an object ref on a fresh clone without mutating the source element', async () => {
+    it('replaces an object ref on a fresh clone without mutating the source element', () => {
       const originalRef = { current: null as HTMLButtonElement | null };
       const replacementRef = { current: null as HTMLButtonElement | null };
       const reusableElement = fixture.createReusableElement({
+        kind: 'function',
         label: 'Original',
         ref: originalRef,
       });
 
       reusableElement.renderClone({ label: 'Cloned', ref: replacementRef });
-      await vi.waitFor(() => expect(container.textContent).toBe('Cloned'));
+      expect(container.textContent).toBe('Cloned');
       const element = container.firstElementChild;
 
       expect(originalRef.current).toBeNull();
       expect(replacementRef.current).toBe(element);
 
       reusableElement.render();
-      await vi.waitFor(() => expect(container.textContent).toBe('Original'));
+      expect(container.textContent).toBe('Original');
       expect(container.firstElementChild).toBe(element);
       expect(replacementRef.current).toBeNull();
       expect(originalRef.current).toBe(element);
@@ -198,32 +480,33 @@ describe.each([false, true])(
       expect(originalRef.current).toBeNull();
     });
 
-    it('preserves, replaces and clears a mounted element ref when cloning it', async () => {
+    it('preserves, replaces and clears a mounted element ref when cloning it', () => {
       const ref = vi.fn();
       const reusableElement = fixture.createReusableElement({
+        kind: 'function',
         label: 'Initial',
         ref,
       });
 
       reusableElement.render();
-      await vi.waitFor(() => expect(container.textContent).toBe('Initial'));
+      expect(container.textContent).toBe('Initial');
       const element = container.firstElementChild;
       expect(ref.mock.lastCall?.[0]?.nodeType).toBe(1);
       expect(ref).toHaveBeenLastCalledWith(element);
 
       reusableElement.renderClone({ label: 'Updated' });
-      await vi.waitFor(() => expect(container.textContent).toBe('Updated'));
+      expect(container.textContent).toBe('Updated');
       expect(container.firstElementChild).toBe(element);
       expect(ref).toHaveBeenLastCalledWith(element);
 
       const replacementRef = vi.fn();
       reusableElement.renderClone({ label: 'Replaced', ref: replacementRef });
-      await vi.waitFor(() => expect(container.textContent).toBe('Replaced'));
+      expect(container.textContent).toBe('Replaced');
       expect(ref).toHaveBeenLastCalledWith(null);
       expect(replacementRef).toHaveBeenLastCalledWith(element);
 
       reusableElement.renderClone({ label: 'Cleared', ref: null });
-      await vi.waitFor(() => expect(container.textContent).toBe('Cleared'));
+      expect(container.textContent).toBe('Cleared');
       expect(ref).toHaveBeenLastCalledWith(null);
       expect(replacementRef).toHaveBeenLastCalledWith(null);
       expect(container.firstElementChild).toBe(element);
@@ -231,9 +514,113 @@ describe.each([false, true])(
       fixture.unmount();
     });
 
+    describe.each(REUSABLE_ELEMENT_KINDS)('a cloned %s element', (kind) => {
+      it.each(CLONE_REF_CASES)(
+        'applies $cloneRef as the clone ref of a $mount element like React',
+        ({ mount, cloneRef, refCalls }) => {
+          const recordedRefCalls: string[] = [];
+          const createRecordingRef =
+            (refName: string) => (value: object | null) => {
+              if (isNull(value)) {
+                recordedRefCalls.push(`${refName} detached`);
+
+                return;
+              }
+
+              const isAttachedToRenderedTarget =
+                kind === 'class'
+                  ? 'getLabel' in value
+                  : value === container.firstElementChild;
+
+              recordedRefCalls.push(
+                isAttachedToRenderedTarget
+                  ? `${refName} attached`
+                  : `${refName} attached to an unexpected value`,
+              );
+            };
+          const reusableElement = fixture.createReusableElement({
+            kind,
+            label: 'Original',
+            ref: createRecordingRef('original'),
+          });
+
+          if (mount === 'mounted') {
+            reusableElement.render();
+          }
+
+          reusableElement.renderClone({
+            label: 'Cloned',
+            ref: getCloneRefConfig(cloneRef, createRecordingRef('replacement')),
+          });
+          expect(container.textContent).toBe('Cloned');
+
+          fixture.unmount();
+          expect(recordedRefCalls).toEqual(refCalls);
+        },
+      );
+    });
+
+    it.each(CLONE_REF_CASES)(
+      'keeps the JSX click handler of a $mount host element cloned with $cloneRef as its ref',
+      ({ mount, cloneRef }) => {
+        const handleClick = vi.fn();
+        const originalRef = vi.fn();
+        const replacementRef = vi.fn();
+        const reusableElement = fixture.createReusableElement({
+          kind: 'host',
+          label: 'Original',
+          ref: originalRef,
+          onClick: handleClick,
+        });
+
+        if (mount === 'mounted') {
+          reusableElement.render();
+        }
+
+        reusableElement.renderClone({
+          label: 'Cloned',
+          ref: getCloneRefConfig(cloneRef, replacementRef),
+        });
+        getButtonByText('Cloned')?.dispatchEvent(
+          new environment.window.MouseEvent('click', { bubbles: true }),
+        );
+
+        expect(handleClick).toHaveBeenCalledOnce();
+      },
+    );
+
+    it('keeps a clone ref attached while the cloning component re-renders around an element with handlers', async () => {
+      const cleanup = vi.fn();
+      const cloneRef = vi.fn(() => cleanup);
+      const handleClick = vi.fn();
+
+      fixture.renderCloneRefSlot({
+        label: 'Cloned',
+        cloneRef,
+        onClick: handleClick,
+      });
+      const clonedButton = getButtonByText('Cloned');
+
+      await fixture.click(getButtonByText('Re-render 0')!);
+      await fixture.click(getButtonByText('Re-render 1')!);
+      expect(getButtonByText('Re-render 2')).toBeDefined();
+      expect(nameRefCalls(cloneRef, { clonedButton })).toEqual([
+        'clonedButton',
+      ]);
+      expect(cleanup).not.toHaveBeenCalled();
+
+      clonedButton?.dispatchEvent(
+        new environment.window.MouseEvent('click', { bubbles: true }),
+      );
+      expect(handleClick).toHaveBeenCalledOnce();
+
+      fixture.unmount();
+      expect(cleanup).toHaveBeenCalledOnce();
+    });
+
     it.each(COMPOSITIONS)(
       'keeps %s callback refs on the DOM element through updates and unmount',
-      async (composition) => {
+      (composition) => {
         const firstRef = vi.fn();
         const secondRef = vi.fn();
         const firstClick = vi.fn();
@@ -245,7 +632,7 @@ describe.each([false, true])(
           ref: firstRef,
           onClick: firstClick,
         });
-        await vi.waitFor(() => expect(container.textContent).toBe('Initial'));
+        expect(container.textContent).toBe('Initial');
         const element = container.firstElementChild!;
 
         expect(firstRef.mock.lastCall?.[0]?.nodeType).toBe(1);
@@ -262,7 +649,7 @@ describe.each([false, true])(
           ref: secondRef,
           onClick: secondClick,
         });
-        await vi.waitFor(() => expect(container.textContent).toBe('Updated'));
+        expect(container.textContent).toBe('Updated');
 
         expect(container.firstElementChild).toBe(element);
         expect(firstRef).toHaveBeenLastCalledWith(null);
@@ -274,12 +661,12 @@ describe.each([false, true])(
         expect(secondClick).toHaveBeenCalledOnce();
 
         fixture.render({ composition, label: 'Cleared', ref: null });
-        await vi.waitFor(() => expect(container.textContent).toBe('Cleared'));
+        expect(container.textContent).toBe('Cleared');
         expect(container.firstElementChild).toBe(element);
         expect(secondRef).toHaveBeenLastCalledWith(null);
 
         fixture.render({ composition, label: 'Restored', ref: secondRef });
-        await vi.waitFor(() => expect(container.textContent).toBe('Restored'));
+        expect(container.textContent).toBe('Restored');
         expect(secondRef).toHaveBeenLastCalledWith(element);
 
         fixture.unmount();
@@ -290,29 +677,29 @@ describe.each([false, true])(
 
     it.each(COMPOSITIONS)(
       'clears replaced and unmounted %s object refs',
-      async (composition) => {
+      (composition) => {
         const firstRef = { current: null as HTMLButtonElement | null };
         const secondRef = { current: null as HTMLButtonElement | null };
 
         fixture.render({ composition, label: 'Initial', ref: firstRef });
-        await vi.waitFor(() => expect(container.textContent).toBe('Initial'));
+        expect(container.textContent).toBe('Initial');
         const element = container.firstElementChild;
 
         expect(firstRef.current?.nodeType).toBe(1);
         expect(firstRef.current).toBe(element);
         fixture.render({ composition, label: 'Updated', ref: secondRef });
-        await vi.waitFor(() => expect(container.textContent).toBe('Updated'));
+        expect(container.textContent).toBe('Updated');
 
         expect(firstRef.current).toBeNull();
         expect(secondRef.current).toBe(element);
 
         fixture.render({ composition, label: 'Cleared' });
-        await vi.waitFor(() => expect(container.textContent).toBe('Cleared'));
+        expect(container.textContent).toBe('Cleared');
         expect(container.firstElementChild).toBe(element);
         expect(secondRef.current).toBeNull();
 
         fixture.render({ composition, label: 'Restored', ref: secondRef });
-        await vi.waitFor(() => expect(container.textContent).toBe('Restored'));
+        expect(container.textContent).toBe('Restored');
         expect(secondRef.current).toBe(element);
         fixture.unmount();
         expect(secondRef.current).toBeNull();
@@ -320,24 +707,158 @@ describe.each([false, true])(
     );
 
     it.each(COMPOSITIONS)(
-      'runs %s callback ref cleanup when replaced and unmounted',
-      async (composition) => {
+      'runs %s callback ref cleanups instead of calling the refs with null',
+      (composition) => {
         const firstCleanup = vi.fn();
         const secondCleanup = vi.fn();
         const firstRef = vi.fn(() => firstCleanup);
         const secondRef = vi.fn(() => secondCleanup);
 
         fixture.render({ composition, label: 'Initial', ref: firstRef });
-        await vi.waitFor(() => expect(container.textContent).toBe('Initial'));
+        const element = container.firstElementChild;
+
+        expect(element?.nodeType).toBe(1);
+        expect(nameRefCalls(firstRef, { element })).toEqual(['element']);
         expect(firstCleanup).not.toHaveBeenCalled();
 
         fixture.render({ composition, label: 'Updated', ref: secondRef });
-        await vi.waitFor(() => expect(container.textContent).toBe('Updated'));
+        expect(container.firstElementChild).toBe(element);
+        expect(nameRefCalls(firstRef, { element })).toEqual(['element']);
         expect(firstCleanup).toHaveBeenCalledOnce();
+        expect(nameRefCalls(secondRef, { element })).toEqual(['element']);
         expect(secondCleanup).not.toHaveBeenCalled();
 
         fixture.unmount();
+        expect(nameRefCalls(secondRef, { element })).toEqual(['element']);
         expect(secondCleanup).toHaveBeenCalledOnce();
+      },
+    );
+
+    it('re-renders a memo component with a props-ignoring comparer only when its ref changes', () => {
+      const firstRef = vi.fn();
+      const secondRef = vi.fn();
+
+      fixture.renderPropsIgnoringMemo({ label: 'Initial', ref: firstRef });
+      const element = container.firstElementChild;
+
+      fixture.renderPropsIgnoringMemo({ label: 'Updated', ref: secondRef });
+      expect(container.textContent).toBe('Updated');
+      expect(container.firstElementChild).toBe(element);
+      expect(nameRefCalls(firstRef, { element })).toEqual(['element', null]);
+      expect(nameRefCalls(secondRef, { element })).toEqual(['element']);
+
+      fixture.renderPropsIgnoringMemo({ label: 'Ignored', ref: secondRef });
+      expect(container.textContent).toBe('Updated');
+      expect(nameRefCalls(secondRef, { element })).toEqual(['element']);
+
+      fixture.unmount();
+      expect(nameRefCalls(firstRef, { element })).toEqual(['element', null]);
+      expect(nameRefCalls(secondRef, { element })).toEqual(['element', null]);
+    });
+
+    it('re-renders a default memo component when a prop is added with an undefined value', () => {
+      const handleRender = vi.fn();
+
+      fixture.renderPropsRecordingMemo({
+        label: 'Same',
+        onRender: handleRender,
+      });
+      fixture.renderPropsRecordingMemo({
+        label: 'Same',
+        title: undefined,
+        onRender: handleRender,
+      });
+
+      expect(handleRender.mock.calls).toEqual([
+        [['label']],
+        [['label', 'title']],
+      ]);
+    });
+
+    it('swaps an inline cleanup ref on a memo component without calling it with null', async () => {
+      const refCalls: string[] = [];
+
+      fixture.renderMemoCleanupRefSwitch({
+        onRefCall: (refCall) => refCalls.push(refCall),
+      });
+      expect(refCalls).toEqual(['attach Render 0']);
+
+      await fixture.click(getButtonByText('Render 0')!);
+      expect(container.textContent).toBe('Render 1');
+      expect(refCalls).toEqual([
+        'attach Render 0',
+        'cleanup Render 0',
+        'attach Render 1',
+      ]);
+
+      fixture.unmount();
+      expect(refCalls).toEqual([
+        'attach Render 0',
+        'cleanup Render 0',
+        'attach Render 1',
+        'cleanup Render 1',
+      ]);
+    });
+
+    it.each(['plain-function', 'forward-ref'] as const)(
+      'runs %s imperative handle ref cleanups instead of calling the refs with null',
+      (composition) => {
+        const refCalls: string[] = [];
+        const createCleanupRef =
+          (refName: string) => (handle: { getLabel: () => string } | null) => {
+            refCalls.push(
+              isNull(handle)
+                ? `${refName} null`
+                : `${refName} ${handle.getLabel()}`,
+            );
+
+            return () => {
+              refCalls.push(`${refName} cleanup`);
+            };
+          };
+        const firstRef = createCleanupRef('first');
+        const secondRef = createCleanupRef('second');
+
+        fixture.renderImperativeHandle({
+          composition,
+          label: 'Initial',
+          ref: firstRef,
+        });
+        fixture.renderImperativeHandle({
+          composition,
+          label: 'Updated',
+          ref: firstRef,
+        });
+        fixture.renderImperativeHandle({
+          composition,
+          label: 'Updated',
+          ref: secondRef,
+        });
+        fixture.unmount();
+
+        expect(refCalls).toEqual([
+          'first Initial',
+          'first cleanup',
+          'first Updated',
+          'first cleanup',
+          'second Updated',
+          'second cleanup',
+        ]);
+      },
+    );
+
+    it.each(['plain-function', 'forward-ref'] as const)(
+      'calls %s imperative handle refs without a cleanup with null on teardown',
+      (composition) => {
+        const ref = vi.fn();
+
+        fixture.renderImperativeHandle({ composition, label: 'Initial', ref });
+        const handle = ref.mock.calls[0]?.[0];
+
+        expect(handle?.getLabel()).toBe('Initial');
+
+        fixture.unmount();
+        expect(nameRefCalls(ref, { handle })).toEqual(['handle', null]);
       },
     );
   },
