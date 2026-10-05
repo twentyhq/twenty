@@ -11,27 +11,24 @@ import {
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { readToolCallStatus } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-tool-call-status.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
-import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { buildStepExecutionKey } from 'src/modules/workflow/workflow-executor/utils/build-step-execution-key.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
+import { resolveConversationThreadKey } from 'src/modules/workflow/workflow-executor/utils/resolve-conversation-thread-key.util';
 import { isWorkflowSendChatMessageAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/guards/is-workflow-send-chat-message-action.guard';
 import { findMissingRequiredToolArguments } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/utils/find-missing-required-tool-arguments.util';
 import { buildSendChatMessageAnswerResult } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/utils/build-send-chat-message-answer-result.util';
@@ -44,8 +41,7 @@ const MAX_SEND_ATTEMPTS = 10;
 export class SendChatMessageWorkflowAction implements WorkflowAction {
   constructor(
     private readonly agentInboxService: AgentInboxService,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
+    private readonly workflowRunInboxSenderService: WorkflowRunInboxSenderWorkspaceService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly toolRegistryService: ToolRegistryService,
@@ -66,10 +62,11 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { workspaceMemberId, title, text, toolCall } = resolveInput(
-      step.settings.input,
-      context,
-    ) as WorkflowSendChatMessageActionInput;
+    const { workspaceMemberId, title, text, toolCall, conversation } =
+      resolveInput(
+        step.settings.input,
+        context,
+      ) as WorkflowSendChatMessageActionInput;
 
     if (!isValidUuid(workspaceMemberId)) {
       throw new WorkflowStepExecutorException(
@@ -85,7 +82,24 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       );
     }
 
-    const workflow = await this.findRunWorkflowOrThrow(runInfo);
+    const sender =
+      await this.workflowRunInboxSenderService.findRunSenderOrThrow(runInfo);
+    const executionKey = buildStepExecutionKey({
+      stepId: currentStepId,
+      steps,
+      context,
+    });
+    const threadKey = resolveConversationThreadKey({
+      conversation,
+      defaultScope: 'RUN',
+      workflowRunId: runInfo.workflowRunId,
+      stepExecutionKey: executionKey,
+    });
+    // a conversation shared by key holds every run's messages, so each run keys its own
+    const messageKey =
+      conversation?.scope === 'KEY'
+        ? `${runInfo.workflowRunId}:${executionKey}`
+        : executionKey;
     let awaitingToolCall:
       | ReturnType<SendChatMessageWorkflowAction['resolveAwaitingToolCall']>
       | undefined;
@@ -103,37 +117,23 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       : undefined;
 
     const sendMessage = (idempotencyKey: string) =>
-      // Each run gets its own conversation with the member, so every message
-      // a run sends reads as one exchange.
       this.agentInboxService.sendMessage({
         workspaceId: runInfo.workspaceId,
-        sender: {
-          type: 'workflow',
-          workflowId: workflow.id,
-          workflowName: isNonEmptyString(workflow.name)
-            ? workflow.name
-            : 'Untitled',
-        },
+        sender,
         input: {
           workspaceMemberId,
-          threadKey: runInfo.workflowRunId,
+          threadKey,
           idempotencyKey,
           title: isNonEmptyString(title) ? title : step.name,
           text,
         },
         buildAwaitingToolCall,
       });
-    const executionKey = buildStepExecutionKey({
-      stepId: currentStepId,
-      steps,
-      context,
-    });
-
     // a step run again finds the call it posted before: it keeps waiting on a pending one, reuses
     // an answered one so nothing runs twice, and asks again once an earlier call closed unanswered
     for (let attempt = 0; attempt < MAX_SEND_ATTEMPTS; attempt++) {
       const { threadId, isDismissed, awaitedToolOutput } = await sendMessage(
-        attempt === 0 ? executionKey : `${executionKey}:${attempt}`,
+        attempt === 0 ? messageKey : `${messageKey}:${attempt}`,
       );
 
       if (!isDefined(buildAwaitingToolCall)) {
@@ -249,44 +249,5 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
         workflowStep: { workflowRunId: runInfo.workflowRunId, stepId },
       },
     };
-  }
-
-  // Every run carries the core workflow it was started from, which is the
-  // identity the executor bills and the conversation is attributed to.
-  private async findRunWorkflowOrThrow({
-    workflowRunId,
-    workspaceId,
-  }: WorkflowActionInput['runInfo']): Promise<
-    Pick<WorkflowEntity, 'id' | 'name'>
-  > {
-    const workflowRun =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager
-            .getRepository<WorkflowRunWorkspaceEntity>('workflowRun', {
-              shouldBypassPermissionChecks: true,
-            })
-            .findOne({
-              where: { id: workflowRunId },
-              select: ['id', 'coreWorkflowId'],
-            }),
-        buildSystemAuthContext(workspaceId),
-      );
-
-    const workflow = isDefined(workflowRun?.coreWorkflowId)
-      ? await this.workflowCoreSyncService.findCoreWorkflowById(
-          workspaceId,
-          workflowRun.coreWorkflowId,
-        )
-      : null;
-
-    if (!isDefined(workflow)) {
-      throw new WorkflowStepExecutorException(
-        'Workflow run has no workflow',
-        WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
-      );
-    }
-
-    return workflow;
   }
 }
