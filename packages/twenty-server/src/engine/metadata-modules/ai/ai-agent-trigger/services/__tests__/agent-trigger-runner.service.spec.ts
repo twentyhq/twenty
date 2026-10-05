@@ -29,14 +29,35 @@ const JOB_DATA: RunAgentTriggerJobData = {
   },
 };
 
+const buildAgent = (isTriggerActive = true) => ({
+  id: AGENT_ID,
+  label: 'Enricher',
+  applicationId: 'application-id',
+  triggers: [
+    {
+      id: TRIGGER_ID,
+      type: 'DATABASE_EVENT',
+      isActive: isTriggerActive,
+      instructions: 'Qualify the company',
+      settings: { eventName: 'company.created' },
+    },
+  ],
+});
+
 describe('AgentTriggerRunnerService', () => {
   let service: AgentTriggerRunnerService;
   let executeAgent: jest.Mock;
   let recordTurn: jest.Mock;
   let currentRoleId: string | undefined;
+  let findAgent: jest.Mock;
+  let findApplication: jest.Mock;
 
   beforeEach(async () => {
     currentRoleId = AGENT_ROLE_ID;
+    findAgent = jest.fn().mockResolvedValue(buildAgent());
+    findApplication = jest
+      .fn()
+      .mockResolvedValue({ id: 'application-id', name: 'App' });
     executeAgent = jest.fn().mockResolvedValue({ result: { text: 'done' } });
     recordTurn = jest.fn().mockResolvedValue(undefined);
 
@@ -53,30 +74,11 @@ describe('AgentTriggerRunnerService', () => {
         },
         {
           provide: ApplicationLookupService,
-          useValue: {
-            findById: jest
-              .fn()
-              .mockResolvedValue({ id: 'application-id', name: 'App' }),
-          },
+          useValue: { findById: findApplication },
         },
         {
           provide: getWorkspaceScopedRepositoryToken(AgentEntity),
-          useValue: {
-            findOne: jest.fn().mockResolvedValue({
-              id: AGENT_ID,
-              label: 'Enricher',
-              applicationId: 'application-id',
-              triggers: [
-                {
-                  id: TRIGGER_ID,
-                  type: 'DATABASE_EVENT',
-                  isActive: true,
-                  instructions: 'Qualify the company',
-                  settings: { eventName: 'company.created' },
-                },
-              ],
-            }),
-          },
+          useValue: { findOne: findAgent },
         },
         {
           provide: getRepositoryToken(WorkspaceEntity),
@@ -118,6 +120,29 @@ describe('AgentTriggerRunnerService', () => {
       }),
     );
     expect(recordTurn).toHaveBeenCalled();
+  });
+
+  it.each([
+    ['the agent was deleted', () => findAgent.mockResolvedValue(null)],
+    [
+      'the trigger was turned off',
+      () => findAgent.mockResolvedValue(buildAgent(false)),
+    ],
+    [
+      'the trigger was removed',
+      () => findAgent.mockResolvedValue({ ...buildAgent(), triggers: [] }),
+    ],
+    [
+      'the application was not found',
+      () => findApplication.mockResolvedValue(null),
+    ],
+  ])('should not run when %s', async (_, arrange) => {
+    arrange();
+
+    await service.run(JOB_DATA);
+
+    expect(executeAgent).not.toHaveBeenCalled();
+    expect(recordTurn).not.toHaveBeenCalled();
   });
 
   it('should not run when the agent role changed since dispatch', async () => {
