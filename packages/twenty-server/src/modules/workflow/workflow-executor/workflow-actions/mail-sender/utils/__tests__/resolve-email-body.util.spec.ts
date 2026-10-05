@@ -107,6 +107,34 @@ describe('resolveEmailBody', () => {
     expect(JSON.parse(resolvedBody)).toEqual(htmlDocument('<h1>Report</h1>'));
   });
 
+  it('should render the email document held by a single-variable body', async () => {
+    const storedDocument = {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'From a record' }],
+        },
+      ],
+    };
+
+    const resolvedBody = await resolveEmailBody('{{record.body}}', {
+      record: { body: JSON.stringify(storedDocument) },
+    });
+
+    expect(JSON.parse(resolvedBody)).toEqual(storedDocument);
+  });
+
+  it('should reject a single-variable body holding an invalid email document', async () => {
+    await expect(
+      resolveEmailBody('{{record.body}}', {
+        record: {
+          body: JSON.stringify({ type: 'doc', content: [{ type: 'nope' }] }),
+        },
+      }),
+    ).rejects.toThrow('Invalid workflow email document');
+  });
+
   it('should keep stored plain text as editable lines with its line breaks', async () => {
     const resolvedBody = await resolveEmailBody('Hi {{trigger.name}}\nBye', {
       trigger: { name: 'Ada' },

@@ -343,6 +343,18 @@ describe('Outbound email body formats (integration)', () => {
       expect(sanitizedHtmlBody).toBe('<h1>Weekly report</h1><p>All good</p>');
     }, 300000);
 
+    it('renders the email document held by a body that is a single variable', async () => {
+      const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
+        body: '{{trigger.document}}',
+        payload: {
+          document: JSON.stringify(paragraphDocument('From a record')),
+        },
+      });
+
+      expect(sanitizedHtmlBody).toContain(EMAIL_SHELL_MARKER);
+      expect(plainTextBody).toBe('From a record');
+    }, 300000);
+
     it('sends a full HTML document body without wrapping it in the email shell', async () => {
       const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
         body: '<!DOCTYPE html><html><body><p>Full document</p></body></html>',
@@ -501,6 +513,53 @@ describe('Outbound email body formats (integration)', () => {
           convertedBodies,
         );
       };
+
+    it('converts the core and workspace copies each from its own steps', async () => {
+      const readEmailStepNames = async (workflowVersionId: string) => {
+        const workspaceSchema = await getAppleWorkspaceSchema();
+        const selectEmailStepName = `jsonb_path_query_first(steps, '$[*] ? (@.type == "SEND_EMAIL").name') #>> '{}'`;
+        const [workspaceRow] = await global.testDataSource.query(
+          `SELECT ${selectEmailStepName} AS name FROM "${workspaceSchema}"."workflowVersion" WHERE "id" = $1`,
+          [workflowVersionId],
+        );
+        const [coreRow] = await global.testDataSource.query(
+          `SELECT ${selectEmailStepName} AS name FROM core."workflowVersion" WHERE "workspaceWorkflowVersionId" = $1`,
+          [workflowVersionId],
+        );
+
+        return { workspaceName: workspaceRow.name, coreName: coreRow.name };
+      };
+
+      await runSendEmailWorkflow({
+        body: '<p>Hello</p>',
+        beforeRun: async (workflowVersionId) => {
+          await global.testDataSource.query(
+            `UPDATE core."workflowVersion"
+             SET steps = jsonb_set(steps, '{0,name}', '"Renamed in core only"')
+             WHERE "workspaceWorkflowVersionId" = $1`,
+            [workflowVersionId],
+          );
+          const namesBeforeUpgrade =
+            await readEmailStepNames(workflowVersionId);
+
+          await runUpgradeCommand(false);
+
+          expect(await readEmailStepNames(workflowVersionId)).toEqual(
+            namesBeforeUpgrade,
+          );
+          expect(namesBeforeUpgrade.coreName).toBe('Renamed in core only');
+
+          const { workspaceBody, coreBody } =
+            await readStoredBodies(workflowVersionId);
+
+          for (const body of [workspaceBody, coreBody]) {
+            expect(
+              parseCanonicalEmailDocument(parseJson<unknown>(body)).success,
+            ).toBe(true);
+          }
+        },
+      });
+    }, 300000);
 
     it.each([
       {
