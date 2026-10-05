@@ -1,70 +1,65 @@
-import { Input } from '@base-ui/react/input';
-import { clsx } from 'clsx';
-import { useId, useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useId } from 'react';
 import { type SearchInputProps } from './types/SearchInputProps';
 
 import { IconFilter, IconSearch } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
+import { Input } from '@ui/primitives/input/Input/Input';
+import { InputGroup } from '@ui/primitives/input/InputGroup/InputGroup';
 import { useTheme } from '@ui/theme';
 
 import styles from './SearchInput.module.scss';
 
 export const SearchInput = ({
-  value,
-  onChange,
   placeholder,
   filterDropdown,
-  autoFocus,
-  disabled,
-  className,
+  size = 'md',
   id,
   filterButtonAriaLabel = 'Filter',
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledby,
+  ...props
 }: SearchInputProps) => {
   const theme = useTheme();
-  const [isFocused, setIsFocused] = useState(false);
   const generatedId = useId();
   const inputId = id ?? generatedId;
 
   const filterButton = (
     <Button
       variant="outline"
+      size={size}
       aria-label={filterButtonAriaLabel}
-      startIcon={
-        <span className={styles.filterIcon}>
-          <IconFilter size={theme.icon.size.md} />
-        </span>
-      }
+      startIcon={<IconFilter size={theme.icon.size.md} />}
       className={styles.filterButton}
     />
   );
 
   return (
-    <div className={clsx(styles.wrapper, className)}>
-      <div className={styles.inputContainer}>
-        <div
-          className={styles.iconContainer}
-          data-focused={isFocused || undefined}
-          aria-hidden
-        >
-          <IconSearch size={theme.icon.size.md} />
-        </div>
+    <div className={styles.wrapper}>
+      <InputGroup
+        className={styles.inputGroup}
+        size={size}
+        startElement={
+          <IconSearch
+            className={styles.searchIcon}
+            size={theme.icon.size.md}
+            aria-hidden
+          />
+        }
+      >
         <Input
+          {...props}
           id={inputId}
-          className={styles.input}
-          value={value}
-          onValueChange={(newValue) => onChange(newValue)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
-          autoFocus={autoFocus}
-          disabled={disabled}
-          aria-label={ariaLabelledby ? undefined : (ariaLabel ?? placeholder)}
+          aria-label={
+            isNonEmptyString(ariaLabelledby)
+              ? undefined
+              : (ariaLabel ?? placeholder)
+          }
           aria-labelledby={ariaLabelledby}
         />
-      </div>
-      {filterDropdown && filterDropdown(filterButton)}
+      </InputGroup>
+      {filterDropdown?.(filterButton)}
     </div>
   );
 };

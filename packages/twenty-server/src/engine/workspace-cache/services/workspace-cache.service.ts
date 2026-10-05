@@ -15,6 +15,7 @@ import { DataSource } from 'typeorm';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { WorkspaceDerivedCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-derived-cache-provider.service';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -26,6 +27,7 @@ import {
   WORKSPACE_CACHE_OPTIONS,
   WorkspaceCacheOptions,
 } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { WORKSPACE_DERIVED_CACHE_KEY } from 'src/engine/workspace-cache/decorators/workspace-derived-cache.decorator';
 import {
   WorkspaceCacheException,
   WorkspaceCacheExceptionCode,
@@ -35,9 +37,13 @@ import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/servic
 import {
   WorkspaceCacheKeyName,
   type WorkspaceCacheDataMap,
+  type WorkspaceCacheOrDerivedCacheDataMap,
+  type RemovedWorkspaceCacheKeyName,
+  type WorkspaceCacheOrDerivedCacheKeyName,
   type WorkspaceCacheResult,
   type WorkspaceCacheResultWithHashes,
   type WorkspaceCacheStoredDataMap,
+  type WorkspaceDerivedCacheKeyName,
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import {
   type VersionEntry,
@@ -46,27 +52,27 @@ import {
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/get-key-name-from-local-cache-key.util';
 import { packIdleVersions } from 'src/engine/workspace-cache/utils/pack-idle-versions.util';
+import { isWorkspaceDerivedCacheKeyName } from 'src/engine/workspace-cache/utils/is-workspace-derived-cache-key-name.util';
 import {
   deserializeCacheBlob,
   serializeCacheBlob,
 } from 'src/engine/workspace-cache/utils/serialize-cache-blob.util';
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
-const LOCAL_TTL_MS = 100; // 100ms
-const MEMOIZER_TTL_MS = 10_000; // 10 seconds
-const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
-const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
+const LOCAL_TTL_MS = 100;
+const MEMOIZER_TTL_MS = 10_000;
+const STALE_VERSION_TTL_MS = 5_000;
+const MAX_LOCAL_STALE_VERSIONS = 5;
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling.
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
-const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
+const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000;
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const PACKING_INTERVAL_MS = 500;
 const PACKING_PONDERATION_BUDGET = 64;
 const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
-// Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
+// Per-cache-key entry caps
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
-  ['ORMEntityMetadatas', 128],
   ['flatFieldMetadataMaps', 256],
   ['flatFieldMetadataMapsOrm', 512],
 ]);
@@ -76,6 +82,11 @@ type StoredCacheDataType = WorkspaceCacheStoredDataMap[WorkspaceCacheKeyName];
 type CacheEntriesResult = {
   data: Partial<WorkspaceCacheDataMap>;
   hashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+};
+
+type CacheOrDerivedCacheEntriesResult = {
+  data: Partial<WorkspaceCacheOrDerivedCacheDataMap>;
+  hashes: Partial<Record<WorkspaceCacheOrDerivedCacheKeyName, string>>;
 };
 
 type RecomputeHashResolution =
@@ -96,6 +107,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private readonly workspaceCacheProviders = new Map<
     WorkspaceCacheKeyName,
     WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
+  >();
+  private readonly workspaceDerivedCacheProviders = new Map<
+    WorkspaceDerivedCacheKeyName,
+    WorkspaceDerivedCacheProvider
   >();
   private readonly localDataOnlyKeys = new Set<WorkspaceCacheKeyName>();
   private readonly packingPonderationByKey = new Map<
@@ -157,6 +172,22 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           );
         }
       }
+
+      const workspaceDerivedCacheKeyName =
+        this.reflector.get<WorkspaceDerivedCacheKeyName>(
+          WORKSPACE_DERIVED_CACHE_KEY,
+          instance.constructor,
+        );
+
+      if (
+        isDefined(workspaceDerivedCacheKeyName) &&
+        instance instanceof WorkspaceDerivedCacheProvider
+      ) {
+        this.workspaceDerivedCacheProviders.set(
+          workspaceDerivedCacheKeyName,
+          instance,
+        );
+      }
     }
 
     this.cacheMetricsService.start(this.localCache);
@@ -187,10 +218,9 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.packingTimer.unref();
   }
 
-  public async getOrRecompute<const K extends WorkspaceCacheKeyName[]>(
-    workspaceId: string,
-    cacheKeyNames: K,
-  ): Promise<WorkspaceCacheResult<K>> {
+  public async getOrRecompute<
+    const K extends WorkspaceCacheOrDerivedCacheKeyName[],
+  >(workspaceId: string, cacheKeyNames: K): Promise<WorkspaceCacheResult<K>> {
     const { data } = await this.getOrRecomputeWithHashes(
       workspaceId,
       cacheKeyNames,
@@ -200,13 +230,88 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   public async getOrRecomputeWithHashes<
-    const K extends WorkspaceCacheKeyName[],
+    const K extends WorkspaceCacheOrDerivedCacheKeyName[],
   >(
     workspaceId: string,
     cacheKeyNames: K,
   ): Promise<WorkspaceCacheResultWithHashes<K>> {
     this.assertValidCacheParameters(workspaceId, cacheKeyNames);
 
+    const providerEntries = await this.getOrRecomputeProviderEntries(
+      workspaceId,
+      this.getSourceCacheKeyNames(cacheKeyNames),
+    );
+
+    if (!cacheKeyNames.some(isWorkspaceDerivedCacheKeyName)) {
+      return providerEntries as WorkspaceCacheResultWithHashes<K>;
+    }
+
+    const result: CacheOrDerivedCacheEntriesResult = { data: {}, hashes: {} };
+
+    for (const cacheKeyName of cacheKeyNames) {
+      if (!isWorkspaceDerivedCacheKeyName(cacheKeyName)) {
+        Object.assign(result.data, {
+          [cacheKeyName]: providerEntries.data[cacheKeyName],
+        });
+        result.hashes[cacheKeyName] = providerEntries.hashes[cacheKeyName];
+        continue;
+      }
+
+      const derivedCacheProvider =
+        this.getDerivedCacheProviderOrThrow(cacheKeyName);
+      const { sourceKeyName } = derivedCacheProvider;
+      const source = providerEntries.data[sourceKeyName];
+
+      if (!isDefined(source)) {
+        throw new WorkspaceCacheException(
+          `Source cache "${sourceKeyName}" of derived cache "${cacheKeyName}" is not loaded`,
+          WorkspaceCacheExceptionCode.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      Object.assign(result.data, {
+        [cacheKeyName]: derivedCacheProvider.getFromSource(source),
+      });
+      result.hashes[cacheKeyName] = providerEntries.hashes[sourceKeyName];
+    }
+
+    return result as WorkspaceCacheResultWithHashes<K>;
+  }
+
+  private getSourceCacheKeyNames(
+    cacheKeyNames: readonly WorkspaceCacheOrDerivedCacheKeyName[],
+  ): WorkspaceCacheKeyName[] {
+    return [
+      ...new Set(
+        cacheKeyNames.map((cacheKeyName) =>
+          isWorkspaceDerivedCacheKeyName(cacheKeyName)
+            ? this.getDerivedCacheProviderOrThrow(cacheKeyName).sourceKeyName
+            : cacheKeyName,
+        ),
+      ),
+    ];
+  }
+
+  private getDerivedCacheProviderOrThrow(
+    derivedKeyName: WorkspaceDerivedCacheKeyName,
+  ): WorkspaceDerivedCacheProvider {
+    const derivedCacheProvider =
+      this.workspaceDerivedCacheProviders.get(derivedKeyName);
+
+    if (!isDefined(derivedCacheProvider)) {
+      throw new WorkspaceCacheException(
+        `Derived cache provider with key name "${derivedKeyName}" not found`,
+        WorkspaceCacheExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return derivedCacheProvider;
+  }
+
+  private async getOrRecomputeProviderEntries(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<CacheEntriesResult> {
     const memoKey =
       `${workspaceId}-${[...cacheKeyNames].sort().join(',')}` as const;
 
@@ -263,33 +368,49 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       },
     );
 
-    return result as WorkspaceCacheResultWithHashes<K>;
+    return result as CacheEntriesResult;
   }
 
   public async getOrRecomputeCombinedHash(
     workspaceId: string,
-    cacheKeyNames: WorkspaceCacheKeyName[],
+    cacheKeyNames: WorkspaceCacheOrDerivedCacheKeyName[],
   ): Promise<string> {
     this.assertValidCacheParameters(workspaceId, cacheKeyNames);
 
-    const cachedHashes = await this.getCacheHashes(workspaceId, cacheKeyNames);
-    const missingKeys = cacheKeyNames.filter(
+    const sourceCacheKeyNames = this.getSourceCacheKeyNames(cacheKeyNames);
+
+    const cachedHashes = await this.getCacheHashes(
+      workspaceId,
+      sourceCacheKeyNames,
+    );
+    const missingKeys = sourceCacheKeyNames.filter(
       (cacheKeyName) => !isDefined(cachedHashes[cacheKeyName]),
     );
 
-    if (missingKeys.length === 0) {
-      return combineCacheHashes(cachedHashes, cacheKeyNames);
+    const sourceHashes =
+      missingKeys.length === 0
+        ? cachedHashes
+        : {
+            ...cachedHashes,
+            ...(
+              await this.getOrRecomputeProviderEntries(workspaceId, missingKeys)
+            ).hashes,
+          };
+
+    const cacheOrDerivedCacheHashes: Partial<
+      Record<WorkspaceCacheOrDerivedCacheKeyName, string>
+    > = { ...sourceHashes };
+
+    for (const cacheKeyName of cacheKeyNames) {
+      if (isWorkspaceDerivedCacheKeyName(cacheKeyName)) {
+        cacheOrDerivedCacheHashes[cacheKeyName] =
+          sourceHashes[
+            this.getDerivedCacheProviderOrThrow(cacheKeyName).sourceKeyName
+          ];
+      }
     }
 
-    const { hashes: recomputedHashes } = await this.getOrRecomputeWithHashes(
-      workspaceId,
-      missingKeys,
-    );
-
-    return combineCacheHashes(
-      { ...cachedHashes, ...recomputedHashes },
-      cacheKeyNames,
-    );
+    return combineCacheHashes(cacheOrDerivedCacheHashes, cacheKeyNames);
   }
 
   private collectRowsRequirements(cacheKeyNames: WorkspaceCacheKeyName[]) {
@@ -317,8 +438,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           strategy: 'mint',
         });
 
-        // Clear memoizer again after recomputation to evict any stale entries
-        // cached by concurrent getOrRecompute calls during the flush window.
+        // Clear again to evict entries concurrent getOrRecompute calls cached during the flush window
         await this.memoizer.clearKeys(`${workspaceId}-`);
       },
     );
@@ -351,11 +471,20 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   public async flush(
     workspaceId: string,
-    cacheKeyNames: WorkspaceCacheKeyName[],
+    cacheKeyNames: (
+      | WorkspaceCacheOrDerivedCacheKeyName
+      | RemovedWorkspaceCacheKeyName
+    )[],
   ): Promise<void> {
-    await this.deleteFromRedis(workspaceId, cacheKeyNames);
+    const storedCacheKeyNames = cacheKeyNames.filter(
+      (cacheKeyName): cacheKeyName is WorkspaceCacheKeyName =>
+        cacheKeyName !== 'ORMEntityMetadatas' &&
+        !isWorkspaceDerivedCacheKeyName(cacheKeyName),
+    );
 
-    this.deleteFromLocalCache(workspaceId, cacheKeyNames);
+    await this.deleteFromRedis(workspaceId, storedCacheKeyNames);
+
+    this.deleteFromLocalCache(workspaceId, storedCacheKeyNames);
   }
 
   public async evictWorkspaceFromLocalCache(
@@ -372,7 +501,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   private assertValidCacheParameters(
     workspaceId: string,
-    cacheKeyNames: WorkspaceCacheKeyName[],
+    cacheKeyNames: WorkspaceCacheOrDerivedCacheKeyName[],
   ): void {
     if (
       !isDefined(workspaceId) ||
@@ -482,7 +611,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return { redisEntries, missingInRedis };
     }
 
-    // Interleave data and hash keys for atomic fetch: [data1, hash1, data2, hash2, ...]
     const allKeys = cacheKeyNames.flatMap((keyName) => {
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 

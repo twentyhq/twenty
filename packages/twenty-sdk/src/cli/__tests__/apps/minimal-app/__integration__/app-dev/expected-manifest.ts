@@ -1,6 +1,6 @@
 import { FieldType } from '@/sdk/define';
 import type { Manifest } from 'twenty-shared/application';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, HTTPMethod } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
   commandMenuItems: [],
@@ -11,7 +11,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     displayName: 'Root App',
     description: 'An app with all entities at root level',
     galleryImages: [],
-    defaultRoleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000002',
+    defaultRoleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000040',
     packageJsonChecksum: '[checksum]',
     yarnLockChecksum: '[checksum]',
     requiredServerVersionRange: null,
@@ -60,7 +60,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
         path: '/my-function',
-        httpMethod: 'GET',
+        httpMethod: HTTPMethod.GET,
         isAuthRequired: false,
       },
       handlerName: 'default.config.handler',

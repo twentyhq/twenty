@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
-import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsRadioSettingsCardProps<Option extends { value: string }> = {
@@ -12,6 +12,7 @@ type SettingsRadioSettingsCardProps<Option extends { value: string }> = {
   onChange: (nextValue: Option['value']) => void;
   options: Option[];
   value: Option['value'];
+  disabled?: boolean;
 };
 
 const StyledCardContentContainer = styled.div`
@@ -69,6 +70,7 @@ export const SettingsRadioSettingsCard = <
   onChange,
   options,
   value,
+  disabled = false,
 }: SettingsRadioSettingsCardProps<Option>) => {
   const groupId = useId();
   const { i18n } = useLingui();
@@ -78,6 +80,7 @@ export const SettingsRadioSettingsCard = <
       name={name}
       value={value}
       onValueChange={onChange}
+      disabled={disabled}
       onKeyDown={(event) => {
         if (
           !(event.target instanceof HTMLElement) ||
@@ -87,13 +90,13 @@ export const SettingsRadioSettingsCard = <
         }
       }}
     >
-      <Card fullWidth rounded>
+      <Card.Root fullWidth rounded>
         {options.map((option, index) => {
           const isSelected = value === option.value;
 
           return (
             <StyledCardContentContainer key={option.value}>
-              <CardContent divider={index < options.length - 1}>
+              <Card.Content divider={index < options.length - 1}>
                 <StyledOptionHeader>
                   {option.cardMedia}
                   <StyledTextContainer>
@@ -117,11 +120,11 @@ export const SettingsRadioSettingsCard = <
                     {option.cardContentExpanded}
                   </StyledExpandedContent>
                 )}
-              </CardContent>
+              </Card.Content>
             </StyledCardContentContainer>
           );
         })}
-      </Card>
+      </Card.Root>
     </RadioGroup>
   );
 };

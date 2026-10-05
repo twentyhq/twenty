@@ -1,7 +1,7 @@
 import { FieldMetadataType } from '@/types';
 
 export const isFieldMetadataSelectKind = (
-  fieldMetadataType: FieldMetadataType,
+  fieldMetadataType: `${FieldMetadataType}`,
 ): boolean => {
   return (
     fieldMetadataType === FieldMetadataType.SELECT ||

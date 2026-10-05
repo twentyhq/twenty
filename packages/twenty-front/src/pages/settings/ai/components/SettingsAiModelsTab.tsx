@@ -53,7 +53,10 @@ export const SettingsAiModelsTab = () => {
           title={t`Models`}
           description={t`Choose the default modes for people and agents`}
         />
-        <Card rounded backgroundColor={themeCssVariables.background.secondary}>
+        <Card.Root
+          rounded
+          backgroundColor={themeCssVariables.background.secondary}
+        >
           <StyledSettingsSelectGroup controlWidth={160}>
             <SettingsOptionCardContentSelect
               Icon={IconMessage}
@@ -120,7 +123,7 @@ export const SettingsAiModelsTab = () => {
               ))}
             </StyledSettingsSelectGroup>
           )}
-        </Card>
+        </Card.Root>
       </Section.Root>
 
       <SettingsAiModelTiersPreview />

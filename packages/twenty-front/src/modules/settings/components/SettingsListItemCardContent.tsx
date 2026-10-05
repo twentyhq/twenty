@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
-import { CardContent } from 'twenty-ui/primitives/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRowContainer = styled.div`
@@ -47,9 +47,7 @@ const StyledLabel = styled.span`
   white-space: nowrap;
 `;
 
-// Rows are a fixed height, so the description has to give way rather than wrap
-// out of the row. A zero basis means it only ever takes the space the label
-// leaves, so the label stays readable and the description truncates first.
+// Rows are fixed-height, so the description truncates first rather than wrapping or squeezing the label
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.light};
   flex: 1 1 0;
@@ -95,7 +93,7 @@ export const SettingsListItemCardContent = ({
 
   const content = (
     <StyledRowContainer>
-      <CardContent
+      <Card.Content
         onClick={onClick}
         divider={divider}
         isClickable={isInteractive}
@@ -122,7 +120,7 @@ export const SettingsListItemCardContent = ({
             />
           )}
         </StyledRightContainer>
-      </CardContent>
+      </Card.Content>
     </StyledRowContainer>
   );
 

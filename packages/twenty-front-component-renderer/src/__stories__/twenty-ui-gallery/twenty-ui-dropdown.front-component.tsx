@@ -23,7 +23,11 @@ const DropdownExample = () => {
         <Dropdown.Content aria-label="Assignee actions">
           <Dropdown.Page id="root">
             <Dropdown.Section>
-              <Dropdown.ActionItem page="assignees">
+              <Dropdown.ActionItem
+                page="assignees"
+                shortcut={[['G'], ['A']]}
+                shortcutJoinLabel="followed by"
+              >
                 Assign person
               </Dropdown.ActionItem>
               <Dropdown.ActionItem onClick={() => setSelection('Unassigned')}>
@@ -44,6 +48,8 @@ const DropdownExample = () => {
                 <Dropdown.OptionItem
                   key={assignee}
                   selected={selection === assignee}
+                  shortcut={[['G'], [assignee.charAt(0)]]}
+                  shortcutJoinLabel="next"
                   onSelect={() => setSelection(assignee)}
                 >
                   {assignee}

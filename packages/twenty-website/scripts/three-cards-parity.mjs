@@ -54,7 +54,6 @@ function readSection(page, headingNeedle) {
         ? `${containerStyle.paddingLeft} ${containerStyle.rowGap}`
         : null,
       headingStyle: `${headingStyle.fontSize} ${headingStyle.fontWeight} ${headingStyle.maxWidth}`,
-      // Per-card anatomy: an h3, a body, and whether a footer rendered.
       cards: slots.map((slot) => ({
         hasHeading: Boolean(slot.querySelector('h3')),
         hasFooter: Boolean(slot.querySelector('footer')),
@@ -85,7 +84,6 @@ async function scrollGridTo(page, gridTop, viewportFraction) {
   await page.waitForTimeout(350);
 }
 
-// --- HOME: restored scroll choreography --------------------------------
 {
   const oldPage = await openSitePage(OLD_BASE, '/');
   const newPage = await openSitePage(NEW_BASE, '/');
@@ -194,7 +192,6 @@ async function scrollGridTo(page, gridTop, viewportFraction) {
   await newReduced.close();
 }
 
-// --- PRODUCT: intro, rhythm, footerless cards ---------------------------
 {
   const oldPage = await openSitePage(OLD_BASE, '/product');
   const newPage = await openSitePage(NEW_BASE, '/product');

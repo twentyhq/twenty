@@ -49,8 +49,9 @@ export const Default: Story = {
 };
 
 export const Documentation: Story = {
-  ...Default,
-  play: undefined,
+  decorators: Default.decorators,
+  parameters: Default.parameters,
+  args: Default.args,
 };
 
 export const Placeholder: Story = {
@@ -89,7 +90,7 @@ export const Multiple: Story = {
     await expect(trigger).toHaveTextContent('Cherry');
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(popup).not.toBeVisible());
-    await expect(trigger).toHaveFocus();
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 

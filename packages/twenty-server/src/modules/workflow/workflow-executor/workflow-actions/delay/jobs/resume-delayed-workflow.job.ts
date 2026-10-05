@@ -23,6 +23,7 @@ import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/ty
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
+// Drains delays queued before delays became time waits; new ones resume through ResumeWaitingWorkflowStepJob
 @Processor({
   queueName: MessageQueue.delayedJobsQueue,
   scope: Scope.REQUEST,

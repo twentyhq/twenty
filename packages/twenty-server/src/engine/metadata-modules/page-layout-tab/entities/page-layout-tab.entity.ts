@@ -29,6 +29,7 @@ export type PageLayoutTabOverrides = {
 };
 
 @Entity({ name: 'pageLayoutTab', schema: 'core' })
+@Index('IDX_PAGE_LAYOUT_TAB_APPLICATION_ID', ['applicationId'])
 @ObjectType('PageLayoutTab')
 @Index(
   'IDX_PAGE_LAYOUT_TAB_WORKSPACE_ID_PAGE_LAYOUT_ID',

@@ -5,13 +5,13 @@ import { recordPermissionsFamilyState } from '@/object-record/record-sharing/sta
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import {
   type RecordPermissionsDto,
-  type RecordPermissionsTargetInput,
+  type RecordTargetInput,
 } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 export const recordPermissionsFamilySelector = createAtomFamilySelector<
   RecordPermissionsDto | undefined,
-  RecordPermissionsTargetInput
+  RecordTargetInput
 >({
   key: 'recordPermissionsFamilySelector',
   get:

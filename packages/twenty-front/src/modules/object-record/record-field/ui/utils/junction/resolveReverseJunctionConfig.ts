@@ -87,8 +87,7 @@ const findReciprocalField = ({
     : undefined;
 };
 
-// Junction relation metadata already names its inverse field. Following those
-// edges keeps unrelated fields elsewhere in the workspace out of resolution.
+// Following the named inverse fields keeps unrelated workspace fields out of resolution.
 export const resolveReverseJunctionConfig = ({
   junctionObjectMetadataId,
   relationTargetFieldMetadataId,

@@ -15,8 +15,7 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 
 const APPLICATION_TOKEN_RATE_LIMIT_MAX = 30;
 const APPLICATION_TOKEN_RATE_LIMIT_WINDOW_MS = 30_000;
@@ -28,7 +27,19 @@ const APPLICATION_TOKEN_RATE_LIMIT_WINDOW_MS = 30_000;
   AuthGraphqlApiExceptionFilter,
   ThrottlerGraphqlApiExceptionFilter,
 )
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 export class ApplicationOAuthResolver {
   constructor(
     private readonly applicationTokenService: ApplicationTokenService,
@@ -36,13 +47,33 @@ export class ApplicationOAuthResolver {
   ) {}
 
   @Mutation(() => ApplicationTokenPairDTO)
-  @UseGuards(RequireAccessTokenGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
   async renewApplicationToken(
     @Args('applicationRefreshToken') applicationRefreshToken: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ApplicationTokenPairDTO> {
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `app-renew:${workspaceId}:${userWorkspaceId}`,
+      1,
+      APPLICATION_TOKEN_RATE_LIMIT_MAX,
+      APPLICATION_TOKEN_RATE_LIMIT_WINDOW_MS,
+    );
+
     const applicationRefreshTokenPayload =
       await this.applicationTokenService.validateApplicationRefreshTokenForSessionOrThrow(
         {
@@ -52,13 +83,6 @@ export class ApplicationOAuthResolver {
           userWorkspaceId,
         },
       );
-
-    await this.throttlerService.tokenBucketThrottleOrThrow(
-      `app-renew:${workspaceId}:${userWorkspaceId}:${applicationRefreshTokenPayload.applicationId}`,
-      1,
-      APPLICATION_TOKEN_RATE_LIMIT_MAX,
-      APPLICATION_TOKEN_RATE_LIMIT_WINDOW_MS,
-    );
 
     return this.applicationTokenService.renewApplicationTokens(
       applicationRefreshTokenPayload,

@@ -2,13 +2,13 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { InstallOnboardingAppsJob } from 'src/engine/core-modules/onboarding/jobs/install-onboarding-apps.job';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 
 describe('InstallOnboardingAppsJob', () => {
   let job: InstallOnboardingAppsJob;
-  let applicationRegistrationService: ApplicationRegistrationService;
+  let applicationRegistrationLookupService: ApplicationRegistrationLookupService;
   let applicationInstallService: ApplicationInstallService;
   let onboardingService: OnboardingService;
 
@@ -25,7 +25,7 @@ describe('InstallOnboardingAppsJob', () => {
       providers: [
         InstallOnboardingAppsJob,
         {
-          provide: ApplicationRegistrationService,
+          provide: ApplicationRegistrationLookupService,
           useValue: {
             findOneByUniversalIdentifierGlobal: jest.fn(),
           },
@@ -47,9 +47,10 @@ describe('InstallOnboardingAppsJob', () => {
     }).compile();
 
     job = module.get<InstallOnboardingAppsJob>(InstallOnboardingAppsJob);
-    applicationRegistrationService = module.get<ApplicationRegistrationService>(
-      ApplicationRegistrationService,
-    );
+    applicationRegistrationLookupService =
+      module.get<ApplicationRegistrationLookupService>(
+        ApplicationRegistrationLookupService,
+      );
     applicationInstallService = module.get<ApplicationInstallService>(
       ApplicationInstallService,
     );
@@ -63,7 +64,7 @@ describe('InstallOnboardingAppsJob', () => {
   it('should credit the reward for every requested app and install them', async () => {
     jest
       .spyOn(
-        applicationRegistrationService,
+        applicationRegistrationLookupService,
         'findOneByUniversalIdentifierGlobal',
       )
       .mockImplementation(async (universalIdentifier) =>
@@ -80,7 +81,6 @@ describe('InstallOnboardingAppsJob', () => {
 
     expect(onboardingService.creditInstallAppsReward).toHaveBeenCalledWith({
       workspaceId,
-      rewardAppsCount: 2,
     });
     expect(applicationInstallService.installApplication).toHaveBeenCalledTimes(
       2,
@@ -90,7 +90,7 @@ describe('InstallOnboardingAppsJob', () => {
   it('should credit only once an install has succeeded', async () => {
     jest
       .spyOn(
-        applicationRegistrationService,
+        applicationRegistrationLookupService,
         'findOneByUniversalIdentifierGlobal',
       )
       .mockImplementation(async (universalIdentifier) =>
@@ -117,7 +117,7 @@ describe('InstallOnboardingAppsJob', () => {
   it('should not credit again when a failed run is relaunched', async () => {
     jest
       .spyOn(
-        applicationRegistrationService,
+        applicationRegistrationLookupService,
         'findOneByUniversalIdentifierGlobal',
       )
       .mockResolvedValue(null);
@@ -139,7 +139,7 @@ describe('InstallOnboardingAppsJob', () => {
   it('should not credit when every install fails', async () => {
     jest
       .spyOn(
-        applicationRegistrationService,
+        applicationRegistrationLookupService,
         'findOneByUniversalIdentifierGlobal',
       )
       .mockImplementation(async (universalIdentifier) =>
@@ -163,7 +163,7 @@ describe('InstallOnboardingAppsJob', () => {
   it('should credit only the apps that were actually installed when a registration cannot be found', async () => {
     jest
       .spyOn(
-        applicationRegistrationService,
+        applicationRegistrationLookupService,
         'findOneByUniversalIdentifierGlobal',
       )
       .mockImplementation(async (universalIdentifier) =>
@@ -182,7 +182,6 @@ describe('InstallOnboardingAppsJob', () => {
 
     expect(onboardingService.creditInstallAppsReward).toHaveBeenCalledWith({
       workspaceId,
-      rewardAppsCount: 1,
     });
     expect(applicationInstallService.installApplication).toHaveBeenCalledTimes(
       1,
@@ -192,7 +191,7 @@ describe('InstallOnboardingAppsJob', () => {
   it('should clear every step to go back to once the apps are scheduled', async () => {
     jest
       .spyOn(
-        applicationRegistrationService,
+        applicationRegistrationLookupService,
         'findOneByUniversalIdentifierGlobal',
       )
       .mockResolvedValue(buildRegistration('registration-id'));
@@ -214,7 +213,7 @@ describe('InstallOnboardingAppsJob', () => {
   it('should keep the steps to go back to when every install failed', async () => {
     jest
       .spyOn(
-        applicationRegistrationService,
+        applicationRegistrationLookupService,
         'findOneByUniversalIdentifierGlobal',
       )
       .mockResolvedValue(null);
@@ -233,7 +232,7 @@ describe('InstallOnboardingAppsJob', () => {
   it('should clear the steps to go back to when only some installs succeeded', async () => {
     jest
       .spyOn(
-        applicationRegistrationService,
+        applicationRegistrationLookupService,
         'findOneByUniversalIdentifierGlobal',
       )
       .mockImplementation(async (universalIdentifier) =>
@@ -259,7 +258,7 @@ describe('InstallOnboardingAppsJob', () => {
   it('should still install when the job was enqueued before it carried a user', async () => {
     jest
       .spyOn(
-        applicationRegistrationService,
+        applicationRegistrationLookupService,
         'findOneByUniversalIdentifierGlobal',
       )
       .mockResolvedValue(buildRegistration('registration-id'));

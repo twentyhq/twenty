@@ -29,7 +29,7 @@ import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
-import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
+import { RecordDragMultiDragCounterChip } from '@/object-record/record-drag/components/RecordDragMultiDragCounterChip';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
@@ -50,8 +50,7 @@ const cloneColumnFieldWidthRules = Array.from(
   },
 ).join('\n');
 
-// The overlay renders in a portal outside the table, so the column width CSS
-// variables and sticky cell rules of the table ancestors are redeclared here.
+// The overlay portals outside the table, so its column width variables and sticky rules are redeclared.
 const StyledRowDragOverlayCSSBridge = styled.div`
   position: relative;
 
@@ -119,10 +118,8 @@ const StyledRowDragOverlayCSSBridge = styled.div`
   }
 `;
 
-// The full-width row preview would overhang overlays such as the record side
-// panel when the visible table is narrower than the row, so it is clipped to
-// the scroll wrapper's width. The multi-drag counter chip renders outside
-// this container because it pokes past the row's top-left corner.
+// Clipped to the scroll wrapper so the preview doesn't overhang overlays; the counter chip sits outside
+// because it pokes past the row's top-left corner.
 const StyledRowClipContainer = styled.div`
   overflow: hidden;
 `;
@@ -205,7 +202,7 @@ export const RecordTableRowDragOverlayContent = ({
           </RecordTableRowDraggableContextProvider>
         </RecordTableTr>
       </StyledRowClipContainer>
-      <RecordTableRowMultiDragPreview recordId={recordId} />
+      <RecordDragMultiDragCounterChip />
     </StyledRowDragOverlayCSSBridge>
   );
 };

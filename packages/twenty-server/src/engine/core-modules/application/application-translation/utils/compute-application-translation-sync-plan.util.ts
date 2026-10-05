@@ -17,8 +17,7 @@ export type ApplicationTranslationSyncPlan = {
   rowIdsToSoftDelete: string[];
 };
 
-// A soft-deleted row is preferred over none, so a locale that comes back is
-// revived rather than duplicated.
+// Prefer a soft-deleted row over none so a returning locale is revived, not duplicated
 const pickRowByLocale = (
   existingRows: StoredTranslationRow[],
 ): Map<keyof typeof APP_LOCALES, StoredTranslationRow> => {

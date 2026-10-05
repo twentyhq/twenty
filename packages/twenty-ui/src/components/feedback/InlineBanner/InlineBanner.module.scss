@@ -23,3 +23,31 @@
   flex: 1;
   min-width: 0;
 }
+
+.compact {
+  box-sizing: content-box;
+  font-family: inherit;
+  font-size: inherit;
+  font-style: inherit;
+  gap: var(--t-spacing-2);
+  justify-content: space-between;
+  line-height: inherit;
+  margin-bottom: 0;
+  max-width: 512px;
+  min-height: auto;
+  width: auto;
+
+  .bannerContent {
+    flex: initial;
+  }
+}
+
+.compactBlue {
+  background: var(--t-color-blue5);
+  color: var(--t-color-blue10);
+}
+
+.compactDanger {
+  background: var(--t-color-red3);
+  color: var(--t-color-red);
+}

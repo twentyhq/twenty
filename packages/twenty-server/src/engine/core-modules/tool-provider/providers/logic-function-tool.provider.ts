@@ -6,6 +6,7 @@ import {
   DEFAULT_TOOL_INPUT_SCHEMA,
 } from 'twenty-shared/logic-function';
 
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -16,6 +17,7 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { buildLogicFunctionToolName } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-name.util';
 
 @Injectable()
 export class LogicFunctionToolProvider implements ToolProvider {
@@ -29,10 +31,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
     return true;
   }
 
-  // Logic function tools emit `executionRef.kind === 'logic_function'`
-  // descriptors and are dispatched inline by ToolExecutorService. The
-  // static-tool path is unreachable for this provider; this method exists
-  // only to satisfy the interface.
+  // Unreachable: logic function descriptors are dispatched inline by ToolExecutorService.
   async executeStaticTool(
     toolName: string,
     _args: Record<string, unknown>,
@@ -84,13 +83,17 @@ export class LogicFunctionToolProvider implements ToolProvider {
       (fn): fn is FlatLogicFunction =>
         isDefined(fn) &&
         isDefined(fn.toolTriggerSettings) &&
-        fn.deletedAt === null,
+        fn.deletedAt === null &&
+        canCallerReachApplication({
+          callingApplication: context.application,
+          applicationId: fn.applicationId,
+        }),
     );
 
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
     for (const logicFunction of logicFunctionsWithSchema) {
-      const toolName = this.buildLogicFunctionToolName(logicFunction.name);
+      const toolName = buildLogicFunctionToolName(logicFunction.name);
 
       const base: ToolIndexEntry = {
         name: toolName,
@@ -124,12 +127,5 @@ export class LogicFunctionToolProvider implements ToolProvider {
     }
 
     return descriptors;
-  }
-
-  private buildLogicFunctionToolName(functionName: string): string {
-    return `app_${functionName
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '_')
-      .replace(/^_+|_+$/g, '')}`;
   }
 }

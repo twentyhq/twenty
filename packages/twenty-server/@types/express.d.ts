@@ -28,5 +28,7 @@ declare module 'express-serve-static-core' {
     tokenType?: JwtTokenTypeEnum;
     authenticatedAt?: Date;
     executedRootResolvers?: string[];
+    mcpMethod?: string;
+    mcpToolName?: string;
   }
 }

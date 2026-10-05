@@ -2,10 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { CustomException } from 'src/utils/custom-exception';
 
 type AgentHistoryStorageExceptionCode =
-  | 'INVALID_STATE'
-  | 'MISSING_STATE'
   | 'INVALID_WORKSPACE'
-  | 'INVALID_CRITERIA'
   | 'RECORD_NOT_FOUND';
 
 export class AgentHistoryStorageException extends CustomException<AgentHistoryStorageExceptionCode> {

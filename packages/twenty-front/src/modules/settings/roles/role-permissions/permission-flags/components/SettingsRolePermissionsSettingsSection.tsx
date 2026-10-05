@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components';
 import { IconSettings } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -69,7 +69,7 @@ export const SettingsRolePermissionsSettingsSection = ({
       <Section.Header title={t`Layout`} description={t`Layout permissions`} />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
-          <Card rounded>
+          <Card.Root rounded>
             <SettingsOptionCardContentSwitch
               Icon={IconSettings}
               title={t`Layout All Access`}
@@ -83,10 +83,10 @@ export const SettingsRolePermissionsSettingsSection = ({
                 });
               }}
             />
-          </Card>
+          </Card.Root>
         </StyledCardContainer>
       )}
-      <AnimatedExpandableContainer
+      <Collapsible
         isExpanded={
           !shouldShowAllAccessToggle || !settingsDraftRole.canUpdateAllSettings
         }
@@ -95,7 +95,6 @@ export const SettingsRolePermissionsSettingsSection = ({
           opacity: 0.2,
           size: 0.4,
         }}
-        mode="scroll-height"
         containAnimation={false}
       >
         <StyledTable>
@@ -115,7 +114,7 @@ export const SettingsRolePermissionsSettingsSection = ({
             ))}
           </StyledTableRows>
         </StyledTable>
-      </AnimatedExpandableContainer>
+      </Collapsible>
     </Section.Root>
   );
 };

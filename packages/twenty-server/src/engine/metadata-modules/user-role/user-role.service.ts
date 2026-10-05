@@ -2,9 +2,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -34,9 +35,6 @@ export class UserRoleService {
     private readonly roleValidationService: RoleValidationService,
   ) {}
 
-  // Resolves a workspace member to its user workspace and assigns the role,
-  // enforcing the self-role-change and assignability rules for every surface
-  // (GraphQL, AI tools, future REST/CLI).
   public async assignRoleToWorkspaceMember({
     workspaceId,
     workspaceMemberId,
@@ -70,8 +68,7 @@ export class UserRoleService {
       );
     }
 
-    // Checked before role validation so a self-assignment fails with the
-    // self-role error even when the supplied role does not exist.
+    // Before role validation so a self-assignment reports the self-role error even for an unknown role
     this.validateNotSelfAssignmentOrThrow({
       userWorkspaceIds: [userWorkspace.id],
       actingUserWorkspaceId,
@@ -207,37 +204,25 @@ export class UserRoleService {
   public async getWorkspaceMembersAssignedToRole(
     roleId: string,
     workspaceId: string,
-  ): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
+  ): Promise<FlatWorkspaceMember[]> {
     const userWorkspaceIdsWithRole =
       await this.getUserWorkspaceIdsAssignedToRole(roleId, workspaceId);
 
-    const userIds = await this.userWorkspaceRepository
-      .find({
-        where: {
-          id: In(userWorkspaceIdsWithRole),
-        },
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return userWorkspaceIdsWithRole
+      .map((userWorkspaceId) => {
+        const workspaceMemberId =
+          flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId];
+
+        return isDefined(workspaceMemberId)
+          ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+          : undefined;
       })
-      .then((userWorkspaces) =>
-        userWorkspaces.map((userWorkspace) => userWorkspace.userId),
-      );
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const workspaceMembers = await workspaceMemberRepository.find({
-        where: {
-          userId: In(userIds),
-        },
-      });
-
-      return workspaceMembers;
-    }, authContext);
+      .filter(isDefined);
   }
 
   private validateNotSelfAssignmentOrThrow({
@@ -432,5 +417,53 @@ export class UserRoleService {
         },
       );
     }
+  }
+
+  async resolveCustodianUserWorkspace({
+    removedUserWorkspace,
+    actingUserWorkspaceId,
+  }: {
+    removedUserWorkspace: UserWorkspaceEntity;
+    actingUserWorkspaceId?: string;
+  }): Promise<UserWorkspaceEntity | undefined> {
+    const otherUserWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        workspaceId: removedUserWorkspace.workspaceId,
+        id: Not(removedUserWorkspace.id),
+      },
+      order: { createdAt: 'ASC' },
+    });
+
+    if (otherUserWorkspaces.length === 0) {
+      return undefined;
+    }
+
+    const actingUserWorkspace = otherUserWorkspaces.find(
+      (otherUserWorkspace) => otherUserWorkspace.id === actingUserWorkspaceId,
+    );
+
+    if (isDefined(actingUserWorkspace)) {
+      return actingUserWorkspace;
+    }
+
+    const rolesByUserWorkspaceId = await this.getRolesByUserWorkspaces({
+      userWorkspaceIds: otherUserWorkspaces.map(
+        (otherUserWorkspace) => otherUserWorkspace.id,
+      ),
+      workspaceId: removedUserWorkspace.workspaceId,
+    });
+
+    const oldestAdminUserWorkspace = otherUserWorkspaces.find(
+      (otherUserWorkspace) =>
+        rolesByUserWorkspaceId
+          .get(otherUserWorkspace.id)
+          ?.some(
+            (role) =>
+              role.universalIdentifier ===
+              STANDARD_ROLE.admin.universalIdentifier,
+          ),
+    );
+
+    return oldestAdminUserWorkspace ?? otherUserWorkspaces[0];
   }
 }

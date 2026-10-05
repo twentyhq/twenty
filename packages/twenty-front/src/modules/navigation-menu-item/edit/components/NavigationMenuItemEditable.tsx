@@ -1,3 +1,4 @@
+import { type NavigationMenuItemMenuMode } from '@/navigation-menu-item/edit/types/NavigationMenuItemMenuMode';
 import { NavigationMenuItemObjectColorEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemObjectColorEditor';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 // Aliased so both reads satisfy the matching-state-variable lint rule, which
@@ -7,15 +8,13 @@ import {
   isDropdownOpenComponentState as isColorPickerOpenComponentState,
 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useCallback, useState, type ReactNode } from 'react';
+import { useCallback, useRef, useState, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -56,14 +55,16 @@ export const NavigationMenuItemEditable = ({
     isLayoutCustomizationModeEnabledState,
   );
 
-  const theme = useTheme();
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const [
     selectedNavigationMenuItemIdInEditMode,
     setSelectedNavigationMenuItemIdInEditMode,
   ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
   const { openDropdown } = useOpenDropdown();
-  const [mode, setMode] = useState<'actions' | 'edit'>('actions');
+  const [mode, setMode] = useState<NavigationMenuItemMenuMode>({
+    type: 'actions',
+  });
+  const rowRef = useRef<HTMLDivElement>(null);
   const dropdownId = `navigation-item-${item.id}`;
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
@@ -79,9 +80,9 @@ export const NavigationMenuItemEditable = ({
   const canEdit =
     item.type === NavigationMenuItemType.LINK ||
     item.type === NavigationMenuItemType.FOLDER;
-  const openEditMode = useCallback(() => setMode('edit'), []);
+  const openEditMode = useCallback(() => setMode({ type: 'edit' }), []);
   const open = (nextMode: 'actions' | 'edit') => {
-    setMode(nextMode);
+    setMode({ type: nextMode });
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   };
   const shouldOpenLinkEditor =
@@ -127,43 +128,33 @@ export const NavigationMenuItemEditable = ({
     <NavigationMenuItemMenu
       section={isWorkspace ? 'workspace' : 'favorite'}
       dropdownId={dropdownId}
-      clickableComponent={row}
-      disableClickForClickableComponent
-      dropdownPlacement={mode === 'edit' ? 'top-start' : 'right-start'}
-      dropdownOffset={
-        mode === 'edit' ? { y: theme.spacingMultiplicator } : undefined
-      }
-      excludedClickOutsideIds={[
-        `${dropdownId}-icon`,
-        `${dropdownId}-icon-icon-color-picker`,
-      ]}
+      anchor={rowRef}
+      mode={mode}
+      onModeChange={setMode}
       onClose={() =>
         setSelectedNavigationMenuItemIdInEditMode((selectedId) =>
           selectedId === item.id ? null : selectedId,
         )
       }
       renderMenu={({ onClose, onAdd }) =>
-        mode === 'edit' && item.type === NavigationMenuItemType.LINK ? (
-          <LegacyDropdownContent
-            widthInPixels={GenericDropdownContentWidth.ExtraLarge}
-          >
-            <NavigationMenuItemLinkEditor
-              item={item}
-              dropdownId={dropdownId}
-              onClose={onClose}
-            />
-          </LegacyDropdownContent>
+        mode.type === 'edit' && item.type === NavigationMenuItemType.LINK ? (
+          <NavigationMenuItemLinkEditor
+            item={item}
+            dropdownId={dropdownId}
+            onClose={onClose}
+          />
         ) : (
           <NavigationMenuItemActions
             item={item}
             section={isWorkspace ? 'workspace' : 'favorite'}
-            dropdownId={dropdownId}
             onClose={onClose}
             onAdd={onAdd}
           />
         )
       }
-    />
+    >
+      {row}
+    </NavigationMenuItemMenu>
   ) : (
     row
   );
@@ -178,7 +169,9 @@ export const NavigationMenuItemEditable = ({
       }
     >
       <StyledRow
+        ref={rowRef}
         id={anchorId}
+        data-navigation-menu-item-id={dropdownId}
         onContextMenu={(event) => {
           if (
             !canOrganize ||

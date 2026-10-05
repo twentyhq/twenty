@@ -40,8 +40,7 @@ export const RecordTableWidgetJunctionAddNewRow = ({
     junctionCreateThrough,
   });
 
-  // Linking an existing record only writes the junction object, so the
-  // junction's own permissions gate the row rather than the target object's.
+  // Linking only writes the junction object, so its permissions gate the row.
   if (
     isObjectMetadataReadOnly({
       objectPermissions: junctionObjectPermissions,
