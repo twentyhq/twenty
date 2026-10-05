@@ -1,10 +1,11 @@
+import { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from 'twenty-shared/ai';
+
 import {
   type UserWorkspaceAuthContext,
   type WorkspaceAuthContext,
 } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import {
-  ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   attachConversationToRecordInputSchema,
   createAttachConversationToRecordTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';

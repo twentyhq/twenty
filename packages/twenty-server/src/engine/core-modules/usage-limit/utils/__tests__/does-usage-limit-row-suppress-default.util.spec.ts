@@ -6,6 +6,7 @@ import {
 import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const buildDefault = (
   overrides: Partial<StockLimitDefaultDefinition> = {},
@@ -15,7 +16,7 @@ const buildDefault = (
   limitKind: 'stock',
   spenderType: 'workspace',
   spenderId: '',
-  meter: 'bytes',
+  unit: UsageUnit.BYTE,
   periodUnit: 'lifetime',
   periodCount: 1,
   limitValueConfigVariable: 'WORKSPACE_STORAGE_LIMIT_BYTES',
@@ -34,7 +35,7 @@ const buildScope = (
     limitKind: 'stock',
     periodCount: 1,
     periodUnit: 'lifetime',
-    meter: 'bytes',
+    unit: UsageUnit.BYTE,
     ...overrides,
   });
 
@@ -69,7 +70,7 @@ describe('doesUsageLimitRowSuppressDefault', () => {
   });
 
   it.each([
-    ['meter', { meter: 'quantity' } as Partial<UsageLimitScope>],
+    ['unit', { unit: UsageUnit.FILE } as Partial<UsageLimitScope>],
     [
       'spender type',
       { spenderType: 'application' } as Partial<UsageLimitScope>,
@@ -79,6 +80,7 @@ describe('doesUsageLimitRowSuppressDefault', () => {
       { resourceType: UsageResourceType.RECORD } as Partial<UsageLimitScope>,
     ],
     ['limit kind', { limitKind: 'quota' } as Partial<UsageLimitScope>],
+    ['period unit', { periodUnit: 'day' } as Partial<UsageLimitScope>],
   ])('does not suppress across a different %s', (_label, overrides) => {
     expect(
       doesUsageLimitRowSuppressDefault({
@@ -97,11 +99,11 @@ describe('doesUsageLimitRowSuppressDefault', () => {
     ).toBe(false);
   });
 
-  it('ignores the period, which no builder matches on', () => {
+  it('ignores the period count, which a speed window can change', () => {
     expect(
       doesUsageLimitRowSuppressDefault({
-        scope: buildScope({ periodCount: 60, periodUnit: 'second' }),
-        usageLimitDefault: buildDefault(),
+        scope: buildScope({ periodCount: 60 }),
+        usageLimitDefault: buildDefault({ periodCount: 1 }),
       }),
     ).toBe(true);
   });

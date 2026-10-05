@@ -71,6 +71,7 @@ export const useHotkeysOnFocusedElement = ({
       enableOnContentEditable,
       enableOnFormTags,
       ignoreModifiers,
+      ignoreEventWhen: options?.ignoreEventWhen,
     },
     dependencies,
   );

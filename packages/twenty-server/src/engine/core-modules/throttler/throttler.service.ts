@@ -7,6 +7,7 @@ import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
+import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import {
   TOKEN_BUCKETS_DENY_PARTIAL_ARG,
   TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
@@ -24,48 +25,12 @@ export class ThrottlerService {
     tokensToConsume: number,
     maxTokens: number,
     timeWindow: number,
-  ): Promise<number> {
-    const now = Date.now();
-    const availableTokens = await this.getAvailableTokensCount(
-      key,
-      maxTokens,
-      timeWindow,
-      now,
-    );
-
-    if (availableTokens < tokensToConsume) {
-      throw new ThrottlerException(
-        `Limit reached (${maxTokens} tokens per ${timeWindow} ms)`,
-        ThrottlerExceptionCode.LIMIT_REACHED,
-      );
-    }
-
-    await this.cacheStorage.set(
-      key,
-      {
-        tokens: availableTokens - tokensToConsume,
-        lastRefillAt: now,
-      },
-      timeWindow * 2,
-    );
-
-    return availableTokens - tokensToConsume;
-  }
-
-  async atomicTokenBucketThrottleOrThrow({
-    key,
-    maxTokens,
-    timeWindow,
-  }: {
-    key: string;
-    maxTokens: number;
-    timeWindow: number;
-  }): Promise<void> {
+  ): Promise<void> {
     const [admittedCount] = await this.cacheStorage.runScript<number[]>({
       script: TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
-      keys: [key],
+      keys: [`${TOKEN_BUCKET_THROTTLE_KEY_PREFIX}:${key}`],
       args: [
-        '1',
+        String(tokensToConsume),
         JSON.stringify([
           { burst: maxTokens, refill: maxTokens, windowMs: timeWindow },
         ]),
@@ -73,7 +38,7 @@ export class ThrottlerService {
       ],
     });
 
-    if (admittedCount !== 1) {
+    if (admittedCount !== tokensToConsume) {
       throw new ThrottlerException(
         `Limit reached (${maxTokens} tokens per ${timeWindow} ms)`,
         ThrottlerExceptionCode.LIMIT_REACHED,

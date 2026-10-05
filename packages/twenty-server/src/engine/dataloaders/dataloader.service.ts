@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import DataLoader from 'dataloader';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { FieldMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/field-metadata-connection-loader.factory';
 import { IndexMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/index-metadata-connection-loader.factory';
@@ -180,8 +177,6 @@ export class DataloaderService {
     private readonly indexMetadataConnectionLoaderFactory: IndexMetadataConnectionLoaderFactory,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -966,37 +961,17 @@ export class DataloaderService {
           .filter(isDefined);
       });
 
-      const allUserWorkspaceIds = [...new Set(userWorkspaceIdsByRoleId.flat())];
-
-      const userWorkspaces =
-        allUserWorkspaceIds.length > 0
-          ? await this.userWorkspaceRepository.find({
-              select: { id: true, userId: true },
-              where: { id: In(allUserWorkspaceIds), workspaceId },
-            })
-          : [];
-
-      const userIdByUserWorkspaceId = new Map(
-        userWorkspaces.map((userWorkspace) => [
-          userWorkspace.id,
-          userWorkspace.userId,
-        ]),
-      );
-
       return userWorkspaceIdsByRoleId.map((userWorkspaceIds) =>
         userWorkspaceIds
           .map((userWorkspaceId) => {
-            const userId = userIdByUserWorkspaceId.get(userWorkspaceId);
-            const workspaceMemberId = isDefined(userId)
-              ? flatWorkspaceMemberMaps.idByUserId[userId]
-              : undefined;
+            const workspaceMemberId =
+              flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId];
 
             return isDefined(workspaceMemberId)
               ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
               : undefined;
           })
-          .filter(isDefined)
-          .filter((workspaceMember) => !isDefined(workspaceMember.deletedAt)),
+          .filter(isDefined),
       );
     });
   }

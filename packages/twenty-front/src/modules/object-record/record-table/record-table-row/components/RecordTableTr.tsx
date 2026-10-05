@@ -3,7 +3,7 @@ import { useIsRecordDeleted } from '@/object-record/record-field/ui/hooks/useIsR
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDiv } from '@/object-record/record-table/record-table-row/components/RecordTableRowDiv';
-import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
@@ -27,8 +27,8 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
     const { objectMetadataItem, isObjectReadOnly } =
       useRecordTableContextOrThrow();
 
-    const isRowSelected = useAtomComponentFamilyStateValue(
-      isRowSelectedComponentFamilyState,
+    const isRecordSelected = useAtomComponentFamilyStateValue(
+      isRecordSelectedComponentFamilyState,
       recordId,
     );
 
@@ -58,7 +58,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
               objectNameSingular: objectMetadataItem.nameSingular,
             }) + recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
-          isSelected: isRowSelected,
+          isSelected: isRecordSelected,
           isRecordReadOnly: isObjectReadOnly || isRecordDeleted,
         }}
       >

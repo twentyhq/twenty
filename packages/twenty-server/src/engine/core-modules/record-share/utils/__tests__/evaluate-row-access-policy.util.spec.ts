@@ -1,7 +1,12 @@
 /* @license Enterprise */
 
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
-import { FieldMetadataType, RecordShareAccessLevel } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+  MetadataReadability,
+  RecordShareAccessLevel,
+} from 'twenty-shared/types';
 
 import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
 import {
@@ -9,6 +14,7 @@ import {
   type RowAccessEvaluationContext,
   type RowAccessRecord,
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
+import { resolveRecordShareFeatureFlags } from 'src/engine/core-modules/record-share/utils/resolve-record-share-feature-flags.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -18,7 +24,9 @@ import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-objec
 import {
   type RecordShareExpressionTarget,
   type RowAccessExpression,
+  type RowAccessPolicySubject,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
 
 const MEMBER_ID = 'member-1';
 
@@ -211,5 +219,59 @@ describe('evaluateRowAccessPolicy', () => {
         records: [expect.objectContaining({ id: 'active-private' })],
       }),
     );
+  });
+
+  describe('with record share visibility gating turned off for the workspace', () => {
+    const privateObject = {
+      ...flatObjectMetadata,
+      readability: MetadataReadability.PRIVATE,
+    };
+    const buildUngatedPolicy = (
+      objectsPermissions: RowAccessPolicySubject['objectsPermissions'],
+    ) =>
+      buildRowAccessPolicy({
+        subject: {
+          isSystemContext: false,
+          objectsPermissions,
+          principalIds: [MEMBER_ID],
+          canAccessAllRecords: false,
+          isOwningApplication: () => false,
+          resolveRowLevelPermissionRecordFilter: () => null,
+        },
+        environment: {
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+          ...resolveRecordShareFeatureFlags({
+            [FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED]: false,
+          }),
+        },
+        tableAlias: 'company',
+        flatObjectMetadata: privateObject,
+        operationType: 'select',
+        depth: 0,
+      });
+
+    it('admits every PRIVATE record to a role that can read the object, without reading shares', async () => {
+      const context = buildContext();
+
+      expect(
+        await evaluateRowAccessPolicy({
+          policy: buildUngatedPolicy(undefined),
+          records,
+          context,
+        }),
+      ).toEqual(new Set(records.map((record) => record.id)));
+      expect(context.fetchRecordShares).not.toHaveBeenCalled();
+    });
+
+    it('still denies a role that cannot read the object', async () => {
+      expect(
+        await evaluateRowAccessPolicy({
+          policy: buildUngatedPolicy({}),
+          records,
+          context: buildContext(),
+        }),
+      ).toEqual(new Set());
+    });
   });
 });

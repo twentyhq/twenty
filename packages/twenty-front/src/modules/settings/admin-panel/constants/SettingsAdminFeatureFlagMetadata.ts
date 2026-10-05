@@ -50,17 +50,9 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED]: {
-    label: msg`Webhook rate limits`,
-    description: msg`Limit the rate of outgoing webhook deliveries.`,
-  },
   [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
     label: msg`Deferred workspace migration actions`,
     description: msg`Run the slow parts of data model changes in the background after they are saved.`,
-  },
-  [FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED]: {
-    label: msg`Execution quotas`,
-    description: msg`Enforce usage quotas on workflow node runs and logic function executions.`,
   },
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
     label: msg`Record creation form`,
@@ -79,7 +71,11 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     description: msg`Let admins add conditions a record must meet to be saved, checked on every write.`,
   },
   [FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED]: {
-    label: msg`Workflow chat messages`,
-    description: msg`Add a workflow step that posts a message in a member's AI chat.`,
+    label: msg`Workflow inbox messages`,
+    description: msg`Add a workflow step that sends a message, and optionally an action to approve, to a member's inbox.`,
+  },
+  [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: {
+    label: msg`Skip unchanged calendar records`,
+    description: msg`Only write calendar events and participants that changed since the last sync.`,
   },
 };

@@ -26,7 +26,7 @@ export const DEFAULT_MODELS_BY_TIER: Record<AiModelTier, string[]> = {
     'mistral/mistral-large-latest',
   ],
   smart: [
-    'openai/gpt-5.6-sol@high',
+    'openai/gpt-6-astra@low',
     'google/gemini-3.8-flash@high',
     'anthropic/claude-opus-5@high',
     'xai/grok-4.6@high',

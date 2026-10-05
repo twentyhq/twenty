@@ -230,6 +230,7 @@ export const Enter: Story = {
       ).not.toBeInTheDocument();
     });
     await expect(handleEnterMocked).not.toHaveBeenCalled();
+    await userEvent.click(await canvas.findByPlaceholderText(/HH:mm/));
     await userEvent.keyboard('{enter}');
 
     await expect(handleEnterMocked).toHaveBeenCalledTimes(1);

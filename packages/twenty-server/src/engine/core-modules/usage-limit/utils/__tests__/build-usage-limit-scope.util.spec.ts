@@ -2,6 +2,7 @@ import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/
 import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const buildInput = (
   overrides: Partial<CreateUsageLimitInput> = {},
@@ -13,7 +14,7 @@ const buildInput = (
   limitKind: 'quota',
   periodCount: 1,
   periodUnit: 'month',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   limitValue: 1_000_000,
   burstValue: null,
   ...overrides,
@@ -29,7 +30,7 @@ describe('buildUsageLimitScope', () => {
       limitKind: 'quota',
       periodCount: 1,
       periodUnit: 'month',
-      meter: 'creditsUsedMicro',
+      unit: UsageUnit.CREDIT,
     });
   });
 

@@ -1,7 +1,6 @@
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowRunContext,
@@ -59,6 +58,7 @@ import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/cons
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
 
@@ -79,6 +79,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
+    private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -195,6 +196,7 @@ export class WorkflowExecutorWorkspaceService {
         if (canRetryStep) {
           await this.scheduleStepRetry({
             stepId,
+            resumedThreadId,
             error: actionOutput.error,
             retryDelayMs: getStepRetryDelayMs({ stepInfo: stepInfos[stepId] }),
             workflowRunId,
@@ -417,16 +419,6 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
   }): Promise<WorkflowActionOutput | undefined> {
-    const isExecutionQuotaEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
-        workspaceId,
-      );
-
-    if (!isExecutionQuotaEnabled) {
-      return undefined;
-    }
-
     try {
       await this.billingUsageService.assertUsageAllowed({
         workspaceId,
@@ -458,7 +450,7 @@ export class WorkflowExecutorWorkspaceService {
       resourceType: UsageResourceType.WORKFLOW,
       operationType: UsageOperationType.WORKFLOW_EXECUTION,
       spenders: billingSpenders,
-      cost: { creditsUsedMicro: 100, quantity: 1 },
+      cost: { [UsageUnit.CREDIT]: 100, [UsageUnit.INVOCATION]: 1 },
     });
 
     await this.usageRecorderService.record(workspaceId, [
@@ -485,7 +477,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }): Promise<{ shouldProcessNextSteps: boolean }> {
-    const isPendingEvent = actionOutput.pendingEvent;
+    const wait = actionOutput.wait;
     const isSuccess = isDefined(actionOutput.result);
     const isStopped = actionOutput.shouldEndWorkflowRun ?? false;
     const isNotFinished = actionOutput.shouldRemainRunning ?? false;
@@ -494,9 +486,10 @@ export class WorkflowExecutorWorkspaceService {
 
     let stepInfo: WorkflowRunStepInfo;
 
-    if (isPendingEvent) {
+    if (isDefined(wait)) {
       stepInfo = {
         status: StepStatus.PENDING,
+        wait,
       };
     } else if (isStopped) {
       stepInfo = {
@@ -529,6 +522,16 @@ export class WorkflowExecutorWorkspaceService {
       };
     }
 
+    // armed before the step reads as pending, so an event in between is put off rather than lost
+    if (isDefined(wait)) {
+      await this.workflowStepWaitWorkspaceService.arm({
+        workspaceId,
+        workflowRunId,
+        stepId,
+        wait,
+      });
+    }
+
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
       stepId,
       stepInfo,
@@ -536,10 +539,43 @@ export class WorkflowExecutorWorkspaceService {
       workspaceId,
     });
 
+    if (isDefined(wait)) {
+      await this.cancelWaitIfRunEnded({ stepId, workflowRunId, workspaceId });
+    }
+
     return {
       shouldProcessNextSteps:
         isSuccess || isStopped || isSkipped || isFailedSafely,
     };
+  }
+
+  // a run that ended while its step was arming cancelled its waits before this one existed
+  private async cancelWaitIfRunEnded({
+    stepId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const { status } =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (
+      status === WorkflowRunStatus.COMPLETED ||
+      status === WorkflowRunStatus.FAILED ||
+      status === WorkflowRunStatus.STOPPED
+    ) {
+      await this.workflowStepWaitWorkspaceService.cancelStepWait({
+        workspaceId,
+        workflowRunId,
+        stepId,
+      });
+    }
   }
 
   private async executeStep({
@@ -729,14 +765,18 @@ export class WorkflowExecutorWorkspaceService {
     }
   }
 
+  // a step that failed after resuming on an answer retries from that conversation, so the
+  // person is not asked again and an approved call does not run a second time
   private async scheduleStepRetry({
     stepId,
+    resumedThreadId,
     error,
     retryDelayMs,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
+    resumedThreadId: string | undefined;
     error: string;
     retryDelayMs: number;
     workflowRunId: string;
@@ -744,6 +784,7 @@ export class WorkflowExecutorWorkspaceService {
   }) {
     await this.workflowRunWorkspaceService.moveStepToRetry({
       stepId,
+      resumedThreadId,
       error,
       workflowRunId,
       workspaceId,

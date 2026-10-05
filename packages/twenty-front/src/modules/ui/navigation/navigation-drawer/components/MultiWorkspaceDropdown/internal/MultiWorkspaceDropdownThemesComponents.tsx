@@ -1,45 +1,23 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Dropdown } from 'twenty-ui/components';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
-import { IconChevronLeft } from 'twenty-ui/icon';
 
 export const MultiWorkspaceDropdownThemesComponents = () => {
   const { t } = useLingui();
 
   const { setColorScheme, colorScheme, colorSchemeList } = useColorScheme();
 
-  const setMultiWorkspaceDropdown = useSetAtomState(
-    multiWorkspaceDropdownState,
-  );
-
   return (
-    <LegacyDropdownContent>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={() => setMultiWorkspaceDropdown('default')}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        {t`Theme`}
-      </DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
+    <>
+      <Dropdown.Back>{t`Theme`}</Dropdown.Back>
+      <Dropdown.Section>
         {colorSchemeList.map((theme) => (
-          <ListItem
+          <Dropdown.OptionItem
             key={theme.id}
             startIcon={<SelectOptionIcon Icon={theme.icon} />}
-            onClick={() => setColorScheme(theme.id)}
-            role="option"
-            aria-selected={theme.id === colorScheme}
-            indicator="check"
+            onSelect={() => setColorScheme(theme.id)}
+            closeOnSelect={false}
             selected={theme.id === colorScheme}
           >
             {theme.id === 'System'
@@ -47,9 +25,9 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
               : theme.id === 'Dark'
                 ? t`Dark`
                 : t`Light`}
-          </ListItem>
+          </Dropdown.OptionItem>
         ))}
-      </DropdownMenuItemsContainer>
-    </LegacyDropdownContent>
+      </Dropdown.Section>
+    </>
   );
 };

@@ -81,6 +81,8 @@ validationRuleParser.binaryOps['>'] = compareDefinedValues(
 validationRuleParser.binaryOps['>='] = compareDefinedValues(
   (left, right) => left >= right,
 );
+validationRuleParser.binaryOps.in = (value: unknown, list: unknown) =>
+  Array.isArray(list) && list.includes(value);
 
 validationRuleParser.functions = Object.fromEntries(
   Object.entries(VALIDATION_RULE_FUNCTIONS).map(([name, { evaluate }]) => [

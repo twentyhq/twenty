@@ -104,7 +104,7 @@ export class AgentService {
   }
 
   async createOneAgent(
-    input: CreateAgentInput & { isCustom: boolean },
+    { isSystem = false, ...input }: CreateAgentInput & { isSystem?: boolean },
     workspaceId: string,
   ): Promise<FlatAgentWithRoleId> {
     const { flatApplicationMaps, flatRoleMaps } =
@@ -130,6 +130,7 @@ export class AgentService {
     const { flatAgentToCreate, flatRoleTargetToCreate } =
       fromCreateAgentInputToFlatAgent({
         createAgentInput: input,
+        isSystem,
         workspaceId,
         flatApplication: resolvedFlatApplication,
         flatRoleMaps,

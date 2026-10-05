@@ -1,3 +1,5 @@
+import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { agentChatThreadInboxStatusByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
@@ -15,6 +17,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordPermissionsByRecordIdFamilySelector } from '@/object-record/record-sharing/states/recordPermissionsByRecordIdFamilySelector';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -30,6 +33,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useAtomValue } from 'jotai';
 import {
   ContextStorePageType,
+  CoreObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
@@ -88,11 +92,34 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     },
   );
 
+  // A chat's read and done state belongs to the member, not to the record,
+  // so the inbox commands read it from here. They stay hidden until the
+  // member state loads rather than offering the wrong half of a pair
+  const agentChatThreadParticipants = useAtomStateValue(
+    agentChatThreadParticipantsState,
+  );
+  const inboxStatusThreadIds =
+    objectMetadataItem?.nameSingular ===
+      CoreObjectNameSingular.AgentChatThread &&
+    isDefined(agentChatThreadParticipants)
+      ? (recordIds ?? [])
+      : [];
+  const agentChatThreadInboxStatusByThreadId = useAtomFamilySelectorValue(
+    agentChatThreadInboxStatusByThreadIdFamilySelector,
+    { threadIds: inboxStatusThreadIds },
+  );
+
   // Records shared below the role's access level carry their own permissions, which availability expressions read per record
-  const selectedRecords = storedSelectedRecords.map((record) =>
-    isDefined(recordPermissionsByRecordId[record.id])
-      ? { ...record, recordPermissions: recordPermissionsByRecordId[record.id] }
-      : record,
+  const selectedRecords = storedSelectedRecords.map(
+    (record): ObjectRecord => ({
+      ...record,
+      ...(isDefined(recordPermissionsByRecordId[record.id]) && {
+        recordPermissions: recordPermissionsByRecordId[record.id],
+      }),
+      ...(isDefined(agentChatThreadInboxStatusByThreadId[record.id]) && {
+        inboxStatus: agentChatThreadInboxStatusByThreadId[record.id],
+      }),
+    }),
   );
 
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);

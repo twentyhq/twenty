@@ -38,13 +38,17 @@ export const buildRecordShareGate = ({
     readability: target.flatObjectMetadata.readability,
     isOwningApplication,
   });
+  const isGatingEnabled =
+    context.environment.isRecordShareVisibilityGatingEnabled;
+
   switch (gateKind) {
     case 'open':
-      return shouldEnforceRecordShareExceptions({
-        flatObjectMetadata: target.flatObjectMetadata,
-        isRecordSharingEnabled: context.environment.isRecordSharingEnabled,
-        canAccessAllRecords: context.subject.canAccessAllRecords,
-      })
+      return isGatingEnabled &&
+        shouldEnforceRecordShareExceptions({
+          flatObjectMetadata: target.flatObjectMetadata,
+          isRecordSharingEnabled: context.environment.isRecordSharingEnabled,
+          canAccessAllRecords: context.subject.canAccessAllRecords,
+        })
         ? buildRecordShareExceptionGate(context, target)
         : { kind: 'open' };
     case 'deny':
@@ -56,7 +60,9 @@ export const buildRecordShareGate = ({
         buildParentPolicy,
       });
     case 'private':
-      return buildOwnRecordShareGate(context, target);
+      return isGatingEnabled
+        ? buildOwnRecordShareGate(context, target)
+        : { kind: 'open' };
     default:
       return assertUnreachable(gateKind);
   }
@@ -128,6 +134,8 @@ const buildInheritedReadabilityGate = ({
   target,
   buildParentPolicy,
 }: RecordShareGateArgs): RowAccessPolicy => {
+  const isGatingEnabled =
+    context.environment.isRecordShareVisibilityGatingEnabled;
   const { tableAlias, flatObjectMetadata, depth, joinParentRelationShape } =
     target;
 
@@ -156,7 +164,7 @@ const buildInheritedReadabilityGate = ({
   const isOpenWhenDetached = isOpenWhenDetachedObject(flatObjectMetadata);
 
   if (parents.length === 0) {
-    return isOpenWhenDetached
+    return isOpenWhenDetached || !isGatingEnabled
       ? { kind: 'open' }
       : buildOwnRecordShareGate(context, target);
   }
@@ -164,6 +172,24 @@ const buildInheritedReadabilityGate = ({
   const principals = resolveRecordSharePrincipals(context, target);
 
   if (!isDefined(principals)) {
+    return { kind: 'open' };
+  }
+
+  const parentExpressions = parents.map((parent) =>
+    buildInheritedReadabilityParentExpression({
+      context,
+      target,
+      parent,
+      buildParentPolicy,
+    }),
+  );
+
+  if (
+    !isGatingEnabled &&
+    parentExpressions.every(
+      (parentExpression) => parentExpression.policy.kind === 'open',
+    )
+  ) {
     return { kind: 'open' };
   }
 
@@ -175,14 +201,7 @@ const buildInheritedReadabilityGate = ({
       objectMetadataId: flatObjectMetadata.id,
       ...principals,
       isOpenWhenDetached,
-      parents: parents.map((parent) =>
-        buildInheritedReadabilityParentExpression({
-          context,
-          target,
-          parent,
-          buildParentPolicy,
-        }),
-      ),
+      parents: parentExpressions,
     },
   };
 };
