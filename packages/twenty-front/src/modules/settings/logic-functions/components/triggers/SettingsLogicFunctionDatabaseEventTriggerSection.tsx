@@ -66,7 +66,9 @@ export const SettingsLogicFunctionDatabaseEventTriggerSection = ({
         return;
       }
 
-      if (!isDefined(fieldValue)) return;
+      if (!isDefined(fieldValue)) {
+        return;
+      }
 
       onChange([
         ...triggers,

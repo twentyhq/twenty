@@ -410,7 +410,7 @@ A trigger's `updatedFields` filters which update events trigger the function.
 | `updatedFields` | Optional list of field names. On `.updated` events, only changes touching one of them trigger the function. |
 | `batchMode` | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
 
-A function can list several triggers (a single trigger object still works). Each one is evaluated on its own, with its own `updatedFields` and `batchMode`, so an event matching two triggers (such as `person.updated` and `*.updated`) calls the handler once per trigger. Read `event.name` in the handler to tell them apart:
+A function can list several triggers (a single trigger object still works). Each one is evaluated on its own, with its own `updatedFields` and `batchMode`, so an event matching two triggers (such as `person.updated` and `*.updated`) calls the handler once per trigger with the same payload, so prefer triggers that do not overlap:
 
 ```ts
 export default defineLogicFunction({
