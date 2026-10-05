@@ -11,7 +11,8 @@ known-failure scenarios that assert sandbox errors declare the patterns they
 require.
 `createGalleryRenderTest` checks the exact set of expected failed components.
 `createOverlayOpenTest` checks that a trigger opens its overlay and pins the
-popup content as absent from the page.
+popup content as absent from the page. `expectTriggerClosesAndReopensOverlay`
+closes an open overlay from its trigger and opens it again.
 `expectSandboxErrors` requires each listed known error and rejects any other
 error. `expectAssertionToKeepFailing` pins an interaction that must have no
 effect within the interaction timeout.
@@ -63,15 +64,16 @@ responses and closes them on teardown or timeout. These delayed-response steps
 run only in test mode; the regular and static stories use data images and
 retain working source controls, fallback, replacement and unmount/remount checks.
 
-The Dropdown stories verify that both runtimes open the menu, accept an external
-controlled state update, and reopen after the first popup mount. The popup
-content remains absent because it portals into the sandbox body. ListItem uses
-a scoped theme container for its overflow tooltip, matching the existing Tooltip
-fixture, and verifies Escape dismissal and continued selection updates after hover.
-The first overflow hover enrolls the label for host geometry observation. Initial
-worker measurements are zero until the host snapshot arrives. The story waits
-for that snapshot and re-enters after enabling the tooltip; opening
-on the first hover remains a geometry limitation.
+The Dropdown fixture prevents outside interactions from dismissing its menu, so
+its "Assign Ada and close menu" button closes the menu only by setting the
+controlled `open` state to `false`, and the press is not swallowed as a
+dismissing click. The Dropdown stories open the menu, close it with that
+button, then reopen it, close it from the trigger and open it again. The
+CurrencyPicker, PhoneCountryPicker and CountrySelect stories also close and
+reopen their popup from the trigger, so a runtime that stops rendering once the
+popup has mounted fails them. ListItem uses a scoped theme container for its
+overflow tooltip, matching the existing Tooltip fixture, and verifies Escape
+dismissal and continued selection updates after hover.
 
 ## Known sandbox limitations
 
@@ -87,7 +89,8 @@ expected-to-fail by the runner.
 | --- | --- |
 | NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree and stops Preact rendering. Separate React and Preact stories assert the pointer gap and successful typing, keyboard bounds, disabled/read-only state, named form values and submission. |
 | ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/image-input.mdx). |
-| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal and focus restoration are not covered yet. |
+| Popover, Dialog, AlertDialog, Menu, Select, Dropdown, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Search, selection, dismissal from inside the popup and focus restoration are not covered yet. |
+| ListItem | The first hover over an overflowing label does not open its tooltip: that hover enrolls the label for host geometry observation, and the worker measures it as zero-sized until the host snapshot arrives. The story asserts the label is not marked as overflowing after the first hover, then re-enters to mark it and again to open the tooltip. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
 | Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
 

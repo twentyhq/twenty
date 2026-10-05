@@ -3,6 +3,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
+import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
 const OVERFLOW_LABEL = 'A long workspace preference that overflows its row';
@@ -39,12 +40,14 @@ export const listItemTest: TwentyUiGalleryPlayFunction = async ({
       ),
     { timeout: INTERACTION_TIMEOUT },
   );
+  await user.hover(overflowingLabel);
+  await waitForSandboxRoundTrip();
+  expect(overflowingLabel).not.toHaveAttribute('data-content-overflowing');
+
+  await user.unhover(overflowingLabel);
+  await user.hover(overflowingLabel);
   await waitFor(
-    async () => {
-      await user.unhover(overflowingLabel);
-      await user.hover(overflowingLabel);
-      expect(overflowingLabel).toHaveAttribute('data-content-overflowing');
-    },
+    () => expect(overflowingLabel).toHaveAttribute('data-content-overflowing'),
     { timeout: INTERACTION_TIMEOUT },
   );
   await user.unhover(overflowingLabel);

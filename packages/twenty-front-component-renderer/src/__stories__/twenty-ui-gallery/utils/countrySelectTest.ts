@@ -2,9 +2,12 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { SANDBOX_ROUND_TRIP_SETTLE_DELAY } from '@/__stories__/shared/test-utils/timeouts';
+import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { createOverlayOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createOverlayOpenTest';
+import { expectTriggerClosesAndReopensOverlay } from '@/__stories__/twenty-ui-gallery/utils/expectTriggerClosesAndReopensOverlay';
+
+type Canvas = ReturnType<typeof within>;
 
 const BILLING_COUNTRY_TRIGGER_NAME = 'Billing country';
 
@@ -13,41 +16,57 @@ const billingCountrySelectOpenTest = createOverlayOpenTest({
   popupText: 'Brésil',
 });
 
+const expectTriggersShowSavedCountriesWithDecorativeFlags = (
+  canvas: Canvas,
+) => {
+  const billingTrigger = canvas.getByRole('button', {
+    name: BILLING_COUNTRY_TRIGGER_NAME,
+  });
+  const shippingTrigger = canvas.getByRole('button', {
+    name: 'Shipping country',
+  });
+
+  expect(billingTrigger).toHaveTextContent('France');
+  expect(shippingTrigger).toHaveTextContent('Japon');
+  expect(within(billingTrigger).getByText('🇫🇷')).toHaveAttribute(
+    'aria-hidden',
+    'true',
+  );
+  expect(within(shippingTrigger).getByText('🇯🇵')).toHaveAttribute(
+    'aria-hidden',
+    'true',
+  );
+};
+
+const expectDisabledTriggerIgnoresClick = async (canvas: Canvas) => {
+  const disabledTrigger = canvas.getByRole('button', {
+    name: 'Disabled country',
+  });
+
+  expect(disabledTrigger).toHaveAttribute('aria-disabled', 'true');
+  expect(disabledTrigger).not.toBeDisabled();
+  expect(disabledTrigger).toHaveTextContent('France');
+
+  await userEvent.click(disabledTrigger);
+  await waitForSandboxRoundTrip();
+  expect(disabledTrigger).toHaveAttribute('aria-expanded', 'false');
+  expect(
+    canvas.getByRole('status', { name: 'Saved countries' }),
+  ).toHaveTextContent('Billing: France; Shipping: Japan');
+};
+
 export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
   context,
 ) => {
   const canvas = within(context.canvasElement);
-
   await expectFrontComponentMounted(canvas);
-  const billing = canvas.getByRole('button', {
-    name: BILLING_COUNTRY_TRIGGER_NAME,
-  });
-  const shipping = canvas.getByRole('button', { name: 'Shipping country' });
-  const disabled = canvas.getByRole('button', { name: 'Disabled country' });
 
-  expect(billing).toHaveTextContent('France');
-  expect(shipping).toHaveTextContent('Japon');
-  expect(within(billing).getByText('🇫🇷')).toHaveAttribute(
-    'aria-hidden',
-    'true',
-  );
-  expect(within(shipping).getByText('🇯🇵')).toHaveAttribute(
-    'aria-hidden',
-    'true',
-  );
-  expect(disabled).toHaveAttribute('aria-disabled', 'true');
-  expect(disabled).not.toBeDisabled();
-  expect(disabled).toHaveTextContent('France');
-
-  await userEvent.click(disabled);
-  await new Promise((resolve) =>
-    setTimeout(resolve, SANDBOX_ROUND_TRIP_SETTLE_DELAY),
-  );
-  expect(disabled).toHaveAttribute('aria-expanded', 'false');
-  expect(
-    canvas.getByRole('status', { name: 'Saved countries' }),
-  ).toHaveTextContent('Billing: France; Shipping: Japan');
+  expectTriggersShowSavedCountriesWithDecorativeFlags(canvas);
+  await expectDisabledTriggerIgnoresClick(canvas);
   expect(errorHandler).not.toHaveBeenCalled();
 
   await billingCountrySelectOpenTest(context);
+  await expectTriggerClosesAndReopensOverlay(
+    canvas.getByRole('button', { name: BILLING_COUNTRY_TRIGGER_NAME }),
+  );
 };
