@@ -117,6 +117,9 @@ describe('RunWorkflowJob', () => {
 
       await expect(resume()).rejects.toThrow('Step blew up');
 
+      expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledTimes(
+        1,
+      );
       expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledWith(
         expect.objectContaining({
           status: WorkflowRunStatus.FAILED,
