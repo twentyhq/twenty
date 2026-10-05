@@ -9,8 +9,7 @@ import { resolveTranslation } from '../translations/resolveTranslation';
 
 export type TransProps = {
   children?: ReactNode;
-  // Use this (with `values`) for interpolation; inlined child expressions
-  // cannot be statically extracted.
+  // Use with `values` for interpolation: inlined child expressions cannot be statically extracted
   message?: string;
   context?: string;
   values?: TranslationValues;

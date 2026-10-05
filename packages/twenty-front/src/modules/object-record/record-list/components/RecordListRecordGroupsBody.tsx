@@ -1,14 +1,14 @@
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
-import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
+import { visibleRecordGroupIdsIncludingEmptyComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsIncludingEmptyComponentSelector';
 import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-index/components/RecordIndexGroupAggregatesDataLoader';
 import { RecordListRecordGroup } from '@/object-record/record-list/components/RecordListRecordGroup';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { ViewType } from '@/views/types/ViewType';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
+// Each group loads its own records, so empty groups stay mounted and hide
+// themselves, and show again once records come back
 export const RecordListRecordGroupsBody = () => {
-  const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
-    visibleRecordGroupIdsComponentFamilySelector,
-    ViewType.LIST,
+  const visibleRecordGroupIds = useAtomComponentSelectorValue(
+    visibleRecordGroupIdsIncludingEmptyComponentSelector,
   );
 
   return (

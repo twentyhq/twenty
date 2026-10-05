@@ -31,8 +31,10 @@ export const getDropdownFocusTarget = ({
     ? items.filter((item) => item.dataset.dropdownPage === target.page)
     : [];
 
-  if (pageTriggers.length === 1) {
-    return pageTriggers[0];
+  const [firstPageTrigger] = pageTriggers;
+
+  if (pageTriggers.length === 1 && isDefined(firstPageTrigger)) {
+    return firstPageTrigger;
   }
 
   const matchingPageTriggers = isNonEmptyString(target?.label)
@@ -41,8 +43,13 @@ export const getDropdownFocusTarget = ({
       )
     : [];
 
-  if (matchingPageTriggers.length === 1) {
-    return matchingPageTriggers[0];
+  const [firstMatchingPageTrigger] = matchingPageTriggers;
+
+  if (
+    matchingPageTriggers.length === 1 &&
+    isDefined(firstMatchingPageTrigger)
+  ) {
+    return firstMatchingPageTrigger;
   }
 
   const pageTrigger = isDefined(target) ? items[target.index] : undefined;
@@ -73,8 +80,13 @@ export const getDropdownFocusTarget = ({
     return search;
   }
 
+  if (edge === 'last') {
+    return items[items.length - 1] ?? firstFormControl ?? content;
+  }
+
   return (
-    (edge === 'last' ? items[items.length - 1] : items[0]) ??
+    items.find((item) => !item.hasAttribute('data-dropdown-back')) ??
+    items[0] ??
     firstFormControl ??
     content
   );

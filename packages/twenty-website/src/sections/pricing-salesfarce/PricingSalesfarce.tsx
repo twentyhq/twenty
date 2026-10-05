@@ -28,8 +28,6 @@ const COMPARE_LINKS = [
     label: msg`Twenty vs Microsoft Dynamics`,
     href: '/compare-pricing/microsoft-dynamics',
   },
-  // Attio comparison parked, may return:
-  // { label: msg`Twenty vs Attio`, href: '/compare-pricing/attio' },
 ];
 
 const Grid = styled.div`
@@ -76,8 +74,6 @@ const CompareList = styled.ul`
   padding: 0;
 `;
 
-// The footer's hover-marker link affordance, so the list reads as the same
-// navigation language.
 const HoverMarker = styled.span`
   background-color: ${semanticColor.ink};
   border-radius: 1px;

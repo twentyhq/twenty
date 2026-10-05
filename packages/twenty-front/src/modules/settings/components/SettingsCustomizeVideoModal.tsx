@@ -19,8 +19,7 @@ type SettingsCustomizeVideoModalProps = {
   tabs: SettingsCustomizeVideoModalTab[];
 };
 
-// the tab list draws its own separator, so the header only needs one when the
-// single tab is replaced by a plain title
+// The tab list draws its own separator, so the header needs one only when it shows a plain title
 const StyledHeader = styled.div<{ $hasBottomBorder: boolean }>`
   align-items: center;
   border-bottom: ${({ $hasBottomBorder }) =>

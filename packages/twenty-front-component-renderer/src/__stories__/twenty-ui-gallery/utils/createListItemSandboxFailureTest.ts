@@ -4,12 +4,12 @@ import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/mat
 import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
-import { withKnownListItemHostErrors } from '@/__stories__/twenty-ui-gallery/utils/withKnownListItemHostErrors';
+import { withKnownHostEventErrors } from '@/__stories__/twenty-ui-gallery/utils/withKnownHostEventErrors';
 
 export const createListItemSandboxFailureTest =
   (runtime: 'react' | 'preact'): TwentyUiGalleryPlayFunction =>
   async ({ canvasElement }) =>
-    withKnownListItemHostErrors(async () => {
+    withKnownHostEventErrors(async () => {
       const user = userEvent.setup();
       const canvas = within(canvasElement);
       await expectFrontComponentMounted(canvas);

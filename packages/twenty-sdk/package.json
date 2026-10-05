@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.44.0",
+  "version": "2.46.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -9,7 +9,8 @@
     "dist",
     "README.md",
     "CHANGELOG.md",
-    "package.json"
+    "package.json",
+    "docs/build.md"
   ],
   "scripts": {
     "build": "npx rimraf dist && npx vite build"
@@ -62,7 +63,13 @@
       "types": "./dist/front-component-renderer/build/index.d.ts",
       "import": "./dist/front-component-renderer/build.mjs",
       "require": "./dist/front-component-renderer/build.cjs"
-    }
+    },
+    "./build": {
+      "types": "./dist/build/index.d.ts",
+      "import": "./dist/build.mjs",
+      "require": "./dist/build.cjs"
+    },
+    "./build/descriptor.json": "./dist/build/descriptor.json"
   },
   "license": "MIT",
   "dependencies": {
@@ -136,6 +143,9 @@
       ],
       "front-component-renderer/build": [
         "dist/front-component-renderer/build/index.d.ts"
+      ],
+      "build": [
+        "dist/build/index.d.ts"
       ]
     }
   }

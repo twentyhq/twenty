@@ -24,6 +24,12 @@
     corner-shape: round;
   }
 
+  &[data-ring] {
+    box-shadow:
+      0 0 0 1px var(--t-border-color-light),
+      0 0 0 2px var(--t-background-primary);
+  }
+
   &[data-clickable]:not([data-disabled]) {
     cursor: pointer;
   }

@@ -19,9 +19,11 @@ import { isNonEmptyArray } from '@sniptt/guards';
 export const buildSharedDependenciesBundle = async ({
   appPath,
   sharedDependencies,
+  outputDir = OUTPUT_DIR,
   onFileBuilt,
 }: {
   appPath: string;
+  outputDir?: string;
   sharedDependencies: FrontComponentSharedDependenciesManifest;
   onFileBuilt: OnFileBuiltCallback;
 }): Promise<SharedDependenciesBuildContext> => {
@@ -37,7 +39,7 @@ export const buildSharedDependenciesBundle = async ({
     );
   }
 
-  const builtPath = join(OUTPUT_DIR, sharedDependencies.builtPath);
+  const builtPath = join(outputDir, sharedDependencies.builtPath);
   const absoluteBuiltPath = join(appPath, builtPath);
 
   await ensureDir(dirname(absoluteBuiltPath));

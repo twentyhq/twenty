@@ -50,15 +50,14 @@ export const addErrorsAndRunHooks = (
         case 'unique': {
           const values = data.map((entry) => entry[field.key]);
 
-          const taken = new Set(); // Set of items used at least once
-          const duplicates = new Set(); // Set of items used multiple times
+          const taken = new Set();
+          const duplicates = new Set();
 
           values.forEach((value) => {
             if (
               fieldValidationDefinition.allowEmpty === true &&
               (isUndefinedOrNull(value) || value === '' || !Boolean(value))
             ) {
-              // If allowEmpty is set, we will not validate falsy fields such as undefined or empty string.
               return;
             }
 

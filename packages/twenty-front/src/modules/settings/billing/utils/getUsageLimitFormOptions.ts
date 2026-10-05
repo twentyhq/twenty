@@ -1,18 +1,16 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { USAGE_LIMIT_METER_LABELS } from '@/settings/billing/constants/UsageLimitMeterLabels';
 import { ANCHORED_USAGE_LIMIT_PERIOD_UNITS } from '@/settings/billing/constants/AnchoredUsageLimitPeriodUnits';
 import { USAGE_LIMIT_SPENDER_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitSpenderTypeLabels';
 import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
-import { type UsageLimitMeter } from '@/settings/billing/types/UsageLimitMeter';
 import { type UsageLimitPeriodUnit } from '@/settings/billing/types/UsageLimitPeriodUnit';
 import { type UsageLimitSpenderType } from '@/settings/billing/types/UsageLimitSpenderType';
-import { getUsageLimitOperationTypes } from '@/settings/billing/utils/getUsageLimitOperationTypes';
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
 import {
   UsageOperationType,
   type UsageQuotaDefinitionsQuery,
   type UsageResourceType,
+  UsageUnit,
 } from '~/generated-metadata/graphql';
 
 type UsageLimitDefinitions =
@@ -22,7 +20,7 @@ type UsageLimitFormOptions = {
   resourceTypes: UsageResourceType[];
   operationTypes: UsageOperationType[];
   spenderTypes: UsageLimitSpenderType[];
-  meters: UsageLimitMeter[];
+  units: UsageUnit[];
   periodUnits: UsageLimitPeriodUnit[];
 };
 
@@ -48,20 +46,21 @@ export const getUsageLimitFormOptions = ({
       resourceTypes,
       operationTypes: [],
       spenderTypes: [],
-      meters: [],
+      units: [],
       periodUnits: [],
     };
   }
 
-  const operationTypes = getUsageLimitOperationTypes(definition);
+  const operationTypes = definition.allowedOperations.map(
+    (allowedOperation) => allowedOperation.operationType,
+  );
 
-  const meters = definition.allowedMeters
-    .filter((meter) => isKeyOfRecord(USAGE_LIMIT_METER_LABELS, meter))
-    .filter(
-      (meter) =>
-        values.operationType !== UsageOperationType.ALL ||
-        meter === 'creditsUsedMicro',
-    );
+  const units =
+    definition.allowedOperations.find(
+      (allowedOperation) =>
+        allowedOperation.operationType === values.operationType,
+    )?.allowedUnits ??
+    (values.operationType === UsageOperationType.ALL ? [UsageUnit.CREDIT] : []);
 
   const periodUnits = ANCHORED_USAGE_LIMIT_PERIOD_UNITS.filter(
     (periodUnit) =>
@@ -74,7 +73,7 @@ export const getUsageLimitFormOptions = ({
     spenderTypes: definition.allowedSpenderTypes.filter((spenderType) =>
       isKeyOfRecord(USAGE_LIMIT_SPENDER_TYPE_LABELS, spenderType),
     ),
-    meters,
+    units,
     periodUnits,
   };
 };

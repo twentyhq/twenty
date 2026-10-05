@@ -593,7 +593,7 @@ export class ObjectMetadataService {
     if (!isDefined(createdFlatObjectMetadata)) {
       throw new ObjectMetadataException(
         'Created object metadata not found in recomputed cache',
-        ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
 

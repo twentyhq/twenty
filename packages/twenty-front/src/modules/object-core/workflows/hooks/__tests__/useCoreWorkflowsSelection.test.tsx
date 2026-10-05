@@ -76,6 +76,7 @@ describe('useCoreWorkflowsSelection', () => {
     act(() => result.current.toggleRow('core-1'));
     rerender({ coreWorkflows: coreWorkflows.slice(1) });
     expect(result.current.selectedRowIds).toEqual([]);
+    expect(result.current.selectedRowCount).toBe(1);
     expect(jotaiStore.get(coreWorkflowsSelectionState.atom).rowIds).toEqual([
       'core-1',
     ]);

@@ -1,5 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { qrCodeState } from '@/auth/states/qrCode';
+import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
@@ -41,12 +42,15 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
           initiateOTPProvisioningResult.data
             .initiateOTPProvisioningForAuthenticatedUser.uri,
         );
-      } catch {
-        enqueueToast({
-          variant: 'error',
-          children: t`Two factor authentication provisioning failed.`,
-          dedupeKey: 'two-factor-authentication-provisioning-initiation-failed',
-        });
+      } catch (error) {
+        enqueueToast(
+          getTwoFactorAuthenticationErrorToastOptions({
+            error,
+            fallbackMessage: t`Two factor authentication provisioning failed.`,
+            dedupeKey:
+              'two-factor-authentication-provisioning-initiation-failed',
+          }),
+        );
       }
     };
 

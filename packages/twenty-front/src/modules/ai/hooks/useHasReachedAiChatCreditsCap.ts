@@ -7,12 +7,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/hasReachedCurrentBillingPeriodCapSelector';
 import { isResourceCreditSubscriptionItem } from '@/workspace/utils/isResourceCreditSubscriptionItem';
 
-// The credits exhausted error renders nothing on its own, so the banner must
-// mount whenever the workspace is refused for lack of credits. The resource
-// credit item's flag is the authoritative signal: a refused send marks it, an
-// upgrade or a successful send clears it. The thread error only stands in when
-// client state carries no resource credit item to hold the flag; when the item
-// exists, trusting a leftover error would keep the banner up after an upgrade.
+// The credits error renders nothing, so this keeps the banner mounted. The resource credit item's flag is
+// authoritative; the thread error stands in only without the item, else it would outlive an upgrade.
 export const useHasReachedAiChatCreditsCap = () => {
   const hasReachedCurrentBillingPeriodCap = useAtomStateValue(
     hasReachedCurrentBillingPeriodCapSelector,

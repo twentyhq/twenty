@@ -32,10 +32,15 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const buttons = canvas.getAllByRole('button');
-    buttons[0].focus();
+    buttons[0]!.focus();
     await userEvent.tab();
     await expect(buttons[1]).toHaveFocus();
   },
+};
+
+export const Documentation: Story = {
+  args: Default.args,
+  decorators: Default.decorators,
 };
 
 export const Dark: Story = { ...Default, globals: { colorScheme: 'dark' } };
@@ -144,8 +149,8 @@ export const FramedAttached: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const buttons = canvas.getAllByRole('button');
-    const firstButtonStyle = getComputedStyle(buttons[0]);
-    const lastButtonStyle = getComputedStyle(buttons[2]);
+    const firstButtonStyle = getComputedStyle(buttons[0]!);
+    const lastButtonStyle = getComputedStyle(buttons[2]!);
     const groupStyle = getComputedStyle(canvas.getByRole('group'));
 
     await expect(firstButtonStyle.borderStartEndRadius).toBe('0px');

@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
+import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationDevelopmentResolver } from 'src/engine/core-modules/application/application-development/application-development.resolver';
 import { ApplicationDevelopmentService } from 'src/engine/core-modules/application/application-development/application-development.service';
+import { ApplicationExportResolver } from 'src/engine/core-modules/application/application-development/application-export.resolver';
 import { ApplicationSchemaResolver } from 'src/engine/core-modules/application/application-development/application-schema.resolver';
 import { ApplicationFileUploadService } from 'src/engine/core-modules/application/application-development/application-file-upload.service';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
@@ -25,9 +28,11 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 @Module({
   imports: [
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    ApplicationLookupModule,
     ApplicationModule,
     ApplicationManifestModule,
     ApplicationPackageModule,
+    ApplicationRegistrationLookupModule,
     ApplicationRegistrationModule,
     CacheLockModule,
     FeatureFlagModule,
@@ -42,6 +47,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
   providers: [
     ApplicationDevelopmentResolver,
     ApplicationDevelopmentService,
+    ApplicationExportResolver,
     ApplicationSchemaResolver,
     ApplicationFileUploadService,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,

@@ -1,4 +1,5 @@
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath } from 'twenty-shared/types';
@@ -99,7 +100,7 @@ export const Logo = ({
               size="lg"
               name={placeholder}
               shape="square"
-              colorSeed={placeholder}
+              colorSeed={getWorkspaceAvatarColorSeed(placeholder)}
             />
           </StyledSecondaryLogoContainer>
         )

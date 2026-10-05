@@ -1,3 +1,5 @@
+import { OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS } from './ObjectsSyncedFromConnectedAccounts';
+
 // Objects whose records must not be created, updated, or deleted by
 // automation callers (workflows and AI tools). Either they back the
 // automation runtime itself (recursion risk), gate access/permissions,
@@ -9,11 +11,5 @@ export const OBJECTS_BLOCKED_FROM_AUTOMATION = [
   'workflowAutomatedTrigger',
   'workspaceMember',
   'dashboard',
-  'message',
-  'messageThread',
-  'messageChannelMessageAssociation',
-  'messageParticipant',
-  'calendarEvent',
-  'calendarEventParticipant',
-  'calendarChannelEventAssociation',
+  ...OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS,
 ] as const;

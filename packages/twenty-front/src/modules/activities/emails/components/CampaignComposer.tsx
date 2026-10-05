@@ -19,9 +19,7 @@ type CampaignComposerProps = {
   campaign: MessageCampaign;
 };
 
-// The envelope fields and the body are one surface rather than two widgets, so
-// the composer tab keeps a single full-bleed widget: stacking two widgets would
-// box each of them in its own card.
+// One widget, not two: stacked widgets would each get boxed in their own card.
 export const CampaignComposer = ({ campaign }: CampaignComposerProps) => {
   const [bodyEditor, setBodyEditor] = useState<Editor | null>(null);
   const canvasWidth = useCampaignCanvasWidth(bodyEditor);

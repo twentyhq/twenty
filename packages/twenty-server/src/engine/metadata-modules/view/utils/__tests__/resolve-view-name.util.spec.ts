@@ -71,8 +71,6 @@ describe('resolveViewName', () => {
     ).toBe('All {objectLabelPlural}');
   });
 
-  // A view owned by the workspace-custom application is user copy: it must come
-  // back verbatim rather than being matched against the standard catalog.
   it('returns a workspace-custom view name untranslated', () => {
     expect(
       resolveViewName({
@@ -99,8 +97,7 @@ describe('resolveViewName', () => {
   });
 
   it('resolves an installed application view name from that application catalog', () => {
-    // generateMessageId('All rockets', 'view.name') — catalogs are keyed with
-    // the metadataName.property context since S5.
+    // generateMessageId('All rockets', 'view.name')
     const catalog = { '1FxLDo': 'Toutes les fusees' };
 
     expect(

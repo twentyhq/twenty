@@ -36,10 +36,6 @@
   Expands the button to fill its container width.
 </ParamField>
 
-<ParamField body="hotkeys" type="string[]">
-  Keyboard shortcut hints displayed on non-mobile screens.
-</ParamField>
-
 <ParamField body="href" type="string">
   Destination URL. Enables native link semantics instead of button semantics.
 </ParamField>
@@ -52,16 +48,16 @@
   Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller.
 </ParamField>
 
+<ParamField body="shortcut" type="ShortcutDefinition">
+  Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens.
+</ParamField>
+
+<ParamField body="shortcutJoinLabel" type="string">
+  Localized text between sequence steps. Defaults to then.
+</ParamField>
+
 <ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;" default="md">
-  Button height: `sm` (24px) or `md` (32px).
-</ParamField>
-
-<ParamField body="soon" type="boolean" default="false">
-  Displays a coming-soon label and disables activation.
-</ParamField>
-
-<ParamField body="soonLabel" type="string">
-  Text for the coming-soon label.
+  Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size.
 </ParamField>
 
 <ParamField body="startIcon" type="ReactNode">
@@ -73,6 +69,6 @@
   returns a style object based on the component's state.
 </ParamField>
 
-<ParamField body="variant" type="&quot;ghost&quot; | &quot;outline&quot; | &quot;soft&quot; | &quot;solid&quot;" default="outline">
-  Visual treatment of the button surface.
+<ParamField body="variant" type="&quot;ghost&quot; | &quot;link&quot; | &quot;outline&quot; | &quot;soft&quot; | &quot;solid&quot;" default="outline">
+  Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics.
 </ParamField>

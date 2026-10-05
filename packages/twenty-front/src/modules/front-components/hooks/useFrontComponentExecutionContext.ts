@@ -25,6 +25,7 @@ import {
   type EnqueueSnackbarParams,
 } from 'twenty-shared/types';
 
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
@@ -372,7 +373,9 @@ export const useFrontComponentExecutionContext = ({
         isNonEmptyString(params.preprompt.text)
       ) {
         openAskAiPageWithPreprompt({
-          text: params.preprompt.text,
+          serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(
+            params.preprompt.text,
+          ),
           mode: params.preprompt.mode,
           model: params.preprompt.model,
         });
@@ -443,8 +446,7 @@ export const useFrontComponentExecutionContext = ({
     timelineActivityId: timelineActivityId ?? null,
     toolCall,
     colorScheme,
-    // i18n.locale is a Lingui string; the host is always configured with the
-    // APP_LOCALES set, so it is a valid AppLocale.
+    // The host is always configured with APP_LOCALES, so this is a valid AppLocale.
     locale: i18n.locale as AppLocale,
   };
 
@@ -488,16 +490,13 @@ export const useFrontComponentExecutionContext = ({
       }
       lastCopyToClipboardCallAtRef.current = now;
 
-      // Front components notify their own users, so a host success toast
-      // would show up on top of theirs.
+      // Front components show their own toast; a host one would stack on top.
       await copyToClipboardWithoutSuccessToast(text);
     };
 
   const hostUploadFile: FrontComponentHostCommunicationApi['uploadFile'] =
     async (file, params) => {
-      // Arguments come from sandboxed application code: reject malformed
-      // shapes here. fieldMetadataId is mandatory — a file uploaded outside
-      // a FILES field could never be attached to a record and would leak.
+      // Sandboxed input; fieldMetadataId is mandatory since a file uploaded outside a FILES field could never be attached and would leak.
       if (
         !(file instanceof Blob) ||
         file.size === 0 ||
@@ -507,8 +506,7 @@ export const useFrontComponentExecutionContext = ({
         return { status: 'failed', reason: 'invalid-params' };
       }
 
-      // A non-FILES target would upload fine and then fail at attach time,
-      // stranding the file; reject it before uploading anything.
+      // A non-FILES target would fail at attach time, stranding the uploaded file.
       const { fieldMetadataItem } = getFieldMetadataItemById({
         fieldMetadataId: params.fieldMetadataId,
         objectMetadataItems,

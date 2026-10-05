@@ -11,6 +11,7 @@ import { type DropdownContentProps } from '../types/DropdownContentProps';
 import { DropdownPageFocusEffect } from './DropdownPageFocusEffect';
 import { DropdownSearchTargetEffect } from './DropdownSearchTargetEffect';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
+import { getDropdownSearchTarget } from './getDropdownSearchTarget';
 import { isUnhandledModifierShortcut } from './isUnhandledModifierShortcut';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownKeyboardNavigation } from './useDropdownKeyboardNavigation';
@@ -29,14 +30,25 @@ export const DropdownContent = ({
   children,
   initialFocus,
   onKeyDown,
+  onInput,
   onClick,
   onMouseDown,
   onPointerDown,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
   ref,
   ...props
 }: DropdownContentProps) => {
-  const { type, isSubmenu, setOpen, initialFocusEdge, focusOnOpen } =
-    useDropdownContext();
+  const {
+    type,
+    isSubmenu,
+    setOpen,
+    initialFocusEdge,
+    focusOnOpen,
+    triggerId,
+    titleId,
+    setSearchTargetId,
+  } = useDropdownContext();
   const contentRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState<HTMLDivElement | null>(null);
   const mergedRef = useMergedRefs(contentRef, ref, setContent);
@@ -45,6 +57,9 @@ export const DropdownContent = ({
     isSubmenu,
     setOpen,
   });
+  const defaultAriaLabelledBy = isDefined(ariaLabel)
+    ? undefined
+    : (titleId ?? triggerId);
 
   return (
     <>
@@ -59,6 +74,8 @@ export const DropdownContent = ({
         container={container}
         keepMounted={keepMounted}
         role={type === 'menu' ? 'menu' : 'dialog'}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy ?? defaultAriaLabelledBy}
         data-dropdown-content=""
         data-type={type}
         className={mergeClassNames(styles.content, className)}
@@ -91,6 +108,10 @@ export const DropdownContent = ({
           if (!isUnhandledModifierShortcut(event)) {
             event.stopPropagation();
           }
+        }}
+        onInput={(event) => {
+          onInput?.(event);
+          setSearchTargetId(getDropdownSearchTarget(event.currentTarget)?.id);
         }}
         onClick={(event) => {
           event.stopPropagation();

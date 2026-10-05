@@ -25,7 +25,7 @@ type MenuStoryProps = MenuRootProps & { content?: MenuCatalogContent };
 
 const BASIC_ITEMS = (
   <>
-    <Menu.Item startIcon={<IconCopy />} hotkeys={['⌘', 'D']}>
+    <Menu.Item startIcon={<IconCopy />} shortcut={['Mod', 'D']}>
       Duplicate
     </Menu.Item>
     <Menu.Item startIcon={<IconDownload />} description="CSV">
@@ -155,9 +155,9 @@ export const Default: Story = {
 };
 
 export const Documentation: Story = {
-  ...Default,
+  decorators: Default.decorators,
+  parameters: Default.parameters,
   args: { defaultOpen: false },
-  play: undefined,
 };
 
 export const DocumentationInteractions: Story = {

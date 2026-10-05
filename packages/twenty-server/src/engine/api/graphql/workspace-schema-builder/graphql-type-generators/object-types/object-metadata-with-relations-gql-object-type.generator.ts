@@ -61,7 +61,6 @@ export class ObjectMetadataWithRelationsGqlObjectTypeGenerator {
       isMorphOrRelationFieldMetadataType(field.type),
     );
 
-    // Security check to avoid extending an object that does not need to be extended
     if (!containsRelationOrMorphField) {
       this.logger.error(
         `This object does not need to be extended: ${flatObjectMetadata.id.toString()}`,

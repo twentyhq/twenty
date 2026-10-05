@@ -8,7 +8,7 @@ import { Injectable, type Type } from '@nestjs/common';
 
 import { type ObjectLiteral } from 'typeorm';
 
-import { type ObjectRecord } from 'twenty-shared/types';
+import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
@@ -24,7 +24,6 @@ import {
 import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
-import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 
@@ -33,7 +32,6 @@ export class WorkspaceOrmManager {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly recordSharingFeatureService: RecordSharingFeatureService,
   ) {}
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
@@ -127,16 +125,7 @@ export class WorkspaceOrmManager {
       ? await this.loadLiteWorkspaceContext(resolvedAuthContext)
       : await this.loadWorkspaceContext(resolvedAuthContext);
 
-    return withWorkspaceContext(
-      {
-        ...context,
-        isLegacyRecordAccessOpen:
-          await this.recordSharingFeatureService.isLegacyRecordAccessOpen(
-            resolvedAuthContext.workspace.id,
-          ),
-      },
-      fn,
-    );
+    return withWorkspaceContext(context, fn);
   }
 
   private async loadWorkspaceContext(
@@ -151,6 +140,7 @@ export class WorkspaceOrmManager {
       featureFlagsMap,
       billingEntitlements,
       rolesPermissions: permissionsPerRoleId,
+      roleIdsWithAllRecordsAccess,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRowLevelPermissionPredicateMaps,
@@ -162,6 +152,7 @@ export class WorkspaceOrmManager {
       'featureFlagsMap',
       'billingEntitlements',
       'rolesPermissions',
+      'roleIdsWithAllRecordsAccess',
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
       'flatRowLevelPermissionPredicateMaps',
@@ -171,6 +162,16 @@ export class WorkspaceOrmManager {
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
+    const flatValidationRuleMaps = featureFlagsMap[
+      FeatureFlagKey.IS_VALIDATION_RULES_ENABLED
+    ]
+      ? (
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'flatValidationRuleMaps',
+          ])
+        ).flatValidationRuleMaps
+      : undefined;
+
     return {
       authContext,
       flatObjectMetadataMaps,
@@ -178,10 +179,12 @@ export class WorkspaceOrmManager {
       flatIndexMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
+      flatValidationRuleMaps,
       objectIdByNameSingular,
       featureFlagsMap,
       billingEntitlements,
       permissionsPerRoleId,
+      roleIdsWithAllRecordsAccess,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
     };
@@ -228,6 +231,7 @@ export class WorkspaceOrmManager {
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       billingEntitlements,
       permissionsPerRoleId: {},
+      roleIdsWithAllRecordsAccess: [],
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
     };

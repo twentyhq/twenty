@@ -70,7 +70,10 @@ export class EmailBillingService {
       resourceType: UsageResourceType.EMAIL,
       operationType: UsageOperationType.EMAIL_SEND,
       spenders,
-      cost: { creditsUsedMicro, quantity: sentEmailCount },
+      cost: {
+        [UsageUnit.CREDIT]: creditsUsedMicro,
+        [UsageUnit.INVOCATION]: sentEmailCount,
+      },
     });
 
     await this.usageRecorderService.record(workspaceId, [

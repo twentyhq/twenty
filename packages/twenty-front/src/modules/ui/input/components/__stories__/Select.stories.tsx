@@ -161,6 +161,12 @@ export const SearchWithPinnedDisabledAndAction: Story = {
     expect(args.onChange).toHaveBeenCalledWith('a');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
+
+    await userEvent.click(trigger);
+    const reopenedPopup = await body.findByRole('dialog');
+    expect(
+      within(reopenedPopup).getByRole('searchbox', { name: 'Search' }),
+    ).toHaveValue('');
   },
 };
 
@@ -198,6 +204,22 @@ export const SingleTabStopAndLabelledPopup: Story = {
     await expect(
       await body.findByRole('dialog', { name: 'Status' }),
     ).toBeVisible();
+  },
+};
+
+export const DropdownWidthAutoMatchesTrigger: Story = {
+  args: { fullWidth: true, dropdownWidthAuto: true },
+  parameters: { container: { width: 500 } },
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button');
+    await userEvent.click(trigger);
+    const body = within(canvasElement.ownerDocument.body);
+    const popup = await body.findByRole('dialog');
+    await waitFor(() =>
+      expect(popup.getBoundingClientRect().width).toBe(
+        trigger.getBoundingClientRect().width,
+      ),
+    );
   },
 };
 
@@ -267,10 +289,14 @@ export const ParentAndClickOutsideContainment: Story = {
     expect(onExcludedClickOutside).not.toHaveBeenCalled();
     await userEvent.click(trigger);
     await body.findByRole('dialog');
-    await userEvent.click(canvas.getByRole('button', { name: 'Outside' }));
+    const outsideButton = canvas.getByRole('button', { name: 'Outside' });
+    await userEvent.click(outsideButton);
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
+    expect(onParentClickOutside).not.toHaveBeenCalled();
+    expect(onExcludedClickOutside).not.toHaveBeenCalled();
+    await userEvent.click(outsideButton);
     expect(onParentClickOutside).toHaveBeenCalledTimes(1);
     expect(onExcludedClickOutside).toHaveBeenCalledTimes(1);
   },

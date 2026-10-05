@@ -1,19 +1,15 @@
 import { preserveLegacyRecordAccess } from 'src/database/commands/upgrade-version-command/2-43/utils/preserve-legacy-record-access.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  FeatureFlagKey,
-  MetadataReadability,
-  MetadataWritability,
-} from 'twenty-shared/types';
+import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 
 import { ServiceUnavailableException } from '@nestjs/common';
 
 import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
 import { isEmptyUnprovisionedAgentHistoryWorkspace } from 'src/database/commands/upgrade-version-command/2-43/utils/is-empty-unprovisioned-agent-history-workspace.util';
-import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
+import { backfillLegacyChatThreadOwnerGrants as backfillChatThreadOwnerGrants } from 'src/database/commands/agent-history/utils/backfill-legacy-chat-thread-owner-grants.util';
 
 jest.mock(
-  'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util',
+  'src/database/commands/agent-history/utils/backfill-legacy-chat-thread-owner-grants.util',
 );
 
 jest.mock(
@@ -92,7 +88,7 @@ describe('Common sharing upgrade', () => {
     async (flag, entitlement, wasRecordSharingEnabled) => {
       const { command, maps, billing } = buildCommand();
       Object.assign(maps.featureFlagsMap, {
-        [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: flag,
+        IS_RECORD_SHARING_ENABLED: flag,
       });
       billing.getWorkspaceEntitlementValue.mockResolvedValue(entitlement);
       await command.up(args);

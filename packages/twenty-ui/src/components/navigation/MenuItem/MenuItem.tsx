@@ -1,3 +1,4 @@
+import { isDefined } from '@ui/utilities/utils/isDefined';
 import { IconChevronRight } from '@ui/icon';
 import { type MouseEvent } from 'react';
 import { type MenuItemProps } from './types/MenuItemProps';
@@ -7,7 +8,7 @@ import {
   StyledHoverableMenuItemBase,
   StyledMenuItemRightContent,
 } from '@ui/components/navigation/MenuItem/parts/StyledMenuItemBase';
-import { MenuItemHotKeys } from '@ui/primitives/navigation/ListItem/internal/MenuItemHotKeys/MenuItemHotKeys';
+import { Shortcut } from '@ui/primitives/typography/Shortcut/Shortcut';
 import { useTheme } from '@ui/theme';
 import { clsx } from 'clsx';
 
@@ -36,7 +37,8 @@ export const MenuItem = ({
   disabled = false,
   focused = false,
   selected = false,
-  hotKeys,
+  shortcut,
+  shortcutJoinLabel,
   isSubMenuOpened = false,
 }: MenuItemProps) => {
   const theme = useTheme();
@@ -78,7 +80,9 @@ export const MenuItem = ({
             {iconButtons}
           </StyledMenuItemRightContent>
         )}
-        {hotKeys && <MenuItemHotKeys hotKeys={hotKeys} />}
+        {isDefined(shortcut) && (
+          <Shortcut shortcut={shortcut} sequenceJoinLabel={shortcutJoinLabel} />
+        )}
         {RightIcon && (
           <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         )}

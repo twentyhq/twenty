@@ -65,31 +65,15 @@ export class WorkspaceMigrationRunnerService {
       flatMapsKeysSet.has('flatObjectMetadataMaps') ||
       flatMapsKeysSet.has('flatFieldMetadataMaps');
 
-    if (shouldIncrementMetadataGraphqlSchemaVersion) {
-      legacyCacheKeyNames.push('ORMEntityMetadatas', 'graphQLResolverNameMap');
-    }
-
-    const shouldInvalidateRoleMapCache =
-      flatMapsKeysSet.has('flatRoleMaps') ||
-      flatMapsKeysSet.has('flatRoleTargetMaps');
-
     const shouldInvalidateRolesPermissionsCache =
+      flatMapsKeysSet.has('flatRoleMaps') ||
+      flatMapsKeysSet.has('flatRoleTargetMaps') ||
       flatMapsKeysSet.has('flatObjectPermissionMaps') ||
       flatMapsKeysSet.has('flatFieldPermissionMaps') ||
       flatMapsKeysSet.has('flatRolePermissionFlagMaps');
 
-    if (shouldInvalidateRoleMapCache || shouldInvalidateRolesPermissionsCache) {
-      legacyCacheKeyNames.push(
-        'rolesPermissions',
-        'userWorkspaceRoleMap',
-        'flatRoleTargetMaps',
-        'apiKeyRoleMap',
-        'flatRoleTargetByAgentIdMaps',
-      );
-    }
-
-    if (flatMapsKeysSet.has('flatApplicationVariableMaps')) {
-      legacyCacheKeyNames.push('applicationVariableMaps');
+    if (shouldInvalidateRolesPermissionsCache) {
+      legacyCacheKeyNames.push('rolesPermissions');
     }
 
     return {
@@ -489,7 +473,6 @@ export class WorkspaceMigrationRunnerService {
         }`,
         'Runner',
       );
-      await this.logBlockingDbActivity();
 
       if (queryRunner.isTransactionActive && !queryRunner.isReleased) {
         await queryRunner
@@ -506,6 +489,10 @@ export class WorkspaceMigrationRunnerService {
           'Runner',
         );
       }
+
+      await queryRunner.release();
+
+      await this.logBlockingDbActivity();
 
       const invertedActions = [...actions].reverse();
 
@@ -545,7 +532,9 @@ export class WorkspaceMigrationRunnerService {
         context: getFlatEntityMapsExceptionContext(error),
       });
     } finally {
-      await queryRunner.release();
+      if (!queryRunner.isReleased) {
+        await queryRunner.release();
+      }
     }
 
     const postCommitInvalidateStart = performance.now();

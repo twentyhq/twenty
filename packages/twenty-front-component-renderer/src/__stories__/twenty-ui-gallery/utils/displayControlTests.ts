@@ -2,7 +2,6 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { galleryRenderTest } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
-import { createGalleryRenderTest } from '@/__stories__/twenty-ui-gallery/utils/createGalleryRenderTest';
 
 type CreateDisplayControlTestOptions = {
   buttonName: string;
@@ -56,17 +55,14 @@ export const tagControlsTest = createDisplayControlTest({
   staticContent: 'Static tag',
 });
 
-// Image loading requires window.Image, which the sandbox does not provide.
 const avatarGalleryTest: TwentyUiGalleryPlayFunction = async (context) => {
-  await createGalleryRenderTest({ expectedFailedComponents: ['AvatarImage'] })(
-    context,
+  await galleryRenderTest(context);
+  const imageEntry = within(
+    within(context.canvasElement).getByTestId('gallery-item-AvatarImage'),
   );
-  await expect(
-    within(context.canvasElement).getByTestId('gallery-status'),
-  ).toHaveAttribute(
-    'data-failed-messages',
-    'AvatarImage: window.Image is not a constructor',
-  );
+
+  await expect(imageEntry.getByText('I')).toBeVisible();
+  await expect(imageEntry.queryByRole('presentation')).not.toBeInTheDocument();
 };
 
 export const avatarControlsTest = createDisplayControlTest({
