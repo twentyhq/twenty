@@ -45,10 +45,13 @@ export const listItemTest: TwentyUiGalleryPlayFunction = async ({
   );
   await user.unhover(overflowingLabel);
   await user.hover(overflowingLabel);
-  await waitFor(() => {
-    expect(page.getByRole('tooltip')).toHaveTextContent(OVERFLOW_LABEL);
-    expect(page.getByRole('tooltip')).toBeVisible();
-  });
+  await waitFor(
+    () => {
+      expect(page.getByRole('tooltip')).toHaveTextContent(OVERFLOW_LABEL);
+      expect(page.getByRole('tooltip')).toBeVisible();
+    },
+    { timeout: INTERACTION_TIMEOUT },
+  );
 
   expect(hiddenFields).toHaveFocus();
   await user.keyboard('{Escape}');

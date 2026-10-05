@@ -53,8 +53,9 @@ controlled state update, and reopen after the first popup mount. The popup
 content remains absent because it portals into the sandbox body. ListItem uses
 a scoped theme container for its overflow tooltip, matching the existing Tooltip
 fixture, and verifies Escape dismissal and continued selection updates after hover.
-The first overflow hover enrolls the label for host geometry observation. The
-story waits for that snapshot and re-enters after enabling the tooltip; opening
+The first overflow hover enrolls the label for host geometry observation. Initial
+worker measurements are zero until the host snapshot arrives. The story waits
+for that snapshot and re-enters after enabling the tooltip; opening
 on the first hover remains a geometry limitation.
 
 ## Known sandbox limitations

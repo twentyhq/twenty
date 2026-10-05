@@ -2,8 +2,8 @@ import type * as esbuild from 'esbuild';
 import { dirname } from 'node:path';
 import { isDefined } from 'twenty-shared/utils';
 
-import { PREACT_REF_COMPAT_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/preact-ref-compat-source';
 import { JSX_RUNTIME_SHARED_HELPERS_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/jsx-runtime-shared-helpers-source';
+import { PREACT_REF_COMPAT_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/preact-ref-compat-source';
 
 const JSX_RUNTIME_WRAPPER = `
 import {
