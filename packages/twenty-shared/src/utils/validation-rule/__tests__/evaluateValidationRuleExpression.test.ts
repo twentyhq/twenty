@@ -190,6 +190,12 @@ describe('evaluateValidationRuleExpression', () => {
     expect(evaluate(expression, {})).toEqual({ status: 'failed' });
   });
 
+  it('should not look for a value inside a text', () => {
+    expect(evaluate('"W" in stage', { stage: 'WON' })).toEqual({
+      status: 'failed',
+    });
+  });
+
   it('should check that a value is in a list of values', () => {
     const expression = 'stage in ["WON", "LOST"]';
 
