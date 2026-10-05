@@ -1,6 +1,6 @@
 import { type ServerResponse } from 'node:http';
 
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isNull } from '@sniptt/guards';
 import { type Plugin } from 'vite';
 
 import { AVATAR_IMAGE_FIXTURE } from '../../src/__stories__/twenty-ui-gallery/constants/AvatarImageFixture';
@@ -54,13 +54,7 @@ export const createAvatarImageFixturePlugin = (): Plugin => ({
       flushResponses(request, sendGone);
     };
 
-    const findOrCreateRequest = (requestId: string): ImageRequest => {
-      const existingRequest = requests.get(requestId);
-
-      if (!isUndefined(existingRequest)) {
-        return existingRequest;
-      }
-
+    const createRequest = (requestId: string): ImageRequest => {
       const request: ImageRequest = {
         state: 'pending',
         responses: new Set(),
@@ -71,6 +65,9 @@ export const createAvatarImageFixturePlugin = (): Plugin => ({
 
       return request;
     };
+
+    const findOrCreateRequest = (requestId: string): ImageRequest =>
+      requests.get(requestId) ?? createRequest(requestId);
 
     server.httpServer?.once('close', () => {
       for (const request of requests.values()) {
