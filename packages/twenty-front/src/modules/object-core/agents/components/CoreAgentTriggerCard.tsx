@@ -63,6 +63,14 @@ const StyledHint = styled.div<{ isError: boolean }>`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
+const toFieldNames = (fields: FieldMultiSelectValue | string): string[] => {
+  if (Array.isArray(fields)) {
+    return fields;
+  }
+
+  return isDefined(fields) ? [fields] : [];
+};
+
 type CoreAgentTriggerCardProps = {
   trigger: AgentTrigger;
   onChange: (trigger: AgentTrigger) => void;
@@ -129,11 +137,7 @@ export const CoreAgentTriggerCard = ({
   const handleWatchedFieldsChange = (
     fields: FieldMultiSelectValue | string,
   ) => {
-    const updatedFields = Array.isArray(fields)
-      ? fields
-      : isDefined(fields)
-        ? [fields]
-        : [];
+    const updatedFields = toFieldNames(fields);
 
     updateDatabaseEvent({
       updatedFields: updatedFields.length > 0 ? updatedFields : undefined,
