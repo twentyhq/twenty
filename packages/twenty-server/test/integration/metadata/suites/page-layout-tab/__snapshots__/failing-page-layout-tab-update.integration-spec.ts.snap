@@ -1,10 +1,11 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Page layout tab update should fail when updating a non-existent page layout tab 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "PAGE_LAYOUT_TAB_NOT_FOUND",
+    "userFriendlyMessage": "Page layout tab not found.",
   },
   "message": "Page layout tab to update not found",
   "name": "NotFoundError",

@@ -4,7 +4,7 @@ exports[`Public assets controller download should fail when path attempts to esc
 {
   "body": {
     "code": "FILE_NOT_FOUND",
-    "error": "Error",
+    "error": "NotFoundException",
     "messages": [
       "File not found",
     ],
@@ -18,7 +18,7 @@ exports[`Public assets controller download should fail when path contains URL-en
 {
   "body": {
     "code": "FILE_NOT_FOUND",
-    "error": "Error",
+    "error": "NotFoundException",
     "messages": [
       "File not found",
     ],
@@ -32,7 +32,7 @@ exports[`Public assets controller download should fail when path contains a lead
 {
   "body": {
     "code": "FILE_NOT_FOUND",
-    "error": "Error",
+    "error": "NotFoundException",
     "messages": [
       "File not found",
     ],
@@ -46,7 +46,7 @@ exports[`Public assets controller download should fail when path contains multip
 {
   "body": {
     "code": "FILE_NOT_FOUND",
-    "error": "Error",
+    "error": "NotFoundException",
     "messages": [
       "File not found",
     ],
@@ -60,7 +60,7 @@ exports[`Public assets controller download should fail when the applicationId do
 {
   "body": {
     "code": "FILE_NOT_FOUND",
-    "error": "Error",
+    "error": "NotFoundException",
     "messages": [
       "File not found",
     ],
@@ -74,7 +74,7 @@ exports[`Public assets controller download should fail when the requested asset 
 {
   "body": {
     "code": "FILE_NOT_FOUND",
-    "error": "Error",
+    "error": "NotFoundException",
     "messages": [
       "File not found",
     ],
@@ -88,7 +88,7 @@ exports[`Public assets controller download should fail when the workspaceId does
 {
   "body": {
     "code": "FILE_NOT_FOUND",
-    "error": "Error",
+    "error": "NotFoundException",
     "messages": [
       "File not found",
     ],

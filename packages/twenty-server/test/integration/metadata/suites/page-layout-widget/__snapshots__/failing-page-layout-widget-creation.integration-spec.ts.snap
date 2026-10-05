@@ -1,9 +1,10 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Page layout widget creation should fail AGGREGATE_CHART widget configuration validation failures when AGGREGATE_CHART configuration has invalid UUID 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
     "userFriendlyMessage": "Invalid page layout widget data.",
   },
   "message": "aggregateFieldMetadataId: aggregateFieldMetadataId must be a UUID",
@@ -15,6 +16,7 @@ exports[`Page layout widget creation should fail AGGREGATE_CHART widget configur
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
     "userFriendlyMessage": "Invalid page layout widget data.",
   },
   "message": "aggregateFieldMetadataId: aggregateFieldMetadataId should not be empty, aggregateFieldMetadataId must be a UUID; aggregateOperation: aggregateOperation should not be empty, aggregateOperation must be one of the following values: MIN, MAX, AVG, SUM, COUNT, COUNT_UNIQUE_VALUES, COUNT_EMPTY, COUNT_NOT_EMPTY, COUNT_TRUE, COUNT_FALSE, PERCENTAGE_EMPTY, PERCENTAGE_NOT_EMPTY",
@@ -26,6 +28,7 @@ exports[`Page layout widget creation should fail BAR_CHART widget configuration 
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
     "userFriendlyMessage": "Invalid page layout widget data.",
   },
   "message": "primaryAxisGroupByFieldMetadataId: primaryAxisGroupByFieldMetadataId should not be empty, primaryAxisGroupByFieldMetadataId must be a UUID; layout: layout should not be empty, layout must be one of the following values: VERTICAL, HORIZONTAL",
@@ -37,6 +40,7 @@ exports[`Page layout widget creation should fail BAR_CHART widget configuration 
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
     "userFriendlyMessage": "Invalid page layout widget data.",
   },
   "message": "primaryAxisGroupByFieldMetadataId: primaryAxisGroupByFieldMetadataId should not be empty, primaryAxisGroupByFieldMetadataId must be a UUID; layout: layout should not be empty, layout must be one of the following values: VERTICAL, HORIZONTAL",
@@ -48,6 +52,7 @@ exports[`Page layout widget creation should fail Edge case configuration validat
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
     "userFriendlyMessage": "Invalid page layout widget data.",
   },
   "message": "Invalid configuration: missing configuration type",
@@ -59,6 +64,7 @@ exports[`Page layout widget creation should fail Edge case configuration validat
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
     "userFriendlyMessage": "Invalid page layout widget data.",
   },
   "message": "Invalid configuration type: UNSUPPORTED_TYPE",
@@ -110,6 +116,7 @@ exports[`Page layout widget creation should fail IFRAME widget configuration val
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
     "userFriendlyMessage": "Invalid page layout widget data.",
   },
   "message": "url: url must be a URL address",
@@ -121,6 +128,7 @@ exports[`Page layout widget creation should fail IFRAME widget configuration val
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
     "userFriendlyMessage": "Invalid page layout widget data.",
   },
   "message": "url: url must be a URL address",
@@ -132,6 +140,7 @@ exports[`Page layout widget creation should fail STANDALONE_RICH_TEXT widget con
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
     "userFriendlyMessage": "Invalid page layout widget data.",
   },
   "message": "body: body should not be empty",
@@ -143,6 +152,7 @@ exports[`Page layout widget creation should fail STANDALONE_RICH_TEXT widget con
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
     "userFriendlyMessage": "Invalid page layout widget data.",
   },
   "message": "body: nested property body must be either object or array",

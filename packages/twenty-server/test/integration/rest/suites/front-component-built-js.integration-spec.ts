@@ -119,12 +119,12 @@ describe('Front component built JS endpoint', () => {
     }
   });
 
-  it('should return 403 when no token is provided', async () => {
+  it('should return 401 when no token is provided', async () => {
     await makeRestApiRequest({
       method: 'get',
       path: `/front-components/${frontComponentId}`,
       bearer: '',
-    }).expect(403);
+    }).expect(401);
   });
 
   it('should return 401 when an invalid token is provided', async () => {

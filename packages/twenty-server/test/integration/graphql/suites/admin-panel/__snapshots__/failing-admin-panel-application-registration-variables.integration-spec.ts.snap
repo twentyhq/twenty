@@ -5,7 +5,7 @@ exports[`Admin panel application registration variables should fail without the 
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to access this feature. Please contact your workspace administrator for access.",
   },
   "message": "Entity performing the request does not have permission",
   "name": "ForbiddenError",
@@ -17,7 +17,7 @@ exports[`Admin panel application registration variables should fail without the 
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to access this feature. Please contact your workspace administrator for access.",
   },
   "message": "Entity performing the request does not have permission",
   "name": "ForbiddenError",

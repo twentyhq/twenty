@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Role deletion should fail when deleting a non-editable system role (Admin) 1`] = `
 [
@@ -31,12 +31,15 @@ exports[`Role deletion should fail when deleting a non-existent role 1`] = `
 exports[`Role deletion should fail when deleting the workspace default role (Member) 1`] = `
 [
   {
+    "eventId": Any<String>,
     "extensions": {
       "code": "INTERNAL_SERVER_ERROR",
       "exceptionEventId": Any<String>,
+      "subCode": "DEFAULT_ROLE_CANNOT_BE_DELETED",
       "userFriendlyMessage": "The default role cannot be deleted as it is required for the workspace to function properly.",
     },
     "message": "Default role cannot be deleted",
+    "name": "InternalServerError",
   },
 ]
 `;

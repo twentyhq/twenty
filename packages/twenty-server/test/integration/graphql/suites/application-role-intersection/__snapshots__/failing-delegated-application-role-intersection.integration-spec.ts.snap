@@ -14,6 +14,7 @@ exports[`A delegated application without the flag is refused should refuse a vie
 {
   "extensions": {
     "code": "FORBIDDEN",
+    "subCode": "VIEW_MODIFY_PERMISSION_DENIED",
     "userFriendlyMessage": "You don't have permission to modify this view.",
   },
   "message": "You do not have permission to modify this view",
@@ -26,7 +27,7 @@ exports[`A delegated application without the flag is refused should refuse a wor
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to manage the workspace blocklist.",
   },
   "message": "Entity performing the request does not have permission",
 }
@@ -37,7 +38,7 @@ exports[`A delegated application without the flag is refused should refuse delet
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access.",
   },
   "message": "Entity performing the request does not have permission",
   "name": "ForbiddenError",
@@ -49,7 +50,7 @@ exports[`A delegated application without the flag is refused should refuse the b
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "Entity performing the request does not have permission",
   "name": "ForbiddenError",
@@ -61,7 +62,7 @@ exports[`A delegated application without the flag is refused should refuse the p
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to upload profile pictures. Please contact your workspace administrator for access.",
   },
   "message": "Entity performing the request does not have permission",
   "name": "ForbiddenError",
@@ -73,7 +74,7 @@ exports[`A delegated application without the flag is refused should refuse updat
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to update this workspace member.",
   },
   "message": "Entity performing the request does not have permission",
   "name": "ForbiddenError",

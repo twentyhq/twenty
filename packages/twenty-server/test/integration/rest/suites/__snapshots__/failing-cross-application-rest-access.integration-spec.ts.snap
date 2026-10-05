@@ -4,7 +4,7 @@ exports[`Application token REST access to another application should fail with a
 {
   "body": {
     "code": "FORBIDDEN",
-    "error": "Error",
+    "error": "ForbiddenException",
     "messages": [
       "An application token can only target its own application",
     ],
@@ -18,7 +18,7 @@ exports[`Application token REST access to another application should fail with a
 {
   "body": {
     "code": "FORBIDDEN",
-    "error": "Error",
+    "error": "ForbiddenException",
     "messages": [
       "An application token can only reach its own application",
     ],
@@ -32,7 +32,7 @@ exports[`Application token REST access to another application should fail with a
 {
   "body": {
     "code": "FORBIDDEN",
-    "error": "Error",
+    "error": "ForbiddenException",
     "messages": [
       "An application token can only target its own application",
     ],
@@ -46,7 +46,7 @@ exports[`Application token REST access to another application should fail with a
 {
   "body": {
     "code": "FORBIDDEN",
-    "error": "Error",
+    "error": "ForbiddenException",
     "messages": [
       "An application token can only target its own application",
     ],
@@ -60,7 +60,7 @@ exports[`Application token REST access to another application should fail with a
 {
   "body": {
     "code": "FORBIDDEN",
-    "error": "Error",
+    "error": "ForbiddenException",
     "messages": [
       "An application token can only reach its own application",
     ],
@@ -74,7 +74,7 @@ exports[`Application token REST access to another application should fail with a
 {
   "body": {
     "code": "FORBIDDEN",
-    "error": "Error",
+    "error": "ForbiddenException",
     "messages": [
       "An application token can only target its own application",
     ],

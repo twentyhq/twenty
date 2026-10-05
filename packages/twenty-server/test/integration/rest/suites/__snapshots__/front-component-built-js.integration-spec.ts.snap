@@ -4,7 +4,7 @@ exports[`Front component built JS endpoint should return 404 for a non-existent 
 {
   "body": {
     "code": "FRONT_COMPONENT_NOT_FOUND",
-    "error": "Error",
+    "error": "NotFoundException",
     "messages": [
       "Front component not found",
     ],
@@ -18,7 +18,7 @@ exports[`Front component built JS endpoint should return 404 when front componen
 {
   "body": {
     "code": "FRONT_COMPONENT_NOT_FOUND",
-    "error": "Error",
+    "error": "NotFoundException",
     "messages": [
       "Front component built file not found",
     ],

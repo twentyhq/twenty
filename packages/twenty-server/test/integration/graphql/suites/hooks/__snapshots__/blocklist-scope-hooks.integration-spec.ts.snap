@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`blocklist scope hooks refuses a member-scoped entry targeting another workspace member 1`] = `
 {
@@ -49,7 +49,7 @@ exports[`blocklist scope hooks refuses a workspace-scoped entry created without 
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to manage the workspace blocklist.",
   },
   "message": "Entity performing the request does not have permission",
 }
@@ -71,7 +71,7 @@ exports[`blocklist scope hooks refuses deletion and restoration of a workspace-s
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to manage the workspace blocklist.",
   },
   "message": "Entity performing the request does not have permission",
 }
@@ -82,7 +82,7 @@ exports[`blocklist scope hooks refuses deletion and restoration of a workspace-s
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to manage the workspace blocklist.",
   },
   "message": "Entity performing the request does not have permission",
 }
@@ -159,7 +159,7 @@ exports[`blocklist scope hooks refuses to overwrite a workspace-scoped entry thr
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to manage the workspace blocklist.",
   },
   "message": "Entity performing the request does not have permission",
 }

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`View Filter Group update should fail when parentViewFilterGroupId does not exist 1`] = `
 {
@@ -16,7 +16,8 @@ exports[`View Filter Group update should fail when view filter group id does not
 {
   "extensions": {
     "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "VIEW_FILTER_GROUP_NOT_FOUND",
+    "userFriendlyMessage": "A view filter group error occurred.",
   },
   "message": "View filter group not found",
   "name": "NotFoundError",

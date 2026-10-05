@@ -47,9 +47,9 @@ const describeIssues = (issues: WorkflowValidationIssue[]): string =>
   issues.map((issue) => issue.message).join('; ');
 const WORKFLOW_VERSION_VALIDATION_EXCEPTION_CATEGORY_BY_CODE = {
   [WorkflowVersionValidationExceptionCode.MALFORMED_WORKFLOW_VERSION]:
-    'INTERNAL_SERVER_ERROR',
+    'BAD_USER_INPUT',
   [WorkflowVersionValidationExceptionCode.NON_ACTIVABLE_WORKFLOW_VERSION]:
-    'INTERNAL_SERVER_ERROR',
+    'BAD_USER_INPUT',
 } as const satisfies Record<
   WorkflowVersionValidationExceptionCode,
   ExceptionCategory

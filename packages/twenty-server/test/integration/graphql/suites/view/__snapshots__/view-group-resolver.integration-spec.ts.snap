@@ -1,10 +1,11 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`View Group Resolver deleteViewGroup should throw an error when deleting non-existent view group 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "VIEW_GROUP_NOT_FOUND",
+    "userFriendlyMessage": "A view group error occurred.",
   },
   "message": "View group to destroy not found",
   "name": "NotFoundError",
@@ -15,7 +16,8 @@ exports[`View Group Resolver destroyViewGroup should throw an error when destroy
 {
   "extensions": {
     "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "VIEW_GROUP_NOT_FOUND",
+    "userFriendlyMessage": "A view group error occurred.",
   },
   "message": "View group to destroy not found",
   "name": "NotFoundError",
@@ -26,7 +28,8 @@ exports[`View Group Resolver updateViewGroup should throw an error when updating
 {
   "extensions": {
     "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "VIEW_GROUP_NOT_FOUND",
+    "userFriendlyMessage": "A view group error occurred.",
   },
   "message": "View group to update not found",
   "name": "NotFoundError",

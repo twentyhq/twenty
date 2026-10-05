@@ -45,7 +45,7 @@ exports[`Application token tarball upload should fail with a user-bound applicat
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to access this feature. Please contact your workspace administrator for access.",
   },
   "message": "Entity performing the request does not have permission",
   "name": "ForbiddenError",
@@ -97,7 +97,7 @@ exports[`Application token tarball upload should fail with an application token 
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "You do not have permission to access this feature. Please contact your workspace administrator for access.",
   },
   "message": "Entity performing the request does not have permission",
   "name": "ForbiddenError",

@@ -4,7 +4,7 @@ exports[`RouteTrigger suspended workspace (integration) GET /s/suspended-workspa
 {
   "body": {
     "code": "WORKSPACE_SUSPENDED",
-    "error": "Error",
+    "error": "ForbiddenException",
     "messages": [
       "Workspace is suspended",
     ],

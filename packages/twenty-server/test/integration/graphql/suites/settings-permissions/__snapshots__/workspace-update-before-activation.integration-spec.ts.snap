@@ -5,7 +5,7 @@ exports[`updateWorkspace while the workspace is pending creation rejects securit
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "These fields cannot be updated before the workspace is activated: allowImpersonation.",
   },
   "message": "Entity performing the request does not have permission",
   "name": "ForbiddenError",
@@ -17,7 +17,7 @@ exports[`updateWorkspace while the workspace is pending creation rejects the who
   "extensions": {
     "code": "FORBIDDEN",
     "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "These fields cannot be updated before the workspace is activated: isPublicInviteLinkEnabled.",
   },
   "message": "Entity performing the request does not have permission",
   "name": "ForbiddenError",

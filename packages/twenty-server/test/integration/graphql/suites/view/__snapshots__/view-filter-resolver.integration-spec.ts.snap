@@ -39,7 +39,8 @@ exports[`View Filter Resolver deleteViewFilter should throw an error when deleti
 {
   "extensions": {
     "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "VIEW_FILTER_NOT_FOUND",
+    "userFriendlyMessage": "A view filter error occurred.",
   },
   "message": "View filter to destroy not found",
   "name": "NotFoundError",
@@ -50,7 +51,8 @@ exports[`View Filter Resolver destroyViewFilter should throw an error when destr
 {
   "extensions": {
     "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "VIEW_FILTER_NOT_FOUND",
+    "userFriendlyMessage": "A view filter error occurred.",
   },
   "message": "View filter to destroy not found",
   "name": "NotFoundError",
@@ -61,7 +63,8 @@ exports[`View Filter Resolver updateViewFilter should throw an error when updati
 {
   "extensions": {
     "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "VIEW_FILTER_NOT_FOUND",
+    "userFriendlyMessage": "A view filter error occurred.",
   },
   "message": "View filter to update not found",
   "name": "NotFoundError",
