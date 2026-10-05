@@ -3,6 +3,7 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
+import { buildRecordValidationRuleViolationMessage } from 'src/engine/metadata-modules/validation-rule/utils/build-record-validation-rule-violation-message.util';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum RecordValidationRuleExceptionCode {
@@ -22,7 +23,9 @@ const getRecordValidationRuleUserFriendlyMessage = ({
       return {
         id: 'validation-rule-violation',
         message: '{ruleMessage}',
-        values: { ruleMessage: violations[0]?.message ?? '' },
+        values: {
+          ruleMessage: buildRecordValidationRuleViolationMessage(violations),
+        },
       };
     }
     case RecordValidationRuleExceptionCode.VALIDATION_RULE_EVALUATION_FAILED:

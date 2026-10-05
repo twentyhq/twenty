@@ -12,6 +12,7 @@ import {
   RecordValidationRuleExceptionCode,
 } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
 import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
+import { buildRecordValidationRuleViolationMessage } from 'src/engine/metadata-modules/validation-rule/utils/build-record-validation-rule-violation-message.util';
 import { buildValidationRuleFieldDescriptors } from 'src/engine/metadata-modules/validation-rule/utils/build-validation-rule-field-descriptors.util';
 import { computeRecordValidationRuleViolations } from 'src/engine/metadata-modules/validation-rule/utils/compute-record-validation-rule-violations.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -237,7 +238,7 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
 
   if (violations.length > 0) {
     throw new RecordValidationRuleException(
-      violations[0].message,
+      buildRecordValidationRuleViolationMessage(violations),
       RecordValidationRuleExceptionCode.VALIDATION_RULE_VIOLATION,
       violations,
     );
