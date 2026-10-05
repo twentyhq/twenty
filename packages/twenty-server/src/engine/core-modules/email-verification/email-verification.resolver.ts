@@ -5,7 +5,6 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ResendEmailVerificationTokenInput } from 'src/engine/core-modules/email-verification/dtos/resend-email-verification-token.input';
 import { ResendEmailVerificationTokenDTO } from 'src/engine/core-modules/email-verification/dtos/resend-email-verification-token.dto';
-import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -17,10 +16,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 @MetadataResolver()
 @AllowSuspendedWorkspace()
 @UsePipes(ResolverValidationPipe)
-@UseFilters(
-  EmailVerificationExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class EmailVerificationResolver {
   constructor(
     private readonly emailVerificationService: EmailVerificationService,

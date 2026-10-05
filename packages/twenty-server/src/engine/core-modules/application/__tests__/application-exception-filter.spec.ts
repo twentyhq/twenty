@@ -1,12 +1,14 @@
+import { type ArgumentsHost } from '@nestjs/common';
+
 import { i18n } from '@lingui/core';
 import { type Manifest } from 'twenty-shared/application';
-
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
   type BaseGraphQLError,
   ErrorCode,
@@ -29,17 +31,13 @@ const manifest = {
   fields: [],
 } as unknown as Manifest;
 
-const catchAsGraphQLError = (exception: ApplicationException) => {
-  const filter = new ApplicationExceptionFilter();
+const graphqlHost = { getType: () => 'graphql' } as unknown as ArgumentsHost;
 
-  try {
-    filter.catch(exception);
-  } catch (graphqlError) {
-    return graphqlError as BaseGraphQLError;
-  }
-
-  throw new Error('ApplicationExceptionFilter did not throw');
-};
+const catchAsGraphQLError = (exception: ApplicationException) =>
+  new ApplicationExceptionFilter({} as ExceptionHandlerService).catch(
+    exception,
+    graphqlHost,
+  ) as BaseGraphQLError;
 
 describe('ApplicationExceptionFilter response error format', () => {
   it('should surface an install conflict as APPLICATION_INSTALLATION_FAILED with a human message', () => {

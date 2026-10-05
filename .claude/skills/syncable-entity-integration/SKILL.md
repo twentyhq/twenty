@@ -17,7 +17,7 @@ This step:
 1. Registers services in 3 NestJS modules
 2. Creates service layer (returns flat entities)
 3. Creates resolver layer (converts flat → DTO)
-4. Uses exception interceptor for GraphQL
+4. Relies on the global exception filters for GraphQL and REST errors
 
 **Key principle**: Services return flat entities, resolvers transpile flat → DTO.
 
@@ -188,15 +188,12 @@ export class MyEntityService {
 **File**: `src/engine/metadata-modules/my-entity/my-entity.resolver.ts`
 
 ```typescript
-import { UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
-import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { MyEntityService } from 'src/engine/metadata-modules/my-entity/my-entity.service';
 import { fromFlatMyEntityToMyEntityDto } from 'src/engine/metadata-modules/my-entity/utils/from-flat-my-entity-to-my-entity-dto.util';
 
 @Resolver(() => MyEntityDto)
-@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 export class MyEntityResolver {
   constructor(private readonly myEntityService: MyEntityService) {}
 
@@ -237,7 +234,7 @@ export class MyEntityResolver {
 - Receives flat entities from service
 - **Converts flat → DTO** using conversion utility
 - Returns DTOs to GraphQL API
-- Uses exception interceptor for error formatting
+- Lets exceptions propagate: global filters format them
 
 ---
 
@@ -287,18 +284,27 @@ export const fromFlatMyEntityToMyEntityDto = (
 
 ---
 
-## Exception Interceptor
+## Exceptions
 
-The `WorkspaceMigrationGraphqlApiExceptionInterceptor` automatically handles:
+Resolvers and controllers need no exception filter or interceptor:
 
-1. `FlatEntityMapsException` → Converts to GraphQL errors (NotFoundError, etc.)
-2. `WorkspaceMigrationBuilderException` → Formats validation errors with i18n
-3. `WorkspaceMigrationRunnerException` → Formats runner errors
+1. `CustomException` subclasses (e.g. `FlatEntityMapsException`) → `CustomExceptionFilter` and the GraphQL error hook turn each code's category into a REST status or a GraphQL error
+2. `WorkspaceMigrationBuilderException` / `WorkspaceMigrationRunnerException` → `WorkspaceMigrationExceptionFilter` formats validation and runner errors with i18n
 
-**What it does**:
-- Catches exceptions and formats for API responses
-- Translates error messages based on user locale
-- Ensures consistent error structure for frontend
+A new exception declares a category for every code, next to its user-friendly messages:
+
+```typescript
+const MY_ENTITY_EXCEPTION_CATEGORY_BY_CODE = {
+  [MyEntityExceptionCode.MY_ENTITY_NOT_FOUND]: 'NOT_FOUND',
+  [MyEntityExceptionCode.INVALID_MY_ENTITY_INPUT]: 'BAD_USER_INPUT',
+} as const satisfies Record<MyEntityExceptionCode, ExceptionCategory>;
+
+// in the constructor
+super(message, code, {
+  userFriendlyMessage: getMyEntityExceptionUserFriendlyMessage(code),
+  category: MY_ENTITY_EXCEPTION_CATEGORY_BY_CODE[code],
+});
+```
 
 ---
 
@@ -312,7 +318,7 @@ Before moving to Step 6 (Testing):
 - [ ] Service layer created
 - [ ] Service returns flat entities (not DTOs)
 - [ ] Resolver layer created
-- [ ] Resolver uses exception interceptor
+- [ ] Exception declares a category for every code
 - [ ] Resolver converts flat → DTO
 - [ ] Flat-to-DTO conversion utility created
 

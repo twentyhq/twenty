@@ -1,11 +1,10 @@
-import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
@@ -21,9 +20,7 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 import { ApplicationConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/application-connected-account.dto';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
-import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/connected-account/interceptors/connected-account-graphql-api-exception.interceptor';
 import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UseGuards(
@@ -39,9 +36,7 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
     application: true,
   }),
 )
-@UseInterceptors(ConnectedAccountGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => ConnectedAccountDTO)
-@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 export class ConnectedAccountResolver {
   constructor(
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,

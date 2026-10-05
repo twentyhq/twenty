@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Int, Mutation, Query } from '@nestjs/graphql';
 
 import { type Request } from 'express';
@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -23,7 +22,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 
 @UsePipes(ResolverValidationPipe)
-@UseFilters(AuthGraphqlApiExceptionFilter)
 @UseGuards(
   AuthPrincipalGuard({
     userSession: true,

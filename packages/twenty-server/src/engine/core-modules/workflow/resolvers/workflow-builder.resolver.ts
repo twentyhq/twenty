@@ -10,8 +10,6 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeStepOutputSchemaInput } from 'src/engine/core-modules/workflow/dtos/compute-step-output-schema.input';
-import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-query-validation-graphql-api-exception.filter';
-import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { msg } from '@lingui/core/macro';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
@@ -30,10 +28,8 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @CoreResolver()
 @UseGuards(
@@ -51,13 +47,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
 @UsePipes(ResolverValidationPipe)
-@UseFilters(
-  WorkflowTriggerGraphqlApiExceptionFilter,
-  WorkflowQueryValidationGraphqlApiExceptionFilter,
-  PermissionsGraphqlApiExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class WorkflowBuilderResolver {
   constructor(
     private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,

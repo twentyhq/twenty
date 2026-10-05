@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { isDefined } from 'class-validator';
@@ -12,15 +12,12 @@ import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/
 import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/update-view-sort.input';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
-import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/delete-view-sort.input';
 import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
 import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-child-entity-permission.guard';
 import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-child-entity-permission.guard';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @MetadataResolver(() => ViewSortDTO)
-@UseFilters(ViewGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {

@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -24,11 +24,9 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { TimelineActivityTypeDTO } from 'src/engine/metadata-modules/timeline-activity-type/dtos/timeline-activity-type.dto';
 import { UpdateTimelineActivityTypeInput } from 'src/engine/metadata-modules/timeline-activity-type/dtos/update-timeline-activity-type.input';
-import { TimelineActivityTypeGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/timeline-activity-type/interceptors/timeline-activity-type-graphql-api-exception.interceptor';
 import { TimelineActivityTypeService } from 'src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.service';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -43,12 +41,8 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
     application: true,
   }),
 )
-@UseInterceptors(
-  WorkspaceMigrationGraphqlApiExceptionInterceptor,
-  TimelineActivityTypeGraphqlApiExceptionInterceptor,
-)
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => TimelineActivityTypeDTO)
-@UseFilters(AuthGraphqlApiExceptionFilter)
 export class TimelineActivityTypeResolver {
   constructor(
     private readonly timelineActivityTypeService: TimelineActivityTypeService,

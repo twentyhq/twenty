@@ -8,7 +8,6 @@ import {
   Post,
   Query,
   Req,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
@@ -24,16 +23,11 @@ import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decor
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { UpdatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout.input';
 import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
-import { PageLayoutRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/filters/page-layout-rest-api-exception.filter';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
-import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
 @Controller(`${ApiPath.Rest}/metadata/pageLayouts`)
 @UseGuards(
@@ -48,13 +42,6 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
     oauthClient: true,
     application: true,
   }),
-)
-@UseFilters(
-  PermissionsRestApiExceptionFilter,
-  PageLayoutRestApiExceptionFilter,
-  FlatEntityMapsRestApiExceptionFilter,
-  WorkspaceMigrationRunnerRestApiExceptionFilter,
-  AuthRestApiExceptionFilter,
 )
 export class PageLayoutController {
   constructor(

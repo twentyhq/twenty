@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -27,7 +27,6 @@ import { CreateEmailGroupChannelOutput } from 'src/engine/metadata-modules/messa
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { UpdateMessageChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/update-message-channel.input';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import {
@@ -36,7 +35,6 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -59,9 +57,7 @@ import {
     application: true,
   }),
 )
-@UseInterceptors(MessageChannelGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => MessageChannelDTO)
-@UseFilters(AuthGraphqlApiExceptionFilter)
 export class MessageChannelResolver {
   constructor(
     private readonly messageChannelMetadataService: MessageChannelMetadataService,

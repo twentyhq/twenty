@@ -23,9 +23,7 @@ import { buildUnsubscribePreferencesPage } from 'src/engine/core-modules/emailin
 import { buildUnsubscribeResultPage } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-result-page.util';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 
 const UNSUBSCRIBE_TOKEN_FORMAT = /^[A-Za-z0-9_-]{1,1024}$/;
@@ -59,20 +57,12 @@ export class UnsubscribeController {
   ) {}
 
   private async throttleOrThrow(bucketKey: string): Promise<void> {
-    try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        bucketKey,
-        1,
-        RATE_LIMIT.maxRequests,
-        RATE_LIMIT.windowMs,
-      );
-    } catch (error) {
-      if (error instanceof ThrottlerException) {
-        throttlerToRestApiExceptionHandler(error);
-      }
-
-      throw error;
-    }
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      bucketKey,
+      1,
+      RATE_LIMIT.maxRequests,
+      RATE_LIMIT.windowMs,
+    );
   }
 
   private async throttleByRequesterOrThrow(request: Request): Promise<void> {

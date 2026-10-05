@@ -17,10 +17,6 @@ import { DeleteOneIndexInput } from 'src/engine/metadata-modules/index-metadata/
 import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/services/index-metadata.service';
-import { indexMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/index-metadata/utils/index-metadata-graphql-api-exception-handler.util';
-import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -37,11 +33,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 )
 @MetadataResolver(() => IndexMetadataDTO)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(
-  PreventNestToAutoLogGraphqlErrorsFilter,
-  PermissionsGraphqlApiExceptionFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class IndexMetadataResolver {
   constructor(private readonly indexMetadataService: IndexMetadataService) {}
 
@@ -51,20 +43,14 @@ export class IndexMetadataResolver {
     @Parent() indexMetadata: IndexMetadataDTO,
     @Context() context: { loaders: IDataloaders },
   ): Promise<IndexFieldMetadataDTO[]> {
-    try {
-      const indexFieldMetadataItems =
-        await context.loaders.indexFieldMetadataLoader.load({
-          objectMetadata: { id: indexMetadata.objectMetadataId },
-          indexMetadata,
-          workspaceId: workspace.id,
-        });
+    const indexFieldMetadataItems =
+      await context.loaders.indexFieldMetadataLoader.load({
+        objectMetadata: { id: indexMetadata.objectMetadataId },
+        indexMetadata,
+        workspaceId: workspace.id,
+      });
 
-      return indexFieldMetadataItems;
-    } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
-
-      return [];
-    }
+    return indexFieldMetadataItems;
   }
 
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
@@ -73,16 +59,12 @@ export class IndexMetadataResolver {
     @Args('input') input: CreateOneIndexInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<IndexMetadataDTO> {
-    try {
-      const flatIndexMetadata = await this.indexMetadataService.createOne({
-        createIndexInput: input.index,
-        workspaceId,
-      });
+    const flatIndexMetadata = await this.indexMetadataService.createOne({
+      createIndexInput: input.index,
+      workspaceId,
+    });
 
-      return fromFlatIndexMetadataToIndexMetadataDto(flatIndexMetadata);
-    } catch (error) {
-      return indexMetadataGraphqlApiExceptionHandler(error);
-    }
+    return fromFlatIndexMetadataToIndexMetadataDto(flatIndexMetadata);
   }
 
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
@@ -91,15 +73,11 @@ export class IndexMetadataResolver {
     @Args('input') input: DeleteOneIndexInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<IndexMetadataDTO> {
-    try {
-      const flatIndexMetadata = await this.indexMetadataService.deleteOne({
-        id: input.id,
-        workspaceId,
-      });
+    const flatIndexMetadata = await this.indexMetadataService.deleteOne({
+      id: input.id,
+      workspaceId,
+    });
 
-      return fromFlatIndexMetadataToIndexMetadataDto(flatIndexMetadata);
-    } catch (error) {
-      return indexMetadataGraphqlApiExceptionHandler(error);
-    }
+    return fromFlatIndexMetadataToIndexMetadataDto(flatIndexMetadata);
   }
 }

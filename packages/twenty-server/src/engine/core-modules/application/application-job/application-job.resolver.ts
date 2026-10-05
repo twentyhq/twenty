@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import {
@@ -7,7 +7,6 @@ import {
 } from 'twenty-shared/application';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { EnqueueJobResultDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job-result.dto';
 import { EnqueueJobInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job.input';
 import { EnqueueJobsResultDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs-result.dto';
@@ -16,7 +15,6 @@ import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-sta
 import { ApplicationJobService } from 'src/engine/core-modules/application/application-job/services/application-job.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
@@ -40,7 +38,6 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
   }),
   NoPermissionGuard,
 )
-@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 export class ApplicationJobResolver {

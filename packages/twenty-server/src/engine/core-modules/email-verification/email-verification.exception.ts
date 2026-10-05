@@ -23,15 +23,16 @@ const getEmailVerificationExceptionUserFriendlyMessage = (
 ) => {
   switch (code) {
     case EmailVerificationExceptionCode.EMAIL_VERIFICATION_NOT_REQUIRED:
-      return msg`Email verification is not required.`;
+      return msg`Email verification not required.`;
     case EmailVerificationExceptionCode.INVALID_TOKEN:
     case EmailVerificationExceptionCode.INVALID_APP_TOKEN_TYPE:
-    case EmailVerificationExceptionCode.TOKEN_EXPIRED:
       return msg`There is an issue with your token. Please try again.`;
+    case EmailVerificationExceptionCode.TOKEN_EXPIRED:
+      return msg`Request has expired, please try again.`;
     case EmailVerificationExceptionCode.EMAIL_MISSING:
       return msg`Email is required.`;
     case EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED:
-      return msg`Email is already verified.`;
+      return msg`Email already verified.`;
     case EmailVerificationExceptionCode.INVALID_EMAIL:
       return msg`Invalid email address.`;
     case EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED:

@@ -1,11 +1,8 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Parent, ResolveField } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { ApplicationVariableEntityExceptionFilter } from 'src/engine/core-modules/application/application-variable/application-variable-exception-filter';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -18,7 +15,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -35,11 +31,6 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
 @MetadataResolver(() => ApplicationVariableEntityDTO)
-@UseFilters(
-  ApplicationVariableEntityExceptionFilter,
-  ApplicationExceptionFilter,
-  AuthGraphqlApiExceptionFilter,
-)
 export class ApplicationVariableEntityResolver {
   constructor(
     private readonly applicationVariableService: ApplicationVariableEntityService,

@@ -11,7 +11,6 @@ import { Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oauth.guard';
 import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/google-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
@@ -21,7 +20,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller(`${ApiPath.Auth}/google`)
-@UseFilters(AuthRestApiExceptionFilter)
 export class GoogleAuthController {
   constructor(private readonly authService: AuthService) {}
 

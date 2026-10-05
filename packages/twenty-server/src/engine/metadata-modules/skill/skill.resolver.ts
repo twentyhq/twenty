@@ -1,10 +1,9 @@
-import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -17,10 +16,8 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { CreateSkillInput } from 'src/engine/metadata-modules/skill/dtos/create-skill.input';
 import { SkillDTO } from 'src/engine/metadata-modules/skill/dtos/skill.dto';
 import { UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-skill.input';
-import { SkillGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/skill/interceptors/skill-graphql-api-exception.interceptor';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 // Reads only need the AI flag so the chat composer can list skills; mutations need AI_SETTINGS
@@ -38,12 +35,8 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
   }),
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
-@UseInterceptors(
-  WorkspaceMigrationGraphqlApiExceptionInterceptor,
-  SkillGraphqlApiExceptionInterceptor,
-)
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => SkillDTO)
-@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 export class SkillResolver {
   constructor(private readonly skillService: SkillService) {}
 

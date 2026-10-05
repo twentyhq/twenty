@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -8,11 +8,9 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PieChartDataInput } from 'src/modules/dashboard/chart-data/dtos/inputs/pie-chart-data.input';
 import { PieChartDataDTO } from 'src/modules/dashboard/chart-data/dtos/pie-chart-data.dto';
-import { ChartDataGraphqlApiExceptionFilter } from 'src/modules/dashboard/chart-data/filters/chart-data-graphql-api-exception.filter';
 import { PieChartDataService } from 'src/modules/dashboard/chart-data/services/pie-chart-data.service';
 
 @MetadataResolver()
-@UseFilters(ChartDataGraphqlApiExceptionFilter)
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {

@@ -7,7 +7,6 @@ import {
   Post,
   Query,
   Res,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
@@ -23,12 +22,10 @@ import { GoogleCalendarNotificationHandler } from 'src/modules/connected-account
 import { GoogleMessagingNotificationHandler } from 'src/modules/connected-account-sync-webhooks/drivers/google/google-messaging-notification.handler';
 import { MicrosoftCalendarNotificationHandler } from 'src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-calendar-notification.handler';
 import { MicrosoftMessagingNotificationHandler } from 'src/modules/connected-account-sync-webhooks/drivers/microsoft/microsoft-messaging-notification.handler';
-import { ConnectedAccountSyncWebhookApiExceptionFilter } from 'src/modules/connected-account-sync-webhooks/filters/connected-account-sync-webhook-api-exception.filter';
 import { type GooglePubSubPushMessage } from 'src/modules/connected-account-sync-webhooks/types/google-pubsub-push.type';
 import { type MicrosoftGraphNotificationPayload } from 'src/modules/connected-account-sync-webhooks/types/microsoft-graph-notification.type';
 
 @Controller()
-@UseFilters(ConnectedAccountSyncWebhookApiExceptionFilter)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 export class ConnectedAccountSyncWebhooksController {
   constructor(

@@ -20,42 +20,18 @@ export class FileApiExceptionFilter implements ExceptionFilter {
   ) {}
 
   catch(exception: FileException, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
+    const response = host.switchToHttp().getResponse<Response>();
 
-    switch (exception.code) {
-      case FileExceptionCode.UNAUTHENTICATED:
-        return this.httpExceptionHandlerService.handleError(
-          exception,
-          response,
-          403,
-        );
-      case FileExceptionCode.FILE_NOT_FOUND:
-        return this.httpExceptionHandlerService.handleError(
-          exception,
-          response,
-          404,
-        );
-      case FileExceptionCode.RANGE_NOT_SATISFIABLE:
-        if (isDefined(exception.fileSizeInBytes)) {
-          response.setHeader(
-            'Content-Range',
-            `bytes */${exception.fileSizeInBytes}`,
-          );
-        }
-
-        return this.httpExceptionHandlerService.handleError(
-          exception,
-          response,
-          416,
-        );
-      case FileExceptionCode.INTERNAL_SERVER_ERROR:
-      default:
-        return this.httpExceptionHandlerService.handleError(
-          exception,
-          response,
-          500,
-        );
+    if (
+      exception.code === FileExceptionCode.RANGE_NOT_SATISFIABLE &&
+      isDefined(exception.fileSizeInBytes)
+    ) {
+      response.setHeader(
+        'Content-Range',
+        `bytes */${exception.fileSizeInBytes}`,
+      );
     }
+
+    return this.httpExceptionHandlerService.handleError(exception, response);
   }
 }

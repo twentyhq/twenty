@@ -7,7 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { EnterpriseLicenseInfoDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-license-info.dto';
 import { EnterpriseSubscriptionStatusDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-subscription-status.dto';
-import { EnterpriseExceptionFilter } from 'src/engine/core-modules/enterprise/enterprise-exception.filter';
 import {
   EnterpriseException,
   EnterpriseExceptionCode,
@@ -46,7 +45,7 @@ const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
   NoPermissionGuard,
 )
 @UsePipes(ResolverValidationPipe)
-@UseFilters(EnterpriseExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class EnterpriseResolver {
   constructor(private readonly enterprisePlanService: EnterprisePlanService) {}
 

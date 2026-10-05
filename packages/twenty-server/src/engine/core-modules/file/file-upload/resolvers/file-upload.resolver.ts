@@ -7,7 +7,6 @@ import { FileFolder } from 'twenty-shared/types';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
-import { FileUploadGraphqlApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-graphql-api-exception.filter';
 import { CreateFileUploadPermissionGuard } from 'src/engine/core-modules/file/file-upload/guards/create-file-upload-permission.guard';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -16,7 +15,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 
 @UseGuards(
@@ -35,9 +33,7 @@ import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usa
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
-  FileUploadGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
-  AuthGraphqlApiExceptionFilter,
 )
 @MetadataResolver()
 export class FileUploadResolver {

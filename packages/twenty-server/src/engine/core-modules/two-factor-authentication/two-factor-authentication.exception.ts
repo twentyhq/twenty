@@ -24,7 +24,7 @@ const getTwoFactorAuthenticationExceptionUserFriendlyMessage = (
     case TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_NOT_FOUND:
       return msg`Two-factor authentication method not found.`;
     case TwoFactorAuthenticationExceptionCode.INVALID_OTP:
-      return msg`Invalid verification code.`;
+      return msg`Invalid verification code. Please try again.`;
     case TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_ALREADY_PROVISIONED:
       return msg`Two-factor authentication is already set up.`;
     case TwoFactorAuthenticationExceptionCode.MALFORMED_DATABASE_OBJECT:

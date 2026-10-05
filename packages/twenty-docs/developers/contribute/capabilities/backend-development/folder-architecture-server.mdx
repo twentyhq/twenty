@@ -34,7 +34,7 @@ See [custom decorators](https://docs.nestjs.com/custom-decorators) for more deta
 
 ## Filters
 
-Includes exception filters to handle exceptions that might occur in GraphQL endpoints.
+Includes the global exception filters. Every `CustomException` declares a category for each of its codes, and these filters turn it into the REST status or the GraphQL error, so endpoints need no filter of their own.
 
 ## Guards
 

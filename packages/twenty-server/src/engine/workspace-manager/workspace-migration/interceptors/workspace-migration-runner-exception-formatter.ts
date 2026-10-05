@@ -10,12 +10,12 @@ import {
 
 export const workspaceMigrationRunnerExceptionFormatter = (
   error: WorkspaceMigrationRunnerException,
-) => {
+): BaseGraphQLError => {
   if (
     error.code ===
     WorkspaceMigrationRunnerExceptionCode.DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS
   ) {
-    throw new ConflictError(error.message, {
+    return new ConflictError(error.message, {
       subCode: error.code,
       userFriendlyMessage: error.userFriendlyMessage,
     });
@@ -24,7 +24,7 @@ export const workspaceMigrationRunnerExceptionFormatter = (
   const isExecutionFailed =
     error.code === WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED;
 
-  throw new BaseGraphQLError(
+  return new BaseGraphQLError(
     error.message,
     isExecutionFailed
       ? ErrorCode.APPLICATION_INSTALLATION_FAILED

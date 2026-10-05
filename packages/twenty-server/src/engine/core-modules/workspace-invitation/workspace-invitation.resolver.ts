@@ -7,7 +7,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.dto';
 import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
@@ -17,7 +16,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -39,11 +37,7 @@ import { SendInvitationsInput } from './dtos/send-invitations.input';
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE_MEMBERS),
 )
 @UsePipes(ResolverValidationPipe)
-@UseFilters(
-  PermissionsGraphqlApiExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @MetadataResolver()
 export class WorkspaceInvitationResolver {
   constructor(

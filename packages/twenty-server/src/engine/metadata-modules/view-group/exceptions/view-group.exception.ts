@@ -32,7 +32,7 @@ const VIEW_GROUP_EXCEPTION_CATEGORY_BY_CODE = {
   [ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA]: 'BAD_USER_INPUT',
   [ViewGroupExceptionCode.VIEW_NOT_FOUND]: 'NOT_FOUND',
   [ViewGroupExceptionCode.MISSING_MAIN_GROUP_BY_FIELD_METADATA_ID]:
-    'INTERNAL_SERVER_ERROR',
+    'BAD_USER_INPUT',
 } as const satisfies Record<ViewGroupExceptionCode, ExceptionCategory>;
 
 export enum ViewGroupExceptionMessageKey {

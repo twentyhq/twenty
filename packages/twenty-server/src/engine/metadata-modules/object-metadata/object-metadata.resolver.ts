@@ -52,13 +52,10 @@ import { getEffectiveImageIdentifierFieldMetadataId } from 'src/engine/metadata-
 import { MostlyEmptyFieldsService } from 'src/engine/metadata-modules/object-metadata/mostly-empty-fields.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
-import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { SearchFieldMetadataDTO } from 'src/engine/metadata-modules/search-field-metadata/dtos/search-field-metadata.dto';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -77,11 +74,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 )
 @MetadataResolver(() => ObjectMetadataDTO)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(
-  PreventNestToAutoLogGraphqlErrorsFilter,
-  PermissionsGraphqlApiExceptionFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class ObjectMetadataResolver {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
@@ -237,18 +230,10 @@ export class ObjectMetadataResolver {
     objectMetadataId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<string[]> {
-    try {
-      return await this.mostlyEmptyFieldsService.getMostlyEmptyFieldMetadataIds(
-        {
-          workspaceId,
-          objectMetadataId,
-        },
-      );
-    } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
-
-      return [];
-    }
+    return await this.mostlyEmptyFieldsService.getMostlyEmptyFieldMetadataIds({
+      workspaceId,
+      objectMetadataId,
+    });
   }
 
   private async resolveStandardOverride(
@@ -363,17 +348,14 @@ export class ObjectMetadataResolver {
     @Args('input') input: CreateOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    try {
-      const flatobjectMetadata =
-        await this.objectMetadataService.createOneObject({
-          createObjectInput: input.object,
-          workspaceId,
-        });
+    const flatobjectMetadata = await this.objectMetadataService.createOneObject(
+      {
+        createObjectInput: input.object,
+        workspaceId,
+      },
+    );
 
-      return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
-    } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
-    }
+    return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
   }
 
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
@@ -382,17 +364,14 @@ export class ObjectMetadataResolver {
     @Args('input') deleteObjectInput: DeleteOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    try {
-      const flatobjectMetadata =
-        await this.objectMetadataService.deleteOneObject({
-          deleteObjectInput,
-          workspaceId,
-        });
+    const flatobjectMetadata = await this.objectMetadataService.deleteOneObject(
+      {
+        deleteObjectInput,
+        workspaceId,
+      },
+    );
 
-      return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
-    } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
-    }
+    return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
   }
 
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
@@ -401,17 +380,14 @@ export class ObjectMetadataResolver {
     @Args('input') updateObjectInput: UpdateOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    try {
-      const flatobjectMetadata =
-        await this.objectMetadataService.updateOneObject({
-          updateObjectInput,
-          workspaceId,
-        });
+    const flatobjectMetadata = await this.objectMetadataService.updateOneObject(
+      {
+        updateObjectInput,
+        workspaceId,
+      },
+    );
 
-      return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
-    } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
-    }
+    return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
   }
 
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
@@ -421,17 +397,13 @@ export class ObjectMetadataResolver {
     updateObjectInputs: UpdateOneObjectInput[],
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    try {
-      const flatObjectMetadatas =
-        await this.objectMetadataService.updateManyObjects({
-          updateObjectInputs,
-          workspaceId,
-        });
+    const flatObjectMetadatas =
+      await this.objectMetadataService.updateManyObjects({
+        updateObjectInputs,
+        workspaceId,
+      });
 
-      return flatObjectMetadatas.map(fromFlatObjectMetadataToObjectMetadataDto);
-    } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
-    }
+    return flatObjectMetadatas.map(fromFlatObjectMetadataToObjectMetadataDto);
   }
 
   @ResolveField(() => [FieldMetadataDTO], { nullable: false })
@@ -440,21 +412,13 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
   ): Promise<FieldMetadataDTO[]> {
-    try {
-      const fieldMetadataItems = await context.loaders.fieldMetadataLoader.load(
-        {
-          objectMetadata,
-          workspaceId: workspace.id,
-          locale: context.req.locale,
-        },
-      );
+    const fieldMetadataItems = await context.loaders.fieldMetadataLoader.load({
+      objectMetadata,
+      workspaceId: workspace.id,
+      locale: context.req.locale,
+    });
 
-      return fieldMetadataItems;
-    } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
-
-      return [];
-    }
+    return fieldMetadataItems;
   }
 
   @ResolveField(() => [IndexMetadataDTO], { nullable: false })
@@ -463,20 +427,12 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders },
   ): Promise<IndexMetadataDTO[]> {
-    try {
-      const indexMetadataItems = await context.loaders.indexMetadataLoader.load(
-        {
-          objectMetadata,
-          workspaceId: workspace.id,
-        },
-      );
+    const indexMetadataItems = await context.loaders.indexMetadataLoader.load({
+      objectMetadata,
+      workspaceId: workspace.id,
+    });
 
-      return indexMetadataItems;
-    } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
-
-      return [];
-    }
+    return indexMetadataItems;
   }
 
   @ResolveField(() => [SearchFieldMetadataDTO], { nullable: false })
@@ -485,18 +441,12 @@ export class ObjectMetadataResolver {
     @Parent() objectMetadata: ObjectMetadataDTO,
     @Context() context: { loaders: IDataloaders },
   ): Promise<SearchFieldMetadataDTO[]> {
-    try {
-      const searchFieldMetadataItems =
-        await context.loaders.searchFieldMetadataLoader.load({
-          objectMetadata,
-          workspaceId: workspace.id,
-        });
+    const searchFieldMetadataItems =
+      await context.loaders.searchFieldMetadataLoader.load({
+        objectMetadata,
+        workspaceId: workspace.id,
+      });
 
-      return searchFieldMetadataItems;
-    } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(error);
-
-      return [];
-    }
+    return searchFieldMetadataItems;
   }
 }

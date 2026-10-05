@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -12,13 +12,10 @@ import { DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dt
 import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/update-view-group.input';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
-import { ViewGroupGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view-group/utils/view-group-graphql-api-exception.filter';
 import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-child-entity-permission.guard';
 import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-child-entity-permission.guard';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @MetadataResolver(() => ViewGroupDTO)
-@UseFilters(ViewGroupGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {

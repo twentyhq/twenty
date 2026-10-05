@@ -1,10 +1,9 @@
 import { createSubscriptionAuthorization } from 'src/engine/subscriptions/utils/create-subscription-authorization';
-import { aiGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/ai/utils/ai-graphql-api-exception-handler.util';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { withAsyncIteratorAuthorization } from 'src/engine/subscriptions/utils/with-async-iterator-authorization';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Subscription } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -13,11 +12,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { convertCustomExceptionToGraphQLError } from 'src/engine/core-modules/graphql/utils/convert-custom-exception-to-graphql-error.util';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-stream-reap-check-interval-ms.constant';
 import { AgentChatEventDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-event.dto';
@@ -25,6 +24,7 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
+import { CustomException } from 'src/utils/custom-exception';
 @MetadataResolver()
 @UseGuards(
   AuthPrincipalGuard({
@@ -39,7 +39,6 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
     application: { withUser: true, withoutUser: false },
   }),
 )
-@UseInterceptors(AiGraphqlApiExceptionInterceptor)
 export class AgentChatSubscriptionResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,
@@ -71,7 +70,12 @@ export class AgentChatSubscriptionResolver {
             threadId,
             workspaceMemberId,
           })
-          .catch(aiGraphqlApiExceptionHandler),
+          .catch((error) => {
+            // Subscriptions bypass the GraphQL error hook, so convert here
+            throw error instanceof CustomException
+              ? convertCustomExceptionToGraphQLError(error)
+              : error;
+          }),
       maxAgeMs: AGENT_CHAT_KEEPALIVE_INTERVAL_MS,
     });
     await authorize();

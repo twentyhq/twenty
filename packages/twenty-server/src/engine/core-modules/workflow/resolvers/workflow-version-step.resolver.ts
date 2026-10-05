@@ -22,8 +22,6 @@ import { UpdateWorkflowVersionTriggerInput } from 'src/engine/core-modules/workf
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-action.dto';
 import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import { WorkflowVersionTriggerDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-trigger.dto';
-import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
-import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -31,7 +29,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountHandleDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-handle.dto';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import {
   WorkflowVersionStepException,
@@ -41,7 +38,6 @@ import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workfl
 import { canUpdateWorkflowRunStep } from 'src/modules/workflow/workflow-runner/utils/can-update-workflow-run-step.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
@@ -59,13 +55,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   }),
   SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
-@UseFilters(
-  PermissionsGraphqlApiExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-  WorkflowVersionStepGraphqlApiExceptionFilter,
-  WorkflowVersionValidationGraphqlApiExceptionFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class WorkflowVersionStepResolver {
   constructor(
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,

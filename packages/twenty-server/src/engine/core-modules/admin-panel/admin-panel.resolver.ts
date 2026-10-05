@@ -69,7 +69,6 @@ import { ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-m
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { FindApplicationRegistrationInstalledWorkspacesInput } from 'src/engine/core-modules/application/application-registration/dtos/find-application-registration-installed-workspaces.input';
 import { PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
 import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
@@ -82,10 +81,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
-import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
-import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -108,13 +104,7 @@ import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/ut
 
 @UsePipes(ResolverValidationPipe)
 @AdminResolver()
-@UseFilters(
-  AuthGraphqlApiExceptionFilter,
-  TwoFactorAuthenticationExceptionFilter,
-  ThrottlerGraphqlApiExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-  ConfigVariableGraphqlApiExceptionFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {

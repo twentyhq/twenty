@@ -15,7 +15,6 @@ import {
   AdminPanelWorkspaceUsageLimitsDTO,
 } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-usage-limits.dto';
 import { AdminPanelUsageLimitService } from 'src/engine/core-modules/admin-panel/services/admin-panel-usage-limit.service';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
@@ -28,7 +27,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 @UsePipes(ResolverValidationPipe)
 @AdminResolver()
 @UseFilters(
-  AuthGraphqlApiExceptionFilter,
   UsageLimitGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )

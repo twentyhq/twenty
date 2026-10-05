@@ -1,9 +1,4 @@
-import {
-  UseFilters,
-  UseGuards,
-  UseInterceptors,
-  UsePipes,
-} from '@nestjs/common';
+import { UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -12,8 +7,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ApplicationDevelopmentService } from 'src/engine/core-modules/application/application-development/application-development.service';
 import { ApplicationExportDTO } from 'src/engine/core-modules/application/application-development/dtos/application-export.dto';
 import { ExportApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/export-application.input';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
@@ -26,7 +19,6 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
-@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {

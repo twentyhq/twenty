@@ -49,14 +49,11 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+
 @MetadataResolver()
 @AllowSuspendedWorkspace()
 @UsePipes(ResolverValidationPipe)
-@UseFilters(
-  PermissionsGraphqlApiExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class BillingResolver {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,

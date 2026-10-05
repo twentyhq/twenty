@@ -2,7 +2,7 @@ import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Float,
@@ -43,10 +43,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
-import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -62,12 +59,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   }),
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
-@UseInterceptors(AiGraphqlApiExceptionInterceptor)
-@UseFilters(
-  UsageLimitGraphqlApiExceptionFilter,
-  BillingGraphqlApiExceptionFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(UsageLimitGraphqlApiExceptionFilter)
 @MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {
   constructor(

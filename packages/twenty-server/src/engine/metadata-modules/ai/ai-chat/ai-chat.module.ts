@@ -22,7 +22,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
-import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -96,7 +95,6 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     MessagePruningService,
     StreamAgentChatJob,
     SystemPromptBuilderService,
-    AiGraphqlApiExceptionInterceptor,
     provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [

@@ -4,15 +4,12 @@ import {
   NotFoundException,
   Param,
   Res,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import {
   ALLOWED_SDK_MODULES,
   type SdkModuleName,
@@ -47,7 +44,6 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
     application: true,
   }),
 )
-@UseFilters(ApplicationRestApiExceptionFilter)
 export class SdkClientController {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,

@@ -2,7 +2,6 @@ import { EmailOperation } from 'twenty-shared/types';
 import {
   ForbiddenException,
   Logger,
-  UseFilters,
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
@@ -11,7 +10,6 @@ import { Args, Mutation } from '@nestjs/graphql';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FileEmailAttachmentService } from 'src/engine/core-modules/file/file-email-attachment/services/file-email-attachment.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -29,7 +27,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
-@UseFilters(AuthGraphqlApiExceptionFilter)
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {

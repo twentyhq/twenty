@@ -1,8 +1,7 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
@@ -14,7 +13,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @MetadataResolver()
-@UseFilters(ApplicationRegistrationExceptionFilter)
 export class MarketplacePublicResolver {
   constructor(
     private readonly marketplaceQueryService: MarketplaceQueryService,

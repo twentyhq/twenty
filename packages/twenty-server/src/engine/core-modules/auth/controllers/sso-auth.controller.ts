@@ -1,14 +1,6 @@
 /* @license Enterprise */
 
-import {
-  Controller,
-  Get,
-  Post,
-  Req,
-  Res,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { generateServiceProviderMetadata } from '@node-saml/node-saml';
@@ -25,7 +17,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { OidcAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
 import { SamlAuthGuard } from 'src/engine/core-modules/auth/guards/saml-auth.guard';
@@ -48,7 +39,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller(ApiPath.Auth)
-@UseFilters(AuthRestApiExceptionFilter)
 export class SsoAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,

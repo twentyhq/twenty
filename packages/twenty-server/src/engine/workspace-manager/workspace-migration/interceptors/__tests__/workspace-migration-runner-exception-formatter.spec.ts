@@ -13,7 +13,7 @@ describe('workspaceMigrationRunnerExceptionFormatter', () => {
       code: WorkspaceMigrationRunnerExceptionCode.DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS,
     });
 
-    expect(() => workspaceMigrationRunnerExceptionFormatter(exception)).toThrow(
+    expect(workspaceMigrationRunnerExceptionFormatter(exception)).toEqual(
       expect.objectContaining({
         message: exception.message,
         extensions: expect.objectContaining({
@@ -27,14 +27,14 @@ describe('workspaceMigrationRunnerExceptionFormatter', () => {
   });
 
   it('should keep formatting other runner exceptions as internal server errors', () => {
-    expect(() =>
+    expect(
       workspaceMigrationRunnerExceptionFormatter(
         new WorkspaceMigrationRunnerException({
           message: 'Application not found',
           code: WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND,
         }),
       ),
-    ).toThrow(
+    ).toEqual(
       expect.objectContaining({
         extensions: expect.objectContaining({
           code: ErrorCode.INTERNAL_SERVER_ERROR,

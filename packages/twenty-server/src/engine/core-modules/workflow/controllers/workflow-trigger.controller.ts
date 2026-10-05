@@ -1,24 +1,13 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Post,
-  Req,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Request } from 'express';
 import { ApiPath, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-
-import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -34,10 +23,6 @@ import {
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 @Controller(ApiPath.Webhooks)
-@UseFilters(
-  WorkflowTriggerRestApiExceptionFilter,
-  PermissionsGraphqlApiExceptionFilter,
-)
 export class WorkflowTriggerController {
   constructor(
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,

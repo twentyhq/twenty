@@ -5,7 +5,6 @@ import {
   Post,
   Req,
   Res,
-  UseFilters,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -20,7 +19,6 @@ import { OAuthTokenInput } from 'src/engine/core-modules/application/application
 import { OAuthService } from 'src/engine/core-modules/application/application-oauth/oauth.service';
 import { OAuthErrorResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-error-response.type';
 import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -30,7 +28,6 @@ const OAUTH_RATE_LIMIT_MAX = 60;
 const OAUTH_RATE_LIMIT_WINDOW_MS = 60_000;
 
 @Controller(ApiPath.OAuth)
-@UseFilters(AuthRestApiExceptionFilter)
 export class OAuthTokenController {
   constructor(
     private readonly oauthService: OAuthService,

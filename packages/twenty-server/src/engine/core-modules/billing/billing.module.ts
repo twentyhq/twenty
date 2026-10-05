@@ -20,7 +20,6 @@ import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/bil
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
@@ -95,7 +94,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingPlanService,
     BillingWorkspaceMemberListener,
     BillingService,
-    BillingRestApiExceptionFilter,
     BillingSyncCustomerDataCommand,
     BillingUpdateSubscriptionPriceCommand,
     BillingSyncPlansDataCommand,

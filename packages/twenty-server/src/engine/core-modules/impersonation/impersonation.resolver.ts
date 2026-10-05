@@ -10,13 +10,11 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { AuthImpersonationContext } from 'src/engine/decorators/auth/auth-impersonation-context.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -29,11 +27,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
-@UseFilters(
-  AuthGraphqlApiExceptionFilter,
-  PermissionsGraphqlApiExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class ImpersonationResolver {
   constructor(private readonly impersonationService: ImpersonationService) {}
 

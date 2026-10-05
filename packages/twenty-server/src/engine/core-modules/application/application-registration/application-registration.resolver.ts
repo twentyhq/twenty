@@ -22,7 +22,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
-import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
@@ -41,8 +40,6 @@ import { RotateClientSecretDTO } from 'src/engine/core-modules/application/appli
 import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-modules/application/application-registration/dtos/transfer-application-registration-ownership.input';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { FileUploadGraphqlApiExceptionFilter } from 'src/engine/core-modules/file/file-upload/filters/file-upload-graphql-api-exception.filter';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -59,7 +56,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
@@ -73,13 +69,7 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => ApplicationRegistrationEntity)
-@UseFilters(
-  ApplicationRegistrationExceptionFilter,
-  ApplicationExceptionFilter,
-  FileUploadGraphqlApiExceptionFilter,
-  AuthGraphqlApiExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class ApplicationRegistrationResolver {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,

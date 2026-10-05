@@ -1,10 +1,8 @@
-import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isNonEmptyString } from '@sniptt/guards';
-
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -24,8 +22,6 @@ import { AgentIdInput } from './dtos/agent-id.input';
 import { AgentDTO } from './dtos/agent.dto';
 import { CreateAgentInput } from './dtos/create-agent.input';
 import { UpdateAgentInput } from './dtos/update-agent.input';
-import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UseGuards(
@@ -42,12 +38,8 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
   }),
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
-@UseInterceptors(
-  WorkspaceMigrationGraphqlApiExceptionInterceptor,
-  AiGraphqlApiExceptionInterceptor,
-)
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver()
-@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 export class AgentResolver {
   constructor(
     private readonly agentService: AgentService,

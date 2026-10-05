@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -15,7 +15,6 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -30,7 +29,6 @@ import { CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navig
 import { NavigationMenuItemDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/navigation-menu-item.dto';
 import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/record-identifier.dto';
 import { UpdateOneNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
-import { NavigationMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/navigation-menu-item/interceptors/navigation-menu-item-graphql-api-exception.interceptor';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
@@ -49,12 +47,8 @@ import { ApplicationTranslationCatalogService } from 'src/engine/metadata-module
     application: true,
   }),
 )
-@UseInterceptors(
-  WorkspaceMigrationGraphqlApiExceptionInterceptor,
-  NavigationMenuItemGraphqlApiExceptionInterceptor,
-)
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => NavigationMenuItemDTO)
-@UseFilters(AuthGraphqlApiExceptionFilter)
 export class NavigationMenuItemResolver {
   constructor(
     private readonly navigationMenuItemService: NavigationMenuItemService,

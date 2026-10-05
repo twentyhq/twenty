@@ -28,9 +28,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
-
 // rest/apiKeys is deprecated in favor of rest/metadata/apiKeys and will be removed
 @Controller([`${ApiPath.Rest}/apiKeys`, `${ApiPath.Rest}/metadata/apiKeys`])
 @UseGuards(
@@ -48,11 +45,7 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
   }),
   SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
 )
-@UseFilters(
-  PermissionsRestApiExceptionFilter,
-  RestApiExceptionFilter,
-  AuthRestApiExceptionFilter,
-)
+@UseFilters(RestApiExceptionFilter)
 export class ApiKeyController {
   constructor(private readonly apiKeyService: ApiKeyService) {}
 

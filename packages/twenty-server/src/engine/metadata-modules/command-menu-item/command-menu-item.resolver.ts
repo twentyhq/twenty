@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -27,11 +27,9 @@ import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu
 import { CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
 import { CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
 import { UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
-import { CommandMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/command-menu-item/interceptors/command-menu-item-graphql-api-exception.interceptor';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -46,12 +44,8 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
     application: true,
   }),
 )
-@UseInterceptors(
-  WorkspaceMigrationGraphqlApiExceptionInterceptor,
-  CommandMenuItemGraphqlApiExceptionInterceptor,
-)
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => CommandMenuItemDTO)
-@UseFilters(AuthGraphqlApiExceptionFilter)
 export class CommandMenuItemResolver {
   constructor(
     private readonly commandMenuItemService: CommandMenuItemService,

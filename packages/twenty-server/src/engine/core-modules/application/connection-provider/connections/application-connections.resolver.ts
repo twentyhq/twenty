@@ -1,13 +1,7 @@
-import {
-  UseGuards,
-  UseInterceptors,
-  UsePipes,
-  UseFilters,
-} from '@nestjs/common';
+import { UseGuards, UsePipes } from '@nestjs/common';
 import { Args, ID, Mutation, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ConnectionProviderGraphqlApiExceptionInterceptor } from 'src/engine/core-modules/application/connection-provider/interceptors/connection-provider-graphql-api-exception.interceptor';
 import { AppConnectionObjectDto } from 'src/engine/core-modules/application/connection-provider/connections/dtos/app-connection.object';
 import { ListAppConnectionsInput } from 'src/engine/core-modules/application/connection-provider/connections/dtos/list-app-connections.input';
 import { ReportAppConnectionAuthFailureInput } from 'src/engine/core-modules/application/connection-provider/connections/dtos/report-app-connection-auth-failure.input';
@@ -21,7 +15,6 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -37,10 +30,8 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   }),
   NoPermissionGuard,
 )
-@UseInterceptors(ConnectionProviderGraphqlApiExceptionInterceptor)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
-@UseFilters(AuthGraphqlApiExceptionFilter)
 export class ApplicationConnectionsResolver {
   constructor(
     private readonly listService: ApplicationConnectionsListService,

@@ -1,10 +1,9 @@
-import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Context, Parent, ResolveField } from '@nestjs/graphql';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -30,7 +29,6 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 )
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => SettingsMenuItemDTO)
-@UseFilters(AuthGraphqlApiExceptionFilter)
 export class SettingsMenuItemResolver {
   constructor(
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,

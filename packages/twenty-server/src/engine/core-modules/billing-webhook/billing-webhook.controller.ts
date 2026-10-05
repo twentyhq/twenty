@@ -8,7 +8,6 @@ import {
   type RawBodyRequest,
   Req,
   Res,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
@@ -28,14 +27,12 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
-import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller()
-@UseFilters(BillingRestApiExceptionFilter)
 export class BillingWebhookController {
   protected readonly logger = new Logger(BillingWebhookController.name);
 

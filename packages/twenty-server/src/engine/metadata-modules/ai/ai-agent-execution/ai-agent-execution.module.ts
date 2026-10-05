@@ -24,7 +24,6 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
-import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -58,7 +57,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   providers: [
     AgentAsyncExecutorService,
     AgentActorContextService,
-    AiGraphqlApiExceptionInterceptor,
     AgentMessagePartResolver,
     AgentMessageResolver,
     AgentRunResolver,

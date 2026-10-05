@@ -8,7 +8,6 @@ import {
   Post,
   Query,
   Req,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
@@ -21,8 +20,6 @@ import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticat
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
@@ -33,12 +30,9 @@ import {
   ViewFilterExceptionCode,
   ViewFilterExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
-import { ViewFilterRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
-import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-child-entity-permission.guard';
 import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-child-entity-permission.guard';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
 @Controller(`${ApiPath.Rest}/metadata/viewFilters`)
 @UseGuards(
@@ -53,13 +47,6 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
     oauthClient: true,
     application: true,
   }),
-)
-@UseFilters(
-  PermissionsRestApiExceptionFilter,
-  ViewFilterRestApiExceptionFilter,
-  FlatEntityMapsRestApiExceptionFilter,
-  WorkspaceMigrationRunnerRestApiExceptionFilter,
-  AuthRestApiExceptionFilter,
 )
 export class ViewFilterController {
   constructor(private readonly viewFilterService: ViewFilterService) {}

@@ -16,7 +16,6 @@ import { CreateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/c
 import { DeletedCoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/deleted-core-workflow.dto';
 import { DeleteCoreWorkflowsInput } from 'src/engine/core-modules/workflow/dtos/delete-core-workflows.input';
 import { DiscardCoreWorkflowDraftInput } from 'src/engine/core-modules/workflow/dtos/discard-core-workflow-draft.input';
-import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-query-validation-graphql-api-exception.filter';
 import { CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { CoreWorkflowVersionArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.input';
 import { CoreWorkflowVersionsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-versions.input';
@@ -33,7 +32,6 @@ import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/wo
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { buildActorMetadataFromPrincipal } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-principal.util';
 import {
   WorkflowQueryValidationException,
@@ -48,7 +46,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
@@ -66,12 +63,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
   }),
   SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
-@UseFilters(
-  WorkflowQueryValidationGraphqlApiExceptionFilter,
-  PermissionsGraphqlApiExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class CoreWorkflowResolver {
   constructor(
     private readonly coreWorkflowListService: CoreWorkflowListService,

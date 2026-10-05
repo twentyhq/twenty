@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -6,10 +6,8 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationHealthCheckService } from 'src/engine/core-modules/application/application-health/application-health-check.service';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationHealthCheckResultDTO } from 'src/engine/core-modules/application/dtos/application-health-check-result.dto';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -32,7 +30,6 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
   SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
 )
 @MetadataResolver(() => ApplicationDTO)
-@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 export class ApplicationHealthResolver {
   constructor(
     private readonly applicationHealthCheckService: ApplicationHealthCheckService,

@@ -1,9 +1,8 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationConnectionProviderDTO } from 'src/engine/core-modules/application/connection-provider/dtos/application-connection-provider.dto';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
@@ -29,7 +28,6 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
   }),
 )
 @MetadataResolver(() => ApplicationConnectionProviderDTO)
-@UseFilters(ApplicationExceptionFilter)
 export class ApplicationConnectionProviderResolver {
   constructor(
     private readonly oauthProviderService: ConnectionProviderService,

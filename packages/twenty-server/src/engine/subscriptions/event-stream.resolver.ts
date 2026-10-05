@@ -13,7 +13,6 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
@@ -59,11 +58,7 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
   NoPermissionGuard,
 )
 @UsePipes(ResolverValidationPipe)
-@UseFilters(
-  EventStreamExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(EventStreamExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 export class EventStreamResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,

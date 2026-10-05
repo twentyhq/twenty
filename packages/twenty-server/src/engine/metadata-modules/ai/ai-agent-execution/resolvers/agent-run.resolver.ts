@@ -1,11 +1,10 @@
-import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
@@ -17,8 +16,6 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { RunAgentInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent.input';
 import { RunAgentResultDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent-result.dto';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
-import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -34,12 +31,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   }),
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
-@UseInterceptors(AiGraphqlApiExceptionInterceptor)
-@UseFilters(
-  UsageLimitGraphqlApiExceptionFilter,
-  BillingGraphqlApiExceptionFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(UsageLimitGraphqlApiExceptionFilter)
 // TODO(@abdulrahmancodes): install ResolverValidationPipe here; without it every
 // class-validator decorator on RunAgentInputDTO is inert. Enabling it rejects the
 // empty assistant turns the Slack app replays, so those callers go first.

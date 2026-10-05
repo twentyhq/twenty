@@ -4,7 +4,6 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatNavigationMenuItemModule } from 'src/engine/metadata-modules/flat-navigation-menu-item/flat-navigation-menu-item.module';
-import { NavigationMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/navigation-menu-item/interceptors/navigation-menu-item-graphql-api-exception.interceptor';
 import { NavigationMenuItemDeletionJob } from 'src/engine/metadata-modules/navigation-menu-item/jobs/navigation-menu-item-deletion.job';
 import { NavigationMenuItemDeletionListener } from 'src/engine/metadata-modules/navigation-menu-item/listeners/navigation-menu-item-deletion.listener';
 import { NavigationMenuItemResolver } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.resolver';
@@ -36,7 +35,6 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
     NavigationMenuItemDeletionJob,
     NavigationMenuItemResolver,
     NavigationMenuItemRecordIdentifierService,
-    NavigationMenuItemGraphqlApiExceptionInterceptor,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
     NavigationMenuItemToolWorkspaceService,
   ],

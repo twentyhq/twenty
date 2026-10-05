@@ -2,7 +2,6 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { EventLogEmitterExceptionFilter } from 'src/engine/core-modules/event-logs/emit/event-log-emitter-exception.filter';
 import {
   EventLogEmitterException,
   EventLogEmitterExceptionCode,
@@ -18,8 +17,6 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-
 import { Analytics } from './dtos/analytics.dto';
 import {
   CreateAnalyticsInputV2,
@@ -30,11 +27,7 @@ import { EventLogEmitterService } from './event-log-emitter.service';
 
 @MetadataResolver(() => Analytics)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(
-  EventLogEmitterExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class EventLogEmitterResolver {
   constructor(
     private readonly eventLogEmitterService: EventLogEmitterService,

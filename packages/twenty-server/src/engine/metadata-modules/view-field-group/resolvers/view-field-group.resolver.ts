@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import { UseGuards, UsePipes } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -34,12 +34,9 @@ import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/over
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @MetadataResolver(() => ViewFieldGroupDTO)
-@UseFilters(ViewGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {

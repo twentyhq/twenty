@@ -7,7 +7,6 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -15,7 +14,6 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { CreatePublicDomainInput } from 'src/engine/core-modules/public-domain/dtos/create-public-domain.input';
 import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
 import { PublicDomainInput } from 'src/engine/core-modules/public-domain/dtos/public-domain.input';
-import { PublicDomainExceptionFilter } from 'src/engine/core-modules/public-domain/public-domain-exception-filter';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import {
   PublicDomainException,
@@ -27,7 +25,6 @@ import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-ta
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UseGuards(
@@ -45,12 +42,7 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE_MEMBERS),
 )
 @UsePipes(ResolverValidationPipe)
-@UseFilters(
-  PublicDomainExceptionFilter,
-  ApplicationExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @MetadataResolver()
 export class PublicDomainResolver {
   constructor(

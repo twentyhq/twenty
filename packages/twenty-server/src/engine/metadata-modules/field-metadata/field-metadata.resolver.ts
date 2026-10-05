@@ -45,12 +45,9 @@ import { CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/c
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
 import { applyMetadataFilterToQueryBuilder } from 'src/engine/metadata-modules/pagination/utils/apply-metadata-filter-to-query-builder.util';
 import { findManyWithCursorPagination } from 'src/engine/metadata-modules/pagination/utils/find-many-with-cursor-pagination.util';
-import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -75,11 +72,7 @@ type FieldMetadataStandardOverrideParent = Pick<
 )
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => FieldMetadataDTO)
-@UseFilters(
-  PermissionsGraphqlApiExceptionFilter,
-  PreventNestToAutoLogGraphqlErrorsFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
@@ -261,16 +254,12 @@ export class FieldMetadataResolver {
     @Args('input') input: CreateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    try {
-      const flatFieldMetadata = await this.fieldMetadataService.createOneField({
-        createFieldInput: input.field,
-        workspaceId,
-      });
+    const flatFieldMetadata = await this.fieldMetadataService.createOneField({
+      createFieldInput: input.field,
+      workspaceId,
+    });
 
-      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
-    } catch (error) {
-      return fieldMetadataGraphqlApiExceptionHandler(error);
-    }
+    return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
   }
 
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
@@ -279,16 +268,12 @@ export class FieldMetadataResolver {
     @Args('input') input: UpdateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    try {
-      const flatFieldMetadata = await this.fieldMetadataService.updateOneField({
-        updateFieldInput: { ...input.update, id: input.id },
-        workspaceId,
-      });
+    const flatFieldMetadata = await this.fieldMetadataService.updateOneField({
+      updateFieldInput: { ...input.update, id: input.id },
+      workspaceId,
+    });
 
-      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
-    } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
-    }
+    return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
   }
 
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
@@ -301,16 +286,12 @@ export class FieldMetadataResolver {
       throw new ForbiddenError('Could not retrieve workspace ID');
     }
 
-    try {
-      const flatFieldMetadata = await this.fieldMetadataService.deleteOneField({
-        deleteOneFieldInput,
-        workspaceId,
-      });
+    const flatFieldMetadata = await this.fieldMetadataService.deleteOneField({
+      deleteOneFieldInput,
+      workspaceId,
+    });
 
-      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
-    } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
-    }
+    return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
   }
 
   @ResolveField(() => RelationDTO, { nullable: true })
@@ -323,15 +304,11 @@ export class FieldMetadataResolver {
     }: Pick<FieldMetadataDTO, 'id' | 'objectMetadataId'>,
     @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDTO | null> {
-    try {
-      return await context.loaders.relationLoader.load({
-        fieldMetadataId,
-        objectMetadataId,
-        workspaceId: workspace.id,
-      });
-    } catch (error) {
-      return fieldMetadataGraphqlApiExceptionHandler(error);
-    }
+    return await context.loaders.relationLoader.load({
+      fieldMetadataId,
+      objectMetadataId,
+      workspaceId: workspace.id,
+    });
   }
 
   @ResolveField(() => [RelationDTO], { nullable: true })
@@ -344,14 +321,10 @@ export class FieldMetadataResolver {
     }: Pick<FieldMetadataDTO, 'id' | 'objectMetadataId'>,
     @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDTO[] | null> {
-    try {
-      return await context.loaders.morphRelationLoader.load({
-        fieldMetadataId,
-        objectMetadataId,
-        workspaceId: workspace.id,
-      });
-    } catch (error) {
-      return fieldMetadataGraphqlApiExceptionHandler(error);
-    }
+    return await context.loaders.morphRelationLoader.load({
+      fieldMetadataId,
+      objectMetadataId,
+      workspaceId: workspace.id,
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, UseFilters, UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -54,7 +54,6 @@ import { AuthAuthenticatedAt } from 'src/engine/decorators/auth/auth-authenticat
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthImpersonationContext } from 'src/engine/decorators/auth/auth-impersonation-context.decorator';
 import { canCredentialAutoLoginIntoWorkspaces } from 'src/engine/core-modules/auth/utils/can-credential-auto-login-into-workspaces.util';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthIsUserSession } from 'src/engine/decorators/auth/auth-is-user-session.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -73,7 +72,6 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions.type';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -90,7 +88,6 @@ const getHMACKey = (email?: string, key?: string | null) => {
 };
 
 @MetadataResolver(() => UserEntity)
-@UseFilters(PermissionsGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
 export class UserResolver {
   constructor(
     @InjectRepository(UserEntity)

@@ -22,7 +22,6 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -51,7 +50,6 @@ import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspa
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { getAuthBypassProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-bypass-providers-by-workspace.util';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
-import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -69,7 +67,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
@@ -85,11 +82,7 @@ const OriginHeader = createParamDecorator(
 
 @MetadataResolver(() => WorkspaceEntity)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(
-  PreventNestToAutoLogGraphqlErrorsFilter,
-  PermissionsGraphqlApiExceptionFilter,
-  AuthGraphqlApiExceptionFilter,
-)
+@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
@@ -177,19 +170,15 @@ export class WorkspaceResolver {
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
   ) {
-    try {
-      return await this.workspaceService.updateWorkspaceById({
-        payload: {
-          ...data,
-          id: workspace.id,
-        },
-        userWorkspaceId,
-        apiKey,
-        application,
-      });
-    } catch (error) {
-      workspaceGraphqlApiExceptionHandler(error);
-    }
+    return await this.workspaceService.updateWorkspaceById({
+      payload: {
+        ...data,
+        id: workspace.id,
+      },
+      userWorkspaceId,
+      apiKey,
+      application,
+    });
   }
 
   @Mutation(() => WorkspaceEntity)
@@ -211,14 +200,10 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceAllowedIframeOriginsInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    try {
-      return await this.workspaceService.updateWorkspaceAllowedIframeOrigins(
-        workspace.id,
-        data,
-      );
-    } catch (error) {
-      workspaceGraphqlApiExceptionHandler(error);
-    }
+    return await this.workspaceService.updateWorkspaceAllowedIframeOrigins(
+      workspace.id,
+      data,
+    );
   }
 
   @ResolveField(() => [FeatureFlagDTO], { nullable: true })
@@ -263,13 +248,9 @@ export class WorkspaceResolver {
       return [];
     }
 
-    try {
-      return this.billingSubscriptionService.getBillingSubscriptions(
-        workspace.id,
-      );
-    } catch (error) {
-      workspaceGraphqlApiExceptionHandler(error);
-    }
+    return this.billingSubscriptionService.getBillingSubscriptions(
+      workspace.id,
+    );
   }
 
   @ResolveField(() => String, { nullable: true })
@@ -440,62 +421,58 @@ export class WorkspaceResolver {
     @OriginHeader() originHeader: string,
     @Args('origin', { nullable: true }) origin?: string,
   ): Promise<PublicWorkspaceDataDTO | undefined> {
-    try {
-      const systemEnabledProviders: AuthProvidersDTO = {
-        google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
-        magicLink: false,
-        password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
-        microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
-        sso: [],
-      };
+    const systemEnabledProviders: AuthProvidersDTO = {
+      google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
+      magicLink: false,
+      password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
+      microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
+      sso: [],
+    };
 
-      if (!origin) {
-        return {
-          id: 'default-workspace',
-          logo: '',
-          displayName: 'Default Workspace',
-          workspaceUrls: {
-            subdomainUrl: originHeader,
-            customUrl: originHeader,
-          },
-          authProviders: systemEnabledProviders,
-        };
-      }
-
-      const workspace =
-        await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
-          origin,
-        );
-
-      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
-      let workspaceLogoWithToken = '';
-
-      if (isDefined(workspace.logoFileId)) {
-        workspaceLogoWithToken = await this.fileUrlService.signFileByIdUrl({
-          fileId: workspace.logoFileId,
-          workspaceId: workspace.id,
-          fileFolder: FileFolder.CorePicture,
-        });
-      }
-
+    if (!origin) {
       return {
-        id: workspace.id,
-        logo: workspaceLogoWithToken,
-        displayName: workspace.displayName,
-        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
-        authProviders: getAuthProvidersByWorkspace({
-          workspace,
-          systemEnabledProviders,
-        }),
-        authBypassProviders: getAuthBypassProvidersByWorkspace({
-          workspace,
-          systemEnabledProviders,
-        }),
+        id: 'default-workspace',
+        logo: '',
+        displayName: 'Default Workspace',
+        workspaceUrls: {
+          subdomainUrl: originHeader,
+          customUrl: originHeader,
+        },
+        authProviders: systemEnabledProviders,
       };
-    } catch (err) {
-      workspaceGraphqlApiExceptionHandler(err);
     }
+
+    const workspace =
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
+        origin,
+      );
+
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+    let workspaceLogoWithToken = '';
+
+    if (isDefined(workspace.logoFileId)) {
+      workspaceLogoWithToken = await this.fileUrlService.signFileByIdUrl({
+        fileId: workspace.logoFileId,
+        workspaceId: workspace.id,
+        fileFolder: FileFolder.CorePicture,
+      });
+    }
+
+    return {
+      id: workspace.id,
+      logo: workspaceLogoWithToken,
+      displayName: workspace.displayName,
+      workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
+      authProviders: getAuthProvidersByWorkspace({
+        workspace,
+        systemEnabledProviders,
+      }),
+      authBypassProviders: getAuthBypassProvidersByWorkspace({
+        workspace,
+        systemEnabledProviders,
+      }),
+    };
   }
 
   @Query(() => PublicWorkspaceDataSummaryDTO)
@@ -508,27 +485,23 @@ export class WorkspaceResolver {
     })
     id: string,
   ): Promise<PublicWorkspaceDataSummaryDTO | undefined> {
-    try {
-      const workspace = await this.workspaceService.findOneWorkspaceById(id);
+    const workspace = await this.workspaceService.findOneWorkspaceById(id);
 
-      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-      const logo = isDefined(workspace.logoFileId)
-        ? await this.fileUrlService.signFileByIdUrl({
-            fileId: workspace.logoFileId,
-            workspaceId: workspace.id,
-            fileFolder: FileFolder.CorePicture,
-          })
-        : (workspace.logo ?? '');
+    const logo = isDefined(workspace.logoFileId)
+      ? await this.fileUrlService.signFileByIdUrl({
+          fileId: workspace.logoFileId,
+          workspaceId: workspace.id,
+          fileFolder: FileFolder.CorePicture,
+        })
+      : (workspace.logo ?? '');
 
-      return {
-        id: workspace.id,
-        logo,
-        displayName: workspace.displayName,
-      };
-    } catch (err) {
-      workspaceGraphqlApiExceptionHandler(err);
-    }
+    return {
+      id: workspace.id,
+      logo,
+      displayName: workspace.displayName,
+    };
   }
 
   @Mutation(() => DomainValidRecords, { nullable: true })

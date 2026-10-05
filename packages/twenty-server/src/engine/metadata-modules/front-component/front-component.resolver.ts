@@ -1,4 +1,4 @@
-import { Inject, UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
+import { Inject, UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Info,
@@ -16,14 +16,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -38,7 +36,6 @@ import { CreateFrontComponentInput } from 'src/engine/metadata-modules/front-com
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 import { UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
-import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
@@ -55,12 +52,8 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
     application: true,
   }),
 )
-@UseInterceptors(
-  WorkspaceMigrationGraphqlApiExceptionInterceptor,
-  FrontComponentGraphqlApiExceptionInterceptor,
-)
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => FrontComponentDTO)
-@UseFilters(AuthGraphqlApiExceptionFilter)
 export class FrontComponentResolver {
   constructor(
     @Inject(FrontComponentService)
@@ -205,7 +198,6 @@ export class FrontComponentResolver {
     }),
     NoPermissionGuard,
   )
-  @UseFilters(ApplicationExceptionFilter)
   async generateFrontComponentApplicationTokenPair(
     @Args('applicationId', { type: () => UUIDScalarType })
     applicationId: string,

@@ -25,7 +25,6 @@ import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.ser
 import { getMcpRequestLogFields } from 'src/engine/api/mcp/utils/get-mcp-request-log-fields.util';
 import { writeSseEvent } from 'src/engine/api/mcp/utils/write-sse-event.util';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -56,7 +55,7 @@ import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-susp
   WorkspaceNotSuspendedGuard,
   NoPermissionGuard,
 )
-@UseFilters(RestApiExceptionFilter, AuthRestApiExceptionFilter)
+@UseFilters(RestApiExceptionFilter)
 export class McpCoreController {
   constructor(private readonly mcpProtocolService: McpProtocolService) {}
 

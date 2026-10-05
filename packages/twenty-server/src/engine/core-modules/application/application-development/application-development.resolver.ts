@@ -1,9 +1,4 @@
-import {
-  UseFilters,
-  UseGuards,
-  UseInterceptors,
-  UsePipes,
-} from '@nestjs/common';
+import { UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import bytes from 'bytes';
@@ -25,7 +20,6 @@ import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/appli
 import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -35,13 +29,11 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
-@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {

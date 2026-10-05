@@ -9,7 +9,6 @@ import {
   Post,
   Put,
   Req,
-  UseFilters,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -21,7 +20,6 @@ import { ApiPath, FeatureFlagKey } from 'twenty-shared/types';
 import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/types/rest-cursor-page-info.type';
 import { paginateByIdCursor } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
-import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -38,7 +36,6 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { FieldMetadataRestApiExceptionFilter } from 'src/engine/metadata-modules/field-metadata/filters/field-metadata-rest-api-exception.filter';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
@@ -51,10 +48,7 @@ import {
   toLegacyFieldMetadataListResponse,
   toLegacyFieldMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/field-metadata/utils/to-legacy-field-metadata-response.util';
-import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -73,13 +67,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
     application: true,
   }),
   SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
-)
-@UseFilters(
-  PermissionsRestApiExceptionFilter,
-  FieldMetadataRestApiExceptionFilter,
-  ApplicationRestApiExceptionFilter,
-  FlatEntityMapsRestApiExceptionFilter,
-  AuthRestApiExceptionFilter,
 )
 @UsePipes(new ValidationPipe())
 export class FieldMetadataController {

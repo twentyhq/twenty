@@ -5,7 +5,6 @@ import {
   Get,
   Query,
   Res,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
@@ -14,8 +13,6 @@ import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -23,7 +20,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller(`${ApiPath.Auth}/oauth-propagator`)
-@UseFilters(AuthRestApiExceptionFilter)
 export class OAuthPropagatorController {
   constructor(
     private readonly domainServerConfigService: DomainServerConfigService,

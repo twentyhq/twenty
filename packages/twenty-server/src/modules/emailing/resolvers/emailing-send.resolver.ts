@@ -10,8 +10,6 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { CampaignAudiencePreviewDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-audience-preview.dto';
 import { CancelMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign.input';
 import { CancelMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign-output.dto';
-import { EmailGroupAccessGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter';
-import { EmailingDomainGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter';
 import { PreviewMessageCampaignAudienceInput } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-audience.input';
 import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
 import { SendMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input';
@@ -34,7 +32,6 @@ import {
 } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -42,7 +39,6 @@ import { MessageCampaignScheduleService } from 'src/modules/emailing/services/me
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domain/utils/count-delivered-recipients.util';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -59,13 +55,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   FeatureFlagGuard,
   SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
 )
-@UseFilters(
-  EmailGroupAccessGraphqlApiExceptionFilter,
-  EmailingDomainGraphqlApiExceptionFilter,
-  ThrottlerGraphqlApiExceptionFilter,
-  AuthGraphqlApiExceptionFilter,
-  UsageLimitGraphqlApiExceptionFilter,
-)
+@UseFilters(UsageLimitGraphqlApiExceptionFilter)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 export class EmailingSendResolver {

@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -10,11 +10,9 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { assertLoginTokenIsNotForImpersonation } from 'src/engine/core-modules/auth/utils/assert-login-token-is-not-for-impersonation.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -25,9 +23,6 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-
-import { TwoFactorAuthenticationExceptionFilter } from './two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
 import { DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
@@ -39,12 +34,6 @@ import { VerifyTwoFactorAuthenticationMethodDTO } from './dto/verify-two-factor-
 import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 
 @MetadataResolver()
-@UseFilters(
-  AuthGraphqlApiExceptionFilter,
-  PermissionsGraphqlApiExceptionFilter,
-  TwoFactorAuthenticationExceptionFilter,
-  ThrottlerGraphqlApiExceptionFilter,
-)
 export class TwoFactorAuthenticationResolver {
   constructor(
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,

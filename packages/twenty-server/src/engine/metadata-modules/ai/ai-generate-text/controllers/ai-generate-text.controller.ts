@@ -18,15 +18,11 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters/ai-api-exception.filter';
-import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 
 @Controller(`${ApiPath.Rest}/ai`)
@@ -44,14 +40,7 @@ import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
     application: true,
   }),
 )
-@UseFilters(
-  RestApiExceptionFilter,
-  PermissionsRestApiExceptionFilter,
-  AiRestApiExceptionFilter,
-  UsageLimitRestApiExceptionFilter,
-  BillingRestApiExceptionFilter,
-  AuthRestApiExceptionFilter,
-)
+@UseFilters(RestApiExceptionFilter, UsageLimitRestApiExceptionFilter)
 export class AiGenerateTextController {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,

@@ -1,5 +1,5 @@
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
-import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
@@ -11,7 +11,6 @@ import {
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { matchWorkspacePersonEnrichmentToUserEmail } from 'src/engine/core-modules/company-enrichment/utils/match-workspace-person-enrichment-to-user-email.util';
 import { sanitizeWorkspaceCompanyEnrichment } from 'src/engine/core-modules/company-enrichment/utils/sanitize-workspace-company-enrichment.util';
 import { sanitizeWorkspacePersonEnrichment } from 'src/engine/core-modules/company-enrichment/utils/sanitize-workspace-person-enrichment.util';
@@ -23,7 +22,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { StartWorkspaceSetupChatResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/start-workspace-setup-chat-result.dto';
 import { WorkspaceSetupChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service';
-import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -39,9 +37,7 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
   }),
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
-@UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @MetadataResolver()
-@UseFilters(AuthGraphqlApiExceptionFilter)
 export class WorkspaceSetupChatResolver {
   constructor(
     private readonly workspaceSetupChatService: WorkspaceSetupChatService,

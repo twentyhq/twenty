@@ -7,10 +7,8 @@ import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatFrontComponentModule } from 'src/engine/metadata-modules/flat-front-component/flat-front-component.module';
 import { FrontComponentController } from 'src/engine/metadata-modules/front-component/controllers/front-component.controller';
-import { FrontComponentRestApiExceptionFilter } from 'src/engine/metadata-modules/front-component/filters/front-component-rest-api-exception.filter';
 import { FrontComponentResolver } from 'src/engine/metadata-modules/front-component/front-component.resolver';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
-import { FrontComponentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/front-component/interceptors/front-component-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -38,8 +36,6 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
   providers: [
     FrontComponentService,
     FrontComponentResolver,
-    FrontComponentGraphqlApiExceptionInterceptor,
-    FrontComponentRestApiExceptionFilter,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
   ],
   exports: [FrontComponentService],

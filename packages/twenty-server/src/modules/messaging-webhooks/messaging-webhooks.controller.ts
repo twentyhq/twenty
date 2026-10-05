@@ -4,7 +4,6 @@ import {
   Post,
   type RawBodyRequest,
   Req,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
@@ -17,12 +16,10 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { ResendWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/resend/services/resend-webhook-driver.service';
 import { SesInboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-inbound-webhook-driver.service';
 import { SesOutboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-outbound-webhook-driver.service';
-import { MessagingWebhookApiExceptionFilter } from 'src/modules/messaging-webhooks/filters/messaging-webhook-api-exception.filter';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messaging-webhook.exception';
 
 @Controller()
-@UseFilters(MessagingWebhookApiExceptionFilter)
 export class MessagingWebhooksController {
   constructor(
     private readonly sesInboundWebhookDriverService: SesInboundWebhookDriverService,

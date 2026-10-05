@@ -1,9 +1,4 @@
-import {
-  UseFilters,
-  UseGuards,
-  UseInterceptors,
-  UsePipes,
-} from '@nestjs/common';
+import { UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -11,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { TriggerInstallApplicationJobInput } from 'src/engine/core-modules/application/application-install/dtos/trigger-install-application-job.input';
 import { TriggerInstallApplicationJobResultDTO } from 'src/engine/core-modules/application/application-install/dtos/trigger-install-application-job-result.dto';
@@ -21,13 +15,11 @@ import { ApplicationLifecycleJobService } from 'src/engine/core-modules/applicat
 import { ApplicationUninstallRunnerService } from 'src/engine/core-modules/application/application-install/services/application-uninstall-runner.service';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/application-manifest/dtos/uninstall-application.input';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
-import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { UpdateApplicationInput } from 'src/engine/core-modules/application/dtos/update-application.input';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { resolveTargetApplicationOrThrow } from 'src/engine/core-modules/application/utils/resolve-target-application-or-throw.util';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -43,11 +35,6 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
-@UseFilters(
-  ApplicationExceptionFilter,
-  ApplicationRegistrationExceptionFilter,
-  AuthGraphqlApiExceptionFilter,
-)
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @UseGuards(
   AuthPrincipalGuard({

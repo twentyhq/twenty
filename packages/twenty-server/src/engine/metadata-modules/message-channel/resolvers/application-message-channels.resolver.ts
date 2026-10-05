@@ -1,9 +1,4 @@
-import {
-  UseGuards,
-  UseInterceptors,
-  UsePipes,
-  UseFilters,
-} from '@nestjs/common';
+import { UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -20,9 +15,7 @@ import { CreateAppMessageChannelInput } from 'src/engine/metadata-modules/messag
 import { ListAppMessageChannelsInput } from 'src/engine/metadata-modules/message-channel/dtos/list-app-message-channels.input';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { UpdateAppMessageChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/update-app-message-channel.input';
-import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -38,10 +31,8 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   }),
   NoPermissionGuard,
 )
-@UseInterceptors(MessageChannelGraphqlApiExceptionInterceptor)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
-@UseFilters(AuthGraphqlApiExceptionFilter)
 export class ApplicationMessageChannelsResolver {
   constructor(
     private readonly applicationMessageChannelsService: ApplicationMessageChannelsService,

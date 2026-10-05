@@ -1,18 +1,9 @@
-import {
-  Controller,
-  Get,
-  Logger,
-  Res,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Logger, Res, UseGuards } from '@nestjs/common';
 
 import { pipeline } from 'stream/promises';
 
 import { Response } from 'express';
 import { ApiPath, FileFolder } from 'twenty-shared/types';
-
-import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -26,15 +17,11 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
-import { FrontComponentRestApiExceptionFilter } from 'src/engine/metadata-modules/front-component/filters/front-component-rest-api-exception.filter';
 import {
   FrontComponentException,
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
-import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @Controller(`${ApiPath.Rest}/front-components`)
@@ -51,13 +38,6 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
     oauthClient: true,
     application: true,
   }),
-)
-@UseFilters(
-  PermissionsRestApiExceptionFilter,
-  ApplicationRestApiExceptionFilter,
-  FrontComponentRestApiExceptionFilter,
-  FlatEntityMapsRestApiExceptionFilter,
-  WorkspaceMigrationRunnerRestApiExceptionFilter,
 )
 export class FrontComponentController {
   private readonly logger = new Logger(FrontComponentController.name);

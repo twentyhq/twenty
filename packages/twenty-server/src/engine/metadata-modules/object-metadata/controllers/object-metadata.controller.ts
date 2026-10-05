@@ -9,7 +9,6 @@ import {
   Post,
   Put,
   Req,
-  UseFilters,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -22,7 +21,6 @@ import { In } from 'typeorm';
 import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/types/rest-cursor-page-info.type';
 import { paginateByIdCursor } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
-import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -33,12 +31,10 @@ import { DerivedFieldMetadataIdsService } from 'src/engine/metadata-modules/deri
 import { type DerivedFieldMetadataIds } from 'src/engine/metadata-modules/derived-field-metadata-ids/types/derived-field-metadata-ids.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
-import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { type ObjectMetadataWithFieldsDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata-with-fields.dto';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { ObjectMetadataRestApiExceptionFilter } from 'src/engine/metadata-modules/object-metadata/filters/object-metadata-rest-api-exception.filter';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   ObjectMetadataException,
@@ -56,8 +52,6 @@ import {
   toLegacyObjectMetadataListResponse,
   toLegacyObjectMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/object-metadata/utils/to-legacy-object-metadata-response.util';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -76,13 +70,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
     application: true,
   }),
   SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
-)
-@UseFilters(
-  PermissionsRestApiExceptionFilter,
-  ObjectMetadataRestApiExceptionFilter,
-  ApplicationRestApiExceptionFilter,
-  FlatEntityMapsRestApiExceptionFilter,
-  AuthRestApiExceptionFilter,
 )
 @UsePipes(new ValidationPipe())
 export class ObjectMetadataController {

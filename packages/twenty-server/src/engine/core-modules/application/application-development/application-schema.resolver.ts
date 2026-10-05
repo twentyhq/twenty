@@ -1,11 +1,10 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Query } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceGraphqlSchemaSDLService } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -19,7 +18,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @MetadataResolver()
-@UseFilters(ApplicationExceptionFilter)
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {

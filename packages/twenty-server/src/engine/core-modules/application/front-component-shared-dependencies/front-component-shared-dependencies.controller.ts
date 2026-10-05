@@ -1,19 +1,9 @@
-import {
-  Controller,
-  Get,
-  Logger,
-  Param,
-  Res,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Logger, Param, Res, UseGuards } from '@nestjs/common';
 
 import { pipeline } from 'stream/promises';
 
 import { Response } from 'express';
 import { ApiPath, FileFolder } from 'twenty-shared/types';
-
-import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import { FrontComponentSharedDependenciesService } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.service';
 import { extractChecksumFromCacheKey } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/extract-checksum-from-cache-key.util';
 import { getSharedDependenciesBundleCacheControl } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/get-shared-dependencies-bundle-cache-control.util';
@@ -50,7 +40,6 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
     application: true,
   }),
 )
-@UseFilters(ApplicationRestApiExceptionFilter)
 export class FrontComponentSharedDependenciesController {
   private readonly logger = new Logger(
     FrontComponentSharedDependenciesController.name,

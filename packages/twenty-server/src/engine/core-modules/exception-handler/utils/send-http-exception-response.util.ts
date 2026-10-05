@@ -33,12 +33,24 @@ const getErrorNameFromStatusCode = (statusCode: number) => {
       return 'MethodNotAllowedException';
     case 409:
       return 'ConflictException';
+    case 410:
+      return 'GoneException';
+    case 413:
+      return 'PayloadTooLargeException';
     case 416:
       return 'RequestedRangeNotSatisfiableException';
     case 422:
       return 'UnprocessableEntityException';
+    case 429:
+      return 'TooManyRequestsException';
     case 500:
       return 'InternalServerErrorException';
+    case 502:
+      return 'BadGatewayException';
+    case 503:
+      return 'ServiceUnavailableException';
+    case 504:
+      return 'GatewayTimeoutException';
     default: {
       if (statusCode >= 500) {
         return 'InternalServerErrorException';
@@ -96,7 +108,10 @@ export const sendHttpExceptionResponse = ({
 
   return response.status(statusCode).send({
     statusCode,
-    error: exception.name ?? getErrorNameFromStatusCode(statusCode),
+    error:
+      exception instanceof CustomException
+        ? getErrorNameFromStatusCode(statusCode)
+        : (exception.name ?? getErrorNameFromStatusCode(statusCode)),
     messages: [exception?.message],
     code: exception instanceof CustomError ? exception.code : undefined,
   });

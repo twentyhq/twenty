@@ -29,7 +29,7 @@ export const workspaceMigrationBuilderGraphqlApiExceptionHandler = (
     })
     .join(', ')}`;
 
-  throw new BaseGraphQLError(
+  return new BaseGraphQLError(
     exception.message,
     ErrorCode.METADATA_VALIDATION_FAILED,
     {

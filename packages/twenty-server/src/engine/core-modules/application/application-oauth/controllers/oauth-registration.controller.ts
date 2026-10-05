@@ -7,7 +7,6 @@ import {
   Post,
   Req,
   Res,
-  UseFilters,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -25,7 +24,6 @@ import {
 import { OAuthRegisterInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-register.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -42,7 +40,6 @@ const ALLOWED_GRANT_TYPES = ['authorization_code', 'refresh_token'];
 const ALLOWED_RESPONSE_TYPES = ['code'];
 
 @Controller(ApiPath.OAuth)
-@UseFilters(AuthRestApiExceptionFilter)
 export class OAuthRegistrationController {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)

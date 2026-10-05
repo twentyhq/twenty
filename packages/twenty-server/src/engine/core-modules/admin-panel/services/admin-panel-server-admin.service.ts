@@ -194,8 +194,7 @@ export class AdminPanelServerAdminService {
       );
     }
 
-    // A wrong code throws INVALID_OTP, which the resolver's
-    // TwoFactorAuthenticationExceptionFilter maps to a user-friendly message.
+    // A wrong code throws INVALID_OTP, whose user-friendly message reaches the client as is.
     await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
       actorUserId,
       otp,

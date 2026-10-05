@@ -1,6 +1,6 @@
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { Logger, UseGuards, UseFilters } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Parent, ResolveField } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
@@ -25,7 +25,7 @@ import { AgentTurnGraderService } from 'src/engine/metadata-modules/ai/ai-agent-
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {
@@ -41,7 +41,6 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
 )
 @MetadataResolver(() => AgentTurnDTO)
-@UseFilters(AuthGraphqlApiExceptionFilter)
 export class AgentTurnResolver {
   private readonly logger = new Logger(AgentTurnResolver.name);
 

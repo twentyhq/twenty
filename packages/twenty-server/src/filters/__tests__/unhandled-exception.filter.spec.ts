@@ -1,6 +1,8 @@
 // oxlint-disable twenty/graphql-resolvers-should-be-guarded
 import {
   type CanActivate,
+  Catch,
+  type ExceptionFilter,
   Injectable,
   Module,
   UseGuards,
@@ -20,13 +22,17 @@ import { YogaDriver, type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { msg } from '@lingui/core/macro';
 import { type GraphQLSchema, graphql } from 'graphql';
 
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import {
+  ErrorCode,
+  ForbiddenError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { CustomExceptionFilter } from 'src/filters/custom-exception.filter';
 import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 
 @Injectable()
@@ -37,6 +43,13 @@ class DenyPermissionGuard implements CanActivate {
       PermissionsExceptionCode.PERMISSION_DENIED,
       { userFriendlyMessage: msg`denied` },
     );
+  }
+}
+
+@Catch(PermissionsException)
+class TypedPermissionsGraphqlFilter implements ExceptionFilter {
+  catch(exception: PermissionsException) {
+    return new ForbiddenError(exception);
   }
 }
 
@@ -59,7 +72,7 @@ class TestResolver {
 @Module({
   providers: [
     TestResolver,
-    { provide: APP_FILTER, useClass: PermissionsGraphqlApiExceptionFilter },
+    { provide: APP_FILTER, useClass: TypedPermissionsGraphqlFilter },
   ],
 })
 class FeatureModule {}
@@ -86,6 +99,27 @@ class RootModuleWithAppFilter {}
   ],
 })
 class RootModuleWithoutAppFilter {}
+
+@Module({
+  providers: [TestResolver],
+})
+class FeatureModuleWithoutTypedFilter {}
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<YogaDriverConfig>({
+      driver: YogaDriver,
+      autoSchemaFile: true,
+    }),
+    FeatureModuleWithoutTypedFilter,
+  ],
+  providers: [
+    { provide: APP_FILTER, useClass: UnhandledExceptionFilter },
+    { provide: APP_FILTER, useClass: CustomExceptionFilter },
+    { provide: ExceptionHandlerService, useValue: {} },
+  ],
+})
+class RootModuleWithCustomExceptionFilter {}
 
 const buildSchema = async (
   rootModule: unknown,
@@ -135,6 +169,22 @@ describe('UnhandledExceptionFilter global registration', () => {
     const result = await runGuardedMutation(schema);
 
     expect(result.errors?.[0]?.extensions?.code).toBeUndefined();
+    expect(result.errors?.[0]?.originalError).toBeInstanceOf(
+      PermissionsException,
+    );
+
+    await app.close();
+  });
+
+  // the GraphQL error hook converts it by category; the filter only keeps Nest from logging it
+  it('hands CustomExceptions to the GraphQL layer untouched when CustomExceptionFilter is registered after the catch-all', async () => {
+    const { app, schema } = await buildSchema(
+      RootModuleWithCustomExceptionFilter,
+      false,
+    );
+
+    const result = await runGuardedMutation(schema);
+
     expect(result.errors?.[0]?.originalError).toBeInstanceOf(
       PermissionsException,
     );

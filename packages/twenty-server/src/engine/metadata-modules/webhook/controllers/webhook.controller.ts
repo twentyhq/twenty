@@ -23,14 +23,10 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
-import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
 @Controller([`${ApiPath.Rest}/webhooks`, `${ApiPath.Rest}/metadata/webhooks`])
 @UseGuards(
@@ -48,13 +44,7 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
   }),
   SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
 )
-@UseFilters(
-  PermissionsRestApiExceptionFilter,
-  RestApiExceptionFilter,
-  FlatEntityMapsRestApiExceptionFilter,
-  WorkspaceMigrationRunnerRestApiExceptionFilter,
-  AuthRestApiExceptionFilter,
-)
+@UseFilters(RestApiExceptionFilter)
 export class WebhookController {
   constructor(private readonly webhookService: WebhookService) {}
 

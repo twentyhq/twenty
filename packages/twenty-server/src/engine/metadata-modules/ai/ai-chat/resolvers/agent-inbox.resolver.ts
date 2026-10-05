@@ -1,16 +1,10 @@
-import {
-  UseFilters,
-  UseGuards,
-  UseInterceptors,
-  UsePipes,
-} from '@nestjs/common';
+import { UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
@@ -21,7 +15,6 @@ import { SendInboxMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-cha
 import { SendInboxMessageInputDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-inbox-message.input';
 import { AgentInboxProposalService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-proposal.service';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
-import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -32,8 +25,6 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
   }),
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
-@UseInterceptors(AiGraphqlApiExceptionInterceptor)
-@UseFilters(AuthGraphqlApiExceptionFilter)
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 export class AgentInboxResolver {

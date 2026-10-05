@@ -1,10 +1,9 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { type AppKeyValue } from 'twenty-shared/application';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { AppKeyValueDto } from 'src/engine/core-modules/application/application-key-value/dtos/app-key-value.dto';
 import { SetAppKeyValueInput } from 'src/engine/core-modules/application/application-key-value/dtos/set-app-key-value.input';
 import { AppKeyValueScope } from 'src/engine/core-modules/application/application-key-value/enums/app-key-value-scope.enum';
@@ -15,7 +14,6 @@ import { AuthApplication } from 'src/engine/decorators/auth/auth-application.dec
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -31,7 +29,6 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   }),
   NoPermissionGuard,
 )
-@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 @MetadataResolver()
 export class ApplicationKeyValueResolver {
   constructor(

@@ -1,7 +1,5 @@
 import { RecordPermissionsModule } from 'src/engine/metadata-modules/record-permissions/record-permissions.module';
 import { Module } from '@nestjs/common';
-import { APP_FILTER } from '@nestjs/core';
-
 import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
@@ -14,8 +12,6 @@ import { CalendarChannelMetadataModule } from 'src/engine/metadata-modules/calen
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
-import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
 import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
@@ -77,16 +73,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     CalendarChannelMetadataModule,
     MessageFolderMetadataModule,
   ],
-  providers: [
-    {
-      provide: APP_FILTER,
-      useClass: FlatEntityMapsGraphqlApiExceptionFilter,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: PermissionsGraphqlApiExceptionFilter,
-    },
-  ],
+  providers: [],
   exports: [
     FieldMetadataModule,
     FrontComponentModule,

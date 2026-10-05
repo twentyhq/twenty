@@ -8,7 +8,6 @@ import {
   Post,
   Query,
   Req,
-  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
@@ -21,8 +20,6 @@ import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticat
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { type ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import {
@@ -32,12 +29,10 @@ import {
   ViewSortExceptionCode,
   ViewSortExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
-import { ViewSortRestApiExceptionFilter } from 'src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
-import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-child-entity-permission.guard';
 import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-child-entity-permission.guard';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+
 @Controller(`${ApiPath.Rest}/metadata/viewSorts`)
 @UseGuards(
   AuthPrincipalGuard({
@@ -51,13 +46,6 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
     oauthClient: true,
     application: true,
   }),
-)
-@UseFilters(
-  PermissionsRestApiExceptionFilter,
-  ViewSortRestApiExceptionFilter,
-  FlatEntityMapsRestApiExceptionFilter,
-  WorkspaceMigrationRunnerRestApiExceptionFilter,
-  AuthRestApiExceptionFilter,
 )
 export class ViewSortController {
   constructor(private readonly viewSortService: ViewSortService) {}

@@ -12,9 +12,7 @@ import {
   RecordSharePrincipalInput,
   RecordSharingDTO,
 } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
-import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
-import { recordShareGraphqlApiExceptionHandler } from 'src/engine/core-modules/record-share/utils/record-share-graphql-api-exception-handler.util';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { RecordTargetInput } from 'src/engine/metadata-modules/record-permissions/dtos/record-target.input';
 
@@ -50,13 +48,11 @@ export class RecordSharingResolver {
     @Args('accessLevel', { type: () => RecordShareAccessLevel })
     accessLevel: RecordShareAccessLevel,
   ) {
-    return this.handleRecordShareException(() =>
-      this.sharingService.setGeneralAccess({
-        ...target,
-        accessLevel,
-        authContext: this.getUserContext(),
-      }),
-    );
+    return this.sharingService.setGeneralAccess({
+      ...target,
+      accessLevel,
+      authContext: this.getUserContext(),
+    });
   }
 
   @Mutation(() => RecordSharingDTO)
@@ -66,14 +62,12 @@ export class RecordSharingResolver {
     @Args('accessLevel', { type: () => RecordShareAccessLevel })
     accessLevel: RecordShareAccessLevel,
   ) {
-    return this.handleRecordShareException(() =>
-      this.sharingService.setShare({
-        ...target,
-        principal,
-        accessLevel,
-        authContext: this.getUserContext(),
-      }),
-    );
+    return this.sharingService.setShare({
+      ...target,
+      principal,
+      accessLevel,
+      authContext: this.getUserContext(),
+    });
   }
 
   @Mutation(() => RecordSharingDTO)
@@ -81,26 +75,11 @@ export class RecordSharingResolver {
     @Args('target') target: RecordTargetInput,
     @Args('principal') principal: RecordSharePrincipalInput,
   ) {
-    return this.handleRecordShareException(() =>
-      this.sharingService.removeShare({
-        ...target,
-        principal,
-        authContext: this.getUserContext(),
-      }),
-    );
-  }
-
-  private async handleRecordShareException(
-    change: () => Promise<RecordSharingDTO>,
-  ): Promise<RecordSharingDTO> {
-    try {
-      return await change();
-    } catch (error) {
-      if (error instanceof RecordShareException) {
-        recordShareGraphqlApiExceptionHandler(error);
-      }
-      throw error;
-    }
+    return this.sharingService.removeShare({
+      ...target,
+      principal,
+      authContext: this.getUserContext(),
+    });
   }
 
   private getUserContext() {
