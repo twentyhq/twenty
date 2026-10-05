@@ -52,18 +52,18 @@ export class WorkspaceMigrationRunnerService {
     private readonly inFlightDeferredWorkspaceMigrationActionsService: InFlightDeferredWorkspaceMigrationActionsService,
   ) {}
 
-  private getLegacyCacheInvalidation(
-    allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[],
-  ): {
+  private getLegacyCacheInvalidation({
+    allFlatEntityMapsKeys,
+    hasSchemaMetadataChanged,
+  }: {
+    allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
+    hasSchemaMetadataChanged: boolean;
+  }): {
     shouldIncrementMetadataGraphqlSchemaVersion: boolean;
     legacyCacheKeyNames: WorkspaceCacheKeyName[];
   } {
     const flatMapsKeysSet = new Set(allFlatEntityMapsKeys);
     const legacyCacheKeyNames: WorkspaceCacheKeyName[] = [];
-
-    const shouldIncrementMetadataGraphqlSchemaVersion =
-      flatMapsKeysSet.has('flatObjectMetadataMaps') ||
-      flatMapsKeysSet.has('flatFieldMetadataMaps');
 
     const shouldInvalidateRolesPermissionsCache =
       flatMapsKeysSet.has('flatRoleMaps') ||
@@ -77,7 +77,7 @@ export class WorkspaceMigrationRunnerService {
     }
 
     return {
-      shouldIncrementMetadataGraphqlSchemaVersion,
+      shouldIncrementMetadataGraphqlSchemaVersion: hasSchemaMetadataChanged,
       legacyCacheKeyNames,
     };
   }
@@ -85,9 +85,13 @@ export class WorkspaceMigrationRunnerService {
   async invalidateCache({
     allFlatEntityMapsKeys,
     workspaceId,
+    hasSchemaMetadataChanged = allFlatEntityMapsKeys.includes(
+      'flatObjectMetadataMaps',
+    ) || allFlatEntityMapsKeys.includes('flatFieldMetadataMaps'),
   }: {
     allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
     workspaceId: string;
+    hasSchemaMetadataChanged?: boolean;
   }): Promise<void> {
     this.logger.perfTime(
       'Runner',
@@ -95,7 +99,10 @@ export class WorkspaceMigrationRunnerService {
     );
 
     const { shouldIncrementMetadataGraphqlSchemaVersion, legacyCacheKeyNames } =
-      this.getLegacyCacheInvalidation(allFlatEntityMapsKeys);
+      this.getLegacyCacheInvalidation({
+        allFlatEntityMapsKeys,
+        hasSchemaMetadataChanged,
+      });
 
     const cacheKeyNamesToInvalidate = [
       ...new Set([
@@ -263,6 +270,11 @@ export class WorkspaceMigrationRunnerService {
     const actionMetadataNames = [
       ...new Set(actions.flatMap((action) => action.metadataName)),
     ];
+    const hasSchemaMetadataChanged = actionMetadataNames.some(
+      (actionMetadataName) =>
+        actionMetadataName === 'objectMetadata' ||
+        actionMetadataName === 'fieldMetadata',
+    );
 
     const hasSearchVectorRebuildAction = actions.some(
       (action) =>
@@ -514,6 +526,7 @@ export class WorkspaceMigrationRunnerService {
         await this.invalidateCache({
           allFlatEntityMapsKeys,
           workspaceId,
+          hasSchemaMetadataChanged,
         });
       } catch (cacheError) {
         this.logger.error(
@@ -543,6 +556,7 @@ export class WorkspaceMigrationRunnerService {
       await this.invalidateCache({
         allFlatEntityMapsKeys,
         workspaceId,
+        hasSchemaMetadataChanged,
       });
 
       this.recordRunPhaseMetric({
@@ -580,10 +594,6 @@ export class WorkspaceMigrationRunnerService {
         allFlatEntityMaps,
       },
     );
-
-    const hasSchemaMetadataChanged =
-      allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
-      allFlatEntityMapsKeys.includes('flatFieldMetadataMaps');
 
     this.logger.perfTimeEnd('Runner', 'Total execution');
 
