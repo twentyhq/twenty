@@ -75,7 +75,11 @@ export const useCoreAgentSave = ({
     modelConfiguration: formValues.modelConfiguration,
     responseFormat: formValues.responseFormat,
     evaluationInputs: formValues.evaluationInputs,
-    triggers: formValues.triggers,
+    // Stored triggers the form could not parse are left out of formValues, so
+    // only send triggers when the user edited them to avoid deleting those
+    ...(!isDeeplyEqual(formValues.triggers, originalFormValues.triggers) && {
+      triggers: formValues.triggers,
+    }),
   });
 
   const autoSave = useDebouncedCallback(async () => {
