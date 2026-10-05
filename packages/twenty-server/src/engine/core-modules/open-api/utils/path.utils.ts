@@ -37,6 +37,7 @@ export const computeBatchPath = (
       operationId: `createMany${capitalize(item.namePlural)}`,
       parameters: [
         { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/fields' },
         { $ref: '#/components/parameters/upsert' },
       ],
       requestBody: getArrayRequestBody(capitalize(item.nameSingular)),
@@ -62,13 +63,14 @@ export const computeManyResultPath = (
     get: {
       tags: [item.namePlural],
       summary: `Find Many ${item.namePlural}`,
-      description: `**order_by**, **filter**, **limit**, **depth**, **starting_after** or **ending_before** can be provided to request your **${item.namePlural}**`,
+      description: `**order_by**, **filter**, **limit**, **depth**, **fields**, **starting_after** or **ending_before** can be provided to request your **${item.namePlural}**`,
       operationId: `findMany${capitalize(item.namePlural)}`,
       parameters: [
         { $ref: '#/components/parameters/orderBy' },
         { $ref: '#/components/parameters/filter' },
         { $ref: '#/components/parameters/limit' },
         { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/fields' },
         { $ref: '#/components/parameters/startingAfter' },
         { $ref: '#/components/parameters/endingBefore' },
         ...(isDiscoverableObject(item)
@@ -87,6 +89,7 @@ export const computeManyResultPath = (
       operationId: `createOne${capitalize(item.nameSingular)}`,
       parameters: [
         { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/fields' },
         { $ref: '#/components/parameters/upsert' },
       ],
       requestBody: getRequestBody(capitalize(item.nameSingular)),
@@ -116,6 +119,7 @@ export const computeManyResultPath = (
       operationId: `updateMany${capitalize(item.namePlural)}`,
       parameters: [
         { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/fields' },
         { $ref: '#/components/parameters/filter' },
       ],
       requestBody: getUpdateRequestBody(capitalize(item.nameSingular)),
@@ -135,11 +139,12 @@ export const computeSingleResultPath = (
     get: {
       tags: [item.namePlural],
       summary: `Find One ${item.nameSingular}`,
-      description: `**depth** can be provided to request your **${item.nameSingular}**`,
+      description: `**depth** and **fields** can be provided to request your **${item.nameSingular}**`,
       operationId: `findOne${capitalize(item.nameSingular)}`,
       parameters: [
         { $ref: '#/components/parameters/idPath' },
         { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/fields' },
       ],
       responses: {
         '200': getFindOneResponse200(item),
@@ -168,6 +173,7 @@ export const computeSingleResultPath = (
       parameters: [
         { $ref: '#/components/parameters/idPath' },
         { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/fields' },
       ],
       requestBody: getUpdateRequestBody(capitalize(item.nameSingular)),
       responses: {
@@ -206,9 +212,12 @@ export const computeDuplicatesResultPath = (
     post: {
       tags: [item.namePlural],
       summary: `Find ${item.nameSingular} Duplicates`,
-      description: `**depth** can be provided to request your **${item.nameSingular}**`,
+      description: `**depth** and **fields** can be provided to request your **${item.nameSingular}**`,
       operationId: `find${capitalize(item.nameSingular)}Duplicates`,
-      parameters: [{ $ref: '#/components/parameters/depth' }],
+      parameters: [
+        { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/fields' },
+      ],
       requestBody: getFindDuplicatesRequestBody(capitalize(item.nameSingular)),
       responses: {
         '200': getFindDuplicatesResponse200(item),
@@ -230,6 +239,7 @@ export const computeRestoreOneResultPath = (
       parameters: [
         { $ref: '#/components/parameters/idPath' },
         { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/fields' },
       ],
       responses: {
         '200': getRestoreOneResponse200(item),
@@ -251,6 +261,7 @@ export const computeRestoreManyResultPath = (
       parameters: [
         { $ref: '#/components/parameters/filter' },
         { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/fields' },
       ],
       responses: {
         '200': getRestoreManyResponse200(item),
@@ -269,7 +280,10 @@ export const computeMergeManyResultPath = (
       tags: [item.namePlural],
       summary: `Merge Many ${item.namePlural}`,
       operationId: `mergeMany${capitalize(item.namePlural)}`,
-      parameters: [{ $ref: '#/components/parameters/depth' }],
+      parameters: [
+        { $ref: '#/components/parameters/depth' },
+        { $ref: '#/components/parameters/fields' },
+      ],
       requestBody: getMergeManyRequestBody(),
       responses: {
         '200': getMergeManyResponse200(item),
