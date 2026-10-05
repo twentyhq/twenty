@@ -43,6 +43,12 @@ describe('sanitizeImageLoadRequest', () => {
     });
   });
 
+  it('rejects values that are not request objects', () => {
+    expect(sanitizeImageLoadRequest(null)).toBeNull();
+    expect(sanitizeImageLoadRequest(undefined)).toBeNull();
+    expect(sanitizeImageLoadRequest('/avatar.png')).toBeNull();
+  });
+
   it('rejects requests without an identifier or a usable source', () => {
     const request = {
       requestId: '1',

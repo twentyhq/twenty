@@ -1,11 +1,16 @@
 import { isNull, isString } from '@sniptt/guards';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { resolveImageLoadReferrerPolicy } from '@/host/image-loading/utils/resolveImageLoadReferrerPolicy';
 import { type ImageLoadRequest } from '@/types/image/ImageLoadRequest';
 
 export const sanitizeImageLoadRequest = (
-  request: Record<keyof ImageLoadRequest, unknown>,
+  request: unknown,
 ): ImageLoadRequest | null => {
+  if (!isPlainObject(request)) {
+    return null;
+  }
+
   const src = isString(request.src) ? request.src : null;
   const srcset = isString(request.srcset) ? request.srcset : null;
 
