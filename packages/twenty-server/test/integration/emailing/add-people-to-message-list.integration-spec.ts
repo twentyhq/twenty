@@ -88,7 +88,7 @@ const createMessageList = async () => {
 
   expect(result.errors).toBeUndefined();
 
-  const messageListId = result.data.createdRecords[0].id as string;
+  const messageListId: string = result.data.createdRecords[0].id;
 
   messageListIds.push(messageListId);
 
@@ -107,7 +107,30 @@ const countMessageListMembers = async (messageListId: string) => {
     variables: { filter: { listId: { eq: messageListId } } },
   });
 
-  return response.body.data.messageListMembers.totalCount as number;
+  const totalCount: number = response.body.data.messageListMembers.totalCount;
+
+  return totalCount;
+};
+
+const findMessageListMemberPersonIds = async (messageListId: string) => {
+  const response = await makeGraphqlApiRequest({
+    query: gql`
+      query MessageListMembers($filter: MessageListMemberFilterInput) {
+        messageListMembers(filter: $filter) {
+          edges {
+            node {
+              personId
+            }
+          }
+        }
+      }
+    `,
+    variables: { filter: { listId: { eq: messageListId } } },
+  });
+  const edges: { node: { personId: string } }[] =
+    response.body.data.messageListMembers.edges;
+
+  return edges.map(({ node }) => node.personId).sort();
 };
 
 const destroyInBatches = async ({
@@ -209,14 +232,17 @@ describe('triggerAddPeopleToMessageListJob (integration)', () => {
 
   it('adds only the people matching the filter', async () => {
     const messageListId = await createMessageList();
+    const selectedPersonIds = personIds.slice(0, 3);
 
     expect(
       await addPeopleAndWait({
         messageListId,
-        personFilter: { id: { in: personIds.slice(0, 3) } },
+        personFilter: { id: { in: selectedPersonIds } },
       }),
     ).toBe('completed');
-    expect(await countMessageListMembers(messageListId)).toBe(3);
+    expect(await findMessageListMemberPersonIds(messageListId)).toEqual(
+      [...selectedPersonIds].sort(),
+    );
   });
 
   it('rejects a list that does not exist', async () => {
