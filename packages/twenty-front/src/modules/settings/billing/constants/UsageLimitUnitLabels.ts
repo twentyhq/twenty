@@ -20,4 +20,8 @@ export const USAGE_LIMIT_UNIT_LABELS: Record<UsageUnit, UsageLimitUnitLabel> = {
     name: msg`Rows written`,
     suffix: msg`rows`,
   },
+  [UsageUnit.ESTIMATED_ROWS_SORTED]: {
+    name: msg`Rows sorted`,
+    suffix: msg`rows`,
+  },
 };

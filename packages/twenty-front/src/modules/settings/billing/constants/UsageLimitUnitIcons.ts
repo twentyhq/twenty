@@ -25,4 +25,5 @@ export const USAGE_LIMIT_UNIT_ICONS: Record<UsageUnit, IconComponent> = {
   [UsageUnit.COMPLEXITY]: IconNumber123,
   [UsageUnit.ESTIMATED_ROWS_READ]: IconDatabase,
   [UsageUnit.ESTIMATED_ROWS_WRITTEN]: IconDatabase,
+  [UsageUnit.ESTIMATED_ROWS_SORTED]: IconDatabase,
 };
