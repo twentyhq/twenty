@@ -224,7 +224,7 @@ describe('Settings permission resolution', () => {
       'DELETE FROM core."roleTarget" WHERE "apiKeyId" = $1',
       [unassignedApiKey.apiKeyId],
     );
-    await invalidateWorkspaceCache(['apiKeyRoleMap']);
+    await invalidateWorkspaceCache(['flatRoleTargetMaps']);
 
     grantedApplication = await setupApplicationWithVariable({
       name: 'Settings resolution granted app',
@@ -277,7 +277,7 @@ describe('Settings permission resolution', () => {
       );
     }
 
-    await invalidateWorkspaceCache(['apiKeyMap', 'apiKeyRoleMap']);
+    await invalidateWorkspaceCache(['apiKeyMap', 'flatRoleTargetMaps']);
 
     for (const roleId of createdRoleIds) {
       await deleteOneRole({

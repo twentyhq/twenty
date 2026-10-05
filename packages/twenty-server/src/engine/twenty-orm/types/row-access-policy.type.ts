@@ -89,6 +89,7 @@ export type RowAccessPolicyEnvironment = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   isRecordSharingEnabled: boolean;
+  isRecordShareVisibilityGatingEnabled: boolean;
 };
 
 export type RowAccessCompilationEnvironment = {

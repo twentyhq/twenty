@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
-  FeatureFlagKey,
   MetadataReadability,
   type ObjectRecord,
   type ObjectsPermissions,
@@ -46,6 +45,7 @@ import {
   type SqlCondition,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { compileRowAccessExpression } from 'src/engine/twenty-orm/utils/compile-row-access-policy.util';
+import { resolveRecordShareFeatureFlags } from 'src/engine/core-modules/record-share/utils/resolve-record-share-feature-flags.util';
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
 import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
@@ -2537,16 +2537,20 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       ),
       resolveTableExpression: (objectMetadataId) =>
         this.getTableExpression(objectMetadataId),
-      isRecordSharingEnabled: this.isRecordSharingEnabled,
+      ...this.recordShareFeatureFlags,
     };
   }
 
-  private get isRecordSharingEnabled(): boolean {
-    return (
-      this.options.internalContext.featureFlagsMap[
-        FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED
-      ] ?? false
+  private get recordShareFeatureFlags(): ReturnType<
+    typeof resolveRecordShareFeatureFlags
+  > {
+    return resolveRecordShareFeatureFlags(
+      this.options.internalContext.featureFlagsMap,
     );
+  }
+
+  private get isRecordSharingEnabled(): boolean {
+    return this.recordShareFeatureFlags.isRecordSharingEnabled;
   }
 
   private resolveInheritedReadabilityParents(
