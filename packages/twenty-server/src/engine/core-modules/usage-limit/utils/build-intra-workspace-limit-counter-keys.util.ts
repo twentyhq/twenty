@@ -35,7 +35,7 @@ export const buildIntraWorkspaceLimitCounterKeys = ({
           operationType: limit.operationType,
           spenderType: limit.spenderType,
           spenderId: limit.spenderId,
-          meter: limit.meter,
+          unit: limit.unit,
           periodUnit: limit.periodUnit,
           periodStart: period.periodStart,
           limitValue: limit.limitValue,

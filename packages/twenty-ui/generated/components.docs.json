@@ -8460,7 +8460,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types. Omit it for options that navigate or apply without a selection state."
+            "description": "Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types, or as `aria-current` when `render` is not a button, such as a link. Omit it for options that navigate or apply without a selection state."
           },
           {
             "name": "shortcut",
@@ -8899,6 +8899,13 @@
       {
         "name": "Section",
         "props": [
+          {
+            "name": "columns",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": "Number of grid columns. Sets the grid layout and enables horizontal arrow navigation and vertical movement by row."
+          },
           {
             "name": "label",
             "type": "ReactNode",
