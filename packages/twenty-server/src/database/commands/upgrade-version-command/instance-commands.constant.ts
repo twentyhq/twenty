@@ -223,7 +223,7 @@ import { AddIsSystemToAgentAndWorkflowFastInstanceCommand } from 'src/database/c
 import { CreateWorkflowStepWaitTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791148642493-create-workflow-step-wait-table';
 import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791094130961-drop-core-agent-history-tables';
 import { RenameUsageLimitMeterToUnitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791186790123-rename-usage-limit-meter-to-unit';
-import { AddTwoFactorAuthenticationRecoveryCodeIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791195827232-add-two-factor-authentication-recovery-code-index';
+import { AddTwoFactorAuthenticationRecoveryCodeIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791211905283-add-two-factor-authentication-recovery-code-index';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
