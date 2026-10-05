@@ -7,13 +7,13 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 export class AddUpgradeMigrationWorkspaceIdCreatedAtIndexFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'CREATE INDEX IF NOT EXISTS "IDX_UPGRADE_MIGRATION_WORKSPACE_ID_CREATED_AT_ATTEMPT" ON "core"."upgradeMigration" ("workspaceId", "createdAt", "attempt")',
+      'CREATE INDEX IF NOT EXISTS "IDX_UPGRADE_MIGRATION_WORKSPACE_ID_CREATED_AT" ON "core"."upgradeMigration" ("workspaceId", "createdAt")',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'DROP INDEX IF EXISTS "core"."IDX_UPGRADE_MIGRATION_WORKSPACE_ID_CREATED_AT_ATTEMPT"',
+      'DROP INDEX IF EXISTS "core"."IDX_UPGRADE_MIGRATION_WORKSPACE_ID_CREATED_AT"',
     );
   }
 }

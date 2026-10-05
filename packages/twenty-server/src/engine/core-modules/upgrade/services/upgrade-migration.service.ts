@@ -257,7 +257,7 @@ export class UpgradeMigrationService {
             "isInitial"
           FROM core."upgradeMigration"
           WHERE "workspaceId" = workspace_ids."workspaceId"
-          ORDER BY "createdAt" DESC, attempt DESC
+          ORDER BY "createdAt" DESC
           LIMIT 1
         ) latest
       `,

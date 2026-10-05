@@ -29,10 +29,9 @@ export type UpgradeMigrationStatus = 'completed' | 'failed';
     where: '"workspaceId" IS NOT NULL',
   },
 )
-@Index('IDX_UPGRADE_MIGRATION_WORKSPACE_ID_CREATED_AT_ATTEMPT', [
+@Index('IDX_UPGRADE_MIGRATION_WORKSPACE_ID_CREATED_AT', [
   'workspaceId',
   'createdAt',
-  'attempt',
 ])
 export class UpgradeMigrationEntity {
   @PrimaryGeneratedColumn('uuid')
