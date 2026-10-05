@@ -347,14 +347,14 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         );
 
         const keysToRecompute = [...keysNeedingRecompute, ...missingInRedis];
-        const recomputedEntries = await this.recomputeDataFromProvider(
+        const recomputedEntries = await this.recomputeDataFromProvider({
           workspaceId,
-          keysToRecompute,
-          {
+          cacheKeyNames: keysToRecompute,
+          expectedHashes: {
             ...expectedHashesOfKeysNeedingRecompute,
             ...expectedHashesOfMissingInRedis,
           },
-        );
+        });
 
         if (recomputedEntries.hasUnpublishedEntries) {
           // A superseded result still answers this call but must not be served to later ones
@@ -443,11 +443,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       async () => {
         const freshHashes = await this.invalidate(workspaceId, cacheKeyNames);
 
-        await this.recomputeDataFromProvider(
+        await this.recomputeDataFromProvider({
           workspaceId,
           cacheKeyNames,
-          freshHashes,
-        );
+          expectedHashes: freshHashes,
+        });
       },
     );
   }
@@ -693,11 +693,15 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     return { redisEntries, missingInRedis, expectedHashes };
   }
 
-  private async recomputeDataFromProvider(
-    workspaceId: string,
-    cacheKeyNames: WorkspaceCacheKeyName[],
-    expectedHashes: Partial<Record<WorkspaceCacheKeyName, string>>,
-  ): Promise<RecomputedCacheEntriesResult> {
+  private async recomputeDataFromProvider({
+    workspaceId,
+    cacheKeyNames,
+    expectedHashes,
+  }: {
+    workspaceId: string;
+    cacheKeyNames: WorkspaceCacheKeyName[];
+    expectedHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+  }): Promise<RecomputedCacheEntriesResult> {
     const result: RecomputedCacheEntriesResult = {
       data: {},
       hashes: {},
