@@ -1,31 +1,23 @@
 export const JSX_RUNTIME_ELEMENT_EVENT_LISTENER_REGISTRY_SOURCE = `
 const eventListenerEntriesByElement = new WeakMap();
 
-function isSyntheticLikeEvent(event) {
-  return event != null && typeof event === 'object' && 'nativeEvent' in event;
-}
-
 function createElementEventListener(listenerEntry) {
   return function (event) {
     const jsxHandler = listenerEntry.handlersBySource.jsx;
     const cloneHandler = listenerEntry.handlersBySource.clone;
-    const mergesClonedHandler =
-      !!jsxHandler && !!cloneHandler && isSyntheticLikeEvent(event);
-
-    if (mergesClonedHandler) {
-      event.preventBaseUIHandler = function () {
-        event.baseUIHandlerPrevented = true;
-      };
+    if (jsxHandler && cloneHandler) {
+      callChainedEventHandlers({
+        thisArg: this,
+        event,
+        firstHandler: jsxHandler,
+        secondHandler: cloneHandler,
+      });
+      return;
     }
 
-    if (jsxHandler) {
-      jsxHandler.call(this, event);
-    }
-
-    const isCloneHandlerPrevented =
-      mergesClonedHandler && event.baseUIHandlerPrevented;
-    if (cloneHandler && !isCloneHandlerPrevented) {
-      cloneHandler.call(this, event);
+    const handlerOfSingleSource = jsxHandler || cloneHandler;
+    if (handlerOfSingleSource) {
+      handlerOfSingleSource.call(this, event);
     }
   };
 }

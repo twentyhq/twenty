@@ -8,7 +8,12 @@ type EventSource = 'jsx' | 'clone';
 type EventRef = ((element: EventTarget | null) => unknown) & {
   _eventSource?: EventSource;
 };
-type ClonedElement = { type: string; props: Record<string, unknown> };
+type ClonedElement = {
+  type: string;
+  props: Record<string, unknown>;
+  ref?: unknown;
+};
+type PreventableEvent = Event & { preventBaseUIHandler?: () => void };
 
 type SharedHelpers = {
   makeEventRef: (
@@ -44,6 +49,23 @@ const createSyntheticLikeEvent = (type: string): Event => {
   const event = new Event(type);
 
   return Object.assign(event, { nativeEvent: event });
+};
+
+const createMergedRef =
+  (...refs: EventRef[]) =>
+  (element: EventTarget | null) => {
+    for (const ref of refs) {
+      ref(element);
+    }
+  };
+
+const dispatchSyntheticLikeEvents = (
+  element: EventTarget,
+  eventTypes: string[],
+) => {
+  for (const eventType of eventTypes) {
+    element.dispatchEvent(createSyntheticLikeEvent(eventType));
+  }
 };
 
 describe('jsx runtime shared helpers', () => {
@@ -288,5 +310,367 @@ describe('jsx runtime shared helpers', () => {
     element.dispatchEvent(new Event('keydown'));
 
     expect(calls).toEqual(['outer click', 'inner keydown']);
+  });
+
+  describe.each([
+    { runtimeName: 'React', readsElementRefFromVnode: false },
+    { runtimeName: 'Preact', readsElementRefFromVnode: true },
+  ])('nested clones in $runtimeName', ({ readsElementRefFromVnode }) => {
+    const toClonedElement = (elementRef: unknown): ClonedElement =>
+      readsElementRefFromVnode
+        ? { type: 'html-button', props: {}, ref: elementRef }
+        : { type: 'html-button', props: { ref: elementRef } };
+
+    const cloneElementRef = (
+      sharedHelpers: SharedHelpers,
+      elementRef: EventRef,
+      config: Record<string, unknown>,
+    ) =>
+      sharedHelpers.withCloneEventRef(
+        toClonedElement(elementRef),
+        config,
+        readsElementRefFromVnode,
+      ).ref;
+
+    const cloneElementRefWithMergedRef = (
+      sharedHelpers: SharedHelpers,
+      elementRef: EventRef,
+      config: Record<string, unknown>,
+    ) =>
+      cloneElementRef(sharedHelpers, elementRef, {
+        ...config,
+        ref: createMergedRef(elementRef),
+      });
+
+    const recordCall =
+      (calls: string[], name: string, preventsBaseUIHandler = false) =>
+      (event: PreventableEvent) => {
+        calls.push(name);
+        if (preventsBaseUIHandler) {
+          event.preventBaseUIHandler?.();
+        }
+      };
+
+    it('should run the inner clone handlers before the handlers of a clone whose ref calls the element ref', () => {
+      const sharedHelpers = loadSharedHelpers();
+      const element = new EventTarget();
+      const calls: string[] = [];
+
+      const jsxRef = sharedHelpers.makeEventRef(
+        { onClick: recordCall(calls, 'jsx') },
+        null,
+        'jsx',
+      );
+      const innerCloneRef = cloneElementRef(sharedHelpers, jsxRef, {
+        onClick: recordCall(calls, 'inner'),
+        onKeyDown: recordCall(calls, 'inner keydown'),
+      });
+      cloneElementRefWithMergedRef(sharedHelpers, innerCloneRef, {
+        onClick: recordCall(calls, 'outer'),
+      })(element);
+      dispatchSyntheticLikeEvents(element, ['click', 'keydown']);
+
+      expect(calls).toEqual(['jsx', 'inner', 'outer', 'inner keydown']);
+    });
+
+    it('should chain the handlers of every clone whose ref calls the element ref, innermost first', () => {
+      const sharedHelpers = loadSharedHelpers();
+      const element = new EventTarget();
+      const calls: string[] = [];
+
+      const jsxRef = sharedHelpers.makeEventRef(
+        { onClick: recordCall(calls, 'jsx') },
+        null,
+        'jsx',
+      );
+      const innerCloneRef = cloneElementRef(sharedHelpers, jsxRef, {
+        onClick: recordCall(calls, 'inner'),
+      });
+      const middleCloneRef = cloneElementRefWithMergedRef(
+        sharedHelpers,
+        innerCloneRef,
+        { onClick: recordCall(calls, 'middle') },
+      );
+      cloneElementRefWithMergedRef(sharedHelpers, middleCloneRef, {
+        onClick: recordCall(calls, 'outer'),
+      })(element);
+      dispatchSyntheticLikeEvents(element, ['click']);
+
+      expect(calls).toEqual(['jsx', 'inner', 'middle', 'outer']);
+    });
+
+    it('should let an inner clone handler prevent the handlers of every ref-merging clone around it', () => {
+      const sharedHelpers = loadSharedHelpers();
+      const element = new EventTarget();
+      const calls: string[] = [];
+
+      const jsxRef = sharedHelpers.makeEventRef(
+        { onClick: recordCall(calls, 'jsx') },
+        null,
+        'jsx',
+      );
+      const innerCloneRef = cloneElementRef(sharedHelpers, jsxRef, {
+        onClick: recordCall(calls, 'inner', true),
+      });
+      const middleCloneRef = cloneElementRefWithMergedRef(
+        sharedHelpers,
+        innerCloneRef,
+        { onClick: recordCall(calls, 'middle') },
+      );
+      cloneElementRefWithMergedRef(sharedHelpers, middleCloneRef, {
+        onClick: recordCall(calls, 'outer'),
+      })(element);
+      dispatchSyntheticLikeEvents(element, ['click']);
+
+      expect(calls).toEqual(['jsx', 'inner']);
+    });
+
+    it('should let the element handler prevent the handlers of every clone', () => {
+      const sharedHelpers = loadSharedHelpers();
+      const element = new EventTarget();
+      const calls: string[] = [];
+
+      const jsxRef = sharedHelpers.makeEventRef(
+        { onClick: recordCall(calls, 'jsx', true) },
+        null,
+        'jsx',
+      );
+      const innerCloneRef = cloneElementRef(sharedHelpers, jsxRef, {
+        onClick: recordCall(calls, 'inner'),
+      });
+      cloneElementRefWithMergedRef(sharedHelpers, innerCloneRef, {
+        onClick: recordCall(calls, 'outer'),
+      })(element);
+      dispatchSyntheticLikeEvents(element, ['click']);
+
+      expect(calls).toEqual(['jsx']);
+    });
+
+    it('should keep the handlers of a ref-merging clone around a clone without handlers', () => {
+      const sharedHelpers = loadSharedHelpers();
+      const element = new EventTarget();
+      const calls: string[] = [];
+
+      const jsxRef = sharedHelpers.makeEventRef(
+        { onClick: recordCall(calls, 'jsx') },
+        null,
+        'jsx',
+      );
+      const innerCloneRef = cloneElementRef(sharedHelpers, jsxRef, {
+        className: 'inner',
+      });
+      cloneElementRefWithMergedRef(sharedHelpers, innerCloneRef, {
+        onClick: recordCall(calls, 'outer'),
+      })(element);
+      dispatchSyntheticLikeEvents(element, ['click']);
+
+      expect(calls).toEqual(['jsx', 'outer']);
+    });
+
+    it('should keep the inner clone handlers and remove listeners left without handlers once the ref-merging clone goes away', () => {
+      const sharedHelpers = loadSharedHelpers();
+      const element = new EventTarget();
+      const removeEventListener = vi.spyOn(element, 'removeEventListener');
+      const calls: string[] = [];
+
+      const jsxRef = sharedHelpers.makeEventRef(
+        { onClick: recordCall(calls, 'jsx') },
+        null,
+        'jsx',
+      );
+      const innerCloneRef = cloneElementRef(sharedHelpers, jsxRef, {
+        onClick: recordCall(calls, 'inner'),
+      });
+      const outerCloneRef = cloneElementRefWithMergedRef(
+        sharedHelpers,
+        innerCloneRef,
+        {
+          onClick: recordCall(calls, 'outer'),
+          onFocus: recordCall(calls, 'outer focus'),
+        },
+      );
+      outerCloneRef(element);
+      outerCloneRef(null);
+      innerCloneRef(element);
+      dispatchSyntheticLikeEvents(element, ['click', 'focus']);
+
+      expect(calls).toEqual(['jsx', 'inner']);
+      expect(removeEventListener.mock.calls.map(([type]) => type)).toEqual([
+        'focus',
+      ]);
+    });
+
+    it('should keep the ref-merging clone handlers and remove listeners left without handlers once the inner clone goes away', () => {
+      const sharedHelpers = loadSharedHelpers();
+      const element = new EventTarget();
+      const removeEventListener = vi.spyOn(element, 'removeEventListener');
+      const calls: string[] = [];
+      const handleJsxClick = recordCall(calls, 'jsx');
+      const handleOuterClick = recordCall(calls, 'outer');
+
+      const jsxRef = sharedHelpers.makeEventRef(
+        { onClick: handleJsxClick },
+        null,
+        'jsx',
+      );
+      const innerCloneRef = cloneElementRef(sharedHelpers, jsxRef, {
+        onClick: recordCall(calls, 'inner'),
+        onKeyDown: recordCall(calls, 'inner keydown'),
+      });
+      const outerCloneRef = cloneElementRefWithMergedRef(
+        sharedHelpers,
+        innerCloneRef,
+        { onClick: handleOuterClick },
+      );
+      outerCloneRef(element);
+      outerCloneRef(null);
+      const rerenderedJsxRef = sharedHelpers.makeEventRef(
+        { onClick: handleJsxClick },
+        null,
+        'jsx',
+      );
+      cloneElementRefWithMergedRef(sharedHelpers, rerenderedJsxRef, {
+        onClick: handleOuterClick,
+      })(element);
+      dispatchSyntheticLikeEvents(element, ['click', 'keydown']);
+
+      expect(calls).toEqual(['jsx', 'outer']);
+      expect(removeEventListener.mock.calls.map(([type]) => type)).toEqual([
+        'keydown',
+      ]);
+    });
+
+    it('should run each nested clone handler once after a re-render', () => {
+      const sharedHelpers = loadSharedHelpers();
+      const element = new EventTarget();
+      const calls: string[] = [];
+      const renderOuterCloneRef = () => {
+        const jsxRef = sharedHelpers.makeEventRef(
+          { onClick: recordCall(calls, 'jsx') },
+          null,
+          'jsx',
+        );
+        const innerCloneRef = cloneElementRef(sharedHelpers, jsxRef, {
+          onClick: recordCall(calls, 'inner'),
+        });
+        return cloneElementRefWithMergedRef(sharedHelpers, innerCloneRef, {
+          onClick: recordCall(calls, 'outer'),
+        });
+      };
+
+      const firstOuterCloneRef = renderOuterCloneRef();
+      firstOuterCloneRef(element);
+      const secondOuterCloneRef = renderOuterCloneRef();
+      firstOuterCloneRef(null);
+      secondOuterCloneRef(element);
+      dispatchSyntheticLikeEvents(element, ['click']);
+
+      expect(calls).toEqual(['jsx', 'inner', 'outer']);
+    });
+
+    it('should reuse the ref of nested clones without handlers so their refs do not change on every render', () => {
+      const sharedHelpers = loadSharedHelpers();
+      const jsxRef = sharedHelpers.makeEventRef(null, null, 'jsx');
+      const innerCloneRef = cloneElementRef(sharedHelpers, jsxRef, {
+        className: 'inner',
+      });
+      const mergedRef = createMergedRef(innerCloneRef);
+      const renderRefMergingCloneRef = () =>
+        cloneElementRef(sharedHelpers, innerCloneRef, { ref: mergedRef });
+      const renderPlainCloneRef = () =>
+        cloneElementRef(sharedHelpers, innerCloneRef, { className: 'outer' });
+
+      expect(renderRefMergingCloneRef()).toBe(renderRefMergingCloneRef());
+      expect(renderPlainCloneRef()).toBe(renderPlainCloneRef());
+    });
+
+    it('should let a plain clone of a ref-merging clone replace its handlers per prop', () => {
+      const sharedHelpers = loadSharedHelpers();
+      const element = new EventTarget();
+      const calls: string[] = [];
+
+      const jsxRef = sharedHelpers.makeEventRef(
+        { onClick: recordCall(calls, 'jsx') },
+        null,
+        'jsx',
+      );
+      const innerCloneRef = cloneElementRef(sharedHelpers, jsxRef, {
+        onClick: recordCall(calls, 'inner'),
+        onKeyDown: recordCall(calls, 'inner keydown'),
+      });
+      const refMergingCloneRef = cloneElementRefWithMergedRef(
+        sharedHelpers,
+        innerCloneRef,
+        { onClick: recordCall(calls, 'ref merging') },
+      );
+      cloneElementRef(sharedHelpers, refMergingCloneRef, {
+        onClick: recordCall(calls, 'outer'),
+      })(element);
+      dispatchSyntheticLikeEvents(element, ['click', 'keydown']);
+
+      expect(calls).toEqual(['jsx', 'outer', 'inner keydown']);
+    });
+
+    it('should replace the inner clone handlers per prop when the outer clone replaces the element ref without calling it', () => {
+      const sharedHelpers = loadSharedHelpers();
+      const element = new EventTarget();
+      const objectRef = { current: null as EventTarget | null };
+      const calls: string[] = [];
+
+      const jsxRef = sharedHelpers.makeEventRef(
+        { onClick: recordCall(calls, 'jsx') },
+        null,
+        'jsx',
+      );
+      const innerCloneRef = cloneElementRef(sharedHelpers, jsxRef, {
+        onClick: recordCall(calls, 'inner'),
+        onKeyDown: recordCall(calls, 'inner keydown'),
+      });
+      cloneElementRef(sharedHelpers, innerCloneRef, {
+        onClick: recordCall(calls, 'outer'),
+        ref: objectRef,
+      })(element);
+      dispatchSyntheticLikeEvents(element, ['click', 'keydown']);
+
+      expect(calls).toEqual(['outer', 'inner keydown']);
+      expect(objectRef.current).toBe(element);
+    });
+
+    it.each([
+      { outerCloneDescription: 'a plain clone', outerCloneRefConfig: {} },
+      {
+        outerCloneDescription: 'a clone replacing the ref again',
+        outerCloneRefConfig: { ref: { current: null } },
+      },
+    ])(
+      'should keep the inner clone handlers a ref-replacing clone replaced when $outerCloneDescription wraps it',
+      ({ outerCloneRefConfig }) => {
+        const sharedHelpers = loadSharedHelpers();
+        const element = new EventTarget();
+        const calls: string[] = [];
+
+        const jsxRef = sharedHelpers.makeEventRef(
+          { onClick: recordCall(calls, 'jsx') },
+          null,
+          'jsx',
+        );
+        const innerCloneRef = cloneElementRef(sharedHelpers, jsxRef, {
+          onClick: recordCall(calls, 'inner'),
+          onKeyDown: recordCall(calls, 'inner keydown'),
+        });
+        const refReplacingCloneRef = cloneElementRef(
+          sharedHelpers,
+          innerCloneRef,
+          { onClick: recordCall(calls, 'middle'), ref: { current: null } },
+        );
+        cloneElementRef(sharedHelpers, refReplacingCloneRef, {
+          onFocus: recordCall(calls, 'outer focus'),
+          ...outerCloneRefConfig,
+        })(element);
+        dispatchSyntheticLikeEvents(element, ['click', 'keydown', 'focus']);
+
+        expect(calls).toEqual(['middle', 'inner keydown', 'outer focus']);
+      },
+    );
   });
 });
