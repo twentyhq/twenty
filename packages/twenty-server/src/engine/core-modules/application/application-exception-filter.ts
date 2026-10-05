@@ -13,6 +13,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { sendHttpExceptionResponse } from 'src/engine/core-modules/exception-handler/utils/send-http-exception-response.util';
+import { convertCustomExceptionToGraphQLError } from 'src/engine/core-modules/graphql/utils/convert-custom-exception-to-graphql-error.util';
 import {
   BaseGraphQLError,
   ErrorCode,
@@ -37,7 +38,7 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       exception.code !==
       ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED
     ) {
-      return exception;
+      return convertCustomExceptionToGraphQLError(exception);
     }
 
     const installationError = new BaseGraphQLError(

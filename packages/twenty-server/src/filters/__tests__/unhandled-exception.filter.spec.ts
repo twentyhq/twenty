@@ -176,8 +176,7 @@ describe('UnhandledExceptionFilter global registration', () => {
     await app.close();
   });
 
-  // the GraphQL error hook converts it by category; the filter only keeps Nest from logging it
-  it('hands CustomExceptions to the GraphQL layer untouched when CustomExceptionFilter is registered after the catch-all', async () => {
+  it('converts CustomExceptions by category when CustomExceptionFilter is registered after the catch-all', async () => {
     const { app, schema } = await buildSchema(
       RootModuleWithCustomExceptionFilter,
       false,
@@ -185,8 +184,9 @@ describe('UnhandledExceptionFilter global registration', () => {
 
     const result = await runGuardedMutation(schema);
 
-    expect(result.errors?.[0]?.originalError).toBeInstanceOf(
-      PermissionsException,
+    expect(result.errors?.[0]?.extensions?.code).toBe(ErrorCode.FORBIDDEN);
+    expect(result.errors?.[0]?.extensions?.subCode).toBe(
+      PermissionsExceptionCode.PERMISSION_DENIED,
     );
 
     await app.close();

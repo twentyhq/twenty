@@ -9,6 +9,7 @@ import { type Response } from 'express';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { sendHttpExceptionResponse } from 'src/engine/core-modules/exception-handler/utils/send-http-exception-response.util';
+import { convertCustomExceptionToGraphQLError } from 'src/engine/core-modules/graphql/utils/convert-custom-exception-to-graphql-error.util';
 import { CustomException } from 'src/utils/custom-exception';
 
 @Catch(CustomException)
@@ -18,9 +19,9 @@ export class CustomExceptionFilter implements ExceptionFilter {
   ) {}
 
   catch(exception: CustomException, host: ArgumentsHost) {
-    // Returning instead of throwing keeps Nest from logging it; the GraphQL error hook converts it
+    // Returning instead of throwing keeps Nest from logging it
     if (host.getType<GqlContextType>() === 'graphql') {
-      return exception;
+      return convertCustomExceptionToGraphQLError(exception);
     }
 
     return sendHttpExceptionResponse({
