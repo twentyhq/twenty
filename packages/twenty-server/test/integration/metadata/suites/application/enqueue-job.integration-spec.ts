@@ -24,6 +24,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
+import { AUTH_PRINCIPAL_REFUSED_MESSAGE } from 'src/engine/guards/constants/auth-principal-refused-message.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const MARKER_DIRECTORY = join(tmpdir(), `enqueue-job-${uuidv4()}`);
@@ -319,7 +320,10 @@ describe('enqueueJob (e2e)', () => {
     });
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toContain('APPLICATION_ACCESS');
+    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
+    expect(response.body.errors[0].message).toBe(
+      AUTH_PRINCIPAL_REFUSED_MESSAGE,
+    );
   });
 
   it('enqueues a logic function owned by the calling application and the worker runs it', async () => {

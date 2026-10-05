@@ -128,7 +128,6 @@ export class AgentInboxService {
       threadId,
       turnId,
       openingMessageId,
-      memberUserWorkspaceId: thread.userWorkspaceId,
       senderDescription: senderDetails.description,
     });
 
@@ -246,23 +245,20 @@ export class AgentInboxService {
     return part?.toolOutput;
   }
 
-  // Answering a tool call resolves who may answer from the user message of
-  // its turn, and models expect a conversation to open with one. It holds
-  // no text from the sender, so nothing the sender wrote reads as the
-  // member's request.
+  // The opener is a system message naming the sender, and holds no text from
+  // it. Written as two idempotent writes, so a retry completes an opener that
+  // a failure left half written.
   private async ensureOpener({
     workspaceId,
     threadId,
     turnId,
     openingMessageId,
-    memberUserWorkspaceId,
     senderDescription,
   }: {
     workspaceId: string;
     threadId: string;
     turnId: string;
     openingMessageId: string;
-    memberUserWorkspaceId: string | null;
     senderDescription: string;
   }): Promise<void> {
     await this.ignoreDuplicate(() =>
@@ -280,10 +276,9 @@ export class AgentInboxService {
         id: openingMessageId,
         threadId,
         turnId,
-        role: AgentMessageRole.USER,
+        role: AgentMessageRole.SYSTEM,
         agentId: null,
-        senderUserWorkspaceId: memberUserWorkspaceId,
-        isHidden: true,
+        senderUserWorkspaceId: null,
         parts: [
           {
             type: 'text',

@@ -190,7 +190,9 @@ export class StreamAgentChatJob {
           userWorkspaceId: data.userWorkspaceId,
         });
 
-      if (!isDefined(message.turnId)) {
+      const turnId = data.existingTurnId ?? message?.turnId;
+
+      if (!isDefined(turnId)) {
         throw new AiException(
           'Message turn not found',
           AiExceptionCode.MESSAGE_NOT_FOUND,
@@ -211,7 +213,7 @@ export class StreamAgentChatJob {
       await this.buildAndPublishStream({
         workspace,
         data,
-        turnId: message.turnId,
+        turnId,
         sender,
         authorization,
         titlePromise,

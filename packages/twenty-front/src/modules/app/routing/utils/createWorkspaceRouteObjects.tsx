@@ -11,6 +11,18 @@ import {
 import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 
+const AgentCoreIndexPage = lazy(() =>
+  import('~/pages/object-core/AgentCoreIndexPage').then((module) => ({
+    default: module.AgentCoreIndexPage,
+  })),
+);
+
+const AgentCoreShowPage = lazy(() =>
+  import('~/pages/object-core/AgentCoreShowPage').then((module) => ({
+    default: module.AgentCoreShowPage,
+  })),
+);
+
 const WorkflowCoreShowPage = lazy(() =>
   import('~/pages/object-core/WorkflowCoreShowPage').then((module) => ({
     default: module.WorkflowCoreShowPage,
@@ -85,6 +97,22 @@ export const createWorkspaceRouteObjects = ({
         workspaceSurfaces: MAIN_AND_SIDE_PANEL,
         isLocationExpandableFromSidePanel: true,
       },
+    },
+    {
+      path: AppPath.AgentIndexPage,
+      element: (
+        <LazyRoute fallback={<RecordIndexSkeletonLoader />}>
+          <AgentCoreIndexPage />
+        </LazyRoute>
+      ),
+    },
+    {
+      path: AppPath.AgentShowPage,
+      element: (
+        <LazyRoute>
+          <AgentCoreShowPage />
+        </LazyRoute>
+      ),
     },
     {
       path: AppPath.Index,

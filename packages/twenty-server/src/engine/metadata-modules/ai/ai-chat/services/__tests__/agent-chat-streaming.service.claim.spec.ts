@@ -60,6 +60,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         .mockResolvedValue({ id: 'user-message-id', turnId: 'turn-id' }),
       closePendingToolCalls: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue([]),
+      getThreadContexts: jest.fn().mockResolvedValue([]),
       getQueuedMessages: jest.fn().mockResolvedValue(queuedMessages),
       hasQueuedMessages: jest
         .fn()
@@ -224,16 +225,6 @@ describe('AgentChatStreamingService claim & reap', () => {
       expect(agentChatService.queueMessage).toHaveBeenCalled();
       expect(agentChatService.promoteQueuedMessage).toHaveBeenCalledWith(
         expect.objectContaining({ messageId: 'older-queued-id' }),
-      );
-    });
-
-    it('loads hidden messages for the model', async () => {
-      const { send, agentChatService } = buildService();
-
-      await send();
-
-      expect(agentChatService.getMessagesForThread).toHaveBeenCalledWith(
-        expect.objectContaining({ includeHidden: true }),
       );
     });
 
