@@ -34,6 +34,11 @@ const OPPORTUNITY_FIELDS: ValidationRuleFieldDescriptor[] = [
     universalIdentifier: 'opportunity-is-qualified',
   },
   {
+    name: 'tags',
+    type: FieldMetadataType.MULTI_SELECT,
+    universalIdentifier: 'opportunity-tags',
+  },
+  {
     name: 'company',
     type: FieldMetadataType.RELATION,
     universalIdentifier: 'opportunity-company',
@@ -155,6 +160,13 @@ describe('compileValidationRuleExpression', () => {
 
   it('should keep array literals', () => {
     expect(compile('stage in ["WON", "LOST"]').isValid).toBe(true);
+  });
+
+  it('should accept a value in a list field', () => {
+    expect(compile('"PRIORITY" in tags')).toEqual({
+      isValid: true,
+      bindings: { tags: 'opportunity-tags' },
+    });
   });
 
   it('should reject assignments', () => {

@@ -80,6 +80,7 @@ describe('doesUsageLimitRowSuppressDefault', () => {
       { resourceType: UsageResourceType.RECORD } as Partial<UsageLimitScope>,
     ],
     ['limit kind', { limitKind: 'quota' } as Partial<UsageLimitScope>],
+    ['period unit', { periodUnit: 'day' } as Partial<UsageLimitScope>],
   ])('does not suppress across a different %s', (_label, overrides) => {
     expect(
       doesUsageLimitRowSuppressDefault({
@@ -98,11 +99,11 @@ describe('doesUsageLimitRowSuppressDefault', () => {
     ).toBe(false);
   });
 
-  it('ignores the period, which no builder matches on', () => {
+  it('ignores the period count, which a speed window can change', () => {
     expect(
       doesUsageLimitRowSuppressDefault({
-        scope: buildScope({ periodCount: 60, periodUnit: 'second' }),
-        usageLimitDefault: buildDefault(),
+        scope: buildScope({ periodCount: 60 }),
+        usageLimitDefault: buildDefault({ periodCount: 1 }),
       }),
     ).toBe(true);
   });
