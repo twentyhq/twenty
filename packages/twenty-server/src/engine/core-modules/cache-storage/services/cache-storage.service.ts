@@ -135,7 +135,10 @@ export class CacheStorageService {
     keysToDelete: string[];
   }): Promise<void> {
     if (!this.isRedisCache(this.cache)) {
-      throw new Error('msetAndMdel is only supported with Redis cache');
+      throw new CacheStorageException(
+        'msetAndMdel is only supported with Redis cache',
+        CacheStorageExceptionCode.REDIS_CACHE_REQUIRED,
+      );
     }
 
     const transaction = this.cache.store.client.multi();
