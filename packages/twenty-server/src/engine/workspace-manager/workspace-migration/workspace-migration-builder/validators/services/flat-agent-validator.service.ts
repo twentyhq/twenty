@@ -203,10 +203,23 @@ export class FlatAgentValidatorService {
       );
     }
 
-    if (isDefined(flatEntityUpdate.triggers)) {
+    if (flatEntityUpdate.triggers !== undefined) {
       validationResult.errors.push(
         ...validateAgentTriggers({ triggers: flatEntityUpdate.triggers }),
       );
+
+      // Triggers start runs on their own, so only the agent's application may schedule them
+      if (
+        !isCallerTwentyStandardApp(buildOptions) &&
+        buildOptions.applicationUniversalIdentifier !==
+          fromFlatAgent.applicationUniversalIdentifier
+      ) {
+        validationResult.errors.push({
+          code: AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+          message: t`Only the application that owns this agent can change its triggers`,
+          userFriendlyMessage: msg`Only the application that owns this agent can change its triggers`,
+        });
+      }
     }
 
     return validationResult;

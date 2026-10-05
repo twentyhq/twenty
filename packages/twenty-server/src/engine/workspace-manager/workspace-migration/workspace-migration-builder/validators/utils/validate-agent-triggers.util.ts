@@ -2,13 +2,12 @@ import { msg, t } from '@lingui/core/macro';
 import { isBoolean, isNonEmptyString, isNull, isString } from '@sniptt/guards';
 import { CronExpressionParser } from 'cron-parser';
 import {
+  AGENT_TRIGGER_EVENT_NAME_PATTERN,
+  AGENT_TRIGGER_LIMITS,
   AGENT_TRIGGER_TYPES,
-  type AgentTrigger,
 } from 'twenty-shared/application';
 import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 
-import { AGENT_DATABASE_EVENT_TRIGGER_EVENT_NAME_PATTERN } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-database-event-trigger-event-name-pattern.const';
-import { AGENT_TRIGGER_LIMITS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-trigger-limits.const';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
@@ -39,7 +38,7 @@ const validateDatabaseEventTriggerSettings = (
 
   if (
     !isString(eventName) ||
-    !AGENT_DATABASE_EVENT_TRIGGER_EVENT_NAME_PATTERN.test(eventName)
+    !AGENT_TRIGGER_EVENT_NAME_PATTERN.test(eventName)
   ) {
     return [
       buildInvalidTriggerError(
@@ -163,10 +162,11 @@ const validateAgentTrigger = (
   }
 };
 
+// Triggers arrive as raw JSON from the API or a manifest, so nothing about their shape is assumed
 export const validateAgentTriggers = ({
   triggers,
 }: {
-  triggers: AgentTrigger[];
+  triggers: unknown;
 }): AgentTriggerValidationError[] => {
   if (!Array.isArray(triggers)) {
     return [buildInvalidTriggerError(t`Agent triggers must be a list`)];
@@ -184,7 +184,9 @@ export const validateAgentTriggers = ({
 
   const errors = triggers.flatMap((trigger) => validateAgentTrigger(trigger));
 
-  const triggerIds = triggers.map((trigger) => trigger.id);
+  const triggerIds = triggers
+    .filter(isPlainObject)
+    .map((trigger) => trigger.id);
 
   if (new Set(triggerIds).size !== triggerIds.length) {
     errors.push(buildInvalidTriggerError(t`Agent trigger ids must be unique`));

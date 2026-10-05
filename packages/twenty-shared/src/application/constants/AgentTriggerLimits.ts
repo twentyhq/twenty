@@ -1,4 +1,4 @@
 export const AGENT_TRIGGER_LIMITS = {
   MAX_TRIGGERS_PER_AGENT: 20,
   MAX_INSTRUCTIONS_LENGTH: 10_000,
-};
+} as const;
