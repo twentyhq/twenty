@@ -213,7 +213,7 @@ describe('serializeEvent', () => {
     },
   );
 
-  it.each(['input', 'change', 'click', 'blur', 'focusout'])(
+  it.each(['change', 'click', 'blur', 'focusout'])(
     'should include form control state on %s, once the browser has applied the change',
     (type) => {
       expect(
@@ -229,6 +229,15 @@ describe('serializeEvent', () => {
         target: { value: 'typed', checked: false },
       }),
     ).toEqual({ type: 'keyup', value: 'typed' });
+  });
+
+  it('should include the value but not the checked state on input, which fires after React restores a controlled checkbox', () => {
+    expect(
+      serializeEvent({
+        type: 'input',
+        target: { value: 'on', checked: false },
+      }),
+    ).toEqual({ type: 'input', value: 'on' });
   });
 
   it('should include the muted state only once a volume change has applied it', () => {

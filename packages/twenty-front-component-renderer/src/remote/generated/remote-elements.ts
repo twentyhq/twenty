@@ -559,6 +559,7 @@ export const HtmlInputElement = createRemoteElement<
     copy: createSerializedEventConfig('copy'),
     paste: createSerializedEventConfig('paste'),
     cut: createSerializedEventConfig('cut'),
+    change: { ...createSerializedEventConfig('change'), bubbles: true },
   },
 });
 
@@ -605,6 +606,7 @@ export const HtmlTextareaElement = createRemoteElement<
     copy: createSerializedEventConfig('copy'),
     paste: createSerializedEventConfig('paste'),
     cut: createSerializedEventConfig('cut'),
+    change: { ...createSerializedEventConfig('change'), bubbles: true },
   },
 });
 
@@ -630,6 +632,7 @@ export const HtmlSelectElement = createRemoteElement<
   },
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
+    change: { ...createSerializedEventConfig('change'), bubbles: true },
   },
 });
 

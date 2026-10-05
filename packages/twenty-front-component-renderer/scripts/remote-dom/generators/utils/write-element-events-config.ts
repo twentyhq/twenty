@@ -21,6 +21,12 @@ export const writeElementEventsConfig = ({
         `'${eventName}': ${TYPE_NAMES.SERIALIZED_EVENT_CONFIG_FACTORY}('${eventName}'),`,
       );
     }
+
+    for (const eventName of elementDescriptor.alwaysForwardedEvents) {
+      writer.writeLine(
+        `'${eventName}': { ...${TYPE_NAMES.SERIALIZED_EVENT_CONFIG_FACTORY}('${eventName}'), bubbles: true },`,
+      );
+    }
   });
   writer.write(',');
   writer.newLine();

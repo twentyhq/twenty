@@ -9,5 +9,6 @@ export type RemoteElementDescriptor = {
   hasSpecificProperties: boolean;
   hasCommonHtmlEvents: boolean;
   customEvents: readonly string[];
+  alwaysForwardedEvents: readonly string[];
   hasEvents: boolean;
 };

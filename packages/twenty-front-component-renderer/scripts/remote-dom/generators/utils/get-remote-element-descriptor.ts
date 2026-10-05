@@ -1,5 +1,6 @@
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { ALWAYS_FORWARDED_EVENT_NAMES_BY_TAG } from '../always-forwarded-event-names-by-tag';
 import { type ComponentSchema } from '../schemas';
 import { type RemoteElementDescriptor } from '../types/remote-element-descriptor.type';
 import { getSpecificProperties } from './get-specific-properties';
@@ -28,6 +29,9 @@ export const getRemoteElementDescriptor = ({
     ? component.events.filter((eventName) => !commonEventNames.has(eventName))
     : component.events;
 
+  const alwaysForwardedEvents =
+    ALWAYS_FORWARDED_EVENT_NAMES_BY_TAG[component.customElementName] ?? [];
+
   return {
     elementName: `${component.name}Element`,
     propertiesTypeName: `${component.name}Properties`,
@@ -37,6 +41,7 @@ export const getRemoteElementDescriptor = ({
     hasSpecificProperties: isNonEmptyArray(Object.keys(specificProperties)),
     hasCommonHtmlEvents,
     customEvents,
+    alwaysForwardedEvents,
     hasEvents: hasCommonHtmlEvents || isNonEmptyArray(customEvents),
   };
 };

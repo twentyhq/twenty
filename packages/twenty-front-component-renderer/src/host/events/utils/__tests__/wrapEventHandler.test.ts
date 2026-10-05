@@ -86,6 +86,73 @@ describe('wrapEventHandler', () => {
     expect(outerRemoteListener).toHaveBeenCalledTimes(1);
   });
 
+  it('should forward the form control state of a native event only once, so a later handler cannot revert what the worker wrote', () => {
+    const inputRemoteListener = jest.fn();
+    const changeRemoteListener = jest.fn();
+    const nativeInputEvent = { type: 'input' };
+    const target = { value: 'ab', checked: true };
+
+    wrapEventHandler({ remoteListener: inputRemoteListener })({
+      type: 'input',
+      target,
+      nativeEvent: nativeInputEvent,
+    });
+    wrapEventHandler({ remoteListener: changeRemoteListener })({
+      type: 'change',
+      target,
+      nativeEvent: nativeInputEvent,
+    });
+
+    expect(inputRemoteListener).toHaveBeenCalledWith({
+      type: 'input',
+      value: 'ab',
+    });
+    expect(changeRemoteListener).toHaveBeenCalledWith({ type: 'change' });
+  });
+
+  it('should forward the form control state of every distinct native event', () => {
+    const remoteListener = jest.fn();
+    const handler = wrapEventHandler({ remoteListener });
+    const target = { value: 'ab' };
+
+    handler({ type: 'change', target, nativeEvent: { type: 'input' } });
+    handler({ type: 'change', target, nativeEvent: { type: 'input' } });
+
+    expect(remoteListener).toHaveBeenNthCalledWith(1, {
+      type: 'change',
+      value: 'ab',
+    });
+    expect(remoteListener).toHaveBeenNthCalledWith(2, {
+      type: 'change',
+      value: 'ab',
+    });
+  });
+
+  it('should still forward the form control state when the earlier handler for the native event failed', () => {
+    const changeRemoteListener = jest.fn();
+    const nativeInputEvent = { type: 'input' };
+    const target = { value: 'ab' };
+    const inputHandler = wrapEventHandler({
+      remoteListener: () => {
+        throw new TypeError('listener is not a function');
+      },
+    });
+
+    expect(() =>
+      inputHandler({ type: 'input', target, nativeEvent: nativeInputEvent }),
+    ).toThrow('listener is not a function');
+    wrapEventHandler({ remoteListener: changeRemoteListener })({
+      type: 'change',
+      target,
+      nativeEvent: nativeInputEvent,
+    });
+
+    expect(changeRemoteListener).toHaveBeenCalledWith({
+      type: 'change',
+      value: 'ab',
+    });
+  });
+
   it('should forward the remote ids of the host target and related target', () => {
     const remoteListener = jest.fn();
     const target = {};

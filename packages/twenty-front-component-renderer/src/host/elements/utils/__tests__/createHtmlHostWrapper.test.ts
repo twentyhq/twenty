@@ -1,6 +1,7 @@
 import '@/testing/setupServerRenderingGlobals';
 
 import { REMOTE_ELEMENT_PROP } from '@remote-dom/react/host';
+import userEvent from '@testing-library/user-event';
 import { act, createElement, type ComponentType } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -282,6 +283,80 @@ describe('createHtmlHostWrapper client events', () => {
     });
 
     expect(node.value).toBe('');
+  });
+
+  it('should mount a file input whose worker element already holds a selected file path', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, {
+          type: 'file',
+          value: 'C:\\fakepath\\report.pdf',
+        }),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    expect(node.value).toBe('');
+    expect(node.hasAttribute('value')).toBe(false);
+  });
+
+  it('should keep a file input uncontrolled when the worker echoes the selected file path', () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    const Wrapper = createHtmlHostWrapper('input');
+    const handleChange = jest.fn();
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, { type: 'file', onChange: handleChange }),
+      );
+    });
+    act(() => {
+      root.render(
+        createElement(Wrapper, {
+          type: 'file',
+          onChange: handleChange,
+          value: 'C:\\fakepath\\report.pdf',
+        }),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    act(() => {
+      node.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    expect(node.value).toBe('');
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should clear the selected file when the worker resets the file input value', async () => {
+    const user = userEvent.setup();
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'file' }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+
+    await act(async () => {
+      await user.upload(node, new File(['image'], 'avatar.png'));
+    });
+
+    expect(node.value).toBe('C:\\fakepath\\avatar.png');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'file', value: '' }));
+    });
+
+    expect(node.value).toBe('');
+    expect(node.files).toHaveLength(0);
   });
 
   it('should forward focusin through a handler prop that arrives after mount', () => {
