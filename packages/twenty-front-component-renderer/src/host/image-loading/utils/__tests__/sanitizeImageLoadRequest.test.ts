@@ -49,6 +49,19 @@ describe('sanitizeImageLoadRequest', () => {
     expect(sanitizeImageLoadRequest('/avatar.png')).toBeNull();
   });
 
+  it('treats blank sources as absent', () => {
+    expect(
+      sanitizeImageLoadRequest({
+        requestId: '1',
+        src: ' /avatar.png ',
+        srcset: ' ',
+        sizes: '',
+        crossOrigin: null,
+        referrerPolicy: '',
+      }),
+    ).toMatchObject({ src: ' /avatar.png ', srcset: null });
+  });
+
   it('rejects requests without an identifier or a usable source', () => {
     const request = {
       requestId: '1',
@@ -62,6 +75,10 @@ describe('sanitizeImageLoadRequest', () => {
     expect(sanitizeImageLoadRequest({ ...request, requestId: 1 })).toBeNull();
     expect(
       sanitizeImageLoadRequest({ ...request, src: UNCONVERTIBLE_VALUE }),
+    ).toBeNull();
+    expect(sanitizeImageLoadRequest({ ...request, src: ' \n\t' })).toBeNull();
+    expect(
+      sanitizeImageLoadRequest({ ...request, src: '', srcset: ' ' }),
     ).toBeNull();
     expect(
       sanitizeImageLoadRequest({
