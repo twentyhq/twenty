@@ -203,7 +203,8 @@ export class AgentChatSharingService {
     workspaceMemberId: string;
     id?: string;
     title?: string;
-    workflowRunId?: string;
+    // filed under done for its owner, until activity brings it back to their inbox
+    isArchived?: boolean;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
@@ -211,7 +212,6 @@ export class AgentChatSharingService {
       await this.findParticipantObjectMetadataId(args.workspaceId);
     const hasInboxState = isDefined(participantObjectMetadataId);
 
-    // workflowRunId is set by the server for a run conversation, never written by the member
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
@@ -228,12 +228,11 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workflowRunId", "workspaceMemberId", "userWorkspaceId"${hasInboxState ? ', "lastActivityAt"' : ''})
-           VALUES ($1, $2, $3, $4, $5${hasInboxState ? ', clock_timestamp()' : ''}) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId"${hasInboxState ? ', "lastActivityAt"' : ''})
+           VALUES ($1, $2, $3, $4${hasInboxState ? ', clock_timestamp()' : ''}) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
-            args.workflowRunId ?? null,
             authContext.workspaceMemberId,
             authContext.userWorkspaceId,
           ],
@@ -260,8 +259,8 @@ export class AgentChatSharingService {
         if (hasInboxState) {
           await manager.query(
             `WITH participant AS (
-               INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt")
-               VALUES ($1, $2, $3)
+               INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "archivedAt")
+               VALUES ($1, $2, $3, CASE WHEN $5::boolean THEN clock_timestamp() END)
                RETURNING id, "workspaceMemberId"
              )
              ${buildAgentChatThreadParticipantOwnerShareInsert({
@@ -274,6 +273,7 @@ export class AgentChatSharingService {
               authContext.workspaceMemberId,
               record.lastActivityAt,
               participantObjectMetadataId,
+              args.isArchived ?? false,
             ],
           );
         }

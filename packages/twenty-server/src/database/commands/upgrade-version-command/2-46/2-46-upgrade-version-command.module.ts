@@ -7,10 +7,12 @@ import { BackfillAgentChatThreadInboxStateCommand } from 'src/database/commands/
 import { AddAiChatInboxCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019633-add-ai-chat-inbox-command-menu-items.command';
 import { AllowAiChatInboxCommandsOnSeveralChatsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791009973891-allow-ai-chat-inbox-commands-on-several-chats.command';
 import { MakeAgentChatThreadParticipantsPrivateCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791056679663-make-agent-chat-thread-participants-private.command';
+import { DropWorkflowRunFromChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791208395308-drop-workflow-run-from-chat-threads.command';
 import { BackfillAgentAndWorkflowIsSystemCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791130332894-backfill-agent-and-workflow-is-system.command';
-import { FlushLogicFunctionCacheForDatabaseEventTriggersListCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791195525510-flush-logic-function-cache-for-database-event-triggers-list.command';
+import { FlushLogicFunctionCacheForDatabaseEventTriggersListCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791209000001-flush-logic-function-cache-for-database-event-triggers-list.command';
 import { ScheduleAgentChatThreadSnoozeEndsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791093059050-schedule-agent-chat-thread-snooze-ends.command';
 import { UnpinNewAiChatCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019634-unpin-new-ai-chat-command-menu-item.command';
+import { TurnHiddenAgentMessagesIntoSystemMessagesCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791204952095-turn-hidden-agent-messages-into-system-messages.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -32,6 +34,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MakeAgentChatThreadParticipantsPrivateCommand,
     ScheduleAgentChatThreadSnoozeEndsCommand,
     BackfillAgentAndWorkflowIsSystemCommand,
+    TurnHiddenAgentMessagesIntoSystemMessagesCommand,
+    DropWorkflowRunFromChatThreadsCommand,
     FlushLogicFunctionCacheForDatabaseEventTriggersListCommand,
   ],
 })

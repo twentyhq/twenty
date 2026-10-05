@@ -632,37 +632,6 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
-  workflowRun: {
-    ...createStandardRelationFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'workflowRun',
-        type: FieldMetadataType.RELATION,
-        label: i18nLabel(
-          msg({ message: 'Workflow Run', context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: 'Workflow run whose agent step held this conversation',
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconHistoryToggle',
-        isUIEditable: false,
-        isNullable: true,
-        targetObjectName: 'workflowRun',
-        targetFieldName: 'agentChatThreads',
-        morphId: null,
-        settings: {
-          relationType: RelationType.MANY_TO_ONE,
-          onDelete: RelationOnDeleteAction.CASCADE,
-          joinColumnName: 'workflowRunId',
-        },
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
   messages: {
     ...createStandardRelationFieldFlatMetadata({
       ...args,
