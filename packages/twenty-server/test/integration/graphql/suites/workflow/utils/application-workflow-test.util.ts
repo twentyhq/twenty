@@ -11,7 +11,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { type WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
@@ -75,31 +75,11 @@ export const createCompanyStep = (
     },
   }) as WorkflowStepManifestWithoutEdges;
 
-export const createOpportunityStep = (
-  opportunityName: string,
-): WorkflowStepManifestWithoutEdges =>
-  ({
-    name: 'Create opportunity',
-    type: 'CREATE_RECORD',
-    input: {
-      objectUniversalIdentifier:
-        STANDARD_OBJECTS.opportunity.universalIdentifier,
-      objectRecord: { name: opportunityName },
-    },
-  }) as WorkflowStepManifestWithoutEdges;
-
 export const formStep = (): WorkflowStepManifestWithoutEdges =>
   ({
     name: 'Ask a note',
     type: 'FORM',
     input: [{ id: randomUUID(), name: 'note', label: 'Note', type: 'TEXT' }],
-  }) as WorkflowStepManifestWithoutEdges;
-
-export const delayStep = (seconds: number): WorkflowStepManifestWithoutEdges =>
-  ({
-    name: 'Wait',
-    type: 'DELAY',
-    input: { delayType: 'DURATION', duration: { seconds } },
   }) as WorkflowStepManifestWithoutEdges;
 
 export const logicFunctionStep = (
@@ -220,7 +200,7 @@ export const runCoreWorkflowVersion = (coreWorkflowVersionId: string) =>
     { input: { coreWorkflowVersionId } },
   );
 
-export const findTestWorkflowRun = async (
+const findTestWorkflowRun = async (
   workflowRunId: string,
 ): Promise<TestWorkflowRun> => {
   const [workflowRun] = await globalThis.testDataSource.query(
@@ -247,15 +227,6 @@ export const waitForTestWorkflowRun = async (
 
   return findTestWorkflowRun(workflowRunId);
 };
-
-export const waitForTestWorkflowRunToEnd = (workflowRunId: string) =>
-  waitForTestWorkflowRun(workflowRunId, ({ status }) =>
-    [
-      WorkflowRunStatus.COMPLETED,
-      WorkflowRunStatus.FAILED,
-      WorkflowRunStatus.STOPPED,
-    ].includes(status),
-  );
 
 export const countTestCompanies = async (name: string): Promise<number> => {
   const [{ count }] = await globalThis.testDataSource.query(

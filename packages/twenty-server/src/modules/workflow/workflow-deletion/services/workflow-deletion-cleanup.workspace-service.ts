@@ -2,30 +2,26 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, In } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import {
-  WorkflowRunStatus,
-  type WorkflowRunWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 const WORKFLOW_RUN_DELETION_BATCH_SIZE = 200;
 
+const WAITING_WORKFLOW_RUN_STATUSES = [
+  WorkflowRunStatus.RUNNING,
+  WorkflowRunStatus.STOPPING,
+];
+
 @Injectable()
 export class WorkflowDeletionCleanupWorkspaceService {
   constructor(
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectDataSource()
     private readonly dataSource: DataSource,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
@@ -38,72 +34,10 @@ export class WorkflowDeletionCleanupWorkspaceService {
     workspaceId: string;
     coreWorkflowIds: string[];
   }): Promise<void> {
-    const { flatWorkflowMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatWorkflowMaps'] },
-      );
-
-    const stillDeletedCoreWorkflowIds = coreWorkflowIds.filter(
-      (coreWorkflowId) =>
-        !isDefined(
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: coreWorkflowId,
-            flatEntityMaps: flatWorkflowMaps,
-          }),
-        ),
-    );
-
-    if (stillDeletedCoreWorkflowIds.length === 0) {
-      return;
-    }
-
-    await this.cancelWaitsOfRuns({
-      workspaceId,
-      coreWorkflowIds: stillDeletedCoreWorkflowIds,
-    });
-    await this.deleteRuns({
-      workspaceId,
-      coreWorkflowIds: stillDeletedCoreWorkflowIds,
-    });
+    await this.deleteRuns({ workspaceId, coreWorkflowIds });
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
       workspaceId,
     );
-  }
-
-  private async cancelWaitsOfRuns({
-    workspaceId,
-    coreWorkflowIds,
-  }: {
-    workspaceId: string;
-    coreWorkflowIds: string[];
-  }): Promise<void> {
-    const runsThatMayWait =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager
-            .getRepository<WorkflowRunWorkspaceEntity>('workflowRun', {
-              shouldBypassPermissionChecks: true,
-            })
-            .find({
-              where: {
-                coreWorkflowId: In(coreWorkflowIds),
-                status: In([
-                  WorkflowRunStatus.RUNNING,
-                  WorkflowRunStatus.STOPPING,
-                ]),
-              },
-              select: { id: true },
-              withDeleted: true,
-            }),
-        buildSystemAuthContext(workspaceId),
-      );
-
-    for (const { id } of runsThatMayWait) {
-      await this.workflowStepWaitWorkspaceService.cancelRunWaits({
-        workspaceId,
-        workflowRunId: id,
-      });
-    }
   }
 
   private async deleteRuns({
@@ -119,7 +53,10 @@ export class WorkflowDeletionCleanupWorkspaceService {
 
     do {
       const [deletedRuns] = await this.dataSource.query<
-        [{ status: WorkflowRunStatus; deletedAt: Date | null }[], number]
+        [
+          { id: string; status: WorkflowRunStatus; deletedAt: Date | null }[],
+          number,
+        ]
       >(
         `
           DELETE FROM ${schemaName}."workflowRun"
@@ -128,10 +65,19 @@ export class WorkflowDeletionCleanupWorkspaceService {
             WHERE "coreWorkflowId" = ANY($1)
             LIMIT $2
           )
-          RETURNING status, "deletedAt";
+          RETURNING id, status, "deletedAt";
         `,
         [coreWorkflowIds, WORKFLOW_RUN_DELETION_BATCH_SIZE],
       );
+
+      for (const { id, status } of deletedRuns) {
+        if (WAITING_WORKFLOW_RUN_STATUSES.includes(status)) {
+          await this.workflowStepWaitWorkspaceService.cancelRunWaits({
+            workspaceId,
+            workflowRunId: id,
+          });
+        }
+      }
 
       deletedRunCount = deletedRuns.length;
       removedNotStartedRunCount += deletedRuns.filter(

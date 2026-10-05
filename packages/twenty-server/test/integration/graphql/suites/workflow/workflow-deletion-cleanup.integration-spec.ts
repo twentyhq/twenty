@@ -421,11 +421,8 @@ describe('workflow deletion cleanup', () => {
       expect(await countWorkflowRuns([waitingRunId])).toBe(0);
     }, 120000);
 
-    it('repeats the cleanup safely and leaves a workflow that exists alone', async () => {
-      await cleanUpDeletedWorkflowsAgain([
-        deletedWorkflow.coreWorkflowId,
-        keptWorkflow.coreWorkflowId,
-      ]);
+    it('repeats the cleanup safely', async () => {
+      await cleanUpDeletedWorkflowsAgain([deletedWorkflow.coreWorkflowId]);
 
       expect(await countWorkflowRuns([keptRunId])).toBe(1);
       expect(

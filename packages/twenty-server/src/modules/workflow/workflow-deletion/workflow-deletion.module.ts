@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { CleanUpDeletedWorkflowsJob } from 'src/modules/workflow/workflow-deletion/jobs/clean-up-deleted-workflows.job';
 import { WorkflowDeletionListener } from 'src/modules/workflow/workflow-deletion/listeners/workflow-deletion.listener';
 import { WorkflowDeletionCleanupWorkspaceService } from 'src/modules/workflow/workflow-deletion/services/workflow-deletion-cleanup.workspace-service';
@@ -11,7 +10,6 @@ import { WorkflowStepWaitStoreModule } from 'src/modules/workflow/workflow-wait/
 @Module({
   imports: [
     WorkflowVersionCoreModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkflowStepWaitStoreModule,
     WorkflowRunQueueModule,
   ],

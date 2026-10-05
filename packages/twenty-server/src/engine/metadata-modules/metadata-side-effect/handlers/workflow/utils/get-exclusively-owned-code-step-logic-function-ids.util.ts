@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isValidUuid } from 'twenty-shared/utils';
 
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
@@ -21,7 +22,9 @@ const collectLogicFunctionIds = ({
           ? step.settings.input.logicFunctionId
           : undefined;
 
-      return isValidUuid(logicFunctionId) ? [logicFunctionId] : [];
+      return isNonEmptyString(logicFunctionId) && isValidUuid(logicFunctionId)
+        ? [logicFunctionId]
+        : [];
     }),
   );
 
