@@ -13,7 +13,6 @@ vi.mock('twenty-client-sdk/core', () => ({
 import onOpportunityCreated from '../on-opportunity-created';
 
 const OPPORTUNITY_ID = '11111111-1111-1111-1111-111111111111';
-const PERSON_ID = '22222222-2222-2222-2222-222222222222';
 const MESSAGE_ID = '33333333-3333-3333-3333-333333333333';
 const OCCURRED_AT = '2026-06-10T09:00:00.000Z';
 
@@ -42,24 +41,18 @@ describe('on-opportunity-created', () => {
   });
 
   it('computes the last contact from the point of contact', async () => {
-    queryMock.mockImplementation((query) =>
-      query.opportunities
-        ? Promise.resolve({
-            opportunities: buildPage([
-              { id: OPPORTUNITY_ID, pointOfContactId: PERSON_ID },
-            ]),
-          })
-        : Promise.resolve({
-            people: buildPage([
-              {
-                id: PERSON_ID,
-                lastContactAt: OCCURRED_AT,
-                lastContactItemMessage: { id: MESSAGE_ID },
-                lastContactItemCalendarEvent: null,
-              },
-            ]),
-          }),
-    );
+    queryMock.mockResolvedValue({
+      opportunities: buildPage([
+        {
+          id: OPPORTUNITY_ID,
+          pointOfContact: {
+            lastContactAt: OCCURRED_AT,
+            lastContactItemMessage: { id: MESSAGE_ID },
+            lastContactItemCalendarEvent: null,
+          },
+        },
+      ]),
+    });
 
     await handler({
       name: 'opportunity.created',

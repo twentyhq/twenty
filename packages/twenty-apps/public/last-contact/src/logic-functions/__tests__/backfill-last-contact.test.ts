@@ -2,13 +2,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const {
   queryMock,
-  enqueueMeetingSweepJobMock,
+  scheduleUpcomingPersonMeetingsMock,
+  collectPersonMeetingParticipantsMock,
+  applyMeetingInteractionsMock,
   backfillPeopleMock,
   backfillOpportunitiesMock,
   backfillCompaniesMock,
 } = vi.hoisted(() => ({
   queryMock: vi.fn(),
-  enqueueMeetingSweepJobMock: vi.fn(),
+  scheduleUpcomingPersonMeetingsMock: vi.fn(),
+  collectPersonMeetingParticipantsMock: vi.fn(),
+  applyMeetingInteractionsMock: vi.fn(),
   backfillPeopleMock: vi.fn(),
   backfillOpportunitiesMock: vi.fn(),
   backfillCompaniesMock: vi.fn(),
@@ -20,8 +24,16 @@ vi.mock('twenty-client-sdk/core', () => ({
   }),
 }));
 
-vi.mock('src/utils/enqueue-meeting-sweep-job', () => ({
-  enqueueMeetingSweepJob: enqueueMeetingSweepJobMock,
+vi.mock('src/utils/schedule-meetings', () => ({
+  scheduleUpcomingPersonMeetings: scheduleUpcomingPersonMeetingsMock,
+}));
+
+vi.mock('src/utils/collect-person-meeting-participants', () => ({
+  collectPersonMeetingParticipants: collectPersonMeetingParticipantsMock,
+}));
+
+vi.mock('src/utils/apply-meeting-interactions', () => ({
+  applyMeetingInteractions: applyMeetingInteractionsMock,
 }));
 
 vi.mock('src/utils/backfill-settings', () => ({
@@ -73,8 +85,12 @@ const recordBatch =
 beforeEach(() => {
   events = [];
 
-  enqueueMeetingSweepJobMock.mockReset();
-  enqueueMeetingSweepJobMock.mockResolvedValue(undefined);
+  scheduleUpcomingPersonMeetingsMock.mockReset();
+  scheduleUpcomingPersonMeetingsMock.mockResolvedValue(undefined);
+  collectPersonMeetingParticipantsMock.mockReset();
+  collectPersonMeetingParticipantsMock.mockResolvedValue([]);
+  applyMeetingInteractionsMock.mockReset();
+  applyMeetingInteractionsMock.mockResolvedValue([]);
 
   queryMock.mockReset();
   queryMock.mockImplementation(async (query: ConnectionQuery) => {
@@ -150,12 +166,22 @@ describe('backfill-last-contact', () => {
     expect(queryMock).not.toHaveBeenCalled();
   });
 
-  it('should enqueue a meeting sweep within the next hour on every upgrade', async () => {
+  it('should schedule upcoming meetings and apply the last hour of meetings on every upgrade', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-12T12:00:00.000Z'));
+
     await handler({ previousVersion: '1.7.0', newVersion: '1.8.0' });
 
-    expect(enqueueMeetingSweepJobMock).toHaveBeenCalledTimes(1);
-    const [delayMs] = enqueueMeetingSweepJobMock.mock.calls[0];
-    expect(delayMs).toBeGreaterThanOrEqual(0);
-    expect(delayMs).toBeLessThan(60 * 60 * 1000);
+    expect(scheduleUpcomingPersonMeetingsMock).toHaveBeenCalledTimes(1);
+    expect(collectPersonMeetingParticipantsMock).toHaveBeenCalledWith(
+      expect.anything(),
+      {
+        from: new Date('2026-06-12T11:00:00.000Z'),
+        to: new Date('2026-06-12T12:00:00.000Z'),
+      },
+    );
+    expect(applyMeetingInteractionsMock).toHaveBeenCalledTimes(1);
+
+    vi.useRealTimers();
   });
 });

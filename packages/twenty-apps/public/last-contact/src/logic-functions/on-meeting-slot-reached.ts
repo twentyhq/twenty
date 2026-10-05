@@ -3,9 +3,9 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { BATCH_HANDLER_TIMEOUT_SECONDS } from 'src/constants/batch-handler-timeout-seconds';
 import { MEETING_SLOT_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { applyStartedMeetings } from 'src/utils/apply-started-meetings';
-import { collectCalendarEventStarts } from 'src/utils/collect-calendar-event-starts';
-import { type MeetingSlotPayload } from 'src/utils/schedule-meeting-slot-jobs';
+import { applyMeetingInteractions } from 'src/utils/apply-meeting-interactions';
+import { collectPersonMeetingParticipants } from 'src/utils/collect-person-meeting-participants';
+import { type MeetingSlotPayload } from 'src/utils/schedule-meetings';
 
 // Meetings are re-read rather than carried in the payload: one moved or
 // canceled after scheduling no longer matches the slot.
@@ -15,14 +15,17 @@ const handler = async ({
 }: MeetingSlotPayload): Promise<void> => {
   const client = new CoreApiClient();
 
-  const calendarEventStarts = await collectCalendarEventStarts(client, {
+  const participants = await collectPersonMeetingParticipants(client, {
     from: new Date(slotStart),
     to: new Date(slotEnd),
   });
 
-  await applyStartedMeetings(
+  await applyMeetingInteractions(
     client,
-    calendarEventStarts.map(({ id }) => id),
+    participants.map(({ personId, calendarEventId }) => ({
+      personId,
+      calendarEventId,
+    })),
   );
 };
 

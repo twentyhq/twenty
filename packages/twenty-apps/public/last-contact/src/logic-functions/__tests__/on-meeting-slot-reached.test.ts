@@ -20,11 +20,6 @@ const handler = onMeetingSlotReached.config.handler as (payload: {
   slotEnd: string;
 }) => Promise<void>;
 
-const emptyPage = {
-  edges: [],
-  pageInfo: { hasNextPage: false, endCursor: null },
-};
-
 beforeEach(() => {
   queryMock.mockReset();
   mutationMock.mockReset();
@@ -34,19 +29,30 @@ describe('on-meeting-slot-reached', () => {
   it('should be valid and have no trigger of its own', () => {
     expect(onMeetingSlotReached.success).toBe(true);
     expect(onMeetingSlotReached.config.cronTriggerSettings).toBeUndefined();
+    expect(
+      onMeetingSlotReached.config.databaseEventTriggerSettings,
+    ).toBeUndefined();
   });
 
-  it('should re-read the meetings of its slot and stop when none remain', async () => {
-    queryMock.mockResolvedValue({ calendarEvents: emptyPage });
+  it('should re-read the person meetings of its slot in one call and stop when none remain', async () => {
+    queryMock.mockResolvedValue({
+      calendarEventParticipants: {
+        edges: [],
+        pageInfo: { hasNextPage: false, endCursor: null },
+      },
+    });
 
     await handler({ slotStart: SLOT_START, slotEnd: SLOT_END });
 
     expect(queryMock).toHaveBeenCalledTimes(1);
-    expect(queryMock.mock.calls[0][0].calendarEvents.__args.filter).toEqual({
+    expect(
+      queryMock.mock.calls[0][0].calendarEventParticipants.__args.filter,
+    ).toEqual({
       and: [
-        { startsAt: { gte: SLOT_START } },
-        { startsAt: { lt: SLOT_END } },
-        { isCanceled: { eq: false } },
+        { personId: { is: 'NOT_NULL' } },
+        { calendarEvent: { startsAt: { gte: SLOT_START } } },
+        { calendarEvent: { startsAt: { lt: SLOT_END } } },
+        { calendarEvent: { isCanceled: { eq: false } } },
       ],
     });
     expect(mutationMock).not.toHaveBeenCalled();

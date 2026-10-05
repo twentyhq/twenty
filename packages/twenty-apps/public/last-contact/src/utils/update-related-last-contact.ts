@@ -2,7 +2,11 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { chunk } from 'src/utils/chunk';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
-import { type InteractionKind } from 'src/utils/update-person-last-contact';
+import {
+  type InteractionKind,
+  type PersonLastContactState,
+  type RelatedLastContact,
+} from 'src/utils/update-person-last-contact';
 import {
   type RecordUpsert,
   upsertRecordsInBatches,
@@ -14,12 +18,6 @@ export type RelatedInteraction = {
   occurredAt: string;
   itemId: string;
   kind: InteractionKind;
-};
-
-type OpportunityLink = {
-  opportunityId: string;
-  pointOfContactId: string;
-  lastContactAt: string | null;
 };
 
 const isNewer = (
@@ -37,85 +35,13 @@ const buildData = ({
   lastContactItemCalendarEventId: kind === 'meeting' ? itemId : null,
 });
 
-const collectCompanyIdByPersonId = async (
+// A nested relation returns at most 60 records, so the opportunities of a
+// person past that cap are read with their own query.
+const collectOpportunitiesByPointOfContactId = async (
   client: CoreApiClient,
   personIds: string[],
-): Promise<Map<string, string>> => {
-  const companyIdByPersonId = new Map<string, string>();
-
-  for (const ids of chunk(personIds, PAGE_SIZE)) {
-    let after: string | undefined;
-
-    do {
-      const { people } = await executeWithRetry(() =>
-        client.query({
-          people: {
-            __args: { filter: { id: { in: ids } }, first: PAGE_SIZE, after },
-            edges: { node: { id: true, companyId: true } },
-            pageInfo: { hasNextPage: true, endCursor: true },
-          },
-        }),
-      );
-
-      for (const edge of people?.edges ?? []) {
-        const { id, companyId } = edge.node;
-
-        if (id && companyId) {
-          companyIdByPersonId.set(id, companyId);
-        }
-      }
-
-      after = people?.pageInfo.hasNextPage
-        ? (people.pageInfo.endCursor ?? undefined)
-        : undefined;
-    } while (after);
-  }
-
-  return companyIdByPersonId;
-};
-
-const collectCompanyLastContactAt = async (
-  client: CoreApiClient,
-  companyIds: string[],
-): Promise<Map<string, string | null>> => {
-  const lastContactAtByCompanyId = new Map<string, string | null>();
-
-  for (const ids of chunk(companyIds, PAGE_SIZE)) {
-    let after: string | undefined;
-
-    do {
-      const { companies } = await executeWithRetry(() =>
-        client.query({
-          companies: {
-            __args: { filter: { id: { in: ids } }, first: PAGE_SIZE, after },
-            edges: { node: { id: true, lastContactAt: true } },
-            pageInfo: { hasNextPage: true, endCursor: true },
-          },
-        }),
-      );
-
-      for (const edge of companies?.edges ?? []) {
-        const { id, lastContactAt } = edge.node;
-
-        if (id) {
-          lastContactAtByCompanyId.set(id, lastContactAt ?? null);
-        }
-      }
-
-      after = companies?.pageInfo.hasNextPage
-        ? (companies.pageInfo.endCursor ?? undefined)
-        : undefined;
-    } while (after);
-  }
-
-  return lastContactAtByCompanyId;
-};
-
-const collectOpportunityLinks = async (
-  client: CoreApiClient,
-  personIds: string[],
-): Promise<OpportunityLink[]> => {
-  const links: OpportunityLink[] = [];
+): Promise<Map<string, RelatedLastContact[]>> => {
+  const opportunitiesByPersonId = new Map<string, RelatedLastContact[]>();
 
   for (const ids of chunk(personIds, PAGE_SIZE)) {
     let after: string | undefined;
@@ -144,12 +70,17 @@ const collectOpportunityLinks = async (
       for (const edge of opportunities?.edges ?? []) {
         const { id, pointOfContactId, lastContactAt } = edge.node;
 
-        if (id && pointOfContactId) {
-          links.push({
-            opportunityId: id,
-            pointOfContactId,
-            lastContactAt: lastContactAt ?? null,
-          });
+        if (!id || !pointOfContactId) {
+          continue;
+        }
+
+        const opportunity = { id, lastContactAt: lastContactAt ?? null };
+        const existing = opportunitiesByPersonId.get(pointOfContactId);
+
+        if (existing) {
+          existing.push(opportunity);
+        } else {
+          opportunitiesByPersonId.set(pointOfContactId, [opportunity]);
         }
       }
 
@@ -159,15 +90,51 @@ const collectOpportunityLinks = async (
     } while (after);
   }
 
-  return links;
+  return opportunitiesByPersonId;
+};
+
+const resolveOpportunitiesByPersonId = async (
+  client: CoreApiClient,
+  stateByPersonId: Map<string, PersonLastContactState>,
+  personIds: string[],
+): Promise<Map<string, RelatedLastContact[]>> => {
+  const opportunitiesByPersonId = new Map<string, RelatedLastContact[]>();
+  const truncatedPersonIds: string[] = [];
+
+  for (const personId of personIds) {
+    const connection = stateByPersonId.get(personId)
+      ?.pointOfContactForOpportunities;
+    const opportunities = (connection?.edges ?? []).map(({ node }) => node);
+
+    if ((connection?.totalCount ?? 0) > opportunities.length) {
+      truncatedPersonIds.push(personId);
+    } else {
+      opportunitiesByPersonId.set(personId, opportunities);
+    }
+  }
+
+  if (truncatedPersonIds.length > 0) {
+    const fetched = await collectOpportunitiesByPointOfContactId(
+      client,
+      truncatedPersonIds,
+    );
+
+    for (const personId of truncatedPersonIds) {
+      opportunitiesByPersonId.set(personId, fetched.get(personId) ?? []);
+    }
+  }
+
+  return opportunitiesByPersonId;
 };
 
 // Companies and opportunities surface emails and meetings from their related
 // people, so their last contact mirrors the most recent contact of any person
-// connected to them.
+// connected to them. The company and opportunities come from the person read
+// that precedes this, so only the writes cost API calls.
 export const updateRelatedLastContactForPeople = async (
   client: CoreApiClient,
   contactByPersonId: Map<string, RelatedInteraction>,
+  stateByPersonId: Map<string, PersonLastContactState>,
 ): Promise<void> => {
   const personIds = [...contactByPersonId.keys()];
 
@@ -175,37 +142,28 @@ export const updateRelatedLastContactForPeople = async (
     return;
   }
 
-  const companyIdByPersonId = await collectCompanyIdByPersonId(
-    client,
-    personIds,
-  );
   const contactByCompanyId = new Map<string, RelatedInteraction>();
+  const lastContactAtByCompanyId = new Map<string, string | null>();
 
   for (const [personId, contact] of contactByPersonId) {
-    const companyId = companyIdByPersonId.get(personId);
+    const company = stateByPersonId.get(personId)?.company;
 
-    if (!companyId) {
+    if (!company?.id) {
       continue;
     }
 
-    const current = contactByCompanyId.get(companyId);
+    lastContactAtByCompanyId.set(company.id, company.lastContactAt ?? null);
+
+    const current = contactByCompanyId.get(company.id);
 
     if (!current || contact.occurredAt > current.occurredAt) {
-      contactByCompanyId.set(companyId, contact);
+      contactByCompanyId.set(company.id, contact);
     }
   }
 
-  const lastContactAtByCompanyId = await collectCompanyLastContactAt(
-    client,
-    [...contactByCompanyId.keys()],
-  );
   const companyUpserts: RecordUpsert[] = [];
 
   for (const [companyId, contact] of contactByCompanyId) {
-    if (!lastContactAtByCompanyId.has(companyId)) {
-      continue;
-    }
-
     if (isNewer(contact.occurredAt, lastContactAtByCompanyId.get(companyId))) {
       companyUpserts.push({ id: companyId, ...buildData(contact) });
     }
@@ -213,17 +171,25 @@ export const updateRelatedLastContactForPeople = async (
 
   await upsertRecordsInBatches(client, 'createCompanies', companyUpserts);
 
-  const opportunityLinks = await collectOpportunityLinks(client, personIds);
+  const opportunitiesByPersonId = await resolveOpportunitiesByPersonId(
+    client,
+    stateByPersonId,
+    personIds,
+  );
   const opportunityUpserts: RecordUpsert[] = [];
 
-  for (const { opportunityId, pointOfContactId, lastContactAt } of opportunityLinks) {
-    const contact = contactByPersonId.get(pointOfContactId);
+  for (const [personId, opportunities] of opportunitiesByPersonId) {
+    const contact = contactByPersonId.get(personId);
 
-    if (!contact || !isNewer(contact.occurredAt, lastContactAt)) {
+    if (!contact) {
       continue;
     }
 
-    opportunityUpserts.push({ id: opportunityId, ...buildData(contact) });
+    for (const { id, lastContactAt } of opportunities) {
+      if (isNewer(contact.occurredAt, lastContactAt)) {
+        opportunityUpserts.push({ id, ...buildData(contact) });
+      }
+    }
   }
 
   await upsertRecordsInBatches(

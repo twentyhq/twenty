@@ -11,7 +11,7 @@ import {
   applyMeetingInteractions,
   type CalendarEventParticipantLink,
 } from 'src/utils/apply-meeting-interactions';
-import { scheduleMeetingSlotJobs } from 'src/utils/schedule-meeting-slot-jobs';
+import { scheduleMeetings } from 'src/utils/schedule-meetings';
 
 type CalendarEventParticipantUpdate = {
   personId?: string | null;
@@ -46,7 +46,7 @@ const handler = async (
     [...linkByKey.values()],
   );
 
-  await scheduleMeetingSlotJobs(upcomingMeetingStartsAts);
+  await scheduleMeetings(upcomingMeetingStartsAts);
 };
 
 export default defineLogicFunction({

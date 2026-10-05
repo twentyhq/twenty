@@ -16,14 +16,23 @@ import {
 } from 'src/constants/universal-identifiers';
 import onCalendarInteraction from 'src/logic-functions/on-calendar-interaction';
 import onCompanyCreated from 'src/logic-functions/on-company-created';
+import onMeetingHorizonReached from 'src/logic-functions/on-meeting-horizon-reached';
+import onMeetingSlotReached from 'src/logic-functions/on-meeting-slot-reached';
 import onEmailInteraction from 'src/logic-functions/on-email-interaction';
 import onOpportunityCreated from 'src/logic-functions/on-opportunity-created';
 import onOpportunityUpdated from 'src/logic-functions/on-opportunity-updated';
 import onPersonUpdated from 'src/logic-functions/on-person-updated';
+import { buildPersonAggregates } from 'src/utils/person-last-contact-aggregation';
 
 const calendarHandler = onCalendarInteraction.config.handler as (
   batch: unknown,
 ) => Promise<void>;
+const meetingSlotHandler = onMeetingSlotReached.config.handler as (payload: {
+  slotStart: string;
+  slotEnd: string;
+}) => Promise<void>;
+const meetingHorizonHandler = onMeetingHorizonReached.config
+  .handler as () => Promise<void>;
 const emailHandler = onEmailInteraction.config.handler as (
   batch: unknown,
 ) => Promise<void>;
@@ -667,6 +676,62 @@ describe('last contact handlers', () => {
     expect(asTime(payload.slotEnd)).toBeGreaterThan(asTime(startsAt)!);
   });
 
+  it('should apply the meetings of a slot once it is reached', async () => {
+    const startsAt = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const calendarEventId = await createCalendarEvent(client, { startsAt });
+    createdCalendarEventIds.push(calendarEventId);
+    const participantId = await createCalendarEventParticipant(client, {
+      calendarEventId,
+      personId,
+    });
+    createdParticipantIds.push(participantId);
+
+    await meetingSlotHandler({
+      slotStart: new Date(Date.parse(startsAt) - 60 * 1000).toISOString(),
+      slotEnd: new Date(Date.parse(startsAt) + 60 * 1000).toISOString(),
+    });
+
+    const lastContact = await getPersonLastContact(client, personId);
+    expect(asTime(lastContact.lastContactAt)).toBe(asTime(startsAt));
+    expect(lastContact.lastContactItemCalendarEventId).toBe(calendarEventId);
+  });
+
+  it('should schedule upcoming person meetings when the horizon is reached', async () => {
+    const startsAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const calendarEventId = await createCalendarEvent(client, { startsAt });
+    createdCalendarEventIds.push(calendarEventId);
+    const participantId = await createCalendarEventParticipant(client, {
+      calendarEventId,
+      personId,
+    });
+    createdParticipantIds.push(participantId);
+
+    enqueueJobsMock.mockClear();
+    enqueueJobsMock.mockResolvedValue({ enqueued: true });
+
+    await meetingHorizonHandler();
+
+    const scheduledSlots = enqueueJobsMock.mock.calls
+      .map(([input]) => input)
+      .filter(
+        (input) =>
+          input.logicFunctionUniversalIdentifier ===
+          MEETING_SLOT_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+      )
+      .map((input) => input.jobs[0].payload);
+    expect(
+      scheduledSlots.some(
+        ({ slotStart, slotEnd }) =>
+          asTime(slotStart)! <= asTime(startsAt)! &&
+          asTime(slotEnd)! > asTime(startsAt)!,
+      ),
+    ).toBe(true);
+  });
+
   it('should not set lastContactAt when the past calendar event is canceled', async () => {
     const startsAt = new Date(Date.now() - DAY_IN_MS).toISOString();
     const personId = await createPerson(client);
@@ -744,6 +809,36 @@ describe('last contact handlers', () => {
       lastEmailId: messageId,
       lastMeetingId: null,
     });
+  });
+
+  it('aggregates a person backfill from nested participants', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const receivedAt = new Date(Date.now() - 5 * DAY_IN_MS).toISOString();
+    const startsAt = new Date(Date.now() - 7 * DAY_IN_MS).toISOString();
+
+    const messageId = await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt,
+      direction: 'outbound',
+    });
+    const calendarEventId = await recordMeeting({
+      personId,
+      workspaceMemberId,
+      startsAt,
+    });
+
+    const aggregate = (await buildPersonAggregates(client, [personId])).get(
+      personId,
+    );
+
+    expect(aggregate?.lastEmail?.id).toBe(messageId);
+    expect(aggregate?.lastMeeting?.id).toBe(calendarEventId);
+    expect(aggregate?.lastContactById).toBe(workspaceMemberId);
+    expect(asTime(aggregate?.lastOutboundAt)).toBe(asTime(receivedAt));
+    expect(asTime(aggregate?.lastInboundAt)).toBe(asTime(startsAt));
   });
 
   it('keeps last contact writes off the person timeline', async () => {

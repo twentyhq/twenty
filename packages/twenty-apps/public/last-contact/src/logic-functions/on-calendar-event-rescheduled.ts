@@ -6,7 +6,7 @@ import { type DatabaseEventBatchPayload } from 'twenty-sdk/logic-function';
 
 import { BATCH_HANDLER_TIMEOUT_SECONDS } from 'src/constants/batch-handler-timeout-seconds';
 import { CALENDAR_EVENT_RESCHEDULED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { scheduleMeetingSlotJobs } from 'src/utils/schedule-meeting-slot-jobs';
+import { scheduleMeetings } from 'src/utils/schedule-meetings';
 
 type CalendarEventUpdate = {
   startsAt?: string | null;
@@ -26,7 +26,7 @@ const handler = async (
     }
   }
 
-  await scheduleMeetingSlotJobs(meetingStartsAts);
+  await scheduleMeetings(meetingStartsAts);
 };
 
 export default defineLogicFunction({
