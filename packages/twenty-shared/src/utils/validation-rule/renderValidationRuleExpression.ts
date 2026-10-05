@@ -1,6 +1,7 @@
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { isValidationRuleFieldSymbol } from '@/utils/validation-rule/isValidationRuleFieldSymbol';
+import { isValidationRuleReservedName } from '@/utils/validation-rule/isValidationRuleReservedName';
 import { mapValidationRuleExpressionPaths } from '@/utils/validation-rule/mapValidationRuleExpressionPaths';
 import { isDefined } from '@/utils/validation/isDefined';
 
@@ -51,8 +52,17 @@ export const renderValidationRuleExpression = ({
       });
 
       return [
-        rootField?.name ?? rootSegment,
-        targetField?.name ?? memberSegment,
+        isDefined(rootField) &&
+        !isValidationRuleReservedName({ name: rootField.name, isMember: false })
+          ? rootField.name
+          : rootSegment,
+        isDefined(targetField) &&
+        !isValidationRuleReservedName({
+          name: targetField.name,
+          isMember: true,
+        })
+          ? targetField.name
+          : memberSegment,
         ...remainingSegments,
       ]
         .filter(isDefined)

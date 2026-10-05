@@ -113,4 +113,29 @@ describe('renderValidationRuleExpression', () => {
       }),
     ).toBe('isDefined(amount) and now > "2026-01-01"');
   });
+  it('should keep the symbol of a field renamed to a reserved word, so the rendered text compiles back to the same rule', () => {
+    const compilation = compileOrThrow(SOURCE_EXPRESSION, FIELDS);
+    const fieldsWithReservedNames = buildFields({
+      amountName: 'now',
+      companyName: 'company',
+      industryName: 'and',
+    });
+
+    const rendered = renderValidationRuleExpression({
+      expression: compilation.expression,
+      bindings: compilation.bindings,
+      fields: fieldsWithReservedNames,
+    });
+
+    expect(rendered).toBe(
+      'company.$f2 != "SaaS" or not isEmpty($f3.amountMicros)',
+    );
+    expect(
+      compileValidationRuleExpression({
+        expression: rendered,
+        bindings: compilation.bindings,
+        fields: fieldsWithReservedNames,
+      }),
+    ).toEqual(compilation);
+  });
 });

@@ -20,14 +20,16 @@ const resolveFieldSegment = ({
   segment,
   candidateFields,
   bindings,
+  acceptsFieldNames,
   unknownFieldErrorMessage,
 }: {
   segment: string;
   candidateFields: ValidationRuleFieldDescriptor[];
   bindings: ValidationRuleBindings;
+  acceptsFieldNames: boolean;
   unknownFieldErrorMessage: string;
 }): ResolveFieldSegmentResult => {
-  if (!isValidationRuleFieldSymbol(segment)) {
+  if (acceptsFieldNames && !isValidationRuleFieldSymbol(segment)) {
     const field = candidateFields.find(
       (candidate) => candidate.name === segment,
     );
@@ -90,10 +92,12 @@ export const resolveValidationRuleIdentifierPath = ({
   path,
   fields,
   bindings,
+  acceptsFieldNames,
 }: {
   path: string;
   fields: ValidationRuleFieldDescriptor[];
   bindings: ValidationRuleBindings;
+  acceptsFieldNames: boolean;
 }): ResolveValidationRuleIdentifierPathResult => {
   const [rootSegment, ...memberSegments] = path.split('.');
 
@@ -111,6 +115,7 @@ export const resolveValidationRuleIdentifierPath = ({
     segment: rootSegment,
     candidateFields: fields,
     bindings,
+    acceptsFieldNames,
     unknownFieldErrorMessage: `Unknown field "${rootSegment}"`,
   });
 
@@ -173,6 +178,7 @@ export const resolveValidationRuleIdentifierPath = ({
     segment: targetFieldSegment,
     candidateFields: rootField.relationTargetFields,
     bindings,
+    acceptsFieldNames,
     unknownFieldErrorMessage: `Unknown field "${targetFieldSegment}" on "${rootField.name}"`,
   });
 

@@ -28,6 +28,7 @@ export const getValidationRuleReadFieldPaths = ({
       path,
       fields,
       bindings,
+      acceptsFieldNames: false,
     });
 
     if (!resolution.isResolved || resolution.resolvedPath.type === 'now') {

@@ -57,6 +57,7 @@ describe('convertValidationRuleToFieldSymbols', () => {
         $f4: 'amount-universal-identifier',
         $f5: 'close-date-universal-identifier',
       },
+      hasUnconvertedFields: false,
     });
   });
 
@@ -78,6 +79,7 @@ describe('convertValidationRuleToFieldSymbols', () => {
         $f2: 'company-name-universal-identifier',
         $f3: 'parent-company-universal-identifier',
       },
+      hasUnconvertedFields: false,
     });
   });
 
@@ -105,8 +107,10 @@ describe('convertValidationRuleToFieldSymbols', () => {
     ).toEqual({
       expression: 'isNonEmptyString($f1)',
       bindings: { $f1: 'deleted-field-universal-identifier' },
+      hasUnconvertedFields: false,
     });
   });
+
   it('should produce what compiling the name-based expression gives today', () => {
     const expression =
       'stage != "WON" or (company.employees > 10 and not isEmpty(amount))';
@@ -121,8 +125,29 @@ describe('convertValidationRuleToFieldSymbols', () => {
       },
     });
 
+    expect(convertedRule?.hasUnconvertedFields).toBe(false);
     expect(
       compileValidationRuleExpression({ expression, fields: OPPORTUNITY_FIELDS }),
-    ).toEqual({ isValid: true, ...convertedRule });
+    ).toEqual({
+      isValid: true,
+      expression: convertedRule?.expression,
+      bindings: convertedRule?.bindings,
+    });
+  });
+
+  it('should flag a related field read through parentheses, which it cannot bind to a symbol', () => {
+    expect(
+      convertValidationRuleToFieldSymbols({
+        expression: '(company).employees > 10',
+        bindings: {
+          company: 'company-universal-identifier',
+          'company.employees': 'employees-universal-identifier',
+        },
+      }),
+    ).toEqual({
+      expression: '($f1).employees > 10',
+      bindings: { $f1: 'company-universal-identifier' },
+      hasUnconvertedFields: true,
+    });
   });
 });

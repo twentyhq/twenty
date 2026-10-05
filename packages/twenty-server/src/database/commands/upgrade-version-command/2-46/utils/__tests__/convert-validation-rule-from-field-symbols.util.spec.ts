@@ -29,7 +29,8 @@ describe('convertValidationRuleFromFieldSymbols', () => {
 
     expect(
       convertValidationRuleFromFieldSymbols({
-        ...convertedRule,
+        expression: convertedRule.expression,
+        bindings: convertedRule.bindings,
         fieldNameByUniversalIdentifier: FIELD_NAME_BY_UNIVERSAL_IDENTIFIER,
       }),
     ).toEqual(LEGACY_RULE);

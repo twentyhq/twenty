@@ -72,14 +72,20 @@ const FIELDS: ValidationRuleFieldDescriptor[] = [
   },
 ];
 
-const evaluate = (expression: string, record: Record<string, unknown>) =>
-  evaluateValidationRuleExpression({
+const evaluate = (expression: string, record: Record<string, unknown>) => {
+  const compilation = compileValidationRuleExpression({
     expression,
-    bindings: {},
+    fields: FIELDS,
+  });
+
+  return evaluateValidationRuleExpression({
+    expression: compilation.isValid ? compilation.expression : expression,
+    bindings: compilation.isValid ? compilation.bindings : {},
     record,
     fields: FIELDS,
     now: NOW,
   });
+};
 
 const WON_NEEDS_AMOUNT = 'stage != "WON" or not isEmpty(amount)';
 
@@ -299,7 +305,15 @@ describe('evaluateValidationRuleExpression', () => {
   });
 
   it('should report an expression that does not return a boolean', () => {
-    expect(evaluate('stage', { stage: 'WON' })).toEqual({
+    expect(
+      evaluateValidationRuleExpression({
+        expression: '$f1',
+        bindings: { $f1: 'opportunity-stage' },
+        record: { stage: 'WON' },
+        fields: FIELDS,
+        now: NOW,
+      }),
+    ).toEqual({
       status: 'errored',
       errorMessage: 'Expression did not return true or false',
     });

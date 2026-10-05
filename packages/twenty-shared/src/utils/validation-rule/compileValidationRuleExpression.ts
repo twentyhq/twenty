@@ -81,6 +81,7 @@ export const compileValidationRuleExpression = ({
       path,
       fields,
       bindings,
+      acceptsFieldNames: true,
     });
 
     if (!resolution.isResolved) {

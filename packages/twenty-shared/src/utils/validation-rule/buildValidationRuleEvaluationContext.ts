@@ -80,7 +80,7 @@ const descendIntoContainer = (
 };
 
 type EvaluationLevel = {
-  segment: string;
+  contextKey: string;
   recordKey: string;
   field: ValidationRuleFieldDescriptor | undefined;
 };
@@ -95,24 +95,33 @@ const computeEvaluationLevels = ({
     { type: 'field' }
   >;
 }): EvaluationLevel[] => {
+  const [rootSegment, targetFieldSegment] = segments;
   const { rootField, targetField, subfieldName } = resolvedPath;
 
-  return [
-    { segment: segments[0], recordKey: rootField.name, field: rootField },
-    isDefined(targetField)
-      ? {
-          segment: segments[1],
-          recordKey: targetField.name,
-          field: targetField,
-        }
-      : undefined,
-    isDefined(subfieldName)
-      ? { segment: subfieldName, recordKey: subfieldName, field: undefined }
-      : undefined,
-  ].filter(
-    (level): level is EvaluationLevel =>
-      isDefined(level) && isDefined(level.segment),
-  );
+  if (!isDefined(rootSegment)) {
+    return [];
+  }
+
+  const rootLevel: EvaluationLevel = {
+    contextKey: rootSegment,
+    recordKey: rootField.name,
+    field: rootField,
+  };
+  const targetFieldLevels: EvaluationLevel[] =
+    isDefined(targetField) && isDefined(targetFieldSegment)
+      ? [
+          {
+            contextKey: targetFieldSegment,
+            recordKey: targetField.name,
+            field: targetField,
+          },
+        ]
+      : [];
+  const subfieldLevels: EvaluationLevel[] = isDefined(subfieldName)
+    ? [{ contextKey: subfieldName, recordKey: subfieldName, field: undefined }]
+    : [];
+
+  return [rootLevel, ...targetFieldLevels, ...subfieldLevels];
 };
 
 export const buildValidationRuleEvaluationContext = ({
@@ -140,14 +149,14 @@ export const buildValidationRuleEvaluationContext = ({
       continue;
     }
 
-    if (!(rootLevel.segment in context)) {
+    if (!(rootLevel.contextKey in context)) {
       const rootValue = normalizeLeafValue(
         record[rootLevel.recordKey],
         rootLevel.field,
       );
 
       registerCompositeValue(rootValue, rootLevel.field);
-      context[rootLevel.segment] = rootValue;
+      context[rootLevel.contextKey] = rootValue;
     }
 
     let container: EvaluationContainer | null = context;
@@ -157,17 +166,17 @@ export const buildValidationRuleEvaluationContext = ({
         break;
       }
 
-      if (index > 0 && !(level.segment in container)) {
-        container[level.segment] = container[level.recordKey];
-      }
+      if (index > 0) {
+        if (!(level.contextKey in container)) {
+          container[level.contextKey] = container[level.recordKey];
+        }
 
-      if (index === 1) {
-        registerCompositeValue(container[level.segment], level.field);
+        registerCompositeValue(container[level.contextKey], level.field);
       }
 
       if (index === levels.length - 1) {
-        container[level.segment] = normalizeLeafValue(
-          container[level.segment],
+        container[level.contextKey] = normalizeLeafValue(
+          container[level.contextKey],
           level.field,
         );
         break;
@@ -175,7 +184,7 @@ export const buildValidationRuleEvaluationContext = ({
 
       container = descendIntoContainer(
         container,
-        level.segment,
+        level.contextKey,
         ownedContainers,
       );
     }

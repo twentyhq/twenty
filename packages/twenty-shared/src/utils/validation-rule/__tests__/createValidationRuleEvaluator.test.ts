@@ -54,4 +54,16 @@ describe('createValidationRuleEvaluator', () => {
       errorMessage: '"$f1" refers to a field that was deleted or deactivated',
     });
   });
+  it('should not read fields by name, only through bound symbols', () => {
+    const evaluate = createValidationRuleEvaluator({
+      expression: 'employees > 10',
+      bindings: {},
+      fields: FIELDS,
+    });
+
+    expect(evaluate({ record: { employees: 50 }, now: NOW })).toEqual({
+      status: 'errored',
+      errorMessage: '"employees" is not bound to a field',
+    });
+  });
 });

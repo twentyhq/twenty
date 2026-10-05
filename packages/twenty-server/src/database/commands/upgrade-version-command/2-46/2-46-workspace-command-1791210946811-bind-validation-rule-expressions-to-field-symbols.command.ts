@@ -6,16 +6,16 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { convertValidationRuleFromFieldSymbols } from 'src/database/commands/upgrade-version-command/2-46/utils/convert-validation-rule-from-field-symbols.util';
+import { type ValidationRuleExpressionAndBindings } from 'src/database/commands/upgrade-version-command/2-46/types/validation-rule-expression-and-bindings.type';
 import { convertValidationRuleToFieldSymbols } from 'src/database/commands/upgrade-version-command/2-46/utils/convert-validation-rule-to-field-symbols.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-type ValidationRuleExpressionAndBindings = {
-  expression: string;
-  bindings: Record<string, string>;
-};
-
 type ValidationRuleRow = ValidationRuleExpressionAndBindings & { id: string };
+
+type ConvertedValidationRule = ValidationRuleExpressionAndBindings & {
+  shouldDisable: boolean;
+};
 
 @RegisteredWorkspaceCommand('2.46.0', 1791210946811)
 @Command({
@@ -48,7 +48,18 @@ export class BindValidationRuleExpressionsToFieldSymbolsCommand extends Provisio
       dataSource,
       workspaceId,
       isDryRun: options.dryRun ?? false,
-      convert: convertValidationRuleToFieldSymbols,
+      convert: (validationRule) => {
+        const convertedValidationRule =
+          convertValidationRuleToFieldSymbols(validationRule);
+
+        return isDefined(convertedValidationRule)
+          ? {
+              expression: convertedValidationRule.expression,
+              bindings: convertedValidationRule.bindings,
+              shouldDisable: convertedValidationRule.hasUnconvertedFields,
+            }
+          : null;
+      },
     });
 
     this.logger.log(
@@ -81,11 +92,16 @@ export class BindValidationRuleExpressionsToFieldSymbolsCommand extends Provisio
       dataSource,
       workspaceId,
       isDryRun: options.dryRun ?? false,
-      convert: (validationRule) =>
-        convertValidationRuleFromFieldSymbols({
+      convert: (validationRule) => {
+        const convertedValidationRule = convertValidationRuleFromFieldSymbols({
           ...validationRule,
           fieldNameByUniversalIdentifier,
-        }),
+        });
+
+        return isDefined(convertedValidationRule)
+          ? { ...convertedValidationRule, shouldDisable: false }
+          : null;
+      },
     });
 
     this.logger.log(
@@ -104,7 +120,7 @@ export class BindValidationRuleExpressionsToFieldSymbolsCommand extends Provisio
     isDryRun: boolean;
     convert: (
       validationRule: ValidationRuleExpressionAndBindings,
-    ) => ValidationRuleExpressionAndBindings | null;
+    ) => ConvertedValidationRule | null;
   }): Promise<number> {
     const validationRuleRows: ValidationRuleRow[] = await dataSource.query(
       `SELECT id, expression, bindings FROM core."validationRule" WHERE "workspaceId" = $1`,
@@ -131,10 +147,15 @@ export class BindValidationRuleExpressionsToFieldSymbolsCommand extends Provisio
     await queryRunner.startTransaction();
 
     try {
-      for (const { id, expression, bindings } of convertedValidationRules) {
+      for (const {
+        id,
+        expression,
+        bindings,
+        shouldDisable,
+      } of convertedValidationRules) {
         await queryRunner.query(
-          `UPDATE core."validationRule" SET expression = $1, bindings = $2::jsonb WHERE id = $3 AND "workspaceId" = $4`,
-          [expression, JSON.stringify(bindings), id, workspaceId],
+          `UPDATE core."validationRule" SET expression = $1, bindings = $2::jsonb, "isActive" = "isActive" AND NOT $3 WHERE id = $4 AND "workspaceId" = $5`,
+          [expression, JSON.stringify(bindings), shouldDisable, id, workspaceId],
         );
       }
 

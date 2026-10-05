@@ -42,6 +42,7 @@ export const createValidationRuleEvaluator = ({
       path,
       fields,
       bindings,
+      acceptsFieldNames: false,
     });
 
     if (!resolution.isResolved) {

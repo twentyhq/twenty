@@ -212,27 +212,31 @@ export class ValidationRuleService {
 
     const isActive =
       input.update.isActive ?? existingFlatValidationRule.isActive;
-    const isExpressionChanged =
-      isDefined(input.update.expression) &&
-      (input.update.expression !== existingFlatValidationRule.expression ||
-        isDefined(input.update.bindings));
-    const shouldCompile =
-      isExpressionChanged || (isActive && !existingFlatValidationRule.isActive);
-
-    const compiledExpression = shouldCompile
-      ? compileValidationRuleExpressionOrThrow({
-          expression:
-            input.update.expression ?? existingFlatValidationRule.expression,
+    const sourceExpression = isDefined(input.update.expression)
+      ? {
+          expression: input.update.expression,
           bindings:
             input.update.bindings ?? existingFlatValidationRule.bindings,
-          objectMetadataId: existingFlatValidationRule.objectMetadataId,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        })
+        }
       : {
           expression: existingFlatValidationRule.expression,
           bindings: existingFlatValidationRule.bindings,
         };
+    const isSourceExpressionStored =
+      sourceExpression.expression === existingFlatValidationRule.expression &&
+      sourceExpression.bindings === existingFlatValidationRule.bindings;
+    const shouldCompile =
+      !isSourceExpressionStored ||
+      (isActive && !existingFlatValidationRule.isActive);
+
+    const compiledExpression = shouldCompile
+      ? compileValidationRuleExpressionOrThrow({
+          ...sourceExpression,
+          objectMetadataId: existingFlatValidationRule.objectMetadataId,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        })
+      : sourceExpression;
 
     const flatValidationRuleToUpdate =
       fromUpdateValidationRuleInputToFlatValidationRuleToUpdate({

@@ -45,6 +45,7 @@ describe('buildValidationRuleEditorFields', () => {
           path,
           fields: descriptors,
           bindings: {},
+          acceptsFieldNames: true,
         }).isResolved,
     );
 
