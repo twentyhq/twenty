@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
+import { isUndefined } from '@sniptt/guards';
 import {
   fieldMetadataDefaultValueFunctionName,
   type ValidationRuleFieldDescriptor,
@@ -24,7 +25,7 @@ const FUNCTION_DEFAULT_VALUES = Object.values(
 const isServerFilledField = (
   fieldMetadataItem: DraftFieldMetadataItem,
 ): boolean =>
-  fieldMetadataItem.isSystem === true ||
+  fieldMetadataItem.isSystem ||
   FUNCTION_DEFAULT_VALUES.includes(fieldMetadataItem.defaultValue);
 
 const withStaticDefaultValues = ({
@@ -46,7 +47,11 @@ const withStaticDefaultValues = ({
         stripSimpleQuotesFromStringRecursive(fieldMetadataItem.defaultValue),
       ]),
   ),
-  ...draftRecord,
+  ...Object.fromEntries(
+    Object.entries(draftRecord).filter(
+      ([, draftValue]) => !isUndefined(draftValue),
+    ),
+  ),
 });
 
 const canEvaluateOnDraft = ({

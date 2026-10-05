@@ -189,11 +189,21 @@ describe('computeDraftValidationRuleViolations', () => {
     ).toEqual([]);
   });
 
+  it('should keep the static default value when the draft value is undefined', () => {
+    expect(
+      compute(
+        { tagline: undefined },
+        [TAGLINE_RULE],
+        [{ name: 'tagline', isSystem: false, defaultValue: "'Our motto'" }],
+      ),
+    ).toEqual([]);
+  });
+
   it('should leave a rule on an absent system field to the server', () => {
     expect(
       compute(
         {},
-        [{ ...AMOUNT_RULE, expression: 'not isDefined(createdAt)' }],
+        [{ ...AMOUNT_RULE, expression: 'isDefined(createdAt)' }],
         [{ name: 'createdAt', isSystem: true, defaultValue: 'now' }],
       ),
     ).toEqual([]);
