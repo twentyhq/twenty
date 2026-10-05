@@ -56,9 +56,9 @@ export class ConvertWorkflowEmailBodiesToEmailDocumentsCommand extends Provision
     const workspaceVersionTable = `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`;
     const queryRunner = dataSource.createQueryRunner();
 
-    await queryRunner.connect();
-
     try {
+      await queryRunner.connect();
+
       const convertedCoreVersions = convertEmailBodiesInRows(
         await queryRunner.query(
           `SELECT id, steps FROM core."workflowVersion" WHERE "workspaceId" = $1`,
