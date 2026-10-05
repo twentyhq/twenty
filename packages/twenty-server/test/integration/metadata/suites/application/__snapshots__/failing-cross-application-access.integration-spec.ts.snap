@@ -258,6 +258,18 @@ exports[`Application token access to another application should fail with a user
 }
 `;
 
+exports[`Application token access to another application should fail with a user-bound application token should refuse updateOneAgent on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
 exports[`Application token access to another application should fail with a user-bound application token should refuse updateOneLogicFunction on another application 1`] = `
 {
   "extensions": {
@@ -545,6 +557,18 @@ exports[`Application token access to another application should fail with an app
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse updateOneAgent on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
 }
 `;
 

@@ -7,6 +7,7 @@ import { findManyApplicationRegistrations } from 'test/integration/metadata/suit
 import { findOneApplicationRegistration } from 'test/integration/metadata/suites/application-registration/utils/find-one-application-registration.util';
 import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 import { findOneAgent } from 'test/integration/metadata/suites/agent/utils/find-one-agent.util';
+import { updateOneAgent } from 'test/integration/metadata/suites/agent/utils/update-one-agent.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { completeApplicationFileUploads } from 'test/integration/metadata/suites/application/utils/complete-application-file-uploads.util';
@@ -24,6 +25,7 @@ import { upgradeApplication } from 'test/integration/metadata/suites/application
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import {
   type ApplicationWithResources,
+  DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS,
   setupApplicationWithResources,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
 import { findApplicationConnectedAccounts } from 'test/integration/metadata/suites/connected-account/utils/find-application-connected-accounts.util';
@@ -40,6 +42,7 @@ import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphq
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
@@ -232,6 +235,28 @@ const singleTargetEndpointTestCases: EachTestingContext<EndpointTestContext>[] =
         requestOtherApplication: ({ otherApplication, token }) =>
           findOneAgent({
             input: { id: otherApplication.agentId },
+            token,
+            expectToFail: true,
+          }),
+      },
+    },
+    {
+      title: 'updateOneAgent',
+      context: {
+        requestOtherApplication: ({ otherApplication, token }) =>
+          updateOneAgent({
+            input: {
+              id: otherApplication.agentId,
+              triggers: [
+                {
+                  id: '0d2b1a8c-77a4-4e2e-8f0c-3a8e9f6b4c22',
+                  type: 'CRON',
+                  isActive: true,
+                  instructions: null,
+                  settings: { pattern: '* * * * *' },
+                },
+              ],
+            },
             token,
             expectToFail: true,
           }),
@@ -504,6 +529,10 @@ describe('Application token access to another application should fail', () => {
   beforeAll(async () => {
     const callingApplication = await setupApplicationWithResources({
       name: 'Calling Application',
+      permissionFlagUniversalIdentifiers: [
+        ...DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS,
+        SystemPermissionFlag.AI_SETTINGS,
+      ],
     });
     const otherApplication = await setupApplicationWithResources({
       name: 'Other Application',
