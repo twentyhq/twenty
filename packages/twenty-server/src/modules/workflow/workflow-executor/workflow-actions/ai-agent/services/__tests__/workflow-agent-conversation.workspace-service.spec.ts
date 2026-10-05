@@ -26,14 +26,12 @@ const buildService = ({
   const messagePartRepository = { update: jest.fn() };
   const messageRepository = { find: jest.fn().mockResolvedValue([]) };
   const agentInboxService = {
-    openThread: jest
-      .fn()
-      .mockImplementation(({ workspaceMemberId }) =>
-        Promise.resolve({
-          thread: { id: `thread-for-${workspaceMemberId ?? 'nobody'}` },
-          isCreated,
-        }),
-      ),
+    openThread: jest.fn().mockImplementation(({ workspaceMemberId }) =>
+      Promise.resolve({
+        thread: { id: `thread-for-${workspaceMemberId ?? 'nobody'}` },
+        isCreated,
+      }),
+    ),
   };
   const conversationReaderService = {
     loadMessages: jest.fn().mockResolvedValue(PRIOR_MESSAGES),
