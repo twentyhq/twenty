@@ -29,7 +29,7 @@ const getUserExceptionUserFriendlyMessage = (code: UserExceptionCode) => {
   }
 };
 const USER_EXCEPTION_CATEGORY_BY_CODE = {
-  [UserExceptionCode.USER_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [UserExceptionCode.USER_NOT_FOUND]: 'NOT_FOUND',
   [UserExceptionCode.EMAIL_ALREADY_IN_USE]: 'INTERNAL_SERVER_ERROR',
   [UserExceptionCode.EMAIL_UNCHANGED]: 'INTERNAL_SERVER_ERROR',
   [UserExceptionCode.EMAIL_UPDATE_RESTRICTED_TO_SINGLE_WORKSPACE]:

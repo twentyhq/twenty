@@ -52,6 +52,7 @@ export class BaseGraphQLError extends GraphQLError {
   readonly positions: ReadonlyArray<number> | undefined;
   readonly nodes: ReadonlyArray<ASTNode> | undefined;
   public originalError: Error | undefined;
+  declare readonly sourceException?: CustomException;
 
   // oxlint-disable-next-line typescript/no-explicit-any
   [key: string]: any;
@@ -65,6 +66,9 @@ export class BaseGraphQLError extends GraphQLError {
       const exception = exceptionOrMessage;
 
       super(exception.message);
+
+      // Non-enumerable so it is never serialized, and not originalError so Yoga does not mask it
+      Object.defineProperty(this, 'sourceException', { value: exception });
 
       this.extensions = {
         subCode: exception.code,

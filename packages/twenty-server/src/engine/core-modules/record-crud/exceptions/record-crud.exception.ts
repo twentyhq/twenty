@@ -46,7 +46,7 @@ const getRecordCrudExceptionUserFriendlyMessage = (
   }
 };
 const RECORD_CRUD_EXCEPTION_CATEGORY_BY_CODE = {
-  [RecordCrudExceptionCode.INVALID_REQUEST]: 'INTERNAL_SERVER_ERROR',
+  [RecordCrudExceptionCode.INVALID_REQUEST]: 'BAD_USER_INPUT',
   [RecordCrudExceptionCode.WORKSPACE_ID_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
   [RecordCrudExceptionCode.OBJECT_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
   [RecordCrudExceptionCode.RECORD_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',

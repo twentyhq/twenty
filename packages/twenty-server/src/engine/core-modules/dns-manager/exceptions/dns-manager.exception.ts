@@ -33,8 +33,7 @@ export const DnsManagerExceptionCode = appendCommonExceptionCode({
 } as const);
 const DNS_MANAGER_EXCEPTION_CATEGORY_BY_CODE = {
   [DnsManagerExceptionCode.INTERNAL_SERVER_ERROR]: 'INTERNAL_SERVER_ERROR',
-  [DnsManagerExceptionCode.HOSTNAME_ALREADY_REGISTERED]:
-    'INTERNAL_SERVER_ERROR',
+  [DnsManagerExceptionCode.HOSTNAME_ALREADY_REGISTERED]: 'CONFLICT',
   [DnsManagerExceptionCode.HOSTNAME_NOT_REGISTERED]: 'INTERNAL_SERVER_ERROR',
   [DnsManagerExceptionCode.INVALID_INPUT_DATA]: 'INTERNAL_SERVER_ERROR',
   [DnsManagerExceptionCode.CLOUDFLARE_CLIENT_NOT_INITIALIZED]:

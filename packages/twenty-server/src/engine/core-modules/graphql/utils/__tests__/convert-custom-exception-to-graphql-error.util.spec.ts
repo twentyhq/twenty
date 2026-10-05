@@ -50,4 +50,15 @@ describe('convertCustomExceptionToGraphQLError', () => {
       exception.userFriendlyMessage,
     );
   });
+
+  it('keeps the source exception for Sentry without serializing it', () => {
+    const exception = buildException('INTERNAL_SERVER_ERROR');
+
+    const graphqlError = convertCustomExceptionToGraphQLError(exception);
+
+    expect(graphqlError.sourceException).toBe(exception);
+    expect(graphqlError.originalError).toBeUndefined();
+    expect(JSON.stringify(graphqlError)).not.toContain('sourceException');
+    expect({ ...graphqlError }).not.toHaveProperty('sourceException');
+  });
 });

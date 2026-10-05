@@ -28,7 +28,7 @@ const getJwtKeyManagerExceptionUserFriendlyMessage = (
 const JWT_KEY_MANAGER_EXCEPTION_CATEGORY_BY_CODE = {
   [JwtKeyManagerExceptionCode.INTERNAL_SERVER_ERROR]: 'INTERNAL_SERVER_ERROR',
   [JwtKeyManagerExceptionCode.INVALID_PRIVATE_KEY]: 'INTERNAL_SERVER_ERROR',
-  [JwtKeyManagerExceptionCode.SIGNING_KEY_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [JwtKeyManagerExceptionCode.SIGNING_KEY_NOT_FOUND]: 'NOT_FOUND',
 } as const satisfies Record<
   keyof typeof JwtKeyManagerExceptionCode,
   ExceptionCategory

@@ -29,7 +29,7 @@ export class UserWorkspaceException extends CustomException<UserWorkspaceExcepti
       userFriendlyMessage:
         userFriendlyMessage ??
         getUserWorkspaceExceptionUserFriendlyMessage(code),
-      category: 'INTERNAL_SERVER_ERROR',
+      category: 'UNAUTHENTICATED',
     });
   }
 }

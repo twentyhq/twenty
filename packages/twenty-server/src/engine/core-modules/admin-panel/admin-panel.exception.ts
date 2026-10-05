@@ -26,7 +26,7 @@ const getAdminPanelExceptionUserFriendlyMessage = (
 };
 const ADMIN_PANEL_EXCEPTION_CATEGORY_BY_CODE = {
   [AdminPanelExceptionCode.INVALID_MAINTENANCE_MODE_TIME_RANGE]:
-    'INTERNAL_SERVER_ERROR',
+    'BAD_USER_INPUT',
   [AdminPanelExceptionCode.INTERNAL_SERVER_ERROR]: 'INTERNAL_SERVER_ERROR',
 } as const satisfies Record<
   keyof typeof AdminPanelExceptionCode,

@@ -49,7 +49,7 @@ const getEmailingDomainDriverExceptionUserFriendlyMessage = (
   }
 };
 const EMAILING_DOMAIN_DRIVER_EXCEPTION_CATEGORY_BY_CODE = {
-  [EmailingDomainDriverExceptionCode.NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [EmailingDomainDriverExceptionCode.NOT_FOUND]: 'NOT_FOUND',
   [EmailingDomainDriverExceptionCode.TEMPORARY_ERROR]: 'INTERNAL_SERVER_ERROR',
   [EmailingDomainDriverExceptionCode.INSUFFICIENT_PERMISSIONS]:
     'INTERNAL_SERVER_ERROR',

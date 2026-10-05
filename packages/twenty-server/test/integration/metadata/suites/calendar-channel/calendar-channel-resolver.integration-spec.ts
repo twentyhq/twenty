@@ -48,6 +48,24 @@ describe('calendarChannelResolver (e2e)', () => {
       expect(response.status).toBe(200);
       expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
+
+    it('should deny filtering by a nonexistent connectedAccountId', async () => {
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          query MyCalendarChannels($connectedAccountId: UUID) {
+            myCalendarChannels(connectedAccountId: $connectedAccountId) {
+              id
+            }
+          }
+        `,
+        variables: {
+          connectedAccountId: '20202020-0000-4000-8000-000000000000',
+        },
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+    });
   });
 
   describe('updateCalendarChannel', () => {

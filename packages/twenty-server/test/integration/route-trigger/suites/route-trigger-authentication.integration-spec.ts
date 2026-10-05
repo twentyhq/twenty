@@ -14,12 +14,8 @@ const ROLE_UNIVERSAL_IDENTIFIER = '4e1b6a52-7c1f-4b0e-9a55-27255a1c0002';
 const ROUTE_FUNCTION_UNIVERSAL_IDENTIFIER =
   '4e1b6a52-7c1f-4b0e-9a55-27255a1c0003';
 
-const ROUTE_FUNCTION_RESPONSE = { executed: true };
-
-const ROUTE_BUILT_HANDLER_CODE = `export const main = async () => (${JSON.stringify(
-  ROUTE_FUNCTION_RESPONSE,
-)});
-`;
+const ROUTE_BUILT_HANDLER_CODE =
+  'export const main = async () => ({ executed: true });\n';
 
 const authRequiredRouteManifest: LogicFunctionManifest = {
   universalIdentifier: ROUTE_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -99,7 +95,7 @@ describe('RouteTrigger authentication (integration)', () => {
       .set('Authorization', `Bearer ${applicationAccessToken}`);
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual(ROUTE_FUNCTION_RESPONSE);
+    expect(response.body).toEqual({ executed: true });
   }, 60000);
 
   it('rejects an auth-required route with 401 when no credentials are sent', async () => {

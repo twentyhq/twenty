@@ -12,7 +12,7 @@ export enum FilesFieldExceptionCode {
 }
 const FILES_FIELD_EXCEPTION_CATEGORY_BY_CODE = {
   [FilesFieldExceptionCode.FILE_DELETION_FAILED]: 'INTERNAL_SERVER_ERROR',
-  [FilesFieldExceptionCode.BAD_REQUEST]: 'INTERNAL_SERVER_ERROR',
+  [FilesFieldExceptionCode.BAD_REQUEST]: 'BAD_USER_INPUT',
   [FilesFieldExceptionCode.TEMPORARY_FILE_NOT_ALLOWED]: 'INTERNAL_SERVER_ERROR',
 } as const satisfies Record<FilesFieldExceptionCode, ExceptionCategory>;
 

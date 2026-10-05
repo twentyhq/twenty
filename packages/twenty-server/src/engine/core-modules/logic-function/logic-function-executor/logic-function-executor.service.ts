@@ -96,10 +96,8 @@ export enum LogicFunctionExecutionExceptionCode {
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
 }
 const LOGIC_FUNCTION_EXECUTION_EXCEPTION_CATEGORY_BY_CODE = {
-  [LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND]:
-    'INTERNAL_SERVER_ERROR',
-  [LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED]:
-    'INTERNAL_SERVER_ERROR',
+  [LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND]: 'NOT_FOUND',
+  [LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED]: 'RATE_LIMITED',
 } as const satisfies Record<
   LogicFunctionExecutionExceptionCode,
   ExceptionCategory

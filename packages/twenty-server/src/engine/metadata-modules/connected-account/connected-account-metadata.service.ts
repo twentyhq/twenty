@@ -207,9 +207,11 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<ConnectedAccountEntity> {
-    const connectedAccount = await this.findByIdOrThrow({ id, workspaceId });
+    const connectedAccount = await this.findById({ id, workspaceId });
 
+    // A missing account answers like a forbidden one so ids cannot be probed
     if (
+      !isDefined(connectedAccount) ||
       !isConnectedAccountUsableByCaller({ connectedAccount, userWorkspaceId })
     ) {
       throw new ConnectedAccountException(

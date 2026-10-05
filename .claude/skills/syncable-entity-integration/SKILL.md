@@ -286,7 +286,7 @@ export const fromFlatMyEntityToMyEntityDto = (
 
 ## Exceptions
 
-Resolvers and controllers need no exception filter or interceptor:
+Resolvers and controllers need no exception filter or interceptor for standard exceptions. Keep a dedicated filter only when the response itself is special (the OAuth redirect on `OAUTH_ACCESS_DENIED`, the `Content-Range` header on file range errors):
 
 1. `CustomException` subclasses (e.g. `FlatEntityMapsException`) → `CustomExceptionFilter` and the GraphQL error hook turn each code's category into a REST status or a GraphQL error
 2. `WorkspaceMigrationBuilderException` / `WorkspaceMigrationRunnerException` → `WorkspaceMigrationExceptionFilter` formats validation and runner errors with i18n

@@ -50,7 +50,7 @@ const EMAIL_VERIFICATION_EXCEPTION_CATEGORY_BY_CODE = {
   [EmailVerificationExceptionCode.EMAIL_MISSING]: 'BAD_USER_INPUT',
   [EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED]: 'BAD_USER_INPUT',
   [EmailVerificationExceptionCode.INVALID_EMAIL]: 'BAD_USER_INPUT',
-  [EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED]: 'FORBIDDEN',
+  [EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED]: 'RATE_LIMITED',
 } as const satisfies Record<EmailVerificationExceptionCode, ExceptionCategory>;
 
 export class EmailVerificationException extends CustomException<EmailVerificationExceptionCode> {

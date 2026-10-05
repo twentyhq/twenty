@@ -142,7 +142,17 @@ export class MessageChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageChannelEntity> {
-    const messageChannel = await this.findByIdOrThrow({ id, workspaceId });
+    const messageChannel = await this.repository.findOne({
+      where: { id, workspaceId },
+    });
+
+    // A missing channel answers like a forbidden one so ids cannot be probed
+    if (!isDefined(messageChannel)) {
+      throw new MessageChannelException(
+        `Message channel ${id} is not usable by user workspace ${userWorkspaceId}`,
+        MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
+      );
+    }
 
     await this.connectedAccountMetadataService.verifyUsableByCaller({
       id: messageChannel.connectedAccountId,

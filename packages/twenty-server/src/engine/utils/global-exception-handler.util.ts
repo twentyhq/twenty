@@ -71,11 +71,16 @@ export const shouldCaptureException = (
     return false;
   }
 
+  const sourceException =
+    exception instanceof BaseGraphQLError
+      ? (exception.sourceException ?? exception)
+      : exception;
+
   if (
-    exception instanceof CustomException &&
-    isDefined(exception.shouldBeCapturedBySentry)
+    sourceException instanceof CustomException &&
+    isDefined(sourceException.shouldBeCapturedBySentry)
   ) {
-    return exception.shouldBeCapturedBySentry;
+    return sourceException.shouldBeCapturedBySentry;
   }
 
   if (

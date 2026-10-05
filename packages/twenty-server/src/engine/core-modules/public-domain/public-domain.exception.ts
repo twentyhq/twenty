@@ -31,10 +31,9 @@ const getPublicDomainExceptionUserFriendlyMessage = (
   }
 };
 const PUBLIC_DOMAIN_EXCEPTION_CATEGORY_BY_CODE = {
-  [PublicDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED]:
-    'BAD_USER_INPUT',
+  [PublicDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED]: 'CONFLICT',
   [PublicDomainExceptionCode.DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN]:
-    'BAD_USER_INPUT',
+    'CONFLICT',
   [PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_FOUND]: 'NOT_FOUND',
   [PublicDomainExceptionCode.APPLICATION_NOT_FOUND]: 'NOT_FOUND',
 } as const satisfies Record<PublicDomainExceptionCode, ExceptionCategory>;

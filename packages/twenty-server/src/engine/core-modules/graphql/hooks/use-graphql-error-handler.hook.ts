@@ -178,7 +178,11 @@ export const useGraphQLErrorHandlerHook = <
 
             if (errorsToCapture.length > 0) {
               const eventIds = exceptionHandlerService.captureExceptions(
-                errorsToCapture,
+                errorsToCapture.map((error) =>
+                  error instanceof BaseGraphQLError
+                    ? (error.sourceException ?? error)
+                    : error,
+                ),
                 {
                   operation: {
                     name: opName,

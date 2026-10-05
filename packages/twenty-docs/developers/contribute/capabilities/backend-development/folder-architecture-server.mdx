@@ -34,7 +34,7 @@ See [custom decorators](https://docs.nestjs.com/custom-decorators) for more deta
 
 ## Filters
 
-Includes the global exception filters. Every `CustomException` declares a category for each of its codes, and these filters turn it into the REST status or the GraphQL error, so endpoints need no filter of their own.
+Includes the global exception filters. Every `CustomException` declares a category for each of its codes, and these filters turn it into the REST status or the GraphQL error, so endpoints need no filter of their own. Dedicated filters remain only for responses that need more than a status, such as the OAuth redirect or the `Content-Range` header on file range errors.
 
 ## Guards
 

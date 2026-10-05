@@ -43,8 +43,7 @@ const WORKSPACE_INVITATION_EXCEPTION_CATEGORY_BY_CODE = {
     'INTERNAL_SERVER_ERROR',
   [WorkspaceInvitationExceptionCode.USER_ALREADY_EXIST]:
     'INTERNAL_SERVER_ERROR',
-  [WorkspaceInvitationExceptionCode.INVALID_INVITATION]:
-    'INTERNAL_SERVER_ERROR',
+  [WorkspaceInvitationExceptionCode.INVALID_INVITATION]: 'BAD_USER_INPUT',
   [WorkspaceInvitationExceptionCode.EMAIL_MISSING]: 'INTERNAL_SERVER_ERROR',
 } as const satisfies Record<
   WorkspaceInvitationExceptionCode,

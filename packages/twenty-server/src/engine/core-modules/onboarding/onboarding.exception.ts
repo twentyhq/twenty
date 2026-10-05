@@ -28,8 +28,7 @@ const getOnboardingExceptionUserFriendlyMessage = (
   }
 };
 const ONBOARDING_EXCEPTION_CATEGORY_BY_CODE = {
-  [OnboardingExceptionCode.NO_PREVIOUS_ONBOARDING_STEP]:
-    'INTERNAL_SERVER_ERROR',
+  [OnboardingExceptionCode.NO_PREVIOUS_ONBOARDING_STEP]: 'BAD_USER_INPUT',
   [OnboardingExceptionCode.MISSING_TRANSACTION_QUERY_RUNNER]:
     'INTERNAL_SERVER_ERROR',
   [OnboardingExceptionCode.INSTALL_APPS_JOB_ENQUEUE_FAILED]:

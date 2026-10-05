@@ -74,6 +74,24 @@ describe('messageFolderResolver (e2e)', () => {
       expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
 
+    it('should deny filtering by a nonexistent messageChannelId', async () => {
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          query MyMessageFolders($messageChannelId: UUID) {
+            myMessageFolders(messageChannelId: $messageChannelId) {
+              id
+            }
+          }
+        `,
+        variables: {
+          messageChannelId: '20202020-0000-4000-8000-000000000000',
+        },
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+    });
+
     it('should not expose hidden fields', async () => {
       const response = await makeMetadataApiRequest({
         query: gql`
