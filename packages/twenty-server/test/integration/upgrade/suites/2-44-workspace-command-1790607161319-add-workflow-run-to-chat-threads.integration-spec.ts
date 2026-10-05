@@ -3,17 +3,16 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { LEGACY_CHAT_THREAD_OWNER_FIELD_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-44/constants/legacy-chat-thread-owner-field-universal-identifier.constant';
+import {
+  LEGACY_CHAT_THREAD_WORKFLOW_RUN_FIELD_UNIVERSAL_IDENTIFIER,
+  LEGACY_CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER,
+  LEGACY_WORKFLOW_RUN_AGENT_CHAT_THREADS_FIELD_UNIVERSAL_IDENTIFIER,
+} from 'src/database/commands/upgrade-version-command/2-44/constants/legacy-chat-thread-workflow-run-universal-identifiers.constant';
 import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const RUN_ON_WORKSPACE_ARGS = {
   workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -23,13 +22,13 @@ const RUN_ON_WORKSPACE_ARGS = {
 };
 
 const FIELD_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.agentChatThread.fields.workflowRun.universalIdentifier,
-  STANDARD_OBJECTS.workflowRun.fields.agentChatThreads.universalIdentifier,
+  LEGACY_CHAT_THREAD_WORKFLOW_RUN_FIELD_UNIVERSAL_IDENTIFIER,
+  LEGACY_WORKFLOW_RUN_AGENT_CHAT_THREADS_FIELD_UNIVERSAL_IDENTIFIER,
 ];
 
-const INDEX_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.agentChatThread.indexes.workflowRunIndex.universalIdentifier;
-
+// 2.46 dropped the run link from the standard objects, so a workspace
+// upgrading past 2.44 keeps its threads PRIVATE and unlinked, as a fresh
+// install leaves them.
 describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsCommand (integration)', () => {
   let command: AddWorkflowRunToChatThreadsCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
@@ -60,94 +59,24 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
         ),
       ).length,
       hasIndex: isDefined(
-        flatIndexMaps.byUniversalIdentifier[INDEX_UNIVERSAL_IDENTIFIER],
+        flatIndexMaps.byUniversalIdentifier[
+          LEGACY_CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER
+        ],
       ),
-      isOwnerRequired:
-        flatFieldMetadataMaps.byUniversalIdentifier[
-          LEGACY_CHAT_THREAD_OWNER_FIELD_UNIVERSAL_IDENTIFIER
-        ]?.isNullable === false,
       readability: threadObject?.readability,
       readabilityParentFieldUniversalIdentifiers:
         threadObject?.readabilityParentFieldUniversalIdentifiers,
     };
   };
 
-  // Pre-upgrade state: no run link and threads PRIVATE, as 2.43 left them.
-  const setPreUpgradeState = async () => {
-    const migrationService =
-      getAppProviderByClassName<WorkspaceMigrationValidateBuildAndRunService>(
-        'WorkspaceMigrationValidateBuildAndRunService',
-      );
-    const applicationService =
-      getAppProviderByClassName<ApplicationService>('ApplicationService');
-    const { twentyStandardFlatApplication } =
-      await applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId: SEED_APPLE_WORKSPACE_ID },
-      );
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
-      await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'flatIndexMaps',
-      ]);
-    const threadObject =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.universalIdentifier
-      ]!;
-    const run = async (
-      allFlatEntityOperationByMetadataName: Parameters<
-        WorkspaceMigrationValidateBuildAndRunService['validateBuildAndRunLegacyWorkspaceMigration']
-      >[0]['allFlatEntityOperationByMetadataName'],
-    ) => {
-      const result =
-        await migrationService.validateBuildAndRunLegacyWorkspaceMigration({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-          allFlatEntityOperationByMetadataName,
-        });
-
-      expect(result.status).toBe('success');
-    };
-
-    await run({
-      objectMetadata: {
-        flatEntityToCreate: [],
-        flatEntityToDelete: [],
-        flatEntityToUpdate: [
-          {
-            ...threadObject,
-            readability: MetadataReadability.PRIVATE,
-            readabilityParentFieldUniversalIdentifiers: null,
-          },
-        ],
-      },
-    });
-    // Run conversations only exist from 2.44 on; no earlier version can hold them ownerless and unlinked.
-    await global.testDataSource.query(
-      `DELETE FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThread" WHERE "workflowRunId" IS NOT NULL`,
-    );
-    await run({
-      fieldMetadata: {
-        flatEntityToCreate: [],
-        flatEntityToDelete: FIELD_UNIVERSAL_IDENTIFIERS.map(
-          (universalIdentifier) =>
-            flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier],
-        ).filter(isDefined) as FlatFieldMetadata[],
-        flatEntityToUpdate: [],
-      },
-      index: {
-        flatEntityToCreate: [],
-        flatEntityToDelete: [
-          flatIndexMaps.byUniversalIdentifier[INDEX_UNIVERSAL_IDENTIFIER],
-        ].filter(isDefined) as FlatIndexMetadata[],
-        flatEntityToUpdate: [],
-      },
-    });
+  const UNLINKED_STATE = {
+    fieldCount: 0,
+    hasIndex: false,
+    readability: MetadataReadability.PRIVATE,
+    readabilityParentFieldUniversalIdentifiers: null,
   };
 
-  beforeAll(async () => {
+  beforeAll(() => {
     command = getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
       'AddWorkflowRunToChatThreadsCommand',
     );
@@ -157,124 +86,24 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
-
-    await setPreUpgradeState();
-  });
-
-  afterAll(async () => {
-    await runCommand();
   });
 
   it('starts from a workspace without the run link', async () => {
-    expect(await readState()).toMatchObject({
-      fieldCount: 0,
-      hasIndex: false,
-      readability: MetadataReadability.PRIVATE,
-    });
+    expect(await readState()).toEqual(UNLINKED_STATE);
   });
 
-  it('changes nothing on a dry run', async () => {
-    await runCommand({ dryRun: true });
-
-    expect(await readState()).toMatchObject({
-      fieldCount: 0,
-      hasIndex: false,
-      readability: MetadataReadability.PRIVATE,
-    });
-  });
-
-  it('links threads to runs and makes them inherit their run readability, as a fresh install does', async () => {
+  it('no longer links threads to runs', async () => {
     await runCommand();
 
-    expect(await readState()).toEqual({
-      fieldCount: FIELD_UNIVERSAL_IDENTIFIERS.length,
-      hasIndex: true,
-      isOwnerRequired: false,
-      readability: MetadataReadability.INHERITED,
-      readabilityParentFieldUniversalIdentifiers: [
-        STANDARD_OBJECTS.agentChatThread.fields.workflowRun.universalIdentifier,
-      ],
-    });
+    expect(await readState()).toEqual(UNLINKED_STATE);
   });
 
-  it('is a no-op when run again', async () => {
-    const before = await readState();
-
-    await runCommand();
-
-    expect(await readState()).toEqual(before);
-  });
-
-  it('leaves threads still under SYSTEM protection as they are', async () => {
-    const { flatObjectMetadataMaps } =
-      await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
-        'flatObjectMetadataMaps',
-      ]);
-    const threadObject =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.universalIdentifier
-      ]!;
-    const migrationService =
-      getAppProviderByClassName<WorkspaceMigrationValidateBuildAndRunService>(
-        'WorkspaceMigrationValidateBuildAndRunService',
-      );
-    const applicationService =
-      getAppProviderByClassName<ApplicationService>('ApplicationService');
-    const { twentyStandardFlatApplication } =
-      await applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId: SEED_APPLE_WORKSPACE_ID },
-      );
-    const setThreadProtection = async (
-      protection: Pick<
-        typeof threadObject,
-        'readability' | 'readabilityParentFieldUniversalIdentifiers'
-      >,
-    ) => {
-      const result =
-        await migrationService.validateBuildAndRunLegacyWorkspaceMigration({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-          allFlatEntityOperationByMetadataName: {
-            objectMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [{ ...threadObject, ...protection }],
-            },
-          },
-        });
-
-      expect(result.status).toBe('success');
-    };
-
-    await setThreadProtection({
-      readability: MetadataReadability.SYSTEM,
-      readabilityParentFieldUniversalIdentifiers: null,
-    });
-    await runCommand();
-
-    expect(await readState()).toMatchObject({
-      readability: MetadataReadability.SYSTEM,
-    });
-
-    await setThreadProtection({
-      readability: threadObject.readability,
-      readabilityParentFieldUniversalIdentifiers:
-        threadObject.readabilityParentFieldUniversalIdentifiers,
-    });
-  });
-
-  it('makes threads PRIVATE again on down', async () => {
+  it('keeps threads PRIVATE on down', async () => {
     await workspaceOrmManager.executeInWorkspaceContext(
       () => command.down(RUN_ON_WORKSPACE_ARGS),
       buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
     );
 
-    expect(await readState()).toMatchObject({
-      fieldCount: FIELD_UNIVERSAL_IDENTIFIERS.length,
-      readability: MetadataReadability.PRIVATE,
-      readabilityParentFieldUniversalIdentifiers: null,
-    });
+    expect(await readState()).toEqual(UNLINKED_STATE);
   });
 });

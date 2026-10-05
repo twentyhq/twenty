@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
@@ -8,6 +8,7 @@ import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/util
 import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
+import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -36,6 +37,7 @@ export const useAiChatEditor = () => {
   const { searchMentionRecords } = useMentionSearch();
   const { searchWorkspaceMembers } = useWorkspaceMemberMentionSearch();
   const { searchSkills } = useSkillSuggestionSearch();
+  const { uploadFiles } = useAiChatFileUpload();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -68,6 +70,25 @@ export const useAiChatEditor = () => {
           return true;
         }
         return false;
+      },
+      handlePaste: (_view, event) => {
+        const clipboardData = event.clipboardData;
+
+        if (
+          !isDefined(clipboardData) ||
+          clipboardData.types.includes('text/plain')
+        ) {
+          return false;
+        }
+
+        const pastedFiles = Array.from(clipboardData.files);
+
+        if (!isNonEmptyArray(pastedFiles)) {
+          return false;
+        }
+
+        uploadFiles(pastedFiles);
+        return true;
       },
     },
     onUpdate: (currentEditor) => {

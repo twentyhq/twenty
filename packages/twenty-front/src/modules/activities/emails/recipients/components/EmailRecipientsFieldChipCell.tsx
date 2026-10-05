@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type MouseEvent } from 'react';
+import { type MouseEvent, type RefObject } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { EMAIL_RECIPIENT_DND_TYPE } from '@/activities/emails/recipients/constants/EmailRecipientDndType';
@@ -10,7 +10,7 @@ import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailR
 import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/types/EmailRecipientsFieldId';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 
-export type EmailRecipientChipDropEdge = 'before' | 'after' | null;
+import { type EmailRecipientChipDropEdge } from '@/activities/emails/recipients/types/EmailRecipientChipDropEdge';
 
 const DROP_INDICATOR_WIDTH = '2px';
 // Centers the bar in the 4px chip gap: half the gap plus half the bar.
@@ -52,6 +52,7 @@ type EmailRecipientsFieldChipCellProps = {
   chipId: string;
   chipIndex: number;
   dropdownId: string;
+  inputRef: RefObject<HTMLInputElement | null>;
   dropEdge: EmailRecipientChipDropEdge;
   fieldId: EmailRecipientsFieldId;
   isFlashing: boolean;
@@ -71,6 +72,7 @@ export const EmailRecipientsFieldChipCell = ({
   chipId,
   chipIndex,
   dropdownId,
+  inputRef,
   dropEdge,
   fieldId,
   isFlashing,
@@ -126,6 +128,7 @@ export const EmailRecipientsFieldChipCell = ({
         <EmailRecipientsFieldChip
           chipId={chipId}
           dropdownId={dropdownId}
+          inputRef={inputRef}
           recipient={recipient}
           resolution={resolution}
           isInvalid={isInvalid}

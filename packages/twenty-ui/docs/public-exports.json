@@ -700,6 +700,7 @@
   "primitives/input": {
     "reExports": [],
     "values": {
+      "Autocomplete": "primitives/input/Autocomplete/Autocomplete",
       "Button": "primitives/input/Button/Button",
       "ButtonGroup": "primitives/input/ButtonGroup/ButtonGroup",
       "Checkbox": "primitives/input/Checkbox/Checkbox",
@@ -716,6 +717,13 @@
       "Textarea": "primitives/input/Textarea/Textarea"
     },
     "types": {
+      "AutocompleteEmptyProps": "primitives/input/Autocomplete/types/AutocompleteEmptyProps",
+      "AutocompleteInputGroupProps": "primitives/input/Autocomplete/types/AutocompleteInputGroupProps",
+      "AutocompleteInputProps": "primitives/input/Autocomplete/types/AutocompleteInputProps",
+      "AutocompleteItemProps": "primitives/input/Autocomplete/types/AutocompleteItemProps",
+      "AutocompleteListProps": "primitives/input/Autocomplete/types/AutocompleteListProps",
+      "AutocompletePopupProps": "primitives/input/Autocomplete/types/AutocompletePopupProps",
+      "AutocompleteRootProps": "primitives/input/Autocomplete/types/AutocompleteRootProps",
       "ButtonColor": "primitives/input/Button/types/ButtonColor",
       "ButtonGroupProps": "primitives/input/ButtonGroup/types/ButtonGroupProps",
       "ButtonProps": "primitives/input/Button/types/ButtonProps",
