@@ -1633,6 +1633,100 @@ enum LogicFunctionExecutionStatus {
   ERROR
 }
 
+type UserSession {
+  id: UUID!
+  workspaceId: UUID
+  authProvider: String!
+  isImpersonating: Boolean!
+  userAgent: String
+  ipAddress: String
+  createdAt: DateTime!
+  lastActiveAt: DateTime!
+  expiresAt: DateTime!
+  isCurrent: Boolean!
+}
+
+type BillingEndTrialPeriod {
+  """Updated subscription status"""
+  status: SubscriptionStatus
+
+  """Boolean that confirms if a payment method was found"""
+  hasPaymentMethod: Boolean!
+
+  """
+  Billing portal URL for payment method update (returned when no payment method exists)
+  """
+  billingPortalUrl: String
+
+  """Updated current billing subscription"""
+  currentBillingSubscription: BillingSubscription
+
+  """All billing subscriptions"""
+  billingSubscriptions: [BillingSubscription!]
+}
+
+type BillingResourceCreditUsage {
+  productKey: BillingProductKey!
+  periodStart: DateTime!
+  periodEnd: DateTime!
+  usedCredits: Float!
+  grantedCredits: Float!
+  rolloverCredits: Float!
+  totalGrantedCredits: Float!
+  unitPriceCents: Float!
+}
+
+type BillingPlan {
+  planKey: BillingPlanKey!
+  baseProducts: [BillingLicensedProduct!]!
+  resourceCreditProducts: [BillingLicensedProduct!]!
+  meteredProducts: [BillingMeteredProduct!]!
+}
+
+type BillingPaymentIntent {
+  clientSecret: String!
+  paymentIntentType: String!
+}
+
+type BillingSession {
+  url: String
+}
+
+type BillingUpdate {
+  """Current billing subscription"""
+  currentBillingSubscription: BillingSubscription!
+
+  """All billing subscriptions"""
+  billingSubscriptions: [BillingSubscription!]!
+}
+
+type UsageBreakdownItem {
+  key: String!
+  label: String
+  creditsUsed: Float!
+}
+
+type UsageTimeSeries {
+  date: String!
+  creditsUsed: Float!
+}
+
+type UsageUserDaily {
+  userWorkspaceId: String!
+  dailyUsage: [UsageTimeSeries!]!
+}
+
+type UsageAnalytics {
+  usageByUser: [UsageBreakdownItem!]!
+  usageByOperationType: [UsageBreakdownItem!]!
+  usageByApplication: [UsageBreakdownItem!]!
+  usageByModel: [UsageBreakdownItem!]!
+  timeSeries: [UsageTimeSeries!]!
+  periodStart: DateTime!
+  periodEnd: DateTime!
+  userDailyUsage: UsageUserDaily
+}
+
 type UsageLimitOperationDefinition {
   operationType: UsageOperationType!
   allowedUnits: [UsageUnit!]!
@@ -1930,100 +2024,6 @@ type EventSubscription {
   objectRecordEventsWithQueryIds: [ObjectRecordEventWithQueryIds!]!
   metadataEvents: [MetadataEvent!]!
   queueJobEvents: [JobStatus!]!
-}
-
-type UserSession {
-  id: UUID!
-  workspaceId: UUID
-  authProvider: String!
-  isImpersonating: Boolean!
-  userAgent: String
-  ipAddress: String
-  createdAt: DateTime!
-  lastActiveAt: DateTime!
-  expiresAt: DateTime!
-  isCurrent: Boolean!
-}
-
-type BillingEndTrialPeriod {
-  """Updated subscription status"""
-  status: SubscriptionStatus
-
-  """Boolean that confirms if a payment method was found"""
-  hasPaymentMethod: Boolean!
-
-  """
-  Billing portal URL for payment method update (returned when no payment method exists)
-  """
-  billingPortalUrl: String
-
-  """Updated current billing subscription"""
-  currentBillingSubscription: BillingSubscription
-
-  """All billing subscriptions"""
-  billingSubscriptions: [BillingSubscription!]
-}
-
-type BillingResourceCreditUsage {
-  productKey: BillingProductKey!
-  periodStart: DateTime!
-  periodEnd: DateTime!
-  usedCredits: Float!
-  grantedCredits: Float!
-  rolloverCredits: Float!
-  totalGrantedCredits: Float!
-  unitPriceCents: Float!
-}
-
-type BillingPlan {
-  planKey: BillingPlanKey!
-  baseProducts: [BillingLicensedProduct!]!
-  resourceCreditProducts: [BillingLicensedProduct!]!
-  meteredProducts: [BillingMeteredProduct!]!
-}
-
-type BillingPaymentIntent {
-  clientSecret: String!
-  paymentIntentType: String!
-}
-
-type BillingSession {
-  url: String
-}
-
-type BillingUpdate {
-  """Current billing subscription"""
-  currentBillingSubscription: BillingSubscription!
-
-  """All billing subscriptions"""
-  billingSubscriptions: [BillingSubscription!]!
-}
-
-type UsageBreakdownItem {
-  key: String!
-  label: String
-  creditsUsed: Float!
-}
-
-type UsageTimeSeries {
-  date: String!
-  creditsUsed: Float!
-}
-
-type UsageUserDaily {
-  userWorkspaceId: String!
-  dailyUsage: [UsageTimeSeries!]!
-}
-
-type UsageAnalytics {
-  usageByUser: [UsageBreakdownItem!]!
-  usageByOperationType: [UsageBreakdownItem!]!
-  usageByApplication: [UsageBreakdownItem!]!
-  usageByModel: [UsageBreakdownItem!]!
-  timeSeries: [UsageTimeSeries!]!
-  periodStart: DateTime!
-  periodEnd: DateTime!
-  userDailyUsage: UsageUserDaily
 }
 
 type ApprovedAccessDomain {
@@ -3894,6 +3894,7 @@ type Query {
   usageQuotasWithConsumption: [UsageQuotaWithConsumption!]!
   usageQuotaDefinitions: UsageQuotaDefinitions!
   usageQuotaScopeConsumption(input: UsageQuotaScopeInput!): UsageQuotaScopeConsumption
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
   getPageLayoutTabs(pageLayoutId: String!): [PageLayoutTab!]!
@@ -3936,7 +3937,6 @@ type Query {
   frontComponent(id: UUID!): FrontComponent
   getInviteSuggestions: [InviteSuggestion!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
-  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
@@ -4050,6 +4050,13 @@ input UsageQuotaScopeInput {
   unit: UsageUnit!
 }
 
+input UsageAnalyticsInput {
+  periodStart: DateTime
+  periodEnd: DateTime
+  userWorkspaceId: String
+  operationTypes: [UsageOperationType!]
+}
+
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
@@ -4072,13 +4079,6 @@ input ObjectFilter {
 input LogicFunctionIdInput {
   """The id of the function."""
   id: ID!
-}
-
-input UsageAnalyticsInput {
-  periodStart: DateTime
-  periodEnd: DateTime
-  userWorkspaceId: String
-  operationTypes: [UsageOperationType!]
 }
 
 input GetApiKeyInput {
