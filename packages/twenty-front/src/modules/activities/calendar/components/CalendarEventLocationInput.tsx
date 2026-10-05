@@ -1,7 +1,8 @@
 import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
 import { PlaceAutocompleteSelect } from '@/geo-map/components/PlaceAutocompleteSelect';
 import { usePlaceAutocomplete } from '@/geo-map/hooks/usePlaceAutocomplete';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
+import { Autocomplete } from 'twenty-ui/primitives/input';
 import { isDefined } from 'twenty-shared/utils';
 
 const CALENDAR_EVENT_LOCATION_AUTOCOMPLETE_DROPDOWN_ID =
@@ -46,29 +47,29 @@ export const CalendarEventLocationInput = ({
   };
 
   return (
-    <Dropdown
+    <AutocompleteRoot
       dropdownId={CALENDAR_EVENT_LOCATION_AUTOCOMPLETE_DROPDOWN_ID}
-      dropdownPlacement="bottom-start"
-      clickableComponentWidth="100%"
-      disableClickForClickableComponent
-      onClickOutside={closePlaceAutocomplete}
-      clickableComponent={
-        <StyledComposerTextInput
-          type="text"
-          autoComplete="off"
-          aria-label={ariaLabel}
-          placeholder={placeholder}
-          value={value}
-          onChange={(event) => handleLocationChange(event.target.value)}
-        />
-      }
-      dropdownComponents={
-        <PlaceAutocompleteSelect
-          list={placeAutocompleteData}
-          onChange={handlePlaceSelection}
-          dropdownId={CALENDAR_EVENT_LOCATION_AUTOCOMPLETE_DROPDOWN_ID}
-        />
-      }
-    />
+      items={placeAutocompleteData}
+      itemToStringValue={(place) => place.text}
+      value={value}
+      openOnValueChange={false}
+      onValueChange={handleLocationChange}
+      onClose={closePlaceAutocomplete}
+    >
+      <Autocomplete.Input
+        type="text"
+        autoComplete="off"
+        aria-label={ariaLabel}
+        placeholder={placeholder}
+        render={(inputProps) => (
+          // oxlint-disable-next-line react/jsx-props-no-spreading
+          <StyledComposerTextInput {...inputProps} className={undefined} />
+        )}
+      />
+      <PlaceAutocompleteSelect
+        list={placeAutocompleteData}
+        onChange={handlePlaceSelection}
+      />
+    </AutocompleteRoot>
   );
 };

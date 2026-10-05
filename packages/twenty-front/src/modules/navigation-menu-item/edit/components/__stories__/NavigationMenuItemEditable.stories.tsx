@@ -174,9 +174,9 @@ export const PreviewInsertion: Story = {
     await userEvent.click(await body.findByText('Object'));
     await expect(await canvas.findByText('Select a menu item')).toBeVisible();
     await userEvent.keyboard('{Escape}');
-    await expect(
-      canvas.queryByText('Select a menu item'),
-    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(canvas.queryByText('Select a menu item')).not.toBeInTheDocument(),
+    );
     await userEvent.pointer({
       target: await canvas.findByText('Docs'),
       keys: '[MouseRight]',
@@ -189,9 +189,9 @@ export const PreviewInsertion: Story = {
     ).toEqual(['Select a menu item', 'Docs', 'Status']);
     await userEvent.click(await body.findByText('Link'));
     await expect(await body.findByDisplayValue('Twenty')).toBeVisible();
-    await expect(
-      canvas.queryByText('Select a menu item'),
-    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(canvas.queryByText('Select a menu item')).not.toBeInTheDocument(),
+    );
     await userEvent.keyboard('{Escape}');
   },
 };

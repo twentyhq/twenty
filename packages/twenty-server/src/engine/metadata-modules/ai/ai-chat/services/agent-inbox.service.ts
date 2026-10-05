@@ -10,6 +10,7 @@ import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
+import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
 import { buildToolPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-tool-part.util';
 import { type ResolveInboxProposal } from 'src/engine/metadata-modules/ai/ai-chat/types/resolve-inbox-proposal.type';
@@ -112,19 +113,21 @@ export class AgentInboxService {
 
     const thread =
       existingThread ??
-      (await this.createThread({
-        workspaceId,
-        threadId,
-        workspaceMemberId: input.workspaceMemberId,
-        title: input.title,
-      }));
+      (
+        await this.openThread({
+          workspaceId,
+          sender,
+          workspaceMemberId: input.workspaceMemberId,
+          threadKey: input.threadKey,
+          title: input.title,
+        })
+      ).thread;
 
     await this.ensureOpener({
       workspaceId,
       threadId,
       turnId,
       openingMessageId,
-      memberUserWorkspaceId: thread.userWorkspaceId,
       senderDescription: senderDetails.description,
     });
 
@@ -169,6 +172,64 @@ export class AgentInboxService {
     return { threadId, isDismissed: false, awaitedToolOutput };
   }
 
+  // The thread key picks the sender's conversation with the member, so every
+  // write with the same key lands in one thread. A conversation with no
+  // member belongs to no inbox, and only the server reads it. One the member
+  // deleted is returned as it is, and the caller decides whether to write to it.
+  async openThread({
+    workspaceId,
+    sender,
+    workspaceMemberId,
+    threadKey,
+    title,
+    isArchivedOnCreate = false,
+  }: {
+    workspaceId: string;
+    sender: AgentInboxSender;
+    workspaceMemberId: string | null;
+    threadKey: string;
+    title: string;
+    isArchivedOnCreate?: boolean;
+  }): Promise<{
+    thread: AgentChatThreadWorkspaceEntity;
+    isCreated: boolean;
+  }> {
+    const threadId = buildInboxThreadId({
+      senderKey: getAgentInboxSenderDetails(sender).key,
+      workspaceMemberId,
+      threadKey,
+    });
+    const existingThread = await this.findThread({ workspaceId, threadId });
+
+    if (isDefined(existingThread)) {
+      return { thread: existingThread, isCreated: false };
+    }
+
+    try {
+      const thread = isDefined(workspaceMemberId)
+        ? await this.threadService.createThread({
+            workspaceId,
+            workspaceMemberId,
+            id: threadId,
+            title,
+            isArchived: isArchivedOnCreate,
+          })
+        : await this.createUnaddressedThread({ workspaceId, threadId, title });
+
+      return { thread, isCreated: true };
+    } catch (error) {
+      const concurrentlyCreatedThread = isUniqueViolationError(error)
+        ? await this.findThread({ workspaceId, threadId })
+        : null;
+
+      if (!isDefined(concurrentlyCreatedThread)) {
+        throw error;
+      }
+
+      return { thread: concurrentlyCreatedThread, isCreated: false };
+    }
+  }
+
   private async findToolOutput({
     workspaceId,
     toolCallId,
@@ -184,23 +245,20 @@ export class AgentInboxService {
     return part?.toolOutput;
   }
 
-  // Answering a tool call resolves who may answer from the user message of
-  // its turn, and models expect a conversation to open with one. It holds
-  // no text from the sender, so nothing the sender wrote reads as the
-  // member's request.
+  // The opener is a system message naming the sender, and holds no text from
+  // it. Written as two idempotent writes, so a retry completes an opener that
+  // a failure left half written.
   private async ensureOpener({
     workspaceId,
     threadId,
     turnId,
     openingMessageId,
-    memberUserWorkspaceId,
     senderDescription,
   }: {
     workspaceId: string;
     threadId: string;
     turnId: string;
     openingMessageId: string;
-    memberUserWorkspaceId: string | null;
     senderDescription: string;
   }): Promise<void> {
     await this.ignoreDuplicate(() =>
@@ -218,10 +276,9 @@ export class AgentInboxService {
         id: openingMessageId,
         threadId,
         turnId,
-        role: AgentMessageRole.USER,
+        role: AgentMessageRole.SYSTEM,
         agentId: null,
-        senderUserWorkspaceId: memberUserWorkspaceId,
-        isHidden: true,
+        senderUserWorkspaceId: null,
         parts: [
           {
             type: 'text',
@@ -244,35 +301,20 @@ export class AgentInboxService {
     });
   }
 
-  private async createThread({
+  private async createUnaddressedThread({
     workspaceId,
     threadId,
-    workspaceMemberId,
     title,
   }: {
     workspaceId: string;
     threadId: string;
-    workspaceMemberId: string;
     title: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
-    try {
-      return await this.threadService.createThread({
-        workspaceId,
-        workspaceMemberId,
-        id: threadId,
-        title,
-      });
-    } catch (error) {
-      const concurrentlyCreatedThread = isUniqueViolationError(error)
-        ? await this.findThread({ workspaceId, threadId })
-        : null;
+    await this.threadRepository.insert(workspaceId, { id: threadId, title });
 
-      if (!isDefined(concurrentlyCreatedThread)) {
-        throw error;
-      }
-
-      return concurrentlyCreatedThread;
-    }
+    return this.threadRepository.findOneOrFail(workspaceId, {
+      where: { id: threadId },
+    });
   }
 
   // Every id is derived from the keys, so a row that already exists was

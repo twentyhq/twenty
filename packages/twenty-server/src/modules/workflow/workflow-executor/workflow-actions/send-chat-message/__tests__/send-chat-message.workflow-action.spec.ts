@@ -6,6 +6,7 @@ import { type AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowStepExecutorExceptionCode } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { createMockIteratorStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { SendChatMessageWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/send-chat-message.workflow-action';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -60,11 +61,15 @@ describe('SendChatMessageWorkflowAction', () => {
 
     action = new SendChatMessageWorkflowAction(
       { sendMessage } as unknown as AgentInboxService,
-      {
-        executeInWorkspaceContext: jest.fn((callback) => callback()),
-        getRepository: jest.fn().mockReturnValue({ findOne: findWorkflowRun }),
-      } as unknown as WorkspaceOrmManager,
-      { findCoreWorkflowById } as unknown as WorkflowCoreSyncService,
+      new WorkflowRunInboxSenderWorkspaceService(
+        {
+          executeInWorkspaceContext: jest.fn((callback) => callback()),
+          getRepository: jest
+            .fn()
+            .mockReturnValue({ findOne: findWorkflowRun }),
+        } as unknown as WorkspaceOrmManager,
+        { findCoreWorkflowById } as unknown as WorkflowCoreSyncService,
+      ),
       {} as WorkflowExecutionContextService,
       {} as WorkflowRunWorkspaceService,
       {} as ToolRegistryService,
@@ -129,6 +134,48 @@ describe('SendChatMessageWorkflowAction', () => {
       'step-1:iterator=0',
       'step-1:iterator=1',
     ]);
+  });
+
+  it('starts a new conversation each time the step runs when asked to', async () => {
+    await execute({
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+      title: 'Hello',
+      text: 'Hello',
+      conversation: { scope: 'STEP' },
+    });
+
+    expect(sendMessage.mock.calls[0][0].input).toMatchObject({
+      threadKey: `${WORKFLOW_RUN_ID}:step-1`,
+      idempotencyKey: 'step-1',
+    });
+  });
+
+  it('shares a conversation by its resolved key, keeping each run its own messages', async () => {
+    await execute({
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+      title: 'Hello',
+      text: 'Hello',
+      conversation: { scope: 'KEY', key: 'deal-{{trigger.name}}' },
+    });
+
+    expect(sendMessage.mock.calls[0][0].input).toMatchObject({
+      threadKey: 'key:deal-Acme',
+      idempotencyKey: `${WORKFLOW_RUN_ID}:step-1`,
+    });
+  });
+
+  it('refuses a shared conversation without a key', async () => {
+    await expect(
+      execute({
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        title: 'Hello',
+        text: 'Hello',
+        conversation: { scope: 'KEY', key: '' },
+      }),
+    ).rejects.toMatchObject({
+      code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+    });
+    expect(sendMessage).not.toHaveBeenCalled();
   });
 
   it('titles the conversation with the step name when no title is set', async () => {

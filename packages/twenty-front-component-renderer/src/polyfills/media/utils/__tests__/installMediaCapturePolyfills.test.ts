@@ -16,7 +16,7 @@ type MediaGlobals = {
   ) => MediaRecorderLike) & { isTypeSupported: (mimeType: string) => boolean };
 };
 
-type MediaStreamTrackLike = {
+type MediaStreamTrackLike = EventTarget & {
   id: string;
   kind: string;
   readyState: string;
@@ -31,7 +31,7 @@ type MediaStreamLike = {
   getTracks: () => MediaStreamTrackLike[];
 };
 
-type MediaRecorderLike = {
+type MediaRecorderLike = EventTarget & {
   state: string;
   mimeType: string;
   start: (timesliceMs?: number) => void;
@@ -40,7 +40,18 @@ type MediaRecorderLike = {
   onstart: (() => void) | null;
   onstop: (() => void) | null;
   onerror: ((event: { error: Error }) => void) | null;
+  onpause: (() => void) | null;
+  onresume: (() => void) | null;
 };
+
+const MEDIA_RECORDER_EVENT_TYPES = [
+  'dataavailable',
+  'start',
+  'stop',
+  'error',
+  'pause',
+  'resume',
+] as const;
 
 const createTransportStub = (): MediaSessionHostFunctions => ({
   mediaStartStream: jest.fn(async () => ({
@@ -70,6 +81,25 @@ const installOnFreshScope = (transport: MediaSessionHostFunctions) => {
   installMediaCapturePolyfills({ globalScope, bridge });
 
   return { bridge, mediaGlobals: globalScope as unknown as MediaGlobals };
+};
+
+const createMediaRecorder = async () => {
+  const { mediaGlobals } = installOnFreshScope(createTransportStub());
+  const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia({
+    audio: true,
+  });
+
+  return new mediaGlobals.MediaRecorder(mediaStream);
+};
+
+const createMediaStreamTrack = async () => {
+  const { mediaGlobals } = installOnFreshScope(createTransportStub());
+  const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia({
+    audio: true,
+  });
+  const [track] = mediaStream.getTracks();
+
+  return track;
 };
 
 describe('installMediaCapturePolyfills', () => {
@@ -331,5 +361,100 @@ describe('installMediaCapturePolyfills', () => {
 
     expect(mediaGlobals.MediaRecorder.isTypeSupported('audio/webm')).toBe(true);
     expect(mediaGlobals.MediaRecorder.isTypeSupported('video/mp4')).toBe(false);
+  });
+
+  describe.each(MEDIA_RECORDER_EVENT_TYPES)(
+    'MediaRecorder on%s',
+    (eventType) => {
+      const handlerName = `on${eventType}` as const;
+
+      it('should keep a listener that shares its callback with the handler', async () => {
+        const mediaRecorder = await createMediaRecorder();
+        const handler = jest.fn();
+
+        mediaRecorder[handlerName] = handler;
+        mediaRecorder.addEventListener(eventType, handler);
+        mediaRecorder.dispatchEvent(new Event(eventType));
+
+        expect(handler).toHaveBeenCalledTimes(2);
+
+        mediaRecorder[handlerName] = null;
+        mediaRecorder.dispatchEvent(new Event(eventType));
+
+        expect(handler).toHaveBeenCalledTimes(3);
+      });
+
+      it('should keep the handler active when its callback is removed as a listener', async () => {
+        const mediaRecorder = await createMediaRecorder();
+        const handler = jest.fn();
+
+        mediaRecorder[handlerName] = handler;
+        mediaRecorder.removeEventListener(eventType, handler);
+        mediaRecorder.dispatchEvent(new Event(eventType));
+
+        expect(handler).toHaveBeenCalledTimes(1);
+      });
+
+      it('should keep a replaced handler in its listener position until it is cleared', async () => {
+        const mediaRecorder = await createMediaRecorder();
+        const calls: string[] = [];
+
+        mediaRecorder[handlerName] = () => calls.push('first');
+        mediaRecorder.addEventListener(eventType, () => calls.push('second'));
+        mediaRecorder[handlerName] = () => calls.push('third');
+        mediaRecorder.dispatchEvent(new Event(eventType));
+
+        mediaRecorder[handlerName] = null;
+        mediaRecorder[handlerName] = () => calls.push('fourth');
+        mediaRecorder.dispatchEvent(new Event(eventType));
+
+        expect(calls).toEqual(['third', 'second', 'second', 'fourth']);
+      });
+    },
+  );
+
+  describe('MediaStreamTrack onended', () => {
+    it('should keep a listener that shares its callback with the handler', async () => {
+      const track = await createMediaStreamTrack();
+      const endedHandler = jest.fn();
+
+      track.onended = endedHandler;
+      track.addEventListener('ended', endedHandler);
+      track.dispatchEvent(new Event('ended'));
+
+      expect(endedHandler).toHaveBeenCalledTimes(2);
+
+      track.onended = null;
+      track.dispatchEvent(new Event('ended'));
+
+      expect(endedHandler).toHaveBeenCalledTimes(3);
+    });
+
+    it('should keep the handler active when its callback is removed as a listener', async () => {
+      const track = await createMediaStreamTrack();
+      const endedHandler = jest.fn();
+
+      track.onended = endedHandler;
+      track.removeEventListener('ended', endedHandler);
+      track.dispatchEvent(new Event('ended'));
+
+      expect(endedHandler).toHaveBeenCalledTimes(1);
+    });
+
+    it('should keep a replaced handler in its listener position until it is cleared', async () => {
+      const track = await createMediaStreamTrack();
+      const calls: string[] = [];
+
+      track.onended = () => calls.push('first');
+      track.addEventListener('ended', () => calls.push('second'));
+      track.onended = () => calls.push('third');
+      track.dispatchEvent(new Event('ended'));
+
+      track.onended = null;
+      track.onended = () => calls.push('fourth');
+      track.dispatchEvent(new Event('ended'));
+
+      expect(calls).toEqual(['third', 'second', 'second', 'fourth']);
+    });
   });
 });

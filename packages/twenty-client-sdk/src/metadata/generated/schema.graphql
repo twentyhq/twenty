@@ -3547,7 +3547,7 @@ type ChatStreamCatchupChunks {
 }
 
 type SendChatMessageResult {
-  messageId: String!
+  messageId: String
   queued: Boolean!
   streamId: String
 }
