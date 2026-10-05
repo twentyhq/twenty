@@ -129,8 +129,6 @@ export class UpgradeGaugeService implements OnModuleInit {
     try {
       const upgradeStatus = await this.inflightUpgradeStatusPromise;
 
-      // Another pod is refreshing the shared cache: keep the last known value
-      // and read the cache again on the next collection
       if (!isDefined(upgradeStatus)) {
         return this.cachedUpgradeStatus;
       }

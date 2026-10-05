@@ -177,9 +177,6 @@ export class UpgradeStatusService {
     });
   }
 
-  // Every pod polls this for its gauges, so on a cache miss only the pod
-  // holding the refresh lock recomputes; the others report null until the
-  // shared cache is written
   async getInstanceAndWorkspaceCountsStatus(): Promise<InstanceAndWorkspaceCountsUpgradeStatus | null> {
     const cachedStatus = await this.getCachedInstanceAndWorkspaceStatus();
 

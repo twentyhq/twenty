@@ -13,7 +13,6 @@ const COMPUTED_AT_KEY = 'upgrade-status:computed-at';
 const REFRESH_LOCK_KEY = 'upgrade-status:refresh-lock';
 
 const CACHE_TTL_MS = 60 * 60 * 1000;
-// Outlives the primary query timeout so a slow refresh still holds the lock
 const REFRESH_LOCK_TTL_MS = 2 * 60 * 1000;
 @Injectable()
 export class UpgradeStatusCacheService {
