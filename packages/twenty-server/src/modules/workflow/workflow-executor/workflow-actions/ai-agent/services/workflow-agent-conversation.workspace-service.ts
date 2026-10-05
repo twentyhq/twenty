@@ -22,6 +22,10 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { WORKFLOW_AGENT_WAIT_TOOL_NAMES } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-wait-tool-names.constant';
@@ -79,23 +83,39 @@ export class WorkflowAgentConversationWorkspaceService {
     const { workspaceId, workflowRunId } = runInfo;
     const sender =
       await this.workflowRunInboxSenderService.findRunSenderOrThrow(runInfo);
-    const openThread = (workspaceMemberId: string | null) =>
-      this.agentInboxService.openThread({
-        workspaceId,
-        sender,
-        workspaceMemberId,
-        threadKey,
-        title,
-        isArchivedOnCreate: true,
-      });
-
-    const { thread, isCreated } = isDefined(recipientWorkspaceMemberId)
-      ? await openThread(recipientWorkspaceMemberId)
-      : await this.openThreadWithCreator({
+    const openThreadUnderKey = (key: string) => {
+      const openThread = (workspaceMemberId: string | null) =>
+        this.agentInboxService.openThread({
           workspaceId,
-          coreWorkflowId: sender.workflowId,
-          openThread,
+          sender,
+          workspaceMemberId,
+          threadKey: key,
+          title,
+          isArchivedOnCreate: true,
         });
+
+      return isDefined(recipientWorkspaceMemberId)
+        ? openThread(recipientWorkspaceMemberId)
+        : this.openThreadWithCreator({
+            workspaceId,
+            coreWorkflowId: sender.workflowId,
+            openThread,
+          });
+    };
+
+    const keyedConversation = await openThreadUnderKey(threadKey);
+
+    // a conversation the recipient deleted is not written to again, so this execution starts its own
+    const { thread, isCreated } = isDefined(keyedConversation.thread.deletedAt)
+      ? await openThreadUnderKey(`${threadKey}:${workflowRunId}:${stepId}`)
+      : keyedConversation;
+
+    if (isDefined(thread.deletedAt)) {
+      throw new WorkflowStepExecutorException(
+        'The recipient deleted this conversation',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     await this.workflowRunWorkspaceService.setStepThreadId({
       stepId,

@@ -127,7 +127,7 @@ export class AddWorkflowRunToChatThreadsCommand extends ProvisionedWorkspaceComm
 
     if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Would create ${fieldsToCreate.length} field(s) and ${indexesToCreate.length} index(es), update ${fieldsToUpdate.length} field(s), then make chat threads inherit readability from their run for workspace ${workspaceId}`,
+        `[DRY RUN] Would create ${fieldsToCreate.length} field(s) and ${indexesToCreate.length} index(es), update ${fieldsToUpdate.length} field(s)${isRunLinkStandard ? ', then make chat threads inherit readability from their run' : ''} for workspace ${workspaceId}`,
       );
 
       return;

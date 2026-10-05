@@ -175,7 +175,8 @@ export class AgentInboxService {
 
   // The thread key picks the sender's conversation with the member, so every
   // write with the same key lands in one thread. A conversation with no
-  // member belongs to no inbox, and only the server reads it.
+  // member belongs to no inbox, and only the server reads it. One the member
+  // deleted is returned as it is, and the caller decides whether to write to it.
   async openThread({
     workspaceId,
     sender,

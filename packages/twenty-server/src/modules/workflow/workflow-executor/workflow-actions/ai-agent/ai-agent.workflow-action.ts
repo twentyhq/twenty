@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 
 import {
   ASK_QUESTION_TOOL_NAME,
@@ -102,9 +102,14 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         'workspaceMemberId' | 'conversation'
       >;
 
+    // a variable can resolve to any value, so anything but a member id or nothing is refused
     if (
-      isNonEmptyString(recipientWorkspaceMemberId) &&
-      !isValidUuid(recipientWorkspaceMemberId)
+      isDefined(recipientWorkspaceMemberId) &&
+      recipientWorkspaceMemberId !== '' &&
+      !(
+        isString(recipientWorkspaceMemberId) &&
+        isValidUuid(recipientWorkspaceMemberId)
+      )
     ) {
       throw new WorkflowStepExecutorException(
         'Recipient must be a workspace member',

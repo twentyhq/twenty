@@ -158,6 +158,44 @@ describe('WorkflowAgentConversationWorkspaceService', () => {
       ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
     });
 
+    it('starts its own conversation when the recipient deleted the one its key names', async () => {
+      const { service, agentInboxService } = buildService();
+
+      agentInboxService.openThread.mockResolvedValueOnce({
+        thread: { id: 'deleted-thread-id', deletedAt: '2026-01-01' },
+        isCreated: false,
+      });
+
+      await expect(
+        service.openConversation({
+          ...OPEN_ARGS,
+          recipientWorkspaceMemberId: 'recipient-id',
+        }),
+      ).resolves.toEqual({
+        threadId: 'thread-for-recipient-id',
+        priorMessages: [],
+      });
+      expect(agentInboxService.openThread).toHaveBeenLastCalledWith(
+        expect.objectContaining({ threadKey: 'run-id:step-id:run-id:step-id' }),
+      );
+    });
+
+    it('fails when the recipient also deleted the conversation this execution started', async () => {
+      const { service, agentInboxService } = buildService();
+
+      agentInboxService.openThread.mockResolvedValue({
+        thread: { id: 'deleted-thread-id', deletedAt: '2026-01-01' },
+        isCreated: false,
+      });
+
+      await expect(
+        service.openConversation({
+          ...OPEN_ARGS,
+          recipientWorkspaceMemberId: 'recipient-id',
+        }),
+      ).rejects.toThrow('The recipient deleted this conversation');
+    });
+
     it('continues from what an existing conversation holds', async () => {
       const { service, conversationReaderService } = buildService({
         isCreated: false,

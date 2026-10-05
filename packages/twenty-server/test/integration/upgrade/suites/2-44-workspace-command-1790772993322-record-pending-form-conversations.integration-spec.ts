@@ -132,9 +132,21 @@ describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsC
   });
 
   it('records no conversation once threads no longer name a run', async () => {
+    const countThreads = () =>
+      inWorkspace(() =>
+        workspaceOrmManager
+          .getRepository('agentChatThread', {
+            shouldBypassPermissionChecks: true,
+          })
+          .count({ withDeleted: true }),
+      );
+    const threadCountBefore = await countThreads();
+
     await inWorkspace(() =>
       command.runOnWorkspace({ ...RUN_ON_WORKSPACE_ARGS, options: {} }),
     );
+
+    expect(await countThreads()).toBe(threadCountBefore);
 
     const { state } = await inWorkspace(() =>
       workflowRunRepository().findOneOrFail({

@@ -244,7 +244,8 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
               runInfo: { workspaceId, workflowRunId },
               stepId: workflow.step.id,
               title: workflow.step.name,
-              recipientWorkspaceMemberId: null,
+              recipientWorkspaceMemberId:
+                INITIATORS[agentWorkflow.initiator].workspaceMemberId,
               threadKey: `${workflowRunId}:${workflow.step.id}`,
             });
 
