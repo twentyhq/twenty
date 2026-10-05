@@ -21,6 +21,9 @@ import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query
 import { type EstimatedRowsUsage } from 'src/engine/api/common/common-query-runners/types/estimated-rows-usage.type';
 import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
 import { estimateRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-rows-read.util';
+import { collectFilterFieldNames } from 'src/engine/api/common/common-query-runners/utils/collect-filter-field-names.util';
+import { countDistinctAggregates } from 'src/engine/api/common/common-query-runners/utils/count-distinct-aggregates.util';
+import { estimateJoinedRowCount } from 'src/engine/api/common/common-query-runners/utils/estimate-joined-row-count.util';
 import { estimateRelationRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-relation-rows-read.util';
 import {
   RECORDS_PER_GROUP_LIMIT,
@@ -476,28 +479,47 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     args: CommonExtendedInput<GroupByQueryArgs>,
     rowsEstimationContext: RowsEstimationContext,
   ): EstimatedRowsUsage {
+    const filter = args.filter ?? {};
+    const includeRecords = args.includeRecords ?? false;
+
     const matchingRowCount = estimateRowsRead({
-      filter: args.filter ?? {},
+      filter,
       context: rowsEstimationContext,
     });
 
-    if (!(args.includeRecords ?? false)) {
-      return { rowsRead: matchingRowCount, rowsWritten: 0 };
-    }
+    const joinedRowCount = estimateJoinedRowCount({
+      fieldNames: [
+        ...collectFilterFieldNames(filter),
+        ...args.groupBy.flatMap((groupByEntry) => Object.keys(groupByEntry)),
+      ],
+      context: rowsEstimationContext,
+    });
+
+    const groupedRowCount = includeRecords
+      ? 2 * matchingRowCount
+      : matchingRowCount;
 
     return {
       rowsRead:
-        2 * matchingRowCount +
-        estimateRelationRowsRead({
-          select: args.selectedFieldsResult.select,
-          parentRowCount: Math.min(
-            getGroupLimit(args.limit) * RECORDS_PER_GROUP_LIMIT,
-            matchingRowCount,
-          ),
-          context: rowsEstimationContext,
-          recordLimitPerParent: RELATIONS_PER_RECORD_LIMIT,
-        }),
+        groupedRowCount +
+        joinedRowCount +
+        (includeRecords
+          ? estimateRelationRowsRead({
+              select: args.selectedFieldsResult.select,
+              parentRowCount: Math.min(
+                getGroupLimit(args.limit) * RECORDS_PER_GROUP_LIMIT,
+                matchingRowCount,
+              ),
+              context: rowsEstimationContext,
+              recordLimitPerParent: RELATIONS_PER_RECORD_LIMIT,
+            })
+          : 0),
       rowsWritten: 0,
+      rowsSorted:
+        groupedRowCount +
+        joinedRowCount +
+        countDistinctAggregates(args.selectedFieldsResult.aggregate) *
+          matchingRowCount,
     };
   }
 }

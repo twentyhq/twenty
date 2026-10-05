@@ -24,8 +24,12 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { type EstimatedRowsUsage } from 'src/engine/api/common/common-query-runners/types/estimated-rows-usage.type';
 import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
+import { collectFilterFieldNames } from 'src/engine/api/common/common-query-runners/utils/collect-filter-field-names.util';
+import { countDistinctAggregates } from 'src/engine/api/common/common-query-runners/utils/count-distinct-aggregates.util';
+import { estimateJoinedRowCount } from 'src/engine/api/common/common-query-runners/utils/estimate-joined-row-count.util';
 import { estimateRelationRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-relation-rows-read.util';
 import { estimateRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-rows-read.util';
+import { isLeadingOrderServedByIndex } from 'src/engine/api/common/common-query-runners/utils/is-leading-order-served-by-index.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonFindManyOutput } from 'src/engine/api/common/types/common-find-many-output.type';
@@ -383,21 +387,46 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       context: rowsEstimationContext,
     });
 
-    const aggregateRowsRead =
-      Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0
-        ? estimateRowsRead({ filter, context: rowsEstimationContext })
-        : 0;
+    const hasAggregatedFields =
+      Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
+
+    const matchingRowCount = hasAggregatedFields
+      ? estimateRowsRead({ filter, context: rowsEstimationContext })
+      : 0;
+
+    const joinedRowCount = estimateJoinedRowCount({
+      fieldNames: [
+        ...collectFilterFieldNames(filter),
+        ...orderByLeaves
+          .filter((leaf) => leaf.kind === 'relation')
+          .map((leaf) => leaf.path[0]),
+      ],
+      context: rowsEstimationContext,
+    });
+
+    const sortedRecordRowCount = isLeadingOrderServedByIndex(
+      orderByLeaves,
+      rowsEstimationContext,
+    )
+      ? 0
+      : recordRowsRead;
 
     return {
       rowsRead:
         recordRowsRead +
-        aggregateRowsRead +
+        matchingRowCount +
+        joinedRowCount +
         estimateRelationRowsRead({
           select: args.selectedFieldsResult.select,
           parentRowCount: Math.min(limit, recordRowsRead),
           context: rowsEstimationContext,
         }),
       rowsWritten: 0,
+      rowsSorted:
+        sortedRecordRowCount +
+        joinedRowCount +
+        countDistinctAggregates(args.selectedFieldsResult.aggregate) *
+          matchingRowCount,
     };
   }
 

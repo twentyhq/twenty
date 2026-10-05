@@ -15,7 +15,7 @@ describe('estimateCreatedRecordsRowsUsage', () => {
           objectNameSingular: 'person',
         }),
       }),
-    ).toEqual({ rowsRead: 300_000, rowsWritten: 10 });
+    ).toEqual({ rowsRead: 300_000, rowsWritten: 10, rowsSorted: 0 });
   });
 
   it('should read one row to place records when the position has an index', () => {
@@ -29,7 +29,7 @@ describe('estimateCreatedRecordsRowsUsage', () => {
           additionalPersonIndexes: [personPositionIndex],
         }),
       }),
-    ).toEqual({ rowsRead: 1, rowsWritten: 10 });
+    ).toEqual({ rowsRead: 1, rowsWritten: 10, rowsSorted: 0 });
   });
 
   it('should look up each unique column of each record on upsert', () => {
@@ -42,7 +42,7 @@ describe('estimateCreatedRecordsRowsUsage', () => {
           objectNameSingular: 'person',
         }),
       }),
-    ).toEqual({ rowsRead: 20, rowsWritten: 10 });
+    ).toEqual({ rowsRead: 20, rowsWritten: 10, rowsSorted: 0 });
   });
 
   it('should read nothing to place records of an object without position', () => {
@@ -55,6 +55,6 @@ describe('estimateCreatedRecordsRowsUsage', () => {
           objectNameSingular: 'company',
         }),
       }),
-    ).toEqual({ rowsRead: 0, rowsWritten: 1 });
+    ).toEqual({ rowsRead: 0, rowsWritten: 1, rowsSorted: 0 });
   });
 });

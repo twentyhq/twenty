@@ -13,7 +13,7 @@ describe('estimateFilteredMutationRowsUsage', () => {
         select: { id: true },
         context,
       }),
-    ).toEqual({ rowsRead: 1, rowsWritten: 1 });
+    ).toEqual({ rowsRead: 1, rowsWritten: 1, rowsSorted: 0 });
   });
 
   it('should read and write the rows listed by id', () => {
@@ -23,7 +23,7 @@ describe('estimateFilteredMutationRowsUsage', () => {
         select: { id: true },
         context,
       }),
-    ).toEqual({ rowsRead: 3, rowsWritten: 3 });
+    ).toEqual({ rowsRead: 3, rowsWritten: 3, rowsSorted: 0 });
   });
 
   it('should add the relations returned for the written rows', () => {
@@ -33,7 +33,7 @@ describe('estimateFilteredMutationRowsUsage', () => {
         select: { id: true, company: { id: true } },
         context,
       }),
-    ).toEqual({ rowsRead: 30, rowsWritten: 15 });
+    ).toEqual({ rowsRead: 30, rowsWritten: 15, rowsSorted: 0 });
   });
 
   it('should read and write the whole table for a filter without an index', () => {
@@ -43,6 +43,20 @@ describe('estimateFilteredMutationRowsUsage', () => {
         select: { id: true },
         context,
       }),
-    ).toEqual({ rowsRead: 300_000, rowsWritten: 300_000 });
+    ).toEqual({
+      rowsRead: 300_000,
+      rowsWritten: 300_000,
+      rowsSorted: 0,
+    });
+  });
+
+  it('should read and hash the joined table for a filter through a relation', () => {
+    expect(
+      estimateFilteredMutationRowsUsage({
+        filter: { company: { id: { eq: 'company-id' } } },
+        select: { id: true },
+        context,
+      }),
+    ).toEqual({ rowsRead: 320_000, rowsWritten: 300_000, rowsSorted: 20_000 });
   });
 });

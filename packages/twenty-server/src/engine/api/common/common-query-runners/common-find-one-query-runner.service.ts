@@ -13,6 +13,8 @@ import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query
 import { type EstimatedRowsUsage } from 'src/engine/api/common/common-query-runners/types/estimated-rows-usage.type';
 import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
 import { estimateRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-rows-read.util';
+import { collectFilterFieldNames } from 'src/engine/api/common/common-query-runners/utils/collect-filter-field-names.util';
+import { estimateJoinedRowCount } from 'src/engine/api/common/common-query-runners/utils/estimate-joined-row-count.util';
 import { estimateRelationRowsRead } from 'src/engine/api/common/common-query-runners/utils/estimate-relation-rows-read.util';
 import {
   CommonQueryRunnerException,
@@ -170,19 +172,23 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     args: CommonExtendedInput<FindOneQueryArgs>,
     rowsEstimationContext: RowsEstimationContext,
   ): EstimatedRowsUsage {
+    const filter = args.filter ?? {};
+    const joinedRowCount = estimateJoinedRowCount({
+      fieldNames: collectFilterFieldNames(filter),
+      context: rowsEstimationContext,
+    });
+
     return {
       rowsRead:
-        estimateRowsRead({
-          filter: args.filter ?? {},
-          limit: 1,
-          context: rowsEstimationContext,
-        }) +
+        estimateRowsRead({ filter, limit: 1, context: rowsEstimationContext }) +
+        joinedRowCount +
         estimateRelationRowsRead({
           select: args.selectedFieldsResult.select,
           parentRowCount: 1,
           context: rowsEstimationContext,
         }),
       rowsWritten: 0,
+      rowsSorted: joinedRowCount,
     };
   }
 }

@@ -45,5 +45,6 @@ export const estimateCreatedRecordsRowsUsage = ({
         recordLimitPerParent: QUERY_MAX_RECORDS,
       }),
     rowsWritten: createdRecordCount,
+    rowsSorted: 0,
   };
 };

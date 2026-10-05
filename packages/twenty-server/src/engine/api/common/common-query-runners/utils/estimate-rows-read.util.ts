@@ -5,10 +5,9 @@ import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-
 
 import { type RowsEstimationContext } from 'src/engine/api/common/common-query-runners/types/rows-estimation-context.type';
 import { estimateRowsReadForColumnCondition } from 'src/engine/api/common/common-query-runners/utils/estimate-rows-read-for-column-condition.util';
+import { isLeadingOrderServedByIndex } from 'src/engine/api/common/common-query-runners/utils/is-leading-order-served-by-index.util';
 import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
-import { getOptionalOrderByCasting } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/get-optional-order-by-casting.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
-import { getEffectiveScanOrder } from 'src/engine/api/utils/get-effective-scan-order.utils';
 import { type OrderByLeaf } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -95,45 +94,6 @@ const estimateRowsReadForFilter = (
   );
 
   return Math.min(context.recordCount, ...rowsReadPerFilterEntry);
-};
-
-const computeOrderByLeafColumnName = (leaf: OrderByLeaf): string | null => {
-  switch (leaf.kind) {
-    case 'scalar':
-      return leaf.path[0];
-    case 'composite':
-      return computeCompositeColumnName(
-        leaf.fieldMetadata,
-        leaf.compositeProperty,
-      );
-    case 'relation':
-      return null;
-  }
-};
-
-const isLeadingOrderServedByIndex = (
-  orderByLeaves: OrderByLeaf[],
-  context: RowsEstimationContext,
-): boolean => {
-  const [leadingLeaf] = orderByLeaves;
-
-  if (!isDefined(leadingLeaf)) {
-    return true;
-  }
-
-  const columnName = computeOrderByLeafColumnName(leadingLeaf);
-  const { isAscending, areNullsScannedLast } = getEffectiveScanOrder(
-    leadingLeaf.direction,
-    true,
-  );
-  const isBtreeScanOrder = isAscending === areNullsScannedLast;
-
-  return (
-    isDefined(columnName) &&
-    context.indexedColumnByName.has(columnName) &&
-    getOptionalOrderByCasting(leadingLeaf.fieldMetadata) === '' &&
-    isBtreeScanOrder
-  );
 };
 
 export const estimateRowsRead = ({

@@ -303,6 +303,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           context: rowsEstimationContext,
         }),
       rowsWritten: 0,
+      rowsSorted: 0,
     };
   }
 }

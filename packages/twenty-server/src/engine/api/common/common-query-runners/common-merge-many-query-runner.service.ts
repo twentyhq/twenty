@@ -666,6 +666,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           context: rowsEstimationContext,
         }),
       rowsWritten: args.dryRun ? 0 : movedChildRowCount + args.ids.length,
+      rowsSorted: 0,
     };
   }
 }

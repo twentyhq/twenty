@@ -549,16 +549,17 @@ export abstract class CommonBaseQueryRunnerService<
         authContext.workspace.id,
       );
 
-    const { rowsRead, rowsWritten } = this.computeEstimatedRowsUsage(
-      args,
-      buildRowsEstimationContext({
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        flatIndexMaps,
-        approximateRecordCountByTableName,
-      }),
-    );
+    const { rowsRead, rowsWritten, rowsSorted } =
+      this.computeEstimatedRowsUsage(
+        args,
+        buildRowsEstimationContext({
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          flatIndexMaps,
+          approximateRecordCountByTableName,
+        }),
+      );
 
     if (rowsRead > 0) {
       this.recordApiUsage({
@@ -573,6 +574,14 @@ export abstract class CommonBaseQueryRunnerService<
         authContext,
         quantity: rowsWritten,
         unit: UsageUnit.ESTIMATED_ROWS_WRITTEN,
+      });
+    }
+
+    if (rowsSorted > 0) {
+      this.recordApiUsage({
+        authContext,
+        quantity: rowsSorted,
+        unit: UsageUnit.ESTIMATED_ROWS_SORTED,
       });
     }
   }
