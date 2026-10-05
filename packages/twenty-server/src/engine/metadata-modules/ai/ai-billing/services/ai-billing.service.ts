@@ -141,7 +141,10 @@ export class AiBillingService {
       workspaceId,
       operationType,
       spenders: { userWorkspaceId, agentId },
-      cost: { creditsUsedMicro, quantity: totalTokens },
+      cost: {
+        [UsageUnit.CREDIT]: creditsUsedMicro,
+        [UsageUnit.TOKEN]: totalTokens,
+      },
     });
 
     await this.emitAiTokenUsageEvent(
@@ -179,7 +182,10 @@ export class AiBillingService {
       workspaceId,
       operationType,
       spenders,
-      cost: { creditsUsedMicro, quantity: totalTokens },
+      cost: {
+        [UsageUnit.CREDIT]: creditsUsedMicro,
+        [UsageUnit.TOKEN]: totalTokens,
+      },
     });
   }
 
@@ -204,7 +210,10 @@ export class AiBillingService {
       workspaceId,
       operationType: UsageOperationType.WEB_SEARCH,
       spenders: { userWorkspaceId },
-      cost: { creditsUsedMicro, quantity: nativeWebSearchCallCount },
+      cost: {
+        [UsageUnit.CREDIT]: creditsUsedMicro,
+        [UsageUnit.INVOCATION]: nativeWebSearchCallCount,
+      },
     });
 
     await this.usageRecorderService.record(workspaceId, [

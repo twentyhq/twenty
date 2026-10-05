@@ -58,17 +58,23 @@ export const DropdownRoot = ({
   const [triggerId, registerTrigger] = useRegisteredElementId();
   const [titleId, registerTitle] = useRegisteredElementId();
 
-  if (previousOpen !== open) {
-    setPreviousOpen(open);
+  const isOpening = open && !previousOpen;
+  const isClosing = !open && previousOpen;
 
-    if (!open) {
-      setPageHistory([{ id: defaultPage }]);
-      setActivePage(undefined);
-      setPageFocusRequest(undefined);
-      setInitialFocusEdge('first');
-      setFocusOnOpen(true);
-      setSearchTargetId(undefined);
-    }
+  if (isOpening || isClosing) {
+    setPreviousOpen(open);
+  }
+
+  if (isOpening) {
+    setPageHistory([{ id: defaultPage }]);
+    setActivePage(undefined);
+    setPageFocusRequest(undefined);
+  }
+
+  if (isClosing) {
+    setInitialFocusEdge('first');
+    setFocusOnOpen(true);
+    setSearchTargetId(undefined);
   }
 
   const setOpen = (nextOpen: boolean) => {
