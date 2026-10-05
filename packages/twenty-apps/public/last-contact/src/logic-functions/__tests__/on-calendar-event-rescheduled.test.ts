@@ -59,7 +59,7 @@ describe('on-calendar-event-rescheduled', () => {
       onCalendarEventRescheduled.config.databaseEventTriggerSettings,
     ).toEqual({
       eventName: 'calendarEvent.updated',
-      updatedFields: ['startsAt'],
+      updatedFields: ['startsAt', 'isCanceled'],
       batchMode: true,
     });
   });

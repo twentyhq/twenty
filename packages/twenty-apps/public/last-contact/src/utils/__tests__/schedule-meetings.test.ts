@@ -67,10 +67,23 @@ describe('scheduleMeetings', () => {
     expect(enqueueJobsMock.mock.calls[1][0].delayMs).toBe(96 * MINUTE_MS);
   });
 
-  it('should skip started meetings and unparsable start times', async () => {
-    await scheduleMeetings(['2026-06-12T11:59:00.000Z', NOW, 'not-a-date']);
+  it('should skip meetings whose slot already ended and unparsable start times', async () => {
+    await scheduleMeetings(['2026-06-12T11:59:00.000Z', 'not-a-date']);
 
     expect(enqueueJobsMock).not.toHaveBeenCalled();
+  });
+
+  it('should still schedule a meeting that started within the current slot', async () => {
+    vi.setSystemTime(new Date('2026-06-12T12:02:00.000Z'));
+
+    await scheduleMeetings(['2026-06-12T12:01:00.000Z']);
+
+    expect(enqueueJobsMock).toHaveBeenCalledTimes(1);
+    expect(enqueueJobsMock.mock.calls[0][0].jobs[0].payload).toEqual({
+      slotStart: '2026-06-12T12:00:00.000Z',
+      slotEnd: '2026-06-12T12:05:00.000Z',
+    });
+    expect(enqueueJobsMock.mock.calls[0][0].delayMs).toBe(4 * MINUTE_MS);
   });
 
   it('should leave meetings past the 6 day horizon to one horizon job at the next period', async () => {

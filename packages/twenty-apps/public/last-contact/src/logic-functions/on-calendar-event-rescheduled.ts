@@ -55,11 +55,11 @@ export default defineLogicFunction({
     CALENDAR_EVENT_RESCHEDULED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-calendar-event-rescheduled',
   description:
-    "Schedules a meeting's new time slot when its start time changes, so last contact is updated once it starts, or applies it right away when it moved into the past.",
+    "Schedules a meeting's new time slot when its start time changes or it is un-canceled, so last contact is updated once it starts, or applies it right away when it already started.",
   timeoutSeconds: BATCH_HANDLER_TIMEOUT_SECONDS,
   databaseEventTriggerSettings: {
     eventName: 'calendarEvent.updated',
-    updatedFields: ['startsAt'],
+    updatedFields: ['startsAt', 'isCanceled'],
     batchMode: true,
   },
   handler,

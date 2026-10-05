@@ -49,7 +49,7 @@ export const scheduleMeetings = async (
   for (const meetingStartsAt of meetingStartsAts) {
     const startsAtMs = Date.parse(meetingStartsAt);
 
-    if (Number.isNaN(startsAtMs) || startsAtMs <= now) {
+    if (Number.isNaN(startsAtMs)) {
       continue;
     }
 
@@ -58,7 +58,12 @@ export const scheduleMeetings = async (
       continue;
     }
 
-    slotStartsMs.add(Math.floor(startsAtMs / MEETING_SLOT_MS) * MEETING_SLOT_MS);
+    const slotStartMs =
+      Math.floor(startsAtMs / MEETING_SLOT_MS) * MEETING_SLOT_MS;
+
+    if (slotStartMs + MEETING_SLOT_MS > now) {
+      slotStartsMs.add(slotStartMs);
+    }
   }
 
   for (const slotStartMs of [...slotStartsMs].sort()) {
