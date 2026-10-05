@@ -249,23 +249,29 @@ export class TwoFactorAuthenticationService {
       { status: OTPStatus.VERIFIED },
     );
 
-    await this.revokePendingRecoveryCodes({ workspaceId, userId });
+    await this.revokeRecoveryCodes({
+      workspaceId,
+      userId,
+      includeRedeemed: true,
+    });
   }
 
-  async revokePendingRecoveryCodes({
+  async revokeRecoveryCodes({
     workspaceId,
     userId,
+    includeRedeemed = false,
   }: {
     workspaceId: WorkspaceEntity['id'];
     userId: UserEntity['id'];
+    includeRedeemed?: boolean;
   }): Promise<number> {
     const updateResult = await this.appTokenRepository.update(
       {
         workspaceId,
         userId,
         type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
-        deletedAt: IsNull(),
         revokedAt: IsNull(),
+        ...(includeRedeemed ? {} : { deletedAt: IsNull() }),
       },
       { revokedAt: new Date() },
     );

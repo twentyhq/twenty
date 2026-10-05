@@ -28,9 +28,11 @@ const USER_ID = '20202020-3957-4908-9c36-2929a23f8357';
 
 const statusMock = ({
   hasVerifiedTwoFactorAuthenticationMethod,
+  isAwaitingRecoveryEnrollment = false,
   pendingRecoveryCodeExpiresAt,
 }: {
   hasVerifiedTwoFactorAuthenticationMethod: boolean;
+  isAwaitingRecoveryEnrollment?: boolean;
   pendingRecoveryCodeExpiresAt: string | null;
 }): MockedResponse => ({
   request: {
@@ -42,6 +44,7 @@ const statusMock = ({
       twoFactorAuthenticationRecoveryStatus: {
         __typename: 'TwoFactorAuthenticationRecoveryStatus',
         hasVerifiedTwoFactorAuthenticationMethod,
+        isAwaitingRecoveryEnrollment,
         pendingRecoveryCodeExpiresAt,
       },
     },
@@ -82,6 +85,20 @@ it('explains that there is nothing to recover when the member has no authenticat
   expect(
     screen.queryByRole('button', { name: 'Generate recovery code' }),
   ).not.toBeInTheDocument();
+});
+
+it('lets the admin issue a new code to a member who has not finished setting up the authenticator from a recovery', async () => {
+  renderSection([
+    statusMock({
+      hasVerifiedTwoFactorAuthenticationMethod: false,
+      isAwaitingRecoveryEnrollment: true,
+      pendingRecoveryCodeExpiresAt: null,
+    }),
+  ]);
+
+  expect(
+    await screen.findByRole('button', { name: 'Generate recovery code' }),
+  ).toBeInTheDocument();
 });
 
 it('shows a pending code and revokes it', async () => {

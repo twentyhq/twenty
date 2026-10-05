@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { renderEmail } from 'twenty-emails';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
-import { IsNull, MoreThanOrEqual, QueryFailedError } from 'typeorm';
+import { IsNull, MoreThanOrEqual, Not, QueryFailedError } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -81,7 +81,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   };
   let twoFactorAuthenticationService: {
     assertFreshStepUpAuthenticationOrThrow: jest.Mock;
-    revokePendingRecoveryCodes: jest.Mock;
+    revokeRecoveryCodes: jest.Mock;
     generatePendingTotpSecret: jest.Mock;
   };
   let userWorkspaceService: { getUserWorkspaceForUser: jest.Mock };
@@ -134,7 +134,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
           provide: TwoFactorAuthenticationService,
           useValue: {
             assertFreshStepUpAuthenticationOrThrow: jest.fn(),
-            revokePendingRecoveryCodes: jest.fn().mockResolvedValue(0),
+            revokeRecoveryCodes: jest.fn().mockResolvedValue(0),
             generatePendingTotpSecret: jest.fn().mockReturnValue({
               uri: REPLACEMENT_PROVISIONING_URI,
               encryptedSecret: 'encrypted-replacement-secret',
@@ -224,7 +224,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         }),
       );
       expect(
-        twoFactorAuthenticationService.revokePendingRecoveryCodes,
+        twoFactorAuthenticationService.revokeRecoveryCodes,
       ).toHaveBeenCalledWith({
         workspaceId: WORKSPACE_ID,
         userId: TARGET_USER_ID,
@@ -282,6 +282,24 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         targetUserId: TARGET_USER_ID,
         targetWorkspaceId: WORKSPACE_ID,
       });
+
+      expect(appTokenRepository.insert).toHaveBeenCalled();
+    });
+
+    it('refuses a member with no authenticator to recover', async () => {
+      methodRepository.exists.mockResolvedValue(false);
+
+      await expect(generate()).rejects.toMatchObject({
+        code: TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED,
+      });
+      expect(appTokenRepository.insert).not.toHaveBeenCalled();
+    });
+
+    it('issues a new code to a member who has not finished setting up the authenticator from a previous recovery', async () => {
+      methodRepository.exists.mockResolvedValue(false);
+      appTokenRepository.exists.mockResolvedValue(true);
+
+      await generate();
 
       expect(appTokenRepository.insert).toHaveBeenCalled();
     });
@@ -355,7 +373,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       expect(transactionalRepositories.appToken.update).toHaveBeenNthCalledWith(
         1,
         expect.objectContaining(redeemableCodeWhere),
-        { deletedAt: expect.any(Date) },
+        { deletedAt: expect.any(Date), revokedAt: expect.any(Date) },
       );
       expect(transactionalRepositories.method.delete).toHaveBeenCalledWith({
         workspaceId: WORKSPACE_ID,
@@ -398,6 +416,13 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         redeem({ isTwoFactorAuthenticationEnforced: true }),
       ).resolves.toEqual({ provisioningUri: REPLACEMENT_PROVISIONING_URI });
 
+      expect(transactionalRepositories.appToken.update).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+        }),
+        { deletedAt: expect.any(Date) },
+      );
       expect(transactionalRepositories.method.insert).toHaveBeenCalledWith({
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: TARGET_USER_WORKSPACE_ID,
@@ -438,16 +463,25 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         workspaceId: WORKSPACE_ID,
       });
 
-    it('refuses public enrollment while a recently redeemed recovery has no verified authenticator', async () => {
+    it('refuses public enrollment until the authenticator issued by a recovery is verified, however long ago it was redeemed', async () => {
       methodRepository.exists.mockResolvedValue(false);
       appTokenRepository.exists.mockResolvedValue(true);
 
       await expect(assertEnrollmentAllowed()).rejects.toMatchObject({
         code: TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
       });
+      expect(appTokenRepository.exists).toHaveBeenCalledWith({
+        where: {
+          userId: TARGET_USER_ID,
+          workspaceId: WORKSPACE_ID,
+          type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+          deletedAt: Not(IsNull()),
+          revokedAt: IsNull(),
+        },
+      });
     });
 
-    it('allows enrollment when no recovery code was redeemed recently', async () => {
+    it('allows enrollment when no redeemed recovery is waiting for its authenticator', async () => {
       methodRepository.exists.mockResolvedValue(false);
       appTokenRepository.exists.mockResolvedValue(false);
 
@@ -478,7 +512,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         code: TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED,
       });
       expect(
-        twoFactorAuthenticationService.revokePendingRecoveryCodes,
+        twoFactorAuthenticationService.revokeRecoveryCodes,
       ).not.toHaveBeenCalled();
     });
   });

@@ -125,6 +125,16 @@ const selectPendingRecoveryCodes = (): Promise<{ id: string }[]> =>
     ],
   );
 
+const selectOpenRecoveryCodes = (): Promise<{ id: string }[]> =>
+  global.testDataSource.query(
+    `SELECT "id" FROM core."appToken" WHERE "type" = $1 AND "userId" = $2 AND "workspaceId" = $3 AND "revokedAt" IS NULL`,
+    [
+      AppTokenType.TwoFactorAuthenticationRecoveryCode,
+      USER_DATA_SEED_IDS.JONY,
+      SEED_APPLE_WORKSPACE_ID,
+    ],
+  );
+
 const enrollAuthenticator = async (accessToken: string): Promise<string> => {
   const { data } = await initiateOtpProvisioningForAuthenticatedUser({
     accessToken,
@@ -192,6 +202,7 @@ const getRecoveryStatus = async (userId: string) => {
         query TwoFactorAuthenticationRecoveryStatus($userId: UUID!) {
           twoFactorAuthenticationRecoveryStatus(userId: $userId) {
             hasVerifiedTwoFactorAuthenticationMethod
+            isAwaitingRecoveryEnrollment
             pendingRecoveryCodeExpiresAt
           }
         }
@@ -369,6 +380,7 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       expect(statusWithCode.data.twoFactorAuthenticationRecoveryStatus).toEqual(
         {
           hasVerifiedTwoFactorAuthenticationMethod: true,
+          isAwaitingRecoveryEnrollment: false,
           pendingRecoveryCodeExpiresAt: expiresAt,
         },
       );
@@ -668,6 +680,17 @@ describe('Two-factor authentication recovery codes (integration)', () => {
           'RECOVERY_ENROLLMENT_RESTRICTED',
         );
 
+        const awaitingStatus = await getRecoveryStatus(USER_DATA_SEED_IDS.JONY);
+
+        expect(
+          awaitingStatus.data.twoFactorAuthenticationRecoveryStatus,
+        ).toMatchObject({
+          hasVerifiedTwoFactorAuthenticationMethod: false,
+          isAwaitingRecoveryEnrollment: true,
+        });
+
+        await generateCodeForJony();
+
         const { errors: otpErrors } = await getAuthTokensFromOtp({
           loginToken: await getJonyLoginToken(),
           otp: await generateOtp(replacementSecret as string),
@@ -676,6 +699,7 @@ describe('Two-factor authentication recovery codes (integration)', () => {
         });
 
         expect(otpErrors).toBeUndefined();
+        expect(await selectOpenRecoveryCodes()).toEqual([]);
 
         jonySecret = replacementSecret as string;
       } finally {

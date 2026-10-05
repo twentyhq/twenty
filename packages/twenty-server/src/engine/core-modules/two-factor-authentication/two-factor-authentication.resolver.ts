@@ -120,6 +120,11 @@ export class TwoFactorAuthenticationResolver {
       );
     }
 
+    // A recovery redeemed while this request ran may have replaced the method, so the URI could hold its secret
+    await this.twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow(
+      { userId: user.id, workspaceId: workspace.id },
+    );
+
     return { uri };
   }
 

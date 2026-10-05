@@ -16,6 +16,7 @@ import {
   IsNull,
   MoreThan,
   MoreThanOrEqual,
+  Not,
   QueryFailedError,
   Repository,
 } from 'typeorm';
@@ -37,7 +38,6 @@ import {
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ISSUANCE_RATE_LIMIT_WINDOW_MS,
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_MAX,
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_WINDOW_MS,
-  TWO_FACTOR_AUTHENTICATION_RECOVERY_ENROLLMENT_WINDOW_MS,
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-recovery-code.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
@@ -139,10 +139,16 @@ export class TwoFactorAuthenticationRecoveryService {
         targetWorkspaceId,
       });
 
-    const hasVerifiedTwoFactorAuthenticationMethod =
-      await this.hasVerifiedTwoFactorAuthenticationMethod(targetUserWorkspace);
+    const hasRecoverableTwoFactorAuthentication =
+      (await this.hasVerifiedTwoFactorAuthenticationMethod(
+        targetUserWorkspace,
+      )) ||
+      (await this.isAwaitingRecoveryEnrollment({
+        userId: targetUserId,
+        workspaceId: targetWorkspaceId,
+      }));
 
-    if (!hasVerifiedTwoFactorAuthenticationMethod) {
+    if (!hasRecoverableTwoFactorAuthentication) {
       throw new TwoFactorAuthenticationException(
         'The member has no verified two-factor authentication method',
         TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED,
@@ -152,7 +158,7 @@ export class TwoFactorAuthenticationRecoveryService {
       );
     }
 
-    await this.twoFactorAuthenticationService.revokePendingRecoveryCodes({
+    await this.twoFactorAuthenticationService.revokeRecoveryCodes({
       workspaceId: targetWorkspaceId,
       userId: targetUserId,
     });
@@ -217,7 +223,7 @@ export class TwoFactorAuthenticationRecoveryService {
       });
 
     const revokedCount =
-      await this.twoFactorAuthenticationService.revokePendingRecoveryCodes({
+      await this.twoFactorAuthenticationService.revokeRecoveryCodes({
         workspaceId: targetWorkspaceId,
         userId: targetUserWorkspace.userId,
       });
@@ -235,6 +241,7 @@ export class TwoFactorAuthenticationRecoveryService {
     targetWorkspaceId: WorkspaceEntity['id'];
   }): Promise<{
     hasVerifiedTwoFactorAuthenticationMethod: boolean;
+    isAwaitingRecoveryEnrollment: boolean;
     pendingRecoveryCodeExpiresAt: Date | null;
   }> {
     const targetUserWorkspace =
@@ -246,6 +253,13 @@ export class TwoFactorAuthenticationRecoveryService {
 
     const hasVerifiedTwoFactorAuthenticationMethod =
       await this.hasVerifiedTwoFactorAuthenticationMethod(targetUserWorkspace);
+
+    const isAwaitingRecoveryEnrollment =
+      !hasVerifiedTwoFactorAuthenticationMethod &&
+      (await this.isAwaitingRecoveryEnrollment({
+        userId: targetUserId,
+        workspaceId: targetWorkspaceId,
+      }));
 
     const pendingRecoveryCode = await this.appTokenRepository.findOne({
       where: {
@@ -260,6 +274,7 @@ export class TwoFactorAuthenticationRecoveryService {
 
     return {
       hasVerifiedTwoFactorAuthenticationMethod,
+      isAwaitingRecoveryEnrollment,
       pendingRecoveryCodeExpiresAt: pendingRecoveryCode?.expiresAt ?? null,
     };
   }
@@ -296,7 +311,7 @@ export class TwoFactorAuthenticationRecoveryService {
       async (entityManager) => {
         const appTokenRepository = entityManager.getRepository(AppTokenEntity);
 
-        // deletedAt marks the redemption and anchors the post-recovery enrollment window
+        // A redeemed code stays unrevoked only while it reserves enrollment for the authenticator it issued
         const consumeResult = await appTokenRepository.update(
           {
             userId,
@@ -308,7 +323,9 @@ export class TwoFactorAuthenticationRecoveryService {
             expiresAt: MoreThan(new Date()),
             createdAt: MoreThanOrEqual(userWorkspace.createdAt),
           },
-          { deletedAt: new Date() },
+          workspace.isTwoFactorAuthenticationEnforced
+            ? { deletedAt: new Date() }
+            : { deletedAt: new Date(), revokedAt: new Date() },
         );
 
         if ((consumeResult.affected ?? 0) === 0) {
@@ -403,27 +420,30 @@ export class TwoFactorAuthenticationRecoveryService {
       return;
     }
 
-    const hasRecentlyRedeemedRecoveryCode =
-      await this.appTokenRepository.exists({
-        where: {
-          userId,
-          workspaceId,
-          type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
-          deletedAt: MoreThan(
-            new Date(
-              Date.now() -
-                TWO_FACTOR_AUTHENTICATION_RECOVERY_ENROLLMENT_WINDOW_MS,
-            ),
-          ),
-        },
-      });
-
-    if (hasRecentlyRedeemedRecoveryCode) {
+    if (await this.isAwaitingRecoveryEnrollment({ userId, workspaceId })) {
       throw new TwoFactorAuthenticationException(
         'Enrollment after a recovery must use the authenticator issued with the recovery code',
         TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
       );
     }
+  }
+
+  private isAwaitingRecoveryEnrollment({
+    userId,
+    workspaceId,
+  }: {
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+  }): Promise<boolean> {
+    return this.appTokenRepository.exists({
+      where: {
+        userId,
+        workspaceId,
+        type: AppTokenType.TwoFactorAuthenticationRecoveryCode,
+        deletedAt: Not(IsNull()),
+        revokedAt: IsNull(),
+      },
+    });
   }
 
   private async getTargetUserWorkspaceOrThrow({

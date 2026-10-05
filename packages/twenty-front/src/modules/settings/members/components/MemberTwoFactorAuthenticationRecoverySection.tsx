@@ -124,7 +124,8 @@ export const MemberTwoFactorAuthenticationRecoverySection = ({
         title={t`Two-factor authentication`}
         description={t`Let this member sign in again if they lost their authenticator app`}
       />
-      {recoveryStatus.hasVerifiedTwoFactorAuthenticationMethod ? (
+      {recoveryStatus.hasVerifiedTwoFactorAuthenticationMethod ||
+      recoveryStatus.isAwaitingRecoveryEnrollment ? (
         <StyledContent>
           {isDefined(generatedRecoveryCode) && (
             <TwoFactorAuthenticationRecoveryCodeDisplay

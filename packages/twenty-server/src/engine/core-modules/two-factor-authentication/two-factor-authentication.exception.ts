@@ -38,7 +38,7 @@ const getTwoFactorAuthenticationExceptionUserFriendlyMessage = (
     case TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_ISSUANCE_CONFLICT:
       return msg`Another recovery code was just generated for this member. Refresh the page to see it.`;
     case TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED:
-      return msg`Set up your authenticator from the recovery code screen, or ask a workspace admin for a new recovery code.`;
+      return msg`Ask a workspace admin for a new recovery code to finish setting up two-factor authentication.`;
     case TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED:
       return msg`Enter your two-factor authentication code to continue.`;
     default:

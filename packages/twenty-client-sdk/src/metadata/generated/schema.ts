@@ -2433,6 +2433,7 @@ export interface VerifyTwoFactorAuthenticationMethod {
 
 export interface TwoFactorAuthenticationRecoveryStatus {
     hasVerifiedTwoFactorAuthenticationMethod: Scalars['Boolean']
+    isAwaitingRecoveryEnrollment: Scalars['Boolean']
     pendingRecoveryCodeExpiresAt?: Scalars['DateTime']
     __typename: 'TwoFactorAuthenticationRecoveryStatus'
 }
@@ -6364,6 +6365,7 @@ export interface VerifyTwoFactorAuthenticationMethodGenqlSelection{
 
 export interface TwoFactorAuthenticationRecoveryStatusGenqlSelection{
     hasVerifiedTwoFactorAuthenticationMethod?: boolean | number
+    isAwaitingRecoveryEnrollment?: boolean | number
     pendingRecoveryCodeExpiresAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

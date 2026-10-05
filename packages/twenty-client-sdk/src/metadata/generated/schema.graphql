@@ -2880,6 +2880,7 @@ type VerifyTwoFactorAuthenticationMethod {
 
 type TwoFactorAuthenticationRecoveryStatus {
   hasVerifiedTwoFactorAuthenticationMethod: Boolean!
+  isAwaitingRecoveryEnrollment: Boolean!
   pendingRecoveryCodeExpiresAt: DateTime
 }
 

@@ -1,5 +1,9 @@
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import { qrCodeState } from '@/auth/states/qrCode';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
@@ -11,6 +15,7 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const TwoFactorAuthenticationSetupEffect = () => {
   const { initiateCurrentUserWorkspaceOtpProvisioning } =
@@ -22,6 +27,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
   const loginToken = useAtomStateValue(loginTokenState);
   const qrCode = useAtomStateValue(qrCodeState);
   const setQrCode = useSetAtomState(qrCodeState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
 
   const { t } = useLingui();
 
@@ -56,6 +62,10 @@ export const TwoFactorAuthenticationSetupEffect = () => {
           initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri,
         );
       } catch (error) {
+        if (isGraphqlErrorOfType(error, 'RECOVERY_ENROLLMENT_RESTRICTED')) {
+          setSignInUpStep(SignInUpStep.TwoFactorAuthenticationRecovery);
+        }
+
         enqueueToast(
           getTwoFactorAuthenticationErrorToastOptions({
             error,

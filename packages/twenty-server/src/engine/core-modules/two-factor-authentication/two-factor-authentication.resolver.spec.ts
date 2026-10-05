@@ -227,6 +227,24 @@ describe('TwoFactorAuthenticationResolver', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('should withhold the URI when a recovery is redeemed while provisioning runs', async () => {
+      const restrictedException = new TwoFactorAuthenticationException(
+        'Enrollment reserved for recovery',
+        TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
+      );
+
+      twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(restrictedException);
+
+      await expect(
+        resolver.initiateOTPProvisioning(mockInput, origin),
+      ).rejects.toBe(restrictedException);
+      expect(
+        twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow,
+      ).toHaveBeenCalledTimes(2);
+    });
+
     it('should throw WORKSPACE_NOT_FOUND when workspace is not found', async () => {
       workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
         null,

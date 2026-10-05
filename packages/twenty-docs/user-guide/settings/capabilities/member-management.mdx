@@ -69,7 +69,7 @@ You need the **Security** permission and two-factor authentication set up on you
 
 The code works once and expires after 1 hour by default. It is only shown once. Generating a new code replaces the previous one, and you can click **Revoke** to cancel a pending code. The member gets an email when a code is issued.
 
-When the member uses the code, their authenticator for this workspace is removed and they are signed out of their other sessions. If the workspace enforces two-factor authentication, they are asked to set up a new authenticator right away.
+When the member uses the code, their authenticator for this workspace is removed and they are signed out of their other sessions. If the workspace enforces two-factor authentication, they are asked to set up a new authenticator right away. If they leave before finishing, generate a new code for them: until that setup is done, the member can only set up an authenticator through a recovery code.
 
 <Note>
 You can't generate a recovery code for yourself. Only a server administrator can generate one for another server administrator.

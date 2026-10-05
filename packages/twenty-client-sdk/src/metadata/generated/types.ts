@@ -5560,6 +5560,9 @@ export default {
             "hasVerifiedTwoFactorAuthenticationMethod": [
                 8
             ],
+            "isAwaitingRecoveryEnrollment": [
+                8
+            ],
             "pendingRecoveryCodeExpiresAt": [
                 4
             ],
