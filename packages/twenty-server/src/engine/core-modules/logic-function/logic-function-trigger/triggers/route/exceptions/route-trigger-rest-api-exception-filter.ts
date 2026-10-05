@@ -33,6 +33,12 @@ export class RouteTriggerRestApiExceptionFilter implements ExceptionFilter {
           response,
           404,
         );
+      case RouteTriggerExceptionCode.UNAUTHENTICATED:
+        return this.httpExceptionHandlerService.handleError(
+          exception as CustomException,
+          response,
+          401,
+        );
       case RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION:
       case RouteTriggerExceptionCode.WORKSPACE_SUSPENDED:
         return this.httpExceptionHandlerService.handleError(

@@ -76,6 +76,17 @@ describe('RouteTriggerRestApiExceptionFilter', () => {
     );
   });
 
+  it('maps a missing or invalid token to 401', () => {
+    const exception = new RouteTriggerException(
+      'Missing authentication token',
+      RouteTriggerExceptionCode.UNAUTHENTICATED,
+    );
+
+    filter.catch(exception, host);
+
+    expect(handleError).toHaveBeenCalledWith(exception, response, 401);
+  });
+
   it('maps a disabled function to 403', () => {
     const exception = new RouteTriggerException(
       'disabled',

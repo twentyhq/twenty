@@ -86,6 +86,23 @@ export class RouteTriggerService {
     }
   }
 
+  private async validateRouteAuthenticationOrThrow(
+    request: Request,
+  ): Promise<RawAuthContext> {
+    try {
+      return await this.accessTokenService.validateTokenByRequest(request);
+    } catch (error) {
+      if (error instanceof AuthException) {
+        throw new RouteTriggerException(
+          error.message,
+          RouteTriggerExceptionCode.UNAUTHENTICATED,
+        );
+      }
+
+      throw error;
+    }
+  }
+
   private async resolveRouteTriggerRequestContextOrFail(
     request: Request,
   ): Promise<RouteTriggerRequestContext> {
@@ -288,7 +305,7 @@ export class RouteTriggerService {
     if (httpRouteSettings?.isAuthRequired) {
       const routeAuthenticationContext =
         authenticationContext ??
-        (await this.accessTokenService.validateTokenByRequest(request));
+        (await this.validateRouteAuthenticationOrThrow(request));
 
       if (!isDefined(routeAuthenticationContext.workspace)) {
         throw new RouteTriggerException(
