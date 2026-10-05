@@ -4,6 +4,7 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/build-created-by-from-api-key.util';
+import { buildCreatedByFromAgent } from 'src/engine/core-modules/actor/utils/build-created-by-from-agent.util';
 import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
@@ -160,6 +161,13 @@ export class ActorFromAuthContextService {
     }
 
     if (isApplicationAuthContext(authContext)) {
+      if (isDefined(authContext.actingAgent)) {
+        return buildCreatedByFromAgent({
+          agent: authContext.actingAgent,
+          applicationId: authContext.application.id,
+        });
+      }
+
       return buildCreatedByFromApplication({
         application: authContext.application,
       });
