@@ -1,8 +1,19 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+// enqueueJobs only accepts an application token, and the test runs with an API
+// key; capturing it also keeps scheduled jobs from running inside the test.
+const { enqueueJobsMock } = vi.hoisted(() => ({ enqueueJobsMock: vi.fn() }));
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  enqueueJobs: enqueueJobsMock,
+}));
+
+import {
+  APPLICATION_UNIVERSAL_IDENTIFIER,
+  MEETING_SLOT_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import onCalendarInteraction from 'src/logic-functions/on-calendar-interaction';
 import onCompanyCreated from 'src/logic-functions/on-company-created';
 import onEmailInteraction from 'src/logic-functions/on-email-interaction';
@@ -636,6 +647,9 @@ describe('last contact handlers', () => {
     });
     createdParticipantIds.push(participantId);
 
+    enqueueJobsMock.mockClear();
+    enqueueJobsMock.mockResolvedValue({ enqueued: true });
+
     await calendarHandler(
       calendarBatch(participantId, personId, calendarEventId),
     );
@@ -643,6 +657,14 @@ describe('last contact handlers', () => {
     expect(
       (await getPersonLastContact(client, personId)).lastContactAt,
     ).toBeNull();
+    expect(enqueueJobsMock).toHaveBeenCalledTimes(1);
+    expect(enqueueJobsMock.mock.calls[0][0]).toMatchObject({
+      logicFunctionUniversalIdentifier:
+        MEETING_SLOT_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+    });
+    const [{ payload }] = enqueueJobsMock.mock.calls[0][0].jobs;
+    expect(asTime(payload.slotStart)).toBeLessThanOrEqual(asTime(startsAt)!);
+    expect(asTime(payload.slotEnd)).toBeGreaterThan(asTime(startsAt)!);
   });
 
   it('should not set lastContactAt when the past calendar event is canceled', async () => {
