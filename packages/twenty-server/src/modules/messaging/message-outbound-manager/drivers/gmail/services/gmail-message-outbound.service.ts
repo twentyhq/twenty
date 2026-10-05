@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type gmail_v1, google } from 'googleapis';
+import { type gmail_v1, google, type people_v1 } from 'googleapis';
 import MailComposer from 'nodemailer/lib/mail-composer';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -171,12 +171,11 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
         })
       : connectedAccount.handle;
 
-    const { data: peopleData } = await peopleClient.people.get({
-      resourceName: 'people/me',
-      personFields: 'names',
+    const fromName = await this.getFromName({
+      gmailClient,
+      peopleClient,
+      fromEmail,
     });
-
-    const fromName = peopleData?.names?.[0]?.displayName;
 
     const from = formatMessageFromHeader({
       fromEmail,
@@ -195,5 +194,31 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
     const encodedMessage = Buffer.from(messageBuffer).toString('base64url');
 
     return { gmailClient, encodedMessage, messageBuffer };
+  }
+
+  private async getFromName({
+    gmailClient,
+    peopleClient,
+    fromEmail,
+  }: {
+    gmailClient: gmail_v1.Gmail;
+    peopleClient: people_v1.People;
+    fromEmail: string;
+  }): Promise<string | undefined> {
+    const { data: sendAsData } = await gmailClient.users.settings.sendAs.get({
+      userId: 'me',
+      sendAsEmail: fromEmail,
+    });
+
+    if (isNonEmptyString(sendAsData.displayName)) {
+      return sendAsData.displayName;
+    }
+
+    const { data: peopleData } = await peopleClient.people.get({
+      resourceName: 'people/me',
+      personFields: 'names',
+    });
+
+    return peopleData?.names?.[0]?.displayName ?? undefined;
   }
 }
