@@ -177,6 +177,18 @@ describe('createImageLoadingHost', () => {
     expect(createImage).not.toHaveBeenCalled();
   });
 
+  it('reports a srcset without usable candidates as an error', async () => {
+    const { host, images } = createImageHost({
+      isComplete: true,
+      naturalWidth: 0,
+    });
+
+    await expect(
+      host.loadImage({ ...IMAGE_LOAD_REQUEST, src: null, srcset: ' , ' }),
+    ).resolves.toMatchObject({ status: 'error' });
+    expect(images[0].hasAttribute('srcset')).toBe(false);
+  });
+
   it('reports an error without creating an image once the pending load limit is reached', async () => {
     const { host, createImage } = createImageHost();
 

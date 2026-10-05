@@ -96,6 +96,12 @@ export const createImageLoadingHost = ({
       if (image.complete && image.naturalWidth > 0) {
         finishRequest('loaded');
       }
+
+      queueMicrotask(() => {
+        if (image.complete && !isNonEmptyString(image.currentSrc)) {
+          finishRequest('error');
+        }
+      });
     });
   };
 
