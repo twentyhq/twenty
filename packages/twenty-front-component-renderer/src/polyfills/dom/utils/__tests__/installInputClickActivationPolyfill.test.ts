@@ -290,6 +290,43 @@ describe('installInputClickActivationPolyfill', () => {
     container.remove();
   });
 
+  it('should uncheck a group radio that is only checked through its attribute', () => {
+    const container = document.createElement('html-div') as HTMLElement;
+    const daily = createInput({ type: 'radio', name: 'frequency' });
+    const weekly = createInput({ type: 'radio', name: 'frequency' });
+
+    weekly.setAttribute('checked', '');
+    Object.defineProperty(weekly, 'checked', {
+      value: undefined,
+      configurable: true,
+      writable: true,
+    });
+    container.append(daily, weekly);
+    document.body.append(container);
+
+    daily.dispatchEvent(createClickEvent());
+
+    expect(daily.checked).toBe(true);
+    expect(weekly.checked).toBe(false);
+
+    container.remove();
+  });
+
+  it('should uncheck a checkbox that is only checked through its attribute', () => {
+    const checkbox = createInput({ type: 'checkbox' });
+
+    checkbox.setAttribute('checked', '');
+    Object.defineProperty(checkbox, 'checked', {
+      value: undefined,
+      configurable: true,
+      writable: true,
+    });
+
+    checkbox.dispatchEvent(createClickEvent());
+
+    expect(checkbox.checked).toBe(false);
+  });
+
   it('should fire no change when an already checked radio is clicked', () => {
     const radio = createInput({ type: 'radio', name: 'stage', checked: true });
     const eventTypes = recordEventTypes(radio);

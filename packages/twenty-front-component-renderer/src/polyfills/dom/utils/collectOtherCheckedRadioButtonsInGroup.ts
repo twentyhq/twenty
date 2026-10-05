@@ -1,4 +1,5 @@
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
+import { isElementChecked } from '@/polyfills/selectors/utils/isElementChecked';
 import { iterateRadioButtonGroup } from '@/polyfills/selectors/utils/iterateRadioButtonGroup';
 
 export const collectOtherCheckedRadioButtonsInGroup = (
@@ -6,5 +7,5 @@ export const collectOtherCheckedRadioButtonsInGroup = (
 ): SelectorElementLike[] =>
   [...iterateRadioButtonGroup(radioButton)].filter(
     (groupRadioButton) =>
-      groupRadioButton !== radioButton && groupRadioButton.checked === true,
+      groupRadioButton !== radioButton && isElementChecked(groupRadioButton),
   );

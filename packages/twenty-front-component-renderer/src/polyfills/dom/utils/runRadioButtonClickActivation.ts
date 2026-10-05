@@ -1,13 +1,14 @@
 import { type InputClickActivationContext } from '@/polyfills/dom/types/InputClickActivationContext';
 import { collectOtherCheckedRadioButtonsInGroup } from '@/polyfills/dom/utils/collectOtherCheckedRadioButtonsInGroup';
 import { dispatchInputAndChangeEvents } from '@/polyfills/dom/utils/dispatchInputAndChangeEvents';
+import { isElementChecked } from '@/polyfills/selectors/utils/isElementChecked';
 
 export const runRadioButtonClickActivation = ({
   inputElement,
   clickEvent,
   dispatchEvent,
 }: InputClickActivationContext): boolean => {
-  if (inputElement.checked === true) {
+  if (isElementChecked(inputElement)) {
     return dispatchEvent(clickEvent);
   }
 
