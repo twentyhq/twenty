@@ -106,6 +106,7 @@ describe('workflow deletion cleanup', () => {
     let deletedWorkflow: WorkspaceWorkflow;
     let keptWorkflow: WorkspaceWorkflow;
     let codeLogicFunctionId: string;
+    let keptCodeLogicFunctionId: string;
     let completedRunId: string;
     let waitingRunId: string;
     let keptRunId: string;
@@ -224,6 +225,15 @@ describe('workflow deletion cleanup', () => {
       codeLogicFunctionId = codeStep.settings.input.logicFunctionId as string;
       formStepId = formStepOfVersion.id;
 
+      const keptCodeStep = await createStep({
+        workflowVersionId: keptWorkflow.workflowVersionId,
+        stepType: 'CODE',
+        parentStepId: 'trigger',
+      });
+
+      keptCodeLogicFunctionId = keptCodeStep.settings.input
+        .logicFunctionId as string;
+
       await graphql(
         `
           mutation UpdateStep($input: UpdateWorkflowVersionStepInput!) {
@@ -285,6 +295,14 @@ describe('workflow deletion cleanup', () => {
           waitingRunId,
           ({ state }) => state?.stepInfos?.[formStepId]?.status === 'PENDING',
         );
+
+        keptRunId = await runWorkflowVersion({
+          workflowVersionId: keptWorkflow.workflowVersionId,
+        });
+        await waitForTestWorkflowRun(
+          keptRunId,
+          ({ status }) => status === 'COMPLETED',
+        );
       } finally {
         executeSpy.mockRestore();
       }
@@ -297,14 +315,6 @@ describe('workflow deletion cleanup', () => {
         stepId: formStepId,
         wait: { type: 'EVENT', eventName: 'company.updated' },
       });
-
-      keptRunId = await runWorkflowVersion({
-        workflowVersionId: keptWorkflow.workflowVersionId,
-      });
-      await waitForTestWorkflowRun(
-        keptRunId,
-        ({ status }) => status === 'COMPLETED',
-      );
     }, 180000);
 
     afterAll(async () => {
@@ -390,6 +400,11 @@ describe('workflow deletion cleanup', () => {
       expect(
         await countRows(`core."workflowVersion" WHERE id = $1`, [
           keptWorkflow.coreWorkflowVersionId,
+        ]),
+      ).toBe(1);
+      expect(
+        await countRows(`core."logicFunction" WHERE id = $1`, [
+          keptCodeLogicFunctionId,
         ]),
       ).toBe(1);
       expect(await countTestWorkflowRuns([keptRunId])).toBe(1);
