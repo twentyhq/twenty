@@ -70,7 +70,9 @@ export class EmailAliasManagerService {
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.EMAIL_GROUP:
       case ConnectedAccountProvider.APP:
-        return isDefined(connectedAccount.handleAliases) ? connectedAccount.handleAliases : [];
+        return isDefined(connectedAccount.handleAliases)
+          ? connectedAccount.handleAliases
+          : [];
       default:
         return assertUnreachable(
           connectedAccount.provider,
