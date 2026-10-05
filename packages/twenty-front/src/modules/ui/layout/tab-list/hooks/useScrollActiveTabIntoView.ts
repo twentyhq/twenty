@@ -5,9 +5,7 @@ type UseScrollActiveTabIntoViewParams = {
   isScrollable: boolean;
 };
 
-// A tab selected from the URL or from initial state can sit outside the
-// scrolled region, and a rotation can push it back out, which would leave the
-// row looking like nothing is selected.
+// A tab selected from the URL or initial state, or after a rotation, can sit outside the scrolled region
 export const useScrollActiveTabIntoView = ({
   activeTabId,
   isScrollable,

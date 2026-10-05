@@ -3,7 +3,7 @@ import { join, resolve } from 'path';
 import { ASSET_PATH } from 'src/constants/assets-path';
 
 export const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
-export const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
+export const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60;
 
 export const LAMBDA_CLIENT_MAX_ATTEMPTS = 8;
 export const LAMBDA_CLIENT_RETRY_MODE = 'adaptive' as const;

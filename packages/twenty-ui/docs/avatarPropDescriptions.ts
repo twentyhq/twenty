@@ -12,6 +12,7 @@ export const AVATAR_PROP_DESCRIPTIONS = {
   backgroundColor: 'Background color override for a first-letter fallback.',
   borderColor: 'Border color override for the outline fallback.',
   pulsing: 'Animates the avatar opacity. Respects reduced-motion preferences.',
+  ring: 'Surrounds the avatar with a background-colored ring so overlapping avatars stay distinct.',
   disabled:
     'Applies disabled styling and disables activation when `onClick` is supplied.',
   nativeButton:

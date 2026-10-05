@@ -6,19 +6,19 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AgentMessageRole,
-  AgentMessageStatus,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import {
   AiException,
@@ -32,7 +32,7 @@ export class AgentChatActorService {
     private readonly messages: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threads: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
-    private readonly chatService: AgentChatService,
+    private readonly threadService: AgentChatThreadService,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -72,8 +72,7 @@ export class AgentChatActorService {
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
-    // Only pre-attribution messages inherit the original participant. Never use
-    // a worker's caller or the participant whose preceding turn drained the queue.
+    // only pre-attribution messages inherit the thread's member; never the worker's caller or the participant whose turn drained the queue
     let userWorkspaceId = message.senderUserWorkspaceId;
     if (!isDefined(userWorkspaceId)) {
       const thread = await this.threads.findOneOrFail(workspaceId, {
@@ -113,15 +112,15 @@ export class AgentChatActorService {
       ...sender,
     });
     const thread = await withWorkspaceAuthContext(authContext, () =>
-      this.chatService.getWritableThread({
+      this.threadService.getWritableThread({
         workspaceId,
         threadId,
         workspaceMemberId: authContext.workspaceMemberId,
       }),
     );
-    if (isDefined(thread.archivedAt)) {
+    if (isDefined(thread.deletedAt)) {
       throw new AiException(
-        'Thread is archived',
+        'Thread is deleted',
         AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
@@ -138,6 +137,32 @@ export class AgentChatActorService {
         AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
+    const rolePermissions = await this.resolveRolePermissions({
+      workspaceId,
+      userWorkspaceId: sender.userWorkspaceId,
+      authContext,
+    });
+    if (!isDefined(rolePermissions)) {
+      throw new AiException(
+        'Chat execution is not permitted',
+        AiExceptionCode.THREAD_NOT_FOUND,
+      );
+    }
+    return { authContext, ...rolePermissions };
+  }
+
+  // the permissions a member acts with in the chat, also used to run the calls they approve
+  async resolveRolePermissions({
+    workspaceId,
+    userWorkspaceId,
+    authContext,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    authContext: WorkspaceAuthContext;
+  }): Promise<
+    { rolePermissionConfig: RolePermissionConfig; roleId: string } | undefined
+  > {
     const { userWorkspaceRoleMap } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'userWorkspaceRoleMap',
@@ -147,17 +172,15 @@ export class AgentChatActorService {
       userWorkspaceRoleMap,
       apiKeyRoleMap: {},
     });
-    const roleId = userWorkspaceRoleMap[sender.userWorkspaceId];
-    if (!isDefined(rolePermissionConfig) || !isDefined(roleId)) {
-      throw new AiException(
-        'Chat execution is not permitted',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
-    return { authContext, rolePermissionConfig, roleId };
+    const roleId = userWorkspaceRoleMap[userWorkspaceId];
+
+    return isDefined(rolePermissionConfig) && isDefined(roleId)
+      ? { rolePermissionConfig, roleId }
+      : undefined;
   }
 
-  async authorizeQuestionAnswer({
+  // resolved from the application context of the turn that made the call
+  async authorizeToolCallResolution({
     workspaceId,
     threadId,
     messageId,
@@ -166,20 +189,20 @@ export class AgentChatActorService {
     threadId: string;
     messageId: string;
   }): Promise<void> {
-    const question = await this.messages.findOne(workspaceId, {
+    const toolCallMessage = await this.messages.findOne(workspaceId, {
       where: { id: messageId, threadId, role: AgentMessageRole.ASSISTANT },
       select: ['turnId'],
     });
-    if (!isDefined(question?.turnId)) {
+    if (!isDefined(toolCallMessage?.turnId)) {
       throw new AiException(
-        'Question turn not found',
+        'Tool call turn not found',
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
     const { sender } = await this.resolveMessage({
       workspaceId,
       threadId,
-      turnId: question.turnId,
+      turnId: toolCallMessage.turnId,
     });
     const request = workspaceAuthContextStorage.getStore();
     if (
@@ -189,8 +212,8 @@ export class AgentChatActorService {
       (request.application?.id ?? null) !== sender.applicationId
     ) {
       throw new AiException(
-        'Answer requires the original application context',
-        AiExceptionCode.INVALID_QUESTION_ANSWER,
+        'Resolving this tool call requires the original application context',
+        AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
       );
     }
   }

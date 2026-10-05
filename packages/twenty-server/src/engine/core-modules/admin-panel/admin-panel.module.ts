@@ -54,8 +54,6 @@ import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
@@ -66,8 +64,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       WorkspaceEntity,
       UserWorkspaceEntity,
       FeatureFlagEntity,
-      AgentChatThreadEntity,
-      AgentMessageEntity,
       BillingCustomerEntity,
       BillingPriceEntity,
     ]),

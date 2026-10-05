@@ -3,6 +3,7 @@ import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/type
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const MONTH_PERIOD = {
   periodStart: new Date('2026-08-01T00:00:00.000Z'),
@@ -23,7 +24,7 @@ const buildLimit = (overrides: Partial<FlatQuotaLimit>): FlatQuotaLimit => ({
   limitKind: 'quota',
   periodCount: 1,
   periodUnit: 'month',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   limitValue: 1_000_000,
   burstValue: null,
   isInstanceOverride: false,
@@ -38,7 +39,7 @@ const buildDefault = (
   limitKind: 'quota',
   spenderType: 'workspace',
   spenderId: '',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   periodUnit: 'month',
   periodCount: 1,
   isOverridable: true,
@@ -72,9 +73,9 @@ describe('buildQuotaCounters', () => {
       {
         kind: 'limit',
         isDefault: false,
-        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}`,
+        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}:1000000`,
         limitValue: 1_000_000,
-        meter: 'creditsUsedMicro',
+        unit: UsageUnit.CREDIT,
         resourceType: UsageResourceType.AI,
         periodUnit: 'month',
         periodStart: MONTH_PERIOD.periodStart,
@@ -167,9 +168,9 @@ describe('buildQuotaCounters', () => {
       {
         kind: 'limit',
         isDefault: true,
-        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}:default:5000`,
+        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}:5000:default`,
         limitValue: 5_000,
-        meter: 'creditsUsedMicro',
+        unit: UsageUnit.CREDIT,
         resourceType: UsageResourceType.AI,
         periodUnit: 'month',
         periodStart: MONTH_PERIOD.periodStart,
@@ -207,7 +208,7 @@ describe('buildQuotaCounters', () => {
 
   it.each([
     { spenderType: 'userWorkspace' as const, spenderId: 'user-1' },
-    { meter: 'quantity' as const },
+    { unit: UsageUnit.TOKEN },
   ])('preserves the default for a different scope: %j', (overrides) => {
     const counters = buildCounters({
       limits: [buildLimit(overrides)],

@@ -2,16 +2,21 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { createElement } from 'react';
 
+import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 import { useInstallOnboardingApps } from '@/onboarding/hooks/useInstallOnboardingApps';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import {
+  mockCurrentWorkspace,
+  mockedUserData,
+} from '~/testing/mock-data/users';
 
 const mockTriggerInstallAppsOnboardingStep = jest.fn();
 
@@ -19,6 +24,8 @@ jest.mock('@/onboarding/hooks/useTriggerInstallAppsOnboardingStep', () => ({
   useTriggerInstallAppsOnboardingStep: () =>
     mockTriggerInstallAppsOnboardingStep,
 }));
+
+const AVAILABLE_APPS = ['app-1', 'app-2'];
 
 const onboardingConfig: OnboardingConfig = {
   importContactsCreditsReward: 2,
@@ -34,25 +41,15 @@ const Wrapper = ({ children }: { children: React.ReactNode }) =>
 
 const renderInstallHook = () => {
   const { result } = renderHook(
-    () => {
-      const setOnboardingConfig = useSetAtomState(onboardingConfigState);
-      const onboardingFreeCredits = useAtomStateValue(
-        onboardingFreeCreditsState,
-      );
-      const installOnboardingApps = useInstallOnboardingApps();
-
-      return {
-        setOnboardingConfig,
-        onboardingFreeCredits,
-        installOnboardingApps,
-      };
-    },
+    () => ({
+      onboardingFreeCredits: useAtomFamilyStateValue(
+        onboardingFreeCreditsFamilyState,
+        mockCurrentWorkspace.id,
+      ),
+      installOnboardingApps: useInstallOnboardingApps(AVAILABLE_APPS),
+    }),
     { wrapper: Wrapper },
   );
-
-  act(() => {
-    result.current.setOnboardingConfig(onboardingConfig);
-  });
 
   return result;
 };
@@ -61,20 +58,19 @@ describe('useInstallOnboardingApps', () => {
   beforeEach(() => {
     localStorage.clear();
     resetJotaiStore();
+    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+    jotaiStore.set(onboardingConfigState.atom, onboardingConfig);
+    jotaiStore.set(currentUserState.atom, {
+      ...mockedUserData,
+      isWorkspaceCreator: true,
+    });
     mockTriggerInstallAppsOnboardingStep.mockReset();
   });
 
-  it('should credit the selected apps once the step succeeds', async () => {
+  it('should install and credit every available app by default', async () => {
     mockTriggerInstallAppsOnboardingStep.mockResolvedValue(undefined);
 
     const result = renderInstallHook();
-
-    act(() => {
-      result.current.installOnboardingApps.toggleApp('app-1');
-    });
-    act(() => {
-      result.current.installOnboardingApps.toggleApp('app-2');
-    });
 
     await act(async () => {
       await result.current.installOnboardingApps.installSelectedAppsAndContinue();
@@ -87,16 +83,55 @@ describe('useInstallOnboardingApps', () => {
     expect(result.current.onboardingFreeCredits.installApps).toBe(1);
   });
 
-  it('should reset the completing state and not credit when the step fails', async () => {
-    mockTriggerInstallAppsOnboardingStep.mockRejectedValue(
-      new Error('network error'),
-    );
+  it('should leave out the apps turned off', async () => {
+    mockTriggerInstallAppsOnboardingStep.mockResolvedValue(undefined);
 
     const result = renderInstallHook();
 
     act(() => {
       result.current.installOnboardingApps.toggleApp('app-1');
     });
+
+    await act(async () => {
+      await result.current.installOnboardingApps.installSelectedAppsAndContinue();
+    });
+
+    expect(mockTriggerInstallAppsOnboardingStep).toHaveBeenCalledWith({
+      universalIdentifiers: ['app-2'],
+      isAutoSkipped: false,
+    });
+  });
+
+  it('should credit the apps as soon as their install starts', () => {
+    mockTriggerInstallAppsOnboardingStep.mockReturnValue(new Promise(() => {}));
+
+    const result = renderInstallHook();
+
+    act(() => {
+      void result.current.installOnboardingApps.installSelectedAppsAndContinue();
+    });
+
+    expect(result.current.onboardingFreeCredits.installApps).toBe(1);
+  });
+
+  it('should not credit a skip', async () => {
+    mockTriggerInstallAppsOnboardingStep.mockResolvedValue(undefined);
+
+    const result = renderInstallHook();
+
+    await act(async () => {
+      await result.current.installOnboardingApps.skip();
+    });
+
+    expect(result.current.onboardingFreeCredits.installApps).toBe(0);
+  });
+
+  it('should reset the completing state and the credits when the step fails', async () => {
+    mockTriggerInstallAppsOnboardingStep.mockRejectedValue(
+      new Error('network error'),
+    );
+
+    const result = renderInstallHook();
 
     await act(async () => {
       await result.current.installOnboardingApps.installSelectedAppsAndContinue();
@@ -112,10 +147,6 @@ describe('useInstallOnboardingApps', () => {
       .mockResolvedValueOnce(undefined);
 
     const result = renderInstallHook();
-
-    act(() => {
-      result.current.installOnboardingApps.toggleApp('app-1');
-    });
 
     await act(async () => {
       await result.current.installOnboardingApps.installSelectedAppsAndContinue();
@@ -139,10 +170,6 @@ describe('useInstallOnboardingApps', () => {
     );
 
     const result = renderInstallHook();
-
-    act(() => {
-      result.current.installOnboardingApps.toggleApp('app-1');
-    });
 
     act(() => {
       void result.current.installOnboardingApps.installSelectedAppsAndContinue();

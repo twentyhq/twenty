@@ -1,7 +1,7 @@
 import { SocialLink } from '@/ui/field/display/components/SocialLink/SocialLink';
 import { isNonEmptyString } from '@sniptt/guards';
 import { getSafeUrl } from 'twenty-shared/utils';
-import { RoundedLink } from 'twenty-ui/components';
+import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink/RoundedLink';
 import { checkUrlType } from '~/utils/checkUrlType';
 import { isSocialLinkType } from '~/utils/isSocialLinkType';
 

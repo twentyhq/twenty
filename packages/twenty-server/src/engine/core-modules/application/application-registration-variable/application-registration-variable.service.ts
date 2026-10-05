@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Not, type EntityManager, type Repository } from 'typeorm';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -34,6 +35,7 @@ export class ApplicationRegistrationVariableService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly encryptionService: SecretEncryptionService,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
   ) {}
 
   async findVariablesWithObfuscatedValues({
@@ -43,9 +45,9 @@ export class ApplicationRegistrationVariableService {
     applicationRegistrationId: string;
     workspaceId: string;
   }): Promise<ApplicationRegistrationVariableDTO[]> {
-    await this.assertRegistrationOwnedByWorkspace({
+    await this.applicationRegistrationLookupService.findOneByIdOrThrow({
       applicationRegistrationId,
-      workspaceId,
+      ownerWorkspaceId: workspaceId,
     });
 
     return this.findVariablesWithObfuscatedValuesGlobal(
@@ -75,9 +77,9 @@ export class ApplicationRegistrationVariableService {
   }): Promise<ApplicationRegistrationVariableDTO> {
     const variable = await this.findVariableOrThrow(input.id);
 
-    await this.assertRegistrationOwnedByWorkspace({
+    await this.applicationRegistrationLookupService.findOneByIdOrThrow({
       applicationRegistrationId: variable.applicationRegistrationId,
-      workspaceId,
+      ownerWorkspaceId: workspaceId,
     });
 
     canCallerReachApplicationRegistrationOrThrow({
@@ -98,7 +100,6 @@ export class ApplicationRegistrationVariableService {
     return this.toObfuscatedDTO(entity);
   }
 
-  // Syncs variable schemas from manifest: creates missing, updates metadata, removes stale
   async syncVariableSchemas(
     applicationRegistrationId: string,
     serverVariables: ServerVariables,
@@ -314,24 +315,5 @@ export class ApplicationRegistrationVariableService {
           ? '•••••••••••••'
           : plaintextValue,
     };
-  }
-
-  private async assertRegistrationOwnedByWorkspace({
-    applicationRegistrationId,
-    workspaceId,
-  }: {
-    applicationRegistrationId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id: applicationRegistrationId, ownerWorkspaceId: workspaceId },
-    });
-
-    if (!registration) {
-      throw new ApplicationRegistrationException(
-        `Application registration with id ${applicationRegistrationId} not found`,
-        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
-      );
-    }
   }
 }

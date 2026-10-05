@@ -366,10 +366,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
           })
         : undefined;
 
-      // Standard views are not synced together with page layouts: an upgrade
-      // step can create a widget before a later step creates the view it
-      // embeds. The widget is then created without a view, which renders
-      // empty until the view lands, instead of failing the whole migration.
+      // Standard views sync separately from page layouts, so a widget may precede its view and render empty until it lands
       const flatView = isDefined(viewUniversalIdentifier)
         ? findFlatEntityByUniversalIdentifier({
             flatEntityMaps: flatViewMaps,
@@ -404,6 +401,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     case WidgetConfigurationType.CALL_RECORDING_SUMMARY:
     case WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT:
     case WidgetConfigurationType.CHAT_THREADS:
+    case WidgetConfigurationType.CHAT:
     case WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY:
     case WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS:
       return universalConfiguration;

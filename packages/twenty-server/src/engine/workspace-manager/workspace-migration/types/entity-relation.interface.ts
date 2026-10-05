@@ -1,5 +1,3 @@
-/**
- * Wrapper type used to circumvent ESM modules circular dependency issue
- * caused by reflection metadata saving the type of the property.
- */
+// Wrapper type that circumvents the ESM circular dependency caused by
+// reflection metadata saving the type of the property.
 export type EntityRelation<T> = T;

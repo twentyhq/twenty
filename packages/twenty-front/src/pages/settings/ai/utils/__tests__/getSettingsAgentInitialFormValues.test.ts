@@ -13,6 +13,7 @@ const agent = {
   responseFormat: { type: 'json', schema: {} },
   roleId: 'role-id',
   isCustom: true,
+  isSystem: false,
   modelConfiguration: { webSearch: { enabled: true } },
   evaluationInputs: ['Is Acme a good fit?'],
   applicationId: 'application-id',

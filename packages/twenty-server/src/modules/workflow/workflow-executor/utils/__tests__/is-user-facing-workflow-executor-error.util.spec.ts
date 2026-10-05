@@ -52,6 +52,7 @@ describe('isUserFacingWorkflowExecutorError', () => {
     WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
     WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
     WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+    WorkflowStepExecutorExceptionCode.FORBIDDEN,
   ])('returns true for user-facing workflow step executor code %s', (code) => {
     const error = new WorkflowStepExecutorException('User error', code);
 
@@ -67,11 +68,7 @@ describe('isUserFacingWorkflowExecutorError', () => {
     expect(isUserFacingWorkflowExecutorError(error)).toBe(false);
   });
 
-  // No retry conjures a model, and reporting these as system errors buries the
-  // real ones, so a misconfigured classification step is the author's to fix.
   it.each([
-    // What an instance with no provider configured at all raises, through
-    // getDefaultModelForTier under the auto-select fallback.
     AiExceptionCode.API_KEY_NOT_CONFIGURED,
     AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
     AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,

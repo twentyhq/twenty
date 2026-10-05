@@ -9,6 +9,7 @@ import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
+import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
 import { preventDismissingClickActivation } from './preventDismissingClickActivation';
 import { useRegisteredElementId } from './useRegisteredElementId';
 
@@ -20,6 +21,8 @@ export const DropdownRoot = ({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
+  onEscapeKeyDown,
+  onInteractOutside,
   multiple = false,
   defaultPage = 'root',
   isSubmenu = false,
@@ -55,17 +58,23 @@ export const DropdownRoot = ({
   const [triggerId, registerTrigger] = useRegisteredElementId();
   const [titleId, registerTitle] = useRegisteredElementId();
 
-  if (previousOpen !== open) {
-    setPreviousOpen(open);
+  const isOpening = open && !previousOpen;
+  const isClosing = !open && previousOpen;
 
-    if (!open) {
-      setPageHistory([{ id: defaultPage }]);
-      setActivePage(undefined);
-      setPageFocusRequest(undefined);
-      setInitialFocusEdge('first');
-      setFocusOnOpen(true);
-      setSearchTargetId(undefined);
-    }
+  if (isOpening || isClosing) {
+    setPreviousOpen(open);
+  }
+
+  if (isOpening) {
+    setPageHistory([{ id: defaultPage }]);
+    setActivePage(undefined);
+    setPageFocusRequest(undefined);
+  }
+
+  if (isClosing) {
+    setInitialFocusEdge('first');
+    setFocusOnOpen(true);
+    setSearchTargetId(undefined);
   }
 
   const setOpen = (nextOpen: boolean) => {
@@ -137,6 +146,24 @@ export const DropdownRoot = ({
           eventDetails.reason === 'focus-out';
 
         if (isOutsideDismissal && openNestedRootCountRef.current > 0) {
+          eventDetails.cancel();
+          return;
+        }
+
+        const isEscapeDismissPrevented =
+          eventDetails.reason === 'escape-key' &&
+          isDropdownDismissPrevented({
+            onDismiss: onEscapeKeyDown,
+            event: eventDetails.event,
+          });
+        const isOutsideDismissPrevented =
+          isOutsideDismissal &&
+          isDropdownDismissPrevented({
+            onDismiss: onInteractOutside,
+            event: eventDetails.event,
+          });
+
+        if (isEscapeDismissPrevented || isOutsideDismissPrevented) {
           eventDetails.cancel();
           return;
         }

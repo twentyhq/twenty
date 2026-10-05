@@ -28,6 +28,9 @@ export const MENU_ITEM_PROP_DESCRIPTIONS = {
   hasSubMenu: 'Shows a submenu chevron; does not create a submenu.',
   focused: 'Applies focused appearance without moving DOM focus.',
   selected: 'Applies selected appearance without owning selection state.',
-  hotKeys: 'Visible shortcut hints. Register handlers in the application.',
+  shortcut:
+    'Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Register handlers in the application.',
+  shortcutJoinLabel:
+    'Text between sequential shortcut steps. Defaults to `then`.',
   isSubMenuOpened: 'Applies the open treatment to the submenu chevron.',
 } satisfies Partial<Record<keyof ComponentProps<typeof MenuItem>, string>>;

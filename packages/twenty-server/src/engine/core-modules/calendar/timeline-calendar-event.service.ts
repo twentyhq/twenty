@@ -58,14 +58,8 @@ export class TimelineCalendarEventService {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const offset = (page - 1) * pageSize;
 
-      // Runs under a system auth context, which resolves no role, so without
-      // this the participant relations (person, workspaceMember) are read with
-      // empty permissions and denied for everyone. Channel-level redaction of
-      // title and description below is what gates the caller's access.
-      // TODO run under the caller's role via resolveRolePermissionConfig instead
-      // of bypassing, once roles that cannot read person degrade to a redacted
-      // timeline rather than a denied one
-      // https://github.com/twentyhq/core-team-issues/issues/2777
+      // System auth context resolves no role, so participant relations would be denied; channel-level redaction below gates access.
+      // TODO: run under the caller's role once unreadable person degrades to redaction https://github.com/twentyhq/core-team-issues/issues/2777
       const calendarEventRepository =
         this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
           'calendarEvent',
@@ -185,7 +179,6 @@ export class TimelineCalendarEventService {
             })
           : [];
 
-      // Resolve current user's userWorkspaceId (workspaceMember → userId → userWorkspace)
       const workspaceMemberRepo =
         this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',

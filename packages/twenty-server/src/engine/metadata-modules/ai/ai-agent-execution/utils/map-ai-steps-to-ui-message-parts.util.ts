@@ -2,10 +2,7 @@ import { type StepResult, type ToolSet } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-// An agent run outside chat keeps no stream to persist, only the SDK's step
-// results. Rebuilding the parts a chat stream would have produced lets that
-// run be stored and read back as an ordinary conversation.
-export const mapAiStepsToUiMessageParts = (
+export const mapAiStepsToUIMessageParts = (
   steps: Pick<StepResult<ToolSet>, 'content'>[],
 ): ExtendedUIMessagePart[] => {
   const parts: ExtendedUIMessagePart[] = [];

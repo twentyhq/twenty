@@ -10,10 +10,10 @@ import {
 import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
-import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage-meter.type';
 import { nullableBigintColumnTransformer } from 'src/engine/twenty-orm/utils/nullable-bigint-column-transformer.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
 @Unique('UQ_USAGE_LIMIT_SCOPE', [
@@ -25,7 +25,7 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
   'limitKind',
   'periodCount',
   'periodUnit',
-  'meter',
+  'unit',
 ])
 @Entity({ name: 'usageLimit', schema: 'core' })
 export class UsageLimitEntity extends WorkspaceRelatedEntity {
@@ -54,7 +54,7 @@ export class UsageLimitEntity extends WorkspaceRelatedEntity {
   periodUnit: PeriodUnit;
 
   @Column({ type: 'varchar' })
-  meter: UsageMeter;
+  unit: UsageUnit;
 
   @Column({ type: 'bigint', transformer: nullableBigintColumnTransformer })
   limitValue: number;

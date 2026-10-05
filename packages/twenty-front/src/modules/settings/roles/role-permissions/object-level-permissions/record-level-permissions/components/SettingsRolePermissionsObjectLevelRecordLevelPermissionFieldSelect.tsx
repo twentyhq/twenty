@@ -1,15 +1,16 @@
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { Dropdown } from 'twenty-ui/components';
 
 import { AdvancedFilterFieldSelectDropdownButtonClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButtonClickableSelect';
-import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
-import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
-import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu';
-import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectDropdownContent } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectDropdownContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 const StyledContainer = styled.div`
   flex: 2;
@@ -27,34 +28,29 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect 
     const { advancedFilterFieldSelectDropdownId } =
       useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-    const [objectFilterDropdownIsSelectingCompositeField] =
-      useAtomComponentState(
-        objectFilterDropdownIsSelectingCompositeFieldComponentState,
-      );
-
     return (
       <StyledContainer>
-        <Dropdown
+        <DropdownRoot
           dropdownId={advancedFilterFieldSelectDropdownId}
-          clickableComponent={
+          type="picker"
+        >
+          <Dropdown.Trigger render={<div />} nativeButton={false}>
             <AdvancedFilterFieldSelectDropdownButtonClickableSelect
               recordFilterId={recordFilterId}
             />
-          }
-          dropdownComponents={
-            objectFilterDropdownIsSelectingCompositeField ? (
-              <SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu
-                recordFilterId={recordFilterId}
-              />
-            ) : (
-              <SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu
-                recordFilterId={recordFilterId}
-              />
-            )
-          }
-          dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
-          dropdownPlacement="bottom-start"
-        />
+          </Dropdown.Trigger>
+          <DropdownContent
+            aria-label={t`Select a filter field`}
+            side="bottom"
+            align="start"
+            sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
+            width={GenericDropdownContentWidth.ExtraLarge}
+          >
+            <SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectDropdownContent
+              recordFilterId={recordFilterId}
+            />
+          </DropdownContent>
+        </DropdownRoot>
       </StyledContainer>
     );
   };

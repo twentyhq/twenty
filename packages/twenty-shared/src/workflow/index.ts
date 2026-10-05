@@ -14,6 +14,7 @@ export { OBJECTS_BLOCKED_FROM_AUTOMATION } from './constants/ObjectsBlockedFromA
 export { OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS } from './constants/ObjectsSyncedFromConnectedAccounts';
 export { STEP_RETRY_DELAYS_MS } from './constants/StepRetryDelaysMs';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
+export { WORKFLOW_ACTION_FEATURE_FLAGS } from './constants/WorkflowActionFeatureFlags';
 export { WORKFLOW_TRIGGER_METADATA_KEY } from './constants/WorkflowTriggerMetadataKey';
 export { WORKFLOW_TRIGGER_METADATA_LABEL } from './constants/WorkflowTriggerMetadataLabel';
 export { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY } from './constants/WorkflowTriggerMetadataWorkspaceMemberIdKey';
@@ -62,7 +63,10 @@ export { workflowFilterActionSettingsSchema } from './schemas/filter-action-sett
 export { workflowFindRecordsActionSchema } from './schemas/find-records-action-schema';
 export { workflowFindRecordsActionSettingsSchema } from './schemas/find-records-action-settings-schema';
 export { workflowFormActionSchema } from './schemas/form-action-schema';
-export { workflowFormActionSettingsSchema } from './schemas/form-action-settings-schema';
+export {
+  workflowFormFieldSchema,
+  workflowFormActionSettingsSchema,
+} from './schemas/form-action-settings-schema';
 export { workflowHttpRequestActionSchema } from './schemas/http-request-action-schema';
 export { workflowHttpRequestActionSettingsSchema } from './schemas/http-request-action-settings-schema';
 export { workflowIfElseActionSchema } from './schemas/if-else-action-schema';
@@ -81,6 +85,8 @@ export {
   workflowPickRecordStrategySchema,
   workflowPickRecordActionSettingsSchema,
 } from './schemas/pick-record-action-settings-schema';
+export { workflowSendChatMessageActionSchema } from './schemas/send-chat-message-action-schema';
+export { workflowSendChatMessageActionSettingsSchema } from './schemas/send-chat-message-action-settings-schema';
 export { workflowSendEmailActionSchema } from './schemas/send-email-action-schema';
 export type { WorkflowEmailFiles } from './schemas/send-email-action-settings-schema';
 export {
@@ -93,6 +99,8 @@ export { workflowUpdateRecordActionSchema } from './schemas/update-record-action
 export { workflowUpdateRecordActionSettingsSchema } from './schemas/update-record-action-settings-schema';
 export { workflowUpsertRecordActionSchema } from './schemas/upsert-record-action-schema';
 export { workflowUpsertRecordActionSettingsSchema } from './schemas/upsert-record-action-settings-schema';
+export { workflowWaitForEventActionSchema } from './schemas/wait-for-event-action-schema';
+export { workflowWaitForEventActionSettingsSchema } from './schemas/wait-for-event-action-settings-schema';
 export { workflowWebhookTriggerSchema } from './schemas/webhook-trigger-schema';
 export { workflowActionSchema } from './schemas/workflow-action-schema';
 export { workflowDelayActionSchema } from './schemas/workflow-delay-action-schema';
@@ -108,6 +116,7 @@ export {
   workflowRunStepLogsSchema,
 } from './schemas/workflow-run-step-log-schema';
 export { workflowRunStepStatusSchema } from './schemas/workflow-run-step-status-schema';
+export { workflowStepWaitSchema } from './schemas/workflow-step-wait-schema';
 export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
 export { workflowVariableReferenceSchema } from './schemas/workflow-variable-reference-schema';
 export type { EmailRecipients } from './types/EmailRecipients';
@@ -137,6 +146,7 @@ export type {
   AiAgentStepLogDetails,
   AiToolCallLog,
 } from './types/WorkflowRunStepLog';
+export type { WorkflowStepWait } from './types/WorkflowStepWait';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
@@ -175,6 +185,7 @@ export {
   getStepOutgoingStepIds,
 } from './validation/utils/get-step-outgoing-step-ids.util';
 export { getVariablePathSuggestions } from './validation/utils/get-variable-path-suggestions.util';
+export { validateWorkflowExecutionPaths } from './validation/utils/validate-workflow-execution-paths.util';
 export { validateWorkflowGraph } from './validation/utils/validate-workflow-graph.util';
 export { validateWorkflowStepParams } from './validation/utils/validate-workflow-step-params.util';
 export { validateWorkflowVariableReferences } from './validation/utils/validate-workflow-variable-references.util';

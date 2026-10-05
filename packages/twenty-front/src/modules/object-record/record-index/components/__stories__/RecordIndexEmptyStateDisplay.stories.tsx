@@ -26,8 +26,7 @@ const playRenderAndClick: Story['play'] = async ({ args, canvasElement }) => {
   expect(await canvas.findByText(args.title as string)).toBeVisible();
   expect(canvas.getByText(args.subTitle as string)).toBeVisible();
 
-  // The button renders a clipped ellipsis next to its title, so its
-  // accessible name is not the bare title.
+  // The button's accessible name includes a clipped ellipsis, not just the title.
   const button = canvas.getByText(args.buttonTitle as string).closest('button');
 
   expect(button).not.toBeNull();

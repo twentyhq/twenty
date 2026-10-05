@@ -7,5 +7,6 @@ export type MenuItemSlotProps = Pick<
   | 'endIcon'
   | 'description'
   | 'descriptionPlacement'
-  | 'hotkeys'
+  | 'shortcut'
+  | 'shortcutJoinLabel'
 >;

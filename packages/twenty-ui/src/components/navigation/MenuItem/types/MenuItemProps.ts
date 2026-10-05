@@ -1,7 +1,7 @@
+import { type ShortcutDefinition } from '@ui/primitives/typography/Shortcut/types/ShortcutDefinition';
 import { type MenuItemAccent } from '@ui/components/navigation/MenuItem/types/MenuItemAccent';
 import { type IconComponent } from '@ui/icon';
 import { type ThemeColor } from '@ui/theme';
-import { type Nullable } from '@ui/utilities/types/Nullable';
 import { type MouseEvent, type ReactNode } from 'react';
 
 export type MenuItemProps = {
@@ -28,6 +28,7 @@ export type MenuItemProps = {
   hasSubMenu?: boolean;
   focused?: boolean;
   selected?: boolean;
-  hotKeys?: Nullable<string[]>;
+  shortcut?: ShortcutDefinition;
+  shortcutJoinLabel?: string;
   isSubMenuOpened?: boolean;
 };

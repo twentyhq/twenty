@@ -61,7 +61,7 @@ export const SettingsAdminChats = () => {
           <SearchInput
             placeholder={t`Search by workspace, user email or thread id...`}
             value={searchQuery}
-            onChange={setSearchQuery}
+            onValueChange={setSearchQuery}
             filterDropdown={(filterButton) => (
               <SettingsAdminChatsFilterDropdown
                 filterButton={filterButton}

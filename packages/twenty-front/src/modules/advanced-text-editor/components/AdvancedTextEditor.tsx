@@ -22,7 +22,18 @@ const StyledEditorContainer = styled.div<{
     flex-grow: 1;
     height: 100%;
     min-height: ${({ minHeight }) => minHeight}px;
+    position: relative;
     width: 100%;
+  }
+
+  .drop-cursor {
+    background-color: ${themeCssVariables.color.blue};
+    border-radius: ${themeCssVariables.border.radius.pill};
+    transition-duration: calc(
+      ${themeCssVariables.animation.duration.fast} * 1s
+    );
+    transition-property: left, top, width, height;
+    transition-timing-function: ease-out;
   }
 
   .tiptap {

@@ -1,9 +1,10 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { AppMenuItem } from '@/applications/components/AppMenuItem';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuItemButtonHotkeyEffect } from '@/command-menu-item/display/components/CommandMenuItemButtonHotkeyEffect';
 import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
+import { CommandMenuDropdownActionItem } from '@/command-menu-item/display/components/CommandMenuDropdownActionItem';
 import { useCommandMenuItemDisplay } from '@/command-menu-item/display/hooks/useCommandMenuItemDisplay';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
@@ -56,6 +57,12 @@ const CommandMenuItemButtonRenderer = ({
     hotKeys: item.hotKeys,
   };
 
+  // A letter runs the button it labels; symbols such as / and @ open the
+  // command menu from anywhere, and key sequences belong to it too
+  const [hotKey] = item.hotKeys ?? [];
+  const runsOnHotKey =
+    item.hotKeys?.length === 1 && /^[a-z]$/i.test(hotKey ?? '');
+
   if (isInPreviewMode) {
     return (
       <StyledPreviewWrapper>
@@ -69,24 +76,35 @@ const CommandMenuItemButtonRenderer = ({
   }
 
   return (
-    <CommandMenuButton
-      command={command}
-      onClick={disabled ? undefined : handleClick}
-      disabled={disabled}
-      progress={progress}
-      loading={isLoading}
-      isPrimaryAction={isPrimaryAction}
-      shouldHideLabel={shouldHideLabel}
-    />
+    <>
+      {runsOnHotKey && (
+        <CommandMenuItemButtonHotkeyEffect
+          hotKey={hotKey}
+          disabled={disabled}
+          onHotkeyTriggered={handleClick}
+        />
+      )}
+      <CommandMenuButton
+        command={command}
+        onClick={disabled ? undefined : handleClick}
+        disabled={disabled}
+        progress={progress}
+        loading={isLoading}
+        isPrimaryAction={isPrimaryAction}
+        shouldHideLabel={shouldHideLabel}
+      />
+    </>
   );
 };
 
+type CommandMenuItemSelectableRendererProps = Pick<
+  CommandMenuItemRendererProps,
+  'item'
+>;
+
 const CommandMenuItemSelectableRenderer = ({
   item,
-  displayType,
-}: CommandMenuItemRendererProps & {
-  displayType: 'listItem' | 'dropdownItem';
-}) => {
+}: CommandMenuItemSelectableRendererProps) => {
   const { Icon, label, handleClick, disabled, progress, isLoading } =
     useCommandMenuItemDisplay(item);
 
@@ -128,33 +146,17 @@ const CommandMenuItemSelectableRenderer = ({
     );
   }
 
-  if (displayType === 'listItem') {
-    return (
-      <SelectableListItem itemId={item.id} onEnter={onItemClick}>
-        <CommandMenuItem
-          id={item.id}
-          Icon={Icon}
-          label={label}
-          onClick={disabled ? undefined : handleClick}
-          hotKeys={item.hotKeys}
-          disabled={disabled}
-          RightComponent={loaderComponent}
-        />
-      </SelectableListItem>
-    );
-  }
-
   return (
     <SelectableListItem itemId={item.id} onEnter={onItemClick}>
-      <ListItem
-        focused={isSelectedItemId}
-        startIcon={<Icon />}
-        onClick={onItemClick}
-        endIcon={loaderComponent}
+      <CommandMenuItem
+        id={item.id}
+        Icon={Icon}
+        label={label}
+        onClick={disabled ? undefined : handleClick}
+        hotKeys={item.hotKeys}
         disabled={disabled}
-      >
-        {label}
-      </ListItem>
+        RightComponent={loaderComponent}
+      />
     </SelectableListItem>
   );
 };
@@ -177,13 +179,12 @@ export const CommandMenuItemRenderer = ({
     );
   }
 
-  if (displayType === 'listItem' || displayType === 'dropdownItem') {
-    return (
-      <CommandMenuItemSelectableRenderer
-        item={item}
-        displayType={displayType}
-      />
-    );
+  if (displayType === 'listItem') {
+    return <CommandMenuItemSelectableRenderer item={item} />;
+  }
+
+  if (displayType === 'dropdownItem') {
+    return <CommandMenuDropdownActionItem item={item} />;
   }
 
   return assertUnreachable(displayType, 'Unsupported display type');

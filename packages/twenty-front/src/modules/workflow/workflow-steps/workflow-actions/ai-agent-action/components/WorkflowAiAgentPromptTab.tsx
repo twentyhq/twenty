@@ -1,5 +1,5 @@
 import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
-import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
+import { type OutputSchemaField } from '@/ai/types/OutputSchemaField';
 import { AiModelPicker } from '@/ai/components/AiModelPicker';
 import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchemaToOutputSchema';
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
@@ -29,6 +29,8 @@ type WorkflowAiAgentPromptTabProps = {
   prompt: string;
   readonly: boolean;
   onPromptChange: (value: string) => void;
+  humanInputInstructions: string;
+  onHumanInputInstructionsChange: (value: string) => void;
   onActionUpdate?: (action: WorkflowAiAgentAction) => void;
 };
 
@@ -37,6 +39,8 @@ export const WorkflowAiAgentPromptTab = ({
   prompt,
   readonly,
   onPromptChange,
+  humanInputInstructions,
+  onHumanInputInstructionsChange,
   onActionUpdate,
 }: WorkflowAiAgentPromptTabProps) => {
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
@@ -145,6 +149,15 @@ export const WorkflowAiAgentPromptTab = ({
         placeholder={t`Describe what you want the AI to do...`}
         defaultValue={prompt}
         onChange={onPromptChange}
+        readonly={readonly}
+      />
+
+      <FormTextFieldInput
+        multiline
+        label={t`Ask for human input`}
+        placeholder={t`When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop.`}
+        defaultValue={humanInputInstructions}
+        onChange={onHumanInputInstructionsChange}
         readonly={readonly}
       />
 

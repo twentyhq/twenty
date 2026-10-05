@@ -181,6 +181,21 @@ export class BullMQDriver
     }
   }
 
+  private async writeGlobalConcurrency(
+    queueName: MessageQueue,
+    globalConcurrency: number | undefined,
+  ): Promise<void> {
+    const queue = this.queueMap[queueName];
+
+    if (isDefined(globalConcurrency)) {
+      await queue.setGlobalConcurrency(globalConcurrency);
+
+      return;
+    }
+
+    await queue.removeGlobalConcurrency();
+  }
+
   work<T>(
     queueName: MessageQueue,
     handler: (job: MessageQueueJob<T>) => Promise<void>,
@@ -204,6 +219,8 @@ export class BullMQDriver
     };
 
     this.workerOptionsMap[queueName] = options;
+
+    void this.writeGlobalConcurrency(queueName, options?.globalConcurrency);
 
     this.workerMap[queueName] = new Worker(
       queueName,
@@ -431,7 +448,6 @@ export class BullMQDriver
       );
     }
 
-    // This ensures only one waiting job can be queued for a specific option.id
     if (options?.id && !options?.allowDuplicatedPrefixes) {
       const waitingJobIds = await this.getWaitingJobIds(queueName);
 

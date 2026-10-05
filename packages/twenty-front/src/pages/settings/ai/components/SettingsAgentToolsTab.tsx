@@ -85,7 +85,7 @@ export const SettingsAgentToolsTab = () => {
         <SearchInput
           placeholder={t`Search a tool...`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
           filterDropdown={(filterButton) => (
             <DropdownRoot
               dropdownId="settings-tools-filter-dropdown"

@@ -22,10 +22,7 @@ import { type RelationJoinInfo } from './types/relation-join-info.type';
 // Re-export types for backward compatibility
 export { OrderByClause, ParseOrderByResult, RelationJoinInfo };
 
-// Compiles SQL ORDER BY clauses from the resolved orderBy leaves: walking,
-// validation and permission checks live in resolveOrderByLeaves, shared with
-// column selection and the cursor utilities, so the scan order can never
-// diverge from what cursors continue.
+// Leaves come from resolveOrderByLeaves, shared with cursors, so the scan order cannot diverge from cursor continuation
 export class GraphqlQueryOrderFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;

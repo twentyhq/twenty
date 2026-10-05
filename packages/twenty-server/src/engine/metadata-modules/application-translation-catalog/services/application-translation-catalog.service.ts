@@ -72,8 +72,6 @@ export class ApplicationTranslationCatalogService {
     };
   }
 
-  // Batched on purpose: one flat-maps read and one fetch per distinct
-  // application, however many entities the caller is resolving.
   async getCatalogs({
     applicationIds,
     locale,
@@ -129,10 +127,7 @@ export class ApplicationTranslationCatalogService {
     return { standardApplicationId, catalogByApplicationId };
   }
 
-  // The single-entity context. GraphQL resolves labels in per-entity
-  // ResolveFields, so it passes its request dataloaders to coalesce the N
-  // calls one page produces; REST resolves a whole page in one call and has
-  // nothing to coalesce, so it passes none. Same resolution either way.
+  // GraphQL passes dataloaders to coalesce per-entity ResolveFields; REST resolves a page at once and passes none
   async buildEffectiveEntityI18nContext({
     applicationId,
     loaders,
@@ -209,8 +204,6 @@ export class ApplicationTranslationCatalogService {
     });
   }
 
-  // The one place the context shape is built, so the loader-backed and
-  // batched sources cannot drift apart.
   private toI18nContextResolver({
     applicationAuthorIdentifiers: {
       standardApplicationId,
@@ -242,9 +235,6 @@ export class ApplicationTranslationCatalogService {
     });
   }
 
-  // The common case: merge every resolved translatable property back onto the
-  // entity it came from. Callers that present several metadata names in one
-  // payload use getI18nContextByApplicationId directly instead.
   async resolveTranslatablePropertiesForEntities<
     TEntity extends { applicationId?: string | null },
   >({

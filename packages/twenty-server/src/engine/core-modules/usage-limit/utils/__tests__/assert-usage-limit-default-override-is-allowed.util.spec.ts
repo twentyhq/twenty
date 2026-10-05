@@ -6,6 +6,7 @@ import {
 } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const buildScope = (
   overrides: Partial<UsageLimitScope> = {},
@@ -18,7 +19,7 @@ const buildScope = (
     limitKind: 'stock',
     periodCount: 1,
     periodUnit: 'lifetime',
-    meter: 'bytes',
+    unit: UsageUnit.BYTE,
     ...overrides,
   });
 
@@ -54,7 +55,7 @@ describe('assertUsageLimitDefaultOverrideIsAllowed', () => {
           spenderType: 'application',
           limitKind: 'speed',
           periodUnit: 'second',
-          meter: 'quantity',
+          unit: UsageUnit.REQUEST,
         }),
         isOperator: false,
       }),
@@ -75,7 +76,7 @@ describe('assertUsageLimitDefaultOverrideIsAllowed', () => {
   it('lets a workspace write on a scope no default covers', () => {
     expect(() =>
       assertUsageLimitDefaultOverrideIsAllowed({
-        scope: buildScope({ meter: 'quantity' }),
+        scope: buildScope({ unit: UsageUnit.FILE }),
         isOperator: false,
       }),
     ).not.toThrow();
