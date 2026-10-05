@@ -145,13 +145,16 @@ export default defineApplication({
       universalIdentifier: '0b6f3c1e-8a2d-4f57-9c1b-7e4d2a9f6c30',
       label: 'Record my meetings',
       type: FieldType.BOOLEAN,
+      value: true,
       scope: 'USER',
     },
   },
 });
 ```
 
-A user variable cannot declare a `value`, and a workspace admin cannot set one for it: its values belong to each member. A member who has not set theirs has no value, so your app decides what an unset value means.
+A user variable's `value` is its default: a member who has not set their own gets it, and a new version of your app can change it. A secret variable cannot have a default. Without one, a member who has not set theirs has no value, so your app decides what an unset value means.
+
+A workspace admin cannot set a value for a user variable: its values belong to each member.
 
 A variable's scope is set when it is created and cannot change. To change it, declare the variable with a new `universalIdentifier`: the sync deletes the old variable and creates the new one.
 

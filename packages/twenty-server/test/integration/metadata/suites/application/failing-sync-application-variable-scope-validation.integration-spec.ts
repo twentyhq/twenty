@@ -13,7 +13,6 @@ const TEST_APP_ID = 'e1b2c3d4-0001-4000-a000-000000000001';
 const TEST_ROLE_ID = 'e1b2c3d4-0002-4000-a000-000000000002';
 const USER_VARIABLE_ID = 'e1b2c3d4-0003-4000-a000-000000000003';
 const NEW_VARIABLE_ID = 'e1b2c3d4-0004-4000-a000-000000000004';
-const NEW_USER_VARIABLE_ID = 'e1b2c3d4-0005-4000-a000-000000000005';
 
 const buildManifestWithVariables = (
   applicationVariables: ApplicationVariables,
@@ -42,48 +41,6 @@ const failingApplicationVariableScopeSyncTestCases: EachTestingContext<TestConte
           RECORD_MY_MEETINGS: {
             universalIdentifier: NEW_VARIABLE_ID,
             scope: 'TEAM' as never,
-          },
-        },
-      },
-    },
-    {
-      title: 'when declaring a value on a user variable',
-      context: {
-        applicationVariables: {
-          API_KEY: {
-            universalIdentifier: USER_VARIABLE_ID,
-            scope: 'USER',
-          },
-          EMAIL_SIGNATURE: {
-            universalIdentifier: NEW_USER_VARIABLE_ID,
-            value: 'Best regards',
-            scope: 'USER',
-          },
-        },
-      },
-    },
-    {
-      title: 'when adding a value to an existing user variable',
-      context: {
-        applicationVariables: {
-          API_KEY: {
-            universalIdentifier: USER_VARIABLE_ID,
-            scope: 'USER',
-            value: 'personal-api-key',
-          },
-        },
-      },
-    },
-    {
-      title:
-        'when adding a value and changing metadata on an existing user variable',
-      context: {
-        applicationVariables: {
-          API_KEY: {
-            universalIdentifier: USER_VARIABLE_ID,
-            scope: 'USER',
-            value: 'personal-api-key',
-            description: 'Updated description',
           },
         },
       },

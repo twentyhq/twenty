@@ -183,7 +183,7 @@ describe('defineApplication', () => {
     expect(result.errors).toEqual([]);
   });
 
-  it('should return error when a user application variable has a value', () => {
+  it('should accept a user application variable with a default value', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
@@ -192,16 +192,14 @@ describe('defineApplication', () => {
         RECORD_MY_MEETINGS: {
           universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
           type: FieldMetadataType.BOOLEAN,
-          value: false,
+          value: true,
           scope: 'USER',
         },
       },
     });
 
-    expect(result.success).toBe(false);
-    expect(result.errors).toEqual([
-      'Application variable "RECORD_MY_MEETINGS" has scope USER and cannot have a value: each member sets their own',
-    ]);
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
   });
 
   it('should accept a secret and required user application variable', () => {

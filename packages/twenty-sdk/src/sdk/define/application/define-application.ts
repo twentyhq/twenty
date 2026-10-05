@@ -61,12 +61,6 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
         )})`,
       );
     }
-
-    if (variable.scope === 'USER' && 'value' in variable) {
-      errors.push(
-        `Application variable "${variableName}" has scope USER and cannot have a value: each member sets their own`,
-      );
-    }
   }
 
   const billableOperations = config.billing?.operations ?? {};

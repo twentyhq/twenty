@@ -21,7 +21,7 @@ import { ADD_TYPE_AND_OPTIONS_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } fr
 import { ADD_IS_DEPRECATED_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-31/add-is-deprecated-to-application-variables-upgrade-command-name.constant';
 import { ADD_LABEL_TO_APPLICATION_VARIABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-36/add-label-to-application-variable-upgrade-command-name.constant';
 import { ADD_IS_REQUIRED_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-is-required-to-application-variables-upgrade-command-name.constant';
-import { ADD_SCOPE_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-44/add-scope-to-application-variables-upgrade-command-name.constant';
+import { ADD_SCOPE_AND_DEFAULT_VALUE_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-scope-and-default-value-to-application-variables-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -42,6 +42,10 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 @Check(
   'CHK_applicationVariable_value_null_only_for_user_scope',
   `("scope" = 'USER') = ("value" IS NULL)`,
+)
+@Check(
+  'CHK_applicationVariable_default_value_not_secret',
+  `NOT ("isSecret" AND "defaultValue" IS NOT NULL)`,
 )
 export class ApplicationVariableEntity extends SyncableEntity {
   @Field(() => UUIDScalarType)
@@ -95,7 +99,8 @@ export class ApplicationVariableEntity extends SyncableEntity {
   options: ApplicationVariableOption[] | null;
 
   @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_SCOPE_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME,
+    upgradeCommandName:
+      ADD_SCOPE_AND_DEFAULT_VALUE_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME,
   })
   @Column({
     nullable: false,
@@ -104,6 +109,15 @@ export class ApplicationVariableEntity extends SyncableEntity {
     default: DEFAULT_APPLICATION_VARIABLE_SCOPE,
   })
   scope: ApplicationVariableScope;
+
+  // Metadata from the manifest, never written by a member or an admin, so a
+  // sync can update it. It is plaintext because secrets cannot have one.
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_SCOPE_AND_DEFAULT_VALUE_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'text' })
+  defaultValue: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

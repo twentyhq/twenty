@@ -16,6 +16,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     description,
     label,
     encryptedValue,
+    defaultValue,
     isSecret,
     isDeprecated,
     isRequired,
@@ -30,6 +31,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     description?: string;
     label?: string;
     encryptedValue: EncryptedString | null;
+    defaultValue: string | null;
     isSecret?: boolean;
     isDeprecated?: boolean;
     isRequired?: boolean;
@@ -52,6 +54,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       type: type ?? FieldMetadataType.TEXT,
       options: options ?? null,
       scope: scope ?? DEFAULT_APPLICATION_VARIABLE_SCOPE,
+      defaultValue,
       createdAt: now,
       updatedAt: now,
     };

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
 import {
   type Manifest,
   type PageLayoutManifest,
@@ -595,30 +594,28 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     for (const [key, applicationVariableManifest] of Object.entries(
       manifest.application.applicationVariables ?? {},
     )) {
-      const isUserVariable = applicationVariableManifest.scope === 'USER';
-
-      if (isUserVariable && 'value' in applicationVariableManifest) {
-        throw new ApplicationException(
-          `User application variable "${key}" cannot have a value`,
-          ApplicationExceptionCode.INVALID_INPUT,
-          {
-            userFriendlyMessage: msg`A user variable cannot have a value: each member sets their own.`,
-          },
-        );
-      }
-
       const type = applicationVariableManifest.type ?? FieldMetadataType.TEXT;
+      const isSecret = applicationVariableManifest.isSecret;
 
-      const plaintextValue =
-        'value' in applicationVariableManifest
+      const defaultValue =
+        !isSecret &&
+        'value' in applicationVariableManifest &&
+        isDefined(applicationVariableManifest.value)
           ? serializeApplicationVariableValue(
               applicationVariableManifest.value,
               type,
             )
-          : '';
+          : null;
 
-      const isSecret = applicationVariableManifest.isSecret;
-      const rawValue = isSecret ? '' : plaintextValue;
+      // A user variable's values belong to each member, so it has no
+      // workspace value: the manifest value is only its default.
+      const encryptedValue =
+        applicationVariableManifest.scope === 'USER'
+          ? null
+          : this.secretEncryptionService.encryptVersioned(
+              (defaultValue ?? '') as PlaintextString,
+              { workspaceId },
+            );
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
@@ -626,12 +623,8 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             key,
             universalIdentifier:
               applicationVariableManifest.universalIdentifier,
-            encryptedValue: isUserVariable
-              ? null
-              : this.secretEncryptionService.encryptVersioned(
-                  rawValue as PlaintextString,
-                  { workspaceId },
-                ),
+            encryptedValue,
+            defaultValue,
             description: applicationVariableManifest.description,
             label: applicationVariableManifest.label,
             isSecret,

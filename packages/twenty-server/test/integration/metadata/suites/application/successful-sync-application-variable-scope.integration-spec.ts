@@ -4,6 +4,8 @@ import { findOneApplication } from 'test/integration/metadata/suites/application
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { type ApplicationVariableScope } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 const TEST_APP_ID = 'e2b2c3d4-0001-4000-a000-000000000001';
 const TEST_ROLE_ID = 'e2b2c3d4-0002-4000-a000-000000000002';
@@ -11,6 +13,48 @@ const TEST_ROLE_ID = 'e2b2c3d4-0002-4000-a000-000000000002';
 const VARIABLE_ID_BY_SCOPE: Record<ApplicationVariableScope, string> = {
   WORKSPACE: 'e2b2c3d4-0003-4000-a000-000000000003',
   USER: 'e2b2c3d4-0004-4000-a000-000000000004',
+};
+
+const syncRecordMyMeetingsVariable = async ({
+  scope,
+  value,
+}: {
+  scope: ApplicationVariableScope;
+  value: boolean;
+}) => {
+  const baseManifest = buildBaseManifest({
+    appId: TEST_APP_ID,
+    roleId: TEST_ROLE_ID,
+  });
+
+  await syncApplication({
+    manifest: {
+      ...baseManifest,
+      application: {
+        ...baseManifest.application,
+        applicationVariables: {
+          RECORD_MY_MEETINGS: {
+            universalIdentifier: VARIABLE_ID_BY_SCOPE[scope],
+            type: FieldMetadataType.BOOLEAN,
+            value,
+            scope,
+          },
+        },
+      },
+    },
+    expectToFail: false,
+  });
+};
+
+const findStoredApplicationVariable = async (
+  universalIdentifier: string,
+): Promise<{ value: string | null; defaultValue: string | null }> => {
+  const [applicationVariable] = await globalThis.testDataSource.query(
+    `SELECT "value", "defaultValue" FROM "core"."applicationVariable" WHERE "universalIdentifier" = $1`,
+    [universalIdentifier],
+  );
+
+  return applicationVariable;
 };
 
 describe('Sync application should create application variables of every scope', () => {
@@ -72,4 +116,31 @@ describe('Sync application should create application variables of every scope', 
     },
     60000,
   );
+
+  it.each<ApplicationVariableScope>(['WORKSPACE', 'USER'])(
+    'should store the manifest value of a %s variable as its default',
+    async (scope) => {
+      await syncRecordMyMeetingsVariable({ scope, value: true });
+
+      const { value, defaultValue } = await findStoredApplicationVariable(
+        VARIABLE_ID_BY_SCOPE[scope],
+      );
+
+      expect(defaultValue).toBe('true');
+      expect(isDefined(value)).toBe(scope === 'WORKSPACE');
+    },
+    60000,
+  );
+
+  it('should update the default of a user variable when the manifest value changes', async () => {
+    await syncRecordMyMeetingsVariable({ scope: 'USER', value: true });
+    await syncRecordMyMeetingsVariable({ scope: 'USER', value: false });
+
+    const { value, defaultValue } = await findStoredApplicationVariable(
+      VARIABLE_ID_BY_SCOPE.USER,
+    );
+
+    expect(defaultValue).toBe('false');
+    expect(value).toBeNull();
+  }, 60000);
 });

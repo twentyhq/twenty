@@ -1,29 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Sync application should fail on invalid application variable scopes when adding a value and changing metadata on an existing user variable 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "INVALID_INPUT",
-    "userFriendlyMessage": "A user variable cannot have a value: each member sets their own.",
-  },
-  "message": "User application variable "API_KEY" cannot have a value",
-  "name": "UserInputError",
-}
-`;
-
-exports[`Sync application should fail on invalid application variable scopes when adding a value to an existing user variable 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "INVALID_INPUT",
-    "userFriendlyMessage": "A user variable cannot have a value: each member sets their own.",
-  },
-  "message": "User application variable "API_KEY" cannot have a value",
-  "name": "UserInputError",
-}
-`;
-
 exports[`Sync application should fail on invalid application variable scopes when changing the scope of an existing variable 1`] = `
 {
   "extensions": {
@@ -56,18 +32,6 @@ exports[`Sync application should fail on invalid application variable scopes whe
   },
   "message": "Validation errors occurred while syncing application manifest metadata",
   "name": "GraphQLError",
-}
-`;
-
-exports[`Sync application should fail on invalid application variable scopes when declaring a value on a user variable 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "INVALID_INPUT",
-    "userFriendlyMessage": "A user variable cannot have a value: each member sets their own.",
-  },
-  "message": "User application variable "EMAIL_SIGNATURE" cannot have a value",
-  "name": "UserInputError",
 }
 `;
 

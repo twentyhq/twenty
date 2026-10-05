@@ -12,6 +12,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateApplicationVariableDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util';
 import { validateApplicationVariableScope } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util';
 
 @Injectable()
@@ -71,6 +72,7 @@ export class FlatApplicationVariableValidatorService {
 
     validationResult.errors.push(
       ...validateApplicationVariableScope(flatApplicationVariable),
+      ...validateApplicationVariableDefaultValue(flatApplicationVariable),
     );
 
     return validationResult;
@@ -164,6 +166,13 @@ export class FlatApplicationVariableValidatorService {
         userFriendlyMessage: msg`Application variable scope cannot be changed`,
       });
     }
+
+    validationResult.errors.push(
+      ...validateApplicationVariableDefaultValue({
+        ...fromFlatApplicationVariable,
+        ...flatEntityUpdate,
+      }),
+    );
 
     return validationResult;
   }
