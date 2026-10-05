@@ -3796,6 +3796,7 @@ type ValidationRule {
   description: String
   icon: String
   expression: String!
+  bindings: JSON!
   message: String!
   isActive: Boolean!
 }
@@ -5698,6 +5699,7 @@ input CreateValidationRuleInput {
   description: String
   icon: String
   expression: String!
+  bindings: JSON
   message: String!
   isActive: Boolean
 }
@@ -5713,6 +5715,7 @@ input UpdateValidationRuleInputUpdates {
   description: String
   icon: String
   expression: String
+  bindings: JSON
   message: String
   isActive: Boolean
 }

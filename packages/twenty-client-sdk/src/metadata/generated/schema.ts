@@ -3331,6 +3331,7 @@ export interface ValidationRule {
     description?: Scalars['String']
     icon?: Scalars['String']
     expression: Scalars['String']
+    bindings: Scalars['JSON']
     message: Scalars['String']
     isActive: Scalars['Boolean']
     __typename: 'ValidationRule'
@@ -7289,6 +7290,7 @@ export interface ValidationRuleGenqlSelection{
     description?: boolean | number
     icon?: boolean | number
     expression?: boolean | number
+    bindings?: boolean | number
     message?: boolean | number
     isActive?: boolean | number
     __typename?: boolean | number
@@ -8237,11 +8239,11 @@ export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['
 
 export interface UpdateSkillInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
 
-export interface CreateValidationRuleInput {objectMetadataId: Scalars['UUID'],errorFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),expression: Scalars['String'],message: Scalars['String'],isActive?: (Scalars['Boolean'] | null)}
+export interface CreateValidationRuleInput {objectMetadataId: Scalars['UUID'],errorFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),expression: Scalars['String'],bindings?: (Scalars['JSON'] | null),message: Scalars['String'],isActive?: (Scalars['Boolean'] | null)}
 
 export interface UpdateValidationRuleInput {id: Scalars['UUID'],update: UpdateValidationRuleInputUpdates}
 
-export interface UpdateValidationRuleInputUpdates {errorFieldMetadataId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),expression?: (Scalars['String'] | null),message?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
+export interface UpdateValidationRuleInputUpdates {errorFieldMetadataId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),expression?: (Scalars['String'] | null),bindings?: (Scalars['JSON'] | null),message?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
 
 export interface UpdateTimelineActivityTypeInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
