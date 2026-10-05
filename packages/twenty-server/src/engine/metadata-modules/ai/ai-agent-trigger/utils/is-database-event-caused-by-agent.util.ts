@@ -3,6 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 import type { ActorMetadata } from 'twenty-shared/types';
 
+import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
+
 type RecordWithActors = {
   createdBy?: ActorMetadata | null;
   updatedBy?: ActorMetadata | null;
@@ -18,7 +20,7 @@ export const isDatabaseEventCausedByAgent = ({
   eventName: string;
   agentId: string;
 }): boolean => {
-  const [, action] = eventName.split('.');
+  const { action } = parseEventNameOrThrow(eventName);
   const { after } = event.properties as { after?: RecordWithActors };
 
   if (!isDefined(after)) {

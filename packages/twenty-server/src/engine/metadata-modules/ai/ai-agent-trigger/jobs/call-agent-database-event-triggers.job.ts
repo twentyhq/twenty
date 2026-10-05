@@ -134,35 +134,38 @@ export class CallAgentDatabaseEventTriggersJob {
         continue;
       }
 
-      const eventGroups =
-        trigger.settings.batchMode === true
-          ? chunk(
-              eventsToRunOn,
-              AGENT_TRIGGER_RUN_LIMITS.MAX_EVENTS_PER_BATCHED_RUN,
-            )
-          : eventsToRunOn.map((event) => [event]);
+      const eventGroups = trigger.settings.batchMode
+        ? chunk(
+            eventsToRunOn,
+            AGENT_TRIGGER_RUN_LIMITS.MAX_EVENTS_PER_BATCHED_RUN,
+          )
+        : eventsToRunOn.map((event) => [event]);
 
-      const canRun = await this.agentTriggerThrottlerService.tryConsumeRuns({
-        workspaceId,
-        agentId: flatAgent.id,
-        runCount: eventGroups.length,
-      });
+      const grantedRunCount =
+        await this.agentTriggerThrottlerService.consumeAvailableRuns({
+          workspaceId,
+          agentId: flatAgent.id,
+          requestedRunCount: eventGroups.length,
+        });
 
-      if (!canRun) {
+      if (grantedRunCount < eventGroups.length) {
         this.logger.warn(
-          `Run limit reached for agent ${flatAgent.id} in workspace ${workspaceId}: skipping ${eventGroups.length} run(s) of trigger ${trigger.id}`,
+          `Run limit reached for agent ${flatAgent.id} in workspace ${workspaceId}: skipping ${eventGroups.length - grantedRunCount} run(s) of trigger ${trigger.id}`,
         );
+      }
 
+      if (grantedRunCount === 0) {
         continue;
       }
 
       await this.messageQueueService.bulkAdd<RunAgentTriggerJobData>(
         RunAgentTriggerJob.name,
-        eventGroups.map((events) => ({
+        eventGroups.slice(0, grantedRunCount).map((events) => ({
           data: {
             workspaceId,
             agentId: flatAgent.id,
             triggerId: trigger.id,
+            dispatchedRoleId: agentRoleId,
             payload: {
               type: 'DATABASE_EVENT',
               eventName,

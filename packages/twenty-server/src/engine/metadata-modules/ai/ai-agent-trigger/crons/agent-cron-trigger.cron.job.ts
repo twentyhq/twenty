@@ -95,13 +95,14 @@ export class AgentCronTriggerCronJob {
         continue;
       }
 
-      const canRun = await this.agentTriggerThrottlerService.tryConsumeRuns({
-        workspaceId,
-        agentId: flatAgent.id,
-        runCount: 1,
-      });
+      const grantedRunCount =
+        await this.agentTriggerThrottlerService.consumeAvailableRuns({
+          workspaceId,
+          agentId: flatAgent.id,
+          requestedRunCount: 1,
+        });
 
-      if (!canRun) {
+      if (grantedRunCount === 0) {
         this.logger.warn(
           `Run limit reached for agent ${flatAgent.id} in workspace ${workspaceId}: skipping trigger ${trigger.id}`,
         );

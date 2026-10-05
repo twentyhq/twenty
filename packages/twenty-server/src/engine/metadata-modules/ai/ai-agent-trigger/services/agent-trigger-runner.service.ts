@@ -20,6 +20,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class AgentTriggerRunnerService {
@@ -33,12 +34,14 @@ export class AgentTriggerRunnerService {
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async run({
     workspaceId,
     agentId,
     triggerId,
+    dispatchedRoleId,
     payload,
   }: RunAgentTriggerJobData): Promise<void> {
     const agent = await this.agentRepository.findOne(workspaceId, {
@@ -52,6 +55,21 @@ export class AgentTriggerRunnerService {
     // The trigger may have been turned off or removed while the run was queued
     if (!isDefined(agent) || !isDefined(trigger) || !trigger.isActive) {
       return;
+    }
+
+    if (isDefined(dispatchedRoleId)) {
+      const { flatRoleTargetByAgentIdMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatRoleTargetByAgentIdMaps',
+        ]);
+
+      if (flatRoleTargetByAgentIdMaps[agentId]?.roleId !== dispatchedRoleId) {
+        this.logger.warn(
+          `Skipping trigger ${triggerId} of agent ${agentId}: its role changed since the run was queued`,
+        );
+
+        return;
+      }
     }
 
     const [workspace, application] = await Promise.all([
@@ -105,16 +123,24 @@ export class AgentTriggerRunnerService {
       }),
     );
 
-    await this.agentRunConversationService.recordTurn({
-      workspaceId,
-      threadId,
-      title: agent.label,
-      agentId: agent.id,
-      applicationId: application.id,
-      actor: { type: 'application', applicationId: application.id },
-      messages,
-      startedAt,
-      execution,
-    });
+    // The agent already acted through its tools, so a failed log write must not fail the run
+    await this.agentRunConversationService
+      .recordTurn({
+        workspaceId,
+        threadId,
+        title: agent.label,
+        agentId: agent.id,
+        applicationId: application.id,
+        actor: { type: 'application', applicationId: application.id },
+        messages,
+        startedAt,
+        execution,
+      })
+      .catch((error: unknown) =>
+        this.logger.error(
+          `Failed to record the run of trigger ${triggerId} of agent ${agentId} in thread ${threadId}`,
+          error instanceof Error ? error.stack : error,
+        ),
+      );
   }
 }

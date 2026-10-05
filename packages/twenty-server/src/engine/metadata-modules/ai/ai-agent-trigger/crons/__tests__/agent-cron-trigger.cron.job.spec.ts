@@ -43,7 +43,7 @@ describe('AgentCronTriggerCronJob', () => {
   let job: AgentCronTriggerCronJob;
   let messageQueueService: { add: jest.Mock };
   let cronTriggerDeduplicationService: { shouldDispatch: jest.Mock };
-  let agentTriggerThrottlerService: { tryConsumeRuns: jest.Mock };
+  let agentTriggerThrottlerService: { consumeAvailableRuns: jest.Mock };
   let flatAgentMaps: ReturnType<typeof buildFlatAgentMaps>;
 
   beforeEach(async () => {
@@ -53,7 +53,7 @@ describe('AgentCronTriggerCronJob', () => {
       shouldDispatch: jest.fn().mockResolvedValue(true),
     };
     agentTriggerThrottlerService = {
-      tryConsumeRuns: jest.fn().mockResolvedValue(true),
+      consumeAvailableRuns: jest.fn().mockResolvedValue(1),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -134,7 +134,7 @@ describe('AgentCronTriggerCronJob', () => {
   });
 
   it('should not enqueue a run once the agent reached its run limit', async () => {
-    agentTriggerThrottlerService.tryConsumeRuns.mockResolvedValue(false);
+    agentTriggerThrottlerService.consumeAvailableRuns.mockResolvedValue(0);
 
     await job.handle();
 

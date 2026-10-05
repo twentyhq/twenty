@@ -127,7 +127,7 @@ const buildRolesPermissions = (
 describe('CallAgentDatabaseEventTriggersJob', () => {
   let job: CallAgentDatabaseEventTriggersJob;
   let messageQueueService: { bulkAdd: jest.Mock };
-  let agentTriggerThrottlerService: { tryConsumeRuns: jest.Mock };
+  let agentTriggerThrottlerService: { consumeAvailableRuns: jest.Mock };
   let cacheData: Record<string, unknown>;
 
   const buildBatch = (
@@ -172,7 +172,12 @@ describe('CallAgentDatabaseEventTriggersJob', () => {
 
     messageQueueService = { bulkAdd: jest.fn().mockResolvedValue(undefined) };
     agentTriggerThrottlerService = {
-      tryConsumeRuns: jest.fn().mockResolvedValue(true),
+      consumeAvailableRuns: jest
+        .fn()
+        .mockImplementation(
+          async ({ requestedRunCount }: { requestedRunCount: number }) =>
+            requestedRunCount,
+        ),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -229,6 +234,7 @@ describe('CallAgentDatabaseEventTriggersJob', () => {
         workspaceId: WORKSPACE_ID,
         agentId: AGENT_ID,
         triggerId: TRIGGER_ID,
+        dispatchedRoleId: AGENT_ROLE_ID,
         payload: expect.objectContaining({
           type: 'DATABASE_EVENT',
           eventName: 'company.updated',
@@ -323,15 +329,30 @@ describe('CallAgentDatabaseEventTriggersJob', () => {
   });
 
   it('should not enqueue runs once the agent reached its run limit', async () => {
-    agentTriggerThrottlerService.tryConsumeRuns.mockResolvedValue(false);
+    agentTriggerThrottlerService.consumeAvailableRuns.mockResolvedValue(0);
 
     await job.handle(buildBatch([buildEvent('record-1')]));
 
-    expect(agentTriggerThrottlerService.tryConsumeRuns).toHaveBeenCalledWith({
+    expect(
+      agentTriggerThrottlerService.consumeAvailableRuns,
+    ).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
       agentId: AGENT_ID,
-      runCount: 1,
+      requestedRunCount: 1,
     });
     expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
+  });
+
+  it('should enqueue the runs left in the allowance when a batch exceeds it', async () => {
+    agentTriggerThrottlerService.consumeAvailableRuns.mockResolvedValue(1);
+
+    await job.handle(
+      buildBatch([buildEvent('record-1'), buildEvent('record-2')]),
+    );
+
+    expect(enqueuedJobs()).toHaveLength(1);
+    expect(enqueuedJobs()[0].payload).toMatchObject({
+      events: [{ recordId: 'record-1' }],
+    });
   });
 });

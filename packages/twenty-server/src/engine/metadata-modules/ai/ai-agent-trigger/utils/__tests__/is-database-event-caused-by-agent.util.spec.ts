@@ -36,6 +36,16 @@ describe('isDatabaseEventCausedByAgent', () => {
     ).toBe(true);
   });
 
+  it('should attribute an upsert to the agent that last updated the record', () => {
+    expect(
+      isDatabaseEventCausedByAgent({
+        event: buildEvent({ updatedBy: agentActor(AGENT_ID) }),
+        eventName: 'company.upserted',
+        agentId: AGENT_ID,
+      }),
+    ).toBe(true);
+  });
+
   it('should not attribute an update made by another agent', () => {
     expect(
       isDatabaseEventCausedByAgent({

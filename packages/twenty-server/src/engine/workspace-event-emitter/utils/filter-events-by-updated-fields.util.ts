@@ -2,6 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
+
 export const filterEventsByUpdatedFields = <TEvent extends ObjectRecordEvent>({
   events,
   eventName,
@@ -11,7 +13,7 @@ export const filterEventsByUpdatedFields = <TEvent extends ObjectRecordEvent>({
   eventName: string;
   watchedFields?: string[];
 }): TEvent[] => {
-  const [, action] = eventName.split('.');
+  const { action } = parseEventNameOrThrow(eventName);
 
   if (action !== 'updated') {
     return events;
