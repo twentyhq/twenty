@@ -82,6 +82,27 @@ describe('defineAgent', () => {
     );
   });
 
+  it('should error on duplicated triggers and wildcard event names', () => {
+    const trigger = {
+      universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
+      type: 'DATABASE_EVENT' as const,
+      settings: { eventName: '*.created' },
+    };
+
+    const result = defineAgent({
+      ...VALID_AGENT_CONFIG,
+      triggers: [trigger, trigger],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual(
+      expect.arrayContaining([
+        `Agent 'sales-assistant' trigger universalIdentifiers must be unique`,
+        `Agent 'sales-assistant' trigger event name '*.created' must look like 'company.created'`,
+      ]),
+    );
+  });
+
   it('should warn when responseFormat is missing', () => {
     const { responseFormat: _responseFormat, ...configWithoutFormat } =
       VALID_AGENT_CONFIG;

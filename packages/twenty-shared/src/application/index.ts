@@ -74,6 +74,8 @@ export type {
 } from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderType } from './connectionProviderType';
+export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventNamePattern';
+export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
 export { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from './constants/ApplicationWorkflowUnavailableStepTypes';
 export { ASSETS_DIR } from './constants/AssetDirectory';
