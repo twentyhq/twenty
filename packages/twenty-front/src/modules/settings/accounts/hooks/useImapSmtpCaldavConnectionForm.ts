@@ -21,8 +21,8 @@ import {
   isProtocolConfiguredForUpdate,
 } from '@/settings/accounts/utils/isProtocolConfigured';
 import {
-  connectionImapSmtpCalDav,
-  connectionImapSmtpCalDavUpdate,
+  getConnectionImapSmtpCalDavSchema,
+  getConnectionImapSmtpCalDavUpdateSchema,
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ACCOUNT_TYPES } from 'twenty-shared/constants';
@@ -67,11 +67,17 @@ export const useImapSmtpCaldavConnectionForm = ({
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
 
+  const connectionSchema = useMemo(
+    () =>
+      isEditing
+        ? getConnectionImapSmtpCalDavUpdateSchema()
+        : getConnectionImapSmtpCalDavSchema(),
+    [isEditing],
+  );
+
   const formMethods = useForm<ConnectionFormData>({
     mode: 'onSubmit',
-    resolver: zodResolver(
-      isEditing ? connectionImapSmtpCalDavUpdate : connectionImapSmtpCalDav,
-    ),
+    resolver: zodResolver(connectionSchema),
     defaultValues: {
       name: '',
       handle: '',

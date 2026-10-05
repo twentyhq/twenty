@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -20,6 +21,43 @@ export type PermissionSummaryItem = {
   label: string;
 };
 
+// One full sentence per combination, so translators can reorder the words
+const getRecordPermissionLabel = ({
+  canRead,
+  canUpdate,
+  canDelete,
+}: {
+  canRead: boolean;
+  canUpdate: boolean;
+  canDelete: boolean;
+}): string => {
+  if (canRead && canUpdate && canDelete) {
+    return t`Read, write, and delete records`;
+  }
+
+  if (canRead && canUpdate) {
+    return t`Read and write records`;
+  }
+
+  if (canRead && canDelete) {
+    return t`Read and delete records`;
+  }
+
+  if (canUpdate && canDelete) {
+    return t`Write and delete records`;
+  }
+
+  if (canRead) {
+    return t`Read records`;
+  }
+
+  if (canUpdate) {
+    return t`Write records`;
+  }
+
+  return t`Delete records`;
+};
+
 export const buildPermissionSummaryFromRoleManifest = (
   defaultRole: RoleManifest,
 ): PermissionSummaryItem[] => {
@@ -29,39 +67,19 @@ export const buildPermissionSummaryFromRoleManifest = (
   const canUpdate = defaultRole.canUpdateAllObjectRecords ?? false;
   const canSoftDelete = defaultRole.canSoftDeleteAllObjectRecords ?? false;
   const canDestroy = defaultRole.canDestroyAllObjectRecords ?? false;
+  const canDelete = canSoftDelete || canDestroy;
 
-  if (canRead || canUpdate || canSoftDelete || canDestroy) {
-    const capabilities: string[] = [];
-
-    if (canRead) {
-      capabilities.push('read');
-    }
-
-    if (canUpdate) {
-      capabilities.push('write');
-    }
-
-    if (canSoftDelete || canDestroy) {
-      capabilities.push('delete');
-    }
-
-    const label =
-      capabilities.length <= 2
-        ? capabilities.join(' and ')
-        : capabilities.slice(0, -1).join(', ') +
-          ', and ' +
-          capabilities[capabilities.length - 1];
-
+  if (canRead || canUpdate || canDelete) {
     items.push({
       Icon: IconAddressBook,
-      label: label.charAt(0).toUpperCase() + label.slice(1) + ' records',
+      label: getRecordPermissionLabel({ canRead, canUpdate, canDelete }),
     });
   }
 
   if ((defaultRole.objectPermissions ?? []).length > 0 && items.length === 0) {
     items.push({
       Icon: IconAddressBook,
-      label: 'Access specific object records',
+      label: t`Access specific object records`,
     });
   }
 
@@ -72,21 +90,21 @@ export const buildPermissionSummaryFromRoleManifest = (
   if (hasDataModelFlag) {
     items.push({
       Icon: IconHierarchy,
-      label: 'Read and write data model configuration',
+      label: t`Read and write data model configuration`,
     });
   }
 
   if (defaultRole.canUpdateAllSettings) {
     items.push({
       Icon: IconSettings,
-      label: 'Update workspace settings',
+      label: t`Update workspace settings`,
     });
   }
 
   if (defaultRole.canAccessAllTools) {
     items.push({
       Icon: IconTool,
-      label: 'Access all tools',
+      label: t`Access all tools`,
     });
   }
 
@@ -96,27 +114,27 @@ export const buildPermissionSummaryFromRoleManifest = (
 
   const flagLabels: Record<string, { label: string; Icon: IconComponent }> = {
     [SystemPermissionFlag.WORKFLOWS]: {
-      label: 'Manage workflows',
+      label: t`Manage workflows`,
       Icon: IconSettingsAutomation,
     },
     [SystemPermissionFlag.SECURITY]: {
-      label: 'Manage security settings',
+      label: t`Manage security settings`,
       Icon: IconKey,
     },
     [SystemPermissionFlag.WORKSPACE_MEMBERS]: {
-      label: 'Manage workspace members',
+      label: t`Manage workspace members`,
       Icon: IconUsers,
     },
     [SystemPermissionFlag.BILLING]: {
-      label: 'Manage billing',
+      label: t`Manage billing`,
       Icon: IconCreditCard,
     },
     [SystemPermissionFlag.API_KEYS_AND_WEBHOOKS]: {
-      label: 'Manage MCP, API keys, and webhooks',
+      label: t`Manage MCP, API keys, and webhooks`,
       Icon: IconPlug,
     },
     [SystemPermissionFlag.AI]: {
-      label: 'Run AI agents',
+      label: t`Run AI agents`,
       Icon: IconSparkles,
     },
   };

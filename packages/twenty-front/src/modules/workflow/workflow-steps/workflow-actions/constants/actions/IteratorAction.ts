@@ -1,11 +1,13 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
 export const ITERATOR_ACTION: {
-  defaultLabel: string;
+  defaultLabel: MessageDescriptor;
   type: Extract<WorkflowActionType, 'ITERATOR'>;
   icon: string;
 } = {
-  defaultLabel: 'Iterator',
+  defaultLabel: msg`Iterator`,
   type: 'ITERATOR',
   icon: 'IconRepeat',
 };

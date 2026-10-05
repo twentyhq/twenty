@@ -1,6 +1,7 @@
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
+import { getFolderNavigationMenuItemLabel } from '@/navigation-menu-item/display/folder/utils/getFolderNavigationMenuItemLabel';
 import { Suspense, lazy } from 'react';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -45,7 +46,7 @@ export const NavigationMenuItemFolder = ({
   orphanIndex,
 }: NavigationMenuItemFolderProps) => {
   const folderId = item.id;
-  const folderName = item.name ?? 'Folder';
+  const folderName = getFolderNavigationMenuItemLabel(item);
   const folderIconKey = item.icon;
   const folderColor = 'color' in item ? (item.color as string | null) : null;
   const folderChildrenNavigationMenuItems =

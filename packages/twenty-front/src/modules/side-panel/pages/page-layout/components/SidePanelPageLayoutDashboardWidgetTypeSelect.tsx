@@ -173,7 +173,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
       const newWidget = createPageLayoutWidget({
         type: WidgetType.STANDALONE_RICH_TEXT,
-        title: 'Untitled Rich Text',
+        title: t`Untitled Rich Text`,
         configuration: {
           configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
           body: { blocknote: '', markdown: null },
@@ -198,7 +198,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
       const newRecordTableWidget = createPageLayoutWidget({
         type: WidgetType.RECORD_TABLE,
-        title: firstAvailableObjectMetadataItem?.labelPlural ?? 'Record Table',
+        title: firstAvailableObjectMetadataItem?.labelPlural ?? t`Record Table`,
         configuration: {
           configurationType: WidgetConfigurationType.RECORD_TABLE,
           isUIEditable: pageLayoutDraft.type === PageLayoutType.RECORD_PAGE,

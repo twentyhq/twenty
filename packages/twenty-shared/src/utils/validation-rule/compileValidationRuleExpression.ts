@@ -43,6 +43,7 @@ export const compileValidationRuleExpression = ({
     return {
       isValid: false,
       errorMessage: 'Bracket access is not supported, use dot access instead',
+      errorCode: 'BRACKET_ACCESS',
     };
   }
 
@@ -86,7 +87,11 @@ export const compileValidationRuleExpression = ({
   });
 
   if (emptyRecordEvaluation.status === 'errored') {
-    return { isValid: false, errorMessage: emptyRecordEvaluation.errorMessage };
+    return {
+      isValid: false,
+      errorMessage: emptyRecordEvaluation.errorMessage,
+      errorCode: emptyRecordEvaluation.errorCode,
+    };
   }
 
   return { isValid: true, bindings };

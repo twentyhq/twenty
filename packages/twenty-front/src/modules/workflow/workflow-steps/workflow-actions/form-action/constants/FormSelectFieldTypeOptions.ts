@@ -1,7 +1,9 @@
 import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
-import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
+  type IconComponent,
   IllustrationIconCalendarEvent,
   IllustrationIconNumbers,
   IllustrationIconOneToMany,
@@ -9,38 +11,42 @@ import {
   IllustrationIconTags,
   IllustrationIconText,
 } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/primitives/input';
 
-export const FORM_SELECT_FIELD_TYPE_OPTIONS: SelectOption<WorkflowFormFieldType>[] =
-  [
-    {
-      label: getDefaultFormFieldSettings(FieldMetadataType.TEXT).label,
-      value: FieldMetadataType.TEXT,
-      Icon: IllustrationIconText,
-    },
-    {
-      label: getDefaultFormFieldSettings(FieldMetadataType.NUMBER).label,
-      value: FieldMetadataType.NUMBER,
-      Icon: IllustrationIconNumbers,
-    },
-    {
-      label: getDefaultFormFieldSettings(FieldMetadataType.DATE).label,
-      value: FieldMetadataType.DATE,
-      Icon: IllustrationIconCalendarEvent,
-    },
-    {
-      label: getDefaultFormFieldSettings('RECORD').label,
-      value: 'RECORD',
-      Icon: IllustrationIconOneToMany,
-    },
-    {
-      label: 'Select',
-      value: FieldMetadataType.SELECT,
-      Icon: IllustrationIconTag,
-    },
-    {
-      label: 'Multi-Select',
-      value: FieldMetadataType.MULTI_SELECT,
-      Icon: IllustrationIconTags,
-    },
-  ];
+type FormSelectFieldTypeOption = {
+  label: MessageDescriptor;
+  value: WorkflowFormFieldType;
+  Icon: IconComponent;
+};
+
+export const FORM_SELECT_FIELD_TYPE_OPTIONS: FormSelectFieldTypeOption[] = [
+  {
+    label: msg`Text`,
+    value: FieldMetadataType.TEXT,
+    Icon: IllustrationIconText,
+  },
+  {
+    label: msg`Number`,
+    value: FieldMetadataType.NUMBER,
+    Icon: IllustrationIconNumbers,
+  },
+  {
+    label: msg`Date`,
+    value: FieldMetadataType.DATE,
+    Icon: IllustrationIconCalendarEvent,
+  },
+  {
+    label: msg`Record`,
+    value: 'RECORD',
+    Icon: IllustrationIconOneToMany,
+  },
+  {
+    label: msg`Select`,
+    value: FieldMetadataType.SELECT,
+    Icon: IllustrationIconTag,
+  },
+  {
+    label: msg`Multi-Select`,
+    value: FieldMetadataType.MULTI_SELECT,
+    Icon: IllustrationIconTags,
+  },
+];

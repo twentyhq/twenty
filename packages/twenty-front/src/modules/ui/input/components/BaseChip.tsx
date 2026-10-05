@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { type MouseEvent, type ReactNode } from 'react';
 import { IconX } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -117,7 +118,7 @@ export const BaseChip = ({
   label,
   title,
   onRemove,
-  removeAriaLabel = 'Remove',
+  removeAriaLabel,
   danger = false,
   selected = false,
   isFlashing = false,
@@ -147,7 +148,7 @@ export const BaseChip = ({
         <StyledDelete
           type="button"
           onClick={onRemove}
-          aria-label={removeAriaLabel}
+          aria-label={removeAriaLabel ?? t`Remove`}
           danger={danger}
         >
           <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />

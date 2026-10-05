@@ -1,10 +1,10 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useFullNameField } from '@/object-record/record-field/ui/meta-types/hooks/useFullNameField';
-import { FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/ui/meta-types/input/constants/FirstNamePlaceholder';
-import { LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/ui/meta-types/input/constants/LastNamePlaceholder';
+import { addCharactersToAvoidPasswordManagers } from '@/object-record/record-field/ui/meta-types/input/utils/addCharactersToAvoidPasswordManagers';
 import { isDoubleTextFieldEmpty } from '@/object-record/record-field/ui/meta-types/input/utils/isDoubleTextFieldEmpty';
 import { type FieldDoubleText } from '@/object-record/record-field/ui/types/FieldDoubleText';
 
+import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { RecordTitleDoubleTextInput } from './RecordTitleDoubleTextInput';
 
@@ -15,6 +15,7 @@ type RecordTitleFullNameFieldInputProps = {
 export const RecordTitleFullNameFieldInput = ({
   sizeVariant,
 }: RecordTitleFullNameFieldInputProps) => {
+  const { t } = useLingui();
   const { draftValue, setDraftValue } = useFullNameField();
 
   const { onEnter, onEscape, onClickOutside, onTab, onShiftTab } = useContext(
@@ -71,12 +72,12 @@ export const RecordTitleFullNameFieldInput = ({
     <RecordTitleDoubleTextInput
       firstValue={draftValue?.firstName ?? ''}
       secondValue={draftValue?.lastName ?? ''}
-      firstValuePlaceholder={
-        FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS
-      }
-      secondValuePlaceholder={
-        LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS
-      }
+      firstValuePlaceholder={addCharactersToAvoidPasswordManagers(
+        t`First name`,
+      )}
+      secondValuePlaceholder={addCharactersToAvoidPasswordManagers(
+        t`Last name`,
+      )}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}

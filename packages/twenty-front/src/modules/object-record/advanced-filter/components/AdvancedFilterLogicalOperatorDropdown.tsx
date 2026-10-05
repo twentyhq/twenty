@@ -4,6 +4,7 @@ import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useLingui } from '@lingui/react/macro';
 import { type RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 type AdvancedFilterLogicalOperatorDropdownProps = {
@@ -13,6 +14,7 @@ type AdvancedFilterLogicalOperatorDropdownProps = {
 export const AdvancedFilterLogicalOperatorDropdown = ({
   recordFilterGroup,
 }: AdvancedFilterLogicalOperatorDropdownProps) => {
+  const { t } = useLingui();
   const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
 
   const handleChange = (value: RecordFilterGroupLogicalOperator) => {
@@ -25,13 +27,20 @@ export const AdvancedFilterLogicalOperatorDropdown = ({
     });
   };
 
+  const logicalOperatorOptions = ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS.map(
+    (option) => ({
+      ...option,
+      label: t(option.label),
+    }),
+  );
+
   return (
     <Select
       dropdownWidth={GenericDropdownContentWidth.Narrow}
       dropdownId={`advanced-filter-logical-operator-${recordFilterGroup.id}`}
       value={recordFilterGroup.logicalOperator}
       onChange={handleChange}
-      options={ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS}
+      options={logicalOperatorOptions}
       dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
     />
   );

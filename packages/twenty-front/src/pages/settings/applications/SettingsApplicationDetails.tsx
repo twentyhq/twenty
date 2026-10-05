@@ -201,7 +201,11 @@ export const SettingsApplicationDetails = () => {
       : []),
     ...workspaceSettingsMenuItems.map((settingsMenuItem) => ({
       id: settingsMenuItem.universalIdentifier,
-      title: settingsMenuItem.title,
+      // Legacy apps get the server's fixed English LEGACY_SETTINGS_MENU_ITEM_TITLE, stored as data
+      title:
+        settingsMenuItem.title === 'Settings'
+          ? t`Settings`
+          : settingsMenuItem.title,
       Icon: getIcon(settingsMenuItem.icon, 'IconAdjustments'),
     })),
   ];

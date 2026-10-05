@@ -35,8 +35,10 @@ const COMPOSITE_CAMPAIGN_VARIABLE_SUBFIELDS: Partial<
   ],
 };
 
+// The front passes translated sub-field labels; the server keeps the English defaults
 export const listCampaignVariablesForFields = (
   fields: CampaignVariableEligibleField[],
+  subFieldLabelsByName: Partial<Record<string, string>> = {},
 ): CampaignVariableDefinition[] => {
   const definitions: CampaignVariableDefinition[] = [];
 
@@ -62,12 +64,15 @@ export const listCampaignVariablesForFields = (
     }
 
     for (const { subFieldName, subFieldLabel } of subFields) {
+      const displayedSubFieldLabel =
+        subFieldLabelsByName[subFieldName] ?? subFieldLabel;
+
       definitions.push({
         name: `${field.name}.${subFieldName}`,
         label:
           subFields.length === 1
             ? field.label
-            : `${field.label} · ${subFieldLabel}`,
+            : `${field.label} · ${displayedSubFieldLabel}`,
         fieldName: field.name,
         fieldType: field.type,
         subFieldName,

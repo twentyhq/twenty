@@ -1,4 +1,5 @@
 import { type WorkflowRunFlow } from '@/workflow/types/Workflow';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import {
   TRIGGER_STEP_ID,
   type WorkflowRunStepInfos,
@@ -6,6 +7,7 @@ import {
 import { type WorkflowRunStepContext } from '@/workflow/workflow-steps/types/WorkflowRunStepContext';
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
 import { getWorkflowRunAllStepInfoHistory } from '@/workflow/workflow-steps/utils/getWorkflowRunAllStepInfoHistory';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getWorkflowRunStepContext = ({
@@ -52,7 +54,7 @@ export const getWorkflowRunStepContext = ({
 
     reversedPreviousStepsContext.push({
       id: step.id,
-      name: step.name,
+      name: getWorkflowStepDisplayName({ name: step.name, type: step.type }),
       context: stepInfoHistory[historyItemIndex].result,
     });
 
@@ -64,7 +66,12 @@ export const getWorkflowRunStepContext = ({
   return [
     {
       id: TRIGGER_STEP_ID,
-      name: flow.trigger.name ?? 'Trigger',
+      name: isDefined(flow.trigger.name)
+        ? getWorkflowStepDisplayName({
+            name: flow.trigger.name,
+            type: flow.trigger.type,
+          })
+        : t`Trigger`,
       context: stepInfos[TRIGGER_STEP_ID].result,
     },
     ...reversedPreviousStepsContext.toReversed(),

@@ -11,9 +11,9 @@ import {
 } from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/constants/CompositeFieldSubFieldLabelMessages';
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
-import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from 'twenty-shared/constants';
 import {
   formatValueForCSV,
   isDefined,
@@ -75,7 +75,12 @@ export const generateCsv: GenerateExport = ({
     const nestedFieldsWithoutTypename = Object.keys(rows[0][column.field])
       .filter((key) => key !== '__typename')
       .map((key) => {
-        const subFieldLabel = COMPOSITE_FIELD_SUB_FIELD_LABELS[columnType][key];
+        const subFieldLabelMessage =
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[columnType][key];
+        const subFieldLabel = isDefined(subFieldLabelMessage)
+          ? t(subFieldLabelMessage)
+          : key;
+
         return {
           field: `${column.field}.${key}`,
           title: formatValueForCSV(

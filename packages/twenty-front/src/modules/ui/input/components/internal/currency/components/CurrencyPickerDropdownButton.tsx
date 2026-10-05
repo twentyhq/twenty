@@ -3,7 +3,7 @@ import { type KeyboardEvent, useId } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
 import { CurrencyPicker } from 'twenty-ui/components';
 
-import { CURRENCY_PICKER_CURRENCIES } from '@/ui/input/components/internal/currency/constants/CurrencyPickerCurrencies';
+import { useCurrencyPickerCurrencies } from '@/ui/input/components/internal/currency/hooks/useCurrencyPickerCurrencies';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
@@ -27,7 +27,8 @@ export const CurrencyPickerDropdownButton = ({
   onChange,
 }: CurrencyPickerDropdownButtonProps) => {
   const dropdownId = useId();
-  const selectedCurrency = CURRENCY_PICKER_CURRENCIES.find(
+  const currencyPickerCurrencies = useCurrencyPickerCurrencies();
+  const selectedCurrency = currencyPickerCurrencies.find(
     ({ code }) => code === selectedCurrencyCode,
   );
   const currencyCode = selectedCurrency?.code ?? CurrencyCode.USD;
@@ -47,7 +48,7 @@ export const CurrencyPickerDropdownButton = ({
         aria-label={t`Currency`}
       >
         <CurrencyPicker.Options
-          currencies={CURRENCY_PICKER_CURRENCIES}
+          currencies={currencyPickerCurrencies}
           value={selectedCurrency?.code}
           onValueChange={onChange}
           searchLabel={t`Search`}

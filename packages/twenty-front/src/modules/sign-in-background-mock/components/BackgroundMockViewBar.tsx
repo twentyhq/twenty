@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
 import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
 import { TintedIconTile } from 'twenty-ui/components';
@@ -37,7 +38,7 @@ export const BackgroundMockViewBar = () => {
       leftComponent={
         <StyledViewPicker>
           <TintedIconTile Icon={IconBuildingSkyscraper} color="blue" />
-          <span>All Companies</span>
+          <span>{t`All Companies`}</span>
           <StyledViewPickerCount>· 599</StyledViewPickerCount>
           <IconChevronDown
             size={theme.icon.size.sm}
@@ -47,9 +48,9 @@ export const BackgroundMockViewBar = () => {
       }
       rightComponent={
         <>
-          <StyledRightAction>Filter</StyledRightAction>
-          <StyledRightAction>Sort</StyledRightAction>
-          <StyledRightAction>Options</StyledRightAction>
+          <StyledRightAction>{t`Filter`}</StyledRightAction>
+          <StyledRightAction>{t`Sort`}</StyledRightAction>
+          <StyledRightAction>{t`Options`}</StyledRightAction>
         </>
       }
     />

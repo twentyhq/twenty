@@ -1,4 +1,5 @@
 import { type WorkflowTrigger } from '@/workflow/types/Workflow';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
@@ -60,7 +61,10 @@ export const getWorkflowDiagramTriggerNode = ({
     data: {
       nodeType: 'trigger',
       triggerType: trigger.type,
-      name: isDefined(trigger.name) ? trigger.name : triggerDefaultLabel,
+      name: getWorkflowStepDisplayName({
+        name: isDefined(trigger.name) ? trigger.name : triggerDefaultLabel,
+        type: trigger.type,
+      }),
       icon: triggerIcon,
       stepId: 'trigger',
       hasNextStepIds:

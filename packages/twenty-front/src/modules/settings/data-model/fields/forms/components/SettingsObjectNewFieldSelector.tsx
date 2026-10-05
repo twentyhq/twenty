@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SETTINGS_FIELD_TYPE_CATEGORIES } from '@/settings/data-model/constants/SettingsFieldTypeCategories';
 import { SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS } from '@/settings/data-model/constants/SettingsFieldTypeCategoryDescriptions';
+import { SETTINGS_FIELD_TYPE_CATEGORY_LABELS } from '@/settings/data-model/constants/SettingsFieldTypeCategoryLabels';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { type SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
@@ -12,7 +13,8 @@ import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFiel
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
@@ -69,6 +71,7 @@ export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
   objectNamePlural,
 }: SettingsObjectNewFieldSelectorProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { control, setValue } =
     useFormContext<SettingsDataModelFieldTypeFormValues>();
@@ -78,7 +81,7 @@ export const SettingsObjectNewFieldSelector = ({
   ).filter(
     ([key, config]) =>
       !excludedFieldTypes.includes(key as SettingsFieldType) &&
-      config.label.toLowerCase().includes(searchQuery.toLowerCase()),
+      t(config.label).toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const { resetDefaultValueField: resetBooleanDefaultValueField } =
@@ -131,10 +134,10 @@ export const SettingsObjectNewFieldSelector = ({
             {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
               <Section.Root key={category}>
                 <Section.Header
-                  title={category}
-                  description={
-                    SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category]
-                  }
+                  title={t(SETTINGS_FIELD_TYPE_CATEGORY_LABELS[category])}
+                  description={t(
+                    SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category],
+                  )}
                 />
                 <StyledContainer>
                   {fieldTypeConfigs
@@ -145,7 +148,7 @@ export const SettingsObjectNewFieldSelector = ({
                         [
                           key,
                           key === FieldMetadataType.MORPH_RELATION
-                            ? { ...config, label: t`Relation` }
+                            ? { ...config, label: msg`Relation` }
                             : config,
                         ] as [string, SettingsFieldTypeConfig<any>],
                     )
@@ -173,7 +176,7 @@ export const SettingsObjectNewFieldSelector = ({
                                 />
                               </StyledFieldTypeIconContainer>
                             }
-                            title={config.label}
+                            title={t(config.label)}
                           />
                         </UndecoratedLink>
                       </StyledCardContainer>

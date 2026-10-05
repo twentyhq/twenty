@@ -1,4 +1,5 @@
 import { type WorkflowStep } from '@/workflow/types/Workflow';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { type WorkflowContext } from '@/workflow/workflow-diagram/types/WorkflowContext';
 import {
   type WorkflowDiagramEdge,
@@ -46,7 +47,7 @@ export const generateNodesAndEdgesForDefaultNode = ({
     data: {
       nodeType: 'action',
       actionType: step.type,
-      name: step.name,
+      name: getWorkflowStepDisplayName({ name: step.name, type: step.type }),
       ...(step.type === 'LOGIC_FUNCTION'
         ? { logicFunctionId: step.settings.input.logicFunctionId }
         : {}),

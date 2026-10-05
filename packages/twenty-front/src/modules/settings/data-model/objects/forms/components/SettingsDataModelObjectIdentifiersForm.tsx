@@ -163,7 +163,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
               callToActionButton={
                 label === t`Record label`
                   ? {
-                      text: 'Create Text Field',
+                      text: t`Create Text Field`,
                       Icon: IconPlus,
                       onClick: () => {
                         navigate('./new-field/select');

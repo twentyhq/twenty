@@ -11,14 +11,15 @@ import { generateFormOutputSchema } from '@/workflow/workflow-variables/utils/ge
 import { generateRecordEventOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateRecordEventOutputSchema';
 import { generateRecordOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateRecordOutputSchema';
 import { generateWaitForEventOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema';
+import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   buildManualTriggerMetadataNode,
+  type Node,
   WORKFLOW_TRIGGER_METADATA_KEY,
+  WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY,
   WORKFLOW_TRIGGER_PAYLOAD_KEY,
-  WORKFLOW_TRIGGER_RECORD_LABEL,
-  WORKFLOW_TRIGGER_RECORDS_LABEL,
 } from 'twenty-shared/workflow';
 import { DatabaseEventAction } from '~/generated-metadata/graphql';
 
@@ -61,6 +62,25 @@ const parseEventName = (
   }
 
   return { objectName, action };
+};
+
+// The shared builder keeps the English labels the server stores, so the front translates them when it builds its own copy
+const buildTranslatedMetadataNode = (): Node => {
+  const metadataNode = buildManualTriggerMetadataNode();
+
+  return {
+    ...metadataNode,
+    label: t`Metadata`,
+    value: {
+      ...metadataNode.value,
+      [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]: {
+        ...metadataNode.value[
+          WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY
+        ],
+        label: t`Workspace Member ID`,
+      },
+    },
+  };
 };
 
 export const computeStepOutputSchema = ({
@@ -111,7 +131,7 @@ export const computeStepOutputSchema = ({
 
       if (availability.type === 'GLOBAL') {
         return {
-          [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
+          [WORKFLOW_TRIGGER_METADATA_KEY]: buildTranslatedMetadataNode(),
         };
       }
 
@@ -133,28 +153,30 @@ export const computeStepOutputSchema = ({
             [WORKFLOW_TRIGGER_PAYLOAD_KEY]: {
               isLeaf: false,
               icon: objectMetadataItem.icon ?? undefined,
-              label: WORKFLOW_TRIGGER_RECORD_LABEL,
+              label: t`Record`,
               value: generateRecordOutputSchema(objectMetadataItem),
             },
-            [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
+            [WORKFLOW_TRIGGER_METADATA_KEY]: buildTranslatedMetadataNode(),
           };
         }
+
+        const objectLabelPlural = objectMetadataItem.labelPlural;
 
         return {
           [WORKFLOW_TRIGGER_PAYLOAD_KEY]: {
             isLeaf: false,
             type: 'object',
-            label: WORKFLOW_TRIGGER_RECORDS_LABEL,
+            label: t`Records`,
             value: {
               [objectMetadataItem.namePlural]: {
                 isLeaf: true,
-                label: objectMetadataItem.labelPlural,
+                label: objectLabelPlural,
                 type: 'array',
-                value: `Array of ${objectMetadataItem.labelPlural}`,
+                value: t`Array of ${objectLabelPlural}`,
               },
             },
           },
-          [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
+          [WORKFLOW_TRIGGER_METADATA_KEY]: buildTranslatedMetadataNode(),
         };
       }
 
@@ -224,7 +246,7 @@ export const computeStepOutputSchema = ({
         threadId: {
           isLeaf: true,
           type: FieldMetadataType.UUID,
-          label: 'Conversation ID',
+          label: t`Conversation ID`,
           value: '',
         },
       };
@@ -238,37 +260,37 @@ export const computeStepOutputSchema = ({
         outcome: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
-          label: 'Outcome',
+          label: t`Outcome`,
           value: 'executed',
         },
         toolName: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
-          label: 'Action',
+          label: t`Action`,
           value: '',
         },
         feedback: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
-          label: 'Feedback',
+          label: t`Feedback`,
           value: '',
         },
         error: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
-          label: 'Error',
+          label: t`Error`,
           value: '',
         },
         arguments: {
           isLeaf: true,
           type: FieldMetadataType.RAW_JSON,
-          label: 'Arguments',
+          label: t`Arguments`,
           value: null,
         },
         output: {
           isLeaf: true,
           type: FieldMetadataType.RAW_JSON,
-          label: 'Output',
+          label: t`Output`,
           value: null,
         },
       };
@@ -279,25 +301,25 @@ export const computeStepOutputSchema = ({
         success: {
           isLeaf: true,
           type: FieldMetadataType.BOOLEAN,
-          label: 'Success',
+          label: t`Success`,
           value: true,
         },
         headerMessageId: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
-          label: 'Message-ID header',
+          label: t`Message-ID header`,
           value: '',
         },
         messageId: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
-          label: 'Message record ID',
+          label: t`Message record ID`,
           value: '',
         },
         messageThreadId: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
-          label: 'Message thread ID',
+          label: t`Message thread ID`,
           value: '',
         },
       };
@@ -308,7 +330,7 @@ export const computeStepOutputSchema = ({
         success: {
           isLeaf: true,
           type: FieldMetadataType.BOOLEAN,
-          label: 'Success',
+          label: t`Success`,
           value: true,
         },
       };
@@ -319,25 +341,25 @@ export const computeStepOutputSchema = ({
         success: {
           isLeaf: true,
           type: FieldMetadataType.BOOLEAN,
-          label: 'Success',
+          label: t`Success`,
           value: true,
         },
         iCalUid: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
-          label: 'iCal UID',
+          label: t`iCal UID`,
           value: '',
         },
         externalEventId: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
-          label: 'External Event ID',
+          label: t`External Event ID`,
           value: '',
         },
         conferenceLink: {
           isLeaf: true,
           type: FieldMetadataType.TEXT,
-          label: 'Conference Link',
+          label: t`Conference Link`,
           value: '',
         },
       };

@@ -25,6 +25,7 @@ import { type ValidationRuleEditorField } from '@/validation-rules/types/Validat
 import { buildValidationRulePreviewRelationGqlFields } from '@/validation-rules/utils/buildValidationRulePreviewRelationGqlFields';
 import { formatValidationRulePreviewValue } from '@/validation-rules/utils/formatValidationRulePreviewValue';
 import { getValidationRuleEditorFieldChipLabel } from '@/validation-rules/utils/getValidationRuleEditorFieldChipLabel';
+import { getValidationRuleErrorMessage } from '@/validation-rules/utils/getValidationRuleErrorMessage';
 import { getValidationRulePreviewValue } from '@/validation-rules/utils/getValidationRulePreviewValue';
 
 const PREVIEW_RECORD_COUNT = 3;
@@ -204,7 +205,7 @@ export const SettingsValidationRulePreview = ({
         return (
           <Tooltip
             delay={TooltipDelay.mediumDelay}
-            content={evaluationResult.errorMessage}
+            content={getValidationRuleErrorMessage(evaluationResult)}
             side="top"
           >
             <StyledStatus tabIndex={0}>

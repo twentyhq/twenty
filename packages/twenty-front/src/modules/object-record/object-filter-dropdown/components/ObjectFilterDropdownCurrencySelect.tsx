@@ -4,11 +4,11 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { turnCurrencyIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCurrencyIntoSelectableItem';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useCurrencies } from '@/ui/input/components/internal/hooks/useCurrencies';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -35,7 +35,9 @@ export const ObjectFilterDropdownCurrencySelect = () => {
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const currenciesAsSelectableItems = CURRENCIES.map(
+  const currencies = useCurrencies();
+
+  const currenciesAsSelectableItems = currencies.map(
     turnCurrencyIntoSelectableItem,
   );
 

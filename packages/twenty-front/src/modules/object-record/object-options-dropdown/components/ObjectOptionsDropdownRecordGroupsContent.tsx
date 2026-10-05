@@ -10,6 +10,7 @@ import { isRecordGroupingOptionalForViewType } from '@/object-record/record-grou
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
+import { RECORD_GROUP_SORT_LABELS } from '@/object-record/record-group/constants/RecordGroupSortLabels';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
@@ -171,7 +172,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                   focused={selectedItemId === 'Sort'}
                   onClick={() => onContentChange('recordGroupSort')}
                   startIcon={<IconArrowsSort />}
-                  description={recordIndexRecordGroupSort}
+                  description={t(
+                    RECORD_GROUP_SORT_LABELS[recordIndexRecordGroupSort],
+                  )}
                   descriptionPlacement="end"
                   hasSubmenu
                 >{t`Sort`}</ListItem>

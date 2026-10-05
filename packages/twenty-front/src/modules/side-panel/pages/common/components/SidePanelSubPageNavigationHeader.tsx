@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -27,13 +28,15 @@ export const SidePanelSubPageNavigationHeader = ({
   onBackClick,
   title,
 }: SidePanelSubPageNavigationHeaderProps) => {
+  const { t } = useLingui();
+
   return (
     <StyledContainer>
       <IconButton
         onClick={onBackClick}
         variant="ghost"
         size="sm"
-        aria-label="Go back"
+        aria-label={t`Go back`}
       >
         <IconChevronLeft />
       </IconButton>

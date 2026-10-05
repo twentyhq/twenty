@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -54,7 +56,7 @@ export const mapViewFiltersToFilters = (
         : getFilterTypeFromFieldType(sourceFieldMetadataItem.type);
 
       const label = isSystemSearchVectorField(sourceFieldMetadataItem.name)
-        ? 'Search'
+        ? t`Search`
         : isDefined(relationTargetFieldMetadataItem)
           ? `${sourceFieldMetadataItem.label} → ${relationTargetFieldMetadataItem.label}`
           : sourceFieldMetadataItem.label;

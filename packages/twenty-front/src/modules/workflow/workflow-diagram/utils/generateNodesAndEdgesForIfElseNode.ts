@@ -2,6 +2,7 @@ import {
   type WorkflowIfElseAction,
   type WorkflowStep,
 } from '@/workflow/types/Workflow';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { type WorkflowContext } from '@/workflow/workflow-diagram/types/WorkflowContext';
 import {
   type WorkflowDiagramEdge,
@@ -50,7 +51,7 @@ export const generateNodesAndEdgesForIfElseNode = ({
     data: {
       nodeType: 'action',
       actionType: step.type,
-      name: step.name,
+      name: getWorkflowStepDisplayName({ name: step.name, type: step.type }),
       hasNextStepIds: true,
       stepId: step.id,
       position: step.position ?? {

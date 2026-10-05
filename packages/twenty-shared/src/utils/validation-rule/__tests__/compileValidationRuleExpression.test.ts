@@ -122,6 +122,7 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('stage')).toEqual({
       isValid: false,
       errorMessage: 'Expression did not return true or false',
+      errorCode: 'NON_BOOLEAN_RESULT',
     });
     expect(compile('amount.amountMicros + 1').isValid).toBe(false);
   });
@@ -130,6 +131,7 @@ describe('compileValidationRuleExpression', () => {
     expect(compile('company["industry"] == "SaaS"')).toEqual({
       isValid: false,
       errorMessage: 'Bracket access is not supported, use dot access instead',
+      errorCode: 'BRACKET_ACCESS',
     });
     expect(
       compile('stage == "WON" and amount["amountMicros"] > 0').isValid,

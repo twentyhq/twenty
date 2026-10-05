@@ -1,4 +1,5 @@
 import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
+import { t } from '@lingui/core/macro';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -135,7 +136,7 @@ export const useBuildSpreadsheetImportFields = () => {
         if (!isImportable) return;
         const label = getCompositeSubFieldLabelWithFieldLabel(
           fieldMetadataItem,
-          subFieldLabel,
+          t(subFieldLabel),
         );
 
         spreadsheetImportFields.push(

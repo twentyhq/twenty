@@ -335,6 +335,7 @@ export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrate
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export type { ValidationRuleBindings } from './ValidationRuleBindings';
 export type { ValidationRuleCompilationResult } from './ValidationRuleCompilationResult';
+export type { ValidationRuleErrorCode } from './ValidationRuleErrorCode';
 export type { ValidationRuleEvaluationResult } from './ValidationRuleEvaluationResult';
 export type { ValidationRuleExpressionToken } from './ValidationRuleExpressionToken';
 export type { ValidationRuleFieldDescriptor } from './ValidationRuleFieldDescriptor';

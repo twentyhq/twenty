@@ -4,6 +4,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
@@ -18,6 +19,7 @@ import {
   shouldComputeOutputSchemaOnFrontend,
 } from '@/workflow/workflow-variables/utils/generate/computeStepOutputSchema';
 import { resolvePersistedStepOutputSchema } from '@/workflow/workflow-variables/utils/resolvePersistedStepOutputSchema';
+import { translatePersistedOutputSchemaLabels } from '@/workflow/workflow-variables/utils/translatePersistedOutputSchemaLabels';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -65,7 +67,10 @@ export const useStepsOutputSchema = () => {
 
         const stepOutputSchema: StepOutputSchemaV2 = {
           id: step.id,
-          name: step.name,
+          name: getWorkflowStepDisplayName({
+            name: step.name,
+            type: step.type,
+          }),
           type: step.type,
           icon: getActionIcon(step.type),
           outputSchema: (outputSchema ?? {}) as OutputSchemaV2,
@@ -98,7 +103,11 @@ export const useStepsOutputSchema = () => {
                 store.get(schemaState) === stepOutputSchema &&
                 isBaseOutputSchemaV2(outputSchema)
               ) {
-                store.set(schemaState, { ...stepOutputSchema, outputSchema });
+                store.set(schemaState, {
+                  ...stepOutputSchema,
+                  outputSchema:
+                    translatePersistedOutputSchemaLabels(outputSchema),
+                });
               }
             })
             .catch((error: Error) => {
@@ -141,9 +150,12 @@ export const useStepsOutputSchema = () => {
 
         const triggerOutputSchema: StepOutputSchemaV2 = {
           id: TRIGGER_STEP_ID,
-          name: isDefined(trigger.name)
-            ? trigger.name
-            : getTriggerDefaultLabel(trigger),
+          name: getWorkflowStepDisplayName({
+            name: isDefined(trigger.name)
+              ? trigger.name
+              : getTriggerDefaultLabel(trigger),
+            type: trigger.type,
+          }),
           type: trigger.type,
           icon: triggerIconKey,
           outputSchema: (outputSchema ?? {}) as OutputSchemaV2,

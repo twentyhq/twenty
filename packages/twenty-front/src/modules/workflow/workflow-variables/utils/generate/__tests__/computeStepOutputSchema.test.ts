@@ -220,7 +220,7 @@ describe('computeStepOutputSchema', () => {
           workspaceMemberId: {
             isLeaf: true,
             type: 'string',
-            label: 'Workspace Member Id',
+            label: 'Workspace Member ID',
           },
         },
       });

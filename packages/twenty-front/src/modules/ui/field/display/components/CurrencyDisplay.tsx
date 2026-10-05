@@ -1,9 +1,11 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { formatToShortNumber, isDefined } from 'twenty-shared/utils';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme } from 'twenty-ui/theme';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { getCurrencyLabel } from '@/localization/utils/getCurrencyLabel';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldCurrencyMetadata,
@@ -30,6 +32,7 @@ export const CurrencyDisplay = ({
   fieldDefinition,
 }: CurrencyDisplayProps) => {
   const theme = useTheme();
+  const { i18n } = useLingui();
 
   const currencyCode = currencyValue?.currencyCode;
   const currencyMetadata = isDefined(currencyCode)
@@ -46,8 +49,12 @@ export const CurrencyDisplay = ({
   const decimalsToUse = decimals ?? DEFAULT_DECIMAL_VALUE;
 
   const { formatNumber } = useNumberFormat();
+  const currencyLabel =
+    isDefined(currencyCode) && isDefined(currencyMetadata)
+      ? getCurrencyLabel({ currencyCode, locale: i18n.locale })
+      : undefined;
   const currencyTooltipContent = isDefined(currencyCode)
-    ? `${currencyCode}${currencyMetadata?.label ? ` - ${currencyMetadata.label}` : ''}`
+    ? `${currencyCode}${isDefined(currencyLabel) ? ` - ${currencyLabel}` : ''}`
     : undefined;
   const shouldShowCurrencyTooltip =
     isDefined(CurrencyIcon) &&

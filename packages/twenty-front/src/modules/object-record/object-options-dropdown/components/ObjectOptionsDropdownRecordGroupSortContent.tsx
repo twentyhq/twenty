@@ -1,5 +1,6 @@
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
+import { RECORD_GROUP_SORT_LABELS } from '@/object-record/record-group/constants/RecordGroupSortLabels';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -106,7 +107,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               indicator="check"
               startIcon={<SelectOptionIcon Icon={IconHandMove} />}
             >
-              {RecordGroupSort.Manual}
+              {t(RECORD_GROUP_SORT_LABELS[RecordGroupSort.Manual])}
             </ListItem>
           </SelectableListItem>
           {!isRelationGroupBy && (
@@ -132,7 +133,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
                   indicator="check"
                   startIcon={<SelectOptionIcon Icon={IconSortAZ} />}
                 >
-                  {RecordGroupSort.Alphabetical}
+                  {t(RECORD_GROUP_SORT_LABELS[RecordGroupSort.Alphabetical])}
                 </ListItem>
               </SelectableListItem>
               <SelectableListItem
@@ -164,7 +165,11 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
                   indicator="check"
                   startIcon={<SelectOptionIcon Icon={IconSortZA} />}
                 >
-                  {RecordGroupSort.ReverseAlphabetical}
+                  {t(
+                    RECORD_GROUP_SORT_LABELS[
+                      RecordGroupSort.ReverseAlphabetical
+                    ],
+                  )}
                 </ListItem>
               </SelectableListItem>
             </>

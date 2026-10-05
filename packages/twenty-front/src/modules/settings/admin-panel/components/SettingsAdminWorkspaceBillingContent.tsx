@@ -1,5 +1,7 @@
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
@@ -90,15 +92,15 @@ const STATUS_COLORS: Record<SubscriptionStatus, ThemeColor> = {
   [SubscriptionStatus.IncompleteExpired]: 'gray',
 };
 
-const STATUS_LABELS: Record<SubscriptionStatus, string> = {
-  [SubscriptionStatus.Active]: 'Active',
-  [SubscriptionStatus.Trialing]: 'Trialing',
-  [SubscriptionStatus.PastDue]: 'Past Due',
-  [SubscriptionStatus.Canceled]: 'Canceled',
-  [SubscriptionStatus.Unpaid]: 'Unpaid',
-  [SubscriptionStatus.Paused]: 'Paused',
-  [SubscriptionStatus.Incomplete]: 'Incomplete',
-  [SubscriptionStatus.IncompleteExpired]: 'Incomplete Expired',
+const STATUS_LABELS: Record<SubscriptionStatus, MessageDescriptor> = {
+  [SubscriptionStatus.Active]: msg`Active`,
+  [SubscriptionStatus.Trialing]: msg`Trialing`,
+  [SubscriptionStatus.PastDue]: msg`Past Due`,
+  [SubscriptionStatus.Canceled]: msg`Canceled`,
+  [SubscriptionStatus.Unpaid]: msg`Unpaid`,
+  [SubscriptionStatus.Paused]: msg`Paused`,
+  [SubscriptionStatus.Incomplete]: msg`Incomplete`,
+  [SubscriptionStatus.IncompleteExpired]: msg`Incomplete Expired`,
 };
 
 const toBillingPlanKey = (planKey: string): BillingPlanKey | null =>
@@ -265,7 +267,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
           label: t`Status`,
           value: (
             <Tag color={STATUS_COLORS[subscription.status]}>
-              {STATUS_LABELS[subscription.status]}
+              {t(STATUS_LABELS[subscription.status])}
             </Tag>
           ),
         },
