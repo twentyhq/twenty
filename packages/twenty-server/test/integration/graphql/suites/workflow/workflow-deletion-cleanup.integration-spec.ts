@@ -587,6 +587,11 @@ describe('workflow deletion cleanup', () => {
           () => executeSpy.mock.calls.length > 0,
         );
 
+        expect(executeSpy).toHaveBeenCalledTimes(1);
+        expect(executeSpy).toHaveBeenCalledWith(
+          expect.objectContaining({ workspaceId: SEED_APPLE_WORKSPACE_ID }),
+        );
+
         const deleteWorkflowActionHandler =
           getAppProviderByClassName<DeleteWorkflowActionHandlerService>(
             'DeleteWorkflowActionHandlerService',
