@@ -193,10 +193,7 @@ describe('UnhandledExceptionFilter Sentry capture', () => {
     filter.catch(exception, buildHost(response));
 
     expect(response.status).toHaveBeenCalledWith(500);
-    expect(captureExceptions).toHaveBeenCalledWith([exception], {
-      user: undefined,
-      workspace: undefined,
-    });
+    expect(captureExceptions).toHaveBeenCalledWith([exception]);
   });
 
   it('does not report a 4xx HttpException', () => {

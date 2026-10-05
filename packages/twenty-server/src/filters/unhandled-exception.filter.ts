@@ -8,7 +8,7 @@ import {
 import { type Response } from 'express';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { handleException } from 'src/engine/utils/global-exception-handler.util';
+import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
 // Exceptions thrown before the CORS middleware (e.g. JSON body parsing) would otherwise lack CORS headers
 @Catch()
@@ -43,11 +43,9 @@ export class UnhandledExceptionFilter implements ExceptionFilter {
     const status =
       exception instanceof HttpException ? exception.getStatus() : 500;
 
-    handleException({
-      exception,
-      exceptionHandlerService: this.exceptionHandlerService,
-      statusCode: status,
-    });
+    if (shouldCaptureException(exception, status)) {
+      this.exceptionHandlerService.captureExceptions([exception]);
+    }
 
     response.status(status).json(exception.response ?? exception.message);
   }
