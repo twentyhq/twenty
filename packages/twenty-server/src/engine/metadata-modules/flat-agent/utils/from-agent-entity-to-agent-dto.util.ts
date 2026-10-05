@@ -5,7 +5,6 @@ export const fromFlatAgentWithRoleIdToAgentDto = ({
   applicationId,
   createdAt,
   description,
-  evaluationInputs,
   icon,
   id,
   isCustom,
@@ -22,7 +21,6 @@ export const fromFlatAgentWithRoleIdToAgentDto = ({
 }: FlatAgentWithRoleId): AgentDTO => ({
   createdAt: new Date(createdAt),
   description: description ?? undefined,
-  evaluationInputs,
   id,
   isCustom,
   isSystem,

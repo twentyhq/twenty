@@ -1,3 +1,4 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
@@ -12,6 +13,26 @@ const FIELDS = [
     name: 'amount',
     type: FieldMetadataType.CURRENCY,
     universalIdentifier: 'amount',
+  },
+  {
+    name: 'tagline',
+    type: FieldMetadataType.TEXT,
+    universalIdentifier: 'tagline',
+  },
+  {
+    name: 'createdAt',
+    type: FieldMetadataType.DATE_TIME,
+    universalIdentifier: 'createdAt',
+  },
+  {
+    name: 'closeDate',
+    type: FieldMetadataType.DATE_TIME,
+    universalIdentifier: 'closeDate',
+  },
+  {
+    name: 'position',
+    type: FieldMetadataType.POSITION,
+    universalIdentifier: 'position',
   },
   {
     name: 'company',
@@ -55,15 +76,25 @@ const COMPANY_RULE = {
 const compute = (
   draftRecord: Record<string, unknown>,
   validationRules: ValidationRule[] = [AMOUNT_RULE],
-  serverFilledFieldNames: string[] = [],
+  fieldMetadataItems: Pick<
+    FieldMetadataItem,
+    'name' | 'isSystem' | 'defaultValue'
+  >[] = [],
 ) =>
   computeDraftValidationRuleViolations({
     validationRules,
     draftRecord,
     fields: FIELDS,
-    serverFilledFieldNames,
+    fieldMetadataItems,
     now: '2026-09-23T10:00:00.000Z',
   });
+
+const TAGLINE_RULE = {
+  ...AMOUNT_RULE,
+  id: 'tagline-rule',
+  expression: 'isNonEmptyString(tagline)',
+  message: 'A company needs a tagline',
+};
 
 describe('computeDraftValidationRuleViolations', () => {
   it('should report the rule when the draft violates it', () => {
@@ -90,34 +121,99 @@ describe('computeDraftValidationRuleViolations', () => {
   });
 
   it('should leave a rule to the server when it reads an absent field the server fills', () => {
-    const draftWithoutStage = {
+    const draftWithoutCloseDate = {
       amount: { amountMicros: null, currencyCode: 'USD' },
+    };
+    const closeDateRule = {
+      ...AMOUNT_RULE,
+      expression: 'isDefined(closeDate) or not isEmpty(amount)',
+    };
+    const closeDateFieldMetadataItem = {
+      name: 'closeDate',
+      isSystem: false,
+      defaultValue: 'now',
     };
 
     expect(
-      compute(draftWithoutStage, [
-        { ...AMOUNT_RULE, expression: 'stage == "WON" or not isEmpty(amount)' },
-      ]).map((violation) => violation.ruleId),
+      compute(draftWithoutCloseDate, [closeDateRule]).map(
+        (violation) => violation.ruleId,
+      ),
     ).toEqual(['amount-rule']);
     expect(
       compute(
-        draftWithoutStage,
-        [
-          {
-            ...AMOUNT_RULE,
-            expression: 'stage == "WON" or not isEmpty(amount)',
-          },
-        ],
-        ['stage'],
+        draftWithoutCloseDate,
+        [closeDateRule],
+        [closeDateFieldMetadataItem],
       ),
     ).toEqual([]);
     expect(
       compute(
-        { ...draftWithoutStage, stage: 'CUSTOMER' },
-        [AMOUNT_RULE],
-        ['stage'],
+        { ...draftWithoutCloseDate, closeDate: null },
+        [closeDateRule],
+        [closeDateFieldMetadataItem],
       ).map((violation) => violation.ruleId),
     ).toEqual(['amount-rule']);
+  });
+
+  it('should evaluate an absent field with its static default value', () => {
+    expect(
+      compute(
+        {},
+        [TAGLINE_RULE],
+        [{ name: 'tagline', isSystem: false, defaultValue: "''" }],
+      ).map((violation) => violation.ruleId),
+    ).toEqual(['tagline-rule']);
+    expect(
+      compute(
+        {},
+        [TAGLINE_RULE],
+        [{ name: 'tagline', isSystem: false, defaultValue: "'Our motto'" }],
+      ),
+    ).toEqual([]);
+    expect(
+      compute(
+        { amount: { amountMicros: null, currencyCode: 'USD' } },
+        [AMOUNT_RULE],
+        [{ name: 'stage', isSystem: false, defaultValue: "'CUSTOMER'" }],
+      ).map((violation) => violation.ruleId),
+    ).toEqual(['amount-rule']);
+  });
+
+  it('should prefer the draft value over the static default value', () => {
+    expect(
+      compute(
+        { tagline: 'Our motto' },
+        [TAGLINE_RULE],
+        [{ name: 'tagline', isSystem: false, defaultValue: "''" }],
+      ),
+    ).toEqual([]);
+  });
+
+  it('should keep the static default value when the draft value is undefined', () => {
+    expect(
+      compute(
+        { tagline: undefined },
+        [TAGLINE_RULE],
+        [{ name: 'tagline', isSystem: false, defaultValue: "'Our motto'" }],
+      ),
+    ).toEqual([]);
+  });
+
+  it('should leave a rule on an absent system field to the server', () => {
+    expect(
+      compute(
+        {},
+        [{ ...AMOUNT_RULE, expression: 'isDefined(createdAt)' }],
+        [{ name: 'createdAt', isSystem: true, defaultValue: 'now' }],
+      ),
+    ).toEqual([]);
+    expect(
+      compute(
+        {},
+        [{ ...AMOUNT_RULE, expression: 'position > 1' }],
+        [{ name: 'position', isSystem: true, defaultValue: 0 }],
+      ),
+    ).toEqual([]);
   });
 
   it('should skip inactive rules', () => {
