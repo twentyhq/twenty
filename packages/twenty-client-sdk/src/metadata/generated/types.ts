@@ -268,6 +268,9 @@ export default {
             "modelConfiguration": [
                 9
             ],
+            "triggers": [
+                9
+            ],
             "__typename": [
                 1
             ]
@@ -12532,6 +12535,9 @@ export default {
             "modelConfiguration": [
                 9
             ],
+            "triggers": [
+                9
+            ],
             "__typename": [
                 1
             ]
@@ -12565,6 +12571,9 @@ export default {
                 9
             ],
             "modelConfiguration": [
+                9
+            ],
+            "triggers": [
                 9
             ],
             "__typename": [

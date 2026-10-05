@@ -225,7 +225,8 @@ import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/comm
 import { RenameUsageLimitMeterToUnitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791186790123-rename-usage-limit-meter-to-unit';
 import { AddUpgradeMigrationWorkspaceIdCreatedAtIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791215192958-add-upgrade-migration-workspace-id-created-at-index';
 import { DropAgentEvaluationInputsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791216099453-drop-agent-evaluation-inputs';
-import { AddTwoFactorAuthenticationRecoveryCodeIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791217207739-add-two-factor-authentication-recovery-code-index';
+import { AddTriggersToAgentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791219100450-add-triggers-to-agent';
+import { AddTwoFactorAuthenticationRecoveryCodeIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791236117054-add-two-factor-authentication-recovery-code-index';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -453,5 +454,6 @@ export const INSTANCE_COMMANDS = [
   RenameUsageLimitMeterToUnitFastInstanceCommand,
   AddUpgradeMigrationWorkspaceIdCreatedAtIndexFastInstanceCommand,
   DropAgentEvaluationInputsFastInstanceCommand,
+  AddTriggersToAgentFastInstanceCommand,
   AddTwoFactorAuthenticationRecoveryCodeIndexFastInstanceCommand,
 ];

@@ -1,4 +1,5 @@
 import { type AgentResponseFormat } from '@/ai/types/AgentResponseFormat';
+import { type AgentTriggerManifest } from '@/application/agentTriggerType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
 export type AgentManifest = SyncableEntityOptions & {
@@ -10,4 +11,5 @@ export type AgentManifest = SyncableEntityOptions & {
   modelId?: string;
   responseFormat?: AgentResponseFormat;
   roleUniversalIdentifier?: string;
+  triggers?: AgentTriggerManifest[];
 };
