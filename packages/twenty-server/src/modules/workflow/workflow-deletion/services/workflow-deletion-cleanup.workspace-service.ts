@@ -58,14 +58,14 @@ export class WorkflowDeletionCleanupWorkspaceService {
         [coreWorkflowIds, WORKFLOW_RUN_DELETION_BATCH_SIZE],
       );
 
-      for (const { id, status } of batchRuns) {
-        if (WAITING_WORKFLOW_RUN_STATUSES.includes(status)) {
-          await this.workflowStepWaitWorkspaceService.cancelRunWaits({
-            workspaceId,
-            workflowRunId: id,
-          });
-        }
-      }
+      await this.workflowStepWaitWorkspaceService.cancelWaitsOfRuns({
+        workspaceId,
+        workflowRunIds: batchRuns
+          .filter(({ status }) =>
+            WAITING_WORKFLOW_RUN_STATUSES.includes(status),
+          )
+          .map(({ id }) => id),
+      });
 
       const [deletedRuns] = await this.dataSource.query<
         [{ status: WorkflowRunStatus; deletedAt: Date | null }[], number]
