@@ -12,11 +12,12 @@ import {
 } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { Card } from 'twenty-ui/primitives/surfaces';
+import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { formatValidationRulePreviewValue } from '@/validation-rules/utils/formatValidationRulePreviewValue';
@@ -29,6 +30,16 @@ const StyledHeader = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
   min-width: 0;
+`;
+
+const StyledRecord = styled.div`
+  display: flex;
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const StyledStatus = styled.span`
+  flex-shrink: 0;
 `;
 
 const StyledFieldValues = styled.div`
@@ -135,14 +146,28 @@ export const SettingsValidationRulePreview = ({
 
     switch (evaluationResult.status) {
       case 'passed':
-        return <Status color="green">{t`Allowed`}</Status>;
+        return (
+          <StyledStatus>
+            <Status color="green">{t`Allowed`}</Status>
+          </StyledStatus>
+        );
       case 'failed':
-        return <Status color="red">{t`Rejected`}</Status>;
+        return (
+          <StyledStatus>
+            <Status color="red">{t`Rejected`}</Status>
+          </StyledStatus>
+        );
       case 'errored':
         return (
-          <Status color="orange" title={evaluationResult.errorMessage}>
-            {t`Error`}
-          </Status>
+          <Tooltip
+            delay={TooltipDelay.mediumDelay}
+            content={evaluationResult.errorMessage}
+            side="top"
+          >
+            <StyledStatus tabIndex={0}>
+              <Status color="orange">{t`Error`}</Status>
+            </StyledStatus>
+          </Tooltip>
         );
     }
   };
@@ -151,11 +176,13 @@ export const SettingsValidationRulePreview = ({
     <Card.Root fullWidth>
       <Card.Content>
         <StyledHeader>
-          <RecordChip
-            objectNameSingular={objectMetadataItem.nameSingular}
-            record={record}
-            forceDisableClick
-          />
+          <StyledRecord>
+            <RecordChip
+              objectNameSingular={objectMetadataItem.nameSingular}
+              record={record}
+              forceDisableClick
+            />
+          </StyledRecord>
           {renderStatus()}
         </StyledHeader>
         <StyledFieldValues>
