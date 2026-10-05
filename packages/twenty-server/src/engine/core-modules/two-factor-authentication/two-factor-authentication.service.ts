@@ -134,6 +134,35 @@ export class TwoFactorAuthenticationService {
       return reuseUri;
     }
 
+    const { uri, encryptedSecret, status } = this.generatePendingTotpSecret({
+      userEmail,
+      workspaceId,
+      workspaceDisplayName,
+    });
+
+    await this.twoFactorAuthenticationMethodRepository.upsert(
+      workspaceId,
+      {
+        userWorkspaceId: userWorkspace.id,
+        secret: encryptedSecret,
+        status,
+        strategy: TwoFactorAuthenticationStrategy.TOTP,
+      },
+      ['userWorkspaceId', 'strategy'],
+    );
+
+    return uri;
+  }
+
+  generatePendingTotpSecret({
+    userEmail,
+    workspaceId,
+    workspaceDisplayName,
+  }: {
+    userEmail: string;
+    workspaceId: WorkspaceEntity['id'];
+    workspaceDisplayName?: string;
+  }): { uri: string; encryptedSecret: EncryptedString; status: OTPStatus } {
     const { uri, context } = new TotpStrategy(
       TOTP_DEFAULT_CONFIGURATION,
     ).initiate(
@@ -141,23 +170,14 @@ export class TwoFactorAuthenticationService {
       `Twenty${workspaceDisplayName ? ` - ${workspaceDisplayName}` : ''}`,
     );
 
-    const encryptedSecret = this.secretEncryptionService.encryptVersioned(
-      context.secret,
-      { workspaceId },
-    );
-
-    await this.twoFactorAuthenticationMethodRepository.upsert(
-      workspaceId,
-      {
-        userWorkspaceId: userWorkspace.id,
-        secret: encryptedSecret,
-        status: context.status,
-        strategy: TwoFactorAuthenticationStrategy.TOTP,
-      },
-      ['userWorkspaceId', 'strategy'],
-    );
-
-    return uri;
+    return {
+      uri,
+      encryptedSecret: this.secretEncryptionService.encryptVersioned(
+        context.secret,
+        { workspaceId },
+      ),
+      status: context.status,
+    };
   }
 
   async validateStrategy(

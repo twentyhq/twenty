@@ -13,6 +13,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -98,5 +99,6 @@ export class AppTokenEntity {
     codeChallenge?: string;
     scope?: string;
     authProvider?: AuthProviderEnum;
+    revokedReason?: UserSessionRevokedReason;
   } | null;
 }

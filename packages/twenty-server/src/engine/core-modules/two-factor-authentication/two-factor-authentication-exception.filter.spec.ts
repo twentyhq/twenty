@@ -121,6 +121,10 @@ describe('TwoFactorAuthenticationExceptionFilter', () => {
         ForbiddenError,
       ],
       [
+        TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
+        ForbiddenError,
+      ],
+      [
         TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_ISSUANCE_CONFLICT,
         ConflictError,
       ],

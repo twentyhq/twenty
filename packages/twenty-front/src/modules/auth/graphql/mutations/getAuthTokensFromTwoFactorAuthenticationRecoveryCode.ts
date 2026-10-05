@@ -16,6 +16,7 @@ export const GET_AUTH_TOKENS_FROM_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE = gql`
       tokens {
         ...AuthTokenPairFragment
       }
+      provisioningUri
     }
   }
 `;

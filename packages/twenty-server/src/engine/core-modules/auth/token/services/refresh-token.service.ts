@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -77,6 +78,14 @@ export class RefreshTokenService {
     }
 
     if (token.revokedAt) {
+      // A revocation with a recorded reason is a security action, not a renewal race between tabs
+      if (isDefined(token.context?.revokedReason)) {
+        throw new AuthException(
+          'This refresh token has been revoked.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
       const wasRevokedBeforeGracePeriod =
         token.revokedAt.getTime() <= Date.now() - ms(reuseGracePeriod);
 

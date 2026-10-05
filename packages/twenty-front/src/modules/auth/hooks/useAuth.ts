@@ -651,15 +651,22 @@ export const useAuth = () => {
           throw result.error;
         }
 
-        if (
-          !result.data?.getAuthTokensFromTwoFactorAuthenticationRecoveryCode
-        ) {
+        const redemption =
+          result.data?.getAuthTokensFromTwoFactorAuthenticationRecoveryCode;
+
+        if (!isDefined(redemption)) {
           throw new Error(
             'No getAuthTokensFromTwoFactorAuthenticationRecoveryCode result',
           );
         }
 
+        if (isDefined(redemption.provisioningUri)) {
+          return { provisioningUri: redemption.provisioningUri };
+        }
+
         await handleLoadWorkspaceAfterAuthentication();
+
+        return { provisioningUri: null };
       },
       [
         getAuthTokensFromTwoFactorAuthenticationRecoveryCode,

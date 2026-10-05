@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { renderEmail } from 'twenty-emails';
+import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { IsNull, QueryFailedError } from 'typeorm';
 
 import {
@@ -16,6 +17,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TwoFactorAuthenticationRecoveryCodeEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-recovery-code.entity';
 import { TwoFactorAuthenticationRecoveryService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service';
+import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import { TwoFactorAuthenticationExceptionCode } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { buildTwoFactorAuthenticationRecoveryCodeRedemptionRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-recovery-code-redemption-rate-limit-key.util';
@@ -33,6 +35,8 @@ jest.mock('twenty-emails', () => ({
 const WORKSPACE_ID = 'workspace-id';
 const TARGET_USER_ID = 'target-user-id';
 const TARGET_USER_WORKSPACE_ID = 'target-user-workspace-id';
+const REPLACEMENT_PROVISIONING_URI =
+  'otpauth://totp/Twenty%20-%20Apple:target@example.com?secret=REPLACEMENT';
 
 const ACTOR = {
   id: 'actor-user-id',
@@ -68,15 +72,18 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   let recoveryCodeRepository: {
     insert: jest.Mock;
     findOne: jest.Mock;
+    exists: jest.Mock;
   };
+  let methodRepository: { exists: jest.Mock };
   let transactionalRepositories: {
     recoveryCode: { update: jest.Mock };
-    method: { delete: jest.Mock };
+    method: { delete: jest.Mock; insert: jest.Mock };
     appToken: { update: jest.Mock };
   };
   let twoFactorAuthenticationService: {
     assertFreshStepUpAuthenticationOrThrow: jest.Mock;
     revokePendingRecoveryCodes: jest.Mock;
+    generatePendingTotpSecret: jest.Mock;
   };
   let userWorkspaceService: { getUserWorkspaceForUser: jest.Mock };
   let userSessionService: { revokeAllSessionsForUser: jest.Mock };
@@ -87,7 +94,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   beforeEach(async () => {
     transactionalRepositories = {
       recoveryCode: { update: jest.fn().mockResolvedValue({ affected: 1 }) },
-      method: { delete: jest.fn() },
+      method: { delete: jest.fn(), insert: jest.fn() },
       appToken: { update: jest.fn() },
     };
 
@@ -115,6 +122,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
           useValue: {
             insert: jest.fn(),
             findOne: jest.fn(),
+            exists: jest.fn().mockResolvedValue(false),
           },
         },
         {
@@ -141,6 +149,11 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
           useValue: {
             assertFreshStepUpAuthenticationOrThrow: jest.fn(),
             revokePendingRecoveryCodes: jest.fn().mockResolvedValue(0),
+            generatePendingTotpSecret: jest.fn().mockReturnValue({
+              uri: REPLACEMENT_PROVISIONING_URI,
+              encryptedSecret: 'encrypted-replacement-secret',
+              status: OTPStatus.PENDING,
+            }),
           },
         },
         {
@@ -189,6 +202,9 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       getWorkspaceScopedRepositoryToken(
         TwoFactorAuthenticationRecoveryCodeEntity,
       ),
+    );
+    methodRepository = module.get(
+      getWorkspaceScopedRepositoryToken(TwoFactorAuthenticationMethodEntity),
     );
     twoFactorAuthenticationService = module.get(TwoFactorAuthenticationService);
     userWorkspaceService = module.get(UserWorkspaceService);
@@ -322,10 +338,17 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   });
 
   describe('redeemRecoveryCode', () => {
-    const redeem = () =>
+    const redeem = ({
+      isTwoFactorAuthenticationEnforced = false,
+    }: { isTwoFactorAuthenticationEnforced?: boolean } = {}) =>
       service.redeemRecoveryCode({
         userId: TARGET_USER_ID,
-        workspace: { id: WORKSPACE_ID, displayName: 'Apple' },
+        userEmail: 'target@example.com',
+        workspace: {
+          id: WORKSPACE_ID,
+          displayName: 'Apple',
+          isTwoFactorAuthenticationEnforced,
+        },
         recoveryCode: 'abcde-fghjk-mnpqr-stvwx',
       });
 
@@ -338,7 +361,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
     };
 
     it('consumes the code, removes the authenticator and revokes refresh tokens together, then signs out the member', async () => {
-      await redeem();
+      await expect(redeem()).resolves.toEqual({ provisioningUri: null });
 
       expect(throttlerService.tokenBucketThrottleOrThrow).toHaveBeenCalledWith(
         buildTwoFactorAuthenticationRecoveryCodeRedemptionRateLimitKey({
@@ -364,8 +387,15 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
           type: AppTokenType.RefreshToken,
           revokedAt: IsNull(),
         },
-        { revokedAt: expect.any(Date) },
+        {
+          revokedAt: expect.any(Date),
+          context: {
+            revokedReason:
+              UserSessionRevokedReason.TwoFactorAuthenticationReset,
+          },
+        },
       );
+      expect(transactionalRepositories.method.insert).not.toHaveBeenCalled();
       expect(userSessionService.revokeAllSessionsForUser).toHaveBeenCalledWith({
         userId: TARGET_USER_ID,
         workspaceId: WORKSPACE_ID,
@@ -379,6 +409,25 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       );
       expect(emailService.send).toHaveBeenCalledWith(
         expect.objectContaining({ to: 'target@example.com' }),
+      );
+    });
+
+    it('hands the replacement authenticator only to the redeeming request when the workspace enforces two-factor authentication', async () => {
+      await expect(
+        redeem({ isTwoFactorAuthenticationEnforced: true }),
+      ).resolves.toEqual({ provisioningUri: REPLACEMENT_PROVISIONING_URI });
+
+      expect(transactionalRepositories.method.insert).toHaveBeenCalledWith({
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: TARGET_USER_WORKSPACE_ID,
+        secret: 'encrypted-replacement-secret',
+        status: OTPStatus.PENDING,
+        strategy: TwoFactorAuthenticationStrategy.TOTP,
+      });
+      expect(
+        transactionalRepositories.method.delete.mock.invocationCallOrder[0],
+      ).toBeLessThan(
+        transactionalRepositories.method.insert.mock.invocationCallOrder[0],
       );
     });
 
@@ -406,6 +455,37 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       expect(
         transactionalRepositories.recoveryCode.update,
       ).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('assertEnrollmentNotReservedForRecoveryOrThrow', () => {
+    const assertEnrollmentAllowed = () =>
+      service.assertEnrollmentNotReservedForRecoveryOrThrow({
+        userId: TARGET_USER_ID,
+        workspaceId: WORKSPACE_ID,
+      });
+
+    it('refuses public enrollment while a recently redeemed recovery has no verified authenticator', async () => {
+      methodRepository.exists.mockResolvedValue(false);
+      recoveryCodeRepository.exists.mockResolvedValue(true);
+
+      await expect(assertEnrollmentAllowed()).rejects.toMatchObject({
+        code: TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED,
+      });
+    });
+
+    it('allows enrollment when no recovery code was redeemed recently', async () => {
+      methodRepository.exists.mockResolvedValue(false);
+      recoveryCodeRepository.exists.mockResolvedValue(false);
+
+      await expect(assertEnrollmentAllowed()).resolves.toBeUndefined();
+    });
+
+    it('leaves non-members to the provisioning flow', async () => {
+      userWorkspaceService.getUserWorkspaceForUser.mockResolvedValue(null);
+
+      await expect(assertEnrollmentAllowed()).resolves.toBeUndefined();
+      expect(recoveryCodeRepository.exists).not.toHaveBeenCalled();
     });
   });
 

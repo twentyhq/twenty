@@ -106,6 +106,10 @@ export class TwoFactorAuthenticationResolver {
 
     const user = await this.userService.findUserByEmailOrThrow(userEmail);
 
+    await this.twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow(
+      { userId: user.id, workspaceId: workspace.id },
+    );
+
     const uri =
       await this.twoFactorAuthenticationService.initiateStrategyConfiguration(
         user.id,

@@ -2517,6 +2517,12 @@ export interface WorkspaceCreationDefaultsDTO {
     __typename: 'WorkspaceCreationDefaultsDTO'
 }
 
+export interface TwoFactorAuthenticationRecoveryCodeRedemption {
+    tokens?: AuthTokenPair
+    provisioningUri?: Scalars['String']
+    __typename: 'TwoFactorAuthenticationRecoveryCodeRedemption'
+}
+
 export interface ApiKeyToken {
     token: Scalars['String']
     __typename: 'ApiKeyToken'
@@ -3772,7 +3778,7 @@ export interface Mutation {
     verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken
     verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokens
     getAuthTokensFromOTP: AuthTokens
-    getAuthTokensFromTwoFactorAuthenticationRecoveryCode: AuthTokens
+    getAuthTokensFromTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCodeRedemption
     signUp: AvailableWorkspacesAndAccessTokens
     signUpInWorkspace: SignUp
     signUpInNewWorkspace: SignUp
@@ -6456,6 +6462,13 @@ export interface WorkspaceCreationDefaultsDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TwoFactorAuthenticationRecoveryCodeRedemptionGenqlSelection{
+    tokens?: AuthTokenPairGenqlSelection
+    provisioningUri?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApiKeyTokenGenqlSelection{
     token?: boolean | number
     __typename?: boolean | number
@@ -7803,7 +7816,7 @@ export interface MutationGenqlSelection{
     verifyEmailAndGetLoginToken?: (VerifyEmailAndGetLoginTokenGenqlSelection & { __args: {emailVerificationToken: Scalars['String'], email: Scalars['String'], captchaToken?: (Scalars['String'] | null), origin: Scalars['String']} })
     verifyEmailAndGetWorkspaceAgnosticToken?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {emailVerificationToken: Scalars['String'], email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
     getAuthTokensFromOTP?: (AuthTokensGenqlSelection & { __args: {otp: Scalars['String'], loginToken: Scalars['String'], captchaToken?: (Scalars['String'] | null), origin: Scalars['String']} })
-    getAuthTokensFromTwoFactorAuthenticationRecoveryCode?: (AuthTokensGenqlSelection & { __args: {recoveryCode: Scalars['String'], loginToken: Scalars['String'], captchaToken?: (Scalars['String'] | null), origin: Scalars['String']} })
+    getAuthTokensFromTwoFactorAuthenticationRecoveryCode?: (TwoFactorAuthenticationRecoveryCodeRedemptionGenqlSelection & { __args: {recoveryCode: Scalars['String'], loginToken: Scalars['String'], captchaToken?: (Scalars['String'] | null), origin: Scalars['String']} })
     signUp?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInWorkspace?: (SignUpGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], workspaceId?: (Scalars['UUID'] | null), workspaceInviteHash?: (Scalars['String'] | null), workspacePersonalInviteToken?: (Scalars['String'] | null), captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInNewWorkspace?: (SignUpGenqlSelection & { __args?: {input?: (SignUpInNewWorkspaceInput | null)} })
@@ -10110,6 +10123,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isWorkspaceCreationDefaultsDTO = (obj?: { __typename?: any } | null): obj is WorkspaceCreationDefaultsDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCreationDefaultsDTO"')
       return WorkspaceCreationDefaultsDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TwoFactorAuthenticationRecoveryCodeRedemption_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryCodeRedemption']
+    export const isTwoFactorAuthenticationRecoveryCodeRedemption = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryCodeRedemption => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryCodeRedemption"')
+      return TwoFactorAuthenticationRecoveryCodeRedemption_possibleTypes.includes(obj.__typename)
     }
     
 

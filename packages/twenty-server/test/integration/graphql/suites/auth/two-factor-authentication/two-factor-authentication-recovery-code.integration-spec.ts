@@ -7,7 +7,9 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { getAuthTokensFromOtp } from 'test/integration/graphql/utils/get-auth-tokens-from-otp.util';
 import { getAuthTokensFromTwoFactorAuthenticationRecoveryCode } from 'test/integration/graphql/utils/get-auth-tokens-from-two-factor-authentication-recovery-code.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
+import { initiateOtpProvisioning } from 'test/integration/graphql/utils/initiate-otp-provisioning.util';
 import { initiateOtpProvisioningForAuthenticatedUser } from 'test/integration/graphql/utils/initiate-otp-provisioning-for-authenticated-user.util';
+import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
 import { verifyTwoFactorAuthenticationMethod } from 'test/integration/graphql/utils/verify-two-factor-authentication-method.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
@@ -499,7 +501,7 @@ describe('Two-factor authentication recovery codes (integration)', () => {
     it('removes the authenticator, signs out other sessions and works only once', async () => {
       const otpLoginToken = await getJonyLoginToken();
 
-      const { errors: otpErrors } = await getAuthTokensFromOtp({
+      const { data: otpData, errors: otpErrors } = await getAuthTokensFromOtp({
         loginToken: otpLoginToken,
         otp: await generateOtp(jonySecret),
         origin: buildAppleWorkspaceOrigin(),
@@ -507,6 +509,9 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       });
 
       expect(otpErrors).toBeUndefined();
+
+      const refreshTokenFromBeforeRecovery =
+        otpData.getAuthTokensFromOTP.tokens.refreshToken.token;
 
       const { recoveryCode } = await generateCodeForJony();
       const loginToken = await getJonyLoginToken();
@@ -532,8 +537,12 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       expect(errors).toBeUndefined();
       expect(
         data.getAuthTokensFromTwoFactorAuthenticationRecoveryCode.tokens
-          .accessOrWorkspaceAgnosticToken.token,
+          ?.accessOrWorkspaceAgnosticToken.token,
       ).toBeDefined();
+      expect(
+        data.getAuthTokensFromTwoFactorAuthenticationRecoveryCode
+          .provisioningUri,
+      ).toBeNull();
       expect(await selectMethodRows(USER_WORKSPACE_DATA_SEED_IDS.JONY)).toEqual(
         [],
       );
@@ -548,6 +557,13 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       );
 
       expect(revokedSessions.length).toBeGreaterThan(0);
+
+      const renewResponse = await renewToken(refreshTokenFromBeforeRecovery);
+
+      expect(renewResponse.body.data).toBeNull();
+      expect(renewResponse.body.errors?.[0]?.extensions?.code).toBe(
+        'FORBIDDEN',
+      );
 
       const { errors: replayErrors } =
         await getAuthTokensFromTwoFactorAuthenticationRecoveryCode({
@@ -638,31 +654,62 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       );
     });
 
-    it('sends the member to setup when the workspace enforces two-factor authentication', async () => {
+    it('hands the replacement authenticator only to the redeeming request when the workspace enforces two-factor authentication', async () => {
       const { recoveryCode } = await generateCodeForJony();
 
       await setTwoFactorAuthenticationEnforced(true);
 
       try {
-        const { errors } =
+        const { data, errors } =
           await getAuthTokensFromTwoFactorAuthenticationRecoveryCode({
             loginToken: await getJonyLoginToken(),
             recoveryCode,
             origin: buildAppleWorkspaceOrigin(),
-            expectToFail: true,
+            expectToFail: false,
           });
 
-        expect(errors?.[0]?.extensions?.subCode).toBe(
-          'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED',
+        expect(errors).toBeUndefined();
+
+        const { tokens, provisioningUri } =
+          data.getAuthTokensFromTwoFactorAuthenticationRecoveryCode;
+
+        expect(tokens).toBeNull();
+
+        const replacementSecret =
+          provisioningUri?.match(/[?&]secret=([^&]+)/)?.[1];
+
+        expect(replacementSecret).toBeDefined();
+
+        const methodRows = await selectMethodRows(
+          USER_WORKSPACE_DATA_SEED_IDS.JONY,
         );
-        expect(
-          await selectMethodRows(USER_WORKSPACE_DATA_SEED_IDS.JONY),
-        ).toEqual([]);
+
+        expect(methodRows).toHaveLength(1);
+        expect(methodRows[0].status).toBe('PENDING');
+
+        const { errors: provisioningErrors } = await initiateOtpProvisioning({
+          loginToken: await getJonyLoginToken(),
+          origin: buildAppleWorkspaceOrigin(),
+          expectToFail: true,
+        });
+
+        expect(provisioningErrors?.[0]?.extensions?.subCode).toBe(
+          'RECOVERY_ENROLLMENT_RESTRICTED',
+        );
+
+        const { errors: otpErrors } = await getAuthTokensFromOtp({
+          loginToken: await getJonyLoginToken(),
+          otp: await generateOtp(replacementSecret as string),
+          origin: buildAppleWorkspaceOrigin(),
+          expectToFail: false,
+        });
+
+        expect(otpErrors).toBeUndefined();
+
+        jonySecret = replacementSecret as string;
       } finally {
         await setTwoFactorAuthenticationEnforced(false);
       }
-
-      jonySecret = await enrollAuthenticator(APPLE_JONY_MEMBER_ACCESS_TOKEN);
     });
 
     it('stops accepting guesses once the member bucket is spent', async () => {

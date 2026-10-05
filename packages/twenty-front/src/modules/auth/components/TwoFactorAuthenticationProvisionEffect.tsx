@@ -1,5 +1,6 @@
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import { qrCodeState } from '@/auth/states/qrCode';
+import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -54,12 +55,15 @@ export const TwoFactorAuthenticationSetupEffect = () => {
         setQrCode(
           initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri,
         );
-      } catch {
-        enqueueToast({
-          variant: 'error',
-          children: t`Two factor authentication provisioning failed.`,
-          dedupeKey: 'two-factor-authentication-provisioning-initiation-failed',
-        });
+      } catch (error) {
+        enqueueToast(
+          getTwoFactorAuthenticationErrorToastOptions({
+            error,
+            fallbackMessage: t`Two factor authentication provisioning failed.`,
+            dedupeKey:
+              'two-factor-authentication-provisioning-initiation-failed',
+          }),
+        );
       }
     };
 

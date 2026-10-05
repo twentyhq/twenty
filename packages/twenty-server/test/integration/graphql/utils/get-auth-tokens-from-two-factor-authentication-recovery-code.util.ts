@@ -4,7 +4,7 @@ import { type CommonResponseBody } from 'test/integration/metadata/types/common-
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
+import { type TwoFactorAuthenticationRecoveryCodeRedemptionDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-code-redemption.dto';
 
 type GetAuthTokensFromTwoFactorAuthenticationRecoveryCodeUtilArgs = {
   loginToken: string;
@@ -19,7 +19,7 @@ export const getAuthTokensFromTwoFactorAuthenticationRecoveryCode = async ({
   origin,
   expectToFail,
 }: GetAuthTokensFromTwoFactorAuthenticationRecoveryCodeUtilArgs): CommonResponseBody<{
-  getAuthTokensFromTwoFactorAuthenticationRecoveryCode: AuthTokens;
+  getAuthTokensFromTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCodeRedemptionDTO;
 }> => {
   const mutation = gql`
     mutation GetAuthTokensFromTwoFactorAuthenticationRecoveryCode(
@@ -37,6 +37,7 @@ export const getAuthTokensFromTwoFactorAuthenticationRecoveryCode = async ({
             token
           }
         }
+        provisioningUri
       }
     }
   `;

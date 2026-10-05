@@ -82,6 +82,7 @@ import { IMPERSONATION_DENIAL_BY_REASON } from 'src/engine/core-modules/imperson
 import { IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-log-message-by-reason.constant';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
+import { TwoFactorAuthenticationRecoveryCodeRedemptionDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-code-redemption.dto';
 import { TwoFactorAuthenticationRecoveryCodeVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-code-verification.input';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 import { TwoFactorAuthenticationRecoveryService } from 'src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service';
@@ -455,7 +456,7 @@ export class AuthResolver {
     return authTokens;
   }
 
-  @Mutation(() => AuthTokens)
+  @Mutation(() => TwoFactorAuthenticationRecoveryCodeRedemptionDTO)
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   @AllowSuspendedWorkspace()
   async getAuthTokensFromTwoFactorAuthenticationRecoveryCode(
@@ -463,7 +464,7 @@ export class AuthResolver {
     recoveryCodeVerificationInput: TwoFactorAuthenticationRecoveryCodeVerificationInput,
     @Args('origin') origin: string,
     @Context() context: { req: Request },
-  ): Promise<AuthTokens> {
+  ): Promise<TwoFactorAuthenticationRecoveryCodeRedemptionDTO> {
     const loginTokenPayload = await this.loginTokenService.verifyLoginToken(
       recoveryCodeVerificationInput.loginToken,
     );
@@ -476,17 +477,16 @@ export class AuthResolver {
 
     const user = await this.userService.findUserByEmailOrThrow(email);
 
-    await this.twoFactorAuthenticationRecoveryService.redeemRecoveryCode({
-      userId: user.id,
-      workspace,
-      recoveryCode: recoveryCodeVerificationInput.recoveryCode,
-    });
+    const { provisioningUri } =
+      await this.twoFactorAuthenticationRecoveryService.redeemRecoveryCode({
+        userId: user.id,
+        userEmail: email,
+        workspace,
+        recoveryCode: recoveryCodeVerificationInput.recoveryCode,
+      });
 
-    if (workspace.isTwoFactorAuthenticationEnforced) {
-      throw new AuthException(
-        'Two factor authentication setup required',
-        AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,
-      );
+    if (isDefined(provisioningUri)) {
+      return { tokens: null, provisioningUri };
     }
 
     const authTokens = await this.authService.verify(
@@ -501,7 +501,7 @@ export class AuthResolver {
       origin: 'sign_in',
     });
 
-    return authTokens;
+    return { tokens: authTokens.tokens, provisioningUri: null };
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)

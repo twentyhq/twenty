@@ -9,6 +9,7 @@ import { ThemeProvider } from 'twenty-ui/theme';
 
 import { SignInUpTwoFactorAuthenticationRecovery } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery';
 import { loginTokenState } from '@/auth/states/loginTokenState';
+import { qrCodeState } from '@/auth/states/qrCode';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -94,9 +95,9 @@ describe('SignInUpTwoFactorAuthenticationRecovery', () => {
   });
 
   it('signs in with the recovery code and reminds the member to set up two-factor authentication again', async () => {
-    mockGetAuthTokensFromTwoFactorAuthenticationRecoveryCode.mockResolvedValue(
-      undefined,
-    );
+    mockGetAuthTokensFromTwoFactorAuthenticationRecoveryCode.mockResolvedValue({
+      provisioningUri: null,
+    });
 
     renderRecoveryStep();
     await submitRecoveryCode('ABCDE-FGHJK-MNPQR-STVWX');
@@ -113,13 +114,13 @@ describe('SignInUpTwoFactorAuthenticationRecovery', () => {
     );
   });
 
-  it('continues to the setup step when the workspace enforces two-factor authentication', async () => {
-    mockGetAuthTokensFromTwoFactorAuthenticationRecoveryCode.mockRejectedValue(
-      buildGraphqlError(
-        'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED',
-        'Two-factor authentication setup required.',
-      ),
-    );
+  it('continues to the setup step with the authenticator issued by the redemption when the workspace enforces two-factor authentication', async () => {
+    const provisioningUri =
+      'otpauth://totp/Twenty:test@example.com?secret=SECRETKEY&issuer=Twenty';
+
+    mockGetAuthTokensFromTwoFactorAuthenticationRecoveryCode.mockResolvedValue({
+      provisioningUri,
+    });
 
     renderRecoveryStep();
     await submitRecoveryCode('ABCDE-FGHJK-MNPQR-STVWX');
@@ -127,6 +128,7 @@ describe('SignInUpTwoFactorAuthenticationRecovery', () => {
     expect(jotaiStore.get(signInUpStepState.atom)).toBe(
       SignInUpStep.TwoFactorAuthenticationProvision,
     );
+    expect(jotaiStore.get(qrCodeState.atom)).toBe(provisioningUri);
     expect(jotaiStore.get(loginTokenState.atom)).toBe('login-token');
     expect(mockEnqueueToast).not.toHaveBeenCalled();
   });

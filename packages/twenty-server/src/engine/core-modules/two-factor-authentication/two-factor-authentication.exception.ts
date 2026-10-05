@@ -13,6 +13,7 @@ export enum TwoFactorAuthenticationExceptionCode {
   INVALID_RECOVERY_CODE = 'INVALID_RECOVERY_CODE',
   RECOVERY_CODE_TARGET_NOT_ALLOWED = 'RECOVERY_CODE_TARGET_NOT_ALLOWED',
   RECOVERY_CODE_ISSUANCE_CONFLICT = 'RECOVERY_CODE_ISSUANCE_CONFLICT',
+  RECOVERY_ENROLLMENT_RESTRICTED = 'RECOVERY_ENROLLMENT_RESTRICTED',
   STEP_UP_AUTHENTICATION_REQUIRED = 'STEP_UP_AUTHENTICATION_REQUIRED',
 }
 
@@ -36,6 +37,8 @@ const getTwoFactorAuthenticationExceptionUserFriendlyMessage = (
       return msg`You can't generate a recovery code for this member.`;
     case TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_ISSUANCE_CONFLICT:
       return msg`Another recovery code was just generated for this member. Refresh the page to see it.`;
+    case TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED:
+      return msg`Set up your authenticator from the recovery code screen, or ask a workspace admin for a new recovery code.`;
     case TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED:
       return msg`Enter your two-factor authentication code to continue.`;
     default:

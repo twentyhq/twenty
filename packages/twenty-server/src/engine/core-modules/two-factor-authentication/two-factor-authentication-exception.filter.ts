@@ -26,6 +26,7 @@ export class TwoFactorAuthenticationExceptionFilter implements ExceptionFilter {
       case TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED:
         throw new UserInputError(exception);
       case TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED:
+      case TwoFactorAuthenticationExceptionCode.RECOVERY_ENROLLMENT_RESTRICTED:
         throw new ForbiddenError(exception);
       case TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_ISSUANCE_CONFLICT:
         throw new ConflictError(exception);

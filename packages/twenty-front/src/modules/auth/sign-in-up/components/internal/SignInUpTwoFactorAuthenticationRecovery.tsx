@@ -1,6 +1,7 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { StyledTwoFactorInstructions } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationStyles';
 import { loginTokenState } from '@/auth/states/loginTokenState';
+import { qrCodeState } from '@/auth/states/qrCode';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -17,11 +18,11 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type FormEvent, useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { MainButton, useToast } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const StyledForm = styled.form`
   align-items: center;
@@ -51,6 +52,7 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
   const { isCaptchaReady } = useCaptcha();
   const loginToken = useAtomStateValue(loginTokenState);
   const setSignInUpStep = useSetAtomState(signInUpStepState);
+  const setQrCode = useSetAtomState(qrCodeState);
   const { t } = useLingui();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -71,27 +73,24 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
     setIsLoading(true);
 
     try {
-      await getAuthTokensFromTwoFactorAuthenticationRecoveryCode(
-        recoveryCode,
-        loginToken,
-        readCaptchaToken(),
-      );
+      const { provisioningUri } =
+        await getAuthTokensFromTwoFactorAuthenticationRecoveryCode(
+          recoveryCode,
+          loginToken,
+          readCaptchaToken(),
+        );
+
+      if (isDefined(provisioningUri)) {
+        setQrCode(provisioningUri);
+        setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
+        return;
+      }
 
       enqueueToast({
         variant: 'info',
         children: t`Two-factor authentication was reset for this workspace. Set it up again from Settings, Profile.`,
       });
     } catch (error) {
-      if (
-        isGraphqlErrorOfType(
-          error,
-          'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED',
-        )
-      ) {
-        setSignInUpStep(SignInUpStep.TwoFactorAuthenticationProvision);
-        return;
-      }
-
       enqueueToast(
         getTwoFactorAuthenticationErrorToastOptions({
           error,
