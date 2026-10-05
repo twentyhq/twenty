@@ -10,7 +10,8 @@ import {
   isDefined,
   parseValidationRuleExpression,
 } from 'twenty-shared/utils';
-import { IconCheck, IconX, useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -26,11 +27,8 @@ const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledStatus = styled.span`
-  display: flex;
-  flex-shrink: 0;
+  justify-content: space-between;
+  min-width: 0;
 `;
 
 const StyledFieldValues = styled.div`
@@ -137,25 +135,14 @@ export const SettingsValidationRulePreview = ({
 
     switch (evaluationResult.status) {
       case 'passed':
-        return (
-          <StyledStatus role="img" aria-label={t`This record can be saved`}>
-            <IconCheck
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-              color={theme.color.green}
-            />
-          </StyledStatus>
-        );
+        return <Status color="green">{t`Allowed`}</Status>;
       case 'failed':
+        return <Status color="red">{t`Rejected`}</Status>;
       case 'errored':
         return (
-          <StyledStatus role="img" aria-label={t`This record is blocked`}>
-            <IconX
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-              color={theme.color.red}
-            />
-          </StyledStatus>
+          <Status color="orange" title={evaluationResult.errorMessage}>
+            {t`Error`}
+          </Status>
         );
     }
   };
