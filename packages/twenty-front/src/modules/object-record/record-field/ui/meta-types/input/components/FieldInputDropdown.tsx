@@ -8,19 +8,19 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
 
-type FieldInputDropdownProps = {
+type FieldInputDropdownProps<TValue> = {
   children: ReactNode;
-  value: unknown;
+  value: TValue;
   onDismiss: () => void;
   multiple?: boolean;
 };
 
-export const FieldInputDropdown = ({
+export const FieldInputDropdown = <TValue,>({
   children,
   value,
   onDismiss,
   multiple,
-}: FieldInputDropdownProps) => {
+}: FieldInputDropdownProps<TValue>) => {
   const { fieldDefinition } = useContext(FieldContext);
   const { onTab, onShiftTab } = useContext(FieldInputEventContext);
   const { anchorRef, align, sideOffset, alignOffset, collisionPadding } =
