@@ -4,6 +4,7 @@ import { type QueryFailedError } from 'typeorm';
 
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { commonQueryRunnerToRestApiExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/common-query-runner-to-rest-api-exception-handler.util';
+import { CommonSelectFieldsException } from 'src/engine/api/common/common-select-fields/common-select-fields.exception';
 import { RestInputRequestParserException } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
@@ -28,6 +29,10 @@ export const workspaceQueryRunnerRestApiExceptionHandler = (
       return commonQueryRunnerToRestApiExceptionHandler(error);
     case error instanceof RecordShareException:
       return recordShareRestApiExceptionHandler(error);
+    case error instanceof CommonSelectFieldsException:
+      throw new BadRequestException(
+        `'fields' parameter invalid. ${error.message}`,
+      );
     case error instanceof RestInputRequestParserException:
       throw new BadRequestException(error.message);
     case error instanceof UsageLimitException:
