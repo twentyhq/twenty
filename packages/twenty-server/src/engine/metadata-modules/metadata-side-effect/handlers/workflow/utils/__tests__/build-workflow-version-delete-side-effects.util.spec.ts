@@ -77,7 +77,7 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
     });
   });
 
-  it('leaves workflows without versions alone', () => {
+  it('returns noop when no version is deletable', () => {
     expect(buildDeleteSideEffects(() => undefined)).toEqual({
       status: 'noop',
     });

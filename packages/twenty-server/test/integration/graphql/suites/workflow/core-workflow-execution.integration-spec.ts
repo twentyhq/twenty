@@ -1710,7 +1710,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         ),
         'handleDeleted',
       )
-      .mockResolvedValueOnce(undefined);
+      .mockResolvedValue(undefined);
 
     try {
       const deleteResponse = await workflowGraphqlRequest(

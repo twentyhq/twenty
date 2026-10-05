@@ -70,6 +70,10 @@ const waitForWorkflowRunsToBeDeleted = async (workflowRunIds: string[]) => {
 
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
+
+  throw new Error(
+    `Workflow runs ${workflowRunIds.join(', ')} were not deleted`,
+  );
 };
 
 const cleanUpDeletedWorkflowsAgain = async (coreWorkflowIds: string[]) =>
@@ -465,6 +469,7 @@ describe('workflow deletion cleanup', () => {
         description: 'Application uninstalled with workflow runs',
         sourcePath: `workflow-deletion-cleanup-${applicationUniversalIdentifier}`,
       });
+      jest.useRealTimers();
 
       const installation = await syncApplication({
         manifest: buildTestApplicationManifest({
@@ -534,7 +539,6 @@ describe('workflow deletion cleanup', () => {
       });
       await installApplication(APP_ID, [FORM_WORKFLOW, SLOW_WORKFLOW]);
       await installApplication(OTHER_APP_ID, [OTHER_APP_WORKFLOW]);
-      jest.useRealTimers();
     }, 180000);
 
     afterAll(async () => {

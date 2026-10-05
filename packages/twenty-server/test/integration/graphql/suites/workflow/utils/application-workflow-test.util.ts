@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -202,7 +203,7 @@ export const runCoreWorkflowVersion = (coreWorkflowVersionId: string) =>
 
 const findTestWorkflowRun = async (
   workflowRunId: string,
-): Promise<TestWorkflowRun> => {
+): Promise<TestWorkflowRun | undefined> => {
   const [workflowRun] = await globalThis.testDataSource.query(
     `SELECT id, status, state FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
     [workflowRunId],
@@ -218,14 +219,16 @@ export const waitForTestWorkflowRun = async (
   for (let attempt = 0; attempt < 600; attempt++) {
     const workflowRun = await findTestWorkflowRun(workflowRunId);
 
-    if (isDone(workflowRun)) {
+    if (isDefined(workflowRun) && isDone(workflowRun)) {
       return workflowRun;
     }
 
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
-  return findTestWorkflowRun(workflowRunId);
+  throw new Error(
+    `Workflow run ${workflowRunId} did not reach the expected state`,
+  );
 };
 
 export const countTestCompanies = async (name: string): Promise<number> => {

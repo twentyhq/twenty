@@ -6,6 +6,7 @@ import { getExclusivelyOwnedCodeStepLogicFunctionIds } from 'src/engine/metadata
 const DELETED_CODE_FUNCTION_ID = '11111111-1111-4111-8111-111111111111';
 const SHARED_CODE_FUNCTION_ID = '22222222-2222-4222-8222-222222222222';
 const APPLICATION_FUNCTION_ID = '33333333-3333-4333-8333-333333333333';
+const SHARED_BY_CODE_FUNCTION_ID = '44444444-4444-4444-8444-444444444444';
 
 const buildStep = (
   type: WorkflowActionType.CODE | WorkflowActionType.LOGIC_FUNCTION,
@@ -34,6 +35,7 @@ describe('getExclusivelyOwnedCodeStepLogicFunctionIds', () => {
           {
             steps: [
               buildStep(WorkflowActionType.CODE, DELETED_CODE_FUNCTION_ID),
+              buildStep(WorkflowActionType.CODE, SHARED_BY_CODE_FUNCTION_ID),
             ],
           },
         ],
@@ -44,6 +46,7 @@ describe('getExclusivelyOwnedCodeStepLogicFunctionIds', () => {
                 WorkflowActionType.LOGIC_FUNCTION,
                 SHARED_CODE_FUNCTION_ID,
               ),
+              buildStep(WorkflowActionType.CODE, SHARED_BY_CODE_FUNCTION_ID),
             ],
           },
         ],

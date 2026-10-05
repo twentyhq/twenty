@@ -48,7 +48,6 @@ export class WorkflowDeletionCleanupWorkspaceService {
     coreWorkflowIds: string[];
   }): Promise<void> {
     const schemaName = getWorkspaceSchemaName(workspaceId);
-    let removedNotStartedRunCount = 0;
     let deletedRunCount: number;
 
     do {
@@ -79,18 +78,19 @@ export class WorkflowDeletionCleanupWorkspaceService {
         }
       }
 
-      deletedRunCount = deletedRuns.length;
-      removedNotStartedRunCount += deletedRuns.filter(
+      const removedNotStartedRunCount = deletedRuns.filter(
         ({ status, deletedAt }) =>
           status === WorkflowRunStatus.NOT_STARTED && !isDefined(deletedAt),
       ).length;
-    } while (deletedRunCount > 0);
 
-    if (removedNotStartedRunCount > 0) {
-      await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
-        workspaceId,
-        removedNotStartedRunCount,
-      );
-    }
+      if (removedNotStartedRunCount > 0) {
+        await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
+          workspaceId,
+          removedNotStartedRunCount,
+        );
+      }
+
+      deletedRunCount = deletedRuns.length;
+    } while (deletedRunCount > 0);
   }
 }
