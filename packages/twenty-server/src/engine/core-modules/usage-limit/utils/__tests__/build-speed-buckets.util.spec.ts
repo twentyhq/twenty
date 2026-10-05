@@ -1,6 +1,7 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type SpeedLimitDefault } from 'src/engine/core-modules/usage-limit/types/speed-limit-default.type';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { buildSpeedBuckets } from 'src/engine/core-modules/usage-limit/utils/build-speed-buckets.util';
@@ -42,7 +43,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   limitKind: 'speed',
   periodCount: 60,
   periodUnit: 'second',
-  meter: 'quantity',
+  unit: UsageUnit.REQUEST,
   limitValue: 100,
   burstValue: null,
   isInstanceOverride: false,
@@ -97,7 +98,7 @@ const systemContext = { type: 'system', workspace } as WorkspaceAuthContext;
 // workspace-wide counter and applications against a cross-workspace one, and
 // left every other caller alone.
 describe('buildSpeedBuckets with no limits configured', () => {
-  it('meters an api key against one shared counter per window', () => {
+  it('counts an api key against one shared counter per window', () => {
     expect(buildBuckets({ authContext: apiKeyContext })).toEqual([
       expect.objectContaining({
         key: '{workspace-1}:speed:API:API_REQUEST:apiKey:-:1',
@@ -113,7 +114,7 @@ describe('buildSpeedBuckets with no limits configured', () => {
     ]);
   });
 
-  it('meters an application against one counter across every workspace', () => {
+  it('counts an application against one counter across every workspace', () => {
     expect(buildBuckets({ authContext: applicationContext })).toEqual([
       expect.objectContaining({
         key: '{server}:speed:API:API_REQUEST:application:app-uid:60',
@@ -148,7 +149,7 @@ describe('buildSpeedBuckets for a spender no application identifies', () => {
     },
   ];
 
-  it('meters a system sender against one counter across every workspace', () => {
+  it('counts a system sender against one counter across every workspace', () => {
     expect(
       buildBuckets({
         authContext: systemContext,
@@ -164,7 +165,7 @@ describe('buildSpeedBuckets for a spender no application identifies', () => {
     ]);
   });
 
-  it('meters a user request against that same counter', () => {
+  it('counts a user request against that same counter', () => {
     const [bucket] = buildBuckets({
       authContext: userContext,
       speedLimitDefaults: WORKSPACE_DEFAULTS,
@@ -310,7 +311,7 @@ describe('buildSpeedBuckets with limits configured', () => {
           spenderId: '',
           periodCount: 1,
           periodUnit: 'month',
-          meter: 'creditsUsedMicro',
+          unit: UsageUnit.CREDIT,
         }),
       ],
     });

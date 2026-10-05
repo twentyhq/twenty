@@ -47,27 +47,9 @@ export const validateUsageLimitAgainstKindRule = (
     );
   }
 
-  if (!rule.allowedMeters.includes(input.meter)) {
-    throw new UsageLimitException(
-      `A ${input.limitKind} limit cannot be metered on ${input.meter}, only on ${rule.allowedMeters.join(', ')}`,
-      UsageLimitExceptionCode.LIMIT_INVALID,
-    );
-  }
-
   if (!rule.isBurstValueAllowed && isDefined(input.burstValue)) {
     throw new UsageLimitException(
       `A ${input.limitKind} limit cannot hold a burst value`,
-      UsageLimitExceptionCode.LIMIT_INVALID,
-    );
-  }
-
-  if (
-    input.limitKind === 'quota' &&
-    input.meter === 'quantity' &&
-    spansEveryOperation
-  ) {
-    throw new UsageLimitException(
-      'A quantity quota needs an operation: only credits aggregate across operations',
       UsageLimitExceptionCode.LIMIT_INVALID,
     );
   }
