@@ -14,11 +14,13 @@ const StyledContainer = styled.div`
 `;
 
 type SettingsApplicationDetailVariablesTabProps = {
+  applicationId: string;
   applicationVariables: ApplicationVariable[];
   onVariableChange: (key: string, value: string) => void;
 };
 
 export const SettingsApplicationDetailVariablesTab = ({
+  applicationId,
   applicationVariables,
   onVariableChange,
 }: SettingsApplicationDetailVariablesTabProps) => {
@@ -53,6 +55,7 @@ export const SettingsApplicationDetailVariablesTab = ({
                 onVariableChange(applicationVariable.key, newValue)
               }
               placeholder={t`Value`}
+              applicationId={applicationId}
             />
           </div>
         ))}

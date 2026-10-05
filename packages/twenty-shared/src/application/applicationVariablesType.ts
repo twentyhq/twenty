@@ -13,14 +13,29 @@ export const APPLICATION_VARIABLE_FIELD_METADATA_TYPES = [
   FieldMetadataType.RICH_TEXT,
   FieldMetadataType.SELECT,
   FieldMetadataType.MULTI_SELECT,
+  FieldMetadataType.FILES,
 ] as const;
 
 export type ApplicationVariableType =
   (typeof APPLICATION_VARIABLE_FIELD_METADATA_TYPES)[number];
 
+// Files are uploaded from the workspace settings, so a manifest cannot
+// carry a value for them and a server variable cannot be one.
+export type ApplicationVariableValueType = Exclude<
+  ApplicationVariableType,
+  typeof FieldMetadataType.FILES
+>;
+
 export type ApplicationVariableOption = {
   label: string;
   value: string;
+};
+
+export type ApplicationVariableFileValue = {
+  fileId: string;
+  label: string;
+  extension?: string;
+  url?: string;
 };
 
 export type ApplicationVariableValue =
@@ -28,12 +43,13 @@ export type ApplicationVariableValue =
   | number
   | boolean
   | string[]
+  | ApplicationVariableFileValue[]
   | Record<string, unknown>
   | null;
 
 type TypedApplicationVariable = {
   label?: string;
-  type?: ApplicationVariableType;
+  type?: ApplicationVariableValueType;
   options?: ApplicationVariableOption[];
   isRequired?: boolean;
   isDeprecated?: boolean;
@@ -52,8 +68,18 @@ type NonSecretApplicationVariable = SyncableEntityOptions &
     isSecret?: false;
   };
 
+type FilesApplicationVariable = SyncableEntityOptions & {
+  label?: string;
+  description?: string;
+  type: typeof FieldMetadataType.FILES;
+  isRequired?: boolean;
+  isDeprecated?: boolean;
+  isSecret?: false;
+};
+
 export type ApplicationVariable =
   | SecretApplicationVariable
-  | NonSecretApplicationVariable;
+  | NonSecretApplicationVariable
+  | FilesApplicationVariable;
 
 export type ApplicationVariables = Record<string, ApplicationVariable>;

@@ -1,6 +1,6 @@
 import {
   type ApplicationVariableOption,
-  type ApplicationVariableType,
+  type ApplicationVariableValueType,
 } from '@/application/applicationVariablesType';
 
 type ServerVariableSchema = {
@@ -8,7 +8,7 @@ type ServerVariableSchema = {
   isSecret?: boolean;
   isRequired?: boolean;
   isDeprecated?: boolean;
-  type?: ApplicationVariableType;
+  type?: ApplicationVariableValueType;
   options?: ApplicationVariableOption[];
 };
 

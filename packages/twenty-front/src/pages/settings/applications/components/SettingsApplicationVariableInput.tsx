@@ -17,6 +17,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
+import { SettingsApplicationVariableFilesInput } from '~/pages/settings/applications/components/SettingsApplicationVariableFilesInput';
 
 type SettingsApplicationVariableInputProps = {
   type?: string | null;
@@ -25,6 +26,8 @@ type SettingsApplicationVariableInputProps = {
   onChange: (serializedValue: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  // Files are stored under the application owning the variable
+  applicationId?: string;
 };
 
 const toSelectOptions = (
@@ -70,8 +73,20 @@ export const SettingsApplicationVariableInput = ({
   onChange,
   placeholder,
   disabled,
+  applicationId,
 }: SettingsApplicationVariableInputProps) => {
   const fieldType = (type as FieldMetadataType) ?? FieldMetadataType.TEXT;
+
+  if (fieldType === FieldMetadataType.FILES && isDefined(applicationId)) {
+    return (
+      <SettingsApplicationVariableFilesInput
+        applicationId={applicationId}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+      />
+    );
+  }
 
   switch (fieldType) {
     case FieldMetadataType.BOOLEAN:

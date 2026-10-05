@@ -46,7 +46,9 @@ export class ApplicationVariableEntityResolver {
   ) {}
 
   @ResolveField(() => String)
-  value(@Parent() applicationVariable: ApplicationVariableEntity): string {
+  async value(
+    @Parent() applicationVariable: ApplicationVariableEntity,
+  ): Promise<string> {
     return this.applicationVariableService.getDisplayValue(applicationVariable);
   }
 

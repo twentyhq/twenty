@@ -3025,6 +3025,7 @@ enum FileFolder {
   AppTarball
   GeneratedSdkClient
   Dpa
+  ApplicationVariable
 }
 
 type ApplicationFileUploadError {
@@ -4186,7 +4187,7 @@ type Mutation {
   updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
   deleteManyNavigationMenuItems(ids: [UUID!]!): [NavigationMenuItem!]!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
-  createFileUpload(filename: String!, size: Float!, fileFolder: FileFolder!, fieldMetadataId: String, fieldMetadataUniversalIdentifier: String): FileUploadTarget!
+  createFileUpload(filename: String!, size: Float!, fileFolder: FileFolder!, fieldMetadataId: String, fieldMetadataUniversalIdentifier: String, applicationId: UUID): FileUploadTarget!
   completeFileUpload(fileId: String!): FileWithSignedUrl!
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!

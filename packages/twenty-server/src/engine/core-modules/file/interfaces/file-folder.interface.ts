@@ -101,4 +101,9 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
     allowedMimeTypes: ANY_MIME_TYPE,
   },
+  [FileFolder.ApplicationVariable]: {
+    ignoreExpirationToken: false,
+    cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
+    allowedMimeTypes: ANY_MIME_TYPE,
+  },
 };

@@ -77,7 +77,7 @@ See [Media capture](/developers/extend/apps/layout/front-components#media-captur
 
 ## Variable types
 
-Both `applicationVariables` and `serverVariables` accept an optional `type` (and, for `SELECT` / `MULTI_SELECT`, an `options` list). Supported types: `TEXT` (default), `BOOLEAN`, `NUMBER`, `NUMERIC`, `DATE`, `DATE_TIME`, `SELECT`, `MULTI_SELECT`, `ARRAY`, `RAW_JSON`, `RICH_TEXT`.
+Both `applicationVariables` and `serverVariables` accept an optional `type` (and, for `SELECT` / `MULTI_SELECT`, an `options` list). Supported types: `TEXT` (default), `BOOLEAN`, `NUMBER`, `NUMERIC`, `DATE`, `DATE_TIME`, `SELECT`, `MULTI_SELECT`, `ARRAY`, `RAW_JSON`, `RICH_TEXT`. `applicationVariables` also accept `FILES` (see [File variables](#file-variables)).
 
 ```ts src/application-config.ts
 import { defineApplication, FieldType } from 'twenty-sdk/define';
@@ -127,6 +127,46 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 ```
 
 The same applies to front components reading values via `getApplicationVariable('VARIABLE_NAME')` — the returned value is a string; parse it as needed.
+
+### File variables
+
+An application variable of type `FILES` holds files the workspace uploads from the app's settings page, for example a logo to print on generated invoices. It declares no `value` (there is no file to ship in a manifest), cannot be `isSecret`, and is not available to `serverVariables`.
+
+```ts src/application-config.ts
+import { defineApplication, FieldType } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, role...
+  applicationVariables: {
+    INVOICE_LOGO: {
+      universalIdentifier: '0d2f9b6e-3c41-4b1a-9e7d-5a8c2f1b6d43',
+      label: 'Invoice logo',
+      description: 'Printed at the top of every generated invoice',
+      type: FieldType.FILES,
+      isRequired: true,
+    },
+  },
+});
+```
+
+The value reaches your code as a JSON array, one entry per uploaded file, with a `url` signed for the current run (it expires, so read it from the variable each time rather than storing it):
+
+```ts
+type ApplicationVariableFile = {
+  fileId: string;
+  label: string; // the uploaded file name, editable in the settings
+  extension: string; // e.g. ".png"
+  url: string; // signed download url, valid for a limited time
+};
+
+const [logo] = JSON.parse(process.env.INVOICE_LOGO ?? '[]') as ApplicationVariableFile[];
+
+if (logo) {
+  const logoBytes = await fetch(logo.url).then((response) => response.arrayBuffer());
+}
+```
+
+An app saving such a variable itself (from a custom settings component) uploads the file with `createFileUpload` using the `ApplicationVariable` folder and its own `applicationId`, completes it with `completeFileUpload`, then writes `updateOneApplicationVariable` with the `[{ fileId, label }]` list. Files dropped from the list are deleted on save.
 
 ## Default function role
 

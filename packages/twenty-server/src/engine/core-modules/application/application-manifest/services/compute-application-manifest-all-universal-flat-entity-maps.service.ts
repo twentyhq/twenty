@@ -608,7 +608,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           : '';
 
       const isSecret = applicationVariableManifest.isSecret;
-      const rawValue = isSecret ? '' : plaintextValue;
+      // Files are uploaded from the workspace settings, so a manifest never seeds one
+      const rawValue =
+        isSecret || type === FieldMetadataType.FILES ? '' : plaintextValue;
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
@@ -626,7 +628,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             isDeprecated: applicationVariableManifest.isDeprecated,
             isRequired: applicationVariableManifest.isRequired,
             type,
-            options: applicationVariableManifest.options,
+            options:
+              'options' in applicationVariableManifest
+                ? applicationVariableManifest.options
+                : undefined,
             applicationUniversalIdentifier,
             now,
           }),

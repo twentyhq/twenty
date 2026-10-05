@@ -12,6 +12,7 @@ import {
 type DirectFileUploadOptions = {
   fileFolder: FileFolder;
   fieldMetadataId?: string;
+  applicationId?: string;
   signal?: AbortSignal;
 };
 
@@ -26,7 +27,12 @@ export const useDirectFileUpload = () => {
 
   const createFileUploadAndPutFile = async (
     file: File,
-    { fileFolder, fieldMetadataId, signal }: DirectFileUploadOptions,
+    {
+      fileFolder,
+      fieldMetadataId,
+      applicationId,
+      signal,
+    }: DirectFileUploadOptions,
   ): Promise<{ fileId: string }> => {
     const createResult = await createFileUpload({
       variables: {
@@ -34,6 +40,7 @@ export const useDirectFileUpload = () => {
         size: file.size,
         fileFolder,
         fieldMetadataId,
+        applicationId,
       },
     });
 

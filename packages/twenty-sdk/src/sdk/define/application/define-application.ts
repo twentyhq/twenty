@@ -48,6 +48,20 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
         `Application variable "${variableName}" is both required and deprecated. \`isDeprecated\` wins: the variable is excluded from the application configuration check.`,
       );
     }
+
+    if (variable.type === FieldMetadataType.FILES) {
+      if ('value' in variable && isDefined(variable.value)) {
+        errors.push(
+          `Application variable "${variableName}" of type ${FieldMetadataType.FILES} cannot declare a value: files are uploaded from the workspace settings`,
+        );
+      }
+
+      if (variable.isSecret) {
+        errors.push(
+          `Application variable "${variableName}" of type ${FieldMetadataType.FILES} cannot be secret`,
+        );
+      }
+    }
   }
 
   const billableOperations = config.billing?.operations ?? {};
@@ -137,6 +151,13 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     if (variable.isRequired && variable.isDeprecated) {
       warnings.push(
         `Server variable "${variableName}" is both required and deprecated. \`isDeprecated\` wins: the variable is excluded from the application configuration check.`,
+      );
+    }
+
+    // Server variables are instance-wide, with no workspace to upload a file from
+    if ((variable.type as string) === FieldMetadataType.FILES) {
+      errors.push(
+        `Server variable "${variableName}" cannot be of type ${FieldMetadataType.FILES}: only application variables accept files`,
       );
     }
   }

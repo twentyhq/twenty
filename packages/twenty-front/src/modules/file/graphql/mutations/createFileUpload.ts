@@ -6,12 +6,14 @@ export const CREATE_FILE_UPLOAD = gql`
     $size: Float!
     $fileFolder: FileFolder!
     $fieldMetadataId: String
+    $applicationId: UUID
   ) {
     createFileUpload(
       filename: $filename
       size: $size
       fileFolder: $fileFolder
       fieldMetadataId: $fieldMetadataId
+      applicationId: $applicationId
     ) {
       fileId
       uploadUrl

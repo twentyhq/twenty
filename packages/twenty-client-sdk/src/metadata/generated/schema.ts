@@ -2586,7 +2586,7 @@ export interface ApplicationFileUploadTarget {
     __typename: 'ApplicationFileUploadTarget'
 }
 
-export type FileFolder = 'RecordExport' | 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
+export type FileFolder = 'RecordExport' | 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa' | 'ApplicationVariable'
 
 export interface ApplicationFileUploadError {
     fileFolder: FileFolder
@@ -7555,7 +7555,7 @@ export interface MutationGenqlSelection{
     updateNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: UpdateOneNavigationMenuItemInput} })
     deleteManyNavigationMenuItems?: (NavigationMenuItemGenqlSelection & { __args: {ids: Scalars['UUID'][]} })
     deleteNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
-    createFileUpload?: (FileUploadTargetGenqlSelection & { __args: {filename: Scalars['String'], size: Scalars['Float'], fileFolder: FileFolder, fieldMetadataId?: (Scalars['String'] | null), fieldMetadataUniversalIdentifier?: (Scalars['String'] | null)} })
+    createFileUpload?: (FileUploadTargetGenqlSelection & { __args: {filename: Scalars['String'], size: Scalars['Float'], fileFolder: FileFolder, fieldMetadataId?: (Scalars['String'] | null), fieldMetadataUniversalIdentifier?: (Scalars['String'] | null), applicationId?: (Scalars['UUID'] | null)} })
     completeFileUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
@@ -11571,7 +11571,8 @@ export const enumFileFolder = {
    EmailImage: 'EmailImage' as const,
    AppTarball: 'AppTarball' as const,
    GeneratedSdkClient: 'GeneratedSdkClient' as const,
-   Dpa: 'Dpa' as const
+   Dpa: 'Dpa' as const,
+   ApplicationVariable: 'ApplicationVariable' as const
 }
 
 export const enumApplicationExportCoverageStatus = {

@@ -2,6 +2,7 @@ import {
   type ApplicationVariableType,
   type ApplicationVariableValue,
 } from '@/application/applicationVariablesType';
+import { parseApplicationVariableFilesValue } from '@/application/utils/applicationVariableFilesValue';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 
 export const serializeApplicationVariableValue = (
@@ -36,6 +37,15 @@ export const serializeApplicationVariableValue = (
       }
 
       return JSON.stringify(value);
+    case FieldMetadataType.FILES: {
+      const files = Array.isArray(value)
+        ? value
+        : typeof value === 'string'
+          ? parseApplicationVariableFilesValue(value)
+          : [];
+
+      return files.length === 0 ? '' : JSON.stringify(files);
+    }
     case FieldMetadataType.RAW_JSON:
     case FieldMetadataType.RICH_TEXT:
       return typeof value === 'string' ? value : JSON.stringify(value);
@@ -50,7 +60,8 @@ export const deserializeApplicationVariableValue = (
 ): ApplicationVariableValue => {
   if (value === '') {
     return type === FieldMetadataType.ARRAY ||
-      type === FieldMetadataType.MULTI_SELECT
+      type === FieldMetadataType.MULTI_SELECT ||
+      type === FieldMetadataType.FILES
       ? []
       : '';
   }
@@ -73,6 +84,8 @@ export const deserializeApplicationVariableValue = (
       } catch {
         return [];
       }
+    case FieldMetadataType.FILES:
+      return parseApplicationVariableFilesValue(value);
     case FieldMetadataType.RAW_JSON:
     case FieldMetadataType.RICH_TEXT:
       try {

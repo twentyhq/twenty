@@ -52,7 +52,9 @@ export { isApplicationHealthCheckResult } from './applicationHealthType';
 export type { ApplicationManifest } from './applicationType';
 export type {
   ApplicationVariableType,
+  ApplicationVariableValueType,
   ApplicationVariableOption,
+  ApplicationVariableFileValue,
   ApplicationVariableValue,
   ApplicationVariable,
   ApplicationVariables,
@@ -239,6 +241,10 @@ export {
   USAGE_OPERATION_TYPES,
   isUsageOperationTypeValue,
 } from './usageOperationTypesType';
+export {
+  isApplicationVariableFileValue,
+  parseApplicationVariableFilesValue,
+} from './utils/applicationVariableFilesValue';
 export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,

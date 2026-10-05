@@ -263,6 +263,7 @@ export const SettingsApplicationDetails = () => {
       case VARIABLES_TAB_ID:
         return (
           <SettingsApplicationDetailVariablesTab
+            applicationId={applicationId}
             applicationVariables={draftApplicationVariables}
             onVariableChange={setApplicationVariableValue}
           />

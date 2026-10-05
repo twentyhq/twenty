@@ -49,6 +49,7 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.EmailImage,
   FileFolder.AppTarball,
   FileFolder.CorePicture,
+  FileFolder.ApplicationVariable,
 ] as const;
 
 // These folders leave quarantine only through their dedicated, permission-gated completions, never the generic one.
@@ -83,6 +84,7 @@ export class FileUploadService {
     fileFolder,
     fieldMetadataId,
     fieldMetadataUniversalIdentifier,
+    applicationId,
   }: {
     workspaceId: string;
     filename: string;
@@ -90,6 +92,7 @@ export class FileUploadService {
     fileFolder: FileFolder;
     fieldMetadataId?: string;
     fieldMetadataUniversalIdentifier?: string;
+    applicationId?: string;
   }): Promise<FileUploadTargetDTO> {
     if (
       !DIRECT_UPLOAD_FILE_FOLDERS.includes(
@@ -128,6 +131,7 @@ export class FileUploadService {
         name,
         fieldMetadataId,
         fieldMetadataUniversalIdentifier,
+        applicationId,
       });
 
     await this.fileStorageService.createPendingFile({
@@ -350,16 +354,49 @@ export class FileUploadService {
     name,
     fieldMetadataId,
     fieldMetadataUniversalIdentifier,
+    applicationId,
   }: {
     workspaceId: string;
     fileFolder: FileFolder;
     name: string;
     fieldMetadataId?: string;
     fieldMetadataUniversalIdentifier?: string;
+    applicationId?: string;
   }): Promise<{
     applicationUniversalIdentifier: string;
     resourcePath: string;
   }> {
+    if (fileFolder === FileFolder.ApplicationVariable) {
+      if (!isDefined(applicationId)) {
+        throw new FileUploadException(
+          'applicationId must be provided for an application variable file',
+          FileUploadExceptionCode.BAD_REQUEST,
+          {
+            userFriendlyMessage: msg`applicationId must be provided for an application variable file`,
+          },
+        );
+      }
+
+      const application = await this.applicationRepository.findOne(
+        workspaceId,
+        {
+          where: { id: applicationId },
+        },
+      );
+
+      if (!isDefined(application)) {
+        throw new ApplicationException(
+          `Could not find application ${applicationId}`,
+          ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+        );
+      }
+
+      return {
+        applicationUniversalIdentifier: application.universalIdentifier,
+        resourcePath: name,
+      };
+    }
+
     if (fileFolder === FileFolder.FilesField) {
       if (!fieldMetadataId && !fieldMetadataUniversalIdentifier) {
         throw new FileUploadException(

@@ -1,6 +1,6 @@
 import { MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT } from 'twenty-shared/application';
 
-import { defineApplication } from '@/sdk/define';
+import { defineApplication, FieldType } from '@/sdk/define';
 
 describe('defineApplication', () => {
   it('should return successful validation result when valid', () => {
@@ -124,6 +124,63 @@ describe('defineApplication', () => {
 
     expect(result.success).toBe(true);
     expect(warnings.some((warning) => warning.includes('API_KEY'))).toBe(true);
+  });
+
+  it('should accept a FILES application variable without a value', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      applicationVariables: {
+        INVOICE_LOGO: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          label: 'Invoice logo',
+          type: FieldType.FILES,
+          isRequired: true,
+        },
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should refuse a FILES application variable declaring a value or marked secret', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      applicationVariables: {
+        INVOICE_LOGO: {
+          universalIdentifier: 'c2d4e6f8-1a3b-4c5d-8e7f-9a0b1c2d3e4f',
+          type: FieldType.FILES,
+          value: 'logo.png',
+          isSecret: true,
+        } as never,
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      expect.stringMatching(/INVOICE_LOGO.*cannot declare a value/),
+      expect.stringMatching(/INVOICE_LOGO.*cannot be secret/),
+    ]);
+  });
+
+  it('should refuse a FILES server variable', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      serverVariables: {
+        LOGO: { type: FieldType.FILES as never },
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      expect.stringMatching(/LOGO.*only application variables accept files/),
+    ]);
   });
 
   it('should warn when an application variable is both required and deprecated', () => {

@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationVariableFileService } from 'src/engine/core-modules/application/application-variable/application-variable-file.service';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import {
   ApplicationVariableEntityException,
@@ -29,13 +31,13 @@ export class ApplicationVariableEntityService {
     private readonly applicationVariableRepository: WorkspaceScopedRepository<ApplicationVariableEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly secretEncryptionService: SecretEncryptionService,
+    private readonly applicationVariableFileService: ApplicationVariableFileService,
   ) {}
 
-  getDisplayValue(applicationVariable: ApplicationVariableEntity): string {
-    const plaintextValue = this.secretEncryptionService.decryptVersionedOrThrow(
-      applicationVariable.value,
-      { workspaceId: applicationVariable.workspaceId },
-    );
+  async getDisplayValue(
+    applicationVariable: ApplicationVariableEntity,
+  ): Promise<string> {
+    const plaintextValue = this.decryptValue(applicationVariable);
 
     if (plaintextValue === '') {
       return '';
@@ -48,7 +50,11 @@ export class ApplicationVariableEntityService {
       );
     }
 
-    return plaintextValue;
+    return this.toReadableValue({
+      type: applicationVariable.type,
+      plaintextValue,
+      workspaceId: applicationVariable.workspaceId,
+    });
   }
 
   async getServerEnvVariables(
@@ -99,25 +105,47 @@ export class ApplicationVariableEntityService {
       .filter(isDefined);
   }
 
-  private toEnvVariables(
+  private async toEnvVariables(
     flatApplicationVariables: FlatApplicationVariable[],
-  ): Record<string, string> {
-    return flatApplicationVariables.reduce<Record<string, string>>(
-      (acc, flatApplicationVariable) => {
-        acc[flatApplicationVariable.key] = this.decryptValue(
-          flatApplicationVariable,
-        );
-
-        return acc;
-      },
-      {},
+  ): Promise<Record<string, string>> {
+    const envVariableEntries = await Promise.all(
+      flatApplicationVariables.map(
+        async (flatApplicationVariable) =>
+          [
+            flatApplicationVariable.key,
+            await this.toReadableValue({
+              type: flatApplicationVariable.type,
+              plaintextValue: this.decryptValue(flatApplicationVariable),
+              workspaceId: flatApplicationVariable.workspaceId,
+            }),
+          ] as const,
+      ),
     );
+
+    return Object.fromEntries(envVariableEntries);
+  }
+
+  private async toReadableValue({
+    type,
+    plaintextValue,
+    workspaceId,
+  }: Pick<FlatApplicationVariable, 'type' | 'workspaceId'> & {
+    plaintextValue: string;
+  }): Promise<string> {
+    if (type !== FieldMetadataType.FILES) {
+      return plaintextValue;
+    }
+
+    return this.applicationVariableFileService.signFilesValue({
+      plaintextValue,
+      workspaceId,
+    });
   }
 
   private decryptValue({
     value,
     workspaceId,
-  }: FlatApplicationVariable): string {
+  }: Pick<FlatApplicationVariable, 'value' | 'workspaceId'>): string {
     return this.secretEncryptionService.decryptVersionedOrThrow(value, {
       workspaceId,
     });
@@ -145,15 +173,36 @@ export class ApplicationVariableEntityService {
       );
     }
 
+    const filesValueUpdate =
+      existingVariable.type === FieldMetadataType.FILES
+        ? await this.applicationVariableFileService.prepareFilesValueUpdate({
+            applicationId,
+            workspaceId,
+            previousPlaintextValue: this.decryptValue(existingVariable),
+            nextPlaintextValue: plainTextValue,
+          })
+        : undefined;
+
+    const plaintextValueToStore = (filesValueUpdate?.plaintextValueToStore ??
+      plainTextValue) as PlaintextString;
+
     await this.applicationVariableRepository.update(
       workspaceId,
       { key, applicationId },
       {
-        value: this.secretEncryptionService.encryptVersioned(plainTextValue, {
-          workspaceId,
-        }),
+        value: this.secretEncryptionService.encryptVersioned(
+          plaintextValueToStore,
+          { workspaceId },
+        ),
       },
     );
+
+    if (isDefined(filesValueUpdate)) {
+      await this.applicationVariableFileService.applyFilesValueUpdate({
+        ...filesValueUpdate,
+        workspaceId,
+      });
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatApplicationVariableMaps',
