@@ -246,7 +246,13 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
 
     const [{ raw }] = google.sentMessages.slice(-1);
 
-    expect(raw).toContain(`From: ${GOOGLE_ALIAS_DISPLAY_NAME} <${ALIAS}>`);
+    const encodedAliasDisplayName = Buffer.from(
+      GOOGLE_ALIAS_DISPLAY_NAME,
+    ).toString('base64');
+
+    expect(raw).toContain(
+      `From: "=?UTF-8?B?${encodedAliasDisplayName}?=" <${ALIAS}>`,
+    );
   }, 60000);
 
   it('refuses to send from an address the account has not verified', async () => {
