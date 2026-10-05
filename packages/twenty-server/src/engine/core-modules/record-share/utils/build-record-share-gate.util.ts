@@ -6,14 +6,12 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
 import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-share/types/inherited-readability-parent.type';
-import {
-  buildInheritedReadabilityCondition,
-  type InheritedReadabilityParentCondition,
-} from 'src/engine/core-modules/record-share/utils/build-inherited-readability-condition.util';
-import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
+import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
+import { shouldEnforceRecordShareExceptions } from 'src/engine/core-modules/record-share/utils/should-enforce-record-share-exceptions.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
+  type InheritedReadabilityParentExpression,
   type RowAccessPolicy,
   type RowAccessPolicyContext,
   type RowAccessPolicyTarget,
@@ -40,9 +38,19 @@ export const buildRecordShareGate = ({
     readability: target.flatObjectMetadata.readability,
     isOwningApplication,
   });
+  const isGatingEnabled =
+    context.environment.isRecordShareVisibilityGatingEnabled;
+
   switch (gateKind) {
     case 'open':
-      return { kind: 'open' };
+      return isGatingEnabled &&
+        shouldEnforceRecordShareExceptions({
+          flatObjectMetadata: target.flatObjectMetadata,
+          isRecordSharingEnabled: context.environment.isRecordSharingEnabled,
+          canAccessAllRecords: context.subject.canAccessAllRecords,
+        })
+        ? buildRecordShareExceptionGate(context, target)
+        : { kind: 'open' };
     case 'deny':
       return { kind: 'denied' };
     case 'inherited':
@@ -52,7 +60,9 @@ export const buildRecordShareGate = ({
         buildParentPolicy,
       });
     case 'private':
-      return buildOwnRecordShareGate(context, target);
+      return isGatingEnabled
+        ? buildOwnRecordShareGate(context, target)
+        : { kind: 'open' };
     default:
       return assertUnreachable(gateKind);
   }
@@ -89,13 +99,33 @@ const buildOwnRecordShareGate = (
 
   return {
     kind: 'gated',
-    condition: buildRecordShareCondition({
+    expression: {
+      kind: 'recordShared',
       tableAlias: target.tableAlias,
-      recordShareTableExpression:
-        context.environment.recordShareTableExpression,
       objectMetadataId: target.flatObjectMetadata.id,
       ...principals,
-    }),
+    },
+  };
+};
+
+const buildRecordShareExceptionGate = (
+  context: RowAccessPolicyContext,
+  target: RowAccessPolicyTarget,
+): RowAccessPolicy => {
+  const principals = resolveRecordSharePrincipals(context, target);
+
+  if (!isDefined(principals)) {
+    return { kind: 'open' };
+  }
+
+  return {
+    kind: 'gated',
+    expression: {
+      kind: 'recordNotRestricted',
+      tableAlias: target.tableAlias,
+      objectMetadataId: target.flatObjectMetadata.id,
+      ...principals,
+    },
   };
 };
 
@@ -104,6 +134,8 @@ const buildInheritedReadabilityGate = ({
   target,
   buildParentPolicy,
 }: RecordShareGateArgs): RowAccessPolicy => {
+  const isGatingEnabled =
+    context.environment.isRecordShareVisibilityGatingEnabled;
   const { tableAlias, flatObjectMetadata, depth, joinParentRelationShape } =
     target;
 
@@ -129,8 +161,12 @@ const buildInheritedReadabilityGate = ({
     return { kind: 'open' };
   }
 
+  const isOpenWhenDetached = isOpenWhenDetachedObject(flatObjectMetadata);
+
   if (parents.length === 0) {
-    return buildOwnRecordShareGate(context, target);
+    return isOpenWhenDetached || !isGatingEnabled
+      ? { kind: 'open' }
+      : buildOwnRecordShareGate(context, target);
   }
 
   const principals = resolveRecordSharePrincipals(context, target);
@@ -139,34 +175,44 @@ const buildInheritedReadabilityGate = ({
     return { kind: 'open' };
   }
 
+  const parentExpressions = parents.map((parent) =>
+    buildInheritedReadabilityParentExpression({
+      context,
+      target,
+      parent,
+      buildParentPolicy,
+    }),
+  );
+
+  if (
+    !isGatingEnabled &&
+    parentExpressions.every(
+      (parentExpression) => parentExpression.policy.kind === 'open',
+    )
+  ) {
+    return { kind: 'open' };
+  }
+
   return {
     kind: 'gated',
-    condition: buildInheritedReadabilityCondition({
+    expression: {
+      kind: 'inheritedReadability',
       tableAlias,
       objectMetadataId: flatObjectMetadata.id,
-      parents: parents.map((parent) =>
-        buildInheritedReadabilityParentCondition({
-          context,
-          target,
-          parent,
-          buildParentPolicy,
-        }),
-      ),
-      recordShareTableExpression:
-        context.environment.recordShareTableExpression,
       ...principals,
-    }),
+      isOpenWhenDetached,
+      parents: parentExpressions,
+    },
   };
 };
 
-const buildInheritedReadabilityParentCondition = ({
-  context,
+const buildInheritedReadabilityParentExpression = ({
   target: { tableAlias, operationType, depth },
   parent,
   buildParentPolicy,
 }: RecordShareGateArgs & {
   parent: InheritedReadabilityParent;
-}): InheritedReadabilityParentCondition => {
+}): InheritedReadabilityParentExpression => {
   if (parent.kind === 'column') {
     const parentTableAlias = `${tableAlias}_${parent.joinColumnName}`;
 
@@ -174,9 +220,7 @@ const buildInheritedReadabilityParentCondition = ({
       kind: 'column',
       joinColumnName: parent.joinColumnName,
       parentTableAlias,
-      parentTableExpression: context.environment.resolveTableExpression(
-        parent.parentFlatObjectMetadata.id,
-      ),
+      parentFlatObjectMetadata: parent.parentFlatObjectMetadata,
       policy: buildParentPolicy({
         tableAlias: parentTableAlias,
         flatObjectMetadata: parent.parentFlatObjectMetadata,
@@ -191,10 +235,8 @@ const buildInheritedReadabilityParentCondition = ({
   return {
     kind: 'children',
     childTableAlias,
-    childTableExpression: context.environment.resolveTableExpression(
-      parent.childFlatObjectMetadata.id,
-    ),
     childJoinColumnName: parent.childJoinColumnName,
+    childFlatObjectMetadata: parent.childFlatObjectMetadata,
     policy: buildParentPolicy({
       tableAlias: childTableAlias,
       flatObjectMetadata: parent.childFlatObjectMetadata,

@@ -1,7 +1,6 @@
 import { type EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
 import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
 import { type OpenAgentChatThreadArchivedAtWritabilityCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790672076234-open-agent-chat-thread-archived-at-writability.command';
-import { type AddInputAskObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790681093095-add-input-ask-object.command';
 import { type MoveAgentChatThreadsToRecordModelCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626421-move-agent-chat-threads-to-record-model.command';
 import { type AddChatRecordPageCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626422-add-chat-record-page-command-menu-items.command';
 import { randomUUID } from 'node:crypto';
@@ -13,13 +12,14 @@ import { type DataSource } from 'typeorm';
 
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { type MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
+import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791094130961-drop-core-agent-history-tables';
 import { type ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790317893308-provision-agent-chat-thread-target.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { type WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
-import { AGENT_HISTORY_STORAGE_KEY } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-storage-key.constant';
-import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { AGENT_HISTORY_MIGRATION_STORAGE_KEY } from 'src/database/commands/agent-history/agent-history-migration-storage-key.constant';
+import { type AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -29,8 +29,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
 
-// The link object 2.43 adds on top of agent history, as later suites see it:
-// its fields and the relations pointing at it, its indexes and its foreign keys.
+// The link object 2.43 adds on top of agent history.
 const describeAgentChatThreadTarget = async (dataSource: DataSource) => ({
   fields: await dataSource.query<{ objectName: string; fieldName: string }[]>(
     `SELECT objectMetadata."nameSingular" AS "objectName", fieldMetadata.name AS "fieldName"
@@ -72,7 +71,7 @@ describe('versioned agent history upgrade (integration)', () => {
   let command: MigrateAgentHistoryToWorkspaceCommand;
   let dataSource: DataSource;
   let workspaceOrmManager: WorkspaceOrmManager;
-  let storage: AgentHistoryStorageService;
+  let storage: AgentHistoryUpgradeStorageService;
   let heartbeat: AgentChatStreamHeartbeatService;
   let upgradeRunner: WorkspaceCommandRunnerService;
   let upgradeCommandName: string;
@@ -109,7 +108,7 @@ describe('versioned agent history upgrade (integration)', () => {
     workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
       'WorkspaceOrmManager',
     );
-    storage = getAppProviderByClassName<AgentHistoryStorageService>(
+    storage = getAppProviderByClassName<AgentHistoryUpgradeStorageService>(
       'AgentHistoryUpgradeStorageService',
     );
     heartbeat = getAppProviderByClassName<AgentChatStreamHeartbeatService>(
@@ -134,8 +133,17 @@ describe('versioned agent history upgrade (integration)', () => {
     dataSource = owners.manager.connection;
     const owner = await owners.findOneByOrFail({ workspaceId: WORKSPACE_ID });
 
-    // Threads a workflow run owns arrived with 2.44 and have no member to own
-    // them in the core tables 2.42 moves history back to.
+    // Recreate the pre-2.47 state this upgrade rolls back from: the core
+    // tables, and the route 2.42 recorded on every workspace it moved
+    const runner = dataSource.createQueryRunner();
+    try {
+      await new DropCoreAgentHistoryTablesFastInstanceCommand().down(runner);
+      await storage.writeState(runner, WORKSPACE_ID, { storage: 'workspace' });
+    } finally {
+      await runner.release();
+    }
+
+    // Run-owned threads arrived with 2.44 and have no member owner in the core tables 2.42 restores.
     await dataSource.query(
       `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE "workflowRunId" IS NOT NULL`,
     );
@@ -148,8 +156,7 @@ describe('versioned agent history upgrade (integration)', () => {
     seededAgentChatThreadTarget =
       await describeAgentChatThreadTarget(dataSource);
 
-    // Objects later upgrades add on top of history hold a relation into it,
-    // which the deleted thread object would take along and strand them without.
+    // Later objects relate into history and would be stranded when the thread object is deleted.
     const historyObjectNames = AGENT_HISTORY_TABLES.map(({ name }) => name);
     const laterObjectNames = (
       await dataSource.query<{ nameSingular: string }[]>(
@@ -168,9 +175,7 @@ describe('versioned agent history upgrade (integration)', () => {
 
     expect(laterObjectNames).toContain('agentChatThreadTarget');
 
-    // Recreate a pre-upgrade workspace: history exists only in core, and none
-    // of the five standard objects has been installed yet, nor the objects
-    // later upgrades add on top of them.
+    // Recreate a pre-upgrade workspace: history only in core, no standard or later objects installed.
     await dataSource.query(
       'DELETE FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = ANY($2)',
       [WORKSPACE_ID, [...historyObjectNames, ...laterObjectNames]],
@@ -190,8 +195,7 @@ describe('versioned agent history upgrade (integration)', () => {
     for (const { name } of [...AGENT_HISTORY_TABLES].reverse()) {
       await dataSource.query(`DROP TABLE "${SCHEMA}"."${name}" CASCADE`);
     }
-    // Pre-upgrade workspaces have no attachment side of the chat thread
-    // relation either; the object deletion above only cascades its metadata.
+    // Pre-upgrade workspaces lack the attachment side too, and the deletion above only cascades its metadata.
     await dataSource.query(
       'DELETE FROM core."indexMetadata" WHERE "workspaceId" = $1 AND "universalIdentifier" = $2',
       [
@@ -205,7 +209,7 @@ describe('versioned agent history upgrade (integration)', () => {
     );
     await dataSource.query(
       'DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND key = $2',
-      [WORKSPACE_ID, AGENT_HISTORY_STORAGE_KEY],
+      [WORKSPACE_ID, AGENT_HISTORY_MIGRATION_STORAGE_KEY],
     );
     await getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
@@ -256,17 +260,13 @@ describe('versioned agent history upgrade (integration)', () => {
       total: 1,
       options: {},
     });
-    // The history objects were rebuilt as 2.42 leaves them; replay the later
-    // upgrades that change them, in order, for the suites that follow.
+    // Replay the later upgrades on the rebuilt 2.42 objects, in order, for the suites that follow.
     for (const laterCommand of [
       getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
         'AddWorkflowRunToChatThreadsCommand',
       ),
       getAppProviderByClassName<OpenAgentChatThreadArchivedAtWritabilityCommand>(
         'OpenAgentChatThreadArchivedAtWritabilityCommand',
-      ),
-      getAppProviderByClassName<AddInputAskObjectCommand>(
-        'AddInputAskObjectCommand',
       ),
       getAppProviderByClassName<MoveAgentChatThreadsToRecordModelCommand>(
         'MoveAgentChatThreadsToRecordModelCommand',
@@ -289,6 +289,12 @@ describe('versioned agent history upgrade (integration)', () => {
     expect(await describeAgentChatThreadTarget(dataSource)).toEqual(
       seededAgentChatThreadTarget,
     );
+    const runner = dataSource.createQueryRunner();
+    try {
+      await new DropCoreAgentHistoryTablesFastInstanceCommand().up(runner);
+    } finally {
+      await runner.release();
+    }
   });
 
   it('skips absent schemas only when no history or migration state exists', async () => {
@@ -313,7 +319,7 @@ describe('versioned agent history upgrade (integration)', () => {
       expect(
         await dataSource.query(
           'SELECT 1 FROM core."keyValuePair" WHERE "workspaceId" = $1 AND key = $2',
-          [workspaceId, AGENT_HISTORY_STORAGE_KEY],
+          [workspaceId, AGENT_HISTORY_MIGRATION_STORAGE_KEY],
         ),
       ).toHaveLength(0);
       expect(
@@ -342,7 +348,7 @@ describe('versioned agent history upgrade (integration)', () => {
       await expect(command.up(args)).rejects.toThrow(/schema is missing/i);
       await dataSource.query(
         'DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND key = $2',
-        [workspaceId, AGENT_HISTORY_STORAGE_KEY],
+        [workspaceId, AGENT_HISTORY_MIGRATION_STORAGE_KEY],
       );
       await dataSource.query(
         `INSERT INTO core."userWorkspace" (id, "workspaceId", "userId")

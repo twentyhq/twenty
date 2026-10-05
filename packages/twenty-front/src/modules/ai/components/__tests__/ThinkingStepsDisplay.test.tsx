@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
-import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
+import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
 
 jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({
@@ -43,6 +43,28 @@ jest.mock('@/ui/layout/tab-list/components/TabList', () => ({
         >
           {tab.title}
         </button>
+      ))}
+    </div>
+  ),
+}));
+
+jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
+  LazyMarkdownRenderer: ({ text }: { text: string }) => (
+    <div data-testid="markdown-renderer">{text}</div>
+  ),
+}));
+
+jest.mock('@/ai/components/ToolRecordsWidget', () => ({
+  ToolRecordsWidget: ({
+    recordReferences,
+  }: {
+    recordReferences: Array<{ displayName: string }>;
+  }) => (
+    <div>
+      {recordReferences.map((recordReference) => (
+        <span key={recordReference.displayName}>
+          {recordReference.displayName}
+        </span>
       ))}
     </div>
   ),
@@ -118,7 +140,9 @@ describe('ThinkingStepsDisplay', () => {
 
     expect(screen.queryByRole('button', { name: /steps/i })).toBeNull();
     expect(screen.getByText('Thinking')).toBeInTheDocument();
-    expect(screen.getByText('Active reasoning content')).toBeInTheDocument();
+    expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
+      'Active reasoning content',
+    );
     expect(
       screen.getByText('Searched the web for crm software'),
     ).toBeInTheDocument();
@@ -288,5 +312,38 @@ describe('ThinkingStepsDisplay', () => {
       expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
       expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
     });
+  });
+
+  it('should show the records a tool step found when its row is expanded', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      hasAssistantTextResponseStarted: true,
+      parts: [
+        createToolPart({
+          type: 'tool-find_many_companies',
+          input: {},
+          output: {
+            message: 'Found 1 company record',
+            recordReferences: [
+              {
+                objectNameSingular: 'company',
+                recordId: '20202020-0000-4000-8000-000000000001',
+                displayName: 'Clearstreet',
+              },
+            ],
+          },
+        }),
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+
+    expect(screen.queryByText('Clearstreet')).toBeNull();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /find_many_companies/i }),
+    );
+
+    expect(screen.getByText('Clearstreet')).toBeInTheDocument();
   });
 });

@@ -1,0 +1,195 @@
+import { Injectable } from '@nestjs/common';
+
+import { randomUUID } from 'node:crypto';
+
+import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
+import { IsNull } from 'typeorm';
+
+import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
+import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
+import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-db-parts.util';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
+import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
+import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
+import { type RecordableAgentExecution } from 'src/engine/metadata-modules/ai/ai-history/types/recordable-agent-execution.type';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
+
+@Injectable()
+export class AgentConversationWriterService {
+  constructor(
+    @InjectAgentHistoryRepository('agentTurn')
+    private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
+    private readonly transactionService: AgentHistoryTransactionService,
+  ) {}
+
+  runInTransaction<TResult>(
+    workspaceId: string,
+    work: (scope: AgentHistoryTransactionScope) => Promise<TResult>,
+  ): Promise<TResult> {
+    return this.transactionService.run(workspaceId, work);
+  }
+
+  async insertTurn({
+    workspaceId,
+    threadId,
+    agentId,
+    id,
+    scope,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    agentId: string | null;
+    id?: string;
+    scope?: AgentHistoryTransactionScope;
+  }): Promise<string> {
+    if (isDefined(scope)) {
+      const turnId = id ?? randomUUID();
+
+      await scope.insert('agentTurn', { id: turnId, threadId, agentId });
+
+      return turnId;
+    }
+
+    const turnInsertResult = await this.turnRepository.insert(workspaceId, {
+      ...(isDefined(id) ? { id } : {}),
+      threadId,
+      agentId,
+    });
+
+    return (id ?? turnInsertResult.identifiers[0].id) as string;
+  }
+
+  // The message and its parts are written together, so a message that
+  // exists is complete. A message that awaits an answer also takes the
+  // thread's single pending slot in the same write, and fails if another
+  // message holds it.
+  async insertMessage({
+    workspaceId,
+    id,
+    threadId,
+    turnId,
+    role,
+    agentId,
+    senderUserWorkspaceId,
+    senderApplicationId,
+    isHidden,
+    isAwaitingAnswer,
+    processedAt,
+    parts,
+    scope,
+  }: {
+    workspaceId: string;
+    id?: string;
+    threadId: string;
+    turnId: string;
+    role: AgentMessageRole;
+    agentId: string | null;
+    senderUserWorkspaceId: string | null;
+    senderApplicationId?: string | null;
+    isHidden?: boolean;
+    isAwaitingAnswer?: boolean;
+    processedAt?: Date;
+    parts: ExtendedUIMessagePart[];
+    scope?: AgentHistoryTransactionScope;
+  }): Promise<string> {
+    const messageId = id ?? randomUUID();
+
+    const write = async (transactionScope: AgentHistoryTransactionScope) => {
+      await transactionScope.insert('agentMessage', {
+        id: messageId,
+        threadId,
+        turnId,
+        role,
+        agentId,
+        processedAt: (processedAt ?? new Date()).toISOString(),
+        ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
+        ...(isDefined(senderApplicationId) ? { senderApplicationId } : {}),
+        ...(isDefined(isHidden) ? { isHidden } : {}),
+      });
+
+      const dbParts = mapUIMessagePartsToDBParts(parts, messageId);
+
+      if (dbParts.length > 0) {
+        await transactionScope.insert('agentMessagePart', dbParts);
+      }
+
+      if (!isAwaitingAnswer) {
+        return;
+      }
+
+      const claimedThreadCount = await transactionScope.update(
+        'agentChatThread',
+        { id: threadId, pendingQuestionMessageId: IsNull() },
+        { pendingQuestionMessageId: messageId },
+      );
+
+      if (claimedThreadCount === 0) {
+        throw new AiException(
+          'The conversation is waiting for an answer to an earlier question',
+          AiExceptionCode.THREAD_AWAITING_ANSWER,
+        );
+      }
+    };
+
+    if (isDefined(scope)) {
+      await write(scope);
+    } else {
+      await this.transactionService.run(workspaceId, write);
+    }
+
+    return messageId;
+  }
+
+  // One unanswerable call would keep the conversation waiting forever, so it is recorded as not waiting
+  async insertExecutionReply({
+    workspaceId,
+    threadId,
+    turnId,
+    agentId,
+    execution,
+    scope,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId: string;
+    agentId: string | null;
+    execution: RecordableAgentExecution;
+    scope?: AgentHistoryTransactionScope;
+  }): Promise<{
+    isAwaitingAnswer: boolean;
+    replyParts: ExtendedUIMessagePart[];
+  }> {
+    const replyParts = mapAiStepsToUIMessageParts(execution.steps ?? []);
+
+    if (replyParts.length === 0) {
+      return { isAwaitingAnswer: false, replyParts };
+    }
+
+    const awaitingParts = findAwaitingPausingToolParts(replyParts);
+    const isAwaitingAnswer =
+      execution.isPaused === true &&
+      awaitingParts.length > 0 &&
+      awaitingParts.every(({ isAnswerable }) => isAnswerable);
+
+    await this.insertMessage({
+      workspaceId,
+      threadId,
+      turnId,
+      role: AgentMessageRole.ASSISTANT,
+      agentId,
+      senderUserWorkspaceId: null,
+      isAwaitingAnswer,
+      parts: replyParts,
+      scope,
+    });
+
+    return { isAwaitingAnswer, replyParts };
+  }
+}

@@ -5,6 +5,7 @@ import {
 import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 
@@ -44,14 +45,6 @@ const buildResolver = () => {
           workspaceId: WORKSPACE_ID,
         };
       }),
-    getPermissions: jest
-      .fn()
-      .mockImplementation(async ({ workspaceMemberId }) => ({
-        canRead: true,
-        canUpdate: workspaceMemberId === 'owner',
-        canDelete: workspaceMemberId === 'owner',
-        canSoftDelete: workspaceMemberId === 'owner',
-      })),
     restoreThreadWithAccess: jest
       .fn()
       .mockRejectedValue(
@@ -61,8 +54,18 @@ const buildResolver = () => {
   const recordEvents = {
     emitThreadCreated: jest.fn(),
     emitThreadUpdated: jest.fn(),
-    emitThreadDestroyed: jest.fn(),
   };
+  const threadService = new AgentChatThreadService(
+    threadRepository as never,
+    sharing as never,
+    recordEvents as never,
+    {
+      recordMemberActivity: jest.fn().mockResolvedValue({
+        lastActivityAt: new Date(),
+        updatedAt: new Date(),
+      }),
+    } as never,
+  );
   const chatService = new AgentChatService(
     threadRepository as never,
     {} as never,
@@ -72,13 +75,15 @@ const buildResolver = () => {
     {} as never,
     sharing as never,
     recordEvents as never,
+    {} as never,
+    threadService,
   );
   const streaming = {
     streamAgentChat: jest
       .fn()
       .mockResolvedValue({ queued: false, messageId: 'message' }),
-    reapDeadStream: jest.fn().mockResolvedValue(null),
   };
+  const streamRecovery = { reapDeadStream: jest.fn().mockResolvedValue(null) };
   const events = {
     publish: jest.fn(),
     getAccumulatedChunks: jest
@@ -90,13 +95,14 @@ const buildResolver = () => {
     threadRepository as never,
     redis as never,
     {} as never,
-    {} as never,
     recordEvents as never,
   );
   const resolver = new AgentChatResolver(
     chatService,
+    threadService,
     sharing as never,
     streaming as never,
+    streamRecovery as never,
     events as never,
     {} as never,
     new AgentChatTurnPreflightService(
@@ -104,7 +110,7 @@ const buildResolver = () => {
         getAvailableModels: () => ['model'],
         validateModelAvailability: jest.fn(),
       } as never,
-      chatService,
+      threadService,
       { assertAiExecutionAllowed: jest.fn() } as never,
     ),
     threadLifecycle,
@@ -112,6 +118,7 @@ const buildResolver = () => {
   return {
     resolver,
     chatService,
+    threadService,
     threadRepository,
     messages,
     sharing,
@@ -262,7 +269,7 @@ describe('Shared conversation API boundaries', () => {
     );
     expect(streaming.streamAgentChat).toHaveBeenCalledWith(
       expect.objectContaining({
-        threadId: THREAD_ID,
+        thread: expect.objectContaining({ id: THREAD_ID }),
         userWorkspaceId: VIEWER_ID,
         workspaceMemberId: 'member',
         text: 'My request',
@@ -289,12 +296,12 @@ describe('Shared conversation API boundaries', () => {
   });
 
   it('does not let ownership bypass a revoked update permission', async () => {
-    const { chatService, sharing } = buildResolver();
+    const { threadService, sharing } = buildResolver();
     sharing.getThreadWithAccess.mockRejectedValue(
       new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
     );
     await expect(
-      chatService.getWritableThread({
+      threadService.getWritableThread({
         threadId: THREAD_ID,
         workspaceMemberId: 'owner',
         workspaceId: WORKSPACE_ID,

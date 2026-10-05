@@ -4,22 +4,9 @@ import { getSystemRelationFieldUniversalIdentifier } from '@/application/determi
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from '@/metadata/constants/standard-object-universal-identifiers.constant';
 import { buildStandardObjectSystemFields } from '@/metadata/utils/internal/build-standard-object-system-fields.util';
 
-// Important notice:
-// - Never ever mutate an existing universal identifier
-// - Deleting an existing universal identifier should be very rare
-// - System field universal identifiers (id, createdAt, updatedAt, deletedAt,
-//   createdBy, updatedBy, position, searchVector) are deterministically derived
-//   from the standard application universal identifier, the object universal
-//   identifier and the field name (buildStandardObjectSystemFields). The name
-//   field is a default field, not a system field, and keeps its hardcoded
-//   universal identifier.
-// - System relation field universal identifiers are deterministically derived
-//   from the object + the relation target object
-//   (getSystemRelationFieldUniversalIdentifier).
-//
-// Fields live in their own const so that both STANDARD_OBJECTS' `fields` and
-// its INDEX view (buildStandardObjectIndexView) can read the same field
-// universal identifiers.
+// Never mutate an existing universal identifier, and delete one only rarely.
+// System field ids come from buildStandardObjectSystemFields and getSystemRelationFieldUniversalIdentifier;
+// name is a default field, not a system one, and keeps its hardcoded id.
 export const STANDARD_OBJECT_FIELDS = {
   agentChatThread: {
     ...buildStandardObjectBaseFields(
@@ -84,7 +71,35 @@ export const STANDARD_OBJECT_FIELDS = {
     recordTargets: {
       universalIdentifier: '5b37eceb-2992-4d27-9897-14af3e3ce9b2',
     },
-    inputAsks: { universalIdentifier: '0c2444ed-7f90-4984-9f56-a3fe16fa6296' },
+    participants: {
+      universalIdentifier: '2ede85e4-216b-4308-8556-b045971414e7',
+    },
+    lastActivityAt: {
+      universalIdentifier: 'b3847509-8e98-4038-88de-dd891767d6fc',
+    },
+    lastMessageText: {
+      universalIdentifier: '1c16eaef-172b-4778-b14b-f302bc6021e4',
+    },
+    lastMessageSenderWorkspaceMemberId: {
+      universalIdentifier: '5c3611a7-7324-472e-9b43-4c7779e5e7cf',
+    },
+    writerWorkspaceMemberIds: {
+      universalIdentifier: 'c8fe2406-ad9c-4274-aeb5-9beb74d4b353',
+    },
+  },
+  agentChatThreadParticipant: {
+    ...buildStandardObjectBaseFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadParticipant,
+    ),
+    thread: { universalIdentifier: '7d0282a5-11ce-4da8-a165-30909ffdf383' },
+    workspaceMember: {
+      universalIdentifier: '4345764d-878b-4a3a-b1c9-822378f868e6',
+    },
+    lastReadAt: { universalIdentifier: '7e3a8319-c127-4c4f-add4-6feac37ea555' },
+    archivedAt: { universalIdentifier: 'ee092c9d-f27e-4fbc-8dad-9ec950936216' },
+    snoozedUntil: {
+      universalIdentifier: '65bc5785-877d-4363-b65c-95175ba20fd0',
+    },
   },
   agentChatThreadTarget: {
     ...buildStandardObjectBaseFields(
@@ -1500,9 +1515,6 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
       }),
     },
-    inputAsks: {
-      universalIdentifier: 'f3b2f310-9aa4-40da-82bb-3388d26e7cde',
-    },
   },
   workflowVersion: {
     ...buildStandardObjectSystemFields(
@@ -1590,6 +1602,9 @@ export const STANDARD_OBJECT_FIELDS = {
     agentChatThreads: {
       universalIdentifier: 'fbaf92a6-44ae-4b6d-9d10-2c15d84eaea1',
     },
+    agentChatThreadParticipants: {
+      universalIdentifier: 'd1de909f-a0eb-4e94-8903-abec012864c9',
+    },
     timeZone: {
       universalIdentifier: '20202020-2d33-4c21-a86e-5943b050dd54',
     },
@@ -1605,27 +1620,5 @@ export const STANDARD_OBJECT_FIELDS = {
     numberFormat: {
       universalIdentifier: '20202020-7f40-4e7f-b126-11c0eda6b141',
     },
-    inputAsks: {
-      universalIdentifier: '552a26c5-21fd-4e3a-ad0d-2f561c96b7d4',
-    },
-  },
-  inputAsk: {
-    ...buildStandardObjectSystemFields(
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
-    ),
-    name: { universalIdentifier: 'f8d3b0ed-f134-420a-9194-ca0f96345642' },
-    status: { universalIdentifier: '919f0339-ee8e-4197-8b6a-b57bbd31035b' },
-    form: { universalIdentifier: 'b25c6916-71bc-435e-a547-ecb384083902' },
-    response: { universalIdentifier: '04906a36-ec59-4d3f-8da9-7ef6696ed326' },
-    assignee: { universalIdentifier: '410fabce-972b-40d3-8b11-3c0807ecab90' },
-    answeredAt: { universalIdentifier: '618f303d-123b-480f-9d40-64fcb0db2e01' },
-    workflowRun: {
-      universalIdentifier: 'cf2d5592-f51c-4dca-a6f2-cb4f7d1fcc80',
-    },
-    stepId: { universalIdentifier: '334c8abb-6ebe-4e08-a746-0098425ef421' },
-    toolCallId: {
-      universalIdentifier: 'f353edad-fe7e-4efc-ab0d-e21a0ee16262',
-    },
-    thread: { universalIdentifier: '21ee043a-d3d6-4545-8771-34aca316aeea' },
   },
 } satisfies Record<string, Record<string, { universalIdentifier: string }>>;

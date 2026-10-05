@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
+import { In, IsNull, Not } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
@@ -10,9 +11,15 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
+import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { readToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/utils/read-tool-call-workflow-step.util';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
+import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
 import {
   WorkflowRunStatus,
   type WorkflowRunState,
@@ -21,19 +28,14 @@ import {
 import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { getStepRetryAttempt } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-attempt.util';
-import { type WorkflowPendingAsk } from 'src/modules/workflow/workflow-executor/types/workflow-pending-ask.type';
+import { isWorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/guards/is-workflow-ai-agent-action.guard';
+import { isWorkflowSendChatMessageAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/guards/is-workflow-send-chat-message-action.guard';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
-import { canWorkflowRunHaveAsks } from 'src/modules/workflow/workflow-runner/utils/can-workflow-run-have-asks.util';
-import { getRunInitiatorWorkspaceMemberId } from 'src/modules/workflow/workflow-runner/utils/get-run-initiator-workspace-member-id.util';
-
-export type StepInputResolution =
-  | { status: 'RESOLVED'; stepId: string }
-  | { status: 'NOT_AWAITING' };
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
@@ -43,8 +45,11 @@ export class WorkflowRunWorkspaceService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
     private readonly metricsService: MetricsService,
-    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
     private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessagePart')
+    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
   ) {}
 
   async createCoreWorkflowRun({
@@ -116,8 +121,7 @@ export class WorkflowRunWorkspaceService {
         enqueuedAt: status === WorkflowRunStatus.ENQUEUED ? new Date() : null,
       });
 
-      // A run is a private record written by the system, so nobody reads it
-      // until it carries its workflow's grants.
+      // A run is a private system-written record, so nobody reads it until it carries its workflow's grants
       await this.workflowRunRecordShareService.syncRuns({
         workspaceId,
         workflowRunIds: [id],
@@ -206,18 +210,24 @@ export class WorkflowRunWorkspaceService {
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
 
-    // A run that ends can no longer consume an answer, so an Ask still
-    // waiting on one stops being actionable rather than outliving it. This is
-    // housekeeping: the run is over either way, and a failure here only
-    // leaves a stale Ask behind.
-    if (canWorkflowRunHaveAsks(workflowRunToUpdate.state)) {
-      await this.inputAskWorkspaceService
-        .cancel({ workspaceId, match: { workflowRunId } })
-        .catch((error: unknown) => {
-          this.logger.error(
-            `Failed to cancel the Asks of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        });
+    const stepThreadIds = Object.values(
+      workflowRunToUpdate.state?.stepInfos ?? {},
+    )
+      .map((stepInfo) => stepInfo?.threadId)
+      .filter(isDefined);
+
+    // An ended run cannot consume answers, so close the calls its conversations wait on.
+    // Best effort: a failure only leaves a call that looks waiting.
+    if (stepThreadIds.length > 0) {
+      await this.closeWaitingConversations({
+        workflowRunId,
+        workspaceId,
+        stepThreadIds,
+      }).catch((error: unknown) => {
+        this.logger.error(
+          `Failed to close the conversations of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      });
     }
 
     const metricKey =
@@ -241,20 +251,15 @@ export class WorkflowRunWorkspaceService {
     }
   }
 
-  // A step that parks on a person opens its Ask in the same locked write, so
-  // an answer can never find the step waiting without it, and a run ending
-  // right after cannot miss it when canceling what is left pending.
   @WithLock('workflowRunId')
   async updateWorkflowRunStepInfo({
     stepId,
     stepInfo,
-    pendingAsks,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
     stepInfo: WorkflowRunStepInfo;
-    pendingAsks?: WorkflowPendingAsk[];
     workflowRunId: string;
     workspaceId: string;
   }) {
@@ -262,20 +267,6 @@ export class WorkflowRunWorkspaceService {
       workflowRunId,
       workspaceId,
     });
-
-    if (stepInfo.status === StepStatus.PENDING) {
-      for (const pendingAsk of pendingAsks ?? []) {
-        await this.inputAskWorkspaceService.open({
-          workspaceId,
-          inputAsk: {
-            ...pendingAsk,
-            workflowRunId,
-            stepId,
-            assigneeId: getRunInitiatorWorkspaceMemberId(workflowRunToUpdate),
-          },
-        });
-      }
-    }
 
     const partialUpdate = {
       state: {
@@ -295,17 +286,17 @@ export class WorkflowRunWorkspaceService {
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
   }
 
-  // Built from the persisted step info rather than the executor's snapshot:
-  // the attempt that just failed recorded its conversation while it ran, and
-  // only the stored step info carries it into the history entry.
+  // Built from persisted step info: only it carries the failed attempt's conversation
   @WithLock('workflowRunId')
   async moveStepToRetry({
     stepId,
+    resumedThreadId,
     error,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
+    resumedThreadId?: string;
     error: string;
     workflowRunId: string;
     workspaceId: string;
@@ -329,7 +320,7 @@ export class WorkflowRunWorkspaceService {
               ...currentStepInfo,
               status: StepStatus.PENDING,
               error,
-              threadId: undefined,
+              threadId: resumedThreadId,
               history: [
                 ...(currentStepInfo?.history ?? []),
                 {
@@ -387,9 +378,7 @@ export class WorkflowRunWorkspaceService {
     });
   }
 
-  // Written from the state read under the lock rather than from the caller's
-  // snapshot, or a step-info write that landed in between, such as an accepted
-  // form submission, would be put back as it was.
+  // Written from the locked state, or a concurrent step-info write (e.g. a form submission) would be reverted
   @WithLock('workflowRunId')
   async markWorkflowRunAsStopping({
     workflowRunId,
@@ -433,25 +422,19 @@ export class WorkflowRunWorkspaceService {
     return true;
   }
 
-  // A step waiting on a person must move on exactly once. This shares the lock
-  // every step-info write takes, so of two concurrent callers the second finds
-  // the step no longer PENDING. A stop is refused too: endWorkflowRun turns a
-  // pending step into FAILED, and a stop still waiting on another branch
-  // leaves the run STOPPING with the step PENDING but nothing left to resume.
-  // An expected conversation must still be the step's: a retry or another loop
-  // iteration replaces it.
+  // Shares the step-info write lock so of two concurrent callers the second finds the step no longer PENDING.
+  // A stop is refused: endWorkflowRun fails a pending step, or leaves it PENDING with nothing to resume.
+  // expectedThreadId must still be the step's: a retry or another loop iteration replaces it.
   @WithLock('workflowRunId')
   async updateStepInfoIfPending({
     stepId,
     stepInfo,
-    inputAskResponse,
     expectedThreadId,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
     stepInfo: Partial<WorkflowRunStepInfo>;
-    inputAskResponse?: Record<string, unknown>;
     expectedThreadId?: string;
     workflowRunId: string;
     workspaceId: string;
@@ -466,21 +449,9 @@ export class WorkflowRunWorkspaceService {
     if (
       workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
       currentStepInfo?.status !== StepStatus.PENDING ||
+      isDefined(currentStepInfo.error) ||
       (isDefined(expectedThreadId) &&
         currentStepInfo.threadId !== expectedThreadId)
-    ) {
-      return false;
-    }
-
-    // Answering the Ask under the lock that accepts the submission is the
-    // claim: of two submissions only the one that answers it moves the step.
-    if (
-      isDefined(inputAskResponse) &&
-      !(await this.inputAskWorkspaceService.answer({
-        workspaceId,
-        key: { workflowRunId, stepId },
-        response: inputAskResponse,
-      }))
     ) {
       return false;
     }
@@ -502,60 +473,82 @@ export class WorkflowRunWorkspaceService {
     return true;
   }
 
-  // Answers the Ask an agent step is waiting on, once and only for that Ask:
-  // a stop, a retry or another loop iteration has moved the step on or
-  // replaced its conversation. The Ask is answered under the run lock, so a
-  // run ending in between cannot cancel an answer it accepts, and of two
-  // concurrent answers the second finds it answered. The step stays PENDING,
-  // which keeps its run alive, until the resume job claims it.
-  @WithLock('workflowRunId')
-  async resolveStepAwaitingToolCall({
+  // A conversation replaced by a retry or a later loop iteration belongs to no step
+  // several Send Message steps of one run post to the same inbox thread, so the step a call names wins
+  async findStepAwaitingAnswer({
     threadId,
-    toolCallId,
-    response,
     workflowRunId,
     workspaceId,
+    expectedStepId,
   }: {
     threadId: string;
-    toolCallId: string;
-    response: Record<string, unknown>;
     workflowRunId: string;
     workspaceId: string;
-  }): Promise<StepInputResolution> {
+    expectedStepId?: string;
+  }): Promise<WorkflowAction | null> {
     const workflowRun = await this.getWorkflowRunOrFail({
       workflowRunId,
       workspaceId,
     });
 
-    // A run conversation names no step: it belongs to the step whose current
-    // execution recorded it, so one replaced by a retry or a later loop
-    // iteration belongs to no step anymore.
-    const [stepId, currentStepInfo] =
+    const [stepId, stepInfo] =
       Object.entries(workflowRun.state?.stepInfos ?? {}).find(
-        ([, stepInfo]) => stepInfo?.threadId === threadId,
+        ([candidateStepId, stepInfo]) =>
+          stepInfo?.threadId === threadId &&
+          (isDefined(expectedStepId)
+            ? candidateStepId === expectedStepId
+            : stepInfo?.status === StepStatus.PENDING),
       ) ?? [];
 
     if (
       workflowRun.status !== WorkflowRunStatus.RUNNING ||
       !isDefined(stepId) ||
-      !isDefined(currentStepInfo) ||
-      isDefined(currentStepInfo.error) ||
-      currentStepInfo.status !== StepStatus.PENDING
+      isDefined(stepInfo?.error) ||
+      stepInfo?.status !== StepStatus.PENDING
     ) {
-      return { status: 'NOT_AWAITING' };
+      return null;
     }
 
-    const hasAnswered = await this.inputAskWorkspaceService.answer({
+    const step = workflowRun.state?.flow?.steps?.find(
+      (candidateStep) => candidateStep.id === stepId,
+    );
+
+    // a form step is submitted from its run, even one that older versions gave a conversation
+    return isDefined(step) &&
+      (isWorkflowAiAgentAction(step) || isWorkflowSendChatMessageAction(step))
+      ? step
+      : null;
+  }
+
+  // a step posting a call still runs until its executor marks it pending, and an answer may arrive first;
+  // a step is named by its id when it posted to an inbox, or by its conversation on its own run
+  async isStepStillRunning({
+    stepId,
+    threadId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId?: string;
+    threadId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const workflowRun = await this.getWorkflowRunOrFail({
+      workflowRunId,
       workspaceId,
-      key: { threadId, toolCallId },
-      response,
     });
 
-    if (!hasAnswered) {
-      return { status: 'NOT_AWAITING' };
-    }
+    const stepInfos = workflowRun.state?.stepInfos ?? {};
+    const stepInfo = isDefined(stepId)
+      ? stepInfos[stepId]
+      : Object.values(stepInfos).find(
+          (candidateStepInfo) => candidateStepInfo?.threadId === threadId,
+        );
 
-    return { status: 'RESOLVED', stepId };
+    return (
+      workflowRun.status === WorkflowRunStatus.RUNNING &&
+      stepInfo?.status === StepStatus.RUNNING
+    );
   }
 
   @WithLock('workflowRunId')
@@ -660,6 +653,30 @@ export class WorkflowRunWorkspaceService {
     }, authContext);
   }
 
+  // read with the requester's own permissions, which follow the visibility of the run's workflow
+  async isWorkflowRunReadableByRequester(
+    workflowRunId: string,
+  ): Promise<boolean> {
+    try {
+      const workflowRun =
+        await this.workspaceOrmManager.executeInWorkspaceContext(() =>
+          this.workspaceOrmManager
+            .getRepositoryWithContextPermissions<WorkflowRunWorkspaceEntity>(
+              'workflowRun',
+            )
+            .findOne({ where: { id: workflowRunId }, select: { id: true } }),
+        );
+
+      return isDefined(workflowRun);
+    } catch (error) {
+      if (error instanceof PermissionsException) {
+        return false;
+      }
+
+      throw error;
+    }
+  }
+
   async getWorkflowRunOrFail({
     workflowRunId,
     workspaceId,
@@ -713,6 +730,111 @@ export class WorkflowRunWorkspaceService {
 
       await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
     }, authContext);
+  }
+
+  private async closeWaitingConversations({
+    workflowRunId,
+    workspaceId,
+    stepThreadIds,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+    stepThreadIds: string[];
+  }): Promise<void> {
+    // An answer holding a conversation's claim closes its calls itself once it finds the run over.
+    // A step can also wait in a member's inbox, whose conversation is theirs, not the run's
+    const [runThreads, inboxThreads] = await Promise.all([
+      this.threadRepository.find(workspaceId, {
+        where: {
+          workflowRunId,
+          pendingQuestionMessageId: Not(IsNull()),
+          activeStreamId: IsNull(),
+        },
+        select: ['id', 'pendingQuestionMessageId'],
+      }),
+      this.threadRepository.find(workspaceId, {
+        where: {
+          id: In(stepThreadIds),
+          workflowRunId: IsNull(),
+          pendingQuestionMessageId: Not(IsNull()),
+          activeStreamId: IsNull(),
+        },
+        select: ['id', 'pendingQuestionMessageId'],
+      }),
+    ]);
+
+    const waitingThreads = [
+      ...runThreads,
+      ...(await this.filterThreadsWaitingOnRun({
+        threads: inboxThreads,
+        workflowRunId,
+        workspaceId,
+      })),
+    ];
+
+    for (const { id, pendingQuestionMessageId } of waitingThreads) {
+      if (!isDefined(pendingQuestionMessageId)) {
+        continue;
+      }
+
+      const { affected } = await this.threadRepository.update(
+        workspaceId,
+        { id, pendingQuestionMessageId, activeStreamId: IsNull() },
+        { pendingQuestionMessageId: null },
+      );
+
+      if (affected === 0) {
+        continue;
+      }
+
+      await closeOpenToolParts({
+        messagePartRepository: this.messagePartRepository,
+        messageId: pendingQuestionMessageId,
+        workspaceId,
+      });
+    }
+  }
+
+  // the member may have moved on to another question in their conversation, which the run must not close
+  private async filterThreadsWaitingOnRun<
+    TThread extends { pendingQuestionMessageId: string | null },
+  >({
+    threads,
+    workflowRunId,
+    workspaceId,
+  }: {
+    threads: TThread[];
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<TThread[]> {
+    const pendingMessageIds = threads
+      .map((thread) => thread.pendingQuestionMessageId)
+      .filter(isDefined);
+
+    if (pendingMessageIds.length === 0) {
+      return [];
+    }
+
+    const pendingParts = await this.messagePartRepository.find(workspaceId, {
+      where: { messageId: In(pendingMessageIds) },
+      select: ['messageId', 'toolOutput'],
+    });
+
+    const messageIdsWaitingOnRun = new Set(
+      pendingParts
+        .filter(
+          (part) =>
+            readToolCallWorkflowStep(part.toolOutput)?.workflowRunId ===
+            workflowRunId,
+        )
+        .map((part) => part.messageId),
+    );
+
+    return threads.filter(
+      (thread) =>
+        isDefined(thread.pendingQuestionMessageId) &&
+        messageIdsWaitingOnRun.has(thread.pendingQuestionMessageId),
+    );
   }
 
   private getInitState(

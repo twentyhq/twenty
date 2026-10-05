@@ -1,7 +1,6 @@
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
-// Tools run as the person who answered, with their permissions, never as the
-// agent that asked.
+// tools run with the answering person's permissions, never the agent's
 export type PausingToolCompletionContext = {
   executeTool: (args: {
     toolName: string;

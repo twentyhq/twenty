@@ -1,12 +1,10 @@
 export enum AppPath {
-  // Not logged-in
   Verify = '/verify',
   VerifyEmail = '/verify-email',
   SignInUp = '/welcome',
   Invite = '/invite/:workspaceInviteHash',
   ResetPassword = '/reset-password/:passwordResetToken',
 
-  // Onboarding
   WorkspaceActivation = '/workspace-activation',
   CreateProfile = '/create/profile',
   SyncEmails = '/sync/emails',
@@ -16,8 +14,8 @@ export enum AppPath {
   PlanRequiredSuccess = '/plan-required/payment-success',
   BookCall = '/book-call',
 
-  // Onboarded
   AiChat = '/chat/:threadId?',
+  AiChatInbox = '/inbox/:threadId?',
   Index = '/',
   // Mobile only: the navigation menu is a page there rather than a drawer.
   Home = '/home',
@@ -39,7 +37,6 @@ export enum AppPath {
   // Deep link for twenty.com/dpa → in-app DPA generator (login-gated redirect).
   Dpa = '/dpa',
 
-  // 404 page not found
   NotFoundWildcard = '*',
   NotFound = '/not-found',
 }

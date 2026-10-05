@@ -26,6 +26,7 @@ import { CreateAgentInput } from './dtos/create-agent.input';
 import { UpdateAgentInput } from './dtos/update-agent.input';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -73,11 +74,13 @@ export class AgentResolver {
   }
 
   @Query(() => AgentDTO)
+  @UseGuards(ApplicationTargetGuard)
   async findOneAgent(
     @ApplicationTargetArg<AgentIdInput>('input', {
       kind: 'applicationOwnedEntity',
       metadataName: 'agent',
       idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
     })
     { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -101,7 +104,7 @@ export class AgentResolver {
     }
 
     const createdAgent = await this.agentService.createOneAgent(
-      { ...input, isCustom: true },
+      input,
       workspace.id,
     );
 

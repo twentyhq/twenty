@@ -39,6 +39,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -111,10 +112,25 @@ export class ApplicationInstallResolver {
   @Mutation(() => Boolean, {
     deprecationReason: 'Use installApplication instead',
   })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async installMarketplaceApp(
     @ApplicationTargetArg('universalIdentifier', {
       kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     universalIdentifier: string,
     @Args('version', { type: () => String, nullable: true })
@@ -131,10 +147,25 @@ export class ApplicationInstallResolver {
   }
 
   @Mutation(() => ApplicationDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async installApplication(
     @ApplicationTargetArg('universalIdentifier', {
       kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     universalIdentifier: string,
     @Args('version', { type: () => String, nullable: true })
@@ -154,11 +185,26 @@ export class ApplicationInstallResolver {
   }
 
   @Mutation(() => TriggerInstallApplicationJobResultDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async triggerInstallApplicationJob(
     @ApplicationTargetArg<TriggerInstallApplicationJobInput>('input', {
       kind: 'applicationUniversalIdentifier',
       idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     { universalIdentifier }: TriggerInstallApplicationJobInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -170,11 +216,26 @@ export class ApplicationInstallResolver {
   }
 
   @Mutation(() => TriggerUninstallApplicationJobResultDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async triggerUninstallApplicationJob(
     @ApplicationTargetArg<TriggerUninstallApplicationJobInput>('input', {
       kind: 'applicationUniversalIdentifier',
       idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     { universalIdentifier }: TriggerUninstallApplicationJobInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -186,9 +247,16 @@ export class ApplicationInstallResolver {
   }
 
   @Query(() => JobStatusDTO, { nullable: true })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async findInstallApplicationJobStatus(
-    @Args('universalIdentifier') universalIdentifier: string,
+    @ApplicationTargetArg('universalIdentifier', {
+      kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
+    })
+    universalIdentifier: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<JobStatusDTO | null> {
     return this.applicationLifecycleJobService.findInstallApplicationJobStatus({
@@ -198,9 +266,16 @@ export class ApplicationInstallResolver {
   }
 
   @Query(() => JobStatusDTO, { nullable: true })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async findUninstallApplicationJobStatus(
-    @Args('universalIdentifier') universalIdentifier: string,
+    @ApplicationTargetArg('universalIdentifier', {
+      kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
+    })
+    universalIdentifier: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<JobStatusDTO | null> {
     return this.applicationLifecycleJobService.findUninstallApplicationJobStatus(
@@ -227,11 +302,25 @@ export class ApplicationInstallResolver {
   }
 
   @Mutation(() => ApplicationDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async updateApplication(
     @ApplicationTargetArg(
       'id',
-      { kind: 'applicationId' },
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
       { type: () => UUIDScalarType },
     )
     id: string,
@@ -252,11 +341,26 @@ export class ApplicationInstallResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async uninstallApplication(
     @ApplicationTargetArgs<UninstallApplicationInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     { universalIdentifier }: UninstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

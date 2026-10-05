@@ -84,6 +84,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
@@ -110,6 +111,7 @@ import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/ut
 @UseFilters(
   AuthGraphqlApiExceptionFilter,
   TwoFactorAuthenticationExceptionFilter,
+  ThrottlerGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   ConfigVariableGraphqlApiExceptionFilter,
 )
@@ -349,9 +351,6 @@ export class AdminPanelResolver {
         }),
       );
 
-    // Listed alongside language models rather than on a page of their own: an
-    // administrator enables and disables them the same way, and the table says
-    // which kind each one is.
     const evaluationModels = this.aiModelRegistryService
       .getAllEvaluationModelsWithStatus()
       .map(({ modelConfig, isAvailable, isAdminEnabled }) => ({
@@ -372,8 +371,7 @@ export class AdminPanelResolver {
 
     return {
       models: [...languageModels, ...evaluationModels],
-      // The model the tier actually runs on here, not the head of the chain: a
-      // chain can start with a provider this instance holds no key for.
+      // Not the chain head: it can start with a provider this instance holds no key for
       defaultModelByTier: AI_MODEL_TIERS.map((tier) => ({
         tier,
         modelId:

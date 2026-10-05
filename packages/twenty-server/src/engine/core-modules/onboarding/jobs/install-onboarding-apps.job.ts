@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -18,7 +18,7 @@ export class InstallOnboardingAppsJob {
   private readonly logger = new Logger(InstallOnboardingAppsJob.name);
 
   constructor(
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly onboardingService: OnboardingService,
   ) {}
@@ -64,7 +64,7 @@ export class InstallOnboardingAppsJob {
   }): Promise<boolean> {
     try {
       const registration =
-        await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
+        await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
           universalIdentifier,
         );
 

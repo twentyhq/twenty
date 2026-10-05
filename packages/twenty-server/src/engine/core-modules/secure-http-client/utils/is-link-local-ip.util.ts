@@ -2,8 +2,7 @@ import { BlockList } from 'net';
 
 import { matchesIpRanges } from 'src/engine/core-modules/secure-http-client/utils/matches-ip-ranges.util';
 
-// Cloud metadata services (169.254.169.254, ECS/EKS task credentials) live in
-// the link-local range, so it is never opened by the internal host allowlist.
+// Cloud metadata services live here, so the internal host allowlist never opens this range.
 const LINK_LOCAL_RANGES = new BlockList();
 
 LINK_LOCAL_RANGES.addSubnet('169.254.0.0', 16);

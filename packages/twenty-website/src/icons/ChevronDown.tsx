@@ -4,7 +4,6 @@ export type ChevronDownProps = {
   sizePx?: number;
 };
 
-// A downward chevron on currentColor — the consumer sets the ink via color.
 export function ChevronDown({ sizePx = 12 }: ChevronDownProps) {
   return (
     <svg

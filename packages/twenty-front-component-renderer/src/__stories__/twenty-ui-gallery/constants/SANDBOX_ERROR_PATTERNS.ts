@@ -3,8 +3,12 @@ export const SANDBOX_ERROR_PATTERNS = {
     "Uncaught TypeError: Cannot use 'in' operator to search for 'composedPath' in undefined",
   VIEWPORT_WIDTH:
     "Uncaught TypeError: Cannot read properties of undefined (reading 'width')",
+  ELEMENT_DATASET:
+    "Uncaught TypeError: Cannot read properties of undefined (reading 'type')",
   NATIVE_EVENT_DEFAULT_PREVENTED:
     "Uncaught TypeError: Cannot read properties of undefined (reading 'defaultPrevented')",
+  MISSING_EVENT_CONSTRUCTOR:
+    "Uncaught TypeError: Right-hand side of 'instanceof' is not an object",
   POINTER_TYPE:
     "Uncaught TypeError: Cannot read properties of undefined (reading 'pointerType')",
   ELEMENT_CONTAINS:

@@ -14,12 +14,13 @@ import { useStore } from 'jotai';
 import {
   type AgentChatSubscriptionEvent,
   type ExtendedUIMessage,
+  type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { ON_AGENT_CHAT_EVENT } from '@/ai/graphql/subscriptions/OnAgentChatEvent';
+import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatFirstLiveSeqComponentFamilyState } from '@/ai/states/agentChatFirstLiveSeqComponentFamilyState';
 import { agentChatHandleEventCallbackComponentFamilyState } from '@/ai/states/agentChatHandleEventCallbackComponentFamilyState';
@@ -30,7 +31,7 @@ import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMess
 import { agentChatStreamLastEventTimestampState } from '@/ai/states/agentChatStreamLastEventTimestampState';
 import { agentChatStreamResubscribeNonceState } from '@/ai/states/agentChatStreamResubscribeNonceState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
-import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
 import { createStreamChunkSequencer } from '@/ai/utils/createStreamChunkSequencer';
@@ -40,14 +41,15 @@ import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
+import {
+  OnAgentChatEventDocument,
+  type OnAgentChatEventSubscription,
+} from '~/generated-metadata/graphql';
 
 const THROTTLE_MS = 100;
 const PERMISSIONS_REFRESH_INTERVAL_MS = 30_000;
 
-// readUIMessageStream requires initialization chunks (start, start-step,
-// text-start) before content chunks. When reconnecting to a thread mid-stream,
-// those chunks were already sent before we subscribed. This adapter injects
-// synthetic initialization chunks so the reader can process mid-stream content.
+// readUIMessageStream needs start chunks that a mid-stream reconnect missed, so inject synthetic ones.
 const createMidStreamAdapter = () => {
   let hasSeenStart = false;
   const knownTextPartIds = new Set<string>();
@@ -103,19 +105,23 @@ const createMidStreamAdapter = () => {
   });
 };
 
-type AgentChatEventPayload = {
-  onAgentChatEvent: {
-    threadId: string;
-    event: AgentChatSubscriptionEvent;
-  };
-};
+type ThreadTitleDataPart = Extract<
+  ExtendedUIMessagePart,
+  { type: 'data-thread-title' }
+>;
+
+const isThreadTitleDataPart = (
+  part: ExtendedUIMessagePart,
+): part is ThreadTitleDataPart => part.type === 'data-thread-title';
 
 export const useAgentChatSubscription = (threadId: string | null) => {
   const store = useStore();
+  // Only a resubscribe trigger: an access denial ends the subscription until the member's permissions change
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
+  const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const sseClient = useAtomStateValue(sseClientState);
   const agentChatStreamResubscribeNonce = useAtomStateValue(
     agentChatStreamResubscribeNonceState,
@@ -155,9 +161,6 @@ export const useAgentChatSubscription = (threadId: string | null) => {
   const usageFamilyCallback = useAtomComponentFamilyStateCallbackState(
     agentChatUsageComponentFamilyState,
   );
-  const threadTitleFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    currentAiChatThreadTitleComponentFamilyState,
-  );
 
   useEffect(() => {
     if (!isDefined(threadId) || !isDefined(sseClient)) {
@@ -179,7 +182,6 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     const fetchedMessagesAtom = fetchedMessagesFamilyCallback(familyKey);
     const queuedMessagesAtom = queuedMessagesFamilyCallback(familyKey);
     const usageAtom = usageFamilyCallback(familyKey);
-    const threadTitleAtom = threadTitleFamilyCallback(familyKey);
 
     let bridge: TransformStream<UIMessageChunk> | null = null;
     let throttleTimer: ReturnType<typeof setTimeout> | null = null;
@@ -254,39 +256,30 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
         const extendedMessage = message as ExtendedUIMessage;
 
-        const titlePart = extendedMessage.parts.find(
-          (part) => part.type === 'data-thread-title',
+        const title = extendedMessage.parts.find(isThreadTitleDataPart)?.data
+          .title;
+
+        const threadRecord = store.get(
+          agentChatThreadRecordFamilySelector.selectorFamily(threadId),
         );
 
-        if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
-          store.set(threadTitleAtom, titlePart.data.title);
+        if (
+          isDefined(title) &&
+          isDefined(threadRecord) &&
+          !isNonEmptyString(threadRecord.title)
+        ) {
+          applyAgentChatThreadUpdate({ id: threadId, title });
         }
 
-        const metadata = extendedMessage.metadata as
-          | {
-              usage?: {
-                inputTokens: number;
-                outputTokens: number;
-                cachedInputTokens: number;
-                inputCredits: number;
-                outputCredits: number;
-                conversationSize: number;
-              };
-              model?: {
-                contextWindowTokens: number;
-              };
-            }
-          | undefined;
+        const usage = extendedMessage.metadata?.usage;
+        const model = extendedMessage.metadata?.model;
 
         if (
-          isDefined(metadata?.usage) &&
-          isDefined(metadata?.model) &&
+          isDefined(usage) &&
+          isDefined(model) &&
           lastUsageCountedMessageId !== extendedMessage.id
         ) {
           lastUsageCountedMessageId = extendedMessage.id;
-
-          const usage = metadata.usage;
-          const model = metadata.model;
 
           store.set(usageAtom, (prev) => ({
             lastMessage: {
@@ -393,8 +386,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'keepalive': {
-          // The initial/reconnect heartbeat also loads access for shared links.
-          // Reuse this lifecycle to reflect edit downgrades without polling the list.
+          // The reconnect heartbeat also reloads shared link access, catching edit downgrades without polling.
           if (
             !isDefined(lastPermissionsRefreshAt) ||
             Date.now() - lastPermissionsRefreshAt >=
@@ -466,13 +458,13 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       void refreshAgentChatThreads();
     };
 
-    const dispose = sseClient.subscribe<AgentChatEventPayload>(
+    const dispose = sseClient.subscribe<OnAgentChatEventSubscription>(
       {
-        query: print(ON_AGENT_CHAT_EVENT),
+        query: print(OnAgentChatEventDocument),
         variables: { threadId },
       },
       {
-        next: (value: ExecutionResult<AgentChatEventPayload>) => {
+        next: (value: ExecutionResult<OnAgentChatEventSubscription>) => {
           if (disposed || accessDenied) {
             return;
           }
@@ -482,14 +474,15 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           }
           store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
 
-          if (isDefined(value.data?.onAgentChatEvent?.event)) {
+          const event: AgentChatSubscriptionEvent | undefined =
+            value.data?.onAgentChatEvent?.event;
+
+          if (isDefined(event)) {
             if (isGraphqlErrorOfType(store.get(errorAtom), 'NOT_FOUND')) {
               store.set(errorAtom, null);
               dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
             }
-            handleEvent(
-              value.data.onAgentChatEvent.event as AgentChatSubscriptionEvent,
-            );
+            handleEvent(event);
           }
         },
         error: (errors) => {
@@ -541,9 +534,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     fetchedMessagesFamilyCallback,
     queuedMessagesFamilyCallback,
     usageFamilyCallback,
-    threadTitleFamilyCallback,
     refreshAgentChatThreads,
     refreshAgentChatThreadPermissions,
+    applyAgentChatThreadUpdate,
     currentUserWorkspace,
   ]);
 };

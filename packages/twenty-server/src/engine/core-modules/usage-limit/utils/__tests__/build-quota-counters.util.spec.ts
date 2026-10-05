@@ -72,7 +72,7 @@ describe('buildQuotaCounters', () => {
       {
         kind: 'limit',
         isDefault: false,
-        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}`,
+        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}:1000000`,
         limitValue: 1_000_000,
         meter: 'creditsUsedMicro',
         resourceType: UsageResourceType.AI,
@@ -167,7 +167,7 @@ describe('buildQuotaCounters', () => {
       {
         kind: 'limit',
         isDefault: true,
-        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}:default:5000`,
+        key: `{workspace-1}:quota:AI:AI_CHAT_TOKEN:workspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}:5000:default`,
         limitValue: 5_000,
         meter: 'creditsUsedMicro',
         resourceType: UsageResourceType.AI,

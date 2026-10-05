@@ -139,7 +139,6 @@ export const computeStepOutputSchema = ({
           };
         }
 
-        // BULK_RECORDS - array indicator nested under payload
         return {
           [WORKFLOW_TRIGGER_PAYLOAD_KEY]: {
             isLeaf: false,
@@ -217,6 +216,61 @@ export const computeStepOutputSchema = ({
       }
 
       return generateFormOutputSchema(formFields, objectMetadataItems);
+    }
+
+    case 'SEND_CHAT_MESSAGE': {
+      const threadIdOutputSchema: OutputSchemaV2 = {
+        threadId: {
+          isLeaf: true,
+          type: FieldMetadataType.UUID,
+          label: 'Conversation ID',
+          value: '',
+        },
+      };
+
+      if (!isDefined(step.settings?.input?.toolCall)) {
+        return threadIdOutputSchema;
+      }
+
+      return {
+        ...threadIdOutputSchema,
+        outcome: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Outcome',
+          value: 'executed',
+        },
+        toolName: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Action',
+          value: '',
+        },
+        feedback: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Feedback',
+          value: '',
+        },
+        error: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Error',
+          value: '',
+        },
+        arguments: {
+          isLeaf: true,
+          type: FieldMetadataType.RAW_JSON,
+          label: 'Arguments',
+          value: null,
+        },
+        output: {
+          isLeaf: true,
+          type: FieldMetadataType.RAW_JSON,
+          label: 'Output',
+          value: null,
+        },
+      };
     }
 
     case 'SEND_EMAIL': {

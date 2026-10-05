@@ -18,8 +18,7 @@ describe('convertOrderByToFindOptionsOrder', () => {
     },
   );
 
-  // The backward scan is the exact reverse of the requested order, so the NULLS
-  // placement reverses along with the direction
+  // The backward scan exactly reverses the requested order, NULLS placement included
   it.each([
     [OrderByDirection.AscNullsFirst, 'DESC', 'NULLS LAST'],
     [OrderByDirection.AscNullsLast, 'DESC', 'NULLS FIRST'],

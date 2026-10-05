@@ -18,7 +18,6 @@ import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/prov
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
@@ -43,15 +42,8 @@ import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
-// NOTE: This module does NOT import WorkflowToolsModule or DashboardToolsModule
-// directly: their service graphs transitively reach AiAgentExecutionModule which
-// forwardRef's back into ToolProviderModule. Those two @Global() modules provide
-// a service token that their respective providers consume via @Optional()
-// @Inject, breaking the cycle.
-//
-// Webhook and NavigationMenuItem do NOT have that cycle, so we import their
-// entity modules directly and the providers inject the services the normal way
-// (same pattern as views/objects/metadata).
+// Workflow and Dashboard tools modules reach AiAgentExecutionModule, which forwardRefs back here,
+// so their @Global() modules provide tokens consumed via @Optional() @Inject instead of being imported.
 
 @Module({
   imports: [
@@ -76,7 +68,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     RoleModule,
     UserRoleModule,
     EmailingModule,
-    TypeOrmModule.forFeature([UserEntity, UserWorkspaceEntity, FileEntity]),
+    TypeOrmModule.forFeature([UserEntity, FileEntity]),
   ],
   providers: [
     ToolIndexResolver,
@@ -94,10 +86,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WebhookToolProvider,
     WorkflowToolProvider,
     {
-      // TOOL_PROVIDERS contains only providers implementing ToolProvider
-      // (registry tools with descriptors). The native tool binder is a
-      // parallel concept and is exported for surfaces that bind SDK-native
-      // tools directly into their model ToolSet.
+      // Only ToolProvider implementations; the native tool binder is exported separately.
       provide: TOOL_PROVIDERS,
       useFactory: (
         actionProvider: ActionToolProvider,

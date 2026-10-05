@@ -6,7 +6,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   convertToModelMessages,
   hasToolCall,
-  type LanguageModelUsage,
   NoOutputGeneratedError,
   isStepCount,
   type StepResult,
@@ -14,7 +13,14 @@ import {
   type SystemModelMessage,
   type ToolSet,
 } from 'ai';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  ASK_QUESTION_TOOL_NAME,
+  ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
+  COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
+  type ExtendedUIMessage,
+  PROPOSE_TOOL_CALL_TOOL_NAME,
+  REQUEST_FORM_TOOL_NAME,
+} from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -47,7 +53,8 @@ import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/ut
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
-import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/ends-on-pausing-tool-call.util';
+import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
+import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
@@ -66,23 +73,14 @@ import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
-import {
-  ASK_QUESTIONS_TOOL_NAME,
-  createAskQuestionsTool,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
-import {
-  ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
-  createAttachConversationToRecordTool,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
-import {
-  PROPOSE_EMAIL_TOOL_NAME,
-  createProposeEmailTool,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
-import {
-  COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
-  createCompleteWorkspaceSetupTool,
-} from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
-import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
+import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
+import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
+import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
+import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
+import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
+import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
+import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
 import { hasNoAssistantMessage } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-no-assistant-message.util';
@@ -97,7 +95,7 @@ import {
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
-import { tagAiChatKindScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-kind-scope.util';
+import { tagAiChatExecutionScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-execution-scope.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -110,20 +108,23 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
+import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
+import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
 
 export type ChatExecutionOptions = {
   workspace: WorkspaceEntity;
   userWorkspaceId: string;
-  threadId?: string;
-  streamId?: string;
-  turnId?: string;
-  messageId?: string;
+  sender: AgentChatSender;
+  authorization: Awaited<ReturnType<AgentChatActorService['authorize']>>;
+  threadId: string;
+  streamId: string;
+  turnId: string;
   messages: ExtendedUIMessage[];
   browsingContext: BrowsingContextType | null;
-  onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
-  onCompaction?: () => void;
+  onCodeExecutionUpdate: CodeExecutionStreamEmitter;
+  onCompaction: () => void;
   modelId?: string;
-  abortSignal?: AbortSignal;
+  abortSignal: AbortSignal;
   conversationSizeTokens: number;
 };
 
@@ -131,6 +132,7 @@ export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   modelConfig: AiModelConfig;
   hasNoMoreAvailableCredits: () => boolean;
+  getStreamError: () => unknown;
 };
 
 @Injectable()
@@ -158,10 +160,11 @@ export class ChatExecutionService {
   async streamChat({
     workspace,
     userWorkspaceId,
+    sender,
+    authorization,
     threadId,
     streamId,
     turnId,
-    messageId,
     messages,
     browsingContext,
     onCodeExecutionUpdate,
@@ -170,31 +173,21 @@ export class ChatExecutionService {
     abortSignal,
     conversationSizeTokens,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
-    if (!isDefined(threadId)) {
-      throw new AiException(
-        'Chat thread identity required',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
-    const { sender, authorization } = await this.chatActorService.authorizeJob({
-      workspaceId: workspace.id,
-      threadId,
-      messageId,
-      turnId,
-      userWorkspaceId,
+    const getAuthorization = createTurnAuthorizer({
+      authorize: () =>
+        this.chatActorService.authorize({
+          workspaceId: workspace.id,
+          threadId,
+          sender,
+        }),
+      authorization,
+      maxAgeMs: AGENT_CHAT_KEEPALIVE_INTERVAL_MS,
     });
-    const resolveExecutionContext = async (): Promise<ToolContext> => {
-      const authorization = await this.chatActorService.authorize({
-        workspaceId: workspace.id,
-        threadId,
-        sender,
-      });
-      return {
-        ...toolContext,
-        ...authorization,
-        resolveExecutionContext: undefined,
-      };
-    };
+    const resolveExecutionContext = async (): Promise<ToolContext> => ({
+      ...toolContext,
+      ...(await getAuthorization()),
+      resolveExecutionContext: undefined,
+    });
     const { actorContext, roleId, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
@@ -258,7 +251,6 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
-    // Native and action search may both be bound here; the model picks at runtime.
     const nativeCapabilities = getNativeModelCapabilities(
       registeredModel.sdkPackage,
     );
@@ -267,21 +259,12 @@ export class ChatExecutionService {
       twitterSearch: nativeCapabilities?.twitterSearch === true,
     });
 
-    // Tools the model can call directly: preloaded registry tools (already
-    // serialized by the hydrator) plus SDK-native tools (opaque, never
-    // serialized). execute_tool routes discovered tools through the registry.
-    const directTools: ToolSet = {
-      ...preloadedTools,
-      ...nativeTools,
-    };
-
     const isWorkspaceSetupConversation =
-      isDefined(threadId) &&
       threadId ===
-        buildWorkspaceSetupChatThreadId({
-          workspaceId: workspace.id,
-          userWorkspaceId,
-        });
+      buildWorkspaceSetupChatThreadId({
+        workspaceId: workspace.id,
+        userWorkspaceId,
+      });
 
     const isWorkspaceSetupThread =
       isWorkspaceSetupConversation &&
@@ -290,11 +273,12 @@ export class ChatExecutionService {
     const isWorkspaceSetupKickoffTurn =
       isWorkspaceSetupThread && hasNoAssistantMessage(messages);
 
-    tagAiChatKindScope({ isWorkspaceSetupThread });
+    tagAiChatExecutionScope({
+      isWorkspaceSetupThread,
+      modelId: registeredModel.modelId,
+    });
 
-    // Judged on the conversation rather than on setup still running: once setup
-    // completes, the member's onboarding carries on in this same conversation,
-    // and it is not one to file under their records.
+    // judged on the conversation, not setup status: onboarding continues here after setup completes
     const canAttachConversationToRecords =
       !isWorkspaceSetupConversation &&
       (await this.featureFlagService.isFeatureEnabled(
@@ -302,35 +286,28 @@ export class ChatExecutionService {
         workspace.id,
       ));
 
-    // Proposing an email only helps someone who could then send it.
-    const canProposeEmail = toolCatalog.some(
-      (toolIndexEntry) => toolIndexEntry.name === 'send_email',
-    );
-
-    const preloadedToolNames = [
-      ...Object.keys(preloadedTools),
-      ...Object.keys(nativeTools),
-      ASK_QUESTIONS_TOOL_NAME,
-      ...(canProposeEmail ? [PROPOSE_EMAIL_TOOL_NAME] : []),
-      ...(isWorkspaceSetupThread ? [COMPLETE_WORKSPACE_SETUP_TOOL_NAME] : []),
-      ...(canAttachConversationToRecords
-        ? [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]
-        : []),
-    ];
-
     const isToolAllowed = (toolName: string) =>
       !AI_CHAT_EXCLUDED_TOOL_NAMES.has(toolName);
 
-    // ToolSet is constant for the entire conversation — no mutation.
-    // learn_tools returns schemas as text; execute_tool dispatches via the registry.
-    const activeTools: ToolSet = {
-      ...directTools,
-      [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
+    const preloadedToolSet: ToolSet = {
+      ...preloadedTools,
+      ...nativeTools,
+      [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
         isWorkspaceSetupThread,
       }),
-      ...(canProposeEmail
-        ? { [PROPOSE_EMAIL_TOOL_NAME]: createProposeEmailTool() }
-        : {}),
+      [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
+      [PROPOSE_TOOL_CALL_TOOL_NAME]: createProposeToolCallTool({
+        resolveProposal: (input) =>
+          resolveProposedToolCall({
+            input,
+            findTool: async (toolName) =>
+              toolCatalog.find(
+                (toolIndexEntry) => toolIndexEntry.name === toolName,
+              ),
+            executeTool: ({ toolName, args }) =>
+              this.toolRegistry.resolveAndExecute(toolName, args, toolContext),
+          }),
+      }),
       ...(isWorkspaceSetupThread
         ? {
             [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
@@ -346,6 +323,10 @@ export class ChatExecutionService {
               }),
           }
         : {}),
+    };
+
+    const activeTools: ToolSet = {
+      ...preloadedToolSet,
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
         this.toolRegistry,
         toolContext,
@@ -380,8 +361,7 @@ export class ChatExecutionService {
 
     const uploadedFiles = collectUploadedFileReferences(messages);
 
-    // Skills the user tagged with / are inlined into the prompt so the model
-    // does not spend a round trip calling load_skills for them.
+    // inline tagged skills to save the model a load_skills round trip
     const referencedSkills = await this.skillService.findFlatSkillsByIds(
       collectReferencedSkillIds(messages),
       workspace.id,
@@ -393,22 +373,15 @@ export class ChatExecutionService {
       isCodeInterpreterEnabled,
     );
 
-    let storedFiles: Array<{
-      filename: string;
-      fileId: string;
-    }> = [];
+    let codeInterpreterFiles: UploadedFileReference[] = [];
 
     if (isCodeInterpreterEnabled) {
       const extracted = extractCodeInterpreterFiles(processedMessages);
 
       processedMessages = extracted.processedMessages;
-
-      if (extracted.extractedFiles.length > 0) {
-        storedFiles = await this.storeExtractedFiles(
-          extracted.extractedFiles,
-          workspace.id,
-        );
-      }
+      codeInterpreterFiles = extracted.extractedFiles.map(
+        ({ filename, fileId }) => ({ filename, fileId }),
+      );
     }
 
     if (isDefined(browsingContext)) {
@@ -436,13 +409,11 @@ export class ChatExecutionService {
       toolCatalog,
       skillCatalog,
       referencedSkills,
-      preloadedTools: preloadedToolNames,
-      uploadedFilesContext: {
-        uploadedFiles,
-        codeInterpreterFiles: storedFiles,
-      },
+      preloadedTools: Object.keys(preloadedToolSet),
+      uploadedFilesContext: { uploadedFiles, codeInterpreterFiles },
       workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
       userContext,
+      userWorkspaceId,
       isWorkspaceSetupThread,
       canAttachConversationToRecords,
     });
@@ -453,7 +424,7 @@ export class ChatExecutionService {
 
     const systemMessage: SystemModelMessage = {
       role: 'system',
-      content: `${systemPrompt}\n\nThis conversation can have multiple participants. Message sender annotations identify who wrote each user message. The current request is from workspace membership ${userWorkspaceId}; use only this participant's identity and permissions for actions. Historical participants' requests do not authorize new actions on their behalf.`,
+      content: systemPrompt,
       providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
     };
 
@@ -479,7 +450,7 @@ export class ChatExecutionService {
     }
 
     if (pruningResult.wasPruned) {
-      onCompaction?.();
+      onCompaction();
     }
 
     const modelMessages = pruningResult.messages;
@@ -492,47 +463,19 @@ export class ChatExecutionService {
     let lastUnderlyingStreamError: unknown;
 
     const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
-      const usage = steps.reduce<LanguageModelUsage>(
-        (acc, step) => ({
-          inputTokens: (acc.inputTokens ?? 0) + (step.usage.inputTokens ?? 0),
-          outputTokens:
-            (acc.outputTokens ?? 0) + (step.usage.outputTokens ?? 0),
-          totalTokens: (acc.totalTokens ?? 0) + (step.usage.totalTokens ?? 0),
-          inputTokenDetails: {
-            noCacheTokens:
-              (acc.inputTokenDetails?.noCacheTokens ?? 0) +
-              (step.usage.inputTokenDetails?.noCacheTokens ?? 0),
-            cacheReadTokens:
-              (acc.inputTokenDetails?.cacheReadTokens ?? 0) +
-              (step.usage.inputTokenDetails?.cacheReadTokens ?? 0),
-            cacheWriteTokens:
-              (acc.inputTokenDetails?.cacheWriteTokens ?? 0) +
-              (step.usage.inputTokenDetails?.cacheWriteTokens ?? 0),
-          },
-          outputTokenDetails: {
-            textTokens:
-              (acc.outputTokenDetails?.textTokens ?? 0) +
-              (step.usage.outputTokenDetails?.textTokens ?? 0),
-            reasoningTokens:
-              (acc.outputTokenDetails?.reasoningTokens ?? 0) +
-              (step.usage.outputTokenDetails?.reasoningTokens ?? 0),
-          },
+      const usage = steps.reduce(
+        (totals, step) => ({
+          inputTokens: totals.inputTokens + (step.usage.inputTokens ?? 0),
+          outputTokens: totals.outputTokens + (step.usage.outputTokens ?? 0),
+          cacheReadTokens:
+            totals.cacheReadTokens +
+            (step.usage.inputTokenDetails?.cacheReadTokens ?? 0),
         }),
-        {
-          inputTokens: 0,
-          outputTokens: 0,
-          totalTokens: 0,
-          inputTokenDetails: {
-            noCacheTokens: 0,
-            cacheReadTokens: 0,
-            cacheWriteTokens: 0,
-          },
-          outputTokenDetails: { textTokens: 0, reasoningTokens: 0 },
-        },
+        { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 },
       );
 
       const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
-      const totalTokens = (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0);
+      const totalTokens = usage.inputTokens + usage.outputTokens;
 
       const costInDollars = this.aiBillingService.calculateStepsCost(
         registeredModel.modelId,
@@ -550,8 +493,6 @@ export class ChatExecutionService {
         userWorkspaceId,
       );
 
-      // billNativeWebSearchUsage short-circuits when count <= 0, so calling
-      // unconditionally is safe regardless of whether native search fired.
       void this.aiBillingService.billNativeWebSearchUsage(
         countNativeWebSearchCallsFromSteps(steps),
         workspace.id,
@@ -562,17 +503,17 @@ export class ChatExecutionService {
 
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AiChatInputTokens,
-        amount: usage.inputTokens ?? 0,
+        amount: usage.inputTokens,
         attributes: modelAttr,
       });
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AiChatOutputTokens,
-        amount: usage.outputTokens ?? 0,
+        amount: usage.outputTokens,
         attributes: modelAttr,
       });
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AiChatCacheReadTokens,
-        amount: usage.inputTokenDetails?.cacheReadTokens ?? 0,
+        amount: usage.cacheReadTokens,
         attributes: modelAttr,
       });
       this.metricsService.incrementCounterBy({
@@ -614,18 +555,14 @@ export class ChatExecutionService {
       }),
       providerOptions: getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
-        providerOptions:
-          this.aiModelConfigService.getReasoningProviderOptions(
-            registeredModel,
-          ),
+        providerOptions: this.aiModelConfigService.getReasoningProviderOptions(
+          registeredModel,
+          { shouldIncludeReasoningSummary: true },
+        ),
         promptCacheKey: threadId,
       }),
       prepareStep: async ({ messages }) => {
-        await this.chatActorService.authorize({
-          workspaceId: workspace.id,
-          threadId,
-          sender,
-        });
+        await getAuthorization();
         stepStartedAt = performance.now();
 
         return {
@@ -650,7 +587,7 @@ export class ChatExecutionService {
       onError: ({ error }) => {
         lastUnderlyingStreamError = error;
         this.logger.error(
-          `Stream ${streamId} emitted an error: ${error instanceof Error ? error.message : String(error)}`,
+          `Stream ${streamId} emitted an error: ${formatErrorWithCause(error)}`,
         );
       },
       onToolExecutionEnd: (event) => {
@@ -781,31 +718,6 @@ export class ChatExecutionService {
         }
 
         if (NoOutputGeneratedError.isInstance(error)) {
-          const underlying = lastUnderlyingStreamError;
-
-          this.exceptionHandlerService.captureExceptions([
-            Object.assign(
-              new Error(
-                `AI chat stream produced no output. ${JSON.stringify({
-                  modelId: registeredModel.modelId,
-                  provider: registeredModel.sdkPackage,
-                  workspaceId: workspace.id,
-                  threadId,
-                  streamId,
-                  turnId,
-                  messageCount: messages.length,
-                  conversationSizeTokens,
-                  elapsedMs: Math.round(performance.now() - streamStartedAt),
-                  underlyingError:
-                    underlying instanceof Error
-                      ? `${underlying.name}: ${underlying.message}`
-                      : String(underlying ?? 'none-recorded'),
-                })}`,
-              ),
-              { cause: underlying },
-            ),
-          ]);
-
           return;
         }
 
@@ -816,6 +728,7 @@ export class ChatExecutionService {
       stream,
       modelConfig,
       hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
+      getStreamError: () => lastUnderlyingStreamError,
     };
   }
 
@@ -864,21 +777,21 @@ export class ChatExecutionService {
     workspace: WorkspaceEntity,
     browsingContext: BrowsingContextType,
   ): string {
-    if (browsingContext.type === 'recordPage') {
-      return this.buildRecordPageContext(
-        workspace,
-        browsingContext.objectNameSingular,
-        browsingContext.recordId,
-        browsingContext.pageLayoutId,
-        browsingContext.activeTabId,
-      );
+    switch (browsingContext.type) {
+      case 'recordPage':
+        return this.buildRecordPageContext(
+          workspace,
+          browsingContext.objectNameSingular,
+          browsingContext.recordId,
+          browsingContext.pageLayoutId,
+          browsingContext.activeTabId,
+        );
+      case 'listView':
+        return this.buildListViewContext(browsingContext);
+      default:
+        // browsing context comes from unvalidated client JSON
+        return '';
     }
-
-    if (browsingContext.type === 'listView') {
-      return this.buildListViewContext(browsingContext);
-    }
-
-    return '';
   }
 
   private buildRecordPageContext(
@@ -928,15 +841,5 @@ export class ChatExecutionService {
     context += `\nUse get_view_query_parameters tool with this viewId to get the exact filter/sort parameters for querying records.`;
 
     return context;
-  }
-
-  private async storeExtractedFiles(
-    files: ExtractedFile[],
-    _workspaceId: string,
-  ): Promise<Array<{ filename: string; fileId: string }>> {
-    return files.map((file) => ({
-      filename: file.filename,
-      fileId: file.fileId,
-    }));
   }
 }

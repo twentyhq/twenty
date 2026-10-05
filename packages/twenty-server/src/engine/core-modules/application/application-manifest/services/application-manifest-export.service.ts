@@ -15,7 +15,7 @@ import { reconstructNavigationMenuItemsManifest } from 'src/engine/core-modules/
 import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-page-layouts-manifest.util';
 import { reconstructRolesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-roles-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import {
   ApplicationException,
@@ -43,7 +43,7 @@ export class ApplicationManifestExportService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
   ) {}
 
   async exportApplication({
@@ -73,10 +73,12 @@ export class ApplicationManifestExportService {
 
     assertFlatApplicationIsExportable(flatApplication);
 
-    await this.applicationRegistrationService.findOneOwnedByWorkspaceOrThrow({
-      universalIdentifier: applicationUniversalIdentifier,
-      workspaceId,
-    });
+    await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
+      {
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId,
+      },
+    );
 
     const applicationAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
       applicationIds: [flatApplication.id],

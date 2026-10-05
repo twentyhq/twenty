@@ -2,8 +2,8 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
 
-import { TEMPLATE_FIRST_PARTY_PACKAGES } from '@/constants/template-packages';
-import createTwentyAppPackageJson from 'package.json';
+import { TEMPLATE_PACKAGE_VERSION } from '../constants/template-package-version';
+import { TEMPLATE_FIRST_PARTY_PACKAGES } from '../constants/template-packages';
 
 const SRC_FOLDER = 'src';
 
@@ -12,16 +12,20 @@ export const copyBaseApplicationProject = async ({
   appDisplayName,
   appDescription,
   appDirectory,
+  templateDirectory = join(__dirname, './constants/template'),
+  packageVersion = TEMPLATE_PACKAGE_VERSION,
   onProgress,
 }: {
   appName: string;
   appDisplayName: string;
   appDescription: string;
   appDirectory: string;
+  templateDirectory?: string;
+  packageVersion?: string;
   onProgress?: (message: string) => void;
 }) => {
   onProgress?.('Copying base template');
-  await fs.copy(join(__dirname, './constants/template'), appDirectory);
+  await fs.copy(templateDirectory, appDirectory);
 
   onProgress?.('Configuring dotfiles (.gitignore, .github, .yarnrc.yml)');
   await renameDotfiles({ appDirectory });
@@ -39,11 +43,10 @@ export const copyBaseApplicationProject = async ({
   });
 
   onProgress?.('Updating package.json');
-  await updatePackageJson({ appName, appDirectory });
+  await updatePackageJson({ appName, appDirectory, packageVersion });
 };
 
-// npm strips dotfiles/dotdirs (.gitignore, .github/) from published packages,
-// so we store them without the leading dot and rename after copying.
+// npm strips dotfiles from published packages, so they're stored without the dot and renamed after copying.
 const renameDotfiles = async ({ appDirectory }: { appDirectory: string }) => {
   const renames = [
     { from: 'gitignore', to: '.gitignore' },
@@ -60,8 +63,7 @@ const renameDotfiles = async ({ appDirectory }: { appDirectory: string }) => {
   }
 };
 
-// AGENTS.md is the cross-tool standard; Claude Code prefers CLAUDE.md and only
-// falls back to AGENTS.md, so we mirror the file to keep a single source of truth.
+// Claude Code prefers CLAUDE.md over the AGENTS.md standard, so mirror it.
 const mirrorAgentsToClaude = async ({
   appDirectory,
 }: {
@@ -105,30 +107,39 @@ const generateUniversalIdentifiers = async ({
   await fs.writeFile(
     universalIdentifiersPath,
     universalIdentifiersFileContent
-      .replace('DISPLAY-NAME-TO-BE-GENERATED', appDisplayName)
-      .replace('DESCRIPTION-TO-BE-GENERATED', appDescription)
+      .replace('DISPLAY-NAME-TO-BE-GENERATED', () =>
+        escapeSingleQuotedString(appDisplayName),
+      )
+      .replace('DESCRIPTION-TO-BE-GENERATED', () =>
+        escapeSingleQuotedString(appDescription),
+      )
       .replace(/UUID-TO-BE-GENERATED/g, () => v4()),
   );
 };
 
+const escapeSingleQuotedString = (value: string) =>
+  value
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r');
+
 const updatePackageJson = async ({
   appName,
   appDirectory,
+  packageVersion,
 }: {
   appName: string;
   appDirectory: string;
+  packageVersion: string;
 }) => {
   const packageJson = await fs.readJson(join(appDirectory, 'package.json'));
 
-  // The template yarn.lock keeps its placeholder workspace name: the only entry
-  // naming the project is the workspace root, which the scaffolder's `yarn install`
-  // rewrites from package.json without re-resolving a single dependency. Renaming
-  // it here would move the entry out of sort order and break `--immutable`.
+  // yarn.lock keeps its placeholder name: `yarn install` rewrites the root entry, and renaming here breaks `--immutable`.
   packageJson.name = appName;
 
   for (const packageName of TEMPLATE_FIRST_PARTY_PACKAGES) {
-    packageJson.devDependencies[packageName] =
-      createTwentyAppPackageJson.version;
+    packageJson.devDependencies[packageName] = packageVersion;
   }
 
   await fs.writeFile(

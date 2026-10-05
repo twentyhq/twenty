@@ -257,11 +257,7 @@ export class BillingUsageService {
     return Number(resourceCreditPrice.metadata?.credit_amount ?? 0);
   }
 
-  // Returns null when usage could not be read. ClickHouseService.select
-  // swallows query errors and returns [], but a bare sum() aggregate always
-  // yields exactly one row, so an empty result means the read failed rather
-  // than "nothing was used". Callers that hand out credits must not confuse
-  // the two.
+  // Null on a failed read: select swallows errors into [], while sum() always yields one row
   private async sumCreditsUsedMicroOrNull(
     condition: string,
     params: Record<string, unknown>,
@@ -284,10 +280,7 @@ export class BillingUsageService {
     return Number.isFinite(total) ? total : 0;
   }
 
-  // Sums by event timestamp rather than by the stamped periodStart dimension.
-  // At a period transition the subscription's currentPeriodStart has already
-  // moved on, so an equality match on periodStart would read the new period
-  // and report a period that has barely started as unused.
+  // By event timestamp: at a transition currentPeriodStart has moved on, so periodStart would read the new period
   async getCreditsUsedBetweenOrNull({
     workspaceId,
     from,

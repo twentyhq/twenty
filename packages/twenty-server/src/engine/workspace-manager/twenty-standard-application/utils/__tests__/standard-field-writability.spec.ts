@@ -35,7 +35,7 @@ describe('Standard field writability', () => {
     ).toBe(true);
   });
 
-  it('leaves fields outside protected history, Asks and search vectors OPEN', () => {
+  it('leaves fields outside protected history and search vectors OPEN', () => {
     const nonSearchVectorWritabilities = new Set(
       standardFlatFieldMetadatas
         .filter(
@@ -47,8 +47,8 @@ describe('Standard field writability', () => {
               STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
               STANDARD_OBJECTS.agentTurn.universalIdentifier,
               STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
+              STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
               STANDARD_OBJECTS.campaignDelivery.universalIdentifier,
-              STANDARD_OBJECTS.inputAsk.universalIdentifier,
               STANDARD_OBJECTS.messageSuppression.universalIdentifier,
             ].some(
               (identifier) =>

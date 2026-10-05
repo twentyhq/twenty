@@ -4,7 +4,8 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
-import { getRelationsSelectFields } from 'src/engine/api/common/common-select-fields/utils/get-relations-select-fields.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { buildRelationSelectionFromDepth } from 'src/engine/api/common/common-select-fields/utils/build-relation-selection-from-depth.util';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { buildEffectiveSelectedFields } from 'src/engine/core-modules/record-crud/utils/build-effective-selected-fields.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -427,7 +428,11 @@ describe('buildEffectiveSelectedFields', () => {
     const buildSelectableRelationFields = (
       objectsPermissions: ObjectsPermissions,
     ) =>
-      getRelationsSelectFields({
+      buildRelationSelectionFromDepth({
+        flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityIds: investorLeadObjectMetadata.fieldIds,
+          flatEntityMaps: relationFieldMaps,
+        }),
         flatObjectMetadataMaps: relationObjectMaps,
         flatFieldMetadataMaps: relationFieldMaps,
         flatObjectMetadata: investorLeadObjectMetadata,

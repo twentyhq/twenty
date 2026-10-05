@@ -16,8 +16,7 @@ describe('getDateFnsLocale', () => {
     expect(locale?.code).toBe('fr');
   });
 
-  // The switch has an en-US default, so a case pointing at a module path that
-  // does not exist fails the same silent way a missing case would.
+  // The switch defaults to en-US, so a wrong module path fails as silently as a missing case
   it.each([
     ['hy-AM', 'hy'],
     ['sr-Latn', 'sr-Latn'],
