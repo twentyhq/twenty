@@ -8,6 +8,8 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
 import { WorkflowVersionStepModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.module';
 import { WorkflowExecutorModule } from 'src/modules/workflow/workflow-executor/workflow-executor.module';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
+import { StopDeletedWorkflowRunsJob } from 'src/modules/workflow/workflow-runner/jobs/stop-deleted-workflow-runs.job';
+import { ApplicationWorkflowDeletionListener } from 'src/modules/workflow/workflow-runner/listeners/application-workflow-deletion.listener';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
@@ -35,6 +37,8 @@ import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-ex
     WorkflowRunnerWorkspaceService,
     CoreWorkflowRunnerService,
     RunWorkflowJob,
+    StopDeletedWorkflowRunsJob,
+    ApplicationWorkflowDeletionListener,
   ],
   exports: [WorkflowRunnerWorkspaceService, CoreWorkflowRunnerService],
 })

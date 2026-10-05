@@ -33,6 +33,7 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
+import { STOPPABLE_WORKFLOW_RUN_STATUSES } from 'src/modules/workflow/workflow-runner/constants/stoppable-workflow-run-statuses.constant';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/build-retry-step-infos.util';
@@ -311,13 +312,7 @@ export class WorkflowRunnerWorkspaceService {
         workspaceId,
       });
 
-    const stoppableStatuses = [
-      WorkflowRunStatus.NOT_STARTED,
-      WorkflowRunStatus.ENQUEUED,
-      WorkflowRunStatus.RUNNING,
-    ];
-
-    if (!stoppableStatuses.includes(workflowRun.status)) {
+    if (!STOPPABLE_WORKFLOW_RUN_STATUSES.includes(workflowRun.status)) {
       return {
         id: workflowRun.id,
         status: workflowRun.status,

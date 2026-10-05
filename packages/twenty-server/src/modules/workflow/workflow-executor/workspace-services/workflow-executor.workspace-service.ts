@@ -143,24 +143,6 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    const workflow = isDefined(workflowRun.coreWorkflowId)
-      ? await this.workflowCoreSyncService.findCoreWorkflowById(
-          workspaceId,
-          workflowRun.coreWorkflowId,
-        )
-      : null;
-
-    if (!isDefined(workflow)) {
-      throw new Error(
-        `Workflow run ${workflowRun.id} has no core workflow identity for billing`,
-      );
-    }
-
-    const billingSpenders = {
-      workflowId: workflow.workspaceWorkflowId ?? workflow.id,
-      applicationId: workflow.applicationId,
-    };
-
     let actionOutput: WorkflowActionOutput;
 
     // A resumed step was claimed as started, which shouldExecuteStep refuses.
@@ -173,6 +155,24 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunStatus: workflowRun.status,
       })
     ) {
+      const workflow = isDefined(workflowRun.coreWorkflowId)
+        ? await this.workflowCoreSyncService.findCoreWorkflowById(
+            workspaceId,
+            workflowRun.coreWorkflowId,
+          )
+        : null;
+
+      if (!isDefined(workflow)) {
+        throw new Error(
+          `Workflow run ${workflowRun.id} has no core workflow identity for billing`,
+        );
+      }
+
+      const billingSpenders = {
+        workflowId: workflow.workspaceWorkflowId ?? workflow.id,
+        applicationId: workflow.applicationId,
+      };
+
       actionOutput = await this.executeStep({
         step: stepToExecute,
         steps,
@@ -220,6 +220,16 @@ export class WorkflowExecutorWorkspaceService {
           actionOutput.shouldFailSafely = true;
         }
       }
+
+      // A resumed step's node run was charged when it first ran and paused.
+      if (
+        !isDefined(actionOutput.error) &&
+        !actionOutput.shouldFailSafely &&
+        !actionOutput.shouldSkipStepExecution &&
+        !isDefined(resumedThreadId)
+      ) {
+        await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
+      }
     } else if (
       shouldFailSafely({
         step: stepToExecute,
@@ -242,19 +252,6 @@ export class WorkflowExecutorWorkspaceService {
       };
     } else {
       return;
-    }
-
-    const isError =
-      isDefined(actionOutput.error) && !actionOutput.shouldFailSafely;
-
-    // A resumed step's node run was charged when it first ran and paused.
-    if (
-      !isError &&
-      !actionOutput.shouldFailSafely &&
-      !actionOutput.shouldSkipStepExecution &&
-      !isDefined(resumedThreadId)
-    ) {
-      await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({
