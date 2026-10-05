@@ -244,6 +244,64 @@ describe('createImagePreloaderClass', () => {
     expect(onLoad).toHaveBeenCalledTimes(1);
   });
 
+  it('keeps a listener that shares its callback with onload', async () => {
+    const { image, requests } = createHarness();
+    const onLoad = jest.fn();
+
+    image.onload = onLoad;
+    image.addEventListener('load', onLoad);
+    image.src = '/first.svg';
+    await flushMicrotasks();
+    requests.get('1')?.(LOADED_IMAGE);
+    await flushMicrotasks();
+
+    expect(onLoad).toHaveBeenCalledTimes(2);
+
+    image.onload = null;
+    image.src = '/second.svg';
+    await flushMicrotasks();
+    requests.get('2')?.(LOADED_IMAGE);
+    await flushMicrotasks();
+
+    expect(onLoad).toHaveBeenCalledTimes(3);
+  });
+
+  it('keeps onerror active when its callback is removed as a listener', async () => {
+    const { image, requests } = createHarness();
+    const onError = jest.fn();
+
+    image.onerror = onError;
+    image.removeEventListener('error', onError);
+    image.src = '/broken.svg';
+    await flushMicrotasks();
+    requests.get('1')?.(BROKEN_IMAGE);
+    await flushMicrotasks();
+
+    expect(onError).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps a replaced onload in its listener position until it is cleared', async () => {
+    const { image, requests } = createHarness();
+    const calls: string[] = [];
+
+    image.onload = () => calls.push('first');
+    image.addEventListener('load', () => calls.push('second'));
+    image.onload = () => calls.push('third');
+    image.src = '/first.svg';
+    await flushMicrotasks();
+    requests.get('1')?.(LOADED_IMAGE);
+    await flushMicrotasks();
+
+    image.onload = null;
+    image.onload = () => calls.push('fourth');
+    image.src = '/second.svg';
+    await flushMicrotasks();
+    requests.get('2')?.(LOADED_IMAGE);
+    await flushMicrotasks();
+
+    expect(calls).toEqual(['third', 'second', 'second', 'fourth']);
+  });
+
   it('keeps delivering the event when a handler throws', async () => {
     const { image, requests } = createHarness();
     const onLoad = jest.fn();

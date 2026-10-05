@@ -1,3 +1,4 @@
+import { isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { normalizeImageDimensionAttribute } from '@/polyfills/image/utils/normalizeImageDimensionAttribute';
@@ -44,7 +45,14 @@ export const createImagePreloaderClass = ({
     #naturalWidth = 0;
     #naturalHeight = 0;
     #pendingDecodes = new Set<PendingImageDecode>();
-    #eventHandlers = new Map<string, EventListener>();
+    #onloadHandler: EventListener | null = null;
+    #onerrorHandler: EventListener | null = null;
+    #invokeOnloadHandler: EventListener = (event) => {
+      this.#onloadHandler?.call(this, event);
+    };
+    #invokeOnerrorHandler: EventListener = (event) => {
+      this.#onerrorHandler?.call(this, event);
+    };
 
     constructor(width?: number, height?: number) {
       super();
@@ -148,19 +156,33 @@ export const createImagePreloaderClass = ({
     }
 
     get onload(): EventListener | null {
-      return this.#getEventHandler('load');
+      return this.#onloadHandler;
     }
 
     set onload(handler: EventListener | null) {
-      this.#setEventHandler('load', handler);
+      this.#onloadHandler = isFunction(handler) ? handler : null;
+
+      if (isDefined(this.#onloadHandler)) {
+        this.addEventListener('load', this.#invokeOnloadHandler);
+        return;
+      }
+
+      this.removeEventListener('load', this.#invokeOnloadHandler);
     }
 
     get onerror(): EventListener | null {
-      return this.#getEventHandler('error');
+      return this.#onerrorHandler;
     }
 
     set onerror(handler: EventListener | null) {
-      this.#setEventHandler('error', handler);
+      this.#onerrorHandler = isFunction(handler) ? handler : null;
+
+      if (isDefined(this.#onerrorHandler)) {
+        this.addEventListener('error', this.#invokeOnerrorHandler);
+        return;
+      }
+
+      this.removeEventListener('error', this.#invokeOnerrorHandler);
     }
 
     decode(): Promise<void> {
@@ -267,24 +289,6 @@ export const createImagePreloaderClass = ({
       }
 
       this.#pendingDecodes.clear();
-    }
-
-    #getEventHandler(eventType: string): EventListener | null {
-      return this.#eventHandlers.get(eventType) ?? null;
-    }
-
-    #setEventHandler(eventType: string, handler: EventListener | null): void {
-      const previousHandler = this.#eventHandlers.get(eventType);
-
-      if (isDefined(previousHandler)) {
-        this.removeEventListener(eventType, previousHandler);
-        this.#eventHandlers.delete(eventType);
-      }
-
-      if (handler !== null) {
-        this.#eventHandlers.set(eventType, handler);
-        this.addEventListener(eventType, handler);
-      }
     }
   };
 };
