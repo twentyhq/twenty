@@ -60,7 +60,7 @@ export const validationRuleParser = new Parser({
 
 validationRuleParser.consts = { true: true, false: false };
 
-const toUtcPlainDateStringOrSelf = (value: string): string => {
+const toPlainDateStringOrSelf = (value: string): string => {
   try {
     return parseToPlainDateOrThrow(value).toString();
   } catch {
@@ -72,11 +72,8 @@ const alignWithDateOnlyOperand = (
   value: NonNullable<unknown>,
   otherValue: NonNullable<unknown>,
 ): NonNullable<unknown> =>
-  isString(value) &&
-  isString(otherValue) &&
-  isDateWithoutTime(otherValue) &&
-  !isDateWithoutTime(value)
-    ? toUtcPlainDateStringOrSelf(value)
+  isString(value) && isString(otherValue) && isDateWithoutTime(otherValue)
+    ? toPlainDateStringOrSelf(value)
     : value;
 
 const compareDefinedValues =

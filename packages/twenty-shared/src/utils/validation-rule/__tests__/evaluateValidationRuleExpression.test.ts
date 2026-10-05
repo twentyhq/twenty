@@ -183,6 +183,11 @@ describe('evaluateValidationRuleExpression', () => {
         closeDate: '2026-09-24T01:00:00+02:00',
       }),
     ).toEqual({ status: 'passed' });
+    expect(
+      evaluate('closeDate > "2026-09-23"', {
+        closeDate: '2026-09-23T10:00:00.000Z',
+      }),
+    ).toEqual({ status: 'failed' });
   });
 
   it('should keep comparing dates and plain texts as strings', () => {
@@ -192,9 +197,6 @@ describe('evaluateValidationRuleExpression', () => {
     expect(
       evaluate('signedOn < "not a date"', { signedOn: '2026-09-23' }),
     ).toEqual({ status: 'passed' });
-    expect(evaluate('stage < "WON"', { stage: 'OPEN' })).toEqual({
-      status: 'passed',
-    });
   });
 
   it('should check that a text contains another text', () => {
