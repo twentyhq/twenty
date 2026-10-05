@@ -75,14 +75,15 @@ const getComparableValue = ({
   value: NonNullable<unknown>;
   otherValue: NonNullable<unknown>;
 }): NonNullable<unknown> => {
-  switch (true) {
-    case isString(value) &&
-      isString(otherValue) &&
-      isDateWithoutTime(otherValue):
-      return toPlainDateStringOrSelf(value);
-    default:
-      return value;
+  if (
+    isString(value) &&
+    isString(otherValue) &&
+    isDateWithoutTime(otherValue)
+  ) {
+    return toPlainDateStringOrSelf(value);
   }
+
+  return value;
 };
 
 const compareDefinedValues =
