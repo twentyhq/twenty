@@ -22,6 +22,7 @@ type AutocompleteRootProps<TItem> = {
   itemToStringValue?: (item: TItem) => string;
   enabled?: boolean;
   openOnValueChange?: boolean;
+  closeOnItemPress?: boolean;
   onClose?: () => void;
   onItemHighlightedByUser?: (item: TItem | undefined) => void;
   globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
@@ -36,6 +37,7 @@ export const AutocompleteRoot = <TItem,>({
   itemToStringValue,
   enabled = true,
   openOnValueChange = true,
+  closeOnItemPress = true,
   onClose,
   onItemHighlightedByUser,
   globalHotkeysConfig,
@@ -62,10 +64,13 @@ export const AutocompleteRoot = <TItem,>({
         details.reason === 'input-change' && !openOnValueChange;
       const isOpeningEmptyList =
         details.reason === 'list-navigation' && !isNonEmptyArray(items);
+      const isClosingOnItemPress =
+        details.reason === 'item-press' && !closeOnItemPress;
 
       if (
         !enabled ||
-        (open && (isOpeningOnValueChange || isOpeningEmptyList))
+        (open && (isOpeningOnValueChange || isOpeningEmptyList)) ||
+        (!open && isClosingOnItemPress)
       ) {
         details.cancel();
         return;

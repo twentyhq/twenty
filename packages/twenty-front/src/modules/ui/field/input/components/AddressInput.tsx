@@ -250,6 +250,7 @@ export const AddressInput = ({
         itemToStringValue={(place) => place.text}
         value={internalValue[fieldType] ?? ''}
         openOnValueChange={false}
+        closeOnItemPress={false}
         onValueChange={(updatedValue) =>
           getChangeHandler(fieldType)(
             turnIntoEmptyStringIfWhitespacesOnly(updatedValue),

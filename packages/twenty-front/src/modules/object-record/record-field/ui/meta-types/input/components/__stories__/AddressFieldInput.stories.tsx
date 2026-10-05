@@ -22,7 +22,7 @@ import {
   type WorkspaceSurfaceContextValue,
 } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { Button } from 'twenty-ui/primitives/input';
-import { graphql, HttpResponse } from 'msw';
+import { delay, graphql, HttpResponse } from 'msw';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useEffect } from 'react';
@@ -316,6 +316,77 @@ export const SelectsCityWithoutReplacingStreet: Story = {
         'Address 1',
       );
       expect(clickOutsideJestFn).not.toHaveBeenCalled();
+    });
+  },
+};
+
+export const KeepsSelectionWhileDetailsLoad: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('GetAddressDetails', async () => {
+          await delay(800);
+
+          return HttpResponse.json({
+            data: {
+              getAddressDetails: {
+                street: '10 Rue de Rivoli',
+                state: 'Île-de-France',
+                postcode: '75001',
+                city: 'Paris',
+                country: 'FR',
+                location: { lat: 48.8566, lng: 2.3522 },
+              },
+            },
+          });
+        }),
+        ...(meta.parameters?.msw?.handlers ?? []),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+    const input = canvas.getByRole('combobox', { name: 'Address 1' });
+    const outsideButton = canvas.getByRole('button', { name: 'Outside' });
+
+    await userEvent.type(input, ' Rue');
+    await userEvent.click(
+      await screen.findByRole('option', { name: '10 Rue de Rivoli, Paris' }),
+    );
+
+    expect(screen.getByRole('listbox')).toBeVisible();
+
+    await userEvent.click(outsideButton);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+      expect(clickOutsideJestFn).not.toHaveBeenCalled();
+      expect(outsideButtonClickJestFn).not.toHaveBeenCalled();
+    });
+
+    await waitFor(
+      () => {
+        expect(input).toHaveValue('10 Rue de Rivoli');
+        expect(canvas.getByRole('combobox', { name: 'City' })).toHaveValue(
+          'Paris',
+        );
+      },
+      { timeout: 3000 },
+    );
+
+    await userEvent.click(outsideButton);
+
+    await waitFor(() => {
+      expect(clickOutsideJestFn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          newValue: expect.objectContaining({
+            addressStreet1: '10 Rue de Rivoli',
+            addressCity: 'Paris',
+            addressPostcode: '75001',
+          }),
+        }),
+      );
     });
   },
 };
