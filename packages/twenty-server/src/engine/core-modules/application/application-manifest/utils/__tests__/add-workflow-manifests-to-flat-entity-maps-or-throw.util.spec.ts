@@ -52,7 +52,6 @@ describe('application workflow installation gate', () => {
           existingAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
           idByUniversalIdentifierByMetadataName: {},
           isApplicationWorkflowsEnabled,
-          inferDeletionFromMissingEntities: true,
           now: '2026-09-28T00:00:00.000Z',
         }),
       ).toThrow('Application workflows are not enabled');
@@ -63,7 +62,6 @@ describe('application workflow installation gate', () => {
 const compute = ({
   workflows = MANIFEST.workflows ?? [],
   fromAllFlatEntityMaps = createEmptyAllFlatEntityMaps(),
-  inferDeletionFromMissingEntities = true,
 } = {}) => {
   for (const workflow of Object.values(
     fromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier,
@@ -89,7 +87,6 @@ const compute = ({
     existingAllFlatEntityMaps: fromAllFlatEntityMaps,
     idByUniversalIdentifierByMetadataName: {},
     isApplicationWorkflowsEnabled: true,
-    inferDeletionFromMissingEntities,
     now: '2026-09-28T00:00:00.000Z',
   });
 
@@ -133,20 +130,11 @@ describe('application workflow manifest updates', () => {
     );
   });
 
-  it('rejects deleting a workflow on a full sync', () => {
-    expect(() =>
-      compute({ workflows: [], fromAllFlatEntityMaps: compute() }),
-    ).toThrow('Removing application workflows is not supported');
-  });
+  it('leaves an omitted workflow out of the target maps so the sync deletes it', () => {
+    const before = compute();
+    const after = compute({ workflows: [], fromAllFlatEntityMaps: before });
 
-  it('allows omitted workflows on additive syncs', () => {
-    expect(() =>
-      compute({
-        workflows: [],
-        fromAllFlatEntityMaps: compute(),
-        inferDeletionFromMissingEntities: false,
-      }),
-    ).not.toThrow();
+    expect(after.flatWorkflowMaps.byUniversalIdentifier).toEqual({});
   });
 
   it('rejects unknown record fields and update selections in one error', () => {
