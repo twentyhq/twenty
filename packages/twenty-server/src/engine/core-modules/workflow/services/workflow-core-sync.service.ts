@@ -527,18 +527,32 @@ export class WorkflowCoreSyncService {
       return;
     }
 
-    await this.runCoreWorkflowMigration({
-      workspaceId,
-      failureMessage:
-        'Multiple validation errors occurred while deleting workflows',
-      operations: {
-        workflow: {
-          flatEntityToCreate: [],
-          flatEntityToDelete: flatWorkflowsToDelete,
-          flatEntityToUpdate: [],
+    try {
+      await this.runCoreWorkflowMigration({
+        workspaceId,
+        failureMessage:
+          'Multiple validation errors occurred while deleting workflows',
+        operations: {
+          workflow: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatWorkflowsToDelete,
+            flatEntityToUpdate: [],
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      const stillPersisted = await this.coreWorkflowRepository.find(
+        workspaceId,
+        {
+          where: { id: In(flatWorkflowsToDelete.map(({ id }) => id)) },
+          select: { id: true },
+        },
+      );
+
+      if (stillPersisted.length > 0) {
+        throw error;
+      }
+    }
   }
 
   async findCoreWorkflowById(
