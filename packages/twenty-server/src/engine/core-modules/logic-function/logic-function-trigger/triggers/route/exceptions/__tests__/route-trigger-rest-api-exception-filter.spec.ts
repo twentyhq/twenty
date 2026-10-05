@@ -2,6 +2,10 @@ import { type ArgumentsHost } from '@nestjs/common';
 
 import { type Response } from 'express';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { type HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { RouteTriggerRestApiExceptionFilter } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger-rest-api-exception-filter';
 import {
@@ -76,15 +80,26 @@ describe('RouteTriggerRestApiExceptionFilter', () => {
     );
   });
 
-  it('maps a missing or invalid token to 401', () => {
-    const exception = new RouteTriggerException(
-      'Missing authentication token',
-      RouteTriggerExceptionCode.UNAUTHENTICATED,
+  it('maps an invalid token to 401', () => {
+    const exception = new AuthException(
+      'Invalid token',
+      AuthExceptionCode.UNAUTHENTICATED,
     );
 
     filter.catch(exception, host);
 
     expect(handleError).toHaveBeenCalledWith(exception, response, 401);
+  });
+
+  it('maps a token refused for this workspace to 403', () => {
+    const exception = new AuthException(
+      'User is not a member of the workspace',
+      AuthExceptionCode.FORBIDDEN_EXCEPTION,
+    );
+
+    filter.catch(exception, host);
+
+    expect(handleError).toHaveBeenCalledWith(exception, response, 403);
   });
 
   it('maps a disabled function to 403', () => {

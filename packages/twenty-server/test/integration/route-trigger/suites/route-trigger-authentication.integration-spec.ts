@@ -98,13 +98,13 @@ describe('RouteTrigger authentication (integration)', () => {
     expect(response.body).toEqual({ executed: true });
   }, 60000);
 
-  it('rejects an auth-required route with 401 when no credentials are sent', async () => {
+  it('rejects an auth-required route with 403 when no credentials are sent', async () => {
     const response = await request(baseUrl)
       .get('/s/auth-required-route')
       .set('Host', workspaceHost);
 
-    expect(response.status).toBe(401);
-    expect(response.body.code).toBe('UNAUTHENTICATED');
+    expect(response.status).toBe(403);
+    expect(response.body.code).toBe('FORBIDDEN_EXCEPTION');
   }, 60000);
 
   it('rejects an auth-required route with 401 when the token is invalid', async () => {
