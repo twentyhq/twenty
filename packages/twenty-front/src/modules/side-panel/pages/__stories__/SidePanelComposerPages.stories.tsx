@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
 import { HttpResponse, graphql } from 'msw';
 import { useEffect, useState } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
@@ -164,6 +164,7 @@ const meta = {
     await mockedApolloClient.clearStore();
   },
   parameters: {
+    mockingDate: null,
     container: { width: 480, height: 720 },
     msw: {
       handlers: [
@@ -227,8 +228,25 @@ type Story = StoryObj<typeof meta>;
 
 export const CalendarEvent: Story = {
   args: { composer: 'calendar-event' },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('GetAutoCompleteAddress', () =>
+          HttpResponse.json({
+            data: {
+              getAutoCompleteAddress: [
+                { text: 'Apple Park, Cupertino', placeId: 'apple-park' },
+              ],
+            },
+          }),
+        ),
+        ...meta.parameters.msw.handlers,
+      ],
+    },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
 
     expect(await canvas.findByText('Kimberly Gordon')).toBeVisible();
     expect(canvas.getByText('tim@apple.dev')).toBeVisible();
@@ -242,6 +260,21 @@ export const CalendarEvent: Story = {
       'Apple Park',
     );
 
+    const locationSuggestion = await screen.findByRole(
+      'option',
+      { name: 'Apple Park, Cupertino' },
+      { timeout: 5000 },
+    );
+
+    await waitFor(() => expect(locationSuggestion).toBeVisible());
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
+
+    expect(canvas.getByPlaceholderText('Add a location')).toHaveValue(
+      'Apple Park',
+    );
     expect(canvas.getByRole('button', { name: /^Create event/ })).toBeEnabled();
   },
 };
@@ -308,5 +341,32 @@ export const Email: Story = {
       canvas.getByDisplayValue('Follow-up from our meeting'),
     ).toBeVisible();
     expect(canvas.getByRole('button', { name: /^Send/ })).toBeEnabled();
+
+    const screen = within(canvasElement.ownerDocument.body);
+    const input = canvas.getByRole('combobox', { name: 'To' });
+
+    await userEvent.type(input, 'new.recipient@example.net');
+
+    const suggestion = await screen.findByRole(
+      'option',
+      { name: /new.recipient@example.net/ },
+      { timeout: 5000 },
+    );
+
+    expect(input).toHaveFocus();
+    await userEvent.click(suggestion);
+
+    expect(canvas.getByText('new.recipient@example.net')).toBeVisible();
+    expect(input).toHaveFocus();
+    await userEvent.click(canvas.getByText('new.recipient@example.net'));
+    await userEvent.click(
+      await screen.findByRole('menuitem', { name: 'Remove' }),
+    );
+
+    expect(
+      canvas.queryByText('new.recipient@example.net'),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(input).toHaveFocus());
+    expect(canvas.getByText('Kimberly Gordon')).toBeVisible();
   },
 };

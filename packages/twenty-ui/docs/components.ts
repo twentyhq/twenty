@@ -1,3 +1,4 @@
+import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
@@ -67,6 +68,13 @@ import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'CountrySelect',
+    source: 'components/input/CountrySelect/CountrySelect.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/country-select',
+    propDescriptions: COUNTRY_SELECT_PROP_DESCRIPTIONS,
+  },
   {
     name: 'CurrencyPicker',
     source: 'components/input/CurrencyPicker/CurrencyPicker.tsx',
@@ -289,6 +297,27 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/RadioGroup/RadioGroup.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/radio-group',
+  },
+  {
+    name: 'Autocomplete',
+    source: 'primitives/input/Autocomplete/Autocomplete.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/autocomplete',
+    partPropDescriptions: {
+      Root: {
+        items:
+          'Items to display in the list. Nullish entries are not supported.',
+      },
+      Input: {
+        size: 'Visual size of the input. Inside an InputGroup, the group size applies.',
+      },
+      Popup: {
+        width:
+          'Width of the popup. Overrides its default minimum anchor width.',
+        container:
+          'Element the popup is portaled into. Defaults to the theme portal container.',
+      },
+    },
   },
   {
     name: 'Select',

@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
@@ -8,6 +8,7 @@ import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/util
 import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
+import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -17,7 +18,6 @@ import { AGENT_CHAT_ENSURE_THREAD_FOR_DRAFT_EVENT_NAME } from '@/ai/constants/Ag
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
-import { WORKSPACE_MEMBER_MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/WorkspaceMemberMentionSuggestionPluginKey';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { useWorkspaceMemberMentionSearch } from '@/mention/hooks/useWorkspaceMemberMentionSearch';
 import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
@@ -37,6 +37,7 @@ export const useAiChatEditor = () => {
   const { searchMentionRecords } = useMentionSearch();
   const { searchWorkspaceMembers } = useWorkspaceMemberMentionSearch();
   const { searchSkills } = useSkillSuggestionSearch();
+  const { uploadFiles } = useAiChatFileUpload();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -45,7 +46,7 @@ export const useAiChatEditor = () => {
   const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
   const editor = useAdvancedTextEditor({
     profile: AI_CHAT_EDITOR_PROFILE,
-    placeholder: t`Ask anything, # a record, @ a teammate or / a skill...`,
+    placeholder: t`Ask anything, @ a teammate or record, / a skill...`,
     readonly: false,
     defaultValue: initialDraft,
     editorProps: {
@@ -53,7 +54,6 @@ export const useAiChatEditor = () => {
         if (event.key === 'Enter' && !event.shiftKey) {
           const isSuggestionMenuOpen = [
             MENTION_SUGGESTION_PLUGIN_KEY,
-            WORKSPACE_MEMBER_MENTION_SUGGESTION_PLUGIN_KEY,
             SKILL_SUGGESTION_PLUGIN_KEY,
           ].some(
             (pluginKey) => pluginKey.getState(view.state)?.active === true,
@@ -70,6 +70,25 @@ export const useAiChatEditor = () => {
           return true;
         }
         return false;
+      },
+      handlePaste: (_view, event) => {
+        const clipboardData = event.clipboardData;
+
+        if (
+          !isDefined(clipboardData) ||
+          clipboardData.types.includes('text/plain')
+        ) {
+          return false;
+        }
+
+        const pastedFiles = Array.from(clipboardData.files);
+
+        if (!isNonEmptyArray(pastedFiles)) {
+          return false;
+        }
+
+        uploadFiles(pastedFiles);
+        return true;
       },
     },
     onUpdate: (currentEditor) => {
@@ -112,16 +131,10 @@ export const useAiChatEditor = () => {
     >;
     const mentionStorage = storage['mention-suggestion'] as {
       searchMentionRecords: typeof searchMentionRecords;
-    };
-    mentionStorage.searchMentionRecords = searchMentionRecords;
-
-    const workspaceMemberMentionStorage = storage[
-      'workspace-member-mention-suggestion'
-    ] as {
       searchWorkspaceMembers: typeof searchWorkspaceMembers;
     };
-    workspaceMemberMentionStorage.searchWorkspaceMembers =
-      searchWorkspaceMembers;
+    mentionStorage.searchMentionRecords = searchMentionRecords;
+    mentionStorage.searchWorkspaceMembers = searchWorkspaceMembers;
 
     const skillStorage = storage['skill-suggestion'] as {
       searchSkills: typeof searchSkills;

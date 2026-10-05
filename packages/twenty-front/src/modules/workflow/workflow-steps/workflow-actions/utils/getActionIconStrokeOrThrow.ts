@@ -25,6 +25,7 @@ export const getActionIconStrokeOrThrow = (
     case 'EMPTY':
     case 'FILTER':
     case 'DELAY':
+    case 'WAIT_FOR_EVENT':
     case 'AI_AGENT':
     case 'CLASSIFY':
       return undefined;

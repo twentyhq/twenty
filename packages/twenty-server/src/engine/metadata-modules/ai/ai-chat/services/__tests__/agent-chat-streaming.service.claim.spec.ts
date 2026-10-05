@@ -37,11 +37,12 @@ describe('AgentChatStreamingService claim & reap', () => {
     claimAffected = 1,
     queuedMessages = [] as unknown[],
     heartbeatAlive = true,
+    pendingToolOutput = { result: { questions: QUESTIONS, status: 'pending' } },
   }: {
     thread?: typeof idleThread & {
       pendingQuestionMessageId?: string;
-      workflowRunId?: string;
     };
+    pendingToolOutput?: Record<string, unknown>;
     claimAffected?: number;
     queuedMessages?: unknown[];
     heartbeatAlive?: boolean;
@@ -59,6 +60,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         .mockResolvedValue({ id: 'user-message-id', turnId: 'turn-id' }),
       closePendingToolCalls: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue([]),
+      getThreadContexts: jest.fn().mockResolvedValue([]),
       getQueuedMessages: jest.fn().mockResolvedValue(queuedMessages),
       hasQueuedMessages: jest
         .fn()
@@ -71,7 +73,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       find: jest.fn().mockResolvedValue([
         {
           id: 'part-id',
-          toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
+          toolOutput: pendingToolOutput,
         },
       ]),
     };
@@ -226,16 +228,6 @@ describe('AgentChatStreamingService claim & reap', () => {
       );
     });
 
-    it('loads hidden messages for the model', async () => {
-      const { send, agentChatService } = buildService();
-
-      await send();
-
-      expect(agentChatService.getMessagesForThread).toHaveBeenCalledWith(
-        expect.objectContaining({ includeHidden: true }),
-      );
-    });
-
     const waitingThread = {
       ...idleThread,
       pendingQuestionMessageId: 'question-message-id',
@@ -260,9 +252,13 @@ describe('AgentChatStreamingService claim & reap', () => {
       ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
     });
 
-    it('refuses a message while its workflow run waits on the conversation', async () => {
+    it('refuses a message while a workflow step waits on the pending call', async () => {
       const { send, agentChatService, messageQueueService } = buildService({
-        thread: { ...waitingThread, workflowRunId: 'workflow-run-id' },
+        thread: waitingThread,
+        pendingToolOutput: {
+          result: { questions: QUESTIONS, status: 'pending' },
+          workflowStep: { workflowRunId: 'workflow-run-id', stepId: 'step-id' },
+        },
       });
 
       await expect(send()).rejects.toMatchObject({

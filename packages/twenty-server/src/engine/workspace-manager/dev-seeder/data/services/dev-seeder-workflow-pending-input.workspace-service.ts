@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { type AskQuestionItem, REQUEST_FORM_TOOL_NAME } from 'twenty-shared/ai';
-import {
-  type ActorMetadata,
-  FieldActorSource,
-  FieldMetadataType,
-} from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type AskQuestionItem } from 'twenty-shared/ai';
+import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { v5 } from 'uuid';
 
@@ -15,11 +10,10 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
-import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -36,10 +30,7 @@ import {
   type WorkflowWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
-import {
-  type WorkflowAction,
-  type WorkflowFormAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import {
   type WorkflowManualTrigger,
@@ -63,10 +54,6 @@ const INITIATORS = {
   TIM: {
     workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     name: 'Tim Apple',
-  },
-  JONY: {
-    workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    name: 'Jony Ive',
   },
   PHIL: {
     workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
@@ -162,29 +149,6 @@ const AGENT_WORKFLOWS_TO_SEED: AgentWorkflowToSeed[] = [
   },
 ];
 
-const DISCOUNT_RUNS_TO_SEED: {
-  suffix: string;
-  initiator: Initiator;
-  endStatus?: WorkflowRunStatus.COMPLETED | WorkflowRunStatus.STOPPED;
-  response?: Record<string, unknown>;
-}[] = [
-  {
-    suffix: 'Answered',
-    initiator: 'TIM',
-    endStatus: WorkflowRunStatus.COMPLETED,
-    response: {
-      discount: 15,
-      justification: 'Three-year commitment signed by Airbnb procurement.',
-    },
-  },
-  {
-    suffix: 'Stopped',
-    initiator: 'PHIL',
-    endStatus: WorkflowRunStatus.STOPPED,
-  },
-  { suffix: 'Pending', initiator: 'JONY' },
-];
-
 const ERROR_HANDLING_OPTIONS = {
   retryOnFailure: { value: 0 },
   continueOnFailure: { value: false },
@@ -203,10 +167,6 @@ type SeededWorkflow = {
 @Injectable()
 export class DevSeederWorkflowPendingInputWorkspaceService {
   constructor(
-    @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentMessagePart')
-    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
@@ -282,11 +242,35 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         workflowRunId,
         workflow,
         initiator: agentWorkflow.initiator,
-        recordConversation: () =>
-          this.workflowAgentConversationService.recordExecution({
+        recordConversation: async () => {
+          const openConversation = (
+            recipientWorkspaceMemberId: string | null,
+          ) =>
+            this.workflowAgentConversationService.openConversation({
+              runInfo: { workspaceId, workflowRunId },
+              stepId: workflow.step.id,
+              title: workflow.step.name,
+              recipientWorkspaceMemberId,
+              threadKey: `${workflowRunId}:${workflow.step.id}`,
+            });
+          // an initiator who cannot hold a chat in this workspace leaves the question with no recipient
+          const { threadId } = await openConversation(
+            INITIATORS[agentWorkflow.initiator].workspaceMemberId,
+          ).catch((error) => {
+            if (
+              error instanceof AiException &&
+              error.code === AiExceptionCode.THREAD_NOT_FOUND
+            ) {
+              return openConversation(null);
+            }
+
+            throw error;
+          });
+
+          await this.workflowAgentConversationService.recordExecution({
             workspaceId,
-            workflowRunId,
-            stepId: workflow.step.id,
+            threadId,
+            workflowStep: { workflowRunId, stepId: workflow.step.id },
             title: workflow.step.name,
             agentId: null,
             prompt: agentWorkflow.runPrompt,
@@ -295,95 +279,9 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
               isPaused: true,
               steps: [{ content }],
             },
-          }),
+          });
+        },
       });
-    }
-
-    const formStep: WorkflowFormAction = {
-      id: seedId('formStep', workspaceId),
-      name: 'Approve discount',
-      type: WorkflowActionType.FORM,
-      valid: true,
-      settings: {
-        input: [
-          {
-            id: seedId('formField:discount', workspaceId),
-            name: 'discount',
-            label: 'Approved discount (%)',
-            type: FieldMetadataType.NUMBER,
-            placeholder: '10',
-          },
-          {
-            id: seedId('formField:justification', workspaceId),
-            name: 'justification',
-            label: 'Justification',
-            type: FieldMetadataType.TEXT,
-            placeholder: 'Why this discount is worth it',
-          },
-        ],
-        outputSchema: {},
-        errorHandlingOptions: ERROR_HANDLING_OPTIONS,
-      },
-      nextStepIds: [],
-    };
-
-    const discountWorkflow = await this.insertWorkflow({
-      workspaceId,
-      applicationId,
-      key: 'approveDiscount',
-      name: 'Approve discount',
-      position: 5,
-      icon: 'IconDiscount',
-      step: formStep,
-    });
-
-    for (const discountRun of DISCOUNT_RUNS_TO_SEED) {
-      const workflowRunId = seedId(
-        `workflowRun:discount${discountRun.suffix}`,
-        workspaceId,
-      );
-
-      await this.seedPausedRun({
-        workspaceId,
-        workflowRunId,
-        workflow: discountWorkflow,
-        initiator: discountRun.initiator,
-        recordConversation: () =>
-          this.workflowAgentConversationService.recordFormRequest({
-            workspaceId,
-            workflowRunId,
-            stepId: formStep.id,
-            title: formStep.name,
-            fields: formStep.settings.input,
-          }),
-      });
-
-      if (isDefined(discountRun.response)) {
-        await this.recordFormAnswer({
-          workspaceId,
-          workflowRunId,
-          formStep,
-          response: discountRun.response,
-        });
-
-        await this.workflowRunWorkspaceService.updateStepInfoIfPending({
-          stepId: formStep.id,
-          stepInfo: {
-            status: StepStatus.SUCCESS,
-            result: discountRun.response,
-          },
-          workflowRunId,
-          workspaceId,
-        });
-      }
-
-      if (isDefined(discountRun.endStatus)) {
-        await this.workflowRunWorkspaceService.endWorkflowRun({
-          workflowRunId,
-          workspaceId,
-          status: discountRun.endStatus,
-        });
-      }
     }
   }
 
@@ -432,45 +330,6 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
       workflowRunId,
       workspaceId,
     });
-  }
-
-  private async recordFormAnswer({
-    workspaceId,
-    workflowRunId,
-    formStep,
-    response,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-    formStep: WorkflowFormAction;
-    response: Record<string, unknown>;
-  }): Promise<void> {
-    const thread = await this.threadRepository.findOneOrFail(workspaceId, {
-      where: { workflowRunId },
-      select: ['id', 'pendingQuestionMessageId'],
-    });
-    const completion = await PAUSING_TOOLS.get(REQUEST_FORM_TOOL_NAME)
-      ?.parseCall({ fields: formStep.settings.input })
-      ?.complete({
-        output: response,
-        context: { executeTool: async () => ({ success: true, message: '' }) },
-      });
-
-    if (!isDefined(thread.pendingQuestionMessageId) || !isDefined(completion)) {
-      throw new Error('Seeded form call does not parse');
-    }
-
-    await this.messagePartRepository.update(
-      workspaceId,
-      { messageId: thread.pendingQuestionMessageId, toolCallId: formStep.id },
-      { toolOutput: completion.toolResult },
-    );
-
-    await this.threadRepository.update(
-      workspaceId,
-      { id: thread.id },
-      { pendingQuestionMessageId: null },
-    );
   }
 
   private async insertWorkflow({

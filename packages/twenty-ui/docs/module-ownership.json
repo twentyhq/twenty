@@ -1,6 +1,7 @@
 {
   "primitives": [
     "AlertDialog",
+    "Autocomplete",
     "Avatar",
     "Banner",
     "Breadcrumb",
@@ -50,6 +51,7 @@
     "CodeEditor",
     "CodeEditorHeader",
     "CommandBlock",
+    "CountrySelect",
     "CurrencyPicker",
     "Dropdown",
     "IconButton",
