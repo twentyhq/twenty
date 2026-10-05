@@ -15,6 +15,15 @@ const agent = {
   isSystem: false,
   modelConfiguration: { webSearch: { enabled: true } },
   evaluationInputs: ['Is Acme a good fit?'],
+  triggers: [
+    {
+      id: '6f1b5a3e-3c3f-4f4a-9a43-0a7f5d6c2b11',
+      type: 'CRON',
+      isActive: true,
+      instructions: 'Send the weekly digest',
+      settings: { pattern: '0 9 * * 1' },
+    },
+  ],
   applicationId: 'application-id',
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
@@ -34,6 +43,15 @@ describe('getCoreAgentInitialFormValues', () => {
       modelConfiguration: { webSearch: { enabled: true } },
       responseFormat: { type: 'json', schema: {} },
       evaluationInputs: ['Is Acme a good fit?'],
+      triggers: [
+        {
+          id: '6f1b5a3e-3c3f-4f4a-9a43-0a7f5d6c2b11',
+          type: 'CRON',
+          isActive: true,
+          instructions: 'Send the weekly digest',
+          settings: { pattern: '0 9 * * 1' },
+        },
+      ],
     });
   });
 

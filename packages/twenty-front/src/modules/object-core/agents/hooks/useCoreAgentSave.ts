@@ -75,6 +75,7 @@ export const useCoreAgentSave = ({
     modelConfiguration: formValues.modelConfiguration,
     responseFormat: formValues.responseFormat,
     evaluationInputs: formValues.evaluationInputs,
+    triggers: formValues.triggers,
   });
 
   const autoSave = useDebouncedCallback(async () => {

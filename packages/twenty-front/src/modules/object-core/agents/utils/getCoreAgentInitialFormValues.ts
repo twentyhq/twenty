@@ -1,3 +1,4 @@
+import { type AgentTrigger } from 'twenty-shared/application';
 import { type FindOneAgentQuery } from '~/generated-metadata/graphql';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 
@@ -17,5 +18,6 @@ export const getCoreAgentInitialFormValues = (
     // TODO: Fallback can be removed once all text response format agents are migrated.
     responseFormat: agent.responseFormat || { type: 'text' },
     evaluationInputs: agent.evaluationInputs ?? [],
+    triggers: (agent.triggers ?? []) as AgentTrigger[],
   };
 };

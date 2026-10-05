@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import {
+  IconBolt,
   IconListCheck,
   IconLock,
   IconSettings,
@@ -29,6 +30,7 @@ import { CoreAgentEvalsTab } from '@/object-core/agents/components/CoreAgentEval
 import { CoreAgentLogsTab } from '@/object-core/agents/components/CoreAgentLogsTab';
 import { CoreAgentRoleTab } from '@/object-core/agents/components/CoreAgentRoleTab';
 import { CoreAgentSettingsTab } from '@/object-core/agents/components/CoreAgentSettingsTab';
+import { CoreAgentTriggersTab } from '@/object-core/agents/components/CoreAgentTriggersTab';
 import { CORE_AGENT_DETAIL_TABS } from '@/object-core/agents/constants/CoreAgentDetailTabs';
 import { useCoreAgentFormState } from '@/object-core/agents/hooks/useCoreAgentFormState';
 import { useCoreAgentSave } from '@/object-core/agents/hooks/useCoreAgentSave';
@@ -116,6 +118,11 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
       Icon: IconLock,
     },
     {
+      id: CORE_AGENT_DETAIL_TABS.TABS_IDS.TRIGGERS,
+      title: t`Triggers`,
+      Icon: IconBolt,
+    },
+    {
       id: CORE_AGENT_DETAIL_TABS.TABS_IDS.EVALS,
       title: t`Evals`,
       Icon: IconListCheck,
@@ -133,6 +140,8 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const isRoleTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.ROLE;
   const isSettingsTab =
     activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS;
+  const isTriggersTab =
+    activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.TRIGGERS;
   const isEvalsTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.EVALS;
   const isLogsTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.LOGS;
 
@@ -175,6 +184,15 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
                   onFieldChange={handleFieldChange}
                   disabled={isFormDisabled}
                   agent={agent}
+                />
+              )}
+              {isTriggersTab && (
+                <CoreAgentTriggersTab
+                  triggers={formValues.triggers}
+                  onTriggersChange={(triggers) =>
+                    handleFieldChange('triggers', triggers)
+                  }
+                  disabled={isFormDisabled}
                 />
               )}
               {isEvalsTab && (

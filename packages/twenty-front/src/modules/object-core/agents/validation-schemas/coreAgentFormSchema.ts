@@ -1,5 +1,6 @@
 import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { z } from 'zod';
+import { coreAgentTriggerSchema } from '@/object-core/agents/validation-schemas/coreAgentTriggerSchema';
 import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
 
 export const coreAgentFormSchema = z.object({
@@ -34,6 +35,7 @@ export const coreAgentFormSchema = z.object({
     })
     .optional(),
   evaluationInputs: z.array(z.string()).default([]),
+  triggers: z.array(coreAgentTriggerSchema).default([]),
 });
 
 export type CoreAgentFormValues = z.infer<typeof coreAgentFormSchema>;
