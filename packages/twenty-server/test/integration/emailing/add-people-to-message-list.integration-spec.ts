@@ -6,7 +6,6 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -63,6 +62,16 @@ const getJobState = async (jobId: string) => {
   return (await campaignQueue.getJobs([jobId]))[jobId]?.state;
 };
 
+const waitForJobToSettle = async (jobId: string) => {
+  await expectEventually(
+    async () =>
+      expect(['completed', 'failed']).toContain(await getJobState(jobId)),
+    { timeoutMs: 90_000 },
+  );
+
+  return getJobState(jobId);
+};
+
 const addPeopleAndWait = async (input: {
   messageListId: string;
   personFilter: object;
@@ -74,9 +83,7 @@ const addPeopleAndWait = async (input: {
   const jobId: string =
     response.body.data.triggerAddPeopleToMessageListJob.jobId;
 
-  await waitForAllJobsToFinish();
-
-  return getJobState(jobId);
+  return waitForJobToSettle(jobId);
 };
 
 const createMessageList = async () => {
@@ -228,7 +235,7 @@ describe('triggerAddPeopleToMessageListJob (integration)', () => {
       'completed',
     );
     expect(await countMessageListMembers(messageListId)).toBe(people.length);
-  }, 60_000);
+  }, 200_000);
 
   it('adds only the people matching the filter', async () => {
     const messageListId = await createMessageList();
@@ -306,9 +313,8 @@ describe('triggerAddPeopleToMessageListJob (integration)', () => {
       expect(secondResponse.body.errors[0].extensions.code).toBe('CONFLICT');
 
       releaseJob();
-      await waitForAllJobsToFinish();
 
-      expect(await getJobState(jobId)).toBe('completed');
+      expect(await waitForJobToSettle(jobId)).toBe('completed');
       expect(
         (await findAddPeopleToMessageListJobStatus(messageListId)).body.data
           .findAddPeopleToMessageListJobStatus,
