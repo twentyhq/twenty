@@ -12,6 +12,7 @@ import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limi
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
@@ -23,7 +24,7 @@ const WORKSPACE_USAGE_LIMITS = gql`
         operationType
         spenderType
         limitKind
-        meter
+        unit
         limitValue
         isOverridable
         overriddenByUsageLimitId
@@ -79,7 +80,7 @@ const STORAGE_STOCK_PAYLOAD = {
   limitKind: 'stock',
   periodCount: 1,
   periodUnit: 'lifetime',
-  meter: 'bytes',
+  unit: UsageUnit.BYTE,
   limitValue: 5_000_000,
   burstValue: null,
 };
@@ -114,7 +115,7 @@ describe('Workspace usage limits from the admin panel', () => {
       expect.objectContaining({
         resourceType: UsageResourceType.STORAGE,
         limitKind: 'stock',
-        meter: 'bytes',
+        unit: UsageUnit.BYTE,
         isOverridable: true,
         overriddenByUsageLimitId: null,
       }),
@@ -149,12 +150,12 @@ describe('Workspace usage limits from the admin panel', () => {
           resourceType: UsageResourceType;
           operationType: UsageOperationType;
           spenderType: string;
-          meter: string;
+          unit: UsageUnit;
         }) =>
           usageLimitDefault.resourceType === UsageResourceType.STORAGE &&
           usageLimitDefault.operationType === UsageOperationType.STORAGE_FILE &&
           usageLimitDefault.spenderType === 'workspace' &&
-          usageLimitDefault.meter === 'bytes',
+          usageLimitDefault.unit === UsageUnit.BYTE,
       ),
     ).toEqual(
       expect.objectContaining({ overriddenByUsageLimitId: usageLimitId }),

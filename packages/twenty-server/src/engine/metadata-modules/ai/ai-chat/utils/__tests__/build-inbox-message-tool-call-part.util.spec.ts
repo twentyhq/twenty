@@ -1,3 +1,4 @@
+import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
 import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
@@ -19,29 +20,28 @@ const build = (toolCall: unknown) =>
       SHARE_RECORDING_TOOL.universalIdentifier
         ? SHARE_RECORDING_TOOL
         : undefined,
+    resolveProposal: async (input) => resolveEmailToolCallProposal(input),
   });
 
 describe('buildInboxMessageToolCallPart', () => {
-  it('asks questions as a pending ask_questions call', async () => {
-    const questions = [
-      {
-        header: 'Share',
-        question: 'Share the recording?',
-        options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
-      },
-    ];
+  it('asks a question as a pending ask_question call', async () => {
+    const question = {
+      header: 'Share',
+      question: 'Share the recording?',
+      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+    };
 
     await expect(
-      build({ toolName: 'ask_questions', input: { questions } }),
+      build({ toolName: 'ask_question', input: question }),
     ).resolves.toEqual({
       isAwaitingAnswer: true,
       part: {
-        type: 'tool-ask_questions',
+        type: 'tool-ask_question',
         toolCallId: TOOL_CALL_ID,
         state: 'output-available',
-        input: { questions },
+        input: question,
         output: expect.objectContaining({
-          result: { questions, status: 'pending' },
+          result: { question, status: 'pending' },
         }),
       },
     });
@@ -62,22 +62,66 @@ describe('buildInboxMessageToolCallPart', () => {
     });
   });
 
-  it('proposes an email as a pending propose_email call', async () => {
-    const email = {
-      recipients: { to: 'team@acme.com', cc: '', bcc: '' },
-      subject: 'Recap',
-      body: 'Here is the recap.',
+  it('proposes an email for the member to send, save as a draft or discard', async () => {
+    const emailCall = {
+      toolName: 'send_email',
+      arguments: {
+        recipients: { to: 'team@acme.com', cc: '', bcc: '' },
+        subject: 'Recap',
+        body: '<p>Here is the recap.</p><p>Jane</p>',
+      },
+      summary: 'Send the call recap to the team',
     };
 
     await expect(
-      build({ toolName: 'propose_email', input: email }),
+      build({ toolName: 'propose_tool_call', input: emailCall }),
     ).resolves.toEqual({
       isAwaitingAnswer: true,
       part: expect.objectContaining({
-        type: 'tool-propose_email',
-        input: email,
+        type: 'tool-propose_tool_call',
+        input: emailCall,
         output: expect.objectContaining({
-          result: { status: 'pending', email },
+          result: {
+            status: 'pending',
+            proposal: {
+              ...emailCall,
+              toolLabel: 'Send Email',
+              template: 'email',
+              alternativeToolNames: ['draft_email'],
+            },
+          },
+        }),
+      }),
+    });
+  });
+
+  it('proposes any call the resolver resolves for the sender', async () => {
+    const updateCall = {
+      toolName: 'update_one_opportunity',
+      arguments: { id: 'deal-1', stage: 'WON' },
+      summary: 'Mark the deal as won',
+    };
+    const proposal = {
+      ...updateCall,
+      toolLabel: 'Update Opportunity',
+      template: 'recordUpdate' as const,
+      objectNameSingular: 'opportunity',
+      recordId: 'deal-1',
+      currentValues: { stage: 'PROPOSAL' },
+    };
+
+    await expect(
+      buildInboxMessageToolCallPart({
+        toolCall: { toolName: 'propose_tool_call', input: updateCall },
+        toolCallId: TOOL_CALL_ID,
+        findApplicationTool: async () => undefined,
+        resolveProposal: async () => ({ proposal }),
+      }),
+    ).resolves.toEqual({
+      isAwaitingAnswer: true,
+      part: expect.objectContaining({
+        output: expect.objectContaining({
+          result: { status: 'pending', proposal },
         }),
       }),
     });
@@ -103,12 +147,34 @@ describe('buildInboxMessageToolCallPart', () => {
 
   it.each([
     ['an unknown tool', { toolName: 'send_email', input: {} }],
-    ['invalid input', { toolName: 'ask_questions', input: { questions: [] } }],
+    [
+      'a proposed call that is not an email',
+      {
+        toolName: 'propose_tool_call',
+        input: {
+          toolName: 'delete_one_company',
+          arguments: { id: 'company-1' },
+          summary: 'Delete the company',
+        },
+      },
+    ],
+    [
+      'a proposed email whose body is neither a document nor HTML',
+      {
+        toolName: 'propose_tool_call',
+        input: {
+          toolName: 'send_email',
+          arguments: { subject: 'Recap', body: 42 },
+          summary: 'Send the recap',
+        },
+      },
+    ],
+    ['invalid input', { toolName: 'ask_question', input: { options: [] } }],
     [
       'a tool of another application',
       { logicFunctionUniversalIdentifier: 'other-tool' },
     ],
-    ['a non-object tool call', 'ask_questions'],
+    ['a non-object tool call', 'ask_question'],
     [
       'an application tool with a non-object input',
       { logicFunctionUniversalIdentifier: 'share-recording-tool', input: [] },
@@ -123,7 +189,7 @@ describe('buildInboxMessageToolCallPart', () => {
     [
       'a tool call naming both a tool and an application tool',
       {
-        toolName: 'ask_questions',
+        toolName: 'ask_question',
         logicFunctionUniversalIdentifier: 'share-recording-tool',
       },
     ],

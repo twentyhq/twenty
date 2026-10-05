@@ -22,42 +22,42 @@ const StyledContainer = styled.div`
 
 const INSTANCE_ID = 'agentChatQuestionCardStory';
 
-const singleQuestion: AgentChatPendingQuestion = {
-  toolCallId: 'call-1',
-  questions: [
+const EMAIL_TYPE_QUESTION = {
+  header: 'Email type',
+  question: 'What type of emails would you like to send?',
+  options: [
     {
-      header: 'Email type',
-      question: 'What type of emails would you like to send?',
-      options: [
-        {
-          label: 'A welcome email',
-          description: 'A short, friendly note to introduce yourself.',
-          isRecommended: true,
-        },
-        { label: 'A presentation of Twenty' },
-        { label: 'An offer for a potential partnership' },
-      ],
+      label: 'A welcome email',
+      description: 'A short, friendly note to introduce yourself.',
+      isRecommended: true,
     },
+    { label: 'A presentation of Twenty' },
+    { label: 'An offer for a potential partnership' },
   ],
 };
 
+const singleQuestion: AgentChatPendingQuestion = {
+  toolCallId: 'call-1',
+  kind: 'question',
+  question: EMAIL_TYPE_QUESTION,
+};
+
+const TONE_QUESTION = {
+  header: 'Tone',
+  question: 'Which tone should the email use?',
+  options: [{ label: 'Friendly', isRecommended: true }, { label: 'Formal' }],
+};
+
+// calls asked before ask_question took one question at a time
 const multipleQuestions: AgentChatPendingQuestion = {
   toolCallId: 'call-2',
-  questions: [
-    singleQuestion.questions[0],
-    {
-      header: 'Tone',
-      question: 'Which tone should the email use?',
-      options: [
-        { label: 'Friendly', isRecommended: true },
-        { label: 'Formal' },
-      ],
-    },
-  ],
+  kind: 'questions',
+  questions: [EMAIL_TYPE_QUESTION, TONE_QUESTION],
 };
 
 const longQuestion: AgentChatPendingQuestion = {
   toolCallId: 'call-3',
+  kind: 'questions',
   questions: [
     {
       header: 'Improvement',
@@ -70,24 +70,23 @@ const longQuestion: AgentChatPendingQuestion = {
         { label: 'Fewer steps' },
       ],
     },
-    multipleQuestions.questions[1],
+    TONE_QUESTION,
   ],
 };
 
 const multiSelectQuestion: AgentChatPendingQuestion = {
   toolCallId: 'call-4',
-  questions: [
-    {
-      header: 'Channels',
-      question: 'Which channels should the outreach campaign use?',
-      allowMultiSelect: true,
-      options: [
-        { label: 'Email', isRecommended: true },
-        { label: 'LinkedIn' },
-        { label: 'Phone' },
-      ],
-    },
-  ],
+  kind: 'question',
+  question: {
+    header: 'Channels',
+    question: 'Which channels should the outreach campaign use?',
+    allowMultiSelect: true,
+    options: [
+      { label: 'Email', isRecommended: true },
+      { label: 'LinkedIn' },
+      { label: 'Phone' },
+    ],
+  },
 };
 
 const StoreSeeder = ({ children }: { children: ReactNode }) => {

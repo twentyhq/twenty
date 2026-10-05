@@ -1,14 +1,14 @@
 import { type StepResult, type ToolSet } from 'ai';
 
-import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
+import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 
 const buildStep = (
   content: StepResult<ToolSet>['content'],
 ): Pick<StepResult<ToolSet>, 'content'> => ({ content });
 
-describe('mapAiStepsToUiMessageParts', () => {
+describe('mapAiStepsToUIMessageParts', () => {
   it('turns each step into the parts a chat stream would have stored', () => {
-    const parts = mapAiStepsToUiMessageParts([
+    const parts = mapAiStepsToUIMessageParts([
       buildStep([
         { type: 'reasoning', text: 'Looking the company up first' },
         {
@@ -49,7 +49,7 @@ describe('mapAiStepsToUiMessageParts', () => {
   });
 
   it('records a failed tool call as an error on its call', () => {
-    const parts = mapAiStepsToUiMessageParts([
+    const parts = mapAiStepsToUIMessageParts([
       buildStep([
         {
           type: 'tool-call',
@@ -76,7 +76,7 @@ describe('mapAiStepsToUiMessageParts', () => {
 
   // A dangling call is finalized by the storage path, not dropped here.
   it('keeps a call that never got a result as waiting on its input', () => {
-    const parts = mapAiStepsToUiMessageParts([
+    const parts = mapAiStepsToUIMessageParts([
       buildStep([
         {
           type: 'tool-call',
@@ -92,7 +92,7 @@ describe('mapAiStepsToUiMessageParts', () => {
 
   it('skips empty text and reasoning', () => {
     expect(
-      mapAiStepsToUiMessageParts([
+      mapAiStepsToUIMessageParts([
         buildStep([
           { type: 'text', text: '' },
           { type: 'reasoning', text: '' },

@@ -1,13 +1,13 @@
 import { IconMessage } from 'twenty-ui/icon';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useLingui } from '@lingui/react/macro';
+import { useId } from 'react';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
-import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
+import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
@@ -42,12 +42,10 @@ export const NavigationDrawerAiChatThreadItem = ({
     thread.id,
   );
   const displayLabel = thread.title || t`New chat`;
+  const actionsInstanceId = useId();
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    getAiChatThreadItemMenuDropdownId({
-      threadId: thread.id,
-      surface: AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER,
-    }),
+    getCommandMenuDropdownIdFromCommandMenuId(actionsInstanceId),
   );
   if (isRenaming && isExpanded) {
     return (
@@ -74,7 +72,7 @@ export const NavigationDrawerAiChatThreadItem = ({
       rightOptions={
         <AiChatThreadActionsDropdown
           thread={thread}
-          surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
+          instanceId={actionsInstanceId}
           onRenameRequested={startRename}
         />
       }

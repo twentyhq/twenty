@@ -2,12 +2,13 @@ import { type StockCounter } from 'src/engine/core-modules/usage-limit/types/sto
 import { findExhaustedStockCounter } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-stock-counter.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const buildCounter = (overrides: Partial<StockCounter> = {}): StockCounter => ({
-  key: 'stock:bytes',
+  key: 'stock:BYTE',
   isDefault: false,
   limitValue: 1_000,
-  meter: 'bytes',
+  unit: UsageUnit.BYTE,
   resourceType: UsageResourceType.STORAGE,
   operationType: UsageOperationType.STORAGE_FILE,
   spenderType: 'workspace',
@@ -21,7 +22,7 @@ describe('findExhaustedStockCounter', () => {
       findExhaustedStockCounter({
         counters: [buildCounter()],
         remainings: [250],
-        cost: { bytes: 250 },
+        cost: { [UsageUnit.BYTE]: 250 },
       }),
     ).toBeNull();
   });
@@ -33,7 +34,7 @@ describe('findExhaustedStockCounter', () => {
       findExhaustedStockCounter({
         counters: [counter],
         remainings: [250],
-        cost: { bytes: 251 },
+        cost: { [UsageUnit.BYTE]: 251 },
       }),
     ).toEqual({ counter, remaining: 250 });
   });
@@ -41,9 +42,9 @@ describe('findExhaustedStockCounter', () => {
   it('admits a counter the cost does not touch', () => {
     expect(
       findExhaustedStockCounter({
-        counters: [buildCounter({ meter: 'quantity' })],
+        counters: [buildCounter({ unit: UsageUnit.FILE })],
         remainings: [0],
-        cost: { bytes: 400 },
+        cost: { [UsageUnit.BYTE]: 400 },
       }),
     ).toBeNull();
   });
@@ -53,7 +54,7 @@ describe('findExhaustedStockCounter', () => {
       findExhaustedStockCounter({
         counters: [buildCounter()],
         remainings: [null],
-        cost: { bytes: 400 },
+        cost: { [UsageUnit.BYTE]: 400 },
       }),
     ).toBeNull();
   });
@@ -63,24 +64,24 @@ describe('findExhaustedStockCounter', () => {
       findExhaustedStockCounter({
         counters: [buildCounter()],
         remainings: [-10],
-        cost: { bytes: 1 },
+        cost: { [UsageUnit.BYTE]: 1 },
       }),
     ).toMatchObject({ remaining: -10 });
   });
 
   it('keeps looking past a counter the cost fits in', () => {
-    const quantityCounter = buildCounter({
-      key: 'stock:quantity',
-      meter: 'quantity',
+    const fileCounter = buildCounter({
+      key: 'stock:FILE',
+      unit: UsageUnit.FILE,
       limitValue: 5,
     });
 
     expect(
       findExhaustedStockCounter({
-        counters: [buildCounter(), quantityCounter],
+        counters: [buildCounter(), fileCounter],
         remainings: [500, 0],
-        cost: { bytes: 400, quantity: 1 },
+        cost: { [UsageUnit.BYTE]: 400, [UsageUnit.FILE]: 1 },
       }),
-    ).toEqual({ counter: quantityCounter, remaining: 0 });
+    ).toEqual({ counter: fileCounter, remaining: 0 });
   });
 });

@@ -11,10 +11,10 @@ export const ACTION_TOOL_IDS = [
   'create_calendar_event',
   'search_help_center',
   'code_interpreter',
-  'navigate_app',
   'save_campaign',
   'create_file_upload',
   'complete_file_upload',
+  'share_record',
 ] as const;
 
 export type ActionToolId = (typeof ACTION_TOOL_IDS)[number];
@@ -41,9 +41,6 @@ export const ACTION_TOOL_LABELS: Record<ActionToolId, ActionToolLabel> = {
   code_interpreter: {
     label: i18nLabel(msg`Code Interpreter`),
   },
-  navigate_app: {
-    label: i18nLabel(msg`Navigate App`),
-  },
   save_campaign: {
     label: i18nLabel(msg`Save Campaign`),
   },
@@ -52,5 +49,8 @@ export const ACTION_TOOL_LABELS: Record<ActionToolId, ActionToolLabel> = {
   },
   complete_file_upload: {
     label: i18nLabel(msg`Complete File Upload`),
+  },
+  share_record: {
+    label: i18nLabel(msg`Share Record`),
   },
 };

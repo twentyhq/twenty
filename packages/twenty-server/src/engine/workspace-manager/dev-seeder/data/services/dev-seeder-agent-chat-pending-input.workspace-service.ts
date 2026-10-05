@@ -1,13 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  ASK_QUESTIONS_TOOL_NAME,
-  type AskQuestionItem,
-  PROPOSE_EMAIL_TOOL_NAME,
-  type ProposedEmail,
-  REQUEST_FORM_TOOL_NAME,
-  type RequestFormField,
-} from 'twenty-shared/ai';
+import { type AskQuestionItem, type RequestFormField } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
@@ -19,12 +12,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
-import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
-import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
-import { createProposeEmailTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
-import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
+import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -33,7 +23,16 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/agent-chat-seeds.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { OPPORTUNITY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { askQuestionCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/ask-question-call.util';
+import { buildSendEmailArguments } from 'src/engine/workspace-manager/dev-seeder/data/utils/build-send-email-arguments.util';
+import { proposeEmailCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/propose-email-call.util';
+import { proposeRecordCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/propose-record-call.util';
+import { requestFormCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/request-form-call.util';
+import { type SeededEmail } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-email.type';
+import { type SeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-call.type';
 
 const AGENT_CHAT_PENDING_INPUT_SEED_NAMESPACE =
   '3c7e1f52-8a4d-4b0e-9d61-2f5a7c9e0b14';
@@ -93,51 +92,60 @@ const ONBOARDING_OWNER_QUESTIONS: AskQuestionItem[] = [
   },
 ];
 
-const AIRBNB_FOLLOW_UP_EMAIL: ProposedEmail = {
-  recipients: {
-    to: 'partnerships@airbnb.com',
-    cc: 'tim@apple.dev',
-    bcc: '',
-  },
+const AIRBNB_FOLLOW_UP_EMAIL: SeededEmail = {
+  to: 'partnerships@airbnb.com',
+  cc: 'tim@apple.dev',
   subject: 'Next steps after our demo',
-  body: 'Hi Airbnb team,\n\nThanks for your time on Tuesday. As promised, here is a summary of what we covered: shared inboxes for your host support team, and workflows that route requests by region.\n\nWould next Thursday work for a technical deep dive with your IT team?\n\nBest,\nJony',
+  body: '<p>Hi Airbnb team,</p><p>Thanks for your time on Tuesday. As promised, here is a summary of what we covered: shared inboxes for your host support team, and workflows that route requests by region.</p><p>Would next Thursday work for a technical deep dive with your IT team?</p><p>Best,<br>Jony</p>',
 };
 
-const STRIPE_QUOTE_EMAIL: ProposedEmail = {
-  recipients: { to: 'procurement@stripe.com', cc: '', bcc: '' },
+const STRIPE_QUOTE_EMAIL: SeededEmail = {
+  to: 'procurement@stripe.com',
   subject: 'Your renewal quote for 2027',
-  body: 'Hi Stripe team,\n\nPlease find your renewal quote for 2027 below: 120 seats on the Organization plan, with the 10% multi-year discount we discussed.\n\nLet me know if anything needs to change before you sign.\n\nBest,\nTim',
+  body: '<p>Hi Stripe team,</p><p>Please find your renewal quote for 2027 below: 120 seats on the Organization plan, with the 10% multi-year discount we discussed.</p><p>Let me know if anything needs to change before you sign.</p><p>Best,<br>Tim</p>',
 };
 
-export type SeededToolCall = {
-  toolName: string;
-  input: Record<string, unknown>;
-  buildPendingOutput: () => Promise<Record<string, unknown>>;
-};
-
-export const proposeEmailCall = (email: ProposedEmail): SeededToolCall => ({
-  toolName: PROPOSE_EMAIL_TOOL_NAME,
-  input: email,
-  buildPendingOutput: () => createProposeEmailTool().execute(email),
+// the snapshot holds the seeded values, so approving the update runs instead of reporting a conflict
+const IPAD_DEAL_HANDOVER_CALL = proposeRecordCall({
+  toolName: 'update_one_opportunity',
+  toolLabel: 'Update opportunity',
+  summary: 'Mark the iPad deployment deal as won and hand it to Phil',
+  template: 'recordUpdate',
+  objectNameSingular: 'opportunity',
+  recordId: OPPORTUNITY_DATA_SEED_IDS.ID_1,
+  arguments: {
+    id: OPPORTUNITY_DATA_SEED_IDS.ID_1,
+    stage: 'CUSTOMER',
+    ownerId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+  },
+  currentValues: {
+    stage: 'PROPOSAL',
+    ownerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+  },
 });
 
-export const askQuestionsCall = (
-  questions: AskQuestionItem[],
-): SeededToolCall => ({
-  toolName: ASK_QUESTIONS_TOOL_NAME,
-  input: { questions },
-  buildPendingOutput: () =>
-    createAskQuestionsTool({ isWorkspaceSetupThread: false }).execute({
-      questions,
-    }),
+const GOOGLE_CONTACT_CALL = proposeRecordCall({
+  toolName: 'create_one_person',
+  toolLabel: 'Create person',
+  summary: 'Add Priya Raman, Google’s new IT director',
+  template: 'recordCreate',
+  objectNameSingular: 'person',
+  arguments: {
+    name: { firstName: 'Priya', lastName: 'Raman' },
+    emails: { primaryEmail: 'priya.raman@google.com' },
+    jobTitle: 'IT Director',
+    companyId: COMPANY_DATA_SEED_IDS.ID_1,
+  },
 });
 
-export const requestFormCall = (
-  fields: RequestFormField[],
-): SeededToolCall => ({
-  toolName: REQUEST_FORM_TOOL_NAME,
-  input: { fields },
-  buildPendingOutput: () => createRequestFormTool().execute({ fields }),
+const STALE_DEAL_DELETION_CALL = proposeRecordCall({
+  toolName: 'delete_one_opportunity',
+  toolLabel: 'Delete opportunity',
+  summary: 'Delete the Apple Watch wellness deal, idle since March',
+  template: 'recordDelete',
+  objectNameSingular: 'opportunity',
+  recordId: OPPORTUNITY_DATA_SEED_IDS.ID_7,
+  arguments: { id: OPPORTUNITY_DATA_SEED_IDS.ID_7 },
 });
 
 const AIRBNB_EXPANSION_FIELDS: RequestFormField[] = [
@@ -177,16 +185,16 @@ const FIGMA_CALL_FIELDS: RequestFormField[] = [
   },
 ];
 
-const LINEAR_WELCOME_EMAIL: ProposedEmail = {
-  recipients: { to: 'ops@linear.app', cc: '', bcc: '' },
+const LINEAR_WELCOME_EMAIL: SeededEmail = {
+  to: 'ops@linear.app',
   subject: 'Welcome to Twenty, Linear',
-  body: 'Hi Linear team,\n\nWelcome aboard! Phil will run your onboarding: expect a kickoff invite from him this week, with SSO and your data import on the agenda.\n\nBest,\nTim',
+  body: '<p>Hi Linear team,</p><p>Welcome aboard! Phil will run your onboarding: expect a kickoff invite from him this week, with SSO and your data import on the agenda.</p><p>Best,<br>Tim</p>',
 };
 
-const FIGMA_WELCOME_EMAIL: ProposedEmail = {
-  recipients: { to: 'it@figma.com', cc: '', bcc: '' },
+const FIGMA_WELCOME_EMAIL: SeededEmail = {
+  to: 'it@figma.com',
   subject: 'Welcome to Twenty, Figma',
-  body: 'Hi Figma team,\n\nWelcome aboard! Your workspace is ready, and we will start with the pipeline import you asked about on our last call.\n\nBest,\nTim',
+  body: '<p>Hi Figma team,</p><p>Welcome aboard! Your workspace is ready, and we will start with the pipeline import you asked about on our last call.</p><p>Best,<br>Tim</p>',
 };
 
 type ConversationToSeed = {
@@ -211,7 +219,7 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
     askedBy: 'TIM',
     prompt: 'Help me plan the Q3 customer webinar and draft the invitation.',
     intro: 'Two choices before I draft the invitation:',
-    calls: [askQuestionsCall(WEBINAR_QUESTIONS)],
+    calls: WEBINAR_QUESTIONS.map(askQuestionCall),
   },
   {
     threadId:
@@ -235,14 +243,12 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
     calls: [proposeEmailCall(STRIPE_QUOTE_EMAIL)],
     answer: {
       response: {
-        decision: 'send',
-        email: {
+        decision: 'approve',
+        toolName: 'send_email',
+        arguments: buildSendEmailArguments({
           ...STRIPE_QUOTE_EMAIL,
-          recipients: {
-            ...STRIPE_QUOTE_EMAIL.recipients,
-            cc: 'phil.schiler@apple.dev',
-          },
-        },
+          cc: 'phil.schiler@apple.dev',
+        }),
       },
       reply:
         'Sent. I copied Phil so he can follow up on the signature. Want me to set a reminder for Friday if Stripe hasn’t signed?',
@@ -255,11 +261,9 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
     askedBy: 'TIM',
     prompt: 'Linear signed. Set up their onboarding.',
     intro: 'One question before I create the onboarding tasks:',
-    calls: [askQuestionsCall(ONBOARDING_OWNER_QUESTIONS)],
+    calls: ONBOARDING_OWNER_QUESTIONS.map(askQuestionCall),
     answer: {
-      response: {
-        answers: [{ questionIndex: 0, selectedOptionIndices: [1] }],
-      },
+      response: { selectedOptionIndices: [1] },
       reply:
         'Phil owns the Linear onboarding. I will create the kickoff, the SSO setup and the data import tasks for him.',
     },
@@ -276,6 +280,44 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
       proposeEmailCall(LINEAR_WELCOME_EMAIL),
       proposeEmailCall(FIGMA_WELCOME_EMAIL),
     ],
+  },
+  {
+    threadId:
+      AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.PENDING_RECORD_UPDATE,
+    title: 'Close the iPad deployment deal',
+    askedBy: 'TIM',
+    prompt:
+      'Google signed the iPad deployment. Update the deal and hand it to Phil for onboarding.',
+    intro: 'Here is the change. Approve it and I will update the deal:',
+    calls: [IPAD_DEAL_HANDOVER_CALL],
+    sharedWith: { member: 'PHIL', accessLevel: RecordShareAccessLevel.READ },
+  },
+  {
+    threadId:
+      AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.PENDING_RECORD_CREATE,
+    title: 'Add Google’s new IT director',
+    askedBy: 'TIM',
+    prompt:
+      'Priya Raman is Google’s new IT director, priya.raman@google.com. Add her to the CRM.',
+    intro: 'Check the contact before I create it:',
+    calls: [GOOGLE_CONTACT_CALL],
+  },
+  {
+    threadId:
+      AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.REJECTED_RECORD_DELETE,
+    title: 'Clean up stale deals',
+    askedBy: 'TIM',
+    prompt: 'Clean up the deals nobody has touched in months.',
+    intro: 'This deal has been idle since March. Delete it?',
+    calls: [STALE_DEAL_DELETION_CALL],
+    answer: {
+      response: {
+        decision: 'reject',
+        feedback: 'Keep it, they are revisiting budgets in January.',
+      },
+      reply:
+        'I left the deal as is. Want me to set a reminder to check in with them in January?',
+    },
   },
   {
     threadId: AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.PENDING_FORM,
@@ -342,8 +384,10 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
     const askedBy = MEMBERS[conversation.askedBy];
     const calls = await Promise.all(
       conversation.calls.map(async (call, callIndex) => {
+        const pendingOutput = await call.buildPendingOutput();
         const pausingToolCall = PAUSING_TOOLS.get(call.toolName)?.parseCall(
           call.input,
+          pendingOutput,
         );
 
         if (!isDefined(pausingToolCall)) {
@@ -353,7 +397,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
         return {
           ...call,
           pausingToolCall,
-          pendingOutput: await call.buildPendingOutput(),
+          pendingOutput,
           // The first call keeps its original seed id
           toolCallId: `call_${seedId(callIndex === 0 ? 'toolCall' : `toolCall${callIndex}`).replace(/-/g, '')}`,
         };
@@ -412,7 +456,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       role: AgentMessageRole.ASSISTANT,
       agentId: null,
       senderUserWorkspaceId: null,
-      parts: mapAiStepsToUiMessageParts([
+      parts: mapAiStepsToUIMessageParts([
         {
           content: [
             { type: 'text', text: conversation.intro },

@@ -86,8 +86,8 @@ export class AppBillingService {
       operationType,
       spenders,
       cost: {
-        creditsUsedMicro: charge.creditsUsedMicro,
-        quantity: charge.quantity,
+        [UsageUnit.CREDIT]: charge.creditsUsedMicro,
+        [unit]: charge.quantity,
       },
     });
 
