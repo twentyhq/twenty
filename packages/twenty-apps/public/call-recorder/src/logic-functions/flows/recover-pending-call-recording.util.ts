@@ -17,7 +17,6 @@ export type RecoverPendingCallRecordingResult =
   | { status: 'attached' }
   | ScheduleRecallBotForCallRecordingResult;
 
-// Throws when Recall's answer is unknown, so the queue retries this recording alone.
 export const recoverPendingCallRecording = async ({
   client,
   callRecordingId,
@@ -48,7 +47,8 @@ export const recoverPendingCallRecording = async ({
     : await findExistingExternalBotIdOrThrow(callRecording.id);
 
   if (!isUndefined(existingExternalBotId)) {
-    const isAttached = await attachRecallBotToPendingCallRecording(client, {
+    const isAttached = await attachRecallBotToPendingCallRecording({
+      client,
       id: callRecording.id,
       externalBotId: existingExternalBotId,
     });

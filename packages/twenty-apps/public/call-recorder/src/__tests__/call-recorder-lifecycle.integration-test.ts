@@ -3204,14 +3204,16 @@ describe('call recorder app lifecycle (integration)', () => {
       const externalBotId = randomUUID();
 
       expect(
-        await attachRecallBotToPendingCallRecording(client, {
+        await attachRecallBotToPendingCallRecording({
+          client,
           id: callRecordingId,
           externalBotId,
         }),
       ).toBe(true);
 
       expect(
-        await attachRecallBotToPendingCallRecording(client, {
+        await attachRecallBotToPendingCallRecording({
+          client,
           id: callRecordingId,
           externalBotId: randomUUID(),
         }),
@@ -3234,7 +3236,8 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       expect(
-        await attachRecallBotToPendingCallRecording(client, {
+        await attachRecallBotToPendingCallRecording({
+          client,
           id: callRecordingId,
           externalBotId: randomUUID(),
         }),
