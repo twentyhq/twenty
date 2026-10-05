@@ -14,14 +14,12 @@ import { Field, type SelectOption } from 'twenty-ui/primitives/input';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
-import { useId, useRef, useState } from 'react';
-import { Key } from 'ts-key-enum';
+import { useId, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { getDropdownTabTarget } from '@/ui/layout/dropdown/utils/getDropdownTabTarget';
 import { preventDropdownDismissOnInputElement } from '@/ui/layout/dropdown/utils/preventDropdownDismissOnInputElement';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -95,7 +93,6 @@ export const FormMultiSelectFieldInput = ({
 }: FormMultiSelectFieldInputProps) => {
   const theme = useTheme();
   const instanceId = useId();
-  const triggerRef = useRef<HTMLElement>(null);
   const { closeDropdown } = useCloseDropdown();
 
   const [draftValue, setDraftValue] = useState<
@@ -205,9 +202,6 @@ export const FormMultiSelectFieldInput = ({
                 onInteractOutside={preventDropdownDismissOnInputElement}
               >
                 <Dropdown.Trigger
-                  ref={(element) => {
-                    triggerRef.current = element;
-                  }}
                   render={<StyledDisplayModeContainer />}
                   nativeButton={false}
                   aria-label={accessibleLabel}
@@ -230,23 +224,6 @@ export const FormMultiSelectFieldInput = ({
                   />
                 </Dropdown.Trigger>
                 <DropdownContent
-                  onKeyDown={(event) => {
-                    if (
-                      event.key !== Key.Tab ||
-                      !isDefined(triggerRef.current)
-                    ) {
-                      return;
-                    }
-
-                    event.preventDefault();
-                    const tabTarget = getDropdownTabTarget({
-                      trigger: triggerRef.current,
-                      popup: event.currentTarget,
-                      isBackward: event.shiftKey,
-                    });
-                    tabTarget.focus();
-                    closeDropdown(instanceId);
-                  }}
                   align="start"
                   sideOffset={parseInt(theme.spacing[1], 10)}
                   width={

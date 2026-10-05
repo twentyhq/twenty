@@ -180,12 +180,11 @@ export const ToggleAndDismiss: Story = {
   },
 };
 
-export const OutsideInputThenTab: Story = {
+export const OutsideInputKeepsPickerOpen: Story = {
   args: WORK_POLICY_ARGS,
   decorators: [
     (Story) => (
       <>
-        <Input aria-label="Previous input" />
         <Story />
         <Input aria-label="Outside input" />
       </>
@@ -200,29 +199,6 @@ export const OutsideInputThenTab: Story = {
     const popup = await body.findByRole('dialog', { name: 'Work Policy' });
     await userEvent.click(body.getByRole('textbox', { name: 'Outside input' }));
     expect(popup).toBeVisible();
-    await userEvent.click(within(popup).getByRole('searchbox'));
-    await userEvent.tab();
-
-    await waitFor(() => {
-      expect(body.queryByRole('dialog')).not.toBeInTheDocument();
-      expect(
-        body.getByRole('textbox', { name: 'Outside input' }),
-      ).toHaveFocus();
-    });
-
-    await userEvent.click(body.getByRole('button', { name: 'Work Policy' }));
-    const reopenedPopup = await body.findByRole('dialog', {
-      name: 'Work Policy',
-    });
-    await userEvent.click(within(reopenedPopup).getByRole('searchbox'));
-    await userEvent.tab({ shift: true });
-
-    await waitFor(() => {
-      expect(body.queryByRole('dialog')).not.toBeInTheDocument();
-      expect(
-        body.getByRole('textbox', { name: 'Previous input' }),
-      ).toHaveFocus();
-    });
   },
 };
 
