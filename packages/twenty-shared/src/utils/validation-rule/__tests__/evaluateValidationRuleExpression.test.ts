@@ -7,6 +7,16 @@ const NOW = '2026-09-23T10:00:00.000Z';
 
 const FIELDS: ValidationRuleFieldDescriptor[] = [
   {
+    name: 'name',
+    type: FieldMetadataType.TEXT,
+    universalIdentifier: 'opportunity-name',
+  },
+  {
+    name: 'probability',
+    type: FieldMetadataType.NUMBER,
+    universalIdentifier: 'opportunity-probability',
+  },
+  {
     name: 'stage',
     type: FieldMetadataType.SELECT,
     universalIdentifier: 'opportunity-stage',
@@ -125,6 +135,89 @@ describe('evaluateValidationRuleExpression', () => {
       status: 'failed',
     });
     expect(evaluate('closeDate < now', { closeDate: null })).toEqual({
+      status: 'failed',
+    });
+  });
+
+  it.each([
+    ['probability + 1', 3, 4],
+    ['1 + probability', 3, 4],
+    ['probability - 1', 3, 2],
+    ['5 - probability', 3, 2],
+    ['probability * 2', 3, 6],
+    ['2 * probability', 3, 6],
+    ['probability / 2', 3, 1.5],
+    ['6 / probability', 3, 2],
+    ['probability % 2', 3, 1],
+    ['7 % probability', 3, 1],
+    ['-probability', 3, -3],
+    ['+probability', 3, 3],
+    ['abs probability', -3, 3],
+    ['ceil probability', 2.5, 3],
+    ['floor probability', 2.5, 2],
+    ['round probability', 2.5, 3],
+    ['trunc probability', -2.5, -2],
+  ])(
+    'should compute %s on a defined number and keep it empty on an empty one',
+    (operation, probability, result) => {
+      expect(evaluate(`${operation} == ${result}`, { probability })).toEqual({
+        status: 'passed',
+      });
+      expect(
+        evaluate(`isDefined(${operation})`, { probability: null }),
+      ).toEqual({ status: 'failed' });
+    },
+  );
+
+  it('should compute on zero as on any defined number', () => {
+    expect(evaluate('probability % 2 == 0', { probability: 0 })).toEqual({
+      status: 'passed',
+    });
+  });
+
+  it('should fail a comparison on top of a computation over an empty value', () => {
+    const record = { probability: null, company: null };
+
+    expect(evaluate('probability % 2 == 0', record)).toEqual({
+      status: 'failed',
+    });
+    expect(evaluate('abs probability < 10', record)).toEqual({
+      status: 'failed',
+    });
+    expect(evaluate('probability * 2 < 10', record)).toEqual({
+      status: 'failed',
+    });
+    expect(evaluate('company.employees + 1 > 0', record)).toEqual({
+      status: 'failed',
+    });
+  });
+
+  it('should compute the length of a defined text or list and keep an empty one empty', () => {
+    expect(evaluate('length name == 3', { name: 'Rex' })).toEqual({
+      status: 'passed',
+    });
+    expect(evaluate('length tags == 2', { tags: ['NEW', 'PRIORITY'] })).toEqual(
+      { status: 'passed' },
+    );
+    expect(evaluate('length name <= 5', { name: null })).toEqual({
+      status: 'failed',
+    });
+    expect(evaluate('length name >= 3', { name: null })).toEqual({
+      status: 'failed',
+    });
+    expect(evaluate('length tags <= 5', { tags: null })).toEqual({
+      status: 'failed',
+    });
+  });
+
+  it('should concatenate defined texts and keep the result empty when a text is empty', () => {
+    expect(evaluate('name || "!" == "Rex!"', { name: 'Rex' })).toEqual({
+      status: 'passed',
+    });
+    expect(evaluate('isDefined(name || "!")', { name: null })).toEqual({
+      status: 'failed',
+    });
+    expect(evaluate('isDefined("!" || name)', { name: null })).toEqual({
       status: 'failed',
     });
   });

@@ -84,6 +84,32 @@ validationRuleParser.binaryOps['>='] = compareDefinedValues(
 validationRuleParser.binaryOps.in = (value: unknown, list: unknown) =>
   Array.isArray(list) && list.includes(value);
 
+const computeDefinedValues =
+  (compute: (...operands: NonNullable<unknown>[]) => unknown) =>
+  (...operands: unknown[]) =>
+    operands.every(isValidationRuleValueDefined) ? compute(...operands) : null;
+
+for (const operator of ['+', '-', '*', '/', '%', '||']) {
+  validationRuleParser.binaryOps[operator] = computeDefinedValues(
+    validationRuleParser.binaryOps[operator],
+  );
+}
+
+for (const operator of [
+  '-',
+  '+',
+  'abs',
+  'ceil',
+  'floor',
+  'round',
+  'trunc',
+  'length',
+]) {
+  validationRuleParser.unaryOps[operator] = computeDefinedValues(
+    validationRuleParser.unaryOps[operator],
+  );
+}
+
 validationRuleParser.functions = Object.fromEntries(
   Object.entries(VALIDATION_RULE_FUNCTIONS).map(([name, { evaluate }]) => [
     name,
