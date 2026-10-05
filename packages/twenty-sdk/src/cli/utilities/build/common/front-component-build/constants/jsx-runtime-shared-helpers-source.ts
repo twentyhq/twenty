@@ -163,12 +163,28 @@ function _applyUserRef(userRef, el) {
   return undefined;
 }
 
+var _elementAttachingCloneEventRef = null;
+
+function _applyUserRefOfEventRef(userRef, el, source) {
+  if (source !== 'clone') return _applyUserRef(userRef, el);
+  var previousElementAttachingCloneEventRef = _elementAttachingCloneEventRef;
+  _elementAttachingCloneEventRef = el;
+  try {
+    return _applyUserRef(userRef, el);
+  } finally {
+    _elementAttachingCloneEventRef = previousElementAttachingCloneEventRef;
+  }
+}
+
 function _createEventRef(events, userRef, source) {
   var eventRef = function (el) {
     if (el) {
       _registerElementEventHandlers(el, events, source);
     }
-    var userRefCleanup = _applyUserRef(userRef, el);
+    if (el && source === 'jsx' && _elementAttachingCloneEventRef !== el) {
+      _registerElementEventHandlers(el, {}, 'clone');
+    }
+    var userRefCleanup = _applyUserRefOfEventRef(userRef, el, source);
     if (el && typeof userRefCleanup === 'function') return userRefCleanup;
     return undefined;
   };

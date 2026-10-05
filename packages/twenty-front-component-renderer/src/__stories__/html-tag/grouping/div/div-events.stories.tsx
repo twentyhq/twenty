@@ -204,6 +204,18 @@ const playCloneHandlers: NonNullable<Story['play']> = async ({
     setTimeout(resolve, SANDBOX_ROUND_TRIP_SETTLE_DELAY),
   );
   expect(canvas.getByTestId('save-count')).toHaveTextContent('1');
+
+  await userEvent.click(canvas.getByTestId('stop-cloning'));
+  await waitFor(() =>
+    expect(canvas.getByTestId('clone-state')).toHaveTextContent('not cloned'),
+  );
+  expect(canvas.getByTestId('subject')).toBe(subject);
+
+  await userEvent.click(subject);
+  await expectFrontComponentValue({
+    canvas,
+    expected: 'capture,jsx,clone,capture,jsx,clone,capture,jsx',
+  });
 };
 
 export const CloneHandlers: Story = runFrontComponentStory({

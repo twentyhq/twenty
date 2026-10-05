@@ -5,15 +5,23 @@ import { FrontComponentCard } from '@/__stories__/shared/front-components/front-
 
 type CloneClickHandlerProps = {
   render: ReactElement<{ onClick?: () => void }>;
+  isCloneActive: boolean;
   onCloneClick: () => void;
 };
 
-const CloneClickHandler = ({ render, onCloneClick }: CloneClickHandlerProps) =>
-  cloneElement(render, { onClick: () => onCloneClick() });
+const CloneClickHandler = ({
+  render,
+  isCloneActive,
+  onCloneClick,
+}: CloneClickHandlerProps) =>
+  isCloneActive
+    ? cloneElement(render, { onClick: () => onCloneClick() })
+    : render;
 
 const DivCloneHandlersFrontComponent = () => {
   const [clickSources, setClickSources] = useState<string[]>([]);
   const [saveCount, setSaveCount] = useState(0);
+  const [isCloneActive, setIsCloneActive] = useState(true);
   const recordClick = (source: string) =>
     setClickSources((previousSources) => [...previousSources, source]);
 
@@ -21,6 +29,7 @@ const DivCloneHandlersFrontComponent = () => {
     <FrontComponentCard title="div:clone-handlers">
       <div onClickCapture={() => recordClick('capture')}>
         <CloneClickHandler
+          isCloneActive={isCloneActive}
           onCloneClick={() => recordClick('clone')}
           render={
             <button
@@ -44,8 +53,18 @@ const DivCloneHandlersFrontComponent = () => {
       >
         Save once
       </button>
+      <button
+        data-testid="stop-cloning"
+        type="button"
+        onClick={() => setIsCloneActive(false)}
+      >
+        Stop cloning
+      </button>
       <span data-testid="front-component-value">{clickSources.join(',')}</span>
       <output data-testid="save-count">{saveCount}</output>
+      <output data-testid="clone-state">
+        {isCloneActive ? 'cloned' : 'not cloned'}
+      </output>
     </FrontComponentCard>
   );
 };
@@ -55,6 +74,6 @@ export default defineFrontComponent({
     'fc-div-clone-handlers-00000000-0000-0000-0000-000000000020',
   name: 'div-clone-handlers-front-component',
   description:
-    'Front component covering handlers written in JSX, added with cloneElement, registered for the capture phase or removed on re-render',
+    'Front component covering handlers written in JSX, added with cloneElement, registered for the capture phase, removed on re-render or dropped when the clone goes away',
   component: DivCloneHandlersFrontComponent,
 });

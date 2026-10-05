@@ -56,14 +56,20 @@ describe('jsx runtime shared helpers', () => {
   });
 
   it('should run the element handler before the handler a clone added', () => {
-    const { makeEventRef } = loadSharedHelpers();
+    const { makeEventRef, withCloneEventRef } = loadSharedHelpers();
     const element = new EventTarget();
     const calls: string[] = [];
 
-    makeEventRef({ onClick: () => calls.push('clone') }, null, 'clone')(
-      element,
-    );
-    makeEventRef({ onClick: () => calls.push('jsx') }, null, 'jsx')(element);
+    withCloneEventRef(
+      {
+        type: 'html-button',
+        props: {
+          ref: makeEventRef({ onClick: () => calls.push('jsx') }, null, 'jsx'),
+        },
+      },
+      { onClick: () => calls.push('clone') },
+      false,
+    ).ref(element);
     element.dispatchEvent(new Event('click'));
 
     expect(calls).toEqual(['jsx', 'clone']);
@@ -90,9 +96,11 @@ describe('jsx runtime shared helpers', () => {
     const addEventListener = vi.spyOn(element, 'addEventListener');
     const removeEventListener = vi.spyOn(element, 'removeEventListener');
 
-    makeEventRef({ onClick: vi.fn(), onKeyDown: handleKeyDown }, null, 'jsx')(
-      element,
-    );
+    makeEventRef(
+      { onClick: vi.fn(), onKeyDown: handleKeyDown },
+      null,
+      'jsx',
+    )(element);
     makeEventRef({ onKeyDown: handleKeyDown }, null, 'jsx')(element);
     element.dispatchEvent(new Event('keydown'));
 
@@ -119,28 +127,36 @@ describe('jsx runtime shared helpers', () => {
       'jsx',
     )(element);
 
-    expect(addEventListener.mock.calls.map(([type, , capture]) => [type, capture])).toEqual([
+    expect(
+      addEventListener.mock.calls.map(([type, , capture]) => [type, capture]),
+    ).toEqual([
       ['keydown', true],
       ['lostpointercapture', false],
     ]);
   });
 
   it('should let the element handler prevent the handler a clone added, as Base UI merging does', () => {
-    const { makeEventRef } = loadSharedHelpers();
+    const { makeEventRef, withCloneEventRef } = loadSharedHelpers();
     const element = new EventTarget();
+    const handleElementClick = vi.fn(
+      (event: Event & { preventBaseUIHandler?: () => void }) =>
+        event.preventBaseUIHandler?.(),
+    );
     const handleClonedClick = vi.fn();
 
-    makeEventRef({ onClick: handleClonedClick }, null, 'clone')(element);
-    makeEventRef(
+    withCloneEventRef(
       {
-        onClick: (event: Event & { preventBaseUIHandler?: () => void }) =>
-          event.preventBaseUIHandler?.(),
+        type: 'html-button',
+        props: {
+          ref: makeEventRef({ onClick: handleElementClick }, null, 'jsx'),
+        },
       },
-      null,
-      'jsx',
-    )(element);
+      { onClick: handleClonedClick },
+      false,
+    ).ref(element);
     element.dispatchEvent(createSyntheticLikeEvent('click'));
 
+    expect(handleElementClick).toHaveBeenCalledTimes(1);
     expect(handleClonedClick).not.toHaveBeenCalled();
   });
 
@@ -150,9 +166,9 @@ describe('jsx runtime shared helpers', () => {
     const cleanup = vi.fn();
     const objectRef = { current: null as EventTarget | null };
 
-    expect(makeEventRef({ onClick: vi.fn() }, () => cleanup, 'jsx')(element)).toBe(
-      cleanup,
-    );
+    expect(
+      makeEventRef({ onClick: vi.fn() }, () => cleanup, 'jsx')(element),
+    ).toBe(cleanup);
 
     makeEventRef(null, objectRef, 'jsx')(element);
     expect(objectRef.current).toBe(element);
@@ -162,7 +178,9 @@ describe('jsx runtime shared helpers', () => {
     const { makeEventRef } = loadSharedHelpers();
     const userRef = vi.fn();
 
-    expect(makeEventRef(null, null, 'jsx')).toBe(makeEventRef(null, null, 'jsx'));
+    expect(makeEventRef(null, null, 'jsx')).toBe(
+      makeEventRef(null, null, 'jsx'),
+    );
     expect(makeEventRef(null, userRef, 'jsx')).toBe(
       makeEventRef(null, userRef, 'jsx'),
     );
@@ -173,11 +191,70 @@ describe('jsx runtime shared helpers', () => {
     const element = new EventTarget();
     const handleElementClick = vi.fn();
     const handleClonedKeyDown = vi.fn();
-    const elementRef = makeEventRef({ onClick: handleElementClick }, null, 'jsx');
+    const elementRef = makeEventRef(
+      { onClick: handleElementClick },
+      null,
+      'jsx',
+    );
 
     const clonedConfig = withCloneEventRef(
       { type: 'html-button', props: { ref: elementRef } },
       { onKeyDown: handleClonedKeyDown, ref: undefined },
+      false,
+    );
+    clonedConfig.ref(element);
+    element.dispatchEvent(new Event('click'));
+    element.dispatchEvent(new Event('keydown'));
+
+    expect(handleElementClick).toHaveBeenCalledTimes(1);
+    expect(handleClonedKeyDown).toHaveBeenCalledTimes(1);
+  });
+
+  it('should stop running the handlers a clone added once the element renders without the clone', () => {
+    const { makeEventRef, withCloneEventRef } = loadSharedHelpers();
+    const element = new EventTarget();
+    const handleElementClick = vi.fn();
+    const handleClonedClick = vi.fn();
+    const handleClonedKeyDown = vi.fn();
+
+    const clonedConfig = withCloneEventRef(
+      {
+        type: 'html-button',
+        props: {
+          ref: makeEventRef({ onClick: handleElementClick }, null, 'jsx'),
+        },
+      },
+      { onClick: handleClonedClick, onKeyDown: handleClonedKeyDown },
+      false,
+    );
+    clonedConfig.ref(element);
+    clonedConfig.ref(null);
+    makeEventRef({ onClick: handleElementClick }, null, 'jsx')(element);
+    element.dispatchEvent(createSyntheticLikeEvent('click'));
+    element.dispatchEvent(new Event('keydown'));
+
+    expect(handleElementClick).toHaveBeenCalledTimes(1);
+    expect(handleClonedClick).not.toHaveBeenCalled();
+    expect(handleClonedKeyDown).not.toHaveBeenCalled();
+  });
+
+  it('should keep the handlers a clone added when the clone ref reaches the element ref through a merged ref', () => {
+    const { makeEventRef, withCloneEventRef } = loadSharedHelpers();
+    const element = new EventTarget();
+    const handleElementClick = vi.fn();
+    const handleClonedKeyDown = vi.fn();
+    const elementRef = makeEventRef(
+      { onClick: handleElementClick },
+      null,
+      'jsx',
+    );
+    const mergedRef = (mergedElement: EventTarget | null) => {
+      elementRef(mergedElement);
+    };
+
+    const clonedConfig = withCloneEventRef(
+      { type: 'html-button', props: { ref: elementRef } },
+      { onKeyDown: handleClonedKeyDown, ref: mergedRef },
       false,
     );
     clonedConfig.ref(element);
