@@ -98,12 +98,31 @@ describe('doesUsageLimitRowSuppressDefault', () => {
     ).toBe(false);
   });
 
-  it('ignores the period, which no builder matches on', () => {
+  it('ignores the period count, which a speed window can change', () => {
     expect(
       doesUsageLimitRowSuppressDefault({
-        scope: buildScope({ periodCount: 60, periodUnit: 'second' }),
-        usageLimitDefault: buildDefault(),
+        scope: buildScope({ periodCount: 60 }),
+        usageLimitDefault: buildDefault({ periodCount: 1 }),
       }),
     ).toBe(true);
+  });
+
+  it('does not suppress a daily default from a row on another period', () => {
+    const emailQuotaScope = {
+      resourceType: UsageResourceType.EMAIL,
+      operationType: UsageOperationType.EMAIL_SEND,
+      limitKind: 'quota',
+      unit: UsageUnit.INVOCATION,
+    } as const;
+
+    expect(
+      doesUsageLimitRowSuppressDefault({
+        scope: buildScope({ ...emailQuotaScope, periodUnit: 'month' }),
+        usageLimitDefault: {
+          ...buildScope({ ...emailQuotaScope, periodUnit: 'day' }),
+          isOverridable: true,
+        },
+      }),
+    ).toBe(false);
   });
 });

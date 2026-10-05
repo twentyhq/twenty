@@ -129,7 +129,7 @@ describe('findSuppressedUsageLimitDefaults', () => {
       .filter((usageLimitDefault) => usageLimitDefault.isOverridable)
       .map(
         (usageLimitDefault) =>
-          `${usageLimitDefault.resourceType}:${usageLimitDefault.operationType}:${usageLimitDefault.spenderType}:${usageLimitDefault.limitKind}:${usageLimitDefault.unit}`,
+          `${usageLimitDefault.resourceType}:${usageLimitDefault.operationType}:${usageLimitDefault.spenderType}:${usageLimitDefault.limitKind}:${usageLimitDefault.periodUnit}:${usageLimitDefault.unit}`,
       )
       .filter(
         (suppressionKey, _index, suppressionKeys) =>
@@ -139,14 +139,20 @@ describe('findSuppressedUsageLimitDefaults', () => {
     expect(suppressionKeysWithTwoDefaults).toEqual([]);
   });
 
-  it('replaces the email quota default whatever period the row names', () => {
-    const suppressed = findSuppressedUsageLimitDefaults(
-      buildQuotaScope({ periodUnit: 'month', periodCount: 3 }),
-    );
+  it('replaces the email quota default from a daily row', () => {
+    const suppressed = findSuppressedUsageLimitDefaults(buildQuotaScope());
 
     expect(suppressed.map((entry) => entry.limitValueConfigVariable)).toEqual([
       'EMAIL_SEND_WORKSPACE_DAILY_LIMIT',
     ]);
+  });
+
+  it('leaves the daily email quota default alone for a row on another period', () => {
+    expect(
+      findSuppressedUsageLimitDefaults(
+        buildQuotaScope({ periodUnit: 'month' }),
+      ),
+    ).toEqual([]);
   });
 
   it('leaves the email quota default alone for a row on every operation', () => {

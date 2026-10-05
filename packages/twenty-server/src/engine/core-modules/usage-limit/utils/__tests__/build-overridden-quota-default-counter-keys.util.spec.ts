@@ -65,13 +65,8 @@ describe('buildOverriddenQuotaDefaultCounterKeys', () => {
     expect(buildKeys()).toEqual([DEFAULT_COUNTER_KEY]);
   });
 
-  it('keys it whatever period the row itself spans', () => {
-    expect(
-      buildKeys({ usageLimit: buildUsageLimit({ periodUnit: 'month' }) }),
-    ).toEqual([DEFAULT_COUNTER_KEY]);
-  });
-
   it.each([
+    { periodUnit: 'month' as const },
     { spenderType: 'userWorkspace' as const },
     { unit: UsageUnit.CREDIT },
     { operationType: UsageOperationType.ALL },

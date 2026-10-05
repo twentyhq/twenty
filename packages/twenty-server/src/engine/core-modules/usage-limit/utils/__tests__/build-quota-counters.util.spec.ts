@@ -253,7 +253,7 @@ describe('buildQuotaCounters', () => {
     expect(counters).toEqual([]);
   });
 
-  it('overrides the default whatever period the stored limit spans', () => {
+  it('keeps the default alongside a stored limit on another period', () => {
     const counters = buildCounters({
       limits: [buildLimit({ periodUnit: 'week' })],
       quotaLimitDefaults: [buildDefault()],
@@ -261,6 +261,7 @@ describe('buildQuotaCounters', () => {
 
     expect(counters).toEqual([
       expect.objectContaining({ isDefault: false, periodUnit: 'week' }),
+      expect.objectContaining({ isDefault: true, periodUnit: 'month' }),
     ]);
   });
 });
