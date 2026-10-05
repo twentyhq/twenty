@@ -41,18 +41,20 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
       selected={selected}
       actionsVisibility="hover"
       actions={
-        !disabled ? (
+        !disabled || showEditButton ? (
           <>
-            <LightIconButton
-              ref={handleRef}
-              data-dnd-sortable-handle
-              size="sm"
-              emphasis="subtle"
-              aria-label={t`Reorder ${tab.title} tab`}
-              onClick={(event) => event.stopPropagation()}
-            >
-              <IconGripVertical />
-            </LightIconButton>
+            {!disabled && (
+              <LightIconButton
+                ref={handleRef}
+                data-dnd-sortable-handle
+                size="sm"
+                emphasis="subtle"
+                aria-label={t`Reorder ${tab.title} tab`}
+                onClick={(event) => event.stopPropagation()}
+              >
+                <IconGripVertical />
+              </LightIconButton>
+            )}
             {showEditButton && (
               <LightIconButton
                 tabIndex={-1}

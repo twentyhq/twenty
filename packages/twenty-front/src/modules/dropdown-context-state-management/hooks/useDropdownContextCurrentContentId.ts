@@ -1,9 +1,6 @@
-import { type ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
 import { useCallback, useState } from 'react';
 
-export const useDropdownContextCurrentContentId = <
-  TContentId extends ObjectOptionsContentId,
->() => {
+export const useDropdownContextCurrentContentId = <TContentId>() => {
   const [currentContentId, setCurrentContentId] = useState<TContentId | null>(
     null,
   );

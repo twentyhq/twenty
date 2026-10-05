@@ -83,7 +83,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
           <Dropdown.Separator />
         </>
       )}
-      <Dropdown.Section>
+      <Dropdown.Section scrollable>
         {isNonEmptyArray(filteredFieldMetadataItems) ? (
           filteredFieldMetadataItems.map((fieldMetadataItem) => (
             <Dropdown.OptionItem
