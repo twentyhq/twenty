@@ -13,8 +13,13 @@ const dropdownOpenTest = createOverlayOpenTest({
 
 export const dropdownTest: TwentyUiGalleryPlayFunction = async (context) => {
   const canvas = within(context.canvasElement);
+  const expectMenuMountCount = (menuMountCount: number) =>
+    waitFor(() =>
+      expect(canvas.getByText(`Menu mounts: ${menuMountCount}`)).toBeVisible(),
+    );
 
   await dropdownOpenTest(context);
+  await expectMenuMountCount(1);
   const trigger = canvas.getByRole('button', { name: DROPDOWN_TRIGGER_NAME });
   await userEvent.click(
     canvas.getByRole('button', { name: 'Assign Ada and close menu' }),
@@ -28,5 +33,7 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async (context) => {
   });
 
   await dropdownOpenTest(context);
+  await expectMenuMountCount(2);
   await expectTriggerClosesAndReopensOverlay(trigger);
+  await expectMenuMountCount(3);
 };

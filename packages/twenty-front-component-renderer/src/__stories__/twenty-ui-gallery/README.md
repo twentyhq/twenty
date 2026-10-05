@@ -68,7 +68,8 @@ The Dropdown fixture prevents outside interactions from dismissing its menu, so
 its "Assign Ada and close menu" button closes the menu only by setting the
 controlled `open` state to `false`, and the press is not swallowed as a
 dismissing click. The Dropdown stories open the menu, close it with that
-button, then reopen it, close it from the trigger and open it again. The
+button, then reopen it, close it from the trigger and open it again. A counter
+rendered inside the menu shows that each opening mounts the popup content. The
 CurrencyPicker, PhoneCountryPicker and CountrySelect stories also close and
 reopen their popup from the trigger, so a runtime that stops rendering once the
 popup has mounted fails them. ListItem uses a scoped theme container for its
