@@ -18,7 +18,6 @@ const OBJECT_NAMES = [
   'agentMessage',
   'agentMessagePart',
   'agentTurn',
-  'agentTurnEvaluation',
 ] as const;
 
 const { allFlatEntityMaps } = computeTwentyStandardApplicationAllFlatEntityMaps(
