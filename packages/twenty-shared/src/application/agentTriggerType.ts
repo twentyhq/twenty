@@ -2,8 +2,7 @@ import {
   type CronTriggerSettings,
   type DatabaseEventTriggerSettings,
 } from '@/application/logicFunctionManifestType';
-
-export const AGENT_TRIGGER_TYPES = ['DATABASE_EVENT', 'CRON'] as const;
+import { type AGENT_TRIGGER_TYPES } from '@/application/constants/AgentTriggerTypes';
 
 export type AgentTriggerType = (typeof AGENT_TRIGGER_TYPES)[number];
 
