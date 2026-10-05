@@ -59,6 +59,7 @@ import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-age
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
+import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildStrictAgentResponseSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-strict-agent-response-schema.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
@@ -86,7 +87,6 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -178,13 +178,19 @@ export class AgentAsyncExecutorService {
   private async buildPreloadedRegistryTools({
     toolContext,
     runAsRoleId,
+    additionalRoleRestrictionIds,
+    additionalExcludedToolNames = [],
   }: {
     toolContext: RegistryToolContext;
     runAsRoleId?: string;
+    additionalRoleRestrictionIds?: string[];
+    additionalExcludedToolNames?: readonly string[];
   }): Promise<{ tools: ToolSet; proposableTools: ProposableTools }> {
-    const rolePermissionConfig: RolePermissionConfig = {
-      intersectionOf: [runAsRoleId ?? toolContext.roleId],
-    };
+    const rolePermissionConfig = buildAgentRolePermissionConfig({
+      agentRoleId: toolContext.roleId,
+      runAsRoleId,
+      additionalRoleRestrictionIds,
+    });
     const preloadedToolContext = { ...toolContext, rolePermissionConfig };
 
     const tools = await this.toolRegistry.getToolsByCategories(
@@ -194,6 +200,7 @@ export class AgentAsyncExecutorService {
         excludeTools: [
           ...OUTPUT_NAVIGATION_TOOL_NAMES,
           ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
+          ...additionalExcludedToolNames,
         ],
       },
     );
@@ -220,20 +227,29 @@ export class AgentAsyncExecutorService {
   private async buildLazyRegistryTools({
     toolContext: baseToolContext,
     runAsRoleId,
+    additionalRoleRestrictionIds,
+    additionalExcludedToolNames = [],
   }: {
     toolContext: RegistryToolContext;
     runAsRoleId?: string;
+    additionalRoleRestrictionIds?: string[];
+    additionalExcludedToolNames?: readonly string[];
   }): Promise<{
     tools: ToolSet;
     catalogSection: string;
     proposableTools: ProposableTools;
   }> {
-    const toolContext: ToolContext = isDefined(runAsRoleId)
-      ? {
-          ...baseToolContext,
-          rolePermissionConfig: { intersectionOf: [runAsRoleId] },
-        }
-      : baseToolContext;
+    const toolContext: ToolContext =
+      isDefined(runAsRoleId) || isNonEmptyArray(additionalRoleRestrictionIds)
+        ? {
+            ...baseToolContext,
+            rolePermissionConfig: buildAgentRolePermissionConfig({
+              agentRoleId: baseToolContext.roleId,
+              runAsRoleId,
+              additionalRoleRestrictionIds,
+            }),
+          }
+        : baseToolContext;
     const {
       workspaceId,
       roleId,
@@ -254,6 +270,7 @@ export class AgentAsyncExecutorService {
     const excludedToolNames = new Set<string>([
       ...OUTPUT_NAVIGATION_TOOL_NAMES,
       ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
+      ...additionalExcludedToolNames,
     ]);
 
     const catalog = fullCatalog.filter(
@@ -326,6 +343,8 @@ export class AgentAsyncExecutorService {
     workspaceId,
     userWorkspaceId,
     runAsRoleId,
+    additionalRoleRestrictionIds,
+    additionalExcludedToolNames,
     toolLoadingStrategy = 'preload',
     priorMessages = [],
     pausingTools = {},
@@ -344,6 +363,8 @@ export class AgentAsyncExecutorService {
     workspaceId: string;
     userWorkspaceId?: string | null;
     runAsRoleId?: string;
+    additionalRoleRestrictionIds?: string[];
+    additionalExcludedToolNames?: readonly string[];
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
     if (!isNonEmptyArray(messages) && !isNonEmptyArray(priorMessages)) {
@@ -420,11 +441,18 @@ export class AgentAsyncExecutorService {
           };
           const registryToolset =
             toolLoadingStrategy === 'lazy'
-              ? await this.buildLazyRegistryTools({ toolContext, runAsRoleId })
+              ? await this.buildLazyRegistryTools({
+                  toolContext,
+                  runAsRoleId,
+                  additionalRoleRestrictionIds,
+                  additionalExcludedToolNames,
+                })
               : {
                   ...(await this.buildPreloadedRegistryTools({
                     toolContext,
                     runAsRoleId,
+                    additionalRoleRestrictionIds,
+                    additionalExcludedToolNames,
                   })),
                   catalogSection: '',
                 };
