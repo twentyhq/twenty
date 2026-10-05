@@ -19,14 +19,9 @@ import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/m
 
 @UseGuards(
   AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
+    userSession: false,
+    apiKey: false,
+    oauthClient: false,
     application: true,
   }),
   NoPermissionGuard,

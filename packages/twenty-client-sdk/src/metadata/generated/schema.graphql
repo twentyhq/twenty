@@ -1634,24 +1634,9 @@ enum LogicFunctionExecutionStatus {
   ERROR
 }
 
-type UsageQuotaDefinition {
-  resourceType: UsageResourceType!
-  limitKind: String!
-  allowedOperationTypes: [UsageOperationType!]!
-  allowedSpenderTypes: [String!]!
-  allowedMeters: [String!]!
-}
-
-enum UsageResourceType {
-  AI
-  WORKFLOW
-  APP
-  STORAGE
-  API
-  LOGIC_FUNCTION
-  EMAIL
-  WEBHOOK
-  RECORD
+type UsageLimitOperationDefinition {
+  operationType: UsageOperationType!
+  allowedUnits: [UsageUnit!]!
 }
 
 enum UsageOperationType {
@@ -1671,6 +1656,39 @@ enum UsageOperationType {
   SUBSCRIPTION
 }
 
+enum UsageUnit {
+  CREDIT
+  TOKEN
+  INVOCATION
+  MINUTE
+  MILLISECOND
+  BYTE
+  FILE
+  REQUEST
+  SEAT
+  RECORD
+  COMPLEXITY
+}
+
+type UsageQuotaDefinition {
+  resourceType: UsageResourceType!
+  limitKind: String!
+  allowedOperations: [UsageLimitOperationDefinition!]!
+  allowedSpenderTypes: [String!]!
+}
+
+enum UsageResourceType {
+  AI
+  WORKFLOW
+  APP
+  STORAGE
+  API
+  LOGIC_FUNCTION
+  EMAIL
+  WEBHOOK
+  RECORD
+}
+
 type UsageQuotaDefinitions {
   definitions: [UsageQuotaDefinition!]!
   isIntraWorkspaceLimitEntitled: Boolean!
@@ -1685,7 +1703,7 @@ type UsageQuotaWithConsumption {
   spenderId: String
   spenderLabel: String
   periodUnit: String!
-  meter: String!
+  unit: UsageUnit!
   limitValue: BigInt!
   isEnforced: Boolean!
   consumedValue: BigInt
@@ -1714,7 +1732,7 @@ type UsageLimit {
   limitKind: String!
   periodCount: Int!
   periodUnit: String!
-  meter: String!
+  unit: UsageUnit!
   limitValue: BigInt!
   burstValue: BigInt
   createdAt: DateTime!
@@ -2126,9 +2144,7 @@ enum FeatureFlagKey {
   IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED
   IS_AI_CHAT_SHARING_DROPDOWN_ENABLED
   IS_INITIAL_OBJECT_VIEW_ENABLED
-  IS_WEBHOOK_RATE_LIMIT_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-  IS_EXECUTION_QUOTA_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_LOGS_SETTINGS_SECTION_ENABLED
   IS_CONVERSATIONS_TAB_ENABLED
@@ -3531,7 +3547,7 @@ type ChatStreamCatchupChunks {
 }
 
 type SendChatMessageResult {
-  messageId: String!
+  messageId: String
   queued: Boolean!
   streamId: String
 }
@@ -4034,7 +4050,7 @@ input UsageQuotaScopeInput {
   spenderType: String!
   spenderId: String
   periodUnit: String!
-  meter: String!
+  unit: UsageUnit!
 }
 
 input AgentIdInput {
@@ -4491,7 +4507,7 @@ input CreateUsageLimitInput {
   limitKind: String!
   periodCount: Int!
   periodUnit: String!
-  meter: String!
+  unit: UsageUnit!
   limitValue: BigInt!
   burstValue: BigInt
 }
