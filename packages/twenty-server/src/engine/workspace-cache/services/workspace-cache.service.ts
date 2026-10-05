@@ -41,6 +41,7 @@ import {
   WorkspaceCacheKeyName,
   type WorkspaceCacheDataMap,
   type WorkspaceCacheOrDerivedCacheDataMap,
+  type RemovedWorkspaceCacheKeyName,
   type WorkspaceCacheOrDerivedCacheKeyName,
   type WorkspaceCacheResult,
   type WorkspaceCacheResultWithHashes,
@@ -74,9 +75,8 @@ const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const PACKING_INTERVAL_MS = 500;
 const PACKING_PONDERATION_BUDGET = 64;
 const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
-// Per-cache-key entry caps; ORM graphs are ~5 MB each
+// Per-cache-key entry caps
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
-  ['ORMEntityMetadatas', 128],
   ['flatFieldMetadataMaps', 256],
   ['flatFieldMetadataMapsOrm', 512],
 ]);
@@ -458,10 +458,14 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   public async flush(
     workspaceId: string,
-    cacheKeyNames: WorkspaceCacheOrDerivedCacheKeyName[],
+    cacheKeyNames: (
+      | WorkspaceCacheOrDerivedCacheKeyName
+      | RemovedWorkspaceCacheKeyName
+    )[],
   ): Promise<void> {
     const storedCacheKeyNames = cacheKeyNames.filter(
       (cacheKeyName): cacheKeyName is WorkspaceCacheKeyName =>
+        cacheKeyName !== 'ORMEntityMetadatas' &&
         !isWorkspaceDerivedCacheKeyName(cacheKeyName),
     );
 

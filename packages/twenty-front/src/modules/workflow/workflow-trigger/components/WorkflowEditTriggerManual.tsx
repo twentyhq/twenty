@@ -45,6 +45,8 @@ const StyledDescription = styled.span`
   margin-top: 1px;
 `;
 
+const MANUAL_TRIGGER_VISIBLE_ICON_COUNT = 72;
+
 const StyledIconPickerContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -153,12 +155,13 @@ export const WorkflowEditTriggerManual = ({
         <IconPicker
           dropdownId="workflow-edit-manual-trigger-icon"
           selectedIconKey={trigger.settings.icon}
-          dropdownOffset={{ y: -12 }}
+          dropdownSideOffset={-12}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-          maxIconsVisible={9 * 8} // 9 columns * 8 lines
+          maxIconsVisible={MANUAL_TRIGGER_VISIBLE_ICON_COUNT}
           disabled={triggerOptions.readonly}
           clickableComponent={
             <StyledIconPickerContainer
+              aria-label={t`Command Icon`}
               onClick={(e) => {
                 if (triggerOptions.readonly === true) {
                   e.stopPropagation();

@@ -26,6 +26,7 @@ import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
 import { PickRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/pick-record.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
+import { WaitForEventWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/wait-for-event.workflow-action';
 import { UpsertRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/upsert-record.workflow-action';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
@@ -53,6 +54,7 @@ export class WorkflowActionFactory {
     private readonly classifyWorkflowAction: ClassifyWorkflowAction,
     private readonly emptyWorkflowAction: EmptyWorkflowAction,
     private readonly delayWorkflowAction: DelayWorkflowAction,
+    private readonly waitForEventWorkflowAction: WaitForEventWorkflowAction,
   ) {}
 
   get(stepType: WorkflowActionType): WorkflowAction {
@@ -99,6 +101,8 @@ export class WorkflowActionFactory {
         return this.emptyWorkflowAction;
       case WorkflowActionType.DELAY:
         return this.delayWorkflowAction;
+      case WorkflowActionType.WAIT_FOR_EVENT:
+        return this.waitForEventWorkflowAction;
       default:
         throw new WorkflowStepExecutorException(
           `Workflow step executor not found for step type '${stepType}'`,

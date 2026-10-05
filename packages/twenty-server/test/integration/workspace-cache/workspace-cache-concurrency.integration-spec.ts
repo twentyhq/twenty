@@ -12,7 +12,7 @@ import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { type WorkspaceORMEntityMetadatasCacheService } from 'src/engine/twenty-orm/workspace-orm-entity-metadatas-cache.service';
+import { type WorkspaceFlatWorkspaceMemberMapCacheService } from 'src/engine/core-modules/user/services/workspace-flat-workspace-member-map-cache.service';
 import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
 import { type WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -237,8 +237,8 @@ describe('Workspace cache concurrent publication', () => {
 
   it('retries superseded local-only computations without storing their data in Redis', async () => {
     const provider =
-      getAppProviderByClassName<WorkspaceORMEntityMetadatasCacheService>(
-        'WorkspaceORMEntityMetadatasCacheService',
+      getAppProviderByClassName<WorkspaceFlatWorkspaceMemberMapCacheService>(
+        'WorkspaceFlatWorkspaceMemberMapCacheService',
       );
     const compute = provider.computeForCache.bind(provider);
     let resume = () => {};
@@ -251,23 +251,25 @@ describe('Workspace cache concurrent publication', () => {
     });
 
     await workspaceCacheService.flush(SEED_APPLE_WORKSPACE_ID, [
-      'ORMEntityMetadatas',
+      'flatWorkspaceMemberMaps',
     ]);
-    jest.spyOn(provider, 'computeForCache').mockImplementationOnce(async () => {
-      const data = await compute();
-      signalComputed();
-      await gate;
-      return data;
-    });
+    jest
+      .spyOn(provider, 'computeForCache')
+      .mockImplementationOnce(async (context) => {
+        const data = await compute(context);
+        signalComputed();
+        await gate;
+        return data;
+      });
     const pendingRead = workspaceCacheService.getOrRecomputeWithHashes(
       SEED_APPLE_WORKSPACE_ID,
-      ['ORMEntityMetadatas'],
+      ['flatWorkspaceMemberMaps'],
     );
 
     try {
       await computed;
       await workspaceCacheService.flush(SEED_APPLE_WORKSPACE_ID, [
-        'ORMEntityMetadatas',
+        'flatWorkspaceMemberMaps',
       ]);
     } finally {
       resume();
@@ -275,13 +277,13 @@ describe('Workspace cache concurrent publication', () => {
     const result = await pendingRead;
     expect(result.hashes).toEqual(
       await workspaceCacheService.getCacheHashes(SEED_APPLE_WORKSPACE_ID, [
-        'ORMEntityMetadatas',
+        'flatWorkspaceMemberMaps',
       ]),
     );
     expect(
       await global.app
         .get<CacheStorageService>(CacheStorageNamespace.EngineWorkspace)
-        .get(`ORMEntityMetadatas:${SEED_APPLE_WORKSPACE_ID}:data`),
+        .get(`flatWorkspaceMemberMaps:${SEED_APPLE_WORKSPACE_ID}:data`),
     ).toBeUndefined();
   });
 });
