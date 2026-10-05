@@ -10,10 +10,13 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-application-retry-limit.constant';
 import { isRetryableLogicFunctionExecutionError } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/is-retryable-logic-function-execution-error.util';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 export type LogicFunctionJobPayload = {
   logicFunctionId: string;
@@ -30,6 +33,8 @@ export class LogicFunctionJobRunnerService {
 
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    @InjectWorkspaceScopedRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
   ) {}
 
   async run({
@@ -82,11 +87,17 @@ export class LogicFunctionJobRunnerService {
       }
 
       // Delayed or retried jobs can outlive their application: once it is
-      // uninstalled the job has nothing left to run, so retrying is pointless
+      // uninstalled the job has nothing left to run, so retrying is pointless.
+      // The metadata cache can lag right after an install, so only the
+      // database tells an uninstall apart from a stale cache miss.
       if (
         error instanceof LogicFunctionExecutionException &&
         error.code ===
-          LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+          LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND &&
+        !(await this.logicFunctionRepository.existsBy(
+          logicFunctionPayload.workspaceId,
+          { id: logicFunctionPayload.logicFunctionId },
+        ))
       ) {
         this.logger.log(
           `Skipping function ${logicFunctionPayload.logicFunctionId} (workspace ${logicFunctionPayload.workspaceId}): ${error.message}`,
