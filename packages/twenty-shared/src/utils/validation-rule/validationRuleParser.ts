@@ -68,16 +68,22 @@ const toPlainDateStringOrSelf = (value: string): string => {
   }
 };
 
-const alignWithDateOnlyOperand = ({
+const getComparableValue = ({
   value,
   otherValue,
 }: {
   value: NonNullable<unknown>;
   otherValue: NonNullable<unknown>;
-}): NonNullable<unknown> =>
-  isString(value) && isString(otherValue) && isDateWithoutTime(otherValue)
-    ? toPlainDateStringOrSelf(value)
-    : value;
+}): NonNullable<unknown> => {
+  switch (true) {
+    case isString(value) &&
+      isString(otherValue) &&
+      isDateWithoutTime(otherValue):
+      return toPlainDateStringOrSelf(value);
+    default:
+      return value;
+  }
+};
 
 const compareDefinedValues =
   (
@@ -90,8 +96,8 @@ const compareDefinedValues =
     isValidationRuleValueDefined(left) &&
     isValidationRuleValueDefined(right) &&
     compare(
-      alignWithDateOnlyOperand({ value: left, otherValue: right }),
-      alignWithDateOnlyOperand({ value: right, otherValue: left }),
+      getComparableValue({ value: left, otherValue: right }),
+      getComparableValue({ value: right, otherValue: left }),
     );
 
 validationRuleParser.binaryOps['<'] = compareDefinedValues(
