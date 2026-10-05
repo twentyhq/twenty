@@ -15,25 +15,6 @@ type MeetingInteraction = {
   calendarEventId: string;
   startsAt: string;
 };
-type NestedParticipants<TParticipant> = {
-  totalCount?: number | null;
-  edges?: { node: TParticipant }[];
-} | null;
-type MessageMemberParticipant = {
-  role?: string | null;
-  workspaceMemberId?: string | null;
-};
-type CalendarMemberParticipant = {
-  isOrganizer?: boolean | null;
-  workspaceMemberId?: string | null;
-};
-// A nested relation returns at most 60 records: an item whose participants
-// were cut off is resolved with its own query instead.
-type CollectedInteractions<TInteraction, TOwner> = {
-  interactions: TInteraction[];
-  ownerByItemId: Map<string, TOwner>;
-  truncatedItemIds: Set<string>;
-};
 type MessageMemberInfo = { ownerId: string; fromIsMember: boolean };
 type ContactItem = { kind: 'email' | 'meeting'; id: string };
 
@@ -50,53 +31,11 @@ export type PersonAgg = {
   lastMeeting?: { at: string; id: string };
 };
 
-const listParticipants = <TParticipant>(
-  participants: NestedParticipants<TParticipant> | undefined,
-): { nodes: TParticipant[]; isTruncated: boolean } => {
-  const nodes = (participants?.edges ?? []).map(({ node }) => node);
-
-  return {
-    nodes,
-    isTruncated: (participants?.totalCount ?? 0) > nodes.length,
-  };
-};
-
-const foldMessageMemberInfo = (
-  info: MessageMemberInfo | undefined,
-  { role, workspaceMemberId }: MessageMemberParticipant,
-): MessageMemberInfo | undefined => {
-  if (!workspaceMemberId) {
-    return info;
-  }
-
-  const folded = info ?? { ownerId: workspaceMemberId, fromIsMember: false };
-
-  if (role === 'FROM') {
-    folded.ownerId = workspaceMemberId;
-    folded.fromIsMember = true;
-  }
-
-  return folded;
-};
-
-const pickCalendarOwnerId = (
-  participants: CalendarMemberParticipant[],
-): string | undefined =>
-  participants.reduce<string | undefined>(
-    (ownerId, { isOrganizer, workspaceMemberId }) =>
-      workspaceMemberId && (!ownerId || isOrganizer === true)
-        ? workspaceMemberId
-        : ownerId,
-    undefined,
-  );
-
 const collectEmailInteractions = async (
   client: CoreApiClient,
   personIds: string[],
-): Promise<CollectedInteractions<EmailInteraction, MessageMemberInfo>> => {
+): Promise<EmailInteraction[]> => {
   const interactions: EmailInteraction[] = [];
-  const ownerByItemId = new Map<string, MessageMemberInfo>();
-  const truncatedItemIds = new Set<string>();
 
   for (const ids of chunk(personIds, PAGE_SIZE)) {
     let after: string | undefined;
@@ -114,16 +53,7 @@ const collectEmailInteractions = async (
               node: {
                 id: true,
                 personId: true,
-                message: {
-                  id: true,
-                  receivedAt: true,
-                  messageParticipants: {
-                    totalCount: true,
-                    edges: {
-                      node: { role: true, workspaceMemberId: true },
-                    },
-                  },
-                },
+                message: { id: true, receivedAt: true },
               },
             },
             pageInfo: { hasNextPage: true, endCursor: true },
@@ -133,33 +63,12 @@ const collectEmailInteractions = async (
 
       for (const edge of messageParticipants?.edges ?? []) {
         const { personId, message } = edge.node;
-        if (!personId || !message?.id || !message?.receivedAt) {
-          continue;
-        }
-
-        interactions.push({
-          personId,
-          messageId: message.id,
-          receivedAt: message.receivedAt,
-        });
-
-        if (ownerByItemId.has(message.id) || truncatedItemIds.has(message.id)) {
-          continue;
-        }
-
-        const { nodes, isTruncated } = listParticipants<MessageMemberParticipant>(
-          message.messageParticipants,
-        );
-
-        if (isTruncated) {
-          truncatedItemIds.add(message.id);
-          continue;
-        }
-
-        const info = nodes.reduce(foldMessageMemberInfo, undefined);
-
-        if (info) {
-          ownerByItemId.set(message.id, info);
+        if (personId && message?.id && message?.receivedAt) {
+          interactions.push({
+            personId,
+            messageId: message.id,
+            receivedAt: message.receivedAt,
+          });
         }
       }
 
@@ -169,17 +78,15 @@ const collectEmailInteractions = async (
     } while (after);
   }
 
-  return { interactions, ownerByItemId, truncatedItemIds };
+  return interactions;
 };
 
 const collectMeetingInteractions = async (
   client: CoreApiClient,
   personIds: string[],
-): Promise<CollectedInteractions<MeetingInteraction, string>> => {
+): Promise<MeetingInteraction[]> => {
   const now = new Date().toISOString();
   const interactions: MeetingInteraction[] = [];
-  const ownerByItemId = new Map<string, string>();
-  const truncatedItemIds = new Set<string>();
 
   for (const ids of chunk(personIds, PAGE_SIZE)) {
     let after: string | undefined;
@@ -197,17 +104,7 @@ const collectMeetingInteractions = async (
               node: {
                 id: true,
                 personId: true,
-                calendarEvent: {
-                  id: true,
-                  startsAt: true,
-                  isCanceled: true,
-                  calendarEventParticipants: {
-                    totalCount: true,
-                    edges: {
-                      node: { isOrganizer: true, workspaceMemberId: true },
-                    },
-                  },
-                },
+                calendarEvent: { id: true, startsAt: true, isCanceled: true },
               },
             },
             pageInfo: { hasNextPage: true, endCursor: true },
@@ -218,42 +115,17 @@ const collectMeetingInteractions = async (
       for (const edge of calendarEventParticipants?.edges ?? []) {
         const { personId, calendarEvent } = edge.node;
         if (
-          !personId ||
-          !calendarEvent?.id ||
-          !calendarEvent?.startsAt ||
-          calendarEvent.isCanceled ||
-          calendarEvent.startsAt > now
+          personId &&
+          calendarEvent?.id &&
+          calendarEvent?.startsAt &&
+          !calendarEvent.isCanceled &&
+          calendarEvent.startsAt <= now
         ) {
-          continue;
-        }
-
-        interactions.push({
-          personId,
-          calendarEventId: calendarEvent.id,
-          startsAt: calendarEvent.startsAt,
-        });
-
-        if (
-          ownerByItemId.has(calendarEvent.id) ||
-          truncatedItemIds.has(calendarEvent.id)
-        ) {
-          continue;
-        }
-
-        const { nodes, isTruncated } =
-          listParticipants<CalendarMemberParticipant>(
-            calendarEvent.calendarEventParticipants,
-          );
-
-        if (isTruncated) {
-          truncatedItemIds.add(calendarEvent.id);
-          continue;
-        }
-
-        const ownerId = pickCalendarOwnerId(nodes);
-
-        if (ownerId) {
-          ownerByItemId.set(calendarEvent.id, ownerId);
+          interactions.push({
+            personId,
+            calendarEventId: calendarEvent.id,
+            startsAt: calendarEvent.startsAt,
+          });
         }
       }
 
@@ -263,7 +135,7 @@ const collectMeetingInteractions = async (
     } while (after);
   }
 
-  return { interactions, ownerByItemId, truncatedItemIds };
+  return interactions;
 };
 
 const collectMessageMemberInfo = async (
@@ -296,17 +168,19 @@ const collectMessageMemberInfo = async (
       );
 
       for (const edge of messageParticipants?.edges ?? []) {
-        const { messageId, ...participant } = edge.node;
-        if (!messageId) {
+        const { messageId, role, workspaceMemberId } = edge.node;
+        if (!messageId || !workspaceMemberId) {
           continue;
         }
-        const info = foldMessageMemberInfo(
-          infoByMessageId.get(messageId),
-          participant,
-        );
-        if (info) {
-          infoByMessageId.set(messageId, info);
+        const info = infoByMessageId.get(messageId) ?? {
+          ownerId: workspaceMemberId,
+          fromIsMember: false,
+        };
+        if (role === 'FROM') {
+          info.ownerId = workspaceMemberId;
+          info.fromIsMember = true;
         }
+        infoByMessageId.set(messageId, info);
       }
 
       after = messageParticipants?.pageInfo.hasNextPage
@@ -429,28 +303,20 @@ export const buildPersonAggregates = async (
     return aggByPersonId;
   }
 
-  const [emailResult, meetingResult] = await Promise.all([
+  const [emails, meetings] = await Promise.all([
     collectEmailInteractions(client, personIds),
     collectMeetingInteractions(client, personIds),
   ]);
 
-  // Owners come nested with each interaction; only items whose participants
-  // were cut off by the nested relation cap need a query of their own.
-  const [truncatedMessageMemberInfo, truncatedCalendarOwners] =
-    await Promise.all([
-      collectMessageMemberInfo(client, [...emailResult.truncatedItemIds]),
-      collectCalendarOwners(client, [...meetingResult.truncatedItemIds]),
-    ]);
-  const messageMemberInfo = new Map([
-    ...emailResult.ownerByItemId,
-    ...truncatedMessageMemberInfo,
+  const messageIds = [...new Set(emails.map((email) => email.messageId))];
+  const calendarEventIds = [
+    ...new Set(meetings.map((meeting) => meeting.calendarEventId)),
+  ];
+
+  const [messageMemberInfo, calendarOwners] = await Promise.all([
+    collectMessageMemberInfo(client, messageIds),
+    collectCalendarOwners(client, calendarEventIds),
   ]);
-  const calendarOwners = new Map([
-    ...meetingResult.ownerByItemId,
-    ...truncatedCalendarOwners,
-  ]);
-  const emails = emailResult.interactions;
-  const meetings = meetingResult.interactions;
 
   const aggFor = (personId: string): PersonAgg => {
     const existing = aggByPersonId.get(personId);

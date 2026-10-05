@@ -47,8 +47,8 @@ describe('on-opportunity-created', () => {
           id: OPPORTUNITY_ID,
           pointOfContact: {
             lastContactAt: OCCURRED_AT,
-            lastContactItemMessage: { id: MESSAGE_ID },
-            lastContactItemCalendarEvent: null,
+            lastContactItemMessageId: MESSAGE_ID,
+            lastContactItemCalendarEventId: null,
           },
         },
       ]),

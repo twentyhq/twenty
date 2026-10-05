@@ -14,8 +14,8 @@ type Client = {
 
 const POINT_OF_CONTACT = {
   lastContactAt: OCCURRED_AT,
-  lastContactItemMessage: { id: MESSAGE_ID },
-  lastContactItemCalendarEvent: null,
+  lastContactItemMessageId: MESSAGE_ID,
+  lastContactItemCalendarEventId: null,
 };
 
 const buildClient = (opportunities: Record<string, unknown>[]): Client => ({

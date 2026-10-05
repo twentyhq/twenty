@@ -21,8 +21,8 @@ type OpportunityNode = {
   id?: string | null;
   pointOfContact?: {
     lastContactAt?: string | null;
-    lastContactItemMessage?: { id: string } | null;
-    lastContactItemCalendarEvent?: { id: string } | null;
+    lastContactItemMessageId?: string | null;
+    lastContactItemCalendarEventId?: string | null;
   } | null;
 };
 
@@ -32,17 +32,18 @@ const buildLastContactData = (
   pointOfContact
     ? {
         lastContactAt: pointOfContact.lastContactAt ?? null,
-        lastContactItemMessageId:
-          pointOfContact.lastContactItemMessage?.id ?? null,
+        lastContactItemMessageId: pointOfContact.lastContactItemMessageId ?? null,
         lastContactItemCalendarEventId:
-          pointOfContact.lastContactItemCalendarEvent?.id ?? null,
+          pointOfContact.lastContactItemCalendarEventId ?? null,
       }
     : EMPTY_LAST_CONTACT;
 
 // An opportunity's last contact mirrors its point of contact, so it must be
 // recomputed whenever the opportunity is created or its point of contact changes,
 // not only when an interaction happens. The point of contact is read nested in
-// the opportunity query, which costs no extra API call.
+// the opportunity query, which costs no extra API call; its last contact item
+// is read through the join columns because relations two levels deep come back
+// empty.
 export const recomputeOpportunitiesLastContact = async (
   client: CoreApiClient,
   opportunityIds: string[],
@@ -66,8 +67,8 @@ export const recomputeOpportunitiesLastContact = async (
                 id: true,
                 pointOfContact: {
                   lastContactAt: true,
-                  lastContactItemMessage: { id: true },
-                  lastContactItemCalendarEvent: { id: true },
+                  lastContactItemMessageId: true,
+                  lastContactItemCalendarEventId: true,
                 },
               },
             },
