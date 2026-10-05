@@ -21,7 +21,6 @@ describe('Agent update should succeed', () => {
         prompt: 'Original prompt',
         modelId: TEST_AI_MODEL_ID,
         responseFormat: { type: 'text' },
-        evaluationInputs: ['input 1'],
       },
     });
 
@@ -206,21 +205,6 @@ describe('Agent update should succeed', () => {
     });
   });
 
-  it('should update agent evaluationInputs', async () => {
-    const { data } = await updateOneAgent({
-      expectToFail: false,
-      input: {
-        id: testAgentId,
-        evaluationInputs: ['new input 1', 'new input 2', 'new input 3'],
-      },
-    });
-
-    expect(data.updateOneAgent).toMatchObject({
-      id: testAgentId,
-      evaluationInputs: ['new input 1', 'new input 2', 'new input 3'],
-    });
-  });
-
   it('should update multiple agent properties at once', async () => {
     const { data } = await updateOneAgent({
       expectToFail: false,
@@ -235,7 +219,6 @@ describe('Agent update should succeed', () => {
           type: 'json',
           schema: DEFAULT_TOOL_INPUT_SCHEMA as AgentResponseSchema,
         },
-        evaluationInputs: ['eval 1', 'eval 2'],
       },
     });
 
@@ -250,7 +233,6 @@ describe('Agent update should succeed', () => {
         type: 'json',
         schema: { type: 'object' },
       },
-      evaluationInputs: ['eval 1', 'eval 2'],
     });
   });
 
@@ -291,21 +273,6 @@ describe('Agent update should succeed', () => {
       icon: null,
       description: null,
       modelConfiguration: null,
-    });
-  });
-
-  it('should clear evaluationInputs by setting to empty array', async () => {
-    const { data } = await updateOneAgent({
-      expectToFail: false,
-      input: {
-        id: testAgentId,
-        evaluationInputs: [],
-      },
-    });
-
-    expect(data.updateOneAgent).toMatchObject({
-      id: testAgentId,
-      evaluationInputs: [],
     });
   });
 });

@@ -2,7 +2,6 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
-  IsArray,
   IsNotEmpty,
   IsObject,
   IsOptional,
@@ -80,10 +79,4 @@ export class UpdateAgentInput {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   modelConfiguration?: ModelConfiguration;
-
-  @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
-  @Field(() => [String], { nullable: true })
-  evaluationInputs?: string[];
 }

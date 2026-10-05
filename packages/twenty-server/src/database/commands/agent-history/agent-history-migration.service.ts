@@ -5,7 +5,11 @@ import { DataSource, type QueryRunner } from 'typeorm';
 
 import { AgentHistoryMigrationDataService } from 'src/database/commands/agent-history/agent-history-migration-data.service';
 import { AgentHistoryMigrationValidationService } from 'src/database/commands/agent-history/agent-history-migration-validation.service';
-import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import {
+  AGENT_HISTORY_TABLES,
+  ACTIVE_AGENT_HISTORY_TABLES,
+  isActiveAgentHistoryTable,
+} from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
 import { AGENT_HISTORY_MIGRATION_STORAGE_KEY } from 'src/database/commands/agent-history/agent-history-migration-storage-key.constant';
 import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-history/agent-history-migration-state.service';
@@ -161,15 +165,17 @@ export class AgentHistoryMigrationService {
               throw new Error('Migration state changed unexpectedly');
             }
             const table = AGENT_HISTORY_TABLES[progress.tableIndex];
-            const ids = await this.dataService.copyBatch({
-              runner,
-              workspaceId,
-              table,
-              source: current.storage,
-              target,
-              lastId: progress.lastId,
-              batchSize,
-            });
+            const ids = isActiveAgentHistoryTable(table)
+              ? await this.dataService.copyBatch({
+                  runner,
+                  workspaceId,
+                  table,
+                  source: current.storage,
+                  target,
+                  lastId: progress.lastId,
+                  batchSize,
+                })
+              : [];
             const next: AgentHistoryMigrationState = {
               ...current,
               migration: {
@@ -314,7 +320,7 @@ export class AgentHistoryMigrationService {
         workspaceId,
         storage: state.storage,
       });
-      for (const table of AGENT_HISTORY_TABLES) {
+      for (const table of ACTIVE_AGENT_HISTORY_TABLES) {
         const [{ count }] = await runner.query(
           `SELECT count(*) FROM ${getAgentHistoryTable({ workspaceId, storage: state.storage, name: table.name })} ${state.storage === 'core' ? 'WHERE "workspaceId" = $1' : ''}`,
           state.storage === 'core' ? [workspaceId] : [],

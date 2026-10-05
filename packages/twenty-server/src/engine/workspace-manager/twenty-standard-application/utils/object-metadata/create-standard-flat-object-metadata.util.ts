@@ -269,49 +269,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
-  agentTurnEvaluation: (
-    args: Omit<
-      CreateStandardObjectArgs<'agentTurnEvaluation'>,
-      'context' | 'objectName'
-    >,
-  ) =>
-    createStandardObjectFlatMetadata({
-      ...args,
-      objectName: 'agentTurnEvaluation',
-      context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
-        nameSingular: 'agentTurnEvaluation',
-        namePlural: 'agentTurnEvaluations',
-        labelSingular: i18nLabel(
-          msg({
-            message: 'Agent turn evaluation',
-            context: 'objectMetadata.labelSingular',
-          }),
-        ),
-        labelPlural: i18nLabel(
-          msg({
-            message: 'Agent turn evaluations',
-            context: 'objectMetadata.labelPlural',
-          }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: 'Agent turn evaluation',
-            context: 'objectMetadata.description',
-          }),
-        ),
-        icon: 'IconLego',
-        isSystem: true,
-        isSearchable: false,
-        isAuditLogged: false,
-        isUIEditable: false,
-        isUICreatable: false,
-        readability: MetadataReadability.SYSTEM,
-        writability: MetadataWritability.SYSTEM,
-        labelIdentifierFieldMetadataName: 'id',
-      },
-    }),
   campaignDelivery: (
     args: Omit<
       CreateStandardObjectArgs<'campaignDelivery'>,

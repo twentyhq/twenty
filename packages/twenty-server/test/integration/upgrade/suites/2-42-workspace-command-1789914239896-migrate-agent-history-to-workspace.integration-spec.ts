@@ -10,7 +10,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { type DataSource } from 'typeorm';
 
-import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { type MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
 import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791094130961-drop-core-agent-history-tables';
 import { type ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790317893308-provision-agent-chat-thread-target.command';
@@ -157,7 +157,9 @@ describe('versioned agent history upgrade (integration)', () => {
       await describeAgentChatThreadTarget(dataSource);
 
     // Later objects relate into history and would be stranded when the thread object is deleted.
-    const historyObjectNames = AGENT_HISTORY_TABLES.map(({ name }) => name);
+    const historyObjectNames = ACTIVE_AGENT_HISTORY_TABLES.map(
+      ({ name }) => name,
+    );
     const laterObjectNames = (
       await dataSource.query<{ nameSingular: string }[]>(
         `SELECT DISTINCT objectMetadata."nameSingular"
@@ -192,7 +194,7 @@ describe('versioned agent history upgrade (integration)', () => {
     for (const { typname } of laterObjectEnumTypes) {
       await dataSource.query(`DROP TYPE "${SCHEMA}"."${typname}"`);
     }
-    for (const { name } of [...AGENT_HISTORY_TABLES].reverse()) {
+    for (const { name } of [...ACTIVE_AGENT_HISTORY_TABLES].reverse()) {
       await dataSource.query(`DROP TABLE "${SCHEMA}"."${name}" CASCADE`);
     }
     // Pre-upgrade workspaces lack the attachment side too, and the deletion above only cascades its metadata.
@@ -398,7 +400,7 @@ describe('versioned agent history upgrade (integration)', () => {
     expect(
       await dataSource.query(
         'SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = ANY($2)',
-        [WORKSPACE_ID, AGENT_HISTORY_TABLES.map(({ name }) => name)],
+        [WORKSPACE_ID, ACTIVE_AGENT_HISTORY_TABLES.map(({ name }) => name)],
       ),
     ).toHaveLength(0);
 
@@ -414,9 +416,9 @@ describe('versioned agent history upgrade (integration)', () => {
     expect(
       await dataSource.query(
         'SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = ANY($2)',
-        [WORKSPACE_ID, AGENT_HISTORY_TABLES.map(({ name }) => name)],
+        [WORKSPACE_ID, ACTIVE_AGENT_HISTORY_TABLES.map(({ name }) => name)],
       ),
-    ).toHaveLength(5);
+    ).toHaveLength(ACTIVE_AGENT_HISTORY_TABLES.length);
 
     await heartbeat.clear(streamId);
     await runCommand('up');
