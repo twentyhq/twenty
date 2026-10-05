@@ -10,34 +10,34 @@ export const switchTest: TwentyUiGalleryPlayFunction = async ({
   const canvas = within(canvasElement);
   await expectFrontComponentMounted(canvas);
 
-  const emailNotifications = canvas.getByRole('switch', {
+  const emailNotificationsSwitch = canvas.getByRole('switch', {
     name: 'Email notifications',
   });
-  const uncontrolled = canvas.getByRole('switch', {
+  const uncontrolledSwitch = canvas.getByRole('switch', {
     name: 'Uncontrolled notifications',
   });
-  const disabled = canvas.getByRole('switch', {
+  const disabledSwitch = canvas.getByRole('switch', {
     name: 'Disabled notifications',
   });
-  expect(emailNotifications).not.toBeChecked();
-  expect(uncontrolled).toBeChecked();
-  expect(disabled).toHaveAttribute('aria-disabled', 'true');
+  expect(emailNotificationsSwitch).not.toBeChecked();
+  expect(uncontrolledSwitch).toBeChecked();
+  expect(disabledSwitch).toHaveAttribute('aria-disabled', 'true');
 
-  await userEvent.click(disabled);
-  expect(disabled).not.toBeChecked();
+  await userEvent.click(disabledSwitch);
+  expect(disabledSwitch).not.toBeChecked();
   expect(canvas.getByRole('status')).toHaveTextContent(
     'Notifications: disabled',
   );
 
-  await userEvent.click(emailNotifications);
+  await userEvent.click(emailNotificationsSwitch);
   await waitFor(() =>
     expect(canvas.getByRole('status')).toHaveTextContent(
       'Notifications: enabled',
     ),
   );
-  expect(emailNotifications).toBeChecked();
+  expect(emailNotificationsSwitch).toBeChecked();
 
-  await userEvent.click(uncontrolled);
-  await waitFor(() => expect(uncontrolled).not.toBeChecked());
+  await userEvent.click(uncontrolledSwitch);
+  await waitFor(() => expect(uncontrolledSwitch).not.toBeChecked());
   expect(errorHandler).not.toHaveBeenCalled();
 };

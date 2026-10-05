@@ -1,21 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-type ModifierKeyState = {
-  altKey: boolean;
-  ctrlKey: boolean;
-  metaKey: boolean;
-  shiftKey: boolean;
-};
-
-const MODIFIER_KEY_STATE_PROPERTY_NAME_BY_KEY_ARGUMENT = new Map<
-  string,
-  keyof ModifierKeyState
->([
-  ['Alt', 'altKey'],
-  ['Control', 'ctrlKey'],
-  ['Meta', 'metaKey'],
-  ['Shift', 'shiftKey'],
-]);
+import { MODIFIER_KEY_STATE_PROPERTY_NAME_BY_KEY_ARGUMENT } from '@/polyfills/events/constants/ModifierKeyStatePropertyNameByKeyArgument';
+import { type ModifierKeyState } from '@/polyfills/events/types/ModifierKeyState';
 
 export const resolveModifierKeyState = (
   modifierKeyState: ModifierKeyState,

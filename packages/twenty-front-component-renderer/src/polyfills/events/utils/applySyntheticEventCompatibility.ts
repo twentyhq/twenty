@@ -1,9 +1,9 @@
-type CancelableEvent = {
+type EventWithCancellationFlags = {
   defaultPrevented: boolean;
   cancelBubble: boolean;
 };
 
-type SyntheticEventCompatibility<TEvent extends CancelableEvent> = {
+type SyntheticEventCompatibility<TEvent extends EventWithCancellationFlags> = {
   nativeEvent: TEvent;
   isDefaultPrevented: () => boolean;
   isPropagationStopped: () => boolean;
@@ -11,7 +11,7 @@ type SyntheticEventCompatibility<TEvent extends CancelableEvent> = {
 };
 
 export const applySyntheticEventCompatibility = <
-  TEvent extends CancelableEvent,
+  TEvent extends EventWithCancellationFlags,
 >(
   event: TEvent,
 ): TEvent & SyntheticEventCompatibility<TEvent> =>

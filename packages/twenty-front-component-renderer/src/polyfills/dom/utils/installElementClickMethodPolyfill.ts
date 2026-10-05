@@ -1,6 +1,4 @@
-import { resolveOwnerWindowOfNode } from '@/polyfills/dom/utils/resolveOwnerWindowOfNode';
-import { applySyntheticEventCompatibility } from '@/polyfills/events/utils/applySyntheticEventCompatibility';
-import { resolveEventClassForEventType } from '@/polyfills/events/utils/resolveEventClassForEventType';
+import { createClickEventForElement } from '@/polyfills/dom/utils/createClickEventForElement';
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
 import { isElementDisabled } from '@/polyfills/selectors/utils/isElementDisabled';
 import { definePolyfillMethod } from '@/polyfills/utils/definePolyfillMethod';
@@ -26,20 +24,7 @@ export const installElementClickMethodPolyfill = (
       elementsWithClickInProgress.add(element);
 
       try {
-        const clickEventClass = resolveEventClassForEventType({
-          eventType: 'click',
-          eventClassScope: resolveOwnerWindowOfNode(element),
-        });
-
-        element.dispatchEvent(
-          applySyntheticEventCompatibility(
-            new clickEventClass('click', {
-              bubbles: true,
-              cancelable: true,
-              composed: true,
-            }),
-          ),
-        );
+        element.dispatchEvent(createClickEventForElement(element));
       } finally {
         elementsWithClickInProgress.delete(element);
       }

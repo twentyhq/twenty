@@ -1,7 +1,7 @@
-import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
+import { type RemoteSerializedEventListener } from '@/host/events/types/RemoteSerializedEventListener';
 import { applyEventDispatchProperties } from '@/host/events/utils/applyEventDispatchProperties';
 import { serializeEvent } from '@/host/events/utils/serializeEvent';
-import { type SerializedEventData } from '@/types/SerializedEventData';
+import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 
 const forwardedBubblingHostEvents = new WeakSet<object>();
 
@@ -10,7 +10,7 @@ export const wrapEventHandler =
     remoteListener,
     findRemoteElementIdContainingNode,
   }: {
-    remoteListener: (detail: SerializedEventData) => void;
+    remoteListener: RemoteSerializedEventListener;
     findRemoteElementIdContainingNode?: FindRemoteElementIdContainingNode;
   }) =>
   (hostEvent: object): void => {
@@ -21,7 +21,7 @@ export const wrapEventHandler =
     const serializedEvent = serializeEvent(hostEvent);
 
     applyEventDispatchProperties({
-      serialized: serializedEvent,
+      serializedEvent,
       hostEvent,
       findRemoteElementIdContainingNode,
     });

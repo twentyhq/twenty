@@ -3,22 +3,22 @@ import { isBoolean } from '@sniptt/guards';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export const applyEventModifierKeys = ({
-  serialized,
+  serializedEvent,
   domEvent,
 }: {
-  serialized: SerializedEventData;
+  serializedEvent: SerializedEventData;
   domEvent: Record<string, unknown>;
 }): void => {
   if (isBoolean(domEvent.altKey)) {
-    serialized.altKey = domEvent.altKey;
+    serializedEvent.altKey = domEvent.altKey;
   }
   if (isBoolean(domEvent.ctrlKey)) {
-    serialized.ctrlKey = domEvent.ctrlKey;
+    serializedEvent.ctrlKey = domEvent.ctrlKey;
   }
   if (isBoolean(domEvent.metaKey)) {
-    serialized.metaKey = domEvent.metaKey;
+    serializedEvent.metaKey = domEvent.metaKey;
   }
   if (isBoolean(domEvent.shiftKey)) {
-    serialized.shiftKey = domEvent.shiftKey;
+    serializedEvent.shiftKey = domEvent.shiftKey;
   }
 };

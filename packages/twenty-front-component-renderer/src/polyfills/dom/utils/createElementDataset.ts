@@ -2,22 +2,18 @@ import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ElementWithAttributeNames } from '@/polyfills/dom/types/ElementWithAttributeNames';
-import { convertDataAttributeNameToDatasetProperty } from '@/polyfills/dom/utils/convertDataAttributeNameToDatasetProperty';
 import { convertDatasetPropertyToDataAttributeName } from '@/polyfills/dom/utils/convertDatasetPropertyToDataAttributeName';
-import { isDatasetAttributeName } from '@/polyfills/dom/utils/isDatasetAttributeName';
+import { listElementDatasetProperties } from '@/polyfills/dom/utils/listElementDatasetProperties';
+import { readElementDatasetValue } from '@/polyfills/dom/utils/readElementDatasetValue';
 
 export const createElementDataset = (
   element: ElementWithAttributeNames,
-): DOMStringMap => {
-  const readDatasetValue = (property: string): string | undefined =>
-    element.getAttribute(convertDatasetPropertyToDataAttributeName(property)) ??
-    undefined;
-
-  return new Proxy<DOMStringMap>(
+): DOMStringMap =>
+  new Proxy<DOMStringMap>(
     {},
     {
       get: (target, property, receiver) =>
-        (isString(property) ? readDatasetValue(property) : undefined) ??
+        readElementDatasetValue({ element, property }) ??
         Reflect.get(target, property, receiver),
       set: (target, property, value, receiver) => {
         if (!isString(property)) {
@@ -32,7 +28,7 @@ export const createElementDataset = (
         return true;
       },
       has: (target, property) =>
-        (isString(property) && isDefined(readDatasetValue(property))) ||
+        isDefined(readElementDatasetValue({ element, property })) ||
         Reflect.has(target, property),
       deleteProperty: (target, property) => {
         if (!isString(property)) {
@@ -45,20 +41,20 @@ export const createElementDataset = (
 
         return true;
       },
-      ownKeys: () =>
-        element
-          .getAttributeNames()
-          .filter(isDatasetAttributeName)
-          .map(convertDataAttributeNameToDatasetProperty),
+      ownKeys: () => listElementDatasetProperties(element),
       getOwnPropertyDescriptor: (target, property) => {
-        const value = isString(property)
-          ? readDatasetValue(property)
-          : undefined;
+        const datasetValue = readElementDatasetValue({ element, property });
 
-        return isDefined(value)
-          ? { value, writable: true, enumerable: true, configurable: true }
-          : Reflect.getOwnPropertyDescriptor(target, property);
+        if (!isDefined(datasetValue)) {
+          return Reflect.getOwnPropertyDescriptor(target, property);
+        }
+
+        return {
+          value: datasetValue,
+          writable: true,
+          enumerable: true,
+          configurable: true,
+        };
       },
     },
   );
-};

@@ -1,28 +1,14 @@
-import { isFunction, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { DOM_EVENT_TYPE_TO_REACT_PROP } from '@/constants/DomEventTypeToReactProp';
-import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
+import { buildHostReactEventHandlerProp } from '@/host/elements/utils/buildHostReactEventHandlerProp';
 import { hasDangerousUrlScheme } from '@/host/elements/utils/hasDangerousUrlScheme';
-import { isEventHandlerKey } from '@/host/events/utils/isEventHandlerKey';
 import { isNavigationUrlAttribute } from '@/host/elements/utils/isNavigationUrlAttribute';
-import { isRemoteEventListenerActive } from '@/host/elements/utils/isRemoteEventListenerActive';
 import { parseCssString } from '@/host/elements/utils/parseCssString';
-import { wrapEventHandler } from '@/host/events/utils/wrapEventHandler';
-import { type SerializedEventData } from '@/types/SerializedEventData';
+import { isEventHandlerKey } from '@/host/events/utils/isEventHandlerKey';
+import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components', 'ref']);
-
-// Both spellings are indexed: dblclick arrives as ondblclick or onDoubleClick.
-const LOWERCASE_EVENT_PROP_TO_DOM_EVENT_TYPE: Record<string, string> =
-  Object.fromEntries(
-    Object.entries(DOM_EVENT_TYPE_TO_REACT_PROP).flatMap(
-      ([domEventType, reactProp]) => [
-        [`on${domEventType}`, domEventType],
-        [reactProp.toLowerCase(), domEventType],
-      ],
-    ),
-  );
 
 export const buildHostReactPropsFromRemoteProps = ({
   remoteProps,
@@ -50,21 +36,16 @@ export const buildHostReactPropsFromRemoteProps = ({
     // A guest can put any property name on the wire, and React binds every on*
     // prop it recognizes, so unmapped handler names are dropped.
     if (isEventHandlerKey(remotePropName)) {
-      const domEventType =
-        LOWERCASE_EVENT_PROP_TO_DOM_EVENT_TYPE[remotePropName.toLowerCase()];
+      const hostReactEventHandlerProp = buildHostReactEventHandlerProp({
+        remoteProps,
+        remotePropName,
+        remotePropValue,
+        findRemoteElementIdContainingNode,
+      });
 
-      if (
-        isDefined(domEventType) &&
-        isFunction(remotePropValue) &&
-        isRemoteEventListenerActive({ remoteProps, domEventType })
-      ) {
-        hostReactProps[DOM_EVENT_TYPE_TO_REACT_PROP[domEventType]] =
-          wrapEventHandler({
-            remoteListener: remotePropValue as (
-              detail: SerializedEventData,
-            ) => void,
-            findRemoteElementIdContainingNode,
-          });
+      if (isDefined(hostReactEventHandlerProp)) {
+        hostReactProps[hostReactEventHandlerProp.reactPropName] =
+          hostReactEventHandlerProp.hostEventHandler;
       }
       continue;
     }

@@ -1,51 +1,22 @@
-import { isBoolean, isNumber } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
 
-import { MUTED_STATE_SETTLED_EVENT_TYPE } from '@/host/events/constants/MutedStateSettledEventType';
 import { applyFormControlTargetProperties } from '@/host/events/utils/applyFormControlTargetProperties';
+import { applyMediaTargetProperties } from '@/host/events/utils/applyMediaTargetProperties';
+import { applyScrollTargetProperties } from '@/host/events/utils/applyScrollTargetProperties';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export const applyEventTargetProperties = ({
-  serialized,
+  serializedEvent,
   target,
 }: {
-  serialized: SerializedEventData;
+  serializedEvent: SerializedEventData;
   target: unknown;
 }): void => {
   if (!isPlainObject(target)) {
     return;
   }
 
-  applyFormControlTargetProperties({ serialized, target });
-
-  if (isNumber(target.scrollTop)) {
-    serialized.scrollTop = target.scrollTop;
-  }
-  if (isNumber(target.scrollLeft)) {
-    serialized.scrollLeft = target.scrollLeft;
-  }
-  if (isNumber(target.currentTime)) {
-    serialized.currentTime = target.currentTime;
-  }
-  if (isNumber(target.duration)) {
-    serialized.duration = target.duration;
-  }
-  if (isBoolean(target.paused)) {
-    serialized.paused = target.paused;
-  }
-  if (isBoolean(target.ended)) {
-    serialized.ended = target.ended;
-  }
-  if (isNumber(target.volume)) {
-    serialized.volume = target.volume;
-  }
-  if (
-    serialized.type === MUTED_STATE_SETTLED_EVENT_TYPE &&
-    isBoolean(target.muted)
-  ) {
-    serialized.muted = target.muted;
-  }
-  if (isNumber(target.playbackRate)) {
-    serialized.playbackRate = target.playbackRate;
-  }
+  applyFormControlTargetProperties({ serializedEvent, target });
+  applyScrollTargetProperties({ serializedEvent, target });
+  applyMediaTargetProperties({ serializedEvent, target });
 };

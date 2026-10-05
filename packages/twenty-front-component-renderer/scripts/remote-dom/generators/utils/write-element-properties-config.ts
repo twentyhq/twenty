@@ -1,46 +1,40 @@
 import { type CodeBlockWriter } from 'ts-morph';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { TYPE_NAMES } from '../constants';
-import { type ComponentSchema, type PropertySchema } from '../schemas';
-import { writePropertyEntries } from './write-property-entries';
+import { type RemoteElementDescriptor } from '../types/remote-element-descriptor.type';
+import { writePropertyConfigEntries } from './write-property-config-entries';
 
 export const writeElementPropertiesConfig = ({
   writer,
-  component,
-  specificProperties,
-  shouldUseCommonHtmlPropertiesConfig,
+  elementDescriptor,
+  hasCommonPropertiesConfig,
 }: {
   writer: CodeBlockWriter;
-  component: ComponentSchema;
-  specificProperties: Record<string, PropertySchema>;
-  shouldUseCommonHtmlPropertiesConfig: boolean;
+  elementDescriptor: RemoteElementDescriptor;
+  hasCommonPropertiesConfig: boolean;
 }): void => {
-  if (!isNonEmptyArray(Object.keys(component.properties))) {
-    return;
-  }
+  const { isHtmlElement, hasSpecificProperties, specificProperties } =
+    elementDescriptor;
 
-  const isHtmlElement = isDefined(component.htmlTag);
-  const hasSpecificProperties = isNonEmptyArray(
-    Object.keys(specificProperties),
-  );
-  const shouldReuseCommonProperties =
-    isHtmlElement &&
-    !hasSpecificProperties &&
-    shouldUseCommonHtmlPropertiesConfig;
+  const shouldReuseCommonPropertiesConfig =
+    isHtmlElement && !hasSpecificProperties && hasCommonPropertiesConfig;
 
-  if (shouldReuseCommonProperties) {
+  if (shouldReuseCommonPropertiesConfig) {
     writer.write(`properties: ${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`);
     writer.newLine();
     return;
   }
 
+  const shouldSpreadCommonPropertiesConfig =
+    isHtmlElement && hasSpecificProperties;
+
   writer.write('properties: ');
   writer.block(() => {
-    if (isHtmlElement && hasSpecificProperties) {
+    if (shouldSpreadCommonPropertiesConfig) {
       writer.writeLine(`...${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`);
     }
-    writePropertyEntries({ writer, properties: specificProperties });
+
+    writePropertyConfigEntries({ writer, properties: specificProperties });
   });
   writer.write(',');
   writer.newLine();

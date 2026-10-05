@@ -15,11 +15,16 @@ export const resolveEventClassForEventType = ({
   eventClassScope,
 }: ResolveEventClassForEventTypeInput): WorkerEventConstructor => {
   const eventClassName = EVENT_CLASS_NAME_BY_EVENT_TYPE.get(eventType);
-  const eventClass = isDefined(eventClassName)
-    ? eventClassScope[eventClassName]
-    : undefined;
 
-  return isWorkerEventConstructor(eventClass)
-    ? eventClass
-    : resolveBaseEventClass(eventClassScope);
+  if (!isDefined(eventClassName)) {
+    return resolveBaseEventClass(eventClassScope);
+  }
+
+  const typedEventClass = eventClassScope[eventClassName];
+
+  if (!isWorkerEventConstructor(typedEventClass)) {
+    return resolveBaseEventClass(eventClassScope);
+  }
+
+  return typedEventClass;
 };

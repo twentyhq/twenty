@@ -1,4 +1,5 @@
 import { type SourceFile, VariableDeclarationKind } from 'ts-morph';
+
 import { TYPE_NAMES } from '../constants';
 
 export const generateCommonEventsConfig = (sourceFile: SourceFile): void => {
@@ -6,7 +7,7 @@ export const generateCommonEventsConfig = (sourceFile: SourceFile): void => {
     declarationKind: VariableDeclarationKind.Const,
     declarations: [
       {
-        name: 'HTML_COMMON_EVENTS_CONFIG',
+        name: TYPE_NAMES.COMMON_EVENTS_CONFIG,
         initializer: (writer) => {
           writer.writeLine('Object.fromEntries(');
           writer.indent(() => {
@@ -15,7 +16,9 @@ export const generateCommonEventsConfig = (sourceFile: SourceFile): void => {
             );
             writer.indent(() => {
               writer.writeLine('eventType,');
-              writer.writeLine('createSerializedEventConfig(eventType),');
+              writer.writeLine(
+                `${TYPE_NAMES.SERIALIZED_EVENT_CONFIG_FACTORY}(eventType),`,
+              );
             });
             writer.writeLine(']),');
           });

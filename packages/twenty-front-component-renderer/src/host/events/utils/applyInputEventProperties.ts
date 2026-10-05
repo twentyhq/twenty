@@ -5,18 +5,21 @@ import { applyPasteClipboardText } from '@/host/events/utils/applyPasteClipboard
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export const applyInputEventProperties = ({
-  serialized,
+  serializedEvent,
   domEvent,
 }: {
-  serialized: SerializedEventData;
+  serializedEvent: SerializedEventData;
   domEvent: Record<string, unknown>;
 }): void => {
   if (isString(domEvent.inputType)) {
-    serialized.inputType = domEvent.inputType;
+    serializedEvent.inputType = domEvent.inputType;
   }
   if (isString(domEvent.data)) {
-    serialized.data = domEvent.data.slice(0, MAX_SERIALIZED_EVENT_TEXT_LENGTH);
+    serializedEvent.data = domEvent.data.slice(
+      0,
+      MAX_SERIALIZED_EVENT_TEXT_LENGTH,
+    );
   }
 
-  applyPasteClipboardText(serialized, domEvent);
+  applyPasteClipboardText(serializedEvent, domEvent);
 };

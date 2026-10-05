@@ -1,5 +1,6 @@
 import { createCurrencyPickerTest } from '@/__stories__/twenty-ui-gallery/utils/createCurrencyPickerTest';
-import { createDropdownOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createDropdownOpenTest';
+import { createDropdownTest } from '@/__stories__/twenty-ui-gallery/utils/createDropdownTest';
+import { createPhoneCountryPickerTest } from '@/__stories__/twenty-ui-gallery/utils/createPhoneCountryPickerTest';
 import { phoneCountryPickerTriggerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTriggerTest';
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
 import { imageInputTest } from '@/__stories__/twenty-ui-gallery/utils/imageInputTest';
@@ -356,21 +357,13 @@ export const MenuPreact: Story = createGalleryStory({
 export const DropdownReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-dropdown',
   runtime: 'react',
-  play: createDropdownOpenTest({
-    runtime: 'react',
-    triggerName: 'Choose assignee',
-    popupText: 'Assign person',
-  }),
+  play: createDropdownTest('react'),
 });
 
 export const DropdownPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-dropdown',
   runtime: 'preact',
-  play: createDropdownOpenTest({
-    runtime: 'preact',
-    triggerName: 'Choose assignee',
-    popupText: 'Assign person',
-  }),
+  play: createDropdownTest('preact'),
 });
 
 export const PhoneCountryPickerTriggersReact: Story = createGalleryStory({
@@ -388,21 +381,13 @@ export const PhoneCountryPickerTriggersPreact: Story = createGalleryStory({
 export const PhoneCountryPickerReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-phone-country-picker',
   runtime: 'react',
-  play: createDropdownOpenTest({
-    runtime: 'react',
-    triggerName: 'Primary phone country',
-    popupText: 'United Kingdom',
-  }),
+  play: createPhoneCountryPickerTest('react'),
 });
 
 export const PhoneCountryPickerPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-phone-country-picker',
   runtime: 'preact',
-  play: createDropdownOpenTest({
-    runtime: 'preact',
-    triggerName: 'Primary phone country',
-    popupText: 'United Kingdom',
-  }),
+  play: createPhoneCountryPickerTest('preact'),
 });
 
 export const SelectReact: Story = createGalleryStory({

@@ -8,34 +8,34 @@ import { serializeSelectedOptionIndexes } from '@/host/events/utils/serializeSel
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export const applyFormControlTargetProperties = ({
-  serialized,
+  serializedEvent,
   target,
 }: {
-  serialized: SerializedEventData;
+  serializedEvent: SerializedEventData;
   target: Record<string, unknown>;
 }): void => {
   if (
-    CHECKED_STATE_SETTLED_EVENT_TYPES.has(serialized.type) &&
+    CHECKED_STATE_SETTLED_EVENT_TYPES.has(serializedEvent.type) &&
     isBoolean(target.checked)
   ) {
-    serialized.checked = target.checked;
+    serializedEvent.checked = target.checked;
   }
 
-  if (!FORM_CONTROL_VALUE_SETTLED_EVENT_TYPES.has(serialized.type)) {
+  if (!FORM_CONTROL_VALUE_SETTLED_EVENT_TYPES.has(serializedEvent.type)) {
     return;
   }
 
   if (isString(target.value)) {
-    serialized.value = target.value;
+    serializedEvent.value = target.value;
   }
 
   const selectedOptionIndexes = serializeSelectedOptionIndexes(target);
   if (isDefined(selectedOptionIndexes)) {
-    serialized.selectedOptionIndexes = selectedOptionIndexes;
+    serializedEvent.selectedOptionIndexes = selectedOptionIndexes;
   }
 
-  const files = serializeFileList(target.files);
-  if (isDefined(files)) {
-    serialized.files = files;
+  const serializedFiles = serializeFileList(target.files);
+  if (isDefined(serializedFiles)) {
+    serializedEvent.files = serializedFiles;
   }
 };

@@ -5,10 +5,15 @@ import { resolveBaseEventClass } from '@/polyfills/events/utils/resolveBaseEvent
 
 const INPUT_ACTIVATION_EVENT_TYPES = ['input', 'change'] as const;
 
+type DispatchInputAndChangeEventsInput = Pick<
+  InputClickActivationContext,
+  'inputElement' | 'dispatchEvent'
+>;
+
 export const dispatchInputAndChangeEvents = ({
   inputElement,
   dispatchEvent,
-}: Omit<InputClickActivationContext, 'clickEvent'>): void => {
+}: DispatchInputAndChangeEventsInput): void => {
   const baseEventClass = resolveBaseEventClass(
     resolveOwnerWindowOfNode(inputElement),
   );

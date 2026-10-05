@@ -24,6 +24,9 @@ const DivCloneHandlersFrontComponent = () => {
   const [isCloneActive, setIsCloneActive] = useState(true);
   const recordClick = (source: string) =>
     setClickSources((previousSources) => [...previousSources, source]);
+  const isSaved = saveCount > 0;
+  const incrementSaveCount = () =>
+    setSaveCount((previousCount) => previousCount + 1);
 
   return (
     <FrontComponentCard title="div:clone-handlers">
@@ -45,11 +48,7 @@ const DivCloneHandlersFrontComponent = () => {
       <button
         data-testid="save-once"
         type="button"
-        onClick={
-          saveCount > 0
-            ? undefined
-            : () => setSaveCount((previousCount) => previousCount + 1)
-        }
+        onClick={isSaved ? undefined : incrementSaveCount}
       >
         Save once
       </button>

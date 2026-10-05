@@ -13,15 +13,15 @@ const findRemoteElementIdContainingNode = (node: unknown) =>
   ]).get(node);
 
 const applyToHostEvent = (hostEvent: Record<string, unknown>) => {
-  const serialized: SerializedEventData = { type: String(hostEvent.type) };
+  const serializedEvent: SerializedEventData = { type: String(hostEvent.type) };
 
   applyEventDispatchProperties({
-    serialized,
+    serializedEvent,
     hostEvent,
     findRemoteElementIdContainingNode,
   });
 
-  return serialized;
+  return serializedEvent;
 };
 
 describe('applyEventDispatchProperties', () => {
@@ -77,13 +77,13 @@ describe('applyEventDispatchProperties', () => {
   });
 
   it('should still mark a bubbling host event when no remote element ids can be resolved', () => {
-    const serialized: SerializedEventData = { type: 'click' };
+    const serializedEvent: SerializedEventData = { type: 'click' };
 
     applyEventDispatchProperties({
-      serialized,
+      serializedEvent,
       hostEvent: { type: 'click', bubbles: true, target: TARGET },
     });
 
-    expect(serialized).toEqual({ type: 'click', bubbles: true });
+    expect(serializedEvent).toEqual({ type: 'click', bubbles: true });
   });
 });

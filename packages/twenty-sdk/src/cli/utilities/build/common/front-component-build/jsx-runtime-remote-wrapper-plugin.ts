@@ -1,115 +1,8 @@
 import type * as esbuild from 'esbuild';
 
 import { JSX_RUNTIME_SHARED_HELPERS_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/jsx-runtime-shared-helpers-source';
-
-const JSX_RUNTIME_WRAPPER = `
-import {
-  jsx as _originalJsx,
-  jsxs as _originalJsxs,
-  Fragment,
-} from '__real_react_jsx_runtime__';
-
-import {
-  customElementMap,
-  injectStyleViaHead,
-  extractCssText,
-  withJsxEventRef,
-} from '__jsx_shared_helpers__';
-
-function _wrapJsxFactory(originalFactory) {
-  return function wrappedJsx(type, props, key) {
-    if (typeof type === 'string') {
-      if (type === 'style') {
-        var css =
-          props && props.dangerouslySetInnerHTML
-            ? props.dangerouslySetInnerHTML.__html || ''
-            : extractCssText(props && props.children);
-        injectStyleViaHead(css);
-        return null;
-      }
-
-      var customTag = customElementMap[type];
-      if (customTag) {
-        return originalFactory(customTag, withJsxEventRef(props), key);
-      }
-    }
-    return originalFactory(type, props, key);
-  };
-}
-
-export var jsx = _wrapJsxFactory(_originalJsx);
-export var jsxs = _wrapJsxFactory(_originalJsxs);
-export { Fragment };
-`.trim();
-
-const createReactWrapper = ({
-  readsElementRefFromVnode,
-}: {
-  readsElementRefFromVnode: boolean;
-}) => `
-export * from '__real_react__';
-import _React from '__real_react__';
-
-import {
-  customElementMap,
-  injectStyleViaHead,
-  extractCssText,
-  withJsxEventRef,
-  withCloneEventRef,
-  isCustomElementTag,
-} from '__jsx_shared_helpers__';
-
-var _originalCreateElement = _React.createElement;
-var _originalCloneElement = _React.cloneElement;
-var _readsElementRefFromVnode = ${readsElementRefFromVnode};
-
-function createElement(type) {
-  var args = arguments;
-  if (typeof type === 'string') {
-    if (type === 'style') {
-      var props = args.length > 1 ? args[1] : null;
-      if (props) {
-        var css = props.dangerouslySetInnerHTML
-          ? props.dangerouslySetInnerHTML.__html || ''
-          : extractCssText(props.children);
-        injectStyleViaHead(css);
-      }
-      return null;
-    }
-
-    var customTag = customElementMap[type];
-    if (customTag) {
-      var newArgs = [customTag, withJsxEventRef(args.length > 1 ? args[1] : null)];
-      for (var i = 2; i < args.length; i++) newArgs.push(args[i]);
-      return _originalCreateElement.apply(null, newArgs);
-    }
-  }
-  return _originalCreateElement.apply(null, args);
-}
-
-function cloneElement(element) {
-  var args = arguments;
-  if (!element || !isCustomElementTag(element.type)) {
-    return _originalCloneElement.apply(null, args);
-  }
-  var newArgs = [
-    element,
-    withCloneEventRef(
-      element,
-      args.length > 1 ? args[1] : null,
-      _readsElementRefFromVnode,
-    ),
-  ];
-  for (var i = 2; i < args.length; i++) newArgs.push(args[i]);
-  return _originalCloneElement.apply(null, newArgs);
-}
-
-export { createElement, cloneElement };
-export default Object.assign({}, _React, {
-  createElement: createElement,
-  cloneElement: cloneElement,
-});
-`.trim();
+import { JSX_RUNTIME_WRAPPER_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/jsx-runtime-wrapper-source';
+import { getReactWrapperSource } from '@/cli/utilities/build/common/front-component-build/utils/get-react-wrapper-source';
 
 type JsxRuntimeRemoteWrapperPluginOptions = {
   usePreact?: boolean;
@@ -173,7 +66,7 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
       });
 
       build.onLoad({ filter: /.*/, namespace: 'jsx-runtime-wrapper' }, () => ({
-        contents: JSX_RUNTIME_WRAPPER,
+        contents: JSX_RUNTIME_WRAPPER_SOURCE,
         loader: 'js' as const,
       }));
 
@@ -209,7 +102,9 @@ export const createJsxRuntimeRemoteWrapperPlugin = (
       });
 
       build.onLoad({ filter: /.*/, namespace: 'react-wrapper' }, () => ({
-        contents: createReactWrapper({ readsElementRefFromVnode: usePreact }),
+        contents: getReactWrapperSource({
+          readsElementRefFromVnode: usePreact,
+        }),
         loader: 'js' as const,
       }));
     },

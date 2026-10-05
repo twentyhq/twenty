@@ -1,4 +1,4 @@
-import { HOST_ORIGINATED_EVENTS } from '@/polyfills/events/constants/HostOriginatedEvents';
+import { hostOriginatedEvents } from '@/polyfills/events/states/hostOriginatedEvents';
 
 export const isHostOriginatedEvent = (event: object): boolean =>
-  HOST_ORIGINATED_EVENTS.has(event);
+  hostOriginatedEvents.has(event);

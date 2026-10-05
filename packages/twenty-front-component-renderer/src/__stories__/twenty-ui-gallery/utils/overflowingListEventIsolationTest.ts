@@ -5,6 +5,13 @@ import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/mat
 import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
+type Canvas = ReturnType<typeof within>;
+
+const expectHostActivationsToStayAtZero = async (canvas: Canvas) => {
+  await waitForSandboxRoundTrip();
+  expect(canvas.getByLabelText('Host activations')).toHaveTextContent('0');
+};
+
 export const overflowingListEventIsolationTest: TwentyUiGalleryPlayFunction =
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -22,8 +29,7 @@ export const overflowingListEventIsolationTest: TwentyUiGalleryPlayFunction =
     await waitFor(() => expect(lastTarget).toBeVisible());
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
 
-    await waitForSandboxRoundTrip();
-    expect(canvas.getByLabelText('Host activations')).toHaveTextContent('0');
+    await expectHostActivationsToStayAtZero(canvas);
 
     await userEvent.click(lastTarget);
     await waitFor(() =>
@@ -32,7 +38,6 @@ export const overflowingListEventIsolationTest: TwentyUiGalleryPlayFunction =
       ),
     );
 
-    await waitForSandboxRoundTrip();
-    expect(canvas.getByLabelText('Host activations')).toHaveTextContent('0');
+    await expectHostActivationsToStayAtZero(canvas);
     expect(errorHandler).not.toHaveBeenCalled();
   };

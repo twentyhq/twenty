@@ -6,11 +6,15 @@ component stories. Each fixture has React and Preact stories built with
 Scenarios share their checks between runtimes where behavior matches. The story
 file contains the metadata and named entries; `utils/` holds the story factory,
 shared assertions, render checks, interaction checks, and known-failure
-scenarios. Shared types and error patterns live in `types/` and `constants/`.
+scenarios. Shared types live in `types/` and shared constants in `constants/`;
+each known-failure scenario declares the error pattern it requires.
 `createGalleryRenderTest` checks the exact set of expected failed components.
 `createOverlayOpenTest` checks that a trigger opens its overlay and pins the
-popup content as absent from the page. `expectSandboxErrors` requires each
-listed known error and rejects any other error.
+popup content as absent from the page. `createDropdownOpenTest` applies it to
+the Dropdown-based popups in React and pins that they never open in Preact.
+`expectSandboxErrors` requires each listed known error and rejects any other
+error. `expectAssertionToKeepFailing` pins an interaction that must have no
+effect within the interaction timeout.
 
 | Fixture | Components |
 | --- | --- |

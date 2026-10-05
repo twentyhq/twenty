@@ -1,11 +1,15 @@
 import { type SourceFile, VariableDeclarationKind } from 'ts-morph';
 
-export const generateSerializedEventConfig = (sourceFile: SourceFile): void => {
+import { TYPE_NAMES } from '../constants';
+
+export const generateSerializedEventConfigFactory = (
+  sourceFile: SourceFile,
+): void => {
   sourceFile.addVariableStatement({
     declarationKind: VariableDeclarationKind.Const,
     declarations: [
       {
-        name: 'createSerializedEventConfig',
+        name: TYPE_NAMES.SERIALIZED_EVENT_CONFIG_FACTORY,
         initializer: (writer) => {
           writer.write(
             '(eventType: string): RemoteElementEventListenerDefinition => (',

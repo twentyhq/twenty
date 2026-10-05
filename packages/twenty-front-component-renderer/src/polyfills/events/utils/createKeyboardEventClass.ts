@@ -27,7 +27,9 @@ export const createKeyboardEventClass = (
 
       this.key = eventInit.key ?? '';
       this.code = eventInit.code ?? '';
-      this.location = eventInit.location ?? 0;
+      this.location =
+        eventInit.location ??
+        KeyboardEventImplementation.DOM_KEY_LOCATION_STANDARD;
       this.repeat = eventInit.repeat ?? false;
       this.isComposing = eventInit.isComposing ?? false;
       this.ctrlKey = eventInit.ctrlKey ?? false;

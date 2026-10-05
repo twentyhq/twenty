@@ -1,6 +1,6 @@
 import { type InputClickActivationContext } from '@/polyfills/dom/types/InputClickActivationContext';
+import { collectOtherCheckedRadioButtonsInGroup } from '@/polyfills/dom/utils/collectOtherCheckedRadioButtonsInGroup';
 import { dispatchInputAndChangeEvents } from '@/polyfills/dom/utils/dispatchInputAndChangeEvents';
-import { iterateRadioButtonGroup } from '@/polyfills/selectors/utils/iterateRadioButtonGroup';
 
 export const runRadioButtonClickActivation = ({
   inputElement,
@@ -11,12 +11,8 @@ export const runRadioButtonClickActivation = ({
     return dispatchEvent(clickEvent);
   }
 
-  const previouslyCheckedRadioButtons = [
-    ...iterateRadioButtonGroup(inputElement),
-  ].filter(
-    (radioButton) =>
-      radioButton !== inputElement && radioButton.checked === true,
-  );
+  const previouslyCheckedRadioButtons =
+    collectOtherCheckedRadioButtonsInGroup(inputElement);
 
   inputElement.checked = true;
 

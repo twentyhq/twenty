@@ -1,9 +1,4 @@
-import { createInputEventClass } from '@/polyfills/events/utils/createInputEventClass';
-import { createKeyboardEventClass } from '@/polyfills/events/utils/createKeyboardEventClass';
-import { createMouseEventClass } from '@/polyfills/events/utils/createMouseEventClass';
-import { createPointerEventClass } from '@/polyfills/events/utils/createPointerEventClass';
-import { createUiEventClass } from '@/polyfills/events/utils/createUiEventClass';
-import { createWheelEventClass } from '@/polyfills/events/utils/createWheelEventClass';
+import { createEventClassByName } from '@/polyfills/events/utils/createEventClassByName';
 import { resolveBaseEventClass } from '@/polyfills/events/utils/resolveBaseEventClass';
 import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
 
@@ -14,19 +9,9 @@ type InstallEventConstructorPolyfillsInput = {
 export const installEventConstructorPolyfills = ({
   globalScope,
 }: InstallEventConstructorPolyfillsInput): void => {
-  const UIEventImplementation = createUiEventClass(
+  const eventClassByName = createEventClassByName(
     resolveBaseEventClass(globalScope),
   );
-  const MouseEventImplementation = createMouseEventClass(UIEventImplementation);
-
-  const eventClassByName = {
-    UIEvent: UIEventImplementation,
-    MouseEvent: MouseEventImplementation,
-    PointerEvent: createPointerEventClass(MouseEventImplementation),
-    WheelEvent: createWheelEventClass(MouseEventImplementation),
-    KeyboardEvent: createKeyboardEventClass(UIEventImplementation),
-    InputEvent: createInputEventClass(UIEventImplementation),
-  };
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
     for (const [eventClassName, eventClass] of Object.entries(

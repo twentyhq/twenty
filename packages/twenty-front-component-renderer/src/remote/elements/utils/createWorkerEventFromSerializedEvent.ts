@@ -37,14 +37,13 @@ export const createWorkerEventFromSerializedEvent = ({
     cancelable: true,
   });
 
-  applySerializedEventProperties({ event, eventData });
-  applySerializedEventRelatedTarget({
-    event,
-    relatedTarget: resolveHostEventRelatedTarget({
-      listeningElement,
-      relatedTargetRemoteElementId: eventData.relatedTargetRemoteElementId,
-    }),
+  const relatedTarget = resolveHostEventRelatedTarget({
+    listeningElement,
+    relatedTargetRemoteElementId: eventData.relatedTargetRemoteElementId,
   });
+
+  applySerializedEventProperties({ event, eventData });
+  applySerializedEventRelatedTarget({ event, relatedTarget });
   markEventAsHostOriginated(event);
   setHostEventDispatchTarget({ event, dispatchTarget });
 

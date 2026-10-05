@@ -4,57 +4,57 @@ import { applyFirstChangedTouchCoordinates } from '@/host/events/utils/applyFirs
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export const applyMouseEventProperties = ({
-  serialized,
+  serializedEvent,
   domEvent,
 }: {
-  serialized: SerializedEventData;
+  serializedEvent: SerializedEventData;
   domEvent: Record<string, unknown>;
 }): void => {
   if (isNumber(domEvent.clientX)) {
-    serialized.clientX = domEvent.clientX;
+    serializedEvent.clientX = domEvent.clientX;
   }
   if (isNumber(domEvent.clientY)) {
-    serialized.clientY = domEvent.clientY;
+    serializedEvent.clientY = domEvent.clientY;
   }
   if (isNumber(domEvent.x)) {
-    serialized.x = domEvent.x;
+    serializedEvent.x = domEvent.x;
   }
   if (isNumber(domEvent.y)) {
-    serialized.y = domEvent.y;
+    serializedEvent.y = domEvent.y;
   }
   if (isNumber(domEvent.pageX)) {
-    serialized.pageX = domEvent.pageX;
+    serializedEvent.pageX = domEvent.pageX;
   }
   if (isNumber(domEvent.pageY)) {
-    serialized.pageY = domEvent.pageY;
+    serializedEvent.pageY = domEvent.pageY;
   }
   if (isNumber(domEvent.screenX)) {
-    serialized.screenX = domEvent.screenX;
+    serializedEvent.screenX = domEvent.screenX;
   }
   if (isNumber(domEvent.screenY)) {
-    serialized.screenY = domEvent.screenY;
+    serializedEvent.screenY = domEvent.screenY;
   }
   if (isNumber(domEvent.offsetX)) {
-    serialized.offsetX = domEvent.offsetX;
+    serializedEvent.offsetX = domEvent.offsetX;
   }
   if (isNumber(domEvent.offsetY)) {
-    serialized.offsetY = domEvent.offsetY;
+    serializedEvent.offsetY = domEvent.offsetY;
   }
   if (isNumber(domEvent.movementX)) {
-    serialized.movementX = domEvent.movementX;
+    serializedEvent.movementX = domEvent.movementX;
   }
   if (isNumber(domEvent.movementY)) {
-    serialized.movementY = domEvent.movementY;
+    serializedEvent.movementY = domEvent.movementY;
   }
   if (isNumber(domEvent.button)) {
-    serialized.button = domEvent.button;
+    serializedEvent.button = domEvent.button;
   }
   if (isNumber(domEvent.buttons)) {
-    serialized.buttons = domEvent.buttons;
+    serializedEvent.buttons = domEvent.buttons;
   }
   if (isNumber(domEvent.detail)) {
-    serialized.detail = domEvent.detail;
+    serializedEvent.detail = domEvent.detail;
   }
 
-  applyFirstChangedTouchCoordinates(serialized, domEvent);
+  applyFirstChangedTouchCoordinates(serializedEvent, domEvent);
 };

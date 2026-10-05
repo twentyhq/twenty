@@ -5,7 +5,7 @@ import { takeHostEventDispatchTarget } from '@/polyfills/events/utils/takeHostEv
 export const installHostEventRetargetingPolyfill = (
   elementPrototype: EventTarget,
 ): void => {
-  const dispatchEventAtThisTarget = elementPrototype.dispatchEvent;
+  const dispatchEventWithoutRetargeting = elementPrototype.dispatchEvent;
 
   Object.defineProperty(elementPrototype, 'dispatchEvent', {
     value: function (this: EventTarget, event: Event): boolean {
@@ -18,7 +18,7 @@ export const installHostEventRetargetingPolyfill = (
         return hostEventDispatchTarget.dispatchEvent(event);
       }
 
-      return dispatchEventAtThisTarget.call(this, event);
+      return dispatchEventWithoutRetargeting.call(this, event);
     },
     configurable: true,
     writable: true,

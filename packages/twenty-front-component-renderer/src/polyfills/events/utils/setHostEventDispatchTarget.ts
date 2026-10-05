@@ -1,4 +1,4 @@
-import { HOST_EVENT_DISPATCH_TARGET_BY_EVENT } from '@/polyfills/events/constants/HostEventDispatchTargetByEvent';
+import { hostEventDispatchTargetByEvent } from '@/polyfills/events/states/hostEventDispatchTargetByEvent';
 
 export const setHostEventDispatchTarget = ({
   event,
@@ -7,5 +7,5 @@ export const setHostEventDispatchTarget = ({
   event: Event;
   dispatchTarget: EventTarget;
 }): void => {
-  HOST_EVENT_DISPATCH_TARGET_BY_EVENT.set(event, dispatchTarget);
+  hostEventDispatchTargetByEvent.set(event, dispatchTarget);
 };

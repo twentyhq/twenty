@@ -1,17 +1,19 @@
-import { type ComponentSchema, type PropertySchema } from '../schemas';
+import { type PropertySchema } from '../schemas';
 
 export const getSpecificProperties = ({
-  component,
+  properties,
   commonPropertyNames,
 }: {
-  component: ComponentSchema;
+  properties: Record<string, PropertySchema>;
   commonPropertyNames: Set<string>;
 }): Record<string, PropertySchema> => {
-  const specific: Record<string, PropertySchema> = {};
-  for (const [name, schema] of Object.entries(component.properties)) {
-    if (!commonPropertyNames.has(name)) {
-      specific[name] = schema;
+  const specificProperties: Record<string, PropertySchema> = {};
+
+  for (const [propertyName, propertySchema] of Object.entries(properties)) {
+    if (!commonPropertyNames.has(propertyName)) {
+      specificProperties[propertyName] = propertySchema;
     }
   }
-  return specific;
+
+  return specificProperties;
 };

@@ -1,16 +1,19 @@
 import { type Project, type SourceFile } from 'ts-morph';
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { INTERNAL_ELEMENT_CLASSES } from './constants';
 import { type ComponentSchema, type PropertySchema } from './schemas';
+import { generateCommonEventsArray } from './utils/generate-common-events-array';
+import { generateCommonEventsConfig } from './utils/generate-common-events-config';
 import { generateCommonEventsType } from './utils/generate-common-events-type';
 import { generateCommonPropertiesConfig } from './utils/generate-common-properties-config';
 import { generateCommonPropertiesType } from './utils/generate-common-properties-type';
 import { generateCustomElementRegistrations } from './utils/generate-custom-element-registrations';
 import { generateElementDefinition } from './utils/generate-element-definition';
-import { generateElementPropertyType } from './utils/generate-element-property-type';
+import { generateElementPropertiesType } from './utils/generate-element-properties-type';
+import { generateRemoteElementsImports } from './utils/generate-remote-elements-imports';
+import { generateSerializedEventConfigFactory } from './utils/generate-serialized-event-config-factory';
 import { generateTagNameMapDeclaration } from './utils/generate-tag-name-map-declaration';
-import { getSpecificProperties } from './utils/get-specific-properties';
+import { getRemoteElementDescriptor } from './utils/get-remote-element-descriptor';
 
 export const generateRemoteElements = ({
   project,
@@ -27,57 +30,38 @@ export const generateRemoteElements = ({
     overwrite: true,
   });
 
-  const commonEventNames = new Set(commonEvents);
-  const shouldUseCommonHtmlPropertiesConfig = isNonEmptyArray(
-    Object.keys(commonProperties),
-  );
-
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: '@remote-dom/core/elements',
-    namedImports: [
-      'createRemoteElement',
-      INTERNAL_ELEMENT_CLASSES.ROOT,
-      INTERNAL_ELEMENT_CLASSES.FRAGMENT,
-      { name: 'RemoteElementEventListenerDefinition', isTypeOnly: true },
-      { name: 'RemoteElementEventListenersDefinition', isTypeOnly: true },
-    ],
-  });
-
-  sourceFile.addImportDeclaration({
-    moduleSpecifier:
-      '@/remote/elements/utils/createWorkerEventFromSerializedEvent',
-    namedImports: ['createWorkerEventFromSerializedEvent'],
-  });
-
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: '@/types/SerializedEventData',
-    namedImports: [{ name: 'SerializedEventData', isTypeOnly: true }],
-  });
-
   const commonPropertyNames = new Set(Object.keys(commonProperties));
+  const commonEventNames = new Set(commonEvents);
+  const hasCommonProperties = commonPropertyNames.size > 0;
+  const hasCommonEvents = commonEventNames.size > 0;
+
+  generateRemoteElementsImports(sourceFile);
 
   generateCommonPropertiesType({ sourceFile, commonProperties });
 
-  if (commonEventNames.size > 0) {
-    generateCommonEventsType({ sourceFile, events: commonEvents });
+  if (hasCommonEvents) {
+    generateCommonEventsType({ sourceFile, commonEvents });
+    generateCommonEventsArray({ sourceFile, commonEvents });
+    generateSerializedEventConfigFactory(sourceFile);
+    generateCommonEventsConfig(sourceFile);
   }
 
-  if (shouldUseCommonHtmlPropertiesConfig) {
+  if (hasCommonProperties) {
     generateCommonPropertiesConfig({ sourceFile, commonProperties });
   }
 
   for (const component of components) {
-    const specificProperties = isDefined(component.htmlTag)
-      ? getSpecificProperties({ component, commonPropertyNames })
-      : component.properties;
+    const elementDescriptor = getRemoteElementDescriptor({
+      component,
+      commonPropertyNames,
+      commonEventNames,
+    });
 
-    generateElementPropertyType({ sourceFile, component, specificProperties });
+    generateElementPropertiesType({ sourceFile, elementDescriptor });
     generateElementDefinition({
       sourceFile,
-      component,
-      specificProperties,
-      commonEventNames,
-      shouldUseCommonHtmlPropertiesConfig,
+      elementDescriptor,
+      hasCommonPropertiesConfig: hasCommonProperties,
     });
   }
 

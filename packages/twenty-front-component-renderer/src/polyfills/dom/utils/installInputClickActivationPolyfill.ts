@@ -1,5 +1,6 @@
 import { isNull } from '@sniptt/guards';
 
+import { type InputClickActivationContext } from '@/polyfills/dom/types/InputClickActivationContext';
 import { type NodeWithOwnerDocument } from '@/polyfills/dom/types/NodeWithOwnerDocument';
 import { resolveInputClickActivationType } from '@/polyfills/dom/utils/resolveInputClickActivationType';
 import { runCheckboxClickActivation } from '@/polyfills/dom/utils/runCheckboxClickActivation';
@@ -21,25 +22,30 @@ export const installInputClickActivationPolyfill = (
       const dispatchEvent = (eventToDispatch: Event): boolean =>
         dispatchEventWithoutActivation.call(this, eventToDispatch);
 
-      const activationType =
-        event.type === 'click' && !isHostOriginatedEvent(event)
-          ? resolveInputClickActivationType(this)
-          : null;
+      const isWorkerOriginatedClick =
+        event.type === 'click' && !isHostOriginatedEvent(event);
+
+      if (!isWorkerOriginatedClick) {
+        return dispatchEvent(event);
+      }
+
+      const activationType = resolveInputClickActivationType(this);
 
       if (isNull(activationType)) {
         return dispatchEvent(event);
       }
 
-      const runClickActivation =
-        activationType === 'checkbox'
-          ? runCheckboxClickActivation
-          : runRadioButtonClickActivation;
-
-      return runClickActivation({
+      const clickActivationContext: InputClickActivationContext = {
         inputElement: this,
         clickEvent: event,
         dispatchEvent,
-      });
+      };
+
+      if (activationType === 'checkbox') {
+        return runCheckboxClickActivation(clickActivationContext);
+      }
+
+      return runRadioButtonClickActivation(clickActivationContext);
     },
     configurable: true,
     writable: true,

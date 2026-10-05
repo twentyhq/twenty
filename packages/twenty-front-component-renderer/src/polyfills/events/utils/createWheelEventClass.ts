@@ -19,6 +19,7 @@ export const createWheelEventClass = (
       this.deltaX = eventInit.deltaX ?? 0;
       this.deltaY = eventInit.deltaY ?? 0;
       this.deltaZ = eventInit.deltaZ ?? 0;
-      this.deltaMode = eventInit.deltaMode ?? 0;
+      this.deltaMode =
+        eventInit.deltaMode ?? WheelEventImplementation.DOM_DELTA_PIXEL;
     }
   };

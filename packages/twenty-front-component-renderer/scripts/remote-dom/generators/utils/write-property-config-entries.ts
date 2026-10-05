@@ -1,17 +1,18 @@
 import { type CodeBlockWriter } from 'ts-morph';
+
 import { type PropertySchema } from '../schemas';
 import { schemaTypeToConstructor } from './schema-type-to-constructor';
 
-export const writePropertyEntries = ({
+export const writePropertyConfigEntries = ({
   writer,
   properties,
 }: {
   writer: CodeBlockWriter;
   properties: Record<string, PropertySchema>;
 }): void => {
-  for (const [name, schema] of Object.entries(properties)) {
+  for (const [propertyName, propertySchema] of Object.entries(properties)) {
     writer.writeLine(
-      `'${name}': { type: ${schemaTypeToConstructor(schema.type)} },`,
+      `'${propertyName}': { type: ${schemaTypeToConstructor(propertySchema.type)} },`,
     );
   }
 };

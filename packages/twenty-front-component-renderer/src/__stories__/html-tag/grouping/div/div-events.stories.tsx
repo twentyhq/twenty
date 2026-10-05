@@ -24,6 +24,13 @@ export default meta;
 
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
+type Canvas = ReturnType<typeof within>;
+
+type CloneHandlersScenario = {
+  canvas: Canvas;
+  subject: HTMLElement;
+};
+
 export const ClickEvent: Story = runFrontComponentStory({
   frontComponentBundleName: 'div-click',
   play: async ({ canvasElement }) => {
@@ -124,13 +131,9 @@ export const FocusInOut: Story = runFrontComponentStory({
   },
 });
 
-const playPropagation: NonNullable<Story['play']> = async ({
-  canvasElement,
-}) => {
-  const canvas = within(canvasElement);
-
-  await expectFrontComponentMounted(canvas);
-
+const expectLabelClickBubblesToContainerAndDocument = async (
+  canvas: Canvas,
+) => {
   await userEvent.click(await canvas.findByTestId('label'));
   await waitFor(() =>
     expect(canvas.getByTestId('container-click')).toHaveTextContent(
@@ -142,7 +145,9 @@ const playPropagation: NonNullable<Story['play']> = async ({
       'propagation-label',
     ),
   );
+};
 
+const expectStoppedClickStaysOnIsolatedButton = async (canvas: Canvas) => {
   await userEvent.click(canvas.getByTestId('isolated-button'));
   await waitFor(() =>
     expect(canvas.getByTestId('isolated-click-count')).toHaveTextContent('1'),
@@ -152,7 +157,11 @@ const playPropagation: NonNullable<Story['play']> = async ({
   expect(canvas.getByTestId('document-click')).toHaveTextContent(
     'propagation-label',
   );
+};
 
+const expectBlurReportsNextFocusedFieldAsRelatedTarget = async (
+  canvas: Canvas,
+) => {
   await userEvent.click(canvas.getByTestId('first-field'));
   await userEvent.click(canvas.getByTestId('second-field'));
   await waitFor(() =>
@@ -160,6 +169,17 @@ const playPropagation: NonNullable<Story['play']> = async ({
       'propagation-second-field',
     ),
   );
+};
+
+const playPropagation: NonNullable<Story['play']> = async ({
+  canvasElement,
+}) => {
+  const canvas = within(canvasElement);
+
+  await expectFrontComponentMounted(canvas);
+  await expectLabelClickBubblesToContainerAndDocument(canvas);
+  await expectStoppedClickStaysOnIsolatedButton(canvas);
+  await expectBlurReportsNextFocusedFieldAsRelatedTarget(canvas);
 };
 
 export const Propagation: Story = runFrontComponentStory({
@@ -173,15 +193,10 @@ export const PropagationPreact: Story = runFrontComponentStory({
   play: playPropagation,
 });
 
-const playCloneHandlers: NonNullable<Story['play']> = async ({
-  canvasElement,
-}) => {
-  const canvas = within(canvasElement);
-
-  await expectFrontComponentMounted(canvas);
-
-  const subject = await canvas.findByTestId('subject');
-
+const expectEachClickRunsCaptureJsxAndClonedHandlers = async ({
+  canvas,
+  subject,
+}: CloneHandlersScenario) => {
   await userEvent.click(subject);
   await expectFrontComponentValue({ canvas, expected: 'capture,jsx,clone' });
 
@@ -190,17 +205,24 @@ const playCloneHandlers: NonNullable<Story['play']> = async ({
     canvas,
     expected: 'capture,jsx,clone,capture,jsx,clone',
   });
+};
 
-  const saveOnce = canvas.getByTestId('save-once');
+const expectHandlerRemovedOnRerenderIsNotCalled = async (canvas: Canvas) => {
+  const saveOnceButton = canvas.getByTestId('save-once');
 
-  await userEvent.click(saveOnce);
+  await userEvent.click(saveOnceButton);
   await waitFor(() =>
     expect(canvas.getByTestId('save-count')).toHaveTextContent('1'),
   );
-  await userEvent.click(saveOnce);
+  await userEvent.click(saveOnceButton);
   await waitForSandboxRoundTrip();
   expect(canvas.getByTestId('save-count')).toHaveTextContent('1');
+};
 
+const expectRemovingCloneKeepsElementAndDropsClonedHandler = async ({
+  canvas,
+  subject,
+}: CloneHandlersScenario) => {
   await userEvent.click(canvas.getByTestId('stop-cloning'));
   await waitFor(() =>
     expect(canvas.getByTestId('clone-state')).toHaveTextContent('not cloned'),
@@ -211,6 +233,23 @@ const playCloneHandlers: NonNullable<Story['play']> = async ({
   await expectFrontComponentValue({
     canvas,
     expected: 'capture,jsx,clone,capture,jsx,clone,capture,jsx',
+  });
+};
+
+const playCloneHandlers: NonNullable<Story['play']> = async ({
+  canvasElement,
+}) => {
+  const canvas = within(canvasElement);
+
+  await expectFrontComponentMounted(canvas);
+
+  const subject = await canvas.findByTestId('subject');
+
+  await expectEachClickRunsCaptureJsxAndClonedHandlers({ canvas, subject });
+  await expectHandlerRemovedOnRerenderIsNotCalled(canvas);
+  await expectRemovingCloneKeepsElementAndDropsClonedHandler({
+    canvas,
+    subject,
   });
 };
 

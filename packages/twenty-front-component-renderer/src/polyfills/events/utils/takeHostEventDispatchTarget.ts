@@ -1,11 +1,11 @@
-import { HOST_EVENT_DISPATCH_TARGET_BY_EVENT } from '@/polyfills/events/constants/HostEventDispatchTargetByEvent';
+import { hostEventDispatchTargetByEvent } from '@/polyfills/events/states/hostEventDispatchTargetByEvent';
 
 export const takeHostEventDispatchTarget = (
   event: Event,
 ): EventTarget | undefined => {
-  const dispatchTarget = HOST_EVENT_DISPATCH_TARGET_BY_EVENT.get(event);
+  const dispatchTarget = hostEventDispatchTargetByEvent.get(event);
 
-  HOST_EVENT_DISPATCH_TARGET_BY_EVENT.delete(event);
+  hostEventDispatchTargetByEvent.delete(event);
 
   return dispatchTarget;
 };

@@ -1,7 +1,8 @@
 import { type SourceFile, VariableDeclarationKind } from 'ts-morph';
+
 import { TYPE_NAMES } from '../constants';
 import { type PropertySchema } from '../schemas';
-import { writePropertyEntries } from './write-property-entries';
+import { writePropertyConfigEntries } from './write-property-config-entries';
 
 export const generateCommonPropertiesConfig = ({
   sourceFile,
@@ -17,7 +18,10 @@ export const generateCommonPropertiesConfig = ({
         name: TYPE_NAMES.COMMON_PROPERTIES_CONFIG,
         initializer: (writer) => {
           writer.block(() => {
-            writePropertyEntries({ writer, properties: commonProperties });
+            writePropertyConfigEntries({
+              writer,
+              properties: commonProperties,
+            });
           });
         },
       },
