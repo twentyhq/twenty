@@ -1,5 +1,6 @@
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { fromUsageLimitEntityToDto } from 'src/engine/core-modules/usage-limit/utils/from-usage-limit-entity-to-dto.util';
 
@@ -14,7 +15,7 @@ const buildEntity = (overrides: Partial<UsageLimitEntity>): UsageLimitEntity =>
     limitKind: 'quota',
     periodCount: 1,
     periodUnit: 'month',
-    meter: 'creditsUsedMicro',
+    unit: UsageUnit.CREDIT,
     limitValue: 3000,
     burstValue: null,
     createdAt: new Date('2026-01-01'),

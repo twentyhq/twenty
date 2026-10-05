@@ -18,6 +18,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const WEBHOOK_RECEIVER_PORT = 4318;
@@ -120,7 +121,7 @@ describe('Webhook rate limiting', () => {
         limitKind: 'speed',
         periodCount: WINDOW_SECONDS,
         periodUnit: 'second',
-        meter: 'quantity',
+        unit: UsageUnit.REQUEST,
         limitValue: LIMIT_VALUE,
         burstValue: LIMIT_VALUE,
       },

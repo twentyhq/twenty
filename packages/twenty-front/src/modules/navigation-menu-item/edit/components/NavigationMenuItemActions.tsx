@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Dropdown, useDropdownPage } from 'twenty-ui/components';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { useLingui } from '@lingui/react/macro';
@@ -13,43 +13,32 @@ import {
   IconRowInsertTop,
   IconRowInsertBottom,
   IconTrash,
-  IconChevronLeft,
 } from 'twenty-ui/icon';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
-import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
-import {
-  NavigationMenuItemSelectableItem,
-  type NavigationMenuItemOption,
-} from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
+import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
+import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
+import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 
 type NavigationMenuItemActionsProps = {
   item: NavigationMenuItem;
   section: NavigationMenuItemSection;
   onAdd: (target: NavigationMenuItemAddTarget) => void;
-  dropdownId: string;
   onClose: () => void;
 };
 export const NavigationMenuItemActions = ({
   item,
   section,
   onAdd,
-  dropdownId,
   onClose,
 }: NavigationMenuItemActionsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const { items, getSortedSiblings, moveUp, moveDown, moveToFolder, remove } =
     useNavigationMenuItemMoveRemove(section);
-  const [page, setPage] = useState<'actions' | 'folders'>('actions');
+  const { goToPage } = useDropdownPage();
   const siblings = getSortedSiblings(item.id) ?? [];
   const index = siblings.findIndex((sibling) => sibling.id === item.id);
   const run = (action: () => Promise<void>) => {
@@ -77,7 +66,7 @@ export const NavigationMenuItemActions = ({
       Icon: IconFolderSymlink,
       isDisabled: item.type === NavigationMenuItemType.FOLDER,
       hasSubMenu: true,
-      onClick: () => setPage('folders'),
+      onClick: () => goToPage('folders'),
     },
     {
       id: 'before',
@@ -126,33 +115,23 @@ export const NavigationMenuItemActions = ({
         onClick: () => run(() => moveToFolder(item.id, folder.id)),
       })),
   ];
-  const options = page === 'folders' ? folders : actions;
   return (
-    <LegacyDropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
-      {page === 'folders' && (
-        <DropdownMenuHeader
-          StartComponent={
-            <DropdownMenuHeaderLeftComponent
-              Icon={IconChevronLeft}
-              onClick={() => setPage('actions')}
-            />
-          }
-        >{t`Move to folder`}</DropdownMenuHeader>
-      )}
-      <SelectableList
-        key={page}
-        selectableListInstanceId={`${dropdownId}-actions`}
-        focusId={dropdownId}
-        selectableItemIdArray={options
-          .filter((option) => !option.isDisabled)
-          .map((option) => option.id)}
-      >
-        <DropdownMenuItemsContainer hasMaxHeight={page === 'folders'}>
-          {options.map((option) => (
+    <>
+      <Dropdown.Page id="root">
+        <Dropdown.Section>
+          {actions.map((option) => (
             <NavigationMenuItemSelectableItem key={option.id} item={option} />
           ))}
-        </DropdownMenuItemsContainer>
-      </SelectableList>
-    </LegacyDropdownContent>
+        </Dropdown.Section>
+      </Dropdown.Page>
+      <Dropdown.Page id="folders">
+        <Dropdown.Back>{t`Move to folder`}</Dropdown.Back>
+        <Dropdown.Section scrollable>
+          {folders.map((option) => (
+            <NavigationMenuItemSelectableItem key={option.id} item={option} />
+          ))}
+        </Dropdown.Section>
+      </Dropdown.Page>
+    </>
   );
 };

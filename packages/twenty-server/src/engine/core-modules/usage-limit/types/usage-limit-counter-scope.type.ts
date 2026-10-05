@@ -9,6 +9,6 @@ export type UsageLimitCounterScope = Pick<
   | 'spenderId'
   | 'limitKind'
   | 'periodUnit'
-  | 'meter'
+  | 'unit'
   | 'limitValue'
 >;

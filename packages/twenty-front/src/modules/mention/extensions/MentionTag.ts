@@ -2,7 +2,6 @@ import { formatRecordReference } from '@/ai/utils/formatRecordReference';
 import { MentionChip } from '@/mention/components/MentionChip';
 import { Node } from '@tiptap/core';
 import { mergeAttributes, ReactNodeViewRenderer } from '@tiptap/react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 export const MentionTag = Node.create({
   name: 'mentionTag',
@@ -57,7 +56,7 @@ export const MentionTag = Node.create({
         'data-type': 'mentionTag',
         class: 'mention-tag',
       }),
-      `${node.attrs.objectNameSingular === CoreObjectNameSingular.WorkspaceMember ? '@' : '#'}${node.attrs.label}`,
+      `@${node.attrs.label}`,
     ];
   },
 

@@ -32,6 +32,7 @@ requiring them to occur.
 | `twenty-ui-tooltip` | Tooltip (convenience and compound APIs) |
 | `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, Button hotkeys |
 | `twenty-ui-reading-directions` | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
+| `twenty-ui-country-select` | CountrySelect (`TwentyUiCountrySelect.stories.tsx`) |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
@@ -63,6 +64,7 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | PhoneCountryPicker | Both runtimes render the triggers, flags, and disabled state. Opening fails while reading pointer contact data from the missing `nativeEvent`. In React the popup still mounts, and the Dropdown search effect then reads `dataset`, which sandbox elements lack; the uncaught error unmounts the React tree, so the React story requires that error and keeps the pointer error optional. See the [PhoneCountryPicker documentation](../../../../twenty-docs/ui/components/phone-country-picker.mdx). |
 | Menu | Opening fails on the missing `nativeEvent.pointerType` and pointer contact data. |
 | Select | Opening fails on missing native event data and focus support. Preact can report only the last of these failures when the host coalesces sandbox errors. |
+| CountrySelect | Opening fails while reading pointer contact data from the missing `nativeEvent`. React still mounts the popup, and the Dropdown search target then reads `dataset`, which worker elements do not provide, so that error is allowed without being required; Preact stops at the opening error. The fixture checks the selected values and decorative flags, then clicks the disabled trigger and, after a settle delay, requires the opening error alone, so a popup mounted by React fails the story. Clicking an enabled trigger then asserts the opening error. |
 | Switch, Checkbox, Radio (standard and card), SegmentedControl | Activation attempts to construct an unavailable `PointerEvent`. `RadioCardReact` never gets that far: React drops the click handler Base UI adds through `React.cloneElement`, so only the group's focus handling fails on the missing `nativeEvent` for `composedPath`. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
 | Tooltip | `TooltipReact` opens on hover but remains open after Escape because React drops the handlers Base UI adds through `React.cloneElement`. |
@@ -97,4 +99,12 @@ Then, from `packages/twenty-front-component-renderer`, run:
 
 ```sh
 npx vitest run --config vitest.storybook.config.ts TwentyUiGallery.stories.tsx
+```
+
+The CountrySelect and reading-directions fixtures live in their own story
+files, so run them separately:
+
+```sh
+npx vitest run --config vitest.storybook.config.ts TwentyUiCountrySelect.stories.tsx
+npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.stories.tsx
 ```
