@@ -2,7 +2,6 @@ import {
   type FeatureFlagKey,
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
-import { type EntityMetadata } from 'typeorm';
 
 import { type CompactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/compact-flat-field-metadata-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -27,7 +26,6 @@ export type AdditionalCacheDataMaps = {
   rolesPermissions: ObjectsPermissionsByRoleId;
   apiKeyMap: Record<string, FlatApiKey>;
   flatApplicationMaps: FlatApplicationCacheMaps;
-  ORMEntityMetadatas: EntityMetadata[];
   flatFieldMetadataMapsOrm: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
@@ -42,6 +40,8 @@ export type WorkspaceCacheDataMap = AllFlatEntityMaps<true> &
   AdditionalCacheDataMaps;
 
 export type WorkspaceCacheKeyName = keyof WorkspaceCacheDataMap;
+
+export type RemovedWorkspaceCacheKeyName = 'ORMEntityMetadatas';
 
 export type WorkspaceDerivedCacheDataMap = {
   roleIdsWithAllRecordsAccess: string[];
