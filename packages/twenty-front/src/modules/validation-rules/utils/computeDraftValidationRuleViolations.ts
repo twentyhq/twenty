@@ -17,13 +17,15 @@ type DraftFieldMetadataItem = Pick<
   'name' | 'isSystem' | 'defaultValue'
 >;
 
+const FUNCTION_DEFAULT_VALUES = Object.values(
+  fieldMetadataDefaultValueFunctionName,
+);
+
 const isServerFilledField = (
   fieldMetadataItem: DraftFieldMetadataItem,
 ): boolean =>
   fieldMetadataItem.isSystem === true ||
-  Object.values(fieldMetadataDefaultValueFunctionName).some(
-    (functionName) => functionName === fieldMetadataItem.defaultValue,
-  );
+  FUNCTION_DEFAULT_VALUES.includes(fieldMetadataItem.defaultValue);
 
 const withStaticDefaultValues = ({
   draftRecord,
