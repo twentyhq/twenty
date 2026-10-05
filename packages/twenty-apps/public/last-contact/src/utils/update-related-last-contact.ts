@@ -13,6 +13,7 @@ import {
 } from 'src/utils/upsert-records-in-batches';
 
 const PAGE_SIZE = 200;
+const NESTED_RELATION_MAX_RECORDS = 60;
 
 export type RelatedInteraction = {
   occurredAt: string;
@@ -104,7 +105,12 @@ const resolveOpportunitiesByPersonId = async (
       ?.pointOfContactForOpportunities;
     const opportunities = (connection?.edges ?? []).map(({ node }) => node);
 
-    if ((connection?.totalCount ?? 0) > opportunities.length) {
+    const isTruncated =
+      typeof connection?.totalCount === 'number'
+        ? connection.totalCount > opportunities.length
+        : opportunities.length >= NESTED_RELATION_MAX_RECORDS;
+
+    if (isTruncated) {
       truncatedPersonIds.push(personId);
     } else {
       opportunitiesByPersonId.set(personId, opportunities);

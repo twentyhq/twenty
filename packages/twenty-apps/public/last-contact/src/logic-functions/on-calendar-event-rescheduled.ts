@@ -26,7 +26,7 @@ const handler = async (
   for (const event of batch.events) {
     const { startsAt, isCanceled } = event.properties.after ?? {};
 
-    if (!startsAt || isCanceled === true) {
+    if (!startsAt || isCanceled) {
       continue;
     }
 

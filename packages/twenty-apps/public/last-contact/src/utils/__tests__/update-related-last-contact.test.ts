@@ -27,7 +27,7 @@ const buildState = ({
 }: {
   company?: { id: string; lastContactAt: string | null } | null;
   opportunities?: { id: string; lastContactAt: string | null }[];
-  totalCount?: number;
+  totalCount?: number | null;
 } = {}): PersonLastContactState => ({
   company,
   pointOfContactForOpportunities: {
@@ -208,5 +208,30 @@ describe('updateRelatedLastContactForPeople', () => {
     expect(
       findUpsertData('createOpportunities').map(({ id }: { id: string }) => id),
     ).toEqual([OPPORTUNITY_ID, OTHER_OPPORTUNITY_ID]);
+  });
+
+  it('reads the opportunities of a person when the nested relation is full and has no total count', async () => {
+    client.query.mockResolvedValue({
+      opportunities: {
+        edges: [],
+        pageInfo: { hasNextPage: false, endCursor: null },
+      },
+    });
+
+    await updateRelatedLastContactForPeople(
+      client as never,
+      emailContact(),
+      stateFor(
+        buildState({
+          opportunities: Array.from({ length: 60 }, (_, index) => ({
+            id: `opportunity-${index}`,
+            lastContactAt: null,
+          })),
+          totalCount: null,
+        }),
+      ),
+    );
+
+    expect(client.query).toHaveBeenCalledTimes(1);
   });
 });
