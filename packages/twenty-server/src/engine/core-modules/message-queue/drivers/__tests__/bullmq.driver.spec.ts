@@ -196,6 +196,71 @@ describe('BullMQDriver progress', () => {
   );
 });
 
+describe('BullMQDriver queue wait metric', () => {
+  const recordHistogram = jest.fn();
+  const driver = new BullMQDriver(
+    {} as never,
+    { recordHistogram } as never,
+    {} as never,
+    {} as never,
+  );
+
+  driver.register(MessageQueue.workflowQueue);
+
+  const processJob = async (
+    job: Pick<Job, 'opts' | 'timestamp' | 'attemptsMade'>,
+  ) => {
+    jest.clearAllMocks();
+    driver.work(MessageQueue.workflowQueue, jest.fn());
+
+    const processor = jest.mocked(Worker).mock.calls[0][1];
+
+    if (typeof processor !== 'function') {
+      throw new Error('Worker processor was not registered');
+    }
+
+    await processor({
+      id: 'job-id',
+      name: 'job',
+      data: {},
+      updateData: jest.fn(),
+      updateProgress: jest.fn(),
+      ...job,
+    } as unknown as Job);
+  };
+
+  // Fake timers are on globally, so Date.now() is frozen between the job
+  // creation below and the processor call
+  beforeAll(() => {
+    jest.setSystemTime(1_700_000_000_000);
+  });
+
+  it('records the wait net of the scheduled delay', async () => {
+    await processJob({
+      opts: { delay: 60_000 },
+      timestamp: Date.now() - 62_000,
+      attemptsMade: 0,
+    });
+
+    expect(recordHistogram).toHaveBeenCalledWith(
+      expect.objectContaining({
+        value: 2_000,
+        attributes: { queue: MessageQueue.workflowQueue, job_name: 'job' },
+      }),
+    );
+  });
+
+  it('does not sample the wait of a retry', async () => {
+    await processJob({
+      opts: {},
+      timestamp: Date.now() - 120_000,
+      attemptsMade: 1,
+    });
+
+    expect(recordHistogram).not.toHaveBeenCalled();
+  });
+});
+
 describe('BullMQDriver global concurrency', () => {
   const driver = new BullMQDriver(
     {} as never,
