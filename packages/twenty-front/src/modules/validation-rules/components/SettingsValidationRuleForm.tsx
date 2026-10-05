@@ -68,7 +68,6 @@ export const SettingsValidationRuleForm = ({
               fields={fields}
               editorFields={editorFields}
               expression={values.expression}
-              message={values.message}
             />
           }
           form={

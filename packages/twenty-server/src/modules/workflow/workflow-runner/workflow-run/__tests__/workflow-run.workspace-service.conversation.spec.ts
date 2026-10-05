@@ -32,9 +32,16 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       find: jest.fn().mockResolvedValue([
         {
           id: 'part-id',
+          messageId: 'message-id',
           toolName: 'ask_question',
           toolInput: QUESTIONS[0],
-          toolOutput: { result: { question: QUESTIONS[0], status: 'pending' } },
+          toolOutput: {
+            result: { question: QUESTIONS[0], status: 'pending' },
+            workflowStep: {
+              workflowRunId: 'workflow-run-id',
+              stepId: 'step-id',
+            },
+          },
         },
       ]),
       writePart: jest.fn(),
@@ -304,6 +311,29 @@ describe('WorkflowRunWorkspaceService conversations', () => {
         result: { question: QUESTIONS[0], status: 'skipped' },
         expectedStatus: 'pending',
       });
+    });
+
+    it('leaves open a call another run posted in a conversation they share', async () => {
+      const { service, threadRepository, messagePartRepository } =
+        buildService();
+
+      messagePartRepository.find.mockResolvedValue([
+        {
+          id: 'part-id',
+          messageId: 'message-id',
+          toolName: 'ask_question',
+          toolInput: QUESTIONS[0],
+          toolOutput: {
+            result: { question: QUESTIONS[0], status: 'pending' },
+            workflowStep: { workflowRunId: 'other-run-id', stepId: 'step-id' },
+          },
+        },
+      ]);
+
+      await endRun(service);
+
+      expect(threadRepository.update).not.toHaveBeenCalled();
+      expect(messagePartRepository.writePart).not.toHaveBeenCalled();
     });
 
     it('leaves a conversation to the answer holding its claim', async () => {

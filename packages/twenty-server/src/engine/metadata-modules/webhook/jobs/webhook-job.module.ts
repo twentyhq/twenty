@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
@@ -16,7 +15,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     EventLogEmitterModule,
-    FeatureFlagModule,
     FlatWebhookModule,
     MetricsModule,
     RecordShareModule,
