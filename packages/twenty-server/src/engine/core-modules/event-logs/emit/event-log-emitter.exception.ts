@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum EventLogEmitterExceptionCode {
   INVALID_TYPE = 'INVALID_TYPE',
@@ -21,6 +24,10 @@ const getEventLogEmitterExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const EVENT_LOG_EMITTER_EXCEPTION_CATEGORY_BY_CODE = {
+  [EventLogEmitterExceptionCode.INVALID_TYPE]: 'BAD_USER_INPUT',
+  [EventLogEmitterExceptionCode.INVALID_INPUT]: 'BAD_USER_INPUT',
+} as const satisfies Record<EventLogEmitterExceptionCode, ExceptionCategory>;
 
 export class EventLogEmitterException extends CustomException<EventLogEmitterExceptionCode> {
   constructor(
@@ -32,6 +39,7 @@ export class EventLogEmitterException extends CustomException<EventLogEmitterExc
       userFriendlyMessage:
         userFriendlyMessage ??
         getEventLogEmitterExceptionUserFriendlyMessage(code),
+      category: EVENT_LOG_EMITTER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

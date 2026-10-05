@@ -10,7 +10,10 @@ export class TimelineException extends CustomException<TimelineExceptionCode> {
     super(
       message,
       TimelineExceptionCode.TIMELINE_ACTIVITY_TYPE_RESOLUTION_FAILED,
-      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      {
+        userFriendlyMessage: STANDARD_ERROR_MESSAGE,
+        category: 'INTERNAL_SERVER_ERROR',
+      },
     );
   }
 }

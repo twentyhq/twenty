@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum CalendarEventCreationExceptionCode {
   PROVIDER_NOT_SUPPORTED = 'PROVIDER_NOT_SUPPORTED',
@@ -21,6 +24,15 @@ const getCalendarEventCreationExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const CALENDAR_EVENT_CREATION_EXCEPTION_CATEGORY_BY_CODE = {
+  [CalendarEventCreationExceptionCode.PROVIDER_NOT_SUPPORTED]:
+    'INTERNAL_SERVER_ERROR',
+  [CalendarEventCreationExceptionCode.PROVIDER_REQUEST_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  CalendarEventCreationExceptionCode,
+  ExceptionCategory
+>;
 
 export class CalendarEventCreationException extends CustomException<CalendarEventCreationExceptionCode> {
   constructor(
@@ -32,6 +44,7 @@ export class CalendarEventCreationException extends CustomException<CalendarEven
       userFriendlyMessage:
         userFriendlyMessage ??
         getCalendarEventCreationExceptionUserFriendlyMessage(code),
+      category: CALENDAR_EVENT_CREATION_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum NavigationMenuItemExceptionCode {
   NAVIGATION_MENU_ITEM_NOT_FOUND = 'NAVIGATION_MENU_ITEM_NOT_FOUND',
@@ -27,6 +30,13 @@ const getNavigationMenuItemExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const NAVIGATION_MENU_ITEM_EXCEPTION_CATEGORY_BY_CODE = {
+  [NavigationMenuItemExceptionCode.NAVIGATION_MENU_ITEM_NOT_FOUND]: 'NOT_FOUND',
+  [NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT]:
+    'BAD_USER_INPUT',
+  [NavigationMenuItemExceptionCode.CIRCULAR_DEPENDENCY]: 'BAD_USER_INPUT',
+  [NavigationMenuItemExceptionCode.MAX_DEPTH_EXCEEDED]: 'BAD_USER_INPUT',
+} as const satisfies Record<NavigationMenuItemExceptionCode, ExceptionCategory>;
 
 export class NavigationMenuItemException extends CustomException<NavigationMenuItemExceptionCode> {
   constructor(
@@ -38,6 +48,7 @@ export class NavigationMenuItemException extends CustomException<NavigationMenuI
       userFriendlyMessage:
         userFriendlyMessage ??
         getNavigationMenuItemExceptionUserFriendlyMessage(code),
+      category: NAVIGATION_MENU_ITEM_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -3,7 +3,10 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 const getConnectionProviderExceptionUserFriendlyMessage = (
   code: ConnectionProviderExceptionCode,
@@ -41,6 +44,29 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const CONNECTION_PROVIDER_EXCEPTION_CATEGORY_BY_CODE = {
+  [ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND]: 'NOT_FOUND',
+  [ConnectionProviderExceptionCode.CLIENT_CREDENTIALS_NOT_CONFIGURED]:
+    'INTERNAL_SERVER_ERROR',
+  [ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+  [ConnectionProviderExceptionCode.REFRESH_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [ConnectionProviderExceptionCode.INVALID_STATE]: 'BAD_USER_INPUT',
+  [ConnectionProviderExceptionCode.INVALID_REQUEST]: 'BAD_USER_INPUT',
+  [ConnectionProviderExceptionCode.FORBIDDEN]: 'FORBIDDEN',
+  [ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT]:
+    'BAD_USER_INPUT',
+  [ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NOT_FOUND]: 'NOT_FOUND',
+  [ConnectionProviderExceptionCode.CONNECTION_NOT_FOUND]: 'NOT_FOUND',
+  [ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NAME_ALREADY_EXISTS]:
+    'BAD_USER_INPUT',
+  [ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND]:
+    'NOT_FOUND',
+  [ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_NOT_FOUND]:
+    'NOT_FOUND',
+  [ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<ConnectionProviderExceptionCode, ExceptionCategory>;
 
 export class ConnectionProviderException extends CustomException<ConnectionProviderExceptionCode> {
   constructor(
@@ -52,6 +78,7 @@ export class ConnectionProviderException extends CustomException<ConnectionProvi
       userFriendlyMessage:
         userFriendlyMessage ??
         getConnectionProviderExceptionUserFriendlyMessage(code),
+      category: CONNECTION_PROVIDER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -29,6 +29,7 @@ export class WorkflowCommonException extends CustomException<WorkflowCommonExcep
       userFriendlyMessage:
         userFriendlyMessage ??
         getWorkflowCommonExceptionUserFriendlyMessage(code),
+      category: 'INTERNAL_SERVER_ERROR',
     });
   }
 }

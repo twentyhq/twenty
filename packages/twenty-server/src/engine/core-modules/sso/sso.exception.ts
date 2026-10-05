@@ -4,7 +4,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum SsoExceptionCode {
   USER_NOT_FOUND = 'USER_NOT_FOUND',
@@ -36,6 +39,15 @@ const getSsoExceptionUserFriendlyMessage = (code: SsoExceptionCode) => {
       assertUnreachable(code);
   }
 };
+const SSO_EXCEPTION_CATEGORY_BY_CODE = {
+  [SsoExceptionCode.USER_NOT_FOUND]: 'NOT_FOUND',
+  [SsoExceptionCode.IDENTITY_PROVIDER_NOT_FOUND]: 'NOT_FOUND',
+  [SsoExceptionCode.IDENTITY_PROVIDER_ALREADY_EXISTS]: 'CONFLICT',
+  [SsoExceptionCode.INVALID_ISSUER_URL]: 'BAD_USER_INPUT',
+  [SsoExceptionCode.INVALID_IDP_TYPE]: 'BAD_USER_INPUT',
+  [SsoExceptionCode.UNKNOWN_SSO_CONFIGURATION_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [SsoExceptionCode.SSO_DISABLE]: 'FORBIDDEN',
+} as const satisfies Record<SsoExceptionCode, ExceptionCategory>;
 
 export class SsoException extends CustomException<SsoExceptionCode> {
   constructor(
@@ -46,6 +58,7 @@ export class SsoException extends CustomException<SsoExceptionCode> {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getSsoExceptionUserFriendlyMessage(code),
+      category: SSO_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

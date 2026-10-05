@@ -3,7 +3,10 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum WorkflowStepExecutorExceptionCode {
   SCOPED_WORKSPACE_NOT_FOUND = 'SCOPED_WORKSPACE_NOT_FOUND',
@@ -34,6 +37,20 @@ const getWorkflowStepExecutorExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const WORKFLOW_STEP_EXECUTOR_EXCEPTION_CATEGORY_BY_CODE = {
+  [WorkflowStepExecutorExceptionCode.SCOPED_WORKSPACE_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [WorkflowStepExecutorExceptionCode.FORBIDDEN]: 'INTERNAL_SERVER_ERROR',
+  [WorkflowStepExecutorExceptionCode.INTERNAL_ERROR]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  WorkflowStepExecutorExceptionCode,
+  ExceptionCategory
+>;
 
 export class WorkflowStepExecutorException extends CustomException<WorkflowStepExecutorExceptionCode> {
   constructor(
@@ -45,6 +62,7 @@ export class WorkflowStepExecutorException extends CustomException<WorkflowStepE
       userFriendlyMessage:
         userFriendlyMessage ??
         getWorkflowStepExecutorExceptionUserFriendlyMessage(code),
+      category: WORKFLOW_STEP_EXECUTOR_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

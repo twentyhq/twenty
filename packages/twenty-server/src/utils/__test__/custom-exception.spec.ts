@@ -31,21 +31,22 @@ describe('appendCommonExceptionCode', () => {
 });
 
 describe('CustomException', () => {
-  it('should assign the statusCode option when provided', () => {
+  it('should assign the category option', () => {
     const exception = new UnknownException('Not found', 'NOT_FOUND', {
       userFriendlyMessage: msg`Not found`,
-      statusCode: 404,
+      category: 'NOT_FOUND',
     });
 
-    expect(exception.statusCode).toBe(404);
+    expect(exception.category).toBe('NOT_FOUND');
   });
 
-  it('should leave statusCode undefined when the option is omitted', () => {
+  it('should leave shouldBeCapturedBySentry undefined when the option is omitted', () => {
     const exception = new UnknownException('Boom', 'INTERNAL_SERVER_ERROR', {
       userFriendlyMessage: msg`Boom`,
+      category: 'INTERNAL_SERVER_ERROR',
     });
 
-    expect(exception.statusCode).toBeUndefined();
+    expect(exception.shouldBeCapturedBySentry).toBeUndefined();
   });
 
   class TestException extends CustomException<string> {
@@ -54,7 +55,10 @@ describe('CustomException', () => {
       code: string,
       { userFriendlyMessage }: { userFriendlyMessage: MessageDescriptor },
     ) {
-      super(message, code, { userFriendlyMessage });
+      super(message, code, {
+        userFriendlyMessage,
+        category: 'INTERNAL_SERVER_ERROR',
+      });
     }
   }
 
@@ -95,6 +99,7 @@ describe('UnknownException', () => {
   it('should extend CustomException', () => {
     const exception = new UnknownException('Test error', 'TEST_ERROR', {
       userFriendlyMessage: msg`Test error`,
+      category: 'INTERNAL_SERVER_ERROR',
     });
 
     expect(exception).toBeInstanceOf(CustomException);
@@ -105,6 +110,7 @@ describe('UnknownException', () => {
     const code = 'TEST_ERROR';
     const exception = new UnknownException(message, code, {
       userFriendlyMessage: msg`Test error`,
+      category: 'INTERNAL_SERVER_ERROR',
     });
 
     expect(exception.message).toBe(message);
@@ -117,6 +123,7 @@ describe('UnknownException', () => {
     const userFriendlyMessage = msg`User friendly error message`;
     const exception = new UnknownException(message, code, {
       userFriendlyMessage,
+      category: 'INTERNAL_SERVER_ERROR',
     });
 
     expect(exception.message).toBe(message);

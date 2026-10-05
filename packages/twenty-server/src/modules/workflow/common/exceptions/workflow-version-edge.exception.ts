@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum WorkflowVersionEdgeExceptionCode {
   NOT_FOUND = 'NOT_FOUND',
@@ -21,6 +24,13 @@ const getWorkflowVersionEdgeExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const WORKFLOW_VERSION_EDGE_EXCEPTION_CATEGORY_BY_CODE = {
+  [WorkflowVersionEdgeExceptionCode.NOT_FOUND]: 'NOT_FOUND',
+  [WorkflowVersionEdgeExceptionCode.INVALID_REQUEST]: 'BAD_USER_INPUT',
+} as const satisfies Record<
+  WorkflowVersionEdgeExceptionCode,
+  ExceptionCategory
+>;
 
 export class WorkflowVersionEdgeException extends CustomException<WorkflowVersionEdgeExceptionCode> {
   constructor(
@@ -32,6 +42,7 @@ export class WorkflowVersionEdgeException extends CustomException<WorkflowVersio
       userFriendlyMessage:
         userFriendlyMessage ??
         getWorkflowVersionEdgeExceptionUserFriendlyMessage(code),
+      category: WORKFLOW_VERSION_EDGE_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

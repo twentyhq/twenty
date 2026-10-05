@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum AiExceptionCode {
   AGENT_NOT_FOUND = 'AGENT_NOT_FOUND',
@@ -106,6 +109,39 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       assertUnreachable(code);
   }
 };
+const AI_EXCEPTION_CATEGORY_BY_CODE = {
+  [AiExceptionCode.AGENT_NOT_FOUND]: 'NOT_FOUND',
+  [AiExceptionCode.AGENT_ALREADY_EXISTS]: 'CONFLICT',
+  [AiExceptionCode.AGENT_IS_STANDARD]: 'FORBIDDEN',
+  [AiExceptionCode.AGENT_EXECUTION_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [AiExceptionCode.INVALID_AGENT_INPUT]: 'BAD_USER_INPUT',
+  [AiExceptionCode.THREAD_NOT_FOUND]: 'NOT_FOUND',
+  [AiExceptionCode.RECORD_NOT_FOUND]: 'NOT_FOUND',
+  [AiExceptionCode.WORKSPACE_NOT_FOUND]: 'NOT_FOUND',
+  [AiExceptionCode.CONTEXT_WINDOW_EXCEEDED]: 'BAD_USER_INPUT',
+  [AiExceptionCode.INVALID_CHAT_THREAD_TITLE]: 'BAD_USER_INPUT',
+  [AiExceptionCode.INVALID_CHAT_THREAD_SNOOZE_TIME]: 'BAD_USER_INPUT',
+  [AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE]: 'CONFLICT',
+  [AiExceptionCode.MESSAGE_NOT_FOUND]: 'NOT_FOUND',
+  [AiExceptionCode.INVALID_TOOL_CALL_OUTPUT]: 'BAD_USER_INPUT',
+  [AiExceptionCode.TOOL_CALL_NOT_FOUND]: 'NOT_FOUND',
+  [AiExceptionCode.TOOL_CALL_NOT_PENDING]: 'BAD_USER_INPUT',
+  [AiExceptionCode.API_KEY_NOT_CONFIGURED]: 'SERVICE_UNAVAILABLE',
+  [AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [AiExceptionCode.ROLE_NOT_FOUND]: 'NOT_FOUND',
+  [AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS]: 'FORBIDDEN',
+  [AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED]: 'FORBIDDEN',
+  [AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND]: 'NOT_FOUND',
+  [AiExceptionCode.RUN_AGENT_NOT_ALLOWED]: 'FORBIDDEN',
+  [AiExceptionCode.NO_FAILED_TURN_TO_RETRY]: 'CONFLICT',
+  [AiExceptionCode.STREAM_INTERRUPTED]: 'INTERNAL_SERVER_ERROR',
+  [AiExceptionCode.EVALUATION_MODEL_NOT_FOUND]: 'NOT_FOUND',
+  [AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED]: 'BAD_USER_INPUT',
+  [AiExceptionCode.INVALID_EVALUATION_REQUEST]: 'BAD_USER_INPUT',
+  [AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN]: 'FORBIDDEN',
+  [AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT]: 'CONFLICT',
+  [AiExceptionCode.THREAD_AWAITING_ANSWER]: 'CONFLICT',
+} as const satisfies Record<AiExceptionCode, ExceptionCategory>;
 
 export class AiException extends CustomException<AiExceptionCode> {
   constructor(
@@ -116,6 +152,7 @@ export class AiException extends CustomException<AiExceptionCode> {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getAiExceptionUserFriendlyMessage(code),
+      category: AI_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

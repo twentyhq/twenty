@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum InvalidMetadataExceptionCode {
   LABEL_REQUIRED = 'Label required',
@@ -42,6 +45,17 @@ const getInvalidMetadataExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const INVALID_METADATA_EXCEPTION_CATEGORY_BY_CODE = {
+  [InvalidMetadataExceptionCode.LABEL_REQUIRED]: 'BAD_USER_INPUT',
+  [InvalidMetadataExceptionCode.INPUT_TOO_SHORT]: 'BAD_USER_INPUT',
+  [InvalidMetadataExceptionCode.EXCEEDS_MAX_LENGTH]: 'BAD_USER_INPUT',
+  [InvalidMetadataExceptionCode.RESERVED_KEYWORD]: 'BAD_USER_INPUT',
+  [InvalidMetadataExceptionCode.NOT_CAMEL_CASE]: 'BAD_USER_INPUT',
+  [InvalidMetadataExceptionCode.INVALID_LABEL]: 'BAD_USER_INPUT',
+  [InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL]: 'BAD_USER_INPUT',
+  [InvalidMetadataExceptionCode.INVALID_STRING]: 'BAD_USER_INPUT',
+  [InvalidMetadataExceptionCode.NOT_AVAILABLE]: 'BAD_USER_INPUT',
+} as const satisfies Record<InvalidMetadataExceptionCode, ExceptionCategory>;
 
 export class InvalidMetadataException extends CustomException<InvalidMetadataExceptionCode> {
   constructor(
@@ -53,6 +67,7 @@ export class InvalidMetadataException extends CustomException<InvalidMetadataExc
       userFriendlyMessage:
         userFriendlyMessage ??
         getInvalidMetadataExceptionUserFriendlyMessage(code),
+      category: INVALID_METADATA_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

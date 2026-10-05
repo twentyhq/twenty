@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum RecordTransformerExceptionCode {
   INVALID_URL = 'INVALID_URL',
@@ -36,6 +39,18 @@ const getRecordTransformerExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const RECORD_TRANSFORMER_EXCEPTION_CATEGORY_BY_CODE = {
+  [RecordTransformerExceptionCode.INVALID_URL]: 'BAD_USER_INPUT',
+  [RecordTransformerExceptionCode.INVALID_PHONE_NUMBER]: 'BAD_USER_INPUT',
+  [RecordTransformerExceptionCode.INVALID_PHONE_COUNTRY_CODE]: 'BAD_USER_INPUT',
+  [RecordTransformerExceptionCode.INVALID_PHONE_CALLING_CODE]: 'BAD_USER_INPUT',
+  [RecordTransformerExceptionCode.CONFLICTING_PHONE_COUNTRY_CODE]:
+    'BAD_USER_INPUT',
+  [RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE]:
+    'BAD_USER_INPUT',
+  [RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE]:
+    'BAD_USER_INPUT',
+} as const satisfies Record<RecordTransformerExceptionCode, ExceptionCategory>;
 
 export class RecordTransformerException extends CustomException<RecordTransformerExceptionCode> {
   constructor(
@@ -47,6 +62,7 @@ export class RecordTransformerException extends CustomException<RecordTransforme
       userFriendlyMessage:
         userFriendlyMessage ??
         getRecordTransformerExceptionUserFriendlyMessage(code),
+      category: RECORD_TRANSFORMER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -3,7 +3,10 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type FlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum ApplicationExceptionCode {
   OBJECT_NOT_FOUND = 'OBJECT_NOT_FOUND',
@@ -97,6 +100,38 @@ const getApplicationExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const APPLICATION_EXCEPTION_CATEGORY_BY_CODE = {
+  [ApplicationExceptionCode.OBJECT_NOT_FOUND]: 'NOT_FOUND',
+  [ApplicationExceptionCode.FIELD_NOT_FOUND]: 'NOT_FOUND',
+  [ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND]: 'NOT_FOUND',
+  [ApplicationExceptionCode.FRONT_COMPONENT_NOT_FOUND]: 'NOT_FOUND',
+  [ApplicationExceptionCode.ENTITY_NOT_FOUND]: 'NOT_FOUND',
+  [ApplicationExceptionCode.APPLICATION_NOT_FOUND]: 'NOT_FOUND',
+  [ApplicationExceptionCode.APP_NOT_INSTALLED]: 'NOT_FOUND',
+  [ApplicationExceptionCode.FORBIDDEN]: 'FORBIDDEN',
+  [ApplicationExceptionCode.INVALID_INPUT]: 'BAD_USER_INPUT',
+  [ApplicationExceptionCode.SOURCE_CHANNEL_MISMATCH]: 'BAD_USER_INPUT',
+  [ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [ApplicationExceptionCode.UPGRADE_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [ApplicationExceptionCode.PRE_INSTALL_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [ApplicationExceptionCode.POST_INSTALL_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [ApplicationExceptionCode.UNINSTALL_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [ApplicationExceptionCode.APP_ALREADY_INSTALLED]: 'BAD_USER_INPUT',
+  [ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION]: 'BAD_USER_INPUT',
+  [ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE]: 'BAD_USER_INPUT',
+  [ApplicationExceptionCode.WORKSPACE_VERSION_INCOMPATIBLE]: 'BAD_USER_INPUT',
+  [ApplicationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT]: 'BAD_USER_INPUT',
+  [ApplicationExceptionCode.INVALID_SERVER_VERSION]: 'INTERNAL_SERVER_ERROR',
+  [ApplicationExceptionCode.INVALID_WORKSPACE_VERSION]: 'BAD_USER_INPUT',
+  [ApplicationExceptionCode.APPLICATION_INSTALLATION_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+  [ApplicationExceptionCode.KEY_VALUE_PERSISTENCE_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+  [ApplicationExceptionCode.APPLICATION_NOT_EXPORTABLE]: 'BAD_USER_INPUT',
+  [ApplicationExceptionCode.STANDARD_APPLICATION_NOT_EXPORTABLE]:
+    'BAD_USER_INPUT',
+} as const satisfies Record<ApplicationExceptionCode, ExceptionCategory>;
 
 export class ApplicationException extends CustomException<ApplicationExceptionCode> {
   context?: FlatEntityMapsExceptionContext;
@@ -115,6 +150,7 @@ export class ApplicationException extends CustomException<ApplicationExceptionCo
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getApplicationExceptionUserFriendlyMessage(code),
+      category: APPLICATION_EXCEPTION_CATEGORY_BY_CODE[code],
     });
 
     this.context = context;

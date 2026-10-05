@@ -6,6 +6,7 @@ import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runne
 import {
   appendCommonExceptionCode,
   CustomException,
+  type ExceptionCategory,
 } from 'src/utils/custom-exception';
 
 export const WorkspaceSchemaManagerExceptionCode = appendCommonExceptionCode({
@@ -27,6 +28,17 @@ const getWorkspaceSchemaManagerExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const WORKSPACE_SCHEMA_MANAGER_EXCEPTION_CATEGORY_BY_CODE = {
+  [WorkspaceSchemaManagerExceptionCode.INTERNAL_SERVER_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkspaceSchemaManagerExceptionCode.ENUM_OPERATION_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkspaceSchemaManagerExceptionCode.CONCURRENT_INDEX_CREATION_IN_TRANSACTION]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  keyof typeof WorkspaceSchemaManagerExceptionCode,
+  ExceptionCategory
+>;
 
 export class WorkspaceSchemaManagerException extends CustomException<
   keyof typeof WorkspaceSchemaManagerExceptionCode
@@ -40,6 +52,7 @@ export class WorkspaceSchemaManagerException extends CustomException<
       userFriendlyMessage:
         userFriendlyMessage ??
         getWorkspaceSchemaManagerExceptionUserFriendlyMessage(code),
+      category: WORKSPACE_SCHEMA_MANAGER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

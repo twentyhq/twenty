@@ -6,6 +6,7 @@ import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runne
 import {
   appendCommonExceptionCode,
   CustomException,
+  type ExceptionCategory,
 } from 'src/utils/custom-exception';
 
 export const AuthExceptionCode = appendCommonExceptionCode({
@@ -95,6 +96,36 @@ const getAuthExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const AUTH_EXCEPTION_CATEGORY_BY_CODE = {
+  [AuthExceptionCode.INTERNAL_SERVER_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [AuthExceptionCode.USER_NOT_FOUND]: 'UNAUTHENTICATED',
+  [AuthExceptionCode.USER_WORKSPACE_NOT_FOUND]: 'UNAUTHENTICATED',
+  [AuthExceptionCode.EMAIL_NOT_VERIFIED]: 'FORBIDDEN',
+  [AuthExceptionCode.CLIENT_NOT_FOUND]: 'NOT_FOUND',
+  [AuthExceptionCode.WORKSPACE_NOT_FOUND]: 'UNAUTHENTICATED',
+  [AuthExceptionCode.WORKSPACE_SUSPENDED]: 'FORBIDDEN',
+  [AuthExceptionCode.APPLICATION_NOT_FOUND]: 'UNAUTHENTICATED',
+  [AuthExceptionCode.INVALID_INPUT]: 'BAD_USER_INPUT',
+  [AuthExceptionCode.FORBIDDEN_EXCEPTION]: 'FORBIDDEN',
+  [AuthExceptionCode.INSUFFICIENT_SCOPES]: 'FORBIDDEN',
+  [AuthExceptionCode.UNAUTHENTICATED]: 'UNAUTHENTICATED',
+  [AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED]:
+    'UNAUTHENTICATED',
+  [AuthExceptionCode.INVALID_DATA]: 'FORBIDDEN',
+  [AuthExceptionCode.OAUTH_ACCESS_DENIED]: 'FORBIDDEN',
+  [AuthExceptionCode.SSO_AUTH_FAILED]: 'FORBIDDEN',
+  [AuthExceptionCode.USE_SSO_AUTH]: 'FORBIDDEN',
+  [AuthExceptionCode.SIGNUP_DISABLED]: 'FORBIDDEN',
+  [AuthExceptionCode.GOOGLE_API_AUTH_DISABLED]: 'FORBIDDEN',
+  [AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED]: 'FORBIDDEN',
+  [AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE]: 'FORBIDDEN',
+  [AuthExceptionCode.ENTERPRISE_VALIDITY_TOKEN_NOT_VALID]: 'FORBIDDEN',
+  [AuthExceptionCode.INVALID_JWT_TOKEN_TYPE]: 'FORBIDDEN',
+  [AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED]: 'FORBIDDEN',
+  [AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED]:
+    'FORBIDDEN',
+  [AuthExceptionCode.USER_ALREADY_EXISTS]: 'FORBIDDEN',
+} as const satisfies Record<keyof typeof AuthExceptionCode, ExceptionCategory>;
 
 export class AuthException extends CustomException<
   keyof typeof AuthExceptionCode
@@ -107,6 +138,7 @@ export class AuthException extends CustomException<
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getAuthExceptionUserFriendlyMessage(code),
+      category: AUTH_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

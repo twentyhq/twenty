@@ -18,6 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
 
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { convertCustomExceptionToGraphQLError } from 'src/engine/core-modules/graphql/utils/convert-custom-exception-to-graphql-error.util';
 import { generateGraphQLErrorFromError } from 'src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util';
 import { getGraphqlOperationMetricKeyFromErrorCode } from 'src/engine/core-modules/graphql/utils/get-graphql-operation-metric-key-from-error-code.util';
 import {
@@ -30,6 +31,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { translateUserFriendlyMessageDescriptors } from 'src/engine/core-modules/i18n/utils/translate-user-friendly-message-descriptors.util';
+import { CustomException } from 'src/utils/custom-exception';
 
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
 const SCHEMA_VERSION_HEADER = 'x-schema-version';
@@ -122,6 +124,10 @@ export const useGraphQLErrorHandlerHook = <
                   ...error.extensions,
                   ...(originalError.extensions || {}),
                 };
+              }
+
+              if (originalError instanceof CustomException) {
+                return convertCustomExceptionToGraphQLError(originalError);
               }
 
               if (

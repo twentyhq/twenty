@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export class ViewFilterGroupException extends CustomException<ViewFilterGroupExceptionCode> {
   constructor(
@@ -13,6 +16,7 @@ export class ViewFilterGroupException extends CustomException<ViewFilterGroupExc
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? msg`A view filter group error occurred.`,
+      category: VIEW_FILTER_GROUP_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }
@@ -24,6 +28,14 @@ export enum ViewFilterGroupExceptionCode {
   CIRCULAR_DEPENDENCY = 'CIRCULAR_DEPENDENCY',
   MAX_DEPTH_EXCEEDED = 'MAX_DEPTH_EXCEEDED',
 }
+const VIEW_FILTER_GROUP_EXCEPTION_CATEGORY_BY_CODE = {
+  [ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND]: 'NOT_FOUND',
+  [ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA]:
+    'BAD_USER_INPUT',
+  [ViewFilterGroupExceptionCode.VIEW_NOT_FOUND]: 'NOT_FOUND',
+  [ViewFilterGroupExceptionCode.CIRCULAR_DEPENDENCY]: 'BAD_USER_INPUT',
+  [ViewFilterGroupExceptionCode.MAX_DEPTH_EXCEEDED]: 'BAD_USER_INPUT',
+} as const satisfies Record<ViewFilterGroupExceptionCode, ExceptionCategory>;
 
 export enum ViewFilterGroupExceptionMessageKey {
   WORKSPACE_ID_REQUIRED = 'WORKSPACE_ID_REQUIRED',

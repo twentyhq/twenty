@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum ConfigVariableExceptionCode {
   DATABASE_CONFIG_DISABLED = 'DATABASE_CONFIG_DISABLED',
@@ -33,6 +36,15 @@ const getConfigVariableExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const CONFIG_VARIABLE_EXCEPTION_CATEGORY_BY_CODE = {
+  [ConfigVariableExceptionCode.DATABASE_CONFIG_DISABLED]: 'BAD_USER_INPUT',
+  [ConfigVariableExceptionCode.ENVIRONMENT_ONLY_VARIABLE]: 'FORBIDDEN',
+  [ConfigVariableExceptionCode.VARIABLE_NOT_FOUND]: 'NOT_FOUND',
+  [ConfigVariableExceptionCode.VALIDATION_FAILED]: 'BAD_USER_INPUT',
+  [ConfigVariableExceptionCode.UNSUPPORTED_CONFIG_TYPE]:
+    'INTERNAL_SERVER_ERROR',
+  [ConfigVariableExceptionCode.INTERNAL_ERROR]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<ConfigVariableExceptionCode, ExceptionCategory>;
 
 export class ConfigVariableException extends CustomException<ConfigVariableExceptionCode> {
   constructor(
@@ -44,6 +56,7 @@ export class ConfigVariableException extends CustomException<ConfigVariableExcep
       userFriendlyMessage:
         userFriendlyMessage ??
         getConfigVariableExceptionUserFriendlyMessage(code),
+      category: CONFIG_VARIABLE_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

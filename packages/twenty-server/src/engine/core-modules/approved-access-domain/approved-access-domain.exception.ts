@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum ApprovedAccessDomainExceptionCode {
   APPROVED_ACCESS_DOMAIN_NOT_FOUND = 'APPROVED_ACCESS_DOMAIN_NOT_FOUND',
@@ -36,6 +39,25 @@ const getApprovedAccessDomainExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const APPROVED_ACCESS_DOMAIN_EXCEPTION_CATEGORY_BY_CODE = {
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_NOT_FOUND]:
+    'FORBIDDEN',
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VERIFIED]:
+    'FORBIDDEN',
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED]:
+    'FORBIDDEN',
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_DOES_NOT_MATCH_DOMAIN_EMAIL]:
+    'FORBIDDEN',
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID]:
+    'FORBIDDEN',
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED]:
+    'FORBIDDEN',
+  [ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN]:
+    'FORBIDDEN',
+} as const satisfies Record<
+  ApprovedAccessDomainExceptionCode,
+  ExceptionCategory
+>;
 
 export class ApprovedAccessDomainException extends CustomException<ApprovedAccessDomainExceptionCode> {
   constructor(
@@ -47,6 +69,7 @@ export class ApprovedAccessDomainException extends CustomException<ApprovedAcces
       userFriendlyMessage:
         userFriendlyMessage ??
         getApprovedAccessDomainExceptionUserFriendlyMessage(code),
+      category: APPROVED_ACCESS_DOMAIN_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

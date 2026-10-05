@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum ServerRouteTriggerExceptionCode {
   LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
@@ -39,6 +42,19 @@ const getServerRouteTriggerExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const SERVER_ROUTE_TRIGGER_EXCEPTION_CATEGORY_BY_CODE = {
+  [ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND]: 'NOT_FOUND',
+  [ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_DISABLED]: 'FORBIDDEN',
+  [ServerRouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED]: 'RATE_LIMITED',
+  [ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT]: 'BAD_GATEWAY',
+  [ServerRouteTriggerExceptionCode.RESOLVER_REQUIRES_AUTHENTICATION]:
+    'FORBIDDEN',
+  [ServerRouteTriggerExceptionCode.METHOD_NOT_ALLOWED]: 'METHOD_NOT_ALLOWED',
+} as const satisfies Record<ServerRouteTriggerExceptionCode, ExceptionCategory>;
 
 export class ServerRouteTriggerException extends CustomException<ServerRouteTriggerExceptionCode> {
   constructor(
@@ -50,6 +66,13 @@ export class ServerRouteTriggerException extends CustomException<ServerRouteTrig
       userFriendlyMessage:
         userFriendlyMessage ??
         getServerRouteTriggerExceptionUserFriendlyMessage(code),
+      category: SERVER_ROUTE_TRIGGER_EXCEPTION_CATEGORY_BY_CODE[code],
+      shouldBeCapturedBySentry:
+        code ===
+          ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR ||
+        code === ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT
+          ? false
+          : undefined,
     });
   }
 }

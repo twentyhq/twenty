@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum LogicFunctionExceptionCode {
   LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
@@ -66,6 +69,35 @@ const getLogicFunctionExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const LOGIC_FUNCTION_EXCEPTION_CATEGORY_BY_CODE = {
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND]: 'NOT_FOUND',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN]: 'FORBIDDEN',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_ALREADY_EXIST]: 'CONFLICT',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_READY]: 'FORBIDDEN',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_BUILDING]: 'FORBIDDEN',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_CODE_UNCHANGED]:
+    'INTERNAL_SERVER_ERROR',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_LIMIT_REACHED]:
+    'FORBIDDEN',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED]:
+    'BAD_USER_INPUT',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_TIMEOUT]:
+    'GATEWAY_TIMEOUT',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED]:
+    'BAD_USER_INPUT',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED]: 'FORBIDDEN',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_INVALID_SEED_PROJECT]:
+    'INTERNAL_SERVER_ERROR',
+  [LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT]: 'BAD_USER_INPUT',
+  [LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED]:
+    'FORBIDDEN',
+} as const satisfies Record<LogicFunctionExceptionCode, ExceptionCategory>;
 
 export class LogicFunctionException extends CustomException<LogicFunctionExceptionCode> {
   constructor(
@@ -77,6 +109,7 @@ export class LogicFunctionException extends CustomException<LogicFunctionExcepti
       userFriendlyMessage:
         userFriendlyMessage ??
         getLogicFunctionExceptionUserFriendlyMessage(code),
+      category: LOGIC_FUNCTION_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

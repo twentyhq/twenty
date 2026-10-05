@@ -3,7 +3,10 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum EmailingDomainDriverExceptionCode {
   NOT_FOUND = 'NOT_FOUND',
@@ -45,6 +48,27 @@ const getEmailingDomainDriverExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const EMAILING_DOMAIN_DRIVER_EXCEPTION_CATEGORY_BY_CODE = {
+  [EmailingDomainDriverExceptionCode.NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [EmailingDomainDriverExceptionCode.TEMPORARY_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [EmailingDomainDriverExceptionCode.INSUFFICIENT_PERMISSIONS]:
+    'INTERNAL_SERVER_ERROR',
+  [EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [EmailingDomainDriverExceptionCode.SENDING_SUSPENDED]:
+    'INTERNAL_SERVER_ERROR',
+  [EmailingDomainDriverExceptionCode.SANDBOX_ACCOUNT]: 'INTERNAL_SERVER_ERROR',
+  [EmailingDomainDriverExceptionCode.ALL_RECIPIENTS_SUPPRESSED]:
+    'INTERNAL_SERVER_ERROR',
+  [EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY]:
+    'INTERNAL_SERVER_ERROR',
+  [EmailingDomainDriverExceptionCode.UNSUBSCRIBE_MULTIPLE_RECIPIENTS]:
+    'INTERNAL_SERVER_ERROR',
+  [EmailingDomainDriverExceptionCode.UNKNOWN]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  EmailingDomainDriverExceptionCode,
+  ExceptionCategory
+>;
 
 export class EmailingDomainDriverException extends CustomException<EmailingDomainDriverExceptionCode> {
   constructor(
@@ -56,6 +80,7 @@ export class EmailingDomainDriverException extends CustomException<EmailingDomai
       userFriendlyMessage:
         userFriendlyMessage ??
         getEmailingDomainDriverExceptionUserFriendlyMessage(code),
+      category: EMAILING_DOMAIN_DRIVER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

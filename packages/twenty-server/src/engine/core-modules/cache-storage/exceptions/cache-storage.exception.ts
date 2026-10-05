@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum CacheStorageExceptionCode {
   SCRIPT_EXECUTION_FAILED = 'SCRIPT_EXECUTION_FAILED',
@@ -20,6 +23,10 @@ const getCacheStorageExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const CACHE_STORAGE_EXCEPTION_CATEGORY_BY_CODE = {
+  [CacheStorageExceptionCode.SCRIPT_EXECUTION_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [CacheStorageExceptionCode.REDIS_CACHE_REQUIRED]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<CacheStorageExceptionCode, ExceptionCategory>;
 
 export class CacheStorageException extends CustomException<CacheStorageExceptionCode> {
   constructor(
@@ -31,6 +38,7 @@ export class CacheStorageException extends CustomException<CacheStorageException
       userFriendlyMessage:
         userFriendlyMessage ??
         getCacheStorageExceptionUserFriendlyMessage(code),
+      category: CACHE_STORAGE_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

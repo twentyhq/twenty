@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum ApplicationVariableEntityExceptionCode {
   APPLICATION_VARIABLE_NOT_FOUND = 'APPLICATION_VARIABLE_NOT_FOUND',
@@ -21,6 +24,15 @@ const getApplicationVariableEntityExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const APPLICATION_VARIABLE_ENTITY_EXCEPTION_CATEGORY_BY_CODE = {
+  [ApplicationVariableEntityExceptionCode.APPLICATION_VARIABLE_NOT_FOUND]:
+    'NOT_FOUND',
+  [ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT]:
+    'BAD_USER_INPUT',
+} as const satisfies Record<
+  ApplicationVariableEntityExceptionCode,
+  ExceptionCategory
+>;
 
 export class ApplicationVariableEntityException extends CustomException<ApplicationVariableEntityExceptionCode> {
   constructor(
@@ -32,6 +44,7 @@ export class ApplicationVariableEntityException extends CustomException<Applicat
       userFriendlyMessage:
         userFriendlyMessage ??
         getApplicationVariableEntityExceptionUserFriendlyMessage(code),
+      category: APPLICATION_VARIABLE_ENTITY_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export class ViewFieldException extends CustomException<ViewFieldExceptionCode> {
   constructor(
@@ -13,6 +16,7 @@ export class ViewFieldException extends CustomException<ViewFieldExceptionCode> 
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? msg`A view field error occurred.`,
+      category: VIEW_FIELD_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }
@@ -22,6 +26,11 @@ export enum ViewFieldExceptionCode {
   VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
   INVALID_VIEW_FIELD_DATA = 'INVALID_VIEW_FIELD_DATA',
 }
+const VIEW_FIELD_EXCEPTION_CATEGORY_BY_CODE = {
+  [ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND]: 'NOT_FOUND',
+  [ViewFieldExceptionCode.VIEW_NOT_FOUND]: 'NOT_FOUND',
+  [ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA]: 'BAD_USER_INPUT',
+} as const satisfies Record<ViewFieldExceptionCode, ExceptionCategory>;
 
 export enum ViewFieldExceptionMessageKey {
   WORKSPACE_ID_REQUIRED = 'WORKSPACE_ID_REQUIRED',

@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum MessageFolderExceptionCode {
   MESSAGE_FOLDER_NOT_FOUND = 'MESSAGE_FOLDER_NOT_FOUND',
@@ -24,6 +27,11 @@ const getMessageFolderExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const MESSAGE_FOLDER_EXCEPTION_CATEGORY_BY_CODE = {
+  [MessageFolderExceptionCode.MESSAGE_FOLDER_NOT_FOUND]: 'NOT_FOUND',
+  [MessageFolderExceptionCode.INVALID_MESSAGE_FOLDER_INPUT]: 'BAD_USER_INPUT',
+  [MessageFolderExceptionCode.MESSAGE_FOLDER_OWNERSHIP_VIOLATION]: 'FORBIDDEN',
+} as const satisfies Record<MessageFolderExceptionCode, ExceptionCategory>;
 
 export class MessageFolderException extends CustomException<MessageFolderExceptionCode> {
   constructor(
@@ -35,6 +43,7 @@ export class MessageFolderException extends CustomException<MessageFolderExcepti
       userFriendlyMessage:
         userFriendlyMessage ??
         getMessageFolderExceptionUserFriendlyMessage(code),
+      category: MESSAGE_FOLDER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

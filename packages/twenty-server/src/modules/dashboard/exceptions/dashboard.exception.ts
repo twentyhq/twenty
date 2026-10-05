@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum DashboardExceptionCode {
   DASHBOARD_NOT_FOUND = 'DASHBOARD_NOT_FOUND',
@@ -30,6 +33,12 @@ const getDashboardExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const DASHBOARD_EXCEPTION_CATEGORY_BY_CODE = {
+  [DashboardExceptionCode.DASHBOARD_NOT_FOUND]: 'NOT_FOUND',
+  [DashboardExceptionCode.DASHBOARD_DUPLICATION_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+  [DashboardExceptionCode.PAGE_LAYOUT_NOT_FOUND]: 'NOT_FOUND',
+} as const satisfies Record<DashboardExceptionCode, ExceptionCategory>;
 
 export class DashboardException extends CustomException<DashboardExceptionCode> {
   constructor(
@@ -40,6 +49,7 @@ export class DashboardException extends CustomException<DashboardExceptionCode> 
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getDashboardExceptionUserFriendlyMessage(code),
+      category: DASHBOARD_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

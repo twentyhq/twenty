@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum PublicDomainExceptionCode {
   PUBLIC_DOMAIN_ALREADY_REGISTERED = 'PUBLIC_DOMAIN_ALREADY_REGISTERED',
@@ -27,6 +30,14 @@ const getPublicDomainExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const PUBLIC_DOMAIN_EXCEPTION_CATEGORY_BY_CODE = {
+  [PublicDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED]:
+    'BAD_USER_INPUT',
+  [PublicDomainExceptionCode.DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN]:
+    'BAD_USER_INPUT',
+  [PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_FOUND]: 'NOT_FOUND',
+  [PublicDomainExceptionCode.APPLICATION_NOT_FOUND]: 'NOT_FOUND',
+} as const satisfies Record<PublicDomainExceptionCode, ExceptionCategory>;
 
 export class PublicDomainException extends CustomException<PublicDomainExceptionCode> {
   constructor(
@@ -38,6 +49,7 @@ export class PublicDomainException extends CustomException<PublicDomainException
       userFriendlyMessage:
         userFriendlyMessage ??
         getPublicDomainExceptionUserFriendlyMessage(code),
+      category: PUBLIC_DOMAIN_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export class ViewFilterException extends CustomException<ViewFilterExceptionCode> {
   constructor(
@@ -13,6 +16,7 @@ export class ViewFilterException extends CustomException<ViewFilterExceptionCode
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? msg`A view filter error occurred.`,
+      category: VIEW_FILTER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }
@@ -22,6 +26,11 @@ export enum ViewFilterExceptionCode {
   INVALID_VIEW_FILTER_DATA = 'INVALID_VIEW_FILTER_DATA',
   VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
+const VIEW_FILTER_EXCEPTION_CATEGORY_BY_CODE = {
+  [ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND]: 'NOT_FOUND',
+  [ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA]: 'BAD_USER_INPUT',
+  [ViewFilterExceptionCode.VIEW_NOT_FOUND]: 'NOT_FOUND',
+} as const satisfies Record<ViewFilterExceptionCode, ExceptionCategory>;
 
 export enum ViewFilterExceptionMessageKey {
   WORKSPACE_ID_REQUIRED = 'WORKSPACE_ID_REQUIRED',

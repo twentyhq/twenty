@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum RouteTriggerExceptionCode {
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
@@ -54,6 +57,24 @@ const getRouteTriggerExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const ROUTE_TRIGGER_EXCEPTION_CATEGORY_BY_CODE = {
+  [RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND]: 'NOT_FOUND',
+  [RouteTriggerExceptionCode.WORKSPACE_SUSPENDED]: 'FORBIDDEN',
+  [RouteTriggerExceptionCode.ROUTE_NOT_FOUND]: 'NOT_FOUND',
+  [RouteTriggerExceptionCode.TRIGGER_NOT_FOUND]: 'NOT_FOUND',
+  [RouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND]: 'NOT_FOUND',
+  [RouteTriggerExceptionCode.ROUTE_ALREADY_EXIST]: 'BAD_USER_INPUT',
+  [RouteTriggerExceptionCode.ROUTE_PATH_ALREADY_EXIST]: 'BAD_USER_INPUT',
+  [RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION]: 'FORBIDDEN',
+  [RouteTriggerExceptionCode.ROUTE_TRIGGER_USER_UNCAUGHT_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [RouteTriggerExceptionCode.ROUTE_TRIGGER_PLATFORM_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [RouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED]: 'RATE_LIMITED',
+  [RouteTriggerExceptionCode.LEGACY_ROUTE_DEPRECATED]: 'GONE',
+  [RouteTriggerExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED]:
+    'UNPROCESSABLE_ENTITY',
+} as const satisfies Record<RouteTriggerExceptionCode, ExceptionCategory>;
 
 export class RouteTriggerException extends CustomException<RouteTriggerExceptionCode> {
   constructor(
@@ -65,6 +86,11 @@ export class RouteTriggerException extends CustomException<RouteTriggerException
       userFriendlyMessage:
         userFriendlyMessage ??
         getRouteTriggerExceptionUserFriendlyMessage(code),
+      category: ROUTE_TRIGGER_EXCEPTION_CATEGORY_BY_CODE[code],
+      shouldBeCapturedBySentry:
+        code === RouteTriggerExceptionCode.ROUTE_TRIGGER_USER_UNCAUGHT_ERROR
+          ? false
+          : undefined,
     });
   }
 }

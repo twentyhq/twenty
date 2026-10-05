@@ -3,7 +3,10 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum WorkflowTriggerExceptionCode {
   INVALID_INPUT = 'INVALID_INPUT',
@@ -40,6 +43,16 @@ const getWorkflowTriggerExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const WORKFLOW_TRIGGER_EXCEPTION_CATEGORY_BY_CODE = {
+  [WorkflowTriggerExceptionCode.INVALID_INPUT]: 'BAD_USER_INPUT',
+  [WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER]: 'BAD_USER_INPUT',
+  [WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION]: 'BAD_USER_INPUT',
+  [WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS]: 'BAD_USER_INPUT',
+  [WorkflowTriggerExceptionCode.INVALID_ACTION_TYPE]: 'BAD_USER_INPUT',
+  [WorkflowTriggerExceptionCode.NOT_FOUND]: 'NOT_FOUND',
+  [WorkflowTriggerExceptionCode.FORBIDDEN]: 'FORBIDDEN',
+  [WorkflowTriggerExceptionCode.INTERNAL_ERROR]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<WorkflowTriggerExceptionCode, ExceptionCategory>;
 
 export class WorkflowTriggerException extends CustomException<WorkflowTriggerExceptionCode> {
   constructor(
@@ -51,6 +64,7 @@ export class WorkflowTriggerException extends CustomException<WorkflowTriggerExc
       userFriendlyMessage:
         userFriendlyMessage ??
         getWorkflowTriggerExceptionUserFriendlyMessage(code),
+      category: WORKFLOW_TRIGGER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

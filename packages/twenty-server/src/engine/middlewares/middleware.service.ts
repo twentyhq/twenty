@@ -8,10 +8,10 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/get-auth-exception-rest-status.util';
+import { EXCEPTION_CATEGORY_HTTP_STATUS } from 'src/engine/core-modules/exception-handler/constants/exception-category-http-status.constant';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { convertCustomExceptionToGraphQLError } from 'src/engine/core-modules/graphql/utils/convert-custom-exception-to-graphql-error.util';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
@@ -25,7 +25,7 @@ import {
   handleExceptionAndConvertToGraphQLError,
 } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { type CustomException } from 'src/utils/custom-exception';
+import { CustomException } from 'src/utils/custom-exception';
 
 const DEAD_SESSION_COOKIE_EXCEPTION_CODES = new Set<string>([
   AuthExceptionCode.UNAUTHENTICATED,
@@ -85,13 +85,7 @@ export class MiddlewareService {
     let errors;
 
     if (error instanceof AuthException) {
-      try {
-        const authFilter = new AuthGraphqlApiExceptionFilter();
-
-        authFilter.catch(error);
-      } catch (transformedError) {
-        errors = [transformedError];
-      }
+      errors = [convertCustomExceptionToGraphQLError(error)];
     } else {
       errors = [
         handleExceptionAndConvertToGraphQLError(
@@ -208,8 +202,8 @@ export class MiddlewareService {
       return error.status;
     }
 
-    if (error instanceof AuthException) {
-      return getAuthExceptionRestStatus(error);
+    if (error instanceof CustomException) {
+      return EXCEPTION_CATEGORY_HTTP_STATUS[error.category];
     }
 
     return 500;

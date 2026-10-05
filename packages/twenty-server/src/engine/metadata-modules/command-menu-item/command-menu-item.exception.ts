@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum CommandMenuItemExceptionCode {
   COMMAND_MENU_ITEM_NOT_FOUND = 'COMMAND_MENU_ITEM_NOT_FOUND',
@@ -27,6 +30,15 @@ const getCommandMenuItemExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const COMMAND_MENU_ITEM_EXCEPTION_CATEGORY_BY_CODE = {
+  [CommandMenuItemExceptionCode.COMMAND_MENU_ITEM_NOT_FOUND]: 'NOT_FOUND',
+  [CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT]:
+    'BAD_USER_INPUT',
+  [CommandMenuItemExceptionCode.WORKFLOW_OR_FRONT_COMPONENT_REQUIRED]:
+    'BAD_USER_INPUT',
+  [CommandMenuItemExceptionCode.COMMAND_MENU_ITEM_CANNOT_BE_RESET]:
+    'BAD_USER_INPUT',
+} as const satisfies Record<CommandMenuItemExceptionCode, ExceptionCategory>;
 
 export class CommandMenuItemException extends CustomException<CommandMenuItemExceptionCode> {
   constructor(
@@ -38,6 +50,7 @@ export class CommandMenuItemException extends CustomException<CommandMenuItemExc
       userFriendlyMessage:
         userFriendlyMessage ??
         getCommandMenuItemExceptionUserFriendlyMessage(code),
+      category: COMMAND_MENU_ITEM_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

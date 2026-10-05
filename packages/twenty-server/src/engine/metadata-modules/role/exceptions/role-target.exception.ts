@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum RoleTargetExceptionCode {
   ROLE_TARGET_NOT_FOUND = 'ROLE_TARGET_NOT_FOUND',
@@ -30,6 +33,15 @@ const getRoleTargetExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const ROLE_TARGET_EXCEPTION_CATEGORY_BY_CODE = {
+  [RoleTargetExceptionCode.ROLE_TARGET_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [RoleTargetExceptionCode.INVALID_ROLE_TARGET_DATA]: 'INTERNAL_SERVER_ERROR',
+  [RoleTargetExceptionCode.ROLE_TARGET_MISSING_IDENTIFIER]:
+    'INTERNAL_SERVER_ERROR',
+  [RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY]:
+    'INTERNAL_SERVER_ERROR',
+  [RoleTargetExceptionCode.ROLE_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<RoleTargetExceptionCode, ExceptionCategory>;
 
 export class RoleTargetException extends CustomException<RoleTargetExceptionCode> {
   constructor(
@@ -40,6 +52,7 @@ export class RoleTargetException extends CustomException<RoleTargetExceptionCode
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getRoleTargetExceptionUserFriendlyMessage(code),
+      category: ROLE_TARGET_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

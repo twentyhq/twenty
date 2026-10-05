@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 
@@ -38,6 +41,15 @@ const getUsageLimitExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const USAGE_LIMIT_EXCEPTION_CATEGORY_BY_CODE = {
+  [UsageLimitExceptionCode.RATE_LIMITED]: 'RATE_LIMITED',
+  [UsageLimitExceptionCode.QUOTA_EXHAUSTED]: 'QUOTA_EXHAUSTED',
+  [UsageLimitExceptionCode.STOCK_EXHAUSTED]: 'QUOTA_EXHAUSTED',
+  [UsageLimitExceptionCode.LIMIT_INVALID]: 'BAD_USER_INPUT',
+  [UsageLimitExceptionCode.LIMIT_NOT_ENTITLED]: 'FORBIDDEN',
+  [UsageLimitExceptionCode.LIMIT_FORBIDDEN]: 'FORBIDDEN',
+  [UsageLimitExceptionCode.LIMIT_CONFLICT]: 'CONFLICT',
+} as const satisfies Record<UsageLimitExceptionCode, ExceptionCategory>;
 
 export class UsageLimitException extends CustomException<UsageLimitExceptionCode> {
   readonly exhaustedScope?: ExhaustedScope;
@@ -56,6 +68,7 @@ export class UsageLimitException extends CustomException<UsageLimitExceptionCode
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getUsageLimitExceptionUserFriendlyMessage(code),
+      category: USAGE_LIMIT_EXCEPTION_CATEGORY_BY_CODE[code],
     });
     this.exhaustedScope = exhaustedScope;
   }

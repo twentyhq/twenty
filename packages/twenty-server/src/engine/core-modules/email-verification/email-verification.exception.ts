@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum EmailVerificationExceptionCode {
   EMAIL_VERIFICATION_NOT_REQUIRED = 'EMAIL_VERIFICATION_NOT_REQUIRED',
@@ -37,6 +40,17 @@ const getEmailVerificationExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const EMAIL_VERIFICATION_EXCEPTION_CATEGORY_BY_CODE = {
+  [EmailVerificationExceptionCode.EMAIL_VERIFICATION_NOT_REQUIRED]:
+    'BAD_USER_INPUT',
+  [EmailVerificationExceptionCode.INVALID_TOKEN]: 'FORBIDDEN',
+  [EmailVerificationExceptionCode.INVALID_APP_TOKEN_TYPE]: 'FORBIDDEN',
+  [EmailVerificationExceptionCode.TOKEN_EXPIRED]: 'FORBIDDEN',
+  [EmailVerificationExceptionCode.EMAIL_MISSING]: 'BAD_USER_INPUT',
+  [EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED]: 'BAD_USER_INPUT',
+  [EmailVerificationExceptionCode.INVALID_EMAIL]: 'BAD_USER_INPUT',
+  [EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED]: 'FORBIDDEN',
+} as const satisfies Record<EmailVerificationExceptionCode, ExceptionCategory>;
 
 export class EmailVerificationException extends CustomException<EmailVerificationExceptionCode> {
   constructor(
@@ -48,6 +62,7 @@ export class EmailVerificationException extends CustomException<EmailVerificatio
       userFriendlyMessage:
         userFriendlyMessage ??
         getEmailVerificationExceptionUserFriendlyMessage(code),
+      category: EMAIL_VERIFICATION_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

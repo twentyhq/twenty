@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum EmailingDomainExceptionCode {
   EMAILING_DOMAIN_ALREADY_REGISTERED = 'EMAILING_DOMAIN_ALREADY_REGISTERED',
@@ -54,6 +57,28 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const EMAILING_DOMAIN_EXCEPTION_CATEGORY_BY_CODE = {
+  [EmailingDomainExceptionCode.EMAILING_DOMAIN_ALREADY_REGISTERED]: 'CONFLICT',
+  [EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED]: 'BAD_USER_INPUT',
+  [EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY]:
+    'BAD_USER_INPUT',
+  [EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND]: 'NOT_FOUND',
+  [EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE]: 'FORBIDDEN',
+  [EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND]: 'NOT_FOUND',
+  [EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE]: 'BAD_USER_INPUT',
+  [EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS]:
+    'BAD_USER_INPUT',
+  [EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SUBSCRIPTION_INACTIVE]:
+    'BAD_USER_INPUT',
+  [EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED]:
+    'BAD_USER_INPUT',
+  [EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_REQUIRES_PAID_PLAN]:
+    'BAD_USER_INPUT',
+  [EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE]:
+    'BAD_USER_INPUT',
+  [EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE]:
+    'BAD_USER_INPUT',
+} as const satisfies Record<EmailingDomainExceptionCode, ExceptionCategory>;
 
 export class EmailingDomainException extends CustomException<EmailingDomainExceptionCode> {
   constructor(
@@ -65,6 +90,7 @@ export class EmailingDomainException extends CustomException<EmailingDomainExcep
       userFriendlyMessage:
         userFriendlyMessage ??
         getEmailingDomainExceptionUserFriendlyMessage(code),
+      category: EMAILING_DOMAIN_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

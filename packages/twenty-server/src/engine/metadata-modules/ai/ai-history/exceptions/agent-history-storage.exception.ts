@@ -1,9 +1,19 @@
 import { msg } from '@lingui/core/macro';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 type AgentHistoryStorageExceptionCode =
   | 'INVALID_WORKSPACE'
   | 'RECORD_NOT_FOUND';
+const AGENT_HISTORY_STORAGE_EXCEPTION_CATEGORY_BY_CODE = {
+  INVALID_WORKSPACE: 'INTERNAL_SERVER_ERROR',
+  RECORD_NOT_FOUND: 'NOT_FOUND',
+} as const satisfies Record<
+  AgentHistoryStorageExceptionCode,
+  ExceptionCategory
+>;
 
 export class AgentHistoryStorageException extends CustomException<AgentHistoryStorageExceptionCode> {
   constructor(code: AgentHistoryStorageExceptionCode, message: string) {
@@ -12,7 +22,8 @@ export class AgentHistoryStorageException extends CustomException<AgentHistorySt
         code === 'RECORD_NOT_FOUND'
           ? msg`AI history record not found.`
           : msg`Unable to access AI history. Please try again.`,
-      statusCode: code === 'RECORD_NOT_FOUND' ? 404 : undefined,
+      category: AGENT_HISTORY_STORAGE_EXCEPTION_CATEGORY_BY_CODE[code],
+      shouldBeCapturedBySentry: code === 'RECORD_NOT_FOUND' ? false : undefined,
     });
   }
 }

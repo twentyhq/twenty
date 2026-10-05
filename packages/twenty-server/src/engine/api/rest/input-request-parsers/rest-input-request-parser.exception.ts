@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum RestInputRequestParserExceptionCode {
   INVALID_AGGREGATE_FIELDS_QUERY_PARAM = 'INVALID_AGGREGATE_FIELDS_QUERY_PARAM',
@@ -39,6 +42,27 @@ const getRestInputRequestParserExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const REST_INPUT_REQUEST_PARSER_EXCEPTION_CATEGORY_BY_CODE = {
+  [RestInputRequestParserExceptionCode.INVALID_AGGREGATE_FIELDS_QUERY_PARAM]:
+    'BAD_USER_INPUT',
+  [RestInputRequestParserExceptionCode.INVALID_GROUP_BY_QUERY_PARAM]:
+    'BAD_USER_INPUT',
+  [RestInputRequestParserExceptionCode.INVALID_ORDER_BY_WITH_GROUP_BY_QUERY_PARAM]:
+    'BAD_USER_INPUT',
+  [RestInputRequestParserExceptionCode.INVALID_ORDER_BY_QUERY_PARAM]:
+    'BAD_USER_INPUT',
+  [RestInputRequestParserExceptionCode.INVALID_DEPTH_QUERY_PARAM]:
+    'BAD_USER_INPUT',
+  [RestInputRequestParserExceptionCode.INVALID_FIELDS_QUERY_PARAM]:
+    'BAD_USER_INPUT',
+  [RestInputRequestParserExceptionCode.INVALID_LIMIT_QUERY_PARAM]:
+    'BAD_USER_INPUT',
+  [RestInputRequestParserExceptionCode.INVALID_FILTER_QUERY_PARAM]:
+    'BAD_USER_INPUT',
+} as const satisfies Record<
+  RestInputRequestParserExceptionCode,
+  ExceptionCategory
+>;
 
 export class RestInputRequestParserException extends CustomException<RestInputRequestParserExceptionCode> {
   constructor(
@@ -50,6 +74,7 @@ export class RestInputRequestParserException extends CustomException<RestInputRe
       userFriendlyMessage:
         userFriendlyMessage ??
         getRestInputRequestParserExceptionUserFriendlyMessage(code),
+      category: REST_INPUT_REQUEST_PARSER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

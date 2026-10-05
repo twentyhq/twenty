@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum ConnectedAccountRefreshAccessTokenExceptionCode {
   REFRESH_TOKEN_NOT_FOUND = 'REFRESH_TOKEN_NOT_FOUND',
@@ -30,6 +33,21 @@ const getConnectedAccountRefreshAccessTokenExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const CONNECTED_ACCOUNT_REFRESH_ACCESS_TOKEN_EXCEPTION_CATEGORY_BY_CODE = {
+  [ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN]:
+    'INTERNAL_SERVER_ERROR',
+  [ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED]:
+    'INTERNAL_SERVER_ERROR',
+  [ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  ConnectedAccountRefreshAccessTokenExceptionCode,
+  ExceptionCategory
+>;
 
 export class ConnectedAccountRefreshAccessTokenException extends CustomException<ConnectedAccountRefreshAccessTokenExceptionCode> {
   cause?: unknown;
@@ -46,6 +64,8 @@ export class ConnectedAccountRefreshAccessTokenException extends CustomException
       userFriendlyMessage:
         userFriendlyMessage ??
         getConnectedAccountRefreshAccessTokenExceptionUserFriendlyMessage(code),
+      category:
+        CONNECTED_ACCOUNT_REFRESH_ACCESS_TOKEN_EXCEPTION_CATEGORY_BY_CODE[code],
     });
 
     if (isDefined(cause)) {

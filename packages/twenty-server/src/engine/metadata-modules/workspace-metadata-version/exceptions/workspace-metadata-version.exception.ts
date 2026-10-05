@@ -29,6 +29,7 @@ export class WorkspaceMetadataVersionException extends CustomException<Workspace
       userFriendlyMessage:
         userFriendlyMessage ??
         getWorkspaceMetadataVersionExceptionUserFriendlyMessage(code),
+      category: 'INTERNAL_SERVER_ERROR',
     });
   }
 }

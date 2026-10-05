@@ -3,7 +3,10 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { type WorkflowValidationIssue } from 'twenty-shared/workflow';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum WorkflowVersionValidationExceptionCode {
   MALFORMED_WORKFLOW_VERSION = 'MALFORMED_WORKFLOW_VERSION',
@@ -42,6 +45,15 @@ const getWorkflowVersionValidationExceptionUserFriendlyMessage = (
 
 const describeIssues = (issues: WorkflowValidationIssue[]): string =>
   issues.map((issue) => issue.message).join('; ');
+const WORKFLOW_VERSION_VALIDATION_EXCEPTION_CATEGORY_BY_CODE = {
+  [WorkflowVersionValidationExceptionCode.MALFORMED_WORKFLOW_VERSION]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkflowVersionValidationExceptionCode.NON_ACTIVABLE_WORKFLOW_VERSION]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  WorkflowVersionValidationExceptionCode,
+  ExceptionCategory
+>;
 
 export class WorkflowVersionValidationException extends CustomException<WorkflowVersionValidationExceptionCode> {
   readonly issues: WorkflowValidationIssue[];
@@ -58,6 +70,7 @@ export class WorkflowVersionValidationException extends CustomException<Workflow
     super(`${summary}: ${describeIssues(issues)}`, code, {
       userFriendlyMessage:
         getWorkflowVersionValidationExceptionUserFriendlyMessage(code, issues),
+      category: WORKFLOW_VERSION_VALIDATION_EXCEPTION_CATEGORY_BY_CODE[code],
     });
 
     this.issues = issues;

@@ -1,5 +1,3 @@
-import { HttpStatus } from '@nestjs/common';
-
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
@@ -30,7 +28,8 @@ export class ThrottlerException extends CustomException<ThrottlerExceptionCode> 
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getThrottlerExceptionUserFriendlyMessage(code),
-      statusCode: HttpStatus.TOO_MANY_REQUESTS,
+      category: 'RATE_LIMITED',
+      shouldBeCapturedBySentry: false,
     });
   }
 }

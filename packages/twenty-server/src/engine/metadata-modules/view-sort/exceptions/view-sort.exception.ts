@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export class ViewSortException extends CustomException<ViewSortExceptionCode> {
   constructor(
@@ -13,6 +16,7 @@ export class ViewSortException extends CustomException<ViewSortExceptionCode> {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? msg`A view sort error occurred.`,
+      category: VIEW_SORT_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }
@@ -22,6 +26,11 @@ export enum ViewSortExceptionCode {
   INVALID_VIEW_SORT_DATA = 'INVALID_VIEW_SORT_DATA',
   VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
+const VIEW_SORT_EXCEPTION_CATEGORY_BY_CODE = {
+  [ViewSortExceptionCode.VIEW_SORT_NOT_FOUND]: 'NOT_FOUND',
+  [ViewSortExceptionCode.INVALID_VIEW_SORT_DATA]: 'BAD_USER_INPUT',
+  [ViewSortExceptionCode.VIEW_NOT_FOUND]: 'NOT_FOUND',
+} as const satisfies Record<ViewSortExceptionCode, ExceptionCategory>;
 
 export enum ViewSortExceptionMessageKey {
   WORKSPACE_ID_REQUIRED = 'WORKSPACE_ID_REQUIRED',

@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum ChartDataExceptionCode {
   WIDGET_NOT_FOUND = 'WIDGET_NOT_FOUND',
@@ -36,6 +39,15 @@ const getChartDataExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const CHART_DATA_EXCEPTION_CATEGORY_BY_CODE = {
+  [ChartDataExceptionCode.WIDGET_NOT_FOUND]: 'NOT_FOUND',
+  [ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION]: 'BAD_USER_INPUT',
+  [ChartDataExceptionCode.OBJECT_METADATA_NOT_FOUND]: 'NOT_FOUND',
+  [ChartDataExceptionCode.FIELD_METADATA_NOT_FOUND]: 'NOT_FOUND',
+  [ChartDataExceptionCode.QUERY_EXECUTION_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [ChartDataExceptionCode.TRANSFORMATION_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [ChartDataExceptionCode.PERMISSION_DENIED]: 'FORBIDDEN',
+} as const satisfies Record<ChartDataExceptionCode, ExceptionCategory>;
 
 export class ChartDataException extends CustomException<ChartDataExceptionCode> {
   constructor(
@@ -46,6 +58,7 @@ export class ChartDataException extends CustomException<ChartDataExceptionCode> 
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getChartDataExceptionUserFriendlyMessage(code),
+      category: CHART_DATA_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum PermissionsExceptionCode {
   PERMISSION_DENIED = 'PERMISSION_DENIED',
@@ -162,6 +165,78 @@ const getPermissionsExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const PERMISSIONS_EXCEPTION_CATEGORY_BY_CODE = {
+  [PermissionsExceptionCode.PERMISSION_DENIED]: 'FORBIDDEN',
+  [PermissionsExceptionCode.ADMIN_ROLE_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.WORKSPACE_ID_ROLE_USER_WORKSPACE_MISMATCH]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.TOO_MANY_ADMIN_CANDIDATES]: 'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.USER_WORKSPACE_ALREADY_HAS_ROLE]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.WORKSPACE_MEMBER_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.ROLE_NOT_FOUND]: 'NOT_FOUND',
+  [PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN]: 'FORBIDDEN',
+  [PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER]: 'FORBIDDEN',
+  [PermissionsExceptionCode.UNKNOWN_OPERATION_NAME]: 'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.UNKNOWN_REQUIRED_PERMISSION]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE]: 'FORBIDDEN',
+  [PermissionsExceptionCode.CANNOT_DELETE_OWN_ROLE]: 'FORBIDDEN',
+  [PermissionsExceptionCode.CANNOT_REVOKE_OWN_SETTINGS_ACCESS]: 'FORBIDDEN',
+  [PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT]: 'FORBIDDEN',
+  [PermissionsExceptionCode.INVALID_ARG]: 'BAD_USER_INPUT',
+  [PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS]: 'FORBIDDEN',
+  [PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND]: 'NOT_FOUND',
+  [PermissionsExceptionCode.INVALID_SETTING]: 'BAD_USER_INPUT',
+  [PermissionsExceptionCode.ROLE_NOT_EDITABLE]: 'FORBIDDEN',
+  [PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT]:
+    'FORBIDDEN',
+  [PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT]:
+    'FORBIDDEN',
+  [PermissionsExceptionCode.METHOD_NOT_ALLOWED]: 'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED]: 'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT]:
+    'BAD_USER_INPUT',
+  [PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION]:
+    'BAD_USER_INPUT',
+  [PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND]: 'NOT_FOUND',
+  [PermissionsExceptionCode.ONLY_FIELD_RESTRICTION_ALLOWED]: 'BAD_USER_INPUT',
+  [PermissionsExceptionCode.FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT]:
+    'BAD_USER_INPUT',
+  [PermissionsExceptionCode.FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT]:
+    'BAD_USER_INPUT',
+  [PermissionsExceptionCode.UPSERT_FIELD_PERMISSION_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.PERMISSION_NOT_FOUND]: 'NOT_FOUND',
+  [PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.FIELD_PERMISSION_NOT_FOUND]: 'NOT_FOUND',
+  [PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED]:
+    'BAD_USER_INPUT',
+  [PermissionsExceptionCode.JOIN_COLUMN_NAME_REQUIRED]: 'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.COMPOSITE_TYPE_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET]:
+    'BAD_USER_INPUT',
+  [PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS]: 'BAD_USER_INPUT',
+  [PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS]:
+    'BAD_USER_INPUT',
+  [PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS]:
+    'BAD_USER_INPUT',
+  [PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<PermissionsExceptionCode, ExceptionCategory>;
 
 export class PermissionsException extends CustomException<PermissionsExceptionCode> {
   constructor(
@@ -172,6 +247,7 @@ export class PermissionsException extends CustomException<PermissionsExceptionCo
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getPermissionsExceptionUserFriendlyMessage(code),
+      category: PERMISSIONS_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

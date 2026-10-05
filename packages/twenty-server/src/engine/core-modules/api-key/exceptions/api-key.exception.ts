@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum ApiKeyExceptionCode {
   API_KEY_NOT_FOUND = 'API_KEY_NOT_FOUND',
@@ -28,6 +31,13 @@ const getApiKeyExceptionUserFriendlyMessage = (code: ApiKeyExceptionCode) => {
       assertUnreachable(code);
   }
 };
+const API_KEY_EXCEPTION_CATEGORY_BY_CODE = {
+  [ApiKeyExceptionCode.API_KEY_NOT_FOUND]: 'NOT_FOUND',
+  [ApiKeyExceptionCode.API_KEY_REVOKED]: 'FORBIDDEN',
+  [ApiKeyExceptionCode.API_KEY_EXPIRED]: 'BAD_USER_INPUT',
+  [ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED]: 'FORBIDDEN',
+  [ApiKeyExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS]: 'BAD_USER_INPUT',
+} as const satisfies Record<ApiKeyExceptionCode, ExceptionCategory>;
 
 export class ApiKeyException extends CustomException<ApiKeyExceptionCode> {
   constructor(
@@ -38,6 +48,7 @@ export class ApiKeyException extends CustomException<ApiKeyExceptionCode> {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getApiKeyExceptionUserFriendlyMessage(code),
+      category: API_KEY_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -5,6 +5,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import {
   appendCommonExceptionCode,
   CustomException,
+  type ExceptionCategory,
 } from 'src/utils/custom-exception';
 
 export const AdminPanelExceptionCode = appendCommonExceptionCode({
@@ -23,6 +24,14 @@ const getAdminPanelExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const ADMIN_PANEL_EXCEPTION_CATEGORY_BY_CODE = {
+  [AdminPanelExceptionCode.INVALID_MAINTENANCE_MODE_TIME_RANGE]:
+    'INTERNAL_SERVER_ERROR',
+  [AdminPanelExceptionCode.INTERNAL_SERVER_ERROR]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  keyof typeof AdminPanelExceptionCode,
+  ExceptionCategory
+>;
 
 export class AdminPanelException extends CustomException<
   keyof typeof AdminPanelExceptionCode
@@ -35,6 +44,7 @@ export class AdminPanelException extends CustomException<
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getAdminPanelExceptionUserFriendlyMessage(code),
+      category: ADMIN_PANEL_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

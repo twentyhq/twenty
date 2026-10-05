@@ -1,7 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum CoreWorkflowMetadataExceptionCode {
   INVALID_WORKFLOW_VERSION_DEFINITION = 'INVALID_WORKFLOW_VERSION_DEFINITION',
@@ -33,11 +36,30 @@ const getCoreWorkflowMetadataExceptionUserFriendlyMessage = (
   }
 };
 
-export class CoreWorkflowMetadataException extends CustomException {
+const CORE_WORKFLOW_METADATA_EXCEPTION_CATEGORY_BY_CODE = {
+  [CoreWorkflowMetadataExceptionCode.INVALID_WORKFLOW_VERSION_DEFINITION]:
+    'INTERNAL_SERVER_ERROR',
+  [CoreWorkflowMetadataExceptionCode.WORKFLOW_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [CoreWorkflowMetadataExceptionCode.WORKFLOW_ALREADY_EXISTS]:
+    'INTERNAL_SERVER_ERROR',
+  [CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_ALREADY_EXISTS]:
+    'INTERNAL_SERVER_ERROR',
+  [CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_MISSING_WORKFLOW]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  CoreWorkflowMetadataExceptionCode,
+  ExceptionCategory
+>;
+
+export class CoreWorkflowMetadataException extends CustomException<CoreWorkflowMetadataExceptionCode> {
   constructor(message: string, code: CoreWorkflowMetadataExceptionCode) {
     super(message, code, {
       userFriendlyMessage:
         getCoreWorkflowMetadataExceptionUserFriendlyMessage(code),
+      category: CORE_WORKFLOW_METADATA_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

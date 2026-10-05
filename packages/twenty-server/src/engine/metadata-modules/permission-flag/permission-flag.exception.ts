@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum PermissionFlagExceptionCode {
   PERMISSION_FLAG_NOT_FOUND = 'PERMISSION_FLAG_NOT_FOUND',
@@ -36,6 +39,21 @@ const getPermissionFlagExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const PERMISSION_FLAG_EXCEPTION_CATEGORY_BY_CODE = {
+  [PermissionFlagExceptionCode.PERMISSION_FLAG_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionFlagExceptionCode.PERMISSION_FLAG_ALREADY_EXISTS]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_PERMISSION_TYPE]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionFlagExceptionCode.PERMISSION_FLAG_KEY_IMMUTABLE]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionFlagExceptionCode.PERMISSION_FLAG_IS_STANDARD]:
+    'INTERNAL_SERVER_ERROR',
+  [PermissionFlagExceptionCode.PERMISSION_FLAG_IN_USE]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<PermissionFlagExceptionCode, ExceptionCategory>;
 
 export class PermissionFlagException extends CustomException<PermissionFlagExceptionCode> {
   constructor(
@@ -47,6 +65,7 @@ export class PermissionFlagException extends CustomException<PermissionFlagExcep
       userFriendlyMessage:
         userFriendlyMessage ??
         getPermissionFlagExceptionUserFriendlyMessage(code),
+      category: PERMISSION_FLAG_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -6,6 +6,7 @@ export class CommonSelectFieldsException extends CustomException<'INVALID_FIELD_
   constructor(message: string) {
     super(message, 'INVALID_FIELD_SELECTION', {
       userFriendlyMessage: msg`Invalid field selection. Check the requested fields and relation depth.`,
+      category: 'INTERNAL_SERVER_ERROR',
     });
   }
 }

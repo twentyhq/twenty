@@ -3,7 +3,10 @@ import { msg } from '@lingui/core/macro';
 import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum WorkspaceExceptionCode {
   IFRAME_ORIGIN_LIMIT_EXCEEDED = 'IFRAME_ORIGIN_LIMIT_EXCEEDED',
@@ -49,6 +52,19 @@ const getWorkspaceExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const WORKSPACE_EXCEPTION_CATEGORY_BY_CODE = {
+  [WorkspaceExceptionCode.IFRAME_ORIGIN_LIMIT_EXCEEDED]: 'BAD_USER_INPUT',
+  [WorkspaceExceptionCode.SUBDOMAIN_NOT_FOUND]: 'NOT_FOUND',
+  [WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN]: 'CONFLICT',
+  [WorkspaceExceptionCode.SUBDOMAIN_NOT_VALID]: 'CONFLICT',
+  [WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN]: 'CONFLICT',
+  [WorkspaceExceptionCode.WORKSPACE_NOT_FOUND]: 'NOT_FOUND',
+  [WorkspaceExceptionCode.WORKSPACE_CUSTOM_DOMAIN_DISABLED]: 'FORBIDDEN',
+  [WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED]: 'FORBIDDEN',
+  [WorkspaceExceptionCode.CUSTOM_DOMAIN_NOT_FOUND]: 'NOT_FOUND',
+  [WorkspaceExceptionCode.APPLICATION_UNINSTALL_IN_PROGRESS]: 'CONFLICT',
+  [WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID]: 'BAD_USER_INPUT',
+} as const satisfies Record<WorkspaceExceptionCode, ExceptionCategory>;
 
 export class WorkspaceException extends CustomException<WorkspaceExceptionCode> {
   constructor(
@@ -59,6 +75,7 @@ export class WorkspaceException extends CustomException<WorkspaceExceptionCode> 
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getWorkspaceExceptionUserFriendlyMessage(code),
+      category: WORKSPACE_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

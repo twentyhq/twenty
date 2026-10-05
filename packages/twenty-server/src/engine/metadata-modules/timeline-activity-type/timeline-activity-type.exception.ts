@@ -3,7 +3,10 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { TimelineActivityTypeExceptionCode } from 'src/engine/metadata-modules/timeline-activity-type/enums/timeline-activity-type-exception-code.enum';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 const getTimelineActivityTypeExceptionUserFriendlyMessage = (
   code: TimelineActivityTypeExceptionCode,
@@ -21,6 +24,19 @@ const getTimelineActivityTypeExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const TIMELINE_ACTIVITY_TYPE_EXCEPTION_CATEGORY_BY_CODE = {
+  [TimelineActivityTypeExceptionCode.TIMELINE_ACTIVITY_TYPE_NOT_FOUND]:
+    'NOT_FOUND',
+  [TimelineActivityTypeExceptionCode.TIMELINE_ACTIVITY_TYPE_NAME_ALREADY_EXISTS]:
+    'BAD_USER_INPUT',
+  [TimelineActivityTypeExceptionCode.INVALID_TIMELINE_ACTIVITY_TYPE_INPUT]:
+    'BAD_USER_INPUT',
+  [TimelineActivityTypeExceptionCode.TIMELINE_ACTIVITY_TYPE_CANNOT_BE_RESET]:
+    'BAD_USER_INPUT',
+} as const satisfies Record<
+  TimelineActivityTypeExceptionCode,
+  ExceptionCategory
+>;
 
 export class TimelineActivityTypeException extends CustomException<TimelineActivityTypeExceptionCode> {
   constructor(
@@ -32,6 +48,7 @@ export class TimelineActivityTypeException extends CustomException<TimelineActiv
       userFriendlyMessage:
         userFriendlyMessage ??
         getTimelineActivityTypeExceptionUserFriendlyMessage(code),
+      category: TIMELINE_ACTIVITY_TYPE_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

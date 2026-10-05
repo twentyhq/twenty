@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum OnboardingExceptionCode {
   NO_PREVIOUS_ONBOARDING_STEP = 'NO_PREVIOUS_ONBOARDING_STEP',
@@ -24,6 +27,14 @@ const getOnboardingExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const ONBOARDING_EXCEPTION_CATEGORY_BY_CODE = {
+  [OnboardingExceptionCode.NO_PREVIOUS_ONBOARDING_STEP]:
+    'INTERNAL_SERVER_ERROR',
+  [OnboardingExceptionCode.MISSING_TRANSACTION_QUERY_RUNNER]:
+    'INTERNAL_SERVER_ERROR',
+  [OnboardingExceptionCode.INSTALL_APPS_JOB_ENQUEUE_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<OnboardingExceptionCode, ExceptionCategory>;
 
 export class OnboardingException extends CustomException<OnboardingExceptionCode> {
   constructor(
@@ -34,6 +45,7 @@ export class OnboardingException extends CustomException<OnboardingExceptionCode
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getOnboardingExceptionUserFriendlyMessage(code),
+      category: ONBOARDING_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

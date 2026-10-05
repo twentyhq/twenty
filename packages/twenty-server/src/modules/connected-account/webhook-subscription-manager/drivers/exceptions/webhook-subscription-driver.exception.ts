@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum WebhookSubscriptionDriverExceptionCode {
   PROVIDER_NOT_CONFIGURED = 'PROVIDER_NOT_CONFIGURED',
@@ -33,6 +36,23 @@ const getWebhookSubscriptionDriverExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const WEBHOOK_SUBSCRIPTION_DRIVER_EXCEPTION_CATEGORY_BY_CODE = {
+  [WebhookSubscriptionDriverExceptionCode.PROVIDER_NOT_CONFIGURED]:
+    'INTERNAL_SERVER_ERROR',
+  [WebhookSubscriptionDriverExceptionCode.PROVIDER_RESPONSE_INVALID]:
+    'INTERNAL_SERVER_ERROR',
+  [WebhookSubscriptionDriverExceptionCode.UNSUPPORTED_PROVIDER]:
+    'INTERNAL_SERVER_ERROR',
+  [WebhookSubscriptionDriverExceptionCode.NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [WebhookSubscriptionDriverExceptionCode.INSUFFICIENT_PERMISSIONS]:
+    'INTERNAL_SERVER_ERROR',
+  [WebhookSubscriptionDriverExceptionCode.TEMPORARY_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [WebhookSubscriptionDriverExceptionCode.UNKNOWN]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  WebhookSubscriptionDriverExceptionCode,
+  ExceptionCategory
+>;
 
 export class WebhookSubscriptionDriverException extends CustomException<WebhookSubscriptionDriverExceptionCode> {
   cause?: unknown;
@@ -49,6 +69,7 @@ export class WebhookSubscriptionDriverException extends CustomException<WebhookS
       userFriendlyMessage:
         userFriendlyMessage ??
         getWebhookSubscriptionDriverExceptionUserFriendlyMessage(code),
+      category: WEBHOOK_SUBSCRIPTION_DRIVER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
 
     if (isDefined(cause)) {

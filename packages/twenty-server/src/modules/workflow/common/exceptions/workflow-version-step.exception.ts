@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum WorkflowVersionStepExceptionCode {
   INVALID_REQUEST = 'INVALID_REQUEST',
@@ -27,6 +30,16 @@ const getWorkflowVersionStepExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const WORKFLOW_VERSION_STEP_EXCEPTION_CATEGORY_BY_CODE = {
+  [WorkflowVersionStepExceptionCode.INVALID_REQUEST]: 'BAD_USER_INPUT',
+  [WorkflowVersionStepExceptionCode.NOT_FOUND]: 'NOT_FOUND',
+  [WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE]: 'INTERNAL_SERVER_ERROR',
+  [WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  WorkflowVersionStepExceptionCode,
+  ExceptionCategory
+>;
 
 export class WorkflowVersionStepException extends CustomException<WorkflowVersionStepExceptionCode> {
   constructor(
@@ -38,6 +51,7 @@ export class WorkflowVersionStepException extends CustomException<WorkflowVersio
       userFriendlyMessage:
         userFriendlyMessage ??
         getWorkflowVersionStepExceptionUserFriendlyMessage(code),
+      category: WORKFLOW_VERSION_STEP_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -14,6 +14,8 @@ export class MicrosoftImportDriverException extends CustomException<string> {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? msg`An error occurred during messages import`,
+      category: 'INTERNAL_SERVER_ERROR',
+      shouldBeCapturedBySentry: statusCode >= 500,
     });
     this.statusCode = statusCode;
   }

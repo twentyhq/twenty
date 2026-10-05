@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum MessageListExceptionCode {
   MESSAGE_LIST_NOT_FOUND = 'MESSAGE_LIST_NOT_FOUND',
@@ -21,6 +24,11 @@ const getMessageListExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const MESSAGE_LIST_EXCEPTION_CATEGORY_BY_CODE = {
+  [MessageListExceptionCode.MESSAGE_LIST_NOT_FOUND]: 'NOT_FOUND',
+  [MessageListExceptionCode.MESSAGE_LIST_DUPLICATION_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<MessageListExceptionCode, ExceptionCategory>;
 
 export class MessageListException extends CustomException<MessageListExceptionCode> {
   constructor(
@@ -31,6 +39,7 @@ export class MessageListException extends CustomException<MessageListExceptionCo
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getMessageListExceptionUserFriendlyMessage(code),
+      category: MESSAGE_LIST_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -4,7 +4,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum EventLogsExceptionCode {
   CLICKHOUSE_NOT_CONFIGURED = 'CLICKHOUSE_NOT_CONFIGURED',
@@ -29,6 +32,12 @@ const getEventLogsExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const EVENT_LOGS_EXCEPTION_CATEGORY_BY_CODE = {
+  [EventLogsExceptionCode.CLICKHOUSE_NOT_CONFIGURED]: 'FORBIDDEN',
+  [EventLogsExceptionCode.NO_ENTITLEMENT]: 'FORBIDDEN',
+  [EventLogsExceptionCode.INVALID_FIELD_FILTER]: 'BAD_USER_INPUT',
+  [EventLogsExceptionCode.INVALID_TABLE]: 'BAD_USER_INPUT',
+} as const satisfies Record<EventLogsExceptionCode, ExceptionCategory>;
 
 export class EventLogsException extends CustomException<EventLogsExceptionCode> {
   constructor(
@@ -39,6 +48,7 @@ export class EventLogsException extends CustomException<EventLogsExceptionCode> 
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getEventLogsExceptionUserFriendlyMessage(code),
+      category: EVENT_LOGS_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

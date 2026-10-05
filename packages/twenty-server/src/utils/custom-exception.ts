@@ -16,26 +16,53 @@ export const appendCommonExceptionCode = <
   } as const;
 };
 
+export type ExceptionCategory =
+  | 'BAD_USER_INPUT'
+  | 'UNAUTHENTICATED'
+  | 'PAYMENT_REQUIRED'
+  | 'FORBIDDEN'
+  | 'NOT_FOUND'
+  | 'METHOD_NOT_ALLOWED'
+  | 'CONFLICT'
+  | 'GONE'
+  | 'PAYLOAD_TOO_LARGE'
+  | 'RANGE_NOT_SATISFIABLE'
+  | 'UNPROCESSABLE_ENTITY'
+  | 'RATE_LIMITED'
+  | 'QUOTA_EXHAUSTED'
+  | 'INTERNAL_SERVER_ERROR'
+  | 'BAD_GATEWAY'
+  | 'SERVICE_UNAVAILABLE'
+  | 'GATEWAY_TIMEOUT';
+
 export abstract class CustomException<
   ExceptionCode extends string = string,
   ExceptionMessage extends string = string,
 > extends CustomError {
   code: ExceptionCode;
   userFriendlyMessage: MessageDescriptor;
-  statusCode?: number;
+  category: ExceptionCategory;
+  shouldBeCapturedBySentry?: boolean;
 
   constructor(
     message: ExceptionMessage,
     code: ExceptionCode,
     {
       userFriendlyMessage,
-      statusCode,
-    }: { userFriendlyMessage: MessageDescriptor; statusCode?: number },
+      category,
+      shouldBeCapturedBySentry,
+    }: {
+      userFriendlyMessage: MessageDescriptor;
+      category: ExceptionCategory;
+      // Forces the Sentry decision; by default only 4xx responses skip Sentry
+      shouldBeCapturedBySentry?: boolean;
+    },
   ) {
     super(message);
     this.code = code;
     this.userFriendlyMessage = userFriendlyMessage;
-    this.statusCode = statusCode;
+    this.category = category;
+    this.shouldBeCapturedBySentry = shouldBeCapturedBySentry;
   }
 }
 

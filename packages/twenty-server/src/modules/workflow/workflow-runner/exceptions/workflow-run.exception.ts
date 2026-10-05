@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum WorkflowRunExceptionCode {
   WORKFLOW_RUN_NOT_FOUND = 'WORKFLOW_RUN_NOT_FOUND',
@@ -33,6 +36,16 @@ const getWorkflowRunExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const WORKFLOW_RUN_EXCEPTION_CATEGORY_BY_CODE = {
+  [WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [WorkflowRunExceptionCode.WORKFLOW_ROOT_STEP_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkflowRunExceptionCode.INVALID_OPERATION]: 'INTERNAL_SERVER_ERROR',
+  [WorkflowRunExceptionCode.INVALID_INPUT]: 'INTERNAL_SERVER_ERROR',
+  [WorkflowRunExceptionCode.WORKFLOW_RUN_LIMIT_REACHED]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<WorkflowRunExceptionCode, ExceptionCategory>;
 
 export class WorkflowRunException extends CustomException<WorkflowRunExceptionCode> {
   constructor(
@@ -43,6 +56,7 @@ export class WorkflowRunException extends CustomException<WorkflowRunExceptionCo
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getWorkflowRunExceptionUserFriendlyMessage(code),
+      category: WORKFLOW_RUN_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum CalendarChannelExceptionCode {
   CALENDAR_CHANNEL_NOT_FOUND = 'CALENDAR_CHANNEL_NOT_FOUND',
@@ -24,6 +27,13 @@ const getCalendarChannelExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const CALENDAR_CHANNEL_EXCEPTION_CATEGORY_BY_CODE = {
+  [CalendarChannelExceptionCode.CALENDAR_CHANNEL_NOT_FOUND]: 'NOT_FOUND',
+  [CalendarChannelExceptionCode.INVALID_CALENDAR_CHANNEL_INPUT]:
+    'BAD_USER_INPUT',
+  [CalendarChannelExceptionCode.CALENDAR_CHANNEL_OWNERSHIP_VIOLATION]:
+    'FORBIDDEN',
+} as const satisfies Record<CalendarChannelExceptionCode, ExceptionCategory>;
 
 export class CalendarChannelException extends CustomException<CalendarChannelExceptionCode> {
   constructor(
@@ -35,6 +45,7 @@ export class CalendarChannelException extends CustomException<CalendarChannelExc
       userFriendlyMessage:
         userFriendlyMessage ??
         getCalendarChannelExceptionUserFriendlyMessage(code),
+      category: CALENDAR_CHANNEL_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

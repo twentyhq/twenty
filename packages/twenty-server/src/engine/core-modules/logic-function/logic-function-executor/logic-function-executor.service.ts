@@ -69,16 +69,16 @@ import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export class LogicFunctionExecutionException extends CustomException<LogicFunctionExecutionExceptionCode> {
   constructor(
     message: string,
     public readonly code: LogicFunctionExecutionExceptionCode,
-    {
-      userFriendlyMessage,
-      statusCode,
-    }: { userFriendlyMessage?: MessageDescriptor; statusCode?: number } = {},
+    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
@@ -86,7 +86,7 @@ export class LogicFunctionExecutionException extends CustomException<LogicFuncti
         (code === LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
           ? msg`Logic function not found.`
           : msg`An error occurred.`),
-      statusCode,
+      category: LOGIC_FUNCTION_EXECUTION_EXCEPTION_CATEGORY_BY_CODE[code],
     });
     this.name = 'LogicFunctionExecutionException';
   }
@@ -96,6 +96,15 @@ export enum LogicFunctionExecutionExceptionCode {
   LOGIC_FUNCTION_NOT_FOUND = 'LOGIC_FUNCTION_NOT_FOUND',
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
 }
+const LOGIC_FUNCTION_EXECUTION_EXCEPTION_CATEGORY_BY_CODE = {
+  [LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  LogicFunctionExecutionExceptionCode,
+  ExceptionCategory
+>;
 
 @Injectable()
 export class LogicFunctionExecutorService {
@@ -337,10 +346,7 @@ export class LogicFunctionExecutorService {
       throw new LogicFunctionExecutionException(
         'Logic function execution rate limit exceeded',
         LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
-        {
-          userFriendlyMessage: error.userFriendlyMessage,
-          statusCode: error.statusCode,
-        },
+        { userFriendlyMessage: error.userFriendlyMessage },
       );
     }
   }

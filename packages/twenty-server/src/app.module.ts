@@ -31,6 +31,7 @@ import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware'
 import { TwentyOrmModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-suspended.guard';
+import { CustomExceptionFilter } from 'src/filters/custom-exception.filter';
 import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 import { ModulesModule } from 'src/modules/modules.module';
 
@@ -77,6 +78,11 @@ const MIGRATED_REST_METHODS = [
     {
       provide: APP_FILTER,
       useClass: UnhandledExceptionFilter,
+    },
+    // Registered after the catch-all so Nest tries it first
+    {
+      provide: APP_FILTER,
+      useClass: CustomExceptionFilter,
     },
     {
       provide: APP_GUARD,

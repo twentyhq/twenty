@@ -26,6 +26,7 @@ export class CaptchaException extends CustomException<CaptchaExceptionCode> {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getCaptchaExceptionUserFriendlyMessage(code),
+      category: 'BAD_USER_INPUT',
     });
   }
 }

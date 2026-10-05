@@ -29,6 +29,7 @@ export class WorkflowQueryValidationException extends CustomException<WorkflowQu
       userFriendlyMessage:
         userFriendlyMessage ??
         getWorkflowQueryValidationExceptionUserFriendlyMessage(code),
+      category: 'FORBIDDEN',
     });
   }
 }

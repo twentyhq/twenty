@@ -3,7 +3,10 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type RecordValidationRuleViolation } from 'src/engine/metadata-modules/validation-rule/types/record-validation-rule-violation.type';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum RecordValidationRuleExceptionCode {
   VALIDATION_RULE_VIOLATION = 'VALIDATION_RULE_VIOLATION',
@@ -31,6 +34,15 @@ const getRecordValidationRuleUserFriendlyMessage = ({
       return assertUnreachable(code);
   }
 };
+const RECORD_VALIDATION_RULE_EXCEPTION_CATEGORY_BY_CODE = {
+  [RecordValidationRuleExceptionCode.VALIDATION_RULE_VIOLATION]:
+    'INTERNAL_SERVER_ERROR',
+  [RecordValidationRuleExceptionCode.VALIDATION_RULE_EVALUATION_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  RecordValidationRuleExceptionCode,
+  ExceptionCategory
+>;
 
 export class RecordValidationRuleException extends CustomException<RecordValidationRuleExceptionCode> {
   readonly violations: RecordValidationRuleViolation[];
@@ -45,6 +57,7 @@ export class RecordValidationRuleException extends CustomException<RecordValidat
         code,
         violations,
       }),
+      category: RECORD_VALIDATION_RULE_EXCEPTION_CATEGORY_BY_CODE[code],
     });
 
     this.violations = violations;

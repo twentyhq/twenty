@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum ApplicationRegistrationExceptionCode {
   APPLICATION_REGISTRATION_NOT_FOUND = 'APPLICATION_REGISTRATION_NOT_FOUND',
@@ -78,6 +81,48 @@ const getExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const APPLICATION_REGISTRATION_EXCEPTION_CATEGORY_BY_CODE = {
+  [ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND]:
+    'NOT_FOUND',
+  [ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED]:
+    'BAD_USER_INPUT',
+  [ApplicationRegistrationExceptionCode.INVALID_SCOPE]: 'BAD_USER_INPUT',
+  [ApplicationRegistrationExceptionCode.INVALID_REDIRECT_URI]: 'BAD_USER_INPUT',
+  [ApplicationRegistrationExceptionCode.INVALID_INPUT]: 'BAD_USER_INPUT',
+  [ApplicationRegistrationExceptionCode.SOURCE_CHANNEL_MISMATCH]:
+    'BAD_USER_INPUT',
+  [ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND]: 'NOT_FOUND',
+  [ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS]:
+    'BAD_USER_INPUT',
+  [ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE]:
+    'BAD_USER_INPUT',
+  [ApplicationRegistrationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT]:
+    'BAD_USER_INPUT',
+  [ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION]:
+    'INTERNAL_SERVER_ERROR',
+  [ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED]:
+    'INTERNAL_SERVER_ERROR',
+  [ApplicationRegistrationExceptionCode.CLAIM_NOT_SUPPORTED]:
+    'INTERNAL_SERVER_ERROR',
+  [ApplicationRegistrationExceptionCode.CLAIM_NOT_CONFIGURED]:
+    'INTERNAL_SERVER_ERROR',
+  [ApplicationRegistrationExceptionCode.PROVENANCE_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [ApplicationRegistrationExceptionCode.PROVENANCE_CHECK_UNAVAILABLE]:
+    'INTERNAL_SERVER_ERROR',
+  [ApplicationRegistrationExceptionCode.GITHUB_AUTH_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+  [ApplicationRegistrationExceptionCode.GITHUB_ORG_OWNERSHIP_REQUIRED]:
+    'INTERNAL_SERVER_ERROR',
+  [ApplicationRegistrationExceptionCode.CLAIM_STATE_MISMATCH]:
+    'INTERNAL_SERVER_ERROR',
+  [ApplicationRegistrationExceptionCode.TARBALL_UPLOAD_NOT_FOUND]: 'NOT_FOUND',
+  [ApplicationRegistrationExceptionCode.TARBALL_UPLOAD_COMPLETION_IN_PROGRESS]:
+    'CONFLICT',
+} as const satisfies Record<
+  ApplicationRegistrationExceptionCode,
+  ExceptionCategory
+>;
 
 export class ApplicationRegistrationException extends CustomException<ApplicationRegistrationExceptionCode> {
   constructor(
@@ -88,6 +133,7 @@ export class ApplicationRegistrationException extends CustomException<Applicatio
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getExceptionUserFriendlyMessage(code),
+      category: APPLICATION_REGISTRATION_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

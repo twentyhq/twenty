@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum CalendarEventImportDriverExceptionCode {
   NOT_FOUND = 'NOT_FOUND',
@@ -39,6 +42,25 @@ const getCalendarEventImportDriverExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const CALENDAR_EVENT_IMPORT_DRIVER_EXCEPTION_CATEGORY_BY_CODE = {
+  [CalendarEventImportDriverExceptionCode.NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS]:
+    'INTERNAL_SERVER_ERROR',
+  [CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [CalendarEventImportDriverExceptionCode.UNKNOWN]: 'INTERNAL_SERVER_ERROR',
+  [CalendarEventImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [CalendarEventImportDriverExceptionCode.HANDLE_ALIASES_REQUIRED]:
+    'INTERNAL_SERVER_ERROR',
+  [CalendarEventImportDriverExceptionCode.CHANNEL_MISCONFIGURED]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  CalendarEventImportDriverExceptionCode,
+  ExceptionCategory
+>;
 
 export class CalendarEventImportDriverException extends CustomException<CalendarEventImportDriverExceptionCode> {
   cause?: unknown;
@@ -55,6 +77,7 @@ export class CalendarEventImportDriverException extends CustomException<Calendar
       userFriendlyMessage:
         userFriendlyMessage ??
         getCalendarEventImportDriverExceptionUserFriendlyMessage(code),
+      category: CALENDAR_EVENT_IMPORT_DRIVER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
 
     if (isDefined(cause)) {

@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum UserExceptionCode {
   USER_NOT_FOUND = 'USER_NOT_FOUND',
@@ -25,6 +28,13 @@ const getUserExceptionUserFriendlyMessage = (code: UserExceptionCode) => {
       assertUnreachable(code);
   }
 };
+const USER_EXCEPTION_CATEGORY_BY_CODE = {
+  [UserExceptionCode.USER_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [UserExceptionCode.EMAIL_ALREADY_IN_USE]: 'INTERNAL_SERVER_ERROR',
+  [UserExceptionCode.EMAIL_UNCHANGED]: 'INTERNAL_SERVER_ERROR',
+  [UserExceptionCode.EMAIL_UPDATE_RESTRICTED_TO_SINGLE_WORKSPACE]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<UserExceptionCode, ExceptionCategory>;
 
 export class UserException extends CustomException<UserExceptionCode> {
   constructor(
@@ -35,6 +45,7 @@ export class UserException extends CustomException<UserExceptionCode> {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getUserExceptionUserFriendlyMessage(code),
+      category: USER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

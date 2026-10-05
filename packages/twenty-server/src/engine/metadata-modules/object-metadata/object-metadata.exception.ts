@@ -3,7 +3,10 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum ObjectMetadataExceptionCode {
   OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND',
@@ -43,6 +46,18 @@ const getObjectMetadataExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const OBJECT_METADATA_EXCEPTION_CATEGORY_BY_CODE = {
+  [ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND]: 'NOT_FOUND',
+  [ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT]: 'BAD_USER_INPUT',
+  [ObjectMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED]: 'FORBIDDEN',
+  [ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS]: 'CONFLICT',
+  [ObjectMetadataExceptionCode.APPLICATION_NOT_FOUND]: 'BAD_USER_INPUT',
+  [ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD]:
+    'BAD_USER_INPUT',
+  [ObjectMetadataExceptionCode.INVALID_ORM_OUTPUT]: 'INTERNAL_SERVER_ERROR',
+  [ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [ObjectMetadataExceptionCode.NAME_CONFLICT]: 'FORBIDDEN',
+} as const satisfies Record<ObjectMetadataExceptionCode, ExceptionCategory>;
 
 export class ObjectMetadataException extends CustomException<ObjectMetadataExceptionCode> {
   constructor(
@@ -54,6 +69,7 @@ export class ObjectMetadataException extends CustomException<ObjectMetadataExcep
       userFriendlyMessage:
         userFriendlyMessage ??
         getObjectMetadataExceptionUserFriendlyMessage(code),
+      category: OBJECT_METADATA_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

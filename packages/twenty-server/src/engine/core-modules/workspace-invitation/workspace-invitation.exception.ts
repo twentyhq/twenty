@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum WorkspaceInvitationExceptionCode {
   INVALID_APP_TOKEN_TYPE = 'INVALID_APP_TOKEN_TYPE',
@@ -31,6 +34,22 @@ const getWorkspaceInvitationExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const WORKSPACE_INVITATION_EXCEPTION_CATEGORY_BY_CODE = {
+  [WorkspaceInvitationExceptionCode.INVALID_APP_TOKEN_TYPE]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkspaceInvitationExceptionCode.INVITATION_CORRUPTED]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkspaceInvitationExceptionCode.INVITATION_ALREADY_EXIST]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkspaceInvitationExceptionCode.USER_ALREADY_EXIST]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkspaceInvitationExceptionCode.INVALID_INVITATION]:
+    'INTERNAL_SERVER_ERROR',
+  [WorkspaceInvitationExceptionCode.EMAIL_MISSING]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  WorkspaceInvitationExceptionCode,
+  ExceptionCategory
+>;
 
 export class WorkspaceInvitationException extends CustomException<WorkspaceInvitationExceptionCode> {
   constructor(
@@ -42,6 +61,7 @@ export class WorkspaceInvitationException extends CustomException<WorkspaceInvit
       userFriendlyMessage:
         userFriendlyMessage ??
         getWorkspaceInvitationExceptionUserFriendlyMessage(code),
+      category: WORKSPACE_INVITATION_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

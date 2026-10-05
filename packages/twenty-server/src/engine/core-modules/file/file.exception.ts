@@ -6,6 +6,7 @@ import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runne
 import {
   appendCommonExceptionCode,
   CustomException,
+  type ExceptionCategory,
 } from 'src/utils/custom-exception';
 
 export const FileExceptionCode = appendCommonExceptionCode({
@@ -36,6 +37,14 @@ const getFileExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const FILE_EXCEPTION_CATEGORY_BY_CODE = {
+  [FileExceptionCode.INTERNAL_SERVER_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [FileExceptionCode.UNAUTHENTICATED]: 'FORBIDDEN',
+  [FileExceptionCode.FILE_NOT_FOUND]: 'NOT_FOUND',
+  [FileExceptionCode.INVALID_FILE_FOLDER]: 'INTERNAL_SERVER_ERROR',
+  [FileExceptionCode.TEMPORARY_FILE_NOT_ALLOWED]: 'INTERNAL_SERVER_ERROR',
+  [FileExceptionCode.RANGE_NOT_SATISFIABLE]: 'RANGE_NOT_SATISFIABLE',
+} as const satisfies Record<keyof typeof FileExceptionCode, ExceptionCategory>;
 
 export class FileException extends CustomException<
   keyof typeof FileExceptionCode
@@ -56,6 +65,7 @@ export class FileException extends CustomException<
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getFileExceptionUserFriendlyMessage(code),
+      category: FILE_EXCEPTION_CATEGORY_BY_CODE[code],
     });
     this.fileSizeInBytes = fileSizeInBytes;
   }

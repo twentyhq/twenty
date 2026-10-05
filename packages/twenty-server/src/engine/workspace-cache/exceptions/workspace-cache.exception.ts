@@ -5,6 +5,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import {
   appendCommonExceptionCode,
   CustomException,
+  type ExceptionCategory,
 } from 'src/utils/custom-exception';
 
 export const WorkspaceCacheExceptionCode = appendCommonExceptionCode({
@@ -26,6 +27,14 @@ const getWorkspaceCacheExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const WORKSPACE_CACHE_EXCEPTION_CATEGORY_BY_CODE = {
+  [WorkspaceCacheExceptionCode.INTERNAL_SERVER_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [WorkspaceCacheExceptionCode.MISSING_DECORATOR]: 'INTERNAL_SERVER_ERROR',
+  [WorkspaceCacheExceptionCode.INVALID_PARAMETERS]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  keyof typeof WorkspaceCacheExceptionCode,
+  ExceptionCategory
+>;
 
 export class WorkspaceCacheException extends CustomException<
   keyof typeof WorkspaceCacheExceptionCode
@@ -39,6 +48,7 @@ export class WorkspaceCacheException extends CustomException<
       userFriendlyMessage:
         userFriendlyMessage ??
         getWorkspaceCacheExceptionUserFriendlyMessage(code),
+      category: WORKSPACE_CACHE_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

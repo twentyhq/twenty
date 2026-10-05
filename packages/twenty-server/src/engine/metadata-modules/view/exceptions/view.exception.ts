@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export class ViewException extends CustomException<ViewExceptionCode> {
   constructor(
@@ -12,6 +15,7 @@ export class ViewException extends CustomException<ViewExceptionCode> {
   ) {
     super(message, code, {
       userFriendlyMessage: userFriendlyMessage ?? msg`A view error occurred.`,
+      category: VIEW_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }
@@ -24,6 +28,14 @@ export enum ViewExceptionCode {
   VIEW_WIDGET_NOT_FOUND = 'VIEW_WIDGET_NOT_FOUND',
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
 }
+const VIEW_EXCEPTION_CATEGORY_BY_CODE = {
+  [ViewExceptionCode.VIEW_NOT_FOUND]: 'NOT_FOUND',
+  [ViewExceptionCode.INVALID_VIEW_DATA]: 'BAD_USER_INPUT',
+  [ViewExceptionCode.VIEW_CREATE_PERMISSION_DENIED]: 'FORBIDDEN',
+  [ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED]: 'FORBIDDEN',
+  [ViewExceptionCode.VIEW_WIDGET_NOT_FOUND]: 'NOT_FOUND',
+  [ViewExceptionCode.INTERNAL_SERVER_ERROR]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<ViewExceptionCode, ExceptionCategory>;
 
 export enum ViewExceptionMessageKey {
   WORKSPACE_ID_REQUIRED = 'WORKSPACE_ID_REQUIRED',

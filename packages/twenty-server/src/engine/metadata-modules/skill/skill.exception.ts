@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum SkillExceptionCode {
   SKILL_NOT_FOUND = 'SKILL_NOT_FOUND',
@@ -25,6 +28,12 @@ const getSkillExceptionUserFriendlyMessage = (code: SkillExceptionCode) => {
       assertUnreachable(code);
   }
 };
+const SKILL_EXCEPTION_CATEGORY_BY_CODE = {
+  [SkillExceptionCode.SKILL_NOT_FOUND]: 'NOT_FOUND',
+  [SkillExceptionCode.SKILL_ALREADY_EXISTS]: 'CONFLICT',
+  [SkillExceptionCode.SKILL_IS_STANDARD]: 'FORBIDDEN',
+  [SkillExceptionCode.INVALID_SKILL_INPUT]: 'BAD_USER_INPUT',
+} as const satisfies Record<SkillExceptionCode, ExceptionCategory>;
 
 export class SkillException extends CustomException<SkillExceptionCode> {
   constructor(
@@ -35,6 +44,7 @@ export class SkillException extends CustomException<SkillExceptionCode> {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getSkillExceptionUserFriendlyMessage(code),
+      category: SKILL_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

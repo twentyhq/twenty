@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum RecordCrudExceptionCode {
   INVALID_REQUEST = 'INVALID_REQUEST',
@@ -42,6 +45,17 @@ const getRecordCrudExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const RECORD_CRUD_EXCEPTION_CATEGORY_BY_CODE = {
+  [RecordCrudExceptionCode.INVALID_REQUEST]: 'INTERNAL_SERVER_ERROR',
+  [RecordCrudExceptionCode.WORKSPACE_ID_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [RecordCrudExceptionCode.OBJECT_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [RecordCrudExceptionCode.RECORD_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [RecordCrudExceptionCode.RECORD_CREATION_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [RecordCrudExceptionCode.RECORD_UPDATE_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [RecordCrudExceptionCode.RECORD_DELETION_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [RecordCrudExceptionCode.RECORD_UPSERT_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [RecordCrudExceptionCode.QUERY_FAILED]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<RecordCrudExceptionCode, ExceptionCategory>;
 
 export class RecordCrudException extends CustomException<RecordCrudExceptionCode> {
   constructor(
@@ -52,6 +66,7 @@ export class RecordCrudException extends CustomException<RecordCrudExceptionCode
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getRecordCrudExceptionUserFriendlyMessage(code),
+      category: RECORD_CRUD_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -5,7 +5,10 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-organization-key.constant';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum EnterpriseExceptionCode {
   INVALID_ENTERPRISE_KEY = 'INVALID_ENTERPRISE_KEY',
@@ -45,6 +48,18 @@ const getEnterpriseExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const ENTERPRISE_EXCEPTION_CATEGORY_BY_CODE = {
+  [EnterpriseExceptionCode.INVALID_ENTERPRISE_KEY]: 'BAD_USER_INPUT',
+  [EnterpriseExceptionCode.CONFIG_VARIABLES_IN_DB_DISABLED]: 'BAD_USER_INPUT',
+  [EnterpriseExceptionCode.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER]: 'FORBIDDEN',
+  [EnterpriseExceptionCode.ENTERPRISE_MISSING_SERVER_ID]: 'BAD_USER_INPUT',
+  [EnterpriseExceptionCode.ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION]:
+    'FORBIDDEN',
+  [EnterpriseExceptionCode.ENTERPRISE_DEV_SLOT_IN_USE]: 'FORBIDDEN',
+  [EnterpriseExceptionCode.ENTERPRISE_RELEASE_RATE_LIMITED]: 'FORBIDDEN',
+  [EnterpriseExceptionCode.ENTERPRISE_VALIDITY_TOKEN_RATE_LIMITED]: 'FORBIDDEN',
+  [EnterpriseExceptionCode.ENTERPRISE_SEAT_THRESHOLD_EXCEEDED]: 'FORBIDDEN',
+} as const satisfies Record<EnterpriseExceptionCode, ExceptionCategory>;
 
 export class EnterpriseException extends CustomException<EnterpriseExceptionCode> {
   constructor(
@@ -55,6 +70,7 @@ export class EnterpriseException extends CustomException<EnterpriseExceptionCode
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getEnterpriseExceptionUserFriendlyMessage(code),
+      category: ENTERPRISE_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

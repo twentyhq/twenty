@@ -11,6 +11,7 @@ describe('featureFlagValidator', () => {
           'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED',
           new UnknownException('Error', 'Error', {
             userFriendlyMessage: msg`Error`,
+            category: 'INTERNAL_SERVER_ERROR',
           }),
         ),
       ).not.toThrow();
@@ -20,6 +21,7 @@ describe('featureFlagValidator', () => {
       const invalidKey = 'InvalidKey';
       const exception = new UnknownException('Error', 'Error', {
         userFriendlyMessage: msg`Error`,
+        category: 'INTERNAL_SERVER_ERROR',
       });
 
       expect(() =>

@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum SecretEncryptionExceptionCode {
   NO_ENCRYPTION_KEY_CONFIGURED = 'NO_ENCRYPTION_KEY_CONFIGURED',
@@ -30,6 +33,18 @@ const getSecretEncryptionExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const SECRET_ENCRYPTION_EXCEPTION_CATEGORY_BY_CODE = {
+  [SecretEncryptionExceptionCode.NO_ENCRYPTION_KEY_CONFIGURED]:
+    'INTERNAL_SERVER_ERROR',
+  [SecretEncryptionExceptionCode.UNKNOWN_KEY_ID]: 'INTERNAL_SERVER_ERROR',
+  [SecretEncryptionExceptionCode.MALFORMED_ENVELOPE]: 'INTERNAL_SERVER_ERROR',
+  [SecretEncryptionExceptionCode.UNKNOWN_ENVELOPE_VERSION]:
+    'INTERNAL_SERVER_ERROR',
+  [SecretEncryptionExceptionCode.INVALID_KEY_ID_FORMAT]:
+    'INTERNAL_SERVER_ERROR',
+  [SecretEncryptionExceptionCode.CIPHERTEXT_TOO_SHORT]: 'INTERNAL_SERVER_ERROR',
+  [SecretEncryptionExceptionCode.ALREADY_ENCRYPTED]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<SecretEncryptionExceptionCode, ExceptionCategory>;
 
 export class SecretEncryptionException extends CustomException<SecretEncryptionExceptionCode> {
   constructor(
@@ -41,6 +56,7 @@ export class SecretEncryptionException extends CustomException<SecretEncryptionE
       userFriendlyMessage:
         userFriendlyMessage ??
         getSecretEncryptionExceptionUserFriendlyMessage(code),
+      category: SECRET_ENCRYPTION_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

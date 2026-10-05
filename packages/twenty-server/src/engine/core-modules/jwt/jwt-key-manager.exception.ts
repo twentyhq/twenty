@@ -5,6 +5,7 @@ import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runne
 import {
   appendCommonExceptionCode,
   CustomException,
+  type ExceptionCategory,
 } from 'src/utils/custom-exception';
 
 export const JwtKeyManagerExceptionCode = appendCommonExceptionCode({
@@ -24,6 +25,14 @@ const getJwtKeyManagerExceptionUserFriendlyMessage = (
       return assertUnreachable(code);
   }
 };
+const JWT_KEY_MANAGER_EXCEPTION_CATEGORY_BY_CODE = {
+  [JwtKeyManagerExceptionCode.INTERNAL_SERVER_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [JwtKeyManagerExceptionCode.INVALID_PRIVATE_KEY]: 'INTERNAL_SERVER_ERROR',
+  [JwtKeyManagerExceptionCode.SIGNING_KEY_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  keyof typeof JwtKeyManagerExceptionCode,
+  ExceptionCategory
+>;
 
 export class JwtKeyManagerException extends CustomException<
   keyof typeof JwtKeyManagerExceptionCode
@@ -37,6 +46,7 @@ export class JwtKeyManagerException extends CustomException<
       userFriendlyMessage:
         userFriendlyMessage ??
         getJwtKeyManagerExceptionUserFriendlyMessage(code),
+      category: JWT_KEY_MANAGER_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

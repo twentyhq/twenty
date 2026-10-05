@@ -7,7 +7,10 @@ import {
   INVALID_INPUT_USER_FRIENDLY_MESSAGE,
   TRANSIENT_DATABASE_ERROR_USER_FRIENDLY_MESSAGE,
 } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum TwentyOrmExceptionCode {
   WORKSPACE_SCHEMA_NOT_FOUND = 'WORKSPACE_SCHEMA_NOT_FOUND',
@@ -102,6 +105,44 @@ const getTwentyOrmExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const TWENTY_ORM_EXCEPTION_CATEGORY_BY_CODE = {
+  [TwentyOrmExceptionCode.WORKSPACE_SCHEMA_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.FEATURE_FLAG_MAP_VERSION_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.USER_WORKSPACE_ROLE_MAP_VERSION_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.API_KEY_ROLE_MAP_VERSION_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.MALFORMED_METADATA]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.WORKSPACE_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.CONNECT_RECORD_NOT_FOUND]: 'BAD_USER_INPUT',
+  [TwentyOrmExceptionCode.CONNECT_NOT_ALLOWED]: 'BAD_USER_INPUT',
+  [TwentyOrmExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR]: 'BAD_USER_INPUT',
+  [TwentyOrmExceptionCode.MISSING_MAIN_ALIAS_TARGET]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.METHOD_NOT_ALLOWED]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.ENUM_TYPE_NAME_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.QUERY_READ_TIMEOUT]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.TRANSIENT_DATABASE_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED]: 'BAD_USER_INPUT',
+  [TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE]: 'BAD_USER_INPUT',
+  [TwentyOrmExceptionCode.INVALID_INPUT]: 'BAD_USER_INPUT',
+  [TwentyOrmExceptionCode.ORM_EVENT_DATA_CORRUPTED]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.RLS_VALIDATION_FAILED]: 'BAD_USER_INPUT',
+  [TwentyOrmExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE]:
+    'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.MISSING_PARAMETER]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.INVALID_PARAMETER]: 'BAD_USER_INPUT',
+  [TwentyOrmExceptionCode.MALFORMED_SQL]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.UNKNOWN_OBJECT]: 'BAD_USER_INPUT',
+  [TwentyOrmExceptionCode.UNKNOWN_COLUMN]: 'BAD_USER_INPUT',
+  [TwentyOrmExceptionCode.UNKNOWN_RELATION]: 'BAD_USER_INPUT',
+  [TwentyOrmExceptionCode.UNSUPPORTED_OPERATION]: 'BAD_USER_INPUT',
+  [TwentyOrmExceptionCode.MISSING_ALIAS]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.INVALID_QUERY]: 'INTERNAL_SERVER_ERROR',
+  [TwentyOrmExceptionCode.ENTITY_NOT_FOUND]: 'BAD_USER_INPUT',
+} as const satisfies Record<TwentyOrmExceptionCode, ExceptionCategory>;
 
 export class TwentyOrmException extends CustomException<TwentyOrmExceptionCode> {
   constructor(
@@ -112,6 +153,7 @@ export class TwentyOrmException extends CustomException<TwentyOrmExceptionCode> 
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getTwentyOrmExceptionUserFriendlyMessage(code),
+      category: TWENTY_ORM_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

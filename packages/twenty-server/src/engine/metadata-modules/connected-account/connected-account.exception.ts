@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum ConnectedAccountExceptionCode {
   CONNECTED_ACCOUNT_NOT_FOUND = 'CONNECTED_ACCOUNT_NOT_FOUND',
@@ -24,6 +27,13 @@ const getConnectedAccountExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const CONNECTED_ACCOUNT_EXCEPTION_CATEGORY_BY_CODE = {
+  [ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND]: 'NOT_FOUND',
+  [ConnectedAccountExceptionCode.INVALID_CONNECTED_ACCOUNT_INPUT]:
+    'BAD_USER_INPUT',
+  [ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION]:
+    'FORBIDDEN',
+} as const satisfies Record<ConnectedAccountExceptionCode, ExceptionCategory>;
 
 export class ConnectedAccountException extends CustomException<ConnectedAccountExceptionCode> {
   constructor(
@@ -35,6 +45,7 @@ export class ConnectedAccountException extends CustomException<ConnectedAccountE
       userFriendlyMessage:
         userFriendlyMessage ??
         getConnectedAccountExceptionUserFriendlyMessage(code),
+      category: CONNECTED_ACCOUNT_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

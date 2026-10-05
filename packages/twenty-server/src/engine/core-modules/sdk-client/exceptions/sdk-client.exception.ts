@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum SdkClientExceptionCode {
   ARCHIVE_NOT_FOUND = 'ARCHIVE_NOT_FOUND',
@@ -27,6 +30,12 @@ const getSdkClientExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const SDK_CLIENT_EXCEPTION_CATEGORY_BY_CODE = {
+  [SdkClientExceptionCode.ARCHIVE_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [SdkClientExceptionCode.ARCHIVE_EXTRACTION_FAILED]: 'INTERNAL_SERVER_ERROR',
+  [SdkClientExceptionCode.FILE_NOT_FOUND_IN_ARCHIVE]: 'INTERNAL_SERVER_ERROR',
+  [SdkClientExceptionCode.GENERATION_FAILED]: 'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<SdkClientExceptionCode, ExceptionCategory>;
 
 export class SdkClientException extends CustomException<SdkClientExceptionCode> {
   constructor(
@@ -37,6 +46,7 @@ export class SdkClientException extends CustomException<SdkClientExceptionCode> 
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getSdkClientExceptionUserFriendlyMessage(code),
+      category: SDK_CLIENT_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -9,6 +9,7 @@ import { type ExceptionHandlerWorkspace } from 'src/engine/core-modules/exceptio
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { convertCustomExceptionToGraphQLError } from 'src/engine/core-modules/graphql/utils/convert-custom-exception-to-graphql-error.util';
 import {
   AuthenticationError,
   BaseGraphQLError,
@@ -72,10 +73,9 @@ export const shouldCaptureException = (
 
   if (
     exception instanceof CustomException &&
-    isDefined(exception.statusCode) &&
-    exception.statusCode < 500
+    isDefined(exception.shouldBeCapturedBySentry)
   ) {
-    return false;
+    return exception.shouldBeCapturedBySentry;
   }
 
   if (
@@ -138,6 +138,9 @@ export const convertExceptionToGraphQLError = (
   }
   if (exception instanceof BaseGraphQLError) {
     return exception;
+  }
+  if (exception instanceof CustomException) {
+    return convertCustomExceptionToGraphQLError(exception);
   }
 
   return convertExceptionToGraphql(exception);

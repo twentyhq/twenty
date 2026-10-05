@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum FileStorageExceptionCode {
   FILE_NOT_FOUND = 'FILE_NOT_FOUND',
@@ -27,6 +30,12 @@ const getFileStorageExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const FILE_STORAGE_EXCEPTION_CATEGORY_BY_CODE = {
+  [FileStorageExceptionCode.FILE_NOT_FOUND]: 'NOT_FOUND',
+  [FileStorageExceptionCode.ACCESS_DENIED]: 'FORBIDDEN',
+  [FileStorageExceptionCode.INVALID_EXTENSION]: 'BAD_USER_INPUT',
+  [FileStorageExceptionCode.PRECONDITION_FAILED]: 'CONFLICT',
+} as const satisfies Record<FileStorageExceptionCode, ExceptionCategory>;
 
 export class FileStorageException extends CustomException<FileStorageExceptionCode> {
   constructor(
@@ -37,6 +46,7 @@ export class FileStorageException extends CustomException<FileStorageExceptionCo
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getFileStorageExceptionUserFriendlyMessage(code),
+      category: FILE_STORAGE_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -6,6 +6,7 @@ import { msg } from '@lingui/core/macro';
 import {
   appendCommonExceptionCode,
   CustomException,
+  type ExceptionCategory,
 } from 'src/utils/custom-exception';
 
 export const RowLevelPermissionPredicateGroupExceptionCode =
@@ -35,6 +36,27 @@ const rowLevelPermissionPredicateGroupExceptionUserFriendlyMessages: Record<
   ROW_LEVEL_PERMISSION_FEATURE_DISABLED: msg`Row level permission predicate feature is disabled.`,
   INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
 };
+const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_EXCEPTION_CATEGORY_BY_CODE = {
+  [RowLevelPermissionPredicateGroupExceptionCode.INTERNAL_SERVER_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [RowLevelPermissionPredicateGroupExceptionCode.OBJECT_METADATA_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [RowLevelPermissionPredicateGroupExceptionCode.ROW_LEVEL_PERMISSION_PREDICATE_GROUP_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [RowLevelPermissionPredicateGroupExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA]:
+    'INTERNAL_SERVER_ERROR',
+  [RowLevelPermissionPredicateGroupExceptionCode.ROLE_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [RowLevelPermissionPredicateGroupExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION]:
+    'INTERNAL_SERVER_ERROR',
+  [RowLevelPermissionPredicateGroupExceptionCode.UNAUTHORIZED_OBJECT_MODIFICATION]:
+    'INTERNAL_SERVER_ERROR',
+  [RowLevelPermissionPredicateGroupExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<
+  keyof typeof RowLevelPermissionPredicateGroupExceptionCode,
+  ExceptionCategory
+>;
 
 export class RowLevelPermissionPredicateGroupException extends CustomException<
   keyof typeof RowLevelPermissionPredicateGroupExceptionCode
@@ -48,6 +70,8 @@ export class RowLevelPermissionPredicateGroupException extends CustomException<
       userFriendlyMessage:
         userFriendlyMessage ??
         rowLevelPermissionPredicateGroupExceptionUserFriendlyMessages[code],
+      category:
+        ROW_LEVEL_PERMISSION_PREDICATE_GROUP_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

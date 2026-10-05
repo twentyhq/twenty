@@ -4,8 +4,11 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { getBillingExceptionStatusCode } from 'src/engine/core-modules/billing/utils/get-billing-exception-status-code.util';
-import { CustomException } from 'src/utils/custom-exception';
+import { EXCEPTION_CATEGORY_HTTP_STATUS } from 'src/engine/core-modules/exception-handler/constants/exception-category-http-status.constant';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum BillingExceptionCode {
   BILLING_CUSTOMER_NOT_FOUND = 'BILLING_CUSTOMER_NOT_FOUND',
@@ -100,6 +103,47 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       assertUnreachable(code);
   }
 };
+const BILLING_EXCEPTION_CATEGORY_BY_CODE = {
+  [BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND]: 'NOT_FOUND',
+  [BillingExceptionCode.BILLING_PLAN_NOT_FOUND]: 'NOT_FOUND',
+  [BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND]: 'NOT_FOUND',
+  [BillingExceptionCode.BILLING_PRICE_NOT_FOUND]: 'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND]: 'NOT_FOUND',
+  [BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND]: 'NOT_FOUND',
+  [BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID]: 'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS]: 'BAD_USER_INPUT',
+  [BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_MISSING_REQUEST_BODY]: 'BAD_USER_INPUT',
+  [BillingExceptionCode.BILLING_UNHANDLED_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_STRIPE_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_IN_TRIAL_PERIOD]:
+    'BAD_USER_INPUT',
+  [BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_INVALID]:
+    'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_PRICE_INVALID_TIERS]: 'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_PRICE_INVALID]: 'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_SUBSCRIPTION_PHASE_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE]: 'PAYMENT_REQUIRED',
+  [BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_CANCELED]:
+    'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_CREDIT_AMOUNT_INVALID]: 'BAD_USER_INPUT',
+  [BillingExceptionCode.BILLING_CREDIT_GRANT_NOT_FOUND]: 'NOT_FOUND',
+  [BillingExceptionCode.BILLING_CREDIT_GRANT_VALIDITY_INVALID]:
+    'BAD_USER_INPUT',
+  [BillingExceptionCode.BILLING_USAGE_UNAVAILABLE]: 'INTERNAL_SERVER_ERROR',
+  [BillingExceptionCode.BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE]:
+    'BAD_USER_INPUT',
+  [BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED]:
+    'PAYMENT_REQUIRED',
+  [BillingExceptionCode.BILLING_UPGRADE_INVOICE_VOID_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<BillingExceptionCode, ExceptionCategory>;
 
 export class BillingException extends CustomException<BillingExceptionCode> {
   constructor(
@@ -110,7 +154,13 @@ export class BillingException extends CustomException<BillingExceptionCode> {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getBillingExceptionUserFriendlyMessage(code),
+      category: BILLING_EXCEPTION_CATEGORY_BY_CODE[code],
+      shouldBeCapturedBySentry:
+        EXCEPTION_CATEGORY_HTTP_STATUS[
+          BILLING_EXCEPTION_CATEGORY_BY_CODE[code]
+        ] < 500
+          ? false
+          : undefined,
     });
-    this.statusCode = getBillingExceptionStatusCode(this);
   }
 }

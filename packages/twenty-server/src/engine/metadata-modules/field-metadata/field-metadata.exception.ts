@@ -6,6 +6,7 @@ import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runne
 import {
   appendCommonExceptionCode,
   CustomException,
+  type ExceptionCategory,
 } from 'src/utils/custom-exception';
 
 export const FieldMetadataExceptionCode = appendCommonExceptionCode({
@@ -66,6 +67,29 @@ const getFieldMetadataExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const FIELD_METADATA_EXCEPTION_CATEGORY_BY_CODE = {
+  [FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR]: 'INTERNAL_SERVER_ERROR',
+  [FieldMetadataExceptionCode.APPLICATION_NOT_FOUND]: 'BAD_USER_INPUT',
+  [FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND]: 'NOT_FOUND',
+  [FieldMetadataExceptionCode.INVALID_FIELD_INPUT]: 'BAD_USER_INPUT',
+  [FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED]: 'FORBIDDEN',
+  [FieldMetadataExceptionCode.FIELD_ALREADY_EXISTS]: 'CONFLICT',
+  [FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND]: 'BAD_USER_INPUT',
+  [FieldMetadataExceptionCode.FIELD_METADATA_RELATION_NOT_ENABLED]:
+    'BAD_USER_INPUT',
+  [FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED]:
+    'BAD_USER_INPUT',
+  [FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND]:
+    'BAD_USER_INPUT',
+  [FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION]:
+    'BAD_USER_INPUT',
+  [FieldMetadataExceptionCode.RESERVED_KEYWORD]: 'BAD_USER_INPUT',
+  [FieldMetadataExceptionCode.NOT_AVAILABLE]: 'BAD_USER_INPUT',
+  [FieldMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL]: 'BAD_USER_INPUT',
+} as const satisfies Record<
+  keyof typeof FieldMetadataExceptionCode,
+  ExceptionCategory
+>;
 
 export class FieldMetadataException extends CustomException<
   keyof typeof FieldMetadataExceptionCode
@@ -79,6 +103,7 @@ export class FieldMetadataException extends CustomException<
       userFriendlyMessage:
         userFriendlyMessage ??
         getFieldMetadataExceptionUserFriendlyMessage(code),
+      category: FIELD_METADATA_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

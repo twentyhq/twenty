@@ -10,6 +10,7 @@ export class ClickHouseException extends CustomException<ClickHouseExceptionCode
   constructor(message: string, code: ClickHouseExceptionCode) {
     super(message, code, {
       userFriendlyMessage: msg`An unexpected error occurred.`,
+      category: 'INTERNAL_SERVER_ERROR',
     });
   }
 }

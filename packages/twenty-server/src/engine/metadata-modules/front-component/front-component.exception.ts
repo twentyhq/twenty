@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum FrontComponentExceptionCode {
   FRONT_COMPONENT_NOT_FOUND = 'FRONT_COMPONENT_NOT_FOUND',
@@ -30,6 +33,13 @@ const getFrontComponentExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const FRONT_COMPONENT_EXCEPTION_CATEGORY_BY_CODE = {
+  [FrontComponentExceptionCode.FRONT_COMPONENT_NOT_FOUND]: 'NOT_FOUND',
+  [FrontComponentExceptionCode.FRONT_COMPONENT_ALREADY_EXISTS]: 'CONFLICT',
+  [FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT]: 'BAD_USER_INPUT',
+  [FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED]: 'BAD_USER_INPUT',
+  [FrontComponentExceptionCode.FRONT_COMPONENT_NOT_READY]: 'NOT_FOUND',
+} as const satisfies Record<FrontComponentExceptionCode, ExceptionCategory>;
 
 export class FrontComponentException extends CustomException<FrontComponentExceptionCode> {
   constructor(
@@ -41,6 +51,7 @@ export class FrontComponentException extends CustomException<FrontComponentExcep
       userFriendlyMessage:
         userFriendlyMessage ??
         getFrontComponentExceptionUserFriendlyMessage(code),
+      category: FRONT_COMPONENT_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

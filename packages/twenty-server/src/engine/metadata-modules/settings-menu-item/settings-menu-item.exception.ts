@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum SettingsMenuItemExceptionCode {
   SETTINGS_MENU_ITEM_NOT_FOUND = 'SETTINGS_MENU_ITEM_NOT_FOUND',
@@ -30,6 +33,18 @@ const getSettingsMenuItemExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const SETTINGS_MENU_ITEM_EXCEPTION_CATEGORY_BY_CODE = {
+  [SettingsMenuItemExceptionCode.SETTINGS_MENU_ITEM_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_INPUT]:
+    'INTERNAL_SERVER_ERROR',
+  [SettingsMenuItemExceptionCode.SETTINGS_MENU_ITEM_FRONT_COMPONENT_NOT_FOUND]:
+    'INTERNAL_SERVER_ERROR',
+  [SettingsMenuItemExceptionCode.SETTINGS_MENU_ITEM_POSITION_ALREADY_TAKEN]:
+    'INTERNAL_SERVER_ERROR',
+  [SettingsMenuItemExceptionCode.RESERVED_SETTINGS_MENU_ITEM_TITLE]:
+    'INTERNAL_SERVER_ERROR',
+} as const satisfies Record<SettingsMenuItemExceptionCode, ExceptionCategory>;
 
 export class SettingsMenuItemException extends CustomException<SettingsMenuItemExceptionCode> {
   constructor(
@@ -41,6 +56,7 @@ export class SettingsMenuItemException extends CustomException<SettingsMenuItemE
       userFriendlyMessage:
         userFriendlyMessage ??
         getSettingsMenuItemExceptionUserFriendlyMessage(code),
+      category: SETTINGS_MENU_ITEM_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

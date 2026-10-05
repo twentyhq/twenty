@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum TwoFactorAuthenticationExceptionCode {
   INVALID_CONFIGURATION = 'INVALID_CONFIGURATION',
@@ -30,6 +33,18 @@ const getTwoFactorAuthenticationExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const TWO_FACTOR_AUTHENTICATION_EXCEPTION_CATEGORY_BY_CODE = {
+  [TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION]: 'FORBIDDEN',
+  [TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_NOT_FOUND]:
+    'FORBIDDEN',
+  [TwoFactorAuthenticationExceptionCode.INVALID_OTP]: 'BAD_USER_INPUT',
+  [TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_ALREADY_PROVISIONED]:
+    'FORBIDDEN',
+  [TwoFactorAuthenticationExceptionCode.MALFORMED_DATABASE_OBJECT]: 'FORBIDDEN',
+} as const satisfies Record<
+  TwoFactorAuthenticationExceptionCode,
+  ExceptionCategory
+>;
 
 export class TwoFactorAuthenticationException extends CustomException<TwoFactorAuthenticationExceptionCode> {
   constructor(
@@ -41,6 +56,7 @@ export class TwoFactorAuthenticationException extends CustomException<TwoFactorA
       userFriendlyMessage:
         userFriendlyMessage ??
         getTwoFactorAuthenticationExceptionUserFriendlyMessage(code),
+      category: TWO_FACTOR_AUTHENTICATION_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum MessageChannelExceptionCode {
   MESSAGE_CHANNEL_NOT_FOUND = 'MESSAGE_CHANNEL_NOT_FOUND',
@@ -30,6 +33,16 @@ const getMessageChannelExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const MESSAGE_CHANNEL_EXCEPTION_CATEGORY_BY_CODE = {
+  [MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND]: 'NOT_FOUND',
+  [MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT]: 'BAD_USER_INPUT',
+  [MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION]:
+    'FORBIDDEN',
+  [MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED]:
+    'INTERNAL_SERVER_ERROR',
+  [MessageChannelExceptionCode.EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN]:
+    'FORBIDDEN',
+} as const satisfies Record<MessageChannelExceptionCode, ExceptionCategory>;
 
 export class MessageChannelException extends CustomException<MessageChannelExceptionCode> {
   constructor(
@@ -41,6 +54,7 @@ export class MessageChannelException extends CustomException<MessageChannelExcep
       userFriendlyMessage:
         userFriendlyMessage ??
         getMessageChannelExceptionUserFriendlyMessage(code),
+      category: MESSAGE_CHANNEL_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

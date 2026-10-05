@@ -3,7 +3,10 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 const getMessagingWebhookExceptionUserFriendlyMessage = (
   code: MessagingWebhookExceptionCode,
@@ -24,6 +27,23 @@ const getMessagingWebhookExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const MESSAGING_WEBHOOK_EXCEPTION_CATEGORY_BY_CODE = {
+  [MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_MISSING_REQUEST_BODY]:
+    'BAD_USER_INPUT',
+  [MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_PAYLOAD]:
+    'BAD_USER_INPUT',
+  [MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_FORBIDDEN_TOPIC]:
+    'FORBIDDEN',
+  [MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_SIGNATURE]:
+    'FORBIDDEN',
+  [MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_SUBSCRIBE_URL]:
+    'BAD_USER_INPUT',
+  [MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_SUBSCRIPTION_CONFIRMATION_FAILED]:
+    'INTERNAL_SERVER_ERROR',
+  [MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_UNHANDLED_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_NOT_CONFIGURED]: 'FORBIDDEN',
+} as const satisfies Record<MessagingWebhookExceptionCode, ExceptionCategory>;
 
 export class MessagingWebhookException extends CustomException<MessagingWebhookExceptionCode> {
   constructor(
@@ -35,6 +55,7 @@ export class MessagingWebhookException extends CustomException<MessagingWebhookE
       userFriendlyMessage:
         userFriendlyMessage ??
         getMessagingWebhookExceptionUserFriendlyMessage(code),
+      category: MESSAGING_WEBHOOK_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

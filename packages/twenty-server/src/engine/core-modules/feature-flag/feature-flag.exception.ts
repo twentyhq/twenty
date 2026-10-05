@@ -28,6 +28,7 @@ export class FeatureFlagException extends CustomException<FeatureFlagExceptionCo
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getFeatureFlagExceptionUserFriendlyMessage(code),
+      category: 'INTERNAL_SERVER_ERROR',
     });
   }
 }

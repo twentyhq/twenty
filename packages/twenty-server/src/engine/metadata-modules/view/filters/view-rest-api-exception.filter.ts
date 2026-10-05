@@ -84,7 +84,10 @@ export class ViewRestApiExceptionFilter implements ExceptionFilter {
     const unknownException = new UnknownException(
       'Internal server error',
       'INTERNAL_ERROR',
-      { userFriendlyMessage: msg`An unexpected error occurred.` },
+      {
+        userFriendlyMessage: msg`An unexpected error occurred.`,
+        category: 'INTERNAL_SERVER_ERROR',
+      },
     );
 
     return this.httpExceptionHandlerService.handleError(

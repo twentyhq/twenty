@@ -2,7 +2,10 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+import {
+  CustomException,
+  type ExceptionCategory,
+} from 'src/utils/custom-exception';
 
 export enum PageLayoutTabExceptionCode {
   PAGE_LAYOUT_TAB_NOT_FOUND = 'PAGE_LAYOUT_TAB_NOT_FOUND',
@@ -29,6 +32,10 @@ const getPageLayoutTabExceptionUserFriendlyMessage = (
       assertUnreachable(code);
   }
 };
+const PAGE_LAYOUT_TAB_EXCEPTION_CATEGORY_BY_CODE = {
+  [PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND]: 'NOT_FOUND',
+  [PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA]: 'BAD_USER_INPUT',
+} as const satisfies Record<PageLayoutTabExceptionCode, ExceptionCategory>;
 
 export class PageLayoutTabException extends CustomException<PageLayoutTabExceptionCode> {
   constructor(
@@ -40,6 +47,7 @@ export class PageLayoutTabException extends CustomException<PageLayoutTabExcepti
       userFriendlyMessage:
         userFriendlyMessage ??
         getPageLayoutTabExceptionUserFriendlyMessage(code),
+      category: PAGE_LAYOUT_TAB_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }

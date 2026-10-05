@@ -6,6 +6,7 @@ import { msg } from '@lingui/core/macro';
 import {
   appendCommonExceptionCode,
   CustomException,
+  type ExceptionCategory,
 } from 'src/utils/custom-exception';
 
 export const RowLevelPermissionPredicateExceptionCode =
@@ -37,6 +38,28 @@ const rowLevelPermissionPredicateExceptionUserFriendlyMessages: Record<
   ROW_LEVEL_PERMISSION_FEATURE_DISABLED: msg`Row level permission predicate feature is disabled.`,
   INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
 };
+const ROW_LEVEL_PERMISSION_PREDICATE_EXCEPTION_CATEGORY_BY_CODE = {
+  [RowLevelPermissionPredicateExceptionCode.INTERNAL_SERVER_ERROR]:
+    'INTERNAL_SERVER_ERROR',
+  [RowLevelPermissionPredicateExceptionCode.FIELD_METADATA_NOT_FOUND]:
+    'NOT_FOUND',
+  [RowLevelPermissionPredicateExceptionCode.OBJECT_METADATA_NOT_FOUND]:
+    'NOT_FOUND',
+  [RowLevelPermissionPredicateExceptionCode.ROLE_NOT_FOUND]: 'NOT_FOUND',
+  [RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION]:
+    'FORBIDDEN',
+  [RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_OBJECT_MODIFICATION]:
+    'FORBIDDEN',
+  [RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED]:
+    'FORBIDDEN',
+  [RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_PREDICATE_NOT_FOUND]:
+    'NOT_FOUND',
+  [RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA]:
+    'BAD_USER_INPUT',
+} as const satisfies Record<
+  keyof typeof RowLevelPermissionPredicateExceptionCode,
+  ExceptionCategory
+>;
 
 export class RowLevelPermissionPredicateException extends CustomException<
   keyof typeof RowLevelPermissionPredicateExceptionCode
@@ -50,6 +73,7 @@ export class RowLevelPermissionPredicateException extends CustomException<
       userFriendlyMessage:
         userFriendlyMessage ??
         rowLevelPermissionPredicateExceptionUserFriendlyMessages[code],
+      category: ROW_LEVEL_PERMISSION_PREDICATE_EXCEPTION_CATEGORY_BY_CODE[code],
     });
   }
 }
