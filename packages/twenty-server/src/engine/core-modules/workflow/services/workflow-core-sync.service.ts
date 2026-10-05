@@ -14,6 +14,7 @@ import {
   CoreWorkflowMetadataException,
   CoreWorkflowMetadataExceptionCode,
 } from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
+import { isMigrationEntityNotFoundError } from 'src/engine/core-modules/workflow/utils/is-migration-entity-not-found-error.util';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -541,6 +542,10 @@ export class WorkflowCoreSyncService {
         },
       });
     } catch (error) {
+      if (!isMigrationEntityNotFoundError(error)) {
+        throw error;
+      }
+
       const stillPersisted = await this.coreWorkflowRepository.find(
         workspaceId,
         {
