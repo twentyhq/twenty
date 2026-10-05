@@ -177,20 +177,33 @@ export class UpgradeStatusService {
     });
   }
 
-  async getInstanceAndWorkspaceCountsStatus(): Promise<InstanceAndWorkspaceCountsUpgradeStatus> {
+  async getInstanceAndWorkspaceCountsStatus(): Promise<InstanceAndWorkspaceCountsUpgradeStatus | null> {
+    const hasRefreshLock =
+      await this.upgradeStatusCacheService.tryAcquireRefreshLock();
+
+    if (hasRefreshLock) {
+      try {
+        const refreshedStatus =
+          await this.refreshInstanceAndAllWorkspacesStatus();
+
+        return {
+          instanceUpgradeStatus: refreshedStatus.instanceUpgradeStatus,
+          behindWorkspaceCount: refreshedStatus.workspacesBehind.length,
+          failedWorkspaceCount: refreshedStatus.workspacesFailed.length,
+          upToDateWorkspaceCount: refreshedStatus.upToDateWorkspaceCount,
+          computedAt: refreshedStatus.computedAt,
+        };
+      } catch (error) {
+        this.logger.error('Failed to refresh upgrade status', error);
+
+        await this.upgradeStatusCacheService.releaseRefreshLock();
+      }
+    }
+
     const cachedStatus = await this.getCachedInstanceAndWorkspaceStatus();
 
     if (!isDefined(cachedStatus)) {
-      const refreshedStatus =
-        await this.refreshInstanceAndAllWorkspacesStatus();
-
-      return {
-        instanceUpgradeStatus: refreshedStatus.instanceUpgradeStatus,
-        behindWorkspaceCount: refreshedStatus.workspacesBehind.length,
-        failedWorkspaceCount: refreshedStatus.workspacesFailed.length,
-        upToDateWorkspaceCount: refreshedStatus.upToDateWorkspaceCount,
-        computedAt: refreshedStatus.computedAt,
-      };
+      return null;
     }
 
     return {

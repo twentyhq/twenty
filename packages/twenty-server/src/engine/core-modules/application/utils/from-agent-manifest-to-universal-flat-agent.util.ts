@@ -26,7 +26,6 @@ export const fromAgentManifestToUniversalFlatAgent = ({
       AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
     responseFormat: agentManifest.responseFormat ?? { type: 'text' },
     modelConfiguration: null,
-    evaluationInputs: [],
     isCustom: false,
     isSystem: true,
     createdAt: now,

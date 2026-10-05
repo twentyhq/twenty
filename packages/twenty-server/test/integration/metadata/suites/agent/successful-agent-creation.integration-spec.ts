@@ -45,7 +45,6 @@ describe('Agent creation should succeed', () => {
       roleId: null,
       isCustom: true,
       modelConfiguration: null,
-      evaluationInputs: [],
     });
   });
 
@@ -71,7 +70,6 @@ describe('Agent creation should succeed', () => {
           configuration: {},
         },
       },
-      evaluationInputs: ['test input 1', 'test input 2'],
     } as const satisfies CreateAgentInput;
     const { data } = await createOneAgent({
       expectToFail: false,
