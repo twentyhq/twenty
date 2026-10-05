@@ -20,6 +20,7 @@ const WON_WITHOUT_AMOUNT_RULE = {
   expression: 'stage != "WON" or not isEmpty(amount)',
   message: 'A won opportunity needs an amount',
   errorFieldMetadataId: 'amount-field-metadata-id',
+  errorFieldMetadataUniversalIdentifier: 'amount-universal-identifier',
 };
 
 const BROKEN_RULE = {
@@ -27,6 +28,7 @@ const BROKEN_RULE = {
   expression: 'stage',
   message: 'Never shown',
   errorFieldMetadataId: null,
+  errorFieldMetadataUniversalIdentifier: null,
 };
 
 const compute = (
@@ -90,6 +92,30 @@ describe('computeRecordValidationRuleViolations', () => {
       ],
       evaluationErrors: [],
     });
+  });
+
+  it('should report the violation on the whole record while its error field is inactive', () => {
+    expect(
+      computeRecordValidationRuleViolations({
+        records: [
+          {
+            id: 'record-invalid',
+            stage: 'WON',
+            amount: { amountMicros: null, currencyCode: 'USD' },
+          },
+        ],
+        validationRules: [
+          {
+            ...WON_WITHOUT_AMOUNT_RULE,
+            expression: 'stage != "WON"',
+          },
+        ],
+        fields: FIELDS.filter((field) => field.name !== 'amount'),
+        now: '2026-09-23T10:00:00.000Z',
+        inputIndexByRecordId: new Map(),
+        maxViolations: 100,
+      }).violations[0].fieldMetadataId,
+    ).toBeNull();
   });
 
   it('should leave the input index null when the write had no input array', () => {

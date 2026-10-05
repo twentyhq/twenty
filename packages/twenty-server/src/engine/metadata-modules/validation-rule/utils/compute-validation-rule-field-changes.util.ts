@@ -42,7 +42,7 @@ export const computeValidationRuleFieldChanges = ({
         fieldUniversalIdentifier: updatedField.universalIdentifier,
         newFieldName: isRenamed ? updatedField.name : null,
         shouldDisableRulesReadingField: isRetyped || isDeactivated,
-        shouldDetachErrorField: isDeactivated,
+        shouldDetachErrorField: false,
       },
     ];
   }),

@@ -44,7 +44,7 @@ describe('computeValidationRuleFieldChanges', () => {
         fieldUniversalIdentifier: STAGE.universalIdentifier,
         newFieldName: null,
         shouldDisableRulesReadingField: true,
-        shouldDetachErrorField: true,
+        shouldDetachErrorField: false,
       },
       {
         fieldUniversalIdentifier: 'score-universal-identifier',
