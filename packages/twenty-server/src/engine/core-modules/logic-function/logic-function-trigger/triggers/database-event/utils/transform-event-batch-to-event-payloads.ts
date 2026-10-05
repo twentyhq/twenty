@@ -9,6 +9,7 @@ import { MAX_EVENTS_PER_TRIGGER_JOB } from 'src/engine/core-modules/logic-functi
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
 
 export const transformEventBatchToEventPayloads = ({
   workspaceEventBatch,
@@ -22,15 +23,14 @@ export const transformEventBatchToEventPayloads = ({
 }): LogicFunctionTriggerJobData[] => {
   const result: LogicFunctionTriggerJobData[] = [];
   const { events, ...batchEventInfo } = workspaceEventBatch;
-  const [, operation] = workspaceEventBatch.name.split('.');
 
   for (const logicFunction of logicFunctions) {
     const triggerSettings = logicFunction.databaseEventTriggerSettings;
 
     const filteredEvents = filterEventsByUpdatedFields({
       events,
-      operation,
-      triggerUpdatedFields: triggerSettings?.updatedFields,
+      eventName: workspaceEventBatch.name,
+      watchedFields: triggerSettings?.updatedFields,
     });
 
     if (triggerSettings?.batchMode !== true) {
@@ -97,36 +97,4 @@ const groupEventsByAuthContext = (
   }
 
   return [...eventsByAuthContext.values()];
-};
-
-const filterEventsByUpdatedFields = ({
-  events,
-  operation,
-  triggerUpdatedFields,
-}: {
-  events: ObjectRecordEvent[];
-  operation: string;
-  triggerUpdatedFields?: string[];
-}): ObjectRecordEvent[] => {
-  if (operation !== 'updated') {
-    return events;
-  }
-
-  if (!isDefined(triggerUpdatedFields) || triggerUpdatedFields.length === 0) {
-    return events;
-  }
-
-  return events.filter((event) => {
-    const eventUpdatedFields = (
-      event.properties as { updatedFields?: string[] }
-    )?.updatedFields;
-
-    if (!isDefined(eventUpdatedFields) || eventUpdatedFields.length === 0) {
-      return false;
-    }
-
-    return eventUpdatedFields.some((fieldName: string) =>
-      triggerUpdatedFields.includes(fieldName),
-    );
-  });
 };
