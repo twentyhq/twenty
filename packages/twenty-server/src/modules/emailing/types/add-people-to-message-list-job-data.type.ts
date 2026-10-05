@@ -3,6 +3,7 @@ import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-
 export type AddPeopleToMessageListJobData = {
   workspaceId: string;
   userWorkspaceId: string;
+  applicationId?: string;
   messageListId: string;
   personFilter: Partial<ObjectRecordFilter>;
 };

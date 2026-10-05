@@ -16,12 +16,12 @@ export const messageListGraphqlApiExceptionHandler = (error: Error) => {
     switch (error.code) {
       case MessageListExceptionCode.MESSAGE_LIST_NOT_FOUND:
         throw new NotFoundError(error);
-      case MessageListExceptionCode.TOO_MANY_PEOPLE_TO_ADD:
+      case MessageListExceptionCode.MESSAGE_LIST_TOO_MANY_PEOPLE_TO_ADD:
         throw new UserInputError(error);
-      case MessageListExceptionCode.ADDING_PEOPLE_IN_PROGRESS:
+      case MessageListExceptionCode.MESSAGE_LIST_ADD_PEOPLE_IN_PROGRESS:
         throw new ConflictError(error);
       case MessageListExceptionCode.MESSAGE_LIST_DUPLICATION_FAILED:
-      case MessageListExceptionCode.ADDING_PEOPLE_FAILED:
+      case MessageListExceptionCode.MESSAGE_LIST_ADD_PEOPLE_FAILED:
         throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);

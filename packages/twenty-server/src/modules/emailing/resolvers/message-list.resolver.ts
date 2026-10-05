@@ -78,7 +78,7 @@ export class MessageListResolver {
         workspaceAgnostic: false,
       },
       apiKey: false,
-      oauthClient: true,
+      oauthClient: { withUser: true, withoutUser: false },
       application: false,
     }),
     NoPermissionGuard,
@@ -100,10 +100,7 @@ export class MessageListResolver {
     messageListId: string,
   ): Promise<JobStatusDTO | null> {
     return this.addPeopleToMessageListJobService.findAddPeopleToMessageListJobStatus(
-      {
-        messageListId,
-        workspaceId: getWorkspaceAuthContext().workspace.id,
-      },
+      { messageListId, authContext: getWorkspaceAuthContext() },
     );
   }
 }

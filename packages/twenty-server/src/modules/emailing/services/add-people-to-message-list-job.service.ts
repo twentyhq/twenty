@@ -11,16 +11,14 @@ import { type JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/jo
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { buildJobStatus } from 'src/engine/core-modules/message-queue/utils/build-job-status.util';
-import { getQueueJobIdPrefix } from 'src/engine/core-modules/message-queue/utils/get-queue-job-id-prefix.util';
+import { findInFlightQueueJobIdByPrefix } from 'src/engine/core-modules/message-queue/utils/find-in-flight-queue-job-id-by-prefix.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { ADD_PEOPLE_TO_MESSAGE_LIST_JOB_START_DELAY_MS } from 'src/modules/emailing/constants/add-people-to-message-list-job-start-delay-ms.constant';
-import { ADD_PEOPLE_TO_MESSAGE_LIST_MAX_PERSON_COUNT } from 'src/modules/emailing/constants/add-people-to-message-list-max-person-count.constant';
 import {
   MessageListException,
   MessageListExceptionCode,
@@ -30,12 +28,12 @@ import { AddPeopleToMessageListService } from 'src/modules/emailing/services/add
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
 import { type AddPeopleToMessageListJobData } from 'src/modules/emailing/types/add-people-to-message-list-job-data.type';
 import { buildAddPeopleToMessageListJobId } from 'src/modules/emailing/utils/build-add-people-to-message-list-job-id.util';
+import { buildAddPeopleToMessageListLockKey } from 'src/modules/emailing/utils/build-add-people-to-message-list-lock-key.util';
 
 @Injectable()
 export class AddPeopleToMessageListJobService {
   constructor(
     private readonly addPeopleToMessageListService: AddPeopleToMessageListService,
-    private readonly userRoleService: UserRoleService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly cacheLockService: CacheLockService,
     @InjectMessageQueue(MessageQueue.campaignQueue)
@@ -58,50 +56,43 @@ export class AddPeopleToMessageListJobService {
       );
     }
 
-    const workspaceId = authContext.workspace.id;
-    const userWorkspaceId = authContext.userWorkspaceId;
-
-    await this.assertMessageListExists({
-      messageListId,
-      workspaceId,
-      userWorkspaceId,
-      authContext,
-    });
-
-    const personCount = await this.addPeopleToMessageListService.countPeople({
+    await this.assertMessageListExists({ messageListId, authContext });
+    await this.addPeopleToMessageListService.assertPersonCountWithinLimit({
       authContext,
       personFilter,
     });
 
-    if (personCount > ADD_PEOPLE_TO_MESSAGE_LIST_MAX_PERSON_COUNT) {
-      throw new MessageListException(
-        `Cannot add ${personCount} people to a list at once`,
-        MessageListExceptionCode.TOO_MANY_PEOPLE_TO_ADD,
-      );
-    }
+    const workspaceId = authContext.workspace.id;
 
     return this.cacheLockService.withLock(
       () =>
         this.enqueueAddPeopleToMessageListJob({
           workspaceId,
-          userWorkspaceId,
+          userWorkspaceId: authContext.userWorkspaceId,
+          applicationId: authContext.application?.id,
           messageListId,
           personFilter,
         }),
-      `add-people-to-message-list-job:${workspaceId}:${messageListId}`,
+      buildAddPeopleToMessageListLockKey({ workspaceId, messageListId }),
     );
   }
 
   async findAddPeopleToMessageListJobStatus({
     messageListId,
-    workspaceId,
+    authContext,
   }: {
     messageListId: string;
-    workspaceId: string;
+    authContext: WorkspaceAuthContext;
   }): Promise<JobStatusDTO | null> {
-    const jobId = await this.findInFlightJobId(
-      buildAddPeopleToMessageListJobId({ workspaceId, messageListId }),
-    );
+    await this.assertMessageListExists({ messageListId, authContext });
+
+    const jobId = findInFlightQueueJobIdByPrefix({
+      inFlightJobs: await this.campaignQueueService.getInFlightJobs(),
+      jobIdPrefix: buildAddPeopleToMessageListJobId({
+        workspaceId: authContext.workspace.id,
+        messageListId,
+      }),
+    });
 
     if (!isDefined(jobId)) {
       return null;
@@ -114,26 +105,18 @@ export class AddPeopleToMessageListJobService {
 
   private async assertMessageListExists({
     messageListId,
-    workspaceId,
-    userWorkspaceId,
     authContext,
   }: {
     messageListId: string;
-    workspaceId: string;
-    userWorkspaceId: string;
     authContext: WorkspaceAuthContext;
   }): Promise<void> {
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId,
-      userWorkspaceId,
-    });
     const messageList =
       await this.workspaceOrmManager.executeInWorkspaceContext(
         () =>
           this.workspaceOrmManager
-            .getRepository<MessageListWorkspaceEntity>('messageList', {
-              unionOf: [roleId],
-            })
+            .getRepositoryWithContextPermissions<MessageListWorkspaceEntity>(
+              'messageList',
+            )
             .findOne({ where: { id: messageListId } }),
         authContext,
       );
@@ -150,11 +133,15 @@ export class AddPeopleToMessageListJobService {
     data: AddPeopleToMessageListJobData,
   ): Promise<{ jobId: string }> {
     const jobIdPrefix = buildAddPeopleToMessageListJobId(data);
+    const inFlightJobId = findInFlightQueueJobIdByPrefix({
+      inFlightJobs: await this.campaignQueueService.getInFlightJobs(),
+      jobIdPrefix,
+    });
 
-    if (isDefined(await this.findInFlightJobId(jobIdPrefix))) {
+    if (isDefined(inFlightJobId)) {
       throw new MessageListException(
         `People are already being added to message list ${data.messageListId}`,
-        MessageListExceptionCode.ADDING_PEOPLE_IN_PROGRESS,
+        MessageListExceptionCode.MESSAGE_LIST_ADD_PEOPLE_IN_PROGRESS,
       );
     }
 
@@ -172,21 +159,10 @@ export class AddPeopleToMessageListJobService {
     if (!isDefined(jobId)) {
       throw new MessageListException(
         `Could not queue adding people to message list ${data.messageListId}`,
-        MessageListExceptionCode.ADDING_PEOPLE_FAILED,
+        MessageListExceptionCode.MESSAGE_LIST_ADD_PEOPLE_FAILED,
       );
     }
 
     return { jobId };
-  }
-
-  private async findInFlightJobId(
-    jobIdPrefix: string,
-  ): Promise<string | undefined> {
-    const inFlightJobs = await this.campaignQueueService.getInFlightJobs();
-
-    return inFlightJobs
-      .map((job) => job.id)
-      .filter(isDefined)
-      .find((jobId) => getQueueJobIdPrefix(jobId) === jobIdPrefix);
   }
 }
