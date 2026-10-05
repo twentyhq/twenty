@@ -1,6 +1,6 @@
 import { type ServerResponse } from 'node:http';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isNull, isUndefined } from '@sniptt/guards';
 import { type Plugin } from 'vite';
 
 import { AVATAR_IMAGE_FIXTURE } from '../../src/__stories__/twenty-ui-gallery/constants/AvatarImageFixture';
@@ -57,7 +57,7 @@ export const createAvatarImageFixturePlugin = (): Plugin => ({
     const findOrCreateRequest = (requestId: string): ImageRequest => {
       const existingRequest = requests.get(requestId);
 
-      if (isDefined(existingRequest)) {
+      if (!isUndefined(existingRequest)) {
         return existingRequest;
       }
 
@@ -83,7 +83,7 @@ export const createAvatarImageFixturePlugin = (): Plugin => ({
     server.middlewares.use((request, response, next) => {
       const match = AVATAR_IMAGE_REQUEST_PATTERN.exec(request.url ?? '');
 
-      if (!isDefined(match)) {
+      if (isNull(match)) {
         next();
         return;
       }
