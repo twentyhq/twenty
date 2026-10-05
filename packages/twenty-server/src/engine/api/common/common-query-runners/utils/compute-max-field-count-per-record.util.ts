@@ -1,4 +1,5 @@
 import { RelationType } from 'twenty-shared/types';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -28,7 +29,7 @@ export const computeMaxFieldCountPerRecord = ({
 
   const maxFieldCount = Object.entries(select).reduce(
     (fieldCount, [fieldName, selectedValue]) => {
-      if (typeof selectedValue !== 'object') {
+      if (!isPlainObject(selectedValue)) {
         return fieldCount + 1;
       }
 
