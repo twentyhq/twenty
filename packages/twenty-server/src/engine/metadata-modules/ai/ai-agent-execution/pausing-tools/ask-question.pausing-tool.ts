@@ -137,8 +137,7 @@ export const ASK_QUESTION_PAUSING_TOOL = definePausingTool<
     `user can always type a free-form answer instead of picking an option. ${SEVERAL_QUESTIONS_GUIDANCE}`,
   inputSchema: askQuestionInputSchema,
   prepare: async (question) => ({ pendingResult: { question } }),
-  preview: (question) =>
-    isNonEmptyString(question.question.trim()) ? question.question : null,
+  preview: (question) => question.question,
   outputSchema: buildAskQuestionOutputSchema,
   complete: async ({ output: answer, input: question }) => ({
     toolResult: {

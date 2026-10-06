@@ -26,8 +26,8 @@ import {
 } from 'twenty-shared/types';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
+import { agentChatToolCallArgumentsFamilyState } from '@/ai/states/agentChatToolCallArgumentsFamilyState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
@@ -50,7 +50,12 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useStore } from 'jotai';
-import { CustomError, getAppPath, isDefined } from 'twenty-shared/utils';
+import {
+  CustomError,
+  getAppPath,
+  isDefined,
+  isPlainObject,
+} from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -148,7 +153,6 @@ export const useFrontComponentExecutionContext = ({
     useFrontComponentApplicationTokenPair();
   const { openConfirmationModal } = useCommandMenuConfirmationModal();
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
-  const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
   const { navigateSidePanel } = useNavigateSidePanel();
   const { openRecordInSidePanel: openRecordInSidePanelInternal } =
     useOpenRecordInSidePanel();
@@ -178,6 +182,10 @@ export const useFrontComponentExecutionContext = ({
   const setCommandMenuItemProgress = useSetAtomFamilyState(
     commandMenuItemProgressFamilyState,
     commandMenuItemId ?? '',
+  );
+  const setAgentChatToolCallArguments = useSetAtomFamilyState(
+    agentChatToolCallArgumentsFamilyState,
+    toolCall?.toolCallId ?? '',
   );
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
@@ -496,20 +504,22 @@ export const useFrontComponentExecutionContext = ({
       await copyToClipboardWithoutSuccessToast(text);
     };
 
-  // a component only ever answers the call it renders
-  const respondToToolCall: FrontComponentHostCommunicationApi['respondToToolCall'] =
-    async (response) => {
+  // a component only stages the arguments of the call it renders; the person decides it with the
+  // host's own controls, so a component can never approve a call on their behalf
+  const updateToolCallArguments: FrontComponentHostCommunicationApi['updateToolCallArguments'] =
+    async (toolArguments) => {
       if (!isDefined(toolCall)) {
         throw new CustomError(
-          'Only a component rendering a tool call can respond to it',
-          'FRONT_COMPONENT_NO_TOOL_CALL_TO_RESPOND_TO',
+          'Only a component rendering a tool call can update its arguments',
+          'FRONT_COMPONENT_NO_TOOL_CALL_TO_UPDATE',
         );
       }
 
-      await answerAgentChatToolCall({
-        toolCallId: toolCall.toolCallId,
-        response,
-      });
+      if (!isPlainObject(toolArguments)) {
+        return;
+      }
+
+      setAgentChatToolCallArguments(toolArguments);
     };
 
   const hostUploadFile: FrontComponentHostCommunicationApi['uploadFile'] =
@@ -627,7 +637,7 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanel,
       updateProgress,
       copyToClipboard,
-      respondToToolCall,
+      updateToolCallArguments,
       uploadFile: hostUploadFile,
       storageSet,
       storageDelete,

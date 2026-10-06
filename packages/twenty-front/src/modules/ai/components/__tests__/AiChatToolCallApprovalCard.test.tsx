@@ -7,6 +7,7 @@ import { type ReactNode } from 'react';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 
 import { AiChatToolCallApprovalCard } from '@/ai/components/AiChatToolCallApprovalCard';
+import { agentChatToolCallArgumentsFamilyState } from '@/ai/states/agentChatToolCallArgumentsFamilyState';
 
 type RecordFieldsStubProps = {
   values: Record<string, unknown>;
@@ -22,17 +23,25 @@ const mockFrontComponentIdByToolName = new Map<string, string>();
 jest.mock('@/ai/hooks/useFrontComponentIdByToolName', () => ({
   useFrontComponentIdByToolName: () => mockFrontComponentIdByToolName,
 }));
+jest.mock('@/ai/hooks/useGetToolIndex', () => ({
+  useGetToolIndex: () => ({ loading: false }),
+}));
 
 jest.mock('@/ai/components/AiChatToolWidget', () => ({
   AiChatToolWidget: ({
     toolCall,
     frontComponentId,
   }: {
-    toolCall: { toolCallId: string; toolName: string; status: string };
+    toolCall: {
+      toolCallId: string;
+      toolName: string;
+      status: string;
+      input?: Record<string, unknown>;
+    };
     frontComponentId: string;
   }) => (
     <div data-testid="tool-widget">
-      {`${frontComponentId}:${toolCall.toolCallId}:${toolCall.toolName}:${toolCall.status}`}
+      {`${frontComponentId}:${toolCall.toolCallId}:${toolCall.toolName}:${toolCall.status}:${JSON.stringify(toolCall.input)}`}
     </div>
   ),
 }));
@@ -63,10 +72,13 @@ const PROPOSAL: ProposedToolCall = {
   template: 'generic',
 };
 
-const renderCard = (proposal: ProposedToolCall = PROPOSAL) =>
+const renderCard = (
+  proposal: ProposedToolCall = PROPOSAL,
+  store = createStore(),
+) =>
   render(
     <I18nProvider i18n={i18n}>
-      <Provider store={createStore()}>
+      <Provider store={store}>
         <AiChatToolCallApprovalCard toolCallId="call-1" proposal={proposal} />
       </Provider>
     </I18nProvider>,
@@ -78,15 +90,41 @@ describe('AiChatToolCallApprovalCard', () => {
     mockFrontComponentIdByToolName.clear();
   });
 
-  it("reviews a call with the proposed tool's own front component", () => {
+  it("edits a call with the proposed tool's own front component, but leaves the decision to the person", () => {
     mockFrontComponentIdByToolName.set('http_request', 'front-component-1');
 
     renderCard();
 
     expect(screen.getByTestId('tool-widget')).toHaveTextContent(
-      'front-component-1:call-1:http_request:approval-requested',
+      `front-component-1:call-1:http_request:approval-requested:${JSON.stringify(PROPOSAL.arguments)}`,
     );
-    expect(screen.queryByRole('button', { name: 'Approve' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Approve' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Reject' })).toBeInTheDocument();
+  });
+
+  it('approves the call with the arguments its front component staged', async () => {
+    const user = userEvent.setup();
+    answerAgentChatToolCall.mockReturnValue(new Promise(() => {}));
+    mockFrontComponentIdByToolName.set('http_request', 'front-component-1');
+    const store = createStore();
+    const stagedArguments = {
+      url: 'https://billing.example.com',
+      method: 'PUT',
+    };
+
+    store.set(
+      agentChatToolCallArgumentsFamilyState.getAtom('call-1', null),
+      stagedArguments,
+    );
+    renderCard(PROPOSAL, store);
+
+    await user.click(screen.getByRole('button', { name: 'Approve' }));
+
+    expect(answerAgentChatToolCall).toHaveBeenCalledWith({
+      toolCallId: 'call-1',
+      response: { decision: 'approve', arguments: stagedArguments },
+      optimisticToolOutput: undefined,
+    });
   });
 
   it('shows what the call does and which tool it runs', () => {

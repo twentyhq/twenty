@@ -1,16 +1,22 @@
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { isUndefined } from '@sniptt/guards';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 
+import { AiChatToolWidget } from '@/ai/components/AiChatToolWidget';
 import { AiChatToolCallApprovalArgumentsEditor } from '@/ai/components/internal/AiChatToolCallApprovalArgumentsEditor';
 import { AiChatToolCallApprovalCardLayout } from '@/ai/components/internal/AiChatToolCallApprovalCardLayout';
 import { AiChatToolCallApprovalRecord } from '@/ai/components/internal/AiChatToolCallApprovalRecord';
 import { AiChatToolCallApprovalRecordFields } from '@/ai/components/internal/AiChatToolCallApprovalRecordFields';
 import { useAnswerToolCallApproval } from '@/ai/hooks/useAnswerToolCallApproval';
+import { useFrontComponentIdByToolName } from '@/ai/hooks/useFrontComponentIdByToolName';
+import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
+import { agentChatToolCallArgumentsFamilyState } from '@/ai/states/agentChatToolCallArgumentsFamilyState';
+import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 
 type AiChatToolCallApprovalArgumentsCardProps = {
   toolCallId: string;
@@ -25,19 +31,59 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   const approval = useAnswerToolCallApproval({ toolCallId, proposal });
   const { pendingResponse, isAnswering, approve, reject } = approval;
 
-  // null while the raw arguments do not parse, which blocks approving
-  const [toolArguments, setToolArguments] = useState<Record<
-    string,
-    unknown
-  > | null>(proposal.arguments);
+  // shared with the tool's own front component, which edits them through the host
+  const [stagedArguments, setStagedArguments] = useAtomFamilyState(
+    agentChatToolCallArgumentsFamilyState,
+    toolCallId,
+  );
+  const toolArguments = isUndefined(stagedArguments)
+    ? proposal.arguments
+    : stagedArguments;
+
+  const { loading: isToolIndexLoading } = useGetToolIndex();
+  const frontComponentId = useFrontComponentIdByToolName().get(
+    proposal.toolName,
+  );
 
   const { template, objectNameSingular, recordId } = proposal;
 
   const handleRecordFieldChange = (fieldName: string, value: JsonValue) => {
-    setToolArguments((previousArguments) => ({
-      ...previousArguments,
+    setStagedArguments((previousArguments) => ({
+      ...(previousArguments ?? proposal.arguments),
       [fieldName]: value,
     }));
+  };
+
+  const argumentsEditor = (
+    <AiChatToolCallApprovalArgumentsEditor
+      defaultArguments={proposal.arguments}
+      readonly={isAnswering}
+      onChange={setStagedArguments}
+    />
+  );
+
+  // the editor is only known once the tool index loads, so nothing is edited in one that gets replaced
+  const renderGenericArgumentsEditor = () => {
+    if (isToolIndexLoading) {
+      return <FrontComponentSkeletonLoader />;
+    }
+
+    if (!isDefined(frontComponentId)) {
+      return argumentsEditor;
+    }
+
+    return (
+      <AiChatToolWidget
+        toolCall={{
+          toolCallId,
+          toolName: proposal.toolName,
+          status: 'approval-requested',
+          input: proposal.arguments,
+        }}
+        frontComponentId={frontComponentId}
+        unavailableFallback={argumentsEditor}
+      />
+    );
   };
 
   const hasRecordFields =
@@ -95,13 +141,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
           onChange={handleRecordFieldChange}
         />
       )}
-      {template === 'generic' && (
-        <AiChatToolCallApprovalArgumentsEditor
-          defaultArguments={proposal.arguments}
-          readonly={isAnswering}
-          onChange={setToolArguments}
-        />
-      )}
+      {template === 'generic' && renderGenericArgumentsEditor()}
     </AiChatToolCallApprovalCardLayout>
   );
 };

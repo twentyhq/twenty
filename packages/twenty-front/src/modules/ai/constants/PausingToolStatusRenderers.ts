@@ -16,11 +16,12 @@ type PausingToolStatusRendererProps = {
   isStreaming: boolean;
 };
 
-export const PAUSING_TOOL_STATUS_RENDERERS: Partial<
-  Record<string, ComponentType<PausingToolStatusRendererProps>>
-> = {
-  [ASK_QUESTION_TOOL_NAME]: AiChatQuestionStatusRenderer,
-  [ASK_QUESTIONS_TOOL_NAME]: AiChatQuestionStatusRenderer,
-  [PROPOSE_TOOL_CALL_TOOL_NAME]: AiChatToolCallApprovalStatusRenderer,
-  [REQUEST_FORM_TOOL_NAME]: AiChatFormStatusRenderer,
-};
+export const PAUSING_TOOL_STATUS_RENDERERS: ReadonlyMap<
+  string,
+  ComponentType<PausingToolStatusRendererProps>
+> = new Map([
+  [ASK_QUESTION_TOOL_NAME, AiChatQuestionStatusRenderer],
+  [ASK_QUESTIONS_TOOL_NAME, AiChatQuestionStatusRenderer],
+  [PROPOSE_TOOL_CALL_TOOL_NAME, AiChatToolCallApprovalStatusRenderer],
+  [REQUEST_FORM_TOOL_NAME, AiChatFormStatusRenderer],
+]);

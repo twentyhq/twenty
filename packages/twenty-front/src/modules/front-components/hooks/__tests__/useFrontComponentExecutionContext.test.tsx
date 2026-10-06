@@ -53,16 +53,10 @@ const mockSetRecordPageActiveTabId = jest.fn();
 const mockStorageSet = jest.fn();
 const mockStorageDelete = jest.fn();
 const mockStorageClear = jest.fn();
-const mockAnswerAgentChatToolCall = jest.fn();
+const mockSetToolCallArguments = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 let mockIsMobile = false;
-
-jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
-  useAnswerAgentChatToolCall: () => ({
-    answerAgentChatToolCall: mockAnswerAgentChatToolCall,
-  }),
-}));
 
 jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => mockNavigateApp,
@@ -162,7 +156,10 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomState', () => ({
 }));
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState', () => ({
-  useSetAtomFamilyState: () => mockSetCommandMenuItemProgress,
+  useSetAtomFamilyState: (familyState: { key: string }) =>
+    familyState.key === 'agentChatToolCallArgumentsFamilyState'
+      ? mockSetToolCallArguments
+      : mockSetCommandMenuItemProgress,
 }));
 
 jest.mock('~/hooks/useCopyToClipboard', () => ({
@@ -1231,41 +1228,55 @@ describe('useFrontComponentExecutionContext', () => {
     });
   });
 
-  describe('respondToToolCall', () => {
-    it('answers the tool call the component renders', async () => {
+  describe('updateToolCallArguments', () => {
+    const TOOL_CALL = {
+      toolCallId: 'call-1',
+      toolName: 'app_book_meeting',
+      status: 'approval-requested' as const,
+      input: { slot: '10:00' },
+    };
+
+    it('stages the arguments of the tool call the component renders', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
-        toolCall: {
-          toolCallId: 'call-1',
-          toolName: 'app_book_meeting',
-          status: 'approval-requested',
-          input: { slot: '10:00' },
-        },
+        toolCall: TOOL_CALL,
       });
 
       await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.respondToToolCall(
-          { decision: 'approve', arguments: { slot: '11:00' } },
+        await result.current.frontComponentHostCommunicationApi.updateToolCallArguments(
+          { slot: '11:00' },
         );
       });
 
-      expect(mockAnswerAgentChatToolCall).toHaveBeenCalledWith({
-        toolCallId: 'call-1',
-        response: { decision: 'approve', arguments: { slot: '11:00' } },
-      });
+      expect(mockSetToolCallArguments).toHaveBeenCalledWith({ slot: '11:00' });
     });
 
-    it('refuses to respond outside a tool call', async () => {
+    it('drops arguments that are not an object', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        toolCall: TOOL_CALL,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.updateToolCallArguments(
+          ['11:00'] as never,
+        );
+      });
+
+      expect(mockSetToolCallArguments).not.toHaveBeenCalled();
+    });
+
+    it('refuses to update arguments outside a tool call', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
 
       await expect(
-        result.current.frontComponentHostCommunicationApi.respondToToolCall({
-          decision: 'reject',
-        }),
+        result.current.frontComponentHostCommunicationApi.updateToolCallArguments(
+          { slot: '11:00' },
+        ),
       ).rejects.toThrow('Only a component rendering a tool call');
-      expect(mockAnswerAgentChatToolCall).not.toHaveBeenCalled();
+      expect(mockSetToolCallArguments).not.toHaveBeenCalled();
     });
   });
 

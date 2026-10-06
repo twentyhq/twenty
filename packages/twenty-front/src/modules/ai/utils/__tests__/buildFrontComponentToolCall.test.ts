@@ -34,8 +34,10 @@ describe('buildFrontComponentToolCall', () => {
         },
         errorText: 'Failed',
       } as unknown as ToolUIPart),
-    ).toMatchObject({
+    ).toEqual({
+      toolCallId: 'call_1',
       toolName: 'app_draft_reply',
+      status: 'output-error',
       input: { subject: 'Hello' },
       output: undefined,
       errorText: 'Failed',

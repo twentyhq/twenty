@@ -6,10 +6,14 @@ jest.mock('@/front-components/components/FrontComponentRenderer', () => ({
   FrontComponentRenderer: ({
     toolCall,
   }: {
-    toolCall: { toolName: string; status: string };
+    toolCall: {
+      toolName: string;
+      status: string;
+      input?: Record<string, unknown>;
+    };
   }) => (
     <div data-testid="front-component">
-      {`${toolCall.toolName}:${toolCall.status}`}
+      {`${toolCall.toolName}:${toolCall.status}:${JSON.stringify(toolCall.input)}`}
     </div>
   ),
 }));
@@ -34,7 +38,7 @@ describe('AiChatToolWidget', () => {
     );
 
     expect(await screen.findByTestId('front-component')).toHaveTextContent(
-      'app_draft_reply:approval-requested',
+      'app_draft_reply:approval-requested:{"subject":"Hello"}',
     );
   });
 });

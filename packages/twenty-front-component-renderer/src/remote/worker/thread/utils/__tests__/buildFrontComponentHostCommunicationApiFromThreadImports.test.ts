@@ -13,6 +13,7 @@ const createHostThreadImportsStub = () =>
     closeSidePanel: jest.fn(),
     updateProgress: jest.fn(),
     copyToClipboard: jest.fn(),
+    updateToolCallArguments: jest.fn(),
     uploadFile: jest.fn(),
     storageSet: jest.fn(),
     storageDelete: jest.fn(),
@@ -46,6 +47,7 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       'storageSet',
       'unmountFrontComponent',
       'updateProgress',
+      'updateToolCallArguments',
       'uploadFile',
     ]);
     expect(hostCommunicationApi.navigate).toBe(hostThreadImports.navigate);

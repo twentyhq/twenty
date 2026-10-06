@@ -101,6 +101,25 @@ describe('findAwaitingCallText', () => {
     ).toBeNull();
   });
 
+  it('ignores a legacy multi-question call whose question is only whitespace', () => {
+    expect(
+      findAwaitingCallText([
+        toolPart({
+          toolName: 'ask_questions',
+          input: {
+            questions: [
+              {
+                header: 'Plan',
+                question: '   ',
+                options: [{ label: 'Pro' }, { label: 'Organization' }],
+              },
+            ],
+          },
+        }),
+      ]),
+    ).toBeNull();
+  });
+
   it('ignores a question that is only whitespace', () => {
     expect(
       findAwaitingCallText([

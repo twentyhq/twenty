@@ -7,9 +7,9 @@ export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
 export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';
 export { openSidePanelPage } from './functions/openSidePanelPage';
-export { respondToToolCall } from './functions/respondToToolCall';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
+export { updateToolCallArguments } from './functions/updateToolCallArguments';
 export { uploadFile } from './functions/uploadFile';
 export { useColorScheme } from './hooks/useColorScheme';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
@@ -47,12 +47,12 @@ export type {
   OpenSidePanelPageFunction,
   OpenSidePanelPageParams,
   RequestAccessTokenRefreshFunction,
-  RespondToToolCallFunction,
   StorageClearFunction,
   StorageDeleteFunction,
   StorageSetFunction,
   UnmountFrontComponentFunction,
   UpdateProgressFunction,
+  UpdateToolCallArgumentsFunction,
   UploadedFrontComponentFile,
   UploadFileFailureReason,
   UploadFileFunction,

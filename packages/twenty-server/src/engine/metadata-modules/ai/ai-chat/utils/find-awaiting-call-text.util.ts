@@ -19,7 +19,9 @@ export const findAwaitingCallText = (
         toolName: getToolName(part),
         toolInput: part.input,
         toolOutput: part.output,
-      })?.preview();
+      })
+        ?.preview()
+        ?.trim();
 
       return isNonEmptyString(text) ? [text] : [];
     })

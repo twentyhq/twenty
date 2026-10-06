@@ -6,7 +6,7 @@ import {
   type OpenCommandConfirmationModalHostFunction,
   type OpenSidePanelPageFunction,
   type RequestAccessTokenRefreshFunction,
-  type RespondToToolCallFunction,
+  type UpdateToolCallArgumentsFunction,
   type StorageClearFunction,
   type StorageDeleteFunction,
   type StorageSetFunction,
@@ -25,7 +25,7 @@ export type FrontComponentHostCommunicationApi = {
   closeSidePanel: CloseSidePanelFunction;
   updateProgress: UpdateProgressFunction;
   copyToClipboard: CopyToClipboardFunction;
-  respondToToolCall: RespondToToolCallFunction;
+  updateToolCallArguments: UpdateToolCallArgumentsFunction;
   uploadFile: UploadFileFunction;
   storageSet: StorageSetFunction;
   storageDelete: StorageDeleteFunction;

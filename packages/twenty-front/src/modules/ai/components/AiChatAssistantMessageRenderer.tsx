@@ -59,8 +59,9 @@ const MessagePartRenderer = ({
       );
     default:
       if (isToolUIPart(part)) {
-        const PausingToolStatusRenderer =
-          PAUSING_TOOL_STATUS_RENDERERS[getToolName(part)];
+        const PausingToolStatusRenderer = PAUSING_TOOL_STATUS_RENDERERS.get(
+          getToolName(part),
+        );
 
         if (isDefined(PausingToolStatusRenderer)) {
           return (

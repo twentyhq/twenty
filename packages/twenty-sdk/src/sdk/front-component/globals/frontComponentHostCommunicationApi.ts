@@ -1,4 +1,3 @@
-import { type ToolCallApprovalResponse } from 'twenty-shared/ai';
 import {
   type AppPath,
   type SidePanelPages,
@@ -121,9 +120,10 @@ export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type CopyToClipboardFunction = (text: string) => Promise<void>;
 
-// Decides the proposed call the component renders, as the built-in approval cards do.
-export type RespondToToolCallFunction = (
-  response: ToolCallApprovalResponse,
+// Stages the arguments of the proposed call the component renders; the person still approves
+// or rejects it with the host's own controls.
+export type UpdateToolCallArgumentsFunction = (
+  toolArguments: Record<string, unknown>,
 ) => Promise<void>;
 
 export type UploadedFrontComponentFile = {
@@ -180,7 +180,7 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
-  respondToToolCall?: RespondToToolCallFunction;
+  updateToolCallArguments?: UpdateToolCallArgumentsFunction;
   uploadFile?: UploadFileFunction;
   storageSet?: StorageSetFunction;
   storageDelete?: StorageDeleteFunction;
