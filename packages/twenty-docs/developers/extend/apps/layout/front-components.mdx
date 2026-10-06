@@ -460,6 +460,7 @@ Available hooks:
 | --------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
 | `useUserId()`                                 | `string` or `null`                               | The current user's ID                                                                                            |
 | `useSelectedRecordIds()`                      | `string[]`                                       | All selected record IDs (empty array if none selected)                                                           |
+| `useSelectedRecordsFilter()`                  | `RecordGqlOperationFilter` or `null`             | Filter matching exactly the selected records, including under Select all                                         |
 | `useSelectedObjectMetadata()`                 | `FrontComponentSelectedObjectMetadata` or `null` | The object metadata associated with this front component's record context                                        |
 | `useRecordId()`                               | `string` or `null`                               | **Deprecated.** Use `useSelectedRecordIds()` instead                                                             |
 | `useFrontComponentId()`                       | `string`                                         | This component instance's ID                                                                                     |
@@ -748,6 +749,36 @@ export default defineCommandMenuItem({
   frontComponentUniversalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
 });
 ```
+
+#### Select all
+
+When the user selects all records of a view, `useSelectedRecordIds()` returns an empty array: the selection is defined by the view's filters, search and unticked rows, and can hold far more records than fit in memory. `useSelectedRecordsFilter()` returns a filter matching exactly the selected records in every case, so query with it instead of listing IDs:
+
+```tsx
+import { Command, useSelectedRecordsFilter } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const MarkExported = () => {
+  const selectedRecordsFilter = useSelectedRecordsFilter();
+
+  const execute = async () => {
+    if (selectedRecordsFilter === null) {
+      return;
+    }
+
+    await new CoreApiClient().mutation({
+      updateTasks: {
+        __args: { filter: selectedRecordsFilter, data: { exported: true } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+```
+
+For large selections, pass the filter to a [logic function](/developers/extend/apps/logic/logic-functions) and process the records there, page by page.
 
 ## Public assets
 
