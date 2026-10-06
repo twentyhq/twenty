@@ -7,7 +7,6 @@ import { JSX_RUNTIME_MEMOIZED_EVENT_REF_SOURCE } from '@/cli/utilities/build/com
 import { JSX_RUNTIME_NESTED_CLONE_EVENTS_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/jsx-runtime-nested-clone-events-source';
 import { JSX_RUNTIME_SPLIT_EVENT_PROPS_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/jsx-runtime-split-event-props-source';
 import { JSX_RUNTIME_STYLE_INJECTION_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/jsx-runtime-style-injection-source';
-import { JSX_RUNTIME_USER_REF_REPLACEMENT_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/jsx-runtime-user-ref-replacement-source';
 import { JSX_RUNTIME_WITH_EVENT_REF_SOURCE } from '@/cli/utilities/build/common/front-component-build/constants/jsx-runtime-with-event-ref-source';
 
 export const JSX_RUNTIME_SHARED_HELPERS_SOURCE = [
@@ -20,6 +19,5 @@ export const JSX_RUNTIME_SHARED_HELPERS_SOURCE = [
   JSX_RUNTIME_EVENT_REF_SOURCE,
   JSX_RUNTIME_MEMOIZED_EVENT_REF_SOURCE,
   JSX_RUNTIME_NESTED_CLONE_EVENTS_SOURCE,
-  JSX_RUNTIME_USER_REF_REPLACEMENT_SOURCE,
   JSX_RUNTIME_WITH_EVENT_REF_SOURCE,
 ].join('\n\n');

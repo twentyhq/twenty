@@ -4,17 +4,11 @@ import { errorHandler } from '@/__stories__/shared/test-utils/createFrontCompone
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { createOverlayOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createOverlayOpenTest';
-import { expectTriggerClosesAndReopensOverlay } from '@/__stories__/twenty-ui-gallery/utils/expectTriggerClosesAndReopensOverlay';
+import { createDropdownOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createDropdownOpenTest';
 
 type Canvas = ReturnType<typeof within>;
 
 const BILLING_COUNTRY_TRIGGER_NAME = 'Billing country';
-
-const billingCountrySelectOpenTest = createOverlayOpenTest({
-  trigger: { role: 'button', name: BILLING_COUNTRY_TRIGGER_NAME },
-  popupText: 'Brésil',
-});
 
 const expectTriggersShowSavedCountriesWithDecorativeFlags = (
   canvas: Canvas,
@@ -55,6 +49,11 @@ const expectDisabledTriggerIgnoresClick = async (canvas: Canvas) => {
   ).toHaveTextContent('Billing: France; Shipping: Japan');
 };
 
+const billingCountrySelectOpenTest = createDropdownOpenTest({
+  triggerName: BILLING_COUNTRY_TRIGGER_NAME,
+  popupText: 'Brésil',
+});
+
 export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
   context,
 ) => {
@@ -64,9 +63,5 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
   expectTriggersShowSavedCountriesWithDecorativeFlags(canvas);
   await expectDisabledTriggerIgnoresClick(canvas);
   expect(errorHandler).not.toHaveBeenCalled();
-
   await billingCountrySelectOpenTest(context);
-  await expectTriggerClosesAndReopensOverlay(
-    canvas.getByRole('button', { name: BILLING_COUNTRY_TRIGGER_NAME }),
-  );
 };

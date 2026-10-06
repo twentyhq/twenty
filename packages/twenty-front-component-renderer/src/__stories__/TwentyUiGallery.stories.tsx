@@ -1,5 +1,6 @@
 import { currencyPickerTest } from '@/__stories__/twenty-ui-gallery/utils/currencyPickerTest';
-import { phoneCountryPickerOpenTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerOpenTest';
+import { dropdownTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownTest';
+import { phoneCountryPickerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTest';
 import { phoneCountryPickerTriggerTest } from '@/__stories__/twenty-ui-gallery/utils/phoneCountryPickerTriggerTest';
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
 import { imageInputTest } from '@/__stories__/twenty-ui-gallery/utils/imageInputTest';
@@ -23,7 +24,6 @@ import { responsiveHooksTest } from '@/__stories__/twenty-ui-gallery/utils/respo
 import { RESPONSIVE_HOOKS_WIDGET_SIZING } from '@/__stories__/twenty-ui-gallery/constants/RESPONSIVE_HOOKS_WIDGET_SIZING';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { toastCountdownTest } from '@/__stories__/twenty-ui-gallery/utils/toastCountdownTest';
-import { dropdownTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownTest';
 import { type Meta } from '@storybook/react-vite';
 
 import {
@@ -382,13 +382,13 @@ export const PhoneCountryPickerTriggersPreact: Story = createGalleryStory({
 export const PhoneCountryPickerReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-phone-country-picker',
   runtime: 'react',
-  play: phoneCountryPickerOpenTest,
+  play: phoneCountryPickerTest,
 });
 
 export const PhoneCountryPickerPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-phone-country-picker',
   runtime: 'preact',
-  play: phoneCountryPickerOpenTest,
+  play: phoneCountryPickerTest,
 });
 
 export const SelectReact: Story = createGalleryStory({

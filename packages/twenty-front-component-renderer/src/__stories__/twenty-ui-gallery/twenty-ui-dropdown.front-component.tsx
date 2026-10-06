@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Dropdown } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
@@ -8,21 +8,8 @@ import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twent
 
 const ASSIGNEES = ['Ada Lovelace', 'Grace Hopper'];
 
-const MenuMountCountEffect = ({
-  setMenuMountCount,
-}: {
-  setMenuMountCount: Dispatch<SetStateAction<number>>;
-}) => {
-  useEffect(() => {
-    setMenuMountCount((menuMountCount) => menuMountCount + 1);
-  }, [setMenuMountCount]);
-
-  return null;
-};
-
 const DropdownExample = () => {
   const [open, setOpen] = useState(false);
-  const [menuMountCount, setMenuMountCount] = useState(0);
   const [query, setQuery] = useState('');
   const [selection, setSelection] = useState('Unassigned');
   const matchingAssignees = ASSIGNEES.filter((assignee) =>
@@ -31,15 +18,9 @@ const DropdownExample = () => {
 
   return (
     <TwentyUiGalleryCard title="Dropdown">
-      <Dropdown.Root
-        type="menu"
-        open={open}
-        onOpenChange={setOpen}
-        onInteractOutside={(event) => event.preventDefault()}
-      >
+      <Dropdown.Root type="menu" open={open} onOpenChange={setOpen}>
         <Dropdown.Trigger render={<Button>Choose assignee</Button>} />
         <Dropdown.Content aria-label="Assignee actions">
-          <MenuMountCountEffect setMenuMountCount={setMenuMountCount} />
           <Dropdown.Page id="root">
             <Dropdown.Section>
               <Dropdown.ActionItem
@@ -81,16 +62,7 @@ const DropdownExample = () => {
           </Dropdown.Page>
         </Dropdown.Content>
       </Dropdown.Root>
-      <Button
-        onClick={() => {
-          setSelection('Ada Lovelace');
-          setOpen(false);
-        }}
-      >
-        Assign Ada and close menu
-      </Button>
       <Text role="status">Assignee: {selection}</Text>
-      <Text>Menu mounts: {menuMountCount}</Text>
     </TwentyUiGalleryCard>
   );
 };
