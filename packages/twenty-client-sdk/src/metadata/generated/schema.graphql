@@ -4045,7 +4045,6 @@ type Query {
   checkWorkspaceSubdomainAvailability(subdomain: String!): SubdomainAvailabilityDTO!
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
-  applicationUpgradeRoleGrants(applicationId: UUID!): [ApplicationUpgradeRoleGrant!]!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
   findManyApplicationRegistrations: [ApplicationRegistration!]!
@@ -4059,6 +4058,7 @@ type Query {
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
   getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
+  applicationUpgradeRoleGrants(applicationId: UUID!): [ApplicationUpgradeRoleGrant!]!
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
   findInstallApplicationJobStatus(universalIdentifier: String!): JobStatus
@@ -4451,6 +4451,7 @@ type Mutation {
   checkCustomDomainValidRecords: DomainValidRecords
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!, hasUserApprovedRoleGrants: Boolean): Boolean!
+  runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   grantApplicationCapabilities(input: GrantApplicationCapabilitiesInput!): ApplicationCapabilityGrant!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   installApplication(universalIdentifier: String!, version: String): Application!
@@ -4459,7 +4460,6 @@ type Mutation {
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
   syncMarketplaceCatalog: Boolean!
-  runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   createOIDCIdentityProvider(input: SetupOIDCSsoInput!): SetupSso!
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
