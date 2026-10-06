@@ -55,6 +55,25 @@ describe('buildQuotaDefinitions', () => {
     ]);
   });
 
+  it('lists the overridable instance defaults as scopes only an operator can set', () => {
+    expect(
+      findQuotaDefinition(UsageResourceType.EMAIL)?.operatorOnlyScopes,
+    ).toEqual([
+      {
+        operationType: UsageOperationType.EMAIL_SEND,
+        spenderType: 'workspace',
+        unit: UsageUnit.INVOCATION,
+        periodUnit: 'day',
+      },
+    ]);
+  });
+
+  it('lists no operator-only scope for a resource without quota defaults', () => {
+    expect(
+      findQuotaDefinition(UsageResourceType.AI)?.operatorOnlyScopes,
+    ).toEqual([]);
+  });
+
   it('offers credits and runs on code execution, with no every-operation entry', () => {
     expect(
       findQuotaDefinition(UsageResourceType.LOGIC_FUNCTION)?.allowedOperations,
