@@ -153,7 +153,9 @@ describe('AgentRunnerService', () => {
     expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
       expect.objectContaining({
         messages: MESSAGES,
-        baseSystemPrompt: 'base prompt',
+        baseSystemPrompt: expect.stringMatching(
+          /^base prompt\n\n.*wait_for_event/,
+        ),
         priorMessages: PRIOR_MESSAGES,
       }),
     );
