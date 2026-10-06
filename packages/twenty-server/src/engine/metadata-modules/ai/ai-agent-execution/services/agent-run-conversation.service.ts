@@ -212,12 +212,20 @@ export class AgentRunConversationService {
       isAwaitingAnswer,
     });
 
+    // the waiting call is already saved and can be answered from the conversation, so a
+    // failure to bring it back to the inbox must not fail the run
     if (isAwaitingAnswer) {
-      await this.recordWaitingActivity({
-        workspaceId,
-        threadId,
-        text: findLastMessageText(replyParts) ?? title,
-      });
+      await this.threadService
+        .recordThreadActivity({
+          workspaceId,
+          threadId,
+          text: findLastMessageText(replyParts) ?? title,
+        })
+        .catch((error: unknown) =>
+          this.logger.warn(
+            `Could not record waiting activity on thread ${threadId}: ${error instanceof Error ? error.message : String(error)}`,
+          ),
+        );
     }
 
     return { isAwaitingAnswer };
@@ -238,22 +246,6 @@ export class AgentRunConversationService {
       status: AgentTurnStatus.FAILED,
       error: mapErrorToStreamError(error),
     });
-  }
-
-  // the waiting call is already saved and can be answered from the conversation, so a
-  // failure to bring it back to the inbox must not fail the run
-  private async recordWaitingActivity(args: {
-    workspaceId: string;
-    threadId: string;
-    text: string;
-  }): Promise<void> {
-    await this.threadService
-      .recordThreadActivity(args)
-      .catch((error: unknown) =>
-        this.logger.warn(
-          `Could not record waiting activity on thread ${args.threadId}: ${error instanceof Error ? error.message : String(error)}`,
-        ),
-      );
   }
 
   private buildMessageParts(message: RunAgentMessage): ExtendedUIMessagePart[] {
