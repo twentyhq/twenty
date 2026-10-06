@@ -2,8 +2,14 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
-import { IconBolt, IconLock, IconSettings, useIcons } from 'twenty-ui/icon';
+import { Section } from 'twenty-ui/components/layout';
+import {
+  IconBolt,
+  IconLock,
+  IconSettings,
+  IconTerminal,
+  useIcons,
+} from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -20,6 +26,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type FindOneAgentQuery } from '~/generated-metadata/graphql';
 import { CoreAgentRoleTab } from '@/object-core/agents/components/CoreAgentRoleTab';
+import { CoreAgentRunsTab } from '@/object-core/agents/components/CoreAgentRunsTab';
 import { CoreAgentSettingsTab } from '@/object-core/agents/components/CoreAgentSettingsTab';
 import { CoreAgentTriggersTab } from '@/object-core/agents/components/CoreAgentTriggersTab';
 import { CORE_AGENT_DETAIL_TABS } from '@/object-core/agents/constants/CoreAgentDetailTabs';
@@ -113,6 +120,11 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
       title: t`Triggers`,
       Icon: IconBolt,
     },
+    {
+      id: CORE_AGENT_DETAIL_TABS.TABS_IDS.RUNS,
+      title: t`Runs`,
+      Icon: IconTerminal,
+    },
   ];
 
   const title = agent.label;
@@ -123,6 +135,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
     activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS;
   const isTriggersTab =
     activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.TRIGGERS;
+  const isRunsTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.RUNS;
 
   const isFormDisabled = isReadonlyMode || !agent.isCustom;
 
@@ -172,6 +185,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
                   disabled={isFormDisabled}
                 />
               )}
+              {isRunsTab && <CoreAgentRunsTab agentId={agentId} />}
             </StyledContentContainer>
           </Section.Root>
         </SettingsPageContainer>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Toast } from 'twenty-ui/components';
+import { Toast } from 'twenty-ui/components/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 

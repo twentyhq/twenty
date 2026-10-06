@@ -1,6 +1,7 @@
 import '@/testing/setupServerRenderingGlobals';
 
 import { REMOTE_ELEMENT_PROP } from '@remote-dom/react/host';
+import userEvent from '@testing-library/user-event';
 import { act, createElement, type ComponentType } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -152,6 +153,81 @@ describe('createHtmlHostWrapper client events', () => {
     );
   });
 
+  it('should forward a click once, from the innermost element listening for it', () => {
+    const handleOuterClick = jest.fn();
+    const handleInnerClick = jest.fn();
+    const OuterWrapper = createHtmlHostWrapper('div');
+    const InnerWrapper = createHtmlHostWrapper('button');
+
+    act(() => {
+      root.render(
+        createElement(
+          OuterWrapper,
+          { onClick: handleOuterClick },
+          createElement(InnerWrapper, { onClick: handleInnerClick }),
+        ),
+      );
+    });
+
+    act(() => {
+      container.querySelector('button')?.click();
+    });
+
+    expect(handleInnerClick).toHaveBeenCalledTimes(1);
+    expect(handleInnerClick).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'click', bubbles: true }),
+    );
+    expect(handleOuterClick).not.toHaveBeenCalled();
+  });
+
+  it('should forward a click on an element without a listener from its listening ancestor', () => {
+    const handleOuterClick = jest.fn();
+    const OuterWrapper = createHtmlHostWrapper('div');
+    const InnerWrapper = createHtmlHostWrapper('span');
+
+    act(() => {
+      root.render(
+        createElement(
+          OuterWrapper,
+          { onClick: handleOuterClick },
+          createElement(InnerWrapper, {}, 'label'),
+        ),
+      );
+    });
+
+    act(() => {
+      container.querySelector('span')?.click();
+    });
+
+    expect(handleOuterClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should forward a native focusin once, from the innermost element listening for it', () => {
+    const handleOuterFocusIn = jest.fn();
+    const handleInnerFocusIn = jest.fn();
+    const OuterWrapper = createHtmlHostWrapper('div');
+    const InnerWrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(
+        createElement(
+          OuterWrapper,
+          { onFocusin: handleOuterFocusIn },
+          createElement(InnerWrapper, { onFocusin: handleInnerFocusIn }),
+        ),
+      );
+    });
+
+    act(() => {
+      container
+        .querySelector('input')
+        ?.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+    });
+
+    expect(handleInnerFocusIn).toHaveBeenCalledTimes(1);
+    expect(handleOuterFocusIn).not.toHaveBeenCalled();
+  });
+
   it('should re-assert an unchanged controlled value on an unrelated re-render', () => {
     const Wrapper = createHtmlHostWrapper('input');
 
@@ -207,6 +283,91 @@ describe('createHtmlHostWrapper client events', () => {
     });
 
     expect(node.value).toBe('');
+  });
+
+  it('should mount a file input whose worker element already holds a selected file path', () => {
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, {
+          type: 'file',
+          value: 'C:\\fakepath\\report.pdf',
+        }),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+    expect(node.value).toBe('');
+    expect(node.hasAttribute('value')).toBe(false);
+  });
+
+  it('should keep the selected file when the worker echoes its path, then accept a new selection', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    const user = userEvent.setup();
+    const Wrapper = createHtmlHostWrapper('input');
+    const handleChange = jest.fn();
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, { type: 'file', onChange: handleChange }),
+      );
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+
+    await act(async () => {
+      await user.upload(node, new File(['report'], 'report.pdf'));
+    });
+
+    act(() => {
+      root.render(
+        createElement(Wrapper, {
+          type: 'file',
+          onChange: handleChange,
+          value: 'C:\\fakepath\\report.pdf',
+        }),
+      );
+    });
+
+    expect(node.value).toBe('C:\\fakepath\\report.pdf');
+    expect(node.files?.[0]?.name).toBe('report.pdf');
+
+    await act(async () => {
+      await user.upload(node, new File(['summary'], 'summary.pdf'));
+    });
+
+    expect(node.files?.[0]?.name).toBe('summary.pdf');
+    expect(handleChange).toHaveBeenCalledTimes(2);
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should clear the selected file when the worker resets the file input value', async () => {
+    const user = userEvent.setup();
+    const Wrapper = createHtmlHostWrapper('input');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'file' }));
+    });
+
+    const node = container.firstElementChild as HTMLInputElement;
+
+    await act(async () => {
+      await user.upload(node, new File(['image'], 'avatar.png'));
+    });
+
+    expect(node.value).toBe('C:\\fakepath\\avatar.png');
+
+    act(() => {
+      root.render(createElement(Wrapper, { type: 'file', value: '' }));
+    });
+
+    expect(node.value).toBe('');
+    expect(node.files).toHaveLength(0);
   });
 
   it('should forward focusin through a handler prop that arrives after mount', () => {

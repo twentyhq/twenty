@@ -14,6 +14,7 @@ const TEST_ROLE_ID = uuidv4();
 const FRONT_COMPONENT_ID = uuidv4();
 const PUBLIC_VARIABLE_ID = uuidv4();
 const SECRET_VARIABLE_ID = uuidv4();
+const USER_VARIABLE_ID = uuidv4();
 
 const BUILT_COMPONENT_PATH = 'src/front-components/variables.mjs';
 const PUBLIC_VARIABLE_VALUE = 'pk.public-access-token';
@@ -36,6 +37,10 @@ const buildManifest = (): Manifest => {
         API_SECRET: {
           universalIdentifier: SECRET_VARIABLE_ID,
           isSecret: true,
+        },
+        RECORD_MY_MEETINGS: {
+          universalIdentifier: USER_VARIABLE_ID,
+          scope: 'USER',
         },
       },
     },
@@ -118,7 +123,7 @@ describe('Front component application variables', () => {
     expect(publicVariable.value).not.toContain(PUBLIC_VARIABLE_VALUE);
   });
 
-  it('should expose non-secret application variables decrypted and exclude secret ones', async () => {
+  it('should expose non-secret workspace variables decrypted and exclude secret and user ones', async () => {
     const { data } = await findFrontComponent({
       input: { id: frontComponentId },
       gqlFields: `

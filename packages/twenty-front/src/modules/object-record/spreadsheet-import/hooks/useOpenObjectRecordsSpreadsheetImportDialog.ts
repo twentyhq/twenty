@@ -13,7 +13,7 @@ import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOp
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,

@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';

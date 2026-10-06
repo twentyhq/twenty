@@ -9,7 +9,8 @@ import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { MainButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const SUBSCRIPTION_CONFIRMATION_POLL_INTERVAL_MS = 2000;

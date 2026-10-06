@@ -51,7 +51,8 @@ const DropdownMenuExample = () => (
 );
 
 const meta: Meta<typeof DropdownMenuExample> = {
-  title: 'UI/Components/Dropdown',
+  id: 'ui-components-dropdown',
+  title: 'UI/Components/Navigation/Dropdown',
   component: DropdownMenuExample,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 320, height: 340 } },

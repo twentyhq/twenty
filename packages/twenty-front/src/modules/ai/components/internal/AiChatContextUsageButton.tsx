@@ -6,7 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
-import { MetricRow } from 'twenty-ui/components';
+import { MetricRow } from 'twenty-ui/components/data-display';
 import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconWindow, IconGauge } from 'twenty-ui/icon';

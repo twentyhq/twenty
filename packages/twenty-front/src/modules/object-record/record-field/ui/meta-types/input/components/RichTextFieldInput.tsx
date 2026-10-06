@@ -11,7 +11,7 @@ import { t } from '@lingui/core/macro';
 import { Suspense, lazy, useContext, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 

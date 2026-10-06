@@ -47,6 +47,7 @@ import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billin
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -80,6 +81,7 @@ export class AgentChatResolver {
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   @Query(() => AgentChatThreadDTO)
@@ -128,14 +130,16 @@ export class AgentChatResolver {
     const { chunks, maxSeq } =
       await this.eventPublisherService.getAccumulatedChunks(threadId);
 
+    const turnError = await this.turnRecorderService.findLatestTurnError({
+      workspaceId,
+      threadId,
+    });
+
     return {
       chunks,
       maxSeq,
-      error: thread.lastStreamError
-        ? {
-            code: thread.lastStreamError.code,
-            message: thread.lastStreamError.message,
-          }
+      error: turnError
+        ? { code: turnError.code, message: turnError.message }
         : null,
     };
   }
@@ -377,7 +381,7 @@ export class AgentChatResolver {
     return toDisplayCredits(Number(thread.totalOutputCredits));
   }
 
-  // the caller reads the thread after this, so it sees the reaped stream as failed
+  // the caller reads the thread after this, so it sees the reaped stream as released
   private async reapDeadStream(
     thread: AgentChatThreadWorkspaceEntity,
     workspaceId: string,
@@ -389,7 +393,6 @@ export class AgentChatResolver {
 
     if (isDefined(interruptedError)) {
       thread.activeStreamId = null;
-      thread.lastStreamError = interruptedError;
     }
   }
 }

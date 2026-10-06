@@ -11,7 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPinned } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const SIDE_TRACK = `min(${PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH}px, calc(100% / 3))`;

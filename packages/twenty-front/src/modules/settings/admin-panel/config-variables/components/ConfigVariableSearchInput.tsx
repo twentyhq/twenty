@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { SearchInput } from 'twenty-ui/components';
+import { SearchInput } from 'twenty-ui/components/input';
 
 type ConfigVariableSearchInputProps = {
   value: string;

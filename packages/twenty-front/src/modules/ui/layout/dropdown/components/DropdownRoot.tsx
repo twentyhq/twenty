@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 import { type ComponentProps, useCallback, useSyncExternalStore } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { DropdownCleanupEffect } from '@/ui/layout/dropdown/components/DropdownCleanupEffect';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';

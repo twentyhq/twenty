@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
-import { Toaster } from 'twenty-ui/components';
+import { Toaster } from 'twenty-ui/components/feedback';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
