@@ -135,3 +135,16 @@ it('closes the side panel and deletes the selection once confirmed', async () =>
   expect(mockCloseSidePanelMenu).toHaveBeenCalled();
   expect(mockDeleteSelectedCoreWorkflows).toHaveBeenCalledTimes(1);
 });
+
+it('does not reopen the confirmation when the side panel closes while it is open', async () => {
+  const { rerender } = renderSelectionCommands();
+
+  await userEvent.click(screen.getByText('Delete Workflows'));
+  expect(await screen.findByText('Delete workflow?')).toBeInTheDocument();
+
+  rerender(<></>);
+  rerender(<CoreObjectsCommands section="SELECTION" />);
+
+  expect(await screen.findByText('Delete Workflows')).toBeInTheDocument();
+  expect(screen.queryByText('Delete workflow?')).not.toBeInTheDocument();
+});

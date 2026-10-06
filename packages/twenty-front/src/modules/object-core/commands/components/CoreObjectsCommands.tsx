@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { IconFilter, IconTrash } from 'twenty-ui/icon';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
@@ -33,9 +34,14 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const { openDialog } = useDialog();
+  const { openDialog, closeDialog } = useDialog();
 
-  const handleDeleteSelectedCoreWorkflows = () => {
+  useEffect(
+    () => () => closeDialog(CORE_WORKFLOWS_DELETE_CONFIRMATION_DIALOG_ID),
+    [closeDialog],
+  );
+
+  const openDeleteConfirmationDialog = () => {
     openDialog(CORE_WORKFLOWS_DELETE_CONFIRMATION_DIALOG_ID);
   };
 
@@ -67,13 +73,13 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
         <>
           <SelectableListItem
             itemId={CORE_WORKFLOWS_DELETE_COMMAND_ID}
-            onEnter={handleDeleteSelectedCoreWorkflows}
+            onEnter={openDeleteConfirmationDialog}
           >
             <CommandMenuItem
               id={CORE_WORKFLOWS_DELETE_COMMAND_ID}
               label={coreWorkflowsDeleteCommandLabel}
               Icon={IconTrash}
-              onClick={handleDeleteSelectedCoreWorkflows}
+              onClick={openDeleteConfirmationDialog}
             />
           </SelectableListItem>
           <ConfirmationDialog
