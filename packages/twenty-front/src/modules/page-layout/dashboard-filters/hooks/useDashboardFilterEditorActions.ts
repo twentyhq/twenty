@@ -44,7 +44,7 @@ export const useDashboardFilterEditorActions = (pageLayoutId: string) => {
     );
   };
 
-  // Returns the id of the slot the dimension now stands for, so the caller can open it.
+  // A built-in candidate only converts the dashboard, so the id it resolves to is the built-in slot's own.
   const addCandidateDimension = (
     dimension: DashboardFilterCandidateDimension,
   ): string => {

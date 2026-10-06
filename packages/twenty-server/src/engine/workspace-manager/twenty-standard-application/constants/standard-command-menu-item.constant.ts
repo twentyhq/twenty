@@ -453,6 +453,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     icon: 'IconFilter',
     isPinned: true,
+    // Shares 22 with duplicateDashboard: 23 to 26 are taken by other objects and the position sort tolerates ties, so the dashboard edit-mode group stays contiguous.
     position: 22,
     shortLabel: i18nLabel(
       msg({ message: `Filters`, context: 'commandMenuItem.shortLabel' }),

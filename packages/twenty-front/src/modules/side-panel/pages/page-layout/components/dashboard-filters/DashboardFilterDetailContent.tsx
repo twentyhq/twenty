@@ -70,7 +70,9 @@ export const DashboardFilterDetailContent = ({
   return (
     <SidePanelList selectableItemIds={selectableItemIds}>
       <SelectableListItem itemId={LABEL_ITEM_ID}>
+        {/* The input keeps its own draft and never resyncs, so a trimmed or rejected edit is replaced by remounting on the stored label. */}
         <CommandMenuItemTextInput
+          key={slot.label}
           id={LABEL_ITEM_ID}
           label={t`Label`}
           Icon={IconTag}

@@ -1,8 +1,9 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { type DashboardFilterBindingsByWidgetId } from '@/page-layout/dashboard-filters/types/DashboardFilterBindingsByWidgetId';
 import { countDashboardFilterSlotBoundCharts } from '@/page-layout/dashboard-filters/utils/countDashboardFilterSlotBoundCharts';
+import { getDashboardFilterChartCountLabel } from '@/page-layout/dashboard-filters/utils/getDashboardFilterChartCountLabel';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { plural, t } from '@lingui/core/macro';
+import { t } from '@lingui/core/macro';
 import { type DashboardFilterSlot } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -32,10 +33,10 @@ export const DashboardFilterSlotRow = ({
         id={slot.id}
         label={slot.label}
         Icon={IconFilter}
-        description={t`${boundChartCount} of ${plural(chartCount, {
-          one: '# chart',
-          other: '# charts',
-        })}`}
+        description={getDashboardFilterChartCountLabel({
+          boundChartCount,
+          chartCount,
+        })}
         contextualTextPosition="right"
         hasSubMenu={isDefined(onClick)}
         onClick={onClick}

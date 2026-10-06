@@ -5,7 +5,7 @@ import {
   type DashboardFilterSlotFilterType,
 } from 'twenty-shared/types';
 
-// A filterable concept shared by the dashboard's charts, before it becomes a slot: the user picks one from the "Add filter" menu.
+// Bindings are proposed per chart up front so adding a filter is one click, with no field to pick afterwards.
 export type DashboardFilterCandidateDimension = {
   id: string;
   label: string;

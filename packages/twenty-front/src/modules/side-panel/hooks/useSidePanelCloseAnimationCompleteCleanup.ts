@@ -2,6 +2,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
+import { dashboardFilterEditingSlotIdComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterEditingSlotIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { widgetInsertionContextComponentState } from '@/page-layout/states/widgetInsertionContextComponentState';
@@ -65,6 +66,12 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
           if (isDefined(record) && isDefined(record.pageLayoutId)) {
             store.set(
               pageLayoutEditingWidgetIdComponentState.atomFamily({
+                instanceId: record.pageLayoutId,
+              }),
+              null,
+            );
+            store.set(
+              dashboardFilterEditingSlotIdComponentState.atomFamily({
                 instanceId: record.pageLayoutId,
               }),
               null,

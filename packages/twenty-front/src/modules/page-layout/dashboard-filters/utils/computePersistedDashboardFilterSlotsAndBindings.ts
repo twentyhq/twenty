@@ -1,11 +1,11 @@
 import { type DashboardFilterSlotDefinitionsAndBindings } from '@/page-layout/dashboard-filters/types/DashboardFilterSlotDefinitionsAndBindings';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { getWidgetDashboardFilterBindings } from '@/page-layout/dashboard-filters/utils/getWidgetDashboardFilterBindings';
+import { pruneUnboundDashboardFilterSlotsAndBindings } from '@/page-layout/dashboard-filters/utils/pruneUnboundDashboardFilterSlotsAndBindings';
 import { type DashboardFilterSlot } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
 
-// Same rule as the built-ins: a slot no chart binds yet is kept on the layout for the editor but has no chip, since the chip borrows the inputs of a bound field.
+// A slot no chart binds yet stays on the layout for the editor but gets no chip.
 export const computePersistedDashboardFilterSlotsAndBindings = ({
   slots,
   widgets,
@@ -32,26 +32,8 @@ export const computePersistedDashboardFilterSlotsAndBindings = ({
       }),
   );
 
-  const slotDefinitions = slots.filter((slot) =>
-    Object.values(candidateBindingsByWidgetId).some((bindingsBySlotId) =>
-      isDefined(bindingsBySlotId[slot.id]),
-    ),
-  );
-
-  const existingSlotIds = new Set(slotDefinitions.map((slot) => slot.id));
-
-  const bindingsByWidgetId = Object.fromEntries(
-    Object.entries(candidateBindingsByWidgetId).map(
-      ([widgetId, bindingsBySlotId]) => [
-        widgetId,
-        Object.fromEntries(
-          Object.entries(bindingsBySlotId).filter(([slotId]) =>
-            existingSlotIds.has(slotId),
-          ),
-        ),
-      ],
-    ),
-  );
-
-  return { slotDefinitions, bindingsByWidgetId };
+  return pruneUnboundDashboardFilterSlotsAndBindings({
+    slots,
+    candidateBindingsByWidgetId,
+  });
 };

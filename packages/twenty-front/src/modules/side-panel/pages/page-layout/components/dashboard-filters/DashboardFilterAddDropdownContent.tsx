@@ -1,6 +1,7 @@
 import { useDashboardFilterCandidateDimensions } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterCandidateDimensions';
 import { useDashboardFilterEditorActions } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterEditorActions';
 import { type DashboardFilterCandidateDimension } from '@/page-layout/dashboard-filters/types/DashboardFilterCandidateDimension';
+import { getDashboardFilterChartCountLabel } from '@/page-layout/dashboard-filters/utils/getDashboardFilterChartCountLabel';
 import {
   StyledPageLayoutDropdownContentContainer,
   StyledPageLayoutDropdownMenuItemsContainer,
@@ -14,7 +15,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { plural, t } from '@lingui/core/macro';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
@@ -65,10 +66,7 @@ export const DashboardFilterAddDropdownContent = ({
   const getDimensionDescription = (
     dimension: DashboardFilterCandidateDimension,
   ) => {
-    const chartCountLabel = t`${dimension.boundChartCount} of ${plural(
-      dimension.chartCount,
-      { one: '# chart', other: '# charts' },
-    )}`;
+    const chartCountLabel = getDashboardFilterChartCountLabel(dimension);
 
     return dimension.isBuiltIn === true
       ? t`Built-in · ${chartCountLabel}`

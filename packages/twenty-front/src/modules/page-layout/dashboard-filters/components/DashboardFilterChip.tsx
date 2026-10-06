@@ -1,7 +1,8 @@
+import { getDashboardFilterChartCountLabel } from '@/page-layout/dashboard-filters/utils/getDashboardFilterChartCountLabel';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { styled } from '@linaria/react';
-import { plural, t } from '@lingui/core/macro';
+import { t } from '@lingui/core/macro';
 import { type DashboardFilterSlot } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
@@ -32,13 +33,11 @@ export const DashboardFilterChip = ({
   onClick,
   onRemove,
 }: DashboardFilterChipProps) => {
-  const tooltipContent = t`Applies to ${boundChartCount} of ${plural(
+  const chartCountLabel = getDashboardFilterChartCountLabel({
+    boundChartCount,
     chartCount,
-    {
-      one: '# chart',
-      other: '# charts',
-    },
-  )}`;
+  });
+  const tooltipContent = t`Applies to ${chartCountLabel}`;
 
   return (
     <Tooltip content={tooltipContent} delay={TooltipDelay.shortDelay}>

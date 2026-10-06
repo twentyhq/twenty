@@ -72,6 +72,51 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     expect(result.tabs[0].widgets[0].id).toBe('w1');
   });
 
+  it('should carry the dashboard filter slots and send null when the dashboard uses the built-ins', () => {
+    const slots = [
+      { id: 'date-slot', label: 'Date', filterType: 'DATE_TIME' as const },
+    ];
+    const chartWidget = makeWidget({
+      id: 'chart',
+      type: WidgetType.GRAPH,
+      configuration: {
+        __typename: 'BarChartConfiguration',
+        dashboardFilterBindings: { 'date-slot': { fieldMetadataId: 'f1' } },
+      } as PageLayoutWidget['configuration'],
+    });
+
+    expect(
+      convertPageLayoutDraftToUpdateInput({
+        ...makeDraft([makeTab('tab-1', [chartWidget])]),
+        dashboardFilters: slots,
+      }),
+    ).toMatchObject({
+      dashboardFilters: slots,
+      tabs: [
+        {
+          widgets: [
+            {
+              configuration: {
+                dashboardFilterBindings: {
+                  'date-slot': { fieldMetadataId: 'f1' },
+                },
+              },
+            },
+          ],
+        },
+      ],
+    });
+    expect(
+      convertPageLayoutDraftToUpdateInput({
+        ...makeDraft([]),
+        dashboardFilters: [],
+      }).dashboardFilters,
+    ).toEqual([]);
+    expect(
+      convertPageLayoutDraftToUpdateInput(makeDraft([])).dashboardFilters,
+    ).toBeNull();
+  });
+
   it('should handle multiple widget types', () => {
     const fieldsWidget = makeWidget({ id: 'w1', type: WidgetType.FIELDS });
     const timelineWidget = makeWidget({

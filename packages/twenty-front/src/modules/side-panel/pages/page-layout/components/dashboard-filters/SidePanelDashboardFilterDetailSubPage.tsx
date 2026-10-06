@@ -1,6 +1,7 @@
 import { useDashboardFilterEditor } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterEditor';
 import { dashboardFilterEditingSlotIdComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterEditingSlotIdComponentState';
 import { DashboardFilterDetailContent } from '@/side-panel/pages/page-layout/components/dashboard-filters/DashboardFilterDetailContent';
+import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -14,7 +15,17 @@ export const SidePanelDashboardFilterDetailSubPage = () => {
 
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
 
-  if (!isDashboardFiltersEnabled || !isDefined(pageLayoutId)) {
+  // The editor writes into the draft, which only exists while the dashboard is being edited.
+  const isDashboardInEditMode = useAtomComponentStateValue(
+    isDashboardInEditModeComponentState,
+    pageLayoutId ?? undefined,
+  );
+
+  if (
+    !isDashboardFiltersEnabled ||
+    !isDefined(pageLayoutId) ||
+    !isDashboardInEditMode
+  ) {
     return null;
   }
 

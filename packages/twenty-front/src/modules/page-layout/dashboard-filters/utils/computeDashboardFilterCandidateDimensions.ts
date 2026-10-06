@@ -5,6 +5,7 @@ import {
   type DashboardFilterCandidateDimension,
   type DashboardFilterCandidateDimensionBuiltInInput,
 } from '@/page-layout/dashboard-filters/types/DashboardFilterCandidateDimension';
+import { areDashboardFilterBindingsEqual } from '@/page-layout/dashboard-filters/utils/areDashboardFilterBindingsEqual';
 import { findManyToOneRelationFieldTargetingObject } from '@/page-layout/dashboard-filters/utils/findManyToOneRelationFieldTargetingObject';
 import { getDashboardFilterFieldDimensionKey } from '@/page-layout/dashboard-filters/utils/getDashboardFilterFieldDimensionKey';
 import {
@@ -202,8 +203,20 @@ export const computeDashboardFilterCandidateDimensions = ({
     }),
   );
 
+  // A computed dimension binding exactly what a built-in binds would add a second chip for the same filter.
+  const isTwinOfBuiltIn = (dimension: DashboardFilterCandidateDimension) =>
+    builtInDimensions.some((builtInDimension) =>
+      chartWidgetIds.every((widgetId) =>
+        areDashboardFilterBindingsEqual(
+          builtInDimension.proposedBindingsByWidgetId[widgetId],
+          dimension.proposedBindingsByWidgetId[widgetId],
+        ),
+      ),
+    );
+
   const computedDimensions = [...dimensionsById.values()]
     .map((dimension) => toCandidateDimension({ ...dimension, chartWidgetIds }))
+    .filter((dimension) => !isTwinOfBuiltIn(dimension))
     .toSorted(
       (dimensionA, dimensionB) =>
         dimensionB.boundChartCount - dimensionA.boundChartCount ||

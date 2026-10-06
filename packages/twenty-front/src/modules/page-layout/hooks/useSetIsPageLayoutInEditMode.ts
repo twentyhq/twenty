@@ -1,4 +1,5 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { dashboardFilterEditingSlotIdComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterEditingSlotIdComponentState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
@@ -52,6 +53,11 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     pageLayoutId,
   );
 
+  const dashboardFilterEditingSlotIdState = useAtomComponentStateCallbackState(
+    dashboardFilterEditingSlotIdComponentState,
+    pageLayoutId,
+  );
+
   const store = useStore();
 
   const setIsPageLayoutInEditMode = useCallback(
@@ -73,14 +79,14 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
         return;
       }
 
+      store.set(pageLayoutEditingWidgetIdState, null);
+      store.set(dashboardFilterEditingSlotIdState, null);
+
       if (value) {
-        store.set(pageLayoutEditingWidgetIdState, null);
         store.set(fieldsWidgetGroupsDraftState, {});
         store.set(fieldsWidgetUngroupedFieldsDraftState, {});
         store.set(fieldsWidgetEditorModeDraftState, {});
         store.set(hasInitializedFieldsWidgetGroupsDraftState, {});
-      } else {
-        store.set(pageLayoutEditingWidgetIdState, null);
       }
 
       store.set(isDashboardInEditModeState, value);
@@ -91,6 +97,7 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     },
     [
       isDashboardInEditModeState,
+      dashboardFilterEditingSlotIdState,
       fieldsWidgetGroupsDraftState,
       fieldsWidgetUngroupedFieldsDraftState,
       fieldsWidgetEditorModeDraftState,

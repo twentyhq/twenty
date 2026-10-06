@@ -12,6 +12,7 @@ import {
   PERSON_COMPANY,
   PERSON_CREATED_AT,
   PERSON_OBJECT_ID,
+  WORKSPACE_MEMBER_OBJECT_ID,
   buildChartWidget,
   buildField,
 } from '@/page-layout/dashboard-filters/testing/dashboardFilterTestFixtures';
@@ -262,6 +263,68 @@ describe('computeDashboardFilterCandidateDimensions', () => {
       },
     ]);
     expect(dimensions[2].isBuiltIn).toBeUndefined();
+  });
+
+  it('drops computed twins of the built-ins but keeps genuinely different dimensions', () => {
+    const taskCreatedAt = buildField({
+      id: 'task-created-at',
+      name: 'createdAt',
+      label: 'Creation date',
+      type: FieldMetadataType.DATE_TIME,
+    });
+    const taskAssignee = buildField({
+      id: 'task-assignee',
+      name: 'assignee',
+      label: 'Assignee',
+      type: FieldMetadataType.RELATION,
+      relationTargetObjectMetadataId: WORKSPACE_MEMBER_OBJECT_ID,
+    });
+    const taskDueAt = buildField({
+      id: 'task-due-at',
+      name: 'dueAt',
+      label: 'Due date',
+      type: FieldMetadataType.DATE_TIME,
+    });
+    const taskChart = buildChartWidget({
+      id: 'tasks',
+      objectMetadataId: 'task-object-id',
+    });
+
+    const dimensions = computeDashboardFilterCandidateDimensions({
+      widgets: [COMPANY_CHART, taskChart],
+      objectMetadataItems: [
+        ...OBJECT_METADATA_ITEMS,
+        {
+          id: 'task-object-id',
+          labelSingular: 'Task',
+          fields: [taskCreatedAt, taskAssignee, taskDueAt],
+        },
+      ],
+      builtInSlotsAndBindings: {
+        slots: [
+          { id: 'built-in-date', label: 'Date', filterType: 'DATE_TIME' },
+          { id: 'built-in-owner', label: 'Owner', filterType: 'RELATION' },
+        ],
+        bindingsByWidgetId: {
+          companies: {
+            'built-in-date': { fieldMetadataId: COMPANY_CREATED_AT.id },
+            'built-in-owner': { fieldMetadataId: COMPANY_ACCOUNT_OWNER.id },
+          },
+          tasks: {
+            'built-in-date': { fieldMetadataId: taskCreatedAt.id },
+            'built-in-owner': { fieldMetadataId: taskAssignee.id },
+          },
+        },
+      },
+    });
+
+    expect(dimensions.map((dimension) => dimension.label)).toEqual([
+      'Date',
+      'Owner',
+      'Due date',
+      'ICP',
+      'Name',
+    ]);
   });
 
   it('returns no dimension without charts', () => {

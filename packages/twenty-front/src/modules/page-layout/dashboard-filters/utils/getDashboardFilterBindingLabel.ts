@@ -1,6 +1,26 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type DashboardFilterBinding } from 'twenty-shared/types';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import {
+  type CompositeFieldSubFieldName,
+  type DashboardFilterBinding,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+
+// The server accepts a composite sub-field on either end of a binding, so the label names it the way the filter chips do.
+const getFieldLabelWithSubField = (
+  field: FieldMetadataItem,
+  subFieldName: CompositeFieldSubFieldName | null | undefined,
+): string => {
+  if (!isDefined(subFieldName) || !isCompositeFieldType(field.type)) {
+    return field.label;
+  }
+
+  const subFieldLabel = getCompositeSubFieldLabel(field.type, subFieldName);
+
+  return subFieldLabel === '' ? field.label : `${field.label} ${subFieldLabel}`;
+};
 
 // Reads "Company → Account Owner" for a one-hop binding, like the advanced filter labels its relation traversals.
 export const getDashboardFilterBindingLabel = ({
@@ -23,7 +43,7 @@ export const getDashboardFilterBindingLabel = ({
   }
 
   if (!isDefined(binding.relationTargetFieldMetadataId)) {
-    return boundField.label;
+    return getFieldLabelWithSubField(boundField, binding.subFieldName);
   }
 
   const relationTargetField = fields.find(
@@ -31,6 +51,6 @@ export const getDashboardFilterBindingLabel = ({
   );
 
   return isDefined(relationTargetField)
-    ? `${boundField.label} → ${relationTargetField.label}`
+    ? `${boundField.label} → ${getFieldLabelWithSubField(relationTargetField, binding.subFieldName)}`
     : undefined;
 };
