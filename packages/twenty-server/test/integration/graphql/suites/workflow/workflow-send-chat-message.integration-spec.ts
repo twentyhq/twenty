@@ -233,38 +233,9 @@ describe('Send chat message workflow step', () => {
         toolName: 'update_one_company',
         arguments: { id: companyId, employees: 25 },
       };
-      // the step posts again as a retry of it would, with the same keys
-      const postAgain = async ({
-        workflowRunId,
-        stepId,
-      }: {
-        workflowRunId: string;
-        stepId: string;
-      }) =>
-        getAppProviderByClassName<AgentCallerInboxService>(
-          'AgentCallerInboxService',
-        ).sendMessage({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          sender:
-            await getAppProviderByClassName<WorkflowRunInboxSenderWorkspaceService>(
-              'WorkflowRunInboxSenderWorkspaceService',
-            ).findRunSenderOrThrow({
-              workflowRunId,
-              workspaceId: SEED_APPLE_WORKSPACE_ID,
-            }),
-          message: {
-            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-            threadKey: workflowRunId,
-            idempotencyKey: stepId,
-            title: 'Headcount check',
-            text: 'Raise the headcount to 25?',
-          },
-          awaitedToolCall: {
-            ...toolCall,
-            caller: { type: 'WORKFLOW_STEP', ref: { workflowRunId, stepId } },
-          },
-        });
-      let runIds = { workflowRunId: '', stepId: '' };
+      let postAgain: () => ReturnType<
+        AgentCallerInboxService['sendMessage']
+      > = () => Promise.reject(new Error('The step has not posted yet'));
 
       const { status, stepResult } = await runWorkflowActionStep({
         name: 'Post a headcount check twice',
@@ -276,8 +247,6 @@ describe('Send chat message workflow step', () => {
           toolCall,
         },
         whileRunning: async ({ workflowRunId, stepId }) => {
-          runIds = { workflowRunId, stepId };
-
           await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
 
           const [{ threadId }] = await global.testDataSource.query(
@@ -287,7 +256,39 @@ describe('Send chat message workflow step', () => {
 
           postedThreadId = threadId;
 
-          expect(await postAgain({ workflowRunId, stepId })).toEqual({
+          // the step posts again as a retry of it would, with the same keys; the sender is read while
+          // the run exists, since the run is removed once it completes
+          const sender =
+            await getAppProviderByClassName<WorkflowRunInboxSenderWorkspaceService>(
+              'WorkflowRunInboxSenderWorkspaceService',
+            ).findRunSenderOrThrow({
+              workflowRunId,
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+            });
+
+          postAgain = () =>
+            getAppProviderByClassName<AgentCallerInboxService>(
+              'AgentCallerInboxService',
+            ).sendMessage({
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+              sender,
+              message: {
+                workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+                threadKey: workflowRunId,
+                idempotencyKey: stepId,
+                title: 'Headcount check',
+                text: 'Raise the headcount to 25?',
+              },
+              awaitedToolCall: {
+                ...toolCall,
+                caller: {
+                  type: 'WORKFLOW_STEP',
+                  ref: { workflowRunId, stepId },
+                },
+              },
+            });
+
+          expect(await postAgain()).toEqual({
             status: 'AWAITING',
             threadId,
           });
@@ -303,7 +304,7 @@ describe('Send chat message workflow step', () => {
       expect(status).toBe('COMPLETED');
       expect(stepResult).toMatchObject({ outcome: 'executed' });
       expect(await readEmployees()).toBe(25);
-      expect(await postAgain(runIds)).toEqual({
+      expect(await postAgain()).toEqual({
         status: 'ANSWERED',
         threadId: postedThreadId,
         answer: {
