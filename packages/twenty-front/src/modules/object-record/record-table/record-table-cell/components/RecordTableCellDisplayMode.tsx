@@ -31,7 +31,9 @@ export const RecordTableCellDisplayMode = ({
 
   return (
     <RecordTableCellDisplayContainer
-      onContextMenu={(event) => openRecordContextMenu({ event, recordId })}
+      onContextMenu={(event) =>
+        openRecordContextMenu({ event, recordId, fieldDefinition })
+      }
       onClick={handleClick}
     >
       {children}

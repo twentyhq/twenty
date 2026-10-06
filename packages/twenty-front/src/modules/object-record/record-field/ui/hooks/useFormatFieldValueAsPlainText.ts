@@ -70,10 +70,14 @@ export const useFormatFieldValueAsPlainText = () => {
       }).name,
   };
 
-  const formatFieldValue = (
-    fieldDefinition: FieldDefinition<FieldMetadata>,
-    fieldValue: unknown,
-  ) => formatFieldValueAsPlainText({ fieldDefinition, fieldValue, formatters });
+  const formatFieldValue = ({
+    fieldDefinition,
+    fieldValue,
+  }: {
+    fieldDefinition: FieldDefinition<FieldMetadata>;
+    fieldValue: unknown;
+  }) =>
+    formatFieldValueAsPlainText({ fieldDefinition, fieldValue, formatters });
 
   return { formatFieldValueAsPlainText: formatFieldValue };
 };

@@ -1,4 +1,5 @@
-import { type RecordIndexCommandMenuDropdownTargetCell } from '@/command-menu-item/types/RecordIndexCommandMenuDropdownTargetCell';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type OpenTableCellArgs } from '@/object-record/record-table/types/OpenTableCellArgs';
 import { type CommandMenuDropdownTriggerEvent } from '@/command-menu-item/hooks/useOpenCommandMenuDropdownAtCursor';
 import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
@@ -13,6 +14,7 @@ export type RecordTableBodyContextProps = {
   openRecordContextMenu: (args: {
     event: CommandMenuDropdownTriggerEvent;
     recordId: string;
+    fieldDefinition?: FieldDefinition<FieldMetadata>;
   }) => void;
   hasUserSelectedAllRecords?: boolean;
 };

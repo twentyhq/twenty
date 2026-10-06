@@ -10,12 +10,9 @@ import { isJunctionRelationFieldDefinition } from '@/object-record/record-field/
 import { recordStoreFieldValueSelector } from '@/object-record/record-store/states/selectors/recordStoreFieldValueSelector';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
-export const useRecordIndexCommandMenuDropdownCopyCellText = (
-  dropdownId: string,
-) => {
+export const useRecordIndexCommandMenuDropdownCopyCellText = () => {
   const targetCellAtom = useAtomComponentStateCallbackState(
     recordIndexCommandMenuDropdownTargetCellComponentState,
-    dropdownId,
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -60,8 +57,5 @@ export const useRecordIndexCommandMenuDropdownCopyCellText = (
     return '';
   }
 
-  return formatFieldValueAsPlainText(
-    targetCellWithValue.fieldDefinition,
-    targetCellWithValue.fieldValue,
-  );
+  return formatFieldValueAsPlainText(targetCellWithValue);
 };

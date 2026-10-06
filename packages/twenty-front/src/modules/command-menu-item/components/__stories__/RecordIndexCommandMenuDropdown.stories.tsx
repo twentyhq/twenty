@@ -10,6 +10,9 @@ import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/u
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { recordIndexCommandMenuDropdownTargetCellComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownTargetCellComponentState';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldTextMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useOpenRecordContextMenu } from '@/object-record/record-selection/hooks/useOpenRecordContextMenu';
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
@@ -25,6 +28,7 @@ import {
   type CommandMenuItemFieldsFragment,
   EngineComponentKey,
   FeatureFlagKey,
+  FieldMetadataType,
 } from '~/generated-metadata/graphql';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -137,7 +141,17 @@ const StoryRecordTable = () => {
   );
 };
 
-const DROPDOWN_INSTANCE_ID = 'command-menu-dropdown-story-command-menu';
+const TEXT_FIELD_DEFINITION: FieldDefinition<FieldTextMetadata> = {
+  fieldMetadataId: 'name-field-id',
+  label: 'Name',
+  iconName: 'IconBuildingSkyscraper',
+  type: FieldMetadataType.TEXT,
+  metadata: {
+    fieldName: 'name',
+    objectMetadataNameSingular: 'company',
+    placeHolder: '',
+  },
+};
 
 const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
   title: 'Modules/CommandMenu/RecordIndexCommandMenuDropdown',
@@ -351,34 +365,32 @@ export const AsyncExportStaysOpenWithProgress: Story = {
       mountedCommands,
     );
     expect(body.getByRole('menu', { name: 'Actions' })).toBeVisible();
-    expect(canvas.queryByText('Copy cell')).not.toBeInTheDocument();
   },
 };
 
-export const WithTargetCell: Story = {
-  args: {
-    commandMenuId: 'story',
-  },
-  decorators: [
-    (Story) => {
-      jotaiStore.set(recordStoreFamilyState.atomFamily('record-id'), {
-        id: 'record-id',
-        __typename: 'Person',
-        userName: 'John Doe',
-      });
-      jotaiStore.set(
-        recordIndexCommandMenuDropdownTargetCellComponentState.atomFamily({
-          instanceId: DROPDOWN_INSTANCE_ID,
-        }),
-        { recordId: 'record-id', fieldDefinition: textfieldDefinition },
-      );
-
-      return <Story />;
-    },
-  ],
+export const CopyCellForTargetCell: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body);
+    const body = within(canvasElement.ownerDocument.body);
 
-    expect(await canvas.findByText('Copy cell')).toBeInTheDocument();
+    jotaiStore.set(recordStoreFamilyState.atomFamily('Airbnb'), {
+      id: 'Airbnb',
+      __typename: 'Company',
+      name: 'Airbnb',
+    });
+
+    await rightClickRecord({ canvasElement, recordName: 'Airbnb', offset: 8 });
+
+    expect(body.queryByRole('menuitem', { name: 'Copy cell' })).toBeNull();
+
+    jotaiStore.set(
+      recordIndexCommandMenuDropdownTargetCellComponentState.atomFamily({
+        instanceId: COMMAND_MENU_ID,
+      }),
+      { recordId: 'Airbnb', fieldDefinition: TEXT_FIELD_DEFINITION },
+    );
+
+    expect(
+      await body.findByRole('menuitem', { name: 'Copy cell' }),
+    ).toBeVisible();
   },
 };

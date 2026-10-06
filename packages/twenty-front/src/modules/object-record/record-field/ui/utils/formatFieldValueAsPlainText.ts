@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { isArray, isNonEmptyString, isNumber, isString } from '@sniptt/guards';
 
+import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldActorValue,
@@ -87,10 +88,13 @@ export const formatFieldValueAsPlainText = ({
       return '';
     }
 
-    const amount = formatters.formatNumber(fieldValue.amountMicros / 1000000, {
-      decimals:
-        fieldDefinition.metadata.settings?.decimals ?? DEFAULT_DECIMAL_VALUE,
-    });
+    const amount = formatters.formatNumber(
+      convertCurrencyMicrosToCurrencyAmount(fieldValue.amountMicros),
+      {
+        decimals:
+          fieldDefinition.metadata.settings?.decimals ?? DEFAULT_DECIMAL_VALUE,
+      },
+    );
 
     return joinNonEmpty([amount, fieldValue.currencyCode], ' ');
   }
