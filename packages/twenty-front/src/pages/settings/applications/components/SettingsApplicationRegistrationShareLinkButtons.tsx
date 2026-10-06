@@ -4,6 +4,7 @@ import { SettingsApplicationInstallPermissionValidationModal } from '@/marketpla
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
+import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useQuery } from '@apollo/client/react';
@@ -64,7 +65,9 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
-  const displayedInstallProgress = installProgress ?? 0;
+  const displayedInstallProgress = formatQueueJobProgressLabel(
+    installProgress ?? 0,
+  );
 
   return (
     <StyledButtonGroup>
@@ -78,7 +81,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
             variant="outline"
           >
             {isInstalling
-              ? t`Installing (${displayedInstallProgress}%)`
+              ? t`Installing ${displayedInstallProgress}`
               : t`Install`}
           </Button>
           <SettingsApplicationInstallPermissionValidationModal

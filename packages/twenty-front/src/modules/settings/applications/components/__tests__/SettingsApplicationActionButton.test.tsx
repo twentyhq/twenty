@@ -81,6 +81,14 @@ describe('SettingsApplicationActionButton', () => {
     ).toBeDisabled();
   });
 
+  it('pads a single-digit percentage so the button keeps its width', () => {
+    renderActionButton({ isInstalling: true, installProgress: 7 });
+
+    expect(screen.getByRole('button').textContent).toContain(
+      'Installing \u2007(7%)',
+    );
+  });
+
   it('links to the application settings once installed', () => {
     renderActionButton({ installedApplicationId: INSTALLED_APPLICATION_ID });
 
