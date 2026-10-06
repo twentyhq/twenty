@@ -104,7 +104,9 @@ describe('workflow deletion cleanup', () => {
     };
 
     let deletedWorkflow: WorkspaceWorkflow;
+    let agentWorkflow: WorkspaceWorkflow;
     let keptWorkflow: WorkspaceWorkflow;
+    let workflowAgentId: string;
     let codeLogicFunctionId: string;
     let keptCodeLogicFunctionId: string;
     let completedRunId: string;
@@ -176,7 +178,7 @@ describe('workflow deletion cleanup', () => {
       parentStepId,
     }: {
       workflowVersionId: string;
-      stepType: 'CODE' | 'FORM' | 'DELAY';
+      stepType: 'CODE' | 'FORM' | 'DELAY' | 'AI_AGENT';
       parentStepId: string;
     }): Promise<WorkflowVersionStep> => {
       await graphql(
@@ -209,6 +211,7 @@ describe('workflow deletion cleanup', () => {
 
     beforeAll(async () => {
       deletedWorkflow = await createWorkspaceWorkflow(`${PREFIX} deleted`);
+      agentWorkflow = await createWorkspaceWorkflow(`${PREFIX} agent`);
       keptWorkflow = await createWorkspaceWorkflow(`${PREFIX} kept`);
 
       const codeStep = await createStep({
@@ -224,6 +227,14 @@ describe('workflow deletion cleanup', () => {
 
       codeLogicFunctionId = codeStep.settings.input.logicFunctionId as string;
       formStepId = formStepOfVersion.id;
+
+      const agentStep = await createStep({
+        workflowVersionId: agentWorkflow.workflowVersionId,
+        stepType: 'AI_AGENT',
+        parentStepId: 'trigger',
+      });
+
+      workflowAgentId = agentStep.settings.input.agentId as string;
 
       const keptCodeStep = await createStep({
         workflowVersionId: keptWorkflow.workflowVersionId,
@@ -323,7 +334,11 @@ describe('workflow deletion cleanup', () => {
         [[completedRunId, waitingRunId, keptRunId]],
       );
 
-      for (const { workflowId } of [deletedWorkflow, keptWorkflow]) {
+      for (const { workflowId } of [
+        deletedWorkflow,
+        agentWorkflow,
+        keptWorkflow,
+      ]) {
         await workflowGraphqlRequest(
           'mutation Destroy($id: ID!) { destroyWorkflow(id: $id) { id } }',
           { id: workflowId },
@@ -331,7 +346,7 @@ describe('workflow deletion cleanup', () => {
       }
     });
 
-    it('deletes the definition, triggers, CODE functions, runs and waits of the deleted workflow only, before the deletion returns', async () => {
+    it('deletes the definition, triggers, CODE functions, agents, runs and waits of the deleted workflows only, before the deletion returns', async () => {
       expect(
         await countRows(
           `core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1 OR "workflowVersionId" = $2`,
@@ -350,12 +365,17 @@ describe('workflow deletion cleanup', () => {
             }
           }
         `,
-        { input: { coreWorkflowIds: [deletedWorkflow.coreWorkflowId] } },
+        {
+          input: {
+            coreWorkflowIds: [
+              deletedWorkflow.coreWorkflowId,
+              agentWorkflow.coreWorkflowId,
+            ],
+          },
+        },
       );
 
-      expect(deleteCoreWorkflows).toEqual([
-        { id: deletedWorkflow.coreWorkflowId },
-      ]);
+      expect(deleteCoreWorkflows).toHaveLength(2);
       expect(
         await countRows(`core.workflow WHERE id = $1`, [
           deletedWorkflow.coreWorkflowId,
@@ -379,6 +399,9 @@ describe('workflow deletion cleanup', () => {
         await countRows(`core."logicFunction" WHERE id = $1`, [
           codeLogicFunctionId,
         ]),
+      ).toBe(0);
+      expect(
+        await countRows(`core.agent WHERE id = $1`, [workflowAgentId]),
       ).toBe(0);
 
       expect(await countTestWorkflowRuns([completedRunId, waitingRunId])).toBe(
