@@ -1,4 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { type AppPreferencesApplication } from '@/settings/app-preferences/types/AppPreferencesApplication';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import {
   SETTINGS_APP_PREFERENCES_ACCOUNTS_GRID_TEMPLATE_COLUMNS,
@@ -32,10 +33,12 @@ const StyledFooter = styled.div`
 
 type SettingsAppPreferencesAccountsSectionProps = {
   accounts: ConnectedAccount[];
+  applications: AppPreferencesApplication[];
 };
 
 export const SettingsAppPreferencesAccountsSection = ({
   accounts,
+  applications,
 }: SettingsAppPreferencesAccountsSectionProps) => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
@@ -72,6 +75,9 @@ export const SettingsAppPreferencesAccountsSection = ({
               <SettingsAppPreferencesAccountRow
                 key={account.id}
                 account={account}
+                application={applications.find(
+                  ({ id }) => id === account.applicationId,
+                )}
               />
             ))}
           </StyledTableRowsContainer>

@@ -5,7 +5,7 @@ import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/Set
 import { SettingsAppPreferencesAccountStatus } from '@/settings/app-preferences/components/SettingsAppPreferencesAccountStatus';
 import { SettingsAppPreferencesAccountUsedByCell } from '@/settings/app-preferences/components/SettingsAppPreferencesAccountUsedByCell';
 import { SettingsAppPreferencesApplicationAccountDropdownMenu } from '@/settings/app-preferences/components/SettingsAppPreferencesApplicationAccountDropdownMenu';
-import { useAppPreferencesApplications } from '@/settings/app-preferences/hooks/useAppPreferencesApplications';
+import { type AppPreferencesApplication } from '@/settings/app-preferences/types/AppPreferencesApplication';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -17,20 +17,17 @@ export const SETTINGS_APP_PREFERENCES_ACCOUNTS_GRID_TEMPLATE_COLUMNS =
 
 type SettingsAppPreferencesAccountRowProps = {
   account: ConnectedAccount;
+  application?: AppPreferencesApplication;
 };
 
 export const SettingsAppPreferencesAccountRow = ({
   account,
+  application,
 }: SettingsAppPreferencesAccountRowProps) => {
   const theme = useTheme();
-  const { applications } = useAppPreferencesApplications();
 
   const isApplicationAccount =
     account.provider === ConnectedAccountProvider.APP;
-
-  const application = applications.find(
-    ({ id }) => id === account.applicationId,
-  );
 
   const ProviderIcon = SettingsConnectedAccountIcon({ account });
 

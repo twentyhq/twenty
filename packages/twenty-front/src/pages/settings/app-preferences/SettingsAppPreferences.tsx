@@ -37,7 +37,10 @@ export const SettingsAppPreferences = () => {
           <SettingsSectionSkeletonLoader />
         ) : (
           <>
-            <SettingsAppPreferencesAccountsSection accounts={accounts} />
+            <SettingsAppPreferencesAccountsSection
+              accounts={accounts}
+              applications={applications}
+            />
             <SettingsAppPreferencesApplicationsSection
               applications={applications}
               accounts={accounts}

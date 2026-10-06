@@ -1,9 +1,14 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { DELETE_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/deleteConnectedAccount';
+import { canAdministerConnectedAccount } from '@/settings/app-preferences/utils/canAdministerConnectedAccount';
+import { getApplicationAccountStatus } from '@/settings/app-preferences/utils/getApplicationAccountStatus';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -11,6 +16,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconRefresh, IconUnlink } from 'twenty-ui/icon';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
 
@@ -27,6 +33,10 @@ export const SettingsAppPreferencesApplicationAccountDropdownMenu = ({
 }: SettingsAppPreferencesApplicationAccountDropdownMenuProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const hasApplicationsPermission = useHasPermissionFlag(
+    PermissionFlagType.APPLICATIONS,
+  );
   const apolloClient = useApolloClient();
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const { connectionProviders } = useFindApplicationConnectionProviders(
@@ -45,7 +55,7 @@ export const SettingsAppPreferencesApplicationAccountDropdownMenu = ({
   );
   const applicationId = account.applicationId;
   const canReconnect =
-    isDefined(account.authFailedAt) &&
+    getApplicationAccountStatus(account) !== 'CONNECTED' &&
     isDefined(applicationId) &&
     isDefined(connectionProvider);
 
@@ -67,6 +77,18 @@ export const SettingsAppPreferencesApplicationAccountDropdownMenu = ({
     await deleteConnectedAccountMutation({ variables: { id: account.id } });
     await apolloClient.refetchQueries({ include: 'active' });
   };
+
+  // A workspace-shared account owned by someone else is listed so the member
+  // sees what the app can use, but the server refuses their actions on it.
+  if (
+    !canAdministerConnectedAccount({
+      account,
+      currentUserWorkspaceId: currentWorkspaceMember?.userWorkspaceId,
+      hasAdministrationPermission: hasApplicationsPermission,
+    })
+  ) {
+    return null;
+  }
 
   return (
     <>

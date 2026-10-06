@@ -1,6 +1,7 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
+import { getApplicationAccountStatus } from '@/settings/app-preferences/utils/getApplicationAccountStatus';
 import { useLingui } from '@lingui/react/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,12 +17,17 @@ export const SettingsAppPreferencesAccountStatus = ({
 }: SettingsAppPreferencesAccountStatusProps) => {
   const { t } = useLingui();
 
-  // An account connected through an app's own OAuth provider has no sync
-  // channel, so its only state is the credential's.
   if (account.provider === ConnectedAccountProvider.APP) {
-    return isDefined(account.authFailedAt) ? (
-      <Status color="red" weight="medium">{t`Reconnect needed`}</Status>
-    ) : null;
+    switch (getApplicationAccountStatus(account)) {
+      case 'DISCONNECTED':
+        return <Status color="gray" weight="medium">{t`Disconnected`}</Status>;
+      case 'RECONNECT_NEEDED':
+        return (
+          <Status color="red" weight="medium">{t`Reconnect needed`}</Status>
+        );
+      case 'CONNECTED':
+        return null;
+    }
   }
 
   // Archived accounts retain their synced data but cannot be synced until they

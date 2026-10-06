@@ -1,5 +1,6 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAppPreferencesApplicationAccountDropdownMenu } from '@/settings/app-preferences/components/SettingsAppPreferencesApplicationAccountDropdownMenu';
+import { SettingsAppPreferencesApplicationAccountStatus } from '@/settings/app-preferences/components/SettingsAppPreferencesApplicationAccountStatus';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -12,7 +13,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconAt, IconPlus } from 'twenty-ui/icon';
-import { Avatar, Status } from 'twenty-ui/primitives/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -133,15 +134,9 @@ export const SettingsAppPreferencesApplicationAccountsSection = ({
                     />
                   </TableCell>
                   <TableCell align="right">
-                    {isDefined(account.authFailedAt) ? (
-                      <Status color="red" weight="medium">
-                        {t`Reconnect needed`}
-                      </Status>
-                    ) : (
-                      <Status color="green" weight="medium">
-                        {t`Connected`}
-                      </Status>
-                    )}
+                    <SettingsAppPreferencesApplicationAccountStatus
+                      account={account}
+                    />
                   </TableCell>
                   <TableCell align="right" padding="0">
                     <SettingsAppPreferencesApplicationAccountDropdownMenu

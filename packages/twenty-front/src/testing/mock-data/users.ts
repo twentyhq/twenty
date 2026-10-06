@@ -173,6 +173,7 @@ export const mockCurrentWorkspace = {
 export const mockedWorkspaceMemberData: WorkspaceMember = {
   __typename: 'WorkspaceMember',
   id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+  userWorkspaceId: '20202020-0000-4000-8000-00000000usw1',
   colorScheme: 'Light',
   avatarUrl,
   locale: 'en',
