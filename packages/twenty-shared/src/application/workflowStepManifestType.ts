@@ -48,7 +48,7 @@ const stepFilterManifestSchema = stepFilterSchema
 
 const recordObjectShape = { objectUniversalIdentifier: z.uuid() };
 
-export const workflowStepManifestSchema = z.discriminatedUnion('type', [
+const workflowStepManifestOptions = [
   z.strictObject({
     ...baseStepShape,
     type: z.literal('LOGIC_FUNCTION'),
@@ -191,6 +191,21 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
       prompt: z.string(),
     }),
   ),
-]);
+] as const;
+
+const WORKFLOW_STEP_MANIFEST_TYPES = workflowStepManifestOptions.map(
+  (option) => option.shape.type.value,
+);
+
+export const workflowStepManifestSchema = z.discriminatedUnion(
+  'type',
+  workflowStepManifestOptions,
+  {
+    error: (issue) =>
+      issue.code === 'invalid_union' && isDefined(issue.discriminator)
+        ? `Unsupported step type. Application workflows support: ${WORKFLOW_STEP_MANIFEST_TYPES.join(', ')}`
+        : undefined,
+  },
+);
 
 export type WorkflowStepManifest = z.infer<typeof workflowStepManifestSchema>;

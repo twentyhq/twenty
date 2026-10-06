@@ -13,8 +13,10 @@ export const defineWorkflow: DefineEntity<WorkflowManifest> = (config) => {
     config,
     errors: result.success
       ? []
-      : result.error.issues.map(
-          (issue) => `${issue.path.join('.')}: ${issue.message}`,
+      : result.error.issues.map((issue) =>
+          issue.path.length > 0
+            ? `${issue.path.join('.')}: ${issue.message}`
+            : issue.message,
         ),
   });
 };

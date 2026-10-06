@@ -10,7 +10,6 @@ const workflow: WorkflowManifest = {
   universalIdentifier: '11111111-1111-4111-8111-111111111111',
   name: 'Application greeting',
   version: {
-    universalIdentifier: '22222222-2222-4222-8222-222222222222',
     trigger: {
       universalIdentifier: '33333333-3333-4333-8333-333333333333',
       type: 'MANUAL',
@@ -30,7 +29,7 @@ const workflow: WorkflowManifest = {
   },
 };
 
-describe('defineWorkflow POC', () => {
+describe('defineWorkflow', () => {
   it('accepts a portable manual workflow without workspace IDs', () => {
     expect(defineWorkflow(workflow)).toMatchObject({
       success: true,
@@ -70,13 +69,15 @@ describe('defineWorkflow POC', () => {
   });
 
   it.each([
-    'missing',
-    'cycle',
-    'unreachable',
-    'duplicate',
-    'unsupported',
-    'code',
-  ])('rejects %s definitions before installation', (problem) => {
+    ['missing', 'references a non-existent step'],
+    ['cycle', 'Workflow contains a cycle'],
+    ['unreachable', 'is not reachable from the trigger'],
+    ['duplicate', 'must have distinct universal identifiers'],
+    ['unsupported', 'version.trigger.type: Invalid input: expected "MANUAL"'],
+    ['code', 'version.steps.0.type: Unsupported step type'],
+    ['email', 'version.steps.0.type: Unsupported step type'],
+    ['calendar', 'version.steps.0.type: Unsupported step type'],
+  ])('rejects %s definitions before installation', (problem, error) => {
     const invalid = structuredClone(workflow);
     const step = invalid.version.steps[0];
     if (problem === 'missing') {
@@ -86,10 +87,13 @@ describe('defineWorkflow POC', () => {
       step.nextStepIds = [step.universalIdentifier];
     }
     if (problem === 'unreachable') {
-      invalid.version.trigger.nextStepIds = [];
+      invalid.version.steps.push({
+        ...step,
+        universalIdentifier: '66666666-6666-4666-8666-666666666666',
+      });
     }
     if (problem === 'duplicate') {
-      invalid.version.universalIdentifier = invalid.universalIdentifier;
+      invalid.version.trigger.universalIdentifier = invalid.universalIdentifier;
     }
     if (problem === 'unsupported') {
       Object.assign(invalid.version.trigger, { type: 'CRON' });
@@ -97,6 +101,15 @@ describe('defineWorkflow POC', () => {
     if (problem === 'code') {
       Object.assign(step, { type: 'CODE' });
     }
-    expect(defineWorkflow(invalid).success).toBe(false);
+    if (problem === 'email') {
+      Object.assign(step, { type: 'SEND_EMAIL' });
+    }
+    if (problem === 'calendar') {
+      Object.assign(step, { type: 'CREATE_CALENDAR_EVENT' });
+    }
+    const result = defineWorkflow(invalid);
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([expect.stringMatching(/^\S/)]);
+    expect(result.errors[0]).toContain(error);
   });
 });
