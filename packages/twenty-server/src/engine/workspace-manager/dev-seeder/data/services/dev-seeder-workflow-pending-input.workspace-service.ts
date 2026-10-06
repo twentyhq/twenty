@@ -10,7 +10,7 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
+import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import {
   AiException,
   AiExceptionCode,
@@ -171,7 +171,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
   constructor(
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
-    private readonly agentCallerConversationService: AgentCallerConversationService,
+    private readonly agentRunConversationService: AgentRunConversationService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
@@ -270,12 +270,14 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             throw error;
           });
 
-          const turnId = await this.agentCallerConversationService.openTurn({
+          const turnId = await this.agentRunConversationService.openTurn({
             workspaceId,
             threadId,
+            title: workflow.step.name,
             agentId: null,
-            prompt: agentWorkflow.runPrompt,
             senderUserWorkspaceId: null,
+            senderApplicationId: null,
+            messages: [{ role: 'user', content: agentWorkflow.runPrompt }],
             createdBy:
               await this.workflowAgentConversationService.findTurnCreatedBy({
                 workspaceId,
@@ -283,7 +285,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
               }),
           });
 
-          await this.agentCallerConversationService.closeTurn({
+          await this.agentRunConversationService.closeTurn({
             workspaceId,
             threadId,
             turnId,

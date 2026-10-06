@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { AgentRunnerModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/agent-runner.module';
+import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -18,7 +18,7 @@ import { AiAgentWorkflowAction } from './ai-agent.workflow-action';
   imports: [
     WorkflowExecutionContextModule,
     ApplicationModule,
-    AgentRunnerModule,
+    AiAgentExecutionModule,
     TypeOrmModule.forFeature([AgentEntity]),
     WorkflowRunModule,
     UserWorkspaceModule,

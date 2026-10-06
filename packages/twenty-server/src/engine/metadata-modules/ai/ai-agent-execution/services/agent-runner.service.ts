@@ -3,102 +3,84 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
-import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
+import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
 import { type AgentRunnerResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-result.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
+import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 
-// Runs an agent for a caller that drives it, such as a workflow step, and
-// records the run in the caller's conversation
+// Runs one agent turn and records it in its conversation
 @Injectable()
 export class AgentRunnerService {
   private readonly logger = new Logger(AgentRunnerService.name);
 
   constructor(
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
-    private readonly agentCallerConversationService: AgentCallerConversationService,
+    private readonly agentRunConversationService: AgentRunConversationService,
     private readonly conversationReaderService: AgentConversationReaderService,
   ) {}
 
-  async run({
+  run(input: AgentRunnerRunInput): Promise<AgentRunnerResult> {
+    const { workspaceId, conversation } = input;
+
+    // a continued conversation is read before the run, so two runs on it must not interleave
+    return conversation.isCreated
+      ? this.runTurn(input)
+      : this.agentRunConversationService.withThreadLock({
+          workspaceId,
+          threadId: conversation.threadId,
+          work: () => this.runTurn(input),
+        });
+  }
+
+  private async runTurn({
     workspaceId,
-    conversation,
+    conversation: { threadId, isCreated },
+    conversationActor,
     caller,
-    title,
-    agent,
-    prompt,
-    resolveCreatedBy,
-    baseSystemPrompt,
-    pausingTools,
-    canProposeToolCalls,
-    authContext,
-    actorContext,
-    userWorkspaceId,
-    additionalRoleRestrictionIds,
-    additionalExcludedToolNames,
+    turn,
+    execution,
   }: AgentRunnerRunInput): Promise<AgentRunnerResult> {
-    const { threadId } = conversation;
-    const priorMessages = conversation.isCreated
+    const priorMessages = isCreated
       ? []
       : await this.conversationReaderService.loadMessages({
           workspaceId,
           threadId,
+          actor: conversationActor,
         });
+    const agentId = execution.agent?.id ?? null;
 
-    // A record of the run, not its outcome, so a write failure must not fail the run
-    const recordConversation = async <TResult>(
-      record: () => Promise<TResult>,
-    ): Promise<TResult | null> => {
-      try {
-        return await record();
-      } catch (error) {
-        this.logger.warn(
-          `Failed to record the conversation ${threadId} of ${caller.type} ${JSON.stringify(caller.ref)}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-
-        return null;
-      }
-    };
-
-    const turnId = await recordConversation(async () =>
-      this.agentCallerConversationService.openTurn({
+    const turnId = await this.recordConversation(threadId, async () =>
+      this.agentRunConversationService.openTurn({
         workspaceId,
         threadId,
-        agentId: agent?.id ?? null,
-        prompt,
-        senderUserWorkspaceId: userWorkspaceId,
-        createdBy: await resolveCreatedBy(),
+        title: turn.title,
+        agentId,
+        senderUserWorkspaceId: turn.senderUserWorkspaceId,
+        senderApplicationId: turn.senderApplicationId,
+        createdBy: await turn.resolveCreatedBy(),
+        messages: turn.messages,
       }),
     );
 
     const startedAtMs = Date.now();
 
-    let execution: AgentExecutionResult;
+    let executionResult: AgentExecutionResult;
 
     try {
-      execution = await this.agentAsyncExecutorService.executeAgent({
-        agent,
-        messages: isDefined(prompt) ? [{ role: 'user', content: prompt }] : [],
-        priorMessages,
-        baseSystemPrompt,
-        pausingTools,
-        canProposeToolCalls,
-        actorContext,
-        authContext,
-        workspaceId,
-        userWorkspaceId,
-        additionalRoleRestrictionIds,
-        additionalExcludedToolNames,
-      });
+      executionResult = await withDedicatedAiTrace(() =>
+        this.agentAsyncExecutorService.executeAgent({
+          ...execution,
+          priorMessages,
+        }),
+      );
     } catch (error) {
       if (isDefined(turnId)) {
-        await recordConversation(() =>
-          this.agentCallerConversationService.failTurn({
+        await this.recordConversation(threadId, () =>
+          this.agentRunConversationService.failTurn({
             workspaceId,
             turnId,
             error,
@@ -111,16 +93,16 @@ export class AgentRunnerService {
 
     const durationMs = Date.now() - startedAtMs;
 
-    const recordedTurn = isDefined(turnId)
-      ? await recordConversation(() =>
-          this.agentCallerConversationService.closeTurn({
+    const closedTurn = isDefined(turnId)
+      ? await this.recordConversation(threadId, () =>
+          this.agentRunConversationService.closeTurn({
             workspaceId,
             threadId,
             turnId,
+            title: turn.title,
+            agentId,
+            execution: executionResult,
             caller,
-            title,
-            agentId: agent?.id ?? null,
-            execution,
           }),
         )
       : null;
@@ -128,12 +110,29 @@ export class AgentRunnerService {
     return {
       threadId,
       outcome: this.buildOutcome({
-        execution,
-        isRecorded: isDefined(recordedTurn),
-        isAwaitingAnswer: recordedTurn?.isAwaitingAnswer ?? false,
+        execution: executionResult,
+        isRecorded: isDefined(closedTurn),
+        isAwaitingAnswer: closedTurn?.isAwaitingAnswer ?? false,
       }),
-      summary: buildAgentRunSummary({ execution, durationMs }),
+      summary: buildAgentRunSummary({ execution: executionResult, durationMs }),
     };
+  }
+
+  // A record of the run, not its outcome, so a write failure must not fail the run
+  private async recordConversation<TResult>(
+    threadId: string,
+    record: () => Promise<TResult>,
+  ): Promise<TResult | null> {
+    try {
+      return await record();
+    } catch (error) {
+      this.logger.error(
+        `Failed to record the agent turn in thread ${threadId}`,
+        error instanceof Error ? error.stack : error,
+      );
+
+      return null;
+    }
   }
 
   private buildOutcome({

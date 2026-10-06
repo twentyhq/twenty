@@ -147,7 +147,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         ? executionContext.authContext.userWorkspaceId
         : null;
 
-    const resolvedPrompt = resolveInput(prompt, context) as string;
+    const resolvedPrompt = resolveInput(prompt, context) as string | undefined;
 
     // a resumed step continues where it paused, any other opens the conversation its key names
     const conversation = isDefined(resumedThreadId)
@@ -176,6 +176,12 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const trimmedHumanInputInstructions = humanInputInstructions?.trim();
     const canAskForHumanInput = isNonEmptyString(trimmedHumanInputInstructions);
 
+    // a resumed run continues from its answer, which is already the last message
+    const messages =
+      isDefined(resumedThreadId) || !isDefined(resolvedPrompt)
+        ? []
+        : [{ role: 'user' as const, content: resolvedPrompt }];
+
     const { outcome, summary } = await this.agentRunnerService.run({
       workspaceId,
       conversation,
@@ -183,40 +189,48 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         workflowRunId: runInfo.workflowRunId,
         stepId: currentStepId,
       }),
-      title: step.name,
-      agent,
-      prompt: isDefined(resumedThreadId) ? null : resolvedPrompt,
-      resolveCreatedBy: () =>
-        this.workflowAgentConversationService.findTurnCreatedBy(runInfo),
-      baseSystemPrompt: canAskForHumanInput
-        ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}\n\n${WORKFLOW_AGENT_HUMAN_INPUT_PROMPT}\n\n${trimmedHumanInputInstructions}`
-        : `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}`,
-      pausingTools: {
-        ...createWorkflowAgentWaitTools(),
-        ...(canAskForHumanInput
+      turn: {
+        title: step.name,
+        senderUserWorkspaceId: userWorkspaceId,
+        senderApplicationId: null,
+        messages,
+        resolveCreatedBy: () =>
+          this.workflowAgentConversationService.findTurnCreatedBy(runInfo),
+      },
+      execution: {
+        agent,
+        messages,
+        baseSystemPrompt: canAskForHumanInput
+          ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}\n\n${WORKFLOW_AGENT_HUMAN_INPUT_PROMPT}\n\n${trimmedHumanInputInstructions}`
+          : `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_WAIT_PROMPT}`,
+        pausingTools: {
+          ...createWorkflowAgentWaitTools(),
+          ...(canAskForHumanInput
+            ? {
+                [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
+                  isWorkspaceSetupThread: false,
+                }),
+                [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
+              }
+            : {}),
+        },
+        canProposeToolCalls: canAskForHumanInput,
+        actorContext: executionContext.isActingOnBehalfOfUser
+          ? executionContext.initiator
+          : undefined,
+        authContext: executionContext.authContext,
+        workspaceId,
+        userWorkspaceId,
+        ...(isDefined(application)
           ? {
-              [ASK_QUESTION_TOOL_NAME]: createAskQuestionTool({
-                isWorkspaceSetupThread: false,
-              }),
-              [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
+              additionalRoleRestrictionIds: getRoleIdsFromRolePermissionConfig(
+                executionContext.rolePermissionConfig,
+              ),
+              additionalExcludedToolNames:
+                APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES,
             }
           : {}),
       },
-      canProposeToolCalls: canAskForHumanInput,
-      actorContext: executionContext.isActingOnBehalfOfUser
-        ? executionContext.initiator
-        : undefined,
-      authContext: executionContext.authContext,
-      userWorkspaceId,
-      ...(isDefined(application)
-        ? {
-            additionalRoleRestrictionIds: getRoleIdsFromRolePermissionConfig(
-              executionContext.rolePermissionConfig,
-            ),
-            additionalExcludedToolNames:
-              APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES,
-          }
-        : {}),
     });
 
     await this.persistStepLog({

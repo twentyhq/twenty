@@ -67,13 +67,6 @@ const buildService = ({ isCreated = true } = {}) => {
     }),
   );
 
-  const agentRunConversationService = {
-    closeTurn: jest.fn().mockResolvedValue({
-      isAwaitingAnswer: false,
-      replyParts: [],
-    }),
-    failTurn: jest.fn().mockResolvedValue(undefined),
-  };
   const agentInboxService = {
     openThread: jest.fn().mockImplementation(({ workspaceMemberId }) =>
       Promise.resolve({
@@ -81,9 +74,6 @@ const buildService = ({ isCreated = true } = {}) => {
         isCreated,
       }),
     ),
-  };
-  const threadService = {
-    recordThreadActivity: jest.fn().mockResolvedValue(undefined),
   };
   const threadRecordEventService = {
     emitPendingQuestionCleared: jest.fn().mockResolvedValue(undefined),
@@ -96,11 +86,8 @@ const buildService = ({ isCreated = true } = {}) => {
     threadRepository as never,
     messageRepository as never,
     messagePartRepository as never,
-    agentRunConversationService as never,
     agentInboxService as never,
-    threadService as never,
     threadRecordEventService as never,
-    {} as never,
     turnRecorderService as never,
   );
 
@@ -109,9 +96,7 @@ const buildService = ({ isCreated = true } = {}) => {
     threadRepository,
     messageRepository,
     messagePartRepository,
-    agentRunConversationService,
     agentInboxService,
-    threadService,
     threadRecordEventService,
     turnRecorderService,
   };
@@ -260,66 +245,6 @@ describe('AgentCallerConversationService', () => {
           recipientWorkspaceMemberId: 'recipient-id',
         }),
       ).resolves.toEqual({ status: 'DELETED' });
-    });
-  });
-
-  describe('closeTurn', () => {
-    const closeTurn = (service: AgentCallerConversationService) =>
-      service.closeTurn({
-        workspaceId: 'workspace-id',
-        threadId: 'thread-id',
-        turnId: 'turn-id',
-        caller: CALLER,
-        title: 'Draft the quote',
-        agentId: null,
-        execution: { isPaused: true, steps: [] },
-      });
-
-    it('records the reply with the caller on its pending calls', async () => {
-      const { service, agentRunConversationService, threadService } =
-        buildService();
-
-      await expect(closeTurn(service)).resolves.toEqual({
-        isAwaitingAnswer: false,
-      });
-      expect(agentRunConversationService.closeTurn).toHaveBeenCalledWith(
-        expect.objectContaining({ caller: CALLER, turnId: 'turn-id' }),
-      );
-      expect(threadService.recordThreadActivity).not.toHaveBeenCalled();
-    });
-
-    it('brings a conversation awaiting an answer back to the inbox', async () => {
-      const { service, agentRunConversationService, threadService } =
-        buildService();
-
-      agentRunConversationService.closeTurn.mockResolvedValue({
-        isAwaitingAnswer: true,
-        replyParts: [{ type: 'text', text: 'Which plan?' }],
-      });
-
-      await expect(closeTurn(service)).resolves.toEqual({
-        isAwaitingAnswer: true,
-      });
-      expect(threadService.recordThreadActivity).toHaveBeenCalledWith({
-        workspaceId: 'workspace-id',
-        threadId: 'thread-id',
-        text: 'Which plan?',
-      });
-    });
-
-    it('keeps the answer awaited when the inbox cannot be told', async () => {
-      const { service, agentRunConversationService, threadService } =
-        buildService();
-
-      agentRunConversationService.closeTurn.mockResolvedValue({
-        isAwaitingAnswer: true,
-        replyParts: [],
-      });
-      threadService.recordThreadActivity.mockRejectedValue(new Error('boom'));
-
-      await expect(closeTurn(service)).resolves.toEqual({
-        isAwaitingAnswer: true,
-      });
     });
   });
 

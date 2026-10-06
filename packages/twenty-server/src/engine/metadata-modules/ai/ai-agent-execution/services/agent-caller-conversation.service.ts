@@ -1,30 +1,23 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
 import { closeOpenToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/close-open-tool-parts.util';
-import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerFilter } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-filter.type';
 import { type AgentRunnerOpenedConversation } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-opened-conversation.type';
 import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
-import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
-import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
-import { type RecordableAgentExecution } from 'src/engine/metadata-modules/ai/ai-history/types/recordable-agent-execution.type';
 import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-history/utils/is-awaiting-pausing-tool-output.util';
 import {
   AiException,
@@ -36,12 +29,10 @@ const RECENT_MESSAGES_TO_SEARCH_FOR_PENDING_CALL = 50;
 // The conversation of a run a caller drives, such as a workflow step: the calls
 // the run pauses on name the caller, so an answer or an outcome can find its
 // way back to it, and the caller can close them when it stops waiting.
-// Kept apart from the runner so callers that only record or cancel avoid the
+// Kept apart from the runner so callers that only settle or cancel waits avoid the
 // agent execution and tool dependencies.
 @Injectable()
 export class AgentCallerConversationService {
-  private readonly logger = new Logger(AgentCallerConversationService.name);
-
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -49,11 +40,8 @@ export class AgentCallerConversationService {
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
-    private readonly agentRunConversationService: AgentRunConversationService,
     private readonly agentInboxService: AgentInboxService,
-    private readonly threadService: AgentChatThreadService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
-    private readonly conversationWriterService: AgentConversationWriterService,
     private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
@@ -113,107 +101,6 @@ export class AgentCallerConversationService {
     }
 
     return { status: 'OPENED', threadId: thread.id, isCreated };
-  }
-
-  // The turn is written before the agent runs, so a run in progress or one that
-  // fails is on record
-  async openTurn({
-    workspaceId,
-    threadId,
-    agentId,
-    prompt,
-    senderUserWorkspaceId,
-    createdBy,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    agentId: string | null;
-    prompt: string | null;
-    senderUserWorkspaceId: string | null;
-    createdBy: ActorMetadata;
-  }): Promise<string> {
-    return this.conversationWriterService.runInTransaction(
-      workspaceId,
-      async (scope) => {
-        const turnId = await this.conversationWriterService.insertTurn({
-          workspaceId,
-          threadId,
-          agentId,
-          status: AgentTurnStatus.RUNNING,
-          createdBy,
-          scope,
-        });
-
-        if (isDefined(prompt)) {
-          await this.conversationWriterService.insertMessage({
-            workspaceId,
-            threadId,
-            turnId,
-            role: AgentMessageRole.USER,
-            agentId: null,
-            senderUserWorkspaceId,
-            parts: [{ type: 'text', text: prompt }],
-            scope,
-          });
-        }
-
-        return turnId;
-      },
-    );
-  }
-
-  async closeTurn({
-    workspaceId,
-    threadId,
-    turnId,
-    caller,
-    title,
-    agentId,
-    execution,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    turnId: string;
-    caller: AgentRunCaller;
-    title: string;
-    agentId: string | null;
-    execution: RecordableAgentExecution;
-  }): Promise<{ isAwaitingAnswer: boolean }> {
-    const { isAwaitingAnswer, replyParts } =
-      await this.agentRunConversationService.closeTurn({
-        workspaceId,
-        threadId,
-        turnId,
-        agentId,
-        execution,
-        caller,
-      });
-
-    if (isAwaitingAnswer) {
-      await this.recordWaitingActivity({
-        workspaceId,
-        threadId,
-        text: findLastMessageText(replyParts) ?? title,
-      });
-    }
-
-    return { isAwaitingAnswer };
-  }
-
-  async failTurn({
-    workspaceId,
-    turnId,
-    error,
-  }: {
-    workspaceId: string;
-    turnId: string;
-    error: unknown;
-  }): Promise<void> {
-    await this.agentRunConversationService.failTurn({
-      workspaceId,
-      turnId,
-      error,
-    });
   }
 
   // The paused call stays pending in the conversation until the caller resolves it, then carries the outcome
@@ -396,21 +283,5 @@ export class AgentCallerConversationService {
 
       throw error;
     }
-  }
-
-  // the waiting call is already saved and can be answered from the conversation, so a
-  // failure to bring it back to the inbox must not fail the run
-  private async recordWaitingActivity(args: {
-    workspaceId: string;
-    threadId: string;
-    text: string;
-  }): Promise<void> {
-    await this.threadService
-      .recordThreadActivity(args)
-      .catch((error: unknown) =>
-        this.logger.warn(
-          `Could not record waiting activity on thread ${args.threadId}: ${error instanceof Error ? error.message : String(error)}`,
-        ),
-      );
   }
 }

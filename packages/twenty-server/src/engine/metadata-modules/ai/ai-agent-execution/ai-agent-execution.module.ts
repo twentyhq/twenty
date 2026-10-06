@@ -15,6 +15,7 @@ import { AgentRunResolver } from 'src/engine/metadata-modules/ai/ai-agent-execut
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
+import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -56,6 +57,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentMessageResolver,
     AgentRunResolver,
     AgentRunService,
+    AgentRunnerService,
     RunAgentAttachmentService,
     provideWorkspaceScopedRepository(RoleTargetEntity),
     provideWorkspaceScopedRepository(AgentEntity),
@@ -65,6 +67,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentAsyncExecutorService,
     AgentActorContextService,
     AgentRunConversationModule,
+    AgentRunnerService,
   ],
 })
 export class AiAgentExecutionModule {}

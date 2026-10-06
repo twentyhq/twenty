@@ -22,7 +22,7 @@ import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspac
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { type AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
+import { type AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { type WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -825,24 +825,26 @@ describe('core workflow visibility (e2e)', () => {
         threadKey: `${workflowRunId}:trigger`,
       }));
 
-      const callerConversationService =
-        getAppProviderByClassName<AgentCallerConversationService>(
-          'AgentCallerConversationService',
+      const runConversationService =
+        getAppProviderByClassName<AgentRunConversationService>(
+          'AgentRunConversationService',
         );
 
-      const turnId = await callerConversationService.openTurn({
+      const turnId = await runConversationService.openTurn({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         threadId,
+        title: 'Summarize the lead',
         agentId: null,
-        prompt: 'Summarize the lead',
         senderUserWorkspaceId: null,
+        senderApplicationId: null,
+        messages: [{ role: 'user', content: 'Summarize the lead' }],
         createdBy: await conversationService.findTurnCreatedBy({
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           workflowRunId,
         }),
       });
 
-      await callerConversationService.closeTurn({
+      await runConversationService.closeTurn({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         threadId,
         turnId,
