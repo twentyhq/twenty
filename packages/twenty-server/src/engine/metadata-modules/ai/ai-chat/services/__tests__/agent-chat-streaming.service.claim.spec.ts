@@ -294,7 +294,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       });
 
       await expect(send()).rejects.toMatchObject({
-        code: AiExceptionCode.THREAD_AWAITING_CALLER_INPUT,
+        code: AiExceptionCode.THREAD_AWAITING_ANSWER,
       });
       expect(agentChatService.closePendingToolCalls).not.toHaveBeenCalled();
       expect(agentChatService.addMessage).not.toHaveBeenCalled();
