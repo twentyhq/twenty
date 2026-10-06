@@ -4,7 +4,7 @@ import { IconInfoCircle } from '@ui/icon';
 import { Menu, Tooltip } from '@ui/primitives/surfaces';
 import { ThemeProvider } from '@ui/theme';
 
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 
 export const DirectionalMenusExample = ({
   direction,
@@ -13,7 +13,7 @@ export const DirectionalMenusExample = ({
   direction: 'ltr' | 'rtl';
   scoped?: boolean;
 }) => (
-  <TextDirectionProvider direction={direction}>
+  <DirectionProvider direction={direction}>
     <ThemeProvider colorScheme="dark" applyToRoot={!scoped}>
       <div
         dir={direction}
@@ -67,5 +67,5 @@ export const DirectionalMenusExample = ({
         </Tooltip.Root>
       </div>
     </ThemeProvider>
-  </TextDirectionProvider>
+  </DirectionProvider>
 );

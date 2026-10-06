@@ -207,7 +207,6 @@ describe('useInviteTeam', () => {
     jotaiStore.set(onboardingConfigState.atom, {
       importContactsCreditsReward: 1,
       inviteTeamCreditsRewardPerUser: 0.5,
-      installAppsCreditsReward: 0.5,
       createProfileCreditsReward: 0.5,
       upgradeCreditsReward: 2,
       inviteTeamMaxInvites: 2,

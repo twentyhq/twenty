@@ -1,7 +1,7 @@
 import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
 import { isNumber, isString } from '@sniptt/guards';
 
-import { useProvidedTextDirection } from '@ui/primitives/layout/TextDirectionProvider/internal/useProvidedTextDirection';
+import { useProvidedTextDirection } from '@ui/primitives/layout/DirectionProvider/internal/useProvidedTextDirection';
 import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 

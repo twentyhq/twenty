@@ -4,7 +4,6 @@ export const ONBOARDING_CREDITS_PROGRESS_EMPTY_VALUE: OnboardingCreditsProgress 
   {
     rewardCreditsByStep: {
       importContacts: 0,
-      installApps: 0,
       createProfile: 0,
       inviteTeam: 0,
       upgradeTrial: 0,
