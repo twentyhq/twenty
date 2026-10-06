@@ -40,9 +40,7 @@ const createPointerEvent = (
     preventDefault: jest.fn(),
   }) as unknown as PointerEvent<HTMLElement>;
 
-const createSeparatorHandlers = (
-  remoteProps: Record<string, unknown> = {},
-) => {
+const createSeparatorHandlers = (remoteProps: Record<string, unknown> = {}) => {
   const remotePointerCancel = jest.fn();
   const handlers = createResizableSeparatorProps({
     role: 'separator',
