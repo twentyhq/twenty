@@ -1971,6 +1971,7 @@ type JobStatus {
   state: JobState!
   attemptsMade: Int!
   failedReason: String
+  progress: Int
   enqueuedAt: Float!
   startedAt: Float
   finishedAt: Float
