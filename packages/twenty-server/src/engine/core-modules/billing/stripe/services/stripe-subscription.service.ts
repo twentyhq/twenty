@@ -5,6 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import type Stripe from 'stripe';
 
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
+import { isCreditTopUpInvoice } from 'src/engine/core-modules/billing/utils/is-credit-top-up-invoice.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -52,6 +53,10 @@ export class StripeSubscriptionService {
       collection_method: 'charge_automatically',
       limit: 100,
     })) {
+      if (isCreditTopUpInvoice(invoice)) {
+        continue;
+      }
+
       openInvoices.push(invoice);
     }
 

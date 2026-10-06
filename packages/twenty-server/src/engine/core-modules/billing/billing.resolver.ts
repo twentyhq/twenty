@@ -13,6 +13,8 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { BillingCreditTopUpOfferDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-top-up-offer.dto';
+import { BillingCreditTopUpDTO } from 'src/engine/core-modules/billing/dtos/billing-credit-top-up.dto';
 import { BillingEndTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-end-trial-period.dto';
 import { BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
@@ -20,9 +22,11 @@ import { BillingPaymentIntentDTO } from 'src/engine/core-modules/billing/dtos/bi
 import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-session.dto';
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
+import { BillingPurchaseCreditTopUpInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-purchase-credit-top-up.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BillingCreditOneTimeTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-one-time-top-up.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
@@ -65,6 +69,7 @@ export class BillingResolver {
     private readonly billingPlanService: BillingPlanService,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly billingCreditOneTimeTopUpService: BillingCreditOneTimeTopUpService,
     private readonly permissionsService: PermissionsService,
   ) {}
 
@@ -529,6 +534,70 @@ export class BillingResolver {
     );
 
     return {
+      billingSubscriptions:
+        await this.billingSubscriptionService.getBillingSubscriptions(
+          workspace.id,
+        ),
+      currentBillingSubscription:
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+          { workspaceId: workspace.id },
+        ),
+    };
+  }
+
+  @Query(() => [BillingCreditTopUpOfferDTO])
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  async getCreditTopUpOffers(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<BillingCreditTopUpOfferDTO[]> {
+    return this.billingCreditOneTimeTopUpService.getOffers(workspace.id);
+  }
+
+  // Charges the saved card, so only a signed-in member acting for themselves may call it
+  @Mutation(() => BillingCreditTopUpDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  async purchaseCreditTopUp(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: AuthContextUser,
+    @Args() { creditAmount, idempotencyKey }: BillingPurchaseCreditTopUpInput,
+  ): Promise<BillingCreditTopUpDTO> {
+    const { status, hostedInvoiceUrl } =
+      await this.billingCreditOneTimeTopUpService.purchase({
+        workspaceId: workspace.id,
+        userId: user.id,
+        creditAmount,
+        idempotencyKey,
+      });
+
+    return {
+      status,
+      hostedInvoiceUrl,
       billingSubscriptions:
         await this.billingSubscriptionService.getBillingSubscriptions(
           workspace.id,

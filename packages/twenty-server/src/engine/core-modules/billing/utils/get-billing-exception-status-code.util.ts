@@ -24,9 +24,10 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_CREDIT_GRANT_VALIDITY_INVALID:
     case BillingExceptionCode.BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS:
+    case BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_ALLOWED:
       return 400;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE:
-    case BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED:
+    case BillingExceptionCode.BILLING_INVOICE_PAYMENT_FAILED:
       return 402;
     case BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND:
     case BillingExceptionCode.BILLING_PRICE_NOT_FOUND:
@@ -41,7 +42,7 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_CANCELED:
     case BillingExceptionCode.BILLING_USAGE_UNAVAILABLE:
-    case BillingExceptionCode.BILLING_UPGRADE_INVOICE_VOID_FAILED:
+    case BillingExceptionCode.BILLING_INVOICE_VOID_FAILED:
     case BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_GRANTED:
       return 500;
     default: {

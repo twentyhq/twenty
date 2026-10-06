@@ -10,7 +10,10 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BillingInvoicePaymentStatus } from 'src/engine/core-modules/billing/enums/billing-invoice-payment-status.enum';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
+import { type OneOffInvoicePayment } from 'src/engine/core-modules/billing/types/one-off-invoice-payment.type';
+import { isInvoicePaymentActionRequiredError } from 'src/engine/core-modules/billing/utils/is-invoice-payment-action-required-error.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -65,35 +68,14 @@ export class StripeInvoiceService {
       subscription: stripeSubscriptionId,
     });
 
-    let finalizedInvoice: Stripe.Invoice;
-    let invoiceItemId: string | undefined;
-
-    try {
-      const invoiceItem = await this.stripe.invoiceItems.create({
-        customer: stripeCustomerId,
-        subscription: stripeSubscriptionId,
-        invoice: invoice.id,
-        amount: diffAmountInCents,
-        currency,
-        description,
-      });
-
-      invoiceItemId = invoiceItem.id;
-
-      finalizedInvoice = await this.stripe.invoices.finalizeInvoice(
-        invoice.id,
-        {
-          auto_advance: false,
-        },
-      );
-    } catch (error) {
-      await this.deleteDraftUpgradeInvoice({
-        invoiceId: invoice.id,
-        invoiceItemId,
-      });
-
-      throw error;
-    }
+    const finalizedInvoice = await this.addItemAndFinalizeInvoiceOrDelete({
+      invoiceId: invoice.id,
+      stripeCustomerId,
+      stripeSubscriptionId,
+      amountInCents: diffAmountInCents,
+      currency,
+      description,
+    });
 
     if (finalizedInvoice.status === 'paid') {
       return;
@@ -102,14 +84,153 @@ export class StripeInvoiceService {
     try {
       await this.stripe.invoices.pay(invoice.id);
     } catch (payError) {
-      await this.settleFailedUpgradeInvoiceOrThrow({
+      await this.settleFailedInvoiceOrThrow({
         invoiceId: invoice.id,
         payError,
       });
     }
   }
 
-  private async settleFailedUpgradeInvoiceOrThrow({
+  async chargeOneOffInvoice({
+    stripeCustomerId,
+    stripeSubscriptionId,
+    amountInCents,
+    currency,
+    description,
+    lineDescription,
+    metadata,
+    isAutomaticTaxEnabled,
+    idempotencyKey,
+  }: {
+    stripeCustomerId: string;
+    stripeSubscriptionId: string;
+    amountInCents: number;
+    currency: string;
+    description: string;
+    lineDescription: string;
+    metadata: Stripe.MetadataParam;
+    isAutomaticTaxEnabled: boolean;
+    idempotencyKey: string;
+  }): Promise<OneOffInvoicePayment> {
+    const invoice = await this.stripe.invoices.create(
+      {
+        customer: stripeCustomerId,
+        subscription: stripeSubscriptionId,
+        currency,
+        description,
+        metadata,
+        pending_invoice_items_behavior: 'exclude',
+        automatic_tax: { enabled: isAutomaticTaxEnabled },
+        discounts: '',
+      },
+      { idempotencyKey: `${idempotencyKey}-invoice` },
+    );
+
+    const finalizedInvoice = await this.addItemAndFinalizeInvoiceOrDelete({
+      invoiceId: invoice.id,
+      stripeCustomerId,
+      stripeSubscriptionId,
+      amountInCents,
+      currency,
+      description: lineDescription,
+      idempotencyKey,
+    });
+
+    if (finalizedInvoice.status === 'paid') {
+      return toOneOffInvoicePayment(
+        finalizedInvoice,
+        BillingInvoicePaymentStatus.PAID,
+      );
+    }
+
+    try {
+      const paidInvoice = await this.stripe.invoices.pay(
+        invoice.id,
+        {},
+        { idempotencyKey: `${idempotencyKey}-pay` },
+      );
+
+      return toOneOffInvoicePayment(
+        paidInvoice,
+        paidInvoice.status === 'paid'
+          ? BillingInvoicePaymentStatus.PAID
+          : BillingInvoicePaymentStatus.PROCESSING,
+      );
+    } catch (payError) {
+      // The open invoice stays payable on its hosted page, where the customer can pass 3DS
+      if (isInvoicePaymentActionRequiredError(payError)) {
+        return toOneOffInvoicePayment(
+          finalizedInvoice,
+          BillingInvoicePaymentStatus.REQUIRES_ACTION,
+        );
+      }
+
+      await this.settleFailedInvoiceOrThrow({
+        invoiceId: invoice.id,
+        payError,
+      });
+
+      return toOneOffInvoicePayment(
+        finalizedInvoice,
+        BillingInvoicePaymentStatus.PAID,
+      );
+    }
+  }
+
+  private async addItemAndFinalizeInvoiceOrDelete({
+    invoiceId,
+    stripeCustomerId,
+    stripeSubscriptionId,
+    amountInCents,
+    currency,
+    description,
+    idempotencyKey,
+  }: {
+    invoiceId: string;
+    stripeCustomerId: string;
+    stripeSubscriptionId: string;
+    amountInCents: number;
+    currency: string;
+    description: string;
+    idempotencyKey?: string;
+  }): Promise<Stripe.Invoice> {
+    let invoiceItemId: string | undefined;
+
+    try {
+      const invoiceItem = await this.stripe.invoiceItems.create(
+        {
+          customer: stripeCustomerId,
+          subscription: stripeSubscriptionId,
+          invoice: invoiceId,
+          amount: amountInCents,
+          currency,
+          description,
+        },
+        isDefined(idempotencyKey)
+          ? { idempotencyKey: `${idempotencyKey}-invoice-item` }
+          : undefined,
+      );
+
+      invoiceItemId = invoiceItem.id;
+
+      return await this.stripe.invoices.finalizeInvoice(
+        invoiceId,
+        { auto_advance: false },
+        isDefined(idempotencyKey)
+          ? { idempotencyKey: `${idempotencyKey}-finalize` }
+          : undefined,
+      );
+    } catch (error) {
+      await this.deleteDraftInvoice({
+        invoiceId,
+        invoiceItemId,
+      });
+
+      throw error;
+    }
+  }
+
+  private async settleFailedInvoiceOrThrow({
     invoiceId,
     payError,
   }: {
@@ -135,8 +256,8 @@ export class StripeInvoiceService {
 
       if (refreshedInvoice.status !== 'void') {
         throw new BillingException(
-          `Failed to void upgrade invoice ${invoiceId} after payment failure (${payErrorMessage}): ${this.getErrorMessage(voidError)}`,
-          BillingExceptionCode.BILLING_UPGRADE_INVOICE_VOID_FAILED,
+          `Failed to void invoice ${invoiceId} after payment failure (${payErrorMessage}): ${this.getErrorMessage(voidError)}`,
+          BillingExceptionCode.BILLING_INVOICE_VOID_FAILED,
         );
       }
     }
@@ -145,14 +266,14 @@ export class StripeInvoiceService {
       payError instanceof this.stripe.errors.StripeCardError;
 
     throw new BillingException(
-      `Failed to pay upgrade invoice ${invoiceId}: ${payErrorMessage}`,
+      `Failed to pay invoice ${invoiceId}: ${payErrorMessage}`,
       isCardDecline
-        ? BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED
+        ? BillingExceptionCode.BILLING_INVOICE_PAYMENT_FAILED
         : BillingExceptionCode.BILLING_STRIPE_ERROR,
     );
   }
 
-  private async deleteDraftUpgradeInvoice({
+  private async deleteDraftInvoice({
     invoiceId,
     invoiceItemId,
   }: {
@@ -163,7 +284,7 @@ export class StripeInvoiceService {
       await this.stripe.invoices.del(invoiceId);
     } catch (deleteError) {
       this.logger.error(
-        `Failed to delete draft upgrade invoice ${invoiceId}: ${this.getErrorMessage(deleteError)}`,
+        `Failed to delete draft invoice ${invoiceId}: ${this.getErrorMessage(deleteError)}`,
       );
     }
 
@@ -175,7 +296,7 @@ export class StripeInvoiceService {
       await this.stripe.invoiceItems.del(invoiceItemId);
     } catch (deleteError) {
       this.logger.error(
-        `Failed to delete upgrade invoice item ${invoiceItemId}: ${this.getErrorMessage(deleteError)}`,
+        `Failed to delete invoice item ${invoiceItemId}: ${this.getErrorMessage(deleteError)}`,
       );
     }
   }
@@ -184,3 +305,16 @@ export class StripeInvoiceService {
     return error instanceof Error ? error.message : 'unknown error';
   }
 }
+
+const toOneOffInvoicePayment = (
+  invoice: Stripe.Invoice,
+  status: BillingInvoicePaymentStatus,
+): OneOffInvoicePayment => ({
+  status,
+  stripeInvoiceId: invoice.id,
+  stripeInvoiceNumber: invoice.number,
+  hostedInvoiceUrl:
+    status === BillingInvoicePaymentStatus.REQUIRES_ACTION
+      ? (invoice.hosted_invoice_url ?? null)
+      : null,
+});
