@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
   CoreWorkflowMetadataException,
   CoreWorkflowMetadataExceptionCode,
@@ -30,6 +31,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
+const CORE_WORKFLOW_DELETION_LOCK_TTL_MS = 30_000;
+const CORE_WORKFLOW_DELETION_LOCK_RETRY_INTERVAL_MS = 100;
+
 @Injectable()
 export class WorkflowCoreSyncService {
   private readonly logger = new Logger(WorkflowCoreSyncService.name);
@@ -44,6 +48,7 @@ export class WorkflowCoreSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -490,6 +495,23 @@ export class WorkflowCoreSyncService {
       return;
     }
 
+    await this.cacheLockService.withLock(
+      () => this.deleteFromCoreUnderLock(workspaceId, coreWorkflowIds),
+      `core-workflow-deletion:${workspaceId}`,
+      {
+        ttl: CORE_WORKFLOW_DELETION_LOCK_TTL_MS,
+        maxRetries:
+          CORE_WORKFLOW_DELETION_LOCK_TTL_MS /
+          CORE_WORKFLOW_DELETION_LOCK_RETRY_INTERVAL_MS,
+        ms: CORE_WORKFLOW_DELETION_LOCK_RETRY_INTERVAL_MS,
+      },
+    );
+  }
+
+  private async deleteFromCoreUnderLock(
+    workspaceId: string,
+    coreWorkflowIds: string[],
+  ): Promise<void> {
     const { flatWorkflowMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         { workspaceId, flatMapsKeys: ['flatWorkflowMaps'] },
@@ -539,6 +561,10 @@ export class WorkflowCoreSyncService {
         },
       },
     });
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'workflowAutomatedTriggerMaps',
+    ]);
   }
 
   async findCoreWorkflowById(

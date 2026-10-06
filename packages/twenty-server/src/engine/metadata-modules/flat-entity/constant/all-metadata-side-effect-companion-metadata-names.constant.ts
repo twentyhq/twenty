@@ -1,7 +1,7 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 export const ALL_METADATA_SIDE_EFFECT_COMPANION_METADATA_NAMES = {
-  workflow: ['workflowVersion'],
+  workflow: ['workflowVersion', 'commandMenuItem', 'logicFunction'],
   fieldMetadata: [
     'index',
     'searchFieldMetadata',
