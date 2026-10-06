@@ -167,7 +167,7 @@ A user variable is injected with the value of the member your code runs for, or 
 - In a logic function, `process.env` holds the values of the member who triggered the run, the same member `TWENTY_APP_ACCESS_TOKEN` acts as. A run with nobody behind it, such as a cron job or an install hook, gets the defaults.
 - In a front component, `getApplicationVariable` returns the values of the member viewing it. Secret user variables are left out, like secret workspace variables.
 
-The member who triggered a run is not always the member it is about: a database event runs as whoever edited the record. When a run is about someone else, or about every member, read the values with `applicationVariableUserValues` through `MetadataApiClient`. It lists every member with their values of your app's user variables, and works in every logic function run, including cron jobs and webhooks. Each entry carries the member's `userWorkspaceId`, `workspaceMemberId` and `variables`: each user variable's declaration (`label`, `description`, `type`, `options`, `isSecret`, `isRequired`, `isDeprecated`) and the member's value, or the default until they set their own. Query it as the application to get real values: with a token that has a person behind it, it only returns that person's entry, with secrets masked.
+The member who triggered a run is not always the member it is about: a database event runs as whoever edited the record. When a run is about someone else, or about every member, read the values with `myApplicationUserVariables` through `MetadataApiClient`. It lists every member with their values of your app's user variables, and works in every logic function run, including cron jobs and webhooks. Each entry carries the member's `userWorkspaceId`, `workspaceMemberId` and `variables`: each user variable's declaration (`label`, `description`, `type`, `options`, `isSecret`, `isRequired`, `isDeprecated`) and the member's value, or the default until they set their own. Query it as the application to get real values: with a token that has a person behind it, it only returns that person's entry, with secrets masked.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -175,8 +175,8 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 // In a logic function, for example a cron job
 const client = new MetadataApiClient({ runAs: 'application' });
 
-const { applicationVariableUserValues } = await client.query({
-  applicationVariableUserValues: {
+const { myApplicationUserVariables } = await client.query({
+  myApplicationUserVariables: {
     workspaceMemberId: true,
     variables: { key: true, value: true },
   },
@@ -185,7 +185,7 @@ const { applicationVariableUserValues } = await client.query({
 
 Values are strings, in the same format as `process.env` (see [Variable types](#variable-types)).
 
-A member saves their own value with `updateMyApplicationVariable`, which takes your app's `applicationUniversalIdentifier` and needs no `APPLICATIONS` permission. It takes the member's own session only: an application token is refused, your app's included, so only the member changes their settings.
+A member saves their own value with `updateMyApplicationUserVariable`, which takes your app's `applicationUniversalIdentifier` and needs no `APPLICATIONS` permission. It takes the member's own session only: an application token is refused, your app's included, so only the member changes their settings.
 
 ## Default function role
 

@@ -1,11 +1,11 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { applicationVariableUserValues } from 'test/integration/metadata/suites/application/utils/application-variable-user-values.util';
+import { myApplicationUserVariables } from 'test/integration/metadata/suites/application/utils/my-application-user-variables.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithVariable,
   setupApplicationWithVariable,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-variable.util';
-import { updateMyApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-my-application-variable.util';
+import { updateMyApplicationUserVariable } from 'test/integration/metadata/suites/application/utils/update-my-application-user-variable.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -13,7 +13,7 @@ import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 const NOT_INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER =
   '8f7c1e0a-4b2d-4c3e-9a1f-0d2e3c4b5a69';
 
-describe('Application variable user values should fail', () => {
+describe('User application variable values should fail', () => {
   let userVariableApplication: ApplicationWithVariable;
   let workspaceVariableApplication: ApplicationWithVariable;
   let janeApplicationToken: string;
@@ -50,7 +50,7 @@ describe('Application variable user values should fail', () => {
   });
 
   it('should refuse to set a member value on a workspace variable', async () => {
-    const { errors } = await updateMyApplicationVariable({
+    const { errors } = await updateMyApplicationUserVariable({
       input: {
         applicationUniversalIdentifier:
           workspaceVariableApplication.universalIdentifier,
@@ -64,7 +64,7 @@ describe('Application variable user values should fail', () => {
   });
 
   it('should refuse a key the application does not declare', async () => {
-    const { errors } = await updateMyApplicationVariable({
+    const { errors } = await updateMyApplicationUserVariable({
       input: {
         applicationUniversalIdentifier:
           userVariableApplication.universalIdentifier,
@@ -78,7 +78,7 @@ describe('Application variable user values should fail', () => {
   });
 
   it('should refuse an application that is not installed', async () => {
-    const { errors } = await updateMyApplicationVariable({
+    const { errors } = await updateMyApplicationUserVariable({
       input: {
         applicationUniversalIdentifier:
           NOT_INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -92,7 +92,7 @@ describe('Application variable user values should fail', () => {
   });
 
   it('should refuse an application token writing a member value of its own application', async () => {
-    const { errors } = await updateMyApplicationVariable({
+    const { errors } = await updateMyApplicationUserVariable({
       input: {
         applicationUniversalIdentifier:
           userVariableApplication.universalIdentifier,
@@ -107,7 +107,7 @@ describe('Application variable user values should fail', () => {
   });
 
   it('should refuse to list every member value from a session', async () => {
-    const { errors } = await applicationVariableUserValues({
+    const { errors } = await myApplicationUserVariables({
       input: {},
       expectToFail: true,
     });
@@ -118,7 +118,7 @@ describe('Application variable user values should fail', () => {
   it('should refuse a member value on a workspace variable in the database', async () => {
     await expect(
       global.testDataSource.query(
-        `INSERT INTO "core"."applicationVariableUserValue"
+        `INSERT INTO "core"."userApplicationVariableValue"
           ("workspaceId", "applicationVariableId", "userWorkspaceId", "value")
          SELECT "workspaceId", "id", $1, 'enc:v2:mine'
            FROM "core"."applicationVariable"

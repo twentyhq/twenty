@@ -4,8 +4,8 @@ import { Mutation, Query } from '@nestjs/graphql';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationVariableEntityExceptionFilter } from 'src/engine/core-modules/application/application-variable/application-variable-exception-filter';
-import { ApplicationVariableUserValueService } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.service';
-import { UpdateMyApplicationVariableInput } from 'src/engine/core-modules/application/application-variable/dtos/update-my-application-variable.input';
+import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
+import { UpdateMyApplicationUserVariableInput } from 'src/engine/core-modules/application/application-variable/dtos/update-my-application-user-variable.input';
 import { WorkspaceMemberApplicationVariablesDTO } from 'src/engine/core-modules/application/application-variable/dtos/workspace-member-application-variables.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -38,9 +38,9 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
   ApplicationExceptionFilter,
   AuthGraphqlApiExceptionFilter,
 )
-export class ApplicationVariableUserValueResolver {
+export class UserApplicationVariableValueResolver {
   constructor(
-    private readonly applicationVariableUserValueService: ApplicationVariableUserValueService,
+    private readonly userApplicationVariableValueService: UserApplicationVariableValueService,
   ) {}
 
   @Mutation(() => Boolean)
@@ -58,8 +58,8 @@ export class ApplicationVariableUserValueResolver {
     }),
     ApplicationTargetGuard,
   )
-  async updateMyApplicationVariable(
-    @ApplicationTargetArgs<UpdateMyApplicationVariableInput>({
+  async updateMyApplicationUserVariable(
+    @ApplicationTargetArgs<UpdateMyApplicationUserVariableInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'applicationUniversalIdentifier',
       requireApplicationRegistrationOwnership: false,
@@ -68,29 +68,31 @@ export class ApplicationVariableUserValueResolver {
       applicationUniversalIdentifier,
       key,
       value,
-    }: UpdateMyApplicationVariableInput,
+    }: UpdateMyApplicationUserVariableInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<boolean> {
-    await this.applicationVariableUserValueService.updateMyApplicationVariable({
-      workspaceId,
-      applicationUniversalIdentifier,
-      userWorkspaceId,
-      key,
-      plainTextValue: value,
-    });
+    await this.userApplicationVariableValueService.updateMyApplicationUserVariable(
+      {
+        workspaceId,
+        applicationUniversalIdentifier,
+        userWorkspaceId,
+        key,
+        plainTextValue: value,
+      },
+    );
 
     return true;
   }
 
   @Query(() => [WorkspaceMemberApplicationVariablesDTO])
-  async applicationVariableUserValues(
+  async myApplicationUserVariables(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthApplication() callingApplication: FlatApplication,
     @AuthUserWorkspaceId({ allowUndefined: true })
     requestUserWorkspaceId: string | undefined,
   ): Promise<WorkspaceMemberApplicationVariablesDTO[]> {
-    return this.applicationVariableUserValueService.findApplicationVariableUserValues(
+    return this.userApplicationVariableValueService.findUserApplicationVariableValues(
       {
         workspaceId,
         applicationId: callingApplication.id,

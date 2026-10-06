@@ -33,7 +33,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   schema: 'core',
 })
 @ObjectType('ApplicationVariable')
-// applicationVariableUserValue's foreign key references (id, scope), and
+// userApplicationVariableValue's foreign key references (id, scope), and
 // Postgres needs a unique constraint on exactly the referenced columns.
 @Unique('IDX_APPLICATION_VARIABLE_ID_SCOPE_UNIQUE', ['id', 'scope'])
 // All values are always encrypted regardless of `isSecret`. The

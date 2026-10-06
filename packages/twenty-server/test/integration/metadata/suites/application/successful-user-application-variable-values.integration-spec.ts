@@ -1,10 +1,10 @@
-import { applicationVariableUserValues } from 'test/integration/metadata/suites/application/utils/application-variable-user-values.util';
+import { myApplicationUserVariables } from 'test/integration/metadata/suites/application/utils/my-application-user-variables.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithVariable,
   setupApplicationWithVariable,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-variable.util';
-import { updateMyApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-my-application-variable.util';
+import { updateMyApplicationUserVariable } from 'test/integration/metadata/suites/application/utils/update-my-application-user-variable.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 
@@ -12,7 +12,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
-describe('Application variable user values should succeed', () => {
+describe('User application variable values should succeed', () => {
   let application: ApplicationWithVariable;
   let otherApplication: ApplicationWithVariable;
   let defaultApplication: ApplicationWithVariable;
@@ -76,7 +76,7 @@ describe('Application variable user values should succeed', () => {
   });
 
   it('should give a member the declaration and no value until they set their own', async () => {
-    const { data } = await applicationVariableUserValues({
+    const { data } = await myApplicationUserVariables({
       input: {},
       gqlFields: `
         userWorkspaceId
@@ -96,7 +96,7 @@ describe('Application variable user values should succeed', () => {
       expectToFail: false,
     });
 
-    expect(data.applicationVariableUserValues).toEqual(
+    expect(data.myApplicationUserVariables).toEqual(
       expect.arrayContaining([
         {
           userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
@@ -119,7 +119,7 @@ describe('Application variable user values should succeed', () => {
   });
 
   it('should let a member without the applications permission set their own value', async () => {
-    const { data: updateData } = await updateMyApplicationVariable({
+    const { data: updateData } = await updateMyApplicationUserVariable({
       input: {
         applicationUniversalIdentifier: application.universalIdentifier,
         key: application.variableKey,
@@ -129,15 +129,15 @@ describe('Application variable user values should succeed', () => {
       expectToFail: false,
     });
 
-    expect(updateData.updateMyApplicationVariable).toBe(true);
+    expect(updateData.updateMyApplicationUserVariable).toBe(true);
 
-    const { data } = await applicationVariableUserValues({
+    const { data } = await myApplicationUserVariables({
       input: {},
       token: applicationToken,
       expectToFail: false,
     });
 
-    const jonyValues = data.applicationVariableUserValues.find(
+    const jonyValues = data.myApplicationUserVariables.find(
       ({ userWorkspaceId }) =>
         userWorkspaceId === USER_WORKSPACE_DATA_SEED_IDS.JONY,
     );
@@ -148,7 +148,7 @@ describe('Application variable user values should succeed', () => {
   });
 
   it('should list only the own values for a token a person is behind', async () => {
-    const { data: updateData } = await updateMyApplicationVariable({
+    const { data: updateData } = await updateMyApplicationUserVariable({
       input: {
         applicationUniversalIdentifier: application.universalIdentifier,
         key: application.variableKey,
@@ -158,15 +158,15 @@ describe('Application variable user values should succeed', () => {
       expectToFail: false,
     });
 
-    expect(updateData.updateMyApplicationVariable).toBe(true);
+    expect(updateData.updateMyApplicationUserVariable).toBe(true);
 
-    const { data } = await applicationVariableUserValues({
+    const { data } = await myApplicationUserVariables({
       input: {},
       token: janeApplicationToken,
       expectToFail: false,
     });
 
-    expect(data.applicationVariableUserValues).toEqual([
+    expect(data.myApplicationUserVariables).toEqual([
       {
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
@@ -176,13 +176,13 @@ describe('Application variable user values should succeed', () => {
   });
 
   it('should list the values of every member for a token no person is behind', async () => {
-    const { data } = await applicationVariableUserValues({
+    const { data } = await myApplicationUserVariables({
       input: {},
       token: applicationToken,
       expectToFail: false,
     });
 
-    expect(data.applicationVariableUserValues).toEqual(
+    expect(data.myApplicationUserVariables).toEqual(
       expect.arrayContaining([
         {
           userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
@@ -214,7 +214,7 @@ describe('Application variable user values should succeed', () => {
   });
 
   it('should leave the values of another application out of the list', async () => {
-    await updateMyApplicationVariable({
+    await updateMyApplicationUserVariable({
       input: {
         applicationUniversalIdentifier: otherApplication.universalIdentifier,
         key: otherApplication.variableKey,
@@ -224,13 +224,13 @@ describe('Application variable user values should succeed', () => {
       expectToFail: false,
     });
 
-    const { data } = await applicationVariableUserValues({
+    const { data } = await myApplicationUserVariables({
       input: {},
       token: applicationToken,
       expectToFail: false,
     });
 
-    const jonyValues = data.applicationVariableUserValues.find(
+    const jonyValues = data.myApplicationUserVariables.find(
       ({ userWorkspaceId }) =>
         userWorkspaceId === USER_WORKSPACE_DATA_SEED_IDS.JONY,
     );
@@ -241,13 +241,13 @@ describe('Application variable user values should succeed', () => {
   });
 
   it('should give a member the default until they set their own', async () => {
-    const { data: defaultData } = await applicationVariableUserValues({
+    const { data: defaultData } = await myApplicationUserVariables({
       input: {},
       token: defaultApplicationToken,
       expectToFail: false,
     });
 
-    expect(defaultData.applicationVariableUserValues).toEqual(
+    expect(defaultData.myApplicationUserVariables).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
@@ -256,7 +256,7 @@ describe('Application variable user values should succeed', () => {
       ]),
     );
 
-    await updateMyApplicationVariable({
+    await updateMyApplicationUserVariable({
       input: {
         applicationUniversalIdentifier: defaultApplication.universalIdentifier,
         key: defaultApplication.variableKey,
@@ -266,13 +266,13 @@ describe('Application variable user values should succeed', () => {
       expectToFail: false,
     });
 
-    const { data } = await applicationVariableUserValues({
+    const { data } = await myApplicationUserVariables({
       input: {},
       token: defaultApplicationToken,
       expectToFail: false,
     });
 
-    expect(data.applicationVariableUserValues).toEqual(
+    expect(data.myApplicationUserVariables).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,

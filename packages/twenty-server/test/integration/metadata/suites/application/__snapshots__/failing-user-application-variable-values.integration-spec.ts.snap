@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Application variable user values should fail should refuse a key the application does not declare 1`] = `
+exports[`User application variable values should fail should refuse a key the application does not declare 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",
@@ -12,7 +12,7 @@ exports[`Application variable user values should fail should refuse a key the ap
 }
 `;
 
-exports[`Application variable user values should fail should refuse an application that is not installed 1`] = `
+exports[`User application variable values should fail should refuse an application that is not installed 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",
@@ -24,7 +24,7 @@ exports[`Application variable user values should fail should refuse an applicati
 }
 `;
 
-exports[`Application variable user values should fail should refuse an application token writing a member value of its own application 1`] = `
+exports[`User application variable values should fail should refuse an application token writing a member value of its own application 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -34,7 +34,7 @@ exports[`Application variable user values should fail should refuse an applicati
 }
 `;
 
-exports[`Application variable user values should fail should refuse to list every member value from a session 1`] = `
+exports[`User application variable values should fail should refuse to list every member value from a session 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
@@ -44,7 +44,7 @@ exports[`Application variable user values should fail should refuse to list ever
 }
 `;
 
-exports[`Application variable user values should fail should refuse to set a member value on a workspace variable 1`] = `
+exports[`User application variable values should fail should refuse to set a member value on a workspace variable 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",

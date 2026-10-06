@@ -2,8 +2,8 @@ import { ObjectType, OmitType } from '@nestjs/graphql';
 
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
 
-@ObjectType('ApplicationVariableUserValue')
-export class ApplicationVariableUserValueDTO extends OmitType(
+@ObjectType('UserApplicationVariableValue')
+export class UserApplicationVariableValueDTO extends OmitType(
   ApplicationVariableEntityDTO,
   ['id', 'scope'] as const,
 ) {}

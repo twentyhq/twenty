@@ -1,21 +1,24 @@
-import {
-  type UpdateMyApplicationVariableFactoryInput,
-  updateMyApplicationVariableQueryFactory,
-} from 'test/integration/metadata/suites/application/utils/update-my-application-variable-query-factory.util';
+import { myApplicationUserVariablesQueryFactory } from 'test/integration/metadata/suites/application/utils/my-application-user-variables-query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-export const updateMyApplicationVariable = async ({
+import { type WorkspaceMemberApplicationVariablesDTO } from 'src/engine/core-modules/application/application-variable/dtos/workspace-member-application-variables.dto';
+
+export const myApplicationUserVariables = async ({
   input,
+  gqlFields,
   expectToFail = false,
   token,
-}: PerformMetadataQueryParams<UpdateMyApplicationVariableFactoryInput>): CommonResponseBody<{
-  updateMyApplicationVariable: boolean;
+}: PerformMetadataQueryParams<Record<string, never>>): CommonResponseBody<{
+  myApplicationUserVariables: WorkspaceMemberApplicationVariablesDTO[];
 }> => {
-  const graphqlOperation = updateMyApplicationVariableQueryFactory({ input });
+  const graphqlOperation = myApplicationUserVariablesQueryFactory({
+    input,
+    gqlFields,
+  });
 
   const response = await makeMetadataApiRequest(graphqlOperation, token);
 
@@ -23,7 +26,7 @@ export const updateMyApplicationVariable = async ({
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage:
-        'Updating my application variable should have failed but did not',
+        'Listing user application variable values should have failed but did not',
     });
   }
 
@@ -31,7 +34,7 @@ export const updateMyApplicationVariable = async ({
     warnIfErrorButNotExpectedToFail({
       response,
       errorMessage:
-        'Updating my application variable has failed but should not',
+        'Listing user application variable values has failed but should not',
     });
   }
 

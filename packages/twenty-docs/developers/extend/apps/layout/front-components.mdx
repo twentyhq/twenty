@@ -138,7 +138,7 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
   it.
 </Note>
 
-A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value. Your component cannot save it: `updateMyApplicationVariable` refuses application tokens, so each member sets their own value through their session, as described in [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables). A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
+A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value. Your component cannot save it: `updateMyApplicationUserVariable` refuses application tokens, so each member sets their own value through their session, as described in [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables). A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
 
 <Note>
   `defineSettingsFrontComponent()` is deprecated in favor of
@@ -567,7 +567,7 @@ Notes:
 - The key must be one your app declares in [`defineApplication()`](/developers/extend/apps/config/application). Writing a key that is not declared is a not found.
 - Secret variables read back masked, never as the stored value. Writing them works normally.
 - Reading a variable's `value`, and writing it, need the `APPLICATIONS` settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.APPLICATIONS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles).
-- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret, and is not set this way. Your component cannot write it: `updateMyApplicationVariable` refuses application tokens and takes the member's own session only. See [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables).
+- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret, and is not set this way. Your component cannot write it: `updateMyApplicationUserVariable` refuses application tokens and takes the member's own session only. See [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables).
 
 ### System variables
 

@@ -8,14 +8,14 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { ApplicationVariableUserValueEntity } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.entity';
 import {
   ApplicationVariableEntityException,
   ApplicationVariableEntityExceptionCode,
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
-import { type ApplicationVariableUserValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable-user-value.dto';
 import { type WorkspaceMemberApplicationVariablesDTO } from 'src/engine/core-modules/application/application-variable/dtos/workspace-member-application-variables.dto';
+import { UserApplicationVariableValueEntity } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.entity';
+import { toUserApplicationVariableValues } from 'src/engine/core-modules/application/application-variable/utils/to-user-application-variable-values.util';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -37,16 +37,11 @@ type GetEnvVariablesArgs = ApplicationVariableTarget & {
   flatApplicationVariableMaps?: FlatApplicationVariableMaps;
 };
 
-type UserValue = Pick<
-  ApplicationVariableUserValueEntity,
-  'applicationVariableId' | 'value'
->;
-
 @Injectable()
-export class ApplicationVariableUserValueService {
+export class UserApplicationVariableValueService {
   constructor(
-    @InjectWorkspaceScopedRepository(ApplicationVariableUserValueEntity)
-    private readonly applicationVariableUserValueRepository: WorkspaceScopedRepository<ApplicationVariableUserValueEntity>,
+    @InjectWorkspaceScopedRepository(UserApplicationVariableValueEntity)
+    private readonly userApplicationVariableValueRepository: WorkspaceScopedRepository<UserApplicationVariableValueEntity>,
     @InjectWorkspaceScopedRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: WorkspaceScopedRepository<UserWorkspaceEntity>,
     private readonly applicationVariableService: ApplicationVariableEntityService,
@@ -54,26 +49,48 @@ export class ApplicationVariableUserValueService {
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  async getServerEnvVariables(
-    args: GetEnvVariablesArgs,
-  ): Promise<Record<string, string>> {
+  async getServerEnvVariables({
+    workspaceId,
+    applicationId,
+    userWorkspaceId,
+    flatApplicationVariableMaps,
+  }: GetEnvVariablesArgs): Promise<Record<string, string>> {
     const userFlatApplicationVariables =
-      await this.findUserFlatApplicationVariables(args);
+      await this.findUserFlatApplicationVariables({
+        workspaceId,
+        applicationId,
+        flatApplicationVariableMaps,
+      });
 
-    return this.toEnvVariables({ ...args, userFlatApplicationVariables });
+    return this.toEnvVariables({
+      workspaceId,
+      userWorkspaceId,
+      userFlatApplicationVariables,
+    });
   }
 
-  async getPublicEnvVariables(
-    args: GetEnvVariablesArgs,
-  ): Promise<Record<string, string>> {
+  async getPublicEnvVariables({
+    workspaceId,
+    applicationId,
+    userWorkspaceId,
+    flatApplicationVariableMaps,
+  }: GetEnvVariablesArgs): Promise<Record<string, string>> {
     const userFlatApplicationVariables = (
-      await this.findUserFlatApplicationVariables(args)
+      await this.findUserFlatApplicationVariables({
+        workspaceId,
+        applicationId,
+        flatApplicationVariableMaps,
+      })
     ).filter(({ isSecret }) => !isSecret);
 
-    return this.toEnvVariables({ ...args, userFlatApplicationVariables });
+    return this.toEnvVariables({
+      workspaceId,
+      userWorkspaceId,
+      userFlatApplicationVariables,
+    });
   }
 
-  async findApplicationVariableUserValues({
+  async findUserApplicationVariableValues({
     workspaceId,
     applicationId,
     requestUserWorkspaceId,
@@ -98,7 +115,7 @@ export class ApplicationVariableUserValueService {
             ? { id: requestUserWorkspaceId }
             : undefined,
         }),
-        this.applicationVariableUserValueRepository.find(workspaceId, {
+        this.userApplicationVariableValueRepository.find(workspaceId, {
           select: {
             userWorkspaceId: true,
             applicationVariableId: true,
@@ -134,18 +151,23 @@ export class ApplicationVariableUserValueService {
         {
           userWorkspaceId,
           workspaceMemberId,
-          variables: this.toApplicationVariableUserValues({
+          variables: toUserApplicationVariableValues({
             userFlatApplicationVariables,
             userValues: userValuesByUserWorkspaceId[userWorkspaceId] ?? [],
-            workspaceId,
             shouldMaskSecret: isDefined(requestUserWorkspaceId),
+            getDisplayValue: ({ value, isSecret }) =>
+              this.applicationVariableService.getDisplayValue({
+                value,
+                workspaceId,
+                isSecret,
+              }),
           }),
         },
       ];
     });
   }
 
-  async updateMyApplicationVariable({
+  async updateMyApplicationUserVariable({
     workspaceId,
     applicationUniversalIdentifier,
     userWorkspaceId,
@@ -170,7 +192,7 @@ export class ApplicationVariableUserValueService {
         key,
       });
 
-    await this.applicationVariableUserValueRepository.upsert(
+    await this.userApplicationVariableValueRepository.upsert(
       workspaceId,
       {
         applicationVariableId: flatApplicationVariable.id,
@@ -205,11 +227,16 @@ export class ApplicationVariableUserValueService {
       : [];
 
     return Object.fromEntries(
-      this.toApplicationVariableUserValues({
+      toUserApplicationVariableValues({
         userFlatApplicationVariables,
         userValues,
-        workspaceId,
         shouldMaskSecret: false,
+        getDisplayValue: ({ value, isSecret }) =>
+          this.applicationVariableService.getDisplayValue({
+            value,
+            workspaceId,
+            isSecret,
+          }),
       }).map(({ key, value }) => [key, value]),
     );
   }
@@ -222,8 +249,13 @@ export class ApplicationVariableUserValueService {
     workspaceId: string;
     userWorkspaceId: string;
     userFlatApplicationVariables: FlatApplicationVariable[];
-  }): Promise<UserValue[]> {
-    return this.applicationVariableUserValueRepository.find(workspaceId, {
+  }): Promise<
+    Pick<
+      UserApplicationVariableValueEntity,
+      'applicationVariableId' | 'value'
+    >[]
+  > {
+    return this.userApplicationVariableValueRepository.find(workspaceId, {
       select: { applicationVariableId: true, value: true },
       where: {
         userWorkspaceId,
@@ -231,50 +263,6 @@ export class ApplicationVariableUserValueService {
           userFlatApplicationVariables.map(({ id }) => id),
         ),
       },
-    });
-  }
-
-  private toApplicationVariableUserValues({
-    userFlatApplicationVariables,
-    userValues,
-    workspaceId,
-    shouldMaskSecret,
-  }: {
-    userFlatApplicationVariables: FlatApplicationVariable[];
-    userValues: UserValue[];
-    workspaceId: string;
-    shouldMaskSecret: boolean;
-  }): ApplicationVariableUserValueDTO[] {
-    const userValueByApplicationVariableId = new Map(
-      userValues.map(({ applicationVariableId, value }) => [
-        applicationVariableId,
-        value,
-      ]),
-    );
-
-    return userFlatApplicationVariables.map((flatApplicationVariable) => {
-      const userValue = userValueByApplicationVariableId.get(
-        flatApplicationVariable.id,
-      );
-
-      return {
-        key: flatApplicationVariable.key,
-        label: flatApplicationVariable.label,
-        description: flatApplicationVariable.description,
-        type: flatApplicationVariable.type,
-        options: flatApplicationVariable.options,
-        isSecret: flatApplicationVariable.isSecret,
-        isRequired: flatApplicationVariable.isRequired,
-        isDeprecated: flatApplicationVariable.isDeprecated,
-        // Secrets have no default, so the fallback never needs masking.
-        value: isDefined(userValue)
-          ? this.applicationVariableService.getDisplayValue({
-              value: userValue,
-              workspaceId,
-              isSecret: flatApplicationVariable.isSecret && shouldMaskSecret,
-            })
-          : (flatApplicationVariable.defaultValue ?? ''),
-      };
     });
   }
 

@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { ApplicationVariableUserValueEntity } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.entity';
-import { ApplicationVariableUserValueService } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.service';
+import { UserApplicationVariableValueEntity } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.entity';
+import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -52,16 +52,16 @@ const FLAT_APPLICATION_VARIABLES = [
   }),
 ];
 
-describe('ApplicationVariableUserValueService', () => {
-  let service: ApplicationVariableUserValueService;
+describe('UserApplicationVariableValueService', () => {
+  let service: UserApplicationVariableValueService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ApplicationVariableUserValueService,
+        UserApplicationVariableValueService,
         {
           provide: getWorkspaceScopedRepositoryToken(
-            ApplicationVariableUserValueEntity,
+            UserApplicationVariableValueEntity,
           ),
           useValue: {
             find: jest.fn().mockResolvedValue([
@@ -100,7 +100,7 @@ describe('ApplicationVariableUserValueService', () => {
       ],
     }).compile();
 
-    service = module.get(ApplicationVariableUserValueService);
+    service = module.get(UserApplicationVariableValueService);
   });
 
   describe('getServerEnvVariables', () => {

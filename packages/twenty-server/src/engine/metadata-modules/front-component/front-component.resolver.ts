@@ -18,7 +18,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
-import { ApplicationVariableUserValueService } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.service';
+import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
@@ -69,7 +69,7 @@ export class FrontComponentResolver {
     @Inject(ApplicationTokenService)
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
-    private readonly applicationVariableUserValueService: ApplicationVariableUserValueService,
+    private readonly userApplicationVariableValueService: UserApplicationVariableValueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -320,7 +320,7 @@ export class FrontComponentResolver {
         workspaceId,
         applicationId,
       }),
-      this.applicationVariableUserValueService.getPublicEnvVariables({
+      this.userApplicationVariableValueService.getPublicEnvVariables({
         workspaceId,
         applicationId,
         userWorkspaceId,

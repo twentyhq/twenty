@@ -17,31 +17,31 @@ import {
   type ApplicationVariableScope,
 } from 'twenty-shared/application';
 
-import { ADD_APPLICATION_VARIABLE_USER_VALUE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-application-variable-user-value-upgrade-command-name.constant';
+import { ADD_USER_APPLICATION_VARIABLE_VALUE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-user-application-variable-value-upgrade-command-name.constant';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
-@Entity({ name: 'applicationVariableUserValue', schema: 'core' })
+@Entity({ name: 'userApplicationVariableValue', schema: 'core' })
 @WasIntroducedInUpgrade({
-  upgradeCommandName: ADD_APPLICATION_VARIABLE_USER_VALUE_UPGRADE_COMMAND_NAME,
+  upgradeCommandName: ADD_USER_APPLICATION_VARIABLE_VALUE_UPGRADE_COMMAND_NAME,
 })
-@Unique('IDX_APPLICATION_VARIABLE_USER_VALUE_VARIABLE_USER_UNIQUE', [
+@Unique('IDX_USER_APPLICATION_VARIABLE_VALUE_VARIABLE_USER_UNIQUE', [
   'applicationVariableId',
   'userWorkspaceId',
 ])
-@Index('IDX_APPLICATION_VARIABLE_USER_VALUE_WORKSPACE_ID', ['workspaceId'])
-@Index('IDX_APPLICATION_VARIABLE_USER_VALUE_USER_WORKSPACE_ID', [
+@Index('IDX_USER_APPLICATION_VARIABLE_VALUE_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_USER_APPLICATION_VARIABLE_VALUE_USER_WORKSPACE_ID', [
   'userWorkspaceId',
 ])
 @Check(
-  'CHK_applicationVariableUserValue_value_encrypted',
+  'CHK_userApplicationVariableValue_value_encrypted',
   `"value" LIKE 'enc:v2:%'`,
 )
-@Check('CHK_applicationVariableUserValue_scope_user', `"scope" = 'USER'`)
-export class ApplicationVariableUserValueEntity extends WorkspaceRelatedEntity {
+@Check('CHK_userApplicationVariableValue_scope_user', `"scope" = 'USER'`)
+export class UserApplicationVariableValueEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
