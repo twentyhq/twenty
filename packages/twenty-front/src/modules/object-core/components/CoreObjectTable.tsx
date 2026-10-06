@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
   CoreObjectTableBody,
@@ -67,10 +66,7 @@ export const CoreObjectTable = <TItem,>({
 
   return (
     <Table>
-      <CoreObjectTableHeaderRow
-        gridTemplateColumns={gridTemplateColumns}
-        hoverBackgroundColor={themeCssVariables.background.secondary}
-      >
+      <CoreObjectTableHeaderRow gridTemplateColumns={gridTemplateColumns}>
         {isSelectable && (
           <TableHeader align="center" padding="0">
             <CoreObjectTableCheckboxCell

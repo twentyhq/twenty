@@ -10,8 +10,12 @@ const StyledCoreObjectTableBody = styled(TableBody)`
 `;
 
 const StyledCoreObjectTableHeaderRow = styled(TableRow)`
-  background-color: ${themeCssVariables.background.secondary};
   border-radius: 0;
+
+  &,
+  &:hover {
+    background-color: ${themeCssVariables.background.secondary};
+  }
 
   > [data-table-header] {
     color: ${themeCssVariables.font.color.secondary};
