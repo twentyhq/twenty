@@ -112,8 +112,8 @@ export default {
         442,
         446,
         457,
-        577,
-        584,
+        523,
+        541,
         612
     ],
     "types": {
@@ -7906,37 +7906,38 @@ export default {
                     ]
                 }
             ],
-            "apiKeys": [
-                2
+            "getToolIndex": [
+                369
             ],
-            "getApiKeyRoles": [
-                52
-            ],
-            "apiKey": [
-                2,
+            "getToolInputSchema": [
+                9,
                 {
-                    "input": [
-                        435,
-                        "GetApiKeyInput!"
-                    ]
-                }
-            ],
-            "getViewFilterGroups": [
-                59,
-                {
-                    "viewId": [
-                        1
-                    ]
-                }
-            ],
-            "getViewFilterGroup": [
-                59,
-                {
-                    "id": [
+                    "toolName": [
                         1,
                         "String!"
                     ]
                 }
+            ],
+            "previewMessageCampaignAudience": [
+                350,
+                {
+                    "input": [
+                        435,
+                        "PreviewMessageCampaignAudienceInput!"
+                    ]
+                }
+            ],
+            "messageSuppressions": [
+                358,
+                {
+                    "input": [
+                        436,
+                        "FindMessageSuppressionsInput!"
+                    ]
+                }
+            ],
+            "unsubscribeTopics": [
+                359
             ],
             "billingPortalSession": [
                 162,
@@ -7955,6 +7956,34 @@ export default {
             "getResourceCreditUsage": [
                 159
             ],
+            "myMessageChannels": [
+                339,
+                {
+                    "connectedAccountId": [
+                        3
+                    ]
+                }
+            ],
+            "appMessageChannels": [
+                339,
+                {
+                    "filter": [
+                        437
+                    ]
+                }
+            ],
+            "getEmailingDomains": [
+                335
+            ],
+            "applicationConnectionProviders": [
+                154,
+                {
+                    "applicationId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "myConnectedAccounts": [
                 211
             ],
@@ -7966,24 +7995,6 @@ export default {
                         "UUID!"
                     ]
                 }
-            ],
-            "applicationConnectionProviders": [
-                154,
-                {
-                    "applicationId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "getInviteSuggestions": [
-                203
-            ],
-            "findWorkspaceInvitations": [
-                206
-            ],
-            "getApprovedAccessDomains": [
-                202
             ],
             "getRoles": [
                 52
@@ -7997,168 +8008,30 @@ export default {
                     ]
                 }
             ],
-            "currentWorkspace": [
-                73
+            "apiKeys": [
+                2
             ],
-            "getPublicWorkspaceDataByDomain": [
-                225,
+            "getApiKeyRoles": [
+                52
+            ],
+            "apiKey": [
+                2,
                 {
-                    "origin": [
-                        1
+                    "input": [
+                        438,
+                        "GetApiKeyInput!"
                     ]
                 }
             ],
-            "getPublicWorkspaceDataById": [
-                226,
+            "webhooks": [
+                368
+            ],
+            "webhook": [
+                368,
                 {
                     "id": [
                         3,
                         "UUID!"
-                    ]
-                }
-            ],
-            "findApplicationRegistrationByClientId": [
-                245,
-                {
-                    "clientId": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findApplicationRegistrationByUniversalIdentifier": [
-                80,
-                {
-                    "universalIdentifier": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findManyApplicationRegistrations": [
-                80
-            ],
-            "findOneApplicationRegistration": [
-                80,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findApplicationRegistrationStats": [
-                218,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findApplicationRegistrationVariables": [
-                216,
-                {
-                    "applicationRegistrationId": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "applicationRegistrationTarballUrl": [
-                1,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findClaimableApplicationRegistration": [
-                243,
-                {
-                    "sourcePackage": [
-                        1
-                    ],
-                    "universalIdentifier": [
-                        1
-                    ]
-                }
-            ],
-            "githubClaimAuthorizationUrl": [
-                1,
-                {
-                    "applicationRegistrationId": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findManyApplications": [
-                53
-            ],
-            "findOneApplication": [
-                53,
-                {
-                    "id": [
-                        3
-                    ],
-                    "universalIdentifier": [
-                        3
-                    ]
-                }
-            ],
-            "findInstallApplicationJobStatus": [
-                193,
-                {
-                    "universalIdentifier": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findUninstallApplicationJobStatus": [
-                193,
-                {
-                    "universalIdentifier": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "findManyMarketplaceApps": [
-                261,
-                {
-                    "universalIdentifiers": [
-                        1,
-                        "[String!]"
-                    ]
-                }
-            ],
-            "findMarketplaceAppDetail": [
-                265,
-                {
-                    "universalIdentifier": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "publicMarketplaceApps": [
-                261,
-                {
-                    "isVetted": [
-                        8,
-                        "Boolean!"
-                    ]
-                }
-            ],
-            "publicMarketplaceAppDetail": [
-                265,
-                {
-                    "universalIdentifier": [
-                        1,
-                        "String!"
                     ]
                 }
             ],
@@ -8201,69 +8074,31 @@ export default {
                     ]
                 }
             ],
-            "previewMessageCampaignAudience": [
-                350,
+            "getViewFilterGroups": [
+                59,
                 {
-                    "input": [
-                        436,
-                        "PreviewMessageCampaignAudienceInput!"
+                    "viewId": [
+                        1
                     ]
                 }
             ],
-            "messageSuppressions": [
-                358,
+            "getViewFilterGroup": [
+                59,
                 {
-                    "input": [
-                        437,
-                        "FindMessageSuppressionsInput!"
-                    ]
-                }
-            ],
-            "unsubscribeTopics": [
-                359
-            ],
-            "myMessageChannels": [
-                339,
-                {
-                    "connectedAccountId": [
-                        3
-                    ]
-                }
-            ],
-            "appMessageChannels": [
-                339,
-                {
-                    "filter": [
-                        438
-                    ]
-                }
-            ],
-            "getEmailingDomains": [
-                335
-            ],
-            "getToolIndex": [
-                369
-            ],
-            "getToolInputSchema": [
-                9,
-                {
-                    "toolName": [
+                    "id": [
                         1,
                         "String!"
                     ]
                 }
             ],
-            "webhooks": [
-                368
+            "getInviteSuggestions": [
+                203
             ],
-            "webhook": [
-                368,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
+            "findWorkspaceInvitations": [
+                206
+            ],
+            "getApprovedAccessDomains": [
+                202
             ],
             "myMessageFolders": [
                 414,
@@ -8458,8 +8293,173 @@ export default {
                     ]
                 }
             ],
+            "findApplicationRegistrationByClientId": [
+                245,
+                {
+                    "clientId": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "findApplicationRegistrationByUniversalIdentifier": [
+                80,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "findManyApplicationRegistrations": [
+                80
+            ],
+            "findOneApplicationRegistration": [
+                80,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "findApplicationRegistrationStats": [
+                218,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "findApplicationRegistrationVariables": [
+                216,
+                {
+                    "applicationRegistrationId": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "applicationRegistrationTarballUrl": [
+                1,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "findClaimableApplicationRegistration": [
+                243,
+                {
+                    "sourcePackage": [
+                        1
+                    ],
+                    "universalIdentifier": [
+                        1
+                    ]
+                }
+            ],
+            "githubClaimAuthorizationUrl": [
+                1,
+                {
+                    "applicationRegistrationId": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "currentUser": [
                 77
+            ],
+            "currentWorkspace": [
+                73
+            ],
+            "getPublicWorkspaceDataByDomain": [
+                225,
+                {
+                    "origin": [
+                        1
+                    ]
+                }
+            ],
+            "getPublicWorkspaceDataById": [
+                226,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "findManyApplications": [
+                53
+            ],
+            "findOneApplication": [
+                53,
+                {
+                    "id": [
+                        3
+                    ],
+                    "universalIdentifier": [
+                        3
+                    ]
+                }
+            ],
+            "findInstallApplicationJobStatus": [
+                193,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "findUninstallApplicationJobStatus": [
+                193,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "findManyMarketplaceApps": [
+                261,
+                {
+                    "universalIdentifiers": [
+                        1,
+                        "[String!]"
+                    ]
+                }
+            ],
+            "findMarketplaceAppDetail": [
+                265,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "publicMarketplaceApps": [
+                261,
+                {
+                    "isVetted": [
+                        8,
+                        "Boolean!"
+                    ]
+                }
+            ],
+            "publicMarketplaceAppDetail": [
+                265,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
             ],
             "getSSOIdentityProviders": [
                 252
@@ -8683,14 +8683,6 @@ export default {
                 1
             ]
         },
-        "GetApiKeyInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "PreviewMessageCampaignAudienceInput": {
             "listId": [
                 1
@@ -8724,6 +8716,14 @@ export default {
         },
         "ListAppMessageChannelsInput": {
             "connectedAccountId": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "GetApiKeyInput": {
+            "id": [
                 3
             ],
             "__typename": [
@@ -9667,78 +9667,88 @@ export default {
                     ]
                 }
             ],
-            "createApiKey": [
-                2,
+            "runAgent": [
+                372,
                 {
                     "input": [
                         521,
-                        "CreateApiKeyInput!"
+                        "RunAgentInput!"
                     ]
                 }
             ],
-            "updateApiKey": [
-                2,
+            "sendMessageCampaign": [
+                353,
                 {
                     "input": [
-                        522,
-                        "UpdateApiKeyInput!"
+                        526,
+                        "SendMessageCampaignInput!"
                     ]
                 }
             ],
-            "revokeApiKey": [
-                2,
+            "cancelMessageCampaign": [
+                351,
                 {
                     "input": [
-                        523,
-                        "RevokeApiKeyInput!"
+                        527,
+                        "CancelMessageCampaignInput!"
                     ]
                 }
             ],
-            "assignRoleToApiKey": [
-                8,
-                {
-                    "apiKeyId": [
-                        3,
-                        "UUID!"
-                    ],
-                    "roleId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createViewFilterGroup": [
-                59,
+            "sendMessageCampaignTest": [
+                352,
                 {
                     "input": [
-                        524,
-                        "CreateViewFilterGroupInput!"
+                        528,
+                        "SendMessageCampaignTestInput!"
                     ]
                 }
             ],
-            "updateViewFilterGroup": [
-                59,
+            "duplicateMessageList": [
+                354,
                 {
                     "id": [
-                        1,
-                        "String!"
-                    ],
-                    "input": [
-                        525,
-                        "UpdateViewFilterGroupInput!"
+                        3,
+                        "UUID!"
                     ]
                 }
             ],
-            "deleteViewFilterGroup": [
+            "createMessageSuppression": [
+                355,
+                {
+                    "input": [
+                        529,
+                        "CreateMessageSuppressionInput!"
+                    ]
+                }
+            ],
+            "deleteMessageSuppression": [
                 8,
                 {
                     "id": [
-                        1,
-                        "String!"
+                        3,
+                        "UUID!"
                     ]
                 }
             ],
-            "destroyViewFilterGroup": [
+            "createUnsubscribeTopic": [
+                359,
+                {
+                    "input": [
+                        530,
+                        "CreateUnsubscribeTopicInput!"
+                    ]
+                }
+            ],
+            "updateUnsubscribeTopic": [
+                359,
+                {
+                    "input": [
+                        531,
+                        "UpdateUnsubscribeTopicInput!"
+                    ]
+                }
+            ],
+            "deleteUnsubscribeTopic": [
                 8,
                 {
                     "id": [
@@ -9821,6 +9831,105 @@ export default {
             "cancelSwitchResourceCreditPrice": [
                 163
             ],
+            "updateMessageChannel": [
+                339,
+                {
+                    "input": [
+                        532,
+                        "UpdateMessageChannelInput!"
+                    ]
+                }
+            ],
+            "createEmailGroupChannel": [
+                349,
+                {
+                    "input": [
+                        534,
+                        "CreateEmailGroupChannelInput!"
+                    ]
+                }
+            ],
+            "updateEmailGroupChannel": [
+                339,
+                {
+                    "input": [
+                        535,
+                        "UpdateEmailGroupChannelInput!"
+                    ]
+                }
+            ],
+            "deleteEmailGroupChannel": [
+                339,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "createAppMessageChannel": [
+                339,
+                {
+                    "input": [
+                        536,
+                        "CreateAppMessageChannelInput!"
+                    ]
+                }
+            ],
+            "updateAppMessageChannel": [
+                339,
+                {
+                    "input": [
+                        537,
+                        "UpdateAppMessageChannelInput!"
+                    ]
+                }
+            ],
+            "deleteAppMessageChannel": [
+                339,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "ingestAppMessages": [
+                348,
+                {
+                    "input": [
+                        538,
+                        "IngestAppMessagesInput!"
+                    ]
+                }
+            ],
+            "createEmailingDomain": [
+                335,
+                {
+                    "input": [
+                        542,
+                        "CreateEmailingDomainInput!"
+                    ]
+                }
+            ],
+            "deleteEmailingDomain": [
+                8,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "verifyEmailingDomain": [
+                335,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "deleteConnectedAccount": [
                 211,
                 {
@@ -9836,6 +9945,292 @@ export default {
                     "id": [
                         3,
                         "UUID!"
+                    ]
+                }
+            ],
+            "updateWorkspaceMemberRole": [
+                39,
+                {
+                    "workspaceMemberId": [
+                        3,
+                        "UUID!"
+                    ],
+                    "roleId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "createOneRole": [
+                52,
+                {
+                    "createRoleInput": [
+                        543,
+                        "CreateRoleInput!"
+                    ]
+                }
+            ],
+            "updateOneRole": [
+                52,
+                {
+                    "updateRoleInput": [
+                        544,
+                        "UpdateRoleInput!"
+                    ]
+                }
+            ],
+            "deleteOneRole": [
+                1,
+                {
+                    "roleId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "upsertObjectPermissions": [
+                49,
+                {
+                    "upsertObjectPermissionsInput": [
+                        546,
+                        "UpsertObjectPermissionsInput!"
+                    ]
+                }
+            ],
+            "upsertPermissionFlags": [
+                50,
+                {
+                    "upsertPermissionFlagsInput": [
+                        548,
+                        "UpsertPermissionFlagsInput!"
+                    ]
+                }
+            ],
+            "upsertFieldPermissions": [
+                44,
+                {
+                    "upsertFieldPermissionsInput": [
+                        549,
+                        "UpsertFieldPermissionsInput!"
+                    ]
+                }
+            ],
+            "upsertRowLevelPermissionPredicates": [
+                293,
+                {
+                    "input": [
+                        551,
+                        "UpsertRowLevelPermissionPredicatesInput!"
+                    ]
+                }
+            ],
+            "assignRoleToAgent": [
+                8,
+                {
+                    "agentId": [
+                        3,
+                        "UUID!"
+                    ],
+                    "roleId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "removeRoleFromAgent": [
+                8,
+                {
+                    "agentId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "createApiKey": [
+                2,
+                {
+                    "input": [
+                        554,
+                        "CreateApiKeyInput!"
+                    ]
+                }
+            ],
+            "updateApiKey": [
+                2,
+                {
+                    "input": [
+                        555,
+                        "UpdateApiKeyInput!"
+                    ]
+                }
+            ],
+            "revokeApiKey": [
+                2,
+                {
+                    "input": [
+                        556,
+                        "RevokeApiKeyInput!"
+                    ]
+                }
+            ],
+            "assignRoleToApiKey": [
+                8,
+                {
+                    "apiKeyId": [
+                        3,
+                        "UUID!"
+                    ],
+                    "roleId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "createWebhook": [
+                368,
+                {
+                    "input": [
+                        557,
+                        "CreateWebhookInput!"
+                    ]
+                }
+            ],
+            "updateWebhook": [
+                368,
+                {
+                    "input": [
+                        558,
+                        "UpdateWebhookInput!"
+                    ]
+                }
+            ],
+            "deleteWebhook": [
+                368,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "createOneField": [
+                272,
+                {
+                    "input": [
+                        560,
+                        "CreateOneFieldMetadataInput!"
+                    ]
+                }
+            ],
+            "updateOneField": [
+                272,
+                {
+                    "input": [
+                        562,
+                        "UpdateOneFieldMetadataInput!"
+                    ]
+                }
+            ],
+            "deleteOneField": [
+                272,
+                {
+                    "input": [
+                        564,
+                        "DeleteOneFieldInput!"
+                    ]
+                }
+            ],
+            "createViewGroup": [
+                63,
+                {
+                    "input": [
+                        565,
+                        "CreateViewGroupInput!"
+                    ]
+                }
+            ],
+            "createManyViewGroups": [
+                63,
+                {
+                    "inputs": [
+                        565,
+                        "[CreateViewGroupInput!]!"
+                    ]
+                }
+            ],
+            "updateViewGroup": [
+                63,
+                {
+                    "input": [
+                        566,
+                        "UpdateViewGroupInput!"
+                    ]
+                }
+            ],
+            "updateManyViewGroups": [
+                63,
+                {
+                    "inputs": [
+                        566,
+                        "[UpdateViewGroupInput!]!"
+                    ]
+                }
+            ],
+            "deleteViewGroup": [
+                63,
+                {
+                    "input": [
+                        568,
+                        "DeleteViewGroupInput!"
+                    ]
+                }
+            ],
+            "destroyViewGroup": [
+                63,
+                {
+                    "input": [
+                        569,
+                        "DestroyViewGroupInput!"
+                    ]
+                }
+            ],
+            "createViewFilterGroup": [
+                59,
+                {
+                    "input": [
+                        570,
+                        "CreateViewFilterGroupInput!"
+                    ]
+                }
+            ],
+            "updateViewFilterGroup": [
+                59,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ],
+                    "input": [
+                        571,
+                        "UpdateViewFilterGroupInput!"
+                    ]
+                }
+            ],
+            "deleteViewFilterGroup": [
+                8,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "destroyViewFilterGroup": [
+                8,
+                {
+                    "id": [
+                        1,
+                        "String!"
                     ]
                 }
             ],
@@ -9911,7 +10306,7 @@ export default {
                 202,
                 {
                     "input": [
-                        526,
+                        572,
                         "CreateApprovedAccessDomainInput!"
                     ]
                 }
@@ -9920,7 +10315,7 @@ export default {
                 8,
                 {
                     "input": [
-                        527,
+                        573,
                         "DeleteApprovedAccessDomainInput!"
                     ]
                 }
@@ -9929,625 +10324,8 @@ export default {
                 202,
                 {
                     "input": [
-                        528,
-                        "ValidateApprovedAccessDomainInput!"
-                    ]
-                }
-            ],
-            "updateWorkspaceMemberRole": [
-                39,
-                {
-                    "workspaceMemberId": [
-                        3,
-                        "UUID!"
-                    ],
-                    "roleId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createOneRole": [
-                52,
-                {
-                    "createRoleInput": [
-                        529,
-                        "CreateRoleInput!"
-                    ]
-                }
-            ],
-            "updateOneRole": [
-                52,
-                {
-                    "updateRoleInput": [
-                        530,
-                        "UpdateRoleInput!"
-                    ]
-                }
-            ],
-            "deleteOneRole": [
-                1,
-                {
-                    "roleId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "upsertObjectPermissions": [
-                49,
-                {
-                    "upsertObjectPermissionsInput": [
-                        532,
-                        "UpsertObjectPermissionsInput!"
-                    ]
-                }
-            ],
-            "upsertPermissionFlags": [
-                50,
-                {
-                    "upsertPermissionFlagsInput": [
-                        534,
-                        "UpsertPermissionFlagsInput!"
-                    ]
-                }
-            ],
-            "upsertFieldPermissions": [
-                44,
-                {
-                    "upsertFieldPermissionsInput": [
-                        535,
-                        "UpsertFieldPermissionsInput!"
-                    ]
-                }
-            ],
-            "upsertRowLevelPermissionPredicates": [
-                293,
-                {
-                    "input": [
-                        537,
-                        "UpsertRowLevelPermissionPredicatesInput!"
-                    ]
-                }
-            ],
-            "assignRoleToAgent": [
-                8,
-                {
-                    "agentId": [
-                        3,
-                        "UUID!"
-                    ],
-                    "roleId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "removeRoleFromAgent": [
-                8,
-                {
-                    "agentId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "activateWorkspace": [
-                73,
-                {
-                    "data": [
-                        540,
-                        "ActivateWorkspaceInput!"
-                    ]
-                }
-            ],
-            "updateWorkspace": [
-                73,
-                {
-                    "data": [
-                        541,
-                        "UpdateWorkspaceInput!"
-                    ]
-                }
-            ],
-            "updateWorkspaceAllowedIframeOrigins": [
-                73,
-                {
-                    "data": [
-                        542,
-                        "UpdateWorkspaceAllowedIframeOriginsInput!"
-                    ]
-                }
-            ],
-            "deleteCurrentWorkspace": [
-                73
-            ],
-            "checkCustomDomainValidRecords": [
-                292
-            ],
-            "enrichWorkspaceCompany": [
-                269
-            ],
-            "upgradeApplication": [
-                8,
-                {
-                    "appRegistrationId": [
-                        1,
-                        "String!"
-                    ],
-                    "targetVersion": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "createApplicationRegistration": [
-                244,
-                {
-                    "input": [
-                        543,
-                        "CreateApplicationRegistrationInput!"
-                    ]
-                }
-            ],
-            "updateApplicationRegistration": [
-                80,
-                {
-                    "input": [
-                        544,
-                        "UpdateApplicationRegistrationInput!"
-                    ]
-                }
-            ],
-            "deleteApplicationRegistration": [
-                8,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "rotateApplicationRegistrationClientSecret": [
-                246,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "updateApplicationRegistrationVariable": [
-                216,
-                {
-                    "input": [
-                        546,
-                        "UpdateApplicationRegistrationVariableInput!"
-                    ]
-                }
-            ],
-            "completeAppTarballUpload": [
-                80,
-                {
-                    "fileId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "uploadAppTarball": [
-                80,
-                {
-                    "file": [
-                        457,
-                        "Upload!"
-                    ],
-                    "universalIdentifier": [
-                        1
-                    ]
-                }
-            ],
-            "claimApplicationRegistrationOwnership": [
-                80,
-                {
-                    "applicationRegistrationId": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "transferApplicationRegistrationOwnership": [
-                80,
-                {
-                    "applicationRegistrationId": [
-                        1,
-                        "String!"
-                    ],
-                    "targetWorkspaceSubdomain": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "grantApplicationCapabilities": [
-                268,
-                {
-                    "input": [
-                        548,
-                        "GrantApplicationCapabilitiesInput!"
-                    ]
-                }
-            ],
-            "installMarketplaceApp": [
-                8,
-                {
-                    "universalIdentifier": [
-                        1,
-                        "String!"
-                    ],
-                    "version": [
-                        1
-                    ]
-                }
-            ],
-            "installApplication": [
-                53,
-                {
-                    "universalIdentifier": [
-                        1,
-                        "String!"
-                    ],
-                    "version": [
-                        1
-                    ]
-                }
-            ],
-            "triggerInstallApplicationJob": [
-                266,
-                {
-                    "input": [
-                        549,
-                        "TriggerInstallApplicationJobInput!"
-                    ]
-                }
-            ],
-            "triggerUninstallApplicationJob": [
-                267,
-                {
-                    "input": [
-                        550,
-                        "TriggerUninstallApplicationJobInput!"
-                    ]
-                }
-            ],
-            "updateApplication": [
-                53,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ],
-                    "input": [
-                        551,
-                        "UpdateApplicationInput!"
-                    ]
-                }
-            ],
-            "uninstallApplication": [
-                8,
-                {
-                    "universalIdentifier": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "syncMarketplaceCatalog": [
-                8
-            ],
-            "runApplicationHealthCheck": [
-                259,
-                {
-                    "applicationId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createOneField": [
-                272,
-                {
-                    "input": [
-                        552,
-                        "CreateOneFieldMetadataInput!"
-                    ]
-                }
-            ],
-            "updateOneField": [
-                272,
-                {
-                    "input": [
-                        554,
-                        "UpdateOneFieldMetadataInput!"
-                    ]
-                }
-            ],
-            "deleteOneField": [
-                272,
-                {
-                    "input": [
-                        556,
-                        "DeleteOneFieldInput!"
-                    ]
-                }
-            ],
-            "createViewGroup": [
-                63,
-                {
-                    "input": [
-                        557,
-                        "CreateViewGroupInput!"
-                    ]
-                }
-            ],
-            "createManyViewGroups": [
-                63,
-                {
-                    "inputs": [
-                        557,
-                        "[CreateViewGroupInput!]!"
-                    ]
-                }
-            ],
-            "updateViewGroup": [
-                63,
-                {
-                    "input": [
-                        558,
-                        "UpdateViewGroupInput!"
-                    ]
-                }
-            ],
-            "updateManyViewGroups": [
-                63,
-                {
-                    "inputs": [
-                        558,
-                        "[UpdateViewGroupInput!]!"
-                    ]
-                }
-            ],
-            "deleteViewGroup": [
-                63,
-                {
-                    "input": [
-                        560,
-                        "DeleteViewGroupInput!"
-                    ]
-                }
-            ],
-            "destroyViewGroup": [
-                63,
-                {
-                    "input": [
-                        561,
-                        "DestroyViewGroupInput!"
-                    ]
-                }
-            ],
-            "sendMessageCampaign": [
-                353,
-                {
-                    "input": [
-                        562,
-                        "SendMessageCampaignInput!"
-                    ]
-                }
-            ],
-            "cancelMessageCampaign": [
-                351,
-                {
-                    "input": [
-                        563,
-                        "CancelMessageCampaignInput!"
-                    ]
-                }
-            ],
-            "sendMessageCampaignTest": [
-                352,
-                {
-                    "input": [
-                        564,
-                        "SendMessageCampaignTestInput!"
-                    ]
-                }
-            ],
-            "duplicateMessageList": [
-                354,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createMessageSuppression": [
-                355,
-                {
-                    "input": [
-                        565,
-                        "CreateMessageSuppressionInput!"
-                    ]
-                }
-            ],
-            "deleteMessageSuppression": [
-                8,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createUnsubscribeTopic": [
-                359,
-                {
-                    "input": [
-                        566,
-                        "CreateUnsubscribeTopicInput!"
-                    ]
-                }
-            ],
-            "updateUnsubscribeTopic": [
-                359,
-                {
-                    "input": [
-                        567,
-                        "UpdateUnsubscribeTopicInput!"
-                    ]
-                }
-            ],
-            "deleteUnsubscribeTopic": [
-                8,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "updateMessageChannel": [
-                339,
-                {
-                    "input": [
-                        568,
-                        "UpdateMessageChannelInput!"
-                    ]
-                }
-            ],
-            "createEmailGroupChannel": [
-                349,
-                {
-                    "input": [
-                        570,
-                        "CreateEmailGroupChannelInput!"
-                    ]
-                }
-            ],
-            "updateEmailGroupChannel": [
-                339,
-                {
-                    "input": [
-                        571,
-                        "UpdateEmailGroupChannelInput!"
-                    ]
-                }
-            ],
-            "deleteEmailGroupChannel": [
-                339,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createAppMessageChannel": [
-                339,
-                {
-                    "input": [
-                        572,
-                        "CreateAppMessageChannelInput!"
-                    ]
-                }
-            ],
-            "updateAppMessageChannel": [
-                339,
-                {
-                    "input": [
-                        573,
-                        "UpdateAppMessageChannelInput!"
-                    ]
-                }
-            ],
-            "deleteAppMessageChannel": [
-                339,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "ingestAppMessages": [
-                348,
-                {
-                    "input": [
                         574,
-                        "IngestAppMessagesInput!"
-                    ]
-                }
-            ],
-            "createEmailingDomain": [
-                335,
-                {
-                    "input": [
-                        578,
-                        "CreateEmailingDomainInput!"
-                    ]
-                }
-            ],
-            "deleteEmailingDomain": [
-                8,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "verifyEmailingDomain": [
-                335,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "createWebhook": [
-                368,
-                {
-                    "input": [
-                        579,
-                        "CreateWebhookInput!"
-                    ]
-                }
-            ],
-            "updateWebhook": [
-                368,
-                {
-                    "input": [
-                        580,
-                        "UpdateWebhookInput!"
-                    ]
-                }
-            ],
-            "deleteWebhook": [
-                368,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "runAgent": [
-                372,
-                {
-                    "input": [
-                        582,
-                        "RunAgentInput!"
+                        "ValidateApprovedAccessDomainInput!"
                     ]
                 }
             ],
@@ -10555,7 +10333,7 @@ export default {
                 414,
                 {
                     "input": [
-                        587,
+                        575,
                         "UpdateMessageFolderInput!"
                     ]
                 }
@@ -10564,7 +10342,7 @@ export default {
                 414,
                 {
                     "input": [
-                        589,
+                        577,
                         "UpdateMessageFoldersInput!"
                     ]
                 }
@@ -10573,7 +10351,7 @@ export default {
                 409,
                 {
                     "input": [
-                        590,
+                        578,
                         "UpdateCalendarChannelInput!"
                     ]
                 }
@@ -10582,7 +10360,7 @@ export default {
                 407,
                 {
                     "input": [
-                        592,
+                        580,
                         "SetAppKeyValueInput!"
                     ]
                 }
@@ -10603,7 +10381,7 @@ export default {
                 405,
                 {
                     "input": [
-                        593,
+                        581,
                         "EnqueueJobInput!"
                     ]
                 }
@@ -10612,7 +10390,7 @@ export default {
                 406,
                 {
                     "input": [
-                        594,
+                        582,
                         "EnqueueJobsInput!"
                     ]
                 }
@@ -10621,7 +10399,7 @@ export default {
                 8,
                 {
                     "input": [
-                        596,
+                        584,
                         "ReportAppConnectionAuthFailureInput!"
                     ]
                 }
@@ -10651,7 +10429,7 @@ export default {
                         1
                     ],
                     "fileAttachments": [
-                        597,
+                        585,
                         "[FileAttachmentInput!]"
                     ]
                 }
@@ -10763,7 +10541,7 @@ export default {
                 393,
                 {
                     "input": [
-                        598,
+                        586,
                         "SendInboxMessageInput!"
                     ]
                 }
@@ -10772,7 +10550,7 @@ export default {
                 384,
                 {
                     "input": [
-                        599,
+                        587,
                         "CreateSkillInput!"
                     ]
                 }
@@ -10781,7 +10559,7 @@ export default {
                 384,
                 {
                     "input": [
-                        600,
+                        588,
                         "UpdateSkillInput!"
                     ]
                 }
@@ -10817,7 +10595,7 @@ export default {
                 421,
                 {
                     "input": [
-                        601,
+                        589,
                         "CreateValidationRuleInput!"
                     ]
                 }
@@ -10826,7 +10604,7 @@ export default {
                 421,
                 {
                     "input": [
-                        602,
+                        590,
                         "UpdateValidationRuleInput!"
                     ]
                 }
@@ -10844,7 +10622,7 @@ export default {
                 420,
                 {
                     "input": [
-                        604,
+                        592,
                         "UpdateTimelineActivityTypeInput!"
                     ]
                 }
@@ -10862,7 +10640,7 @@ export default {
                 302,
                 {
                     "input": [
-                        605,
+                        593,
                         "GetAuthorizationUrlForSSOInput!"
                     ]
                 }
@@ -11028,7 +10806,7 @@ export default {
                 305,
                 {
                     "input": [
-                        606
+                        594
                     ]
                 }
             ],
@@ -11186,6 +10964,94 @@ export default {
                     ]
                 }
             ],
+            "createApplicationRegistration": [
+                244,
+                {
+                    "input": [
+                        595,
+                        "CreateApplicationRegistrationInput!"
+                    ]
+                }
+            ],
+            "updateApplicationRegistration": [
+                80,
+                {
+                    "input": [
+                        596,
+                        "UpdateApplicationRegistrationInput!"
+                    ]
+                }
+            ],
+            "deleteApplicationRegistration": [
+                8,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "rotateApplicationRegistrationClientSecret": [
+                246,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "updateApplicationRegistrationVariable": [
+                216,
+                {
+                    "input": [
+                        598,
+                        "UpdateApplicationRegistrationVariableInput!"
+                    ]
+                }
+            ],
+            "completeAppTarballUpload": [
+                80,
+                {
+                    "fileId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "uploadAppTarball": [
+                80,
+                {
+                    "file": [
+                        457,
+                        "Upload!"
+                    ],
+                    "universalIdentifier": [
+                        1
+                    ]
+                }
+            ],
+            "claimApplicationRegistrationOwnership": [
+                80,
+                {
+                    "applicationRegistrationId": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "transferApplicationRegistrationOwnership": [
+                80,
+                {
+                    "applicationRegistrationId": [
+                        1,
+                        "String!"
+                    ],
+                    "targetWorkspaceSubdomain": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "initiateOTPProvisioning": [
                 296,
                 {
@@ -11236,7 +11102,7 @@ export default {
                 8,
                 {
                     "input": [
-                        607,
+                        600,
                         "UpdateWorkspaceMemberSettingsInput!"
                     ]
                 }
@@ -11263,6 +11129,140 @@ export default {
                     "origin": [
                         1,
                         "String!"
+                    ]
+                }
+            ],
+            "activateWorkspace": [
+                73,
+                {
+                    "data": [
+                        601,
+                        "ActivateWorkspaceInput!"
+                    ]
+                }
+            ],
+            "updateWorkspace": [
+                73,
+                {
+                    "data": [
+                        602,
+                        "UpdateWorkspaceInput!"
+                    ]
+                }
+            ],
+            "updateWorkspaceAllowedIframeOrigins": [
+                73,
+                {
+                    "data": [
+                        603,
+                        "UpdateWorkspaceAllowedIframeOriginsInput!"
+                    ]
+                }
+            ],
+            "deleteCurrentWorkspace": [
+                73
+            ],
+            "checkCustomDomainValidRecords": [
+                292
+            ],
+            "enrichWorkspaceCompany": [
+                269
+            ],
+            "upgradeApplication": [
+                8,
+                {
+                    "appRegistrationId": [
+                        1,
+                        "String!"
+                    ],
+                    "targetVersion": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "grantApplicationCapabilities": [
+                268,
+                {
+                    "input": [
+                        604,
+                        "GrantApplicationCapabilitiesInput!"
+                    ]
+                }
+            ],
+            "installMarketplaceApp": [
+                8,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ],
+                    "version": [
+                        1
+                    ]
+                }
+            ],
+            "installApplication": [
+                53,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ],
+                    "version": [
+                        1
+                    ]
+                }
+            ],
+            "triggerInstallApplicationJob": [
+                266,
+                {
+                    "input": [
+                        605,
+                        "TriggerInstallApplicationJobInput!"
+                    ]
+                }
+            ],
+            "triggerUninstallApplicationJob": [
+                267,
+                {
+                    "input": [
+                        606,
+                        "TriggerUninstallApplicationJobInput!"
+                    ]
+                }
+            ],
+            "updateApplication": [
+                53,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ],
+                    "input": [
+                        607,
+                        "UpdateApplicationInput!"
+                    ]
+                }
+            ],
+            "uninstallApplication": [
+                8,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "syncMarketplaceCatalog": [
+                8
+            ],
+            "runApplicationHealthCheck": [
+                259,
+                {
+                    "applicationId": [
+                        3,
+                        "UUID!"
                     ]
                 }
             ],
@@ -12995,113 +12995,301 @@ export default {
                 1
             ]
         },
-        "CreateApiKeyInput": {
+        "RunAgentInput": {
+            "agentUniversalIdentifier": [
+                1
+            ],
+            "prompt": [
+                1
+            ],
+            "runAsWorkspaceMemberId": [
+                3
+            ],
+            "messages": [
+                522
+            ],
+            "input": [
+                522
+            ],
+            "additionalInstructions": [
+                1
+            ],
+            "thread": [
+                525
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RunAgentMessageInput": {
+            "role": [
+                523
+            ],
+            "content": [
+                1
+            ],
+            "attachments": [
+                524
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RunAgentMessageRole": {},
+        "RunAgentMessageAttachmentInput": {
+            "fileId": [
+                3
+            ],
+            "filename": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RunAgentThreadInput": {
+            "key": [
+                1
+            ],
+            "title": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "SendMessageCampaignInput": {
+            "campaignId": [
+                1
+            ],
+            "scheduledAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CancelMessageCampaignInput": {
+            "campaignId": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "SendMessageCampaignTestInput": {
+            "toAddress": [
+                1
+            ],
+            "unsubscribeTopicId": [
+                1
+            ],
+            "subject": [
+                1
+            ],
+            "body": [
+                1
+            ],
+            "fromAddress": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateMessageSuppressionInput": {
+            "emailAddress": [
+                1
+            ],
+            "unsubscribeTopicId": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateUnsubscribeTopicInput": {
             "name": [
                 1
             ],
-            "expiresAt": [
+            "description": [
                 1
             ],
-            "revokedAt": [
-                1
-            ],
-            "roleId": [
-                3
+            "visibility": [
+                360
             ],
             "__typename": [
                 1
             ]
         },
-        "UpdateApiKeyInput": {
+        "UpdateUnsubscribeTopicInput": {
             "id": [
-                3
+                1
             ],
             "name": [
                 1
             ],
-            "expiresAt": [
+            "description": [
                 1
             ],
-            "revokedAt": [
-                1
+            "visibility": [
+                360
             ],
             "__typename": [
                 1
             ]
         },
-        "RevokeApiKeyInput": {
+        "UpdateMessageChannelInput": {
             "id": [
                 3
             ],
+            "update": [
+                533
+            ],
             "__typename": [
                 1
             ]
         },
-        "CreateViewFilterGroupInput": {
+        "UpdateMessageChannelInputUpdates": {
+            "visibility": [
+                340
+            ],
+            "isContactAutoCreationEnabled": [
+                8
+            ],
+            "contactAutoCreationPolicy": [
+                342
+            ],
+            "messageFolderImportPolicy": [
+                343
+            ],
+            "isSyncEnabled": [
+                8
+            ],
+            "excludeNonProfessionalEmails": [
+                8
+            ],
+            "excludeGroupEmails": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateEmailGroupChannelInput": {
+            "handle": [
+                1
+            ],
+            "displayName": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateEmailGroupChannelInput": {
             "id": [
                 3
             ],
-            "parentViewFilterGroupId": [
-                3
-            ],
-            "logicalOperator": [
-                60
-            ],
-            "positionInViewFilterGroup": [
-                16
-            ],
-            "viewId": [
-                3
+            "displayName": [
+                1
             ],
             "__typename": [
                 1
             ]
         },
-        "UpdateViewFilterGroupInput": {
+        "CreateAppMessageChannelInput": {
+            "connectedAccountId": [
+                3
+            ],
+            "handle": [
+                1
+            ],
+            "displayName": [
+                1
+            ],
+            "visibility": [
+                340
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateAppMessageChannelInput": {
             "id": [
                 3
             ],
-            "parentViewFilterGroupId": [
+            "displayName": [
+                1
+            ],
+            "visibility": [
+                340
+            ],
+            "isSyncEnabled": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "IngestAppMessagesInput": {
+            "messageChannelId": [
                 3
             ],
-            "logicalOperator": [
-                60
+            "messages": [
+                539
             ],
-            "positionInViewFilterGroup": [
-                16
+            "__typename": [
+                1
+            ]
+        },
+        "AppMessageInput": {
+            "externalId": [
+                1
             ],
-            "viewId": [
+            "threadExternalId": [
+                1
+            ],
+            "subject": [
+                1
+            ],
+            "text": [
+                1
+            ],
+            "receivedAt": [
+                4
+            ],
+            "participants": [
+                540
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "AppMessageParticipantInput": {
+            "role": [
+                541
+            ],
+            "handle": [
+                1
+            ],
+            "displayName": [
+                1
+            ],
+            "personId": [
+                3
+            ],
+            "workspaceMemberId": [
                 3
             ],
             "__typename": [
                 1
             ]
         },
-        "CreateApprovedAccessDomainInput": {
+        "MessageParticipantRole": {},
+        "CreateEmailingDomainInput": {
             "domain": [
                 1
-            ],
-            "email": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DeleteApprovedAccessDomainInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ValidateApprovedAccessDomainInput": {
-            "validationToken": [
-                1
-            ],
-            "approvedAccessDomainId": [
-                3
             ],
             "__typename": [
                 1
@@ -13153,7 +13341,7 @@ export default {
         },
         "UpdateRoleInput": {
             "update": [
-                531
+                545
             ],
             "id": [
                 3
@@ -13208,7 +13396,7 @@ export default {
                 3
             ],
             "objectPermissions": [
-                533
+                547
             ],
             "__typename": [
                 1
@@ -13250,7 +13438,7 @@ export default {
                 3
             ],
             "fieldPermissions": [
-                536
+                550
             ],
             "__typename": [
                 1
@@ -13281,10 +13469,10 @@ export default {
                 3
             ],
             "predicates": [
-                538
+                552
             ],
             "predicateGroups": [
-                539
+                553
             ],
             "__typename": [
                 1
@@ -13342,208 +13530,91 @@ export default {
                 1
             ]
         },
-        "ActivateWorkspaceInput": {
-            "displayName": [
+        "CreateApiKeyInput": {
+            "name": [
                 1
             ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateWorkspaceInput": {
-            "subdomain": [
+            "expiresAt": [
                 1
             ],
-            "customDomain": [
+            "revokedAt": [
                 1
             ],
-            "displayName": [
-                1
-            ],
-            "logo": [
-                1
-            ],
-            "inviteHash": [
-                1
-            ],
-            "isPublicInviteLinkEnabled": [
-                8
-            ],
-            "isCampaignClickTrackingEnabled": [
-                8
-            ],
-            "workspaceDiscoverability": [
-                74
-            ],
-            "allowImpersonation": [
-                8
-            ],
-            "isGoogleAuthEnabled": [
-                8
-            ],
-            "isMicrosoftAuthEnabled": [
-                8
-            ],
-            "isPasswordAuthEnabled": [
-                8
-            ],
-            "isGoogleAuthBypassEnabled": [
-                8
-            ],
-            "isMicrosoftAuthBypassEnabled": [
-                8
-            ],
-            "isPasswordAuthBypassEnabled": [
-                8
-            ],
-            "defaultRoleId": [
+            "roleId": [
                 3
             ],
-            "isTwoFactorAuthenticationEnforced": [
-                8
-            ],
-            "trashRetentionDays": [
-                16
-            ],
-            "eventLogRetentionDays": [
-                16
-            ],
-            "aiChatModelTier": [
-                76
-            ],
-            "aiAgentModelTier": [
-                76
-            ],
-            "isAutoModelSelectionEnabled": [
-                8
-            ],
-            "aiModelIdByTier": [
-                9
-            ],
-            "aiEvaluationModelId": [
-                1
-            ],
-            "aiAdditionalInstructions": [
-                1
-            ],
-            "editableProfileFields": [
-                1
-            ],
-            "isInternalMessagesImportEnabled": [
-                8
-            ],
             "__typename": [
                 1
             ]
         },
-        "UpdateWorkspaceAllowedIframeOriginsInput": {
-            "operation": [
-                1
+        "UpdateApiKeyInput": {
+            "id": [
+                3
             ],
-            "origin": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateApplicationRegistrationInput": {
             "name": [
                 1
             ],
-            "universalIdentifier": [
+            "expiresAt": [
                 1
             ],
-            "oAuthRedirectUris": [
-                1
-            ],
-            "oAuthScopes": [
+            "revokedAt": [
                 1
             ],
             "__typename": [
                 1
             ]
         },
-        "UpdateApplicationRegistrationInput": {
+        "RevokeApiKeyInput": {
             "id": [
-                1
-            ],
-            "update": [
-                545
+                3
             ],
             "__typename": [
                 1
             ]
         },
-        "UpdateApplicationRegistrationPayload": {
-            "name": [
-                1
-            ],
-            "oAuthRedirectUris": [
-                1
-            ],
-            "oAuthScopes": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateApplicationRegistrationVariableInput": {
+        "CreateWebhookInput": {
             "id": [
+                3
+            ],
+            "targetUrl": [
                 1
             ],
-            "update": [
-                547
-            ],
-            "__typename": [
+            "operations": [
                 1
-            ]
-        },
-        "UpdateApplicationRegistrationVariablePayload": {
-            "value": [
-                1
-            ],
-            "resetValue": [
-                8
             ],
             "description": [
                 1
             ],
+            "secret": [
+                1
+            ],
             "__typename": [
                 1
             ]
         },
-        "GrantApplicationCapabilitiesInput": {
-            "applicationId": [
+        "UpdateWebhookInput": {
+            "id": [
                 3
             ],
-            "capabilities": [
-                1
+            "update": [
+                559
             ],
             "__typename": [
                 1
             ]
         },
-        "TriggerInstallApplicationJobInput": {
-            "universalIdentifier": [
+        "UpdateWebhookInputUpdates": {
+            "targetUrl": [
                 1
             ],
-            "__typename": [
-                1
-            ]
-        },
-        "TriggerUninstallApplicationJobInput": {
-            "universalIdentifier": [
+            "operations": [
                 1
             ],
-            "__typename": [
+            "description": [
                 1
-            ]
-        },
-        "UpdateApplicationInput": {
-            "autoUpgrade": [
-                8
+            ],
+            "secret": [
+                1
             ],
             "__typename": [
                 1
@@ -13551,7 +13622,7 @@ export default {
         },
         "CreateOneFieldMetadataInput": {
             "field": [
-                553
+                561
             ],
             "__typename": [
                 1
@@ -13630,7 +13701,7 @@ export default {
                 3
             ],
             "update": [
-                555
+                563
             ],
             "__typename": [
                 1
@@ -13734,7 +13805,7 @@ export default {
                 3
             ],
             "update": [
-                559
+                567
             ],
             "__typename": [
                 1
@@ -13773,349 +13844,71 @@ export default {
                 1
             ]
         },
-        "SendMessageCampaignInput": {
-            "campaignId": [
-                1
-            ],
-            "scheduledAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CancelMessageCampaignInput": {
-            "campaignId": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "SendMessageCampaignTestInput": {
-            "toAddress": [
-                1
-            ],
-            "unsubscribeTopicId": [
-                1
-            ],
-            "subject": [
-                1
-            ],
-            "body": [
-                1
-            ],
-            "fromAddress": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateMessageSuppressionInput": {
-            "emailAddress": [
-                1
-            ],
-            "unsubscribeTopicId": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateUnsubscribeTopicInput": {
-            "name": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "visibility": [
-                360
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateUnsubscribeTopicInput": {
-            "id": [
-                1
-            ],
-            "name": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "visibility": [
-                360
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateMessageChannelInput": {
+        "CreateViewFilterGroupInput": {
             "id": [
                 3
             ],
-            "update": [
-                569
+            "parentViewFilterGroupId": [
+                3
+            ],
+            "logicalOperator": [
+                60
+            ],
+            "positionInViewFilterGroup": [
+                16
+            ],
+            "viewId": [
+                3
             ],
             "__typename": [
                 1
             ]
         },
-        "UpdateMessageChannelInputUpdates": {
-            "visibility": [
-                340
-            ],
-            "isContactAutoCreationEnabled": [
-                8
-            ],
-            "contactAutoCreationPolicy": [
-                342
-            ],
-            "messageFolderImportPolicy": [
-                343
-            ],
-            "isSyncEnabled": [
-                8
-            ],
-            "excludeNonProfessionalEmails": [
-                8
-            ],
-            "excludeGroupEmails": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateEmailGroupChannelInput": {
-            "handle": [
-                1
-            ],
-            "displayName": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateEmailGroupChannelInput": {
+        "UpdateViewFilterGroupInput": {
             "id": [
                 3
             ],
-            "displayName": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateAppMessageChannelInput": {
-            "connectedAccountId": [
+            "parentViewFilterGroupId": [
                 3
             ],
-            "handle": [
-                1
+            "logicalOperator": [
+                60
             ],
-            "displayName": [
-                1
+            "positionInViewFilterGroup": [
+                16
             ],
-            "visibility": [
-                340
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateAppMessageChannelInput": {
-            "id": [
-                3
-            ],
-            "displayName": [
-                1
-            ],
-            "visibility": [
-                340
-            ],
-            "isSyncEnabled": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "IngestAppMessagesInput": {
-            "messageChannelId": [
-                3
-            ],
-            "messages": [
-                575
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "AppMessageInput": {
-            "externalId": [
-                1
-            ],
-            "threadExternalId": [
-                1
-            ],
-            "subject": [
-                1
-            ],
-            "text": [
-                1
-            ],
-            "receivedAt": [
-                4
-            ],
-            "participants": [
-                576
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "AppMessageParticipantInput": {
-            "role": [
-                577
-            ],
-            "handle": [
-                1
-            ],
-            "displayName": [
-                1
-            ],
-            "personId": [
-                3
-            ],
-            "workspaceMemberId": [
+            "viewId": [
                 3
             ],
             "__typename": [
                 1
             ]
         },
-        "MessageParticipantRole": {},
-        "CreateEmailingDomainInput": {
+        "CreateApprovedAccessDomainInput": {
             "domain": [
                 1
             ],
+            "email": [
+                1
+            ],
             "__typename": [
                 1
             ]
         },
-        "CreateWebhookInput": {
+        "DeleteApprovedAccessDomainInput": {
             "id": [
                 3
             ],
-            "targetUrl": [
-                1
-            ],
-            "operations": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "secret": [
-                1
-            ],
             "__typename": [
                 1
             ]
         },
-        "UpdateWebhookInput": {
-            "id": [
+        "ValidateApprovedAccessDomainInput": {
+            "validationToken": [
+                1
+            ],
+            "approvedAccessDomainId": [
                 3
-            ],
-            "update": [
-                581
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateWebhookInputUpdates": {
-            "targetUrl": [
-                1
-            ],
-            "operations": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "secret": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RunAgentInput": {
-            "agentUniversalIdentifier": [
-                1
-            ],
-            "prompt": [
-                1
-            ],
-            "runAsWorkspaceMemberId": [
-                3
-            ],
-            "messages": [
-                583
-            ],
-            "input": [
-                583
-            ],
-            "additionalInstructions": [
-                1
-            ],
-            "thread": [
-                586
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RunAgentMessageInput": {
-            "role": [
-                584
-            ],
-            "content": [
-                1
-            ],
-            "attachments": [
-                585
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RunAgentMessageRole": {},
-        "RunAgentMessageAttachmentInput": {
-            "fileId": [
-                3
-            ],
-            "filename": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "RunAgentThreadInput": {
-            "key": [
-                1
-            ],
-            "title": [
-                1
             ],
             "__typename": [
                 1
@@ -14126,7 +13919,7 @@ export default {
                 3
             ],
             "update": [
-                588
+                576
             ],
             "__typename": [
                 1
@@ -14145,7 +13938,7 @@ export default {
                 3
             ],
             "update": [
-                588
+                576
             ],
             "__typename": [
                 1
@@ -14156,7 +13949,7 @@ export default {
                 3
             ],
             "update": [
-                591
+                579
             ],
             "__typename": [
                 1
@@ -14221,7 +14014,7 @@ export default {
                 9
             ],
             "jobs": [
-                595
+                583
             ],
             "retryLimit": [
                 32
@@ -14372,7 +14165,7 @@ export default {
                 3
             ],
             "update": [
-                603
+                591
             ],
             "__typename": [
                 1
@@ -14446,12 +14239,219 @@ export default {
                 1
             ]
         },
+        "CreateApplicationRegistrationInput": {
+            "name": [
+                1
+            ],
+            "universalIdentifier": [
+                1
+            ],
+            "oAuthRedirectUris": [
+                1
+            ],
+            "oAuthScopes": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateApplicationRegistrationInput": {
+            "id": [
+                1
+            ],
+            "update": [
+                597
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateApplicationRegistrationPayload": {
+            "name": [
+                1
+            ],
+            "oAuthRedirectUris": [
+                1
+            ],
+            "oAuthScopes": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateApplicationRegistrationVariableInput": {
+            "id": [
+                1
+            ],
+            "update": [
+                599
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateApplicationRegistrationVariablePayload": {
+            "value": [
+                1
+            ],
+            "resetValue": [
+                8
+            ],
+            "description": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "UpdateWorkspaceMemberSettingsInput": {
             "workspaceMemberId": [
                 3
             ],
             "update": [
                 9
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ActivateWorkspaceInput": {
+            "displayName": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateWorkspaceInput": {
+            "subdomain": [
+                1
+            ],
+            "customDomain": [
+                1
+            ],
+            "displayName": [
+                1
+            ],
+            "logo": [
+                1
+            ],
+            "inviteHash": [
+                1
+            ],
+            "isPublicInviteLinkEnabled": [
+                8
+            ],
+            "isCampaignClickTrackingEnabled": [
+                8
+            ],
+            "workspaceDiscoverability": [
+                74
+            ],
+            "allowImpersonation": [
+                8
+            ],
+            "isGoogleAuthEnabled": [
+                8
+            ],
+            "isMicrosoftAuthEnabled": [
+                8
+            ],
+            "isPasswordAuthEnabled": [
+                8
+            ],
+            "isGoogleAuthBypassEnabled": [
+                8
+            ],
+            "isMicrosoftAuthBypassEnabled": [
+                8
+            ],
+            "isPasswordAuthBypassEnabled": [
+                8
+            ],
+            "defaultRoleId": [
+                3
+            ],
+            "isTwoFactorAuthenticationEnforced": [
+                8
+            ],
+            "trashRetentionDays": [
+                16
+            ],
+            "eventLogRetentionDays": [
+                16
+            ],
+            "aiChatModelTier": [
+                76
+            ],
+            "aiAgentModelTier": [
+                76
+            ],
+            "isAutoModelSelectionEnabled": [
+                8
+            ],
+            "aiModelIdByTier": [
+                9
+            ],
+            "aiEvaluationModelId": [
+                1
+            ],
+            "aiAdditionalInstructions": [
+                1
+            ],
+            "editableProfileFields": [
+                1
+            ],
+            "isInternalMessagesImportEnabled": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateWorkspaceAllowedIframeOriginsInput": {
+            "operation": [
+                1
+            ],
+            "origin": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "GrantApplicationCapabilitiesInput": {
+            "applicationId": [
+                3
+            ],
+            "capabilities": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "TriggerInstallApplicationJobInput": {
+            "universalIdentifier": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "TriggerUninstallApplicationJobInput": {
+            "universalIdentifier": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateApplicationInput": {
+            "autoUpgrade": [
+                8
             ],
             "__typename": [
                 1
