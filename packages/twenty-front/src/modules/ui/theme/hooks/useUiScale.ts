@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
+import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 import { persistedUiScaleStepState } from '@/ui/theme/states/persistedUiScaleStepState';
 import { type UiScale } from '@/workspace-member/types/WorkspaceMember';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';

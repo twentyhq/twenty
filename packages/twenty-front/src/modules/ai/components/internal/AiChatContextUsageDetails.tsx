@@ -16,7 +16,7 @@ import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageCo
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 const StyledSection = styled.div`
   display: flex;

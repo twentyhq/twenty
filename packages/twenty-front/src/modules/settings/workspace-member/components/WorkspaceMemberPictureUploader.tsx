@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUploadWorkspaceMemberProfilePicture } from '@/settings/members/hooks/useUploadWorkspaceMemberProfilePicture';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
-import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
+import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 import { SettingsImageInput } from '@/settings/components/SettingsImageInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';

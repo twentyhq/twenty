@@ -9,7 +9,7 @@ import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/Adv
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
-import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/utils/errorMessages';
+import { getErrorMessageFromError } from '@/object-metadata/utils/metadataLabelErrorMessages';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';

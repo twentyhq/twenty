@@ -27,7 +27,7 @@ import { computeUsageLimitProgress } from '@/settings/billing/utils/computeUsage
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 const StyledTrigger = styled.button`
   align-items: center;

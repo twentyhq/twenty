@@ -12,7 +12,7 @@ import {
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { EllipsisDisplay } from '@/ui/field/display/components/internal/EllipsisDisplay/EllipsisDisplay';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
+import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledCurrencyIconContainer = styled.span`

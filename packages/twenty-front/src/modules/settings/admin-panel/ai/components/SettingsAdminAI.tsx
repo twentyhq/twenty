@@ -26,7 +26,7 @@ import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCu
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
+import { AiModelPinSelect } from '@/ai/components/AiModelPinSelect';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';

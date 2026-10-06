@@ -24,7 +24,7 @@ import { isExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`

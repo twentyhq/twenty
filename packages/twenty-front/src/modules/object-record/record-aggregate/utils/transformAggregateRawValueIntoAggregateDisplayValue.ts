@@ -14,9 +14,9 @@ import {
   type AggregateOperations,
   ChartNumberFormat,
 } from '~/generated-metadata/graphql';
-import { formatNumber } from '~/utils/format/formatNumber';
-import { formatDateString } from '~/utils/string/formatDateString';
-import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
+import { formatNumber } from '@/localization/utils/formatNumber';
+import { formatDateString } from '@/object-record/record-field/ui/utils/formatDateString';
+import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 
 export const transformAggregateRawValueIntoAggregateDisplayValue = ({
   aggregateFieldMetadataItem,

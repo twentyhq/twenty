@@ -1,4 +1,4 @@
-import { errors } from '@/settings/data-model/fields/forms/utils/errorMessages';
+import { errors } from '@/object-metadata/utils/metadataLabelErrorMessages';
 import { z } from 'zod';
 
 import { METADATA_LABEL_VALID_PATTERN } from '~/pages/settings/data-model/constants/MetadataLabelValidPattern';
