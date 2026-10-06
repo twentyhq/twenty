@@ -22,6 +22,7 @@ import {
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
+import { isWorkflowRunNotFoundError } from 'src/modules/workflow/workflow-runner/utils/is-workflow-run-not-found-error.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -78,6 +79,10 @@ export class RunWorkflowJob {
           });
         }
       } catch (error) {
+        if (isWorkflowRunNotFoundError(error)) {
+          return;
+        }
+
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workspaceId,
           workflowRunId,
