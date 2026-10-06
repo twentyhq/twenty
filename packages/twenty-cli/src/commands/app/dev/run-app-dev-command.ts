@@ -190,7 +190,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
           await emit(
             {
               kind: 'sync-superseded',
-              message: 'Source changed; a fresh preview is queued.',
+              message: 'Source changed; a fresh plan is queued.',
               revision,
               details: failure.details,
             },
@@ -206,7 +206,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
         await emit(
           {
             kind: 'sync-failure',
-            message: `${failure.message} A new source edit will request a fresh preview.`,
+            message: `${failure.message} A new source edit will request a fresh plan.`,
             revision,
             error: {
               code: failure.code,

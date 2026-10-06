@@ -301,7 +301,7 @@ twenty app apply --create --json
 twenty app apply --no-delete
 ```
 
-`app apply` builds the app once with the CLI pipeline and keeps that build's snapshot until it finishes, so the files it uploads are the ones it built. It then asks the workspace for a fresh preview, shows it, and applies it: it installs the development app if needed, uploads the snapshot files, synchronizes the manifest, and regenerates the app's typed API client. It needs the server's `APPLICATIONS` and `UPLOAD_FILE` permissions.
+`app apply` builds the app once with the CLI pipeline and keeps that build's snapshot until it finishes, so the files it uploads are the ones it built. It then asks the workspace for a fresh plan, shows it, and applies it: it installs the development app if needed, uploads the snapshot files, synchronizes the manifest, and regenerates the app's typed API client. It needs the server's `APPLICATIONS` and `UPLOAD_FILE` permissions.
 
 - **New apps.** An app without a registration needs `--create`, or a yes at the prompt in an interactive terminal. The CLI then registers the app (the server also requires `API_KEYS_AND_WEBHOOKS` for this), installs it, and previews it before uploading anything. Without approval it stops with `CREATE_REQUIRED` (exit 2). The registration's client secret is never requested.
 - **Deletions.** Entities missing from source are deleted by default, as in `app plan`; `--no-delete` keeps them and is sent to both the preview and the sync. Object and field deletions permanently delete stored data, so they need `--yes` or a yes at the prompt. Otherwise the command stops with `CONFIRMATION_REQUIRED` (exit 2) before changing anything. `--yes` never changes which entities are deleted.
@@ -344,7 +344,7 @@ edits settle, not an atomic checkout of files being edited concurrently.
 Registration uses `--create` or a terminal confirmation. Deletion inference is
 on by default, with `--no-delete` to keep missing entities. Object and field
 deletions require a terminal confirmation or `--yes`. Every revision requests a
-fresh preview. An edit cancels a pending confirmation; approval for the
+fresh plan. An edit cancels a pending confirmation; approval for the
 old revision cannot authorize the new one. A remote failure is reported with the
 same phase/outcome details as apply and is retried only after a new source edit,
 with a new preview. Inspect `twenty app plan` when a request's outcome is unknown.
