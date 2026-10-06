@@ -111,8 +111,8 @@ const formatSignedIn = ({
     : '';
 
   return credentials.kind === 'apiKey'
-    ? `Saved remote ${remoteName} ${dimText(`(${apiUrl}) · API key${workspace}`)}`
-    : `Signed in to ${remoteName}${isDefined(identity.email) ? ` as ${identity.email}` : ''}${dimText(workspace)}`;
+    ? `Saved remote "${remoteName}" ${dimText(`(${apiUrl}) · API key${workspace}`)}`
+    : `Signed in to "${remoteName}"${isDefined(identity.email) ? ` as ${identity.email}` : ''}${dimText(workspace)}`;
 };
 
 export const runAuthLoginCommand: CommandRun = async ({
@@ -126,19 +126,20 @@ export const runAuthLoginCommand: CommandRun = async ({
   const remoteName = validateRemoteName(remoteNameOption ?? 'default');
   const replace = readBooleanOption(options, 'replace');
   const configPath = getConfigPath();
-  const existingRemote = findExistingRemote(
-    await readConfig(configPath),
-    remoteName,
-  );
+  const config = await readConfig(configPath);
+  const existingRemote = findExistingRemote(config, remoteName);
   const urlOption = readStringOption(options, 'url');
 
   if (!isDefined(urlOption) && !isDefined(existingRemote)) {
     throw new CliError({
       code: 'USAGE',
       exitCode: EXIT_CODE.USAGE,
-      message: `There is no remote named ${remoteName} yet.`,
+      message:
+        Object.keys(config.remotes).length === 0
+          ? 'No saved connections yet.'
+          : `There is no remote named "${remoteName}" yet.`,
       hint: !isDefined(remoteNameOption)
-        ? 'Run twenty auth login --url <url> to save a connection named "default", or add --name <name> to choose another name.'
+        ? 'Run twenty auth login --url <url> to save a connection.'
         : 'Pass --url to create it.',
     });
   }
@@ -241,19 +242,8 @@ export const runAuthLoginCommand: CommandRun = async ({
       email: identity.email,
       isDefault,
     },
-    human: [
-      formatSuccessLine(
-        formatSignedIn({ remoteName, apiUrl, credentials, identity }),
-      ),
-      ...(isDefault
-        ? [dimText(`  ${remoteName} is your default remote.`)]
-        : []),
-      ...(!isDefined(remoteNameOption) && !isDefined(existingRemote)
-        ? [
-            'No remote name supplied, so this connection was named "default".',
-            'Use --name <name> to name another connection, or --remote <name> to select a saved one.',
-          ]
-        : []),
-    ].join('\n'),
+    human: formatSuccessLine(
+      formatSignedIn({ remoteName, apiUrl, credentials, identity }),
+    ),
   };
 };

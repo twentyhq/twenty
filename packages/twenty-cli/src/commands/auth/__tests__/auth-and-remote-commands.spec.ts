@@ -120,41 +120,14 @@ describe('auth and remote commands', () => {
     });
   });
 
-  it('explains the automatic name only when creating an unnamed connection', async () => {
-    vi.spyOn(process, 'stdin', 'get').mockReturnValue(
-      createStandardInputStub({ content: VALID_KEY }),
-    );
-    const first = await runCliForTest([
-      'auth',
-      'login',
-      '--with-token',
-      '--url',
-      server.url,
-    ]);
-
-    expect(first.exitCode).toBe(0);
-    expect(first.stdout).toContain('this connection was named "default"');
-    expect(first.stdout).toContain(
-      'Use --name <name> to name another connection',
-    );
-    expect(first.stdout).toContain('--remote <name> to select a saved one');
-
-    vi.spyOn(process, 'stdin', 'get').mockReturnValue(
-      createStandardInputStub({ content: VALID_KEY }),
-    );
-    const again = await runCliForTest(['auth', 'login', '--with-token']);
-
-    expect(again.exitCode).toBe(0);
-    expect(again.stdout).not.toContain('No remote name supplied');
-  });
-
-  it('asks for a URL and explains the default name on the first bare login', async () => {
+  it('asks for a URL when no connections have been saved', async () => {
     const { envelope, exitCode } = await runJson(['auth', 'login']);
 
     expect(exitCode).toBe(2);
     expect(envelope.error).toMatchObject({
       code: 'USAGE',
-      hint: 'Run twenty auth login --url <url> to save a connection named "default", or add --name <name> to choose another name.',
+      message: 'No saved connections yet.',
+      hint: 'Run twenty auth login --url <url> to save a connection.',
     });
     await expect(readFile(configPath)).rejects.toMatchObject({
       code: 'ENOENT',
