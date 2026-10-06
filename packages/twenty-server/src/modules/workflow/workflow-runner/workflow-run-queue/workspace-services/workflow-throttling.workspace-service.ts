@@ -20,21 +20,13 @@ export class WorkflowThrottlingWorkspaceService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async getRemainingRunsToEnqueueCount(workspaceId: string) {
-    return this.throttlerService.getAvailableTokensCount(
-      this.getWorkflowExecutionSoftThrottleCacheKey(workspaceId),
-      this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT'),
-      this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_TTL'),
-    );
-  }
-
   async consumeRemainingRunsToEnqueueCount(
     workspaceId: string,
-    runsToConsume: number,
-  ) {
-    await this.throttlerService.consumeTokens(
+    requestedRunCount: number,
+  ): Promise<number> {
+    return this.throttlerService.tokenBucketConsumeUpTo(
       this.getWorkflowExecutionSoftThrottleCacheKey(workspaceId),
-      runsToConsume,
+      requestedRunCount,
       this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT'),
       this.twentyConfigService.get('WORKFLOW_EXEC_SOFT_THROTTLE_TTL'),
     );

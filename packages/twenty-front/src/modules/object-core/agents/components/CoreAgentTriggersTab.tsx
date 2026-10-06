@@ -11,7 +11,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CoreAgentTriggerCard } from '@/object-core/agents/components/CoreAgentTriggerCard';
 import { buildDefaultCoreAgentTrigger } from '@/object-core/agents/utils/buildDefaultCoreAgentTrigger';
-import { useWorkflowObjectSelectOptions } from '@/workflow/hooks/useWorkflowObjectSelectOptions';
+import { useObjectMetadataItemSelectOptions } from '@/object-metadata/hooks/useObjectMetadataItemSelectOptions';
 
 const StyledTriggerList = styled.div`
   display: flex;
@@ -41,7 +41,7 @@ export const CoreAgentTriggersTab = ({
   disabled,
 }: CoreAgentTriggersTabProps) => {
   const { t } = useLingui();
-  const objectOptions = useWorkflowObjectSelectOptions();
+  const objectOptions = useObjectMetadataItemSelectOptions();
 
   const defaultObjectNameSingular =
     objectOptions.find((option) => option.value === 'company')?.value ??

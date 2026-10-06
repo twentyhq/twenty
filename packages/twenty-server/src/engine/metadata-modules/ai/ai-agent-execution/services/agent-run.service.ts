@@ -19,18 +19,13 @@ import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storag
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
-import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
-import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
-import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
 import { addAdditionalInstructionsToLastRunAgentMessage } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/add-additional-instructions-to-last-run-agent-message.util';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
-import { type AgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-actor.type';
-import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import {
   AiException,
   AiExceptionCode,
@@ -54,10 +49,8 @@ export class AgentRunService {
 
   constructor(
     private readonly agentActorContextService: AgentActorContextService,
-    private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
-    private readonly agentRunConversationService: AgentRunConversationService,
+    private readonly agentRunnerService: AgentRunnerService,
     private readonly applicationLookupService: ApplicationLookupService,
-    private readonly conversationReaderService: AgentConversationReaderService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
@@ -142,13 +135,6 @@ export class AgentRunService {
       application,
     };
 
-    const actor: AgentConversationActor = isDefined(runAsContext)
-      ? {
-          type: 'user',
-          userWorkspaceId: runAsContext.authContext.userWorkspaceId,
-        }
-      : { type: 'application', applicationId: application.id };
-
     const senderUserWorkspaceId = this.resolveRunSender({
       runAsContext,
       callerApplication,
@@ -178,107 +164,47 @@ export class AgentRunService {
         })
       : messages;
 
-    const runTurn = async (): Promise<RunAgentResult> => {
-      const priorMessages = isDefined(thread)
-        ? await this.conversationReaderService.loadMessages({
-            workspaceId: workspace.id,
-            threadId,
-            actor,
-          })
-        : [];
-
-      const turnId = await this.recordConversation({
-        threadId,
-        agentUniversalIdentifier: input.agentUniversalIdentifier,
-        record: () =>
-          this.agentRunConversationService.openTurn({
-            workspaceId: workspace.id,
-            threadId,
-            title: threadTitle,
-            agentId: agent.id,
-            senderUserWorkspaceId,
-            senderApplicationId: callerApplication?.id ?? null,
-            createdBy,
-            messages,
-          }),
+    try {
+      const { outcome } = await this.agentRunnerService.run({
+        workspaceId: workspace.id,
+        conversation: { threadId, isCreated: !isDefined(thread) },
+        conversationActor: isDefined(runAsContext)
+          ? {
+              type: 'user',
+              userWorkspaceId: runAsContext.authContext.userWorkspaceId,
+            }
+          : { type: 'application', applicationId: application.id },
+        turn: {
+          title: threadTitle,
+          senderUserWorkspaceId,
+          senderApplicationId: callerApplication?.id ?? null,
+          messages,
+          resolveCreatedBy: async () => createdBy,
+        },
+        execution: {
+          agent,
+          messages: executionMessages,
+          baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
+          actorContext: runAsContext?.actorContext,
+          authContext,
+          workspaceId: workspace.id,
+          userWorkspaceId:
+            runAsContext?.authContext.userWorkspaceId ?? requestUserWorkspaceId,
+          runAsRoleId: runAsContext?.roleId,
+          toolLoadingStrategy: 'lazy',
+        },
       });
 
-      let executionResult: AgentExecutionResult;
-
-      try {
-        executionResult = await withDedicatedAiTrace(() =>
-          this.agentAsyncExecutorService.executeAgent({
-            agent,
-            messages: executionMessages,
-            priorMessages,
-            baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
-            actorContext: runAsContext?.actorContext,
-            authContext,
-            workspaceId: workspace.id,
-            userWorkspaceId:
-              runAsContext?.authContext.userWorkspaceId ??
-              requestUserWorkspaceId,
-            runAsRoleId: runAsContext?.roleId,
-            toolLoadingStrategy: 'lazy',
-          }),
-        );
-      } catch (error) {
-        if (isDefined(turnId)) {
-          await this.recordConversation({
-            threadId,
-            agentUniversalIdentifier: input.agentUniversalIdentifier,
-            record: () =>
-              this.agentRunConversationService.failTurn({
-                workspaceId: workspace.id,
-                turnId,
-                error,
-              }),
-          });
-        }
-
-        throw error;
-      }
-
-      if (isDefined(turnId)) {
-        await this.recordConversation({
-          threadId,
-          agentUniversalIdentifier: input.agentUniversalIdentifier,
-          record: () =>
-            this.agentRunConversationService.closeTurn({
-              workspaceId: workspace.id,
-              threadId,
-              turnId,
-              agentId: agent.id,
-              execution: executionResult,
-            }),
-        });
-      }
-
-      if (executionResult.hasNoMoreAvailableCredits) {
-        return {
-          result: null,
-          error: 'Agent stopped: no more available credits.',
-          success: false,
-          threadId,
-        };
+      if (outcome.status === 'FAILED') {
+        return { result: null, error: outcome.error, success: false, threadId };
       }
 
       return {
-        result: executionResult.result,
+        result: outcome.status === 'COMPLETED' ? outcome.result : null,
         error: null,
         success: true,
         threadId,
       };
-    };
-
-    try {
-      return isDefined(thread)
-        ? await this.agentRunConversationService.withThreadLock({
-            workspaceId: workspace.id,
-            threadId,
-            work: runTurn,
-          })
-        : await runTurn();
     } catch (error) {
       if (
         error instanceof AiException &&
@@ -338,28 +264,6 @@ export class AgentRunService {
     return isDefined(requestAuthContext)
       ? buildActorMetadataFromAuthContext(requestAuthContext)
       : buildCreatedByFromApplication({ application });
-  }
-
-  // A record of the run, not its outcome, so a write failure must not fail the run
-  private async recordConversation<TResult>({
-    threadId,
-    agentUniversalIdentifier,
-    record,
-  }: {
-    threadId: string;
-    agentUniversalIdentifier: string;
-    record: () => Promise<TResult>;
-  }): Promise<TResult | null> {
-    try {
-      return await record();
-    } catch (error) {
-      this.logger.error(
-        `Failed to record the turn of ${agentUniversalIdentifier} in thread ${threadId}`,
-        error instanceof Error ? error.stack : error,
-      );
-
-      return null;
-    }
   }
 
   private assertCanContinueConversation({

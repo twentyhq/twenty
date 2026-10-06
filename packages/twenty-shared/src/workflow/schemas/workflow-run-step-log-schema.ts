@@ -34,6 +34,8 @@ const aiAgentStepLogDetailsSchema = z.object({
   nativeWebSearchCallCount: z.number(),
   toolCalls: z.array(aiToolCallLogSchema),
   durationMs: z.number(),
+  // the conversation the agent ran in
+  threadId: z.string().optional(),
 });
 
 const codeStepLogDetailsSchema = z.object({
