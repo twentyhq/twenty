@@ -12,7 +12,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconCheck } from 'twenty-ui/icon';
 
 type RecordGroupAggregateDropdownOptionsContentProps = {

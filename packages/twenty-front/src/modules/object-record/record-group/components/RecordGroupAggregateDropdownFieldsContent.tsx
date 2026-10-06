@@ -1,5 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { aggregateOperationComponentState } from '@/object-record/record-group/states/aggregateOperationComponentState';

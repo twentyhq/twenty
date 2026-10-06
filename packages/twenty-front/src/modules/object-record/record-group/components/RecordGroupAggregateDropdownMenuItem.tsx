@@ -1,5 +1,5 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { type IconComponent } from 'twenty-ui/icon';
 
 type RecordGroupAggregateDropdownMenuItemProps = {

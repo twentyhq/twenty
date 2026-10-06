@@ -4,7 +4,7 @@ import { type RecordTableWidgetNestedRelationCreateThrough } from '@/object-reco
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { t } from '@lingui/core/macro';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 
 type RecordTableWidgetNestedRelationAddNewRowProps = {

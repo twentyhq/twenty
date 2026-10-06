@@ -1,5 +1,5 @@
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

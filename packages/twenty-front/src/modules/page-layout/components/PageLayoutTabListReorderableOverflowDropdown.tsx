@@ -14,7 +14,7 @@ import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/h
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { isDefined } from 'twenty-shared/utils';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';

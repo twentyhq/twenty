@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type RecordTableWidgetRelationPickerDropdownContentProps = {
   objectNameSingular: string;

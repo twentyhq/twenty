@@ -1,7 +1,7 @@
 import { useRecordGroupActions } from '@/object-record/record-group/hooks/useRecordGroupActions';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { ViewType } from '@/views/types/ViewType';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 export const RecordBoardColumnDropdownMenu = () => {
   const recordGroupActions = useRecordGroupActions({

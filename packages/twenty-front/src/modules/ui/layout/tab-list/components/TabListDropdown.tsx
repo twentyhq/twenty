@@ -3,7 +3,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type TabListDropdownProps = {
   dropdownId: string;

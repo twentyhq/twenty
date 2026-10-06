@@ -4,7 +4,7 @@ import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { type Nullable } from 'twenty-shared/types';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';

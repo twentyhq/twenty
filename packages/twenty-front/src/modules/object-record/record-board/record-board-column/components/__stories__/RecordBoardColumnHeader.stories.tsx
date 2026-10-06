@@ -1,3 +1,4 @@
+import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnHeader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeader';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -65,7 +66,7 @@ const BoardHeaderExample = () => (
         updateOneRecord: () => {},
         deleteOneRecord: async () => {},
         recordBoardId: BOARD_ID,
-        objectPermissions: { objectMetadataId: company.id },
+        objectPermissions: getDefaultObjectPermissions(company.id),
       }}
     >
       <RecordBoardColumnContext.Provider

@@ -1,7 +1,7 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { RecordTableColumnHead } from './RecordTableColumnHead';
 import { RecordTableColumnHeadDropdownMenu } from './RecordTableColumnHeadDropdownMenu';
 import { RecordTableColumnHeadDropdownScrollEffect } from './RecordTableColumnHeadDropdownScrollEffect';
