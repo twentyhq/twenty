@@ -222,6 +222,18 @@ describe('serializeEvent', () => {
     },
   );
 
+  it('should leave out form control state when another forward of the same native event already carried it', () => {
+    expect(
+      serializeEvent(
+        {
+          type: 'input',
+          target: { value: 'after', checked: true, scrollTop: 5 },
+        },
+        { includesFormControlState: false },
+      ),
+    ).toEqual({ type: 'input', scrollTop: 5 });
+  });
+
   it('should include the value but not the checked state on keyup, which precedes a space activation', () => {
     expect(
       serializeEvent({

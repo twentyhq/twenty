@@ -8,15 +8,20 @@ import { type SerializedEventData } from '@/types/SerializedEventData';
 export const applyEventTargetProperties = ({
   serializedEvent,
   target,
+  includesFormControlState,
 }: {
   serializedEvent: SerializedEventData;
   target: unknown;
+  includesFormControlState: boolean;
 }): void => {
   if (!isPlainObject(target)) {
     return;
   }
 
-  applyFormControlTargetProperties({ serializedEvent, target });
+  if (includesFormControlState) {
+    applyFormControlTargetProperties({ serializedEvent, target });
+  }
+
   applyScrollTargetProperties({ serializedEvent, target });
   applyMediaTargetProperties({ serializedEvent, target });
 };

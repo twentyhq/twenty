@@ -10,7 +10,16 @@ import { applyPointerEventProperties } from '@/host/events/utils/applyPointerEve
 import { applyWheelEventProperties } from '@/host/events/utils/applyWheelEventProperties';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
-export const serializeEvent = (domEvent: unknown): SerializedEventData => {
+type SerializeEventOptions = {
+  includesFormControlState: boolean;
+};
+
+export const serializeEvent = (
+  domEvent: unknown,
+  { includesFormControlState }: SerializeEventOptions = {
+    includesFormControlState: true,
+  },
+): SerializedEventData => {
   if (!isPlainObject(domEvent)) {
     return { type: 'unknown' };
   }
@@ -25,7 +34,11 @@ export const serializeEvent = (domEvent: unknown): SerializedEventData => {
   applyKeyboardEventProperties({ serializedEvent, domEvent });
   applyInputEventProperties({ serializedEvent, domEvent });
   applyWheelEventProperties({ serializedEvent, domEvent });
-  applyEventTargetProperties({ serializedEvent, target: domEvent.target });
+  applyEventTargetProperties({
+    serializedEvent,
+    target: domEvent.target,
+    includesFormControlState,
+  });
 
   return serializedEvent;
 };

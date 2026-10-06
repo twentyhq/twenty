@@ -24,13 +24,10 @@ export const wrapEventHandler =
 
     const nativeHostEvent = resolveNativeHostEvent(hostEvent);
 
-    const serializedEvent = serializeEvent(hostEvent);
-
-    if (nativeHostEventsWithForwardedFormControlState.has(nativeHostEvent)) {
-      for (const formControlStateKey of FORM_CONTROL_STATE_SERIALIZED_EVENT_KEYS) {
-        delete serializedEvent[formControlStateKey];
-      }
-    }
+    const serializedEvent = serializeEvent(hostEvent, {
+      includesFormControlState:
+        !nativeHostEventsWithForwardedFormControlState.has(nativeHostEvent),
+    });
 
     applyEventDispatchProperties({
       serializedEvent,
