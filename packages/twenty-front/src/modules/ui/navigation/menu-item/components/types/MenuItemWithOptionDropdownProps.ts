@@ -1,6 +1,6 @@
 import { type Placement } from '@floating-ui/react';
 import { type MouseEvent, type ReactNode } from 'react';
-import { type MenuItemAccent } from 'twenty-ui/components';
+import { type MenuItemAccent } from 'twenty-ui/components/navigation';
 import { type IconComponent } from 'twenty-ui/icon';
 
 export type MenuItemWithOptionDropdownProps = {

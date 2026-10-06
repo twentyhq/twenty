@@ -6,7 +6,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components/input';
 import { IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Dialog, type DialogPopupProps } from 'twenty-ui/primitives/surfaces';

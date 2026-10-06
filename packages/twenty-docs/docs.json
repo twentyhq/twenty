@@ -66,9 +66,7 @@
             "groups": [
               {
                 "group": "Overview",
-                "pages": [
-                  "user-guide/introduction"
-                ]
+                "pages": ["user-guide/introduction"]
               },
               {
                 "group": "Data Model",
@@ -251,9 +249,7 @@
                   },
                   {
                     "group": "How-Tos",
-                    "pages": [
-                      "user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -351,9 +347,7 @@
                   },
                   {
                     "group": "How-Tos",
-                    "pages": [
-                      "user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -375,9 +369,7 @@
                   },
                   {
                     "group": "How-Tos",
-                    "pages": [
-                      "user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -388,9 +380,7 @@
                   "user-guide/legal/overview",
                   {
                     "group": "How-Tos",
-                    "pages": [
-                      "user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -401,9 +391,7 @@
             "groups": [
               {
                 "group": "Overview",
-                "pages": [
-                  "developers/introduction"
-                ]
+                "pages": ["developers/introduction"]
               },
               {
                 "group": "Apps",
@@ -622,33 +610,64 @@
                     "group": "Components",
                     "pages": [
                       "ui/components/overview",
-                      "ui/components/input/main-button",
-                      "ui/components/input/light-button",
-                      "ui/components/input/icon-button",
-                      "ui/components/input/light-icon-button",
-                      "ui/components/section",
-                      "ui/components/overflowing-list",
-                      "ui/components/settings-row",
-                      "ui/components/dropdown",
-                      "ui/components/phone-country-picker",
-                      "ui/components/tab-button",
-                      "ui/components/code-editor",
-                      "ui/components/toast",
-                      "ui/components/animated-icon-crossfade",
-                      "ui/components/avatar-group",
-                      "ui/components/callout",
-                      "ui/components/command-block",
-                      "ui/components/country-select",
-                      "ui/components/currency-picker",
-                      "ui/components/image-input",
-                      "ui/components/inline-banner",
-                      "ui/components/json-tree",
-                      "ui/components/menu-items",
-                      "ui/components/menu-picker",
-                      "ui/components/metric-row",
-                      "ui/components/notification-counter",
-                      "ui/components/search-input",
-                      "ui/components/tinted-icon-tile"
+                      {
+                        "group": "Data display",
+                        "pages": [
+                          "ui/components/data-display/avatar-group",
+                          "ui/components/data-display/command-block",
+                          "ui/components/data-display/json-tree",
+                          "ui/components/data-display/metric-row",
+                          "ui/components/data-display/notification-counter",
+                          "ui/components/data-display/tinted-icon-tile"
+                        ]
+                      },
+                      {
+                        "group": "Feedback",
+                        "pages": [
+                          "ui/components/feedback/callout",
+                          "ui/components/feedback/inline-banner",
+                          "ui/components/feedback/toast"
+                        ]
+                      },
+                      {
+                        "group": "Input",
+                        "pages": [
+                          "ui/components/input/main-button",
+                          "ui/components/input/light-button",
+                          "ui/components/input/icon-button",
+                          "ui/components/input/light-icon-button",
+                          "ui/components/input/country-select",
+                          "ui/components/input/currency-picker",
+                          "ui/components/input/phone-country-picker",
+                          "ui/components/input/image-input",
+                          "ui/components/input/search-input"
+                        ]
+                      },
+                      {
+                        "group": "Layout",
+                        "pages": [
+                          "ui/components/layout/section",
+                          "ui/components/layout/overflowing-list",
+                          "ui/components/layout/animated-icon-crossfade"
+                        ]
+                      },
+                      {
+                        "group": "Navigation",
+                        "pages": [
+                          "ui/components/navigation/dropdown",
+                          "ui/components/navigation/menu-items",
+                          "ui/components/navigation/menu-picker",
+                          "ui/components/navigation/tab-button"
+                        ]
+                      },
+                      {
+                        "group": "Settings",
+                        "pages": ["ui/components/settings/settings-row"]
+                      },
+                      {
+                        "group": "Code editor",
+                        "pages": ["ui/components/code-editor/code-editor"]
+                      }
                     ]
                   }
                 ]
@@ -691,9 +710,7 @@
             "groups": [
               {
                 "group": "Vue d'ensemble",
-                "pages": [
-                  "fr/user-guide/introduction"
-                ]
+                "pages": ["fr/user-guide/introduction"]
               },
               {
                 "group": "Modèle de données",
@@ -856,9 +873,7 @@
                   },
                   {
                     "group": "Guides pratiques",
-                    "pages": [
-                      "fr/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["fr/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -955,9 +970,7 @@
                   },
                   {
                     "group": "Guides pratiques",
-                    "pages": [
-                      "fr/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["fr/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -979,9 +992,7 @@
                   },
                   {
                     "group": "Guides pratiques",
-                    "pages": [
-                      "fr/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["fr/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -992,9 +1003,7 @@
                   "fr/user-guide/legal/overview",
                   {
                     "group": "Guides pratiques",
-                    "pages": [
-                      "fr/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["fr/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -1005,9 +1014,7 @@
             "groups": [
               {
                 "group": "Vue d'ensemble",
-                "pages": [
-                  "fr/developers/introduction"
-                ]
+                "pages": ["fr/developers/introduction"]
               },
               {
                 "group": "Applications",
@@ -1154,9 +1161,7 @@
             "groups": [
               {
                 "group": "نظرة عامة",
-                "pages": [
-                  "ar/user-guide/introduction"
-                ]
+                "pages": ["ar/user-guide/introduction"]
               },
               {
                 "group": "نموذج البيانات",
@@ -1319,9 +1324,7 @@
                   },
                   {
                     "group": "الإرشادات",
-                    "pages": [
-                      "ar/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["ar/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -1418,9 +1421,7 @@
                   },
                   {
                     "group": "الإرشادات",
-                    "pages": [
-                      "ar/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["ar/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -1442,9 +1443,7 @@
                   },
                   {
                     "group": "الإرشادات",
-                    "pages": [
-                      "ar/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["ar/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -1455,9 +1454,7 @@
                   "ar/user-guide/legal/overview",
                   {
                     "group": "الإرشادات",
-                    "pages": [
-                      "ar/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["ar/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -1468,9 +1465,7 @@
             "groups": [
               {
                 "group": "نظرة عامة",
-                "pages": [
-                  "ar/developers/introduction"
-                ]
+                "pages": ["ar/developers/introduction"]
               },
               {
                 "group": "التطبيقات",
@@ -1617,9 +1612,7 @@
             "groups": [
               {
                 "group": "Přehled",
-                "pages": [
-                  "cs/user-guide/introduction"
-                ]
+                "pages": ["cs/user-guide/introduction"]
               },
               {
                 "group": "Datový model",
@@ -1782,9 +1775,7 @@
                   },
                   {
                     "group": "Návody",
-                    "pages": [
-                      "cs/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["cs/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -1881,9 +1872,7 @@
                   },
                   {
                     "group": "Návody",
-                    "pages": [
-                      "cs/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["cs/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -1905,9 +1894,7 @@
                   },
                   {
                     "group": "Návody",
-                    "pages": [
-                      "cs/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["cs/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -1918,9 +1905,7 @@
                   "cs/user-guide/legal/overview",
                   {
                     "group": "Návody",
-                    "pages": [
-                      "cs/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["cs/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -1931,9 +1916,7 @@
             "groups": [
               {
                 "group": "Přehled",
-                "pages": [
-                  "cs/developers/introduction"
-                ]
+                "pages": ["cs/developers/introduction"]
               },
               {
                 "group": "Aplikace",
@@ -2080,9 +2063,7 @@
             "groups": [
               {
                 "group": "Übersicht",
-                "pages": [
-                  "de/user-guide/introduction"
-                ]
+                "pages": ["de/user-guide/introduction"]
               },
               {
                 "group": "Datenmodell",
@@ -2245,9 +2226,7 @@
                   },
                   {
                     "group": "Anleitungen",
-                    "pages": [
-                      "de/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["de/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -2344,9 +2323,7 @@
                   },
                   {
                     "group": "Anleitungen",
-                    "pages": [
-                      "de/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["de/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -2368,9 +2345,7 @@
                   },
                   {
                     "group": "Anleitungen",
-                    "pages": [
-                      "de/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["de/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -2381,9 +2356,7 @@
                   "de/user-guide/legal/overview",
                   {
                     "group": "Anleitungen",
-                    "pages": [
-                      "de/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["de/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -2394,9 +2367,7 @@
             "groups": [
               {
                 "group": "Übersicht",
-                "pages": [
-                  "de/developers/introduction"
-                ]
+                "pages": ["de/developers/introduction"]
               },
               {
                 "group": "Apps",
@@ -2543,9 +2514,7 @@
             "groups": [
               {
                 "group": "Resumen",
-                "pages": [
-                  "es/user-guide/introduction"
-                ]
+                "pages": ["es/user-guide/introduction"]
               },
               {
                 "group": "Modelo de datos",
@@ -2708,9 +2677,7 @@
                   },
                   {
                     "group": "Guías prácticas",
-                    "pages": [
-                      "es/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["es/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -2807,9 +2774,7 @@
                   },
                   {
                     "group": "Guías prácticas",
-                    "pages": [
-                      "es/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["es/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -2831,9 +2796,7 @@
                   },
                   {
                     "group": "Guías prácticas",
-                    "pages": [
-                      "es/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["es/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -2844,9 +2807,7 @@
                   "es/user-guide/legal/overview",
                   {
                     "group": "Guías prácticas",
-                    "pages": [
-                      "es/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["es/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -2857,9 +2818,7 @@
             "groups": [
               {
                 "group": "Resumen",
-                "pages": [
-                  "es/developers/introduction"
-                ]
+                "pages": ["es/developers/introduction"]
               },
               {
                 "group": "Aplicaciones",
@@ -3006,9 +2965,7 @@
             "groups": [
               {
                 "group": "Panoramica",
-                "pages": [
-                  "it/user-guide/introduction"
-                ]
+                "pages": ["it/user-guide/introduction"]
               },
               {
                 "group": "Modello dati",
@@ -3171,9 +3128,7 @@
                   },
                   {
                     "group": "Guide pratiche",
-                    "pages": [
-                      "it/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["it/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -3270,9 +3225,7 @@
                   },
                   {
                     "group": "Guide pratiche",
-                    "pages": [
-                      "it/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["it/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -3294,9 +3247,7 @@
                   },
                   {
                     "group": "Guide pratiche",
-                    "pages": [
-                      "it/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["it/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -3307,9 +3258,7 @@
                   "it/user-guide/legal/overview",
                   {
                     "group": "Guide pratiche",
-                    "pages": [
-                      "it/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["it/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -3320,9 +3269,7 @@
             "groups": [
               {
                 "group": "Panoramica",
-                "pages": [
-                  "it/developers/introduction"
-                ]
+                "pages": ["it/developers/introduction"]
               },
               {
                 "group": "App",
@@ -3469,9 +3416,7 @@
             "groups": [
               {
                 "group": "概要",
-                "pages": [
-                  "ja/user-guide/introduction"
-                ]
+                "pages": ["ja/user-guide/introduction"]
               },
               {
                 "group": "データモデル",
@@ -3634,9 +3579,7 @@
                   },
                   {
                     "group": "ハウツー",
-                    "pages": [
-                      "ja/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["ja/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -3733,9 +3676,7 @@
                   },
                   {
                     "group": "ハウツー",
-                    "pages": [
-                      "ja/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["ja/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -3757,9 +3698,7 @@
                   },
                   {
                     "group": "ハウツー",
-                    "pages": [
-                      "ja/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["ja/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -3770,9 +3709,7 @@
                   "ja/user-guide/legal/overview",
                   {
                     "group": "ハウツー",
-                    "pages": [
-                      "ja/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["ja/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -3783,9 +3720,7 @@
             "groups": [
               {
                 "group": "概要",
-                "pages": [
-                  "ja/developers/introduction"
-                ]
+                "pages": ["ja/developers/introduction"]
               },
               {
                 "group": "アプリ",
@@ -3932,9 +3867,7 @@
             "groups": [
               {
                 "group": "개요",
-                "pages": [
-                  "ko/user-guide/introduction"
-                ]
+                "pages": ["ko/user-guide/introduction"]
               },
               {
                 "group": "데이터 모델",
@@ -4097,9 +4030,7 @@
                   },
                   {
                     "group": "사용 방법",
-                    "pages": [
-                      "ko/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["ko/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -4196,9 +4127,7 @@
                   },
                   {
                     "group": "사용 방법",
-                    "pages": [
-                      "ko/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["ko/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -4220,9 +4149,7 @@
                   },
                   {
                     "group": "사용 방법",
-                    "pages": [
-                      "ko/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["ko/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -4233,9 +4160,7 @@
                   "ko/user-guide/legal/overview",
                   {
                     "group": "사용 방법",
-                    "pages": [
-                      "ko/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["ko/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -4246,9 +4171,7 @@
             "groups": [
               {
                 "group": "개요",
-                "pages": [
-                  "ko/developers/introduction"
-                ]
+                "pages": ["ko/developers/introduction"]
               },
               {
                 "group": "앱",
@@ -4395,9 +4318,7 @@
             "groups": [
               {
                 "group": "Visão Geral",
-                "pages": [
-                  "pt/user-guide/introduction"
-                ]
+                "pages": ["pt/user-guide/introduction"]
               },
               {
                 "group": "Modelo de dados",
@@ -4560,9 +4481,7 @@
                   },
                   {
                     "group": "Como-Tos",
-                    "pages": [
-                      "pt/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["pt/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -4659,9 +4578,7 @@
                   },
                   {
                     "group": "Como-Tos",
-                    "pages": [
-                      "pt/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["pt/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -4683,9 +4600,7 @@
                   },
                   {
                     "group": "Como-Tos",
-                    "pages": [
-                      "pt/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["pt/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -4696,9 +4611,7 @@
                   "pt/user-guide/legal/overview",
                   {
                     "group": "Tutoriais",
-                    "pages": [
-                      "pt/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["pt/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -4709,9 +4622,7 @@
             "groups": [
               {
                 "group": "Visão Geral",
-                "pages": [
-                  "pt/developers/introduction"
-                ]
+                "pages": ["pt/developers/introduction"]
               },
               {
                 "group": "Aplicativos",
@@ -4858,9 +4769,7 @@
             "groups": [
               {
                 "group": "Prezentare generală",
-                "pages": [
-                  "ro/user-guide/introduction"
-                ]
+                "pages": ["ro/user-guide/introduction"]
               },
               {
                 "group": "Model de date",
@@ -5023,9 +4932,7 @@
                   },
                   {
                     "group": "How-Tos",
-                    "pages": [
-                      "ro/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["ro/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -5122,9 +5029,7 @@
                   },
                   {
                     "group": "How-Tos",
-                    "pages": [
-                      "ro/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["ro/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -5146,9 +5051,7 @@
                   },
                   {
                     "group": "How-Tos",
-                    "pages": [
-                      "ro/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["ro/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -5159,9 +5062,7 @@
                   "ro/user-guide/legal/overview",
                   {
                     "group": "Ghiduri practice",
-                    "pages": [
-                      "ro/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["ro/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -5172,9 +5073,7 @@
             "groups": [
               {
                 "group": "Prezentare generală",
-                "pages": [
-                  "ro/developers/introduction"
-                ]
+                "pages": ["ro/developers/introduction"]
               },
               {
                 "group": "Aplicații",
@@ -5321,9 +5220,7 @@
             "groups": [
               {
                 "group": "Обзор",
-                "pages": [
-                  "ru/user-guide/introduction"
-                ]
+                "pages": ["ru/user-guide/introduction"]
               },
               {
                 "group": "Модель данных",
@@ -5486,9 +5383,7 @@
                   },
                   {
                     "group": "Инструкции",
-                    "pages": [
-                      "ru/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["ru/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -5585,9 +5480,7 @@
                   },
                   {
                     "group": "Инструкции",
-                    "pages": [
-                      "ru/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["ru/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -5609,9 +5502,7 @@
                   },
                   {
                     "group": "Инструкции",
-                    "pages": [
-                      "ru/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["ru/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -5622,9 +5513,7 @@
                   "ru/user-guide/legal/overview",
                   {
                     "group": "Инструкции",
-                    "pages": [
-                      "ru/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["ru/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -5635,9 +5524,7 @@
             "groups": [
               {
                 "group": "Обзор",
-                "pages": [
-                  "ru/developers/introduction"
-                ]
+                "pages": ["ru/developers/introduction"]
               },
               {
                 "group": "Приложения",
@@ -5784,9 +5671,7 @@
             "groups": [
               {
                 "group": "Genel Bakış",
-                "pages": [
-                  "tr/user-guide/introduction"
-                ]
+                "pages": ["tr/user-guide/introduction"]
               },
               {
                 "group": "Veri modeli",
@@ -5949,9 +5834,7 @@
                   },
                   {
                     "group": "Nasıl Yapılırlar",
-                    "pages": [
-                      "tr/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["tr/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -6048,9 +5931,7 @@
                   },
                   {
                     "group": "Nasıl Yapılırlar",
-                    "pages": [
-                      "tr/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["tr/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -6072,9 +5953,7 @@
                   },
                   {
                     "group": "Nasıl Yapılırlar",
-                    "pages": [
-                      "tr/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["tr/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -6085,9 +5964,7 @@
                   "tr/user-guide/legal/overview",
                   {
                     "group": "Nasıl Yapılır Kılavuzları",
-                    "pages": [
-                      "tr/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["tr/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -6098,9 +5975,7 @@
             "groups": [
               {
                 "group": "Genel Bakış",
-                "pages": [
-                  "tr/developers/introduction"
-                ]
+                "pages": ["tr/developers/introduction"]
               },
               {
                 "group": "Uygulamalar",
@@ -6247,9 +6122,7 @@
             "groups": [
               {
                 "group": "概览",
-                "pages": [
-                  "zh/user-guide/introduction"
-                ]
+                "pages": ["zh/user-guide/introduction"]
               },
               {
                 "group": "数据模型",
@@ -6412,9 +6285,7 @@
                   },
                   {
                     "group": "操作指南",
-                    "pages": [
-                      "zh/user-guide/ai/how-tos/ai-faq"
-                    ]
+                    "pages": ["zh/user-guide/ai/how-tos/ai-faq"]
                   }
                 ]
               },
@@ -6511,9 +6382,7 @@
                   },
                   {
                     "group": "操作指南",
-                    "pages": [
-                      "zh/user-guide/billing/how-tos/billing-faq"
-                    ]
+                    "pages": ["zh/user-guide/billing/how-tos/billing-faq"]
                   }
                 ]
               },
@@ -6535,9 +6404,7 @@
                   },
                   {
                     "group": "操作指南",
-                    "pages": [
-                      "zh/user-guide/settings/how-tos/settings-faq"
-                    ]
+                    "pages": ["zh/user-guide/settings/how-tos/settings-faq"]
                   }
                 ]
               },
@@ -6548,9 +6415,7 @@
                   "zh/user-guide/legal/overview",
                   {
                     "group": "操作指南",
-                    "pages": [
-                      "zh/user-guide/legal/how-tos/legal-faq"
-                    ]
+                    "pages": ["zh/user-guide/legal/how-tos/legal-faq"]
                   }
                 ]
               }
@@ -6561,9 +6426,7 @@
             "groups": [
               {
                 "group": "概览",
-                "pages": [
-                  "zh/developers/introduction"
-                ]
+                "pages": ["zh/developers/introduction"]
               },
               {
                 "group": "应用",
@@ -6688,7 +6551,7 @@
   "redirects": [
     {
       "source": "/ui/components/info",
-      "destination": "/ui/components/inline-banner"
+      "destination": "/ui/components/feedback/inline-banner"
     },
     {
       "source": "/ui/primitives/layout/animated-expandable-container",
@@ -7440,7 +7303,7 @@
     },
     {
       "source": "/ui/primitives/feedback/toast",
-      "destination": "/ui/components/toast"
+      "destination": "/ui/components/feedback/toast"
     },
     {
       "source": "/ui/primitives/surfaces/card-header",

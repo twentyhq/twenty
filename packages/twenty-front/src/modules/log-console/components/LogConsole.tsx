@@ -4,7 +4,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useReducedMotion } from 'framer-motion';
 import { type TransitionEvent, useSyncExternalStore, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton, LightIconButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { IconButton, LightIconButton } from 'twenty-ui/components/input';
 import {
   IconChevronDown,
   IconChevronUp,

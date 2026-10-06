@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import React, { useMemo } from 'react';
 
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { OverflowingList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components/layout';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink/RoundedLink';
