@@ -202,6 +202,7 @@ export const SwitchingToEmailsLeavesTheInstanceDefaultPeriod: Story = {
     await userEvent.click(
       within(popup).getByRole('button', { name: 'Emails' }),
     );
+    expect(args.onChange).toHaveBeenCalledTimes(1);
     expect(args.onChange).toHaveBeenCalledWith(
       expect.objectContaining({
         unit: UsageUnit.INVOCATION,
