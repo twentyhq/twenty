@@ -36,6 +36,7 @@ import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
 type AnswerToolCallArgs = {
   threadId: string;
@@ -284,6 +285,10 @@ export class ToolCallAnswerService {
       const answerMessage = await this.agentChatService.addMessage({
         threadId,
         userWorkspaceId,
+        turnStatus:
+          isDefined(step) || !isLastAnswer
+            ? AgentTurnStatus.COMPLETED
+            : AgentTurnStatus.RUNNING,
         uiMessage: {
           role: AgentMessageRole.USER,
           parts: [{ type: 'text', text: answerText }],

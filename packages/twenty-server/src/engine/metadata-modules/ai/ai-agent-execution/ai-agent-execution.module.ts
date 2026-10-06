@@ -69,6 +69,10 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(FileEntity),
   ],
-  exports: [AgentAsyncExecutorService, AgentActorContextService],
+  exports: [
+    AgentAsyncExecutorService,
+    AgentActorContextService,
+    AgentRunConversationService,
+  ],
 })
 export class AiAgentExecutionModule {}

@@ -23,6 +23,7 @@ import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-module
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
 @Injectable()
 export class AgentInboxService {
@@ -264,6 +265,7 @@ export class AgentInboxService {
         id: turnId,
         threadId,
         agentId: null,
+        status: AgentTurnStatus.COMPLETED,
       }),
     );
 

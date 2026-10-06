@@ -685,6 +685,10 @@ export class AgentAsyncExecutorService {
         modelId: registeredModel.modelId,
         totalCostInDollars,
         creditsUsedMicro,
+        turnUsage: this.aiBillingService.calculateStepsTurnUsage(
+          registeredModel.modelId,
+          executionSteps,
+        ),
       };
     } catch (error) {
       if (error instanceof AiException) {

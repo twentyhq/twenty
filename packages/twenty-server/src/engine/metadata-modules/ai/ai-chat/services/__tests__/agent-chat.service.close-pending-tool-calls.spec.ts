@@ -1,5 +1,6 @@
 import { IsNull } from 'typeorm';
 
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 
 const QUESTIONS = [
@@ -22,6 +23,9 @@ const buildService = ({ claimAffected = 1 } = {}) => {
   };
   const threadRecordEventService = {
     emitThreadUpdated: jest.fn().mockResolvedValue(undefined),
+  };
+  const turnRecorderService = {
+    endWaitingTurn: jest.fn().mockResolvedValue(undefined),
   };
   const messagePartRepository = {
     find: jest.fn().mockResolvedValue([
@@ -54,6 +58,7 @@ const buildService = ({ claimAffected = 1 } = {}) => {
     threadRecordEventService as never,
     {} as never,
     {} as never,
+    turnRecorderService as never,
   );
 
   return {
@@ -61,6 +66,7 @@ const buildService = ({ claimAffected = 1 } = {}) => {
     threadRepository,
     messagePartRepository,
     threadRecordEventService,
+    turnRecorderService,
   };
 };
 
@@ -73,9 +79,20 @@ const closeArguments = {
 
 describe('AgentChatService closePendingToolCalls', () => {
   it('stops waiting and closes the pending call as skipped', async () => {
-    const { service, threadRepository, messagePartRepository } = buildService();
+    const {
+      service,
+      threadRepository,
+      messagePartRepository,
+      turnRecorderService,
+    } = buildService();
 
     await service.closePendingToolCalls(closeArguments);
+
+    expect(turnRecorderService.endWaitingTurn).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      messageId: 'question-message-id',
+      status: AgentTurnStatus.COMPLETED,
+    });
 
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
@@ -10,7 +11,10 @@ import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/servic
 import { type ToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/types/tool-call-workflow-step.type';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { readToolCallWorkflowStep } from 'src/engine/metadata-modules/ai/ai-chat/utils/read-tool-call-workflow-step.util';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
@@ -65,6 +69,7 @@ export class WorkflowAgentConversationWorkspaceService {
     private readonly workflowRunInboxSenderService: WorkflowRunInboxSenderWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   async openConversation({
@@ -139,40 +144,79 @@ export class WorkflowAgentConversationWorkspaceService {
     };
   }
 
-  async recordExecution({
-    workspaceId,
+  // The turn is written before the agent runs, so a run in progress or one that
+  // fails is on record. A resumed step adds no prompt: the answer is already the
+  // last message
+  async openTurn({
+    runInfo,
     threadId,
-    workflowStep,
-    title,
     agentId,
     prompt,
     initiatorUserWorkspaceId,
+  }: {
+    runInfo: WorkflowRunInfo;
+    threadId: string;
+    agentId: string | null;
+    prompt: string | null;
+    initiatorUserWorkspaceId: string | null;
+  }): Promise<string> {
+    const { workspaceId } = runInfo;
+    const sender =
+      await this.workflowRunInboxSenderService.findRunSenderOrThrow(runInfo);
+
+    return this.conversationWriterService.runInTransaction(
+      workspaceId,
+      async (scope) => {
+        const turnId = await this.conversationWriterService.insertTurn({
+          workspaceId,
+          threadId,
+          agentId,
+          status: AgentTurnStatus.RUNNING,
+          createdBy: {
+            source: FieldActorSource.WORKFLOW,
+            name: sender.workflowName,
+            workspaceMemberId: null,
+            context: {},
+          },
+          scope,
+        });
+
+        if (isDefined(prompt)) {
+          await this.conversationWriterService.insertMessage({
+            workspaceId,
+            threadId,
+            turnId,
+            role: AgentMessageRole.USER,
+            agentId: null,
+            senderUserWorkspaceId: initiatorUserWorkspaceId,
+            parts: [{ type: 'text', text: prompt }],
+            scope,
+          });
+        }
+
+        return turnId;
+      },
+    );
+  }
+
+  async closeTurn({
+    workspaceId,
+    threadId,
+    turnId,
+    workflowStep,
+    title,
+    agentId,
     executionResult,
   }: {
     workspaceId: string;
     threadId: string;
+    turnId: string;
     workflowStep: ToolCallWorkflowStep;
     title: string;
     agentId: string | null;
-    prompt: string;
-    initiatorUserWorkspaceId: string | null;
     executionResult: RecordableAgentExecution;
   }): Promise<RecordedConversation> {
-    const turnId = await this.conversationWriterService.insertTurn({
-      workspaceId,
-      threadId,
-      agentId,
-    });
-
-    await this.conversationWriterService.insertMessage({
-      workspaceId,
-      threadId,
-      turnId,
-      role: AgentMessageRole.USER,
-      agentId: null,
-      senderUserWorkspaceId: initiatorUserWorkspaceId,
-      parts: [{ type: 'text', text: prompt }],
-    });
+    const turn = { workspaceId, threadId, turnId, execution: executionResult };
 
     const isAwaitingAnswer = await this.recordReply({
       workspaceId,
@@ -182,44 +226,38 @@ export class WorkflowAgentConversationWorkspaceService {
       title,
       agentId,
       executionResult,
+    }).catch(async (error: unknown) => {
+      await this.turnRecorderService.finishExecutedTurn({
+        ...turn,
+        error: mapErrorToStreamError(error),
+      });
+
+      throw error;
+    });
+
+    await this.turnRecorderService.finishExecutedTurn({
+      ...turn,
+      isAwaitingAnswer,
     });
 
     return { threadId, isAwaitingAnswer };
   }
 
-  // The answer is already the last message, so only the agent's reply is added
-  async recordContinuation({
+  async failTurn({
     workspaceId,
-    threadId,
-    workflowStep,
-    title,
-    agentId,
-    executionResult,
+    turnId,
+    error,
   }: {
     workspaceId: string;
-    threadId: string;
-    workflowStep: ToolCallWorkflowStep;
-    title: string;
-    agentId: string | null;
-    executionResult: RecordableAgentExecution;
-  }): Promise<RecordedConversation> {
-    const turnId = await this.conversationWriterService.insertTurn({
+    turnId: string;
+    error: unknown;
+  }): Promise<void> {
+    await this.turnRecorderService.finish({
       workspaceId,
-      threadId,
-      agentId,
-    });
-
-    const isAwaitingAnswer = await this.recordReply({
-      workspaceId,
-      threadId,
       turnId,
-      workflowStep,
-      title,
-      agentId,
-      executionResult,
+      status: AgentTurnStatus.FAILED,
+      error: mapErrorToStreamError(error),
     });
-
-    return { threadId, isAwaitingAnswer };
   }
 
   // The wait call stays pending in the conversation until its wait resolves, then carries the outcome

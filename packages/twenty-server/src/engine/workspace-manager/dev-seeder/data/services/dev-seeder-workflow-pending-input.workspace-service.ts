@@ -22,6 +22,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 import { askQuestionCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/ask-question-call.util';
 import { proposeEmailCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/propose-email-call.util';
 import { type SeededEmail } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-email.type';
+import { prepareSeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/prepare-seeded-tool-call.util';
 import { type SeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-call.type';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -221,7 +222,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
               workspaceId,
             );
             const { toolName, input } = call;
-            const output = await call.buildPendingOutput();
+            const { pendingOutput: output } = await prepareSeededToolCall(call);
 
             return [
               { type: 'tool-call' as const, toolCallId, toolName, input },
@@ -267,14 +268,21 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             throw error;
           });
 
-          await this.workflowAgentConversationService.recordExecution({
-            workspaceId,
+          const turnId = await this.workflowAgentConversationService.openTurn({
+            runInfo: { workspaceId, workflowRunId },
             threadId,
-            workflowStep: { workflowRunId, stepId: workflow.step.id },
-            title: workflow.step.name,
             agentId: null,
             prompt: agentWorkflow.runPrompt,
             initiatorUserWorkspaceId: null,
+          });
+
+          await this.workflowAgentConversationService.closeTurn({
+            workspaceId,
+            threadId,
+            turnId,
+            workflowStep: { workflowRunId, stepId: workflow.step.id },
+            title: workflow.step.name,
+            agentId: null,
             executionResult: {
               isPaused: true,
               steps: [{ content }],

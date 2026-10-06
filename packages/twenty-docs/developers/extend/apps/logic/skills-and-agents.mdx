@@ -202,8 +202,10 @@ const { result, threadId } = await runAgent({
 - `additionalInstructions` are given to the model for this call only and are not
   stored, which suits per-request guidance such as formatting rules or a
   deadline. They work without a `thread` too.
-- A turn is stored once the run succeeds. A failed run leaves the conversation
-  as it was.
+- Every run is stored as a turn with its status, failed ones included. Its
+  usage is stored when the agent returns, even if it ran out of credits. A
+  failed run is not part of the conversation, so the next call does not see
+  it.
 - Calls on the same thread run one at a time: a second call waits for the
   first to finish, so each one sees the turns before it.
 - When turns run as different members (see below), each one only sees the text

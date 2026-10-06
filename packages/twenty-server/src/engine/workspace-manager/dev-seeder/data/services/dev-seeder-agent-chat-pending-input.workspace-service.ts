@@ -13,13 +13,13 @@ import { v5 } from 'uuid';
 
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
-import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { prepareSeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/prepare-seeded-tool-call.util';
 import { AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/agent-chat-seeds.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -33,6 +33,7 @@ import { proposeRecordCall } from 'src/engine/workspace-manager/dev-seeder/data/
 import { requestFormCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/request-form-call.util';
 import { type SeededEmail } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-email.type';
 import { type SeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-call.type';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
 const AGENT_CHAT_PENDING_INPUT_SEED_NAMESPACE =
   '3c7e1f52-8a4d-4b0e-9d61-2f5a7c9e0b14';
@@ -384,25 +385,8 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
     const askedBy = MEMBERS[conversation.askedBy];
     const calls = await Promise.all(
       conversation.calls.map(async (call, callIndex) => {
-        const pausingTool = PAUSING_TOOLS.get(call.toolName);
-        const preparedCall = await pausingTool?.prepareCall(
-          call.input,
-          call.context,
-        );
-
-        if (!isDefined(preparedCall) || 'error' in preparedCall) {
-          throw new Error(`Seeded ${call.toolName} call cannot be made`);
-        }
-
-        const { pendingOutput } = preparedCall;
-        const pausingToolCall = pausingTool?.parseCall(
-          call.input,
-          pendingOutput,
-        );
-
-        if (!isDefined(pausingToolCall)) {
-          throw new Error(`Seeded ${call.toolName} call does not parse`);
-        }
+        const { pendingOutput, pausingToolCall } =
+          await prepareSeededToolCall(call);
 
         return {
           ...call,
@@ -432,6 +416,9 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       id: questionTurnId,
       threadId,
       agentId: null,
+      status: isDefined(conversation.answer)
+        ? AgentTurnStatus.COMPLETED
+        : AgentTurnStatus.WAITING_FOR_INPUT,
     });
 
     await this.conversationWriterService.insertMessage({
@@ -504,6 +491,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       id: answerTurnId,
       threadId,
       agentId: null,
+      status: AgentTurnStatus.COMPLETED,
     });
 
     await this.conversationWriterService.insertMessage({

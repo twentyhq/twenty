@@ -3,5 +3,6 @@ export const CORE_AGENT_DETAIL_TABS = {
   TABS_IDS: {
     ROLE: 'role',
     SETTINGS: 'settings',
+    TRIGGERS: 'triggers',
   },
 };

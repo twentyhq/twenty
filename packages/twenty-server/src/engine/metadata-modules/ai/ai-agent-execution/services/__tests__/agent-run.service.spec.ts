@@ -25,7 +25,9 @@ const buildService = () => {
     executeAgent: jest.fn().mockResolvedValue(executionResult),
   };
   const agentRunConversationService = {
-    recordTurn: jest.fn().mockResolvedValue(undefined),
+    openTurn: jest.fn().mockResolvedValue('turn-id'),
+    closeTurn: jest.fn().mockResolvedValue(undefined),
+    failTurn: jest.fn().mockResolvedValue(undefined),
     withThreadLock: jest.fn(({ work }) => work()),
   };
   const conversationReaderService = {
@@ -94,7 +96,7 @@ describe('AgentRunService', () => {
       threadId: null,
     });
     expect(conversationReaderService.loadMessages).not.toHaveBeenCalled();
-    expect(agentRunConversationService.recordTurn).not.toHaveBeenCalled();
+    expect(agentRunConversationService.openTurn).not.toHaveBeenCalled();
     expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
       expect.objectContaining({ priorMessages: [] }),
     );
@@ -146,12 +148,18 @@ describe('AgentRunService', () => {
     expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
       expect.objectContaining({ priorMessages: PRIOR_MESSAGES }),
     );
-    expect(agentRunConversationService.recordTurn).toHaveBeenCalledWith(
+    expect(agentRunConversationService.openTurn).toHaveBeenCalledWith(
       expect.objectContaining({
         threadId,
         title: AGENT.label,
         actor,
         messages: userInput('And the second one?'),
+      }),
+    );
+    expect(agentRunConversationService.closeTurn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadId,
+        turnId: 'turn-id',
         execution: executionResult,
       }),
     );
@@ -172,7 +180,7 @@ describe('AgentRunService', () => {
         messages: userInput('Answer in Slack markdown\n\nAnd the second one?'),
       }),
     );
-    expect(agentRunConversationService.recordTurn).toHaveBeenCalledWith(
+    expect(agentRunConversationService.openTurn).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'Acme renewal',
         messages: userInput('And the second one?'),
@@ -185,7 +193,7 @@ describe('AgentRunService', () => {
     const { service, agentRunConversationService } = buildService();
 
     jest.spyOn(Logger.prototype, 'error').mockImplementation();
-    agentRunConversationService.recordTurn.mockRejectedValue(
+    agentRunConversationService.openTurn.mockRejectedValue(
       new Error('write failed'),
     );
 
@@ -195,6 +203,27 @@ describe('AgentRunService', () => {
     });
 
     expect(result.success).toBe(true);
+    expect(agentRunConversationService.closeTurn).not.toHaveBeenCalled();
+  });
+
+  it('records the turn as failed when the execution throws', async () => {
+    const { service, agentAsyncExecutorService, agentRunConversationService } =
+      buildService();
+    const executionError = new Error('provider down');
+
+    jest.spyOn(Logger.prototype, 'error').mockImplementation();
+    agentAsyncExecutorService.executeAgent.mockRejectedValue(executionError);
+
+    const result = await run(service, {
+      input: userInput('And the second one?'),
+      thread: { key: 'thread' },
+    });
+
+    expect(result.success).toBe(false);
+    expect(agentRunConversationService.failTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ turnId: 'turn-id', error: executionError }),
+    );
+    expect(agentRunConversationService.closeTurn).not.toHaveBeenCalled();
   });
 
   it('refuses a thread without an application token', async () => {

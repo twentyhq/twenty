@@ -1,6 +1,7 @@
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 import { IsNull } from 'typeorm';
 
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -48,6 +49,10 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       query: jest.fn(),
     };
 
+    const turnRecorderService = {
+      endWaitingTurn: jest.fn().mockResolvedValue(undefined),
+    };
+
     messagePartRepository.query.mockImplementation(async (_workspaceId, run) =>
       run({
         table: (name: string) => name,
@@ -62,6 +67,7 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       threadRepository as never,
       messagePartRepository as never,
       { cancelRunWaits: jest.fn().mockResolvedValue(undefined) } as never,
+      turnRecorderService as never,
     );
 
     // The run lock serializes these methods with every other step write.
@@ -103,6 +109,7 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       workflowRun,
       threadRepository,
       messagePartRepository,
+      turnRecorderService,
       updateWorkflowRun,
     };
   };
@@ -284,8 +291,12 @@ describe('WorkflowRunWorkspaceService conversations', () => {
       });
 
     it('stops its conversations waiting and closes their calls as skipped', async () => {
-      const { service, threadRepository, messagePartRepository } =
-        buildService();
+      const {
+        service,
+        threadRepository,
+        messagePartRepository,
+        turnRecorderService,
+      } = buildService();
 
       await endRun(service);
 
@@ -298,6 +309,11 @@ describe('WorkflowRunWorkspaceService conversations', () => {
         },
         { pendingQuestionMessageId: null },
       );
+      expect(turnRecorderService.endWaitingTurn).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        messageId: 'message-id',
+        status: AgentTurnStatus.CANCELLED,
+      });
       const [[closeQuery, [partId, closedToolOutput, expectedStatus]]] =
         messagePartRepository.writePart.mock.calls;
 
