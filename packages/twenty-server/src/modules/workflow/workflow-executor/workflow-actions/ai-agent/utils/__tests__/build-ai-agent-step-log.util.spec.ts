@@ -35,8 +35,8 @@ const baseExecutionResult: AgentExecutionResult = {
     outputTokens: 50,
     cacheReadTokens: 20,
     cacheCreationTokens: 5,
-    inputCredits: 8_000,
-    outputCredits: 4_000,
+    inputCredits: 0,
+    outputCredits: 0,
   },
   steps: [],
 };
