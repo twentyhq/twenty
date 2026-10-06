@@ -12,7 +12,7 @@ export const TEST_STRIPE_SUBSCRIPTION_ID = 'sub_default0';
 
 const TEST_STRIPE_PRODUCT_ID = 'prod_resource_credit_test';
 const TEST_STRIPE_PRICE_ID = 'price_resource_credit_test';
-const TEST_STRIPE_SUBSCRIPTION_ITEM_ID = 'si_resource_credit_test';
+export const TEST_STRIPE_SUBSCRIPTION_ITEM_ID = 'si_resource_credit_test';
 
 export type CreditGrantRow = {
   id: string;
