@@ -68,7 +68,7 @@ Every page below is served as Markdown when you append `.md` to its URL. The ful
 | Connection provider    | `yarn twenty dev:add connectionProvider`   | `src/connection-providers/<name>.ts`    |
 | Timeline activity type | `yarn twenty dev:add timelineActivityType` | `src/timeline-activity-types/<name>.ts` |
 
-`dev:add object` also offers to generate the table view, the navigation menu item, the record page layout and its fields view, which is what makes the object usable. Generated files use `fill-later` and `replace-with-existing-...` placeholders for identifiers the scaffolder cannot know; the build does not catch them, so replace every placeholder before syncing.
+`dev:add object` also offers to generate the table view, the navigation menu item, the record page layout and its fields view, which is what makes the object usable. A field added to that object later is not shown on the record page until it is listed in `src/views/<name>-record-page-fields.ts`. Generated files use `fill-later` and `replace-with-existing-...` placeholders for identifiers the scaffolder cannot know; the build does not catch them, so replace every placeholder before syncing.
 
 ## Rules the build and sync enforce
 
