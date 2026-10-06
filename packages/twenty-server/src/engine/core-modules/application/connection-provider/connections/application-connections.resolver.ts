@@ -25,14 +25,9 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 
 @UseGuards(
   AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
+    userSession: false,
+    apiKey: false,
+    oauthClient: false,
     application: true,
   }),
   NoPermissionGuard,

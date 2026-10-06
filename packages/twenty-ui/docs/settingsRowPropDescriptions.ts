@@ -1,4 +1,4 @@
-import { type SettingsRowProps } from '../src/components/input/SettingsRow/types/SettingsRowProps';
+import { type SettingsRowProps } from '../src/components/settings/SettingsRow/types/SettingsRowProps';
 
 export const SETTINGS_ROW_PROP_DESCRIPTIONS = {
   children:

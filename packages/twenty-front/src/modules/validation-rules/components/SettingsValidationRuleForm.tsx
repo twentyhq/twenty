@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -43,8 +43,16 @@ export const SettingsValidationRuleForm = ({
   const errorFieldOptions = [
     { label: t`Whole record`, value: RECORD_LEVEL_OPTION_VALUE },
     ...objectMetadataItem.fields
-      .filter((field) => field.isActive && !field.isSystem)
-      .map((field) => ({ label: field.label, value: field.id })),
+      .filter(
+        (field) =>
+          !field.isSystem &&
+          (field.isActive || field.id === values.errorFieldMetadataId),
+      )
+      .map((field) => ({
+        label: field.label,
+        value: field.id,
+        contextualText: field.isActive ? undefined : t`Deactivated`,
+      })),
   ];
 
   return (
@@ -68,7 +76,6 @@ export const SettingsValidationRuleForm = ({
               fields={fields}
               editorFields={editorFields}
               expression={values.expression}
-              message={values.message}
             />
           }
           form={

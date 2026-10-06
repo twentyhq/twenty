@@ -615,12 +615,24 @@ export class EnterprisePlanService implements OnModuleInit {
     }
 
     const checkoutUrl = `${apiUrl}/checkout`;
+    const serverId = await this.getOrCreateServerId();
+
+    if (!isDefined(serverId)) {
+      throw new EnterpriseException(
+        'Enterprise checkout requires a server id',
+        EnterpriseExceptionCode.ENTERPRISE_MISSING_SERVER_ID,
+      );
+    }
 
     try {
       const response = await fetch(checkoutUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ billingInterval, seatCount }),
+        body: JSON.stringify({
+          billingInterval,
+          seatCount,
+          instanceMetadata: { serverId },
+        }),
       });
 
       if (!response.ok) {

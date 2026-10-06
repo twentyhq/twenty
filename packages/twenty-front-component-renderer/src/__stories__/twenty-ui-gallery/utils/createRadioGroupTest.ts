@@ -1,18 +1,19 @@
+import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { type SandboxErrorExpectation } from '@/__stories__/twenty-ui-gallery/types/SandboxErrorExpectation';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 type CreateRadioGroupTestOptions = {
-  optionName: 'Daily' | 'Pro plan';
-  activationErrors: SandboxErrorExpectation;
+  optionName: string;
+  initiallyCheckedOptionName: string;
+  activatedStatus: string;
 };
 
 export const createRadioGroupTest =
   ({
     optionName,
-    activationErrors,
+    initiallyCheckedOptionName,
+    activatedStatus,
   }: CreateRadioGroupTestOptions): TwentyUiGalleryPlayFunction =>
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -24,9 +25,17 @@ export const createRadioGroupTest =
     expect(disabled).not.toBeChecked();
     expect(canvas.getByRole('radio', { name: 'Basic plan' })).toBeChecked();
 
-    await userEvent.click(canvas.getByRole('radio', { name: optionName }));
-    await expectSandboxErrors(activationErrors);
+    const option = canvas.getByRole('radio', { name: optionName });
+    const initiallyCheckedOption = canvas.getByRole('radio', {
+      name: initiallyCheckedOptionName,
+    });
 
-    expect(canvas.getByText('Frequency: weekly')).toBeVisible();
-    expect(canvas.getByText('Plan: basic')).toBeVisible();
+    await userEvent.click(option);
+
+    await waitFor(() =>
+      expect(canvas.getByText(activatedStatus)).toBeVisible(),
+    );
+    expect(option).toBeChecked();
+    expect(initiallyCheckedOption).not.toBeChecked();
+    expect(errorHandler).not.toHaveBeenCalled();
   };

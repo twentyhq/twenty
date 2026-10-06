@@ -2,7 +2,7 @@ import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MetricRow } from 'twenty-ui/components';
+import { MetricRow } from 'twenty-ui/components/data-display';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import {
   IconArrowUp,

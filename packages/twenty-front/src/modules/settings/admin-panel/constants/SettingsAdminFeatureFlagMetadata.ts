@@ -30,10 +30,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Direct REST metadata responses`,
     description: msg`Return metadata directly instead of wrapping it in the legacy response envelope.`,
   },
-  [FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED]: {
-    label: msg`Prebuilt logic functions`,
-    description: msg`Run logic functions from prebuilt application bundles.`,
-  },
   [FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED]: {
     label: msg`Application workflows`,
     description: msg`Allow applications to install workflows and start new workflow runs.`,
@@ -50,17 +46,9 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED]: {
-    label: msg`Webhook rate limits`,
-    description: msg`Limit the rate of outgoing webhook deliveries.`,
-  },
   [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
     label: msg`Deferred workspace migration actions`,
     description: msg`Run the slow parts of data model changes in the background after they are saved.`,
-  },
-  [FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED]: {
-    label: msg`Execution quotas`,
-    description: msg`Enforce usage quotas on workflow node runs and logic function executions.`,
   },
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
     label: msg`Record creation form`,

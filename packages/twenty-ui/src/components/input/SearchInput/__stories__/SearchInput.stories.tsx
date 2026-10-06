@@ -1,12 +1,13 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
-import { SettingsRow } from '@ui/components/input/SettingsRow/SettingsRow';
+import { SettingsRow } from '@ui/components/settings/SettingsRow/SettingsRow';
 
 import { SearchInputExample } from './SearchInputExample';
 
 const meta: Meta<typeof SearchInputExample> = {
-  title: 'UI/Input/SearchInput',
+  id: 'ui-input-searchinput',
+  title: 'UI/Components/Input/SearchInput',
   component: SearchInputExample,
   decorators: [ComponentDecorator],
 };

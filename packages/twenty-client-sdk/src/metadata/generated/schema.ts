@@ -48,8 +48,11 @@ export interface ApplicationVariable {
     isRequired: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
+    scope: ApplicationVariableScope
     __typename: 'ApplicationVariable'
 }
+
+export type ApplicationVariableScope = 'WORKSPACE' | 'USER'
 
 export interface Agent {
     id: Scalars['UUID']
@@ -67,7 +70,7 @@ export interface Agent {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     modelConfiguration?: Scalars['JSON']
-    evaluationInputs: Scalars['String'][]
+    triggers: Scalars['JSON'][]
     __typename: 'Agent'
 }
 
@@ -1268,6 +1271,104 @@ export interface LogicFunctionExecutionResult {
 /** Status of the logic function execution */
 export type LogicFunctionExecutionStatus = 'IDLE' | 'SUCCESS' | 'ERROR'
 
+export interface UserSession {
+    id: Scalars['UUID']
+    workspaceId?: Scalars['UUID']
+    authProvider: Scalars['String']
+    isImpersonating: Scalars['Boolean']
+    userAgent?: Scalars['String']
+    ipAddress?: Scalars['String']
+    createdAt: Scalars['DateTime']
+    lastActiveAt: Scalars['DateTime']
+    expiresAt: Scalars['DateTime']
+    isCurrent: Scalars['Boolean']
+    __typename: 'UserSession'
+}
+
+export interface BillingEndTrialPeriod {
+    /** Updated subscription status */
+    status?: SubscriptionStatus
+    /** Boolean that confirms if a payment method was found */
+    hasPaymentMethod: Scalars['Boolean']
+    /** Billing portal URL for payment method update (returned when no payment method exists) */
+    billingPortalUrl?: Scalars['String']
+    /** Updated current billing subscription */
+    currentBillingSubscription?: BillingSubscription
+    /** All billing subscriptions */
+    billingSubscriptions?: BillingSubscription[]
+    __typename: 'BillingEndTrialPeriod'
+}
+
+export interface BillingResourceCreditUsage {
+    productKey: BillingProductKey
+    periodStart: Scalars['DateTime']
+    periodEnd: Scalars['DateTime']
+    usedCredits: Scalars['Float']
+    grantedCredits: Scalars['Float']
+    rolloverCredits: Scalars['Float']
+    totalGrantedCredits: Scalars['Float']
+    unitPriceCents: Scalars['Float']
+    __typename: 'BillingResourceCreditUsage'
+}
+
+export interface BillingPlan {
+    planKey: BillingPlanKey
+    baseProducts: BillingLicensedProduct[]
+    resourceCreditProducts: BillingLicensedProduct[]
+    meteredProducts: BillingMeteredProduct[]
+    __typename: 'BillingPlan'
+}
+
+export interface BillingPaymentIntent {
+    clientSecret: Scalars['String']
+    paymentIntentType: Scalars['String']
+    __typename: 'BillingPaymentIntent'
+}
+
+export interface BillingSession {
+    url?: Scalars['String']
+    __typename: 'BillingSession'
+}
+
+export interface BillingUpdate {
+    /** Current billing subscription */
+    currentBillingSubscription: BillingSubscription
+    /** All billing subscriptions */
+    billingSubscriptions: BillingSubscription[]
+    __typename: 'BillingUpdate'
+}
+
+export interface UsageBreakdownItem {
+    key: Scalars['String']
+    label?: Scalars['String']
+    creditsUsed: Scalars['Float']
+    __typename: 'UsageBreakdownItem'
+}
+
+export interface UsageTimeSeries {
+    date: Scalars['String']
+    creditsUsed: Scalars['Float']
+    __typename: 'UsageTimeSeries'
+}
+
+export interface UsageUserDaily {
+    userWorkspaceId: Scalars['String']
+    dailyUsage: UsageTimeSeries[]
+    __typename: 'UsageUserDaily'
+}
+
+export interface UsageAnalytics {
+    usageByUser: UsageBreakdownItem[]
+    usageByOperationType: UsageBreakdownItem[]
+    usageByApplication: UsageBreakdownItem[]
+    usageByModel: UsageBreakdownItem[]
+    timeSeries: UsageTimeSeries[]
+    periodStart: Scalars['DateTime']
+    periodEnd: Scalars['DateTime']
+    userDailyUsage?: UsageUserDaily
+    __typename: 'UsageAnalytics'
+}
+
 export interface UsageLimitOperationDefinition {
     operationType: UsageOperationType
     allowedUnits: UsageUnit[]
@@ -1503,104 +1604,6 @@ export interface EventSubscription {
     __typename: 'EventSubscription'
 }
 
-export interface UserSession {
-    id: Scalars['UUID']
-    workspaceId?: Scalars['UUID']
-    authProvider: Scalars['String']
-    isImpersonating: Scalars['Boolean']
-    userAgent?: Scalars['String']
-    ipAddress?: Scalars['String']
-    createdAt: Scalars['DateTime']
-    lastActiveAt: Scalars['DateTime']
-    expiresAt: Scalars['DateTime']
-    isCurrent: Scalars['Boolean']
-    __typename: 'UserSession'
-}
-
-export interface BillingEndTrialPeriod {
-    /** Updated subscription status */
-    status?: SubscriptionStatus
-    /** Boolean that confirms if a payment method was found */
-    hasPaymentMethod: Scalars['Boolean']
-    /** Billing portal URL for payment method update (returned when no payment method exists) */
-    billingPortalUrl?: Scalars['String']
-    /** Updated current billing subscription */
-    currentBillingSubscription?: BillingSubscription
-    /** All billing subscriptions */
-    billingSubscriptions?: BillingSubscription[]
-    __typename: 'BillingEndTrialPeriod'
-}
-
-export interface BillingResourceCreditUsage {
-    productKey: BillingProductKey
-    periodStart: Scalars['DateTime']
-    periodEnd: Scalars['DateTime']
-    usedCredits: Scalars['Float']
-    grantedCredits: Scalars['Float']
-    rolloverCredits: Scalars['Float']
-    totalGrantedCredits: Scalars['Float']
-    unitPriceCents: Scalars['Float']
-    __typename: 'BillingResourceCreditUsage'
-}
-
-export interface BillingPlan {
-    planKey: BillingPlanKey
-    baseProducts: BillingLicensedProduct[]
-    resourceCreditProducts: BillingLicensedProduct[]
-    meteredProducts: BillingMeteredProduct[]
-    __typename: 'BillingPlan'
-}
-
-export interface BillingPaymentIntent {
-    clientSecret: Scalars['String']
-    paymentIntentType: Scalars['String']
-    __typename: 'BillingPaymentIntent'
-}
-
-export interface BillingSession {
-    url?: Scalars['String']
-    __typename: 'BillingSession'
-}
-
-export interface BillingUpdate {
-    /** Current billing subscription */
-    currentBillingSubscription: BillingSubscription
-    /** All billing subscriptions */
-    billingSubscriptions: BillingSubscription[]
-    __typename: 'BillingUpdate'
-}
-
-export interface UsageBreakdownItem {
-    key: Scalars['String']
-    label?: Scalars['String']
-    creditsUsed: Scalars['Float']
-    __typename: 'UsageBreakdownItem'
-}
-
-export interface UsageTimeSeries {
-    date: Scalars['String']
-    creditsUsed: Scalars['Float']
-    __typename: 'UsageTimeSeries'
-}
-
-export interface UsageUserDaily {
-    userWorkspaceId: Scalars['String']
-    dailyUsage: UsageTimeSeries[]
-    __typename: 'UsageUserDaily'
-}
-
-export interface UsageAnalytics {
-    usageByUser: UsageBreakdownItem[]
-    usageByOperationType: UsageBreakdownItem[]
-    usageByApplication: UsageBreakdownItem[]
-    usageByModel: UsageBreakdownItem[]
-    timeSeries: UsageTimeSeries[]
-    periodStart: Scalars['DateTime']
-    periodEnd: Scalars['DateTime']
-    userDailyUsage?: UsageUserDaily
-    __typename: 'UsageAnalytics'
-}
-
 export interface ApprovedAccessDomain {
     id: Scalars['UUID']
     domain: Scalars['String']
@@ -1714,7 +1717,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED'
+export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -3097,7 +3100,7 @@ export interface ChatStreamCatchupChunks {
 }
 
 export interface SendChatMessageResult {
-    messageId: Scalars['String']
+    messageId?: Scalars['String']
     queued: Scalars['Boolean']
     streamId?: Scalars['String']
     __typename: 'SendChatMessageResult'
@@ -3178,24 +3181,28 @@ export interface RecordExport {
     __typename: 'RecordExport'
 }
 
-export interface AgentTurnEvaluation {
-    id: Scalars['UUID']
-    turnId: Scalars['UUID']
-    score: Scalars['Int']
-    comment?: Scalars['String']
-    createdAt: Scalars['DateTime']
-    __typename: 'AgentTurnEvaluation'
-}
-
-export interface AgentTurn {
+export interface AgentRun {
     id: Scalars['UUID']
     threadId: Scalars['UUID']
-    agentId?: Scalars['UUID']
-    evaluations: AgentTurnEvaluation[]
-    messages: AgentMessage[]
+    threadTitle?: Scalars['String']
+    status: AgentTurnStatus
+    errorMessage?: Scalars['String']
     createdAt: Scalars['DateTime']
-    __typename: 'AgentTurn'
+    startedAt?: Scalars['DateTime']
+    endedAt?: Scalars['DateTime']
+    modelId?: Scalars['String']
+    inputTokens?: Scalars['Int']
+    outputTokens?: Scalars['Int']
+    credits?: Scalars['Float']
+    creatorSource: Scalars['String']
+    creatorName: Scalars['String']
+    input?: Scalars['String']
+    reply?: Scalars['String']
+    toolNames: Scalars['String'][]
+    __typename: 'AgentRun'
 }
+
+export type AgentTurnStatus = 'RUNNING' | 'WAITING_FOR_INPUT' | 'COMPLETED' | 'CANCELLED' | 'FAILED'
 
 export interface WorkspaceAiStats {
     conversationsCount: Scalars['Int']
@@ -3401,6 +3408,7 @@ export interface Query {
     usageQuotasWithConsumption: UsageQuotaWithConsumption[]
     usageQuotaDefinitions: UsageQuotaDefinitions
     usageQuotaScopeConsumption?: UsageQuotaScopeConsumption
+    getUsageAnalytics: UsageAnalytics
     getPageLayoutWidgets: PageLayoutWidget[]
     getPageLayoutWidget: PageLayoutWidget
     getPageLayoutTabs: PageLayoutTab[]
@@ -3419,22 +3427,21 @@ export interface Query {
     getViewFieldGroup?: ViewFieldGroup
     findManyAgents: Agent[]
     findOneAgent: Agent
-    objects: ObjectConnection
-    object: Object
-    objectRecordCounts: ObjectRecordCount[]
-    mostlyEmptyFieldMetadataIds: Scalars['UUID'][]
-    currentUserSessions: UserSession[]
     findOneLogicFunction: LogicFunction
     findManyLogicFunctions: LogicFunction[]
     getAvailablePackages: Scalars['JSON']
     getLogicFunctionSourceCode?: Scalars['String']
+    currentUserSessions: UserSession[]
     commandMenuItems: CommandMenuItem[]
     commandMenuItem?: CommandMenuItem
     frontComponents: FrontComponent[]
     frontComponent?: FrontComponent
+    objects: ObjectConnection
+    object: Object
+    objectRecordCounts: ObjectRecordCount[]
+    mostlyEmptyFieldMetadataIds: Scalars['UUID'][]
     getInviteSuggestions: InviteSuggestion[]
     applicationConnectionProviders: ApplicationConnectionProvider[]
-    getUsageAnalytics: UsageAnalytics
     billingPortalSession: BillingSession
     listPlans: BillingPlan[]
     getResourceCreditUsage: BillingResourceCreditUsage[]
@@ -3499,7 +3506,7 @@ export interface Query {
     getAiSystemPromptPreview: AiSystemPromptPreview
     skills: Skill[]
     skill?: Skill
-    agentTurns: AgentTurn[]
+    agentRuns: AgentRun[]
     validationRules: ValidationRule[]
     timelineActivityTypes: TimelineActivityType[]
     metadataTranslations: MetadataTranslation[]
@@ -3598,18 +3605,12 @@ export interface Mutation {
     createOneAgent: Agent
     updateOneAgent: Agent
     deleteOneAgent: Agent
-    createOneObject: Object
-    deleteOneObject: Object
-    updateOneObject: Object
-    updateManyObjects: Object[]
-    createOneIndex: Index
-    deleteOneIndex: Index
-    revokeUserSession: Scalars['Boolean']
-    revokeAllOtherUserSessions: Scalars['Int']
     deleteOneLogicFunction: LogicFunction
     createOneLogicFunction: LogicFunction
     executeOneLogicFunction: LogicFunctionExecutionResult
     updateOneLogicFunction: Scalars['Boolean']
+    revokeUserSession: Scalars['Boolean']
+    revokeAllOtherUserSessions: Scalars['Int']
     createCommandMenuItem: CommandMenuItem
     updateCommandMenuItem: CommandMenuItem
     resetCommandMenuItem: CommandMenuItem
@@ -3619,6 +3620,12 @@ export interface Mutation {
     updateFrontComponent: FrontComponent
     deleteFrontComponent: FrontComponent
     updateOneApplicationVariable: Scalars['Boolean']
+    createOneObject: Object
+    deleteOneObject: Object
+    updateOneObject: Object
+    updateManyObjects: Object[]
+    createOneIndex: Index
+    deleteOneIndex: Index
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     completeBookCallOnboardingStep: OnboardingStepSuccess
     triggerInstallAppsOnboardingStep: OnboardingStepSuccess
@@ -3746,8 +3753,6 @@ export interface Mutation {
     deleteSkill: Skill
     activateSkill: Skill
     deactivateSkill: Skill
-    evaluateAgentTurn: AgentTurnEvaluation
-    runEvaluationInput: AgentTurn
     createValidationRule: ValidationRule
     updateValidationRule: ValidationRule
     deleteValidationRule: ValidationRule
@@ -3871,6 +3876,7 @@ export interface ApplicationVariableGenqlSelection{
     isRequired?: boolean | number
     type?: boolean | number
     options?: boolean | number
+    scope?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3891,7 +3897,7 @@ export interface AgentGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     modelConfiguration?: boolean | number
-    evaluationInputs?: boolean | number
+    triggers?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5126,6 +5132,115 @@ export interface LogicFunctionExecutionResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UserSessionGenqlSelection{
+    id?: boolean | number
+    workspaceId?: boolean | number
+    authProvider?: boolean | number
+    isImpersonating?: boolean | number
+    userAgent?: boolean | number
+    ipAddress?: boolean | number
+    createdAt?: boolean | number
+    lastActiveAt?: boolean | number
+    expiresAt?: boolean | number
+    isCurrent?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface BillingEndTrialPeriodGenqlSelection{
+    /** Updated subscription status */
+    status?: boolean | number
+    /** Boolean that confirms if a payment method was found */
+    hasPaymentMethod?: boolean | number
+    /** Billing portal URL for payment method update (returned when no payment method exists) */
+    billingPortalUrl?: boolean | number
+    /** Updated current billing subscription */
+    currentBillingSubscription?: BillingSubscriptionGenqlSelection
+    /** All billing subscriptions */
+    billingSubscriptions?: BillingSubscriptionGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface BillingResourceCreditUsageGenqlSelection{
+    productKey?: boolean | number
+    periodStart?: boolean | number
+    periodEnd?: boolean | number
+    usedCredits?: boolean | number
+    grantedCredits?: boolean | number
+    rolloverCredits?: boolean | number
+    totalGrantedCredits?: boolean | number
+    unitPriceCents?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface BillingPlanGenqlSelection{
+    planKey?: boolean | number
+    baseProducts?: BillingLicensedProductGenqlSelection
+    resourceCreditProducts?: BillingLicensedProductGenqlSelection
+    meteredProducts?: BillingMeteredProductGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface BillingPaymentIntentGenqlSelection{
+    clientSecret?: boolean | number
+    paymentIntentType?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface BillingSessionGenqlSelection{
+    url?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface BillingUpdateGenqlSelection{
+    /** Current billing subscription */
+    currentBillingSubscription?: BillingSubscriptionGenqlSelection
+    /** All billing subscriptions */
+    billingSubscriptions?: BillingSubscriptionGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageBreakdownItemGenqlSelection{
+    key?: boolean | number
+    label?: boolean | number
+    creditsUsed?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageTimeSeriesGenqlSelection{
+    date?: boolean | number
+    creditsUsed?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageUserDailyGenqlSelection{
+    userWorkspaceId?: boolean | number
+    dailyUsage?: UsageTimeSeriesGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageAnalyticsGenqlSelection{
+    usageByUser?: UsageBreakdownItemGenqlSelection
+    usageByOperationType?: UsageBreakdownItemGenqlSelection
+    usageByApplication?: UsageBreakdownItemGenqlSelection
+    usageByModel?: UsageBreakdownItemGenqlSelection
+    timeSeries?: UsageTimeSeriesGenqlSelection
+    periodStart?: boolean | number
+    periodEnd?: boolean | number
+    userDailyUsage?: UsageUserDailyGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface UsageLimitOperationDefinitionGenqlSelection{
     operationType?: boolean | number
     allowedUnits?: boolean | number
@@ -5348,115 +5463,6 @@ export interface EventSubscriptionGenqlSelection{
     objectRecordEventsWithQueryIds?: ObjectRecordEventWithQueryIdsGenqlSelection
     metadataEvents?: MetadataEventGenqlSelection
     queueJobEvents?: JobStatusGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UserSessionGenqlSelection{
-    id?: boolean | number
-    workspaceId?: boolean | number
-    authProvider?: boolean | number
-    isImpersonating?: boolean | number
-    userAgent?: boolean | number
-    ipAddress?: boolean | number
-    createdAt?: boolean | number
-    lastActiveAt?: boolean | number
-    expiresAt?: boolean | number
-    isCurrent?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingEndTrialPeriodGenqlSelection{
-    /** Updated subscription status */
-    status?: boolean | number
-    /** Boolean that confirms if a payment method was found */
-    hasPaymentMethod?: boolean | number
-    /** Billing portal URL for payment method update (returned when no payment method exists) */
-    billingPortalUrl?: boolean | number
-    /** Updated current billing subscription */
-    currentBillingSubscription?: BillingSubscriptionGenqlSelection
-    /** All billing subscriptions */
-    billingSubscriptions?: BillingSubscriptionGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingResourceCreditUsageGenqlSelection{
-    productKey?: boolean | number
-    periodStart?: boolean | number
-    periodEnd?: boolean | number
-    usedCredits?: boolean | number
-    grantedCredits?: boolean | number
-    rolloverCredits?: boolean | number
-    totalGrantedCredits?: boolean | number
-    unitPriceCents?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingPlanGenqlSelection{
-    planKey?: boolean | number
-    baseProducts?: BillingLicensedProductGenqlSelection
-    resourceCreditProducts?: BillingLicensedProductGenqlSelection
-    meteredProducts?: BillingMeteredProductGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingPaymentIntentGenqlSelection{
-    clientSecret?: boolean | number
-    paymentIntentType?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingSessionGenqlSelection{
-    url?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingUpdateGenqlSelection{
-    /** Current billing subscription */
-    currentBillingSubscription?: BillingSubscriptionGenqlSelection
-    /** All billing subscriptions */
-    billingSubscriptions?: BillingSubscriptionGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageBreakdownItemGenqlSelection{
-    key?: boolean | number
-    label?: boolean | number
-    creditsUsed?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageTimeSeriesGenqlSelection{
-    date?: boolean | number
-    creditsUsed?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageUserDailyGenqlSelection{
-    userWorkspaceId?: boolean | number
-    dailyUsage?: UsageTimeSeriesGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageAnalyticsGenqlSelection{
-    usageByUser?: UsageBreakdownItemGenqlSelection
-    usageByOperationType?: UsageBreakdownItemGenqlSelection
-    usageByApplication?: UsageBreakdownItemGenqlSelection
-    usageByModel?: UsageBreakdownItemGenqlSelection
-    timeSeries?: UsageTimeSeriesGenqlSelection
-    periodStart?: boolean | number
-    periodEnd?: boolean | number
-    userDailyUsage?: UsageUserDailyGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7142,23 +7148,24 @@ export interface RecordExportGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AgentTurnEvaluationGenqlSelection{
-    id?: boolean | number
-    turnId?: boolean | number
-    score?: boolean | number
-    comment?: boolean | number
-    createdAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AgentTurnGenqlSelection{
+export interface AgentRunGenqlSelection{
     id?: boolean | number
     threadId?: boolean | number
-    agentId?: boolean | number
-    evaluations?: AgentTurnEvaluationGenqlSelection
-    messages?: AgentMessageGenqlSelection
+    threadTitle?: boolean | number
+    status?: boolean | number
+    errorMessage?: boolean | number
     createdAt?: boolean | number
+    startedAt?: boolean | number
+    endedAt?: boolean | number
+    modelId?: boolean | number
+    inputTokens?: boolean | number
+    outputTokens?: boolean | number
+    credits?: boolean | number
+    creatorSource?: boolean | number
+    creatorName?: boolean | number
+    input?: boolean | number
+    reply?: boolean | number
+    toolNames?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7363,6 +7370,7 @@ export interface QueryGenqlSelection{
     usageQuotasWithConsumption?: UsageQuotaWithConsumptionGenqlSelection
     usageQuotaDefinitions?: UsageQuotaDefinitionsGenqlSelection
     usageQuotaScopeConsumption?: (UsageQuotaScopeConsumptionGenqlSelection & { __args: {input: UsageQuotaScopeInput} })
+    getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     getPageLayoutWidgets?: (PageLayoutWidgetGenqlSelection & { __args: {pageLayoutTabId: Scalars['String']} })
     getPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String']} })
     getPageLayoutTabs?: (PageLayoutTabGenqlSelection & { __args: {pageLayoutId: Scalars['String']} })
@@ -7381,6 +7389,15 @@ export interface QueryGenqlSelection{
     getViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {id: Scalars['String']} })
     findManyAgents?: AgentGenqlSelection
     findOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
+    findOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
+    findManyLogicFunctions?: LogicFunctionGenqlSelection
+    getAvailablePackages?: { __args: {input: LogicFunctionIdInput} }
+    getLogicFunctionSourceCode?: { __args: {input: LogicFunctionIdInput} }
+    currentUserSessions?: UserSessionGenqlSelection
+    commandMenuItems?: CommandMenuItemGenqlSelection
+    commandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
+    frontComponents?: FrontComponentGenqlSelection
+    frontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
     objects?: (ObjectConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
     paging: CursorPaging, 
@@ -7391,18 +7408,8 @@ export interface QueryGenqlSelection{
     id: Scalars['UUID']} })
     objectRecordCounts?: ObjectRecordCountGenqlSelection
     mostlyEmptyFieldMetadataIds?: { __args: {objectMetadataId: Scalars['UUID']} }
-    currentUserSessions?: UserSessionGenqlSelection
-    findOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
-    findManyLogicFunctions?: LogicFunctionGenqlSelection
-    getAvailablePackages?: { __args: {input: LogicFunctionIdInput} }
-    getLogicFunctionSourceCode?: { __args: {input: LogicFunctionIdInput} }
-    commandMenuItems?: CommandMenuItemGenqlSelection
-    commandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
-    frontComponents?: FrontComponentGenqlSelection
-    frontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
     getInviteSuggestions?: InviteSuggestionGenqlSelection
     applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
-    getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null), forPaymentMethodUpdate?: (Scalars['Boolean'] | null)} })
     listPlans?: BillingPlanGenqlSelection
     getResourceCreditUsage?: BillingResourceCreditUsageGenqlSelection
@@ -7473,7 +7480,7 @@ export interface QueryGenqlSelection{
     getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
-    agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
+    agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     validationRules?: (ValidationRuleGenqlSelection & { __args: {objectMetadataId: Scalars['UUID']} })
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
@@ -7505,17 +7512,17 @@ export interface RecordTargetInput {objectMetadataId: Scalars['UUID'],recordId: 
 
 export interface UsageQuotaScopeInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),periodUnit: Scalars['String'],unit: UsageUnit}
 
+export interface UsageAnalyticsInput {periodStart?: (Scalars['DateTime'] | null),periodEnd?: (Scalars['DateTime'] | null),userWorkspaceId?: (Scalars['String'] | null),operationTypes?: (UsageOperationType[] | null)}
+
 export interface AgentIdInput {
 /** The id of the agent. */
 id: Scalars['UUID']}
-
-export interface ObjectFilter {and?: (ObjectFilter[] | null),or?: (ObjectFilter[] | null),id?: (UUIDFilterComparison | null),universalIdentifier?: (UUIDFilterComparison | null),isActive?: (BooleanFieldComparison | null),isRemote?: (BooleanFieldComparison | null),isSearchable?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUICreatable?: (BooleanFieldComparison | null),isUIEditable?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null)}
 
 export interface LogicFunctionIdInput {
 /** The id of the function. */
 id: Scalars['ID']}
 
-export interface UsageAnalyticsInput {periodStart?: (Scalars['DateTime'] | null),periodEnd?: (Scalars['DateTime'] | null),userWorkspaceId?: (Scalars['String'] | null),operationTypes?: (UsageOperationType[] | null)}
+export interface ObjectFilter {and?: (ObjectFilter[] | null),or?: (ObjectFilter[] | null),id?: (UUIDFilterComparison | null),universalIdentifier?: (UUIDFilterComparison | null),isActive?: (BooleanFieldComparison | null),isRemote?: (BooleanFieldComparison | null),isSearchable?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUICreatable?: (BooleanFieldComparison | null),isUIEditable?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null)}
 
 export interface GetApiKeyInput {id: Scalars['UUID']}
 
@@ -7611,18 +7618,12 @@ export interface MutationGenqlSelection{
     createOneAgent?: (AgentGenqlSelection & { __args: {input: CreateAgentInput} })
     updateOneAgent?: (AgentGenqlSelection & { __args: {input: UpdateAgentInput} })
     deleteOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
-    createOneObject?: (ObjectGenqlSelection & { __args: {input: CreateOneObjectInput} })
-    deleteOneObject?: (ObjectGenqlSelection & { __args: {input: DeleteOneObjectInput} })
-    updateOneObject?: (ObjectGenqlSelection & { __args: {input: UpdateOneObjectInput} })
-    updateManyObjects?: (ObjectGenqlSelection & { __args: {inputs: UpdateOneObjectInput[]} })
-    createOneIndex?: (IndexGenqlSelection & { __args: {input: CreateOneIndexInput} })
-    deleteOneIndex?: (IndexGenqlSelection & { __args: {input: DeleteOneIndexInput} })
-    revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
-    revokeAllOtherUserSessions?: boolean | number
     deleteOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
     createOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: CreateLogicFunctionFromSourceInput} })
     executeOneLogicFunction?: (LogicFunctionExecutionResultGenqlSelection & { __args: {input: ExecuteOneLogicFunctionInput} })
     updateOneLogicFunction?: { __args: {input: UpdateLogicFunctionFromSourceInput} }
+    revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
+    revokeAllOtherUserSessions?: boolean | number
     createCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: CreateCommandMenuItemInput} })
     updateCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: UpdateCommandMenuItemInput} })
     resetCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -7632,6 +7633,12 @@ export interface MutationGenqlSelection{
     updateFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: UpdateFrontComponentInput} })
     deleteFrontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId?: (Scalars['UUID'] | null)} }
+    createOneObject?: (ObjectGenqlSelection & { __args: {input: CreateOneObjectInput} })
+    deleteOneObject?: (ObjectGenqlSelection & { __args: {input: DeleteOneObjectInput} })
+    updateOneObject?: (ObjectGenqlSelection & { __args: {input: UpdateOneObjectInput} })
+    updateManyObjects?: (ObjectGenqlSelection & { __args: {inputs: UpdateOneObjectInput[]} })
+    createOneIndex?: (IndexGenqlSelection & { __args: {input: CreateOneIndexInput} })
+    deleteOneIndex?: (IndexGenqlSelection & { __args: {input: DeleteOneIndexInput} })
     skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
     completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
     triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][], isAutoSkipped: Scalars['Boolean']} })
@@ -7759,8 +7766,6 @@ export interface MutationGenqlSelection{
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     activateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     deactivateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
-    evaluateAgentTurn?: (AgentTurnEvaluationGenqlSelection & { __args: {turnId: Scalars['UUID']} })
-    runEvaluationInput?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID'], input: Scalars['String']} })
     createValidationRule?: (ValidationRuleGenqlSelection & { __args: {input: CreateValidationRuleInput} })
     updateValidationRule?: (ValidationRuleGenqlSelection & { __args: {input: UpdateValidationRuleInput} })
     deleteValidationRule?: (ValidationRuleGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -7993,39 +7998,9 @@ viewFieldId?: (Scalars['UUID'] | null),
 /** The id of the field metadata. Used to create a new view field when viewFieldId is not provided. */
 fieldMetadataId?: (Scalars['UUID'] | null),isVisible: Scalars['Boolean'],position: Scalars['Float']}
 
-export interface CreateAgentInput {name?: (Scalars['String'] | null),label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt: Scalars['String'],modelId: Scalars['String'],roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
+export interface CreateAgentInput {name?: (Scalars['String'] | null),label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt: Scalars['String'],modelId: Scalars['String'],roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),triggers?: (Scalars['JSON'][] | null)}
 
-export interface UpdateAgentInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
-
-export interface CreateOneObjectInput {
-/** The object to create */
-object: CreateObjectInput}
-
-export interface CreateObjectInput {nameSingular: Scalars['String'],namePlural: Scalars['String'],labelSingular: Scalars['String'],labelPlural: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
-
-export interface DeleteOneObjectInput {
-/** The id of the record to delete. */
-id: Scalars['UUID']}
-
-export interface UpdateOneObjectInput {update: UpdateObjectPayload,
-/** The id of the object to update */
-id: Scalars['UUID']}
-
-export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),openRecordIn?: (ObjectOpenRecordIn | null),readability?: (MetadataReadability | null),sharingReach?: (ObjectSharingReach | null),translations?: (MetadataTranslationOverrideInput[] | null)}
-
-export interface MetadataTranslationOverrideInput {locale: Scalars['String'],property: Scalars['String'],value?: (Scalars['String'] | null)}
-
-export interface CreateOneIndexInput {
-/** The custom index to create */
-index: CreateIndexInput}
-
-export interface CreateIndexInput {objectMetadataId: Scalars['UUID'],fields: CreateIndexFieldInput[],indexType: IndexType}
-
-export interface CreateIndexFieldInput {fieldMetadataId: Scalars['UUID'],subFieldName?: (Scalars['String'] | null)}
-
-export interface DeleteOneIndexInput {
-/** The id of the custom index to delete. */
-id: Scalars['UUID']}
+export interface UpdateAgentInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),triggers?: (Scalars['JSON'][] | null)}
 
 export interface CreateLogicFunctionFromSourceInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),source?: (Scalars['JSON'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null),serverRouteTriggerSettings?: (Scalars['JSON'] | null),toolTriggerSettings?: (Scalars['JSON'] | null),workflowActionTriggerSettings?: (Scalars['JSON'] | null)}
 
@@ -8056,6 +8031,36 @@ id: Scalars['UUID'],
 update: UpdateFrontComponentInputUpdates}
 
 export interface UpdateFrontComponentInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null)}
+
+export interface CreateOneObjectInput {
+/** The object to create */
+object: CreateObjectInput}
+
+export interface CreateObjectInput {nameSingular: Scalars['String'],namePlural: Scalars['String'],labelSingular: Scalars['String'],labelPlural: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
+
+export interface DeleteOneObjectInput {
+/** The id of the record to delete. */
+id: Scalars['UUID']}
+
+export interface UpdateOneObjectInput {update: UpdateObjectPayload,
+/** The id of the object to update */
+id: Scalars['UUID']}
+
+export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),openRecordIn?: (ObjectOpenRecordIn | null),readability?: (MetadataReadability | null),sharingReach?: (ObjectSharingReach | null),translations?: (MetadataTranslationOverrideInput[] | null)}
+
+export interface MetadataTranslationOverrideInput {locale: Scalars['String'],property: Scalars['String'],value?: (Scalars['String'] | null)}
+
+export interface CreateOneIndexInput {
+/** The custom index to create */
+index: CreateIndexInput}
+
+export interface CreateIndexInput {objectMetadataId: Scalars['UUID'],fields: CreateIndexFieldInput[],indexType: IndexType}
+
+export interface CreateIndexFieldInput {fieldMetadataId: Scalars['UUID'],subFieldName?: (Scalars['String'] | null)}
+
+export interface DeleteOneIndexInput {
+/** The id of the custom index to delete. */
+id: Scalars['UUID']}
 
 export interface CreateApprovedAccessDomainInput {domain: Scalars['String'],email: Scalars['String']}
 
@@ -9048,6 +9053,94 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const UserSession_possibleTypes: string[] = ['UserSession']
+    export const isUserSession = (obj?: { __typename?: any } | null): obj is UserSession => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUserSession"')
+      return UserSession_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingEndTrialPeriod_possibleTypes: string[] = ['BillingEndTrialPeriod']
+    export const isBillingEndTrialPeriod = (obj?: { __typename?: any } | null): obj is BillingEndTrialPeriod => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEndTrialPeriod"')
+      return BillingEndTrialPeriod_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingResourceCreditUsage_possibleTypes: string[] = ['BillingResourceCreditUsage']
+    export const isBillingResourceCreditUsage = (obj?: { __typename?: any } | null): obj is BillingResourceCreditUsage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingResourceCreditUsage"')
+      return BillingResourceCreditUsage_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingPlan_possibleTypes: string[] = ['BillingPlan']
+    export const isBillingPlan = (obj?: { __typename?: any } | null): obj is BillingPlan => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPlan"')
+      return BillingPlan_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingPaymentIntent_possibleTypes: string[] = ['BillingPaymentIntent']
+    export const isBillingPaymentIntent = (obj?: { __typename?: any } | null): obj is BillingPaymentIntent => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPaymentIntent"')
+      return BillingPaymentIntent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingSession_possibleTypes: string[] = ['BillingSession']
+    export const isBillingSession = (obj?: { __typename?: any } | null): obj is BillingSession => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSession"')
+      return BillingSession_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingUpdate_possibleTypes: string[] = ['BillingUpdate']
+    export const isBillingUpdate = (obj?: { __typename?: any } | null): obj is BillingUpdate => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingUpdate"')
+      return BillingUpdate_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
+    export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
+      return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
+    export const isUsageTimeSeries = (obj?: { __typename?: any } | null): obj is UsageTimeSeries => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
+      return UsageTimeSeries_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
+    export const isUsageUserDaily = (obj?: { __typename?: any } | null): obj is UsageUserDaily => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
+      return UsageUserDaily_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
+    export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
+      return UsageAnalytics_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const UsageLimitOperationDefinition_possibleTypes: string[] = ['UsageLimitOperationDefinition']
     export const isUsageLimitOperationDefinition = (obj?: { __typename?: any } | null): obj is UsageLimitOperationDefinition => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimitOperationDefinition"')
@@ -9212,94 +9305,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isEventSubscription = (obj?: { __typename?: any } | null): obj is EventSubscription => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEventSubscription"')
       return EventSubscription_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UserSession_possibleTypes: string[] = ['UserSession']
-    export const isUserSession = (obj?: { __typename?: any } | null): obj is UserSession => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUserSession"')
-      return UserSession_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingEndTrialPeriod_possibleTypes: string[] = ['BillingEndTrialPeriod']
-    export const isBillingEndTrialPeriod = (obj?: { __typename?: any } | null): obj is BillingEndTrialPeriod => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEndTrialPeriod"')
-      return BillingEndTrialPeriod_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingResourceCreditUsage_possibleTypes: string[] = ['BillingResourceCreditUsage']
-    export const isBillingResourceCreditUsage = (obj?: { __typename?: any } | null): obj is BillingResourceCreditUsage => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingResourceCreditUsage"')
-      return BillingResourceCreditUsage_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingPlan_possibleTypes: string[] = ['BillingPlan']
-    export const isBillingPlan = (obj?: { __typename?: any } | null): obj is BillingPlan => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPlan"')
-      return BillingPlan_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingPaymentIntent_possibleTypes: string[] = ['BillingPaymentIntent']
-    export const isBillingPaymentIntent = (obj?: { __typename?: any } | null): obj is BillingPaymentIntent => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPaymentIntent"')
-      return BillingPaymentIntent_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingSession_possibleTypes: string[] = ['BillingSession']
-    export const isBillingSession = (obj?: { __typename?: any } | null): obj is BillingSession => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSession"')
-      return BillingSession_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingUpdate_possibleTypes: string[] = ['BillingUpdate']
-    export const isBillingUpdate = (obj?: { __typename?: any } | null): obj is BillingUpdate => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingUpdate"')
-      return BillingUpdate_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
-    export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
-      return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
-    export const isUsageTimeSeries = (obj?: { __typename?: any } | null): obj is UsageTimeSeries => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
-      return UsageTimeSeries_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
-    export const isUsageUserDaily = (obj?: { __typename?: any } | null): obj is UsageUserDaily => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
-      return UsageUserDaily_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
-    export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
-      return UsageAnalytics_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10664,18 +10669,10 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
-    const AgentTurnEvaluation_possibleTypes: string[] = ['AgentTurnEvaluation']
-    export const isAgentTurnEvaluation = (obj?: { __typename?: any } | null): obj is AgentTurnEvaluation => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentTurnEvaluation"')
-      return AgentTurnEvaluation_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AgentTurn_possibleTypes: string[] = ['AgentTurn']
-    export const isAgentTurn = (obj?: { __typename?: any } | null): obj is AgentTurn => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentTurn"')
-      return AgentTurn_possibleTypes.includes(obj.__typename)
+    const AgentRun_possibleTypes: string[] = ['AgentRun']
+    export const isAgentRun = (obj?: { __typename?: any } | null): obj is AgentRun => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRun"')
+      return AgentRun_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10836,6 +10833,11 @@ export const enumApplicationRegistrationSourceType = {
    TARBALL: 'TARBALL' as const,
    LOCAL: 'LOCAL' as const,
    OAUTH_ONLY: 'OAUTH_ONLY' as const
+}
+
+export const enumApplicationVariableScope = {
+   WORKSPACE: 'WORKSPACE' as const,
+   USER: 'USER' as const
 }
 
 export const enumEngineComponentKey = {
@@ -11441,13 +11443,10 @@ export const enumFeatureFlagKey = {
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
    IS_MESSAGE_CAMPAIGN_ENABLED: 'IS_MESSAGE_CAMPAIGN_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
-   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as const,
    IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' as const,
    IS_AI_CHAT_SHARING_DROPDOWN_ENABLED: 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' as const,
    IS_INITIAL_OBJECT_VIEW_ENABLED: 'IS_INITIAL_OBJECT_VIEW_ENABLED' as const,
-   IS_WEBHOOK_RATE_LIMIT_ENABLED: 'IS_WEBHOOK_RATE_LIMIT_ENABLED' as const,
    IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED: 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' as const,
-   IS_EXECUTION_QUOTA_ENABLED: 'IS_EXECUTION_QUOTA_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_LOGS_SETTINGS_SECTION_ENABLED: 'IS_LOGS_SETTINGS_SECTION_ENABLED' as const,
    IS_CONVERSATIONS_TAB_ENABLED: 'IS_CONVERSATIONS_TAB_ENABLED' as const,
@@ -11671,6 +11670,14 @@ export const enumWorkspaceSetupChatOutcome = {
    STARTED: 'STARTED' as const,
    ALREADY_STARTED: 'ALREADY_STARTED' as const,
    UNAVAILABLE: 'UNAVAILABLE' as const
+}
+
+export const enumAgentTurnStatus = {
+   RUNNING: 'RUNNING' as const,
+   WAITING_FOR_INPUT: 'WAITING_FOR_INPUT' as const,
+   COMPLETED: 'COMPLETED' as const,
+   CANCELLED: 'CANCELLED' as const,
+   FAILED: 'FAILED' as const
 }
 
 export const enumAppKeyValueScope = {

@@ -53,9 +53,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: true,
         isUICreatable: false,
-        // Read by whoever reads its workflow run; with no run it reads only through its own grants, like a PRIVATE record
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['workflowRun'],
+        readability: MetadataReadability.PRIVATE,
         writability: MetadataWritability.OPEN,
         labelIdentifierFieldMetadataName: 'title',
       },
@@ -267,49 +265,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         // Each row is one member's private inbox state, readable through its
         // owner grant and written only through the chat resolvers
         readability: MetadataReadability.PRIVATE,
-        writability: MetadataWritability.SYSTEM,
-        labelIdentifierFieldMetadataName: 'id',
-      },
-    }),
-  agentTurnEvaluation: (
-    args: Omit<
-      CreateStandardObjectArgs<'agentTurnEvaluation'>,
-      'context' | 'objectName'
-    >,
-  ) =>
-    createStandardObjectFlatMetadata({
-      ...args,
-      objectName: 'agentTurnEvaluation',
-      context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
-        nameSingular: 'agentTurnEvaluation',
-        namePlural: 'agentTurnEvaluations',
-        labelSingular: i18nLabel(
-          msg({
-            message: 'Agent turn evaluation',
-            context: 'objectMetadata.labelSingular',
-          }),
-        ),
-        labelPlural: i18nLabel(
-          msg({
-            message: 'Agent turn evaluations',
-            context: 'objectMetadata.labelPlural',
-          }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: 'Agent turn evaluation',
-            context: 'objectMetadata.description',
-          }),
-        ),
-        icon: 'IconLego',
-        isSystem: true,
-        isSearchable: false,
-        isAuditLogged: false,
-        isUIEditable: false,
-        isUICreatable: false,
-        readability: MetadataReadability.SYSTEM,
         writability: MetadataWritability.SYSTEM,
         labelIdentifierFieldMetadataName: 'id',
       },
