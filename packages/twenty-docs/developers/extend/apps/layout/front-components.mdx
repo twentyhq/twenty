@@ -446,7 +446,7 @@ Available hooks:
 | `useFrontComponentId()` | `string` | This component instance's ID |
 | `useTimelineActivityId()` | `string` or `null` | The current timeline activity ID when rendering a custom timeline row |
 | `useColorScheme()` | `'light'` or `'dark'` | The host UI's active color scheme (`System` is already resolved) |
-| `useToolCall()` | `FrontComponentToolCall` or `null` | The AI tool call this component is rendering, when it was surfaced from a logic function's `toolTriggerSettings` |
+| `useToolCall()` | `FrontComponentToolCall` or `null` | The AI tool call this component is rendering, when it was surfaced from a logic function's `toolTriggerSettings`. A call the agent proposed for approval arrives with status `approval-requested` |
 | `useFrontComponentExecutionContext(selector)` | varies | Access the full execution context with a selector function |
 
 ### Object metadata
@@ -577,6 +577,7 @@ Front components can trigger navigation, modals, and notifications using functio
 | `unmountFrontComponent()` | Unmount the component |
 | `updateProgress(progress)` | Update a progress indicator |
 | `uploadFile(file, { fieldMetadataId, fileName? })` | Upload a `Blob` into a FILES field; resolves to `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` or `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
+| `respondToToolCall(response)` | Approve or reject the proposed tool call this component renders, in place of the built-in approval card; `response` is `{ decision: 'approve', toolName?, arguments?, feedback? }` or `{ decision: 'reject', feedback? }` |
 
 Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 
