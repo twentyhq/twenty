@@ -1,6 +1,7 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { AppChip } from '@/applications/components/AppChip';
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
+import { useAppPreferencesApplications } from '@/settings/app-preferences/hooks/useAppPreferencesApplications';
 import { getPreinstalledApplicationForProvider } from '@/settings/app-preferences/utils/getPreinstalledApplicationForProvider';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,9 +24,23 @@ export const SettingsAppPreferencesConnectedAccountApplicationCell = ({
   account,
 }: SettingsAppPreferencesConnectedAccountApplicationCellProps) => {
   const theme = useTheme();
+  const { applications } = useAppPreferencesApplications();
 
   if (isDefined(account.applicationId)) {
-    return <AppChip applicationId={account.applicationId} size="sm" />;
+    const application = applications.find(
+      ({ id }) => id === account.applicationId,
+    );
+
+    return (
+      <AppChip
+        applicationId={account.applicationId}
+        fallbackApplicationData={{
+          name: application?.name,
+          logoUrl: application?.logoUrl,
+        }}
+        size="sm"
+      />
+    );
   }
 
   const preinstalledApplication = getPreinstalledApplicationForProvider(

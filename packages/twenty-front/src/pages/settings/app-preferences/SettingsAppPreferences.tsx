@@ -3,7 +3,8 @@ import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { SettingsAppPreferencesApplicationSection } from '@/settings/app-preferences/components/SettingsAppPreferencesApplicationSection';
 import { SettingsAppPreferencesConnectedAccountsSection } from '@/settings/app-preferences/components/SettingsAppPreferencesConnectedAccountsSection';
-import { useApplicationUserSettingsMenuItems } from '@/settings/app-preferences/hooks/useApplicationUserSettingsMenuItems';
+import { useAppPreferencesApplications } from '@/settings/app-preferences/hooks/useAppPreferencesApplications';
+import { getApplicationUserSettingsMenuItems } from '@/settings/app-preferences/utils/getApplicationUserSettingsMenuItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -18,12 +19,13 @@ export const SettingsAppPreferences = () => {
     includeApplicationAccounts: true,
   });
 
-  const {
-    applicationUserSettingsMenuItems,
-    loading: settingsMenuItemsLoading,
-  } = useApplicationUserSettingsMenuItems();
+  const { applications, loading: applicationsLoading } =
+    useAppPreferencesApplications();
 
-  const loading = accountsLoading || settingsMenuItemsLoading;
+  const applicationUserSettingsMenuItems =
+    getApplicationUserSettingsMenuItems(applications);
+
+  const loading = accountsLoading || applicationsLoading;
 
   return (
     <SettingsPageLayout
