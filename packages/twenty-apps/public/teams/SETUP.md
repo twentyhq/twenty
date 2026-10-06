@@ -69,7 +69,8 @@ does not enable them.
    transcript ID.
 4. Ask the assistant to sync one of them, or add **Sync Teams Transcript** to
    the workflow with that `meetingId` and `transcriptId`. The transcript appears
-   as a Call Recording named after the meeting subject.
+   as a Call Recording named after the meeting subject, linked to the meeting's
+   calendar event when Twenty has synced it.
 
 Both actions use your own connection first and fall back to a workspace-shared
 one. Optional `startDateTime` and `endDateTime` select the meeting window,
