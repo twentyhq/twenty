@@ -3954,42 +3954,27 @@ type Query {
   ): Object!
   objectRecordCounts: [ObjectRecordCount!]!
   mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
-  getInviteSuggestions: [InviteSuggestion!]!
-  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
+  getToolIndex: [ToolIndexEntry!]!
+  getToolInputSchema(toolName: String!): JSON
+  previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
+  messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
+  unsubscribeTopics: [UnsubscribeTopic!]!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
-  findWorkspaceInvitations: [WorkspaceInvitation!]!
-  getApprovedAccessDomains: [ApprovedAccessDomain!]!
+  myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
+  appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
+  getEmailingDomains: [EmailingDomain!]!
+  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
+  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
+  applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
   getRoles: [Role!]!
   getRole(id: UUID!): Role!
   apiKeys: [ApiKey!]!
   getApiKeyRoles: [Role!]!
   apiKey(input: GetApiKeyInput!): ApiKey
-  getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
-  getViewFilterGroup(id: String!): ViewFilterGroup
-  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
-  applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
-  currentWorkspace: Workspace!
-  getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
-  getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
-  findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
-  findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
-  findManyApplicationRegistrations: [ApplicationRegistration!]!
-  findOneApplicationRegistration(id: String!): ApplicationRegistration!
-  findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
-  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
-  applicationRegistrationTarballUrl(id: String!): String
-  findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
-  githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
-  findManyApplications: [Application!]!
-  findOneApplication(id: UUID, universalIdentifier: UUID): Application!
-  findInstallApplicationJobStatus(universalIdentifier: String!): JobStatus
-  findUninstallApplicationJobStatus(universalIdentifier: String!): JobStatus
-  findManyMarketplaceApps(universalIdentifiers: [String!]): [MarketplaceApp!]!
-  findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
-  publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
-  publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
+  webhooks: [Webhook!]!
+  webhook(id: UUID!): Webhook
   fields(
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
@@ -4003,16 +3988,11 @@ type Query {
   ): Field!
   getViewGroups(viewId: String): [ViewGroup!]!
   getViewGroup(id: String!): ViewGroup
-  previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
-  messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
-  unsubscribeTopics: [UnsubscribeTopic!]!
-  myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
-  appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
-  getEmailingDomains: [EmailingDomain!]!
-  getToolIndex: [ToolIndexEntry!]!
-  getToolInputSchema(toolName: String!): JSON
-  webhooks: [Webhook!]!
-  webhook(id: UUID!): Webhook
+  getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
+  getViewFilterGroup(id: String!): ViewFilterGroup
+  getInviteSuggestions: [InviteSuggestion!]!
+  findWorkspaceInvitations: [WorkspaceInvitation!]!
+  getApprovedAccessDomains: [ApprovedAccessDomain!]!
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   getPermissionFlags: [PermissionFlag!]!
@@ -4039,7 +4019,27 @@ type Query {
   checkWorkspaceSubdomainAvailability(subdomain: String!): SubdomainAvailabilityDTO!
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
+  findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
+  findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
+  findManyApplicationRegistrations: [ApplicationRegistration!]!
+  findOneApplicationRegistration(id: String!): ApplicationRegistration!
+  findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
+  findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
+  applicationRegistrationTarballUrl(id: String!): String
+  findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
+  githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
   currentUser: User!
+  currentWorkspace: Workspace!
+  getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
+  getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
+  findManyApplications: [Application!]!
+  findOneApplication(id: UUID, universalIdentifier: UUID): Application!
+  findInstallApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findUninstallApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findManyMarketplaceApps(universalIdentifiers: [String!]): [MarketplaceApp!]!
+  findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
+  publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
+  publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
   pieChartData(input: PieChartDataInput!): PieChartData!
@@ -4100,10 +4100,6 @@ input ObjectFilter {
   isUIReadOnly: BooleanFieldComparison
 }
 
-input GetApiKeyInput {
-  id: UUID!
-}
-
 input PreviewMessageCampaignAudienceInput {
   listId: String!
   unsubscribeTopicId: String
@@ -4119,6 +4115,10 @@ input FindMessageSuppressionsInput {
 
 input ListAppMessageChannelsInput {
   connectedAccountId: UUID
+}
+
+input GetApiKeyInput {
+  id: UUID!
 }
 
 input ListAppConnectionsInput {
@@ -4274,10 +4274,16 @@ type Mutation {
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
   createOneIndex(input: CreateOneIndexInput!): Index!
   deleteOneIndex(input: DeleteOneIndexInput!): Index!
-  skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  goBackToPreviousOnboardingStep: OnboardingStepNavigation!
+  runAgent(input: RunAgentInput!): RunAgentResult!
+  sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
+  cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
+  sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
+  duplicateMessageList(id: UUID!): DuplicatedMessageList!
+  createMessageSuppression(input: CreateMessageSuppressionInput!): MessageSuppression!
+  deleteMessageSuppression(id: UUID!): Boolean!
+  createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
+  updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
+  deleteUnsubscribeTopic(id: String!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
@@ -4288,12 +4294,19 @@ type Mutation {
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   cancelSwitchResourceCreditPrice: BillingUpdate!
-  deleteWorkspaceInvitation(appTokenId: String!): String!
-  resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
-  sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
-  createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
-  deleteApprovedAccessDomain(input: DeleteApprovedAccessDomainInput!): Boolean!
-  validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
+  updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
+  createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
+  updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
+  deleteEmailGroupChannel(id: UUID!): MessageChannel!
+  createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
+  updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
+  deleteAppMessageChannel(id: UUID!): MessageChannel!
+  ingestAppMessages(input: IngestAppMessagesInput!): IngestAppMessagesOutput!
+  createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
+  deleteEmailingDomain(id: String!): Boolean!
+  verifyEmailingDomain(id: String!): EmailingDomain!
+  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
+  disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
@@ -4308,37 +4321,9 @@ type Mutation {
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
   revokeApiKey(input: RevokeApiKeyInput!): ApiKey
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
-  createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
-  updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
-  deleteViewFilterGroup(id: String!): Boolean!
-  destroyViewFilterGroup(id: String!): Boolean!
-  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
-  disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
-  activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
-  updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
-  updateWorkspaceAllowedIframeOrigins(data: UpdateWorkspaceAllowedIframeOriginsInput!): Workspace!
-  deleteCurrentWorkspace: Workspace!
-  checkCustomDomainValidRecords: DomainValidRecords
-  enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
-  upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
-  createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
-  updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
-  deleteApplicationRegistration(id: String!): Boolean!
-  rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
-  updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
-  uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration! @deprecated(reason: "Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage.")
-  claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
-  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
-  grantApplicationCapabilities(input: GrantApplicationCapabilitiesInput!): ApplicationCapabilityGrant!
-  installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
-  installApplication(universalIdentifier: String!, version: String): Application!
-  triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
-  triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult!
-  updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
-  uninstallApplication(universalIdentifier: String!): Boolean!
-  syncMarketplaceCatalog: Boolean!
-  runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
+  createWebhook(input: CreateWebhookInput!): Webhook!
+  updateWebhook(input: UpdateWebhookInput!): Webhook!
+  deleteWebhook(id: UUID!): Webhook!
   createOneField(input: CreateOneFieldMetadataInput!): Field!
   updateOneField(input: UpdateOneFieldMetadataInput!): Field!
   deleteOneField(input: DeleteOneFieldInput!): Field!
@@ -4348,30 +4333,20 @@ type Mutation {
   updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
   deleteViewGroup(input: DeleteViewGroupInput!): ViewGroup!
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
-  sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
-  cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
-  sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
-  duplicateMessageList(id: UUID!): DuplicatedMessageList!
-  createMessageSuppression(input: CreateMessageSuppressionInput!): MessageSuppression!
-  deleteMessageSuppression(id: UUID!): Boolean!
-  createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
-  updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
-  deleteUnsubscribeTopic(id: String!): Boolean!
-  updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
-  createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
-  updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
-  deleteEmailGroupChannel(id: UUID!): MessageChannel!
-  createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
-  updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
-  deleteAppMessageChannel(id: UUID!): MessageChannel!
-  ingestAppMessages(input: IngestAppMessagesInput!): IngestAppMessagesOutput!
-  createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
-  deleteEmailingDomain(id: String!): Boolean!
-  verifyEmailingDomain(id: String!): EmailingDomain!
-  createWebhook(input: CreateWebhookInput!): Webhook!
-  updateWebhook(input: UpdateWebhookInput!): Webhook!
-  deleteWebhook(id: UUID!): Webhook!
-  runAgent(input: RunAgentInput!): RunAgentResult!
+  createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
+  updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
+  deleteViewFilterGroup(id: String!): Boolean!
+  destroyViewFilterGroup(id: String!): Boolean!
+  skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  goBackToPreviousOnboardingStep: OnboardingStepNavigation!
+  deleteWorkspaceInvitation(appTokenId: String!): String!
+  resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
+  sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
+  createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
+  deleteApprovedAccessDomain(input: DeleteApprovedAccessDomainInput!): Boolean!
+  validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
@@ -4425,6 +4400,15 @@ type Mutation {
   generatePlaygroundToken: AuthToken!
   emailPasswordResetLink(email: String!, workspaceId: UUID, captchaToken: String): EmailPasswordResetLink!
   updatePasswordViaResetToken(passwordResetToken: String!, newPassword: String!): InvalidatePassword!
+  createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
+  updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
+  deleteApplicationRegistration(id: String!): Boolean!
+  rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
+  updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
+  completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
+  uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration! @deprecated(reason: "Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage.")
+  claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
+  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   initiateOTPProvisioning(loginToken: String!, origin: String!): InitiateTwoFactorAuthenticationProvisioning!
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
   deleteTwoFactorAuthenticationMethod(twoFactorAuthenticationMethodId: UUID!): DeleteTwoFactorAuthenticationMethod!
@@ -4434,6 +4418,22 @@ type Mutation {
   updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!
   resendEmailVerificationToken(email: String!, origin: String!): ResendEmailVerificationToken!
+  activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
+  updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
+  updateWorkspaceAllowedIframeOrigins(data: UpdateWorkspaceAllowedIframeOriginsInput!): Workspace!
+  deleteCurrentWorkspace: Workspace!
+  checkCustomDomainValidRecords: DomainValidRecords
+  enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
+  upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
+  grantApplicationCapabilities(input: GrantApplicationCapabilitiesInput!): ApplicationCapabilityGrant!
+  installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
+  installApplication(universalIdentifier: String!, version: String): Application!
+  triggerInstallApplicationJob(input: TriggerInstallApplicationJobInput!): TriggerInstallApplicationJobResult!
+  triggerUninstallApplicationJob(input: TriggerUninstallApplicationJobInput!): TriggerUninstallApplicationJobResult!
+  updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
+  uninstallApplication(universalIdentifier: String!): Boolean!
+  syncMarketplaceCatalog: Boolean!
+  runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   createOIDCIdentityProvider(input: SetupOIDCSsoInput!): SetupSso!
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
@@ -5123,18 +5123,143 @@ input DeleteOneIndexInput {
   id: UUID!
 }
 
-input CreateApprovedAccessDomainInput {
-  domain: String!
-  email: String!
+input RunAgentInput {
+  agentUniversalIdentifier: String!
+  prompt: String @deprecated(reason: "Use input instead.")
+  runAsWorkspaceMemberId: UUID
+  messages: [RunAgentMessageInput!] @deprecated(reason: "Use input instead.")
+  input: [RunAgentMessageInput!]
+  additionalInstructions: String
+  thread: RunAgentThreadInput
 }
 
-input DeleteApprovedAccessDomainInput {
+input RunAgentMessageInput {
+  role: RunAgentMessageRole!
+  content: String!
+  attachments: [RunAgentMessageAttachmentInput!]
+}
+
+enum RunAgentMessageRole {
+  user
+  assistant
+}
+
+input RunAgentMessageAttachmentInput {
+  fileId: UUID!
+  filename: String
+}
+
+input RunAgentThreadInput {
+  key: String!
+  title: String
+}
+
+input SendMessageCampaignInput {
+  campaignId: String!
+  scheduledAt: DateTime
+}
+
+input CancelMessageCampaignInput {
+  campaignId: String!
+}
+
+input SendMessageCampaignTestInput {
+  toAddress: String!
+  unsubscribeTopicId: String
+  subject: String!
+  body: String!
+  fromAddress: String!
+}
+
+input CreateMessageSuppressionInput {
+  emailAddress: String!
+  unsubscribeTopicId: UUID
+}
+
+input CreateUnsubscribeTopicInput {
+  name: String!
+  description: String
+  visibility: UnsubscribeTopicVisibility
+}
+
+input UpdateUnsubscribeTopicInput {
+  id: String!
+  name: String
+  description: String
+  visibility: UnsubscribeTopicVisibility
+}
+
+input UpdateMessageChannelInput {
   id: UUID!
+  update: UpdateMessageChannelInputUpdates!
 }
 
-input ValidateApprovedAccessDomainInput {
-  validationToken: String!
-  approvedAccessDomainId: UUID!
+input UpdateMessageChannelInputUpdates {
+  visibility: MessageChannelVisibility
+  isContactAutoCreationEnabled: Boolean
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
+  messageFolderImportPolicy: MessageFolderImportPolicy
+  isSyncEnabled: Boolean
+  excludeNonProfessionalEmails: Boolean
+  excludeGroupEmails: Boolean
+}
+
+input CreateEmailGroupChannelInput {
+  handle: String!
+  displayName: String
+}
+
+input UpdateEmailGroupChannelInput {
+  id: UUID!
+  displayName: String
+}
+
+input CreateAppMessageChannelInput {
+  connectedAccountId: UUID!
+  handle: String!
+  displayName: String
+  visibility: MessageChannelVisibility!
+}
+
+input UpdateAppMessageChannelInput {
+  id: UUID!
+  displayName: String
+  visibility: MessageChannelVisibility
+  isSyncEnabled: Boolean
+}
+
+input IngestAppMessagesInput {
+  messageChannelId: UUID!
+  messages: [AppMessageInput!]!
+}
+
+input AppMessageInput {
+  externalId: String!
+  threadExternalId: String!
+  subject: String
+  text: String!
+  receivedAt: DateTime!
+  participants: [AppMessageParticipantInput!]!
+}
+
+input AppMessageParticipantInput {
+  role: MessageParticipantRole!
+  handle: String!
+  displayName: String
+  personId: UUID
+  workspaceMemberId: UUID
+}
+
+enum MessageParticipantRole {
+  FROM
+  TO
+  CC
+  BCC
+  REPLY_TO
+}
+
+input CreateEmailingDomainInput {
+  domain: String!
 }
 
 input CreateRoleInput {
@@ -5250,108 +5375,27 @@ input RevokeApiKeyInput {
   id: UUID!
 }
 
-input CreateViewFilterGroupInput {
+input CreateWebhookInput {
   id: UUID
-  parentViewFilterGroupId: UUID
-  logicalOperator: ViewFilterGroupLogicalOperator = AND
-  positionInViewFilterGroup: Float
-  viewId: UUID!
-}
-
-input UpdateViewFilterGroupInput {
-  id: UUID
-  parentViewFilterGroupId: UUID
-  logicalOperator: ViewFilterGroupLogicalOperator = AND
-  positionInViewFilterGroup: Float
-  viewId: UUID
-}
-
-input ActivateWorkspaceInput {
-  """
-  Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility.
-  """
-  displayName: String
-}
-
-input UpdateWorkspaceInput {
-  subdomain: String
-  customDomain: String
-  displayName: String
-  logo: String
-  inviteHash: String
-  isPublicInviteLinkEnabled: Boolean
-  isCampaignClickTrackingEnabled: Boolean
-  workspaceDiscoverability: WorkspaceDiscoverability
-  allowImpersonation: Boolean
-  isGoogleAuthEnabled: Boolean
-  isMicrosoftAuthEnabled: Boolean
-  isPasswordAuthEnabled: Boolean
-  isGoogleAuthBypassEnabled: Boolean
-  isMicrosoftAuthBypassEnabled: Boolean
-  isPasswordAuthBypassEnabled: Boolean
-  defaultRoleId: UUID
-  isTwoFactorAuthenticationEnforced: Boolean
-  trashRetentionDays: Float
-  eventLogRetentionDays: Float
-  aiChatModelTier: AiModelTier
-  aiAgentModelTier: AiModelTier
-  isAutoModelSelectionEnabled: Boolean
-  aiModelIdByTier: JSON
-  aiEvaluationModelId: String
-  aiAdditionalInstructions: String
-  editableProfileFields: [String!]
-  isInternalMessagesImportEnabled: Boolean
-}
-
-input UpdateWorkspaceAllowedIframeOriginsInput {
-  operation: String!
-  origin: String!
-}
-
-input CreateApplicationRegistrationInput {
-  name: String!
-  universalIdentifier: String
-  oAuthRedirectUris: [String!]
-  oAuthScopes: [String!]
-}
-
-input UpdateApplicationRegistrationInput {
-  id: String!
-  update: UpdateApplicationRegistrationPayload!
-}
-
-input UpdateApplicationRegistrationPayload {
-  name: String
-  oAuthRedirectUris: [String!]
-  oAuthScopes: [String!]
-}
-
-input UpdateApplicationRegistrationVariableInput {
-  id: String!
-  update: UpdateApplicationRegistrationVariablePayload!
-}
-
-input UpdateApplicationRegistrationVariablePayload {
-  value: String
-  resetValue: Boolean
+  targetUrl: String!
+  operations: [String!]!
   description: String
+  secret: String
 }
 
-input GrantApplicationCapabilitiesInput {
-  applicationId: UUID!
-  capabilities: [String!]!
+input UpdateWebhookInput {
+  """The id of the webhook to update"""
+  id: UUID!
+
+  """The webhook fields to update"""
+  update: UpdateWebhookInputUpdates!
 }
 
-input TriggerInstallApplicationJobInput {
-  universalIdentifier: String!
-}
-
-input TriggerUninstallApplicationJobInput {
-  universalIdentifier: String!
-}
-
-input UpdateApplicationInput {
-  autoUpgrade: Boolean
+input UpdateWebhookInputUpdates {
+  targetUrl: String
+  operations: [String!]
+  description: String
+  secret: String
 }
 
 input CreateOneFieldMetadataInput {
@@ -5452,166 +5496,34 @@ input DestroyViewGroupInput {
   id: UUID!
 }
 
-input SendMessageCampaignInput {
-  campaignId: String!
-  scheduledAt: DateTime
-}
-
-input CancelMessageCampaignInput {
-  campaignId: String!
-}
-
-input SendMessageCampaignTestInput {
-  toAddress: String!
-  unsubscribeTopicId: String
-  subject: String!
-  body: String!
-  fromAddress: String!
-}
-
-input CreateMessageSuppressionInput {
-  emailAddress: String!
-  unsubscribeTopicId: UUID
-}
-
-input CreateUnsubscribeTopicInput {
-  name: String!
-  description: String
-  visibility: UnsubscribeTopicVisibility
-}
-
-input UpdateUnsubscribeTopicInput {
-  id: String!
-  name: String
-  description: String
-  visibility: UnsubscribeTopicVisibility
-}
-
-input UpdateMessageChannelInput {
-  id: UUID!
-  update: UpdateMessageChannelInputUpdates!
-}
-
-input UpdateMessageChannelInputUpdates {
-  visibility: MessageChannelVisibility
-  isContactAutoCreationEnabled: Boolean
-  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
-  messageFolderImportPolicy: MessageFolderImportPolicy
-  isSyncEnabled: Boolean
-  excludeNonProfessionalEmails: Boolean
-  excludeGroupEmails: Boolean
-}
-
-input CreateEmailGroupChannelInput {
-  handle: String!
-  displayName: String
-}
-
-input UpdateEmailGroupChannelInput {
-  id: UUID!
-  displayName: String
-}
-
-input CreateAppMessageChannelInput {
-  connectedAccountId: UUID!
-  handle: String!
-  displayName: String
-  visibility: MessageChannelVisibility!
-}
-
-input UpdateAppMessageChannelInput {
-  id: UUID!
-  displayName: String
-  visibility: MessageChannelVisibility
-  isSyncEnabled: Boolean
-}
-
-input IngestAppMessagesInput {
-  messageChannelId: UUID!
-  messages: [AppMessageInput!]!
-}
-
-input AppMessageInput {
-  externalId: String!
-  threadExternalId: String!
-  subject: String
-  text: String!
-  receivedAt: DateTime!
-  participants: [AppMessageParticipantInput!]!
-}
-
-input AppMessageParticipantInput {
-  role: MessageParticipantRole!
-  handle: String!
-  displayName: String
-  personId: UUID
-  workspaceMemberId: UUID
-}
-
-enum MessageParticipantRole {
-  FROM
-  TO
-  CC
-  BCC
-  REPLY_TO
-}
-
-input CreateEmailingDomainInput {
-  domain: String!
-}
-
-input CreateWebhookInput {
+input CreateViewFilterGroupInput {
   id: UUID
-  targetUrl: String!
-  operations: [String!]!
-  description: String
-  secret: String
+  parentViewFilterGroupId: UUID
+  logicalOperator: ViewFilterGroupLogicalOperator = AND
+  positionInViewFilterGroup: Float
+  viewId: UUID!
 }
 
-input UpdateWebhookInput {
-  """The id of the webhook to update"""
+input UpdateViewFilterGroupInput {
+  id: UUID
+  parentViewFilterGroupId: UUID
+  logicalOperator: ViewFilterGroupLogicalOperator = AND
+  positionInViewFilterGroup: Float
+  viewId: UUID
+}
+
+input CreateApprovedAccessDomainInput {
+  domain: String!
+  email: String!
+}
+
+input DeleteApprovedAccessDomainInput {
   id: UUID!
-
-  """The webhook fields to update"""
-  update: UpdateWebhookInputUpdates!
 }
 
-input UpdateWebhookInputUpdates {
-  targetUrl: String
-  operations: [String!]
-  description: String
-  secret: String
-}
-
-input RunAgentInput {
-  agentUniversalIdentifier: String!
-  prompt: String @deprecated(reason: "Use input instead.")
-  runAsWorkspaceMemberId: UUID
-  messages: [RunAgentMessageInput!] @deprecated(reason: "Use input instead.")
-  input: [RunAgentMessageInput!]
-  additionalInstructions: String
-  thread: RunAgentThreadInput
-}
-
-input RunAgentMessageInput {
-  role: RunAgentMessageRole!
-  content: String!
-  attachments: [RunAgentMessageAttachmentInput!]
-}
-
-enum RunAgentMessageRole {
-  user
-  assistant
-}
-
-input RunAgentMessageAttachmentInput {
-  fileId: UUID!
-  filename: String
-}
-
-input RunAgentThreadInput {
-  key: String!
-  title: String
+input ValidateApprovedAccessDomainInput {
+  validationToken: String!
+  approvedAccessDomainId: UUID!
 }
 
 input UpdateMessageFolderInput {
@@ -5749,9 +5661,97 @@ input SignUpInNewWorkspaceInput {
   subdomain: String
 }
 
+input CreateApplicationRegistrationInput {
+  name: String!
+  universalIdentifier: String
+  oAuthRedirectUris: [String!]
+  oAuthScopes: [String!]
+}
+
+input UpdateApplicationRegistrationInput {
+  id: String!
+  update: UpdateApplicationRegistrationPayload!
+}
+
+input UpdateApplicationRegistrationPayload {
+  name: String
+  oAuthRedirectUris: [String!]
+  oAuthScopes: [String!]
+}
+
+input UpdateApplicationRegistrationVariableInput {
+  id: String!
+  update: UpdateApplicationRegistrationVariablePayload!
+}
+
+input UpdateApplicationRegistrationVariablePayload {
+  value: String
+  resetValue: Boolean
+  description: String
+}
+
 input UpdateWorkspaceMemberSettingsInput {
   workspaceMemberId: UUID!
   update: JSON!
+}
+
+input ActivateWorkspaceInput {
+  """
+  Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility.
+  """
+  displayName: String
+}
+
+input UpdateWorkspaceInput {
+  subdomain: String
+  customDomain: String
+  displayName: String
+  logo: String
+  inviteHash: String
+  isPublicInviteLinkEnabled: Boolean
+  isCampaignClickTrackingEnabled: Boolean
+  workspaceDiscoverability: WorkspaceDiscoverability
+  allowImpersonation: Boolean
+  isGoogleAuthEnabled: Boolean
+  isMicrosoftAuthEnabled: Boolean
+  isPasswordAuthEnabled: Boolean
+  isGoogleAuthBypassEnabled: Boolean
+  isMicrosoftAuthBypassEnabled: Boolean
+  isPasswordAuthBypassEnabled: Boolean
+  defaultRoleId: UUID
+  isTwoFactorAuthenticationEnforced: Boolean
+  trashRetentionDays: Float
+  eventLogRetentionDays: Float
+  aiChatModelTier: AiModelTier
+  aiAgentModelTier: AiModelTier
+  isAutoModelSelectionEnabled: Boolean
+  aiModelIdByTier: JSON
+  aiEvaluationModelId: String
+  aiAdditionalInstructions: String
+  editableProfileFields: [String!]
+  isInternalMessagesImportEnabled: Boolean
+}
+
+input UpdateWorkspaceAllowedIframeOriginsInput {
+  operation: String!
+  origin: String!
+}
+
+input GrantApplicationCapabilitiesInput {
+  applicationId: UUID!
+  capabilities: [String!]!
+}
+
+input TriggerInstallApplicationJobInput {
+  universalIdentifier: String!
+}
+
+input TriggerUninstallApplicationJobInput {
+  universalIdentifier: String!
+}
+
+input UpdateApplicationInput {
+  autoUpgrade: Boolean
 }
 
 input SetupOIDCSsoInput {
