@@ -433,6 +433,7 @@ export class PageLayoutResetService {
     const layoutToUpdate: FlatPageLayout = {
       ...layout,
       isFirstTabPinned: true,
+      dashboardFilters: null,
       updatedAt: now,
     };
 

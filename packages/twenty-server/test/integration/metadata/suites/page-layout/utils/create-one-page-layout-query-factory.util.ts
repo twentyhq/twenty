@@ -10,6 +10,7 @@ const DEFAULT_PAGE_LAYOUT_GQL_FIELDS = `
   name
   type
   objectMetadataId
+  dashboardFilters
   createdAt
   updatedAt
   deletedAt

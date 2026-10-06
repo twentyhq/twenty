@@ -3,6 +3,7 @@
 exports[`Page layout with tabs creation via update should succeed should create a new tab with a widget via page layout update 1`] = `
 {
   "createdAt": Any<String>,
+  "dashboardFilters": null,
   "defaultTabToFocusOnMobileAndSidePanelId": null,
   "deletedAt": null,
   "id": Any<String>,
@@ -27,6 +28,7 @@ exports[`Page layout with tabs creation via update should succeed should create 
             "aggregateOperation": "COUNT",
             "color": null,
             "configurationType": "PIE_CHART",
+            "dashboardFilterBindings": null,
             "dateGranularity": "DAY",
             "description": null,
             "displayDataLabel": false,

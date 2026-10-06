@@ -153,6 +153,62 @@ describe('fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration', () => 
     });
   });
 
+  it('should resolve dashboard filter binding universal identifiers back to field metadata ids and keep null bindings', () => {
+    expect(
+      fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration({
+        universalConfiguration: {
+          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+          aggregateFieldMetadataUniversalIdentifier:
+            AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER,
+          aggregateOperation: AggregateOperations.SUM,
+          dashboardFilterBindings: {
+            owner: {
+              fieldMetadataUniversalIdentifier:
+                RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+              relationTargetFieldMetadataUniversalIdentifier:
+                TARGET_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+            },
+            date: null,
+          },
+        },
+        flatFieldMetadataMaps,
+        flatFrontComponentMaps: createEmptyFlatEntityMaps(),
+        flatViewMaps: createEmptyFlatEntityMaps(),
+        flatViewFieldGroupMaps: createEmptyFlatEntityMaps(),
+      }),
+    ).toMatchObject({
+      dashboardFilterBindings: {
+        owner: {
+          fieldMetadataId: RELATION_FIELD_ID,
+          relationTargetFieldMetadataId: TARGET_TEXT_FIELD_ID,
+        },
+        date: null,
+      },
+    });
+  });
+
+  it('should throw when a dashboard filter binding points to a field that no longer exists', () => {
+    expect(() =>
+      fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration({
+        universalConfiguration: {
+          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+          aggregateFieldMetadataUniversalIdentifier:
+            AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER,
+          aggregateOperation: AggregateOperations.SUM,
+          dashboardFilterBindings: {
+            deleted: { fieldMetadataUniversalIdentifier: null },
+          },
+        },
+        flatFieldMetadataMaps,
+        flatFrontComponentMaps: createEmptyFlatEntityMaps(),
+        flatViewMaps: createEmptyFlatEntityMaps(),
+        flatViewFieldGroupMaps: createEmptyFlatEntityMaps(),
+      }),
+    ).toThrow(
+      'Could not found any field metadata universal identifier while resolving page layout widget',
+    );
+  });
+
   it('should resolve the relation target universal identifier of a relation-traversal chart filter back to a field metadata id', () => {
     const recordFilters = getChartRecordFilters([
       {

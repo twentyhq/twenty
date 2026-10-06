@@ -7,12 +7,13 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
-import { PageLayoutType } from 'twenty-shared/types';
+import { type DashboardFilterSlot, PageLayoutType } from 'twenty-shared/types';
 
 type TestContext = {
   input: {
     name?: string;
     type?: PageLayoutType;
+    dashboardFilters?: DashboardFilterSlot[] | null;
   };
 };
 
@@ -30,6 +31,17 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
     context: {
       input: {
         type: PageLayoutType.DASHBOARD,
+      },
+    },
+  },
+  {
+    title: 'update page layout dashboard filters',
+    context: {
+      input: {
+        type: PageLayoutType.DASHBOARD,
+        dashboardFilters: [
+          { id: 'stage', label: 'Stage', filterType: 'SELECT' },
+        ],
       },
     },
   },
@@ -73,4 +85,31 @@ describe('Page layout update should succeed', () => {
       );
     },
   );
+
+  it('should keep the dashboard filters when the update does not mention them and clear them on null', async () => {
+    const dashboardFilters: DashboardFilterSlot[] = [
+      { id: 'stage', label: 'Stage', filterType: 'SELECT' },
+    ];
+
+    await updateOnePageLayout({
+      expectToFail: false,
+      input: { id: testPageLayoutId, dashboardFilters },
+    });
+
+    const { data: renamedData } = await updateOnePageLayout({
+      expectToFail: false,
+      input: { id: testPageLayoutId, name: 'Renamed Page Layout' },
+    });
+
+    expect(renamedData.updatePageLayout.dashboardFilters).toEqual(
+      dashboardFilters,
+    );
+
+    const { data: clearedData } = await updateOnePageLayout({
+      expectToFail: false,
+      input: { id: testPageLayoutId, dashboardFilters: null },
+    });
+
+    expect(clearedData.updatePageLayout.dashboardFilters).toBeNull();
+  });
 });

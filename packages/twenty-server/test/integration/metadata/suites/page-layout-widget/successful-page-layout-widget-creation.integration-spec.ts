@@ -227,6 +227,31 @@ describe('Page layout widget creation should succeed', () => {
       },
     },
     {
+      title:
+        'create a page layout widget with BAR_CHART configuration bound to dashboard filters',
+      context: {
+        widgetTitle: 'Bar Chart Widget Bound To Dashboard Filters',
+        buildConfiguration: () => ({
+          configurationType: WidgetConfigurationType.BAR_CHART,
+          layout: BarChartLayout.VERTICAL,
+          aggregateFieldMetadataId: testSetup.fieldMetadataId1,
+          aggregateOperation: AggregateOperations.COUNT,
+          primaryAxisGroupByFieldMetadataId: testSetup.fieldMetadataId2,
+          primaryAxisOrderBy: GraphOrderBy.VALUE_DESC,
+          displayDataLabel: false,
+          axisNameDisplay: AxisNameDisplay.NONE,
+          dashboardFilterBindings: {
+            name: { fieldMetadataId: testSetup.fieldMetadataId2 },
+            website: {
+              fieldMetadataId: testSetup.fieldMetadataId3,
+              subFieldName: testSetup.fieldMetadataId3SubFieldName,
+            },
+            owner: null,
+          },
+        }),
+      },
+    },
+    {
       title: 'create a page layout widget with PIE_CHART full configuration',
       context: {
         widgetTitle: 'Pie Chart Widget',

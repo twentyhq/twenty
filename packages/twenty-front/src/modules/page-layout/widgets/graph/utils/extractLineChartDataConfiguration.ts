@@ -1,6 +1,8 @@
 import { type LineChartConfiguration } from '~/generated-metadata/graphql';
 
-type LineChartStyleFields =
+// Dashboard filter bindings are resolved into the filter before the configuration is sent, so the data resolvers never read them.
+type LineChartNonDataFields =
+  | 'dashboardFilterBindings'
   | 'displayDataLabel'
   | 'displayLegend'
   | 'axisNameDisplay'
@@ -9,13 +11,14 @@ type LineChartStyleFields =
 
 export type LineChartDataConfiguration = Omit<
   LineChartConfiguration,
-  LineChartStyleFields
+  LineChartNonDataFields
 >;
 
 export const extractLineChartDataConfiguration = (
   configuration: LineChartConfiguration,
 ): LineChartDataConfiguration => {
   const {
+    dashboardFilterBindings: _dashboardFilterBindings,
     displayDataLabel: _displayDataLabel,
     displayLegend: _displayLegend,
     axisNameDisplay: _axisNameDisplay,

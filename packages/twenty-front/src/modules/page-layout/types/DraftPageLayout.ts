@@ -9,4 +9,5 @@ export type DraftPageLayout = Pick<
   | 'tabs'
   | 'defaultTabToFocusOnMobileAndSidePanelId'
   | 'isFirstTabPinned'
+  | 'dashboardFilters'
 >;

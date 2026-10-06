@@ -7,8 +7,11 @@ import {
 import { duplicateOneDashboard } from 'test/integration/metadata/suites/dashboard/utils/duplicate-one-dashboard.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
+import { WIDGET_CONFIGURATION_GQL_FIELDS } from 'test/integration/metadata/suites/page-layout-widget/constants/widget-configuration-gql-fields.constant';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
+import { fetchTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
+import { findOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/find-one-page-layout.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
@@ -17,6 +20,8 @@ import {
 } from 'twenty-shared/testing';
 import {
   AggregateOperations,
+  type DashboardFilterBindingsBySlotId,
+  type DashboardFilterSlot,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   ViewFilterOperand,
@@ -165,6 +170,111 @@ describe('Dashboard duplication should succeed', () => {
       expect(data.duplicateDashboard.title).toContain('(Copy)');
     },
   );
+
+  it('should duplicate a dashboard with its dashboard filters and chart bindings', async () => {
+    currentTestContextId = 'f1c4a8d2-6b7e-4c3f-8a9d-2b3c4d5e6f70';
+
+    const { objectMetadataId, fieldMetadataId1, fieldMetadataId2 } =
+      await fetchTestFieldMetadataIds();
+
+    const dashboardFilters: DashboardFilterSlot[] = [
+      { id: 'name', label: 'Name', filterType: 'TEXT' },
+      { id: 'owner', label: 'Owner', filterType: 'RELATION' },
+    ];
+    const dashboardFilterBindings: DashboardFilterBindingsBySlotId = {
+      name: { fieldMetadataId: fieldMetadataId2 },
+      owner: null,
+    };
+
+    const { data: pageLayoutData } = await createOnePageLayout({
+      expectToFail: false,
+      input: {
+        name: 'Page Layout with dashboard filters',
+        type: PageLayoutType.DASHBOARD,
+        dashboardFilters,
+      },
+    });
+
+    testPageLayoutId = pageLayoutData.createPageLayout.id;
+
+    const { data: tabData } = await createOnePageLayoutTab({
+      expectToFail: false,
+      input: {
+        title: 'Test Tab',
+        pageLayoutId: testPageLayoutId,
+      },
+    });
+
+    testPageLayoutTabId = tabData.createPageLayoutTab.id;
+
+    await createOnePageLayoutWidget({
+      expectToFail: false,
+      input: {
+        title: 'Companies by name',
+        type: WidgetType.GRAPH,
+        objectMetadataId,
+        pageLayoutTabId: testPageLayoutTabId,
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
+          row: 0,
+          column: 0,
+          rowSpan: 1,
+          columnSpan: 1,
+        },
+        configuration: {
+          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+          aggregateFieldMetadataId: fieldMetadataId1,
+          aggregateOperation: AggregateOperations.COUNT,
+          dashboardFilterBindings,
+        },
+      },
+    });
+
+    const dashboard = await createTestDashboardWithGraphQL({
+      id: currentTestContextId,
+      title: 'Dashboard with dashboard filters',
+      pageLayoutId: testPageLayoutId,
+    });
+
+    testDashboardId = dashboard.id;
+
+    const { data, errors } = await duplicateOneDashboard({
+      expectToFail: false,
+      input: { id: testDashboardId },
+    });
+
+    expect(errors).toBeUndefined();
+
+    duplicatedDashboardId = data.duplicateDashboard.id;
+
+    jestExpectToBeDefined(data.duplicateDashboard.pageLayoutId);
+
+    const { data: duplicatedPageLayoutData } = await findOnePageLayout({
+      expectToFail: false,
+      input: { id: data.duplicateDashboard.pageLayoutId },
+      gqlFields: `
+        id
+        dashboardFilters
+        tabs {
+          widgets {
+            configuration {
+              ${WIDGET_CONFIGURATION_GQL_FIELDS}
+            }
+          }
+        }
+      `,
+    });
+
+    const duplicatedPageLayout = duplicatedPageLayoutData.getPageLayout;
+
+    jestExpectToBeDefined(duplicatedPageLayout);
+
+    expect(duplicatedPageLayout.id).not.toBe(testPageLayoutId);
+    expect(duplicatedPageLayout.dashboardFilters).toEqual(dashboardFilters);
+    expect(
+      duplicatedPageLayout.tabs?.flatMap((tab) => tab.widgets ?? []),
+    ).toMatchObject([{ configuration: { dashboardFilterBindings } }]);
+  });
 
   // Regression test for #24285
   it('should duplicate a dashboard with a chart widget filtering through a relation target field', async () => {

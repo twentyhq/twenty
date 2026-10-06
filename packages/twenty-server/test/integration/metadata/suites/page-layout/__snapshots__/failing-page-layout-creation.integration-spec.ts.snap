@@ -1,5 +1,57 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`Page layout creation should fail when a dashboard filter has an unknown filter type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Dashboard filter "amount" filter type must be one of DATE, DATE_TIME, RELATION, SELECT, MULTI_SELECT, TEXT, BOOLEAN",
+              "userFriendlyMessage": "Invalid dashboard filters.",
+              "value": {
+                "filterType": "NUMBER",
+                "id": Any<String>,
+                "label": "Amount",
+              },
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "Dashboard With Invalid Filter Type",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Invalid dashboard filters.",
+  },
+  "message": "Multiple validation errors occurred while creating page layout",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Page layout creation should fail when dashboard filters are not an array 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "dashboardFilters must be an array",
+  "name": "UserInputError",
+}
+`;
+
 exports[`Page layout creation should fail when name is empty string 1`] = `
 {
   "extensions": {
@@ -21,6 +73,54 @@ exports[`Page layout creation should fail when name is missing 1`] = `
     "userFriendlyMessage": "An error occurred.",
   },
   "message": "Field "name" of required type "String!" was not provided.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Page layout creation should fail when two dashboard filters share the same id 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayout": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_DATA",
+              "message": "Dashboard filter ids must be unique, found duplicates: date",
+              "userFriendlyMessage": "Invalid dashboard filters.",
+              "value": [
+                {
+                  "filterType": "DATE_TIME",
+                  "id": Any<String>,
+                  "label": "Created",
+                },
+                {
+                  "filterType": "DATE",
+                  "id": Any<String>,
+                  "label": "Closed",
+                },
+              ],
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "Dashboard With Duplicated Filter Ids",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayout",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayout",
+    "summary": {
+      "pageLayout": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Invalid dashboard filters.",
+  },
+  "message": "Multiple validation errors occurred while creating page layout",
   "name": "GraphQLError",
 }
 `;

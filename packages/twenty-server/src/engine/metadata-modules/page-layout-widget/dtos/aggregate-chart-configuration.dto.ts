@@ -21,6 +21,7 @@ import {
   type AggregateChartConfiguration,
   AggregateOperations,
   type ChartFilter,
+  type DashboardFilterBindingsBySlotId,
   SerializedRelation,
 } from 'twenty-shared/types';
 
@@ -70,6 +71,11 @@ export class AggregateChartConfigurationDTO implements AggregateChartConfigurati
   @IsObject()
   @IsOptional()
   filter?: ChartFilter;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsObject()
+  @IsOptional()
+  dashboardFilterBindings?: DashboardFilterBindingsBySlotId;
 
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
   @IsTimeZone()

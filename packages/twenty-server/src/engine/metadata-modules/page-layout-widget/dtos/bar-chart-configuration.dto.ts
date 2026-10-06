@@ -21,6 +21,7 @@ import {
   AggregateOperations,
   type BarChartConfiguration,
   type ChartFilter,
+  type DashboardFilterBindingsBySlotId,
   SerializedRelation,
 } from 'twenty-shared/types';
 
@@ -165,6 +166,11 @@ export class BarChartConfigurationDTO implements BarChartConfiguration {
   @IsObject()
   @IsOptional()
   filter?: ChartFilter;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsObject()
+  @IsOptional()
+  dashboardFilterBindings?: DashboardFilterBindingsBySlotId;
 
   @Field(() => BarChartGroupMode, {
     nullable: true,

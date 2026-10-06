@@ -6,12 +6,17 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
-import { PageLayoutType } from 'twenty-shared/types';
+import {
+  type DashboardFilterSlot,
+  PageLayoutType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 type TestContext = {
   input: {
     name: string;
     type?: PageLayoutType;
+    dashboardFilters?: DashboardFilterSlot[] | null;
   };
 };
 
@@ -30,6 +35,32 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       input: {
         name: 'Dashboard Layout',
         type: PageLayoutType.DASHBOARD,
+      },
+    },
+  },
+  {
+    title: 'create a page layout with DASHBOARD type and dashboard filters',
+    context: {
+      input: {
+        name: 'Dashboard Layout With Filters',
+        type: PageLayoutType.DASHBOARD,
+        dashboardFilters: [
+          {
+            id: 'created',
+            label: 'Created',
+            filterType: 'DATE_TIME',
+            defaultValue: {
+              operand: ViewFilterOperand.IS_NOT_EMPTY,
+              value: '',
+            },
+          },
+          {
+            id: 'owner',
+            label: 'Owner',
+            filterType: 'RELATION',
+            isRequired: false,
+          },
+        ],
       },
     },
   },

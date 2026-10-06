@@ -79,6 +79,7 @@ export class PageLayoutDuplicationService {
           name: originalFlatLayout.name,
           type: originalFlatLayout.type,
           objectMetadataId: originalFlatLayout.objectMetadataId,
+          dashboardFilters: originalFlatLayout.dashboardFilters,
         },
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,

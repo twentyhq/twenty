@@ -1,5 +1,11 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { PageLayoutType, SerializedRelation } from 'twenty-shared/types';
+
+import { GraphQLJSON } from 'graphql-type-json';
+import {
+  type DashboardFilterSlot,
+  PageLayoutType,
+  SerializedRelation,
+} from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
@@ -40,6 +46,9 @@ export class PageLayoutDTO {
 
   @Field({ nullable: false, defaultValue: true })
   isFirstTabPinned: boolean;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  dashboardFilters: DashboardFilterSlot[] | null;
 
   @Field()
   createdAt: Date;

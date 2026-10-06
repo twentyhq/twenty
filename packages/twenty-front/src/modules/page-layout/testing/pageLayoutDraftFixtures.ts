@@ -60,5 +60,6 @@ export const makeDraft = (
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: null,
   isFirstTabPinned: true,
+  dashboardFilters: null,
   tabs,
 });

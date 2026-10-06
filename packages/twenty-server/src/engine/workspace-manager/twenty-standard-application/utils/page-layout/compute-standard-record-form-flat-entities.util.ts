@@ -203,6 +203,7 @@ export const computeStandardRecordFormFlatEntities = ({
       name: STANDARD_RECORD_FORM_NAME,
       type: PageLayoutType.RECORD_FORM,
       isFirstTabPinned: true,
+      dashboardFilters: null,
       objectMetadataId: flatObjectMetadata.id,
       objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       isSystemSideEffect: true,

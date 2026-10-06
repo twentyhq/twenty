@@ -44,6 +44,17 @@ exports[`Page layout widget creation should fail BAR_CHART widget configuration 
 }
 `;
 
+exports[`Page layout widget creation should fail Dashboard filter binding validation failures when a dashboard filter binding targets a deleted field 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Chart "Chart Bound To A Deleted Field": Dashboard filter "gone" binding uses field id "20202020-0000-4000-8000-000000000000", but it was deleted. Please remove or replace this binding.",
+  },
+  "message": "Chart "Chart Bound To A Deleted Field": Dashboard filter "gone" binding uses field id "20202020-0000-4000-8000-000000000000", but it was deleted. Please remove or replace this binding.",
+  "name": "UserInputError",
+}
+`;
+
 exports[`Page layout widget creation should fail Edge case configuration validation failures when configuration has missing configurationType 1`] = `
 {
   "extensions": {

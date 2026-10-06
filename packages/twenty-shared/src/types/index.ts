@@ -212,7 +212,10 @@ export type {
   DashboardFilterSlot,
   DashboardFilterBinding,
   DashboardFilterBindingsBySlotId,
+  UniversalDashboardFilterBinding,
+  UniversalDashboardFilterBindingsBySlotId,
 } from './page-layout/DashboardFilter';
+export { DASHBOARD_FILTER_SLOT_FILTER_TYPES } from './page-layout/DashboardFilter';
 export type { GraphWidgetConfigurationType } from './page-layout/GraphWidgetConfigurationType';
 export { GRAPH_WIDGET_CONFIGURATION_TYPES } from './page-layout/GraphWidgetConfigurationType';
 export type { GridPosition } from './page-layout/GridPosition';

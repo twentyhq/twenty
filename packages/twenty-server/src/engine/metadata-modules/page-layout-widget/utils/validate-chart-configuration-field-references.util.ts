@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import {
   FieldMetadataType,
   type ChartRecordFilter,
+  type DashboardFilterBinding,
   type ViewFilterOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,6 +22,8 @@ import {
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
+import { resolveMorphTargetObjectId } from 'src/engine/metadata-modules/page-layout-widget/utils/resolve-morph-target-object-id.util';
+import { validateCompositeSubfield } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-composite-subfield.util';
 import { validateGroupByFieldOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-group-by-field.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
@@ -92,6 +95,108 @@ const validateSelectFilterOptionsOrThrow = ({
     `Filter on "${filterField.label}" uses option(s) ${invalidValuesText} that do not exist. Allowed values: ${allowedValuesText}.`,
     widgetTitle,
   );
+};
+
+const findActiveFlatFieldMetadataOfObjectOrThrow = ({
+  fieldMetadataId,
+  objectMetadataId,
+  describeField,
+  flatFieldMetadataMaps,
+  widgetTitle,
+}: {
+  fieldMetadataId: string;
+  objectMetadataId: string;
+  describeField: string;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  widgetTitle?: string | null;
+}): FlatFieldMetadata => {
+  const field = findActiveFlatFieldMetadataById(
+    fieldMetadataId,
+    flatFieldMetadataMaps,
+  );
+
+  if (!isDefined(field)) {
+    throw buildChartFieldValidationException(
+      `${describeField} uses field id "${fieldMetadataId}", but it was deleted. Please remove or replace this binding.`,
+      widgetTitle,
+    );
+  }
+
+  if (field.objectMetadataId !== objectMetadataId) {
+    throw buildChartFieldValidationException(
+      `${describeField} field "${fieldMetadataId}" must belong to objectMetadataId "${objectMetadataId}".`,
+      widgetTitle,
+    );
+  }
+
+  return field;
+};
+
+// A binding is a filter without a value: the field it names is checked the way filter fields are, including the relation target it may traverse.
+const validateDashboardFilterBindingOrThrow = ({
+  slotId,
+  binding,
+  widgetObjectMetadataId,
+  widgetTitle,
+  flatFieldMetadataMaps,
+  allFields,
+}: {
+  slotId: string;
+  binding: DashboardFilterBinding;
+  widgetObjectMetadataId: string;
+  widgetTitle?: string | null;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  allFields: FlatFieldMetadata[];
+}): void => {
+  const describeBinding = `Dashboard filter "${slotId}" binding`;
+
+  const boundField = findActiveFlatFieldMetadataOfObjectOrThrow({
+    fieldMetadataId: binding.fieldMetadataId,
+    objectMetadataId: widgetObjectMetadataId,
+    describeField: describeBinding,
+    flatFieldMetadataMaps,
+    widgetTitle,
+  });
+
+  let filteredField = boundField;
+
+  if (isDefined(binding.relationTargetFieldMetadataId)) {
+    const relationTargetObjectMetadataId =
+      boundField.relationTargetObjectMetadataId ??
+      (boundField.type === FieldMetadataType.MORPH_RELATION
+        ? resolveMorphTargetObjectId({ field: boundField, allFields })
+        : null);
+
+    if (!isDefined(relationTargetObjectMetadataId)) {
+      throw buildChartFieldValidationException(
+        `${describeBinding} field "${binding.fieldMetadataId}" is not a relation, so it cannot target field "${binding.relationTargetFieldMetadataId}".`,
+        widgetTitle,
+      );
+    }
+
+    filteredField = findActiveFlatFieldMetadataOfObjectOrThrow({
+      fieldMetadataId: binding.relationTargetFieldMetadataId,
+      objectMetadataId: relationTargetObjectMetadataId,
+      describeField: `${describeBinding} relation target`,
+      flatFieldMetadataMaps,
+      widgetTitle,
+    });
+  }
+
+  if (isDefined(binding.subFieldName)) {
+    try {
+      validateCompositeSubfield({
+        field: filteredField,
+        subFieldName: binding.subFieldName,
+        paramName: describeBinding,
+      });
+    } catch (error) {
+      throw buildChartFieldValidationException(
+        error instanceof Error ? error.message : String(error),
+        widgetTitle,
+      );
+    }
+  }
 };
 
 export const validateChartConfigurationFieldReferencesOrThrow = ({
@@ -282,6 +387,26 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
           widgetTitle,
         });
       }
+    }
+  }
+
+  if (isDefined(widgetConfiguration.dashboardFilterBindings)) {
+    for (const [slotId, binding] of Object.entries(
+      widgetConfiguration.dashboardFilterBindings,
+    )) {
+      // null means the slot is explicitly not applied to this chart
+      if (!isDefined(binding)) {
+        continue;
+      }
+
+      validateDashboardFilterBindingOrThrow({
+        slotId,
+        binding,
+        widgetObjectMetadataId,
+        widgetTitle,
+        flatFieldMetadataMaps,
+        allFields,
+      });
     }
   }
 };

@@ -1,6 +1,8 @@
 import { type BarChartConfiguration } from '~/generated-metadata/graphql';
 
-type BarChartStyleFields =
+// Dashboard filter bindings are resolved into the filter before the configuration is sent, so the data resolvers never read them.
+type BarChartNonDataFields =
+  | 'dashboardFilterBindings'
   | 'displayDataLabel'
   | 'displayLegend'
   | 'axisNameDisplay'
@@ -9,13 +11,14 @@ type BarChartStyleFields =
 
 export type BarChartDataConfiguration = Omit<
   BarChartConfiguration,
-  BarChartStyleFields
+  BarChartNonDataFields
 >;
 
 export const extractBarChartDataConfiguration = (
   configuration: BarChartConfiguration,
 ): BarChartDataConfiguration => {
   const {
+    dashboardFilterBindings: _dashboardFilterBindings,
     displayDataLabel: _displayDataLabel,
     displayLegend: _displayLegend,
     axisNameDisplay: _axisNameDisplay,

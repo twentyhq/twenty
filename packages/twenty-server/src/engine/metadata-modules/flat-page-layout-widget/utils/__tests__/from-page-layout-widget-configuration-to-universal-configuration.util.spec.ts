@@ -112,6 +112,56 @@ describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
     ).toBeNull();
   });
 
+  it('should convert dashboard filter binding field ids to universal identifiers and keep null bindings', () => {
+    const universalConfiguration =
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: {
+          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+          aggregateFieldMetadataId: AGGREGATE_FIELD_ID,
+          aggregateOperation: AggregateOperations.SUM,
+          dashboardFilterBindings: {
+            owner: {
+              fieldMetadataId: RELATION_FIELD_ID,
+              relationTargetFieldMetadataId: TARGET_TEXT_FIELD_ID,
+              subFieldName: 'addressCity',
+            },
+            date: null,
+            deleted: { fieldMetadataId: DELETED_FIELD_ID },
+          },
+        },
+        fieldMetadataUniversalIdentifierById,
+      });
+
+    expect(universalConfiguration).toMatchObject({
+      dashboardFilterBindings: {
+        owner: {
+          fieldMetadataUniversalIdentifier: RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+          relationTargetFieldMetadataUniversalIdentifier:
+            TARGET_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+          subFieldName: 'addressCity',
+        },
+        date: null,
+        deleted: { fieldMetadataUniversalIdentifier: null },
+      },
+    });
+    expect(universalConfiguration).not.toHaveProperty(
+      'dashboardFilterBindings.owner.fieldMetadataId',
+    );
+  });
+
+  it('should leave dashboard filter bindings undefined when the chart has none', () => {
+    expect(
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: {
+          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+          aggregateFieldMetadataId: AGGREGATE_FIELD_ID,
+          aggregateOperation: AggregateOperations.SUM,
+        },
+        fieldMetadataUniversalIdentifierById,
+      }),
+    ).toMatchObject({ dashboardFilterBindings: undefined });
+  });
+
   it('should preserve disabled widget content editing on field configurations', () => {
     const fieldMetadataId = '3e20d40a-0e85-44c1-8fa8-f802e8a1edce';
     const fieldMetadataUniversalIdentifier =

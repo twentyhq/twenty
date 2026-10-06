@@ -1,6 +1,8 @@
 import { type PieChartConfiguration } from '~/generated-metadata/graphql';
 
-type PieChartStyleFields =
+// Dashboard filter bindings are resolved into the filter before the configuration is sent, so the data resolvers never read them.
+type PieChartNonDataFields =
+  | 'dashboardFilterBindings'
   | 'displayDataLabel'
   | 'displayLegend'
   | 'showCenterMetric'
@@ -9,13 +11,14 @@ type PieChartStyleFields =
 
 export type PieChartDataConfiguration = Omit<
   PieChartConfiguration,
-  PieChartStyleFields
+  PieChartNonDataFields
 >;
 
 export const extractPieChartDataConfiguration = (
   configuration: PieChartConfiguration,
 ): PieChartDataConfiguration => {
   const {
+    dashboardFilterBindings: _dashboardFilterBindings,
     displayDataLabel: _displayDataLabel,
     displayLegend: _displayLegend,
     showCenterMetric: _showCenterMetric,

@@ -556,6 +556,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
       ...PAGE_LAYOUT_KIND_GAPS,
       isFirstTabPinned:
         'workspace-owned: the sync keeps the live value, so the forward default never diffs',
+      dashboardFilters:
+        'workspace-owned: the sync keeps the live value, so the forward default never diffs',
     },
   },
   {

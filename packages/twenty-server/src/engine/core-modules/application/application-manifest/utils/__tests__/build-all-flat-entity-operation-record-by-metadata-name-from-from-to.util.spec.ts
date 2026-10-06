@@ -41,6 +41,7 @@ const PAGE_LAYOUT: FlatPageLayout = {
   tabUniversalIdentifiers: [],
   isSystemSideEffect: false,
   isFirstTabPinned: true,
+  dashboardFilters: null,
   deletedAt: null,
 };
 
@@ -313,6 +314,22 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
       fromAllFlatEntityMaps: buildAllFlatEntityMapsWithPageLayout({
         ...PAGE_LAYOUT,
         isFirstTabPinned: false,
+      }),
+      toAllUniversalFlatEntityMaps:
+        buildAllFlatEntityMapsWithPageLayout(PAGE_LAYOUT),
+      buildOptions: BUILD_OPTIONS,
+    });
+
+    expect(result).toEqual({});
+  });
+
+  it('does not update a layout whose workspace added dashboard filters when its manifest is unchanged', () => {
+    const result = buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
+      fromAllFlatEntityMaps: buildAllFlatEntityMapsWithPageLayout({
+        ...PAGE_LAYOUT,
+        dashboardFilters: [
+          { id: 'date', label: 'Date', filterType: 'DATE_TIME' },
+        ],
       }),
       toAllUniversalFlatEntityMaps:
         buildAllFlatEntityMapsWithPageLayout(PAGE_LAYOUT),

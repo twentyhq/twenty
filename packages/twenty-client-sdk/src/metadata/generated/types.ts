@@ -2477,6 +2477,9 @@ export default {
             "filter": [
                 9
             ],
+            "dashboardFilterBindings": [
+                9
+            ],
             "timezone": [
                 1
             ],
@@ -2559,6 +2562,9 @@ export default {
                 1
             ],
             "filter": [
+                9
+            ],
+            "dashboardFilterBindings": [
                 9
             ],
             "timezone": [
@@ -2644,6 +2650,9 @@ export default {
                 1
             ],
             "filter": [
+                9
+            ],
+            "dashboardFilterBindings": [
                 9
             ],
             "isStacked": [
@@ -2745,6 +2754,9 @@ export default {
                 1
             ],
             "filter": [
+                9
+            ],
+            "dashboardFilterBindings": [
                 9
             ],
             "groupMode": [
@@ -3075,6 +3087,9 @@ export default {
             ],
             "isFirstTabPinned": [
                 8
+            ],
+            "dashboardFilters": [
+                9
             ],
             "createdAt": [
                 4
@@ -11812,6 +11827,9 @@ export default {
             "objectMetadataId": [
                 3
             ],
+            "dashboardFilters": [
+                9
+            ],
             "__typename": [
                 1
             ]
@@ -11825,6 +11843,9 @@ export default {
             ],
             "objectMetadataId": [
                 3
+            ],
+            "dashboardFilters": [
+                9
             ],
             "__typename": [
                 1
@@ -11842,6 +11863,9 @@ export default {
             ],
             "isFirstTabPinned": [
                 8
+            ],
+            "dashboardFilters": [
+                9
             ],
             "tabs": [
                 468

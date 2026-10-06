@@ -1257,6 +1257,7 @@ type AggregateChartConfiguration {
   numberFormat: ChartNumberFormat
   description: String
   filter: JSON
+  dashboardFilterBindings: JSON
   timezone: String
   firstDayOfTheWeek: Int
   prefix: String
@@ -1325,6 +1326,7 @@ type PieChartConfiguration {
   description: String
   color: String
   filter: JSON
+  dashboardFilterBindings: JSON
   timezone: String
   firstDayOfTheWeek: Int
 }
@@ -1380,6 +1382,7 @@ type LineChartConfiguration {
   description: String
   color: String
   filter: JSON
+  dashboardFilterBindings: JSON
   isStacked: Boolean
   isCumulative: Boolean
   timezone: String
@@ -1424,6 +1427,7 @@ type BarChartConfiguration {
   description: String
   color: String
   filter: JSON
+  dashboardFilterBindings: JSON
   groupMode: BarChartGroupMode
   layout: BarChartLayout!
   isCumulative: Boolean
@@ -1587,6 +1591,7 @@ type PageLayout {
   applicationId: UUID!
   isSystemSideEffect: Boolean!
   isFirstTabPinned: Boolean!
+  dashboardFilters: JSON
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
@@ -4576,12 +4581,14 @@ input CreatePageLayoutInput {
   name: String!
   type: PageLayoutType = RECORD_PAGE
   objectMetadataId: UUID
+  dashboardFilters: JSON
 }
 
 input UpdatePageLayoutInput {
   name: String
   type: PageLayoutType
   objectMetadataId: UUID
+  dashboardFilters: JSON
 }
 
 input UpdatePageLayoutWithTabsInput {
@@ -4589,6 +4596,7 @@ input UpdatePageLayoutWithTabsInput {
   type: PageLayoutType!
   objectMetadataId: UUID
   isFirstTabPinned: Boolean
+  dashboardFilters: JSON
   tabs: [UpdatePageLayoutTabWithWidgetsInput!]!
 }
 

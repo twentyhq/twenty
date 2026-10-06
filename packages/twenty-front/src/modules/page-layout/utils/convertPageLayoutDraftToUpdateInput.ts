@@ -57,6 +57,7 @@ export const convertPageLayoutDraftToUpdateInput = (
     type: pageLayoutDraft.type,
     objectMetadataId: pageLayoutDraft.objectMetadataId ?? null,
     isFirstTabPinned: pageLayoutDraft.isFirstTabPinned,
+    dashboardFilters: pageLayoutDraft.dashboardFilters ?? null,
     tabs: pageLayoutDraft.tabs
       .filter((tab) => tab.isActive)
       .map((tab) => {

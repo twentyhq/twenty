@@ -1,7 +1,9 @@
 import { type Equal, type Expect } from 'twenty-shared/testing';
 import {
+  type DashboardFilterBindingsBySlotId,
   type SerializedRelation,
   type FormatRecordSerializedRelationProperties,
+  type UniversalDashboardFilterBindingsBySlotId,
 } from 'twenty-shared/types';
 
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
@@ -20,6 +22,14 @@ type BrandedObjectWithRelation = JsonbProperty<ObjectWithRelation>;
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type ObjectAssertions = [
+  // Bindings are keyed by slot id, so only the nested relation ids get the universal suffix.
+  Expect<
+    Equal<
+      FormatRecordSerializedRelationProperties<DashboardFilterBindingsBySlotId>,
+      UniversalDashboardFilterBindingsBySlotId
+    >
+  >,
+
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<ObjectWithRelation>,

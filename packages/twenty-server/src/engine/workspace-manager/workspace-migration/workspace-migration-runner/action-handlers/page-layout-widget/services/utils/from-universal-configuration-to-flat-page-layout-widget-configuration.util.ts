@@ -1,6 +1,8 @@
 import {
   type ChartFilter,
+  type DashboardFilterBindingsBySlotId,
   type UniversalChartFilter,
+  type UniversalDashboardFilterBindingsBySlotId,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -80,6 +82,52 @@ const convertUniversalFilterToChartFilter = ({
   };
 };
 
+const convertUniversalBindingsToDashboardFilterBindings = ({
+  dashboardFilterBindings,
+  flatFieldMetadataMaps,
+}: {
+  dashboardFilterBindings: UniversalDashboardFilterBindingsBySlotId | undefined;
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+}): DashboardFilterBindingsBySlotId | undefined => {
+  if (!isDefined(dashboardFilterBindings)) {
+    return undefined;
+  }
+
+  return Object.fromEntries(
+    Object.entries(dashboardFilterBindings).map(([slotId, binding]) => {
+      if (!isDefined(binding)) {
+        return [slotId, null];
+      }
+
+      const {
+        fieldMetadataUniversalIdentifier,
+        relationTargetFieldMetadataUniversalIdentifier,
+        ...rest
+      } = binding;
+
+      return [
+        slotId,
+        {
+          ...rest,
+          fieldMetadataId: resolveFieldMetadataIdOrThrow({
+            fieldMetadataUniversalIdentifier,
+            flatFieldMetadataMaps,
+          }),
+          ...(isDefined(relationTargetFieldMetadataUniversalIdentifier)
+            ? {
+                relationTargetFieldMetadataId: resolveFieldMetadataIdOrThrow({
+                  fieldMetadataUniversalIdentifier:
+                    relationTargetFieldMetadataUniversalIdentifier,
+                  flatFieldMetadataMaps,
+                }),
+              }
+            : {}),
+        },
+      ];
+    }),
+  );
+};
+
 export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
   universalConfiguration,
   flatFieldMetadataMaps,
@@ -99,6 +147,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         aggregateFieldMetadataUniversalIdentifier,
         ratioAggregateConfig: universalRatioAggregateConfig,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = universalConfiguration;
 
@@ -127,6 +176,11 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
           filter,
           flatFieldMetadataMaps,
         }),
+        dashboardFilterBindings:
+          convertUniversalBindingsToDashboardFilterBindings({
+            dashboardFilterBindings,
+            flatFieldMetadataMaps,
+          }),
       };
     }
 
@@ -135,6 +189,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         aggregateFieldMetadataUniversalIdentifier,
         groupByFieldMetadataUniversalIdentifier,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = universalConfiguration;
 
@@ -158,6 +213,11 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
           filter,
           flatFieldMetadataMaps,
         }),
+        dashboardFilterBindings:
+          convertUniversalBindingsToDashboardFilterBindings({
+            dashboardFilterBindings,
+            flatFieldMetadataMaps,
+          }),
       };
     }
 
@@ -167,6 +227,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         primaryAxisGroupByFieldMetadataUniversalIdentifier,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = universalConfiguration;
 
@@ -201,6 +262,11 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
           filter,
           flatFieldMetadataMaps,
         }),
+        dashboardFilterBindings:
+          convertUniversalBindingsToDashboardFilterBindings({
+            dashboardFilterBindings,
+            flatFieldMetadataMaps,
+          }),
       };
     }
 
@@ -210,6 +276,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
         primaryAxisGroupByFieldMetadataUniversalIdentifier,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier,
         filter,
+        dashboardFilterBindings,
         ...rest
       } = universalConfiguration;
 
@@ -244,6 +311,11 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
           filter,
           flatFieldMetadataMaps,
         }),
+        dashboardFilterBindings:
+          convertUniversalBindingsToDashboardFilterBindings({
+            dashboardFilterBindings,
+            flatFieldMetadataMaps,
+          }),
       };
     }
 

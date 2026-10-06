@@ -12,10 +12,11 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
+import { type DashboardFilterSlot, PageLayoutType } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
-import { PageLayoutType } from 'twenty-shared/types';
 
 @InputType()
 export class UpdatePageLayoutWithTabsInput {
@@ -38,6 +39,11 @@ export class UpdatePageLayoutWithTabsInput {
   @IsBoolean()
   @IsOptional()
   isFirstTabPinned?: boolean;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsArray()
+  @IsOptional()
+  dashboardFilters?: DashboardFilterSlot[] | null;
 
   @Field(() => [UpdatePageLayoutTabWithWidgetsInput])
   @IsArray()

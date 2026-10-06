@@ -13,13 +13,20 @@ import {
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
+import { fetchTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  PageLayoutTabLayoutMode,
+  WidgetType,
+} from 'twenty-shared/types';
 
 const DEFAULT_GRID_POSITION = {
   layoutMode: PageLayoutTabLayoutMode.GRID as const,
@@ -60,6 +67,94 @@ describe('Page layout widget creation should fail', () => {
     await destroyOnePageLayout({
       expectToFail: false,
       input: { id: testPageLayoutId },
+    });
+  });
+
+  describe('Dashboard filter binding validation failures', () => {
+    let companyObjectMetadataId: string;
+    let companyPositionFieldMetadataId: string;
+    let personJobTitleFieldMetadataId: string;
+
+    beforeAll(async () => {
+      const { objectMetadataId, fieldMetadataId1 } =
+        await fetchTestFieldMetadataIds();
+
+      companyObjectMetadataId = objectMetadataId;
+      companyPositionFieldMetadataId = fieldMetadataId1;
+
+      const { objects } = await findManyObjectMetadata({
+        expectToFail: false,
+        input: {
+          filter: {},
+          paging: { first: 100 },
+        },
+        gqlFields: `
+          id
+          nameSingular
+          fieldsList {
+            id
+            name
+          }
+        `,
+      });
+
+      const personJobTitleField = objects
+        .find((object) => object.nameSingular === 'person')
+        ?.fieldsList?.find((field) => field.name === 'jobTitle');
+
+      jestExpectToBeDefined(personJobTitleField);
+
+      personJobTitleFieldMetadataId = personJobTitleField.id;
+    });
+
+    it('when a dashboard filter binding targets a field of another object', async () => {
+      const { errors } = await createOnePageLayoutWidget({
+        expectToFail: true,
+        input: {
+          title: 'Chart Bound To A Foreign Field',
+          pageLayoutTabId: testPageLayoutTabId,
+          type: WidgetType.GRAPH,
+          objectMetadataId: companyObjectMetadataId,
+          position: DEFAULT_GRID_POSITION,
+          configuration: {
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+            aggregateFieldMetadataId: companyPositionFieldMetadataId,
+            aggregateOperation: AggregateOperations.COUNT,
+            dashboardFilterBindings: {
+              jobTitle: { fieldMetadataId: personJobTitleFieldMetadataId },
+            },
+          },
+        },
+      });
+
+      expect(errors).toHaveLength(1);
+      expect(errors[0].extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+      expect(errors[0].message).toContain(
+        `Dashboard filter "jobTitle" binding field "${personJobTitleFieldMetadataId}" must belong to objectMetadataId "${companyObjectMetadataId}".`,
+      );
+    });
+
+    it('when a dashboard filter binding targets a deleted field', async () => {
+      const { errors } = await createOnePageLayoutWidget({
+        expectToFail: true,
+        input: {
+          title: 'Chart Bound To A Deleted Field',
+          pageLayoutTabId: testPageLayoutTabId,
+          type: WidgetType.GRAPH,
+          objectMetadataId: companyObjectMetadataId,
+          position: DEFAULT_GRID_POSITION,
+          configuration: {
+            configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+            aggregateFieldMetadataId: companyPositionFieldMetadataId,
+            aggregateOperation: AggregateOperations.COUNT,
+            dashboardFilterBindings: {
+              gone: { fieldMetadataId: '20202020-0000-4000-8000-000000000000' },
+            },
+          },
+        },
+      });
+
+      expectOneNotInternalServerErrorSnapshot({ errors });
     });
   });
 

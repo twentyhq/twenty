@@ -3,6 +3,7 @@
 exports[`Page layout with tabs update should succeed should update page layout with multiple tabs and different widget types 1`] = `
 {
   "createdAt": Any<String>,
+  "dashboardFilters": null,
   "defaultTabToFocusOnMobileAndSidePanelId": null,
   "deletedAt": null,
   "id": Any<String>,
@@ -27,6 +28,7 @@ exports[`Page layout with tabs update should succeed should update page layout w
             "aggregateOperation": "COUNT",
             "color": null,
             "configurationType": "PIE_CHART",
+            "dashboardFilterBindings": null,
             "dateGranularity": "DAY",
             "description": null,
             "displayDataLabel": false,
@@ -103,6 +105,7 @@ exports[`Page layout with tabs update should succeed should update page layout w
 exports[`Page layout with tabs update should succeed should update page layout with single tab and widget 1`] = `
 {
   "createdAt": Any<String>,
+  "dashboardFilters": null,
   "defaultTabToFocusOnMobileAndSidePanelId": null,
   "deletedAt": null,
   "id": Any<String>,
@@ -127,6 +130,7 @@ exports[`Page layout with tabs update should succeed should update page layout w
             "aggregateOperation": "COUNT",
             "color": null,
             "configurationType": "PIE_CHART",
+            "dashboardFilterBindings": null,
             "dateGranularity": "DAY",
             "description": null,
             "displayDataLabel": false,
