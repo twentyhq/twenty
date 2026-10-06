@@ -1,10 +1,7 @@
-import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
-import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
-import { SettingsAppPreferencesApplicationSection } from '@/settings/app-preferences/components/SettingsAppPreferencesApplicationSection';
-import { SettingsAppPreferencesConnectedAccountsSection } from '@/settings/app-preferences/components/SettingsAppPreferencesConnectedAccountsSection';
+import { SettingsAppPreferencesAccountsSection } from '@/settings/app-preferences/components/SettingsAppPreferencesAccountsSection';
+import { SettingsAppPreferencesApplicationsSection } from '@/settings/app-preferences/components/SettingsAppPreferencesApplicationsSection';
 import { useAppPreferencesApplications } from '@/settings/app-preferences/hooks/useAppPreferencesApplications';
-import { getApplicationUserSettingsMenuItems } from '@/settings/app-preferences/utils/getApplicationUserSettingsMenuItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -21,9 +18,6 @@ export const SettingsAppPreferences = () => {
 
   const { applications, loading: applicationsLoading } =
     useAppPreferencesApplications();
-
-  const applicationUserSettingsMenuItems =
-    getApplicationUserSettingsMenuItems(applications);
 
   const loading = accountsLoading || applicationsLoading;
 
@@ -43,23 +37,11 @@ export const SettingsAppPreferences = () => {
           <SettingsSectionSkeletonLoader />
         ) : (
           <>
-            <SettingsAppPreferencesConnectedAccountsSection
+            <SettingsAppPreferencesAccountsSection accounts={accounts} />
+            <SettingsAppPreferencesApplicationsSection
+              applications={applications}
               accounts={accounts}
             />
-            {applicationUserSettingsMenuItems.map(
-              ({ application, settingsMenuItem }) => (
-                <SettingsAppPreferencesApplicationSection
-                  key={settingsMenuItem.id}
-                  applicationId={application.id}
-                  applicationName={application.name}
-                  applicationLogoUrl={application.logoUrl}
-                  title={settingsMenuItem.title}
-                  frontComponentId={settingsMenuItem.frontComponentId}
-                />
-              ),
-            )}
-            <SettingsAccountsBlocklistSection />
-            <SettingsAccountsSettingsSection />
           </>
         )}
       </SettingsPageContainer>

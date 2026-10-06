@@ -26,22 +26,22 @@ describe('title-utils', () => {
       'Experience - Settings',
     );
     expect(getPageTitleFromPath('/settings/accounts')).toBe(
-      'Account - Settings',
+      'App preferences - Settings',
     );
     expect(getPageTitleFromPath('/settings/accounts/new')).toBe(
-      'Account - Settings',
+      'App preferences - Settings',
     );
     expect(getPageTitleFromPath('/settings/accounts/calendars')).toBe(
-      'Account - Settings',
+      'App preferences - Settings',
     );
     expect(
       getPageTitleFromPath('/settings/accounts/calendars/:accountUuid'),
-    ).toBe('Account - Settings');
+    ).toBe('App preferences - Settings');
     expect(getPageTitleFromPath('/settings/accounts/emails')).toBe(
-      'Account - Settings',
+      'App preferences - Settings',
     );
     expect(getPageTitleFromPath('/settings/accounts/emails/:accountUuid')).toBe(
-      'Account - Settings',
+      'App preferences - Settings',
     );
     expect(getPageTitleFromPath('/settings/billing/plans')).toBe(
       'Billing - Settings',
