@@ -1,8 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
   CoreObjectTableBody,
+  CoreObjectTableHeaderRow,
   CoreObjectTableRow,
 } from '@/object-core/components/CoreObjectTableRow';
 import { CoreObjectTableCheckboxCell } from '@/object-core/components/CoreObjectTableCheckboxCell';
@@ -15,7 +17,6 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type TableFieldMetadata } from '@/ui/layout/table/types/TableFieldMetadata';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 
@@ -66,7 +67,10 @@ export const CoreObjectTable = <TItem,>({
 
   return (
     <Table>
-      <TableRow gridTemplateColumns={gridTemplateColumns}>
+      <CoreObjectTableHeaderRow
+        gridTemplateColumns={gridTemplateColumns}
+        hoverBackgroundColor={themeCssVariables.background.secondary}
+      >
         {isSelectable && (
           <TableHeader align="center" padding="0">
             <CoreObjectTableCheckboxCell
@@ -94,12 +98,12 @@ export const CoreObjectTable = <TItem,>({
             />
           ) : (
             <TableHeader key={column.fieldName} align={column.align}>
-              {isDefined(column.FieldIcon) && <column.FieldIcon size={14} />}
+              <column.FieldIcon size={14} />
               <TableHeaderText>{t(column.fieldLabel)}</TableHeaderText>
             </TableHeader>
           ),
         )}
-      </TableRow>
+      </CoreObjectTableHeaderRow>
       <CoreObjectTableBody>
         {items.map((item) => {
           const rowId = getItemKey(item);

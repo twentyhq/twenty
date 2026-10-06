@@ -9,6 +9,16 @@ const StyledCoreObjectTableBody = styled(TableBody)`
   padding: 0;
 `;
 
+const StyledCoreObjectTableHeaderRow = styled(TableRow)`
+  background-color: ${themeCssVariables.background.secondary};
+  border-radius: 0;
+
+  > [data-table-header] {
+    color: ${themeCssVariables.font.color.secondary};
+    font-size: ${themeCssVariables.font.size.sm};
+  }
+`;
+
 const StyledCoreObjectTableRow = styled(TableRow)`
   border-radius: 0;
 
@@ -19,5 +29,6 @@ const StyledCoreObjectTableRow = styled(TableRow)`
 
 export {
   StyledCoreObjectTableBody as CoreObjectTableBody,
+  StyledCoreObjectTableHeaderRow as CoreObjectTableHeaderRow,
   StyledCoreObjectTableRow as CoreObjectTableRow,
 };
