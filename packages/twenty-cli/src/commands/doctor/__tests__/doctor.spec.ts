@@ -492,6 +492,45 @@ describe('doctor', () => {
     expect(result.stdout).not.toContain(API_KEY);
   });
 
+  it.each([false, true])(
+    'colors human diagnostics on the output stream, failures: %s',
+    async (hasFailures) => {
+      vi.stubEnv('NO_COLOR', undefined);
+      vi.stubEnv('FORCE_COLOR', '1');
+      await saveConfig({ version: 1, remotes: {} });
+      await chmod(configPath, 0o644);
+
+      const result = await runCliForTest([
+        'doctor',
+        '--offline',
+        ...(hasFailures ? ['--remote', 'missing'] : []),
+      ]);
+      const output = hasFailures ? result.stderr : result.stdout;
+
+      expect(output).toContain('\u001b[32m[PASS]\u001b[39m');
+      expect(output).toContain('\u001b[33m[SKIPPED]\u001b[39m');
+      expect(output).toContain('\u001b[33m[WARNING]\u001b[39m');
+
+      if (hasFailures) {
+        expect(output).toContain('\u001b[31m[FAIL]\u001b[39m');
+        expect(result.stdout).toBe('');
+      } else {
+        expect(result.stderr).toBe('');
+      }
+    },
+  );
+
+  it('respects NO_COLOR for human diagnostics', async () => {
+    vi.stubEnv('FORCE_COLOR', undefined);
+    vi.stubEnv('NO_COLOR', '1');
+
+    const result = await runCliForTest(['doctor', '--offline']);
+
+    expect(result.stdout).toContain('[PASS] node:');
+    expect(result.stdout).toContain('[SKIPPED] project:');
+    expect(result.stdout).not.toContain('\u001b[');
+  });
+
   it('keeps failed JSON diagnostics free of ANSI even when color is forced', async () => {
     vi.stubEnv('FORCE_COLOR', '1');
     const result = await runJson(['--remote', 'missing']);
