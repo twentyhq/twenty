@@ -11,7 +11,7 @@ import {
   buildMcpServerUrl,
   isHttpsUrl,
 } from '@/settings/mcp-and-apis/utils/mcpSetup';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';

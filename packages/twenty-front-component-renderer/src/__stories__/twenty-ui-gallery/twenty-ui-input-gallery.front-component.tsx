@@ -5,8 +5,8 @@ import {
   LightIconButton,
   MainButton,
   SearchInput,
-  TabButton,
-} from 'twenty-ui/components';
+} from 'twenty-ui/components/input';
+import { TabButton } from 'twenty-ui/components/navigation';
 import { CodeEditorHeader } from 'twenty-ui/components/code-editor';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import {

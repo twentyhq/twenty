@@ -21,11 +21,8 @@ import { useLingui } from '@lingui/react/macro';
 import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
 import { ContextStorePageType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  LightIconButton,
-  MenuItem,
-  MenuItemDraggable,
-} from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { MenuItem, MenuItemDraggable } from 'twenty-ui/components/navigation';
 import {
   IconDotsVertical,
   IconPin,

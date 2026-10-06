@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { SettingsRow } from 'twenty-ui/components';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconBell } from 'twenty-ui/icon';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';

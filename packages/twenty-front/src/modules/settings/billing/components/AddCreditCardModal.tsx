@@ -3,7 +3,7 @@ import { AddPaymentMethodForm } from '@/settings/billing/components/AddPaymentMe
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';

@@ -6,36 +6,83 @@ description: Shared design presets and reusable app building blocks composed fro
 
 Components combine [primitives](/ui/primitives/overview) into recurring design presets and reusable app building blocks. Like primitives, they receive data and callbacks from your application.
 
-Import shared components from `twenty-ui/components`. The code editor has its own entry point, `twenty-ui/components/code-editor`, because it requires Monaco. See [Getting started](/ui/getting-started) for installation and theme setup.
+Use the matching family import shown below. The aggregate `twenty-ui/components` entry also remains available. The code editor has its own entry point, `twenty-ui/components/code-editor`, because it requires Monaco. See [Getting started](/ui/getting-started) for installation and theme setup.
 
-## Browse components
+## Input
 
-| Component                                                                   | Purpose                                                               |
-| --------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| [MainButton](/ui/components/input/main-button)                              | Prominent actions with a solid surface, elevation, and semibold text. |
-| [LightButton](/ui/components/input/light-button)                            | Lightweight actions with standard or subtle emphasis.                 |
-| [IconButton](/ui/components/input/icon-button)                              | Square or round icon actions built on Button.                         |
-| [LightIconButton](/ui/components/input/light-icon-button)                   | Lightweight icon actions with standard or subtle emphasis.            |
-| [Section](/ui/components/section)                                           | Related content with a heading, description, and optional action.     |
-| [SettingsRow](/ui/components/settings-row)                                  | Labeled switches for settings and filters.                            |
-| [MetricRow](/ui/components/metric-row)                                      | Labels and formatted values with optional determinate progress.       |
-| [Dropdown](/ui/components/dropdown)                                         | Action menus, searchable pickers, and form panels.                    |
-| [PhoneCountryPicker](/ui/components/phone-country-picker) | Searchable country flags and calling-code selection. |
-| [TabButton](/ui/components/tab-button)                                      | Route links and adjacent actions with the same appearance as tabs.    |
-| [CodeEditor](/ui/components/code-editor)                                    | Code editing with Monaco, an optional header, and the Twenty theme.   |
-| [Toast](/ui/components/toast)                                               | Notifications, queue management, and dismissal.                       |
-| [AvatarGroup](/ui/components/avatar-group)                                  | Overlapping avatars and overflow counts.                              |
-| [CommandBlock](/ui/components/command-block)                                | Command text with an optional copy action.                            |
-| [JsonTree](/ui/components/json-tree)                                        | Expandable JSON values and named entries.                             |
-| [NotificationCounter](/ui/components/notification-counter)                  | Compact numeric badges.                                               |
-| [TintedIconTile](/ui/components/tinted-icon-tile)                           | Icons on theme-colored tiles.                                         |
-| [Callout](/ui/components/callout)                                           | Semantic messages with actions and dismissal.                         |
-| [InlineBanner](/ui/components/inline-banner)                                | Compact banners with optional actions.                                |
-| [ToastProvider and Toaster](/ui/components/toast#application-notifications) | Notification stores, queue limits, and rendering.                     |
-| [SearchInput](/ui/components/search-input)                                  | Search text and optional filter controls.                             |
-| [AnimatedIconCrossfade](/ui/components/animated-icon-crossfade)             | State-driven icon transitions.                                        |
-| [Menu rows](/ui/components/menu-items)                                      | MenuItem, MenuItemAvatar, MenuItemDraggable, and MenuItemSuggestion.  |
-| [CountrySelect](/ui/components/country-select)                            | Searchable country choices, flags, and an explicit empty selection.   |
-| [MenuPicker](/ui/components/menu-picker)                                    | Compact icon toggles with tooltips.                                   |
+Import from `twenty-ui/components/input`.
+
+| Component                                                       | Purpose                                                               |
+| --------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [MainButton](/ui/components/input/main-button)                  | Prominent actions with a solid surface, elevation, and semibold text. |
+| [LightButton](/ui/components/input/light-button)                | Lightweight actions with standard or subtle emphasis.                 |
+| [IconButton](/ui/components/input/icon-button)                  | Square or round icon actions built on Button.                         |
+| [LightIconButton](/ui/components/input/light-icon-button)       | Lightweight icon actions with standard or subtle emphasis.            |
+| [PhoneCountryPicker](/ui/components/input/phone-country-picker) | Searchable country flags and calling-code selection.                  |
+| [SearchInput](/ui/components/input/search-input)                | Search text and optional filter controls.                             |
+| [CountrySelect](/ui/components/input/country-select)            | Searchable country choices, flags, and an explicit empty selection.   |
+| [CurrencyPicker](/ui/components/input/currency-picker)          | Searchable currency choices with explicit formatting.                 |
+| [ImageInput](/ui/components/input/image-input)                  | Image selection, validation, and preview.                             |
+
+## Navigation
+
+Import from `twenty-ui/components/navigation`.
+
+| Component                                           | Purpose                                                              |
+| --------------------------------------------------- | -------------------------------------------------------------------- |
+| [Dropdown](/ui/components/navigation/dropdown)      | Action menus, searchable pickers, and form panels.                   |
+| [TabButton](/ui/components/navigation/tab-button)   | Route links and adjacent actions with the same appearance as tabs.   |
+| [Menu rows](/ui/components/navigation/menu-items)   | MenuItem, MenuItemAvatar, MenuItemDraggable, and MenuItemSuggestion. |
+| [MenuPicker](/ui/components/navigation/menu-picker) | Compact icon toggles with tooltips.                                  |
+
+## Data display
+
+Import from `twenty-ui/components/data-display`.
+
+| Component                                                               | Purpose                                                         |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------- |
+| [MetricRow](/ui/components/data-display/metric-row)                     | Labels and formatted values with optional determinate progress. |
+| [AvatarGroup](/ui/components/data-display/avatar-group)                 | Overlapping avatars and overflow counts.                        |
+| [CommandBlock](/ui/components/data-display/command-block)               | Command text with an optional copy action.                      |
+| [JsonTree](/ui/components/data-display/json-tree)                       | Expandable JSON values and named entries.                       |
+| [NotificationCounter](/ui/components/data-display/notification-counter) | Compact numeric badges.                                         |
+| [TintedIconTile](/ui/components/data-display/tinted-icon-tile)          | Icons on theme-colored tiles.                                   |
+
+## Feedback
+
+Import from `twenty-ui/components/feedback`.
+
+| Component                                                                            | Purpose                                           |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------- |
+| [Toast](/ui/components/feedback/toast)                                               | Notifications, queue management, and dismissal.   |
+| [Callout](/ui/components/feedback/callout)                                           | Semantic messages with actions and dismissal.     |
+| [InlineBanner](/ui/components/feedback/inline-banner)                                | Compact banners with optional actions.            |
+| [ToastProvider and Toaster](/ui/components/feedback/toast#application-notifications) | Notification stores, queue limits, and rendering. |
+
+## Layout
+
+Import from `twenty-ui/components/layout`.
+
+| Component                                                              | Purpose                                                           |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| [Section](/ui/components/layout/section)                               | Related content with a heading, description, and optional action. |
+| [AnimatedIconCrossfade](/ui/components/layout/animated-icon-crossfade) | State-driven icon transitions.                                    |
+| [OverflowingList](/ui/components/layout/overflowing-list)              | Fit visible items and collect the overflow.                       |
+
+## Settings
+
+Import from `twenty-ui/components/settings`.
+
+| Component                                           | Purpose                                    |
+| --------------------------------------------------- | ------------------------------------------ |
+| [SettingsRow](/ui/components/settings/settings-row) | Labeled switches for settings and filters. |
+
+## Code editor
+
+Import from `twenty-ui/components/code-editor`.
+
+| Component                                            | Purpose                                                             |
+| ---------------------------------------------------- | ------------------------------------------------------------------- |
+| [CodeEditor](/ui/components/code-editor/code-editor) | Code editing with Monaco, an optional header, and the Twenty theme. |
 
 Routing, record formatting, product placeholders, and application state belong to the host application. Shared components expose data, callback, and render props for those integrations.

@@ -2,7 +2,7 @@ import { objectColorsDraftState } from '@/layout-customization/states/objectColo
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { isDefined } from 'twenty-shared/utils';
-import { DEFAULT_COLOR_LABELS } from 'twenty-ui/components';
+import { DEFAULT_COLOR_LABELS } from 'twenty-ui/components/navigation';
 import { Button } from 'twenty-ui/primitives/input';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { mockedUserData } from '~/testing/mock-data/users';
