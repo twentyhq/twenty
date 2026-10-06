@@ -4,11 +4,11 @@ description: How to develop an app that works and scales well across many worksp
 icon: "gauge-high"
 ---
 
-An app is written once and runs once per workspace that installs it. Every trigger and every API call is multiplied by the number of installs, and most of what those runs call is shared: the application API budget, the job queue, and any provider key stored as a server variable. The practices below come from the [public apps](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public) and apply to any app expected to run on more than a few workspaces.
+## The application API rate limit
 
-## Cron triggers and shared rate limits
+The Twenty API accepts **500 requests per minute per application registration**. The limit is enforced at the server level and shared by every workspace that has installed the app: all installs draw on the same budget. A request beyond the limit is refused with a `429`.
 
-A cron pattern is evaluated once a minute for every active workspace, and one run is enqueued per workspace whose pattern matches. The same pattern therefore starts in every workspace at the same minute, and those runs then call the same budgets: the application API limit, which is counted across all workspaces of the instance, and any provider API key shared by every install.
+Everything an app does is therefore multiplied by its number of installs. A cron trigger makes this visible: the pattern is evaluated per workspace, so every install starts a run at the same minute, and all of those runs call the same budget.
 
 ```text
    pattern "0 3 * * *"                  the server, every minute
@@ -20,15 +20,21 @@ A cron pattern is evaluated once a minute for every active workspace, and one ru
               │               │                   │               │
               └───────────────┴─────────┬─────────┴───────────────┘
                                         ▼
-                     one app API budget, one provider API key
-                         N bursts in the same second  →  429
+                      500 requests per minute for the whole app
+                                   N × calls  →  429
 ```
 
-With a few installs this is harmless. With several hundred, a pattern such as `*/15 * * * *` produces several hundred simultaneous runs every 15 minutes, and a provider endpoint that allows 60 calls per minute refuses most of them.
+The same applies to database event triggers: a bulk write such as a mailbox sync emits one event per record, and one API call per event drains the budget within seconds.
 
-- Use database events, webhooks and user actions for the fast path. Reserve cron for reconciling what those missed.
-- Schedule daily, off-peak, at a minute not used by another cron of the app.
-- Keep the cron handler to an enqueue. Compute a stable per-workspace delay and hand the work to a background job, so runs spread over a window instead of starting together:
+## How to deal with it
+
+1. **Batch database event triggers.** Set `batchMode: true` so up to 200 events arrive in one run, and declare `updatedFields` so unrelated updates never start a run. Reduce the batch to the distinct records it touches before the first API call. See [Batching database events](/developers/extend/apps/logic/logic-functions#batching-database-events).
+
+2. **Make one request per batch, not per record.** The limit counts requests, not records. Read with `in` filters over the whole batch, and write with `createMany` and `upsert: true`, or `updateMany` with a filter: 200 records in one mutation is one request, 200 single updates are 200 requests. Skip writes that change nothing.
+
+3. **Collapse bursts into one delayed job.** When events reveal work that is larger than the event itself, mark the records and enqueue one job with `delayMs` and a deterministic `jobId` that includes a time window. The queue ignores an id it already holds, so a burst of events becomes a single run. See [Choose your own job id](/developers/extend/apps/logic/background-jobs#choose-your-own-job-id).
+
+4. **Spread cron work.** Schedule daily and off-peak, and keep the cron handler to an enqueue with a stable per-workspace delay, so runs spread over a window instead of starting together:
 
 ```ts
 const delayMs =
@@ -36,29 +42,8 @@ const delayMs =
   (60 * 60 * 1000);
 ```
 
-- Bound each run: a time window, one page per job, an early exit when nothing is pending.
-- Cron settings are part of the installed manifest. A changed pattern reaches existing installs only through an app upgrade, so bump the version.
+5. **Pace fan-outs.** Jobs enqueued without a delay all become eligible at once. Group the work into slots, delay slot `i` by `i` minutes, and delay the next page by the slots the current page used. See [Background jobs](/developers/extend/apps/logic/background-jobs).
 
-## Practices
+6. **Retry a `429` with backoff.** The client SDK throws on any non-2xx response. Retry `429` and `5xx` with exponential backoff, jitter and a cap on attempts, or re-enqueue the job with a delay instead of waiting inside the run. Throw `RetryableLogicFunctionError` when the whole run should be redelivered.
 
-1. **Narrow and batch database event triggers.** A bulk write such as a mailbox sync emits one event per record, thousands within seconds, and one run per event saturates the workers. Declare `updatedFields` so the server filters before a run exists, set `batchMode: true`, and reduce the batch to distinct records before the first API call. Listen to the transition that matters: `messageParticipant.updated` on `personId` fires once per link, whereas `message.created` fires before the record is useful. See [Batching database events](/developers/extend/apps/logic/logic-functions#batching-database-events).
-
-2. **Detect, then backfill with one delayed job.** An event sometimes reveals more work than it carries, such as a thread never processed or a bulk import. Doing that work inline, or once per event, multiplies it by the size of the burst. Record what needs work on the record or in the key-value store, then enqueue one job with `delayMs` and a deterministic `jobId` that includes a time window. The queue ignores an id it already holds, so the burst collapses into one run that starts once the writes have settled. See [Choose your own job id](/developers/extend/apps/logic/background-jobs#choose-your-own-job-id).
-
-3. **Do not trigger your own function.** An app that writes to the object it listens to re-fires on its own writes. Exclude written fields from `updatedFields`, recognize your own writes through data you own rather than `updatedBy`, which every API write stamps, and set `isAuditLogged: false` on fields rewritten on every sync so the record timeline stays readable.
-
-4. **Pace fan-outs.** Jobs enqueued without a delay all become eligible at once, and a single `enqueueJobs` call accepts 200 of them. Group the work into slots sized from the shared budget, delay slot `i` by `i` minutes, and delay the next page by the number of slots the current page used. Carry the attempt count in the payload, since `retryLimit` bounds one job and a re-enqueue is a new job. Throw `RetryableLogicFunctionError` for transient failures; any other error is final. On a `429`, re-enqueue with the `Retry-After` delay rather than waiting inside the run. See [Background jobs](/developers/extend/apps/logic/background-jobs).
-
-5. **Count API calls per run.** The application API budget is 500 calls per minute, shared by all workspaces of the instance, and consumed per root field: a `createMany` with `upsert: true` carrying 200 records is one call, while 200 single updates are 200 calls. Read with `in` filters over the batch, write once per object type, and skip writes that change nothing. Retry `429`, `502`, `503` and `504` with exponential backoff, jitter and a cap on attempts.
-
-6. **Cache values that do not change.** A provider lookup on every event, for a value fixed at connection time such as a bot identity or a team id, costs a round trip and a provider call each time. Store the value in the [key-value store](/developers/extend/apps/logic/key-value-store) when the connection is registered and read it from there. A reconnect re-runs the hook, so the cache corrects itself without a TTL.
-
-7. **Treat provider budgets as shared.** A provider key stored as a server variable is one account for every workspace. Give the provider client a request timeout and a small retry budget, since library defaults retry for minutes and outlive the function. List once per run and match in memory rather than one lookup per record. Record an idempotency key and an "attempted at" marker on the record before calling the provider, so a recovery run can tell "never reached the provider" from "outcome unknown", and respect the provider's idempotency window when re-sending a request.
-
-8. **Make every run idempotent and resumable.** Events can be delivered twice, jobs can be retried, and a run can be cut off by its timeout. Derive record ids from provider ids so webhooks, syncs and backfills converge on one row. Keep a status field with terminal states. Write with a filter that encodes the expected state and treat zero matched rows as a concurrent writer. Persist the cursor before enqueuing the next page. Charge credits only after the write that completed the record.
-
-9. **Acknowledge webhooks fast and deduplicate deliveries.** Providers redeliver when an acknowledgement is late, and each redelivery is a billed invocation. Verify the signature and dispatch in the server route resolver, do the work in the queued target, and forward the provider's retry headers so redeliveries are visible in logs. Deduplicate with a unique index on the provider's message key or a deterministic job id.
-
-10. **Backfill deliberately.** A backfill touches every record of a workspace, so it is where the multiplication by installs is most visible. Run it on a fresh install, on an upgrade that requires it (compare `previousVersion` and `newVersion`), or on an explicit user action, and never unattended when it bills. Bound the window and the number of pages, skip records already present, and expose the batch size as a server variable. Post-install hooks run one at a time on their own queue, so a backfill whose jobs would compete for the same API budget can run sequentially inside the hook.
-
-11. **Check credits before spending and expose a health check.** `getCreditAvailability()` reports whether the workspace may spend and fails open, so a transient error never cancels work. `defineHealthCheck` surfaces a missing prerequisite, such as no synced inbox or a rejected provider token, on the app settings page with a link to the fix, instead of leaving fields silently empty. See [Checking before you spend](/developers/extend/apps/logic/credits#checking-before-you-spend) and [Health check](/developers/extend/apps/logic/logic-functions#health-check).
+7. **Cache what does not change.** A value fixed at connection time, such as an identity or a team id, belongs in the [key-value store](/developers/extend/apps/logic/key-value-store) rather than in a request on every event.
