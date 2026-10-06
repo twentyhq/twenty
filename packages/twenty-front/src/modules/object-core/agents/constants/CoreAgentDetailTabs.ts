@@ -3,7 +3,7 @@ export const CORE_AGENT_DETAIL_TABS = {
   TABS_IDS: {
     ROLE: 'role',
     SETTINGS: 'settings',
-    EVALS: 'evals',
-    LOGS: 'logs',
+    TRIGGERS: 'triggers',
+    RUNS: 'runs',
   },
 };

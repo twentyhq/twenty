@@ -232,6 +232,41 @@ exports[`Agent update should fail when updating responseFormat with invalid type
 }
 `;
 
+exports[`Agent update should fail when updating triggers with an invalid cron pattern 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Cron triggers need a valid cron pattern such as "0 9 * * 1"",
+              "userFriendlyMessage": "An agent trigger is invalid",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "An agent trigger is invalid",
+  },
+  "message": "Multiple validation errors occurred while updating agent",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Agent update should fail when updating with empty label 1`] = `
 {
   "extensions": {

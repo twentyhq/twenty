@@ -824,14 +824,21 @@ describe('core workflow visibility (e2e)', () => {
         threadKey: `${workflowRunId}:trigger`,
       }));
 
-      await conversationService.recordExecution({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      const turnId = await conversationService.openTurn({
+        runInfo: { workspaceId: SEED_APPLE_WORKSPACE_ID, workflowRunId },
         threadId,
-        workflowStep: { workflowRunId, stepId: 'trigger' },
-        title: 'Summarize the lead',
         agentId: null,
         prompt: 'Summarize the lead',
         initiatorUserWorkspaceId: null,
+      });
+
+      await conversationService.closeTurn({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        threadId,
+        turnId,
+        workflowStep: { workflowRunId, stepId: 'trigger' },
+        title: 'Summarize the lead',
+        agentId: null,
         executionResult: {
           steps: [
             { content: [{ type: 'text', text: 'A warm lead.' }] },
