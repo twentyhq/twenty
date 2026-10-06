@@ -1554,7 +1554,6 @@ export interface JobStatus {
     state: JobState
     attemptsMade: Scalars['Int']
     failedReason?: Scalars['String']
-    /** Completion percentage reported by the job, from 0 to 100 */
     progress?: Scalars['Int']
     enqueuedAt: Scalars['Float']
     startedAt?: Scalars['Float']
@@ -5434,7 +5433,6 @@ export interface JobStatusGenqlSelection{
     state?: boolean | number
     attemptsMade?: boolean | number
     failedReason?: boolean | number
-    /** Completion percentage reported by the job, from 0 to 100 */
     progress?: boolean | number
     enqueuedAt?: boolean | number
     startedAt?: boolean | number

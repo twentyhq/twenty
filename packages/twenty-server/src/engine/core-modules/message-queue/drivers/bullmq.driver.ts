@@ -295,7 +295,6 @@ export class BullMQDriver
     this.workerMap[queueName].on('active', (job) =>
       this.emitJobChange({ queueName, job, state: 'active' }),
     );
-    // updateProgress only moves a job's progress, never its state
     this.workerMap[queueName].on('progress', (job) =>
       this.emitJobChange({ queueName, job, state: 'active' }),
     );

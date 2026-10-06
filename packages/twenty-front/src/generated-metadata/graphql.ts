@@ -2607,7 +2607,6 @@ export type JobStatus = {
   failedReason?: Maybe<Scalars['String']['output']>;
   finishedAt?: Maybe<Scalars['Float']['output']>;
   jobId: Scalars['String']['output'];
-  /** Completion percentage reported by the job, from 0 to 100 */
   progress?: Maybe<Scalars['Int']['output']>;
   startedAt?: Maybe<Scalars['Float']['output']>;
   state: JobState;

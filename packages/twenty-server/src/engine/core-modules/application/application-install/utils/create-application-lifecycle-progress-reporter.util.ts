@@ -24,7 +24,6 @@ export const createApplicationLifecycleProgressReporter = <
     const completedStepCount = steps.indexOf(step) + 1;
     const percentage = Math.round((completedStepCount / steps.length) * 100);
 
-    // Progress is informational: losing an update must never fail the lifecycle operation
     try {
       await updateProgress(percentage);
     } catch (error) {

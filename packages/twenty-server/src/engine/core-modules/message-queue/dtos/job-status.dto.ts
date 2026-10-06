@@ -16,10 +16,7 @@ export class JobStatusDTO {
   @Field(() => String, { nullable: true })
   failedReason?: string;
 
-  @Field(() => Int, {
-    nullable: true,
-    description: 'Completion percentage reported by the job, from 0 to 100',
-  })
+  @Field(() => Int, { nullable: true })
   progress?: number;
 
   @Field(() => Number)

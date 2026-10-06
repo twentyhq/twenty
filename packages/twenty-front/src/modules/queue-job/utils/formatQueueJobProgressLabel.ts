@@ -1,5 +1,4 @@
-// A figure space is exactly one digit wide, so a single-digit percentage keeps
-// a label the same width as a two-digit one
+// A figure space is one digit wide, so single-digit labels keep the same width
 const FIGURE_SPACE = ' ';
 
 export const formatQueueJobProgressLabel = (progress: number): string => {
