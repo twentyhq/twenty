@@ -124,13 +124,16 @@ describe('fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow',
     });
   });
 
-  it('refuses to hide a widget that is not a form field', () => {
-    expect(() =>
-      updateWidget({
-        existingWidget: buildFormFieldWidget({ type: WidgetType.GRAPH }),
-        isActive: false,
-      }),
-    ).toThrow('Only form field widgets can be shown or hidden');
+  it('hides widgets of any type the same way', () => {
+    const updatedWidget = updateWidget({
+      existingWidget: buildFormFieldWidget({ type: WidgetType.GRAPH }),
+      isActive: false,
+    });
+
+    expect(updatedWidget.isActive).toBe(true);
+    expect(updatedWidget.overrides).toEqual({
+      [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: { isActive: false },
+    });
   });
 
   it('writes the column of a widget the workspace owns outright', () => {

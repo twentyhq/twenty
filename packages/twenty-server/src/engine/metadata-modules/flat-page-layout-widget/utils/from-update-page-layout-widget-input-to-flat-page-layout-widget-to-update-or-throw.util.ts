@@ -1,5 +1,4 @@
 import { t } from '@lingui/core/macro';
-import { WidgetType } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -170,13 +169,6 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     const { isActive } = rawUpdatePageLayoutWidgetInput.update;
 
     if (isDefined(isActive)) {
-      if (flatPageLayoutWidgetToUpdate.type !== WidgetType.FORM_FIELD) {
-        throw new PageLayoutWidgetException(
-          t`Only form field widgets can be shown or hidden`,
-          PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-        );
-      }
-
       return dispatchIsActiveUpdateToAuthoredOverride({
         metadataName: 'pageLayoutWidget',
         flatEntity: flatPageLayoutWidgetToUpdate,
