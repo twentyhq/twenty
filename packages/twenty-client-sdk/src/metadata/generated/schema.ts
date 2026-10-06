@@ -683,7 +683,7 @@ export interface User {
 
 
 /** Onboarding status */
-export type OnboardingStatus = 'PLAN_REQUIRED' | 'WORKSPACE_ACTIVATION' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'APPS_INSTALLATION' | 'INVITE_TEAM' | 'BOOK_CALL' | 'COMPLETED'
+export type OnboardingStatus = 'PLAN_REQUIRED' | 'WORKSPACE_ACTIVATION' | 'PROFILE_CREATION' | 'SYNC_EMAIL' | 'INVITE_TEAM' | 'BOOK_CALL' | 'COMPLETED'
 
 export interface ApplicationRegistration {
     id: Scalars['UUID']
@@ -1379,11 +1379,20 @@ export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' |
 
 export type UsageUnit = 'CREDIT' | 'TOKEN' | 'INVOCATION' | 'MINUTE' | 'MILLISECOND' | 'BYTE' | 'FILE' | 'REQUEST' | 'SEAT' | 'RECORD' | 'COMPLEXITY'
 
+export interface UsageQuotaOperatorOnlyScope {
+    operationType: UsageOperationType
+    spenderType: Scalars['String']
+    unit: UsageUnit
+    periodUnit: Scalars['String']
+    __typename: 'UsageQuotaOperatorOnlyScope'
+}
+
 export interface UsageQuotaDefinition {
     resourceType: UsageResourceType
     limitKind: Scalars['String']
     allowedOperations: UsageLimitOperationDefinition[]
     allowedSpenderTypes: Scalars['String'][]
+    operatorOnlyScopes: UsageQuotaOperatorOnlyScope[]
     __typename: 'UsageQuotaDefinition'
 }
 
@@ -3628,7 +3637,6 @@ export interface Mutation {
     updateOneApplicationVariable: Scalars['Boolean']
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     completeBookCallOnboardingStep: OnboardingStepSuccess
-    triggerInstallAppsOnboardingStep: OnboardingStepSuccess
     goBackToPreviousOnboardingStep: OnboardingStepNavigation
     deleteWorkspaceInvitation: Scalars['String']
     resendWorkspaceInvitation: SendInvitations
@@ -5249,11 +5257,21 @@ export interface UsageLimitOperationDefinitionGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UsageQuotaOperatorOnlyScopeGenqlSelection{
+    operationType?: boolean | number
+    spenderType?: boolean | number
+    unit?: boolean | number
+    periodUnit?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface UsageQuotaDefinitionGenqlSelection{
     resourceType?: boolean | number
     limitKind?: boolean | number
     allowedOperations?: UsageLimitOperationDefinitionGenqlSelection
     allowedSpenderTypes?: boolean | number
+    operatorOnlyScopes?: UsageQuotaOperatorOnlyScopeGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7642,7 +7660,6 @@ export interface MutationGenqlSelection{
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId?: (Scalars['UUID'] | null)} }
     skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
     completeBookCallOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {hasBookedCall: Scalars['Boolean'], isAutoSkipped: Scalars['Boolean']} })
-    triggerInstallAppsOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {universalIdentifiers: Scalars['String'][], isAutoSkipped: Scalars['Boolean']} })
     goBackToPreviousOnboardingStep?: OnboardingStepNavigationGenqlSelection
     deleteWorkspaceInvitation?: { __args: {appTokenId: Scalars['String']} }
     resendWorkspaceInvitation?: (SendInvitationsGenqlSelection & { __args: {appTokenId: Scalars['String']} })
@@ -9147,6 +9164,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isUsageLimitOperationDefinition = (obj?: { __typename?: any } | null): obj is UsageLimitOperationDefinition => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimitOperationDefinition"')
       return UsageLimitOperationDefinition_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageQuotaOperatorOnlyScope_possibleTypes: string[] = ['UsageQuotaOperatorOnlyScope']
+    export const isUsageQuotaOperatorOnlyScope = (obj?: { __typename?: any } | null): obj is UsageQuotaOperatorOnlyScope => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageQuotaOperatorOnlyScope"')
+      return UsageQuotaOperatorOnlyScope_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11153,7 +11178,6 @@ export const enumOnboardingStatus = {
    WORKSPACE_ACTIVATION: 'WORKSPACE_ACTIVATION' as const,
    PROFILE_CREATION: 'PROFILE_CREATION' as const,
    SYNC_EMAIL: 'SYNC_EMAIL' as const,
-   APPS_INSTALLATION: 'APPS_INSTALLATION' as const,
    INVITE_TEAM: 'INVITE_TEAM' as const,
    BOOK_CALL: 'BOOK_CALL' as const,
    COMPLETED: 'COMPLETED' as const
