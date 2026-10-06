@@ -35,6 +35,11 @@ const buildService = () => {
       authContext: { userWorkspaceId: RUN_AS_USER_WORKSPACE_ID },
       roleId: 'role-id',
     }),
+    buildApplicationAgentContext: jest.fn().mockResolvedValue({
+      application: APPLICATION,
+      authContext: { type: 'application' },
+      agentRoleId: 'agent-role-id',
+    }),
   };
 
   const service = new AgentRunService(
@@ -43,14 +48,6 @@ const buildService = () => {
     {} as never,
     { findById: jest.fn().mockResolvedValue(APPLICATION) } as never,
     { findOne: jest.fn().mockResolvedValue(AGENT) } as never,
-    {} as never,
-    {
-      getOrRecompute: jest.fn().mockResolvedValue({
-        flatRoleTargetByAgentIdMaps: {
-          [AGENT.id]: { roleId: 'agent-role-id' },
-        },
-      }),
-    } as never,
   );
 
   return { service, agentRunnerService };

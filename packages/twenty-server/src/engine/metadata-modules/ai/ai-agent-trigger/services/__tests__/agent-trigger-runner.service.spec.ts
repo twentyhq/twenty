@@ -1,15 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
 import { type RunAgentTriggerJobData } from 'src/engine/metadata-modules/ai/ai-agent-trigger/types/run-agent-trigger-job-data.type';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WORKSPACE_ID = 'workspace-id';
 const AGENT_ID = 'agent-id';
@@ -71,33 +68,24 @@ describe('AgentTriggerRunnerService', () => {
           useValue: { register: jest.fn() },
         },
         {
-          provide: ApplicationLookupService,
-          useValue: { findById: findApplication },
-        },
-        {
-          provide: getWorkspaceScopedRepositoryToken(AgentEntity),
-          useValue: { findOne: findAgent },
-        },
-        {
-          provide: getRepositoryToken(WorkspaceEntity),
+          provide: AgentActorContextService,
           useValue: {
-            findOneOrFail: jest.fn().mockResolvedValue({
-              id: WORKSPACE_ID,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-              deletedAt: null,
+            buildApplicationAgentContext: jest.fn(async () => {
+              const application = await findApplication();
+
+              return application
+                ? {
+                    application,
+                    authContext: { type: 'application', application },
+                    agentRoleId: currentRoleId,
+                  }
+                : null;
             }),
           },
         },
         {
-          provide: WorkspaceCacheService,
-          useValue: {
-            getOrRecompute: jest.fn().mockImplementation(async () => ({
-              flatRoleTargetByAgentIdMaps: {
-                [AGENT_ID]: { agentId: AGENT_ID, roleId: currentRoleId },
-              },
-            })),
-          },
+          provide: getWorkspaceScopedRepositoryToken(AgentEntity),
+          useValue: { findOne: findAgent },
         },
       ],
     }).compile();

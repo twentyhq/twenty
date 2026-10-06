@@ -21,6 +21,7 @@ import { AgentRunPendingWakeUpHandlerService } from 'src/engine/metadata-modules
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
+import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
@@ -28,10 +29,8 @@ import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-mode
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -40,6 +39,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AiBillingModule,
     AiModelsModule,
     AiAgentModule,
+    AiAgentRoleModule,
     ApplicationLookupModule,
     FileUrlModule,
     MetricsModule,
@@ -48,12 +48,10 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UserRoleModule,
     PermissionsModule,
     ToolProviderModule,
-    WorkspaceCacheModule,
     TypeOrmModule.forFeature([
       AgentEntity,
       AgentRunSuspensionEntity,
       FileEntity,
-      RoleTargetEntity,
       WorkspaceEntity,
     ]),
   ],
@@ -70,7 +68,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AgentRunPendingWakeUpHandlerService,
     ContinueAgentRunJob,
     RunAgentAttachmentService,
-    provideWorkspaceScopedRepository(RoleTargetEntity),
     provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(AgentRunSuspensionEntity),
     provideWorkspaceScopedRepository(FileEntity),
