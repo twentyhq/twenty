@@ -7,6 +7,7 @@ import { useCreateJunctionRecordFromTableWidget } from '@/object-record/record-t
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -66,7 +67,7 @@ export const RecordTableWidgetJunctionAddNewRow = ({
       >
         <RecordTableActionRow LeftIcon={IconPlus} text={t`Add New`} />
       </Dropdown.Trigger>
-      <DropdownContent align="start" width={200}>
+      <DropdownContent align="start" width={GenericDropdownContentWidth.Medium}>
         <RecordTableWidgetRelationPickerDropdownContent
           objectNameSingular={
             junctionCreateThrough.targetObjectMetadataNameSingular

@@ -14,6 +14,7 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -123,7 +124,10 @@ export const RecordTableHeaderAddColumnButton = () => {
           >
             <IconPlus size={theme.icon.size.md} />
           </Dropdown.Trigger>
-          <DropdownContent align="start" width={200}>
+          <DropdownContent
+            align="start"
+            width={GenericDropdownContentWidth.Medium}
+          >
             <RecordTableHeaderPlusButtonContent />
           </DropdownContent>
         </DropdownRoot>

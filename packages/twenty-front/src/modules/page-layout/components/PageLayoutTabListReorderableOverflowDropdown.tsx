@@ -13,6 +13,7 @@ import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnable
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { isDefined } from 'twenty-shared/utils';
@@ -131,7 +132,11 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
         hiddenTabsCount={hiddenTabsCount}
         isActiveTabHidden={isActiveTabHidden}
       />
-      <DropdownContent align="end" sideOffset={8} width={200}>
+      <DropdownContent
+        align="end"
+        sideOffset={8}
+        width={GenericDropdownContentWidth.Medium}
+      >
         <Dropdown.Section>
           {hiddenTabs.map((tab, index) => {
             const disabled = tab.disabled ?? loading;

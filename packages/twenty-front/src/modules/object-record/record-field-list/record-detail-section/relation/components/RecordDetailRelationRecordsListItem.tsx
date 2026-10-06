@@ -18,6 +18,7 @@ import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDi
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -236,7 +237,11 @@ export const RecordDetailRelationRecordsListItem = ({
                 </LightIconButton>
               }
             />
-            <DropdownContent side="right" align="start" width={200}>
+            <DropdownContent
+              side="right"
+              align="start"
+              width={GenericDropdownContentWidth.Medium}
+            >
               <Dropdown.Section>
                 <Dropdown.ActionItem
                   startIcon={<IconUnlink />}

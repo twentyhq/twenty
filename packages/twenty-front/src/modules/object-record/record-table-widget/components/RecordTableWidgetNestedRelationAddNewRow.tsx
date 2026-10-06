@@ -3,6 +3,7 @@ import { RecordTableWidgetRelationPickerDropdownContent } from '@/object-record/
 import { type RecordTableWidgetNestedRelationCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { t } from '@lingui/core/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
@@ -26,7 +27,7 @@ export const RecordTableWidgetNestedRelationAddNewRow = ({
     >
       <RecordTableActionRow LeftIcon={IconPlus} text={t`Add New`} />
     </Dropdown.Trigger>
-    <DropdownContent align="start" width={200}>
+    <DropdownContent align="start" width={GenericDropdownContentWidth.Medium}>
       <RecordTableWidgetRelationPickerDropdownContent
         objectNameSingular={
           nestedRelationCreateThrough.relationObjectMetadataNameSingular
