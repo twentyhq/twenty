@@ -979,6 +979,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
+    triggers: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     isSystem: {
       toCompare: true,
       toStringify: false,
