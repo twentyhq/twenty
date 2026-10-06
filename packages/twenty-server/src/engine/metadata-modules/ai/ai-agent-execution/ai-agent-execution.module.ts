@@ -16,11 +16,13 @@ import { AgentMessagePartResolver } from 'src/engine/metadata-modules/ai/ai-agen
 import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message.resolver';
 import { AgentRunResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-run.resolver';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { AgentCallerInboxService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-inbox.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentRunPendingWakeUpHandlerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-pending-wake-up-handler.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
+import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -34,6 +36,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 
 @Module({
   imports: [
+    AgentChatThreadModule,
     AgentHistoryModule,
     AgentRunConversationModule,
     AiBillingModule,
@@ -57,6 +60,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   ],
   providers: [
     AgentAsyncExecutorService,
+    AgentCallerInboxService,
     AgentActorContextService,
     AiGraphqlApiExceptionInterceptor,
     AgentMessagePartResolver,
@@ -74,6 +78,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   ],
   exports: [
     AgentAsyncExecutorService,
+    AgentCallerInboxService,
     AgentActorContextService,
     AgentRunConversationModule,
     AgentRunnerService,

@@ -1,4 +1,4 @@
-import { findMissingRequiredToolArguments } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/utils/find-missing-required-tool-arguments.util';
+import { findMissingRequiredToolArguments } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-missing-required-tool-arguments.util';
 
 const CALENDAR_EVENT_SCHEMA = {
   type: 'object',

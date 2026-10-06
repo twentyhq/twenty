@@ -17,6 +17,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { type AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { type AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -99,6 +100,17 @@ const findSuspensions = (callerType: string, agentId: string) =>
     [callerType, agentId],
   );
 
+const findWaitCallStatus = async (threadId: string) => {
+  const [part] = await global.testDataSource.query(
+    `SELECT part."toolOutput"->'result'->>'status' AS status FROM "${schema}"."agentMessagePart" part
+     JOIN "${schema}"."agentMessage" message ON message.id = part."messageId"
+     WHERE message."threadId" = $1 AND part."toolName" = 'wait_for_duration'`,
+    [threadId],
+  );
+
+  return part?.status;
+};
+
 const findTurnStatuses = async (threadId: string) =>
   (
     await global.testDataSource.query(
@@ -166,6 +178,17 @@ describe('agent runs that wait (integration)', () => {
     const [suspension] = await findSuspensions('AGENT_TRIGGER', agentId);
 
     expect(suspension).toMatchObject({ ownerType: 'AGENT_RUN' });
+
+    // the run reads its conversation when it goes on, so a chat message cannot slip in while it waits
+    await expect(
+      getAppProviderByClassName<AgentChatStreamingService>(
+        'AgentChatStreamingService',
+      ).streamAgentChat({
+        thread: { id: suspension.threadId, pendingQuestionMessageId: null },
+        workspace: { id: workspaceId },
+        text: 'Any news?',
+      } as Parameters<AgentChatStreamingService['streamAgentChat']>[0]),
+    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_AWAITING_ANSWER });
     expect(executeAgent.mock.calls[0][0].baseSystemPrompt).toContain(
       'wait_for_duration',
     );
@@ -193,7 +216,9 @@ describe('agent runs that wait (integration)', () => {
 
     await runTrigger();
 
-    expect(await findSuspensions('AGENT_TRIGGER', agentId)).toHaveLength(1);
+    const [{ threadId }] = await findSuspensions('AGENT_TRIGGER', agentId);
+
+    expect(await findWaitCallStatus(threadId)).toBe('pending');
 
     await updateOneAgent({
       expectToFail: false,
@@ -208,6 +233,7 @@ describe('agent runs that wait (integration)', () => {
     });
 
     expect(executeAgent).toHaveBeenCalledTimes(1);
+    expect(await findWaitCallStatus(threadId)).toBe('cancelled');
 
     await updateOneAgent({
       expectToFail: false,

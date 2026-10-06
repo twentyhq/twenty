@@ -96,7 +96,7 @@ const buildService = (execution = buildExecution()) => {
     agentRunConversationService as never,
     conversationReaderService as never,
     {
-      findOne: jest.fn().mockResolvedValue(null),
+      assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
       closeAwaitedCalls: jest.fn().mockResolvedValue(undefined),
     } as never,
     {} as never,

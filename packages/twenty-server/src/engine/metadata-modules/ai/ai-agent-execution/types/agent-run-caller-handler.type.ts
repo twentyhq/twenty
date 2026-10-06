@@ -2,10 +2,10 @@ import { type ActorMetadata } from 'twenty-shared/types';
 
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-input.type';
+import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
 import { type AgentRunCallerWaitingState } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-waiting-state.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type AgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-summary.type';
-import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
 
 export type AgentRunCallerHandler<
   TCaller extends AgentRunCaller = AgentRunCaller,
@@ -28,7 +28,7 @@ export type AgentRunCallerHandler<
   onOutcome?(
     input: AgentRunCallerInput<TCaller> & {
       threadId: string;
-      outcome: Exclude<AgentRunnerOutcome, { status: 'SUSPENDED' }>;
+      outcome: AgentRunCallerOutcome;
       // null for a call the caller posted itself, which no agent ran
       summary: AgentRunSummary | null;
     },

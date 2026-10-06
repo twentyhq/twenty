@@ -31,6 +31,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
+import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
@@ -93,6 +94,7 @@ export class AgentChatStreamingService {
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly turnRecorderService: AgentTurnRecorderService,
+    private readonly agentRunSuspensionService: AgentRunSuspensionService,
   ) {}
 
   async tryClaimStream({
@@ -628,15 +630,24 @@ export class AgentChatStreamingService {
   }): Promise<void> {
     const messageId = thread.pendingQuestionMessageId;
 
-    if (!isDefined(messageId)) {
-      return;
-    }
-
-    if (await this.isAwaitingCaller({ messageId, workspaceId })) {
+    if (
+      isDefined(messageId) &&
+      (await this.isAwaitingCaller({ messageId, workspaceId }))
+    ) {
       throw new AiException(
         'This conversation is waiting on an answer to the run that asked',
         AiExceptionCode.THREAD_AWAITING_CALLER_INPUT,
       );
+    }
+
+    // a run waiting on an event or a duration asks nothing, yet reads the conversation when it goes on
+    await this.agentRunSuspensionService.assertConversationNotSuspended({
+      workspaceId,
+      threadId: thread.id,
+    });
+
+    if (!isDefined(messageId)) {
+      return;
     }
 
     await this.agentChatService.closePendingToolCalls({

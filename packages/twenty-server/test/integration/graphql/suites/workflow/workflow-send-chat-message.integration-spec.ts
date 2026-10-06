@@ -13,8 +13,9 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { type AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { type AgentCallerInboxService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-inbox.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type WorkflowRunInboxSenderWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-inbox-sender.workspace-service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -227,7 +228,44 @@ describe('Send chat message workflow step', () => {
       expect(await readEmployees()).toBe(30);
     }, 120000);
 
-    it('keeps waiting when the step posts its call again', async () => {
+    it('keeps waiting when the step posts its call again, then reads the answer', async () => {
+      const toolCall = {
+        toolName: 'update_one_company',
+        arguments: { id: companyId, employees: 25 },
+      };
+      // the step posts again as a retry of it would, with the same keys
+      const postAgain = async ({
+        workflowRunId,
+        stepId,
+      }: {
+        workflowRunId: string;
+        stepId: string;
+      }) =>
+        getAppProviderByClassName<AgentCallerInboxService>(
+          'AgentCallerInboxService',
+        ).sendMessage({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          sender:
+            await getAppProviderByClassName<WorkflowRunInboxSenderWorkspaceService>(
+              'WorkflowRunInboxSenderWorkspaceService',
+            ).findRunSenderOrThrow({
+              workflowRunId,
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+            }),
+          message: {
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+            threadKey: workflowRunId,
+            idempotencyKey: stepId,
+            title: 'Headcount check',
+            text: 'Raise the headcount to 25?',
+          },
+          awaitedToolCall: {
+            ...toolCall,
+            caller: { type: 'WORKFLOW_STEP', ref: { workflowRunId, stepId } },
+          },
+        });
+      let runIds = { workflowRunId: '', stepId: '' };
+
       const { status, stepResult } = await runWorkflowActionStep({
         name: 'Post a headcount check twice',
         stepType: 'SEND_CHAT_MESSAGE',
@@ -235,12 +273,11 @@ describe('Send chat message workflow step', () => {
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
           title: 'Headcount check',
           text: 'Raise the headcount to 25?',
-          toolCall: {
-            toolName: 'update_one_company',
-            arguments: { id: companyId, employees: 25 },
-          },
+          toolCall,
         },
         whileRunning: async ({ workflowRunId, stepId }) => {
+          runIds = { workflowRunId, stepId };
+
           await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
 
           const [{ threadId }] = await global.testDataSource.query(
@@ -250,18 +287,10 @@ describe('Send chat message workflow step', () => {
 
           postedThreadId = threadId;
 
-          await expect(
-            getAppProviderByClassName<AgentRunSuspensionService>(
-              'AgentRunSuspensionService',
-            ).awaitCallerCall({
-              workspaceId: SEED_APPLE_WORKSPACE_ID,
-              threadId,
-              caller: {
-                type: 'WORKFLOW_STEP',
-                ref: { workflowRunId, stepId },
-              },
-            }),
-          ).resolves.toBeUndefined();
+          expect(await postAgain({ workflowRunId, stepId })).toEqual({
+            status: 'AWAITING',
+            threadId,
+          });
 
           await answerPostedCall({
             workflowRunId,
@@ -274,6 +303,18 @@ describe('Send chat message workflow step', () => {
       expect(status).toBe('COMPLETED');
       expect(stepResult).toMatchObject({ outcome: 'executed' });
       expect(await readEmployees()).toBe(25);
+      expect(await postAgain(runIds)).toEqual({
+        status: 'ANSWERED',
+        threadId: postedThreadId,
+        answer: {
+          outcome: 'executed',
+          toolName: 'update_one_company',
+          arguments: { id: companyId, employees: 25 },
+          output: expect.anything(),
+          feedback: null,
+          error: null,
+        },
+      });
     }, 120000);
 
     it('runs nothing when the recipient rejects the action', async () => {
