@@ -27,6 +27,7 @@ import {
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
+import { ApplicationVariableUserValueService } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -106,6 +107,7 @@ export class LogicFunctionExecutorService {
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
+    private readonly applicationVariableUserValueService: ApplicationVariableUserValueService,
     private readonly subscriptionService: SubscriptionService,
     private readonly eventLogLiveService: EventLogLiveService,
     private readonly eventLogEmitterService: EventLogEmitterService,
@@ -438,10 +440,23 @@ export class LogicFunctionExecutorService {
         applicationId: flatApplication.id,
         flatApplicationVariableMaps,
       });
+    // The same member TWENTY_APP_ACCESS_TOKEN acts as, so a run reads the
+    // values of whoever it acts for.
+    const userVariables =
+      await this.applicationVariableUserValueService.getServerEnvVariables({
+        workspaceId,
+        applicationId: flatApplication.id,
+        flatApplicationVariableMaps,
+        userWorkspaceId:
+          hasTriggeringPerson && !isDefined(workspaceDeletionRequestTimestamp)
+            ? userWorkspaceId
+            : undefined,
+      });
 
     return {
       ...serverVariables,
       ...workspaceVariables,
+      ...userVariables,
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
       // Falls back to the application so cron schedules and install hooks work with nobody triggering.
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: (

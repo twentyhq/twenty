@@ -18,6 +18,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
+import { ApplicationVariableUserValueService } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
@@ -68,6 +69,7 @@ export class FrontComponentResolver {
     @Inject(ApplicationTokenService)
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
+    private readonly applicationVariableUserValueService: ApplicationVariableUserValueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -176,9 +178,10 @@ export class FrontComponentResolver {
           })
         : undefined,
       isDefined(selectedFields.applicationVariables)
-        ? this.applicationVariableService.getPublicEnvVariables({
+        ? this.getPublicApplicationVariables({
             workspaceId: workspace.id,
             applicationId: dto.applicationId,
+            userWorkspaceId,
           })
         : undefined,
     ]);
@@ -301,5 +304,29 @@ export class FrontComponentResolver {
     });
 
     return fromFlatFrontComponentToFrontComponentDto(flatFrontComponent);
+  }
+
+  private async getPublicApplicationVariables({
+    workspaceId,
+    applicationId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    userWorkspaceId: string;
+  }): Promise<Record<string, string>> {
+    const [workspaceVariables, userVariables] = await Promise.all([
+      this.applicationVariableService.getPublicEnvVariables({
+        workspaceId,
+        applicationId,
+      }),
+      this.applicationVariableUserValueService.getPublicEnvVariables({
+        workspaceId,
+        applicationId,
+        userWorkspaceId,
+      }),
+    ]);
+
+    return { ...workspaceVariables, ...userVariables };
   }
 }

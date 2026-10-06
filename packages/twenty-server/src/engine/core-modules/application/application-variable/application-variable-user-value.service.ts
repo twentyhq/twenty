@@ -21,6 +21,7 @@ import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/utils/resolve-workspace-member-id-for-user.util';
+import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -29,6 +30,11 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 type ApplicationVariableTarget = {
   workspaceId: string;
   applicationId: string;
+};
+
+type GetEnvVariablesArgs = ApplicationVariableTarget & {
+  userWorkspaceId: string | undefined;
+  flatApplicationVariableMaps?: FlatApplicationVariableMaps;
 };
 
 type UserValue = Pick<
@@ -72,18 +78,11 @@ export class ApplicationVariableUserValueService {
       return [];
     }
 
-    const userValues = await this.applicationVariableUserValueRepository.find(
+    const userValues = await this.findUserValues({
       workspaceId,
-      {
-        select: { applicationVariableId: true, value: true },
-        where: {
-          userWorkspaceId,
-          applicationVariableId: In(
-            userFlatApplicationVariables.map(({ id }) => id),
-          ),
-        },
-      },
-    );
+      userWorkspaceId,
+      userFlatApplicationVariables,
+    });
 
     return this.toApplicationVariableUserValues({
       userFlatApplicationVariables,
@@ -91,6 +90,25 @@ export class ApplicationVariableUserValueService {
       workspaceId,
       shouldMaskSecret: true,
     });
+  }
+
+  async getServerEnvVariables(
+    args: GetEnvVariablesArgs,
+  ): Promise<Record<string, string>> {
+    const userFlatApplicationVariables =
+      await this.findUserFlatApplicationVariables(args);
+
+    return this.toEnvVariables({ ...args, userFlatApplicationVariables });
+  }
+
+  async getPublicEnvVariables(
+    args: GetEnvVariablesArgs,
+  ): Promise<Record<string, string>> {
+    const userFlatApplicationVariables = (
+      await this.findUserFlatApplicationVariables(args)
+    ).filter(({ isSecret }) => !isSecret);
+
+    return this.toEnvVariables({ ...args, userFlatApplicationVariables });
   }
 
   async findApplicationVariableUserValues({
@@ -203,6 +221,57 @@ export class ApplicationVariableUserValueService {
     );
   }
 
+  private async toEnvVariables({
+    workspaceId,
+    userWorkspaceId,
+    userFlatApplicationVariables,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    userFlatApplicationVariables: FlatApplicationVariable[];
+  }): Promise<Record<string, string>> {
+    if (!isNonEmptyArray(userFlatApplicationVariables)) {
+      return {};
+    }
+
+    const userValues = isDefined(userWorkspaceId)
+      ? await this.findUserValues({
+          workspaceId,
+          userWorkspaceId,
+          userFlatApplicationVariables,
+        })
+      : [];
+
+    return Object.fromEntries(
+      this.toApplicationVariableUserValues({
+        userFlatApplicationVariables,
+        userValues,
+        workspaceId,
+        shouldMaskSecret: false,
+      }).map(({ key, value }) => [key, value]),
+    );
+  }
+
+  private async findUserValues({
+    workspaceId,
+    userWorkspaceId,
+    userFlatApplicationVariables,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    userFlatApplicationVariables: FlatApplicationVariable[];
+  }): Promise<UserValue[]> {
+    return this.applicationVariableUserValueRepository.find(workspaceId, {
+      select: { applicationVariableId: true, value: true },
+      where: {
+        userWorkspaceId,
+        applicationVariableId: In(
+          userFlatApplicationVariables.map(({ id }) => id),
+        ),
+      },
+    });
+  }
+
   private toApplicationVariableUserValues({
     userFlatApplicationVariables,
     userValues,
@@ -277,11 +346,15 @@ export class ApplicationVariableUserValueService {
   private async findUserFlatApplicationVariables({
     workspaceId,
     applicationId,
-  }: ApplicationVariableTarget): Promise<FlatApplicationVariable[]> {
+    flatApplicationVariableMaps,
+  }: ApplicationVariableTarget & {
+    flatApplicationVariableMaps?: FlatApplicationVariableMaps;
+  }): Promise<FlatApplicationVariable[]> {
     return (
       await this.applicationVariableService.findFlatApplicationVariables({
         workspaceId,
         applicationId,
+        flatApplicationVariableMaps,
       })
     ).filter(({ scope }) => scope === 'USER');
   }

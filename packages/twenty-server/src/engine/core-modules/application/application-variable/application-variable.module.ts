@@ -41,6 +41,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationVariableUserValueService,
     ApplicationVariableUserValueResolver,
   ],
-  exports: [ApplicationVariableEntityService],
+  exports: [
+    ApplicationVariableEntityService,
+    ApplicationVariableUserValueService,
+  ],
 })
 export class ApplicationVariableEntityModule {}

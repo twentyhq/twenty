@@ -2,6 +2,7 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { updateMyApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-my-application-variable.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { findFrontComponent } from 'test/integration/metadata/suites/front-component/utils/find-front-component.util';
 import { findFrontComponents } from 'test/integration/metadata/suites/front-component/utils/find-front-components.util';
@@ -15,9 +16,11 @@ const FRONT_COMPONENT_ID = uuidv4();
 const PUBLIC_VARIABLE_ID = uuidv4();
 const SECRET_VARIABLE_ID = uuidv4();
 const USER_VARIABLE_ID = uuidv4();
+const USER_SECRET_VARIABLE_ID = uuidv4();
 
 const BUILT_COMPONENT_PATH = 'src/front-components/variables.mjs';
 const PUBLIC_VARIABLE_VALUE = 'pk.public-access-token';
+const USER_VARIABLE_DEFAULT_VALUE = 'off';
 
 const buildManifest = (): Manifest => {
   const baseManifest = buildBaseManifest({
@@ -40,6 +43,12 @@ const buildManifest = (): Manifest => {
         },
         RECORD_MY_MEETINGS: {
           universalIdentifier: USER_VARIABLE_ID,
+          value: USER_VARIABLE_DEFAULT_VALUE,
+          scope: 'USER',
+        },
+        PERSONAL_API_KEY: {
+          universalIdentifier: USER_SECRET_VARIABLE_ID,
+          isSecret: true,
           scope: 'USER',
         },
       },
@@ -123,17 +132,51 @@ describe('Front component application variables', () => {
     expect(publicVariable.value).not.toContain(PUBLIC_VARIABLE_VALUE);
   });
 
-  it('should expose non-secret workspace variables decrypted and exclude secret and user ones', async () => {
-    const { data } = await findFrontComponent({
+  it('should expose non-secret variables with the viewing member values of user variables', async () => {
+    await updateMyApplicationVariable({
+      input: {
+        applicationUniversalIdentifier: TEST_APP_ID,
+        key: 'RECORD_MY_MEETINGS',
+        value: 'on',
+      },
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    await updateMyApplicationVariable({
+      input: {
+        applicationUniversalIdentifier: TEST_APP_ID,
+        key: 'PERSONAL_API_KEY',
+        value: 'jony-personal-key',
+      },
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    const { data: jonyData } = await findFrontComponent({
       input: { id: frontComponentId },
       gqlFields: `
         id
         applicationVariables
       `,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
-    expect(data.frontComponent.applicationVariables).toEqual({
+    expect(jonyData.frontComponent.applicationVariables).toEqual({
       PUBLIC_ACCESS_TOKEN: PUBLIC_VARIABLE_VALUE,
+      RECORD_MY_MEETINGS: 'on',
+    });
+
+    const { data: janeData } = await findFrontComponent({
+      input: { id: frontComponentId },
+      gqlFields: `
+        id
+        applicationVariables
+      `,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    expect(janeData.frontComponent.applicationVariables).toEqual({
+      PUBLIC_ACCESS_TOKEN: PUBLIC_VARIABLE_VALUE,
+      RECORD_MY_MEETINGS: USER_VARIABLE_DEFAULT_VALUE,
     });
   });
 });

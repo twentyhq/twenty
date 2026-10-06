@@ -1034,7 +1034,7 @@ setCompany(result.company);
 
 It is also how an app reads and updates its own [application variables](/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime), in a logic function as in a front component. An application token only ever reaches its own application, in its own workspace.
 
-A [user variable](/developers/extend/apps/config/application#workspace-and-user-variables) is never in `process.env`. To read every member's value of your app's user variables, for example in a cron job, query `applicationVariableUserValues` with `runAs: 'application'`.
+A [user variable](/developers/extend/apps/config/application#workspace-and-user-variables) is in `process.env` with the value of the member who triggered the run, or its default when nobody did. To read every member's value of your app's user variables, for example in a cron job, query `applicationVariableUserValues` with `runAs: 'application'`.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
