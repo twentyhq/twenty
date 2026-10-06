@@ -3455,42 +3455,22 @@ export interface Query {
     object: Object
     objectRecordCounts: ObjectRecordCount[]
     mostlyEmptyFieldMetadataIds: Scalars['UUID'][]
-    getRoles: Role[]
-    getRole: Role
-    currentWorkspace: Workspace
-    getPublicWorkspaceDataByDomain: PublicWorkspaceData
-    getPublicWorkspaceDataById: PublicWorkspaceDataSummary
-    findApplicationRegistrationByClientId?: PublicApplicationRegistration
-    findApplicationRegistrationByUniversalIdentifier?: ApplicationRegistration
-    findManyApplicationRegistrations: ApplicationRegistration[]
-    findOneApplicationRegistration: ApplicationRegistration
-    findApplicationRegistrationStats: ApplicationRegistrationStats
-    findApplicationRegistrationVariables: ApplicationRegistrationVariable[]
-    applicationRegistrationTarballUrl?: Scalars['String']
-    findClaimableApplicationRegistration?: ClaimableApplicationRegistration
-    githubClaimAuthorizationUrl: Scalars['String']
-    findManyApplications: Application[]
-    findOneApplication: Application
-    findInstallApplicationJobStatus?: JobStatus
-    findUninstallApplicationJobStatus?: JobStatus
-    findManyMarketplaceApps: MarketplaceApp[]
-    findMarketplaceAppDetail: MarketplaceAppDetail
-    publicMarketplaceApps: MarketplaceApp[]
-    publicMarketplaceAppDetail: MarketplaceAppDetail
-    fields: FieldConnection
-    field: Field
-    getViewGroups: ViewGroup[]
-    getViewGroup?: ViewGroup
+    getToolIndex: ToolIndexEntry[]
+    getToolInputSchema?: Scalars['JSON']
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
     messageSuppressions: MessageSuppressionList
     unsubscribeTopics: UnsubscribeTopic[]
     myMessageChannels: MessageChannel[]
     appMessageChannels: MessageChannel[]
     getEmailingDomains: EmailingDomain[]
-    getToolIndex: ToolIndexEntry[]
-    getToolInputSchema?: Scalars['JSON']
+    getRoles: Role[]
+    getRole: Role
     webhooks: Webhook[]
     webhook?: Webhook
+    fields: FieldConnection
+    field: Field
+    getViewGroups: ViewGroup[]
+    getViewGroup?: ViewGroup
     myMessageFolders: MessageFolder[]
     myCalendarChannels: CalendarChannel[]
     getPermissionFlags: PermissionFlag[]
@@ -3517,7 +3497,27 @@ export interface Query {
     checkWorkspaceSubdomainAvailability: SubdomainAvailabilityDTO
     getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO
     validatePasswordResetToken: ValidatePasswordResetToken
+    findApplicationRegistrationByClientId?: PublicApplicationRegistration
+    findApplicationRegistrationByUniversalIdentifier?: ApplicationRegistration
+    findManyApplicationRegistrations: ApplicationRegistration[]
+    findOneApplicationRegistration: ApplicationRegistration
+    findApplicationRegistrationStats: ApplicationRegistrationStats
+    findApplicationRegistrationVariables: ApplicationRegistrationVariable[]
+    applicationRegistrationTarballUrl?: Scalars['String']
+    findClaimableApplicationRegistration?: ClaimableApplicationRegistration
+    githubClaimAuthorizationUrl: Scalars['String']
     currentUser: User
+    currentWorkspace: Workspace
+    getPublicWorkspaceDataByDomain: PublicWorkspaceData
+    getPublicWorkspaceDataById: PublicWorkspaceDataSummary
+    findManyApplications: Application[]
+    findOneApplication: Application
+    findInstallApplicationJobStatus?: JobStatus
+    findUninstallApplicationJobStatus?: JobStatus
+    findManyMarketplaceApps: MarketplaceApp[]
+    findMarketplaceAppDetail: MarketplaceAppDetail
+    publicMarketplaceApps: MarketplaceApp[]
+    publicMarketplaceAppDetail: MarketplaceAppDetail
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     eventLogs: EventLogQueryResult
     pieChartData: PieChartData
@@ -3657,52 +3657,7 @@ export interface Mutation {
     updateManyObjects: Object[]
     createOneIndex: Index
     deleteOneIndex: Index
-    updateWorkspaceMemberRole: WorkspaceMember
-    createOneRole: Role
-    updateOneRole: Role
-    deleteOneRole: Scalars['String']
-    upsertObjectPermissions: ObjectPermission[]
-    upsertPermissionFlags: RolePermissionFlag[]
-    upsertFieldPermissions: FieldPermission[]
-    upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult
-    assignRoleToAgent: Scalars['Boolean']
-    removeRoleFromAgent: Scalars['Boolean']
-    activateWorkspace: Workspace
-    updateWorkspace: Workspace
-    updateWorkspaceAllowedIframeOrigins: Workspace
-    deleteCurrentWorkspace: Workspace
-    checkCustomDomainValidRecords?: DomainValidRecords
-    enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult
-    upgradeApplication: Scalars['Boolean']
-    createApplicationRegistration: CreateApplicationRegistration
-    updateApplicationRegistration: ApplicationRegistration
-    deleteApplicationRegistration: Scalars['Boolean']
-    rotateApplicationRegistrationClientSecret: RotateClientSecret
-    updateApplicationRegistrationVariable: ApplicationRegistrationVariable
-    completeAppTarballUpload: ApplicationRegistration
-    /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
-    uploadAppTarball: ApplicationRegistration
-    claimApplicationRegistrationOwnership: ApplicationRegistration
-    transferApplicationRegistrationOwnership: ApplicationRegistration
-    grantApplicationCapabilities: ApplicationCapabilityGrant
-    /** @deprecated Use installApplication instead */
-    installMarketplaceApp: Scalars['Boolean']
-    installApplication: Application
-    triggerInstallApplicationJob: TriggerInstallApplicationJobResult
-    triggerUninstallApplicationJob: TriggerUninstallApplicationJobResult
-    updateApplication: Application
-    uninstallApplication: Scalars['Boolean']
-    syncMarketplaceCatalog: Scalars['Boolean']
-    runApplicationHealthCheck?: ApplicationHealthCheckResult
-    createOneField: Field
-    updateOneField: Field
-    deleteOneField: Field
-    createViewGroup: ViewGroup
-    createManyViewGroups: ViewGroup[]
-    updateViewGroup: ViewGroup
-    updateManyViewGroups: ViewGroup[]
-    deleteViewGroup: ViewGroup
-    destroyViewGroup: ViewGroup
+    runAgent: RunAgentResult
     sendMessageCampaign: SendMessageCampaignOutputDTO
     cancelMessageCampaign: CancelMessageCampaignOutputDTO
     sendMessageCampaignTest: SendEmailViaDomainOutput
@@ -3723,10 +3678,28 @@ export interface Mutation {
     createEmailingDomain: EmailingDomain
     deleteEmailingDomain: Scalars['Boolean']
     verifyEmailingDomain: EmailingDomain
-    runAgent: RunAgentResult
+    updateWorkspaceMemberRole: WorkspaceMember
+    createOneRole: Role
+    updateOneRole: Role
+    deleteOneRole: Scalars['String']
+    upsertObjectPermissions: ObjectPermission[]
+    upsertPermissionFlags: RolePermissionFlag[]
+    upsertFieldPermissions: FieldPermission[]
+    upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult
+    assignRoleToAgent: Scalars['Boolean']
+    removeRoleFromAgent: Scalars['Boolean']
     createWebhook: Webhook
     updateWebhook: Webhook
     deleteWebhook: Webhook
+    createOneField: Field
+    updateOneField: Field
+    deleteOneField: Field
+    createViewGroup: ViewGroup
+    createManyViewGroups: ViewGroup[]
+    updateViewGroup: ViewGroup
+    updateManyViewGroups: ViewGroup[]
+    deleteViewGroup: ViewGroup
+    destroyViewGroup: ViewGroup
     updateMessageFolder: MessageFolder
     updateMessageFolders: MessageFolder[]
     updateCalendarChannel: CalendarChannel
@@ -3782,6 +3755,16 @@ export interface Mutation {
     generatePlaygroundToken: AuthToken
     emailPasswordResetLink: EmailPasswordResetLink
     updatePasswordViaResetToken: InvalidatePassword
+    createApplicationRegistration: CreateApplicationRegistration
+    updateApplicationRegistration: ApplicationRegistration
+    deleteApplicationRegistration: Scalars['Boolean']
+    rotateApplicationRegistrationClientSecret: RotateClientSecret
+    updateApplicationRegistrationVariable: ApplicationRegistrationVariable
+    completeAppTarballUpload: ApplicationRegistration
+    /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
+    uploadAppTarball: ApplicationRegistration
+    claimApplicationRegistrationOwnership: ApplicationRegistration
+    transferApplicationRegistrationOwnership: ApplicationRegistration
     initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioning
     initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning
     deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod
@@ -3791,6 +3774,23 @@ export interface Mutation {
     updateWorkspaceMemberSettings: Scalars['Boolean']
     updateUserEmail: Scalars['Boolean']
     resendEmailVerificationToken: ResendEmailVerificationToken
+    activateWorkspace: Workspace
+    updateWorkspace: Workspace
+    updateWorkspaceAllowedIframeOrigins: Workspace
+    deleteCurrentWorkspace: Workspace
+    checkCustomDomainValidRecords?: DomainValidRecords
+    enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult
+    upgradeApplication: Scalars['Boolean']
+    grantApplicationCapabilities: ApplicationCapabilityGrant
+    /** @deprecated Use installApplication instead */
+    installMarketplaceApp: Scalars['Boolean']
+    installApplication: Application
+    triggerInstallApplicationJob: TriggerInstallApplicationJobResult
+    triggerUninstallApplicationJob: TriggerUninstallApplicationJobResult
+    updateApplication: Application
+    uninstallApplication: Scalars['Boolean']
+    syncMarketplaceCatalog: Scalars['Boolean']
+    runApplicationHealthCheck?: ApplicationHealthCheckResult
     createOIDCIdentityProvider: SetupSso
     createSAMLIdentityProvider: SetupSso
     deleteSSOIdentityProvider: DeleteSso
@@ -3819,9 +3819,9 @@ export interface Mutation {
     __typename: 'Mutation'
 }
 
-export type MessageParticipantRole = 'FROM' | 'TO' | 'CC' | 'BCC' | 'REPLY_TO'
-
 export type RunAgentMessageRole = 'user' | 'assistant'
+
+export type MessageParticipantRole = 'FROM' | 'TO' | 'CC' | 'BCC' | 'REPLY_TO'
 
 export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
 
@@ -7424,28 +7424,18 @@ export interface QueryGenqlSelection{
     id: Scalars['UUID']} })
     objectRecordCounts?: ObjectRecordCountGenqlSelection
     mostlyEmptyFieldMetadataIds?: { __args: {objectMetadataId: Scalars['UUID']} }
+    getToolIndex?: ToolIndexEntryGenqlSelection
+    getToolInputSchema?: { __args: {toolName: Scalars['String']} }
+    previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
+    messageSuppressions?: (MessageSuppressionListGenqlSelection & { __args: {input: FindMessageSuppressionsInput} })
+    unsubscribeTopics?: UnsubscribeTopicGenqlSelection
+    myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
+    appMessageChannels?: (MessageChannelGenqlSelection & { __args?: {filter?: (ListAppMessageChannelsInput | null)} })
+    getEmailingDomains?: EmailingDomainGenqlSelection
     getRoles?: RoleGenqlSelection
     getRole?: (RoleGenqlSelection & { __args: {id: Scalars['UUID']} })
-    currentWorkspace?: WorkspaceGenqlSelection
-    getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
-    getPublicWorkspaceDataById?: (PublicWorkspaceDataSummaryGenqlSelection & { __args: {id: Scalars['UUID']} })
-    findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
-    findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
-    findManyApplicationRegistrations?: ApplicationRegistrationGenqlSelection
-    findOneApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {id: Scalars['String']} })
-    findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
-    findApplicationRegistrationVariables?: (ApplicationRegistrationVariableGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
-    applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
-    findClaimableApplicationRegistration?: (ClaimableApplicationRegistrationGenqlSelection & { __args?: {sourcePackage?: (Scalars['String'] | null), universalIdentifier?: (Scalars['String'] | null)} })
-    githubClaimAuthorizationUrl?: { __args: {applicationRegistrationId: Scalars['String']} }
-    findManyApplications?: ApplicationGenqlSelection
-    findOneApplication?: (ApplicationGenqlSelection & { __args?: {id?: (Scalars['UUID'] | null), universalIdentifier?: (Scalars['UUID'] | null)} })
-    findInstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
-    findUninstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
-    findManyMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args?: {universalIdentifiers?: (Scalars['String'][] | null)} })
-    findMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
-    publicMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args: {isVetted: Scalars['Boolean']} })
-    publicMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    webhooks?: WebhookGenqlSelection
+    webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     fields?: (FieldConnectionGenqlSelection & { __args: {
     /** Limit or page results. */
     paging: CursorPaging, 
@@ -7456,16 +7446,6 @@ export interface QueryGenqlSelection{
     id: Scalars['UUID']} })
     getViewGroups?: (ViewGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getViewGroup?: (ViewGroupGenqlSelection & { __args: {id: Scalars['String']} })
-    previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
-    messageSuppressions?: (MessageSuppressionListGenqlSelection & { __args: {input: FindMessageSuppressionsInput} })
-    unsubscribeTopics?: UnsubscribeTopicGenqlSelection
-    myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
-    appMessageChannels?: (MessageChannelGenqlSelection & { __args?: {filter?: (ListAppMessageChannelsInput | null)} })
-    getEmailingDomains?: EmailingDomainGenqlSelection
-    getToolIndex?: ToolIndexEntryGenqlSelection
-    getToolInputSchema?: { __args: {toolName: Scalars['String']} }
-    webhooks?: WebhookGenqlSelection
-    webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     myMessageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     getPermissionFlags?: PermissionFlagGenqlSelection
@@ -7492,7 +7472,27 @@ export interface QueryGenqlSelection{
     checkWorkspaceSubdomainAvailability?: (SubdomainAvailabilityDTOGenqlSelection & { __args: {subdomain: Scalars['String']} })
     getWorkspaceCreationDefaults?: WorkspaceCreationDefaultsDTOGenqlSelection
     validatePasswordResetToken?: (ValidatePasswordResetTokenGenqlSelection & { __args: {passwordResetToken: Scalars['String']} })
+    findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
+    findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    findManyApplicationRegistrations?: ApplicationRegistrationGenqlSelection
+    findOneApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {id: Scalars['String']} })
+    findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
+    findApplicationRegistrationVariables?: (ApplicationRegistrationVariableGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
+    applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
+    findClaimableApplicationRegistration?: (ClaimableApplicationRegistrationGenqlSelection & { __args?: {sourcePackage?: (Scalars['String'] | null), universalIdentifier?: (Scalars['String'] | null)} })
+    githubClaimAuthorizationUrl?: { __args: {applicationRegistrationId: Scalars['String']} }
     currentUser?: UserGenqlSelection
+    currentWorkspace?: WorkspaceGenqlSelection
+    getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
+    getPublicWorkspaceDataById?: (PublicWorkspaceDataSummaryGenqlSelection & { __args: {id: Scalars['UUID']} })
+    findManyApplications?: ApplicationGenqlSelection
+    findOneApplication?: (ApplicationGenqlSelection & { __args?: {id?: (Scalars['UUID'] | null), universalIdentifier?: (Scalars['UUID'] | null)} })
+    findInstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    findUninstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    findManyMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args?: {universalIdentifiers?: (Scalars['String'][] | null)} })
+    findMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    publicMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args: {isVetted: Scalars['Boolean']} })
+    publicMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
     pieChartData?: (PieChartDataGenqlSelection & { __args: {input: PieChartDataInput} })
@@ -7671,52 +7671,7 @@ export interface MutationGenqlSelection{
     updateManyObjects?: (ObjectGenqlSelection & { __args: {inputs: UpdateOneObjectInput[]} })
     createOneIndex?: (IndexGenqlSelection & { __args: {input: CreateOneIndexInput} })
     deleteOneIndex?: (IndexGenqlSelection & { __args: {input: DeleteOneIndexInput} })
-    updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {workspaceMemberId: Scalars['UUID'], roleId: Scalars['UUID']} })
-    createOneRole?: (RoleGenqlSelection & { __args: {createRoleInput: CreateRoleInput} })
-    updateOneRole?: (RoleGenqlSelection & { __args: {updateRoleInput: UpdateRoleInput} })
-    deleteOneRole?: { __args: {roleId: Scalars['UUID']} }
-    upsertObjectPermissions?: (ObjectPermissionGenqlSelection & { __args: {upsertObjectPermissionsInput: UpsertObjectPermissionsInput} })
-    upsertPermissionFlags?: (RolePermissionFlagGenqlSelection & { __args: {upsertPermissionFlagsInput: UpsertPermissionFlagsInput} })
-    upsertFieldPermissions?: (FieldPermissionGenqlSelection & { __args: {upsertFieldPermissionsInput: UpsertFieldPermissionsInput} })
-    upsertRowLevelPermissionPredicates?: (UpsertRowLevelPermissionPredicatesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionPredicatesInput} })
-    assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
-    removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
-    activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
-    updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
-    updateWorkspaceAllowedIframeOrigins?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceAllowedIframeOriginsInput} })
-    deleteCurrentWorkspace?: WorkspaceGenqlSelection
-    checkCustomDomainValidRecords?: DomainValidRecordsGenqlSelection
-    enrichWorkspaceCompany?: WorkspaceCompanyEnrichmentResultGenqlSelection
-    upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
-    createApplicationRegistration?: (CreateApplicationRegistrationGenqlSelection & { __args: {input: CreateApplicationRegistrationInput} })
-    updateApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {input: UpdateApplicationRegistrationInput} })
-    deleteApplicationRegistration?: { __args: {id: Scalars['String']} }
-    rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
-    updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
-    completeAppTarballUpload?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['UUID']} })
-    /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
-    uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
-    claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
-    transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
-    grantApplicationCapabilities?: (ApplicationCapabilityGrantGenqlSelection & { __args: {input: GrantApplicationCapabilitiesInput} })
-    /** @deprecated Use installApplication instead */
-    installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
-    installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
-    triggerInstallApplicationJob?: (TriggerInstallApplicationJobResultGenqlSelection & { __args: {input: TriggerInstallApplicationJobInput} })
-    triggerUninstallApplicationJob?: (TriggerUninstallApplicationJobResultGenqlSelection & { __args: {input: TriggerUninstallApplicationJobInput} })
-    updateApplication?: (ApplicationGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateApplicationInput} })
-    uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
-    syncMarketplaceCatalog?: boolean | number
-    runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
-    createOneField?: (FieldGenqlSelection & { __args: {input: CreateOneFieldMetadataInput} })
-    updateOneField?: (FieldGenqlSelection & { __args: {input: UpdateOneFieldMetadataInput} })
-    deleteOneField?: (FieldGenqlSelection & { __args: {input: DeleteOneFieldInput} })
-    createViewGroup?: (ViewGroupGenqlSelection & { __args: {input: CreateViewGroupInput} })
-    createManyViewGroups?: (ViewGroupGenqlSelection & { __args: {inputs: CreateViewGroupInput[]} })
-    updateViewGroup?: (ViewGroupGenqlSelection & { __args: {input: UpdateViewGroupInput} })
-    updateManyViewGroups?: (ViewGroupGenqlSelection & { __args: {inputs: UpdateViewGroupInput[]} })
-    deleteViewGroup?: (ViewGroupGenqlSelection & { __args: {input: DeleteViewGroupInput} })
-    destroyViewGroup?: (ViewGroupGenqlSelection & { __args: {input: DestroyViewGroupInput} })
+    runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     sendMessageCampaign?: (SendMessageCampaignOutputDTOGenqlSelection & { __args: {input: SendMessageCampaignInput} })
     cancelMessageCampaign?: (CancelMessageCampaignOutputDTOGenqlSelection & { __args: {input: CancelMessageCampaignInput} })
     sendMessageCampaignTest?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendMessageCampaignTestInput} })
@@ -7737,10 +7692,28 @@ export interface MutationGenqlSelection{
     createEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {input: CreateEmailingDomainInput} })
     deleteEmailingDomain?: { __args: {id: Scalars['String']} }
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
-    runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
+    updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {workspaceMemberId: Scalars['UUID'], roleId: Scalars['UUID']} })
+    createOneRole?: (RoleGenqlSelection & { __args: {createRoleInput: CreateRoleInput} })
+    updateOneRole?: (RoleGenqlSelection & { __args: {updateRoleInput: UpdateRoleInput} })
+    deleteOneRole?: { __args: {roleId: Scalars['UUID']} }
+    upsertObjectPermissions?: (ObjectPermissionGenqlSelection & { __args: {upsertObjectPermissionsInput: UpsertObjectPermissionsInput} })
+    upsertPermissionFlags?: (RolePermissionFlagGenqlSelection & { __args: {upsertPermissionFlagsInput: UpsertPermissionFlagsInput} })
+    upsertFieldPermissions?: (FieldPermissionGenqlSelection & { __args: {upsertFieldPermissionsInput: UpsertFieldPermissionsInput} })
+    upsertRowLevelPermissionPredicates?: (UpsertRowLevelPermissionPredicatesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionPredicatesInput} })
+    assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
+    removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createOneField?: (FieldGenqlSelection & { __args: {input: CreateOneFieldMetadataInput} })
+    updateOneField?: (FieldGenqlSelection & { __args: {input: UpdateOneFieldMetadataInput} })
+    deleteOneField?: (FieldGenqlSelection & { __args: {input: DeleteOneFieldInput} })
+    createViewGroup?: (ViewGroupGenqlSelection & { __args: {input: CreateViewGroupInput} })
+    createManyViewGroups?: (ViewGroupGenqlSelection & { __args: {inputs: CreateViewGroupInput[]} })
+    updateViewGroup?: (ViewGroupGenqlSelection & { __args: {input: UpdateViewGroupInput} })
+    updateManyViewGroups?: (ViewGroupGenqlSelection & { __args: {inputs: UpdateViewGroupInput[]} })
+    deleteViewGroup?: (ViewGroupGenqlSelection & { __args: {input: DeleteViewGroupInput} })
+    destroyViewGroup?: (ViewGroupGenqlSelection & { __args: {input: DestroyViewGroupInput} })
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
     updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
@@ -7796,6 +7769,16 @@ export interface MutationGenqlSelection{
     generatePlaygroundToken?: AuthTokenGenqlSelection
     emailPasswordResetLink?: (EmailPasswordResetLinkGenqlSelection & { __args: {email: Scalars['String'], workspaceId?: (Scalars['UUID'] | null), captchaToken?: (Scalars['String'] | null)} })
     updatePasswordViaResetToken?: (InvalidatePasswordGenqlSelection & { __args: {passwordResetToken: Scalars['String'], newPassword: Scalars['String']} })
+    createApplicationRegistration?: (CreateApplicationRegistrationGenqlSelection & { __args: {input: CreateApplicationRegistrationInput} })
+    updateApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {input: UpdateApplicationRegistrationInput} })
+    deleteApplicationRegistration?: { __args: {id: Scalars['String']} }
+    rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
+    updateApplicationRegistrationVariable?: (ApplicationRegistrationVariableGenqlSelection & { __args: {input: UpdateApplicationRegistrationVariableInput} })
+    completeAppTarballUpload?: (ApplicationRegistrationGenqlSelection & { __args: {fileId: Scalars['UUID']} })
+    /** @deprecated Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage. */
+    uploadAppTarball?: (ApplicationRegistrationGenqlSelection & { __args: {file: Scalars['Upload'], universalIdentifier?: (Scalars['String'] | null)} })
+    claimApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
+    transferApplicationRegistrationOwnership?: (ApplicationRegistrationGenqlSelection & { __args: {applicationRegistrationId: Scalars['String'], targetWorkspaceSubdomain: Scalars['String']} })
     initiateOTPProvisioning?: (InitiateTwoFactorAuthenticationProvisioningGenqlSelection & { __args: {loginToken: Scalars['String'], origin: Scalars['String']} })
     initiateOTPProvisioningForAuthenticatedUser?: InitiateTwoFactorAuthenticationProvisioningGenqlSelection
     deleteTwoFactorAuthenticationMethod?: (DeleteTwoFactorAuthenticationMethodGenqlSelection & { __args: {twoFactorAuthenticationMethodId: Scalars['UUID']} })
@@ -7805,6 +7788,23 @@ export interface MutationGenqlSelection{
     updateWorkspaceMemberSettings?: { __args: {input: UpdateWorkspaceMemberSettingsInput} }
     updateUserEmail?: { __args: {newEmail: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} }
     resendEmailVerificationToken?: (ResendEmailVerificationTokenGenqlSelection & { __args: {email: Scalars['String'], origin: Scalars['String']} })
+    activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
+    updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
+    updateWorkspaceAllowedIframeOrigins?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceAllowedIframeOriginsInput} })
+    deleteCurrentWorkspace?: WorkspaceGenqlSelection
+    checkCustomDomainValidRecords?: DomainValidRecordsGenqlSelection
+    enrichWorkspaceCompany?: WorkspaceCompanyEnrichmentResultGenqlSelection
+    upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
+    grantApplicationCapabilities?: (ApplicationCapabilityGrantGenqlSelection & { __args: {input: GrantApplicationCapabilitiesInput} })
+    /** @deprecated Use installApplication instead */
+    installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
+    installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
+    triggerInstallApplicationJob?: (TriggerInstallApplicationJobResultGenqlSelection & { __args: {input: TriggerInstallApplicationJobInput} })
+    triggerUninstallApplicationJob?: (TriggerUninstallApplicationJobResultGenqlSelection & { __args: {input: TriggerUninstallApplicationJobInput} })
+    updateApplication?: (ApplicationGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateApplicationInput} })
+    uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
+    syncMarketplaceCatalog?: boolean | number
+    runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     createOIDCIdentityProvider?: (SetupSsoGenqlSelection & { __args: {input: SetupOIDCSsoInput} })
     createSAMLIdentityProvider?: (SetupSsoGenqlSelection & { __args: {input: SetupSAMLSsoInput} })
     deleteSSOIdentityProvider?: (DeleteSsoGenqlSelection & { __args: {input: DeleteSsoInput} })
@@ -8080,6 +8080,46 @@ export interface DeleteOneIndexInput {
 /** The id of the custom index to delete. */
 id: Scalars['UUID']}
 
+export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),messages?: (RunAgentMessageInput[] | null),input?: (RunAgentMessageInput[] | null),additionalInstructions?: (Scalars['String'] | null),thread?: (RunAgentThreadInput | null)}
+
+export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String'],attachments?: (RunAgentMessageAttachmentInput[] | null)}
+
+export interface RunAgentMessageAttachmentInput {fileId: Scalars['UUID'],filename?: (Scalars['String'] | null)}
+
+export interface RunAgentThreadInput {key: Scalars['String'],title?: (Scalars['String'] | null)}
+
+export interface SendMessageCampaignInput {campaignId: Scalars['String'],scheduledAt?: (Scalars['DateTime'] | null)}
+
+export interface CancelMessageCampaignInput {campaignId: Scalars['String']}
+
+export interface SendMessageCampaignTestInput {toAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
+
+export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
+
+export interface CreateUnsubscribeTopicInput {name: Scalars['String'],description?: (Scalars['String'] | null),visibility?: (UnsubscribeTopicVisibility | null)}
+
+export interface UpdateUnsubscribeTopicInput {id: Scalars['String'],name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),visibility?: (UnsubscribeTopicVisibility | null)}
+
+export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMessageChannelInputUpdates}
+
+export interface UpdateMessageChannelInputUpdates {visibility?: (MessageChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (MessageChannelContactAutoCreationPolicy | null),messageFolderImportPolicy?: (MessageFolderImportPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null),excludeNonProfessionalEmails?: (Scalars['Boolean'] | null),excludeGroupEmails?: (Scalars['Boolean'] | null)}
+
+export interface CreateEmailGroupChannelInput {handle: Scalars['String'],displayName?: (Scalars['String'] | null)}
+
+export interface UpdateEmailGroupChannelInput {id: Scalars['UUID'],displayName?: (Scalars['String'] | null)}
+
+export interface CreateAppMessageChannelInput {connectedAccountId: Scalars['UUID'],handle: Scalars['String'],displayName?: (Scalars['String'] | null),visibility: MessageChannelVisibility}
+
+export interface UpdateAppMessageChannelInput {id: Scalars['UUID'],displayName?: (Scalars['String'] | null),visibility?: (MessageChannelVisibility | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
+
+export interface IngestAppMessagesInput {messageChannelId: Scalars['UUID'],messages: AppMessageInput[]}
+
+export interface AppMessageInput {externalId: Scalars['String'],threadExternalId: Scalars['String'],subject?: (Scalars['String'] | null),text: Scalars['String'],receivedAt: Scalars['DateTime'],participants: AppMessageParticipantInput[]}
+
+export interface AppMessageParticipantInput {role: MessageParticipantRole,handle: Scalars['String'],displayName?: (Scalars['String'] | null),personId?: (Scalars['UUID'] | null),workspaceMemberId?: (Scalars['UUID'] | null)}
+
+export interface CreateEmailingDomainInput {domain: Scalars['String']}
+
 export interface CreateRoleInput {id?: (Scalars['String'] | null),label: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),canUpdateAllSettings?: (Scalars['Boolean'] | null),canAccessAllTools?: (Scalars['Boolean'] | null),canReadAllObjectRecords?: (Scalars['Boolean'] | null),canUpdateAllObjectRecords?: (Scalars['Boolean'] | null),canSoftDeleteAllObjectRecords?: (Scalars['Boolean'] | null),canDestroyAllObjectRecords?: (Scalars['Boolean'] | null),canBeAssignedToUsers?: (Scalars['Boolean'] | null),canBeAssignedToAgents?: (Scalars['Boolean'] | null),canBeAssignedToApiKeys?: (Scalars['Boolean'] | null)}
 
 export interface UpdateRoleInput {update: UpdateRolePayload,
@@ -8104,31 +8144,15 @@ export interface RowLevelPermissionPredicateInput {id?: (Scalars['UUID'] | null)
 
 export interface RowLevelPermissionPredicateGroupInput {id?: (Scalars['UUID'] | null),objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
 
-export interface ActivateWorkspaceInput {
-/** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */
-displayName?: (Scalars['String'] | null)}
+export interface CreateWebhookInput {id?: (Scalars['UUID'] | null),targetUrl: Scalars['String'],operations: Scalars['String'][],description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
 
-export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),aiChatModelTier?: (AiModelTier | null),aiAgentModelTier?: (AiModelTier | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),aiEvaluationModelId?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null)}
+export interface UpdateWebhookInput {
+/** The id of the webhook to update */
+id: Scalars['UUID'],
+/** The webhook fields to update */
+update: UpdateWebhookInputUpdates}
 
-export interface UpdateWorkspaceAllowedIframeOriginsInput {operation: Scalars['String'],origin: Scalars['String']}
-
-export interface CreateApplicationRegistrationInput {name: Scalars['String'],universalIdentifier?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null)}
-
-export interface UpdateApplicationRegistrationInput {id: Scalars['String'],update: UpdateApplicationRegistrationPayload}
-
-export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null)}
-
-export interface UpdateApplicationRegistrationVariableInput {id: Scalars['String'],update: UpdateApplicationRegistrationVariablePayload}
-
-export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),resetValue?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null)}
-
-export interface GrantApplicationCapabilitiesInput {applicationId: Scalars['UUID'],capabilities: Scalars['String'][]}
-
-export interface TriggerInstallApplicationJobInput {universalIdentifier: Scalars['String']}
-
-export interface TriggerUninstallApplicationJobInput {universalIdentifier: Scalars['String']}
-
-export interface UpdateApplicationInput {autoUpgrade?: (Scalars['Boolean'] | null)}
+export interface UpdateWebhookInputUpdates {targetUrl?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
 
 export interface CreateOneFieldMetadataInput {
 /** The record to create */
@@ -8165,56 +8189,6 @@ id: Scalars['UUID']}
 export interface DestroyViewGroupInput {
 /** The id of the view group to destroy. */
 id: Scalars['UUID']}
-
-export interface SendMessageCampaignInput {campaignId: Scalars['String'],scheduledAt?: (Scalars['DateTime'] | null)}
-
-export interface CancelMessageCampaignInput {campaignId: Scalars['String']}
-
-export interface SendMessageCampaignTestInput {toAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
-
-export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
-
-export interface CreateUnsubscribeTopicInput {name: Scalars['String'],description?: (Scalars['String'] | null),visibility?: (UnsubscribeTopicVisibility | null)}
-
-export interface UpdateUnsubscribeTopicInput {id: Scalars['String'],name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),visibility?: (UnsubscribeTopicVisibility | null)}
-
-export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMessageChannelInputUpdates}
-
-export interface UpdateMessageChannelInputUpdates {visibility?: (MessageChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (MessageChannelContactAutoCreationPolicy | null),messageFolderImportPolicy?: (MessageFolderImportPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null),excludeNonProfessionalEmails?: (Scalars['Boolean'] | null),excludeGroupEmails?: (Scalars['Boolean'] | null)}
-
-export interface CreateEmailGroupChannelInput {handle: Scalars['String'],displayName?: (Scalars['String'] | null)}
-
-export interface UpdateEmailGroupChannelInput {id: Scalars['UUID'],displayName?: (Scalars['String'] | null)}
-
-export interface CreateAppMessageChannelInput {connectedAccountId: Scalars['UUID'],handle: Scalars['String'],displayName?: (Scalars['String'] | null),visibility: MessageChannelVisibility}
-
-export interface UpdateAppMessageChannelInput {id: Scalars['UUID'],displayName?: (Scalars['String'] | null),visibility?: (MessageChannelVisibility | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
-
-export interface IngestAppMessagesInput {messageChannelId: Scalars['UUID'],messages: AppMessageInput[]}
-
-export interface AppMessageInput {externalId: Scalars['String'],threadExternalId: Scalars['String'],subject?: (Scalars['String'] | null),text: Scalars['String'],receivedAt: Scalars['DateTime'],participants: AppMessageParticipantInput[]}
-
-export interface AppMessageParticipantInput {role: MessageParticipantRole,handle: Scalars['String'],displayName?: (Scalars['String'] | null),personId?: (Scalars['UUID'] | null),workspaceMemberId?: (Scalars['UUID'] | null)}
-
-export interface CreateEmailingDomainInput {domain: Scalars['String']}
-
-export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),messages?: (RunAgentMessageInput[] | null),input?: (RunAgentMessageInput[] | null),additionalInstructions?: (Scalars['String'] | null),thread?: (RunAgentThreadInput | null)}
-
-export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String'],attachments?: (RunAgentMessageAttachmentInput[] | null)}
-
-export interface RunAgentMessageAttachmentInput {fileId: Scalars['UUID'],filename?: (Scalars['String'] | null)}
-
-export interface RunAgentThreadInput {key: Scalars['String'],title?: (Scalars['String'] | null)}
-
-export interface CreateWebhookInput {id?: (Scalars['UUID'] | null),targetUrl: Scalars['String'],operations: Scalars['String'][],description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
-
-export interface UpdateWebhookInput {
-/** The id of the webhook to update */
-id: Scalars['UUID'],
-/** The webhook fields to update */
-update: UpdateWebhookInputUpdates}
-
-export interface UpdateWebhookInputUpdates {targetUrl?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
 
 export interface UpdateMessageFolderInput {id: Scalars['UUID'],update: UpdateMessageFolderInputUpdates}
 
@@ -8256,7 +8230,33 @@ export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UU
 
 export interface SignUpInNewWorkspaceInput {displayName?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null)}
 
+export interface CreateApplicationRegistrationInput {name: Scalars['String'],universalIdentifier?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null)}
+
+export interface UpdateApplicationRegistrationInput {id: Scalars['String'],update: UpdateApplicationRegistrationPayload}
+
+export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null)}
+
+export interface UpdateApplicationRegistrationVariableInput {id: Scalars['String'],update: UpdateApplicationRegistrationVariablePayload}
+
+export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),resetValue?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null)}
+
 export interface UpdateWorkspaceMemberSettingsInput {workspaceMemberId: Scalars['UUID'],update: Scalars['JSON']}
+
+export interface ActivateWorkspaceInput {
+/** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */
+displayName?: (Scalars['String'] | null)}
+
+export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),aiChatModelTier?: (AiModelTier | null),aiAgentModelTier?: (AiModelTier | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),aiEvaluationModelId?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null)}
+
+export interface UpdateWorkspaceAllowedIframeOriginsInput {operation: Scalars['String'],origin: Scalars['String']}
+
+export interface GrantApplicationCapabilitiesInput {applicationId: Scalars['UUID'],capabilities: Scalars['String'][]}
+
+export interface TriggerInstallApplicationJobInput {universalIdentifier: Scalars['String']}
+
+export interface TriggerUninstallApplicationJobInput {universalIdentifier: Scalars['String']}
+
+export interface UpdateApplicationInput {autoUpgrade?: (Scalars['Boolean'] | null)}
 
 export interface SetupOIDCSsoInput {name: Scalars['String'],issuer: Scalars['String'],clientID: Scalars['String'],clientSecret: Scalars['String']}
 
@@ -11782,17 +11782,17 @@ export const enumEventLogFilterOperand = {
    IS_NOT: 'IS_NOT' as const
 }
 
+export const enumRunAgentMessageRole = {
+   user: 'user' as const,
+   assistant: 'assistant' as const
+}
+
 export const enumMessageParticipantRole = {
    FROM: 'FROM' as const,
    TO: 'TO' as const,
    CC: 'CC' as const,
    BCC: 'BCC' as const,
    REPLY_TO: 'REPLY_TO' as const
-}
-
-export const enumRunAgentMessageRole = {
-   user: 'user' as const,
-   assistant: 'assistant' as const
 }
 
 export const enumAnalyticsType = {
