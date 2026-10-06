@@ -24,22 +24,24 @@ export const enqueueTeamsAssistantRequestRecord = async (
   request: TeamsAssistantRequestDraft,
 ): Promise<TeamsActivitiesEnqueueResult> => {
   const client = new CoreApiClient();
-  const teamsActivityKey = {
+  const teamsActivityLookup = {
+    client,
     teamsConversationId: request.teamsConversationId,
     teamsActivityId: request.teamsActivityId,
   };
 
-  const existingRequest = await findTeamsAssistantRequestByTeamsActivity(
-    client,
-    teamsActivityKey,
-  );
+  const existingRequest =
+    await findTeamsAssistantRequestByTeamsActivity(teamsActivityLookup);
 
   if (isDefined(existingRequest)) {
     return resolveExistingRequest(existingRequest);
   }
 
   try {
-    const requestId = await createTeamsAssistantRequest(client, request);
+    const requestId = await createTeamsAssistantRequest({
+      client,
+      draft: request,
+    });
 
     return {
       ok: true,
@@ -52,10 +54,7 @@ export const enqueueTeamsAssistantRequestRecord = async (
   } catch (error) {
     if (isDuplicateRecordError(error)) {
       return resolveExistingRequest(
-        await findTeamsAssistantRequestByTeamsActivity(
-          client,
-          teamsActivityKey,
-        ),
+        await findTeamsAssistantRequestByTeamsActivity(teamsActivityLookup),
       );
     }
 

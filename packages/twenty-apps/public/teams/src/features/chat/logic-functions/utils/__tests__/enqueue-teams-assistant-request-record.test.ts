@@ -56,13 +56,11 @@ describe('enqueueTeamsAssistantRequestRecord', () => {
 
     const result = await enqueueTeamsAssistantRequestRecord(REQUEST_DRAFT);
 
-    expect(findTeamsAssistantRequestByTeamsActivityMock).toHaveBeenCalledWith(
-      expect.anything(),
-      {
-        teamsConversationId: 'a:personal-conversation',
-        teamsActivityId: '1700000000000',
-      },
-    );
+    expect(findTeamsAssistantRequestByTeamsActivityMock).toHaveBeenCalledWith({
+      client: expect.anything(),
+      teamsConversationId: 'a:personal-conversation',
+      teamsActivityId: '1700000000000',
+    });
     expect(result).toEqual({
       ok: true,
       request: {

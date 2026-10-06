@@ -4,10 +4,13 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { type TeamsAssistantRequestDraft } from 'src/features/chat/logic-functions/types/teams-assistant-request-draft.type';
 import { buildTeamsAssistantRequestName } from 'src/features/chat/logic-functions/utils/build-teams-assistant-request-name';
 
-export const createTeamsAssistantRequest = async (
-  client: CoreApiClient,
-  draft: TeamsAssistantRequestDraft,
-): Promise<string> => {
+export const createTeamsAssistantRequest = async ({
+  client,
+  draft,
+}: {
+  client: CoreApiClient;
+  draft: TeamsAssistantRequestDraft;
+}): Promise<string> => {
   const mutationResult = await client.mutation({
     createTeamsAssistantRequest: {
       __args: {

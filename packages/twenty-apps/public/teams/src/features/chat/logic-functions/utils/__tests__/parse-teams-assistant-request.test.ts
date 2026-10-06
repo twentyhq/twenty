@@ -89,14 +89,29 @@ describe('parseTeamsAssistantRequest', () => {
     ).toEqual({ request: null, skipReason: 'Empty request text' });
   });
 
-  it('should skip messages sent by a bot', () => {
+  it('should skip messages sent by a bot, with or without a bot role', () => {
     expect(
       parseTeamsAssistantRequest(
-        buildPayload({ from: { id: '28:other-bot', role: 'bot' } }),
+        buildPayload({ from: { id: 'bot-id', role: 'bot' } }),
       ),
     ).toEqual({ request: null, skipReason: 'Not a user message' });
     expect(
-      parseTeamsAssistantRequest(buildPayload({ from: { id: BOT_ID } })),
+      parseTeamsAssistantRequest(
+        buildPayload({ from: { id: '28:other-bot-app-id' } }),
+      ),
     ).toEqual({ request: null, skipReason: 'Not a user message' });
+  });
+
+  it('should skip channel messages that do not mention the bot', () => {
+    expect(
+      parseTeamsAssistantRequest(
+        buildPayload({
+          conversation: {
+            id: '19:channel@thread.tacv2;messageid=1699999999999',
+            conversationType: 'channel',
+          },
+        }),
+      ),
+    ).toEqual({ request: null, skipReason: 'Bot is not mentioned' });
   });
 });

@@ -1,11 +1,28 @@
 const TEAMS_ASSISTANT_REQUEST_NAME_MAX_LENGTH = 60;
 
-export const buildTeamsAssistantRequestName = (requestText: string): string => {
-  const codePoints = [...requestText];
+const graphemeSegmenter = new Intl.Segmenter(undefined, {
+  granularity: 'grapheme',
+});
 
-  if (codePoints.length <= TEAMS_ASSISTANT_REQUEST_NAME_MAX_LENGTH) {
+const countCodePoints = (text: string): number => [...text].length;
+
+export const buildTeamsAssistantRequestName = (requestText: string): string => {
+  if (countCodePoints(requestText) <= TEAMS_ASSISTANT_REQUEST_NAME_MAX_LENGTH) {
     return requestText;
   }
 
-  return `${codePoints.slice(0, TEAMS_ASSISTANT_REQUEST_NAME_MAX_LENGTH - 1).join('')}…`;
+  const { truncatedText } = Array.from(
+    graphemeSegmenter.segment(requestText),
+    ({ segment }) => segment,
+  ).reduce(
+    ({ truncatedText, isFull }, grapheme) =>
+      isFull ||
+      countCodePoints(truncatedText + grapheme) >=
+        TEAMS_ASSISTANT_REQUEST_NAME_MAX_LENGTH
+        ? { truncatedText, isFull: true }
+        : { truncatedText: truncatedText + grapheme, isFull: false },
+    { truncatedText: '', isFull: false },
+  );
+
+  return `${truncatedText}…`;
 };

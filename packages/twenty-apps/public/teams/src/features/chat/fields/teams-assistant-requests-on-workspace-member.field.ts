@@ -20,7 +20,7 @@ export default defineField({
   name: 'teamsAssistantRequests',
   label: 'Teams assistant requests',
   description: 'Teams requests the assistant ran as this member.',
-  icon: 'IconBrandTeams',
+  icon: 'IconMessage',
   isNullable: true,
   relationTargetObjectMetadataUniversalIdentifier:
     TEAMS_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,

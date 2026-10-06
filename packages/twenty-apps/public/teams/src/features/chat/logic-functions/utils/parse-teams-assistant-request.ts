@@ -1,10 +1,13 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 import { type TeamsAssistantRequestDraft } from 'src/features/chat/logic-functions/types/teams-assistant-request-draft.type';
+import { collectTeamsBotMentionTexts } from 'src/features/chat/logic-functions/utils/collect-teams-bot-mention-texts';
 import { normalizeTeamsRequestText } from 'src/features/chat/logic-functions/utils/normalize-teams-request-text';
 
-const DEFAULT_CONVERSATION_TYPE = 'personal';
+const BOT_ACCOUNT_ID_PREFIX = '28:';
+
+const PERSONAL_CONVERSATION_TYPE = 'personal';
 
 type ParsedTeamsAssistantRequest =
   | { request: TeamsAssistantRequestDraft }
@@ -24,7 +27,10 @@ export const parseTeamsAssistantRequest = ({
 
   const senderId = activity.from?.id;
 
-  if (activity.from?.role === 'bot' || senderId === activity.recipient?.id) {
+  if (
+    activity.from?.role === 'bot' ||
+    senderId?.startsWith(BOT_ACCOUNT_ID_PREFIX) === true
+  ) {
     return { request: null, skipReason: 'Not a user message' };
   }
 
@@ -38,6 +44,16 @@ export const parseTeamsAssistantRequest = ({
     return { request: null, skipReason: 'Activity is missing required fields' };
   }
 
+  const conversationType =
+    activity.conversation?.conversationType ?? PERSONAL_CONVERSATION_TYPE;
+
+  if (
+    conversationType !== PERSONAL_CONVERSATION_TYPE &&
+    !isNonEmptyArray(collectTeamsBotMentionTexts(activity))
+  ) {
+    return { request: null, skipReason: 'Bot is not mentioned' };
+  }
+
   const requestText = normalizeTeamsRequestText(activity);
 
   if (!isNonEmptyString(requestText)) {
@@ -48,8 +64,7 @@ export const parseTeamsAssistantRequest = ({
     request: {
       teamsActivityId: activity.id,
       teamsConversationId: conversationId,
-      teamsConversationType:
-        activity.conversation?.conversationType ?? DEFAULT_CONVERSATION_TYPE,
+      teamsConversationType: conversationType,
       teamsServiceUrl: serviceUrl,
       teamsTenantId: tenantId,
       teamsUserId: senderId,

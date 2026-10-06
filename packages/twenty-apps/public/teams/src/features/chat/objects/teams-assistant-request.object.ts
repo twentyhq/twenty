@@ -33,7 +33,7 @@ export default defineObject({
   labelPlural: 'Teams Assistant Requests',
   description:
     'A request sent to the Twenty assistant from Microsoft Teams (mention or personal chat), with its processing status and response.',
-  icon: 'IconBrandTeams',
+  icon: 'IconMessage',
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEAMS_ASSISTANT_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [

@@ -2,13 +2,15 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type TeamsAssistantRequestRecord } from 'src/features/chat/logic-functions/types/teams-assistant-request-record.type';
 
-export const findTeamsAssistantRequestByTeamsActivity = async (
-  client: CoreApiClient,
-  {
-    teamsConversationId,
-    teamsActivityId,
-  }: { teamsConversationId: string; teamsActivityId: string },
-): Promise<TeamsAssistantRequestRecord | undefined> => {
+export const findTeamsAssistantRequestByTeamsActivity = async ({
+  client,
+  teamsConversationId,
+  teamsActivityId,
+}: {
+  client: CoreApiClient;
+  teamsConversationId: string;
+  teamsActivityId: string;
+}): Promise<TeamsAssistantRequestRecord | undefined> => {
   const queryResult = await client.query({
     teamsAssistantRequests: {
       __args: {
