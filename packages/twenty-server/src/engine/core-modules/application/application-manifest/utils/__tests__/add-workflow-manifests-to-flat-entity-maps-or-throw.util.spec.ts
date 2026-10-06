@@ -1,4 +1,5 @@
 import { type UniversalFlatWorkflow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow.type';
+import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
@@ -150,7 +151,7 @@ describe('application workflow manifest updates', () => {
       universalIdentifier: workspaceWorkflowUniversalIdentifier,
       isSystem: false,
       workspaceWorkflowId: null,
-    } as UniversalFlatWorkflow;
+    } as FlatWorkflow;
 
     expect(() =>
       compute({ workflows: [], fromAllFlatEntityMaps }),
