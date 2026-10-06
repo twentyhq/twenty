@@ -7,6 +7,7 @@ import { type HostFocusController } from '@/host/focus/types/HostFocusController
 import { createFocusAwareRemoteConnection } from '@/host/focus/utils/createFocusAwareRemoteConnection';
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/fetch/utils/buildHostFetchPolicyFromFrontComponentUrls';
 import { createFrontComponentHostThread } from '@/host/thread/utils/createFrontComponentHostThread';
+import { createImageLoadingHost } from '@/host/image-loading/utils/createImageLoadingHost';
 import { createHostFetchEnforcingPolicy } from '@/host/fetch/utils/createHostFetchEnforcingPolicy';
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
@@ -84,10 +85,12 @@ export const FrontComponentWorkerEffect = ({
     });
 
     const hostFetch = createHostFetchEnforcingPolicy(hostFetchPolicy);
+    const imageLoadingHost = createImageLoadingHost();
 
     const thread = createFrontComponentHostThread({
       hostMessagePort: channel.port1,
       hostFetch,
+      imageLoadingHost,
       geometryTracker,
       mediaSessionHost,
     });
@@ -180,6 +183,7 @@ export const FrontComponentWorkerEffect = ({
 
     return () => {
       isCancelled = true;
+      imageLoadingHost.dispose();
       hostFocusController.reset();
       window.removeEventListener('message', handleSandboxMessage);
       setThread(null);

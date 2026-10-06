@@ -17,7 +17,6 @@ const HISTORY_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.agentTurn.universalIdentifier,
   STANDARD_OBJECTS.agentMessage.universalIdentifier,
   STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
-  STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
 ];
 
 // A workspace about to be migrated: every other standard object is installed.

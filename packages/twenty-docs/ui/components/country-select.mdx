@@ -71,7 +71,7 @@ Keep application dropdown IDs, focus stacks, field metadata, persistence, and ed
 
 ## Front component renderer
 
-The React and Preact front component sandboxes render the selected country, decorative flag, and disabled trigger. Opening the popup is currently unsupported. Base UI reads pointer contact data from the `nativeEvent` of the forwarded event, which the sandbox does not provide. When the popup content still mounts, the Dropdown reads the popup element's `dataset`, which worker elements do not provide. Search, selection, popup focus, and closing are therefore unavailable in those sandboxes for now. Renderer fixtures check the initial presentation and the disabled trigger, then assert the known opening errors. The UI Storybook exercises these interactions in a regular browser.
+The React and Preact front component sandboxes render the selected country, decorative flag, and disabled trigger. In React the trigger opens the popup, but the popup renders into the sandbox document instead of the page, so its content is not visible. In Preact the popup does not open. Search, selection, popup focus, and closing are therefore unavailable in those sandboxes for now. Renderer fixtures check the initial presentation and the disabled trigger, then assert this opening behavior. The UI Storybook exercises these interactions in a regular browser.
 
 ## Props
 

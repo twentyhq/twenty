@@ -1,4 +1,4 @@
-// Base system prompt for programmatic agent runs outside workflows (runAgent API, evaluations)
+// Base system prompt for programmatic agent runs outside workflows (runAgent API)
 // NOTE: For user-facing chat, use CHAT_SYSTEM_PROMPTS from ai-chat/constants
 
 import { TOOL_USAGE_STRATEGY } from 'src/engine/metadata-modules/ai/ai-agent/constants/tool-usage-strategy.const';

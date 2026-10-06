@@ -18,7 +18,6 @@ const OBJECT_NAMES = [
   'agentMessage',
   'agentMessagePart',
   'agentTurn',
-  'agentTurnEvaluation',
 ] as const;
 
 const { allFlatEntityMaps } = computeTwentyStandardApplicationAllFlatEntityMaps(
@@ -97,7 +96,7 @@ describe('agent history workspace metadata', () => {
     >
   > = {
     agentChatThread: {
-      readability: MetadataReadability.INHERITED,
+      readability: MetadataReadability.PRIVATE,
       writability: MetadataWritability.OPEN,
     },
     agentChatThreadTarget: {

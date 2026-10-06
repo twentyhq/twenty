@@ -1,5 +1,6 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
+import { AGENT_CHAT_THREAD_LIST_FILTER } from '@/ai/constants/AgentChatThreadListFilter';
 import { AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/AgentChatThreadListRecordGqlFields';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
@@ -9,7 +10,6 @@ import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatT
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { buildAgentChatThreadListFilter } from '@/ai/utils/buildAgentChatThreadListFilter';
 import { getAgentChatThreadLastActivityFieldName } from '@/ai/utils/getAgentChatThreadLastActivityFieldName';
 import { getAgentChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
@@ -71,10 +71,6 @@ export const useRefreshAgentChatThreads = () => {
       const currentWorkspaceMemberId = store.get(
         currentWorkspaceMemberState.atom,
       )?.id;
-      const listFilter = buildAgentChatThreadListFilter({
-        chatObjectMetadataItem,
-        currentWorkspaceMemberId,
-      });
 
       const result = await apolloCoreClient
         .query<RecordGqlOperationFindManyResult>({
@@ -86,8 +82,8 @@ export const useRefreshAgentChatThreads = () => {
           }),
           variables: {
             filter: isDefined(threadIdFilter)
-              ? { and: [listFilter, threadIdFilter] }
-              : listFilter,
+              ? { and: [AGENT_CHAT_THREAD_LIST_FILTER, threadIdFilter] }
+              : AGENT_CHAT_THREAD_LIST_FILTER,
             orderBy: [
               {
                 [getAgentChatThreadLastActivityFieldName(

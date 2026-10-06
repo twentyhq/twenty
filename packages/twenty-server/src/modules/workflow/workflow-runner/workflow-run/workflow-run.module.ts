@@ -5,6 +5,7 @@ import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.m
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
+import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { WorkflowRunRecordShareModule } from 'src/engine/core-modules/workflow/workflow-run-record-share.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
@@ -23,6 +24,7 @@ import { WorkflowStepWaitStoreModule } from 'src/modules/workflow/workflow-wait/
     FeatureFlagModule,
     WorkflowRunRecordShareModule,
     AgentHistoryModule,
+    AgentChatThreadLifecycleModule,
     WorkflowStepWaitStoreModule,
   ],
   providers: [
