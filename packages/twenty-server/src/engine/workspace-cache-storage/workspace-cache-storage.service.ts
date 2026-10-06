@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import crypto from 'crypto';
-
-import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -107,50 +103,6 @@ export class WorkspaceCacheStorageService {
 
     return this.cacheStorageService.get<string[]>(
       `${HASH_KEYED_WORKSPACE_CACHE_KEYS.GraphQLUsedScalarNames}:${workspaceId}:${metadataCacheHash}${applicationSuffix}`,
-    );
-  }
-
-  getFeatureFlagsMapVersionFromCache(
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    return this.cacheStorageService.get<string>(
-      `${WORKSPACE_CACHE_KEYS.FeatureFlagMapVersion}:${workspaceId}`,
-    );
-  }
-
-  async setFeatureFlagsMapVersion(workspaceId: string): Promise<string> {
-    const featureFlagMapVersion = crypto.randomUUID();
-
-    await this.cacheStorageService.set<string>(
-      `${WORKSPACE_CACHE_KEYS.FeatureFlagMapVersion}:${workspaceId}`,
-      featureFlagMapVersion,
-      TTL_ONE_WEEK,
-    );
-
-    return featureFlagMapVersion;
-  }
-
-  async setFeatureFlagsMap(
-    workspaceId: string,
-    featureFlagMap: FeatureFlagMap,
-  ): Promise<{
-    newFeatureFlagMapVersion: string;
-  }> {
-    const [, newFeatureFlagMapVersion] = await Promise.all([
-      this.cacheStorageService.set<FeatureFlagMap>(
-        `${WORKSPACE_CACHE_KEYS.FeatureFlagMap}:${workspaceId}`,
-        featureFlagMap,
-        TTL_ONE_WEEK,
-      ),
-      this.setFeatureFlagsMapVersion(workspaceId),
-    ]);
-
-    return { newFeatureFlagMapVersion };
-  }
-
-  getFeatureFlagsMap(workspaceId: string): Promise<FeatureFlagMap | undefined> {
-    return this.cacheStorageService.get<FeatureFlagMap>(
-      `${WORKSPACE_CACHE_KEYS.FeatureFlagMap}:${workspaceId}`,
     );
   }
 

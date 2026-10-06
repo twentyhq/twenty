@@ -46,10 +46,7 @@ import {
   type WorkspaceCacheStoredDataMap,
   type WorkspaceDerivedCacheKeyName,
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
-import {
-  type VersionEntry,
-  type WorkspaceLocalCacheEntry,
-} from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
+import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/get-key-name-from-local-cache-key.util';
 import { packIdleVersions } from 'src/engine/workspace-cache/utils/pack-idle-versions.util';
@@ -62,8 +59,6 @@ import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-ca
 
 const LOCAL_TTL_MS = 100;
 const MEMOIZER_TTL_MS = 10_000;
-const STALE_VERSION_TTL_MS = 5_000;
-const MAX_LOCAL_STALE_VERSIONS = 5;
 // Sized against 4 GiB pods (--max-old-space-size=3500): 7,500 sat at the heap ceiling.
 const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
@@ -594,7 +589,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       if (
         isDefined(localEntry) &&
         isDefined(redisHash) &&
-        localEntry.latestHash === redisHash
+        localEntry.hash === redisHash
       ) {
         localEntry.lastHashCheckedAt = Date.now();
         validKeys.push(keyName);
@@ -827,19 +822,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     for (const keyName of workspaceCacheKeyNames) {
       const localKey = this.buildCacheKey(workspaceId, keyName);
       const entry = this.localCache.get(localKey);
-      const version = entry?.versions.get(entry.latestHash);
 
-      if (isDefined(entry) && isDefined(version)) {
-        const data = this.readVersion({
-          keyName,
-          entry,
-          hash: entry.latestHash,
-          version,
+      if (isDefined(entry)) {
+        Object.assign(result.data, {
+          [keyName]: this.readVersion(keyName, entry),
         });
-
-        Object.assign(result.data, { [keyName]: data });
-        result.hashes[keyName] = entry.latestHash;
-        this.cleanupStaleVersions(entry);
+        result.hashes[keyName] = entry.hash;
       }
     }
 
@@ -877,19 +865,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     data: CacheDataType,
     hash: string,
   ): void {
-    const localKey = this.buildCacheKey(workspaceId, keyName);
-    let entry = this.localCache.get(localKey);
+    const now = Date.now();
 
-    if (!isDefined(entry)) {
-      entry = { versions: new Map(), latestHash: '', lastHashCheckedAt: 0 };
-      this.localCache.set(localKey, entry);
-    }
-
-    entry.versions.set(hash, { state: 'live', data, lastReadAt: Date.now() });
-    entry.latestHash = hash;
-    entry.lastHashCheckedAt = Date.now();
-
-    this.cleanupStaleVersions(entry);
+    this.localCache.set(this.buildCacheKey(workspaceId, keyName), {
+      hash,
+      version: { state: 'live', data, lastReadAt: now },
+      lastHashCheckedAt: now,
+    });
   }
 
   private sweepLocalCache(): void {
@@ -940,17 +922,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  private readVersion({
-    keyName,
-    entry,
-    hash,
-    version,
-  }: {
-    keyName: WorkspaceCacheKeyName;
-    entry: WorkspaceLocalCacheEntry<CacheDataType>;
-    hash: string;
-    version: VersionEntry<CacheDataType>;
-  }): CacheDataType {
+  private readVersion(
+    keyName: WorkspaceCacheKeyName,
+    entry: WorkspaceLocalCacheEntry<CacheDataType>,
+  ): CacheDataType {
+    const { version } = entry;
+
     if (version.state === 'live') {
       version.lastReadAt = Date.now();
 
@@ -962,11 +939,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       deserializeCacheBlob(version.blob),
     );
 
-    entry.versions.set(hash, {
-      state: 'live',
-      data,
-      lastReadAt: Date.now(),
-    });
+    entry.version = { state: 'live', data, lastReadAt: Date.now() };
 
     this.cacheMetricsService.recordUnpacking(
       (performance.now() - unpackStartedAt) / 1000,
@@ -974,38 +947,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     );
 
     return data;
-  }
-
-  private cleanupStaleVersions(
-    entry: WorkspaceLocalCacheEntry<CacheDataType>,
-  ): void {
-    const now = Date.now();
-
-    for (const [hash, version] of entry.versions) {
-      if (
-        hash !== entry.latestHash &&
-        now - version.lastReadAt > STALE_VERSION_TTL_MS
-      ) {
-        entry.versions.delete(hash);
-      }
-    }
-
-    if (entry.versions.size >= MAX_LOCAL_STALE_VERSIONS) {
-      const sorted = [...entry.versions.entries()]
-        .filter(([hash]) => hash !== entry.latestHash)
-        .sort((entryA, entryB) => entryA[1].lastReadAt - entryB[1].lastReadAt);
-
-      while (
-        entry.versions.size >= MAX_LOCAL_STALE_VERSIONS &&
-        sorted.length > 0
-      ) {
-        const oldestEntry = sorted.shift();
-
-        if (isDefined(oldestEntry)) {
-          entry.versions.delete(oldestEntry[0]);
-        }
-      }
-    }
   }
 
   private getProviderOrThrow(

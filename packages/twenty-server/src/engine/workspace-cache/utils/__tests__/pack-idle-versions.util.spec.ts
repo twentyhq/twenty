@@ -10,16 +10,14 @@ const IDLE = NOW_EPOCH_MS - 90_000;
 const RECENT = NOW_EPOCH_MS - 1_000;
 
 const liveEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<string> => ({
-  versions: new Map([['hash-1', { state: 'live', data: 'data', lastReadAt }]]),
-  latestHash: 'hash-1',
+  hash: 'hash-1',
+  version: { state: 'live', data: 'data', lastReadAt },
   lastHashCheckedAt: lastReadAt,
 });
 
 const packedEntry = (lastReadAt: number): WorkspaceLocalCacheEntry<string> => ({
-  versions: new Map([
-    ['hash-1', { state: 'packed', blob: Buffer.from('{}'), lastReadAt }],
-  ]),
-  latestHash: 'hash-1',
+  hash: 'hash-1',
+  version: { state: 'packed', blob: Buffer.from('{}'), lastReadAt },
   lastHashCheckedAt: lastReadAt,
 });
 
@@ -47,7 +45,7 @@ const run = (
 const stateOf = (
   localCache: Map<string, WorkspaceLocalCacheEntry<string>>,
   localKey: string,
-) => localCache.get(localKey)?.versions.get('hash-1')?.state;
+) => localCache.get(localKey)?.version.state;
 
 describe('packIdleVersions', () => {
   it('should pack a version that has gone idle', () => {
@@ -98,7 +96,7 @@ describe('packIdleVersions', () => {
     expect(runs).toBe(3);
     expect(
       [...localCache.values()].every(
-        (entry) => entry.versions.get('hash-1')?.state === 'packed',
+        (entry) => entry.version.state === 'packed',
       ),
     ).toBe(true);
   });
@@ -108,9 +106,9 @@ describe('packIdleVersions', () => {
 
     run(localCache, 2);
 
-    expect(
-      localCache.get(`${FIELD_METADATA}:ws-a`)?.versions.get('hash-1'),
-    ).toMatchObject({ lastReadAt: IDLE });
+    expect(localCache.get(`${FIELD_METADATA}:ws-a`)?.version).toMatchObject({
+      lastReadAt: IDLE,
+    });
   });
 
   it('should leave the version live when pack declines it', () => {

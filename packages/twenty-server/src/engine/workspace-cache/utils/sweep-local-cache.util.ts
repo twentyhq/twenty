@@ -9,11 +9,10 @@ export type LocalCacheSweepConfig = {
 };
 
 const lastReadAtOf = <T>(entry: WorkspaceLocalCacheEntry<T>): number =>
-  entry.versions.get(entry.latestHash)?.lastReadAt ?? 0;
+  entry.version.lastReadAt;
 
-// Mutates the cache: expire versions idle past the TTL (dropping any entry left without a current
-// version), then trim each capped provider and the global total to budget by least-recently-read.
-// Returns the number of entries evicted.
+// Mutates the cache: expire entries idle past the TTL, then trim each capped provider and the
+// global total to budget by least-recently-read. Returns the number of entries evicted.
 export const sweepLocalCache = <T>(
   localCache: Map<string, WorkspaceLocalCacheEntry<T>>,
   now: number,
@@ -22,13 +21,7 @@ export const sweepLocalCache = <T>(
   let evicted = 0;
 
   for (const [localKey, entry] of localCache) {
-    for (const [hash, version] of entry.versions) {
-      if (now - version.lastReadAt > config.ttlMs) {
-        entry.versions.delete(hash);
-      }
-    }
-
-    if (entry.versions.size === 0 || !entry.versions.has(entry.latestHash)) {
+    if (now - entry.version.lastReadAt > config.ttlMs) {
       localCache.delete(localKey);
       evicted += 1;
     }

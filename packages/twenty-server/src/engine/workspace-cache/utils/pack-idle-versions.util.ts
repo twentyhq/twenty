@@ -27,7 +27,6 @@ export const packIdleVersions = <T>({
   const idleSince = nowEpochMs() - minIdleMs;
   const candidates: {
     localKey: string;
-    hash: string;
     lastReadAt: number;
     ponderation: number;
   }[] = [];
@@ -47,15 +46,15 @@ export const packIdleVersions = <T>({
       continue;
     }
 
-    for (const [hash, version] of entry.versions) {
-      if (version.state === 'live' && version.lastReadAt <= idleSince) {
-        candidates.push({
-          localKey,
-          hash,
-          lastReadAt: version.lastReadAt,
-          ponderation,
-        });
-      }
+    if (
+      entry.version.state === 'live' &&
+      entry.version.lastReadAt <= idleSince
+    ) {
+      candidates.push({
+        localKey,
+        lastReadAt: entry.version.lastReadAt,
+        ponderation,
+      });
     }
   }
 
@@ -64,7 +63,7 @@ export const packIdleVersions = <T>({
   let packed = 0;
   let spentPonderation = 0;
 
-  for (const { localKey, hash, ponderation } of candidates) {
+  for (const { localKey, ponderation } of candidates) {
     if (spentPonderation >= ponderationBudget) {
       break;
     }
@@ -74,23 +73,22 @@ export const packIdleVersions = <T>({
     }
 
     const entry = localCache.get(localKey);
-    const version = entry?.versions.get(hash);
 
-    if (!isDefined(entry) || version?.state !== 'live') {
+    if (entry?.version.state !== 'live') {
       continue;
     }
 
-    const blob = pack({ localKey, data: version.data });
+    const blob = pack({ localKey, data: entry.version.data });
 
     if (!isDefined(blob)) {
       continue;
     }
 
-    entry.versions.set(hash, {
+    entry.version = {
       state: 'packed',
       blob,
-      lastReadAt: version.lastReadAt,
-    });
+      lastReadAt: entry.version.lastReadAt,
+    };
     packed += 1;
     spentPonderation += ponderation;
   }

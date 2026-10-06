@@ -13,7 +13,7 @@ export type PackedVersionEntry = {
 export type VersionEntry<T> = LiveVersionEntry<T> | PackedVersionEntry;
 
 export type WorkspaceLocalCacheEntry<T> = {
-  versions: Map<string, VersionEntry<T>>;
-  latestHash: string;
+  hash: string;
+  version: VersionEntry<T>;
   lastHashCheckedAt: number;
 };

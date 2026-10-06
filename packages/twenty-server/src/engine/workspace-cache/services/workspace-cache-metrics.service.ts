@@ -209,18 +209,11 @@ export class WorkspaceCacheMetricsService {
 
       stats.count += 1;
 
-      if (stats.sampled < SIZE_SAMPLE_PER_PROVIDER && entry.versions.size > 0) {
-        // Size every retained version, not just the latest — stale versions still occupy heap.
-        let entryBytes = 0;
-
-        for (const version of entry.versions.values()) {
-          entryBytes +=
-            version.state === 'packed'
-              ? version.blob.byteLength
-              : deepSizeBytes(version.data, SIZE_WALK_NODE_CAP);
-        }
-
-        stats.sampledBytes += entryBytes;
+      if (stats.sampled < SIZE_SAMPLE_PER_PROVIDER) {
+        stats.sampledBytes +=
+          entry.version.state === 'packed'
+            ? entry.version.blob.byteLength
+            : deepSizeBytes(entry.version.data, SIZE_WALK_NODE_CAP);
         stats.sampled += 1;
         await new Promise((resolve) => setImmediate(resolve));
       }
@@ -262,15 +255,6 @@ export class WorkspaceCacheMetricsService {
       perPod: true,
     });
     this.metricsService.createObservableGauge({
-      metricName: 'twenty_workspace_cache_local_versions_total',
-      options: {
-        description:
-          'Total versions across local workspace metadata cache entries',
-      },
-      callback: async () => this.getStats().versionsTotal,
-      perPod: true,
-    });
-    this.metricsService.createObservableGauge({
       metricName: 'twenty_workspace_cache_local_bytes_estimate',
       options: {
         description:
@@ -278,18 +262,6 @@ export class WorkspaceCacheMetricsService {
         unit: 'By',
       },
       callback: async () => this.cacheSizeTotalBytes,
-      perPod: true,
-    });
-    this.metricsService.createMultiObservableGauge({
-      metricName: 'twenty_workspace_cache_local_entries_by_version_count',
-      options: {
-        description:
-          'Local workspace metadata cache entries bucketed by version count',
-      },
-      callback: async () =>
-        Object.entries(this.getStats().versionsByCount).map(
-          ([versions, value]) => ({ value, attributes: { versions } }),
-        ),
       perPod: true,
     });
     this.metricsService.createMultiObservableGauge({
