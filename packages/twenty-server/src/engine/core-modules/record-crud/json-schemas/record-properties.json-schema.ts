@@ -178,7 +178,8 @@ export const generateRecordPropertiesJsonSchema = ({
       continue;
     }
 
-    const isRequired = !field.isNullable && !isPartial;
+    const isRequired =
+      !isPartial && !field.isNullable && !isDefined(field.defaultValue);
 
     if (isMorphOrRelationFlatFieldMetadata(field)) {
       if (!isManyToOneFlatFieldMetadata(field)) {

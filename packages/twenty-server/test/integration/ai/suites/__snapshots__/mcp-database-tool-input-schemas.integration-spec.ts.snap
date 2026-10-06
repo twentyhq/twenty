@@ -40,9 +40,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
             "type": "string",
           },
         },
-        "required": [
-          "position",
-        ],
         "type": "object",
       },
       "maxItems": 20,
@@ -93,9 +90,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
       "type": "string",
     },
   },
-  "required": [
-    "position",
-  ],
   "type": "object",
 }
 `;
@@ -1088,9 +1082,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
             "type": "string",
           },
         },
-        "required": [
-          "position",
-        ],
         "type": "object",
       },
       "maxItems": 20,
@@ -1338,9 +1329,6 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
             "type": "object",
           },
         },
-        "required": [
-          "position",
-        ],
         "type": "object",
       },
       "maxItems": 20,
@@ -1584,9 +1572,6 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
       "type": "object",
     },
   },
-  "required": [
-    "position",
-  ],
   "type": "object",
 }
 `;
@@ -7016,9 +7001,6 @@ exports[`MCP database tool input schemas should list the input schemas of the pe
             "type": "object",
           },
         },
-        "required": [
-          "position",
-        ],
         "type": "object",
       },
       "maxItems": 20,
@@ -7103,9 +7085,6 @@ exports[`MCP database tool input schemas should list the input schemas of the su
             "type": "string",
           },
         },
-        "required": [
-          "position",
-        ],
         "type": "object",
       },
       "maxItems": 20,
@@ -7186,9 +7165,6 @@ exports[`MCP database tool input schemas should list the input schemas of the su
       "type": "string",
     },
   },
-  "required": [
-    "position",
-  ],
   "type": "object",
 }
 `;
@@ -9494,9 +9470,6 @@ exports[`MCP database tool input schemas should list the input schemas of the su
             "type": "string",
           },
         },
-        "required": [
-          "position",
-        ],
         "type": "object",
       },
       "maxItems": 20,
