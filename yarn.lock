@@ -51040,6 +51040,7 @@ __metadata:
     "@types/node": "npm:^24.0.0"
     "@types/semver": "npm:^7.5.8"
     chokidar: "npm:^3.6.0"
+    cjs-module-lexer: "npm:^2.2.0"
     commander: "npm:^14.0.3"
     esbuild: "npm:^0.28.1"
     semver: "npm:7.6.3"

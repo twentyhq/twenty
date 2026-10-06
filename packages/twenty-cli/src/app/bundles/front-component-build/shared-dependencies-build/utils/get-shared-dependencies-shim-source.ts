@@ -11,21 +11,15 @@ export const getSharedDependenciesShimSource = ({
 }): string => {
   const namespaceIdentifier =
     toSharedDependenciesNamespaceIdentifier(specifier);
-
-  const lines = [
-    `import { ${namespaceIdentifier} } from ${JSON.stringify(FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER)};`,
+  const names = [
+    ...exportNames.namedExports,
+    ...(exportNames.hasDefaultExport ? ['default'] : []),
   ];
 
-  for (const [index, exportName] of exportNames.namedExports.entries()) {
-    lines.push(
-      `const __sharedDependenciesExport${index} = ${namespaceIdentifier}[${JSON.stringify(exportName)}];`,
-      `export { __sharedDependenciesExport${index} as ${JSON.stringify(exportName)} };`,
-    );
-  }
-
-  if (exportNames.hasDefaultExport) {
-    lines.push(`export default ${namespaceIdentifier}.default;`);
-  }
-
-  return lines.join('\n');
+  return names
+    .map(
+      (name, index) =>
+        `export { ${namespaceIdentifier}_${index} as ${JSON.stringify(name)} } from ${JSON.stringify(FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER)};`,
+    )
+    .join('\n');
 };

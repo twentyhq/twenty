@@ -13,7 +13,7 @@ export const putUploadFile = async ({
 }: {
   uploadUrl: string;
   contentType: string;
-  bytes: Uint8Array<ArrayBuffer>;
+  bytes: Blob | Uint8Array<ArrayBuffer>;
   signal: AbortSignal;
 }) => {
   const url = URL.parse(uploadUrl);
@@ -36,7 +36,7 @@ export const putUploadFile = async ({
     ]),
   });
 
-  await response.body?.cancel();
+  await response.body?.cancel().catch(() => undefined);
 
   return response.status;
 };

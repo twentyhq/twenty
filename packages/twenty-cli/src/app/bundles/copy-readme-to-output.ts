@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { OUTPUT_DIR } from 'twenty-shared/application';
 
 import { copyBuildFile } from '@/app/bundles/copy-build-file';
+import { recordWatchFile } from '@/app/dev/collect-watch-inputs';
 import { ensureDir } from '@/app/fs-utils';
 
 const README_FILE_NAME_REGEX = /^readme(\.[^.]+)?$/i;
@@ -37,6 +38,8 @@ export const copyReadmeToOutput = async ({
   await ensureDir(outputDir);
   const sourcePath = join(appPath, readmeFileName);
   const destinationPath = join(outputDir, readmeFileName);
+
+  recordWatchFile(sourcePath);
 
   await copyBuildFile({ sourcePath, destinationPath, dereferenceSymlinks });
 };

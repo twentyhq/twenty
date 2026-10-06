@@ -16,6 +16,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { build as bundle, stop } from 'esbuild';
+import { isPlainObject } from 'twenty-shared/utils';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { buildTestAppWorker } from '@/app/__tests__/utils/build-test-app-worker';
@@ -60,7 +61,11 @@ const requireDirectory = (build: ToolingBuild) => {
   if (!build.directory) throw new Error('Snapshot has no directory');
   return build.directory;
 };
-const compareDirectory = async (first: string, second: string) => {
+const compareDirectory = async (
+  first: string,
+  second: string,
+  bundledFrontPaths: Set<string>,
+) => {
   const entries = (
     await readdir(first, { recursive: true, withFileTypes: true })
   ).filter((entry) => entry.isFile());
@@ -69,6 +74,12 @@ const compareDirectory = async (first: string, second: string) => {
   );
   for (const entry of entries) {
     const path = join(entry.parentPath, entry.name).slice(first.length + 1);
+    if (
+      path === 'manifest.json' ||
+      bundledFrontPaths.has(path) ||
+      (path.endsWith('.map') && bundledFrontPaths.has(path.slice(0, -4)))
+    )
+      continue;
     const expected = await readFile(join(first, path));
     const actual = await readFile(join(second, path));
     if (path.endsWith('.map')) {
@@ -100,7 +111,36 @@ const compareDirectory = async (first: string, second: string) => {
   }
 };
 
-describe('CLI bundles and snapshots match the repository SDK', () => {
+const comparableSnapshot = (build: ToolingBuild) => {
+  const manifest = structuredClone(build.manifest);
+
+  if (Array.isArray(manifest.frontComponents)) {
+    for (const component of manifest.frontComponents) {
+      if (isPlainObject(component)) component.builtComponentChecksum = null;
+    }
+  }
+  if (
+    isPlainObject(manifest.application) &&
+    isPlainObject(manifest.application.frontComponentSharedDependencies)
+  ) {
+    manifest.application.frontComponentSharedDependencies.builtChecksum = null;
+  }
+
+  return {
+    ...build,
+    manifest,
+    buildId: '',
+    directory: '',
+    contentHash: '',
+    files: build.files.map((file) =>
+      file.role === 'built-front-component'
+        ? { ...file, sha256: '', size: 0 }
+        : file,
+    ),
+  };
+};
+
+describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () => {
   let root: string;
   let sdkEntryPath: string;
   const copyFixture = async (name: string) => {
@@ -149,8 +189,8 @@ describe('CLI bundles and snapshots match the repository SDK', () => {
           if (!expected.success) throw new Error(JSON.stringify(expected));
           const directory = requireDirectory(actual);
           expect(directory).toContain('/.twenty/cli/snapshots/build-');
-          expect(json({ ...actual, buildId: '', directory: '' })).toEqual(
-            json({ ...expected.data, buildId: '', directory: '' }),
+          expect(json(comparableSnapshot(actual))).toEqual(
+            json(comparableSnapshot(expected.data)),
           );
           expect(
             JSON.parse(
@@ -184,12 +224,35 @@ describe('CLI bundles and snapshots match the repository SDK', () => {
               .update(manifestBytes)
               .digest('hex'),
           );
-          await compareDirectory(requireDirectory(expected.data), directory);
+          const frontComponents = actual.manifest.frontComponents;
+          if (Array.isArray(frontComponents)) {
+            for (const component of frontComponents) {
+              if (isPlainObject(component)) {
+                expect(component.builtComponentChecksum).toBe(
+                  actual.files.find(
+                    (file) => file.path === component.builtComponentPath,
+                  )?.sha256,
+                );
+              }
+            }
+          }
+          await compareDirectory(
+            requireDirectory(expected.data),
+            directory,
+            new Set(
+              actual.files
+                .filter((file) => file.role === 'built-front-component')
+                .map((file) => file.path),
+            ),
+          );
         },
       });
       if (!expected.success) {
         expect(response.result).toEqual(json(expected));
       } else {
+        expect(response.result, JSON.stringify(response.result)).toMatchObject({
+          success: true,
+        });
         expect(response.release).toEqual({
           success: true,
           data: null,
@@ -314,7 +377,7 @@ describe('CLI bundles and snapshots match the repository SDK', () => {
     ).toEqual([...FIXTURES].sort());
   });
   it.each(FIXTURES)(
-    'matches artifacts, checksums, manifest, content hash and diagnostics for %s',
+    'preserves SDK manifest and non-frontend bytes, validates all artifact hashes for %s',
     async (name) => {
       const result = await compareSnapshot(await copyFixture(name));
       expect(result.success, JSON.stringify(result)).toBe(

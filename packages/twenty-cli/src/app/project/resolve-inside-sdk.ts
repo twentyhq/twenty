@@ -1,3 +1,5 @@
+import { realpathSync } from 'node:fs';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { isInsideDirectory } from '@/utils/is-inside-directory';
@@ -7,7 +9,7 @@ const tryResolve = (
   specifier: string,
 ) => {
   try {
-    return resolveFromApp(specifier);
+    return realpathSync(resolveFromApp(specifier));
   } catch {
     return undefined;
   }

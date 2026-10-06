@@ -1,5 +1,5 @@
 import { realpath } from 'node:fs/promises';
-import { relative, resolve, sep } from 'node:path';
+import { dirname, relative, resolve, sep } from 'node:path';
 
 import { watch, type FSWatcher } from 'chokidar';
 
@@ -87,11 +87,6 @@ export const watchAppInputs = async ({
           input.path !== appPath &&
           !isInsideDirectory({ filePath: input.path, directory: appPath }),
       );
-      // Missing paths are observed through their recorded parent. Adding them
-      // directly can suppress directory creation events in chokidar's Node backend.
-      const paths = [
-        ...new Set(externalInputs.map((input) => input.path)),
-      ].filter(pathExistsSync);
       const directories = new Set(
         externalInputs
           .filter((input) => input.kind === 'directory')
@@ -102,6 +97,19 @@ export const watchAppInputs = async ({
           .filter((input) => input.kind === 'file')
           .map((input) => input.path),
       );
+      const parentDirectories = new Set([...directories].map(dirname));
+      const isDirectChild = (path: string) =>
+        [...directories].some((directory) => {
+          const child = relative(directory, path);
+          return child.length > 0 && child !== '..' && !child.includes(sep);
+        });
+      // Node's watcher needs the parent to observe an empty directory disappearing.
+      const paths = [
+        ...new Set([
+          ...externalInputs.map((input) => input.path),
+          ...parentDirectories,
+        ]),
+      ].filter(pathExistsSync);
       const previousWatcher = externalWatcher;
 
       if (paths.length > 0) {
@@ -110,19 +118,26 @@ export const watchAppInputs = async ({
           followSymlinks: false,
           depth: 0,
           atomic: true,
-          ignored: (path) => isIgnoredWatchPath(path),
+          ignored: (path) => {
+            const absolutePath = resolve(path);
+            return (
+              isIgnoredWatchPath(path) ||
+              !(
+                parentDirectories.has(absolutePath) ||
+                directories.has(absolutePath) ||
+                files.has(absolutePath) ||
+                isDirectChild(absolutePath)
+              )
+            );
+          },
         })
           .on('all', (event, path) => {
             const absolutePath = resolve(path);
-            const isDirectChild = [...directories].some((directory) => {
-              const child = relative(directory, absolutePath);
-
-              return child.length > 0 && child !== '..' && !child.includes(sep);
-            });
 
             if (
               files.has(absolutePath) ||
-              (event !== 'change' && isDirectChild)
+              (event !== 'change' &&
+                (isDirectChild(absolutePath) || directories.has(absolutePath)))
             ) {
               onChange();
             }

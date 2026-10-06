@@ -60,7 +60,11 @@ beforeEach(async () => {
   });
   await writeFile(
     join(appPath, 'node_modules/twenty-client-sdk/package.json'),
-    '{"name":"twenty-client-sdk","version":"2.44.0"}',
+    '{"name":"twenty-client-sdk","version":"2.44.0","exports":{"./generate":"./generate.cjs"}}',
+  );
+  await writeFile(
+    join(appPath, 'node_modules/twenty-client-sdk/generate.cjs'),
+    'module.exports = {};',
   );
   controller = new AbortController();
   context = {
@@ -125,12 +129,38 @@ describe('dev client generation', () => {
     expect(await generate(options)).toBe('unchanged');
     await writeFile(
       join(appPath, 'node_modules/twenty-client-sdk/package.json'),
-      '{"name":"twenty-client-sdk","version":"2.45.0"}',
+      '{"name":"twenty-client-sdk","version":"2.45.0","exports":{"./generate":"./generate.cjs"}}',
     );
     expect(await generate(options)).toBe('generated');
     vi.mocked(fetchAppClientSchema).mockResolvedValue('new schema');
     expect(await generate(options)).toBe('generated');
     expect(invalidate).toHaveBeenCalledTimes(4);
+  });
+
+  it('regenerates after generator bytes or a nested generated file change', async () => {
+    const generate = createDevClientGenerator({ appPath });
+    const options = {
+      snapshot,
+      applied,
+      context,
+      withBuildsPaused,
+      invalidate,
+    };
+    const packageRoot = join(appPath, 'node_modules/twenty-client-sdk');
+    const directory = join(packageRoot, 'dist/core/generated/models');
+
+    await mkdir(directory, { recursive: true });
+    await writeFile(join(directory, 'company.ts'), 'original');
+    expect(await generate(options)).toBe('generated');
+    expect(await generate(options)).toBe('unchanged');
+    await writeFile(join(directory, 'company.ts'), 'modified');
+    expect(await generate(options)).toBe('generated');
+    await writeFile(
+      join(packageRoot, 'generate.cjs'),
+      'module.exports = { rebuilt: true };',
+    );
+    expect(await generate(options)).toBe('generated');
+    expect(await generate(options)).toBe('unchanged');
   });
 
   it('keeps the old client on schema failure and does not cache a failed attempt', async () => {

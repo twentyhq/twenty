@@ -40,30 +40,6 @@ export const buildSharedDependenciesBundle = async ({
     );
   }
 
-  const builtPath = join(outputDir, sharedDependencies.builtPath);
-  const absoluteBuiltPath = join(appPath, builtPath);
-
-  await ensureDir(dirname(absoluteBuiltPath));
-
-  await esbuild.build({
-    ...getBaseFrontComponentBuildOptions(),
-    plugins: [
-      ...getWatchInputPlugins(),
-      ...(getBaseFrontComponentBuildOptions().plugins ?? []),
-    ],
-    stdin: {
-      contents: getSharedDependenciesEntrySource(
-        sharedDependencies.dependencies,
-      ),
-      resolveDir: appPath,
-      sourcefile: 'twenty-shared-dependencies-entry.js',
-      loader: 'js',
-    },
-    outfile: absoluteBuiltPath,
-    outExtension: undefined,
-    external: [],
-  });
-
   const exportNamesBySpecifier = new Map(
     await Promise.all(
       sharedDependencies.dependencies.map(
@@ -78,6 +54,28 @@ export const buildSharedDependenciesBundle = async ({
       ),
     ),
   );
+
+  const builtPath = join(outputDir, sharedDependencies.builtPath);
+  const absoluteBuiltPath = join(appPath, builtPath);
+
+  await ensureDir(dirname(absoluteBuiltPath));
+
+  await esbuild.build({
+    ...getBaseFrontComponentBuildOptions(),
+    plugins: [
+      ...getWatchInputPlugins(),
+      ...(getBaseFrontComponentBuildOptions().plugins ?? []),
+    ],
+    stdin: {
+      contents: getSharedDependenciesEntrySource(exportNamesBySpecifier),
+      resolveDir: appPath,
+      sourcefile: 'twenty-shared-dependencies-entry.js',
+      loader: 'js',
+    },
+    outfile: absoluteBuiltPath,
+    outExtension: undefined,
+    external: [],
+  });
 
   const content = await readFile(absoluteBuiltPath);
   const checksum = crypto.createHash('sha256').update(content).digest('hex');

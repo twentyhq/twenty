@@ -1,3 +1,4 @@
+import { readBlobChunks } from '@/utils/read-blob-chunks';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
@@ -35,7 +36,10 @@ export const retainDevSnapshot = async ({
       const destination = join(directory, artifact.path);
 
       await mkdir(dirname(destination), { recursive: true });
-      await writeFile(destination, bytes, { flag: 'wx', signal });
+      await writeFile(destination, readBlobChunks(bytes), {
+        flag: 'wx',
+        signal,
+      });
     }
 
     signal.throwIfAborted();

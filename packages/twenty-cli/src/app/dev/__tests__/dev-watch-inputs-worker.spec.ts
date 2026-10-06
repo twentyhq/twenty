@@ -388,7 +388,7 @@ describe('dev watch inputs reported by the app worker', () => {
     expect(created.isSuccess, JSON.stringify(created.result)).toBe(true);
     expect(
       findInput(created.watchInputs ?? [], 'directory', extrasDirectory)?.stamp,
-    ).toBe(JSON.stringify(['extra.js']));
+    ).toBe(JSON.stringify([['extra.js', false, true, false]]));
     expect(
       findInput(
         created.watchInputs ?? [],

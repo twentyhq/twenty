@@ -1,12 +1,14 @@
 import { createHash } from 'node:crypto';
 import { readFile, realpath } from 'node:fs/promises';
 import { join } from 'node:path';
+import { createRequire } from 'node:module';
+import { resolveInsideSdk } from '@/app/project/resolve-inside-sdk';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AppApplyResult } from '@/app/deployment/apply-app-build';
 import { createPostSyncFailure } from '@/app/deployment/create-post-sync-failure';
-import { readWatchInputStamp } from '@/app/dev/read-watch-input-stamp';
+import { readGeneratedClientStamp } from '@/app/dev/read-generated-client-stamp';
 import { type BuiltDevSnapshot } from '@/app/dev/build-dev-snapshot';
 import {
   fetchAppClientSchema,
@@ -21,18 +23,8 @@ export const createDevClientGenerator = ({ appPath }: { appPath: string }) => {
   let generatedKey: string | undefined;
   let generatedOutputStamp: string | undefined;
   const readGeneratedOutputStamp = () =>
-    JSON.stringify(
-      [
-        'dist/core.mjs',
-        'dist/core.cjs',
-        'dist/core/generated',
-        'dist/core/generated/index.d.ts',
-      ].map((path) =>
-        readWatchInputStamp({
-          path: join(appPath, 'node_modules', 'twenty-client-sdk', path),
-          kind: 'file',
-        }),
-      ),
+    readGeneratedClientStamp(
+      join(appPath, 'node_modules', 'twenty-client-sdk'),
     );
 
   return async ({
@@ -65,6 +57,7 @@ export const createDevClientGenerator = ({ appPath }: { appPath: string }) => {
 
     let schema: string;
     let generationKey: string;
+    let currentGeneratedOutputStamp: string;
 
     try {
       schema = await fetchAppClientSchema({
@@ -76,11 +69,26 @@ export const createDevClientGenerator = ({ appPath }: { appPath: string }) => {
       );
       const packageJson = await readFile(join(packageRoot, 'package.json'));
 
+      const generatorPath = resolveInsideSdk({
+        resolveFromApp: createRequire(join(packageRoot, 'package.json'))
+          .resolve,
+        specifier: 'twenty-client-sdk/generate',
+        sdkPath: packageRoot,
+      });
+
+      if (!isDefined(generatorPath)) {
+        throw new Error(
+          'The installed twenty-client-sdk has no compatible generate entry point.',
+        );
+      }
+
       generationKey = createHash('sha256')
         .update(schema)
         .update(packageRoot)
         .update(packageJson)
+        .update(await readFile(generatorPath))
         .digest('hex');
+      currentGeneratedOutputStamp = await readGeneratedOutputStamp();
     } catch (error) {
       if (context.signal.aborted) {
         throw withPhaseDetails({
@@ -102,7 +110,7 @@ export const createDevClientGenerator = ({ appPath }: { appPath: string }) => {
 
     if (
       generationKey === generatedKey &&
-      readGeneratedOutputStamp() === generatedOutputStamp
+      currentGeneratedOutputStamp === generatedOutputStamp
     ) {
       return 'unchanged';
     }
@@ -120,7 +128,7 @@ export const createDevClientGenerator = ({ appPath }: { appPath: string }) => {
           context,
         });
         generatedKey = generationKey;
-        generatedOutputStamp = readGeneratedOutputStamp();
+        generatedOutputStamp = await readGeneratedOutputStamp();
         applied.completedPhases.push('clientGeneration');
         invalidate();
       });

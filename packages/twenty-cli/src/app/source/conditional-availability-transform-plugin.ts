@@ -7,7 +7,7 @@ import { transformConditionalAvailabilityExpressionsForEsBuildPlugin } from '@/a
 export const conditionalAvailabilityTransformPlugin: esbuild.Plugin = {
   name: 'conditional-availability-transform',
   setup: (build) => {
-    build.onLoad({ filter: /\.tsx?$/ }, async (args) => {
+    build.onLoad({ filter: /\.tsx?$/, namespace: 'file' }, async (args) => {
       const source = await fs.readFile(args.path, 'utf8');
 
       if (!source.includes('conditionalAvailabilityExpression')) {

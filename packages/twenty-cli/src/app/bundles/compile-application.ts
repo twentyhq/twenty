@@ -82,7 +82,18 @@ export const compileApplication = async ({
 
   const translations = await compileApplicationTranslations({
     appPath,
-    onWarning: onTranslationWarning ?? warn,
+    onWarning: (message) => {
+      if (onTranslationWarning) {
+        diagnostics.push({
+          severity: 'warning',
+          code: 'BUILD_WARNING',
+          message,
+        });
+        onTranslationWarning(message);
+      } else {
+        warn(message);
+      }
+    },
   });
 
   signal?.throwIfAborted();

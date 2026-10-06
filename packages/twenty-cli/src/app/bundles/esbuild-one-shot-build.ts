@@ -28,6 +28,13 @@ export const esbuildOneShotBuild = async ({
 
   for (const sourcePath of sourcePaths) {
     const entryName = sourcePath.replace(/\.tsx?$/, '');
+
+    if (Object.hasOwn(entryPoints, entryName)) {
+      throw new Error(
+        `Application sources ${path.relative(appPath, entryPoints[entryName])} and ${sourcePath} produce the same build output. Rename one of them.`,
+      );
+    }
+
     entryPoints[entryName] = path.join(appPath, sourcePath);
   }
 

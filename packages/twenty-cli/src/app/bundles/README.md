@@ -12,8 +12,11 @@ See the [app tooling overview](../README.md) for package ownership.
 
 Logic functions use an ESM/CJS banner, external modules and define stubs.
 Front components use JSX wrappers, remote-DOM transformation, optional
-preact aliases, CSS injection, comment stripping, shared dependency export probes
-and shims. The app's translation catalogs are embedded in the bundles.
+preact aliases, bundled CSS injection, static shared-dependency export discovery
+and live-binding shims. The app's translation catalogs are embedded in the bundles.
+Dependency discovery does not execute package initialization code. CommonJS
+named exports must be statically detectable; packages that compute export names
+at runtime can be consumed through their default export.
 
 The bundler collects source and dependency files, public and generated assets,
 and the README, and updates the manifest's artifact checksums. Snapshot copies
@@ -61,18 +64,16 @@ node ../../node_modules/vitest/vitest.mjs run --config vitest.config.ts --maxWor
 The parity suite builds all five repository fixtures and a fresh CLI-created app
 through the SDK reference and the production CLI worker. The app has a copy of
 the real authoring SDK without its build/CLI exports or implementation files.
-Successful builds have identical manifests, artifact roles/paths/sizes/hashes
-and content hashes. The invalid fixture fails in both pipelines. The fresh
-CLI template's test setup also typechecks with an authoring-only SDK. The parity
-fixture excludes Vitest configuration files to keep its build comparison focused
-on application source, including the test setup.
+Successful builds preserve manifest configuration and artifact paths/roles.
+Non-frontend files remain byte-identical to the SDK reference. Frontend bundle
+bytes and checksums are allowed to differ: dedicated tests verify preserved
+string literals, resolved CSS assets and live shared-dependency bindings. Every
+CLI artifact's size/checksum, its manifest reference and the snapshot content
+hash are checked against the actual bytes. The invalid fixture fails in both
+pipelines. The fresh CLI template's test setup typechecks with an authoring-only SDK.
 
-Only build IDs/directories and JSON-omitted `undefined` properties are normalized
-in snapshot comparisons. File bytes, including the manifest, are exact except
-source maps: real paths are resolved against each map's directory, and the
-define stub's generator banner comment is excluded from `sourcesContent`.
-Virtual plugin source names, generated statements, mappings and all other map
-contents are compared as-is.
+Source-map comparisons for unchanged bundles resolve paths against each map's
+directory and exclude the define stub's generator banner from `sourcesContent`.
 
 Additional tests cover optional covers, project SDK constants, baked translations
 and CSS, README selection, immutable symlink copies, concurrent snapshots,

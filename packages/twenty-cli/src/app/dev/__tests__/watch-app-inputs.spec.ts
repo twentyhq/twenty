@@ -1,4 +1,11 @@
-import { mkdir, mkdtemp, rename, rm, writeFile } from 'node:fs/promises';
+import {
+  mkdir,
+  mkdtemp,
+  realpath,
+  rename,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -9,6 +16,7 @@ import {
   collectWatchInputs,
   recordWatchFile,
 } from '@/app/dev/collect-watch-inputs';
+import { readWatchInputStamp } from '@/app/dev/read-watch-input-stamp';
 import { watchAppInputs } from '@/app/dev/watch-app-inputs';
 
 const watcherOptions = vi.hoisted(() => ({ useFsEvents: false }));
@@ -72,6 +80,7 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
       await mkdir(join(appPath, ignored));
       await writeFile(join(appPath, ignored, 'output.ts'), 'ignored');
     }
+    await writeFile(join(appPath, '.source.ts.swo'), 'editor swap');
     await new Promise((resolve) => setTimeout(resolve, 150));
     expect(onChange).not.toHaveBeenCalled();
     expect(onError).not.toHaveBeenCalled();
@@ -118,6 +127,50 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     await writeFile(external, 'restored');
 
     await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+  });
+
+  it('observes removal of an external directory even with no file inputs', async () => {
+    const { root, watcher, onChange } = await fixture();
+    const directory = join(root, 'empty-linked');
+    await mkdir(directory);
+    const path = await realpath(directory);
+    await watcher.update(
+      [
+        {
+          path,
+          kind: 'directory',
+          stamp: readWatchInputStamp({ path, kind: 'directory' }),
+        },
+      ],
+      false,
+    );
+    await vi.waitFor(
+      async () => {
+        onChange.mockClear();
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        expect(onChange).not.toHaveBeenCalled();
+      },
+      { timeout: 3000 },
+    );
+    onChange.mockClear();
+    await writeFile(join(root, 'unrelated.ts'), 'outside the tracked inputs');
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    expect(onChange).not.toHaveBeenCalled();
+    await rm(directory, { recursive: true });
+    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+  });
+
+  it('detects a file replaced by a directory before watcher registration', async () => {
+    const { root, watcher, onChange } = await fixture();
+    const directory = join(root, 'external');
+    await mkdir(directory);
+    await writeFile(join(directory, 'entry'), 'file');
+    const path = await realpath(directory);
+    const stamp = readWatchInputStamp({ path, kind: 'directory' });
+    await rm(join(directory, 'entry'));
+    await mkdir(join(directory, 'entry'));
+    await watcher.update([{ path, kind: 'directory', stamp }], false);
+    expect(onChange).toHaveBeenCalled();
   });
 
   it('detects an external edit in the gap between compilation and watcher registration', async () => {

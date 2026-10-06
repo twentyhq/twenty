@@ -11,9 +11,17 @@ export const readWatchInputStamp = ({
   try {
     if (kind === 'directory') {
       return JSON.stringify(
-        readdirSync(path)
-          .filter((entry) => !isIgnoredWatchPath(entry))
-          .sort(),
+        readdirSync(path, { withFileTypes: true })
+          .filter((entry) => !isIgnoredWatchPath(entry.name))
+          .map((entry) => [
+            entry.name,
+            entry.isDirectory(),
+            entry.isFile(),
+            entry.isSymbolicLink(),
+          ])
+          .sort(([first], [second]) =>
+            String(first).localeCompare(String(second)),
+          ),
       );
     }
 

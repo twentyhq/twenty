@@ -1,5 +1,6 @@
-import { hashContent } from '@/utils/hash-content';
-import { readFile } from 'node:fs/promises';
+import { readBlobChunks } from '@/utils/read-blob-chunks';
+import { createHash } from 'node:crypto';
+import { openAsBlob } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { type ToolingArtifact } from '@/app/types/tooling-result.type';
@@ -36,15 +37,21 @@ export const readSnapshotFile = async ({
     });
   }
 
-  const bytes = await readFile(filePath);
-  const sha256 = hashContent(bytes);
+  const bytes = await openAsBlob(filePath);
+  const hash = createHash('sha256');
 
-  if (bytes.length !== artifact.size || sha256 !== artifact.sha256) {
+  for await (const chunk of readBlobChunks(bytes)) {
+    hash.update(chunk);
+  }
+
+  const sha256 = hash.digest('hex');
+
+  if (bytes.size !== artifact.size || sha256 !== artifact.sha256) {
     throw createSnapshotInvalidError({
       message: `${artifact.path} changed after the build.`,
       path: artifact.path,
     });
   }
 
-  return new Uint8Array(bytes);
+  return bytes;
 };

@@ -29,6 +29,7 @@
     "@sniptt/guards": "^0.2.0",
     "@types/node": "^24.0.0",
     "@types/semver": "^7.5.8",
+    "cjs-module-lexer": "^2.2.0",
     "commander": "^14.0.3",
     "semver": "7.6.3",
     "twenty-client-sdk": "workspace:*",
