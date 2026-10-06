@@ -112,6 +112,39 @@ describe('workflow deletion cleanup', () => {
     let keptRunId: string;
     let formStepId: string;
 
+    const waitForCoreLink = async ({
+      workflowId,
+      workflowVersionId,
+    }: {
+      workflowId: string;
+      workflowVersionId: string;
+    }): Promise<
+      Pick<WorkspaceWorkflow, 'coreWorkflowId' | 'coreWorkflowVersionId'>
+    > => {
+      for (let attempt = 0; attempt < 40; attempt++) {
+        const [mirror] = await globalThis.testDataSource.query(
+          `SELECT w."coreWorkflowId", v."coreWorkflowVersionId"
+           FROM "${SCHEMA}".workflow w
+           JOIN "${SCHEMA}"."workflowVersion" v ON v."workflowId" = w.id
+           WHERE w.id = $1 AND v.id = $2`,
+          [workflowId, workflowVersionId],
+        );
+
+        if (mirror?.coreWorkflowId && mirror?.coreWorkflowVersionId) {
+          return {
+            coreWorkflowId: mirror.coreWorkflowId,
+            coreWorkflowVersionId: mirror.coreWorkflowVersionId,
+          };
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+
+      throw new Error(
+        `${workflowVersionId} was never linked to its core version`,
+      );
+    };
+
     const createWorkspaceWorkflow = async (
       name: string,
     ): Promise<WorkspaceWorkflow> => {
@@ -146,28 +179,14 @@ describe('workflow deletion cleanup', () => {
         },
       });
 
-      for (let attempt = 0; attempt < 40; attempt++) {
-        const [mirror] = await globalThis.testDataSource.query(
-          `SELECT w."coreWorkflowId", v."coreWorkflowVersionId"
-           FROM "${SCHEMA}".workflow w
-           JOIN "${SCHEMA}"."workflowVersion" v ON v."workflowId" = w.id
-           WHERE w.id = $1 AND v.id = $2`,
-          [createWorkflow.id, workflowVersionId],
-        );
-
-        if (mirror?.coreWorkflowId && mirror?.coreWorkflowVersionId) {
-          return {
-            workflowId: createWorkflow.id,
-            workflowVersionId,
-            coreWorkflowId: mirror.coreWorkflowId,
-            coreWorkflowVersionId: mirror.coreWorkflowVersionId,
-          };
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 250));
-      }
-
-      throw new Error(`${name} was never linked to its core workflow`);
+      return {
+        workflowId: createWorkflow.id,
+        workflowVersionId,
+        ...(await waitForCoreLink({
+          workflowId: createWorkflow.id,
+          workflowVersionId,
+        })),
+      };
     };
 
     const createStep = async ({
@@ -330,6 +349,63 @@ describe('workflow deletion cleanup', () => {
         );
       }
     });
+
+    it('discarding a draft deletes its core version and the CODE functions only it uses', async () => {
+      const { createDraftFromWorkflowVersion } = await graphql(
+        `
+          mutation CreateDraft($input: CreateDraftFromWorkflowVersionInput!) {
+            createDraftFromWorkflowVersion(input: $input) {
+              id
+              steps
+            }
+          }
+        `,
+        {
+          input: {
+            workflowId: deletedWorkflow.workflowId,
+            workflowVersionIdToCopy: deletedWorkflow.workflowVersionId,
+          },
+        },
+      );
+      const draftCodeLogicFunctionId =
+        createDraftFromWorkflowVersion.steps.find(
+          (step: WorkflowVersionStep) => step.type === 'CODE',
+        ).settings.input.logicFunctionId;
+      const { coreWorkflowVersionId: draftCoreWorkflowVersionId } =
+        await waitForCoreLink({
+          workflowId: deletedWorkflow.workflowId,
+          workflowVersionId: createDraftFromWorkflowVersion.id,
+        });
+
+      expect(draftCodeLogicFunctionId).not.toBe(codeLogicFunctionId);
+
+      await graphql(
+        `
+          mutation Discard($input: DiscardCoreWorkflowDraftInput!) {
+            discardCoreWorkflowDraft(input: $input) {
+              id
+            }
+          }
+        `,
+        { input: { coreWorkflowVersionId: draftCoreWorkflowVersionId } },
+      );
+
+      expect(
+        await countRows(`core."workflowVersion" WHERE id = $1`, [
+          draftCoreWorkflowVersionId,
+        ]),
+      ).toBe(0);
+      expect(
+        await countRows(`core."logicFunction" WHERE id = $1`, [
+          draftCodeLogicFunctionId,
+        ]),
+      ).toBe(0);
+      expect(
+        await countRows(`core."logicFunction" WHERE id = $1`, [
+          codeLogicFunctionId,
+        ]),
+      ).toBe(1);
+    }, 120000);
 
     it('deletes the definition, triggers, CODE functions, runs and waits of the deleted workflow only, before the deletion returns', async () => {
       expect(
