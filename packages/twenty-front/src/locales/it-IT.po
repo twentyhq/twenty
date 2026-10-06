@@ -615,7 +615,7 @@ msgstr "{morphRelationCount} oggetti"
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
-msgstr ""
+msgstr "{num, selectordinal, one {{num}°} two {{num}°} few {{num}°} many {{num}°} other {{num}°}}"
 
 #. js-lingui-id: fTSz8d
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -1364,7 +1364,7 @@ msgstr "Aggiungi una nuova azienda con cui siamo in contatto (ad es. nome, sito 
 #. js-lingui-id: 5xxrhm
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
-msgstr "Aggiungi una nota."
+msgstr "Aggiungi una nota"
 
 #. js-lingui-id: uza/B9
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
@@ -1374,7 +1374,7 @@ msgstr "Aggiungi una nota a questo record: "
 #. js-lingui-id: Ad+JsP
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add a person with an email to this company first"
-msgstr "Aggiungi prima una persona con un indirizzo email a questa azienda."
+msgstr "Aggiungi prima una persona con un indirizzo email a questa azienda"
 
 #. js-lingui-id: 4LAQbj
 #: src/modules/activities/calendar/components/CalendarEventComposerTargetsInput.tsx
@@ -1421,12 +1421,12 @@ msgstr "Aggiungi una chiave API per abilitare l'IA."
 #. js-lingui-id: W5wF8J
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to the point of contact first"
-msgstr "Aggiungi prima un indirizzo email al contatto di riferimento."
+msgstr "Aggiungi prima un indirizzo email al contatto di riferimento"
 
 #. js-lingui-id: LVzaHu
 #: src/modules/activities/calendar/hooks/useComposeCalendarEventRelatedRecordAction.ts
 msgid "Add an email to this person first"
-msgstr "Aggiungi prima un indirizzo email a questa persona."
+msgstr "Aggiungi prima un indirizzo email a questa persona"
 
 #. js-lingui-id: KD0hdw
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2936,7 +2936,7 @@ msgstr "Registrazione dell'applicazione"
 #. js-lingui-id: +tE2x9
 #: src/modules/settings/applications/hooks/useUninstallApplication.ts
 msgid "Application successfully uninstalled."
-msgstr ""
+msgstr "Applicazione disinstallata con successo."
 
 #. js-lingui-id: V+GSWz
 #: src/modules/marketplace/hooks/useUpgradeApplication.ts
@@ -3053,7 +3053,7 @@ msgstr "Sei sicuro di voler eliminare {topicName}? I destinatari non potranno pi
 #. js-lingui-id: 4CHeVx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Are you sure you want to delete this evaluation input?"
-msgstr ""
+msgstr "Sei sicuro di voler reimpostare questa variabile?"
 
 #. js-lingui-id: Yz8PeY
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -3117,7 +3117,7 @@ msgstr "Armeno"
 #. js-lingui-id: cybVUo
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "As it will be displayed in the workspace"
-msgstr ""
+msgstr "Come verrà visualizzato nel workspace"
 
 #. js-lingui-id: 54PdN4
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -3173,7 +3173,7 @@ msgstr "Assegnare {roleTargetName}?"
 #. js-lingui-id: nerbkq
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Assign roles to specify access permissions"
-msgstr ""
+msgstr "Assegna ruoli per specificare le autorizzazioni di accesso di ogni agente"
 
 #. js-lingui-id: krsgB0
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
@@ -3437,7 +3437,7 @@ msgstr "Creazione automatica"
 #. js-lingui-id: HX/jD4
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
 msgid "Auto-generated role for {agentDisplayName}"
-msgstr ""
+msgstr "Ruolo generato automaticamente per {agentDisplayName}"
 
 #. js-lingui-id: /nv0ml
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
@@ -3861,7 +3861,7 @@ msgstr "Elenco puntato"
 #. js-lingui-id: s1c0ja
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Bullet List"
-msgstr ""
+msgstr "Elenco puntato"
 
 #. js-lingui-id: 9emr42
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
@@ -4602,7 +4602,7 @@ msgstr "Scegli quali campi utilizzare durante la ricerca dei record."
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
-msgstr ""
+msgstr "Scegli quali campi del profilo gli utenti con il permesso di Modifica profilo possono modificare"
 
 #. js-lingui-id: 3wV73y
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -6227,7 +6227,7 @@ msgstr "Creato"
 #. js-lingui-id: 4fBuqE
 #: src/modules/object-record/record-show/components/RecordIdentifierBarCreatedAt.tsx
 msgid "Created {beautifiedCreatedAt}"
-msgstr ""
+msgstr "Creato il {beautifiedCreatedAt}"
 
 #. js-lingui-id: 6vWyWm
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
@@ -6400,7 +6400,7 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsCrudList.tsx
 msgid "CRUD"
-msgstr ""
+msgstr "CRUD"
 
 #. js-lingui-id: 8RWevB
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -7971,7 +7971,7 @@ msgstr "Nodo duplicato"
 #. js-lingui-id: mMsEuG
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsFooter.tsx
 msgid "Duplicate widget"
-msgstr ""
+msgstr "Duplica widget"
 
 #. js-lingui-id: cheWPw
 #: src/modules/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection.tsx
@@ -8800,7 +8800,7 @@ msgstr "Inserisci un array JSON"
 #. js-lingui-id: uV9utd
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Enter limit"
-msgstr ""
+msgstr "Inserisci il limite"
 
 #. js-lingui-id: O6t21f
 #: src/modules/advanced-text-editor/components/EditLinkDropdownForm.tsx
@@ -8848,7 +8848,7 @@ msgstr ""
 #. js-lingui-id: Xj6ylP
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line. Each line will become a new option."
-msgstr ""
+msgstr "Inserisci un'opzione per riga. Ogni riga diventerà una nuova opzione."
 
 #. js-lingui-id: waLOUb
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -9663,7 +9663,7 @@ msgstr ""
 #. js-lingui-id: P/885a
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Failed to execute evaluation input"
-msgstr ""
+msgstr "Impossibile eseguire l'input di valutazione"
 
 #. js-lingui-id: y1uc9P
 #: src/modules/file/hooks/useDirectFileUpload.ts

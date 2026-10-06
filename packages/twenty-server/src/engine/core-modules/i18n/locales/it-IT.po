@@ -96,7 +96,7 @@ msgstr "{fullMessage}"
 #. js-lingui-id: 7PhDJp
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "{hostnameCount} hostnames found for domain \"{domainName}\". Expect 1"
-msgstr "Trovati {hostnameCount} nomi host per il dominio \"{domainName}\". Previsto 1."
+msgstr "Trovati {hostnameCount} nomi host per il dominio \"{domainName}\". Previsto 1"
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -374,7 +374,7 @@ msgstr "Si è verificato un errore di rete temporaneo."
 #. js-lingui-id: WzDeE/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "A timeline activity type targeting another application's object must declare the timeline activity type it overrides"
-msgstr "Un tipo di attività della cronologia che ha come destinazione l'oggetto di un'altra applicazione deve dichiarare il tipo di attività della cronologia che sostituisce."
+msgstr "Un tipo di attività della timeline che ha come destinazione l'oggetto di un'altra applicazione deve dichiarare il tipo di attività della timeline che sostituisce"
 
 #. js-lingui-id: JJamm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -752,7 +752,7 @@ msgstr "Esecuzione del passaggio dell'agente fallita."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Agent step of the workflow run that held this conversation"
-msgstr "Fase dell'agente dell'esecuzione del flusso di lavoro che ha gestito questa conversazione."
+msgstr "Fase dell'agente dell'esecuzione del flusso di lavoro che ha gestito questa conversazione"
 
 #. js-lingui-id: fX04ru
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -13218,7 +13218,7 @@ msgstr "ha scollegato un'attività correlata"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Unsubscribe topic id"
-msgstr "ID dell'argomento di disiscrizione"
+msgstr "Unsubscribe topic id"
 
 #. js-lingui-id: 93kbO/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
