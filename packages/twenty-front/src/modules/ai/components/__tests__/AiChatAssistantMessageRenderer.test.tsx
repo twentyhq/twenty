@@ -602,8 +602,8 @@ describe('AiChatAssistantMessageRenderer', () => {
     expect(container).not.toBeEmptyDOMElement();
   });
 
-  it('should render nothing for a finished message made only of hidden thinking steps', () => {
-    const { container } = renderAssistantRenderer(
+  it('should still show thinking steps on a finished message that has nothing else to render', () => {
+    renderAssistantRenderer(
       [
         {
           type: 'reasoning',
@@ -614,6 +614,6 @@ describe('AiChatAssistantMessageRenderer', () => {
       { shouldHideThinkingSteps: true },
     );
 
-    expect(container).toBeEmptyDOMElement();
+    expect(screen.getByTestId('thinking-steps-display')).toBeInTheDocument();
   });
 });

@@ -147,22 +147,24 @@ export const AiChatAssistantMessageRenderer = ({
         frontComponentIdByToolName.get(getEffectiveToolName(part)),
       ),
   );
-  const renderItems = shouldHideThinkingSteps
-    ? groupedRenderItems.filter(
-        (renderItem) => renderItem.type !== 'thinking-steps',
-      )
-    : groupedRenderItems;
+  const renderItemsWithoutThinkingSteps = groupedRenderItems.filter(
+    (renderItem) => renderItem.type !== 'thinking-steps',
+  );
+  // Falling back to the steps keeps a finished message from rendering as an empty entry
+  const renderItems =
+    shouldHideThinkingSteps &&
+    (isLastMessageStreaming || renderItemsWithoutThinkingSteps.length > 0)
+      ? renderItemsWithoutThinkingSteps
+      : groupedRenderItems;
 
   const lastRenderItemIndex = renderItems.length - 1;
 
   if (!renderItems.length && !hasError) {
-    const hasOnlyHiddenParts =
-      !isLastMessageStreaming &&
-      (groupedRenderItems.length > 0 ||
-        messageParts.some(isEmptyReasoningPart));
+    const hasOnlyHiddenReasoning =
+      !isLastMessageStreaming && messageParts.some(isEmptyReasoningPart);
 
     return hasSucceededCompleteWorkspaceSetupToolPart ||
-      hasOnlyHiddenParts ? null : (
+      hasOnlyHiddenReasoning ? null : (
       <AiChatInitialLoadingIndicator />
     );
   }
