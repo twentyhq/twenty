@@ -1,4 +1,4 @@
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useLingui } from '@lingui/react/macro';

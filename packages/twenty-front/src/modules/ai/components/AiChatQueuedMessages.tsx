@@ -9,7 +9,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 

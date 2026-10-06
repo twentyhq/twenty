@@ -7,7 +7,7 @@ import { matchPath, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { NavigationLink } from '@/ui/input/components/NavigationLink';
-import { TabButton } from 'twenty-ui/components';
+import { TabButton } from 'twenty-ui/components/navigation';
 import { IconColorSwatch, IconCreditCard, IconGauge } from 'twenty-ui/icon';
 
 const StyledTabBar = styled.div`

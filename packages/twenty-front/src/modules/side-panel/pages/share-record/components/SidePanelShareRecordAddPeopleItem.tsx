@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconLock, IconPlus, IconUsers } from 'twenty-ui/icon';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';

@@ -1,8 +1,8 @@
 [
   {
     "name": "CountrySelect",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/country-select",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/country-select",
     "props": [
       {
         "name": "className",
@@ -127,8 +127,8 @@
   },
   {
     "name": "CurrencyPicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/currency-picker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/currency-picker",
     "props": [],
     "parts": [
       {
@@ -320,8 +320,8 @@
   },
   {
     "name": "MetricRow",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/metric-row",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/metric-row",
     "props": [
       {
         "name": "children",
@@ -457,11 +457,25 @@
     "slug": "data-display/color-sample",
     "props": [
       {
+        "name": "aria-hidden",
+        "type": "Booleanish",
+        "required": false,
+        "defaultValue": null,
+        "description": "Mark decorative swatches as hidden from assistive technology."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name when the caller supplies role=\"img\"."
+      },
+      {
         "name": "className",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "CSS class applied to the swatch."
+        "description": "CSS class merged with the swatch class."
       },
       {
         "name": "color",
@@ -478,11 +492,32 @@
         "description": "Theme color used for the background and border. Required even when `color` overrides the background."
       },
       {
-        "name": "variant",
-        "type": "\"circle\" | \"default\" | \"pipeline\"",
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
         "required": false,
         "defaultValue": null,
-        "description": "Swatch shape: `default`, `circle`, or `pipeline`. Omitting it uses the default shape."
+        "description": "Ref to the swatch div, or the element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render callback composed through Base UI useRender."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native styles merged with the swatch color defaults. Explicit styles win."
+      },
+      {
+        "name": "variant",
+        "type": "\"circle\" | \"default\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Generic swatch shape: `default` or `circle`. Omitting it uses the default shape."
       }
     ]
   },
@@ -569,11 +604,67 @@
     "slug": "feedback/loader",
     "props": [
       {
+        "name": "aria-hidden",
+        "type": "Booleanish",
+        "required": false,
+        "defaultValue": null,
+        "description": "Hide a decorative loader when another element supplies loading feedback."
+      },
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name for a labeled loader status."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of text that names the loader status."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class merged with the loader container class."
+      },
+      {
         "name": "color",
         "type": "\"amber\" | \"blue\" | \"bronze\" | \"brown\" | \"crimson\" | \"cyan\" | \"gold\" | \"grass\" | \"gray\" | \"green\" | \"iris\" | \"jade\" | \"lime\" | \"mint\" | \"orange\" | \"pink\" | \"plum\" | \"purple\" | \"red\" | \"ruby\" | \"sky\" | \"tomato\" | \"turquoise\" | \"violet\" | \"yellow\"",
         "required": false,
         "defaultValue": null,
         "description": "Theme color for the animated dot and border. When omitted, inherits the button color if available, otherwise the tertiary text color."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the container div, or the element supplied through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Element or render callback composed through Base UI useRender."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": null,
+        "description": "Supply status to expose loading feedback as a live region. No role is assigned by default."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native styles merged with the loader color defaults. Explicit styles win."
       }
     ]
   },
@@ -1041,8 +1132,8 @@
   },
   {
     "name": "LightIconButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/light-icon-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/light-icon-button",
     "props": [
       {
         "name": "aria-label",
@@ -1174,8 +1265,8 @@
   },
   {
     "name": "IconButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/icon-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/icon-button",
     "props": [
       {
         "name": "aria-label",
@@ -1300,8 +1391,8 @@
   },
   {
     "name": "MainButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/main-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/main-button",
     "props": [
       {
         "name": "className",
@@ -1412,8 +1503,8 @@
   },
   {
     "name": "LightButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/light-button",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/light-button",
     "props": [
       {
         "name": "className",
@@ -6453,7 +6544,7 @@
           },
           {
             "name": "alignOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": null,
             "description": "Offset in pixels along the alignment axis."
@@ -6530,7 +6621,7 @@
           },
           {
             "name": "sideOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "8",
             "description": "Distance in pixels between the anchor and the popup."
@@ -7262,8 +7353,8 @@
   },
   {
     "name": "Toast",
-    "entryPoint": "twenty-ui/components",
-    "slug": "feedback/toast",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/toast",
     "props": [
       {
         "name": "action",
@@ -7815,8 +7906,8 @@
   },
   {
     "name": "SettingsRow",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/settings-row",
+    "entryPoint": "twenty-ui/components/settings",
+    "slug": "components/settings/settings-row",
     "props": [
       {
         "name": "checked",
@@ -7913,8 +8004,8 @@
   },
   {
     "name": "PhoneCountryPicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/phone-country-picker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/phone-country-picker",
     "props": [],
     "parts": [
       {
@@ -8029,8 +8120,8 @@
   },
   {
     "name": "Dropdown",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/dropdown",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/dropdown",
     "props": [],
     "parts": [
       {
@@ -8167,7 +8258,7 @@
           },
           {
             "name": "alignOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": null,
             "description": "Offset in pixels along the alignment axis."
@@ -8237,7 +8328,7 @@
           },
           {
             "name": "sideOffset",
-            "type": "number",
+            "type": "number | OffsetFunction",
             "required": false,
             "defaultValue": "0",
             "description": "Distance in pixels between the anchor and the popup."
@@ -8976,8 +9067,8 @@
   },
   {
     "name": "OverflowingList",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/overflowing-list",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/overflowing-list",
     "props": [
       {
         "name": "children",
@@ -9011,8 +9102,8 @@
   },
   {
     "name": "Section",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/section",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/section",
     "props": [],
     "parts": [
       {
@@ -9114,7 +9205,7 @@
   {
     "name": "CodeEditor",
     "entryPoint": "twenty-ui/components/code-editor",
-    "slug": "components/code-editor",
+    "slug": "components/code-editor/code-editor",
     "props": [
       {
         "name": "autoHeight",
@@ -9226,35 +9317,63 @@
   {
     "name": "CodeEditorHeader",
     "entryPoint": "twenty-ui/components/code-editor",
-    "slug": "components/code-editor-header",
+    "slug": "components/code-editor/code-editor-header",
     "props": [
       {
-        "name": "leftNodes",
-        "type": "ReactNode[]",
-        "required": false,
-        "defaultValue": null,
-        "description": "Elements shown at the start of the header, such as tabs."
-      },
-      {
-        "name": "rightNodes",
-        "type": "ReactNode[]",
-        "required": false,
-        "defaultValue": null,
-        "description": "Elements shown at the end of the header, such as actions."
-      },
-      {
-        "name": "title",
+        "name": "className",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Text shown at the start of the header, after `leftNodes`."
+        "description": "Additional CSS class applied to the root element."
+      },
+      {
+        "name": "endElement",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content shown at the end of the header, such as actions. Use a fragment for multiple elements."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref forwarded to the rendered root element, a div by default."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replace the root div or compose it with another component. Native props and refs target the rendered root."
+      },
+      {
+        "name": "startElement",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content shown at the start of the header, before the title, such as tabs. Use a fragment for multiple elements."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root element."
+      },
+      {
+        "name": "title",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content shown after `startElement`. This is visible header content, not the native HTML title attribute."
       }
     ]
   },
   {
     "name": "TabButton",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/tab-button",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/tab-button",
     "props": [
       {
         "name": "active",
@@ -9330,8 +9449,8 @@
   },
   {
     "name": "AvatarGroup",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/avatar-group",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/avatar-group",
     "props": [
       {
         "name": "avatars",
@@ -9393,8 +9512,8 @@
   },
   {
     "name": "CommandBlock",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/command-block",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/command-block",
     "props": [
       {
         "name": "button",
@@ -9414,8 +9533,8 @@
   },
   {
     "name": "JsonTree",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/json-tree",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/json-tree",
     "props": [
       {
         "name": "arrowButtonCollapsedLabel",
@@ -9491,8 +9610,8 @@
   },
   {
     "name": "NotificationCounter",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/notification-counter",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/notification-counter",
     "props": [
       {
         "name": "className",
@@ -9519,8 +9638,8 @@
   },
   {
     "name": "TintedIconTile",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/tinted-icon-tile",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/tinted-icon-tile",
     "props": [
       {
         "name": "color",
@@ -9554,8 +9673,8 @@
   },
   {
     "name": "Callout",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/callout",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/callout",
     "props": [
       {
         "name": "action",
@@ -9624,8 +9743,8 @@
   },
   {
     "name": "InlineBanner",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/inline-banner",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/inline-banner",
     "props": [
       {
         "name": "button",
@@ -9680,8 +9799,8 @@
   },
   {
     "name": "ToastProvider",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/toast-provider",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/toast-provider",
     "props": [
       {
         "name": "children",
@@ -9701,8 +9820,8 @@
   },
   {
     "name": "Toaster",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/toaster",
+    "entryPoint": "twenty-ui/components/feedback",
+    "slug": "components/feedback/toaster",
     "props": [
       {
         "name": "container",
@@ -9729,8 +9848,8 @@
   },
   {
     "name": "ImageInput",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/image-input",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/image-input",
     "props": [
       {
         "name": "abortLabel",
@@ -9848,8 +9967,8 @@
   },
   {
     "name": "SearchInput",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/search-input",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/search-input",
     "props": [
       {
         "name": "aria-label",
@@ -9974,8 +10093,8 @@
   },
   {
     "name": "AnimatedIconCrossfade",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/animated-icon-crossfade",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/animated-icon-crossfade",
     "props": [
       {
         "name": "ActiveIcon",
@@ -10009,8 +10128,8 @@
   },
   {
     "name": "MenuItem",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item",
     "props": [
       {
         "name": "accent",
@@ -10198,8 +10317,8 @@
   },
   {
     "name": "MenuItemAvatar",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item-avatar",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item-avatar",
     "props": [
       {
         "name": "accent",
@@ -10296,8 +10415,8 @@
   },
   {
     "name": "MenuItemDraggable",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item-draggable",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item-draggable",
     "props": [
       {
         "name": "accent",
@@ -10394,8 +10513,8 @@
   },
   {
     "name": "MenuItemSuggestion",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-item-suggestion",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-item-suggestion",
     "props": [
       {
         "name": "className",
@@ -10457,8 +10576,8 @@
   },
   {
     "name": "MenuPicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/menu-picker",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/menu-picker",
     "props": [
       {
         "name": "className",

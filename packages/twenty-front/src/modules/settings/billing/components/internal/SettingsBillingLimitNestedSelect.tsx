@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { type IconComponent } from 'twenty-ui/icon';
 
 import { StyledSettingsBillingFieldLabel } from '@/settings/billing/components/internal/SettingsBillingFieldLabel';

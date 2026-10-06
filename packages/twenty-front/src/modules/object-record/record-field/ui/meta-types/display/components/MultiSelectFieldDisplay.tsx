@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useMultiSelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMultiSelectFieldDisplay';
-import { OverflowingList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components/layout';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { isDefined } from 'twenty-shared/utils';
 

@@ -18,7 +18,8 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { MainButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 

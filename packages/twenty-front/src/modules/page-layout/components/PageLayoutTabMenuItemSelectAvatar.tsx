@@ -2,7 +2,7 @@ import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent, useState } from 'react';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPencil } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 

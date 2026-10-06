@@ -1,6 +1,6 @@
 import { BUTTON_INVERTED_CLASS_NAME } from '@/ui/input/styles/ButtonInvertedClassName';
 import { useLingui } from '@lingui/react/macro';
-import { LightButton } from 'twenty-ui/components';
+import { LightButton } from 'twenty-ui/components/input';
 import { Button } from 'twenty-ui/primitives/input';
 
 type CancelButtonProps = {

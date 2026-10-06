@@ -1770,11 +1770,19 @@ enum UsageUnit {
   COMPLEXITY
 }
 
+type UsageQuotaOperatorOnlyScope {
+  operationType: UsageOperationType!
+  spenderType: String!
+  unit: UsageUnit!
+  periodUnit: String!
+}
+
 type UsageQuotaDefinition {
   resourceType: UsageResourceType!
   limitKind: String!
   allowedOperations: [UsageLimitOperationDefinition!]!
   allowedSpenderTypes: [String!]!
+  operatorOnlyScopes: [UsageQuotaOperatorOnlyScope!]!
 }
 
 enum UsageResourceType {

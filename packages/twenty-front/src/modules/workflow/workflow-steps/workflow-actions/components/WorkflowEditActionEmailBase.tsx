@@ -39,7 +39,8 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import { Callout, Dropdown } from 'twenty-ui/components';
+import { Callout } from 'twenty-ui/components/feedback';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { PermissionFlagType } from '~/generated-metadata/graphql';

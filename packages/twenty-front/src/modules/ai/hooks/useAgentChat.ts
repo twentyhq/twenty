@@ -10,7 +10,7 @@ import {
   isValidUuid,
   tipTapDocumentToMarkdown,
 } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';

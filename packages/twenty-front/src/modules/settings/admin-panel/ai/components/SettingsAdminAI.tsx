@@ -1,6 +1,7 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useMemo, useState } from 'react';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
