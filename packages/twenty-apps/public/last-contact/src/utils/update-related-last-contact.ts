@@ -106,9 +106,8 @@ const resolveOpportunitiesByPersonId = async (
     const opportunities = (connection?.edges ?? []).map(({ node }) => node);
 
     const isTruncated =
-      typeof connection?.totalCount === 'number'
-        ? connection.totalCount > opportunities.length
-        : opportunities.length >= NESTED_RELATION_MAX_RECORDS;
+      opportunities.length >= NESTED_RELATION_MAX_RECORDS ||
+      (connection?.totalCount ?? 0) > opportunities.length;
 
     if (isTruncated) {
       truncatedPersonIds.push(personId);

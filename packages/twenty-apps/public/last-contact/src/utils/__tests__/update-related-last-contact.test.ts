@@ -210,7 +210,9 @@ describe('updateRelatedLastContactForPeople', () => {
     ).toEqual([OPPORTUNITY_ID, OTHER_OPPORTUNITY_ID]);
   });
 
-  it('reads the opportunities of a person when the nested relation is full and has no total count', async () => {
+  it.each([null, 60])(
+    'reads the opportunities of a person when the nested relation is full and its total count is %s',
+    async (totalCount) => {
     client.query.mockResolvedValue({
       opportunities: {
         edges: [],
@@ -227,11 +229,12 @@ describe('updateRelatedLastContactForPeople', () => {
             id: `opportunity-${index}`,
             lastContactAt: null,
           })),
-          totalCount: null,
+          totalCount,
         }),
       ),
     );
 
     expect(client.query).toHaveBeenCalledTimes(1);
-  });
+  },
+  );
 });
