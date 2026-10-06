@@ -136,7 +136,7 @@ export const beautifyPastDateRelativeToNowShort = (
     if (diffInDays < 7) return `${diffInDays}d`;
 
     const diffInWeeks = Math.floor(diffInDays / 7);
-    if (diffInWeeks < 5) return `${diffInWeeks}w`;
+    if (diffInWeeks < 4) return `${diffInWeeks}w`;
 
     const diffInMonths = Math.floor(diffInDays / 30);
     if (diffInMonths < 12) return `${diffInMonths}mo`;
