@@ -6,7 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -288,7 +288,7 @@ export const WorkflowEditActionPickRecord = ({
           </>
         )}
 
-        <HorizontalSeparator noMargin />
+        <Separator style={{ margin: 0 }} />
 
         {isDefined(selectedObjectMetadataItem) && (
           <FormMultiRecordPicker

@@ -29,7 +29,7 @@ import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvata
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import {
   type AvailableWorkspace,
@@ -250,8 +250,10 @@ export const SignInUpGlobalScopeForm = () => {
             />
           )}
           {(authProviders.google || authProviders.microsoft) && (
-            <HorizontalSeparator
-              color={themeCssVariables.background.transparent.light}
+            <Separator
+              style={{
+                backgroundColor: themeCssVariables.background.transparent.light,
+              }}
             />
           )}
           {/* oxlint-disable-next-line react/jsx-props-no-spreading */}

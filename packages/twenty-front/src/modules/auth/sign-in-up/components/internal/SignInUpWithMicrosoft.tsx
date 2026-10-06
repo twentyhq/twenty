@@ -10,12 +10,12 @@ import { type SocialSsoSignInUpActionType } from '@/auth/types/SocialSsoSignInUp
 import { useLingui } from '@lingui/react/macro';
 import { MainButton } from 'twenty-ui/components/input';
 import { IconMicrosoft } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { useTheme } from 'twenty-ui/theme';
+import { StyledSignInUpSpacer } from './StyledSignInUpSpacer';
 
 export const SignInUpWithMicrosoft = ({
   action,
@@ -54,7 +54,7 @@ export const SignInUpWithMicrosoft = ({
           <LastUsedPill />
         )}
       </StyledSsoButtonContainer>
-      <HorizontalSeparator visible={false} />
+      <StyledSignInUpSpacer />
     </>
   );
 };

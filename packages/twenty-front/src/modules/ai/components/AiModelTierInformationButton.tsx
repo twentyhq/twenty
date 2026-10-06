@@ -11,7 +11,7 @@ import {
   IconGauge,
   IconInfoCircle,
 } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { MetricRow } from 'twenty-ui/components/data-display';
 import { themeCssVariables, useThemeContainer } from 'twenty-ui/theme';
 
@@ -144,7 +144,7 @@ export const AiModelTierInformationButton = ({
                 {label}
               </MetricRow>
             ))}
-            <HorizontalSeparator noMargin />
+            <Separator style={{ margin: 0 }} />
             <StyledHeading>{t`Vs Balanced mode`}</StyledHeading>
             {comparisons.map(({ label, Icon, value }) => (
               <MetricRow key={label} startIcon={Icon} value={value}>

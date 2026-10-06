@@ -814,7 +814,7 @@
     "reExports": [],
     "values": {
       "Collapsible": "primitives/layout/Collapsible/Collapsible",
-      "HorizontalSeparator": "primitives/layout/HorizontalSeparator/HorizontalSeparator",
+      "Separator": "primitives/layout/Separator/Separator",
       "ResizeHandle": "primitives/layout/ResizeHandle/ResizeHandle",
       "TextDirectionProvider": "primitives/layout/TextDirectionProvider/TextDirectionProvider"
     },
@@ -822,7 +822,8 @@
       "AnimationDimension": "primitives/layout/Collapsible/types/AnimationDimension",
       "AnimationDurationObject": "primitives/layout/Collapsible/types/AnimationDurationObject",
       "AnimationDurations": "primitives/layout/Collapsible/types/AnimationDurations",
-      "ResizeHandleProps": "primitives/layout/ResizeHandle/types/ResizeHandleProps"
+      "ResizeHandleProps": "primitives/layout/ResizeHandle/types/ResizeHandleProps",
+      "SeparatorProps": "primitives/layout/Separator/types/SeparatorProps"
     }
   },
   "primitives/navigation": {

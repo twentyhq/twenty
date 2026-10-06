@@ -1,0 +1,70 @@
+---
+title: Separator
+description: Separate adjacent content with a horizontal or vertical divider.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SeparatorReference from '/snippets/ui/generated/layout/separator.mdx';
+
+`Separator` renders a `div` with `role="separator"` and an accessible orientation. It uses the Base UI separator contract, including native props, refs, and `render` composition. Import `SeparatorProps` from the same entry point.
+
+<StoryEmbed
+  storyId="ui-layout-separator--documentation"
+  title="Horizontal separator"
+/>
+
+## Usage
+
+```tsx
+import { Separator } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSources = () => (
+  <>
+    <Text>Import records from a CSV file.</Text>
+    <Separator />
+    <Text>Connect an external data source.</Text>
+  </>
+);
+```
+
+## Orientation and appearance
+
+`orientation` defaults to `horizontal`. Horizontal separators fill the available width and have vertical margins. Vertical separators stretch along their flex container and have horizontal margins. Give a standalone vertical separator a height. Use native `style` or `className` for spacing and line color. Base UI also accepts functions of the orientation for these props.
+
+<StoryEmbed
+  storyId="ui-layout-separator--vertical-documentation"
+  title="Vertical separator"
+/>
+
+## Labeled dividers
+
+Compose text and divider lines in a separate layout. Give the layout an accessible name and make the individual lines presentational.
+
+```tsx
+import { Separator } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LabeledDivider = () => (
+  <Text
+    role="separator"
+    aria-label="or"
+    style={{ display: 'flex', alignItems: 'center' }}
+  >
+    <Separator aria-hidden style={{ flex: 1, width: 'auto', margin: 0 }} />
+    <Text render={<span />} style={{ marginInline: 'var(--t-spacing-2)' }}>
+      or
+    </Text>
+    <Separator aria-hidden style={{ flex: 1, width: 'auto', margin: 0 }} />
+  </Text>
+);
+```
+
+## Migration
+
+Replace the former horizontal helper with `Separator`. Replace `noMargin` with `style={{ margin: 0 }}` and `color` with `style={{ backgroundColor: color }}`. Move `text` and `textPosition` into a labeled composition. Replace separators used only for invisible spacing with layout spacing.
+
+## Props
+
+<SeparatorReference />

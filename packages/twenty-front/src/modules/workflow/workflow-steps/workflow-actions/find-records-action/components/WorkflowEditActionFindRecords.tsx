@@ -3,7 +3,7 @@ import { isNumber } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -177,7 +177,7 @@ export const WorkflowEditActionFindRecords = ({
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
-        <HorizontalSeparator noMargin />
+        <Separator style={{ margin: 0 }} />
         {isDefined(selectedObjectMetadataItem) && (
           <div>
             <InputLabel>{t`Filter`}</InputLabel>

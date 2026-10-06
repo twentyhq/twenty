@@ -16,7 +16,7 @@ import { isNumber } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 
 type WaitForEventInput = WorkflowWaitForEventAction['settings']['input'];
 
@@ -180,7 +180,7 @@ export const WorkflowEditActionWaitForEvent = ({
             actionType="DATABASE_EVENT"
           />
         )}
-        <HorizontalSeparator noMargin />
+        <Separator style={{ margin: 0 }} />
         <FormNumberFieldInput
           label={t`Timeout days (Optional)`}
           defaultValue={timeoutDraft.days}

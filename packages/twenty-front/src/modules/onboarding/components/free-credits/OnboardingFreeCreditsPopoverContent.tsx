@@ -23,7 +23,7 @@ import {
   IconWand,
 } from 'twenty-ui/icon';
 import { MetricRow } from 'twenty-ui/components/data-display';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledContent = styled.div`
@@ -114,7 +114,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
       </StyledSection>
       {isNonEmptyArray(earnedCreditsByStep) && (
         <>
-          <HorizontalSeparator noMargin />
+          <Separator style={{ margin: 0 }} />
           <StyledSection>
             <StyledSectionTitle>{t`Breakdown`}</StyledSectionTitle>
             {earnedCreditsByStep.map(({ step, credits, rewardCredits }) => (
@@ -133,7 +133,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
           </StyledSection>
         </>
       )}
-      <HorizontalSeparator noMargin />
+      <Separator style={{ margin: 0 }} />
       <StyledSection>
         <StyledSectionTitle>
           {earnedCredits > 0
@@ -165,7 +165,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
           {t`Shared inbox emails`}
         </MetricRow>
       </StyledSection>
-      <HorizontalSeparator noMargin />
+      <Separator style={{ margin: 0 }} />
       <StyledFooter>
         <IconInfoCircle size={theme.icon.size.sm} />
         {t`Stacks on top of your plan and never expires`}

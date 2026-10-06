@@ -28,7 +28,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -257,10 +257,12 @@ export const WorkflowEditActionIfElseBody = ({
 
           return (
             <Fragment key={branch.id}>
-              {branchIndex > 0 && !isElse && <HorizontalSeparator noMargin />}
+              {branchIndex > 0 && !isElse && (
+                <Separator style={{ margin: 0 }} />
+              )}
               {isElse && !isReadonly && (
                 <>
-                  <HorizontalSeparator noMargin />
+                  <Separator style={{ margin: 0 }} />
                   <Button
                     startIcon={<IconPlus />}
                     size="sm"
