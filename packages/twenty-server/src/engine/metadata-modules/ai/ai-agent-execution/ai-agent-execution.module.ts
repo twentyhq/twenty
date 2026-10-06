@@ -2,23 +2,27 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentRunConversationModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/agent-run-conversation.module';
 import { AgentMessagePartResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message-part.resolver';
 import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message.resolver';
 import { AgentRunResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-run.resolver';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
+import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
+import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
@@ -30,12 +34,14 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 
 @Module({
   imports: [
+    AgentChatThreadLifecycleModule,
+    AgentChatThreadModule,
     AgentHistoryModule,
-    AgentRunConversationModule,
     AiBillingModule,
     AiModelsModule,
     AiAgentModule,
     ApplicationLookupModule,
+    CacheLockModule,
     FileUrlModule,
     MetricsModule,
     UserWorkspaceModule,
@@ -52,6 +58,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   providers: [
     AgentAsyncExecutorService,
     AgentActorContextService,
+    AgentCallerConversationService,
+    AgentRunConversationService,
     AiGraphqlApiExceptionInterceptor,
     AgentMessagePartResolver,
     AgentMessageResolver,
@@ -66,7 +74,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   exports: [
     AgentAsyncExecutorService,
     AgentActorContextService,
-    AgentRunConversationModule,
+    AgentCallerConversationService,
+    AgentRunConversationService,
     AgentRunnerService,
   ],
 })
