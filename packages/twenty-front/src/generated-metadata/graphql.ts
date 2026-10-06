@@ -781,6 +781,26 @@ export type Billing = {
   trialPeriods: Array<BillingTrialPeriod>;
 };
 
+export type BillingCreditTopUp = {
+  __typename?: 'BillingCreditTopUp';
+  /** All billing subscriptions */
+  billingSubscriptions: Array<BillingSubscription>;
+  /** Current billing subscription */
+  currentBillingSubscription: BillingSubscription;
+  /** Stripe page where the customer completes a payment that needs their action */
+  hostedInvoiceUrl?: Maybe<Scalars['String']['output']>;
+  status: BillingInvoicePaymentStatus;
+};
+
+export type BillingCreditTopUpOffer = {
+  __typename?: 'BillingCreditTopUpOffer';
+  /** Price before tax, in cents */
+  amountCents: Scalars['Float']['output'];
+  /** Credits added to the workspace */
+  creditAmount: Scalars['Float']['output'];
+  currency: Scalars['String']['output'];
+};
+
 export type BillingCustomer = {
   __typename?: 'BillingCustomer';
   hasPaymentMethod?: Maybe<Scalars['Boolean']['output']>;
@@ -814,6 +834,13 @@ export enum BillingEntitlementKey {
   RLS = 'RLS',
   SSO = 'SSO',
   USAGE_LIMIT = 'USAGE_LIMIT'
+}
+
+/** Where the payment of a one-off invoice stands */
+export enum BillingInvoicePaymentStatus {
+  PAID = 'PAID',
+  PROCESSING = 'PROCESSING',
+  REQUIRES_ACTION = 'REQUIRES_ACTION'
 }
 
 export type BillingLicensedProduct = BillingProductDto & {
@@ -3234,6 +3261,7 @@ export type Mutation = {
   markAgentChatThreadAsRead: AgentChatThreadParticipant;
   markAgentChatThreadAsUnread: AgentChatThreadParticipant;
   moveAgentChatThreadToInbox: AgentChatThreadParticipant;
+  purchaseCreditTopUp: BillingCreditTopUp;
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
   removeQueryFromEventStream: Scalars['Boolean']['output'];
@@ -4082,6 +4110,12 @@ export type MutationMarkAgentChatThreadAsUnreadArgs = {
 
 export type MutationMoveAgentChatThreadToInboxArgs = {
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationPurchaseCreditTopUpArgs = {
+  creditAmount: Scalars['Float']['input'];
+  idempotencyKey: Scalars['UUID']['input'];
 };
 
 
@@ -5313,6 +5347,7 @@ export type Query = {
   getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON']['output'];
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
+  getCreditTopUpOffers: Array<BillingCreditTopUpOffer>;
   getEmailingDomains: Array<EmailingDomain>;
   getInviteSuggestions: Array<InviteSuggestion>;
   getJobs: Array<JobStatus>;

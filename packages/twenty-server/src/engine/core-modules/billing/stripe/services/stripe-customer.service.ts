@@ -86,6 +86,20 @@ export class StripeCustomerService {
     });
   }
 
+  async getAutomaticTaxStatus(
+    stripeCustomerId: string,
+  ): Promise<Stripe.Customer.Tax.AutomaticTax | null> {
+    const customer = await this.stripe.customers.retrieve(stripeCustomerId, {
+      expand: ['tax'],
+    });
+
+    if ('deleted' in customer && customer.deleted === true) {
+      return null;
+    }
+
+    return customer.tax?.automatic_tax ?? null;
+  }
+
   async setDefaultPaymentMethod({
     stripeCustomerId,
     stripePaymentMethodId,
