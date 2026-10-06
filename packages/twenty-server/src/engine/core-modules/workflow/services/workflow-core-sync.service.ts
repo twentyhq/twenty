@@ -561,6 +561,10 @@ export class WorkflowCoreSyncService {
         },
       },
     });
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'workflowAutomatedTriggerMaps',
+    ]);
   }
 
   async findCoreWorkflowById(

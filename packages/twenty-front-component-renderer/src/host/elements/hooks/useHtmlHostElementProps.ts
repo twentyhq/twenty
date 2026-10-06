@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
 import { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
+import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 import { useComposedElementRef } from '@/host/elements/hooks/useComposedElementRef';
 import { useGeometryNodeRef } from '@/host/geometry/hooks/useGeometryNodeRef';
@@ -30,12 +31,18 @@ export const useHtmlHostElementProps = ({
   htmlTag: string;
 }): HtmlHostElementProps => {
   const setEditableFocused = useContext(FrontComponentInputFocusContext);
+  const geometryTracker = useContext(FrontComponentGeometryTrackerContext);
 
   const remoteElementId = getRemoteElementIdFromProps(props);
 
   const { reactUnsupportedEventHandlers, reactBindableProps } =
     extractReactUnsupportedEventHandlers(
-      buildHostReactPropsFromRemoteProps(props, htmlTag),
+      buildHostReactPropsFromRemoteProps({
+        remoteProps: props,
+        htmlTag,
+        findRemoteElementIdContainingNode:
+          geometryTracker?.findRemoteElementIdContainingNode,
+      }),
     );
 
   const reactUnsupportedEventListenerRef = useReactUnsupportedEventListenerRef(
