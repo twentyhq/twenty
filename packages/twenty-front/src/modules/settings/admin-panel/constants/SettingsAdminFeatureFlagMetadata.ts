@@ -42,9 +42,17 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`AI chat sharing dropdown`,
     description: msg`Show the sharing dropdown on AI conversations when record sharing is enabled.`,
   },
+  [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: {
+    label: msg`Initial object views`,
+    description: msg`Use a dedicated initial view for each object in navigation and the view picker.`,
+  },
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: {
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
+  },
+  [FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED]: {
+    label: msg`Record sharing visibility`,
+    description: msg`Apply record sharing visibility rules when accessing records.`,
   },
   [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
     label: msg`Deferred workspace migration actions`,
