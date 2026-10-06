@@ -1,0 +1,63 @@
+---
+title: DirectionProvider
+description: Coordinate directional keyboard and pointer interactions with the document direction.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import DirectionProviderReference from '/snippets/ui/generated/layout/direction-provider.mdx';
+
+`DirectionProvider` supplies `ltr` or `rtl` direction to Twenty UI controls. It does not render a DOM element or set an HTML `dir` attribute. Set both the provider direction and the matching document direction.
+
+<StoryEmbed
+  storyId="ui-input-segmentedcontrol--right-to-left-documentation"
+  title="DirectionProvider example"
+/>
+
+## Usage
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/primitives/input';
+import { DirectionProvider } from 'twenty-ui/primitives/layout';
+
+type DirectionalChoicesProps = { direction: 'ltr' | 'rtl' };
+
+export const DirectionalChoices = ({ direction }: DirectionalChoicesProps) => (
+  <DirectionProvider direction={direction}>
+    <div dir={direction}>
+      <SegmentedControl
+        aria-label="Billing period"
+        defaultValue="annual"
+        options={[
+          { label: 'Annual', value: 'annual' },
+          { label: 'Monthly', value: 'monthly' },
+        ]}
+      />
+    </div>
+  </DirectionProvider>
+);
+```
+
+The host application supplies translated labels and chooses the direction. Direction context affects directional interactions; the HTML attribute handles text and layout. For example, [SegmentedControl](/ui/primitives/input/segmented-control) reverses horizontal arrow navigation, and [ResizeHandle](/ui/primitives/layout/resize-handle) reverses horizontal resizing.
+
+## Scope and state
+
+Place one provider around the controls that share a direction. Nested providers can override the direction for a subtree; pair each override with a matching `dir` attribute. `direction` is application-owned and defaults to `ltr`, matching Base UI. Children are optional. Import `DirectionProviderProps` from the same entry point. The provider has no DOM target, native props, or ref. The provider does not translate content or choose direction from the locale automatically.
+
+## Portals and layout
+
+Menu, Dropdown, Popover, Tooltip, Select, Dialog, and Toast portals carry the provider direction even when their container is outside the element with `dir`. Without a provider they inherit the direction of their container. Keep the provider direction and the trigger's HTML direction consistent. A scoped `ThemeProvider` continues to own the default portal container.
+
+Submenus open toward `inline-end`. ArrowRight opens a submenu in LTR; ArrowLeft opens it in RTL. The opposite key returns to the parent. Explicit `left` and `right` popup placement still mean physical sides. Collision handling can move a popup when space is limited.
+
+Text, indentation, attached button corners, and directional disclosure icons follow reading direction. Supplied icons retain their orientation. `AvatarGroup.overlap` still names a physical edge; the outer avatar does not extend beyond that edge in either direction.
+
+<StoryEmbed
+  storyId="ui-layout-directionprovider--reading-directions"
+  title="Light and dark reading directions"
+  height={1500}
+/>
+
+## Props
+
+<DirectionProviderReference />

@@ -1,0 +1,10 @@
+export const EXIT_CODE = {
+  SUCCESS: 0,
+  FAILURE: 1,
+  USAGE: 2,
+  AUTHENTICATION: 3,
+  NOT_FOUND: 4,
+  PARTIAL_FAILURE: 5,
+  CONFLICT: 6,
+  CANCELLED: 130,
+} as const;

@@ -39,7 +39,7 @@
     "Tabs",
     "Tag",
     "Text",
-    "TextDirectionProvider",
+    "DirectionProvider",
     "Textarea",
     "Tooltip",
     "VisibilityHidden"

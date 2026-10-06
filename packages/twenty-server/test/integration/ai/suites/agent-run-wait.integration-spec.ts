@@ -39,8 +39,8 @@ const agentResult = (
     ...overrides,
   }) as AgentExecutionResult;
 
-const waitingResult = () => {
-  const resumeAt = new Date(Date.now() + 1_000).toISOString();
+const waitingResult = (resumeInMs = 1_000) => {
+  const resumeAt = new Date(Date.now() + resumeInMs).toISOString();
   const output = {
     success: true,
     message: `Waiting until ${resumeAt}.`,
@@ -252,7 +252,8 @@ describe('agent runs that wait (integration)', () => {
   });
 
   it('drops a waiting triggered run once its trigger is turned off', async () => {
-    const executeAgent = mockAgent(waitingResult(), replyingResult);
+    // far enough that the wait cannot elapse before the trigger is turned off
+    const executeAgent = mockAgent(waitingResult(60 * 60_000), replyingResult);
 
     await runTrigger();
 

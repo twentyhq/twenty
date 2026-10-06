@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { FlatWorkflowModule } from 'src/engine/metadata-modules/flat-workflow/flat-workflow.module';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
+import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -15,11 +17,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     ApplicationModule,
+    CacheLockModule,
     WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([WorkflowEntity, WorkspaceEntity]),
     WorkspaceCacheModule,
     FlatWorkflowModule,
+    WorkflowVersionCoreModule,
   ],
   providers: [
     WorkflowCoreSyncService,

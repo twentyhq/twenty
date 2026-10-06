@@ -14,6 +14,8 @@ import {
   Status,
   Tag,
 } from 'twenty-ui/primitives/data-display';
+import { isDefined } from 'twenty-shared/utils';
+import 'twenty-ui/style.css';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
@@ -43,7 +45,36 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'ColorSample',
-    node: <ColorSample colorName="blue" />,
+    node: (
+      <ColorSample
+        colorName="blue"
+        role="img"
+        aria-label="Brand blue"
+        className="custom-swatch"
+        style={{ width: 24 }}
+        render={<span data-composed="true" />}
+        ref={(element) => {
+          if (isDefined(element)) {
+            element.dataset.refTag = element.tagName;
+          }
+        }}
+      />
+    ),
+  },
+  {
+    name: 'DecorativeColorSample',
+    node: <ColorSample colorName="red" aria-hidden="true" />,
+  },
+  {
+    name: 'CircleColorSample',
+    node: (
+      <ColorSample
+        colorName="green"
+        variant="circle"
+        role="img"
+        aria-label="Green"
+      />
+    ),
   },
   {
     name: 'CommandBlock',

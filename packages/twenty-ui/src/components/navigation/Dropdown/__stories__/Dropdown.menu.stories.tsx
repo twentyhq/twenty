@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
-import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
 
 import { Dropdown } from '../Dropdown';
@@ -42,7 +42,7 @@ const openRecordActions = async (canvasElement: HTMLElement) => {
 };
 
 const SubmenuTextEditing = ({ direction }: { direction: 'ltr' | 'rtl' }) => (
-  <TextDirectionProvider direction={direction}>
+  <DirectionProvider direction={direction}>
     <Dropdown.Root type="menu">
       <Dropdown.Trigger>Filters</Dropdown.Trigger>
       <Dropdown.Content aria-label="Filters">
@@ -57,7 +57,7 @@ const SubmenuTextEditing = ({ direction }: { direction: 'ltr' | 'rtl' }) => (
         </Dropdown.Submenu>
       </Dropdown.Content>
     </Dropdown.Root>
-  </TextDirectionProvider>
+  </DirectionProvider>
 );
 
 const playSubmenuTextEditing =
