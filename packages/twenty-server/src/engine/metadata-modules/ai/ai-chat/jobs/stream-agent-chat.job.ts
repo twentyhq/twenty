@@ -2,6 +2,9 @@ import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { findAwaitingCallText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-awaiting-call-text.util';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
+import { mapAgentChatTurnOutcomeToTurnStatus } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-agent-chat-turn-outcome-to-turn-status.util';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Logger, Scope } from '@nestjs/common';
@@ -30,9 +33,7 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
-import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
-import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-agent-turn-usage-from-steps.util';
 import {
   AiException,
   AiExceptionCode,
@@ -108,6 +109,7 @@ export class StreamAgentChatJob {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
     private readonly sharingService: AgentChatSharingService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -197,6 +199,19 @@ export class StreamAgentChatJob {
           'Message turn not found',
           AiExceptionCode.MESSAGE_NOT_FOUND,
         );
+      }
+
+      const isRunning = await this.turnRecorderService.markRunning({
+        workspaceId: data.workspaceId,
+        turnId,
+        modelId: turnModelId,
+        createdBy: buildActorMetadataFromAuthContext(authorization.authContext),
+        streamClaim: { threadId: data.threadId, streamId: data.streamId },
+      });
+
+      // the stream was stopped while starting, and its turn already ended
+      if (!isRunning) {
+        return;
       }
 
       const titlePromise = data.hasTitle
@@ -634,25 +649,10 @@ export class StreamAgentChatJob {
     usageTotals: StreamUsageTotals;
   }) {
     if (part.type === 'finish-step') {
-      const stepCacheCreationTokens = extractCacheCreationTokens(
-        part.providerMetadata,
+      Object.assign(
+        usageTotals,
+        addStepToAgentTurnUsage(modelConfig, usageTotals, part),
       );
-      const stepBreakdown = computeStepCostBreakdown(modelConfig, {
-        usage: part.usage,
-        cacheCreationTokens: stepCacheCreationTokens,
-      });
-
-      usageTotals.inputTokens += stepBreakdown.tokenCounts.totalInputTokens;
-      usageTotals.outputTokens += part.usage?.outputTokens ?? 0;
-      usageTotals.inputCredits += convertDollarsToCreditsMicro(
-        stepBreakdown.inputCostInDollars,
-      );
-      usageTotals.outputCredits += convertDollarsToCreditsMicro(
-        stepBreakdown.outputCostInDollars,
-      );
-      usageTotals.cacheReadTokens +=
-        stepBreakdown.tokenCounts.cachedInputTokens;
-      usageTotals.cacheCreationTokens += stepCacheCreationTokens;
       usageTotals.conversationSize = part.usage?.inputTokens ?? 0;
     }
 
@@ -734,6 +734,8 @@ export class StreamAgentChatJob {
       });
     }
 
+    await this.recordTurnUsage({ workspaceId, threadId, turnId, usageTotals });
+
     if (isDefined(streamError)) {
       return null;
     }
@@ -746,6 +748,15 @@ export class StreamAgentChatJob {
     });
 
     if (responseMessage.parts.length === 0) {
+      await this.finishTurn({
+        workspaceId,
+        turnId,
+        threadId,
+        streamId,
+        outcome,
+        turnModelId,
+      });
+
       return outcome;
     }
 
@@ -774,12 +785,6 @@ export class StreamAgentChatJob {
         ? { lastMessageText: replyText }
         : null,
       usage: {
-        totalInputTokens: usageTotals.inputTokens,
-        totalOutputTokens: usageTotals.outputTokens,
-        totalInputCredits: usageTotals.inputCredits,
-        totalOutputCredits: usageTotals.outputCredits,
-        totalCacheReadTokens: usageTotals.cacheReadTokens,
-        totalCacheCreationTokens: usageTotals.cacheCreationTokens,
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: usageTotals.conversationSize,
         pendingQuestionMessageId: isAwaitingAnswer ? assistantMessageId : null,
@@ -809,6 +814,15 @@ export class StreamAgentChatJob {
 
     this.isAwaitingInput = isAwaitingAnswer;
 
+    await this.finishTurn({
+      workspaceId,
+      turnId,
+      threadId,
+      streamId,
+      outcome,
+      turnModelId,
+    });
+
     await this.agentChatService.notifyThreadUsageUpdated({
       threadBefore: threadBeforeUsage,
       workspaceMemberId,
@@ -816,6 +830,63 @@ export class StreamAgentChatJob {
     });
 
     return outcome;
+  }
+
+  // Usage is recorded on its own: a failure to count it must not fail a reply already saved
+  private async recordTurnUsage({
+    workspaceId,
+    threadId,
+    turnId,
+    usageTotals,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId: string;
+    usageTotals: StreamUsageTotals;
+  }): Promise<void> {
+    await this.turnRecorderService
+      .recordUsage({
+        workspaceId,
+        threadId,
+        turnId,
+        usage: {
+          inputTokens: usageTotals.inputTokens,
+          outputTokens: usageTotals.outputTokens,
+          cacheReadTokens: usageTotals.cacheReadTokens,
+          cacheCreationTokens: usageTotals.cacheCreationTokens,
+          inputCredits: usageTotals.inputCredits,
+          outputCredits: usageTotals.outputCredits,
+        },
+      })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not record the usage of turn ${turnId}: ${formatErrorWithCause(error)}`,
+        ),
+      );
+  }
+
+  private async finishTurn({
+    workspaceId,
+    turnId,
+    threadId,
+    streamId,
+    outcome,
+    turnModelId,
+  }: {
+    workspaceId: string;
+    turnId: string;
+    threadId: string;
+    streamId: string;
+    outcome: AgentChatTurnOutcome;
+    turnModelId: string;
+  }): Promise<void> {
+    await this.turnRecorderService.finish({
+      workspaceId,
+      turnId,
+      ...mapAgentChatTurnOutcomeToTurnStatus(outcome),
+      modelId: turnModelId,
+      streamClaim: { threadId, streamId },
+    });
   }
 
   private logAssistantTurnWithoutText({

@@ -369,10 +369,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     'bills the core-owned spender mapping (mirrorless=%s)',
     async (mirrorless) => {
       const fixture = await createFixture({ mirrorless });
-      const consume = jest.spyOn(
-        global.workflowTestServices.quota,
-        'consumeQuota',
-      );
+      const charge = jest.spyOn(global.workflowTestServices.quota, 'charge');
 
       await waitForRun(await runFixture(fixture), 'COMPLETED');
 
@@ -381,15 +378,17 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         [workspaceId],
       );
 
-      expect(consume).toHaveBeenCalledWith(
-        expect.objectContaining({
-          workspaceId,
-          spenders: {
-            workflowId: fixture.workflowId ?? fixture.coreWorkflowId,
-            applicationId: workspace.workspaceCustomApplicationId,
-          },
-        }),
-      );
+      expect(charge).toHaveBeenCalledWith({
+        workspaceId,
+        events: [
+          expect.objectContaining({
+            spenders: {
+              workflowId: fixture.workflowId ?? fixture.coreWorkflowId,
+              applicationId: workspace.workspaceCustomApplicationId,
+            },
+          }),
+        ],
+      });
     },
   );
 
@@ -787,15 +786,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   }) => submitFormStep({ workflowRunId: runId, stepId, response: { answer } });
 
   describe('submitting a form step', () => {
-    const countRunConversations = async (runId: string) => {
-      const [{ count }] = await global.testDataSource.query(
-        `SELECT COUNT(*)::int AS count FROM "${schema}"."agentChatThread" WHERE "workflowRunId" = $1`,
-        [runId],
-      );
-
-      return count;
-    };
-
     it('waits without a conversation and completes with the submitted values', async () => {
       const finalStep = emptyStep();
       const form = formStep([finalStep.id]);
@@ -810,7 +800,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect((await getRun(runId)).state.stepInfos[form.id].threadId).toBe(
         undefined,
       );
-      expect(await countRunConversations(runId)).toBe(0);
 
       const response = await submitForm({
         runId,
@@ -825,7 +814,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(run.state.stepInfos[form.id].result).toEqual({
         answer: 'Approved',
       });
-      expect(await countRunConversations(runId)).toBe(0);
     });
 
     it('refuses values for fields the form does not have', async () => {
@@ -1020,6 +1008,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           input: {
             prompt: 'Draft the quote',
             humanInputInstructions: 'Ask before choosing a plan.',
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
           },
         },
       }) as WorkflowAction;
@@ -1145,7 +1134,22 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         response: { selectedOptionIndices: [0] },
       });
 
-    it('records no conversation for an agent that answers without asking', async () => {
+    const getInboxState = async (threadId: string) => {
+      const [state] = await global.testDataSource.query(
+        `SELECT thread."workspaceMemberId", thread."lastMessageText",
+           participant."archivedAt" IS NOT NULL AS "isArchived",
+           thread."lastActivityAt" > participant."archivedAt" AS "isBackInInbox"
+         FROM "${schema}"."agentChatThread" thread
+         LEFT JOIN "${schema}"."agentChatThreadParticipant" participant
+           ON participant."threadId" = thread.id AND participant."workspaceMemberId" = thread."workspaceMemberId"
+         WHERE thread.id = $1`,
+        [threadId],
+      );
+
+      return state;
+    };
+
+    it('records the conversation of an agent that answers without asking, filed under done', async () => {
       jest
         .spyOn(
           getAppProviderByClassName<AgentAsyncExecutorService>(
@@ -1160,22 +1164,61 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const runId = await runFixture(fixture);
 
       const run = await waitForRun(runId, 'COMPLETED');
+      const threadId: string = run.state.stepInfos[agent.id].threadId;
 
       expect(run.state.stepInfos[agent.id]).toMatchObject({
         status: 'SUCCESS',
         result: { response: 'Quote sent' },
       });
-      expect(run.state.stepInfos[agent.id].threadId).toBeUndefined();
-
-      const threads = await global.testDataSource.query(
-        `SELECT id FROM "${schema}"."agentChatThread" WHERE "workflowRunId" = $1`,
-        [runId],
-      );
-
-      expect(threads).toEqual([]);
+      expect(await getInboxState(threadId)).toMatchObject({
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        isArchived: true,
+        isBackInInbox: false,
+      });
+      expect(
+        (await getConversation(threadId)).messages.map(
+          ({ role }: { role: string }) => role,
+        ),
+      ).toEqual(['user', 'assistant']);
     });
 
-    it("routes the waiting conversation to the workflow creator's inbox", async () => {
+    it('continues the conversation its key names across runs', async () => {
+      const executeAgent = jest
+        .spyOn(
+          getAppProviderByClassName<AgentAsyncExecutorService>(
+            'AgentAsyncExecutorService',
+          ),
+          'executeAgent',
+        )
+        .mockResolvedValueOnce(replyingResult)
+        .mockResolvedValueOnce(replyingResult);
+      const agent = {
+        ...agentStep([]),
+        settings: {
+          ...agentStep([]).settings,
+          input: {
+            ...agentStep([]).settings.input,
+            conversation: { scope: 'KEY', key: 'quotes' },
+          },
+        },
+      } as WorkflowAction;
+      const fixture = await createFixture({ steps: [agent] });
+
+      const firstRun = await waitForRun(await runFixture(fixture), 'COMPLETED');
+      const secondRun = await waitForRun(
+        await runFixture(fixture),
+        'COMPLETED',
+      );
+      const threadId: string = firstRun.state.stepInfos[agent.id].threadId;
+
+      expect(secondRun.state.stepInfos[agent.id].threadId).toBe(threadId);
+      expect(executeAgent.mock.calls[0][0].priorMessages).toEqual([]);
+      expect(
+        JSON.stringify(executeAgent.mock.calls[1][0].priorMessages),
+      ).toContain('Quote sent');
+    });
+
+    it("routes the waiting conversation to the workflow creator's inbox when the step names no recipient", async () => {
       mockAgent();
       const [creator] = await global.testDataSource.query(
         `SELECT membership.id AS "userWorkspaceId", member.id AS "workspaceMemberId"
@@ -1184,7 +1227,16 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
          WHERE membership."workspaceId" = $1 AND membership."deletedAt" IS NULL AND member.id = $2`,
         [workspaceId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
       );
-      const agent = agentStep([]);
+      const agent = {
+        ...agentStep([]),
+        settings: {
+          ...agentStep([]).settings,
+          input: {
+            ...agentStep([]).settings.input,
+            workspaceMemberId: undefined,
+          },
+        },
+      } as WorkflowAction;
       const fixture = await createFixture({ steps: [agent] });
 
       await global.testDataSource.query(
@@ -1194,35 +1246,38 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       const runId = await runFixture(fixture);
       const run = await waitForStep(runId, agent.id, 'PENDING');
-      const [conversation] = await global.testDataSource.query(
-        `SELECT "workspaceMemberId", "workflowRunId", "lastActivityAt", "lastMessageText" FROM "${schema}"."agentChatThread" WHERE id = $1`,
-        [run.state.stepInfos[agent.id].threadId],
-      );
+      const threadId: string = run.state.stepInfos[agent.id].threadId;
 
-      expect(conversation).toMatchObject({
+      expect(await getInboxState(threadId)).toMatchObject({
         workspaceMemberId: creator.workspaceMemberId,
-        workflowRunId: runId,
         lastMessageText: agent.name,
+        isArchived: true,
+        isBackInInbox: true,
       });
-      expect(conversation.lastActivityAt).not.toBeNull();
 
       const readByAnotherMember = await request(`http://localhost:${APP_PORT}`)
         .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
         .send({
           query: `query ReadRunConversation($threadId: UUID!) { chatMessages(threadId: $threadId) { role } }`,
-          variables: { threadId: run.state.stepInfos[agent.id].threadId },
+          variables: { threadId },
         });
 
-      expect(readByAnotherMember.body.errors).toBeUndefined();
-      expect(readByAnotherMember.body.data.chatMessages.length).toBeGreaterThan(
-        0,
-      );
+      expect(readByAnotherMember.body.errors).toBeDefined();
     });
 
     it('keeps the conversation of a workflow without a member creator off every inbox', async () => {
       mockAgent();
-      const agent = agentStep([]);
+      const agent = {
+        ...agentStep([]),
+        settings: {
+          ...agentStep([]).settings,
+          input: {
+            ...agentStep([]).settings.input,
+            workspaceMemberId: undefined,
+          },
+        },
+      } as WorkflowAction;
       const fixture = await createFixture({ steps: [agent] });
 
       await global.testDataSource.query(

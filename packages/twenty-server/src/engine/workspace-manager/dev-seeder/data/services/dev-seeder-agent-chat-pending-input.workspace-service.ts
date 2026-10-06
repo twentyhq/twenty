@@ -33,6 +33,7 @@ import { proposeRecordCall } from 'src/engine/workspace-manager/dev-seeder/data/
 import { requestFormCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/request-form-call.util';
 import { type SeededEmail } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-email.type';
 import { type SeededToolCall } from 'src/engine/workspace-manager/dev-seeder/data/utils/seeded-tool-call.type';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
 const AGENT_CHAT_PENDING_INPUT_SEED_NAMESPACE =
   '3c7e1f52-8a4d-4b0e-9d61-2f5a7c9e0b14';
@@ -422,6 +423,9 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       id: questionTurnId,
       threadId,
       agentId: null,
+      status: isDefined(conversation.answer)
+        ? AgentTurnStatus.COMPLETED
+        : AgentTurnStatus.WAITING_FOR_INPUT,
     });
 
     await this.conversationWriterService.insertMessage({
@@ -494,6 +498,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       id: answerTurnId,
       threadId,
       agentId: null,
+      status: AgentTurnStatus.COMPLETED,
     });
 
     await this.conversationWriterService.insertMessage({
