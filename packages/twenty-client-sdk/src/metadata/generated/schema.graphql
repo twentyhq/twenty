@@ -192,6 +192,8 @@ enum EngineComponentKey {
   MARK_AI_CHAT_AS_DONE
   REOPEN_AI_CHAT
   SNOOZE_AI_CHAT
+  SUBSCRIBE_TO_AI_CHAT
+  UNSUBSCRIBE_FROM_AI_CHAT
   NAVIGATION
   TRIGGER_WORKFLOW_VERSION
   FRONT_COMPONENT_RENDERER
@@ -3563,6 +3565,7 @@ type SendChatMessageResult {
   messageId: String
   queued: Boolean!
   streamId: String
+  mentionedParticipantWorkspaceMemberIds: [UUID!]
 }
 
 type AgentChatThreadParticipant {
@@ -3571,6 +3574,8 @@ type AgentChatThreadParticipant {
   lastReadAt: DateTime
   archivedAt: DateTime
   snoozedUntil: DateTime
+  isSubscribed: Boolean!
+  lastMentionedAt: DateTime
   updatedAt: DateTime!
 }
 
@@ -4363,7 +4368,7 @@ type Mutation {
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   createChatThread: AgentChatThread!
-  sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
+  sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
@@ -4372,6 +4377,8 @@ type Mutation {
   archiveAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
   snoozeAgentChatThread(threadId: UUID!, snoozedUntil: DateTime!): AgentChatThreadParticipant!
   moveAgentChatThreadToInbox(threadId: UUID!): AgentChatThreadParticipant!
+  subscribeToAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
+  unsubscribeFromAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
   addAgentChatThreadParticipants(threadId: UUID!, workspaceMemberIds: [UUID!]!): [UUID!]!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
