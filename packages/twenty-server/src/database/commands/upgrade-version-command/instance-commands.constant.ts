@@ -225,6 +225,7 @@ import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/comm
 import { RenameUsageLimitMeterToUnitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791186790123-rename-usage-limit-meter-to-unit';
 import { AddUpgradeMigrationWorkspaceIdCreatedAtIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791215192958-add-upgrade-migration-workspace-id-created-at-index';
 import { DropAgentEvaluationInputsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791216099453-drop-agent-evaluation-inputs';
+import { AddTriggersToAgentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791219100450-add-triggers-to-agent';
 import { AddDiscoverableReadabilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791227801821-add-discoverable-readability';
 
 export const INSTANCE_COMMANDS = [
@@ -453,5 +454,6 @@ export const INSTANCE_COMMANDS = [
   RenameUsageLimitMeterToUnitFastInstanceCommand,
   AddUpgradeMigrationWorkspaceIdCreatedAtIndexFastInstanceCommand,
   DropAgentEvaluationInputsFastInstanceCommand,
+  AddTriggersToAgentFastInstanceCommand,
   AddDiscoverableReadabilityFastInstanceCommand,
 ];
