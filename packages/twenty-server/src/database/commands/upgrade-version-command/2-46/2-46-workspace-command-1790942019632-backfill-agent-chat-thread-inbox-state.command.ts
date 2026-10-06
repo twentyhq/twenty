@@ -70,10 +70,12 @@ const backfillAgentChatThreadInboxState = async ({
   manager,
   workspaceId,
   threadObjectMetadataId,
+  participantObjectMetadataId,
 }: {
   manager: EntityManager;
   workspaceId: string;
   threadObjectMetadataId: string;
+  participantObjectMetadataId: string;
 }) => {
   const tables = getBackfillTables(workspaceId);
 
@@ -183,6 +185,17 @@ const backfillAgentChatThreadInboxState = async ({
     ],
   );
 
+  // The participant object is PRIVATE: each row is granted to its member, and
+  // only them
+  await manager.query(
+    `INSERT INTO ${tables.recordShare}
+       ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
+     SELECT $1, participant.id, participant."workspaceMemberId", 'WORKSPACE_MEMBER', 'FULL', 'OWNER', participant.id
+     FROM ${tables.participant} participant
+     ON CONFLICT DO NOTHING`,
+    [participantObjectMetadataId],
+  );
+
   return {
     threadCount,
     participantCount: participants.length,
@@ -227,11 +240,29 @@ const moveRestoredArchivedChatThreadsBackToTrash = async ({
   return movedCount;
 };
 
+const deleteParticipantOwnerShares = async ({
+  manager,
+  workspaceId,
+  participantObjectMetadataId,
+}: {
+  manager: EntityManager;
+  workspaceId: string;
+  participantObjectMetadataId: string;
+}): Promise<void> => {
+  const tables = getBackfillTables(workspaceId);
+
+  await manager.query(
+    `DELETE FROM ${tables.recordShare}
+     WHERE "objectMetadataId" = $1 AND "rowCause" = 'OWNER'`,
+    [participantObjectMetadataId],
+  );
+};
+
 @RegisteredWorkspaceCommand('2.46.0', 1790942019632)
 @Command({
   name: 'upgrade:2-46:backfill-agent-chat-thread-inbox-state',
   description:
-    'Backfill the last activity of chat threads, mark existing chats read for their members and turn chats archived before 2.44 into per-member archives',
+    'Backfill the last activity of chat threads, mark existing chats read for their members, grant each participant row to its member and turn chats archived before 2.44 into per-member archives',
 })
 export class BackfillAgentChatThreadInboxStateCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -247,10 +278,10 @@ export class BackfillAgentChatThreadInboxStateCommand extends ProvisionedWorkspa
   }
 
   async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
-    const threadObjectMetadataId =
-      await this.findThreadObjectMetadataIdIfProvisioned(workspaceId);
+    const objectMetadataIds =
+      await this.findObjectMetadataIdsIfProvisioned(workspaceId);
 
-    if (!isDefined(threadObjectMetadataId)) {
+    if (!isDefined(objectMetadataIds)) {
       return;
     }
 
@@ -267,7 +298,7 @@ export class BackfillAgentChatThreadInboxStateCommand extends ProvisionedWorkspa
         backfillAgentChatThreadInboxState({
           manager,
           workspaceId,
-          threadObjectMetadataId,
+          ...objectMetadataIds,
         }),
       );
 
@@ -277,10 +308,10 @@ export class BackfillAgentChatThreadInboxStateCommand extends ProvisionedWorkspa
   }
 
   async down({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
-    const threadObjectMetadataId =
-      await this.findThreadObjectMetadataIdIfProvisioned(workspaceId);
+    const objectMetadataIds =
+      await this.findObjectMetadataIdsIfProvisioned(workspaceId);
 
-    if (!isDefined(threadObjectMetadataId)) {
+    if (!isDefined(objectMetadataIds)) {
       return;
     }
 
@@ -292,8 +323,21 @@ export class BackfillAgentChatThreadInboxStateCommand extends ProvisionedWorkspa
       return;
     }
 
-    const movedCount = await this.storage.run(workspaceId, ({ manager }) =>
-      moveRestoredArchivedChatThreadsBackToTrash({ manager, workspaceId }),
+    const movedCount = await this.storage.run(
+      workspaceId,
+      async ({ manager }) => {
+        await deleteParticipantOwnerShares({
+          manager,
+          workspaceId,
+          participantObjectMetadataId:
+            objectMetadataIds.participantObjectMetadataId,
+        });
+
+        return moveRestoredArchivedChatThreadsBackToTrash({
+          manager,
+          workspaceId,
+        });
+      },
     );
 
     this.logger.log(
@@ -301,9 +345,10 @@ export class BackfillAgentChatThreadInboxStateCommand extends ProvisionedWorkspa
     );
   }
 
-  private async findThreadObjectMetadataIdIfProvisioned(
-    workspaceId: string,
-  ): Promise<string | undefined> {
+  private async findObjectMetadataIdsIfProvisioned(workspaceId: string): Promise<
+    | { threadObjectMetadataId: string; participantObjectMetadataId: string }
+    | undefined
+  > {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -326,6 +371,9 @@ export class BackfillAgentChatThreadInboxStateCommand extends ProvisionedWorkspa
       return undefined;
     }
 
-    return threadObject.id;
+    return {
+      threadObjectMetadataId: threadObject.id,
+      participantObjectMetadataId: participantObject.id,
+    };
   }
 }
