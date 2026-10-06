@@ -20,7 +20,7 @@ import { WorkflowHandleStaledRunsJob } from 'src/modules/workflow/workflow-runne
 import { WorkflowRunEnqueueJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-run-enqueue.job';
 import { WorkflowHandleStaledRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-handle-staled-runs.workspace-service';
 import { WorkflowRunEnqueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-enqueue.workspace-service';
-import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
+import { WorkflowThrottlingModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-throttling.module';
 
 @Module({
   imports: [
@@ -31,9 +31,9 @@ import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflo
     MetricsModule,
     ThrottlerModule,
     WorkflowRunModule,
+    WorkflowThrottlingModule,
   ],
   providers: [
-    WorkflowThrottlingWorkspaceService,
     WorkflowRunEnqueueCronJob,
     WorkflowRunEnqueueCronCommand,
     WorkflowRunEnqueueWorkspaceService,
@@ -48,7 +48,7 @@ import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflo
     WorkflowCleanWorkflowRunsCronCommand,
   ],
   exports: [
-    WorkflowThrottlingWorkspaceService,
+    WorkflowThrottlingModule,
     WorkflowRunEnqueueJob,
     WorkflowRunEnqueueCronJob,
     WorkflowRunEnqueueCronCommand,
