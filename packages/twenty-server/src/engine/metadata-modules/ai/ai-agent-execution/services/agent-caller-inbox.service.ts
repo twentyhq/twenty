@@ -6,13 +6,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
+import { type ProposedToolCallAnswer } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/proposed-tool-call-answer.type';
 import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import { findMissingRequiredToolArguments } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-missing-required-tool-arguments.util';
 import { readProposedToolCallAnswer } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-proposed-tool-call-answer.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
-import { type AgentCallerInboxDelivery } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-caller-inbox-delivery.type';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
@@ -30,6 +30,15 @@ type AgentCallerAwaitedToolCall = {
   arguments: Record<string, unknown>;
   caller: AgentRunCaller;
 };
+
+type AgentCallerInboxDelivery =
+  | { status: 'DELIVERED'; threadId: string }
+  // the member deleted the conversation, so the call can no longer be answered
+  | { status: 'DISMISSED'; threadId: string }
+  // the caller waits, and gets the answer through its handler's onOutcome
+  | { status: 'AWAITING'; threadId: string }
+  // a message sent before already holds the answer
+  | { status: 'ANSWERED'; threadId: string; answer: ProposedToolCallAnswer };
 
 // A caller, such as a workflow step, messages a member's inbox and may ask them to approve a call.
 // The caller then waits on the answer as on a suspended run, so it gets it through its handler

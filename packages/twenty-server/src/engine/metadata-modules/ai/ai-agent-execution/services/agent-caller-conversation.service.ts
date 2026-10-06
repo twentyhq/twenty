@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
-import { type AgentRunnerOpenedConversation } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-opened-conversation.type';
+import { type AgentRunConversation } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-conversation.type';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import {
@@ -40,7 +40,11 @@ export class AgentCallerConversationService {
     recipientWorkspaceMemberId: string | null;
     // used without a recipient; a member who cannot have the conversation leaves it to no inbox
     fallbackRecipientWorkspaceMemberId?: string | null;
-  }): Promise<AgentRunnerOpenedConversation> {
+  }): Promise<
+    | ({ status: 'OPENED' } & AgentRunConversation)
+    // the recipient deleted both the conversation its key names and the fallback one
+    | { status: 'DELETED' }
+  > {
     const openThreadUnderKey = (key: string) => {
       const openThread = (workspaceMemberId: string | null) =>
         this.agentInboxService.openThread({
