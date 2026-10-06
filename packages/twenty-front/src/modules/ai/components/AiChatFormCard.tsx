@@ -11,7 +11,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledAiChatAskCard } from '@/ai/components/AiChatAskStyledComponents';
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
-// Form fields move to a neutral module together with the shared form field schema
+// request_form reuses the workflow form field schema and renderer, which have no neutral home yet
 // oxlint-disable-next-line no-restricted-imports
 import { WorkflowFormFields } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFields';
 
