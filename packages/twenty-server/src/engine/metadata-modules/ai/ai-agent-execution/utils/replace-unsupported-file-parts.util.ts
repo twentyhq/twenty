@@ -1,6 +1,6 @@
 import { type ExtendedUIMessage, isExtendedFileUIPart } from 'twenty-shared/ai';
 
-import { CODE_INTERPRETER_MIME_TYPES } from 'src/engine/metadata-modules/ai/ai-chat/constants/code-interpreter-mime-types.constant';
+import { CODE_INTERPRETER_MIME_TYPES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/code-interpreter-mime-types.constant';
 import { formatUnsupportedFilePlaceholder } from 'src/engine/metadata-modules/ai/ai-models/utils/format-unsupported-file-placeholder.util';
 import { getNativeMimeTypesForModalities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-mime-types-for-modalities.util';
 

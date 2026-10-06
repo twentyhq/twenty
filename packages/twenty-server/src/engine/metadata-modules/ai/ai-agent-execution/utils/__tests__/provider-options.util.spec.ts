@@ -4,7 +4,7 @@ import {
   getCallLevelProviderOptions,
   getCacheProviderOptions,
   injectCacheBreakpoint,
-} from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
 import {
   AI_SDK_ANTHROPIC,
   AI_SDK_AZURE,
