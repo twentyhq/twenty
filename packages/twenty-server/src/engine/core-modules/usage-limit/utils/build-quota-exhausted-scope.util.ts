@@ -1,4 +1,3 @@
-import { type CreditAllowance } from 'src/engine/core-modules/usage-limit/types/credit-allowance.type';
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -7,11 +6,11 @@ import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usag
 export const buildQuotaExhaustedScope = ({
   resourceType,
   counter,
-  allowance,
+  allowanceMicro,
 }: {
   resourceType: UsageResourceType;
   counter: QuotaCounter;
-  allowance: CreditAllowance | null;
+  allowanceMicro: number | null;
 }): ExhaustedScope => {
   const retryAfterMs = Math.max(counter.periodEnd.getTime() - Date.now(), 0);
 
@@ -41,7 +40,7 @@ export const buildQuotaExhaustedScope = ({
     spenderId: null,
     operationType: UsageOperationType.ALL,
     unit: counter.unit,
-    limitValue: allowance?.allowanceMicro ?? 0,
+    limitValue: allowanceMicro ?? 0,
     remaining: 0,
     periodCount: null,
     periodUnit: null,

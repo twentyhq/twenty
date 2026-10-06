@@ -99,31 +99,9 @@ export class BillingCreditGrantService {
   }
 
   async getActiveCreditsMicro(workspaceId: string): Promise<number> {
-    const { balanceMicro } = await this.getActiveCreditBalance({
-      workspaceId,
-      boundary: null,
-    });
-
-    return balanceMicro;
-  }
-
-  // One statement so the balance and its bounding expiry come from the same snapshot
-  async getActiveCreditBalance({
-    workspaceId,
-    boundary,
-  }: {
-    workspaceId: string;
-    boundary: Date | null;
-  }): Promise<{ balanceMicro: number; earliestExpiryBefore: Date | null }> {
     const result = await this.billingCreditGrantRepository
       .createQueryBuilder('billingCreditGrant')
       .select('COALESCE(SUM("billingCreditGrant"."amountMicro"), 0)', 'total')
-      .addSelect(
-        isDefined(boundary)
-          ? 'MIN("billingCreditGrant"."expiresAt") FILTER (WHERE "billingCreditGrant"."expiresAt" < :boundary)'
-          : 'NULL',
-        'earliestExpiry',
-      )
       .where('"billingCreditGrant"."workspaceId" = :workspaceId', {
         workspaceId,
       })
@@ -132,11 +110,7 @@ export class BillingCreditGrantService {
       .andWhere(
         '("billingCreditGrant"."expiresAt" IS NULL OR "billingCreditGrant"."expiresAt" > now())',
       )
-      .setParameters(isDefined(boundary) ? { boundary } : {})
-      .getRawOne<{
-        total: string | number | null;
-        earliestExpiry: Date | string | null;
-      }>();
+      .getRawOne<{ total: string | number | null }>();
 
     const balanceMicro = Number(result?.total ?? 0);
 
@@ -148,12 +122,7 @@ export class BillingCreditGrantService {
       );
     }
 
-    return {
-      balanceMicro,
-      earliestExpiryBefore: isDefined(result?.earliestExpiry)
-        ? new Date(result.earliestExpiry)
-        : null,
-    };
+    return balanceMicro;
   }
 
   async findUnexpiredGrants(
