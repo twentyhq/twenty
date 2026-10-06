@@ -1,4 +1,5 @@
 import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
@@ -6,6 +7,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { buildWorkflowAgentRunSpec } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-spec.util';
@@ -33,6 +35,7 @@ type PausedAgentStep = {
 export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly storage: AgentHistoryUpgradeStorageService,
   ) {
     super(workspaceIteratorService);
@@ -43,6 +46,25 @@ export class SuspendPausedAgentStepsCommand extends ProvisionedWorkspaceCommandR
   }
 
   async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    if (
+      !isDefined(
+        flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.workflowRun.universalIdentifier
+        ],
+      )
+    ) {
+      this.logger.log(
+        `workflowRun object not found for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
     const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
 
     const suspendedCount = await this.storage.run(

@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
+import { PendingWakeUpEventRecordService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-event-record.service';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
 import { type PendingWakeUpEvent } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-event.type';
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
@@ -12,8 +13,6 @@ import {
   type PendingWakeUpOwnerHandler,
 } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-handler.type';
 import { computePendingWakeUpRetryDelayMs } from 'src/engine/core-modules/pending-wake-up/utils/compute-pending-wake-up-retry-delay-ms.util';
-import { decidePendingWakeUpOnEventRecord } from 'src/engine/core-modules/pending-wake-up/utils/decide-pending-wake-up-on-event-record.util';
-import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { type AgentRunSuspensionEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run-suspension.entity';
 import { buildWaitOutcomeToolOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-wait-outcome-tool-output.util';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
@@ -51,7 +50,7 @@ export class AgentRunPendingWakeUpHandlerService
     private readonly pendingWakeUpOwnerHandlerRegistryService: PendingWakeUpOwnerHandlerRegistryService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
-    private readonly findRecordsService: FindRecordsService,
+    private readonly pendingWakeUpEventRecordService: PendingWakeUpEventRecordService,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessagePart')
@@ -119,8 +118,7 @@ export class AgentRunPendingWakeUpHandlerService
         .getHandlerOrThrow(suspension.caller.type)
         .buildExecutionContext({ workspaceId, caller: suspension.caller });
 
-    return decidePendingWakeUpOnEventRecord({
-      findRecordsService: this.findRecordsService,
+    return this.pendingWakeUpEventRecordService.decideOnEventRecord({
       event,
       authContext,
       rolePermissionConfig,

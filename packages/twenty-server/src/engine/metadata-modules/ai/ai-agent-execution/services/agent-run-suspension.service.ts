@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import isEqual from 'lodash.isequal';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Raw } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -115,9 +116,8 @@ export class AgentRunSuspensionService {
         where: { threadId },
       });
 
-      if (
-        JSON.stringify(existingSuspension?.caller) !== JSON.stringify(caller)
-      ) {
+      // jsonb stores keys in its own order, so the stored caller is compared by value
+      if (!isEqual(existingSuspension?.caller, caller)) {
         throw new AiException(
           'The conversation is waiting on another run',
           AiExceptionCode.THREAD_AWAITING_ANSWER,
