@@ -1,6 +1,5 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { type ReactNode } from 'react';
-import { type IconComponent } from 'twenty-ui/icon';
 
 import { type TableFieldMetadata } from '@/ui/layout/table/types/TableFieldMetadata';
 
@@ -11,7 +10,7 @@ export type CoreObjectTableColumn<TItem> = Pick<
 > & {
   fieldName: keyof TItem & string;
   fieldLabel: MessageDescriptor;
-  FieldIcon: IconComponent;
+  FieldIcon: NonNullable<TableFieldMetadata<TItem>['FieldIcon']>;
   fieldType?: TableFieldMetadata<TItem>['fieldType'];
   gridTrack: string;
   renderCell: (item: TItem) => ReactNode;
