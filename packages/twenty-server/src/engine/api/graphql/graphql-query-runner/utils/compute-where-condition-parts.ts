@@ -68,15 +68,24 @@ export const computeWhereConditionParts = ({
         params: {},
       };
     case 'eq':
+      // Each field's condition reaches the query via its own andWhere() call
+      // with no automatic parenthesization (TypeORM only wraps Brackets/array
+      // conditions, not raw SQL strings) - an un-parenthesized OR here would
+      // leak past an AND-ed sibling filter at the same level instead of
+      // staying scoped to this one field.
       if (isDateTimeField) {
         return {
-          sql: `(${fieldReference} >= :${key}${paramSuffix} AND ${fieldReference} < :${key}${paramSuffix}::timestamptz + interval '1 millisecond')${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
+          sql: hasNullEquivalentFieldValue
+            ? `((${fieldReference} >= :${key}${paramSuffix} AND ${fieldReference} < :${key}${paramSuffix}::timestamptz + interval '1 millisecond') OR ${fieldReference} IS NULL)`
+            : `(${fieldReference} >= :${key}${paramSuffix} AND ${fieldReference} < :${key}${paramSuffix}::timestamptz + interval '1 millisecond')`,
           params: { [`${key}${paramSuffix}`]: value },
         };
       }
 
       return {
-        sql: `${fieldReference} = :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
+        sql: hasNullEquivalentFieldValue
+          ? `(${fieldReference} = :${key}${paramSuffix} OR ${fieldReference} IS NULL)`
+          : `${fieldReference} = :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'neq':
@@ -132,7 +141,9 @@ export const computeWhereConditionParts = ({
       };
     case 'is':
       return {
-        sql: `${fieldReference} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} = :${key}${secondParamSuffix}` : ''}`,
+        sql: hasNullEquivalentFieldValue
+          ? `(${fieldReference} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'} OR ${fieldReference} = :${key}${secondParamSuffix})`
+          : `${fieldReference} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,
         params: hasNullEquivalentFieldValue
           ? { [`${key}${secondParamSuffix}`]: nullEquivalentFieldValue }
           : {},
@@ -158,12 +169,16 @@ export const computeWhereConditionParts = ({
       };
     case 'like':
       return {
-        sql: `${fieldReference}::text LIKE :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
+        sql: hasNullEquivalentFieldValue
+          ? `(${fieldReference}::text LIKE :${key}${paramSuffix} OR ${fieldReference} IS NULL)`
+          : `${fieldReference}::text LIKE :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: `${value}` },
       };
     case 'ilike':
       return {
-        sql: `${fieldReference}::text ILIKE :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
+        sql: hasNullEquivalentFieldValue
+          ? `(${fieldReference}::text ILIKE :${key}${paramSuffix} OR ${fieldReference} IS NULL)`
+          : `${fieldReference}::text ILIKE :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: `${value}` },
       };
     case 'startsWith':
