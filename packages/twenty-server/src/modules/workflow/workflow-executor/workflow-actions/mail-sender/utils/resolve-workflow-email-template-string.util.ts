@@ -1,4 +1,6 @@
-import { escapeHtml, evalFromContext } from 'twenty-shared/utils';
+import { evalFromContext } from 'twenty-shared/utils';
+
+import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
 
 const WORKFLOW_VARIABLE_PATTERN = /\{\{[^{}]+\}\}/g;
 

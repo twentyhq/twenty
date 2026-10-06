@@ -2,7 +2,6 @@ import { randomUUID } from 'node:crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  convertPlainTextToEmailDocument,
   EMAIL_DOCUMENT_SCHEMA_VERSION,
   type EmailDocument,
   parseCanonicalEmailDocument,
@@ -27,6 +26,7 @@ import {
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
@@ -263,9 +263,7 @@ describe('Outbound email body formats (integration)', () => {
 
     it('keeps the paragraphs of a draft body written as lines of text', async () => {
       const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
-        body: convertPlainTextToEmailDocument(
-          'Draft line one\n\nDraft line two',
-        ),
+        body: buildEmailDocument('Draft line one\n\nDraft line two'),
         stepType: 'DRAFT_EMAIL',
       });
 

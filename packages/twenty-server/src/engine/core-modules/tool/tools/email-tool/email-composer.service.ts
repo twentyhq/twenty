@@ -10,11 +10,11 @@ import {
 } from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
+  convertEmailBodyToEmailDocument,
   getEmailProvidersForOperation,
   isDefined,
   isNonEmptyArray,
   isValidUuid,
-  parseEmailBodyAsEmailDocument,
 } from 'twenty-shared/utils';
 import { In, IsNull, LessThanOrEqual, type Repository } from 'typeorm';
 import { z } from 'zod';
@@ -440,17 +440,17 @@ export class EmailComposerService {
 
     const attachments = await this.getAttachments(files || [], workspaceId);
 
-    const bodyParseResult = parseEmailBodyAsEmailDocument(body ?? '');
+    const bodyConversionResult = convertEmailBodyToEmailDocument(body ?? '');
 
-    if (!bodyParseResult.success) {
+    if (!bodyConversionResult.success) {
       throw new EmailToolException(
-        `Invalid outbound email document: ${bodyParseResult.error}`,
+        `Invalid outbound email document: ${bodyConversionResult.error}`,
         EmailToolExceptionCode.INVALID_EMAIL_BODY,
       );
     }
 
     const { html: sanitizedHtmlBody, plainText: plainTextBody } =
-      await compileOutboundEmailContent(bodyParseResult.document);
+      await compileOutboundEmailContent(bodyConversionResult.document);
     const sanitizedSubject = await sanitizeOutboundEmailSubject(subject || '');
 
     const { threadExternalId, references } =

@@ -6,7 +6,7 @@ import {
 } from 'twenty-emails';
 import {
   type EmailDocument,
-  getEmailDocumentStandaloneHtml,
+  getFullHtmlEmailIfWholeBody,
 } from 'twenty-shared/utils';
 
 import { type CompiledOutboundEmailContent } from 'src/engine/core-modules/email/types/compiled-outbound-email-content.type';
@@ -16,7 +16,7 @@ export const compileOutboundEmailContent = async (
   document: EmailDocument,
 ): Promise<CompiledOutboundEmailContent> => {
   const html = await sanitizeOutboundEmailHtml(
-    getEmailDocumentStandaloneHtml(document) ??
+    getFullHtmlEmailIfWholeBody(document) ??
       (await render(reactMarkupFromJSON(document as JSONContent))),
   );
 

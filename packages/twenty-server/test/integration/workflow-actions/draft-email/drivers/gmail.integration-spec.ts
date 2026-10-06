@@ -1,10 +1,10 @@
 import { randomUUID } from 'node:crypto';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { convertPlainTextToEmailDocument } from 'twenty-shared/utils';
 
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { setTestConnectedAccountHandleAliases } from 'test/integration/utils/set-test-connected-account-handle-aliases.util';
@@ -51,9 +51,7 @@ describe('DRAFT_EMAIL workflow action on Gmail (integration)', () => {
           bcc: '{{trigger.bcc}}',
         },
         subject: '{{trigger.subject}}',
-        body: JSON.stringify(
-          convertPlainTextToEmailDocument('Gmail workflow draft body'),
-        ),
+        body: JSON.stringify(buildEmailDocument('Gmail workflow draft body')),
       },
       payload: { ...RECIPIENTS, subject },
     });
@@ -102,7 +100,7 @@ describe('DRAFT_EMAIL workflow action on Gmail (integration)', () => {
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject,
         body: JSON.stringify(
-          convertPlainTextToEmailDocument('Gmail workflow alias draft body'),
+          buildEmailDocument('Gmail workflow alias draft body'),
         ),
       },
     });

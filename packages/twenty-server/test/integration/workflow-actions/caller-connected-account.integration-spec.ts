@@ -1,12 +1,12 @@
 import { randomUUID } from 'node:crypto';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { convertPlainTextToEmailDocument } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { runWebhookTriggeredActionStep } from 'test/integration/graphql/suites/workflow/utils/run-webhook-triggered-action-step.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
@@ -116,9 +116,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         connectedAccountId: '',
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject,
-        body: JSON.stringify(
-          convertPlainTextToEmailDocument('Caller scoped send body'),
-        ),
+        body: JSON.stringify(buildEmailDocument('Caller scoped send body')),
       },
     });
 
@@ -142,9 +140,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         connectedAccountId: '',
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject,
-        body: JSON.stringify(
-          convertPlainTextToEmailDocument('Caller scoped draft body'),
-        ),
+        body: JSON.stringify(buildEmailDocument('Caller scoped draft body')),
       },
     });
 
@@ -168,9 +164,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         connectedAccountId: oldestAccount.connectedAccountId,
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject,
-        body: JSON.stringify(
-          convertPlainTextToEmailDocument('Pinned sender send body'),
-        ),
+        body: JSON.stringify(buildEmailDocument('Pinned sender send body')),
       },
     });
 
@@ -206,7 +200,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject,
         body: JSON.stringify(
-          convertPlainTextToEmailDocument('Workspace visible fallback body'),
+          buildEmailDocument('Workspace visible fallback body'),
         ),
       },
     });
@@ -237,9 +231,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         connectedAccountId: '',
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject: `No usable account ${randomUUID()}`,
-        body: JSON.stringify(
-          convertPlainTextToEmailDocument('No usable account body'),
-        ),
+        body: JSON.stringify(buildEmailDocument('No usable account body')),
       },
     });
 
@@ -263,9 +255,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         connectedAccountId: '',
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject,
-        body: JSON.stringify(
-          convertPlainTextToEmailDocument('Webhook triggered send body'),
-        ),
+        body: JSON.stringify(buildEmailDocument('Webhook triggered send body')),
       },
     });
 

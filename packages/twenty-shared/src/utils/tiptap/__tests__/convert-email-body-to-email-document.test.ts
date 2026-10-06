@@ -1,16 +1,16 @@
 import { type EmailDocument } from '../email-document-schema';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from '../email-document-schema-version';
-import { parseEmailBodyAsEmailDocument } from '../parse-email-body-as-email-document';
+import { convertEmailBodyToEmailDocument } from '../convert-email-body-to-email-document';
 
-const htmlDocument = (html: string): EmailDocument => ({
+const rawHtmlBlockDocument = (html: string): EmailDocument => ({
   type: 'doc',
   attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
   content: [{ type: 'htmlDocument', attrs: { html } }],
 });
 
-describe('parseEmailBodyAsEmailDocument', () => {
+describe('convertEmailBodyToEmailDocument', () => {
   it('should keep the line breaks of plain text as editable lines', () => {
-    expect(parseEmailBodyAsEmailDocument('Dear Ada,\r\n\r\nThanks')).toEqual({
+    expect(convertEmailBodyToEmailDocument('Dear Ada,\r\n\r\nThanks')).toEqual({
       success: true,
       document: {
         type: 'doc',
@@ -32,12 +32,12 @@ describe('parseEmailBodyAsEmailDocument', () => {
 
   it('should keep plain text with variables as HTML so their values stay raw, with its line breaks', () => {
     expect(
-      parseEmailBodyAsEmailDocument(
+      convertEmailBodyToEmailDocument(
         "Dear {{person.name}} & {{step.['a&b']}},\r\n\r\nThanks",
       ),
     ).toEqual({
       success: true,
-      document: htmlDocument(
+      document: rawHtmlBlockDocument(
         "Dear {{person.name}} &amp; {{step.['a&b']}},<br><br>Thanks",
       ),
     });
@@ -58,32 +58,32 @@ describe('parseEmailBodyAsEmailDocument', () => {
     ];
 
     for (const body of bodies) {
-      expect(parseEmailBodyAsEmailDocument(body)).toEqual({
+      expect(convertEmailBodyToEmailDocument(body)).toEqual({
         success: true,
-        document: htmlDocument(body),
+        document: rawHtmlBlockDocument(body),
       });
     }
   });
 
   it('should treat angle-bracketed words that are not HTML tags as plain text', () => {
     for (const body of ['Reach Bob <bob@acme.com>', 'Hi <John>']) {
-      const result = parseEmailBodyAsEmailDocument(body);
+      const result = convertEmailBodyToEmailDocument(body);
 
       expect(result.success && result.document.content?.[0]?.type).toBe(
         'paragraph',
       );
     }
 
-    expect(parseEmailBodyAsEmailDocument('<support> {{contact.name}}')).toEqual(
-      {
-        success: true,
-        document: htmlDocument('&lt;support&gt; {{contact.name}}'),
-      },
-    );
+    expect(
+      convertEmailBodyToEmailDocument('<support> {{contact.name}}'),
+    ).toEqual({
+      success: true,
+      document: rawHtmlBlockDocument('&lt;support&gt; {{contact.name}}'),
+    });
   });
 
   it('should turn a blank body into an empty document', () => {
-    expect(parseEmailBodyAsEmailDocument('  \n ')).toEqual({
+    expect(convertEmailBodyToEmailDocument('  \n ')).toEqual({
       success: true,
       document: {
         type: 'doc',
@@ -99,7 +99,7 @@ describe('parseEmailBodyAsEmailDocument', () => {
     ];
 
     expect(
-      parseEmailBodyAsEmailDocument(JSON.stringify({ type: 'doc', content })),
+      convertEmailBodyToEmailDocument(JSON.stringify({ type: 'doc', content })),
     ).toEqual({
       success: true,
       document: {
@@ -111,7 +111,7 @@ describe('parseEmailBodyAsEmailDocument', () => {
   });
 
   it('should reject a document with a node outside the email schema', () => {
-    const result = parseEmailBodyAsEmailDocument({
+    const result = convertEmailBodyToEmailDocument({
       type: 'doc',
       content: [{ type: 'taskList', content: [] }],
     });

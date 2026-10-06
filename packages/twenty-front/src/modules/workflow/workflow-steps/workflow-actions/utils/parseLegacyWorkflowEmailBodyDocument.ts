@@ -2,16 +2,17 @@ import { type AdvancedTextEditorLegacyDocumentParser } from '@/advanced-text-edi
 import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
 import { type JSONContent } from '@tiptap/core';
 import {
-  parseEmailBodyAsEmailDocument,
+  convertEmailBodyToEmailDocument,
   parseTipTapJsonDocument,
 } from 'twenty-shared/utils';
 
 export const parseLegacyWorkflowEmailBodyDocument: AdvancedTextEditorLegacyDocumentParser =
   (serializedDocument) => {
-    const parseResult = parseEmailBodyAsEmailDocument(serializedDocument);
+    const conversionResult =
+      convertEmailBodyToEmailDocument(serializedDocument);
 
-    if (parseResult.success) {
-      return parseResult.document as JSONContent;
+    if (conversionResult.success) {
+      return conversionResult.document as JSONContent;
     }
 
     return (

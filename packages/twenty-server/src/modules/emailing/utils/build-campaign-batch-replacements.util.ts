@@ -1,4 +1,4 @@
-import { escapeHtml } from 'twenty-shared/utils';
+import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
 
 export const buildCampaignBatchReplacements = ({
   variableNames,

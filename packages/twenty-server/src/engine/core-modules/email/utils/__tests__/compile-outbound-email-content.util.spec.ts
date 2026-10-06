@@ -1,9 +1,7 @@
-import {
-  convertPlainTextToEmailDocument,
-  type EmailDocument,
-} from 'twenty-shared/utils';
+import { type EmailDocument } from 'twenty-shared/utils';
 
 import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 
 const compileDocument = async (document: EmailDocument): Promise<string> =>
   (await compileOutboundEmailContent(document)).html;
@@ -306,7 +304,7 @@ describe('compileOutboundEmailContent', () => {
 
   it('should keep the line breaks of a plain-text document in both parts', async () => {
     const { html, plainText } = await compileOutboundEmailContent(
-      convertPlainTextToEmailDocument('Dear Nick,\n\nThanks,\nJane'),
+      buildEmailDocument('Dear Nick,\n\nThanks,\nJane'),
     );
 
     expect(html).toContain('Dear Nick,<br><br>Thanks,<br>Jane');

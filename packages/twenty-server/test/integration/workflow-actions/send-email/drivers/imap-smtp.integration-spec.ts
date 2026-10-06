@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { convertPlainTextToEmailDocument } from 'twenty-shared/utils';
 
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -10,6 +9,7 @@ import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
@@ -98,9 +98,7 @@ describe('SEND_EMAIL workflow action on SMTP (integration)', () => {
           bcc: '{{trigger.bcc}}',
         },
         subject: '{{trigger.subject}}',
-        body: JSON.stringify(
-          convertPlainTextToEmailDocument('SMTP workflow body'),
-        ),
+        body: JSON.stringify(buildEmailDocument('SMTP workflow body')),
       },
       payload: { to: HANDLE, cc: HANDLE, bcc: HANDLE, subject },
     });
@@ -166,9 +164,7 @@ describe('SEND_EMAIL workflow action on SMTP (integration)', () => {
         fromHandle: 'not-my-alias@acme.test',
         recipients: { to: HANDLE, cc: '', bcc: '' },
         subject,
-        body: JSON.stringify(
-          convertPlainTextToEmailDocument('SMTP workflow rejected body'),
-        ),
+        body: JSON.stringify(buildEmailDocument('SMTP workflow rejected body')),
       },
     });
 

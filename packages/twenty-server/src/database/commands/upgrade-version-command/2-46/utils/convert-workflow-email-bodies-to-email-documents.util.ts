@@ -1,7 +1,7 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import {
+  convertEmailBodyToEmailDocument,
   parseCanonicalEmailDocument,
-  parseEmailBodyAsEmailDocument,
   parseJson,
 } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
@@ -17,9 +17,11 @@ const convertBodyToEmailDocumentJson = (body: unknown): string | undefined => {
     return undefined;
   }
 
-  const parseResult = parseEmailBodyAsEmailDocument(body);
+  const conversionResult = convertEmailBodyToEmailDocument(body);
 
-  return parseResult.success ? JSON.stringify(parseResult.document) : undefined;
+  return conversionResult.success
+    ? JSON.stringify(conversionResult.document)
+    : undefined;
 };
 
 const convertEmailStepBody = (step: WorkflowAction): WorkflowAction => {

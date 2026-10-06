@@ -7,7 +7,4 @@ const HTML_ESCAPES: Record<string, string> = {
 };
 
 export const escapeHtml = (value: string): string =>
-  value.replace(
-    /[&<>"']/g,
-    (character) => HTML_ESCAPES[character] ?? character,
-  );
+  value.replace(/[&<>"']/g, (character) => HTML_ESCAPES[character]);

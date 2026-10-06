@@ -2,7 +2,6 @@ import { randomUUID } from 'node:crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { ImapFlow } from 'imapflow';
-import { convertPlainTextToEmailDocument } from 'twenty-shared/utils';
 
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -11,6 +10,7 @@ import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
@@ -137,9 +137,7 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
         connectedAccountId,
         recipients: { to: '{{trigger.to}}' },
         subject: '{{trigger.subject}}',
-        body: JSON.stringify(
-          convertPlainTextToEmailDocument('SMTP workflow draft body'),
-        ),
+        body: JSON.stringify(buildEmailDocument('SMTP workflow draft body')),
       },
       payload: { to: HANDLE, subject },
     });
@@ -177,9 +175,7 @@ describe('DRAFT_EMAIL workflow action on IMAP (integration)', () => {
         recipients: { to: '{{trigger.to}}' },
         subject: '{{trigger.subject}}',
         body: JSON.stringify(
-          convertPlainTextToEmailDocument(
-            'First paragraph\n\nSecond paragraph',
-          ),
+          buildEmailDocument('First paragraph\n\nSecond paragraph'),
         ),
       },
       payload: { to: HANDLE, subject },
