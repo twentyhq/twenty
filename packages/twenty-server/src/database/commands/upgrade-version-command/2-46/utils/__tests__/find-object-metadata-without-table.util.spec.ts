@@ -1,9 +1,12 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { findObjectMetadataWithoutTable } from 'src/database/commands/upgrade-version-command/2-46/utils/find-object-metadata-without-table.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -28,21 +31,47 @@ const buildFlatObjectMetadata = ({
     isRemote,
   });
 
+const buildRelationFlatFieldMetadata = ({
+  name,
+  objectNameSingular,
+  targetObjectNameSingular,
+  type = FieldMetadataType.RELATION,
+}: {
+  name: string;
+  objectNameSingular: string;
+  targetObjectNameSingular: string;
+  type?: FieldMetadataType;
+}) =>
+  getFlatFieldMetadataMock({
+    id: `field-${objectNameSingular}-${name}`,
+    universalIdentifier: `field-uid-${objectNameSingular}-${name}`,
+    objectMetadataId: `object-${objectNameSingular}`,
+    name,
+    type,
+    relationTargetObjectMetadataId: `object-${targetObjectNameSingular}`,
+  });
+
+const toFlatEntityMaps = <TFlatEntity extends FlatObjectMetadata | FlatFieldMetadata>(
+  flatEntities: TFlatEntity[],
+) =>
+  flatEntities.reduce<FlatEntityMaps<TFlatEntity>>(
+    (flatEntityMaps, flatEntity) =>
+      addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
+    createEmptyFlatEntityMaps(),
+  );
+
 const findWithoutTable = ({
   flatObjectMetadatas,
+  flatFieldMetadatas = [],
   existingTableNames,
 }: {
   flatObjectMetadatas: FlatObjectMetadata[];
+  flatFieldMetadatas?: FlatFieldMetadata[];
   existingTableNames: string[];
 }) => {
   const result = findObjectMetadataWithoutTable({
-    flatObjectMetadataMaps: flatObjectMetadatas.reduce<
-      FlatEntityMaps<FlatObjectMetadata>
-    >(
-      (flatEntityMaps, flatEntity) =>
-        addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
-      createEmptyFlatEntityMaps(),
-    ),
+    flatObjectMetadataMaps: toFlatEntityMaps(flatObjectMetadatas),
+    flatFieldMetadataMaps: toFlatEntityMaps(flatFieldMetadatas),
     existingTableNames: new Set(existingTableNames),
     workspaceCustomApplicationUniversalIdentifier: CUSTOM_APP_UID,
   });
@@ -50,6 +79,9 @@ const findWithoutTable = ({
   return {
     deletable: result.deletableFlatObjectMetadatas.map(
       ({ nameSingular }) => nameSingular,
+    ),
+    inverseFields: result.inverseFlatFieldMetadatasToDelete.map(
+      ({ id }) => id,
     ),
     nonDeletable: result.nonDeletableFlatObjectMetadatas.map(
       ({ nameSingular }) => nameSingular,
@@ -71,7 +103,7 @@ describe('findObjectMetadataWithoutTable', () => {
         ],
         existingTableNames: ['_pet', 'company'],
       }),
-    ).toEqual({ deletable: [], nonDeletable: [] });
+    ).toEqual({ deletable: [], inverseFields: [], nonDeletable: [] });
   });
 
   it('marks a custom object without table as deletable', () => {
@@ -83,7 +115,7 @@ describe('findObjectMetadataWithoutTable', () => {
         ],
         existingTableNames: ['_pet'],
       }),
-    ).toEqual({ deletable: ['viewField'], nonDeletable: [] });
+    ).toEqual({ deletable: ['viewField'], inverseFields: [], nonDeletable: [] });
   });
 
   it('marks a custom object as deletable even when its unprefixed table exists', () => {
@@ -94,7 +126,7 @@ describe('findObjectMetadataWithoutTable', () => {
         ],
         existingTableNames: ['viewField'],
       }),
-    ).toEqual({ deletable: ['viewField'], nonDeletable: [] });
+    ).toEqual({ deletable: ['viewField'], inverseFields: [], nonDeletable: [] });
   });
 
   it('ignores remote objects', () => {
@@ -105,7 +137,7 @@ describe('findObjectMetadataWithoutTable', () => {
         ],
         existingTableNames: [],
       }),
-    ).toEqual({ deletable: [], nonDeletable: [] });
+    ).toEqual({ deletable: [], inverseFields: [], nonDeletable: [] });
   });
 
   it('reports objects of other applications without deleting them', () => {
@@ -124,6 +156,64 @@ describe('findObjectMetadataWithoutTable', () => {
         ],
         existingTableNames: [],
       }),
-    ).toEqual({ deletable: [], nonDeletable: ['company', 'invoice'] });
+    ).toEqual({
+      deletable: [],
+      inverseFields: [],
+      nonDeletable: ['company', 'invoice'],
+    });
+  });
+
+  it('deletes the relation fields that surviving objects hold on a deleted object', () => {
+    expect(
+      findWithoutTable({
+        flatObjectMetadatas: [
+          buildFlatObjectMetadata({ nameSingular: 'view' }),
+          buildFlatObjectMetadata({ nameSingular: 'viewField' }),
+          buildFlatObjectMetadata({ nameSingular: 'pet' }),
+          buildFlatObjectMetadata({
+            nameSingular: 'timelineActivity',
+            applicationUniversalIdentifier:
+              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          }),
+        ],
+        flatFieldMetadatas: [
+          buildRelationFlatFieldMetadata({
+            name: 'view',
+            objectNameSingular: 'viewField',
+            targetObjectNameSingular: 'view',
+          }),
+          buildRelationFlatFieldMetadata({
+            name: 'viewFields',
+            objectNameSingular: 'view',
+            targetObjectNameSingular: 'viewField',
+          }),
+          buildRelationFlatFieldMetadata({
+            name: 'favoriteViewField',
+            objectNameSingular: 'pet',
+            targetObjectNameSingular: 'viewField',
+          }),
+          buildRelationFlatFieldMetadata({
+            name: 'targetView',
+            objectNameSingular: 'timelineActivity',
+            targetObjectNameSingular: 'view',
+            type: FieldMetadataType.MORPH_RELATION,
+          }),
+          buildRelationFlatFieldMetadata({
+            name: 'targetPet',
+            objectNameSingular: 'timelineActivity',
+            targetObjectNameSingular: 'pet',
+            type: FieldMetadataType.MORPH_RELATION,
+          }),
+        ],
+        existingTableNames: ['_pet', 'timelineActivity'],
+      }),
+    ).toEqual({
+      deletable: ['view', 'viewField'],
+      inverseFields: [
+        'field-pet-favoriteViewField',
+        'field-timelineActivity-targetView',
+      ],
+      nonDeletable: [],
+    });
   });
 });
