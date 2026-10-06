@@ -139,11 +139,13 @@ describe('updateConfig', () => {
     });
 
     await writeFile(`${configPath}.lock`, abandonedLock);
+    configLock.TIMEOUT_MILLISECONDS = 125_000;
+    const signal = AbortSignal.timeout(2_000);
 
     await expect(
       updateConfig({
         configPath,
-        signal: new AbortController().signal,
+        signal,
         update: (config) => addRemote(config, 'after-crash'),
       }),
     ).rejects.toMatchObject({

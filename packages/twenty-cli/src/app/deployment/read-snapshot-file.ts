@@ -1,4 +1,3 @@
-import { readBlobChunks } from '@/utils/read-blob-chunks';
 import { createHash } from 'node:crypto';
 import { openAsBlob } from 'node:fs';
 import { resolve } from 'node:path';
@@ -6,6 +5,7 @@ import { resolve } from 'node:path';
 import { type ToolingArtifact } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
 import { isInsideDirectory } from '@/utils/is-inside-directory';
+import { readBlobChunks } from '@/utils/read-blob-chunks';
 
 const createSnapshotInvalidError = ({
   message,
@@ -40,8 +40,19 @@ export const readSnapshotFile = async ({
   const bytes = await openAsBlob(filePath);
   const hash = createHash('sha256');
 
-  for await (const chunk of readBlobChunks(bytes)) {
-    hash.update(chunk);
+  try {
+    for await (const chunk of readBlobChunks(bytes)) {
+      hash.update(chunk);
+    }
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'NotReadableError') {
+      throw createSnapshotInvalidError({
+        message: `${artifact.path} changed after the build.`,
+        path: artifact.path,
+      });
+    }
+
+    throw error;
   }
 
   const sha256 = hash.digest('hex');

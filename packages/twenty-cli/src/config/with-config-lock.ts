@@ -86,7 +86,12 @@ const acquireLock = async ({
   while (!isAcquired) {
     signal.throwIfAborted();
 
-    if (Date.now() > deadline) {
+    const owner = await readLockOwner(lockPath);
+
+    if (
+      (isDefined(owner) && !isProcessAlive(owner.pid)) ||
+      Date.now() > deadline
+    ) {
       throw await createLockedError(lockPath);
     }
 

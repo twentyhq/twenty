@@ -97,7 +97,19 @@ export const watchAppInputs = async ({
           .filter((input) => input.kind === 'file')
           .map((input) => input.path),
       );
-      const parentDirectories = new Set([...directories].map(dirname));
+      const parentDirectories = new Set<string>();
+      const missingDirectories = new Set<string>();
+
+      for (const input of externalInputs) {
+        let parent = dirname(input.path);
+
+        while (!pathExistsSync(parent) && dirname(parent) !== parent) {
+          missingDirectories.add(parent);
+          parent = dirname(parent);
+        }
+
+        parentDirectories.add(parent);
+      }
       const isDirectChild = (path: string) =>
         [...directories].some((directory) => {
           const child = relative(directory, path);
@@ -125,6 +137,7 @@ export const watchAppInputs = async ({
               !(
                 parentDirectories.has(absolutePath) ||
                 directories.has(absolutePath) ||
+                missingDirectories.has(absolutePath) ||
                 files.has(absolutePath) ||
                 isDirectChild(absolutePath)
               )
@@ -137,7 +150,9 @@ export const watchAppInputs = async ({
             if (
               files.has(absolutePath) ||
               (event !== 'change' &&
-                (isDirectChild(absolutePath) || directories.has(absolutePath)))
+                (isDirectChild(absolutePath) ||
+                  directories.has(absolutePath) ||
+                  missingDirectories.has(absolutePath)))
             ) {
               onChange();
             }

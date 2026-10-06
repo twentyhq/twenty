@@ -10,6 +10,12 @@ export async function* readBlobChunks(blob: Blob) {
       yield value;
     }
   } finally {
-    reader.releaseLock();
+    try {
+      await reader.cancel();
+    } catch {
+      // Preserve the original read or consumer error.
+    } finally {
+      reader.releaseLock();
+    }
   }
 }

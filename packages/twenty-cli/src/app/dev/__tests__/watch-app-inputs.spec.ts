@@ -129,6 +129,43 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
   });
 
+  it('keeps a shallow watch when the tracked directory and its parent disappear', async () => {
+    const { root, watcher, onChange, onError } = await fixture();
+    const parent = join(root, 'linked');
+    const directory = join(parent, 'nested');
+    await mkdir(directory, { recursive: true });
+    const path = await realpath(directory);
+    const inputs = [
+      {
+        path,
+        kind: 'directory' as const,
+        stamp: readWatchInputStamp({ path, kind: 'directory' }),
+      },
+    ];
+    await watcher.update(inputs, true);
+    await rm(parent, { recursive: true });
+    await watcher.update([], false);
+    await vi.waitFor(
+      async () => {
+        onChange.mockClear();
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        expect(onChange).not.toHaveBeenCalled();
+      },
+      { timeout: 3000 },
+    );
+    await mkdir(join(root, 'unrelated'));
+    await writeFile(join(root, 'unrelated', 'ignored.ts'), 'ignored');
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    expect(onChange).not.toHaveBeenCalled();
+    await mkdir(parent);
+    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await watcher.update([], false);
+    onChange.mockClear();
+    await mkdir(directory);
+    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    expect(onError).not.toHaveBeenCalled();
+  });
+
   it('observes removal of an external directory even with no file inputs', async () => {
     const { root, watcher, onChange } = await fixture();
     const directory = join(root, 'empty-linked');
