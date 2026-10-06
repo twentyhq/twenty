@@ -186,12 +186,8 @@ const isRowOpen = (title: string) =>
   screen.getByRole('button', { name: title }).getAttribute('aria-pressed') ===
   'true';
 
-const isRowChecked = (title: string) =>
-  (
-    screen.getByRole('checkbox', {
-      name: `Select ${title}`,
-    }) as HTMLInputElement
-  ).checked;
+const getRowCheckbox = (title: string) =>
+  screen.getByRole('checkbox', { name: `Select ${title}` });
 
 const getTargetedThreadIds = (contextStoreInstanceId: string) =>
   jotaiStore.get(
@@ -228,9 +224,9 @@ describe('AiChatInboxPage', () => {
       mode: 'selection',
       selectedRecordIds: [firstThread.id, thirdThread.id],
     });
-    expect(isRowChecked('First chat')).toBe(true);
-    expect(isRowChecked('Second chat')).toBe(false);
-    expect(isRowChecked('Third chat')).toBe(true);
+    expect(getRowCheckbox('First chat')).toBeChecked();
+    expect(getRowCheckbox('Second chat')).not.toBeChecked();
+    expect(getRowCheckbox('Third chat')).toBeChecked();
     expect(isRowOpen('First chat')).toBe(false);
   });
 
@@ -242,8 +238,8 @@ describe('AiChatInboxPage', () => {
     );
 
     expect(screen.getByText('1 chat selected')).toBeInTheDocument();
-    expect(isRowChecked('First chat')).toBe(false);
-    expect(isRowChecked('Third chat')).toBe(true);
+    expect(getRowCheckbox('First chat')).not.toBeChecked();
+    expect(getRowCheckbox('Third chat')).toBeChecked();
   });
 
   it('checks the chat on screen from its checkbox', () => {
@@ -254,7 +250,7 @@ describe('AiChatInboxPage', () => {
     );
 
     expect(screen.getByText('1 chat selected')).toBeInTheDocument();
-    expect(isRowChecked('First chat')).toBe(true);
+    expect(getRowCheckbox('First chat')).toBeChecked();
     expect(screen.getByText('1 selected')).toBeInTheDocument();
   });
 
@@ -355,7 +351,7 @@ describe('AiChatInboxPage', () => {
     renderInbox();
 
     expect(screen.getByText(`Chat page ${firstThread.id}`)).toBeInTheDocument();
-    expect(isRowChecked('Second chat')).toBe(false);
+    expect(getRowCheckbox('Second chat')).not.toBeChecked();
   });
 
   it('switches to the record page layout from the list header', async () => {
