@@ -9709,19 +9709,6 @@ export default {
                     ]
                 }
             ],
-            "triggerInstallAppsOnboardingStep": [
-                206,
-                {
-                    "universalIdentifiers": [
-                        1,
-                        "[String!]!"
-                    ],
-                    "isAutoSkipped": [
-                        8,
-                        "Boolean!"
-                    ]
-                }
-            ],
             "goBackToPreviousOnboardingStep": [
                 205
             ],
