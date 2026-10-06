@@ -41,6 +41,10 @@ export const WithColorDocumentation: Story = {
       <Text>Saving changes</Text>
     </Text>
   ),
+};
+
+export const WithStatusText: Story = {
+  ...WithColorDocumentation,
   play: async ({ canvas }) => {
     const status = canvas.getByRole('status');
     const label = canvas.getByText('Saving changes');
