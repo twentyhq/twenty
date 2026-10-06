@@ -4,7 +4,6 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { useId } from 'react';
 import { IconTrash } from 'twenty-ui/icon';
-import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsApplicationUninstallButtonProps = {
@@ -22,30 +21,21 @@ export const SettingsApplicationUninstallButton = ({
   const uninstallDialogId = useId();
 
   const confirmationValue = t`yes`;
+  const displayedUninstallProgress = uninstallProgress ?? 0;
 
   return (
     <>
       <Button
-        startIcon={
-          isUninstalling ? (
-            <ProgressRing
-              value={uninstallProgress ?? 0}
-              size="sm"
-              barColor="currentColor"
-              aria-hidden
-              render={<span />}
-            />
-          ) : (
-            <IconTrash />
-          )
-        }
+        startIcon={<IconTrash />}
         variant="outline"
         color="danger"
         size="sm"
         onClick={() => openDialog(uninstallDialogId)}
         disabled={isUninstalling}
       >
-        {isUninstalling ? t`Uninstalling...` : t`Uninstall`}
+        {isUninstalling
+          ? t`Uninstalling... (${displayedUninstallProgress}%)`
+          : t`Uninstall`}
       </Button>
       <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}

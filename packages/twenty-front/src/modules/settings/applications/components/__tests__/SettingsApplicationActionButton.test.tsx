@@ -65,30 +65,20 @@ describe('SettingsApplicationActionButton', () => {
     ).toBeDisabled();
   });
 
-  it('shows the installation progress while installing', () => {
+  it('shows the installation progress in the label while installing', () => {
     renderActionButton({ isInstalling: true, installProgress: 60 });
 
-    expect(screen.getByRole('progressbar', { hidden: true })).toHaveAttribute(
-      'aria-valuenow',
-      '60',
-    );
+    expect(
+      screen.getByRole('button', { name: 'Installing... (60%)' }),
+    ).toBeDisabled();
   });
 
-  it('starts the progress ring at zero before the first progress event', () => {
+  it('starts the installation progress at zero before the first progress event', () => {
     renderActionButton({ isInstalling: true });
 
-    expect(screen.getByRole('progressbar', { hidden: true })).toHaveAttribute(
-      'aria-valuenow',
-      '0',
-    );
-  });
-
-  it('does not show a progress ring when not installing', () => {
-    renderActionButton();
-
     expect(
-      screen.queryByRole('progressbar', { hidden: true }),
-    ).not.toBeInTheDocument();
+      screen.getByRole('button', { name: 'Installing... (0%)' }),
+    ).toBeDisabled();
   });
 
   it('links to the application settings once installed', () => {

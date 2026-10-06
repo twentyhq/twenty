@@ -48,7 +48,7 @@ export const InstallingWithProgress: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByRole('button', { name: /^Installing\b/ }),
+      await canvas.findByRole('button', { name: 'Installing... (60%)' }),
     ).toBeDisabled();
   },
 };
