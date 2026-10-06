@@ -148,7 +148,7 @@ export const applyAppBuild = async ({
     await runPhase('installation', () =>
       installDevelopmentApp({ application, target, signal }),
     );
-    output.progress('Requesting a preview…');
+    output.progress('Computing metadata plan…');
 
     return {
       actions: await runPhase('preview', preview),
@@ -161,7 +161,7 @@ export const applyAppBuild = async ({
     appPath,
   });
 
-  output.progress(`Requesting a fresh preview from ${target.apiUrl}…`);
+  output.progress(`Computing metadata plan on ${target.apiUrl}…`);
 
   const { actions, isRegistrationCreated } = await previewOrBootstrap();
   const summary = getAppPlanSummary(actions);
@@ -187,7 +187,7 @@ export const applyAppBuild = async ({
       isApproved: isDeletionApproved,
       question: `Apply ${summary.destructive} ${deletionLabel} stored data on ${target.apiUrl}?`,
       code: 'CONFIRMATION_REQUIRED',
-      message: `The preview includes ${summary.destructive} ${deletionLabel} stored data.`,
+      message: `The plan includes ${summary.destructive} ${deletionLabel} stored data.`,
       hint: 'Review it with twenty app plan, then pass --yes to apply it, or --no-delete to keep entities missing from source.',
     });
   }

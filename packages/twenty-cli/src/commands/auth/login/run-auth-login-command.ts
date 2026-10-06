@@ -59,22 +59,6 @@ const assertSameUrlOrReplace = ({
   });
 };
 
-const readRemoteName = (options: Record<string, unknown>) => {
-  const remoteName =
-    readStringOption(options, 'name') ?? readStringOption(options, 'remote');
-
-  if (!isDefined(remoteName)) {
-    throw new CliError({
-      code: 'USAGE',
-      exitCode: EXIT_CODE.USAGE,
-      message: 'Name the remote with --name.',
-      hint: 'To sign in to a saved remote again, pass --remote <name>.',
-    });
-  }
-
-  return validateRemoteName(remoteName);
-};
-
 const obtainCredentials = async ({
   options,
   apiUrl,
@@ -127,8 +111,8 @@ const formatSignedIn = ({
     : '';
 
   return credentials.kind === 'apiKey'
-    ? `Saved remote ${remoteName} ${dimText(`(${apiUrl}) · API key${workspace}`)}`
-    : `Signed in to ${remoteName}${isDefined(identity.email) ? ` as ${identity.email}` : ''}${dimText(workspace)}`;
+    ? `Saved remote "${remoteName}" ${dimText(`(${apiUrl}) · API key${workspace}`)}`
+    : `Signed in to "${remoteName}"${isDefined(identity.email) ? ` as ${identity.email}` : ''}${dimText(workspace)}`;
 };
 
 export const runAuthLoginCommand: CommandRun = async ({
@@ -137,21 +121,26 @@ export const runAuthLoginCommand: CommandRun = async ({
   outputMode,
   signal,
 }) => {
-  const remoteName = readRemoteName(options);
+  const remoteNameOption =
+    readStringOption(options, 'name') ?? readStringOption(options, 'remote');
+  const remoteName = validateRemoteName(remoteNameOption ?? 'default');
   const replace = readBooleanOption(options, 'replace');
   const configPath = getConfigPath();
-  const existingRemote = findExistingRemote(
-    await readConfig(configPath),
-    remoteName,
-  );
+  const config = await readConfig(configPath);
+  const existingRemote = findExistingRemote(config, remoteName);
   const urlOption = readStringOption(options, 'url');
 
   if (!isDefined(urlOption) && !isDefined(existingRemote)) {
     throw new CliError({
       code: 'USAGE',
       exitCode: EXIT_CODE.USAGE,
-      message: `There is no remote named ${remoteName} yet.`,
-      hint: 'Pass --url to create it.',
+      message:
+        Object.keys(config.remotes).length === 0
+          ? 'No saved connections yet.'
+          : `There is no remote named "${remoteName}" yet.`,
+      hint: !isDefined(remoteNameOption)
+        ? 'Run twenty auth login --url <url> to save a connection.'
+        : 'Pass --url to create it.',
     });
   }
 
@@ -253,13 +242,8 @@ export const runAuthLoginCommand: CommandRun = async ({
       email: identity.email,
       isDefault,
     },
-    human: [
-      formatSuccessLine(
-        formatSignedIn({ remoteName, apiUrl, credentials, identity }),
-      ),
-      ...(isDefault
-        ? [dimText(`  ${remoteName} is your default remote.`)]
-        : []),
-    ].join('\n'),
+    human: formatSuccessLine(
+      formatSignedIn({ remoteName, apiUrl, credentials, identity }),
+    ),
   };
 };

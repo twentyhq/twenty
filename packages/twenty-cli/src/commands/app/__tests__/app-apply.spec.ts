@@ -1601,7 +1601,7 @@ describe('app apply', () => {
     expect(refused.envelope.error).toMatchObject({
       code: 'CONFIRMATION_REQUIRED',
       message:
-        'The preview includes 1 object or field deletion that permanently deletes stored data.',
+        'The plan includes 1 object or field deletion that permanently deletes stored data.',
       hint: expect.stringContaining('--yes'),
       details: { phase: 'confirmation', completedPhases: ['build', 'preview'] },
     });
@@ -1833,10 +1833,11 @@ describe('app apply', () => {
     expect(await readReleasedBuildId()).toBe('build-id');
   });
 
-  it('prints the preview on stderr and a summary on stdout', async () => {
+  it('prints the plan on stderr and a summary on stdout', async () => {
     const { stdout, stderr, exitCode } = await run();
 
     expect(exitCode).toBe(0);
+    expect(stderr).toContain(`Computing metadata plan on ${server.url}…`);
     expect(stderr).toContain('Plan: 1 to add, 0 to change, 0 to destroy.');
     expect(stderr).toContain('typed API client was not regenerated');
     expect(stdout).toContain(`Applied Apply App to ${server.url}`);
