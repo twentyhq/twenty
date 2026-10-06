@@ -62,8 +62,6 @@ type AgentApiRunCaller = Extract<AgentRunCaller, { type: 'AGENT_API_RUN' }>;
 export class AgentRunService
   implements AgentRunCallerHandler<AgentApiRunCaller>, OnModuleInit
 {
-  readonly callerType = 'AGENT_API_RUN';
-
   private readonly logger = new Logger(AgentRunService.name);
 
   constructor(
@@ -76,7 +74,7 @@ export class AgentRunService
   ) {}
 
   onModuleInit(): void {
-    this.callerHandlerRegistry.register(this);
+    this.callerHandlerRegistry.register('AGENT_API_RUN', this);
   }
 
   async run({

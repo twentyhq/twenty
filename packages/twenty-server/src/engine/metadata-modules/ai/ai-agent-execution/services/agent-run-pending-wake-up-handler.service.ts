@@ -40,8 +40,6 @@ type AgentRunResolveContext = {
 export class AgentRunPendingWakeUpHandlerService
   implements PendingWakeUpOwnerHandler<AgentRunResolveContext>, OnModuleInit
 {
-  readonly ownerType = 'AGENT_RUN';
-
   private readonly logger = new Logger(
     AgentRunPendingWakeUpHandlerService.name,
   );
@@ -58,7 +56,7 @@ export class AgentRunPendingWakeUpHandlerService
   ) {}
 
   onModuleInit(): void {
-    this.pendingWakeUpOwnerHandlerRegistryService.register(this);
+    this.pendingWakeUpOwnerHandlerRegistryService.register('AGENT_RUN', this);
   }
 
   buildResumeJobOptions(): QueueJobOptions {

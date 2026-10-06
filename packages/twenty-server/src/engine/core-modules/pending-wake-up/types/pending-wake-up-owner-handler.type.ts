@@ -2,7 +2,6 @@ import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/driv
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { type PendingWakeUpEvent } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-event.type';
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
-import { type PendingWakeUpOwnerType } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-type.type';
 
 export type PendingWakeUpBeforeClaimDecision<TResolveContext> =
   // the event, when given, replaces the one that woke the owner up
@@ -17,8 +16,6 @@ export type PendingWakeUpBeforeClaimDecision<TResolveContext> =
   | { type: 'IGNORE' };
 
 export type PendingWakeUpOwnerHandler<TResolveContext = unknown> = {
-  ownerType: PendingWakeUpOwnerType;
-
   buildResumeJobOptions(ownerId: string): QueueJobOptions;
 
   beforeClaim(input: {

@@ -43,8 +43,6 @@ type TriggeredRun = {
 export class AgentTriggerRunnerService
   implements AgentRunCallerHandler<AgentTriggerCaller>, OnModuleInit
 {
-  readonly callerType = 'AGENT_TRIGGER';
-
   private readonly logger = new Logger(AgentTriggerRunnerService.name);
 
   constructor(
@@ -56,7 +54,7 @@ export class AgentTriggerRunnerService
   ) {}
 
   onModuleInit(): void {
-    this.callerHandlerRegistry.register(this);
+    this.callerHandlerRegistry.register('AGENT_TRIGGER', this);
   }
 
   async run({

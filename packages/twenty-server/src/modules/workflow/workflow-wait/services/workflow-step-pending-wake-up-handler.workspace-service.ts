@@ -40,8 +40,6 @@ export class WorkflowStepPendingWakeUpHandlerWorkspaceService
     PendingWakeUpOwnerHandler<WorkflowStepResolveContext>,
     OnModuleInit
 {
-  readonly ownerType = 'WORKFLOW_STEP';
-
   private readonly logger = new Logger(
     WorkflowStepPendingWakeUpHandlerWorkspaceService.name,
   );
@@ -56,7 +54,10 @@ export class WorkflowStepPendingWakeUpHandlerWorkspaceService
   ) {}
 
   onModuleInit(): void {
-    this.pendingWakeUpOwnerHandlerRegistryService.register(this);
+    this.pendingWakeUpOwnerHandlerRegistryService.register(
+      'WORKFLOW_STEP',
+      this,
+    );
   }
 
   buildResumeJobOptions(workflowRunId: string): QueueJobOptions {
