@@ -29,7 +29,12 @@ export const BackgroundMockPage = () => {
     <PageCardLayout
       header={
         <PageCardHeader
-          icon={<TintedIconTile Icon={IconBuildingSkyscraper} color="blue" />}
+          icon={
+            <TintedIconTile
+              icon={<IconBuildingSkyscraper size={16} />}
+              color="blue"
+            />
+          }
           title={t`Companies`}
           actionButton={
             <>

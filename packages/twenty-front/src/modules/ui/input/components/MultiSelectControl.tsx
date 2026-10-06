@@ -60,10 +60,14 @@ export const MultiSelectControl = ({
       ) : isDefined(firstSelectedOption?.Icon) ? (
         isDefined(firstSelectedOption.iconThemeColor) ? (
           <TintedIconTile
-            Icon={firstSelectedOption.Icon}
+            icon={
+              <firstSelectedOption.Icon
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            }
             color={firstSelectedOption.iconThemeColor}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
+            style={{ width: theme.icon.size.md, height: theme.icon.size.md }}
           />
         ) : (
           <firstSelectedOption.Icon

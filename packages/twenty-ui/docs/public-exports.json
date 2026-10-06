@@ -116,6 +116,7 @@
       "Section": "components/layout/Section/Section"
     },
     "types": {
+      "AnimatedIconCrossfadeProps": "components/layout/AnimatedIconCrossfade/types/AnimatedIconCrossfadeProps",
       "OverflowingListProps": "components/layout/OverflowingList/types/OverflowingListProps",
       "SectionHeaderProps": "components/layout/Section/types/SectionHeaderProps",
       "SectionRootProps": "components/layout/Section/types/SectionRootProps"

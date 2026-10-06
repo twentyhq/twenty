@@ -74,7 +74,7 @@ export const SidePanelObjectFilterDropdownContent = ({
           <Dropdown.OptionItem
             onSelect={() => onSelectObject(null)}
             selected={selectedObjectNameSingular === null}
-            startIcon={<TintedIconTile Icon={IconCube} />}
+            startIcon={<TintedIconTile icon={<IconCube size={16} />} />}
           >
             {allObjectsLabel}
           </Dropdown.OptionItem>

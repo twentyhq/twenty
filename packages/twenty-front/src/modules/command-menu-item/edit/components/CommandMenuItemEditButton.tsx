@@ -48,8 +48,8 @@ export const CommandMenuItemEditButton = () => {
       startIcon={
         <AnimatedIconCrossfade
           isActive={isCommandMenuEditPageActive}
-          ActiveIcon={IconX}
-          InactiveIcon={IconPencil}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
         />
       }
       variant="outline"

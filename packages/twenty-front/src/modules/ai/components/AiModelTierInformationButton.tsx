@@ -140,14 +140,22 @@ export const AiModelTierInformationButton = ({
             {...getFloatingProps()}
           >
             {rows.map(({ label, Icon, value }) => (
-              <MetricRow key={label} startIcon={Icon} value={value}>
+              <MetricRow
+                key={label}
+                startIcon={<Icon size={14} />}
+                value={value}
+              >
                 {label}
               </MetricRow>
             ))}
             <HorizontalSeparator noMargin />
             <StyledHeading>{t`Vs Balanced mode`}</StyledHeading>
             {comparisons.map(({ label, Icon, value }) => (
-              <MetricRow key={label} startIcon={Icon} value={value}>
+              <MetricRow
+                key={label}
+                startIcon={<Icon size={14} />}
+                value={value}
+              >
                 {label}
               </MetricRow>
             ))}

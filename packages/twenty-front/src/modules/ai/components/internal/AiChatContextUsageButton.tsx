@@ -192,7 +192,7 @@ export const AiChatContextUsageButton = () => {
             {...getFloatingProps()}
           >
             <MetricRow
-              startIcon={IconWindow}
+              startIcon={<IconWindow size={14} />}
               progress={percentage}
               value={
                 contextWindow > 0
@@ -210,7 +210,7 @@ export const AiChatContextUsageButton = () => {
             </MetricRow>
             {!isWorkspaceSetupChat && (
               <MetricRow
-                startIcon={IconGauge}
+                startIcon={<IconGauge size={14} />}
                 progress={
                   loading || isDefined(error) ? 0 : (creditPercentage ?? 0)
                 }

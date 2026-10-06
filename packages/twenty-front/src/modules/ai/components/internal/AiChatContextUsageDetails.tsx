@@ -54,25 +54,25 @@ export const AiChatContextUsageDetails = () => {
           <StyledSection>
             <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
             <MetricRow
-              startIcon={IconArrowUp}
+              startIcon={<IconArrowUp size={14} />}
               value={formatAiChatTokens(lastMessage.inputTokens)}
             >
               {t`Input tokens`}
             </MetricRow>
             <MetricRow
-              startIcon={IconHistory}
+              startIcon={<IconHistory size={14} />}
               value={formatAiChatTokens(lastMessage.cachedInputTokens)}
             >
               {t`Cached input`}
             </MetricRow>
             <MetricRow
-              startIcon={IconArrowDown}
+              startIcon={<IconArrowDown size={14} />}
               value={formatAiChatTokens(lastMessage.outputTokens)}
             >
               {t`Output tokens`}
             </MetricRow>
             <MetricRow
-              startIcon={IconCoins}
+              startIcon={<IconCoins size={14} />}
               value={formatNumber(
                 lastMessage.inputCredits + lastMessage.outputCredits,
                 { decimals: 3 },
@@ -87,25 +87,25 @@ export const AiChatContextUsageDetails = () => {
       <StyledSection>
         <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
         <MetricRow
-          startIcon={IconArrowUp}
+          startIcon={<IconArrowUp size={14} />}
           value={formatAiChatTokens(agentChatUsage.inputTokens)}
         >
           {t`Input tokens`}
         </MetricRow>
         <MetricRow
-          startIcon={IconHistory}
+          startIcon={<IconHistory size={14} />}
           value={formatAiChatTokens(agentChatUsage.cachedInputTokens)}
         >
           {t`Cached input`}
         </MetricRow>
         <MetricRow
-          startIcon={IconArrowDown}
+          startIcon={<IconArrowDown size={14} />}
           value={formatAiChatTokens(agentChatUsage.outputTokens)}
         >
           {t`Output tokens`}
         </MetricRow>
         <MetricRow
-          startIcon={IconCoins}
+          startIcon={<IconCoins size={14} />}
           value={formatNumber(
             agentChatUsage.inputCredits + agentChatUsage.outputCredits,
             { decimals: 3 },

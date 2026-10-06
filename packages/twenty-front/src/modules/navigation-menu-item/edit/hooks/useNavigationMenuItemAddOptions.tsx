@@ -115,14 +115,14 @@ export const useNavigationMenuItemAddOptions = ({
         {
           id: 'object',
           label: t`Object`,
-          icon: <TintedIconTile Icon={IconBox} />,
+          icon: <TintedIconTile icon={<IconBox size={16} />} />,
           onClick: () => navigateToStep('object'),
           hasSubMenu: true,
         },
         {
           id: 'view',
           label: t`View`,
-          icon: <TintedIconTile Icon={IconTable} />,
+          icon: <TintedIconTile icon={<IconTable size={16} />} />,
           onClick: () => navigateToStep('view'),
           hasSubMenu: true,
         },
@@ -176,7 +176,7 @@ export const useNavigationMenuItemAddOptions = ({
         {
           id: 'page',
           label: t`Page`,
-          icon: <TintedIconTile Icon={IconPerspective} />,
+          icon: <TintedIconTile icon={<IconPerspective size={16} />} />,
           onClick: () => navigateToStep('page'),
           hasSubMenu: true,
         },
@@ -255,7 +255,7 @@ export const useNavigationMenuItemAddOptions = ({
           return {
             id: view.id,
             label: view.name,
-            icon: <TintedIconTile Icon={Icon} />,
+            icon: <TintedIconTile icon={<Icon size={16} />} />,
             isDisabled: viewIdsAlreadyAdded.has(view.id),
             isAlreadyInSidebar: viewIdsAlreadyAdded.has(view.id),
             onClick: () =>
@@ -289,7 +289,7 @@ export const useNavigationMenuItemAddOptions = ({
             icon: isDefined(navigationItem) ? (
               <NavigationMenuItemIcon navigationMenuItem={navigationItem} />
             ) : (
-              <TintedIconTile Icon={IconPerspective} />
+              <TintedIconTile icon={<IconPerspective size={16} />} />
             ),
             isDisabled: pageLayoutIdsAlreadyAdded.has(page.id),
             isAlreadyInSidebar: pageLayoutIdsAlreadyAdded.has(page.id),

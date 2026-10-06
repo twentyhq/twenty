@@ -103,7 +103,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
       <StyledSection>
         <StyledSectionTitle>{t`Free credits`}</StyledSectionTitle>
         <MetricRow
-          startIcon={IconCoins}
+          startIcon={<IconCoins size={14} />}
           value={plural(earnedCredits, {
             one: `${formattedEarnedCredits} credit`,
             other: `${formattedEarnedCredits} credits`,
@@ -117,19 +117,23 @@ export const OnboardingFreeCreditsPopoverContent = ({
           <HorizontalSeparator noMargin />
           <StyledSection>
             <StyledSectionTitle>{t`Breakdown`}</StyledSectionTitle>
-            {earnedCreditsByStep.map(({ step, credits, rewardCredits }) => (
-              <MetricRow
-                key={step}
-                startIcon={creditsSteps[step].Icon}
-                value={
-                  credits < rewardCredits
-                    ? `${formatOnboardingCredits(credits, numberFormat)}/${formatOnboardingCredits(rewardCredits, numberFormat)}`
-                    : formatOnboardingCredits(credits, numberFormat)
-                }
-              >
-                {creditsSteps[step].label}
-              </MetricRow>
-            ))}
+            {earnedCreditsByStep.map(({ step, credits, rewardCredits }) => {
+              const { Icon } = creditsSteps[step];
+
+              return (
+                <MetricRow
+                  key={step}
+                  startIcon={<Icon size={14} />}
+                  value={
+                    credits < rewardCredits
+                      ? `${formatOnboardingCredits(credits, numberFormat)}/${formatOnboardingCredits(rewardCredits, numberFormat)}`
+                      : formatOnboardingCredits(credits, numberFormat)
+                  }
+                >
+                  {creditsSteps[step].label}
+                </MetricRow>
+              );
+            })}
           </StyledSection>
         </>
       )}
@@ -140,20 +144,26 @@ export const OnboardingFreeCreditsPopoverContent = ({
             ? t`Enough for one of these on average`
             : t`1 credit is enough for one of these on average`}
         </StyledSectionTitle>
-        <MetricRow startIcon={IconSparkles} value={formatNumber(aiActions)}>
+        <MetricRow
+          startIcon={<IconSparkles size={14} />}
+          value={formatNumber(aiActions)}
+        >
           {t`AI actions`}
         </MetricRow>
         <MetricRow
-          startIcon={IconSettingsAutomation}
+          startIcon={<IconSettingsAutomation size={14} />}
           value={formatNumber(workflowSteps)}
         >
           {t`Workflow steps`}
         </MetricRow>
-        <MetricRow startIcon={IconWand} value={formatNumber(enrichments)}>
+        <MetricRow
+          startIcon={<IconWand size={14} />}
+          value={formatNumber(enrichments)}
+        >
           {t`Enrichments`}
         </MetricRow>
         <MetricRow
-          startIcon={IconVideo}
+          startIcon={<IconVideo size={14} />}
           value={plural(callRecordingHours, {
             one: `${formattedCallRecordingHours} hour`,
             other: `${formattedCallRecordingHours} hours`,
@@ -161,7 +171,10 @@ export const OnboardingFreeCreditsPopoverContent = ({
         >
           {t`Call recording`}
         </MetricRow>
-        <MetricRow startIcon={IconMail} value={formatNumber(emailsSent)}>
+        <MetricRow
+          startIcon={<IconMail size={14} />}
+          value={formatNumber(emailsSent)}
+        >
           {t`Shared inbox emails`}
         </MetricRow>
       </StyledSection>
