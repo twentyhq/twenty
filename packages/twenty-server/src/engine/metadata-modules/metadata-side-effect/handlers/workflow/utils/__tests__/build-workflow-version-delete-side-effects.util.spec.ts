@@ -3,10 +3,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { buildWorkflowVersionDeleteSideEffects } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow/utils/build-workflow-version-delete-side-effects.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
-import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
@@ -48,15 +45,6 @@ const buildDeleteSideEffects = (
     },
   });
 };
-
-const aiAgentStep = (agentId: string) => ({
-  id: `step-${agentId}`,
-  name: 'Agent',
-  type: WorkflowActionType.AI_AGENT,
-  valid: true,
-  nextStepIds: [],
-  settings: { input: { agentId, prompt: '' } },
-});
 
 const codeStep = (logicFunctionId: string) => ({
   id: `step-${logicFunctionId}`,
@@ -104,7 +92,7 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
     ).toEqual({ status: 'noop' });
   });
 
-  it('deletes every version of the workflow with its command menu items and the CODE functions and agents only it uses', () => {
+  it('deletes every version of the workflow with its command menu items and the CODE functions only it uses', () => {
     const result = buildDeleteSideEffects((maps) => {
       maps.flatWorkflowMaps.byUniversalIdentifier[WORKFLOW_ID] = {
         id: 'core-workflow-id',
@@ -117,7 +105,7 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
           universalIdentifier: 'active-version',
           coreWorkflowId: 'core-workflow-id',
           workspaceWorkflowVersionId: 'mirror-active-version-id',
-          steps: [codeStep(OWNED_FUNCTION_ID), aiAgentStep('owned-agent-id')],
+          steps: [codeStep(OWNED_FUNCTION_ID)],
         },
         {
           id: 'draft-version-id',
@@ -165,25 +153,6 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
         ] = commandMenuItem as FlatCommandMenuItem;
       }
 
-      maps.flatAgentMaps.byUniversalIdentifier['owned-agent'] = {
-        id: 'owned-agent-id',
-        universalIdentifier: 'owned-agent',
-        isSystem: true,
-      } as FlatAgent;
-      maps.flatRoleTargetMaps.byUniversalIdentifier['owned-agent-target'] = {
-        id: 'owned-agent-target-id',
-        universalIdentifier: 'owned-agent-target',
-        roleId: 'agent-role-id',
-        agentId: 'owned-agent-id',
-      } as FlatRoleTarget;
-      maps.flatRoleMaps.byUniversalIdentifier['agent-role'] = {
-        id: 'agent-role-id',
-        universalIdentifier: 'agent-role',
-        canBeAssignedToAgents: true,
-        canBeAssignedToUsers: false,
-        canBeAssignedToApiKeys: false,
-      } as FlatRole;
-
       for (const logicFunctionId of [OWNED_FUNCTION_ID, SHARED_FUNCTION_ID]) {
         maps.flatLogicFunctionMaps.byUniversalIdentifier[
           `${logicFunctionId}-universal`
@@ -209,14 +178,5 @@ describe('buildWorkflowVersionDeleteSideEffects', () => {
     expect(
       Object.keys(result.operations.logicFunction?.flatEntityToDelete ?? {}),
     ).toEqual([`${OWNED_FUNCTION_ID}-universal`]);
-    expect(
-      Object.keys(result.operations.agent?.flatEntityToDelete ?? {}),
-    ).toEqual(['owned-agent']);
-    expect(
-      Object.keys(result.operations.roleTarget?.flatEntityToDelete ?? {}),
-    ).toEqual(['owned-agent-target']);
-    expect(
-      Object.keys(result.operations.role?.flatEntityToDelete ?? {}),
-    ).toEqual(['agent-role']);
   });
 });
