@@ -7,7 +7,7 @@ import { getConfigPath } from '@/config/get-config-path';
 import { readConfig } from '@/config/read-config';
 import { getAccessTokenExpiry } from '@/oauth/is-access-token-expiring';
 import { formatDetails } from '@/output/format-details';
-import { dimText } from '@/output/style';
+import { colorText, dimText } from '@/output/style';
 import { TARGET_ENVIRONMENT_VARIABLE } from '@/target/constants/target-environment-variable.constant';
 import { fetchSignedInIdentity } from '@/transport/metadata/fetch-signed-in-identity';
 
@@ -44,6 +44,7 @@ export const runAuthStatusCommand: CommandRun<TargetCommandContext> = async ({
   const credentialsLabel = isDefined(identity.email)
     ? `${identity.email} ${dimText(`via ${CREDENTIAL_KIND_LABELS[target.credentialKind]}`)}`
     : CREDENTIAL_KIND_LABELS[target.credentialKind];
+  const statusLabel = colorText('green', 'valid');
 
   return {
     data: {
@@ -66,8 +67,8 @@ export const runAuthStatusCommand: CommandRun<TargetCommandContext> = async ({
       [
         'Status',
         isDefined(sessionExpiry)
-          ? `valid ${dimText(`· renews itself, current token expires in ${formatTimeLeft(sessionExpiry)}`)}`
-          : 'valid',
+          ? `${statusLabel} ${dimText(`· renews itself, current token expires in ${formatTimeLeft(sessionExpiry)}`)}`
+          : statusLabel,
       ],
     ]),
   };

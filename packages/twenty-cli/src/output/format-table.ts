@@ -1,7 +1,7 @@
 import { stripVTControlCharacters } from 'node:util';
 
 import { TABLE_LAYOUT } from '@/output/constants/table-layout.constant';
-import { dimText } from '@/output/style';
+import { boldText } from '@/output/style';
 
 type TableColumn<TRow> = {
   header: string;
@@ -53,7 +53,7 @@ export const formatTable = <TRow>({
       .join(TABLE_LAYOUT.COLUMN_GAP)}`.trimEnd();
 
   return [
-    dimText(formatRow(columns.map((column) => column.header))),
+    boldText(formatRow(columns.map((column) => column.header))),
     ...cells.map(formatRow),
   ].join('\n');
 };
