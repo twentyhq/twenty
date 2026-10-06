@@ -1,0 +1,224 @@
+---
+title: Product Design Rules
+icon: "ruler"
+description: Product, data-viz, table, action, and backend rules for contributing UI and API work to Twenty.
+---
+
+## Scope
+
+These rules are distilled from Carbon, GOV.UK, NN/G, and OWASP, filtered
+for Twenty (CRM: records, pipelines, activities, workflows). Ecommerce-only
+concerns (inventory counts, cash-on-delivery, payment gateways, flash sales)
+are intentionally excluded. For code conventions see the
+[Style Guide](/developers/contribute/style-guide).
+
+
+Source: distilled from Carbon, GOV.UK, NN/G, OWASP — filtered for Twenty
+(CRM: records, pipelines, activities, workflows). Ecommerce-only rules
+(inventory, COD, VNPay, flash-sale) are intentionally excluded.
+
+Conventions: MUST / SHOULD / MAY. Each rule has GOOD/BAD + acceptance.
+
+---
+
+## DATA-001 — Chart answers the business question (MUST)
+
+| Question | Use | Avoid |
+|---|---|---|
+| Revenue/pipeline over time | Line chart | Pie |
+| Compare across stages/owners | Bar chart | Pie |
+| Top owners/deals | Horizontal bar | Pie |
+| 2–4 parts of a whole | Pie allowed | Pie for precise comparison |
+| KPI vs target | KPI + reference line | 3D gauge |
+
+BAD: pie of 12 pipeline stages.
+GOOD: horizontal bar sorted by value desc.
+
+Accept: every dashboard widget maps to one question in its title.
+
+## DATA-002 — Ranking sorts by the ranked metric (MUST)
+
+BAD: "Top deals" sorted alphabetically.
+GOOD: "Top deals by amount" with amounts shown, sorted desc.
+
+Accept: any "Top N" list shows its metric and sort key.
+
+## DATA-003 — Attention first, not id order (MUST)
+
+Record lists, pipelines, workflow runs: actionable items surface first
+(overdue, failed, awaiting owner), not lowest id.
+
+Accept: default view sort reflects the job, with the sort key visible.
+
+## DATA-004 — Every number has a time range (MUST)
+
+BAD: "Revenue: $2.4M".
+GOOD: "Revenue $2.4M · Oct 1–6, 2026 · vs prior period +12.4%".
+
+Accept: no KPI/chart ships without an explicit range + comparison.
+
+## DATA-005 — Value axes start at zero (MUST)
+
+Truncated axes exaggerate deltas. Percentage/change charts must state
+whether the delta is relative or percentage points.
+
+Accept: axis baseline visible or annotated; no 3D charts.
+
+## DATA-006 — Long labels go horizontal (SHOULD)
+
+Person/company/deal names: horizontal bar, never rotated vertical text.
+
+## DATA-007 — Dashboard is overview, table is investigation (SHOULD)
+
+Dashboard: KPIs + trend + Top 5–10 + attention list. Full exploration
+belongs in record views. Max Top 10 with "View all →".
+
+## TABLE-001 — Server-side filter/sort/pagination (MUST)
+
+GraphQL connections (`first`/`after`, `orderBy`, `filter`) — never ship
+50k records to the client for JS filtering.
+
+Accept: list views paginate via cursor; filter+sort compose server-side.
+
+## TABLE-002 — Numbers right, text left, dates consistent (SHOULD)
+
+Amounts tabular-nums right-aligned; names left; one date format.
+
+## TABLE-003 — IDs are not primary information (SHOULD)
+
+Show the human name first; record id secondary/muted.
+
+## TABLE-004 — Status is never color-only (MUST)
+
+Badge = color + text label (Lingui). Color-blind users must distinguish.
+
+## TABLE-005 — Filter state lives in the URL (SHOULD)
+
+View filters/sorts/page survive back-navigation and are shareable.
+
+## TABLE-006 — Column defaults are minimal (SHOULD)
+
+Default ≤ 7 columns; the rest behind column visibility.
+
+## ACT-001 — One primary action per screen (MUST)
+
+One visually primary CTA; the rest secondary/ghost. Destructive actions
+in a separated danger zone, never beside Save.
+
+## ACT-002 — Buttons name action + object (MUST)
+
+GOOD: "Create deal", "Approve refund". BAD: "Submit", "Process".
+
+## ACT-003 — Bulk actions need preview + honest results (MUST)
+
+Confirm shows affected count + consequences; result reports
+succeeded vs skipped with reasons, never a vague "Done".
+
+## ACT-004 — No confirmation fatigue (SHOULD)
+
+Confirm: delete, refund, permission change, bulk/financial ops.
+No confirm for toggles/renames/saves.
+
+## ACT-005 — Errors are recoverable (MUST)
+
+What happened, why, retry path, partial-completion report
+("94 ok, 6 failed — [Retry failed]").
+
+## FE-001 — Loading matches cost (SHOULD)
+
+Skeleton for initial page; inline button state for small ops;
+progress + job view for exports/reports. Never a blank app.
+
+## FE-002 — Optimistic UI only when rollback is cheap (MUST)
+
+Never optimistic for delete, payment, refund, permission change.
+
+## FE-003 — No secrets in twenty-front (MUST)
+
+Public config only. Keys/credentials live server-side.
+
+## BE-001 — Never trust the client (MUST)
+
+Every GraphQL mutation checks authenticated → authorized → owns/has
+access → business rule valid, server-side. Hidden UI is not security.
+
+## BE-002 — Business values are derived server-side (MUST)
+
+Prices, discounts, permissions, ownership come from the server,
+never from client-submitted fields.
+
+## BE-003 — State machines are enforced server-side (MUST)
+
+Multi-step flows (deal stages, workflow runs) validate each transition;
+the client only renders allowed next actions.
+
+## BE-004 — Idempotency for value-dispensing ops (MUST)
+
+Payments, order-equivalents, webhooks, emails, external calls carry
+idempotency keys; retries never double-execute.
+
+## BE-005 — Atomicity for check-then-act (MUST)
+
+Concurrent stock/stage/quota updates run in transactions with row
+locks or optimistic concurrency — never read-then-write naive.
+
+## BE-006 — Expensive ops go to jobs (MUST)
+
+Export 1M records, bulk updates, report generation, embeddings:
+enqueue → worker → storage → notification. No sync HTTP.
+
+## BE-007 — Rate-limit by cost, not just count (SHOULD)
+
+Search, export, bulk write, AI generation, uploads get limits
+proportional to their cost.
+
+## BE-008 — Structured errors with codes (MUST)
+
+`{ code, message, details, requestId }`; clients map codes to Lingui
+strings. No bare 500 guessing.
+
+## BE-009 — Validation in three layers (MUST)
+
+Client = UX; server = security + correctness; DB = integrity
+(UNIQUE, NOT NULL, CHECK, FK). Validation errors say what and how.
+
+## BE-010 — Audit trail for sensitive mutations (MUST)
+
+Who, what, when, where, target, before, after, result. Money,
+permissions, and bulk ops always logged; secrets never logged.
+
+## BE-011 — Correlation IDs end to end (SHOULD)
+
+Every error surface shows a reference id traceable across
+front → API → worker → DB.
+
+## DB-001 — Constraints for invariants (MUST)
+
+Uniqueness, non-negativity, valid transitions the DB can express
+belong in the schema, not just app code.
+
+## DB-002 — Index what you filter/sort (MUST)
+
+UX sort/filter → query pattern → composite index. New admin-style
+list views ship with their index.
+
+## DB-003 — No N+1 on list views (MUST)
+
+100 rows must not cost 201 queries. Eager-load/batch/DataLoader.
+
+## AI-001 — AI actions need preview + human approval (MUST)
+
+Intent → plan → preview → permission check → human confirm →
+execute → audit. No direct execution for destructive/high-impact ops.
+
+## AI-002 — Facts vs inference are labeled (MUST)
+
+AI hypotheses carry "AI-generated hypothesis" with contributing
+signals — never presented as measured data.
+
+## FINAL — One principle
+
+Every UI decision starts from the task; every datum has meaning;
+every action has a business rule; every important rule is enforced
+server-side; every important mutation is auditable; every expensive
+op has a scaling strategy.
