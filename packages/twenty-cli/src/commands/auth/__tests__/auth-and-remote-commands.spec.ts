@@ -103,6 +103,84 @@ describe('auth and remote commands', () => {
     });
   });
 
+  it('saves an unnamed connection as default and reuses its URL on the next login', async () => {
+    const first = await login(['--url', server.url]);
+    const again = await login([]);
+
+    expect(first.exitCode).toBe(0);
+    expect(first.envelope.data).toMatchObject({
+      remote: 'default',
+      isDefault: true,
+    });
+    expect(again.exitCode).toBe(0);
+    expect(again.envelope.data).toEqual(first.envelope.data);
+    expect(await readConfigFile()).toMatchObject({
+      defaultRemote: 'default',
+      remotes: { default: { apiUrl: server.url, apiKey: VALID_KEY } },
+    });
+  });
+
+  it('explains the automatic name only when creating an unnamed connection', async () => {
+    vi.spyOn(process, 'stdin', 'get').mockReturnValue(
+      createStandardInputStub({ content: VALID_KEY }),
+    );
+    const first = await runCliForTest([
+      'auth',
+      'login',
+      '--with-token',
+      '--url',
+      server.url,
+    ]);
+
+    expect(first.exitCode).toBe(0);
+    expect(first.stdout).toContain('this connection was named "default"');
+    expect(first.stdout).toContain(
+      'Use --name <name> to name another connection',
+    );
+    expect(first.stdout).toContain('--remote <name> to select a saved one');
+
+    vi.spyOn(process, 'stdin', 'get').mockReturnValue(
+      createStandardInputStub({ content: VALID_KEY }),
+    );
+    const again = await runCliForTest(['auth', 'login', '--with-token']);
+
+    expect(again.exitCode).toBe(0);
+    expect(again.stdout).not.toContain('No remote name supplied');
+  });
+
+  it('asks for a URL and explains the default name on the first bare login', async () => {
+    const { envelope, exitCode } = await runJson(['auth', 'login']);
+
+    expect(exitCode).toBe(2);
+    expect(envelope.error).toMatchObject({
+      code: 'USAGE',
+      hint: 'Run twenty auth login --url <url> to save a connection named "default", or add --name <name> to choose another name.',
+    });
+    await expect(readFile(configPath)).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+  });
+
+  it('keeps a selected named remote and protects the unnamed connection from URL replacement', async () => {
+    await login(['--url', server.url, '--name', 'prod']);
+    const unnamed = await login(['--url', server.url]);
+    const refused = await login(['--url', secondServerUrl]);
+
+    expect(unnamed.envelope.data).toMatchObject({
+      remote: 'default',
+      isDefault: false,
+    });
+    expect(refused.exitCode).toBe(2);
+    expect(refused.envelope.error.code).toBe('CONFIRMATION_REQUIRED');
+    expect(await readConfigFile()).toMatchObject({
+      defaultRemote: 'prod',
+      remotes: {
+        prod: { apiUrl: server.url },
+        default: { apiUrl: server.url },
+      },
+    });
+  });
+
   it('saves nothing when the server rejects the key', async () => {
     const { envelope, exitCode } = await login(
       ['--url', server.url, '--name', 'prod'],

@@ -22,6 +22,15 @@ failure recovery. See the [README](../README.md) to build and start the CLI.
 ## Connections and authentication
 
 ```bash
+twenty auth login --url https://acme.twenty.com
+twenty auth status
+```
+
+The connection is named `default` when neither `--name` nor `--remote` is supplied.
+Run `twenty auth login` again to sign in to that saved URL. To keep several
+connections, give each a name:
+
+```bash
 twenty auth login --url https://acme.twenty.com --name dev --use
 twenty auth status --remote dev
 twenty remote list
@@ -42,6 +51,8 @@ printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acm
 Credentials and remote settings are saved in `~/.twenty/config.json`, with
 owner-only file permissions. Login validates credentials before saving them.
 `--use` makes the remote the default; the first remote also becomes the default.
+Creating the connection named `default` does not switch an existing default
+remote unless you pass `--use`.
 Use `twenty auth login --remote dev` to sign in again to a saved URL. Changing an
 existing remote's URL requires `--replace`.
 
