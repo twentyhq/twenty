@@ -62,6 +62,7 @@ const buildDraft = (widgets: PageLayoutWidget[]): DraftPageLayout => {
     name: 'Test Page Layout',
     type: PageLayoutType.DASHBOARD,
     isFirstTabPinned: true,
+    dashboardFilters: null,
     objectMetadataId: TEST_OBJECT_METADATA_ID,
     defaultTabToFocusOnMobileAndSidePanelId: null,
     tabs: [tab],

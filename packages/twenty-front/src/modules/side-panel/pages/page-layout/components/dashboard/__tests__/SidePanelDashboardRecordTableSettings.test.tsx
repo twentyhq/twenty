@@ -90,6 +90,7 @@ describe('SidePanelDashboardRecordTableSettings', () => {
         tabs: [],
         defaultTabToFocusOnMobileAndSidePanelId: null,
         isFirstTabPinned: true,
+        dashboardFilters: null,
       },
     );
 

@@ -19,6 +19,7 @@ const MOCK_DASHBOARD_LAYOUT: PageLayout = {
   name: 'Dashboard Layout',
   type: PageLayoutType.DASHBOARD,
   isFirstTabPinned: true,
+  dashboardFilters: null,
   isSystemSideEffect: false,
   objectMetadataId: 'object-metadata-id',
   universalIdentifier: '20202020-0000-0000-0000-000000000001',

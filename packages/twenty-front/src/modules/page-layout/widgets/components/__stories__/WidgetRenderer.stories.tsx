@@ -140,6 +140,7 @@ const createPageLayoutWithWidget = (
   type: pageLayoutType,
   isSystemSideEffect: false,
   isFirstTabPinned: true,
+  dashboardFilters: null,
   objectMetadataId: companyObjectMetadataItem.id,
   universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [
@@ -1721,6 +1722,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       type: pageLayoutType,
       isSystemSideEffect: false,
       isFirstTabPinned: true,
+      dashboardFilters: null,
       objectMetadataId: companyObjectMetadataItem.id,
       universalIdentifier: '20202020-0000-0000-0000-000000000001',
       tabs:

@@ -30,6 +30,7 @@ describe('getTabsByDisplayMode', () => {
     type: PageLayoutType.RECORD_PAGE,
     objectMetadataId: null,
     isFirstTabPinned,
+    dashboardFilters: null,
     tabs,
   });
 

@@ -73,6 +73,7 @@ const pageLayoutWithTranscriptWidget: PageLayout = {
   name: 'Calendar Event Layout',
   type: PageLayoutType.RECORD_PAGE,
   isFirstTabPinned: true,
+  dashboardFilters: null,
   applicationId: '',
   isSystemSideEffect: false,
   objectMetadataId: null,

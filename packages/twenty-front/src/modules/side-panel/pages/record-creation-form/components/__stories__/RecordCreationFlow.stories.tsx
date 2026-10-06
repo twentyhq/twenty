@@ -99,6 +99,7 @@ const RecordCreationFlow = ({ commandOrigin }: RecordCreationFlowProps) => {
         type: PageLayoutType.RECORD_FORM,
         objectMetadataId: objectMetadataItem.id,
         isFirstTabPinned: false,
+        dashboardFilters: null,
       },
     ]);
     replaceDraft('pageLayoutTabs', [

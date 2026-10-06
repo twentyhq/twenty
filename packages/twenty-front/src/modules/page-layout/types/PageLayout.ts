@@ -7,5 +7,5 @@ export type PageLayout = Omit<
   'tabs' | 'dashboardFilters'
 > & {
   tabs: PageLayoutTab[];
-  dashboardFilters?: DashboardFilterSlot[] | null;
+  dashboardFilters: DashboardFilterSlot[] | null;
 };

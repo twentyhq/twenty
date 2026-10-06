@@ -175,6 +175,7 @@ describe('useCreatePageLayoutTab', () => {
         name: 'Test Layout',
         type: PageLayoutType.RECORD_PAGE,
         isFirstTabPinned: true,
+        dashboardFilters: null,
         objectMetadataId: null,
         tabs: [],
       });
@@ -249,6 +250,7 @@ describe('useCreatePageLayoutTab', () => {
         name: 'Test Layout',
         type: PageLayoutType.RECORD_PAGE,
         isFirstTabPinned: true,
+        dashboardFilters: null,
         objectMetadataId: null,
         tabs: [],
       });
@@ -379,6 +381,7 @@ describe('useCreatePageLayoutTab', () => {
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
         isFirstTabPinned: true,
+        dashboardFilters: null,
         objectMetadataId: null,
         tabs: [
           {
