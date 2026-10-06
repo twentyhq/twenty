@@ -567,6 +567,9 @@ export class WorkflowCoreSyncService {
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
       workspaceId,
     );
+    await this.workflowVersionCoreSyncService.evictCronTriggerCacheEntriesOfWorkflows(
+      flatWorkflowsToDelete.map(({ id }) => id),
+    );
   }
 
   async findCoreWorkflowById(
