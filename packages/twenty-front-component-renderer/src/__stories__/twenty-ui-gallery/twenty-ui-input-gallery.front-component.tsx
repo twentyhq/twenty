@@ -20,6 +20,7 @@ import {
   Switch,
 } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme';
+import { Text } from 'twenty-ui/primitives/typography';
 import {
   ComponentGallery,
   type GalleryEntry,
@@ -60,7 +61,14 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'CodeEditorHeader',
-    node: <CodeEditorHeader title="Editor" />,
+    node: (
+      <CodeEditorHeader
+        title={<Text>Editor</Text>}
+        endElement={<Button size="sm">Format</Button>}
+        render={<header />}
+        aria-label="Code editor"
+      />
+    ),
   },
   {
     name: 'IconButton (elevated)',

@@ -25,6 +25,7 @@ import { UpgradeApplicationsJob } from 'src/engine/core-modules/application/jobs
 import { UpgradeWorkspaceApplicationJob } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job';
 import { InstallPreInstalledAppsJob } from 'src/engine/core-modules/application/pre-installed-apps/jobs/install-pre-installed-apps.job';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
+import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pending-wake-up.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { RecordExportModule } from 'src/engine/core-modules/record-export/record-export.module';
@@ -118,6 +119,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     ApplicationRegistrationModule,
     ApplicationUpgradeModule,
     PreInstalledAppsModule,
+    PendingWakeUpModule,
     BillingReminderModule,
     ApplicationRecurringChargeModule,
     WorkspaceMigrationRunnerModule,
