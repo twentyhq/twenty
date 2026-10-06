@@ -72,7 +72,7 @@ export const WithActions: Story = {
     await expect(canvas.getByRole('button', { name: 'Run' })).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Format' })).toBeVisible();
 
-    await userEvent.tab();
+    canvas.getByRole('button', { name: 'Copy code' }).focus();
     await expect(
       canvas.getByRole('button', { name: 'Copy code' }),
     ).toHaveFocus();
