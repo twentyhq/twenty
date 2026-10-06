@@ -238,6 +238,7 @@ export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFro
 export type { CanvasTheme } from './tiptap/canvas-theme';
 export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
 export { convertEmailBodyToEmailDocument } from './tiptap/convert-email-body-to-email-document';
+export { convertStringBodyToEmailDocument } from './tiptap/convert-string-body-to-email-document';
 export { convertTipTapBlocksToMarkdown } from './tiptap/convert-tiptap-blocks-to-markdown';
 export type { EmailDocumentMarkType } from './tiptap/email-document-mark-catalog';
 export {
