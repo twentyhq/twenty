@@ -17,6 +17,5 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [TimelineActivityTypeService, TimelineActivityTypeResolver],
-  exports: [TimelineActivityTypeService],
 })
 export class TimelineActivityTypeModule {}

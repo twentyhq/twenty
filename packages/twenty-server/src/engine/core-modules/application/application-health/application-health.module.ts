@@ -17,6 +17,5 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [ApplicationHealthCheckService, ApplicationHealthResolver],
-  exports: [ApplicationHealthCheckService],
 })
 export class ApplicationHealthModule {}
