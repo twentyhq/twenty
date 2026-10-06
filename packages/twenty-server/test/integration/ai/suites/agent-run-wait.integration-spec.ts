@@ -211,6 +211,46 @@ describe('agent runs that wait (integration)', () => {
     ]);
   });
 
+  it('refuses a chat message while a run goes on in its conversation', async () => {
+    let chatAttempt: Promise<unknown> | undefined;
+
+    jest
+      .spyOn(
+        getAppProviderByClassName<AgentAsyncExecutorService>(
+          'AgentAsyncExecutorService',
+        ),
+        'executeAgent',
+      )
+      .mockImplementationOnce(async () => {
+        const [{ threadId }] = await global.testDataSource.query(
+          `SELECT "threadId" FROM "${schema}"."agentTurn" WHERE "agentId" = $1 AND status = 'running'
+           ORDER BY "createdAt" DESC LIMIT 1`,
+          [agentId],
+        );
+
+        // the run is not suspended yet, so only its lock on the conversation keeps the message out
+        chatAttempt = getAppProviderByClassName<AgentChatStreamingService>(
+          'AgentChatStreamingService',
+        )
+          .streamAgentChat({
+            thread: { id: threadId, pendingQuestionMessageId: null },
+            workspace: { id: workspaceId },
+            text: 'Any news?',
+          } as Parameters<AgentChatStreamingService['streamAgentChat']>[0])
+          .catch((error: unknown) => error);
+
+        await chatAttempt;
+
+        return replyingResult;
+      });
+
+    await runTrigger();
+
+    expect(await chatAttempt).toMatchObject({
+      code: AiExceptionCode.THREAD_AWAITING_ANSWER,
+    });
+  });
+
   it('drops a waiting triggered run once its trigger is turned off', async () => {
     const executeAgent = mockAgent(waitingResult(), replyingResult);
 

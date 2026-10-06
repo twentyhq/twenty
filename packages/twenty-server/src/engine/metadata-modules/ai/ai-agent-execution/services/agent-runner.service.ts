@@ -162,17 +162,13 @@ export class AgentRunnerService {
     // the suspension a continued run resumes from
     suspension: AgentRunSuspensionEntity | null;
   }): Promise<AgentRunnerResult> {
-    const { workspaceId, conversation } = input;
-    const work = () => this.runTurn({ input, suspension });
-
-    // a continued conversation is read before the run, so two runs on it must not interleave
-    return conversation.isCreated
-      ? work()
-      : this.agentRunConversationService.withThreadLock({
-          workspaceId,
-          threadId: conversation.threadId,
-          work,
-        });
+    // nothing else writes to the conversation while the run goes on: another run would read it half
+    // written, and a run that suspends would read a member's message once it goes on
+    return this.agentRunConversationService.withThreadLock({
+      workspaceId: input.workspaceId,
+      threadId: input.conversation.threadId,
+      work: () => this.runTurn({ input, suspension }),
+    });
   }
 
   private async runTurn({
