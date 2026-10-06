@@ -65,7 +65,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     position: 6,
   },
   workflowsFolderAllWorkflows: {
-    universalIdentifier: '20202020-b008-4b08-8b08-c0aba11c0008',
+    universalIdentifier: '151c6570-69f0-4506-9261-b7b7d0c1b503',
     type: NavigationMenuItemType.LINK,
     name: i18nLabel(
       msg({ message: `Workflows`, context: 'navigationMenuItem.name' }),

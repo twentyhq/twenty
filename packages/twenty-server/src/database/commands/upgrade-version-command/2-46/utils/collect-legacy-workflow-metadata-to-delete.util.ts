@@ -9,8 +9,10 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 export type LegacyWorkflowMetadataToDelete = {
@@ -18,6 +20,7 @@ export type LegacyWorkflowMetadataToDelete = {
   flatFieldMetadatasToDelete: UniversalFlatFieldMetadata[];
   flatIndexMetadatasToDelete: FlatIndexMetadata[];
   flatPageLayoutWidgetsToDelete: FlatPageLayoutWidget[];
+  flatNavigationMenuItemsToDelete: FlatNavigationMenuItem[];
 };
 
 const getConfigurationFieldMetadataId = (
@@ -31,11 +34,15 @@ export const collectLegacyWorkflowMetadataToDelete = ({
   flatFieldMetadataMaps,
   flatIndexMaps,
   flatPageLayoutWidgetMaps,
+  flatViewMaps,
+  flatNavigationMenuItemMaps,
 }: {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
   flatPageLayoutWidgetMaps: FlatEntityMaps<FlatPageLayoutWidget>;
+  flatViewMaps: FlatEntityMaps<FlatView>;
+  flatNavigationMenuItemMaps: FlatEntityMaps<FlatNavigationMenuItem>;
 }): LegacyWorkflowMetadataToDelete => {
   const flatObjectMetadatasToDelete =
     LEGACY_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIERS.map((universalIdentifier) =>
@@ -148,6 +155,24 @@ export const collectLegacyWorkflowMetadataToDelete = ({
       );
     });
 
+  const deletedViewIds = new Set(
+    Object.values(flatViewMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(({ objectMetadataId }) => deletedObjectIds.has(objectMetadataId))
+      .map(({ id }) => id),
+  );
+
+  const flatNavigationMenuItemsToDelete = Object.values(
+    flatNavigationMenuItemMaps.byUniversalIdentifier,
+  )
+    .filter(isDefined)
+    .filter(
+      ({ targetObjectMetadataId, viewId }) =>
+        (isDefined(targetObjectMetadataId) &&
+          deletedObjectIds.has(targetObjectMetadataId)) ||
+        (isDefined(viewId) && deletedViewIds.has(viewId)),
+    );
+
   return {
     flatObjectMetadatasToDelete,
     flatFieldMetadatasToDelete: [
@@ -157,5 +182,6 @@ export const collectLegacyWorkflowMetadataToDelete = ({
       ...flatIndexMetadatasToDeleteByUniversalIdentifier.values(),
     ],
     flatPageLayoutWidgetsToDelete,
+    flatNavigationMenuItemsToDelete,
   };
 };

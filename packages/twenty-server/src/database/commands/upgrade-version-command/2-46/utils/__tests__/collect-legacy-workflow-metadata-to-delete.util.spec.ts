@@ -8,8 +8,10 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
 import { type FlatIndexFieldMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
 const WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-62be-406c-b9ca-8caa50d51392';
@@ -127,6 +129,50 @@ const workflowNameWidget = buildFieldWidget({
   fieldMetadataId: workflowNameField.id,
 });
 
+const workflowView = {
+  id: 'workflow-view-id',
+  universalIdentifier: 'workflow-view',
+  objectMetadataId: workflowObject.id,
+} as unknown as FlatView;
+
+const workflowRunView = {
+  id: 'workflow-run-view-id',
+  universalIdentifier: 'workflow-run-view',
+  objectMetadataId: workflowRunObject.id,
+} as unknown as FlatView;
+
+const buildNavigationMenuItem = (
+  overrides: Partial<FlatNavigationMenuItem> & { universalIdentifier: string },
+): FlatNavigationMenuItem =>
+  ({
+    id: `${overrides.universalIdentifier}-id`,
+    targetObjectMetadataId: null,
+    viewId: null,
+    ...overrides,
+  }) as unknown as FlatNavigationMenuItem;
+
+const workflowsObjectNavigationMenuItem = buildNavigationMenuItem({
+  universalIdentifier: 'workflows-object-item',
+  targetObjectMetadataId: workflowObject.id,
+});
+
+const workflowFavoriteNavigationMenuItem = buildNavigationMenuItem({
+  universalIdentifier: 'workflow-favorite-item',
+  targetObjectMetadataId: workflowObject.id,
+  targetRecordId: 'workflow-record-id',
+});
+
+const workflowViewNavigationMenuItem = buildNavigationMenuItem({
+  universalIdentifier: 'workflow-view-item',
+  viewId: workflowView.id,
+});
+
+const workflowRunsNavigationMenuItem = buildNavigationMenuItem({
+  universalIdentifier: 'workflow-runs-item',
+  targetObjectMetadataId: workflowRunObject.id,
+  viewId: workflowRunView.id,
+});
+
 const collect = () =>
   collectLegacyWorkflowMetadataToDelete({
     flatObjectMetadataMaps: toFlatEntityMaps([
@@ -146,6 +192,13 @@ const collect = () =>
       workflowRunWorkflowWidget,
       workflowRunCoreWorkflowWidget,
       workflowNameWidget,
+    ]),
+    flatViewMaps: toFlatEntityMaps([workflowView, workflowRunView]),
+    flatNavigationMenuItemMaps: toFlatEntityMaps([
+      workflowsObjectNavigationMenuItem,
+      workflowFavoriteNavigationMenuItem,
+      workflowViewNavigationMenuItem,
+      workflowRunsNavigationMenuItem,
     ]),
   });
 
@@ -195,6 +248,22 @@ describe('collectLegacyWorkflowMetadataToDelete', () => {
     ).toEqual([workflowRunWorkflowWidget.universalIdentifier]);
   });
 
+  it('collects the navigation items pointing at the legacy objects or their views', () => {
+    expect(
+      collect()
+        .flatNavigationMenuItemsToDelete.map(
+          ({ universalIdentifier }) => universalIdentifier,
+        )
+        .sort(),
+    ).toEqual(
+      [
+        workflowsObjectNavigationMenuItem.universalIdentifier,
+        workflowFavoriteNavigationMenuItem.universalIdentifier,
+        workflowViewNavigationMenuItem.universalIdentifier,
+      ].sort(),
+    );
+  });
+
   it('collects nothing once the legacy objects are gone', () => {
     expect(
       collectLegacyWorkflowMetadataToDelete({
@@ -206,12 +275,17 @@ describe('collectLegacyWorkflowMetadataToDelete', () => {
         flatPageLayoutWidgetMaps: toFlatEntityMaps([
           workflowRunCoreWorkflowWidget,
         ]),
+        flatViewMaps: toFlatEntityMaps([workflowRunView]),
+        flatNavigationMenuItemMaps: toFlatEntityMaps([
+          workflowRunsNavigationMenuItem,
+        ]),
       }),
     ).toEqual({
       flatObjectMetadatasToDelete: [],
       flatFieldMetadatasToDelete: [],
       flatIndexMetadatasToDelete: [],
       flatPageLayoutWidgetsToDelete: [],
+      flatNavigationMenuItemsToDelete: [],
     });
   });
 });

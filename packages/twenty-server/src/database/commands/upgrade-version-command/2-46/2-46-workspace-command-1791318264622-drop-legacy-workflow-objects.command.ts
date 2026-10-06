@@ -8,7 +8,8 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildCoreWorkflowCommandMenuItemUpdates } from 'src/database/commands/upgrade-version-command/2-46/utils/build-core-workflow-command-menu-item-updates.util';
 import { buildGoToWorkflowsCommandMenuItemToCreate } from 'src/database/commands/upgrade-version-command/2-46/utils/build-go-to-workflows-command-menu-item-to-create.util';
-import { buildWorkflowsNavigationLinkUpdate } from 'src/database/commands/upgrade-version-command/2-46/utils/build-workflows-navigation-link-update.util';
+import { buildWorkflowsNavigationLinkToCreate } from 'src/database/commands/upgrade-version-command/2-46/utils/build-workflows-navigation-link-to-create.util';
+import { LEGACY_WORKFLOWS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-46/constants/legacy-workflow-object-universal-identifiers.constant';
 import { collectLegacyWorkflowMetadataToDelete } from 'src/database/commands/upgrade-version-command/2-46/utils/collect-legacy-workflow-metadata-to-delete.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
@@ -47,7 +48,7 @@ export class DropLegacyWorkflowObjectsCommand extends ProvisionedWorkspaceComman
       return;
     }
 
-    await this.rehomeCoreWorkflowCommandsAndNavigation(workspaceId);
+    await this.rehomeCoreWorkflowCommands(workspaceId);
     await this.dropLegacyWorkflowMetadata(workspaceId);
     await this.createGoToWorkflowsCommandMenuItem(workspaceId);
 
@@ -259,57 +260,36 @@ export class DropLegacyWorkflowObjectsCommand extends ProvisionedWorkspaceComman
     }
   }
 
-  private async rehomeCoreWorkflowCommandsAndNavigation(
-    workspaceId: string,
-  ): Promise<void> {
-    const { flatCommandMenuItemMaps, flatNavigationMenuItemMaps } =
+  private async rehomeCoreWorkflowCommands(workspaceId: string): Promise<void> {
+    const { flatCommandMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
-        'flatNavigationMenuItemMaps',
       ]);
-
-    const now = new Date().toISOString();
 
     const commandMenuItemsToUpdate = buildCoreWorkflowCommandMenuItemUpdates({
       flatCommandMenuItemsByUniversalIdentifier:
         flatCommandMenuItemMaps.byUniversalIdentifier,
-      now,
+      now: new Date().toISOString(),
     });
 
-    const workflowsNavigationLinkUpdate = buildWorkflowsNavigationLinkUpdate({
-      flatNavigationMenuItemsByUniversalIdentifier:
-        flatNavigationMenuItemMaps.byUniversalIdentifier,
-      now,
-    });
-
-    if (
-      commandMenuItemsToUpdate.length === 0 &&
-      !isDefined(workflowsNavigationLinkUpdate)
-    ) {
+    if (commandMenuItemsToUpdate.length === 0) {
       return;
     }
 
     await this.runLegacyMigration({
       workspaceId,
-      failureMessage: 'Failed to re-home the workflow commands and navigation',
+      failureMessage: 'Failed to re-home the workflow commands',
       allFlatEntityOperationByMetadataName: {
         commandMenuItem: {
           flatEntityToCreate: [],
           flatEntityToDelete: [],
           flatEntityToUpdate: commandMenuItemsToUpdate,
         },
-        navigationMenuItem: {
-          flatEntityToCreate: [],
-          flatEntityToDelete: [],
-          flatEntityToUpdate: isDefined(workflowsNavigationLinkUpdate)
-            ? [workflowsNavigationLinkUpdate]
-            : [],
-        },
       },
     });
 
     this.logger.log(
-      `Re-homed ${commandMenuItemsToUpdate.length} workflow command(s)${isDefined(workflowsNavigationLinkUpdate) ? ' and the Workflows navigation item' : ''} in workspace ${workspaceId}`,
+      `Re-homed ${commandMenuItemsToUpdate.length} workflow command(s) in workspace ${workspaceId}`,
     );
   }
 
@@ -319,11 +299,15 @@ export class DropLegacyWorkflowObjectsCommand extends ProvisionedWorkspaceComman
       flatFieldMetadataMaps,
       flatIndexMaps,
       flatPageLayoutWidgetMaps,
+      flatViewMaps,
+      flatNavigationMenuItemMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatIndexMaps',
       'flatPageLayoutWidgetMaps',
+      'flatViewMaps',
+      'flatNavigationMenuItemMaps',
     ]);
 
     const {
@@ -331,11 +315,14 @@ export class DropLegacyWorkflowObjectsCommand extends ProvisionedWorkspaceComman
       flatFieldMetadatasToDelete,
       flatIndexMetadatasToDelete,
       flatPageLayoutWidgetsToDelete,
+      flatNavigationMenuItemsToDelete,
     } = collectLegacyWorkflowMetadataToDelete({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatIndexMaps,
       flatPageLayoutWidgetMaps,
+      flatViewMaps,
+      flatNavigationMenuItemMaps,
     });
 
     if (
@@ -350,10 +337,33 @@ export class DropLegacyWorkflowObjectsCommand extends ProvisionedWorkspaceComman
       return;
     }
 
+    const legacyWorkflowsNavigationMenuItem =
+      flatNavigationMenuItemsToDelete.find(
+        ({ universalIdentifier }) =>
+          universalIdentifier ===
+          LEGACY_WORKFLOWS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+      );
+
+    const workflowsNavigationLinkToCreate = isDefined(
+      legacyWorkflowsNavigationMenuItem,
+    )
+      ? buildWorkflowsNavigationLinkToCreate({
+          legacyWorkflowsNavigationMenuItem,
+          now: new Date().toISOString(),
+        })
+      : undefined;
+
     await this.runLegacyMigration({
       workspaceId,
       failureMessage: 'Failed to drop the legacy workflow objects',
       allFlatEntityOperationByMetadataName: {
+        navigationMenuItem: {
+          flatEntityToCreate: isDefined(workflowsNavigationLinkToCreate)
+            ? [workflowsNavigationLinkToCreate]
+            : [],
+          flatEntityToDelete: flatNavigationMenuItemsToDelete,
+          flatEntityToUpdate: [],
+        },
         pageLayoutWidget: {
           flatEntityToCreate: [],
           flatEntityToDelete: flatPageLayoutWidgetsToDelete,
@@ -378,7 +388,7 @@ export class DropLegacyWorkflowObjectsCommand extends ProvisionedWorkspaceComman
     });
 
     this.logger.log(
-      `Dropped ${flatObjectMetadatasToDelete.length} legacy workflow object(s), ${flatFieldMetadatasToDelete.length} field(s), ${flatIndexMetadatasToDelete.length} index(es) and ${flatPageLayoutWidgetsToDelete.length} widget(s) in workspace ${workspaceId}`,
+      `Dropped ${flatObjectMetadatasToDelete.length} legacy workflow object(s), ${flatFieldMetadatasToDelete.length} field(s), ${flatIndexMetadatasToDelete.length} index(es), ${flatPageLayoutWidgetsToDelete.length} widget(s) and ${flatNavigationMenuItemsToDelete.length} navigation item(s)${isDefined(workflowsNavigationLinkToCreate) ? ', and linked the Workflows navigation item to /workflows' : ''} in workspace ${workspaceId}`,
     );
   }
 
