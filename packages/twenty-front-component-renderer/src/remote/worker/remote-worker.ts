@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/states/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
+import { installImageLoadingPolyfill } from '@/polyfills/image/utils/installImageLoadingPolyfill';
 import { workerActiveElementStore } from '@/polyfills/dom/states/workerActiveElementStore';
 import { workerFocusTransport } from '@/polyfills/dom/states/workerFocusTransport';
 import { installActiveElementDetachmentHook } from '@/polyfills/dom/utils/installActiveElementDetachmentHook';
@@ -158,6 +159,22 @@ exposeGlobals({
 });
 
 let hostThread: FrontComponentHostThread | null = null;
+
+installImageLoadingPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  loadImage: (request) => {
+    if (!isDefined(hostThread)) {
+      return Promise.reject(
+        new Error('Image loading transport is not connected'),
+      );
+    }
+
+    return hostThread.imports.loadImage(request);
+  },
+  cancelImage: async (requestId) => {
+    await hostThread?.imports.cancelImage(requestId);
+  },
+});
 
 const workerExports: WorkerExports = {
   render: async (connection, renderContext) => {

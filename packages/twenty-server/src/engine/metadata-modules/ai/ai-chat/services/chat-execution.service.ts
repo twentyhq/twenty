@@ -100,7 +100,6 @@ import { tagAiChatExecutionScope } from 'src/engine/metadata-modules/ai/ai-chat/
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import {
@@ -150,7 +149,6 @@ export class ChatExecutionService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly nativeToolBinder: NativeToolBinderService,
     private readonly messagePruningService: MessagePruningService,
     private readonly metricsService: MetricsService,
     private readonly chatActorService: AgentChatActorService,
@@ -255,10 +253,13 @@ export class ChatExecutionService {
     const nativeCapabilities = getNativeModelCapabilities(
       registeredModel.sdkPackage,
     );
-    const nativeTools = this.nativeToolBinder.bind(registeredModel, {
-      webSearch: nativeCapabilities?.webSearch === true,
-      twitterSearch: nativeCapabilities?.twitterSearch === true,
-    });
+    const nativeTools = this.aiModelConfigService.getNativeModelTools(
+      registeredModel,
+      {
+        webSearch: nativeCapabilities?.webSearch === true,
+        twitterSearch: nativeCapabilities?.twitterSearch === true,
+      },
+    );
 
     const isWorkspaceSetupConversation =
       threadId ===

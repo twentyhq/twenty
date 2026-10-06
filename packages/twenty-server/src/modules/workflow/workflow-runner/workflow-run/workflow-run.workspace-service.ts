@@ -37,6 +37,8 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
@@ -52,6 +54,7 @@ export class WorkflowRunWorkspaceService {
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   async createCoreWorkflowRun({
@@ -754,36 +757,21 @@ export class WorkflowRunWorkspaceService {
     workspaceId: string;
     stepThreadIds: string[];
   }): Promise<void> {
-    // An answer holding a conversation's claim closes its calls itself once it finds the run over.
-    // A step can also wait in a member's inbox, whose conversation is theirs, not the run's
-    const [runThreads, inboxThreads] = await Promise.all([
-      this.threadRepository.find(workspaceId, {
-        where: {
-          workflowRunId,
-          pendingQuestionMessageId: Not(IsNull()),
-          activeStreamId: IsNull(),
-        },
-        select: ['id', 'pendingQuestionMessageId'],
-      }),
-      this.threadRepository.find(workspaceId, {
-        where: {
-          id: In(stepThreadIds),
-          workflowRunId: IsNull(),
-          pendingQuestionMessageId: Not(IsNull()),
-          activeStreamId: IsNull(),
-        },
-        select: ['id', 'pendingQuestionMessageId'],
-      }),
-    ]);
+    // An answer holding a conversation's claim closes its calls itself once it finds the run over
+    const stepThreads = await this.threadRepository.find(workspaceId, {
+      where: {
+        id: In(stepThreadIds),
+        pendingQuestionMessageId: Not(IsNull()),
+        activeStreamId: IsNull(),
+      },
+      select: ['id', 'pendingQuestionMessageId'],
+    });
 
-    const waitingThreads = [
-      ...runThreads,
-      ...(await this.filterThreadsWaitingOnRun({
-        threads: inboxThreads,
-        workflowRunId,
-        workspaceId,
-      })),
-    ];
+    const waitingThreads = await this.filterThreadsWaitingOnRun({
+      threads: stepThreads,
+      workflowRunId,
+      workspaceId,
+    });
 
     for (const { id, pendingQuestionMessageId } of waitingThreads) {
       if (!isDefined(pendingQuestionMessageId)) {
@@ -800,10 +788,17 @@ export class WorkflowRunWorkspaceService {
         continue;
       }
 
+      // the question is already cleared, so its calls must close before anything else can fail
       await closeOpenToolParts({
         messagePartRepository: this.messagePartRepository,
         messageId: pendingQuestionMessageId,
         workspaceId,
+      });
+
+      await this.turnRecorderService.endWaitingTurn({
+        workspaceId,
+        messageId: pendingQuestionMessageId,
+        status: AgentTurnStatus.CANCELLED,
       });
     }
   }

@@ -13,11 +13,8 @@ import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/g
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
 @Injectable()
 export class AgentChatThreadLifecycleService {
@@ -29,6 +26,7 @@ export class AgentChatThreadLifecycleService {
     private readonly redisClientService: RedisClientService,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   async cancelStream({
@@ -87,27 +85,7 @@ export class AgentChatThreadLifecycleService {
     }
   }
 
-  // a run's conversation records what its agent step did, so the record API may only read it
-  async assertThreadIsNotWorkflowRunThread({
-    workspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-  }): Promise<void> {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
-
-    if (isDefined(thread?.workflowRunId)) {
-      throw new PermissionsException(
-        `${PermissionsExceptionMessage.PERMISSION_DENIED}: a workflow run conversation is read-only`,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-  }
-
-  // owned and workflow-run threads are skipped so an upsert cannot reassign them
+  // owned threads are skipped so an upsert cannot reassign them
   async assignCreatedThreadsToCreator({
     authContext,
     threadIds,
@@ -120,10 +98,7 @@ export class AgentChatThreadLifecycleService {
     }
 
     const workspaceId = authContext.workspace.id;
-    const unassignedThreadCriteria = {
-      workspaceMemberId: IsNull(),
-      workflowRunId: IsNull(),
-    };
+    const unassignedThreadCriteria = { workspaceMemberId: IsNull() };
 
     const threadsBefore = await this.threadRepository.find(workspaceId, {
       where: { id: In(threadIds), ...unassignedThreadCriteria },
@@ -187,13 +162,14 @@ export class AgentChatThreadLifecycleService {
       streamId: thread.activeStreamId,
     });
 
-    const { affected } = await this.threadRepository.update(
+    const isReleased = await this.turnRecorderService.releaseStreamClaim({
       workspaceId,
-      { id: thread.id, activeStreamId: thread.activeStreamId },
-      { activeStreamId: null },
-    );
+      threadId: thread.id,
+      streamId: thread.activeStreamId,
+      endRunningTurn: { status: AgentTurnStatus.CANCELLED },
+    });
 
-    if (affected > 0) {
+    if (isReleased) {
       await this.threadRecordEventService.emitThreadUpdated({
         workspaceId,
         threadBefore: thread,
