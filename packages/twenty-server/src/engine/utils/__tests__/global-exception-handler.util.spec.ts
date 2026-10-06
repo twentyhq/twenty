@@ -8,7 +8,6 @@ import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
-import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
   handleException,
   shouldCaptureException,
@@ -74,9 +73,7 @@ describe('handleException', () => {
 
       handleException({
         exception: new AuthException('Auth failure', code),
-        exceptionHandlerService: {
-          captureExceptions,
-        } as unknown as ExceptionHandlerService,
+        exceptionHandlerService: { captureExceptions },
       });
 
       expect(captureExceptions).toHaveBeenCalledTimes(isCaptured ? 1 : 0);
