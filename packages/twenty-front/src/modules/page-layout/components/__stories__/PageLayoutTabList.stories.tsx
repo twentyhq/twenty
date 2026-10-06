@@ -603,6 +603,57 @@ export const DragVisibleTabIntoOverflow: Story = {
   },
 };
 
+const swipeFromElement = (element: Element) => {
+  const bounds = element.getBoundingClientRect();
+  const startX = bounds.left + bounds.width / 2;
+  const startY = bounds.top + bounds.height / 2;
+  const dispatchTouch = (
+    type: 'touchstart' | 'touchmove' | 'touchend',
+    clientX: number,
+  ) => {
+    const touch = new Touch({
+      identifier: 1,
+      target: element,
+      clientX,
+      clientY: startY,
+    });
+    const activeTouches = type === 'touchend' ? [] : [touch];
+
+    element.dispatchEvent(
+      new TouchEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        touches: activeTouches,
+        targetTouches: activeTouches,
+        changedTouches: [touch],
+      }),
+    );
+  };
+
+  dispatchTouch('touchstart', startX);
+  dispatchTouch('touchmove', startX + 40);
+  dispatchTouch('touchend', startX + 40);
+};
+
+export const OverflowClosesOnSwipeFromVisibleTab: Story = {
+  args: { containerWidth: 250, hasAddButton: false },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByRole('button', { name: /More/ }));
+    expect(await body.findByRole('dialog', { name: /More/ })).toBeVisible();
+
+    swipeFromElement(canvas.getByRole('tab', { name: 'Overview' }));
+
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: /More/ }),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};
+
 export const OverflowTabSettings: Story = {
   args: { containerWidth: 300, hasAddButton: false, isInEditMode: true },
   play: async ({ canvasElement }) => {

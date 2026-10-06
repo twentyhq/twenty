@@ -8069,7 +8069,7 @@
             "type": "((event: DropdownDismissEvent) => void)",
             "required": false,
             "defaultValue": null,
-            "description": "Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open."
+            "description": "Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab, and `event.type` is the type of the DOM event that triggered it. Call `event.preventDefault()` to keep it open."
           },
           {
             "name": "onOpenChange",

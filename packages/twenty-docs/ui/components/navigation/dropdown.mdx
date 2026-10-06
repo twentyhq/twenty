@@ -277,7 +277,7 @@ Escape dismisses the popup and restores focus to its trigger. Outside interactio
 
 ## Dismissal
 
-Escape, a press outside the popup and Tab out of it close the dropdown. Pass `onEscapeKeyDown` or `onInteractOutside` to `Root` to react before it closes, and call `event.preventDefault()` to keep it open. `event.target` is the element pressed outside, or `null` when focus leaves with Tab. A prevented outside press still reaches the element it lands on.
+Escape, a press outside the popup and Tab out of it close the dropdown. Pass `onEscapeKeyDown` or `onInteractOutside` to `Root` to react before it closes, and call `event.preventDefault()` to keep it open. `event.target` is the element pressed outside, or `null` when focus leaves with Tab, and `event.type` is the type of the DOM event that triggered it, such as `touchmove` for a swipe outside the popup. A prevented outside press still reaches the element it lands on.
 
 ```tsx
 import { Dropdown } from 'twenty-ui/components/navigation';

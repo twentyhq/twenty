@@ -111,7 +111,9 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
       dropdownId={dropdownId}
       type="picker"
       onInteractOutside={(event) => {
+        const isTouchSwipe = event.type === 'touchmove';
         const isVisibleTabPress =
+          !isTouchSwipe &&
           isDefined(event.target?.closest(SORTABLE_HANDLE_SELECTOR)) &&
           (tabListContainerRef.current?.contains(event.target) ?? false);
 
