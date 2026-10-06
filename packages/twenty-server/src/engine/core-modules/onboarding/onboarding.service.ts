@@ -312,7 +312,6 @@ export class OnboardingService {
       key: OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY,
     });
 
-    // Stored history can hold steps that no longer exist in OnboardingStatus
     return Array.isArray(reversibleStepHistory)
       ? reversibleStepHistory.filter((step) =>
           Object.values(OnboardingStatus).includes(step),
