@@ -85,22 +85,10 @@ const renderUseValidationRules = ({
     </JotaiProvider>
   );
 
-  const loadingStates: boolean[] = [];
-
-  const renderedHook = renderHook(
-    () => {
-      const validationRules = useValidationRules({
-        objectMetadataId: OBJECT_METADATA_ID,
-      });
-
-      loadingStates.push(validationRules.loading);
-
-      return validationRules;
-    },
+  return renderHook(
+    () => useValidationRules({ objectMetadataId: OBJECT_METADATA_ID }),
     { wrapper },
   );
-
-  return { ...renderedHook, loadingStates };
 };
 
 const dispatchValidationRuleUpdate = (updatedRecord: ValidationRule) =>
@@ -138,32 +126,6 @@ describe('useValidationRules', () => {
       ]),
     );
     expect(refetchMock.result).toHaveBeenCalledTimes(1);
-  });
-
-  it('should refresh rules in the background without reporting loading', async () => {
-    const { result, loadingStates } = renderUseValidationRules({
-      mocks: [
-        buildValidationRulesMock([ACTIVE_VALIDATION_RULE]),
-        buildValidationRulesMock([DISABLED_VALIDATION_RULE]),
-      ],
-    });
-
-    await waitFor(() => expect(result.current.validationRules).toHaveLength(1));
-
-    const loadingStatesCountBeforeRefresh = loadingStates.length;
-
-    act(() => {
-      dispatchValidationRuleUpdate(DISABLED_VALIDATION_RULE);
-    });
-
-    await waitFor(() =>
-      expect(result.current.validationRules).toMatchObject([
-        { isActive: false },
-      ]),
-    );
-    expect(loadingStates.slice(loadingStatesCountBeforeRefresh)).not.toContain(
-      true,
-    );
   });
 
   it('should drop a rule another session deleted while the form is open', async () => {

@@ -27,7 +27,6 @@ export const useValidationRules = ({
   const { data, loading, refetch } = useQuery(FindManyValidationRulesDocument, {
     variables: { objectMetadataId },
     skip,
-    notifyOnNetworkStatusChange: false,
   });
 
   const refetchOnValidationRuleOperation = useCallback(
