@@ -63,18 +63,7 @@ describe('UserApplicationVariableValueService', () => {
           provide: getWorkspaceScopedRepositoryToken(
             UserApplicationVariableValueEntity,
           ),
-          useValue: {
-            find: jest.fn().mockResolvedValue([
-              {
-                applicationVariableId: 'record-my-meetings-id',
-                value: 'enc:on',
-              },
-              {
-                applicationVariableId: 'personal-api-key-id',
-                value: 'enc:key',
-              },
-            ]),
-          },
+          useValue: {},
         },
         {
           provide: getWorkspaceScopedRepositoryToken(UserWorkspaceEntity),
@@ -95,7 +84,20 @@ describe('UserApplicationVariableValueService', () => {
             }) => (isSecret ? '********' : `plaintext of ${value}`),
           },
         },
-        { provide: WorkspaceCacheService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              userApplicationVariableValueMaps: {
+                byApplicationVariableId: {
+                  'record-my-meetings-id': { [USER_WORKSPACE_ID]: 'enc:on' },
+                  'personal-api-key-id': { [USER_WORKSPACE_ID]: 'enc:key' },
+                  'language-id': { 'other-user-workspace-id': 'enc:fr' },
+                },
+              },
+            }),
+          },
+        },
         { provide: SecretEncryptionService, useValue: {} },
       ],
     }).compile();

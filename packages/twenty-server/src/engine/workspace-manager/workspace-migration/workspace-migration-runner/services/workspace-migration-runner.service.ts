@@ -81,10 +81,17 @@ export class WorkspaceMigrationRunnerService {
         flatEntityMapsKey === 'flatRolePermissionFlagMaps',
     );
 
+    const hasApplicationVariablesChanged = allFlatEntityMapsKeys.includes(
+      'flatApplicationVariableMaps',
+    );
+
     const cacheKeyNamesToInvalidate: WorkspaceCacheKeyName[] = [
       ...new Set([
         ...withDerivedFieldMetadataMaps(allFlatEntityMapsKeys),
         ...(hasRolesPermissionsChanged ? ['rolesPermissions' as const] : []),
+        ...(hasApplicationVariablesChanged
+          ? ['userApplicationVariableValueMaps' as const]
+          : []),
       ]),
     ];
 

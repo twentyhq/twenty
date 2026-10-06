@@ -386,6 +386,10 @@ export class UserWorkspaceService {
         coreWorkflowIds: createdCoreWorkflowIds,
       });
     }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'userApplicationVariableValueMaps',
+    ]);
   }
 
   async findAvailableWorkspacesByEmail(email: string) {
