@@ -1,4 +1,4 @@
-import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
+import { type OutputSchemaField } from '@/ai/types/OutputSchemaField';
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
@@ -9,7 +9,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
 import { IconPlus } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
@@ -163,11 +163,7 @@ export const WorkflowOutputSchemaBuilder = ({
                       : undefined
                   }
                 />
-                <AnimatedExpandableContainer
-                  isExpanded={isExpanded}
-                  initial={false}
-                  mode="fit-content"
-                >
+                <Collapsible isExpanded={isExpanded}>
                   <StyledSettingsContent>
                     <FormFieldInputContainer>
                       <FormTextFieldInput
@@ -205,7 +201,7 @@ export const WorkflowOutputSchemaBuilder = ({
                       />
                     </FormFieldInputContainer>
                   </StyledSettingsContent>
-                </AnimatedExpandableContainer>
+                </Collapsible>
               </StyledOutputSchemaFieldContainer>
             );
           })}

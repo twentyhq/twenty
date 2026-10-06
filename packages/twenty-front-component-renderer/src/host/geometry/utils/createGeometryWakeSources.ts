@@ -1,6 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type GeometryWakeSources } from '@/host/geometry/types/GeometryWakeSources';
+import { createDevicePixelRatioChangeObserver } from '@/host/geometry/utils/createDevicePixelRatioChangeObserver';
+import { createInputMediaFeatureChangeObserver } from '@/host/geometry/utils/createInputMediaFeatureChangeObserver';
 
 const ANIMATION_EVENT_TYPES = [
   'transitionrun',
@@ -22,6 +24,10 @@ export const createGeometryWakeSources = (
   onWake: () => void,
 ): GeometryWakeSources => {
   const resizeObservedNodes = new Set<Element>();
+  const devicePixelRatioChangeObserver =
+    createDevicePixelRatioChangeObserver(onWake);
+  const inputMediaFeatureChangeObserver =
+    createInputMediaFeatureChangeObserver(onWake);
 
   let rootContainer: Element | null = null;
   let resizeObserver: ResizeObserver | null = null;
@@ -128,6 +134,8 @@ export const createGeometryWakeSources = (
 
     window.addEventListener('resize', onWake);
     observeDocumentStyleMutations();
+    devicePixelRatioChangeObserver.observe();
+    inputMediaFeatureChangeObserver.observe();
 
     if (isDefined(rootContainer)) {
       resolveResizeObserver()?.observe(rootContainer);
@@ -182,6 +190,8 @@ export const createGeometryWakeSources = (
       window.removeEventListener('resize', onWake);
       documentStyleObserver?.disconnect();
       documentStyleObserver = null;
+      devicePixelRatioChangeObserver.disconnect();
+      inputMediaFeatureChangeObserver.disconnect();
     }
 
     resizeObserver?.disconnect();

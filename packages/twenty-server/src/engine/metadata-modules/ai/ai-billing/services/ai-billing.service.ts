@@ -2,16 +2,17 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
-import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
+import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { type BillingTokenUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/billing-token-usage.type';
-import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
+import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
+import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-cost-config.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
@@ -49,35 +50,7 @@ export class AiBillingService {
     });
   }
 
-  private async consumeQuota({
-    workspaceId,
-    operationType,
-    spenders,
-    cost,
-  }: {
-    workspaceId: string;
-    operationType: UsageOperationType;
-    spenders: UsageSpenders;
-    cost: QuotaCost;
-  }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
-    const { exhausted } = await this.usageLimitQuotaService.consumeQuota({
-      workspaceId,
-      resourceType: UsageResourceType.AI,
-      operationType,
-      spenders,
-      cost,
-    });
-
-    return {
-      hasNoMoreAvailableCredits: exhausted.some(
-        (scope) => scope.exhaustedKind === 'allowance',
-      ),
-    };
-  }
-
-  // Evaluation models are looked up first: they price like a language model
-  // but live in their own registry, and getEffectiveModelConfig would throw on
-  // an id it has never registered.
+  // evaluation models first: getEffectiveModelConfig throws on ids outside its registry
   private getCostConfig(modelId: ModelId): AiModelCostConfig {
     return (
       this.aiModelRegistryService.getEvaluationModelConfig(modelId) ??
@@ -85,17 +58,31 @@ export class AiBillingService {
     );
   }
 
+  calculateStepsCost(
+    modelId: ModelId,
+    steps: {
+      usage: BillingTokenUsage;
+      providerMetadata?: Record<string, Record<string, unknown> | undefined>;
+    }[],
+  ): number {
+    const model = this.getCostConfig(modelId);
+
+    return steps.reduce(
+      (costInDollars, step) =>
+        costInDollars +
+        computeStepCostBreakdown(model, {
+          usage: step.usage,
+          cacheCreationTokens: extractCacheCreationTokens(
+            step.providerMetadata,
+          ),
+        }).totalCostInDollars,
+      0,
+    );
+  }
+
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
     const model = this.getCostConfig(modelId);
-    const { usage, cacheCreationTokens = 0 } = billingInput;
-
-    const breakdown = computeCostBreakdown(model, {
-      inputTokens: usage.inputTokens,
-      outputTokens: usage.outputTokens,
-      reasoningTokens: usage.outputTokenDetails?.reasoningTokens,
-      cachedInputTokens: usage.inputTokenDetails?.cacheReadTokens,
-      cacheCreationTokens,
-    });
+    const breakdown = computeStepCostBreakdown(model, billingInput);
 
     this.logger.log(
       `Cost for ${model.modelId}: $${breakdown.totalCostInDollars.toFixed(6)} ` +
@@ -124,22 +111,18 @@ export class AiBillingService {
       (billingInput.usage.inputTokens ?? 0) +
       (billingInput.usage.outputTokens ?? 0);
 
-    await this.consumeQuota({
+    await this.usageLimitQuotaService.charge({
       workspaceId,
-      operationType,
-      spenders: { userWorkspaceId, agentId },
-      cost: { creditsUsedMicro, quantity: totalTokens },
+      events: [
+        this.buildAiTokenUsageEvent({
+          creditsUsedMicro,
+          totalTokens,
+          modelId,
+          operationType,
+          spenders: { userWorkspaceId, agentId },
+        }),
+      ],
     });
-
-    await this.emitAiTokenUsageEvent(
-      workspaceId,
-      creditsUsedMicro,
-      totalTokens,
-      modelId,
-      operationType,
-      agentId,
-      userWorkspaceId,
-    );
   }
 
   async decrementAndCheckAvailableCredits({
@@ -162,12 +145,19 @@ export class AiBillingService {
       (billingInput.usage.inputTokens ?? 0) +
       (billingInput.usage.outputTokens ?? 0);
 
-    return this.consumeQuota({
-      workspaceId,
-      operationType,
-      spenders,
-      cost: { creditsUsedMicro, quantity: totalTokens },
-    });
+    const { exhaustedKind } =
+      await this.usageLimitQuotaService.debitAheadOfRecord({
+        workspaceId,
+        event: this.buildAiTokenUsageEvent({
+          creditsUsedMicro,
+          totalTokens,
+          modelId,
+          operationType,
+          spenders,
+        }),
+      });
+
+    return { hasNoMoreAvailableCredits: exhaustedKind === 'allowance' };
   }
 
   async billNativeWebSearchUsage(
@@ -187,23 +177,19 @@ export class AiBillingService {
       `Native web search billing: ${nativeWebSearchCallCount} calls, $${costInDollars.toFixed(4)}`,
     );
 
-    await this.consumeQuota({
+    await this.usageLimitQuotaService.charge({
       workspaceId,
-      operationType: UsageOperationType.WEB_SEARCH,
-      spenders: { userWorkspaceId },
-      cost: { creditsUsedMicro, quantity: nativeWebSearchCallCount },
+      events: [
+        {
+          resourceType: UsageResourceType.AI,
+          operationType: UsageOperationType.WEB_SEARCH,
+          creditsUsedMicro,
+          quantity: nativeWebSearchCallCount,
+          unit: UsageUnit.INVOCATION,
+          spenders: { userWorkspaceId },
+        },
+      ],
     });
-
-    await this.usageRecorderService.record(workspaceId, [
-      {
-        resourceType: UsageResourceType.AI,
-        operationType: UsageOperationType.WEB_SEARCH,
-        creditsUsedMicro,
-        quantity: nativeWebSearchCallCount,
-        unit: UsageUnit.INVOCATION,
-        spenders: { userWorkspaceId },
-      },
-    ]);
   }
 
   async emitAiTokenUsageEvent(
@@ -216,16 +202,38 @@ export class AiBillingService {
     userWorkspaceId?: string | null,
   ): Promise<void> {
     await this.usageRecorderService.record(workspaceId, [
-      {
-        resourceType: UsageResourceType.AI,
-        operationType,
+      this.buildAiTokenUsageEvent({
         creditsUsedMicro,
-        quantity: totalTokens,
-        unit: UsageUnit.TOKEN,
-        resourceId: agentId || null,
-        resourceContext: modelId,
+        totalTokens,
+        modelId,
+        operationType,
         spenders: { userWorkspaceId, agentId },
-      },
+      }),
     ]);
+  }
+
+  private buildAiTokenUsageEvent({
+    creditsUsedMicro,
+    totalTokens,
+    modelId,
+    operationType,
+    spenders,
+  }: {
+    creditsUsedMicro: number;
+    totalTokens: number;
+    modelId: ModelId;
+    operationType: UsageOperationType;
+    spenders: UsageSpenders;
+  }): RecordUsageInput {
+    return {
+      resourceType: UsageResourceType.AI,
+      operationType,
+      creditsUsedMicro,
+      quantity: totalTokens,
+      unit: UsageUnit.TOKEN,
+      resourceId: spenders.agentId || null,
+      resourceContext: modelId,
+      spenders,
+    };
   }
 }

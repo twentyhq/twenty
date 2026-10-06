@@ -178,8 +178,7 @@ export class WorkflowCoreSyncService {
       [];
     const flatWorkflowsToUpdate: UniversalFlatWorkflow[] = [];
 
-    // The cache decides which rows exist, so a stale map would send a persisted
-    // id down the create branch and hit the primary key. The table decides.
+    // read the table, not the cache: a stale map would send a persisted id to create and hit the primary key
     const persistedCoreWorkflowIds = new Set(
       (
         await this.coreWorkflowRepository.find(workspaceId, {
@@ -210,10 +209,13 @@ export class WorkflowCoreSyncService {
       const flatWorkflow: UniversalFlatWorkflow = {
         universalIdentifier: coreRow.universalIdentifier,
         name: coreRow.name,
+        versionDefinitionHash:
+          existingFlatWorkflow?.versionDefinitionHash ?? null,
         workspaceWorkflowId: coreRow.workspaceWorkflowId,
         lastPublishedVersionId: coreRow.lastPublishedVersionId,
         lastPublishedCoreWorkflowVersionId:
           coreRow.lastPublishedCoreWorkflowVersionId,
+        isSystem: false,
         visibility: WorkflowVisibility.WORKSPACE,
         createdByUserWorkspaceId: null,
         applicationUniversalIdentifier:
@@ -228,6 +230,7 @@ export class WorkflowCoreSyncService {
           ...flatWorkflow,
           universalIdentifier: existingFlatWorkflow.universalIdentifier,
           createdAt: existingFlatWorkflow.createdAt,
+          isSystem: existingFlatWorkflow.isSystem,
           visibility: existingFlatWorkflow.visibility,
           createdByUserWorkspaceId:
             existingFlatWorkflow.createdByUserWorkspaceId,
@@ -350,9 +353,7 @@ export class WorkflowCoreSyncService {
       );
     }, buildSystemAuthContext(workspaceId));
 
-    // The locks above only cover the workspace rows, so the core writes they
-    // decided on run once that transaction has committed, through the runner
-    // like every other core write.
+    // the locks above only cover workspace rows, so core writes go through the runner after commit
     await this.applyReconciledCoreWorkflowUpdates(
       workspaceId,
       coreWorkflowUpdates,
@@ -458,8 +459,7 @@ export class WorkflowCoreSyncService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  // coreWorkflowId is a writable column on the workspace record, so a caller
-  // can point it at a core row owned by another workspace.
+  // coreWorkflowId is caller-writable, so it may point at another workspace's core row
   private async resolveWorkspaceWorkflowIdByOwnedCoreWorkflowId(
     workspaceId: string,
     workflows: WorkflowWorkspaceEntity[],
@@ -506,10 +506,7 @@ export class WorkflowCoreSyncService {
       (_, index) => !isDefined(resolvedFlatWorkflows[index]),
     );
 
-    // The dual-write listener deletes the same rows when the workspace mirror is
-    // soft-deleted, so an id that is gone from both the cache and the table is an
-    // idempotent no-op. An id still in the table is a stale cache and must fail
-    // rather than leave an orphan that still reads and still broadcasts.
+    // gone from the table means the dual-write listener already deleted it; still there means a stale cache, so fail rather than orphan it
     if (missingCoreWorkflowIds.length > 0) {
       const stillPersisted = await this.coreWorkflowRepository.find(
         workspaceId,

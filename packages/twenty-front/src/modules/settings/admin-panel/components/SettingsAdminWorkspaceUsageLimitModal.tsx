@@ -15,10 +15,9 @@ import { DELETE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mut
 import { UPDATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/updateWorkspaceUsageLimit';
 import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/workspaceUsageLimits';
 import { type AdminUsageLimitRow } from '@/settings/admin-panel/types/AdminUsageLimitRow';
-import { formatUsageLimitValue } from '@/settings/admin-panel/utils/formatUsageLimitValue';
 import { getAdminUsageLimitScopeLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitScopeLabel';
-import { USAGE_LIMIT_METER_LABELS } from '@/settings/billing/constants/UsageLimitMeterLabels';
-import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
+import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
+import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -62,6 +61,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
   row,
 }: SettingsAdminWorkspaceUsageLimitModalProps) => {
   const { t } = useLingui();
+  const { formatLimitValue } = useUsageLimitFormatter();
   const { closeDialog } = useDialog();
   const { enqueueToast } = useToast();
   const apolloAdminClient = useApolloAdminClient();
@@ -120,7 +120,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
       limitKind: row.limitKind,
       periodCount: row.periodCount,
       periodUnit: row.periodUnit,
-      meter: row.meter,
+      unit: row.unit,
       limitValue: parsedLimitValue,
       burstValue: isBurstAllowed ? parsedBurstValue : null,
     };
@@ -179,16 +179,16 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     }
   };
 
-  const meterLabel = getUsageLimitLabel(USAGE_LIMIT_METER_LABELS, row.meter);
-  const scopeLabel = getAdminUsageLimitScopeLabel(row);
-  const defaultText = formatUsageLimitValue({
-    value: row.defaultValue,
-    meter: row.meter,
+  const unitLabel = getUsageLimitUnitLabel({
+    unit: row.unit,
+    operationType: row.operationType,
   });
-  const limitValueAdornment =
-    isDefined(parsedLimitValue) && row.meter !== 'quantity'
-      ? formatUsageLimitValue({ value: parsedLimitValue, meter: row.meter })
-      : undefined;
+  const scopeLabel = getAdminUsageLimitScopeLabel(row);
+  const defaultText = formatLimitValue({
+    value: row.defaultValue,
+    unit: row.unit,
+    operationType: row.operationType,
+  });
 
   return (
     <DialogInstance
@@ -218,12 +218,11 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
           <StyledFields>
             <SettingsTextInput
               instanceId={`${dialogId}-limit-value`}
-              label={isDefined(meterLabel) ? t(meterLabel) : t`Limit`}
+              label={t(unitLabel.name)}
               type="number"
               min={1}
               value={limitValue}
               onChange={setLimitValue}
-              rightAdornment={limitValueAdornment}
               autoFocusOnMount
               fullWidth
             />

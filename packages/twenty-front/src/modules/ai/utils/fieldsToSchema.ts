@@ -1,4 +1,4 @@
-import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
+import { type OutputSchemaField } from '@/ai/types/OutputSchemaField';
 import {
   type AgentResponseFieldType,
   type AgentResponseSchema,

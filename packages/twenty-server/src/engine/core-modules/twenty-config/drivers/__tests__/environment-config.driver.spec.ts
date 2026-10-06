@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { validateSync } from 'class-validator';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
@@ -36,6 +37,25 @@ describe('EnvironmentConfigDriver', () => {
 
   it('should be defined', () => {
     expect(driver).toBeDefined();
+  });
+
+  it.each([
+    [undefined, true],
+    ['https://frontend.s3.example.com/index.html', true],
+    ['http://frontend.s3.example.com/index.html', false],
+    ['ftp://frontend.s3.example.com/index.html', false],
+    ['frontend.s3.example.com/index.html', false],
+  ])('validates the optional frontend origin %s', (indexUrl, isValid) => {
+    const config = new ConfigVariables();
+
+    expect(config.FRONTEND_INDEX_URL).toBeUndefined();
+    config.FRONTEND_INDEX_URL = indexUrl;
+
+    const errors = validateSync(config, { strictGroups: true }).filter(
+      (error) => error.property === 'FRONTEND_INDEX_URL',
+    );
+
+    expect(errors.length === 0).toBe(isValid);
   });
 
   describe('get', () => {

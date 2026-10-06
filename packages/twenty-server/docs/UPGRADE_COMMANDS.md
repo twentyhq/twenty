@@ -127,6 +127,15 @@ All pre-2.19 commands follow this rule, including `upgrade:2-10:sync-call-record
 
 Known gap: the static definition does not yet declare `callRecording`'s `searchVector` GIN index (every other searchable standard object declares its GIN index statically), so workspaces upgrading through 2-10 on the legacy path create the `searchVector` column unindexed. The static declaration plus a backfill for already-upgraded workspaces land in a follow-up (twentyhq/core-team-issues#2672), which must ship in the same release as this legacy path.
 
+## Keeping command code in the command
+
+An upgrade command is frozen once released: self-hosters can jump several versions in one upgrade, so the code that runs for them is whatever the current release ships for that old command. Two rules follow.
+
+- **Command logic lives in its version folder.** Helpers, SQL builders, constants and legacy formats that only a command needs go under `upgrade-version-command/<version>/` (or its `utils/`), never in `src/engine` or `src/modules`. Generic primitives (flat-entity utils, schema managers, repositories) are fine to call. The `twenty/no-runtime-import-from-upgrade-command` lint rule rejects runtime imports from `upgrade-version-command/`, except the `*-upgrade-command-name.constant` files that upgrade-aware entities use.
+- **Runtime code never branches on migration state.** Do not teach the runtime to serve both the old and the new shape. When a runtime must not run against a workspace mid-migration, fence it with one explicit check and remove that check once the command leaves the cross-upgrade window.
+
+A command should also not reach into runtime services to do its work. Their behavior changes with every release; the command's must not.
+
 ## Execution Order
 
 Within a given version of Twenty, the upgrade pipeline runs commands in this order, sorted by timestamp within each group:
@@ -136,6 +145,12 @@ Within a given version of Twenty, the upgrade pipeline runs commands in this ord
 3. **Workspace commands**
 
 Workspace commands are executed sequentially across all active/suspended workspaces.
+
+## Dry run
+
+`upgrade --dry-run` stops as soon as it reaches an instance command, logging `Dry run stopped before instance step "<name>"`. It does not execute that command or any later step, and records nothing in `upgradeMigration`.
+
+If the run starts within a workspace segment, pending workspace commands run with `options.dryRun` set until the next instance command or the end of the sequence. Each workspace command is responsible for simulating its own changes. Dry runs cannot preview the full upgrade sequence because later workspace commands may depend on schema changes made by preceding instance commands.
 
 ## Interrupting a run (Ctrl+C, SIGTERM)
 
@@ -196,6 +211,8 @@ npx nx run twenty-server:database:migrate:generate --name <name> --type fast --v
 ```
 
 It registers and boots (versions are validated against `TWENTY_ALL_VERSIONS`) but stays **dormant** — the sequence only runs `TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS` (previous + current). It activates automatically when `nx version:bump` promotes the version to current.
+
+CI rejects changes to next version directories by default, so add the `ci:allow-next-version-upgrade-mutation` label to the PR to confirm the command is meant for a future version.
 
 **Caveat:** `@WasRemovedInUpgrade` / `@WasIntroducedInUpgrade` are validated against the active sequence, so a decorator pointing at a still-dormant next-version command fails boot with `unknown-step-name`. For a deferred drop, keep the entity's `WasRemovedInUpgrade<T>` type wrapper now and add the decorator only once the version is current.
 

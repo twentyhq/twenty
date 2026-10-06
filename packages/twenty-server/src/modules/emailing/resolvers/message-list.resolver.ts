@@ -11,14 +11,13 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { DuplicatedMessageListDTO } from 'src/modules/emailing/dtos/duplicated-message-list.dto';
 import { MessageListDuplicationService } from 'src/modules/emailing/services/message-list-duplication.service';
 import { MessageListGraphqlApiExceptionFilter } from 'src/modules/emailing/utils/message-list-graphql-api-exception.filter';
 
-// Object permissions on the list and its memberships are checked by the
-// service, so no settings permission is required here.
+// The service checks object permissions, so no settings permission is required
 @MetadataResolver()
 @UseFilters(
   MessageListGraphqlApiExceptionFilter,
@@ -26,7 +25,17 @@ import { MessageListGraphqlApiExceptionFilter } from 'src/modules/emailing/utils
   AuthGraphqlApiExceptionFilter,
 )
 @UseGuards(
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   FeatureFlagGuard(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED),
 )
 @UsePipes(ResolverValidationPipe)

@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import chunk from 'lodash.chunk';
 import { Command } from 'nest-commander';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
@@ -21,7 +21,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function-maps.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { isLogicFunctionEligibleForPrebuiltConversion } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-eligible-for-prebuilt-conversion.util';
+import { isLogicFunctionEligibleForPrebuiltConversion } from 'src/database/commands/upgrade-version-command/2-39/utils/is-logic-function-eligible-for-prebuilt-conversion.util';
 import { UpdateLogicFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/logic-function/services/update-logic-function-action-handler.service';
 
 const LOGIC_FUNCTION_PREBUILT_CONVERSION_BATCH_SIZE = 100;
@@ -57,13 +57,13 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
 
     const isPrebuiltModeEnabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
+        'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as FeatureFlagKey,
         workspaceId,
       );
 
     if (!isPrebuiltModeEnabled && !dryRun) {
       await this.featureFlagService.enableFeatureFlags(
-        [FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED],
+        ['IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as FeatureFlagKey],
         workspaceId,
       );
     }
@@ -87,7 +87,7 @@ export class ConvertLogicFunctionsToPrebuiltCommand extends ProvisionedWorkspace
 
     if (dryRun) {
       this.logger.log(
-        `Would ensure ${FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED} is enabled and convert ${conversionTargets.length} logic function(s) on workspace ${workspaceId}`,
+        `Would ensure IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED is enabled and convert ${conversionTargets.length} logic function(s) on workspace ${workspaceId}`,
       );
 
       return;

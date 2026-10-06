@@ -7,9 +7,6 @@ type LocaleDirectionProviderProps = {
   children: ReactNode;
 };
 
-// twenty-ui components already read their direction from Base UI, but nothing
-// ever provided one, so they all resolved to its ltr default no matter which
-// locale was active.
 export const LocaleDirectionProvider = ({
   children,
 }: LocaleDirectionProviderProps) => {

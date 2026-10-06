@@ -6,7 +6,7 @@ import {
   QUERY_MAX_RECORDS,
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
-import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
+import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
@@ -16,6 +16,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { DEFAULT_ID_ORDER_BY_TIEBREAKER } from 'src/engine/api/common/constants/default-id-order-by-tiebreaker.constant';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -91,13 +92,11 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       appliedFilters,
     );
 
-    // Normalizing to deduplicated leaves makes the appended id tie-breaker
-    // yield to a caller-provided id ordering, and guarantees the SQL scan
-    // order and the keyset conditions derive from the same list
+    // Deduplicated leaves let a caller id ordering override the tie-breaker and keep scan order and keyset conditions in sync
     const orderByLeaves = resolveOrderByLeaves({
       orderBy: [
         ...(args.orderBy ?? []),
-        { id: OrderByDirection.AscNullsFirst },
+        DEFAULT_ID_ORDER_BY_TIEBREAKER,
       ] as ObjectRecordOrderBy,
       flatObjectMetadata,
       flatObjectMetadataMaps,
@@ -160,8 +159,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
-      // Order columns must be hydrated onto the records even when not requested:
-      // cursor encoding reads the sort values from them (issue #24333)
+      // Selected even when unrequested: cursor encoding reads the sort values off the records (issue #24333)
       ...buildOrderByColumnsToSelect({
         orderBy: args.orderBy,
         flatObjectMetadata,
@@ -171,9 +169,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     queryBuilder.setFindOptions({ select: columnsToSelect });
 
-    // A join that can duplicate root rows makes a row-level LIMIT return fewer records than
-    // asked, so it is rejected rather than paginated with take/skip, which drops the LIMIT
-    // from the scan.
+    // A row-duplicating join makes LIMIT return too few records, and take/skip would drop LIMIT from the scan
     const nonToOneJoinAliases = getNonToOneJoinAliases(queryBuilder);
 
     if (nonToOneJoinAliases.length > 0) {
@@ -191,8 +187,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     }
     queryBuilder.limit(limit + 1);
 
-    // Add order columns AFTER setFindOptions (setFindOptions clears addSelect)
-    // Pass columnsToSelect so we only add columns that aren't already selected
+    // setFindOptions clears addSelect, so this must come after it
     commonQueryParser.addRelationOrderColumnsToBuilder(
       queryBuilder,
       parsedOrderBy,
@@ -200,9 +195,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       columnsToSelect,
     );
 
-    // Raw rows travel along the entities: the ordered join columns already
-    // selected for the relation ordering are read out of them, so cursors get
-    // their relation values whatever the client selected (or the REST depth)
+    // Raw rows carry the ordered join columns, so cursors get relation values whatever the client selected
     const { entities: fetchedObjectRecords, raw: fetchedRawRows } =
       (await queryBuilder.getRawAndEntities()) as {
         entities: ObjectRecord[];
@@ -218,8 +211,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       fetchedItems: fetchedObjectRecords,
       limit,
       direction: isForwardPagination ? 'forward' : 'backward',
-      // getCursor applies cursors on truthiness, so an empty-string cursor
-      // must not advertise navigation from a cursor.
+      // getCursor applies cursors on truthiness, so an empty-string cursor must not advertise navigation
       hasAfterCursor: Boolean(args.after),
       hasBeforeCursor: Boolean(args.before),
     });

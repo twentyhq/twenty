@@ -10,6 +10,7 @@
   --t-icon-stroke-md: 2;
   --t-icon-stroke-lg: 2.5;
   --t-modal-size-sm-width: 300px;
+  --t-modal-size-compact-width: 360px;
   --t-modal-size-md-width: 400px;
   --t-modal-size-lg-width: 53%;
   --t-modal-size-xl-width: 1200px;
@@ -150,6 +151,7 @@
   --t-box-shadow-light:
     0px 2px 4px 0px rgba(0, 0, 0, 0.04), 0px 0px 4px 0px rgba(0, 0, 0, 0.08);
   --t-box-shadow-sidebar: -4px 4px 4px 0px rgba(0, 0, 0, 0.03);
+  --t-box-shadow-bottom-panel: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
   --t-box-shadow-strong:
     2px 4px 16px 0px rgba(0, 0, 0, 0.16), 0px 2px 4px 0px rgba(0, 0, 0, 0.08);
   --t-box-shadow-underline: 0px 1px 0px 0px rgba(0, 0, 0, 0.32);

@@ -7,6 +7,12 @@ import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
+import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
+import {
+  TOKEN_BUCKETS_ALLOW_PARTIAL_ARG,
+  TOKEN_BUCKETS_DENY_PARTIAL_ARG,
+  TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
+} from 'src/engine/core-modules/throttler/constants/try-consume-token-buckets-script.constant';
 
 @Injectable()
 export class ThrottlerService {
@@ -20,32 +26,46 @@ export class ThrottlerService {
     tokensToConsume: number,
     maxTokens: number,
     timeWindow: number,
-  ): Promise<number> {
-    const now = Date.now();
-    const availableTokens = await this.getAvailableTokensCount(
-      key,
-      maxTokens,
-      timeWindow,
-      now,
-    );
+  ): Promise<void> {
+    const [admittedCount] = await this.cacheStorage.runScript<number[]>({
+      script: TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
+      keys: [`${TOKEN_BUCKET_THROTTLE_KEY_PREFIX}:${key}`],
+      args: [
+        String(tokensToConsume),
+        JSON.stringify([
+          { burst: maxTokens, refill: maxTokens, windowMs: timeWindow },
+        ]),
+        TOKEN_BUCKETS_DENY_PARTIAL_ARG,
+      ],
+    });
 
-    if (availableTokens < tokensToConsume) {
+    if (admittedCount !== tokensToConsume) {
       throw new ThrottlerException(
         `Limit reached (${maxTokens} tokens per ${timeWindow} ms)`,
         ThrottlerExceptionCode.LIMIT_REACHED,
       );
     }
+  }
 
-    await this.cacheStorage.set(
-      key,
-      {
-        tokens: availableTokens - tokensToConsume,
-        lastRefillAt: now,
-      },
-      timeWindow * 2,
-    );
+  async tokenBucketConsumeUpTo(
+    key: string,
+    tokensToConsume: number,
+    maxTokens: number,
+    timeWindow: number,
+  ): Promise<number> {
+    const [admittedCount] = await this.cacheStorage.runScript<number[]>({
+      script: TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
+      keys: [`${TOKEN_BUCKET_THROTTLE_KEY_PREFIX}:${key}`],
+      args: [
+        String(tokensToConsume),
+        JSON.stringify([
+          { burst: maxTokens, refill: maxTokens, windowMs: timeWindow },
+        ]),
+        TOKEN_BUCKETS_ALLOW_PARTIAL_ARG,
+      ],
+    });
 
-    return availableTokens - tokensToConsume;
+    return admittedCount;
   }
 
   async consumeTokens(

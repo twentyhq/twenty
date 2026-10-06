@@ -1,24 +1,36 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query, Subscription } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Subscription,
+} from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { ExecuteOneLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
@@ -28,6 +40,7 @@ import { LogicFunctionLogsDTO } from 'src/engine/metadata-modules/logic-function
 import { LogicFunctionLogsInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-logs.input';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
+import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
@@ -38,26 +51,49 @@ import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
-@UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
-@MetadataResolver()
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  NoPermissionGuard,
+)
+@MetadataResolver(() => LogicFunctionDTO)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
+  ApplicationExceptionFilter,
   AuthGraphqlApiExceptionFilter,
 )
 export class LogicFunctionResolver {
   constructor(
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
+    private readonly logicFunctionFromSourceHelperService: LogicFunctionFromSourceHelperService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly subscriptionService: SubscriptionService,
     private readonly eventLogLiveService: EventLogLiveService,
   ) {}
 
   @Query(() => LogicFunctionDTO)
+  @UseGuards(ApplicationTargetGuard)
   async findOneLogicFunction(
-    @Args('input') { id }: LogicFunctionIdInput,
+    @ApplicationTargetArg<LogicFunctionIdInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'logicFunction',
+      idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
+    })
+    { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
@@ -84,6 +120,8 @@ export class LogicFunctionResolver {
   @AllowSuspendedWorkspace()
   async findManyLogicFunctions(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<LogicFunctionDTO[]> {
     try {
       const { flatLogicFunctionMaps } =
@@ -98,11 +136,29 @@ export class LogicFunctionResolver {
         .filter(
           (flatLogicFunction): flatLogicFunction is FlatLogicFunction =>
             isDefined(flatLogicFunction) &&
-            !isDefined(flatLogicFunction.deletedAt),
+            !isDefined(flatLogicFunction.deletedAt) &&
+            canCallerReachApplication({
+              callingApplication,
+              applicationId: flatLogicFunction.applicationId,
+            }),
         )
         .map((flatLogicFunction) =>
           fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction }),
         );
+    } catch (error) {
+      return logicFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
+  @ResolveField(() => Boolean, { nullable: true })
+  async canRunOnDemand(
+    @Parent() { id }: Pick<LogicFunctionDTO, 'id'>,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<boolean> {
+    try {
+      return await this.logicFunctionFromSourceHelperService.isLogicFunctionRunnableOnDemand(
+        { id, workspaceId },
+      );
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
     }
@@ -148,12 +204,29 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => LogicFunctionDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+  )
   async deleteOneLogicFunction(
     @Args('input') { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
+      await this.logicFunctionFromSourceHelperService.findWorkspaceCustomLogicFunctionOrThrow(
+        { id, workspaceId },
+      );
+
       return await this.logicFunctionFromSourceService.deleteOneWithSource({
         id,
         workspaceId,
@@ -164,7 +237,20 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => LogicFunctionDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+  )
   async createOneLogicFunction(
     @Args('input') input: CreateLogicFunctionFromSourceInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -180,9 +266,18 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => LogicFunctionExecutionResultDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+    ApplicationTargetGuard,
+  )
   async executeOneLogicFunction(
-    @Args('input') { id, payload }: ExecuteOneLogicFunctionInput,
+    @ApplicationTargetArg<ExecuteOneLogicFunctionInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'logicFunction',
+      idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
+    })
+    { id, payload }: ExecuteOneLogicFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser() { id: userId }: AuthContextUser,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -201,9 +296,18 @@ export class LogicFunctionResolver {
   }
 
   @Query(() => String, { nullable: true })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+    ApplicationTargetGuard,
+  )
   async getLogicFunctionSourceCode(
-    @Args('input') { id }: LogicFunctionIdInput,
+    @ApplicationTargetArg<LogicFunctionIdInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'logicFunction',
+      idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
+    })
+    { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
@@ -217,9 +321,17 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+    ApplicationTargetGuard,
+  )
   async updateOneLogicFunction(
-    @Args('input')
+    @ApplicationTargetArg<UpdateLogicFunctionFromSourceInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'logicFunction',
+      idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
+    })
     updateLogicFunctionFromSourceInput: UpdateLogicFunctionFromSourceInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
@@ -273,6 +385,8 @@ export class LogicFunctionResolver {
   async logicFunctionLogs(
     @Args('input') _: LogicFunctionLogsInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ) {
     // Register CLI presence (refreshed by the heartbeat) so the executor only publishes when watched.
     await this.eventLogLiveService.markWatched(
@@ -280,9 +394,18 @@ export class LogicFunctionResolver {
       SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
     );
 
-    const iterator = await this.subscriptionService.subscribe({
+    const iterator = await this.subscriptionService.subscribe<{
+      logicFunctionLogs: LogicFunctionLogsDTO;
+    }>({
       channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
       workspaceId: workspace.id,
+      mapPayload: (payload) =>
+        canCallerReachApplication({
+          callingApplication,
+          applicationId: payload.logicFunctionLogs.applicationId,
+        })
+          ? payload
+          : undefined,
     });
 
     return wrapAsyncIteratorWithLifecycle(() => iterator, {

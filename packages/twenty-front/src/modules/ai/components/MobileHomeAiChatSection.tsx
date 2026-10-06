@@ -1,8 +1,8 @@
-import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
+import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
-import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -16,10 +16,12 @@ export const MobileHomeAiChatSection = () => {
   const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
   });
-  const { threads } = useChatThreads();
+  const { threads } = useChatThreads(agentChatRecentThreadsSelector);
 
+  // Earlier pages can hold only chats filtered out of this list, so an empty
+  // list keeps fetching until it finds some or runs out
   if (threads.length === 0) {
-    return null;
+    return <AgentChatThreadsFetchMoreTrigger />;
   }
 
   return (
@@ -31,9 +33,7 @@ export const MobileHomeAiChatSection = () => {
         currentThreadId={currentAiChatThread}
         onThreadClick={handleThreadClick}
       />
-      <AiChatThreadDeleteConfirmationModal
-        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-      />
+      <AgentChatThreadsFetchMoreTrigger />
     </>
   );
 };

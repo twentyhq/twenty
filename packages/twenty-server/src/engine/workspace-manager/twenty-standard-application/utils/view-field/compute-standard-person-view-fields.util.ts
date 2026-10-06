@@ -110,8 +110,6 @@ export const computeStandardPersonViewFields = (
       },
     }),
 
-    // personRecordPageFields view fields
-    // General group
     personRecordPageFieldsEmails: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'person',
@@ -351,7 +349,6 @@ export const computeStandardPersonViewFields = (
       },
     }),
 
-    // messageListRecordPageMembers view fields
     messageListRecordPageMembersName: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'person',

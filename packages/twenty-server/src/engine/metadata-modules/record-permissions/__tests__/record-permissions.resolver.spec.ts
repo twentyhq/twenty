@@ -16,13 +16,8 @@ const buildResolver = () => {
     universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     readability: MetadataReadability.PRIVATE,
   };
-  const sharing = {
+  const recordPermissionsService = {
     getPermissionsForRecords: jest
-      .fn()
-      .mockResolvedValue(new Map([['record', readable]])),
-  };
-  const legacyChat = {
-    getPermissionsForThreads: jest
       .fn()
       .mockResolvedValue(new Map([['record', readable]])),
   };
@@ -45,8 +40,7 @@ const buildResolver = () => {
     }),
   };
   const resolver = new RecordPermissionsResolver(
-    sharing as never,
-    legacyChat as never,
+    recordPermissionsService as never,
     cache as never,
   );
   const query = (
@@ -61,12 +55,12 @@ const buildResolver = () => {
       } as never,
       () => resolver.recordPermissions(targets),
     );
-  return { query, sharing, legacyChat, cache, objectMetadata };
+  return { query, recordPermissionsService, cache, objectMetadata };
 };
 
 describe('Generic record permissions query', () => {
   it('deduplicates and batches by object using the authenticated viewer and existing policy', async () => {
-    const { query, sharing, legacyChat } = buildResolver();
+    const { query, recordPermissionsService, objectMetadata } = buildResolver();
     const target = { objectMetadataId: 'object', recordId: 'record' };
     const result = await query([
       target,
@@ -83,39 +77,42 @@ describe('Generic record permissions query', () => {
         permissions: readable,
       },
     ]);
-    expect(sharing.getPermissionsForRecords).toHaveBeenCalledTimes(2);
-    expect(sharing.getPermissionsForRecords).toHaveBeenCalledWith({
+    expect(
+      recordPermissionsService.getPermissionsForRecords,
+    ).toHaveBeenCalledTimes(2);
+    expect(
+      recordPermissionsService.getPermissionsForRecords,
+    ).toHaveBeenCalledWith({
       authContext: {
         type: 'user',
         workspace: { id: 'workspace' },
         userWorkspaceId: 'viewer',
       },
-      objectMetadataId: 'object',
+      flatObjectMetadata: objectMetadata,
       recordIds: ['record', 'missing'],
     });
-    expect(legacyChat.getPermissionsForThreads).not.toHaveBeenCalled();
   });
 
   it('does not disclose missing or foreign workspace objects', async () => {
-    const { query, sharing } = buildResolver();
+    const { query, recordPermissionsService } = buildResolver();
     const target = { objectMetadataId: 'foreign', recordId: 'record' };
     expect(await query([target])).toEqual([{ ...target, permissions: denied }]);
-    expect(sharing.getPermissionsForRecords).not.toHaveBeenCalled();
+    expect(
+      recordPermissionsService.getPermissionsForRecords,
+    ).not.toHaveBeenCalled();
   });
 
-  it('preserves the owner-only compatibility policy before the workspace upgrade', async () => {
-    const { query, sharing, legacyChat, objectMetadata } = buildResolver();
+  it('uses the common policy even for SYSTEM chat metadata', async () => {
+    const { query, recordPermissionsService, objectMetadata } = buildResolver();
     objectMetadata.readability = MetadataReadability.SYSTEM;
+    recordPermissionsService.getPermissionsForRecords.mockResolvedValue(
+      new Map(),
+    );
     const target = { objectMetadataId: 'object', recordId: 'record' };
-    expect(await query([target])).toEqual([
-      { ...target, permissions: readable },
-    ]);
-    expect(legacyChat.getPermissionsForThreads).toHaveBeenCalledWith({
-      workspaceId: 'workspace',
-      userWorkspaceId: 'viewer',
-      threadIds: ['record'],
-    });
-    expect(sharing.getPermissionsForRecords).not.toHaveBeenCalled();
+    expect(await query([target])).toEqual([{ ...target, permissions: denied }]);
+    expect(
+      recordPermissionsService.getPermissionsForRecords,
+    ).toHaveBeenCalledTimes(1);
   });
 
   it('rejects oversized batches before reading metadata', async () => {

@@ -2,7 +2,6 @@ import { RecordPermissionsModule } from 'src/engine/metadata-modules/record-perm
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 
-import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { AiGenerateTextModule } from 'src/engine/metadata-modules/ai/ai-generate-text/ai-generate-text.module';
@@ -25,6 +24,7 @@ import { MetadataTranslationModule } from 'src/engine/metadata-modules/metadata-
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { SettingsMenuItemModule } from 'src/engine/metadata-modules/settings-menu-item/settings-menu-item.module';
 import { TimelineActivityTypeModule } from 'src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.module';
+import { ValidationRuleModule } from 'src/engine/metadata-modules/validation-rule/validation-rule.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -53,8 +53,8 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     NavigationMenuItemModule,
     SettingsMenuItemModule,
     TimelineActivityTypeModule,
+    ValidationRuleModule,
     AiAgentModule,
-    AiAgentMonitorModule,
     AiChatModule,
     AiGenerateTextModule,
     AiWorkspaceStatsModule,
@@ -95,6 +95,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     CommandMenuItemModule,
     NavigationMenuItemModule,
     TimelineActivityTypeModule,
+    ValidationRuleModule,
     AiAgentModule,
     AiChatModule,
     MinimalMetadataModule,

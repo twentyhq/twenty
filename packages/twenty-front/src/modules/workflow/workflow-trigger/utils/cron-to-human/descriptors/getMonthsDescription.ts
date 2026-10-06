@@ -14,7 +14,6 @@ const getMonthName = (
 ): string => {
   const index = monthStartIndexZero ? monthNum : monthNum - 1;
 
-  // Create a date for the given month (using January 1st as base)
   const monthDate = new Date(2024, index, 1);
 
   if (isDefined(localeCatalog)) {

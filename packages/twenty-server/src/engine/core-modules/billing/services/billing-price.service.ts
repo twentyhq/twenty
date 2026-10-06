@@ -132,9 +132,6 @@ export class BillingPriceService {
     ).sort((a, b) => a.tiers[0].up_to - b.tiers[0].up_to);
   }
 
-  // V2 counterpart of findEquivalentMeteredPrice.
-  // Finds a RESOURCE_CREDIT price matching the target interval and plan,
-  // with the largest credit_amount that does not exceed the reference credit_amount.
   async findEquivalentResourceCreditPrice({
     targetInterval,
     targetPlanKey,

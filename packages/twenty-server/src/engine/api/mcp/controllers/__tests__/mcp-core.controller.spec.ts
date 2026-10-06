@@ -72,6 +72,8 @@ describe('McpCoreController', () => {
     const mockUser = { id: 'user-1' } as UserEntity;
     const mockUserWorkspaceId = 'user-workspace-1';
     const mockApiKey = { id: 'api-key-1' } as FlatApiKey;
+    const mockHttpRequest = {} as import('express').Request;
+
     const mockRes = {
       status: jest.fn().mockReturnThis(),
       setHeader: jest.fn(),
@@ -113,6 +115,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         undefined,
+        mockHttpRequest,
         mockRes,
       );
 
@@ -124,9 +127,14 @@ describe('McpCoreController', () => {
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
           application: undefined,
+          isDirectMode: false,
         },
       );
       expect(result).toEqual(mockResponse);
+      expect(mockHttpRequest).toMatchObject({
+        mcpMethod: 'tools/call',
+        mcpToolName: 'testTool',
+      });
     });
 
     it('should handle initialize method', async () => {
@@ -161,6 +169,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         undefined,
+        mockHttpRequest,
         mockRes,
       );
 
@@ -172,6 +181,7 @@ describe('McpCoreController', () => {
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
           application: undefined,
+          isDirectMode: false,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -208,6 +218,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         undefined,
+        mockHttpRequest,
         mockRes,
       );
 
@@ -219,6 +230,7 @@ describe('McpCoreController', () => {
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
           application: undefined,
+          isDirectMode: false,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -240,6 +252,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         undefined,
+        mockHttpRequest,
         mockRes,
       );
 
@@ -274,6 +287,7 @@ describe('McpCoreController', () => {
         undefined,
         undefined,
         undefined,
+        mockHttpRequest,
         mockRes,
       );
 
@@ -284,6 +298,7 @@ describe('McpCoreController', () => {
           userId: undefined,
           userWorkspaceId: undefined,
           apiKey: mockApiKey,
+          isDirectMode: false,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -316,6 +331,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         'application/json, text/event-stream',
+        mockHttpRequest,
         mockRes,
       );
 
@@ -348,6 +364,7 @@ describe('McpCoreController', () => {
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
           application: undefined,
+          isDirectMode: false,
         },
         expect.any(Function),
       );
@@ -376,6 +393,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         'application/json',
+        mockHttpRequest,
         mockRes,
       );
 
@@ -401,6 +419,7 @@ describe('McpCoreController', () => {
         mockUserWorkspaceId,
         undefined,
         'application/json, text/event-stream',
+        mockHttpRequest,
         mockRes,
       );
 

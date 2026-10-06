@@ -99,6 +99,15 @@
       },
       "dependsOn": ["^build"]
     },
+    "knip": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["^build", "twenty-shared:build"],
+      "inputs": ["default", "{workspaceRoot}/knip.json"],
+      "options": {
+        "command": "knip --workspace {projectRoot}"
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "cache": true,

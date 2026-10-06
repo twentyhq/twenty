@@ -28,11 +28,23 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "id": {
         "universalIdentifier": "59b74693-2b88-5eb9-82ef-23b1e75c2b78",
       },
+      "lastActivityAt": {
+        "universalIdentifier": "b3847509-8e98-4038-88de-dd891767d6fc",
+      },
+      "lastMessageSenderWorkspaceMemberId": {
+        "universalIdentifier": "5c3611a7-7324-472e-9b43-4c7779e5e7cf",
+      },
+      "lastMessageText": {
+        "universalIdentifier": "1c16eaef-172b-4778-b14b-f302bc6021e4",
+      },
       "lastStreamError": {
         "universalIdentifier": "2e389238-ba5c-4951-83d4-b14f94592c5c",
       },
       "messages": {
         "universalIdentifier": "5c851a60-e5d9-4b1e-9926-c2eab6fc9e62",
+      },
+      "participants": {
+        "universalIdentifier": "2ede85e4-216b-4308-8556-b045971414e7",
       },
       "pendingQuestionMessageId": {
         "universalIdentifier": "51a9b421-7d90-4a59-9712-036ea9721e65",
@@ -70,13 +82,62 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "userWorkspaceId": {
         "universalIdentifier": "bf830886-b6dc-46e9-a229-eecbb0e66032",
       },
+      "workspaceMember": {
+        "universalIdentifier": "6f3ed3b5-0642-4a2a-9558-98376adb60f4",
+      },
+      "writerWorkspaceMemberIds": {
+        "universalIdentifier": "c8fe2406-ad9c-4274-aeb5-9beb74d4b353",
+      },
     },
     "indexes": {
       "ownerIndex": {
         "universalIdentifier": "c97a4c97-266b-490a-a4d6-76274f5de429",
       },
+      "workspaceMemberIndex": {
+        "universalIdentifier": "079f2dd7-6c11-4eae-be8a-cce2d1bee0fb",
+      },
     },
     "universalIdentifier": "fab0fff8-0c90-4116-9bb0-7dbc07392633",
+  },
+  "agentChatThreadParticipant": {
+    "fields": {
+      "archivedAt": {
+        "universalIdentifier": "ee092c9d-f27e-4fbc-8dad-9ec950936216",
+      },
+      "createdAt": {
+        "universalIdentifier": "bae81265-78ca-52fa-b75f-7eda44811ab1",
+      },
+      "deletedAt": {
+        "universalIdentifier": "554805df-af06-5089-bf93-f0a7c8ae9b51",
+      },
+      "id": {
+        "universalIdentifier": "13ba446f-db00-5635-888e-c2b11299e34b",
+      },
+      "lastReadAt": {
+        "universalIdentifier": "7e3a8319-c127-4c4f-add4-6feac37ea555",
+      },
+      "snoozedUntil": {
+        "universalIdentifier": "65bc5785-877d-4363-b65c-95175ba20fd0",
+      },
+      "thread": {
+        "universalIdentifier": "7d0282a5-11ce-4da8-a165-30909ffdf383",
+      },
+      "updatedAt": {
+        "universalIdentifier": "8e7c3d7e-dfee-565a-8f43-271ca4c24579",
+      },
+      "workspaceMember": {
+        "universalIdentifier": "4345764d-878b-4a3a-b1c9-822378f868e6",
+      },
+    },
+    "indexes": {
+      "threadWorkspaceMemberUniqueIndex": {
+        "universalIdentifier": "e5bbe244-cf74-49a3-938a-e6fff7a8710b",
+      },
+      "workspaceMemberIndex": {
+        "universalIdentifier": "73d8bb5d-18eb-47bb-89e6-12d8f89aecf6",
+      },
+    },
+    "universalIdentifier": "a043622a-48ef-426f-b55d-3fdcf4ae52f2",
   },
   "agentChatThreadTarget": {
     "fields": {
@@ -168,6 +229,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "senderUserWorkspaceId": {
         "universalIdentifier": "f4184c3a-b85c-4cef-8181-b2fefdf98fda",
       },
+      "senderWorkspaceMember": {
+        "universalIdentifier": "69bea8e1-451d-4c3c-9d34-505b5a67e06e",
+      },
       "status": {
         "universalIdentifier": "3845ccfa-9394-4cb9-a75c-4ca704414b83",
       },
@@ -187,6 +251,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "hiddenKickoffIndex": {
         "universalIdentifier": "1d423c31-007a-4fcd-8514-dcb1f7a8fa78",
+      },
+      "senderWorkspaceMemberIndex": {
+        "universalIdentifier": "8ecdac01-7bbe-411e-8461-6ff265c90759",
       },
       "threadIndex": {
         "universalIdentifier": "2054f1a5-554f-42ac-a41a-b8ccd6ba72ec",
@@ -299,9 +366,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "daf50675-315c-51af-95a1-e05dd59989ce",
       },
-      "evaluations": {
-        "universalIdentifier": "282b4815-9c5e-4897-8f9a-a4587af6b0e2",
-      },
       "id": {
         "universalIdentifier": "6dd07216-fc15-54d1-ba30-2748dcf55720",
       },
@@ -324,37 +388,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "universalIdentifier": "63697477-8606-415e-86cb-be078d7fcf7e",
-  },
-  "agentTurnEvaluation": {
-    "fields": {
-      "comment": {
-        "universalIdentifier": "f5531d3b-c8f5-4d92-bf72-d5fd8e2697b0",
-      },
-      "createdAt": {
-        "universalIdentifier": "a0e7e222-4d22-59b2-9d4a-108193e3e3ab",
-      },
-      "deletedAt": {
-        "universalIdentifier": "128e9ba5-d735-5f2c-8a86-437af196f4c5",
-      },
-      "id": {
-        "universalIdentifier": "f100558f-f1cd-5e5e-a3c6-c214227f2850",
-      },
-      "score": {
-        "universalIdentifier": "a4313259-d43b-4d10-abf5-2426e152c10b",
-      },
-      "turn": {
-        "universalIdentifier": "c67ddcf0-2812-476a-87dc-cf8a683805aa",
-      },
-      "updatedAt": {
-        "universalIdentifier": "6cd30693-18b4-509b-9418-a185f98d0c03",
-      },
-    },
-    "indexes": {
-      "turnIndex": {
-        "universalIdentifier": "f85d8283-84ae-4343-8328-8c4e21c5b984",
-      },
-    },
-    "universalIdentifier": "73741409-7835-426f-8425-9de13af22302",
   },
   "attachment": {
     "fields": {
@@ -3117,6 +3150,50 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
     "universalIdentifier": "fecdb92c-d150-4544-81f8-f1158d18a7a2",
     "views": {},
   },
+  "shortLink": {
+    "fields": {
+      "authoredTemplateUrl": {
+        "universalIdentifier": "6f588340-ddff-4113-984b-c37c045d496c",
+      },
+      "createdAt": {
+        "universalIdentifier": "72ceaf02-ab5e-5d65-a905-7fe04da6842b",
+      },
+      "createdBy": {
+        "universalIdentifier": "0d1b316a-56c0-545f-a449-2ad439db244f",
+      },
+      "deletedAt": {
+        "universalIdentifier": "1a3026c1-9b00-5d61-b135-9d718f4064a9",
+      },
+      "id": {
+        "universalIdentifier": "5c0ecd7c-f0b5-54e3-a023-bdf42729ebd8",
+      },
+      "position": {
+        "universalIdentifier": "0d249731-8755-54f8-aac5-ee4f2a79a9bd",
+      },
+      "resolvedDestinationUrl": {
+        "universalIdentifier": "5ba068eb-0594-4945-9183-7174a37a9406",
+      },
+      "searchVector": {
+        "universalIdentifier": "42eb2901-3d82-5cb5-b6b4-bb9c7640375b",
+      },
+      "templateAndResolvedUrlHash": {
+        "universalIdentifier": "175f7743-b027-4374-b577-6503679d00fc",
+      },
+      "updatedAt": {
+        "universalIdentifier": "3913f15e-4eb6-5f76-9354-9a58af42b4dd",
+      },
+      "updatedBy": {
+        "universalIdentifier": "aa1ff009-3977-5b66-afb6-bcca66fe1acb",
+      },
+    },
+    "indexes": {
+      "templateAndResolvedUrlHashUniqueIndex": {
+        "universalIdentifier": "b1330e3c-bd74-4bd1-a9dc-1ecefe41f199",
+      },
+    },
+    "universalIdentifier": "22c96608-d1b1-49a2-b328-3e738d61d82d",
+    "views": {},
+  },
   "task": {
     "fields": {
       "assignee": {
@@ -4017,6 +4094,15 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
     "fields": {
       "accountOwnerForCompanies": {
         "universalIdentifier": "20202020-dc29-4bd4-a3c1-29eafa324bee",
+      },
+      "agentChatThreadParticipants": {
+        "universalIdentifier": "d1de909f-a0eb-4e94-8903-abec012864c9",
+      },
+      "agentChatThreads": {
+        "universalIdentifier": "fbaf92a6-44ae-4b6d-9d10-2c15d84eaea1",
+      },
+      "agentMessages": {
+        "universalIdentifier": "211b2717-450a-4f5f-808f-39695c819319",
       },
       "assignedTasks": {
         "universalIdentifier": "20202020-61dc-4a1c-99e8-38ebf8d2bbeb",

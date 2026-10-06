@@ -102,6 +102,7 @@ When adding permissions:
 - Grant the smallest useful scope.
 - Keep sensitive objects and fields out of broad roles.
 - Check whether the app introduces side effects through logic functions before granting write access.
+- For sensitive objects, set `sharingReach: ObjectSharingReach.ROLE_ACCESS` on `defineObject()` (imported from `twenty-sdk/define`) so records can only be shared with people whose role already reaches them. The default, `ObjectSharingReach.WORKSPACE`, lets a record be shared with anyone in the workspace. It only matters while record sharing is enabled, and objects with `APPLICATION` or `SYSTEM` readability are never shared.
 
 ## Verification
 
