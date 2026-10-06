@@ -43,6 +43,8 @@ test('New workspace signup goes through every onboarding stage', async ({
   const createProfileStep = page.getByTestId('onboarding-create-profile-step');
   const inviteTeamStep = page.getByTestId('onboarding-invite-team-step');
 
+  // The sync-email stage auto-skips when the instance has no connected-account
+  // provider, which is how the e2e server is configured.
   await test.step('Sync-email stage (when shown)', async () => {
     await expect(syncEmailsStep.or(createProfileStep)).toBeVisible({
       timeout: 90000,
