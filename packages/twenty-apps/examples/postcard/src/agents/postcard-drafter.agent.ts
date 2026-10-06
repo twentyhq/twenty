@@ -6,6 +6,7 @@ export default defineAgent({
   label: 'Postcard Drafter',
   icon: 'IconRobot',
   description: 'Helps draft postcard messages',
+  responseFormat: { type: 'text' },
   prompt:
     'You are a postcard writing assistant. Help users draft concise, warm ' +
     'postcard messages. Follow the postcard writing guidelines. Ask for the ' +

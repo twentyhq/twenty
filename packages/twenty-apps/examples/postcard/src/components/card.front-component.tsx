@@ -3,9 +3,9 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId } from 'twenty-sdk/front-component';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 
-import { isDefined } from 'src/utils/isDefined';
 import { CARD_TEST_IDS } from './card-test-ids';
 
 export const CARD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
@@ -174,7 +174,9 @@ const SdkHealthPanel = () => {
 };
 
 const PostCardPreview = () => {
-  const recordId = useRecordId();
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId =
+    selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
   const [postCard, setPostCard] = useState<PostCardRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -31,6 +31,7 @@ export default definePageLayout({
       title: 'Preview',
       position: 50,
       icon: 'IconEye',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: 'd70f837e-8d0c-4fe2-b70e-89b5bc173499',

@@ -4,17 +4,35 @@ import {
   enqueueSnackbar,
   unmountFrontComponent,
   updateProgress,
-  useRecordId,
+  useSelectedRecordIds,
 } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
 
 const SYSTEM_PROMPT =
   'You are a postcard writing assistant. Write a short, warm postcard message ' +
   'under 150 words. Use a personal tone. Output ONLY the postcard message ' +
   'text, nothing else — no greeting label, no sign-off label, just the message.';
 
+const NO_AI_MODEL_MESSAGE =
+  'No AI models configured. Go to Settings > Admin Panel > AI to add a provider API key.';
+
+type GenerateTextResponse = {
+  text: string;
+};
+
+type RestErrorBody = {
+  code?: string;
+};
+
+const isNoAiModelError = (error: unknown) =>
+  error instanceof RestApiClientError &&
+  (error.body as RestErrorBody | undefined)?.code === 'API_KEY_NOT_CONFIGURED';
+
 const GeneratePostCardEffect = () => {
-  const recordId = useRecordId();
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId =
+    selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
 
   useEffect(() => {
     if (recordId === null) {
@@ -28,52 +46,24 @@ const GeneratePostCardEffect = () => {
 
     const generate = async () => {
       try {
-        const client = new CoreApiClient();
+        const restClient = new RestApiClient();
+        const coreClient = new CoreApiClient();
 
-        const userPrompt = 'Write a postcard message for a friend.';
-
-        const apiBaseUrl = process.env.TWENTY_API_URL;
-        const token =
-          process.env.TWENTY_APP_ACCESS_TOKEN ?? process.env.TWENTY_API_KEY;
-
-        if (!apiBaseUrl || !token) {
-          throw new Error('API configuration missing');
-        }
-
-        const response = await fetch(`${apiBaseUrl}/rest/ai/generate-text`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
+        const { text } = await restClient.post<GenerateTextResponse>(
+          '/rest/ai/generate-text',
+          {
             systemPrompt: SYSTEM_PROMPT,
-            userPrompt,
-          }),
-        });
-
-        if (!response.ok) {
-          const errorBody = await response.text();
-
-          if (errorBody.includes('No AI models are available')) {
-            throw new Error(
-              'No AI models configured. Go to Settings > Admin Panel > AI to add a provider API key.',
-            );
-          }
-
-          throw new Error(`AI request failed with status ${response.status}`);
-        }
-
-        const data = (await response.json()) as { text?: string };
-        const generatedContent = data.text ?? '';
+            userPrompt: 'Write a postcard message for a friend.',
+          },
+        );
 
         await updateProgress(0.7);
 
-        await client.mutation({
+        await coreClient.mutation({
           updatePostCard: {
             __args: {
               id: recordId,
-              data: { content: generatedContent },
+              data: { content: text },
             },
             id: true,
           },
@@ -89,8 +79,9 @@ const GeneratePostCardEffect = () => {
         await unmountFrontComponent();
       } catch (error) {
         await enqueueSnackbar({
-          message:
-            error instanceof Error
+          message: isNoAiModelError(error)
+            ? NO_AI_MODEL_MESSAGE
+            : error instanceof Error
               ? error.message
               : 'Failed to generate content',
           variant: 'error',

@@ -9,7 +9,7 @@ export default defineSkill({
   content:
     'When writing a postcard: keep the message under 150 words, use a warm ' +
     'and personal tone, mention the recipient by name, and include a clear ' +
-    'call-to-action if the postcard is business-related. Always fill in both ' +
-    'the recipientName and recipientAddress fields before marking the status ' +
-    'as SENT.',
+    'call-to-action if the postcard is business-related. Always link the ' +
+    'recipient (a person) and fill in the content field before marking the ' +
+    'status as SENT.',
 });

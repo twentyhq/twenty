@@ -8,7 +8,7 @@ export default defineField({
   type: FieldType.BOOLEAN,
   name: 'canReceivePostcards',
   label: 'Can Receive Postcards',
-  description: 'Whether the company can receive postcards',
+  description: 'Whether the person can receive postcards',
   icon: 'IconMailbox',
   defaultValue: true,
 });

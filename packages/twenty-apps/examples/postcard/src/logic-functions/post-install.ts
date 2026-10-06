@@ -17,10 +17,10 @@ const handler = async () => {
 
   await client.mutation({
     createPostCards: {
-      __args: { data: SEED_POST_CARDS as any },
+      __args: { data: SEED_POST_CARDS },
       id: true,
     },
-  } as any);
+  });
 
   console.log(`Seeded ${SEED_POST_CARDS.length} post cards on install.`);
   return {};

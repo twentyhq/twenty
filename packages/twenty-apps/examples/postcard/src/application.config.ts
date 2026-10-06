@@ -1,9 +1,10 @@
 import { defineApplication } from 'twenty-sdk/define';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './roles/default-function.role';
 
 export const APPLICATION_UNIVERSAL_IDENTIFIER =
   '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58';
 
+// The default role is declared with defineApplicationRole() in
+// src/roles/default-function.role.ts and picked up automatically.
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: 'Postcard App',
@@ -28,5 +29,4 @@ export default defineApplication({
       isRequired: false,
     },
   },
-  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });

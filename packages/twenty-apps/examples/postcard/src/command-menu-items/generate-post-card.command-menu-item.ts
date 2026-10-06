@@ -10,7 +10,6 @@ export default defineCommandMenuItem({
     GENERATE_POST_CARD_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
   label: 'Generate post card content',
   shortLabel: 'Generate content',
-  icon: 'IconSparkles',
   isPinned: true,
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,

@@ -9,5 +9,6 @@ export default defineAgent({
   label: 'Example Agent',
   description: 'A sample AI agent for your application',
   icon: 'IconRobot',
+  responseFormat: { type: 'text' },
   prompt: 'You are a helpful assistant. Help users with their questions and tasks.',
 });

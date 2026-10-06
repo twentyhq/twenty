@@ -4,12 +4,12 @@ import {
   enqueueSnackbar,
   unmountFrontComponent,
   updateProgress,
-  useRecordId,
+  useSelectedRecordIds,
 } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const SendPostCardsEffect = () => {
-  const recordId = useRecordId();
+  const selectedRecordIds = useSelectedRecordIds();
 
   useEffect(() => {
     const send = async () => {
@@ -19,11 +19,11 @@ const SendPostCardsEffect = () => {
 
         await updateProgress(0.3);
 
-        if (recordId) {
+        if (selectedRecordIds.length > 0) {
           await client.mutation({
-            updatePostCard: {
+            updatePostCards: {
               __args: {
-                id: recordId,
+                filter: { id: { in: selectedRecordIds } },
                 data: { status: 'SENT' },
               },
               id: true,
@@ -31,7 +31,10 @@ const SendPostCardsEffect = () => {
           });
 
           await enqueueSnackbar({
-            message: `Postcard sent`,
+            message:
+              selectedRecordIds.length === 1
+                ? 'Postcard sent'
+                : `${selectedRecordIds.length} postcards sent`,
             variant: 'success',
           });
         }
@@ -47,7 +50,7 @@ const SendPostCardsEffect = () => {
     };
 
     send();
-  }, [recordId]);
+  }, [selectedRecordIds]);
 
   return null;
 };
@@ -58,7 +61,7 @@ export const SEND_POST_CARDS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
 export default defineFrontComponent({
   universalIdentifier: SEND_POST_CARDS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'Send Post Cards',
-  description: 'Sets postcard status to Sent',
+  description: 'Sets the selected postcards to Sent',
   isHeadless: true,
   component: SendPostCardsEffect,
 });

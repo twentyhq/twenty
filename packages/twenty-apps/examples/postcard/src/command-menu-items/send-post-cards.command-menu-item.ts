@@ -6,7 +6,6 @@ export default defineCommandMenuItem({
   universalIdentifier: 'bd75de13-87a1-4f7a-94e2-92e19e97523c',
   label: 'Send post cards',
   shortLabel: 'Send',
-  icon: 'IconSend',
   isPinned: true,
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
