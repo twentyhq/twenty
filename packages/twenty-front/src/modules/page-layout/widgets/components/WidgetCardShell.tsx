@@ -1,4 +1,6 @@
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
+import { DashboardFilterUnaffectedWidgetIndicator } from '@/page-layout/dashboard-filters/components/DashboardFilterUnaffectedWidgetIndicator';
+import { useIsWidgetUnaffectedByDashboardFilters } from '@/page-layout/dashboard-filters/hooks/useIsWidgetUnaffectedByDashboardFilters';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
@@ -64,6 +66,8 @@ export const WidgetCardShell = ({
   const theme = useTheme();
   const { layoutMode } = usePageLayoutContentContext();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const isUnaffectedByDashboardFilters =
+    useIsWidgetUnaffectedByDashboardFilters(widget.id);
 
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
   const isFixedHeightIframe =
@@ -107,6 +111,11 @@ export const WidgetCardShell = ({
             isResizing={isResizing}
             title={widget.title}
             onRemove={onRemove}
+            endAdornment={
+              isUnaffectedByDashboardFilters ? (
+                <DashboardFilterUnaffectedWidgetIndicator />
+              ) : undefined
+            }
             forbiddenDisplay={
               !hasAccess && (
                 <PageLayoutWidgetForbiddenDisplay

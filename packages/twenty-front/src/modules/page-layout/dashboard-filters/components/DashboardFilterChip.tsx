@@ -6,7 +6,9 @@ import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { DashboardFilterChipButton } from '@/page-layout/dashboard-filters/components/DashboardFilterChipButton';
 import { DashboardFilterChipDropdownContent } from '@/page-layout/dashboard-filters/components/DashboardFilterChipDropdownContent';
+import { DashboardFilterRelationChipButton } from '@/page-layout/dashboard-filters/components/DashboardFilterRelationChipButton';
 import { dashboardFilterValuesComponentState } from '@/page-layout/dashboard-filters/states/dashboardFilterValuesComponentState';
 import { getDashboardFilterChipComponentInstanceId } from '@/page-layout/dashboard-filters/utils/getDashboardFilterChipComponentInstanceId';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -14,7 +16,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useGetRecordFilterChipLabelValue } from '@/views/hooks/useGetRecordFilterChipLabelValue';
 import { useStore } from 'jotai';
 import {
@@ -32,11 +33,15 @@ import { useIcons } from 'twenty-ui/icon';
 type DashboardFilterChipProps = {
   slot: DashboardFilterSlot;
   representativeBinding: DashboardFilterBinding;
+  boundWidgetCount: number;
+  totalWidgetCount: number;
 };
 
 export const DashboardFilterChip = ({
   slot,
   representativeBinding,
+  boundWidgetCount,
+  totalWidgetCount,
 }: DashboardFilterChipProps) => {
   const pageLayoutInstanceId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
@@ -156,6 +161,8 @@ export const DashboardFilterChip = ({
     ? getRecordFilterChipLabelValue({ recordFilter: currentRecordFilter })
     : '';
 
+  const ChipIcon = getIcon(fieldMetadataItem.icon);
+
   return (
     <RecordFiltersComponentInstanceContext.Provider
       value={{ instanceId: chipInstanceId }}
@@ -169,15 +176,30 @@ export const DashboardFilterChip = ({
           <Dropdown
             dropdownId={dropdownId}
             clickableComponent={
-              <SortOrFilterChip
-                testId={chipInstanceId}
-                labelKey={slot.label}
-                labelValue={labelValue}
-                Icon={getIcon(fieldMetadataItem.icon)}
-                onRemove={handleRemove}
-                onClick={handleChipClick}
-                type="filter"
-              />
+              isDefined(currentRecordFilter) &&
+              currentRecordFilter.type === 'RELATION' ? (
+                <DashboardFilterRelationChipButton
+                  slot={slot}
+                  recordFilter={currentRecordFilter}
+                  Icon={ChipIcon}
+                  testId={chipInstanceId}
+                  boundWidgetCount={boundWidgetCount}
+                  totalWidgetCount={totalWidgetCount}
+                  onClick={handleChipClick}
+                  onRemove={handleRemove}
+                />
+              ) : (
+                <DashboardFilterChipButton
+                  slot={slot}
+                  labelValue={labelValue}
+                  Icon={ChipIcon}
+                  testId={chipInstanceId}
+                  boundWidgetCount={boundWidgetCount}
+                  totalWidgetCount={totalWidgetCount}
+                  onClick={handleChipClick}
+                  onRemove={handleRemove}
+                />
+              )
             }
             dropdownComponents={
               <DashboardFilterChipDropdownContent

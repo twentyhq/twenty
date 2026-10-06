@@ -13,6 +13,12 @@ const DATE_SLOT: DashboardFilterSlot = {
   filterType: 'DATE_TIME',
 };
 
+const OWNER_SLOT: DashboardFilterSlot = {
+  id: 'built-in-owner',
+  label: 'Owner',
+  filterType: 'RELATION',
+};
+
 describe('serializeDashboardFilterValuesToSearchParams', () => {
   it('writes operand and value params under the page layout namespace', () => {
     const result = serializeDashboardFilterValuesToSearchParams({
@@ -102,6 +108,32 @@ describe('serializeDashboardFilterValuesToSearchParams', () => {
         searchParams: new URLSearchParams(serialized.toString()),
         pageLayoutId: PAGE_LAYOUT_ID,
         slots: [DATE_SLOT],
+      }),
+    ).toEqual(values);
+  });
+
+  it('round-trips a JSON relation value whose brackets must not be read as nesting', () => {
+    const values = {
+      'built-in-owner': {
+        operand: ViewFilterOperand.IS,
+        value: JSON.stringify({
+          isCurrentWorkspaceMemberSelected: true,
+          selectedRecordIds: ['20202020-0687-4c41-b707-ed1bfca972a7'],
+        }),
+      },
+    };
+
+    const serialized = serializeDashboardFilterValuesToSearchParams({
+      searchParams: new URLSearchParams(),
+      pageLayoutId: PAGE_LAYOUT_ID,
+      values,
+    });
+
+    expect(
+      parseDashboardFilterValuesFromSearchParams({
+        searchParams: new URLSearchParams(serialized.toString()),
+        pageLayoutId: PAGE_LAYOUT_ID,
+        slots: [DATE_SLOT, OWNER_SLOT],
       }),
     ).toEqual(values);
   });

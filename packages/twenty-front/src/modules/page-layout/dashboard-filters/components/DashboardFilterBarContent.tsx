@@ -1,6 +1,7 @@
 import { DashboardFilterChip } from '@/page-layout/dashboard-filters/components/DashboardFilterChip';
 import { DashboardFilterUrlSyncEffect } from '@/page-layout/dashboard-filters/components/DashboardFilterUrlSyncEffect';
 import { useDashboardFilterSlots } from '@/page-layout/dashboard-filters/hooks/useDashboardFilterSlots';
+import { countDashboardFilterSlotBoundWidgets } from '@/page-layout/dashboard-filters/utils/countDashboardFilterSlotBoundWidgets';
 import { getDashboardFilterRepresentativeBinding } from '@/page-layout/dashboard-filters/utils/getDashboardFilterRepresentativeBinding';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -56,11 +57,19 @@ export const DashboardFilterBarContent = () => {
             return null;
           }
 
+          const { boundWidgetCount, totalWidgetCount } =
+            countDashboardFilterSlotBoundWidgets({
+              slotId: slot.id,
+              bindingsByWidgetId,
+            });
+
           return (
             <DashboardFilterChip
               key={slot.id}
               slot={slot}
               representativeBinding={representativeBinding}
+              boundWidgetCount={boundWidgetCount}
+              totalWidgetCount={totalWidgetCount}
             />
           );
         })}

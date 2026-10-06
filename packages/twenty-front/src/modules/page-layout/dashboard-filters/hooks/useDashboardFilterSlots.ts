@@ -2,6 +2,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { BUILT_IN_DASHBOARD_FILTER_SLOT_IDS } from '@/page-layout/dashboard-filters/constants/BuiltInDashboardFilterSlotIds';
 import { type DashboardFilterBindingsByWidgetId } from '@/page-layout/dashboard-filters/types/DashboardFilterBindingsByWidgetId';
 import { computeBuiltInDateBindings } from '@/page-layout/dashboard-filters/utils/computeBuiltInDateBindings';
+import { computeBuiltInOwnerBindings } from '@/page-layout/dashboard-filters/utils/computeBuiltInOwnerBindings';
+import { groupDashboardFilterBindingsByWidgetId } from '@/page-layout/dashboard-filters/utils/groupDashboardFilterBindingsByWidgetId';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
@@ -33,6 +35,11 @@ export const useDashboardFilterSlots = (): {
               label: t`Date`,
               filterType: 'DATE_TIME',
             },
+            {
+              id: BUILT_IN_DASHBOARD_FILTER_SLOT_IDS.OWNER,
+              label: t`Owner`,
+              filterType: 'RELATION',
+            },
           ]
         : EMPTY_SLOTS,
     [dashboardPageLayout],
@@ -43,19 +50,18 @@ export const useDashboardFilterSlots = (): {
       return EMPTY_BINDINGS_BY_WIDGET_ID;
     }
 
-    const builtInDateBindingByWidgetId = computeBuiltInDateBindings({
-      widgets: dashboardPageLayout.tabs.flatMap((tab) => tab.widgets),
-      objectMetadataItems,
-    });
+    const widgets = dashboardPageLayout.tabs.flatMap((tab) => tab.widgets);
 
-    return Object.fromEntries(
-      Object.entries(builtInDateBindingByWidgetId).map(
-        ([widgetId, builtInDateBinding]) => [
-          widgetId,
-          { [BUILT_IN_DASHBOARD_FILTER_SLOT_IDS.DATE]: builtInDateBinding },
-        ],
-      ),
-    );
+    return groupDashboardFilterBindingsByWidgetId({
+      [BUILT_IN_DASHBOARD_FILTER_SLOT_IDS.DATE]: computeBuiltInDateBindings({
+        widgets,
+        objectMetadataItems,
+      }),
+      [BUILT_IN_DASHBOARD_FILTER_SLOT_IDS.OWNER]: computeBuiltInOwnerBindings({
+        widgets,
+        objectMetadataItems,
+      }),
+    });
   }, [dashboardPageLayout, objectMetadataItems]);
 
   return { slots, bindingsByWidgetId };
