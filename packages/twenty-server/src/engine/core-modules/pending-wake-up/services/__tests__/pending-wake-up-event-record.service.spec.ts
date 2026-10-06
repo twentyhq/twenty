@@ -1,5 +1,5 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { decidePendingWakeUpOnEventRecord } from 'src/engine/core-modules/pending-wake-up/utils/decide-pending-wake-up-on-event-record.util';
+import { PendingWakeUpEventRecordService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-event-record.service';
 import { type FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 
 const EVENT = {
@@ -22,10 +22,9 @@ const decide = ({
   recordReadAttempt?: number;
   onRecordReadGivenUp?: jest.Mock;
 }) =>
-  decidePendingWakeUpOnEventRecord({
-    findRecordsService: {
-      execute: jest.fn().mockResolvedValue(recordRead),
-    } as unknown as FindRecordsService,
+  new PendingWakeUpEventRecordService({
+    execute: jest.fn().mockResolvedValue(recordRead),
+  } as unknown as FindRecordsService).decideOnEventRecord({
     event: EVENT,
     authContext: {} as WorkspaceAuthContext,
     rolePermissionConfig: { intersectionOf: ['role-id'] },
@@ -34,7 +33,7 @@ const decide = ({
     onRecordReadGivenUp,
   });
 
-describe('decidePendingWakeUpOnEventRecord', () => {
+describe('PendingWakeUpEventRecordService.decideOnEventRecord', () => {
   it('wakes the owner up with only what it can read of the record', async () => {
     expect(
       await decide({

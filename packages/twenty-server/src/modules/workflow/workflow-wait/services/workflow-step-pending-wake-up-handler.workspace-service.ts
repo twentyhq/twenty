@@ -8,6 +8,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
+import { PendingWakeUpEventRecordService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-event-record.service';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
 import { type PendingWakeUpEvent } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-event.type';
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
@@ -16,8 +17,6 @@ import {
   type PendingWakeUpOwnerHandler,
 } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-handler.type';
 import { computePendingWakeUpRetryDelayMs } from 'src/engine/core-modules/pending-wake-up/utils/compute-pending-wake-up-retry-delay-ms.util';
-import { decidePendingWakeUpOnEventRecord } from 'src/engine/core-modules/pending-wake-up/utils/decide-pending-wake-up-on-event-record.util';
-import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import {
   WorkflowRunStatus,
   type WorkflowRunWorkspaceEntity,
@@ -51,7 +50,7 @@ export class WorkflowStepPendingWakeUpHandlerWorkspaceService
     private readonly pendingWakeUpOwnerHandlerRegistryService: PendingWakeUpOwnerHandlerRegistryService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
-    private readonly findRecordsService: FindRecordsService,
+    private readonly pendingWakeUpEventRecordService: PendingWakeUpEventRecordService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -100,8 +99,7 @@ export class WorkflowStepPendingWakeUpHandlerWorkspaceService
           workspaceId,
         });
 
-      return decidePendingWakeUpOnEventRecord({
-        findRecordsService: this.findRecordsService,
+      return this.pendingWakeUpEventRecordService.decideOnEventRecord({
         event,
         authContext,
         rolePermissionConfig,
